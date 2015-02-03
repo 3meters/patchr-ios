@@ -25,6 +25,11 @@
         <attribute name="speed" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <relationship name="entity_" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Entity" inverseName="location" inverseEntity="Entity" syncable="YES"/>
     </entity>
+    <entity name="Message" representedClassName="Message" parentEntity="Entity" syncable="YES">
+        <attribute name="replyToId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rootId" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="replyTo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="replies" inverseEntity="User" syncable="YES"/>
+    </entity>
     <entity name="Notification" representedClassName="Notification" parentEntity="Entity" syncable="YES">
         <attribute name="event" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="parentId" optional="YES" attributeType="String" syncable="YES"/>
@@ -120,6 +125,27 @@
         <relationship name="entityIn" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Entity" inverseName="linksInCounts" inverseEntity="Entity" syncable="YES"/>
         <relationship name="entityOut" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Entity" inverseName="linksOutCounts" inverseEntity="Entity" syncable="YES"/>
     </entity>
+    <entity name="User" representedClassName="User" parentEntity="Entity" syncable="YES">
+        <attribute name="area" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="authSource" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="bio" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="developer" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="facebookId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="googleId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="lastSignedInDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="oauthData" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="oauthId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="oauthSecret" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="oauthToken" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="password" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="role" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="twitterId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="validationDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="validationNotifyDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="webUri" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="replies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Message" inverseName="replyTo" inverseEntity="Message" syncable="YES"/>
+    </entity>
     <elements>
         <element name="Entity" positionX="-63" positionY="-18" width="128" height="238"/>
         <element name="Location" positionX="-18" positionY="54" width="128" height="163"/>
@@ -134,5 +160,7 @@
         <element name="ServiceBase" positionX="0" positionY="63" width="128" height="255"/>
         <element name="ServiceObject" positionX="18" positionY="72" width="128" height="60"/>
         <element name="Statistic" positionX="-18" positionY="135" width="128" height="133"/>
+        <element name="Message" positionX="-18" positionY="135" width="128" height="88"/>
+        <element name="User" positionX="-9" positionY="144" width="128" height="328"/>
     </elements>
 </model>

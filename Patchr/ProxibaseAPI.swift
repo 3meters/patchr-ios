@@ -64,8 +64,6 @@ public class ProxibaseClient {
         }
         self.sessionManager.POST(path, parameters: parameters,
             success: { (dataTask, response) -> Void in
-                let httpRequest = dataTask.originalRequest
-                let bodyString = NSString(data: httpRequest.HTTPBody ?? NSData(), encoding: NSUTF8StringEncoding)
                 completion(response: response, error: nil)
         }) { (dataTask, error) -> Void in
             let response = dataTask.response as? NSHTTPURLResponse

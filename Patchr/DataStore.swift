@@ -7,11 +7,13 @@
 //
 
 import UIKit
+import CoreLocation
 
 class DataStore: NSObject {
     
     var proxibaseClient : ProxibaseClient
     private var managedObjectContext : NSManagedObjectContext
+    private var locationManager : CLLocationManager
     
     private lazy var schemaDictionary : [String : Entity.Type] = {
         return [
@@ -20,9 +22,10 @@ class DataStore: NSObject {
         ]
     }()
     
-    init(managedObjectContext context: NSManagedObjectContext, proxibaseClient: ProxibaseClient) {
+    init(managedObjectContext context: NSManagedObjectContext, proxibaseClient: ProxibaseClient, locationManager: CLLocationManager) {
         self.managedObjectContext = context;
         self.proxibaseClient = proxibaseClient;
+        self.locationManager = locationManager
         super.init()
     }
     
@@ -37,8 +40,12 @@ class DataStore: NSObject {
         ]
         switch query.name {
         case "patches/near":
+            var latLngDictionary = self.fallbackLocation()
+            if locationManager.location != nil {
+                latLngDictionary = ["lat" : locationManager.location.coordinate.latitude, "lng" : locationManager.location.coordinate.longitude]
+            }
             parameters = [:]
-            parameters["location"] = ["lat" : 49.2845280, "lng": -123.1092720] // TODO get current location
+            parameters["location"] = latLngDictionary
             parameters["radius"] = 10000
             parameters["links"] = linksForLinkProfile("patch")
         case "do/getEntitiesForEntity watching":
@@ -47,6 +54,7 @@ class DataStore: NSObject {
             cursor["linkTypes"] = ["watch"]
             cursor["schemas"] = ["patch"]
             parameters["cursor"] = cursor
+            parameters["links"] = linksForLinkProfile("patch")
         case "do/getEntitiesForEntity owner":
             var cursor = parameters["cursor"] as [String : AnyObject]
             cursor["direction"] = "out"
@@ -88,6 +96,7 @@ class DataStore: NSObject {
         var results: [QueryResult] = []
         let dataWrapper = ServiceData()
         if let dictionary = response as? [NSObject : AnyObject] {
+            NSLog("%@", dictionary)
             ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper, mappingNames: false)
             if let entityDictionaries = dataWrapper.data as? [[NSObject : AnyObject]] {
                 for entityDictionary in entityDictionaries {
@@ -146,7 +155,7 @@ class DataStore: NSObject {
                     "schema" : "message",
                     "links" : true,
                     "count" : true,
-                    "limit" : 1,
+                    "limit" : limitContent,
                     "direction" : "both"
                 ],
                 [
@@ -176,10 +185,68 @@ class DataStore: NSObject {
                     "direction" : "in",
                     "where" : ["_creator" : currentUserId]
                 ]]
+        case "message":
+            activeLinks = [[
+                    "type" : "content",
+                    "schema" : "message",
+                    "links" : true,
+                    "count" : true,
+                    "limit" : 1,
+                    "direction" : "both"
+                ],
+                [
+                    "type" : "content",
+                    "schema" : "patch",
+                    "links" : true,
+                    "count" : true,
+                    "limit" : 1,
+                    "direction" : "out"
+                ],
+                [
+                    "type" : "share",
+                    "schema" : "patch",
+                    "links" : true,
+                    "count" : true,
+                    "limit" : 1,
+                    "direction" : "out"
+                ],
+                [
+                    "type" : "share",
+                    "schema" : "message",
+                    "links" : true,
+                    "count" : true,
+                    "limit" : 1,
+                    "direction" : "out"
+                ],
+                [
+                    "type" : "share",
+                    "schema" : "user",
+                    "links" : true,
+                    "count" : true,
+                    "limit" : 5,
+                    "direction" : "out"
+                ],
+                [
+                    "type" : "like",
+                    "schema" : "user",
+                    "links" : true,
+                    "count" : true,
+                    "limit" : 1,
+                    "direction" : "in",
+                    "where" : ["_from" : currentUserId]
+                ]
+            ]
             
         default:()
         }
         
         return ["shortcuts" : true, "active" : activeLinks]
+    }
+    
+    private func fallbackLocation() -> [String : Double] {
+        // TODO we can be more creative with this:
+        // - store/retrieve location in NSUserDefaults
+        // - likely get a nearby major city based on timezone
+        return ["lat" : 49.2845280, "lng": -123.1092720];
     }
 }

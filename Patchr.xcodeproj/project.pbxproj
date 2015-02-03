@@ -58,6 +58,10 @@
 		7DA730931A71ACC9008C25FA /* ServiceBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA730861A71ACC9008C25FA /* ServiceBase.m */; };
 		7DA730941A71ACC9008C25FA /* ServiceObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA730881A71ACC9008C25FA /* ServiceObject.m */; };
 		7DA730961A71B962008C25FA /* QueryResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA730951A71B962008C25FA /* QueryResultTableViewController.swift */; };
+		7DB6E0F81A8174E90017A42F /* _Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DB6E0F51A8174E90017A42F /* _Message.m */; };
+		7DB6E0F91A8174E90017A42F /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DB6E0F71A8174E90017A42F /* Message.m */; };
+		7DB6E0FE1A8177060017A42F /* _User.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DB6E0FB1A8177060017A42F /* _User.m */; };
+		7DB6E0FF1A8177060017A42F /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DB6E0FD1A8177060017A42F /* User.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -153,6 +157,14 @@
 		7DA730871A71ACC9008C25FA /* ServiceObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ServiceObject.h; path = Model/ServiceObject.h; sourceTree = "<group>"; };
 		7DA730881A71ACC9008C25FA /* ServiceObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ServiceObject.m; path = Model/ServiceObject.m; sourceTree = "<group>"; };
 		7DA730951A71B962008C25FA /* QueryResultTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryResultTableViewController.swift; sourceTree = "<group>"; };
+		7DB6E0F41A8174E90017A42F /* _Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _Message.h; path = Model/_Message.h; sourceTree = "<group>"; };
+		7DB6E0F51A8174E90017A42F /* _Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _Message.m; path = Model/_Message.m; sourceTree = "<group>"; };
+		7DB6E0F61A8174E90017A42F /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Message.h; path = Model/Message.h; sourceTree = "<group>"; };
+		7DB6E0F71A8174E90017A42F /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Message.m; path = Model/Message.m; sourceTree = "<group>"; };
+		7DB6E0FA1A8177060017A42F /* _User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _User.h; path = Model/_User.h; sourceTree = "<group>"; };
+		7DB6E0FB1A8177060017A42F /* _User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _User.m; path = Model/_User.m; sourceTree = "<group>"; };
+		7DB6E0FC1A8177060017A42F /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = User.h; path = Model/User.h; sourceTree = "<group>"; };
+		7DB6E0FD1A8177060017A42F /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = User.m; path = Model/User.m; sourceTree = "<group>"; };
 		9D5919BEF434463FF4349942 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A80DE63116DE3050C0FEC4EE /* Pods-Patchr.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.debug.xcconfig"; sourceTree = "<group>"; };
 		A9B11FC184124D485DAA2948 /* Pods-Patchr.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.release.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.release.xcconfig"; sourceTree = "<group>"; };
@@ -279,6 +291,8 @@
 				7DA730721A71ACC9008C25FA /* _Entity.m */,
 				7D3F26CB1A76F77E0015F8E8 /* _Location.h */,
 				7D3F26CC1A76F77E0015F8E8 /* _Location.m */,
+				7DB6E0F41A8174E90017A42F /* _Message.h */,
+				7DB6E0F51A8174E90017A42F /* _Message.m */,
 				7D3F26D71A7706610015F8E8 /* _Notification.h */,
 				7D3F26D81A7706610015F8E8 /* _Notification.m */,
 				7D40B9461A79A36D00F9954C /* _PACategory.h */,
@@ -301,10 +315,14 @@
 				7DA7307C1A71ACC9008C25FA /* _ServiceObject.m */,
 				7D6E264E1A7B18CB000128A7 /* _Statistic.h */,
 				7D6E264F1A7B18CB000128A7 /* _Statistic.m */,
+				7DB6E0FA1A8177060017A42F /* _User.h */,
+				7DB6E0FB1A8177060017A42F /* _User.m */,
 				7DA7307D1A71ACC9008C25FA /* Entity.h */,
 				7DA7307E1A71ACC9008C25FA /* Entity.m */,
 				7D3F26CF1A76F77E0015F8E8 /* Location.h */,
 				7D3F26D01A76F77E0015F8E8 /* Location.m */,
+				7DB6E0F61A8174E90017A42F /* Message.h */,
+				7DB6E0F71A8174E90017A42F /* Message.m */,
 				7D3F26D91A7706610015F8E8 /* Notification.h */,
 				7D3F26DA1A7706610015F8E8 /* Notification.m */,
 				7D40B9481A79A36D00F9954C /* PACategory.h */,
@@ -329,6 +347,8 @@
 				7DA730881A71ACC9008C25FA /* ServiceObject.m */,
 				7D6E26501A7B18CB000128A7 /* Statistic.h */,
 				7D6E26511A7B18CB000128A7 /* Statistic.m */,
+				7DB6E0FC1A8177060017A42F /* User.h */,
+				7DB6E0FD1A8177060017A42F /* User.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -541,6 +561,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7DB6E0FE1A8177060017A42F /* _User.m in Sources */,
 				7DA730911A71ACC9008C25FA /* Place.m in Sources */,
 				7D6E26491A7AE8CF000128A7 /* OwnerTableViewController.swift in Sources */,
 				7D7096011A71D55C00F835C4 /* _QueryResult.m in Sources */,
@@ -550,7 +571,9 @@
 				7DA730931A71ACC9008C25FA /* ServiceBase.m in Sources */,
 				7D3D39D11A6F086F00A44CB2 /* ViewController.swift in Sources */,
 				7DA7308C1A71ACC9008C25FA /* _Query.m in Sources */,
+				7DB6E0F91A8174E90017A42F /* Message.m in Sources */,
 				7D40B9421A7864A000F9954C /* NotificationsTableViewController.swift in Sources */,
+				7DB6E0FF1A8177060017A42F /* User.m in Sources */,
 				7D6E26531A7B18CB000128A7 /* Statistic.m in Sources */,
 				7DA730961A71B962008C25FA /* QueryResultTableViewController.swift in Sources */,
 				7DA7308F1A71ACC9008C25FA /* Entity.m in Sources */,
@@ -561,6 +584,7 @@
 				7D6E26471A7AB93F000128A7 /* WatchingTableViewViewController.swift in Sources */,
 				7D6E264B1A7AEE83000128A7 /* MostActiveTableViewController.swift in Sources */,
 				7DA730921A71ACC9008C25FA /* Query.m in Sources */,
+				7DB6E0F81A8174E90017A42F /* _Message.m in Sources */,
 				7D3D39CF1A6F086F00A44CB2 /* AppDelegate.swift in Sources */,
 				7D3F26D51A76F77E0015F8E8 /* Location.m in Sources */,
 				7D40B9531A79AB0200F9954C /* NearbyPatchesTableViewController.swift in Sources */,

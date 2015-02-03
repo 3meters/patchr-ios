@@ -8,11 +8,13 @@
 
 import UIKit
 import CoreData
+import CoreLocation
 
-class ViewController: UIViewController, RMCoreDataStackDelegate {
+class ViewController: UIViewController, RMCoreDataStackDelegate, CLLocationManagerDelegate {
 
     private var coreDataStack : RMCoreDataStack!
     private var dataStore : DataStore!
+    private var locationManger : CLLocationManager!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,7 +24,12 @@ class ViewController: UIViewController, RMCoreDataStackDelegate {
         self.coreDataStack.delegate = self
         self.coreDataStack.constructWithConfiguration(coreDataConfiguration)
         
-        self.dataStore = DataStore(managedObjectContext: self.coreDataStack.managedObjectContext, proxibaseClient: ProxibaseClient())
+        self.locationManger = CLLocationManager()
+        self.locationManger.delegate = self
+        if CLLocationManager.authorizationStatus() == .NotDetermined {
+            self.locationManger.requestWhenInUseAuthorization()
+        }
+        self.dataStore = DataStore(managedObjectContext: self.coreDataStack.managedObjectContext, proxibaseClient: ProxibaseClient(), locationManager: self.locationManger)
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -70,6 +77,25 @@ class ViewController: UIViewController, RMCoreDataStackDelegate {
     
     func coreDataStack(stack: RMCoreDataStack!, failedInitializingWithInfo info: [NSObject : AnyObject]!) {
         NSLog("[%@ %@]", reflect(self).summary, __FUNCTION__)
+    }
+    
+// MARK: CLLocationManagerDelegate
+    
+    func locationManager(manager: CLLocationManager!, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+        if status == .Authorized || status == .AuthorizedWhenInUse {
+            manager.startUpdatingLocation()
+        } else if status == CLAuthorizationStatus.Denied {
+            let alert = UIAlertController(title: "Location Services Disabled", message: "This app relies on your location to find Patches near you!", preferredStyle: UIAlertControllerStyle.Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [CLLocation]!) {
+        for location in locations {
+            NSLog("%@", location)
+            NSLog("floor %zd", location.floor?.level ?? -1)
+        }
     }
 }
 
