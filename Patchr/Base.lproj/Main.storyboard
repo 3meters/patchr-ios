@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="eHc-MK-aPk">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="eHc-MK-aPk">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
     </dependencies>
@@ -16,15 +16,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="if4-SD-HDm">
-                                <rect key="frame" x="16" y="81" width="121" height="30"/>
-                                <state key="normal" title="Login">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="authenticationButtonAction:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="2fv-HF-xyI"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aD0-GF-pa0">
                                 <rect key="frame" x="33" y="134" width="131" height="30"/>
                                 <state key="normal" title="do/getNotifications">
@@ -79,6 +70,15 @@
                                     <segue destination="sfo-tF-YE4" kind="show" identifier="stats/to/patches/from/users mostPopular" id="301-Af-qkC"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EcL-5N-B7D">
+                                <rect key="frame" x="33" y="400" width="49" height="30"/>
+                                <state key="normal" title="Logout">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="logoutButtonAction:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="rR2-Pk-nGA"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
@@ -86,7 +86,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1258" y="222"/>
+            <point key="canvasLocation" x="2070" y="222"/>
         </scene>
         <!--Most Active-->
         <scene sceneID="XL9-Xa-rbr">
@@ -296,7 +296,116 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tJS-D5-ff0" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2134" y="222"/>
+            <point key="canvasLocation" x="2946" y="222"/>
+        </scene>
+        <!--Splash-->
+        <scene sceneID="2dW-lr-3zd">
+            <objects>
+                <viewController id="4Dp-xR-Xy4" customClass="SplashViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="J2k-NV-Lnj"/>
+                        <viewControllerLayoutGuide type="bottom" id="qw7-FQ-ASh"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="16e-CO-ZpJ">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="29n-GC-HwU">
+                                <rect key="frame" x="276" y="95" width="48" height="30"/>
+                                <state key="normal" title="Sign In">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="w8b-UK-0UD" kind="show" id="mka-am-3Ly"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="owS-Gg-EZi">
+                                <rect key="frame" x="261" y="133" width="78" height="30"/>
+                                <state key="normal" title="Join Patchr">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="ZM4-pP-hjW" kind="show" id="y60-ch-upO"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KyU-3x-QP1">
+                                <rect key="frame" x="277" y="171" width="41" height="30"/>
+                                <state key="normal" title="Guest">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="guestButtonAction:" destination="4Dp-xR-Xy4" eventType="touchUpInside" id="9lf-cO-HGA"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="owS-Gg-EZi" firstAttribute="centerX" secondItem="29n-GC-HwU" secondAttribute="centerX" id="Hh4-eI-zYc"/>
+                            <constraint firstItem="KyU-3x-QP1" firstAttribute="top" secondItem="owS-Gg-EZi" secondAttribute="bottom" constant="8" id="VH8-Zx-hCU"/>
+                            <constraint firstItem="KyU-3x-QP1" firstAttribute="centerX" secondItem="owS-Gg-EZi" secondAttribute="centerX" constant="-2.5" id="Wyi-VC-77g"/>
+                            <constraint firstItem="29n-GC-HwU" firstAttribute="top" secondItem="J2k-NV-Lnj" secondAttribute="bottom" constant="31" id="lZ5-Gp-PIU"/>
+                            <constraint firstItem="owS-Gg-EZi" firstAttribute="top" secondItem="29n-GC-HwU" secondAttribute="bottom" constant="8" id="q23-wE-0c6"/>
+                            <constraint firstAttribute="centerX" secondItem="29n-GC-HwU" secondAttribute="centerX" id="sbx-GS-Q96"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Splash" id="JWQ-gH-IgX"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="E7u-sg-H31" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1337" y="-902"/>
+        </scene>
+        <!--Sign In-->
+        <scene sceneID="QnS-hL-oH6">
+            <objects>
+                <viewController id="w8b-UK-0UD" customClass="SignInViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="2Vk-R7-Mnc"/>
+                        <viewControllerLayoutGuide type="bottom" id="tYx-sk-M5s"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Gte-kv-TCT">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M6O-8a-Klq">
+                                <rect key="frame" x="276" y="100" width="48" height="30"/>
+                                <state key="normal" title="Sign In">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="signInButtonAction:" destination="w8b-UK-0UD" eventType="touchUpInside" id="V9M-ea-XLD"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="centerX" secondItem="M6O-8a-Klq" secondAttribute="centerX" id="LKd-Zu-sSE"/>
+                            <constraint firstItem="M6O-8a-Klq" firstAttribute="top" secondItem="2Vk-R7-Mnc" secondAttribute="bottom" constant="36" id="d7d-Vs-lkJ"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Sign In" id="VD5-sa-B9d"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xDy-uo-zxo" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-430" y="-902"/>
+        </scene>
+        <!--Join Patchr-->
+        <scene sceneID="nHf-m3-ipq">
+            <objects>
+                <viewController id="ZM4-pP-hjW" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="T5d-P1-VEM"/>
+                        <viewControllerLayoutGuide type="bottom" id="GUw-it-sc7"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Apg-Hv-Z8m">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Join Patchr" id="Meh-xf-O1t"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="fh7-Gd-SYa" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-430" y="-135"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="TJt-NF-gmm">
@@ -314,7 +423,25 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hBa-El-rNY" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="446" y="222"/>
+            <point key="canvasLocation" x="1258" y="222"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="7EM-ML-lSf">
+            <objects>
+                <navigationController storyboardIdentifier="SplashNavigationController" automaticallyAdjustsScrollViewInsets="NO" id="68Q-Wu-ATt" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="BeC-pL-V9p">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="4Dp-xR-Xy4" kind="relationship" relationship="rootViewController" id="KFQ-5V-QYU"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="New-9Y-Rlk" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2213" y="-902"/>
         </scene>
     </scenes>
 </document>

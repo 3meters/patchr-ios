@@ -24,7 +24,7 @@ class PatchrTests: XCTestCase {
     func testUserAuthentication() {
         var expectation = self.expectationWithDescription("Login response")
         let client = ProxibaseClient()
-        client.signIn("rob@robmaceachern.com", password: "test9090", installId: "12345") { (response, error) -> Void in
+        client.signIn("rob@robmaceachern.com", password: "test9090", installId: "12345") { (_, _, response, error) -> Void in
             if (error == nil && client.authenticated) {
                 expectation.fulfill()
             } else {

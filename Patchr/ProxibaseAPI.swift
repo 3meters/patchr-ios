@@ -26,15 +26,15 @@ public class ProxibaseClient {
         sessionManager.responseSerializer = JSONResponseSerializerWithData()
     }
     
-    public func signIn(email: NSString, password : NSString, installId: NSString, completion:(response: AnyObject?, error: NSError?) -> Void) {
+    public func signIn(email: NSString, password : NSString, installId: NSString, completion:(userId: String?, sessionKey: String?, response: AnyObject?, error: NSError?) -> Void) {
         let parameters = ["email" : email, "password" : password, "installId" : installId]
         self.sessionManager.POST("auth/signin", parameters: parameters, success: { (dataTask, response) -> Void in
             let json = JSON(response)
             self.userId = json["session"]["_owner"].string
             self.sessionKey = json["session"]["key"].string
-            completion(response: response, error: nil)
+            completion(userId: self.userId, sessionKey: self.sessionKey, response: response, error: nil)
         }) { (dataTask, error) -> Void in
-            completion(response: error?.userInfo?[JSONResponseSerializerWithDataKey], error: error)
+            completion(userId: nil, sessionKey: nil, response: error?.userInfo?[JSONResponseSerializerWithDataKey], error: error)
         }
     }
     

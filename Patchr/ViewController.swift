@@ -50,22 +50,18 @@ class ViewController: UIViewController, RMCoreDataStackDelegate, CLLocationManag
             }
         }
     }
-
-    @IBAction func authenticationButtonAction(sender: UIButton) {
-        if self.dataStore.proxibaseClient.authenticated {
-            sender.setTitle("Logging out...", forState: UIControlState.Normal)
-            self.dataStore.proxibaseClient.signOut({ (response, error) -> Void in
-                if error == nil {
-                    sender.setTitle("Login", forState: UIControlState.Normal)
-                }
-            })
-        } else {
-            sender.setTitle("Logging in...", forState: UIControlState.Normal)
-            self.dataStore.proxibaseClient.signIn("rob@robmaceachern.com", password: "test9090", installId: "123456", completion: { (response, error) -> Void in
-                if error == nil {
-                    sender.setTitle("Logout", forState: UIControlState.Normal)
-                }
-            })
+    
+    @IBAction func logoutButtonAction(sender: UIButton) {
+        NSUserDefaults.standardUserDefaults().setObject(nil, forKey: "com.3meters.patchr.ios.userId")
+        NSUserDefaults.standardUserDefaults().setObject(nil, forKey: "com.3meters.patchr.ios.sessionKey")
+        NSUserDefaults.standardUserDefaults().synchronize()
+        self.dataStore.proxibaseClient.signOut { (response, error) -> Void in
+            if error != nil {
+                NSLog("Error during logout \(error)")
+            }
+            let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+            let destinationViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as UIViewController
+            appDelegate.window!.setRootViewController(destinationViewController, animated: true)
         }
     }
     
@@ -91,11 +87,6 @@ class ViewController: UIViewController, RMCoreDataStackDelegate, CLLocationManag
         }
     }
     
-    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [CLLocation]!) {
-        for location in locations {
-            NSLog("%@", location)
-            NSLog("floor %zd", location.floor?.level ?? -1)
-        }
-    }
+    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [CLLocation]!) {}
 }
 
