@@ -17,8 +17,8 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aD0-GF-pa0">
-                                <rect key="frame" x="33" y="134" width="131" height="30"/>
-                                <state key="normal" title="do/getNotifications">
+                                <rect key="frame" x="33" y="134" width="86" height="30"/>
+                                <state key="normal" title="Notifications">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -26,8 +26,8 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OsK-J6-Fl0">
-                                <rect key="frame" x="33" y="180" width="90" height="30"/>
-                                <state key="normal" title="patches/near">
+                                <rect key="frame" x="33" y="180" width="50" height="30"/>
+                                <state key="normal" title="Nearby">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -35,8 +35,8 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oke-sW-F1J">
-                                <rect key="frame" x="33" y="230" width="233" height="30"/>
-                                <state key="normal" title="do/getEntitiesForEntity (Watching)">
+                                <rect key="frame" x="33" y="230" width="64" height="30"/>
+                                <state key="normal" title="Watching">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -44,8 +44,8 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w1q-X3-Uox">
-                                <rect key="frame" x="33" y="273" width="43" height="30"/>
-                                <state key="normal" title="owner">
+                                <rect key="frame" x="33" y="273" width="45" height="30"/>
+                                <state key="normal" title="Owner">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -53,8 +53,8 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ha5-fL-crJ">
-                                <rect key="frame" x="33" y="311" width="80" height="30"/>
-                                <state key="normal" title="most active">
+                                <rect key="frame" x="33" y="311" width="82" height="30"/>
+                                <state key="normal" title="Most Active">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -62,8 +62,8 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WOz-l1-Rvx">
-                                <rect key="frame" x="33" y="355" width="91" height="30"/>
-                                <state key="normal" title="most popular">
+                                <rect key="frame" x="33" y="355" width="92" height="30"/>
+                                <state key="normal" title="Most Popular">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>

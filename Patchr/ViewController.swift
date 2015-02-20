@@ -29,7 +29,13 @@ class ViewController: UIViewController, RMCoreDataStackDelegate, CLLocationManag
         if CLLocationManager.authorizationStatus() == .NotDetermined {
             self.locationManger.requestWhenInUseAuthorization()
         }
-        self.dataStore = DataStore(managedObjectContext: self.coreDataStack.managedObjectContext, proxibaseClient: ProxibaseClient(), locationManager: self.locationManger)
+        
+        let userId = NSUserDefaults.standardUserDefaults().stringForKey("com.3meters.patchr.ios.userId")
+        let sessionKey = NSUserDefaults.standardUserDefaults().stringForKey("com.3meters.patchr.ios.sessionKey")
+        let proxibaseClient = ProxibaseClient()
+        proxibaseClient.userId = userId
+        proxibaseClient.sessionKey = sessionKey
+        self.dataStore = DataStore(managedObjectContext: self.coreDataStack.managedObjectContext, proxibaseClient: proxibaseClient, locationManager: self.locationManger)
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {

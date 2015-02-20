@@ -11,8 +11,8 @@ import Foundation
 public class ProxibaseClient {
     
     private let sessionManager : AFHTTPSessionManager
-    private(set) public var userId : NSString?
-    private(set) public var sessionKey : NSString?
+    public var userId : NSString?
+    public var sessionKey : NSString?
     
     public var authenticated : Bool {
         return (userId != nil && sessionKey != nil)
