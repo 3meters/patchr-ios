@@ -12,8 +12,8 @@
 		7D01FA361A7024E200DD6DFA /* JSONResponseSerializerWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */; };
 		7D021ABE1A9409450047DAAE /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D021ABD1A9409450047DAAE /* SignInViewController.swift */; };
 		7D021AC21A9423080047DAAE /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D021AC11A9423080047DAAE /* SplashViewController.swift */; };
+		7D0BAD4C1A96CEB0002E602D /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */; };
 		7D3D39CF1A6F086F00A44CB2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */; };
-		7D3D39D11A6F086F00A44CB2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3D39D01A6F086F00A44CB2 /* ViewController.swift */; };
 		7D3D39D41A6F086F00A44CB2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D3D39D21A6F086F00A44CB2 /* Main.storyboard */; };
 		7D3D39D61A6F086F00A44CB2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D3D39D51A6F086F00A44CB2 /* Images.xcassets */; };
 		7D3D39D91A6F086F00A44CB2 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7D3D39D71A6F086F00A44CB2 /* LaunchScreen.xib */; };
@@ -35,10 +35,8 @@
 		7D56EE8B1A70616500BFCC32 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */; };
 		7D56EE8C1A70617200BFCC32 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */; };
 		7D56EE8D1A70618800BFCC32 /* ProxibaseAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3D39EF1A6F116E00A44CB2 /* ProxibaseAPI.swift */; };
-		7D6E26471A7AB93F000128A7 /* WatchingTableViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D6E26461A7AB93F000128A7 /* WatchingTableViewViewController.swift */; };
-		7D6E26491A7AE8CF000128A7 /* OwnerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D6E26481A7AE8CF000128A7 /* OwnerTableViewController.swift */; };
-		7D6E264B1A7AEE83000128A7 /* MostActiveTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D6E264A1A7AEE83000128A7 /* MostActiveTableViewController.swift */; };
-		7D6E264D1A7AEE91000128A7 /* MostPopularTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D6E264C1A7AEE91000128A7 /* MostPopularTableViewController.swift */; };
+		7D6E26471A7AB93F000128A7 /* MeTableViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D6E26461A7AB93F000128A7 /* MeTableViewViewController.swift */; };
+		7D6E264D1A7AEE91000128A7 /* ExploreTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D6E264C1A7AEE91000128A7 /* ExploreTableViewController.swift */; };
 		7D6E26521A7B18CB000128A7 /* _Statistic.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D6E264F1A7B18CB000128A7 /* _Statistic.m */; };
 		7D6E26531A7B18CB000128A7 /* Statistic.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D6E26511A7B18CB000128A7 /* Statistic.m */; };
 		7D7095D71A71BE3200F835C4 /* FetchControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7095D61A71BE3200F835C4 /* FetchControllerDelegate.swift */; };
@@ -85,10 +83,10 @@
 		7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyJSON.swift; sourceTree = "<group>"; };
 		7D021ABD1A9409450047DAAE /* SignInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 		7D021AC11A9423080047DAAE /* SplashViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
+		7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		7D3D39C91A6F086F00A44CB2 /* Patchr.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Patchr.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D3D39CD1A6F086F00A44CB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		7D3D39D01A6F086F00A44CB2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		7D3D39D31A6F086F00A44CB2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		7D3D39D51A6F086F00A44CB2 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		7D3D39D81A6F086F00A44CB2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
@@ -121,10 +119,8 @@
 		7D40B94E1A79A6FD00F9954C /* ProviderMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProviderMap.h; path = Model/ProviderMap.h; sourceTree = "<group>"; };
 		7D40B94F1A79A6FD00F9954C /* ProviderMap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProviderMap.m; path = Model/ProviderMap.m; sourceTree = "<group>"; };
 		7D40B9521A79AB0200F9954C /* NearbyPatchesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearbyPatchesTableViewController.swift; sourceTree = "<group>"; };
-		7D6E26461A7AB93F000128A7 /* WatchingTableViewViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WatchingTableViewViewController.swift; sourceTree = "<group>"; };
-		7D6E26481A7AE8CF000128A7 /* OwnerTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OwnerTableViewController.swift; sourceTree = "<group>"; };
-		7D6E264A1A7AEE83000128A7 /* MostActiveTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MostActiveTableViewController.swift; sourceTree = "<group>"; };
-		7D6E264C1A7AEE91000128A7 /* MostPopularTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MostPopularTableViewController.swift; sourceTree = "<group>"; };
+		7D6E26461A7AB93F000128A7 /* MeTableViewViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeTableViewViewController.swift; sourceTree = "<group>"; };
+		7D6E264C1A7AEE91000128A7 /* ExploreTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExploreTableViewController.swift; sourceTree = "<group>"; };
 		7D6E264E1A7B18CB000128A7 /* _Statistic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _Statistic.h; path = Model/_Statistic.h; sourceTree = "<group>"; };
 		7D6E264F1A7B18CB000128A7 /* _Statistic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _Statistic.m; path = Model/_Statistic.m; sourceTree = "<group>"; };
 		7D6E26501A7B18CB000128A7 /* Statistic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Statistic.h; path = Model/Statistic.h; sourceTree = "<group>"; };
@@ -240,7 +236,6 @@
 				7DA730701A71ACA5008C25FA /* Model */,
 				7D01FA371A705C6600DD6DFA /* Third Party */,
 				7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */,
-				7D3D39D01A6F086F00A44CB2 /* ViewController.swift */,
 				7D3D39EF1A6F116E00A44CB2 /* ProxibaseAPI.swift */,
 				7D3D39D21A6F086F00A44CB2 /* Main.storyboard */,
 				7D3D39D51A6F086F00A44CB2 /* Images.xcassets */,
@@ -255,12 +250,11 @@
 				7DA3D9111A72D5A60082D2AB /* DataStore.swift */,
 				7D40B9411A7864A000F9954C /* NotificationsTableViewController.swift */,
 				7D40B9521A79AB0200F9954C /* NearbyPatchesTableViewController.swift */,
-				7D6E26461A7AB93F000128A7 /* WatchingTableViewViewController.swift */,
-				7D6E26481A7AE8CF000128A7 /* OwnerTableViewController.swift */,
-				7D6E264A1A7AEE83000128A7 /* MostActiveTableViewController.swift */,
-				7D6E264C1A7AEE91000128A7 /* MostPopularTableViewController.swift */,
+				7D6E26461A7AB93F000128A7 /* MeTableViewViewController.swift */,
+				7D6E264C1A7AEE91000128A7 /* ExploreTableViewController.swift */,
 				7D021ABD1A9409450047DAAE /* SignInViewController.swift */,
 				7D021AC11A9423080047DAAE /* SplashViewController.swift */,
+				7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */,
 			);
 			path = Patchr;
 			sourceTree = "<group>";
@@ -569,13 +563,11 @@
 			files = (
 				7DB6E0FE1A8177060017A42F /* _User.m in Sources */,
 				7DA730911A71ACC9008C25FA /* Place.m in Sources */,
-				7D6E26491A7AE8CF000128A7 /* OwnerTableViewController.swift in Sources */,
 				7D7096011A71D55C00F835C4 /* _QueryResult.m in Sources */,
 				7D01FA361A7024E200DD6DFA /* JSONResponseSerializerWithData.m in Sources */,
-				7D6E264D1A7AEE91000128A7 /* MostPopularTableViewController.swift in Sources */,
+				7D6E264D1A7AEE91000128A7 /* ExploreTableViewController.swift in Sources */,
 				7D3F26D61A76F77E0015F8E8 /* Photo.m in Sources */,
 				7DA730931A71ACC9008C25FA /* ServiceBase.m in Sources */,
-				7D3D39D11A6F086F00A44CB2 /* ViewController.swift in Sources */,
 				7DA7308C1A71ACC9008C25FA /* _Query.m in Sources */,
 				7DB6E0F91A8174E90017A42F /* Message.m in Sources */,
 				7D40B9421A7864A000F9954C /* NotificationsTableViewController.swift in Sources */,
@@ -588,8 +580,7 @@
 				7DA7308A1A71ACC9008C25FA /* _Patch.m in Sources */,
 				7D021AC21A9423080047DAAE /* SplashViewController.swift in Sources */,
 				7DA7308D1A71ACC9008C25FA /* _ServiceBase.m in Sources */,
-				7D6E26471A7AB93F000128A7 /* WatchingTableViewViewController.swift in Sources */,
-				7D6E264B1A7AEE83000128A7 /* MostActiveTableViewController.swift in Sources */,
+				7D6E26471A7AB93F000128A7 /* MeTableViewViewController.swift in Sources */,
 				7DA730921A71ACC9008C25FA /* Query.m in Sources */,
 				7DB6E0F81A8174E90017A42F /* _Message.m in Sources */,
 				7D3D39CF1A6F086F00A44CB2 /* AppDelegate.swift in Sources */,
@@ -605,6 +596,7 @@
 				7D40B94B1A79A36D00F9954C /* PACategory.m in Sources */,
 				7D021ABE1A9409450047DAAE /* SignInViewController.swift in Sources */,
 				7D3D39F01A6F116E00A44CB2 /* ProxibaseAPI.swift in Sources */,
+				7D0BAD4C1A96CEB0002E602D /* MainTabBarController.swift in Sources */,
 				7D6E26521A7B18CB000128A7 /* _Statistic.m in Sources */,
 				7D7095D71A71BE3200F835C4 /* FetchControllerDelegate.swift in Sources */,
 				7D40B9401A7816C400F9954C /* ServiceData.m in Sources */,

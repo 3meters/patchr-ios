@@ -8,7 +8,20 @@
 
 import UIKit
 
-class MostPopularTableViewController: QueryResultTableViewController {
+class ExploreTableViewController: QueryResultTableViewController {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
+        query.name = "stats/to/patches/from/users mostPopular"
+        query.limitValue = 25
+        query.path = "stats/to/patches/from/users"
+        self.managedObjectContext.save(nil)
+        self.query = query
+        dataStore.loadMoreResultsFor(self.query, completion: { (results, error) -> Void in
+            NSLog("Default query fetch for tableview")
+        })
+    }
 
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
         if let queryResult = object as? QueryResult {

@@ -1,8 +1,8 @@
 //
-//  ViewController.swift
+//  MainTabBarViewController.swift
 //  Patchr
 //
-//  Created by Rob MacEachern on 2015-01-20.
+//  Created by Rob MacEachern on 2015-02-19.
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
 
@@ -10,8 +10,8 @@ import UIKit
 import CoreData
 import CoreLocation
 
-class ViewController: UIViewController, RMCoreDataStackDelegate, CLLocationManagerDelegate {
-
+class MainTabBarController: UITabBarController, RMCoreDataStackDelegate, CLLocationManagerDelegate {
+    
     private var coreDataStack : RMCoreDataStack!
     private var dataStore : DataStore!
     private var locationManger : CLLocationManager!
@@ -36,6 +36,8 @@ class ViewController: UIViewController, RMCoreDataStackDelegate, CLLocationManag
         proxibaseClient.userId = userId
         proxibaseClient.sessionKey = sessionKey
         self.dataStore = DataStore(managedObjectContext: self.coreDataStack.managedObjectContext, proxibaseClient: proxibaseClient, locationManager: self.locationManger)
+        
+        self.initializeViewControllers()
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -71,7 +73,7 @@ class ViewController: UIViewController, RMCoreDataStackDelegate, CLLocationManag
         }
     }
     
-// MARK: RMCoreDataStackDelegate
+    // MARK: RMCoreDataStackDelegate
     
     func coreDataStack(stack: RMCoreDataStack!, didFinishInitializingWithInfo info: [NSObject : AnyObject]!) {
         NSLog("[%@ %@]", reflect(self).summary, __FUNCTION__)
@@ -81,7 +83,7 @@ class ViewController: UIViewController, RMCoreDataStackDelegate, CLLocationManag
         NSLog("[%@ %@]", reflect(self).summary, __FUNCTION__)
     }
     
-// MARK: CLLocationManagerDelegate
+    // MARK: CLLocationManagerDelegate
     
     func locationManager(manager: CLLocationManager!, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
         if status == .Authorized || status == .AuthorizedWhenInUse {
@@ -94,5 +96,16 @@ class ViewController: UIViewController, RMCoreDataStackDelegate, CLLocationManag
     }
     
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [CLLocation]!) {}
+    
+    // MARK: Private internal
+    
+    func initializeViewControllers() {
+        for viewController in self.viewControllers! {
+            let navController = viewController as UINavigationController
+            if let queryResultTable = navController.topViewController as? QueryResultTableViewController {
+                queryResultTable.managedObjectContext = self.coreDataStack.managedObjectContext
+                queryResultTable.dataStore = self.dataStore
+            }
+        }
+    }
 }
-

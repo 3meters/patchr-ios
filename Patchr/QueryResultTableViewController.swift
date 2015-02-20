@@ -46,14 +46,6 @@ class QueryResultTableViewController: UITableViewController {
         return controller
     }()
     
-    // TODO this should be removed
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        dataStore.loadMoreResultsFor(self.query, completion: { (results, error) -> Void in
-            NSLog("Default query fetch for tableview")
-        })
-    }
-    
     // MARK: Table view data source
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {

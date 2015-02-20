@@ -10,6 +10,19 @@ import UIKit
 
 class NotificationsTableViewController: QueryResultTableViewController {
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
+        query.name = "do/getNotifications"
+        query.limitValue = 25
+        query.path = "do/getNotifications"
+        self.managedObjectContext.save(nil)
+        self.query = query
+        dataStore.loadMoreResultsFor(self.query, completion: { (results, error) -> Void in
+            NSLog("Default query fetch for tableview")
+        })
+    }
+    
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
         if let queryResult = object as? QueryResult {
             if let notification = queryResult.entity_ as? Notification {
