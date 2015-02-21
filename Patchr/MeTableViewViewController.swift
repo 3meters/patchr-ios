@@ -23,6 +23,14 @@ class MeTableViewViewController: QueryResultTableViewController {
         })
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        self.clearsSelectionOnViewWillAppear = false;
+        if let selectedIndexPath = self.tableView.indexPathForSelectedRow() {
+            self.tableView.deselectRowAtIndexPath(selectedIndexPath, animated: animated)
+        }
+    }
+    
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
         if let queryResult = object as? QueryResult {
             if let patch = queryResult.entity_ as? Patch {
@@ -33,6 +41,10 @@ class MeTableViewViewController: QueryResultTableViewController {
         } else {
             cell.textLabel?.text = "Object \(String.fromCString(object_getClassName(object)))"
         }
+    }
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
     }
     
     @IBAction func logoutButtonAction(sender: AnyObject) {

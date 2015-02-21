@@ -23,6 +23,14 @@ class NotificationsTableViewController: QueryResultTableViewController {
         })
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        self.clearsSelectionOnViewWillAppear = false;
+        if let selectedIndexPath = self.tableView.indexPathForSelectedRow() {
+            self.tableView.deselectRowAtIndexPath(selectedIndexPath, animated: animated)
+        }
+    }
+    
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
         if let queryResult = object as? QueryResult {
             if let notification = queryResult.entity_ as? Notification {
@@ -35,4 +43,7 @@ class NotificationsTableViewController: QueryResultTableViewController {
         }
     }
 
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
+    }
 }
