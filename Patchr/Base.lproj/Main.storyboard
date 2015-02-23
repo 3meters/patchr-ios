@@ -198,7 +198,7 @@
         <!--Patch Detail-->
         <scene sceneID="gRZ-Ka-8oC">
             <objects>
-                <viewController id="oEw-aX-F2Q" sceneMemberID="viewController">
+                <viewController id="oEw-aX-F2Q" customClass="PatchDetailViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="grf-Dc-5vD"/>
                         <viewControllerLayoutGuide type="bottom" id="iHs-Fr-ygg"/>
@@ -229,7 +229,7 @@
             </objects>
             <point key="canvasLocation" x="3311" y="-3545"/>
         </scene>
-        <!--View Controller-->
+        <!--Create/Edit Message-->
         <scene sceneID="PMg-6k-d8r">
             <objects>
                 <viewController id="RIj-zQ-Zaq" sceneMemberID="viewController">
@@ -242,11 +242,16 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" id="dmn-cF-eT0">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="Xs6-s5-RM1"/>
+                    <navigationItem key="navigationItem" title="Create/Edit Message" id="dmn-cF-eT0">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="Xs6-s5-RM1">
+                            <connections>
+                                <segue destination="eww-OE-9xb" kind="unwind" unwindAction="unwindFromCreateMessage:" id="Iag-7n-w8i"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="535-uz-S2O" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="eww-OE-9xb" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="5040" y="-3545"/>
         </scene>
@@ -280,7 +285,7 @@
             </objects>
             <point key="canvasLocation" x="3311" y="-2751"/>
         </scene>
-        <!--Create Patch-->
+        <!--Create/Edit Patch-->
         <scene sceneID="rJ2-9Q-pQU">
             <objects>
                 <viewController id="Qcu-U9-IGD" sceneMemberID="viewController">
@@ -293,7 +298,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Create Patch" id="VxZ-dD-foS">
+                    <navigationItem key="navigationItem" title="Create/Edit Patch" id="VxZ-dD-foS">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="MHn-ac-7Pj">
                             <connections>
                                 <segue destination="8ji-BY-jwx" kind="unwind" unwindAction="unwindFromCreatePatch:" id="lE1-aS-1z2"/>

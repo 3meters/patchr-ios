@@ -43,6 +43,7 @@
 		7D7095D71A71BE3200F835C4 /* FetchControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7095D61A71BE3200F835C4 /* FetchControllerDelegate.swift */; };
 		7D7096011A71D55C00F835C4 /* _QueryResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7095FE1A71D55C00F835C4 /* _QueryResult.m */; };
 		7D7096021A71D55C00F835C4 /* QueryResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7096001A71D55C00F835C4 /* QueryResult.m */; };
+		7D9C9E3D1A9BAFCE0069E332 /* PatchDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */; };
 		7DA3D9121A72D5A60082D2AB /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA3D9111A72D5A60082D2AB /* DataStore.swift */; };
 		7DA7306A1A70714C008C25FA /* JSONResponseSerializerWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */; };
 		7DA7306D1A71A0EE008C25FA /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7DA7306B1A71A0EE008C25FA /* Model.xcdatamodeld */; };
@@ -132,6 +133,7 @@
 		7D7095FE1A71D55C00F835C4 /* _QueryResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _QueryResult.m; path = Model/_QueryResult.m; sourceTree = "<group>"; };
 		7D7095FF1A71D55C00F835C4 /* QueryResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QueryResult.h; path = Model/QueryResult.h; sourceTree = "<group>"; };
 		7D7096001A71D55C00F835C4 /* QueryResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QueryResult.m; path = Model/QueryResult.m; sourceTree = "<group>"; };
+		7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchDetailViewController.swift; sourceTree = "<group>"; };
 		7DA3D9111A72D5A60082D2AB /* DataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		7DA7306C1A71A0EE008C25FA /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		7DA730711A71ACC9008C25FA /* _Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _Entity.h; path = Model/_Entity.h; sourceTree = "<group>"; };
@@ -258,6 +260,7 @@
 				7D021ABD1A9409450047DAAE /* SignInViewController.swift */,
 				7D021AC11A9423080047DAAE /* SplashViewController.swift */,
 				7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */,
+				7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */,
 			);
 			path = Patchr;
 			sourceTree = "<group>";
@@ -573,6 +576,7 @@
 				7D3F26D61A76F77E0015F8E8 /* Photo.m in Sources */,
 				7DA730931A71ACC9008C25FA /* ServiceBase.m in Sources */,
 				7DA7308C1A71ACC9008C25FA /* _Query.m in Sources */,
+				7D9C9E3D1A9BAFCE0069E332 /* PatchDetailViewController.swift in Sources */,
 				7DB6E0F91A8174E90017A42F /* Message.m in Sources */,
 				7D40B9421A7864A000F9954C /* NotificationsTableViewController.swift in Sources */,
 				7DB6E0FF1A8177060017A42F /* User.m in Sources */,
