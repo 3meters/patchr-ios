@@ -53,7 +53,14 @@ class QueryResultTableViewController: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.fetchedResultsController.sections![section].numberOfObjects
+        let numberOfObjects = self.fetchedResultsController.sections![section].numberOfObjects
+        if numberOfObjects == 0 {
+            // Don't show cell lines when there are no objects
+            tableView.separatorStyle = UITableViewCellSeparatorStyle.None
+        } else {
+            tableView.separatorStyle = UITableViewCellSeparatorStyle.SingleLine
+        }
+        return numberOfObjects
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {

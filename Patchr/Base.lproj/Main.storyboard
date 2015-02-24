@@ -45,7 +45,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="w8b-UK-0UD" kind="show" id="mka-am-3Ly"/>
+                                    <segue destination="vJ2-ei-F6q" kind="show" id="XGq-iy-6Uq"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="owS-Gg-EZi">
@@ -84,36 +84,76 @@
             <point key="canvasLocation" x="-1337" y="-902"/>
         </scene>
         <!--Sign In-->
-        <scene sceneID="QnS-hL-oH6">
+        <scene sceneID="ac0-Ep-eua">
             <objects>
-                <viewController id="w8b-UK-0UD" customClass="SignInViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="2Vk-R7-Mnc"/>
-                        <viewControllerLayoutGuide type="bottom" id="tYx-sk-M5s"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="Gte-kv-TCT">
+                <tableViewController id="vJ2-ei-F6q" customClass="SignInTableViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="lVH-Ov-LDb">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M6O-8a-Klq">
-                                <rect key="frame" x="276" y="100" width="48" height="30"/>
-                                <state key="normal" title="Sign In">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="signInButtonAction:" destination="w8b-UK-0UD" eventType="touchUpInside" id="V9M-ea-XLD"/>
-                                </connections>
-                            </button>
-                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstAttribute="centerX" secondItem="M6O-8a-Klq" secondAttribute="centerX" id="LKd-Zu-sSE"/>
-                            <constraint firstItem="M6O-8a-Klq" firstAttribute="top" secondItem="2Vk-R7-Mnc" secondAttribute="bottom" constant="36" id="d7d-Vs-lkJ"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" title="Sign In" id="VD5-sa-B9d"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="xDy-uo-zxo" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                        <sections>
+                            <tableViewSection id="FKX-Nn-ee4">
+                                <cells>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="237" id="tfz-DN-eiy">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="tfz-DN-eiy" id="anV-4q-5yq">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="L6G-Ul-CNs">
+                                                    <rect key="frame" x="8" y="17" width="584" height="30"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                </textField>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Bg-4P-zvL">
+                                                    <rect key="frame" x="8" y="102" width="48" height="30"/>
+                                                    <state key="normal" title="Sign In">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="signInButtonAction:" destination="vJ2-ei-F6q" eventType="touchUpInside" id="wes-Rd-s0F"/>
+                                                    </connections>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VK8-QA-boe">
+                                                    <rect key="frame" x="8" y="140" width="126" height="30"/>
+                                                    <state key="normal" title="Forgot Password?">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                </button>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="S5F-2d-yoJ">
+                                                    <rect key="frame" x="8" y="55" width="584" height="30"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
+                                                </textField>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4hC-di-2FT">
+                                                    <rect key="frame" x="8" y="178" width="30" height="30"/>
+                                                    <state key="normal" title="Join">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                </button>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                        </sections>
+                        <connections>
+                            <outlet property="dataSource" destination="vJ2-ei-F6q" id="jK0-kH-Byq"/>
+                            <outlet property="delegate" destination="vJ2-ei-F6q" id="LoM-AK-KS4"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Sign In" id="Fy2-iZ-Lgu">
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="KLe-h4-79X">
+                            <connections>
+                                <action selector="signInButtonAction:" destination="vJ2-ei-F6q" id="CUo-Qu-PAv"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="emailTextField" destination="L6G-Ul-CNs" id="ITp-VJ-o3Z"/>
+                        <outlet property="passwordTextField" destination="S5F-2d-yoJ" id="sag-Cq-J4A"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="A8z-zz-B8q" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-430" y="-902"/>
         </scene>

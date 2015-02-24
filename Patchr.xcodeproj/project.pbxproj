@@ -10,7 +10,7 @@
 		15A28D919EA4F7ED807AE42E /* libPods-PatchrTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B8381B98B66335E158CEC99 /* libPods-PatchrTests.a */; };
 		329E8C34AA0DAB5B16518B8A /* libPods-Patchr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B36067AA93A3B743CFCA837 /* libPods-Patchr.a */; };
 		7D01FA361A7024E200DD6DFA /* JSONResponseSerializerWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */; };
-		7D021ABE1A9409450047DAAE /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D021ABD1A9409450047DAAE /* SignInViewController.swift */; };
+		7D021ABE1A9409450047DAAE /* SignInTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D021ABD1A9409450047DAAE /* SignInTableViewController.swift */; };
 		7D021AC21A9423080047DAAE /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D021AC11A9423080047DAAE /* SplashViewController.swift */; };
 		7D03C3D71A980D9400BAFD19 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D03C3D61A980D9400BAFD19 /* MapKit.framework */; };
 		7D0BAD4C1A96CEB0002E602D /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */; };
@@ -85,7 +85,7 @@
 		7D01FA341A7024E200DD6DFA /* JSONResponseSerializerWithData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONResponseSerializerWithData.h; sourceTree = "<group>"; };
 		7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONResponseSerializerWithData.m; sourceTree = "<group>"; };
 		7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyJSON.swift; sourceTree = "<group>"; };
-		7D021ABD1A9409450047DAAE /* SignInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
+		7D021ABD1A9409450047DAAE /* SignInTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInTableViewController.swift; sourceTree = "<group>"; };
 		7D021AC11A9423080047DAAE /* SplashViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		7D03C3D61A980D9400BAFD19 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
@@ -261,7 +261,7 @@
 				7D40B9521A79AB0200F9954C /* NearbyPatchesTableViewController.swift */,
 				7D6E26461A7AB93F000128A7 /* MeTableViewViewController.swift */,
 				7D6E264C1A7AEE91000128A7 /* ExploreTableViewController.swift */,
-				7D021ABD1A9409450047DAAE /* SignInViewController.swift */,
+				7D021ABD1A9409450047DAAE /* SignInTableViewController.swift */,
 				7D021AC11A9423080047DAAE /* SplashViewController.swift */,
 				7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */,
 				7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */,
@@ -609,7 +609,7 @@
 				7DA7308B1A71ACC9008C25FA /* _Place.m in Sources */,
 				7D40B94A1A79A36D00F9954C /* _PACategory.m in Sources */,
 				7D40B94B1A79A36D00F9954C /* PACategory.m in Sources */,
-				7D021ABE1A9409450047DAAE /* SignInViewController.swift in Sources */,
+				7D021ABE1A9409450047DAAE /* SignInTableViewController.swift in Sources */,
 				7D3D39F01A6F116E00A44CB2 /* ProxibaseAPI.swift in Sources */,
 				7D0BAD4C1A96CEB0002E602D /* MainTabBarController.swift in Sources */,
 				7D6E26521A7B18CB000128A7 /* _Statistic.m in Sources */,

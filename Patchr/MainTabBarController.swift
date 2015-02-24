@@ -14,7 +14,13 @@ class MainTabBarController: UITabBarController, RMCoreDataStackDelegate, CLLocat
     
     private var coreDataStack : RMCoreDataStack!
     private var dataStore : DataStore!
-    private var locationManger : CLLocationManager!
+    private var locationManager : CLLocationManager!
+    
+    deinit {
+        if self.locationManager != nil {
+            self.locationManager.stopUpdatingLocation()
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,10 +30,16 @@ class MainTabBarController: UITabBarController, RMCoreDataStackDelegate, CLLocat
         self.coreDataStack.delegate = self
         self.coreDataStack.constructWithConfiguration(coreDataConfiguration)
         
-        self.locationManger = CLLocationManager()
-        self.locationManger.delegate = self
+        self.locationManager = CLLocationManager()
+        self.locationManager.delegate = self
         if CLLocationManager.authorizationStatus() == .NotDetermined {
-            self.locationManger.requestWhenInUseAuthorization()
+            if self.locationManager.respondsToSelector("requestWhenInUseAuthorization") {
+                // iOS 8+
+                self.locationManager.requestWhenInUseAuthorization()
+            } else {
+                // Pre iOS 8
+                self.locationManager.startUpdatingLocation()
+            }
         }
         
         let userId = NSUserDefaults.standardUserDefaults().stringForKey("com.3meters.patchr.ios.userId")
@@ -35,7 +47,7 @@ class MainTabBarController: UITabBarController, RMCoreDataStackDelegate, CLLocat
         let proxibaseClient = ProxibaseClient()
         proxibaseClient.userId = userId
         proxibaseClient.sessionKey = sessionKey
-        self.dataStore = DataStore(managedObjectContext: self.coreDataStack.managedObjectContext, proxibaseClient: proxibaseClient, locationManager: self.locationManger)
+        self.dataStore = DataStore(managedObjectContext: self.coreDataStack.managedObjectContext, proxibaseClient: proxibaseClient, locationManager: self.locationManager)
         
         self.initializeViewControllers()
     }
