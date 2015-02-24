@@ -13,8 +13,16 @@ class NearbyPatchesTableViewController: QueryResultTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.registerNib(UINib(nibName: "PatchTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
-        self.tableView.rowHeight = UITableViewAutomaticDimension;
-        self.tableView.estimatedRowHeight = 100.0;
+        // iOS 7 doesn't support the new style self-sizing cells
+        // http://stackoverflow.com/a/26283017/2247399
+        if NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_7_1 {
+            self.tableView.rowHeight = UITableViewAutomaticDimension;
+            self.tableView.estimatedRowHeight = 100.0;
+        } else {
+            // iOS 7
+            self.tableView.rowHeight = 100
+        }
+        
         let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
         query.name = "patches/near"
         query.limitValue = 25
