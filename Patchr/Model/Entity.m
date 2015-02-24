@@ -72,7 +72,7 @@
             return stat.count;
         }
     }
-    return nil;
+    return @0;
 }
 
 @end

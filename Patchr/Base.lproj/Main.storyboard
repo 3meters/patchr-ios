@@ -162,6 +162,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="aWT-C7-uMm">
                                 <autoresizingMask key="autoresizingMask"/>
@@ -725,8 +726,8 @@
         <image name="Placeholder patch header" width="216" height="144"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="cGH-YD-j5U"/>
-        <segue reference="PGe-ho-h5m"/>
-        <segue reference="tnz-4R-3lC"/>
+        <segue reference="tt2-1E-rdy"/>
+        <segue reference="fno-E3-fgC"/>
+        <segue reference="aqr-cO-OGv"/>
     </inferredMetricsTieBreakers>
 </document>

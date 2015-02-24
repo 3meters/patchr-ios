@@ -12,6 +12,9 @@ class NearbyPatchesTableViewController: QueryResultTableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.tableView.registerNib(UINib(nibName: "PatchTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
+        self.tableView.rowHeight = UITableViewAutomaticDimension;
+        self.tableView.estimatedRowHeight = 100.0;
         let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
         query.name = "patches/near"
         query.limitValue = 25
@@ -33,6 +36,11 @@ class NearbyPatchesTableViewController: QueryResultTableViewController {
     
     // TODO consolidate the duplicated segue logic
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        if segue.identifier == nil {
+            return
+        }
+        
         switch segue.identifier! {
         case "PatchDetailSegue":
             if let queryResultTable = segue.destinationViewController as? QueryResultTableViewController {
@@ -46,7 +54,18 @@ class NearbyPatchesTableViewController: QueryResultTableViewController {
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
         if let queryResult = object as? QueryResult {
             if let patch = queryResult.entity_ as? Patch {
-                cell.textLabel?.text = "\(patch.name) (\(patch.category.name)) Likes:\(patch.numberOfLikes) Watchers:\(patch.numberOfWatchers) Messages:\(patch.numberOfMessages) Lat:\(patch.location.latValue) Lng:\(patch.location.lngValue)"
+                if let patchCell = cell as? PatchTableViewCell {
+                    patchCell.nameLabel.text = patch.name
+                    patchCell.nameLabel.sizeToFit()
+                    patchCell.categoryLabel.text = patch.category.name
+                    patchCell.detailsLabel.text = "\(patch.numberOfMessages) Messages  \(patch.numberOfWatchers) Watching"
+                    patchCell.imageViewThumb.image = nil
+                    if patch.photo != nil && patch.photo.photoURL() != nil {
+                        patchCell.imageViewThumb.setImageWithURL(patch.photo.photoURL())
+                    }
+                } else {
+                    cell.textLabel?.text = "\(patch.name)"
+                }
             } else {
                 cell.textLabel?.text = "Unknown QueryResult entity type"
             }

@@ -32,6 +32,11 @@ class NotificationsTableViewController: QueryResultTableViewController {
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        if segue.identifier == nil {
+            return
+        }
+        
         switch segue.identifier! {
         case "PatchDetailSegue":
             if let queryResultTable = segue.destinationViewController as? QueryResultTableViewController {

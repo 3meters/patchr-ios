@@ -36,6 +36,8 @@
 		7D56EE8B1A70616500BFCC32 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */; };
 		7D56EE8C1A70617200BFCC32 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */; };
 		7D56EE8D1A70618800BFCC32 /* ProxibaseAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3D39EF1A6F116E00A44CB2 /* ProxibaseAPI.swift */; };
+		7D668A991A9C08DC005EDAF8 /* PatchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D668A971A9C08DC005EDAF8 /* PatchTableViewCell.swift */; };
+		7D668A9A1A9C08DC005EDAF8 /* PatchTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7D668A981A9C08DC005EDAF8 /* PatchTableViewCell.xib */; };
 		7D6E26471A7AB93F000128A7 /* MeTableViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D6E26461A7AB93F000128A7 /* MeTableViewViewController.swift */; };
 		7D6E264D1A7AEE91000128A7 /* ExploreTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D6E264C1A7AEE91000128A7 /* ExploreTableViewController.swift */; };
 		7D6E26521A7B18CB000128A7 /* _Statistic.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D6E264F1A7B18CB000128A7 /* _Statistic.m */; };
@@ -122,6 +124,8 @@
 		7D40B94E1A79A6FD00F9954C /* ProviderMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProviderMap.h; path = Model/ProviderMap.h; sourceTree = "<group>"; };
 		7D40B94F1A79A6FD00F9954C /* ProviderMap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProviderMap.m; path = Model/ProviderMap.m; sourceTree = "<group>"; };
 		7D40B9521A79AB0200F9954C /* NearbyPatchesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearbyPatchesTableViewController.swift; sourceTree = "<group>"; };
+		7D668A971A9C08DC005EDAF8 /* PatchTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTableViewCell.swift; sourceTree = "<group>"; };
+		7D668A981A9C08DC005EDAF8 /* PatchTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PatchTableViewCell.xib; sourceTree = "<group>"; };
 		7D6E26461A7AB93F000128A7 /* MeTableViewViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeTableViewViewController.swift; sourceTree = "<group>"; };
 		7D6E264C1A7AEE91000128A7 /* ExploreTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExploreTableViewController.swift; sourceTree = "<group>"; };
 		7D6E264E1A7B18CB000128A7 /* _Statistic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _Statistic.h; path = Model/_Statistic.h; sourceTree = "<group>"; };
@@ -261,6 +265,8 @@
 				7D021AC11A9423080047DAAE /* SplashViewController.swift */,
 				7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */,
 				7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */,
+				7D668A971A9C08DC005EDAF8 /* PatchTableViewCell.swift */,
+				7D668A981A9C08DC005EDAF8 /* PatchTableViewCell.xib */,
 			);
 			path = Patchr;
 			sourceTree = "<group>";
@@ -459,6 +465,7 @@
 			files = (
 				7D3D39D41A6F086F00A44CB2 /* Main.storyboard in Resources */,
 				7D3D39D91A6F086F00A44CB2 /* LaunchScreen.xib in Resources */,
+				7D668A9A1A9C08DC005EDAF8 /* PatchTableViewCell.xib in Resources */,
 				7D3D39D61A6F086F00A44CB2 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -606,6 +613,7 @@
 				7D3D39F01A6F116E00A44CB2 /* ProxibaseAPI.swift in Sources */,
 				7D0BAD4C1A96CEB0002E602D /* MainTabBarController.swift in Sources */,
 				7D6E26521A7B18CB000128A7 /* _Statistic.m in Sources */,
+				7D668A991A9C08DC005EDAF8 /* PatchTableViewCell.swift in Sources */,
 				7D7095D71A71BE3200F835C4 /* FetchControllerDelegate.swift in Sources */,
 				7D40B9401A7816C400F9954C /* ServiceData.m in Sources */,
 				7D3F26DC1A7706610015F8E8 /* Notification.m in Sources */,

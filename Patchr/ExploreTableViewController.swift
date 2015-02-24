@@ -12,6 +12,10 @@ class ExploreTableViewController: QueryResultTableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.tableView.registerNib(UINib(nibName: "PatchTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
+        self.tableView.rowHeight = UITableViewAutomaticDimension;
+        self.tableView.estimatedRowHeight = 100.0;
+        
         let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
         query.name = "stats/to/patches/from/users mostPopular"
         query.limitValue = 25
@@ -32,6 +36,11 @@ class ExploreTableViewController: QueryResultTableViewController {
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        if segue.identifier == nil {
+            return
+        }
+        
         switch segue.identifier! {
         case "PatchDetailSegue":
             if let queryResultTable = segue.destinationViewController as? QueryResultTableViewController {
@@ -45,9 +54,17 @@ class ExploreTableViewController: QueryResultTableViewController {
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
         if let queryResult = object as? QueryResult {
             if let patch = queryResult.entity_ as? Patch {
-                cell.textLabel?.text = "\(patch.name) (\(patch.category.name))"
-                if patch.count != nil {
-                    cell.textLabel?.text = cell.textLabel?.text?.stringByAppendingString(" \(patch.count) watchers")
+                if let patchCell = cell as? PatchTableViewCell {
+                    patchCell.nameLabel.text = patch.name
+                    patchCell.nameLabel.sizeToFit()
+                    patchCell.categoryLabel.text = patch.category.name
+                    patchCell.detailsLabel.text = "\(patch.numberOfMessages) Messages  \(patch.numberOfWatchers) Watching"
+                    patchCell.imageViewThumb.image = nil
+                    if patch.photo != nil && patch.photo.photoURL() != nil {
+                        patchCell.imageViewThumb.setImageWithURL(patch.photo.photoURL())
+                    }
+                } else {
+                    cell.textLabel?.text = "\(patch.name)"
                 }
             } else {
                 cell.textLabel?.text = "Unknown QueryResult entity type"
