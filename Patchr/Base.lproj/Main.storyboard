@@ -83,6 +83,25 @@
             </objects>
             <point key="canvasLocation" x="-1337" y="-902"/>
         </scene>
+        <!--Forgot Password-->
+        <scene sceneID="s4B-GH-TjB">
+            <objects>
+                <viewController id="KD9-2s-XbT" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="M1V-EQ-aeT"/>
+                        <viewControllerLayoutGuide type="bottom" id="Phx-u4-XiD"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Hja-Fw-jek">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Forgot Password" id="Ad5-xV-qbE"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="JId-Xh-YOM" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-430" y="-1687"/>
+        </scene>
         <!--Sign In-->
         <scene sceneID="ac0-Ep-eua">
             <objects>
@@ -118,6 +137,9 @@
                                                     <state key="normal" title="Forgot Password?">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
+                                                    <connections>
+                                                        <segue destination="KD9-2s-XbT" kind="show" id="YIr-sE-ySW"/>
+                                                    </connections>
                                                 </button>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="S5F-2d-yoJ">
                                                     <rect key="frame" x="8" y="55" width="584" height="30"/>
@@ -129,6 +151,9 @@
                                                     <state key="normal" title="Join">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
+                                                    <connections>
+                                                        <segue destination="ZM4-pP-hjW" kind="show" id="BWG-gp-BqA"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -769,5 +794,6 @@
         <segue reference="tnz-4R-3lC"/>
         <segue reference="PGe-ho-h5m"/>
         <segue reference="cGH-YD-j5U"/>
+        <segue reference="BWG-gp-BqA"/>
     </inferredMetricsTieBreakers>
 </document>
