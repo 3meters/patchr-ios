@@ -13,8 +13,10 @@ class ExploreTableViewController: QueryResultTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.registerNib(UINib(nibName: "PatchTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
-        self.tableView.rowHeight = UITableViewAutomaticDimension;
+        self.tableView.rowHeight = UITableViewAutomaticDimension
         self.tableView.estimatedRowHeight = 100.0;
+        self.searchDisplayController?.searchResultsTableView.rowHeight = self.tableView.rowHeight
+        self.tableView.estimatedRowHeight = self.tableView.estimatedRowHeight
         
         let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
         query.name = "stats/to/patches/from/users mostPopular"

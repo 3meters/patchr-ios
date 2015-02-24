@@ -511,7 +511,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="searchDisplayController" destination="QaR-cf-2cF" id="rpj-3R-4WW"/>
+                        <outlet property="searchDisplayController" destination="QaR-cf-2cF" id="wx4-G3-GG0"/>
                         <segue destination="dFa-9F-rNC" kind="show" identifier="PatchDetailSegue" id="PGe-ho-h5m"/>
                     </connections>
                 </tableViewController>
@@ -726,8 +726,8 @@
         <image name="Placeholder patch header" width="216" height="144"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="tt2-1E-rdy"/>
-        <segue reference="fno-E3-fgC"/>
-        <segue reference="aqr-cO-OGv"/>
+        <segue reference="tnz-4R-3lC"/>
+        <segue reference="PGe-ho-h5m"/>
+        <segue reference="cGH-YD-j5U"/>
     </inferredMetricsTieBreakers>
 </document>
