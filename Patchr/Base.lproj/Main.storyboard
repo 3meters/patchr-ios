@@ -476,6 +476,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <searchBar key="tableHeaderView" contentMode="redraw" id="C5f-sm-BVO">
+                            <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                            <textInputTraits key="textInputTraits"/>
+                            <connections>
+                                <outlet property="delegate" destination="Czf-DV-Qgd" id="6Z0-7i-Zek"/>
+                            </connections>
+                        </searchBar>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="561-0n-xXx">
                                 <autoresizingMask key="autoresizingMask"/>
@@ -502,10 +510,20 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="searchDisplayController" destination="QaR-cf-2cF" id="rpj-3R-4WW"/>
                         <segue destination="dFa-9F-rNC" kind="show" identifier="PatchDetailSegue" id="PGe-ho-h5m"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Kvn-vY-lIY" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <searchDisplayController id="QaR-cf-2cF">
+                    <connections>
+                        <outlet property="delegate" destination="Czf-DV-Qgd" id="d9H-dN-2lf"/>
+                        <outlet property="searchBar" destination="C5f-sm-BVO" id="kiB-Da-WEa"/>
+                        <outlet property="searchContentsController" destination="Czf-DV-Qgd" id="ROe-8n-aEF"/>
+                        <outlet property="searchResultsDataSource" destination="Czf-DV-Qgd" id="KSh-BW-zvD"/>
+                        <outlet property="searchResultsDelegate" destination="Czf-DV-Qgd" id="5nU-Zo-r8V"/>
+                    </connections>
+                </searchDisplayController>
             </objects>
             <point key="canvasLocation" x="2282" y="-1305"/>
         </scene>
@@ -708,7 +726,7 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="cGH-YD-j5U"/>
-        <segue reference="nea-bY-Zi0"/>
-        <segue reference="WKA-tH-M3A"/>
+        <segue reference="PGe-ho-h5m"/>
+        <segue reference="tnz-4R-3lC"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -57,7 +57,10 @@ class QueryResultTableViewController: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("Cell") as UITableViewCell
+        // The reason for the self.tableView here is because of UISearchDisplayController.
+        // There doesn't seem to be a nice way to register cells when using UISearchDisplayController,
+        // so we just grab them from the original table.
+        let cell = self.tableView.dequeueReusableCellWithIdentifier("Cell") as UITableViewCell
         var object : AnyObject = self.fetchedResultsController.sections![indexPath.section].objects[indexPath.row]
         configureCell(cell, object: object)
         return cell
