@@ -32,14 +32,19 @@ class MainTabBarController: UITabBarController, RMCoreDataStackDelegate, CLLocat
         
         self.locationManager = CLLocationManager()
         self.locationManager.delegate = self
+        
         if CLLocationManager.authorizationStatus() == .NotDetermined {
-            if self.locationManager.respondsToSelector("requestWhenInUseAuthorization") {
-                // iOS 8+
+            if self.locationManager.respondsToSelector(Selector("requestWhenInUseAuthorization")) {
+                // iOS 8
                 self.locationManager.requestWhenInUseAuthorization()
             } else {
-                // Pre iOS 8
-                self.locationManager.startUpdatingLocation()
+                // iOS 7
+                self.locationManager.startUpdatingLocation() // Prompts automatically
             }
+        } else if CLLocationManager.authorizationStatus() == .Authorized || CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+            self.locationManager.startUpdatingLocation()
+        } else {
+            // TODO notify that location is not enabled?
         }
         
         let userId = NSUserDefaults.standardUserDefaults().stringForKey("com.3meters.patchr.ios.userId")
