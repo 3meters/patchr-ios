@@ -30,6 +30,18 @@ class NearbyPatchesTableViewController: QueryResultTableViewController {
             self.tableView.deselectRowAtIndexPath(selectedIndexPath, animated: animated)
         }
     }
+    
+    // TODO consolidate the duplicated segue logic
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        switch segue.identifier! {
+        case "PatchDetailSegue":
+            if let queryResultTable = segue.destinationViewController as? QueryResultTableViewController {
+                queryResultTable.managedObjectContext = self.managedObjectContext
+                queryResultTable.dataStore = self.dataStore
+            }
+        default: ()
+        }
+    }
 
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
         if let queryResult = object as? QueryResult {

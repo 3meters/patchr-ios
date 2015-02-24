@@ -13,9 +13,9 @@ class MeTableViewViewController: QueryResultTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
-        query.name = "do/getEntitiesForEntity watching"
+        query.name = "Current user authored messages"
         query.limitValue = 25
-        query.path = "do/getEntitiesForEntity"
+        query.path = ""
         self.managedObjectContext.save(nil)
         self.query = query
         dataStore.loadMoreResultsFor(self.query, completion: { (results, error) -> Void in
@@ -33,8 +33,8 @@ class MeTableViewViewController: QueryResultTableViewController {
     
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
         if let queryResult = object as? QueryResult {
-            if let patch = queryResult.entity_ as? Patch {
-                cell.textLabel?.text = "\(patch.name) (\(patch.category.name)) Lat:\(patch.location.latValue) Lng:\(patch.location.lngValue)"
+            if let message = queryResult.entity_ as? Message {
+                cell.textLabel?.text = "A message"
             } else {
                 cell.textLabel?.text = "Unknown QueryResult entity type"
             }

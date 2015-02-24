@@ -25,5 +25,6 @@
 #import "PACategory.h"
 #import "Location.h"
 #import "Photo.h"
+#import "Message.h"
 
 #endif

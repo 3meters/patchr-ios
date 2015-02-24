@@ -31,6 +31,17 @@ class NotificationsTableViewController: QueryResultTableViewController {
         }
     }
     
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        switch segue.identifier! {
+        case "PatchDetailSegue":
+            if let queryResultTable = segue.destinationViewController as? QueryResultTableViewController {
+                queryResultTable.managedObjectContext = self.managedObjectContext
+                queryResultTable.dataStore = self.dataStore
+            }
+        default: ()
+        }
+    }
+    
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
         if let queryResult = object as? QueryResult {
             if let notification = queryResult.entity_ as? Notification {
