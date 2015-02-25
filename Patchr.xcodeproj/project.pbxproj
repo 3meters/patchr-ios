@@ -66,6 +66,7 @@
 		7DB6E0F91A8174E90017A42F /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DB6E0F71A8174E90017A42F /* Message.m */; };
 		7DB6E0FE1A8177060017A42F /* _User.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DB6E0FB1A8177060017A42F /* _User.m */; };
 		7DB6E0FF1A8177060017A42F /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DB6E0FD1A8177060017A42F /* User.m */; };
+		7DC9D4911A9D46D100234E3C /* RegistrationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC9D4901A9D46D100234E3C /* RegistrationTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -173,6 +174,7 @@
 		7DB6E0FB1A8177060017A42F /* _User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _User.m; path = Model/_User.m; sourceTree = "<group>"; };
 		7DB6E0FC1A8177060017A42F /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = User.h; path = Model/User.h; sourceTree = "<group>"; };
 		7DB6E0FD1A8177060017A42F /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = User.m; path = Model/User.m; sourceTree = "<group>"; };
+		7DC9D4901A9D46D100234E3C /* RegistrationTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegistrationTableViewController.swift; sourceTree = "<group>"; };
 		9D5919BEF434463FF4349942 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A80DE63116DE3050C0FEC4EE /* Pods-Patchr.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.debug.xcconfig"; sourceTree = "<group>"; };
 		A9B11FC184124D485DAA2948 /* Pods-Patchr.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.release.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.release.xcconfig"; sourceTree = "<group>"; };
@@ -267,6 +269,7 @@
 				7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */,
 				7D668A971A9C08DC005EDAF8 /* PatchTableViewCell.swift */,
 				7D668A981A9C08DC005EDAF8 /* PatchTableViewCell.xib */,
+				7DC9D4901A9D46D100234E3C /* RegistrationTableViewController.swift */,
 			);
 			path = Patchr;
 			sourceTree = "<group>";
@@ -581,6 +584,7 @@
 				7D01FA361A7024E200DD6DFA /* JSONResponseSerializerWithData.m in Sources */,
 				7D6E264D1A7AEE91000128A7 /* ExploreTableViewController.swift in Sources */,
 				7D3F26D61A76F77E0015F8E8 /* Photo.m in Sources */,
+				7DC9D4911A9D46D100234E3C /* RegistrationTableViewController.swift in Sources */,
 				7DA730931A71ACC9008C25FA /* ServiceBase.m in Sources */,
 				7DA7308C1A71ACC9008C25FA /* _Query.m in Sources */,
 				7D9C9E3D1A9BAFCE0069E332 /* PatchDetailViewController.swift in Sources */,
