@@ -67,6 +67,8 @@
 		7DB6E0FE1A8177060017A42F /* _User.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DB6E0FB1A8177060017A42F /* _User.m */; };
 		7DB6E0FF1A8177060017A42F /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DB6E0FD1A8177060017A42F /* User.m */; };
 		7DC9D4911A9D46D100234E3C /* RegistrationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC9D4901A9D46D100234E3C /* RegistrationTableViewController.swift */; };
+		8468F81C1A9D095E007D6EE6 /* CreatePatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8468F81B1A9D095E007D6EE6 /* CreatePatchViewController.swift */; };
+		8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8468F8211A9D09D1007D6EE6 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -175,6 +177,8 @@
 		7DB6E0FC1A8177060017A42F /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = User.h; path = Model/User.h; sourceTree = "<group>"; };
 		7DB6E0FD1A8177060017A42F /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = User.m; path = Model/User.m; sourceTree = "<group>"; };
 		7DC9D4901A9D46D100234E3C /* RegistrationTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegistrationTableViewController.swift; sourceTree = "<group>"; };
+		8468F81B1A9D095E007D6EE6 /* CreatePatchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreatePatchViewController.swift; sourceTree = "<group>"; };
+		8468F8201A9D09D1007D6EE6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		9D5919BEF434463FF4349942 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A80DE63116DE3050C0FEC4EE /* Pods-Patchr.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.debug.xcconfig"; sourceTree = "<group>"; };
 		A9B11FC184124D485DAA2948 /* Pods-Patchr.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.release.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.release.xcconfig"; sourceTree = "<group>"; };
@@ -248,6 +252,7 @@
 				7D01FA371A705C6600DD6DFA /* Third Party */,
 				7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */,
 				7D3D39EF1A6F116E00A44CB2 /* ProxibaseAPI.swift */,
+				8468F81B1A9D095E007D6EE6 /* CreatePatchViewController.swift */,
 				7D3D39D21A6F086F00A44CB2 /* Main.storyboard */,
 				7D3D39D51A6F086F00A44CB2 /* Images.xcassets */,
 				7D3D39D71A6F086F00A44CB2 /* LaunchScreen.xib */,
@@ -277,6 +282,7 @@
 		7D3D39CC1A6F086F00A44CB2 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8468F8211A9D09D1007D6EE6 /* Localizable.strings */,
 				7D3D39CD1A6F086F00A44CB2 /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -466,6 +472,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */,
 				7D3D39D41A6F086F00A44CB2 /* Main.storyboard in Resources */,
 				7D3D39D91A6F086F00A44CB2 /* LaunchScreen.xib in Resources */,
 				7D668A9A1A9C08DC005EDAF8 /* PatchTableViewCell.xib in Resources */,
@@ -593,6 +600,7 @@
 				7DB6E0FF1A8177060017A42F /* User.m in Sources */,
 				7D6E26531A7B18CB000128A7 /* Statistic.m in Sources */,
 				7DA730961A71B962008C25FA /* QueryResultTableViewController.swift in Sources */,
+				8468F81C1A9D095E007D6EE6 /* CreatePatchViewController.swift in Sources */,
 				7DA7308F1A71ACC9008C25FA /* Entity.m in Sources */,
 				7DA730941A71ACC9008C25FA /* ServiceObject.m in Sources */,
 				7DA730901A71ACC9008C25FA /* Patch.m in Sources */,
@@ -666,6 +674,14 @@
 				7D3D39D81A6F086F00A44CB2 /* Base */,
 			);
 			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+		8468F8211A9D09D1007D6EE6 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8468F8201A9D09D1007D6EE6 /* en */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
