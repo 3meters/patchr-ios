@@ -54,6 +54,12 @@
 #define COCOAPODS_VERSION_MINOR_AFNetworking_UIKit 3
 #define COCOAPODS_VERSION_PATCH_AFNetworking_UIKit 0
 
+// OHAttributedStringAdditions
+#define COCOAPODS_POD_AVAILABLE_OHAttributedStringAdditions
+#define COCOAPODS_VERSION_MAJOR_OHAttributedStringAdditions 1
+#define COCOAPODS_VERSION_MINOR_OHAttributedStringAdditions 2
+#define COCOAPODS_VERSION_PATCH_OHAttributedStringAdditions 0
+
 // RMCoreDataStack
 #define COCOAPODS_POD_AVAILABLE_RMCoreDataStack
 #define COCOAPODS_VERSION_MAJOR_RMCoreDataStack 0
