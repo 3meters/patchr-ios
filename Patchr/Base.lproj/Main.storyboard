@@ -28,6 +28,41 @@
             </objects>
             <point key="canvasLocation" x="650" y="-908"/>
         </scene>
+        <!--Debug-->
+        <scene sceneID="8BX-ac-TUc">
+            <objects>
+                <viewController title="Debug" id="4k6-Mw-cDx" customClass="DebugViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="XNU-rK-UAA"/>
+                        <viewControllerLayoutGuide type="bottom" id="13D-xo-wyu"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="qMX-2Z-cyl">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Server Address" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EeI-u7-aDo">
+                                <rect key="frame" x="16" y="85" width="118" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="CzB-3n-v5u">
+                                <rect key="frame" x="16" y="114" width="568" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Debug Options" id="2Nn-ku-JwO"/>
+                    <connections>
+                        <outlet property="serverURIField" destination="CzB-3n-v5u" id="EB2-uG-8WZ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UR0-Vs-TcC" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-507" y="-1599"/>
+        </scene>
         <!--Splash-->
         <scene sceneID="2dW-lr-3zd">
             <objects>
@@ -67,12 +102,23 @@
                                     <action selector="guestButtonAction:" destination="4Dp-xR-Xy4" eventType="touchUpInside" id="9lf-cO-HGA"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="z0K-2q-xfQ">
+                                <rect key="frame" x="277" y="242" width="46" height="30"/>
+                                <state key="normal" title="Debug">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="4k6-Mw-cDx" kind="show" id="Sfq-y9-s68"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="owS-Gg-EZi" firstAttribute="centerX" secondItem="29n-GC-HwU" secondAttribute="centerX" id="Hh4-eI-zYc"/>
+                            <constraint firstItem="z0K-2q-xfQ" firstAttribute="top" secondItem="KyU-3x-QP1" secondAttribute="bottom" constant="41" id="PFB-am-Jfx"/>
                             <constraint firstItem="KyU-3x-QP1" firstAttribute="top" secondItem="owS-Gg-EZi" secondAttribute="bottom" constant="8" id="VH8-Zx-hCU"/>
                             <constraint firstItem="KyU-3x-QP1" firstAttribute="centerX" secondItem="owS-Gg-EZi" secondAttribute="centerX" constant="-2.5" id="Wyi-VC-77g"/>
+                            <constraint firstItem="z0K-2q-xfQ" firstAttribute="centerX" secondItem="KyU-3x-QP1" secondAttribute="centerX" constant="2.5" id="gFa-T8-Uip"/>
                             <constraint firstItem="29n-GC-HwU" firstAttribute="top" secondItem="J2k-NV-Lnj" secondAttribute="bottom" constant="31" id="lZ5-Gp-PIU"/>
                             <constraint firstItem="owS-Gg-EZi" firstAttribute="top" secondItem="29n-GC-HwU" secondAttribute="bottom" constant="8" id="q23-wE-0c6"/>
                             <constraint firstAttribute="centerX" secondItem="29n-GC-HwU" secondAttribute="centerX" id="sbx-GS-Q96"/>
@@ -101,7 +147,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JId-Xh-YOM" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-430" y="-1687"/>
+            <point key="canvasLocation" x="1140" y="-1663"/>
         </scene>
         <!--Sign In-->
         <scene sceneID="ac0-Ep-eua">
@@ -658,7 +704,7 @@
                     </connections>
                 </pongPressGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="4123" y="-2036"/>
+            <point key="canvasLocation" x="4935" y="-2036"/>
         </scene>
         <!--Nearby-->
         <scene sceneID="I2B-94-DKt">
@@ -707,7 +753,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="O5p-tj-uEe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2282" y="-2036"/>
+            <point key="canvasLocation" x="3094" y="-2036"/>
         </scene>
         <!--Notifications-->
         <scene sceneID="goo-Ek-lAR">
@@ -726,7 +772,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Am2-qS-eLi" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1470" y="-2036"/>
+            <point key="canvasLocation" x="2282" y="-2036"/>
         </scene>
         <!--Explore-->
         <scene sceneID="jsW-SU-Umj">
@@ -785,7 +831,7 @@
                     </connections>
                 </searchDisplayController>
             </objects>
-            <point key="canvasLocation" x="2282" y="-1305"/>
+            <point key="canvasLocation" x="3094" y="-1305"/>
         </scene>
         <!--Explore-->
         <scene sceneID="dTR-CX-oon">
@@ -804,7 +850,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W5v-97-eI5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1470" y="-1305"/>
+            <point key="canvasLocation" x="2282" y="-1305"/>
         </scene>
         <!--Me-->
         <scene sceneID="7bn-tw-SU5">
@@ -959,7 +1005,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yco-yh-uDx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3311" y="-2036"/>
+            <point key="canvasLocation" x="4123" y="-2036"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="PJq-9p-NHX">
@@ -985,12 +1031,9 @@
         <image name="Placeholder patch header" width="216" height="144"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="tnz-4R-3lC"/>
-        <segue reference="lsa-hP-PPZ"/>
-        <segue reference="cGH-YD-j5U"/>
-        <segue reference="Z9b-z0-EWI"/>
-        <segue reference="aqr-cO-OGv"/>
         <segue reference="fno-E3-fgC"/>
+        <segue reference="aqr-cO-OGv"/>
         <segue reference="WKA-tH-M3A"/>
+        <segue reference="PRR-B4-iJY"/>
     </inferredMetricsTieBreakers>
 </document>

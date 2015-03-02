@@ -19,7 +19,15 @@ public class ProxibaseClient {
     }
     
     required public init() {
-        self.sessionManager = AFHTTPSessionManager(baseURL: NSURL(string: "https://api.aircandi.com/v1/"))
+    
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        var serverURI = userDefaults.stringForKey("com.3meters.patchr.ios.serverURI")
+
+        if serverURI == nil || serverURI?.utf16Count == 0 {
+            serverURI = "https://api.aircandi.com/v1/"
+            userDefaults.setObject(serverURI, forKey: "com.3meters.patchr.ios.serverURI")
+        }
+        self.sessionManager = AFHTTPSessionManager(baseURL: NSURL(string: serverURI!))
         let jsonSerializer = AFJSONRequestSerializer(writingOptions: nil)
 
         sessionManager.requestSerializer = jsonSerializer
