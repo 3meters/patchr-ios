@@ -73,7 +73,7 @@ public class ProxibaseClient {
             ],
             "radius" : radius,
             "limit" : limit,
-            "skip" : offset,
+            "skip" : skip,
             "rest" : true,
             "linked" : links.map { $0.toDictionary() }
         ]
