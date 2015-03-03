@@ -19,11 +19,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AFNetworkActivityLogger.sharedLogger().startLogging()
         #endif
         
-        let userId = NSUserDefaults.standardUserDefaults().stringForKey("com.3meters.patchr.ios.userId")
-        let sessionKey = NSUserDefaults.standardUserDefaults().stringForKey("com.3meters.patchr.ios.sessionKey")
-        let authenticatedUser = (userId != nil) && (sessionKey != nil)
+        // If the connection to the database is considered valid, then start at the usual spot, otherwise start at the splash scene.
         
-        if authenticatedUser {
+        if ProxibaseClient.sharedInstance.authenticated {
             self.window?.rootViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateInitialViewController() as? UIViewController;
         } else {
             let rootController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as? UIViewController

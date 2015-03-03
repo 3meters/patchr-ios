@@ -47,12 +47,7 @@ class MainTabBarController: UITabBarController, RMCoreDataStackDelegate, CLLocat
             // TODO notify that location is not enabled?
         }
         
-        let userId = NSUserDefaults.standardUserDefaults().stringForKey("com.3meters.patchr.ios.userId")
-        let sessionKey = NSUserDefaults.standardUserDefaults().stringForKey("com.3meters.patchr.ios.sessionKey")
-        let proxibaseClient = ProxibaseClient()
-        proxibaseClient.userId = userId
-        proxibaseClient.sessionKey = sessionKey
-        self.dataStore = DataStore(managedObjectContext: self.coreDataStack.managedObjectContext, proxibaseClient: proxibaseClient, locationManager: self.locationManager)
+        self.dataStore = DataStore(managedObjectContext: self.coreDataStack.managedObjectContext, proxibaseClient: ProxibaseClient.sharedInstance, locationManager: self.locationManager)
         
         self.initializeViewControllers()
     }
@@ -77,10 +72,7 @@ class MainTabBarController: UITabBarController, RMCoreDataStackDelegate, CLLocat
     }
     
     @IBAction func logoutButtonAction(sender: UIButton) {
-        NSUserDefaults.standardUserDefaults().setObject(nil, forKey: "com.3meters.patchr.ios.userId")
-        NSUserDefaults.standardUserDefaults().setObject(nil, forKey: "com.3meters.patchr.ios.sessionKey")
-        NSUserDefaults.standardUserDefaults().synchronize()
-        self.dataStore.proxibaseClient.signOut { (response, error) -> Void in
+        ProxibaseClient.sharedInstance.signOut { (response, error) -> Void in
             if error != nil {
                 NSLog("Error during logout \(error)")
             }

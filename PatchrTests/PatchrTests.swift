@@ -25,7 +25,7 @@ class PatchrTests: XCTestCase {
     func testUserAuthentication() {
         var expectation = self.expectationWithDescription("Login response")
         let client = ProxibaseClient()
-        client.signIn("rob@robmaceachern.com", password: "test9090", installId: "12345") { (_, _, response, error) -> Void in
+        client.signIn("rob@robmaceachern.com", password: "test9090") { (response, error) -> Void in
             if (error == nil && client.authenticated) {
                 expectation.fulfill()
             } else {
@@ -55,7 +55,7 @@ class PatchrTests: XCTestCase {
     func testFetchNearbyPatches() {
         var expectation = self.expectationWithDescription("Fetch nearby patches")
         let client = ProxibaseClient()
-        client.signIn("rob@robmaceachern.com", password: "test9090", installId: "123") { (userId, sessionKey, response, error) -> Void in
+        client.signIn("rob@robmaceachern.com", password: "test9090") { (response, error) -> Void in
             let location = CLLocationCoordinate2D(latitude: 49.2845280, longitude: -123.1092720)
             var links = [
                 Link(to: .Beacons, type: .Proximity, limit: 10, count: nil),

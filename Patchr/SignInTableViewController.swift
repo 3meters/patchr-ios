@@ -12,6 +12,7 @@ class SignInTableViewController: UITableViewController {
 
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
+    @IBOutlet weak var signInErrorMessage: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,21 +21,20 @@ class SignInTableViewController: UITableViewController {
     }
     
     @IBAction func signInButtonAction(sender: NSObject) {
-        let proxibaseClient = ProxibaseClient()
-        // TODO need installId
-        proxibaseClient.signIn(self.emailTextField.text, password: self.passwordTextField.text, installId: "1", completion: { (userId, sessionKey, response, error) -> Void in
+        signInErrorMessage.text = ""
+        ProxibaseClient.sharedInstance.signIn(self.emailTextField.text, password: self.passwordTextField.text) { (response, error) -> Void in
             if (error != nil) {
-                NSLog("Login error \(error)")
+                NSLog("Login error \(error!)")
+                if let loginErrorMessage: AnyObject = (response!["error"] as NSDictionary)["message"] {
+                    self.signInErrorMessage.text = loginErrorMessage as? String
+                }
             } else {
                 NSLog("Login success")
-                // Ideally sessionKey would be stored more securely
-                NSUserDefaults.standardUserDefaults().setObject(userId, forKey: "com.3meters.patchr.ios.userId")
-                NSUserDefaults.standardUserDefaults().setObject(sessionKey, forKey: "com.3meters.patchr.ios.sessionKey")
-                NSUserDefaults.standardUserDefaults().synchronize()
+
                 let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
                 let destinationViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateInitialViewController() as UIViewController
                 appDelegate.window!.setRootViewController(destinationViewController, animated: true)
             }
-        })
+        }
     }
 }
