@@ -80,6 +80,18 @@ public class ProxibaseClient {
         self.performPOSTRequestFor("patches/near", parameters: parameters, completion: completion)
     }
     
+    public func fetchNotifications(limit: NSInteger, skip: NSInteger, completion:(response: AnyObject?, error: NSError?) -> Void) {
+        let parameters : Dictionary<String, AnyObject> = [
+            "entityId" : self.userId ?? "",
+            "cursor" : [
+                "sort" : ["modifiedDate" : -1],
+                "skip" : skip,
+                "limit" : limit
+            ]
+        ]
+        self.performPOSTRequestFor("do/getNotifications", parameters: parameters, completion: completion)
+    }
+    
     public func performPOSTRequestFor(path: NSString, var parameters : NSDictionary, completion:(response: AnyObject?, error: NSError?) -> Void) {
         if self.authenticated {
             var authParameters = NSMutableDictionary(dictionary: ["user" : self.userId!, "session" : self.sessionKey!])
@@ -165,4 +177,6 @@ public enum LinkType : String {
     case Content = "content"
     case Like = "like"
     case Watch = "watch"
+    case Create = "create"
+    case Share = "share"
 }
