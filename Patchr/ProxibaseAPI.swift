@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 public class ProxibaseClient {
     
@@ -64,6 +65,20 @@ public class ProxibaseClient {
         }
     }
     
+    public func fetchNearby(location: CLLocationCoordinate2D, radius: NSInteger, limit: NSInteger, offset: NSInteger, links: [Link], completion:(response: AnyObject?, error: NSError?) -> Void) {
+        let parameters = [
+            "location" : [
+                "lat" : location.latitude,
+                "lng" : location.longitude
+            ],
+            "radius" : radius,
+            "limit" : limit,
+            "rest" : true,
+            "linked" : links.map { $0.toDictionary() }
+        ]
+        self.performPOSTRequestFor("patches/near", parameters: parameters, completion: completion)
+    }
+    
     public func performPOSTRequestFor(path: NSString, var parameters : NSDictionary, completion:(response: AnyObject?, error: NSError?) -> Void) {
         if self.authenticated {
             var authParameters = NSMutableDictionary(dictionary: ["user" : self.userId!, "session" : self.sessionKey!])
@@ -93,4 +108,60 @@ public class ProxibaseClient {
                 completion(response: error?.userInfo?[JSONResponseSerializerWithDataKey], error: error)
         }
     }
+}
+
+public class Link {
+    public var to: LinkDestination?
+    public var from: LinkDestination?
+    public var type: LinkType?
+    public var limit: UInt?
+    public var count: Bool?
+    
+    init(to: LinkDestination, type: LinkType, limit: UInt?, count: Bool?) {
+        self.to = to
+        self.type = type
+        self.limit = limit
+        self.count = count
+    }
+    
+    init(from: LinkDestination, type: LinkType, limit: UInt?, count: Bool?) {
+        self.from = from
+        self.type = type
+        self.limit = limit
+        self.count = count
+    }
+    
+    func toDictionary() -> Dictionary<String, AnyObject> {
+        var dictionary = Dictionary<String,AnyObject>()
+        if to != nil {
+            dictionary["to"] = to!.rawValue
+        }
+        if from != nil {
+            dictionary["from"] = from!.rawValue
+        }
+        if type != nil {
+            dictionary["type"] = type!.rawValue
+        }
+        if limit != nil {
+            dictionary["limit"] = limit!
+        }
+        if count != nil {
+            dictionary["count"] = count!
+        }
+        return dictionary
+    }
+}
+
+public enum LinkDestination : String {
+    case Beacons = "beacons"
+    case Places = "places"
+    case Messages = "messages"
+    case Users = "users"
+}
+
+public enum LinkType : String {
+    case Proximity = "proximity"
+    case Content = "content"
+    case Like = "like"
+    case Watch = "watch"
 }
