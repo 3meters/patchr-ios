@@ -205,6 +205,23 @@ public class ProxibaseClient {
         self.performPOSTRequestFor("do/getNotifications", parameters: parameters, completion: completion)
     }
     
+    public func fetchMostMessagedPatches(limit: NSInteger = 50, skip: NSInteger = 0, completion:(response: AnyObject?, error: NSError?) -> Void) {
+        let parameters : Dictionary<String, AnyObject> = [
+            "entityId" : self.userId ?? "",
+            "cursor" : [
+                "sort" : ["modifiedDate" : -1],
+                "skip" : skip,
+                "limit" : limit
+            ],
+            "type" : "content"
+        ]
+        self.performPOSTRequestFor("stats/to/patches/from/messages", parameters: parameters, completion: completion)
+    }
+    
+    public func fetchMessagesOwnedByCurrentUser(limit: NSInteger = 50, skip: NSInteger = 0, links: [Link] = [], completion:(response: AnyObject?, error: NSError?) -> Void) {
+        self.performPOSTRequestFor("find/messages", parameters: [:], completion: completion)
+    }
+    
     public func performPOSTRequestFor(path: NSString, var parameters : NSDictionary, completion:(response: AnyObject?, error: NSError?) -> Void) {
         if self.authenticated {
             var authParameters = NSMutableDictionary(dictionary: ["user" : self.userId!, "session" : self.sessionKey!])

@@ -99,7 +99,6 @@ class PatchrTests: XCTestCase {
         })
     }
     
-    
     func testFetchMessagesForPatch() {
         var expectation = self.expectationWithDescription("Fetch messages for patch")
         let client = ProxibaseClient()
@@ -113,6 +112,44 @@ class PatchrTests: XCTestCase {
                 }
             })
         }
+        self.waitForExpectationsWithTimeout(5, handler: { (error) -> Void in
+            println(error)
+        })
+    }
+    
+    func testFetchMostMessagedPatches() {
+        var expectation = self.expectationWithDescription("Fetch patches with the most messages")
+        let client = ProxibaseClient()
+        client.signIn("rob@robmaceachern.com", password: "test9090") { (response, error) -> Void in
+            client.fetchMostMessagedPatches(completion: { (response, error) -> Void in
+                if error == nil && response != nil {
+                    //NSLog("\(response)")
+                    expectation.fulfill()
+                } else {
+                    println(error)
+                }
+            })
+        }
+        
+        self.waitForExpectationsWithTimeout(5, handler: { (error) -> Void in
+            println(error)
+        })
+    }
+    
+    func testFetchMessagesOwnedByCurrentUser() {
+        var expectation = self.expectationWithDescription("Fetch messages for current user")
+        let client = ProxibaseClient()
+        client.signIn("rob@robmaceachern.com", password: "test9090") { (response, error) -> Void in
+            client.fetchMessagesOwnedByCurrentUser(completion: { (response, error) -> Void in
+                if error == nil && response != nil {
+                    //NSLog("\(response)")
+                    expectation.fulfill()
+                } else {
+                    println(error)
+                }
+            })
+        }
+        
         self.waitForExpectationsWithTimeout(5, handler: { (error) -> Void in
             println(error)
         })

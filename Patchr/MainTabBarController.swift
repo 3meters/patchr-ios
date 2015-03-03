@@ -52,25 +52,6 @@ class MainTabBarController: UITabBarController, RMCoreDataStackDelegate, CLLocat
         self.initializeViewControllers()
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if let viewController = segue.destinationViewController as? QueryResultTableViewController {
-            viewController.managedObjectContext = self.coreDataStack.managedObjectContext
-            viewController.dataStore = self.dataStore
-            
-            switch segue.identifier! {
-            case "do/getNotifications", "patches/near", "do/getEntitiesForEntity watching", "do/getEntitiesForEntity owner", "stats/to/patches/from/messages mostActive", "stats/to/patches/from/users mostPopular":
-                let query = Query.insertInManagedObjectContext(self.coreDataStack.managedObjectContext) as Query
-                query.name = segue.identifier!
-                query.limitValue = 25
-                query.path = segue.identifier!.componentsSeparatedByString(" ")[0]
-                self.coreDataStack.managedObjectContext.save(nil)
-                viewController.query = query
-            default:
-                NSLog("Unknown segue identifier \(segue.identifier)")
-            }
-        }
-    }
-    
     @IBAction func logoutButtonAction(sender: UIButton) {
         ProxibaseClient.sharedInstance.signOut { (response, error) -> Void in
             if error != nil {
