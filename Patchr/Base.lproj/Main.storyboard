@@ -951,6 +951,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="currentUserNameField" destination="95Y-fw-S1K" id="FD8-bf-uiN"/>
                         <segue destination="dFa-9F-rNC" kind="show" identifier="PatchDetailSegue" id="nea-bY-Zi0"/>
                     </connections>
                 </tableViewController>
@@ -1038,9 +1039,9 @@
         <image name="Placeholder patch header" width="216" height="144"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="fno-E3-fgC"/>
-        <segue reference="aqr-cO-OGv"/>
+        <segue reference="nea-bY-Zi0"/>
         <segue reference="WKA-tH-M3A"/>
+        <segue reference="aqr-cO-OGv"/>
         <segue reference="Z9b-z0-EWI"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -42,6 +42,10 @@ public class ProxibaseClient {
     
     public var userId : NSString?
     public var sessionKey : NSString?
+    
+    // These will only be valid after a sign-in.
+    public var userName: NSString?      // These are a convenience for now, but eventually we should
+    public var userEmail: NSString?     // keep track of a full user record for the signed-in user.
 
     public var installId: String
     
@@ -78,6 +82,18 @@ public class ProxibaseClient {
         userDefaults.setObject(sessionKey, forKey: PatchrUserDefaultKey("sessionKey"))
     }
     
+    private func handleSuccessfulSignInResponse(response:AnyObject)
+    {
+        let json = JSON(response)
+        
+        self.userId = json["session"]["_owner"].string
+        self.sessionKey = json["session"]["key"].string
+        self.userName = json["user"]["name"].string
+        self.userEmail = json["user"]["email"].string
+        
+        self.writeCredentialsToUserDefaults()
+    }
+    
     // Send an auth/signin message to the server with the user's email address and password.
     // The completion block will be called asynchronously in either case.
     // If signin is successful, then the credentials from the server will be written to user defaults
@@ -87,11 +103,8 @@ public class ProxibaseClient {
         let parameters = ["email" : email, "password" : password, "installId" : installId]
         self.sessionManager.POST("auth/signin", parameters: parameters,
             success: { (dataTask, response) -> Void in
-                let json = JSON(response)
-                
-                self.userId = json["session"]["_owner"].string
-                self.sessionKey = json["session"]["key"].string
-                self.writeCredentialsToUserDefaults()
+            
+                self.handleSuccessfulSignInResponse(response)
                 
                 completion(response: response, error: nil)
             },
@@ -127,6 +140,33 @@ public class ProxibaseClient {
                 completion(response: nil, error: nil)
             })
         }
+    }
+    
+    // Create a new user with the provided name, email and password.
+    // • Additional optional information (like profile photo) is sent in the parameters dictionary
+    // •
+    public func createUser(name: String, email: String, password: String, parameters: NSDictionary? = nil, completion:(response: AnyObject?, error: NSError?) -> Void)
+    {
+        let parameters = ["data": ["name": name,
+                                   "email": email,
+                                   "password": password
+                                  ],
+                          "secret": "larissa",
+                          "installId": installId
+                         ]
+        
+        self.performPOSTRequestFor("user/create", parameters: parameters,
+            completion: { (response, error) -> Void in
+                if error == nil {
+                    // After creating a user, the user is left in a logged-in state, so process the response
+                    // to extract the credentials.
+                    self.handleSuccessfulSignInResponse(response!)
+                }
+                // TODO: What can go wrong here? 
+                // - User email exists already.
+                // - Other server failures?
+                completion(response: response, error: error)
+        })
     }
     
     public func fetchNearbyPatches(location: CLLocationCoordinate2D, radius: NSInteger, limit: NSInteger, skip: NSInteger, links: [Link], completion:(response: AnyObject?, error: NSError?) -> Void) {
@@ -165,10 +205,11 @@ public class ProxibaseClient {
         self.sessionManager.POST(path, parameters: parameters,
             success: { (dataTask, response) -> Void in
                 completion(response: response, error: nil)
-        }) { (dataTask, error) -> Void in
-            let response = dataTask.response as? NSHTTPURLResponse
-            completion(response: error?.userInfo?[JSONResponseSerializerWithDataKey], error: error)
-        }
+            },
+            failure: { (dataTask, error) -> Void in
+                let response = dataTask.response as? NSHTTPURLResponse
+                completion(response: error?.userInfo?[JSONResponseSerializerWithDataKey], error: error)
+        })
     }
     
     public func performGETRequestFor(path: NSString, var parameters : NSDictionary, completion:(response: AnyObject?, error: NSError?) -> Void) {
@@ -180,10 +221,11 @@ public class ProxibaseClient {
         self.sessionManager.GET(path, parameters: parameters,
             success: { (dataTask, response) -> Void in
                 completion(response: response, error: nil)
-            }) { (dataTask, error) -> Void in
+            },
+            failure: { (dataTask, error) -> Void in
                 let response = dataTask.response as? NSHTTPURLResponse
                 completion(response: error?.userInfo?[JSONResponseSerializerWithDataKey], error: error)
-        }
+        })
     }
 }
 

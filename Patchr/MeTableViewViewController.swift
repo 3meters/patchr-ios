@@ -9,9 +9,15 @@
 import UIKit
 
 class MeTableViewViewController: QueryResultTableViewController {
+    @IBOutlet weak var currentUserNameField: UILabel!
     
     override func viewDidLoad() {
+    
         super.viewDidLoad()
+        
+        // Cheat for now to put the current user name into the view. This only works after a sign-in.
+        currentUserNameField.text = ProxibaseClient.sharedInstance.userName
+        
         let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
         query.name = "Current user authored messages"
         query.limitValue = 25
@@ -48,10 +54,8 @@ class MeTableViewViewController: QueryResultTableViewController {
     }
     
     @IBAction func logoutButtonAction(sender: AnyObject) {
-        NSUserDefaults.standardUserDefaults().setObject(nil, forKey: "com.3meters.patchr.ios.userId")
-        NSUserDefaults.standardUserDefaults().setObject(nil, forKey: "com.3meters.patchr.ios.sessionKey")
-        NSUserDefaults.standardUserDefaults().synchronize()
-        self.dataStore.proxibaseClient.signOut { (response, error) -> Void in
+
+        ProxibaseClient.sharedInstance.signOut { (response, error) -> Void in
             if error != nil {
                 NSLog("Error during logout \(error)")
             }
