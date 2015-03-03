@@ -18,7 +18,8 @@ class DataStore: NSObject {
     private lazy var schemaDictionary : [String : Entity.Type] = {
         return [
             "notification" : Notification.self,
-            "patch" : Patch.self
+            "patch" : Patch.self,
+            "message" : Message.self
         ]
     }()
     
@@ -30,44 +31,27 @@ class DataStore: NSObject {
     }
     
     func loadMoreResultsFor(query: Query, completion:(results: [QueryResult], error: NSError?) -> Void) {
-        var parameters : Dictionary<String, AnyObject> = [
-            "entityId" : self.proxibaseClient.userId ?? "",
-            "cursor" : [
-                "sort" : ["modifiedDate" : -1],
-                "skip" : query.offset,
-                "limit" : query.limit
-            ]
-        ]
+        
         switch query.name {
-        case "patches/near":
-            var latLngDictionary = self.fallbackLocation()
-            if locationManager.location != nil {
-                latLngDictionary = ["lat" : locationManager.location.coordinate.latitude, "lng" : locationManager.location.coordinate.longitude]
-            }
-            parameters = [:]
-            parameters["location"] = latLngDictionary
-            parameters["radius"] = 10000
-            parameters["links"] = linksForLinkProfile("patch")
-        case "do/getEntitiesForEntity watching":
-            var cursor = parameters["cursor"] as [String : AnyObject]
-            cursor["direction"] = "out"
-            cursor["linkTypes"] = ["watch"]
-            cursor["schemas"] = ["patch"]
-            parameters["cursor"] = cursor
-            parameters["links"] = linksForLinkProfile("patch")
-        case "do/getEntitiesForEntity owner":
-            var cursor = parameters["cursor"] as [String : AnyObject]
-            cursor["direction"] = "out"
-            cursor["linkTypes"] = ["create"]
-            cursor["schemas"] = ["patch"]
-            parameters["cursor"] = cursor
-        case "stats/to/patches/from/messages mostActive":
-            parameters = ["type" : "content"]
-        case "stats/to/patches/from/users mostPopular":
-            parameters = ["type" : "watch"]
-        default: ()
+        case "Nearby patches":
+            self.proxibaseClient.fetchNearbyPatches(self.currentUserLocation(), radius: 10000, completion: { (response, error) -> Void in
+                completion(results: self.handleResponseForQuery(query, response: response!), error: error)
+            })
+        case "Notifications for current user":
+            self.proxibaseClient.fetchNotifications(completion: { (response, error) -> Void in
+                completion(results: self.handleResponseForQuery(query, response: response!), error: error)
+            })
+        case "Explore patches":
+            self.proxibaseClient.fetchMostMessagedPatches(completion: { (response, error) -> Void in
+                completion(results: self.handleResponseForQuery(query, response: response!), error: error)
+            })
+        case "Comments by current user":
+            self.proxibaseClient.fetchMessagesOwnedByCurrentUser(completion: { (response, error) -> Void in
+                completion(results: self.handleResponseForQuery(query, response: response!), error: error)
+            })
+        default:
+            assert(false, "Unknown query name \(query.name)")
         }
-        fetchMoreResultsForGenericQuery(query, parameters: parameters, completion: completion)
     }
     
     private func fetchMoreResultsForGenericQuery(query: Query, parameters: [String : AnyObject], completion: (results: [QueryResult], error: NSError?) -> Void) {
@@ -112,10 +96,10 @@ class DataStore: NSObject {
                             queryResult.sortDate = entityModel.sortDate
                             results.append(queryResult)
                         } else {
-                            NSLog("Unknown schema: \(schema)")
+                            assert(false, "Unknown schema: \(schema)")
                         }
                     } else {
-                        NSLog("No schema for object \(entityDictionary)")
+                        assert(false, "No schema for object \(entityDictionary)")
                     }
                 }
             }
@@ -243,10 +227,15 @@ class DataStore: NSObject {
         return ["shortcuts" : true, "active" : activeLinks]
     }
     
-    private func fallbackLocation() -> [String : Double] {
-        // TODO we can be more creative with this:
-        // - store/retrieve location in NSUserDefaults
-        // - likely get a nearby major city based on timezone
-        return ["lat" : 49.2845280, "lng": -123.1092720];
+    private func currentUserLocation() -> CLLocationCoordinate2D {
+        if locationManager.location != nil {
+            return locationManager.location.coordinate
+        } else {
+            // Fallback location
+            // TODO we can be more creative with this:
+            // - store/retrieve location in NSUserDefaults
+            // - likely get a nearby major city based on timezone
+            return CLLocationCoordinate2D(latitude: 49.2845280, longitude: -123.1092720)
+        }
     }
 }

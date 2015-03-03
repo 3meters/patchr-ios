@@ -24,7 +24,7 @@ class NotificationsTableViewController: QueryResultTableViewController {
         }
         
         let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
-        query.name = "do/getNotifications"
+        query.name = "Notifications for current user"
         query.limitValue = 25
         query.path = "do/getNotifications"
         self.managedObjectContext.save(nil)

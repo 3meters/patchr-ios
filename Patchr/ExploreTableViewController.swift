@@ -26,7 +26,7 @@ class ExploreTableViewController: QueryResultTableViewController {
         self.searchDisplayController?.searchResultsTableView.estimatedRowHeight = self.tableView.estimatedRowHeight
         
         let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
-        query.name = "stats/to/patches/from/users mostPopular"
+        query.name = "Explore patches"
         query.limitValue = 25
         query.path = "stats/to/patches/from/users"
         self.managedObjectContext.save(nil)

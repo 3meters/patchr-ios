@@ -24,7 +24,7 @@ class NearbyPatchesTableViewController: QueryResultTableViewController {
         }
         
         let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
-        query.name = "patches/near"
+        query.name = "Nearby patches"
         query.limitValue = 25
         query.path = "patches/near"
         self.managedObjectContext.save(nil)

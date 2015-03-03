@@ -57,23 +57,14 @@ class PatchrTests: XCTestCase {
         let client = ProxibaseClient()
         client.signIn("rob@robmaceachern.com", password: "test9090") { (response, error) -> Void in
             let location = CLLocationCoordinate2D(latitude: 49.2845280, longitude: -123.1092720)
-            var links = [
-                Link(to: .Beacons, type: .Proximity, limit: 10),
-                Link(to: .Places, type: .Proximity, limit: 10),
-                Link(from: .Messages, type: .Content, limit: 2),
-                Link(from: .Messages, type: .Content, count: true),
-                Link(from: .Users, type: .Like, count: true),
-                Link(from: .Users, type: .Watch, count: true)
-            ]
-            
-            client.fetchNearbyPatches(location, radius: 1000, limit: 50, skip: 0, links: links) { (response, error) -> Void in
+            client.fetchNearbyPatches(location, radius: 10000, completion: { (response, error) -> Void in
                 if error == nil && response != nil {
                     //NSLog("\(response)")
                     expectation.fulfill()
                 } else {
                     println(error)
                 }
-            }
+            })
         }
         
         self.waitForExpectationsWithTimeout(5, handler: { (error) -> Void in

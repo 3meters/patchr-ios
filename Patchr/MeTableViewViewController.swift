@@ -19,7 +19,7 @@ class MeTableViewViewController: QueryResultTableViewController {
         currentUserNameField.text = ProxibaseClient.sharedInstance.userName
         
         let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
-        query.name = "Current user authored messages"
+        query.name = "Comments by current user"
         query.limitValue = 25
         query.path = ""
         self.managedObjectContext.save(nil)
@@ -40,7 +40,7 @@ class MeTableViewViewController: QueryResultTableViewController {
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
         if let queryResult = object as? QueryResult {
             if let message = queryResult.entity_ as? Message {
-                cell.textLabel?.text = "A message"
+                cell.textLabel?.text = message.description_
             } else {
                 cell.textLabel?.text = "Unknown QueryResult entity type"
             }

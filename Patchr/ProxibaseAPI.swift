@@ -169,7 +169,15 @@ public class ProxibaseClient {
         })
     }
     
-    public func fetchNearbyPatches(location: CLLocationCoordinate2D, radius: NSInteger, limit: NSInteger, skip: NSInteger, links: [Link], completion:(response: AnyObject?, error: NSError?) -> Void) {
+    public func fetchNearbyPatches(location: CLLocationCoordinate2D, radius: NSInteger, limit: NSInteger = 50, skip: NSInteger = 0, links: [Link] = [], completion:(response: AnyObject?, error: NSError?) -> Void) {
+        var allLinks = [
+            Link(to: .Beacons, type: .Proximity, limit: 10),
+            Link(to: .Places, type: .Proximity, limit: 10),
+            Link(from: .Messages, type: .Content, limit: 2),
+            Link(from: .Messages, type: .Content, count: true),
+            Link(from: .Users, type: .Like, count: true),
+            Link(from: .Users, type: .Watch, count: true)
+        ] + links
         let parameters = [
             "location" : [
                 "lat" : location.latitude,
@@ -179,7 +187,7 @@ public class ProxibaseClient {
             "limit" : limit,
             "skip" : skip,
             "rest" : true,
-            "linked" : links.map { $0.toDictionary() }
+            "linked" : allLinks.map { $0.toDictionary() }
         ]
         self.performPOSTRequestFor("patches/near", parameters: parameters, completion: completion)
     }
