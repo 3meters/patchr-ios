@@ -184,7 +184,16 @@ public class ProxibaseClient {
         self.performPOSTRequestFor("patches/near", parameters: parameters, completion: completion)
     }
     
-    public func fetchNotifications(limit: NSInteger, skip: NSInteger, completion:(response: AnyObject?, error: NSError?) -> Void) {
+    public func fetchMessagesForPatch(patchId: String, limit: NSInteger = 50, skip: NSInteger = 0, links: [Link] = [], completion:(response: AnyObject?, error: NSError?) -> Void) {
+        let allLinks = [Link(from: .Messages, type: .Content, linkFields: "_id")] + links
+        let parameters = [
+            "refs" : "_id,name,photo,schema",
+            "linked" : allLinks.map { $0.toDictionary() }
+        ]
+        self.performPOSTRequestFor("find/patches/\(patchId)", parameters: parameters, completion: completion)
+    }
+    
+    public func fetchNotifications(limit: NSInteger = 50, skip: NSInteger = 0, completion:(response: AnyObject?, error: NSError?) -> Void) {
         let parameters : Dictionary<String, AnyObject> = [
             "entityId" : self.userId ?? "",
             "cursor" : [
@@ -235,19 +244,22 @@ public class Link {
     public var type: LinkType?
     public var limit: UInt?
     public var count: Bool?
+    public var linkFields: String?
     
-    init(to: LinkDestination, type: LinkType, limit: UInt?, count: Bool?) {
+    init(to: LinkDestination, type: LinkType, limit: UInt? = nil, count: Bool? = nil, linkFields: String? = nil) {
         self.to = to
         self.type = type
         self.limit = limit
         self.count = count
+        self.linkFields = linkFields
     }
     
-    init(from: LinkDestination, type: LinkType, limit: UInt?, count: Bool?) {
+    init(from: LinkDestination, type: LinkType, limit: UInt? = nil, count: Bool? = nil, linkFields: String? = nil) {
         self.from = from
         self.type = type
         self.limit = limit
         self.count = count
+        self.linkFields = linkFields
     }
     
     func toDictionary() -> Dictionary<String, AnyObject> {
@@ -266,6 +278,9 @@ public class Link {
         }
         if count != nil {
             dictionary["count"] = count!
+        }
+        if linkFields != nil {
+            dictionary["linkFields"] = linkFields
         }
         return dictionary
     }

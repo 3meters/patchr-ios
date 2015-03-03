@@ -58,16 +58,17 @@ class PatchrTests: XCTestCase {
         client.signIn("rob@robmaceachern.com", password: "test9090") { (response, error) -> Void in
             let location = CLLocationCoordinate2D(latitude: 49.2845280, longitude: -123.1092720)
             var links = [
-                Link(to: .Beacons, type: .Proximity, limit: 10, count: nil),
-                Link(to: .Places, type: .Proximity, limit: 10, count: nil),
-                Link(from: .Messages, type: .Content, limit: 2, count: nil),
-                Link(from: .Messages, type: .Content, limit: nil, count: true),
-                Link(from: .Users, type: .Like, limit: nil, count: true),
-                Link(from: .Users, type: .Watch, limit: nil, count: true)
+                Link(to: .Beacons, type: .Proximity, limit: 10),
+                Link(to: .Places, type: .Proximity, limit: 10),
+                Link(from: .Messages, type: .Content, limit: 2),
+                Link(from: .Messages, type: .Content, count: true),
+                Link(from: .Users, type: .Like, count: true),
+                Link(from: .Users, type: .Watch, count: true)
             ]
             
             client.fetchNearbyPatches(location, radius: 1000, limit: 50, skip: 0, links: links) { (response, error) -> Void in
                 if error == nil && response != nil {
+                    //NSLog("\(response)")
                     expectation.fulfill()
                 } else {
                     println(error)
@@ -84,15 +85,34 @@ class PatchrTests: XCTestCase {
         var expectation = self.expectationWithDescription("Fetch notifications")
         let client = ProxibaseClient()
         client.signIn("rob@robmaceachern.com", password: "test9090") { (response, error) -> Void in
-            client.fetchNotifications(50, skip: 0) { (response, error) -> Void in
+            client.fetchNotifications(completion: { (response, error) -> Void in
                 if error == nil && response != nil {
                     expectation.fulfill()
                 } else {
                     println(error)
                 }
-            }
+            })
         }
         
+        self.waitForExpectationsWithTimeout(5, handler: { (error) -> Void in
+            println(error)
+        })
+    }
+    
+    
+    func testFetchMessagesForPatch() {
+        var expectation = self.expectationWithDescription("Fetch messages for patch")
+        let client = ProxibaseClient()
+        client.signIn("rob@robmaceachern.com", password: "test9090") { (response, error) -> Void in
+            client.fetchMessagesForPatch("pa.150120.02229.596.036120", completion: { (response, error) -> Void in
+                if error == nil && response != nil {
+                    //NSLog("\(response)")
+                    expectation.fulfill()
+                } else {
+                    println(error)
+                }
+            })
+        }
         self.waitForExpectationsWithTimeout(5, handler: { (error) -> Void in
             println(error)
         })
