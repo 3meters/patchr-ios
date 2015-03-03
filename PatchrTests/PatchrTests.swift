@@ -79,4 +79,22 @@ class PatchrTests: XCTestCase {
             println(error)
         })
     }
+    
+    func testFetchNotifications() {
+        var expectation = self.expectationWithDescription("Fetch notifications")
+        let client = ProxibaseClient()
+        client.signIn("rob@robmaceachern.com", password: "test9090") { (response, error) -> Void in
+            client.fetchNotifications(50, skip: 0) { (response, error) -> Void in
+                if error == nil && response != nil {
+                    expectation.fulfill()
+                } else {
+                    println(error)
+                }
+            }
+        }
+        
+        self.waitForExpectationsWithTimeout(5, handler: { (error) -> Void in
+            println(error)
+        })
+    }
 }
