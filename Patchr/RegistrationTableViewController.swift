@@ -18,8 +18,12 @@ class RegistrationTableViewController: UITableViewController {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
 
+    lazy var photoChooserUI: PhotoChooserUI = { PhotoChooserUI(hostViewController: self) }()
+    
     @IBAction func avatarSetButtonAction(sender: AnyObject) {
-        NSLog("TODO Not implemented")
+        photoChooserUI.choosePhoto() { uiImage in
+            self.avatarImageView.image = uiImage
+        }
     }
     
     @IBAction func joinButtonAction(sender: AnyObject) {

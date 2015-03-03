@@ -38,7 +38,8 @@ public class ProxibaseClient {
         return Static.instance
     }
     
-    private let sessionManager : AFHTTPSessionManager
+    private let sessionManager: AFHTTPSessionManager
+    private let s3Manager: AFAmazonS3Manager
     
     public var userId : NSString?
     public var sessionKey : NSString?
@@ -61,17 +62,32 @@ public class ProxibaseClient {
 
         if serverURI == nil || serverURI?.utf16Count == 0 {
             serverURI = "https://api.aircandi.com/v1/"
-            userDefaults.setObject(serverURI, forKey: "com.3meters.patchr.ios.serverURI")
+            userDefaults.setObject(serverURI, forKey: PatchrUserDefaultKey("serverURI"))
         }
-        self.sessionManager = AFHTTPSessionManager(baseURL: NSURL(string: serverURI!))
 
-        sessionManager.requestSerializer = AFJSONRequestSerializer(writingOptions: nil)
-        sessionManager.responseSerializer = JSONResponseSerializerWithData()
-        
         userId     = userDefaults.stringForKey(PatchrUserDefaultKey("userId"))
         sessionKey = userDefaults.stringForKey(PatchrUserDefaultKey("sessionKey"))
         
         installId = "1" // TODO
+        
+        sessionManager = AFHTTPSessionManager(baseURL: NSURL(string: serverURI!))
+
+        sessionManager.requestSerializer = AFJSONRequestSerializer(writingOptions: nil)
+        sessionManager.responseSerializer = JSONResponseSerializerWithData()
+        
+
+//      S3
+//      {
+//        key: 'AKIAIYU2FPHC2AOUG3CA',
+//        secret: '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',
+//        region: 'us-west-2',
+//        bucket: 'aircandi-images',
+//      }
+
+        let PatchrS3Key    = "AKIAIYU2FPHC2AOUG3CA"
+        let PatchrS3Secret = "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"
+        
+        s3Manager = AFAmazonS3Manager(accessKeyID: PatchrS3Key, secret: PatchrS3Secret)
         
     }
     

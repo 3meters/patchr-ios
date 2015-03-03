@@ -10,6 +10,8 @@ import UIKit
 import XCTest
 import CoreLocation
 
+// NOTE: At this moment, the tests are set up so that they only work when set up to run on the production server.
+    
 class PatchrTests: XCTestCase {
     
     
