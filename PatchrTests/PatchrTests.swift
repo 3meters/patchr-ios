@@ -52,7 +52,7 @@ class PatchrTests: XCTestCase {
         })
     }
     
-    func testFetchNearby() {
+    func testFetchNearbyPatches() {
         var expectation = self.expectationWithDescription("Fetch nearby patches")
         let client = ProxibaseClient()
         client.signIn("rob@robmaceachern.com", password: "test9090", installId: "123") { (userId, sessionKey, response, error) -> Void in
@@ -66,7 +66,7 @@ class PatchrTests: XCTestCase {
                 Link(from: .Users, type: .Watch, limit: nil, count: true)
             ]
             
-            client.fetchNearby(location, radius: 1000, limit: 50, offset: 0, links: links) { (response, error) -> Void in
+            client.fetchNearbyPatches(location, radius: 1000, limit: 50, offset: 0, links: links) { (response, error) -> Void in
                 if error == nil && response != nil {
                     expectation.fulfill()
                 } else {
