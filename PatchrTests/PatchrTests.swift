@@ -66,7 +66,7 @@ class PatchrTests: XCTestCase {
                 Link(from: .Users, type: .Watch, limit: nil, count: true)
             ]
             
-            client.fetchNearbyPatches(location, radius: 1000, limit: 50, offset: 0, links: links) { (response, error) -> Void in
+            client.fetchNearbyPatches(location, radius: 1000, limit: 50, skip: 0, links: links) { (response, error) -> Void in
                 if error == nil && response != nil {
                     expectation.fulfill()
                 } else {

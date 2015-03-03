@@ -65,7 +65,7 @@ public class ProxibaseClient {
         }
     }
     
-    public func fetchNearbyPatches(location: CLLocationCoordinate2D, radius: NSInteger, limit: NSInteger, offset: NSInteger, links: [Link], completion:(response: AnyObject?, error: NSError?) -> Void) {
+    public func fetchNearbyPatches(location: CLLocationCoordinate2D, radius: NSInteger, limit: NSInteger, skip: NSInteger, links: [Link], completion:(response: AnyObject?, error: NSError?) -> Void) {
         let parameters = [
             "location" : [
                 "lat" : location.latitude,
@@ -73,7 +73,7 @@ public class ProxibaseClient {
             ],
             "radius" : radius,
             "limit" : limit,
-            "offset" : offset,
+            "skip" : offset,
             "rest" : true,
             "linked" : links.map { $0.toDictionary() }
         ]
