@@ -10,6 +10,8 @@ import UIKit
 
 class ExploreTableViewController: QueryResultTableViewController {
     
+    var selectedPatch: Patch?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.registerNib(UINib(nibName: "PatchTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
@@ -27,8 +29,6 @@ class ExploreTableViewController: QueryResultTableViewController {
         
         let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
         query.name = "Explore patches"
-        query.limitValue = 25
-        query.path = "stats/to/patches/from/users"
         self.managedObjectContext.save(nil)
         self.query = query
         dataStore.loadMoreResultsFor(self.query, completion: { (results, error) -> Void in
@@ -44,6 +44,7 @@ class ExploreTableViewController: QueryResultTableViewController {
         }
     }
     
+    // TODO consolidate the duplicated segue logic
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
         if segue.identifier == nil {
@@ -52,9 +53,11 @@ class ExploreTableViewController: QueryResultTableViewController {
         
         switch segue.identifier! {
         case "PatchDetailSegue":
-            if let queryResultTable = segue.destinationViewController as? QueryResultTableViewController {
-                queryResultTable.managedObjectContext = self.managedObjectContext
-                queryResultTable.dataStore = self.dataStore
+            if let patchDetailViewController = segue.destinationViewController as? PatchDetailViewController {
+                patchDetailViewController.managedObjectContext = self.managedObjectContext
+                patchDetailViewController.dataStore = self.dataStore
+                patchDetailViewController.patch = self.selectedPatch
+                self.selectedPatch = nil
             }
         default: ()
         }
@@ -84,7 +87,14 @@ class ExploreTableViewController: QueryResultTableViewController {
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
+        if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryResult {
+            if let patch = queryResult.entity_ as? Patch {
+                self.selectedPatch = patch
+                self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
+                return
+            }
+        }
+        assert(false, "Couldn't set selectedPatch")
     }
 
     @IBAction func unwindFromCreatePatch(segue: UIStoryboardSegue) {}

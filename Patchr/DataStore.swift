@@ -49,30 +49,19 @@ class DataStore: NSObject {
             self.proxibaseClient.fetchMessagesOwnedByCurrentUser(completion: { (response, error) -> Void in
                 completion(results: self.handleResponseForQuery(query, response: response!), error: error)
             })
+        case "Messages for patch":
+            // TODO need mechanism to pass patchId through query
+            self.proxibaseClient.fetchMessagesForPatch("pa.123.todo", completion: { (response, error) -> Void in
+                completion(results: self.handleResponseForQuery(query, response: response!), error: error)
+            })
         default:
             assert(false, "Unknown query name \(query.name)")
         }
     }
     
-    private func fetchMoreResultsForGenericQuery(query: Query, parameters: [String : AnyObject], completion: (results: [QueryResult], error: NSError?) -> Void) {
-        self.proxibaseClient.performPOSTRequestFor(query.path,
-            parameters: parameters,
-            completion: { (response, var error) -> Void in
-                var queryResults : [QueryResult] = []
-                if error == nil {
-                    if response != nil {
-                        queryResults = self.handleResponseForQuery(query, response: response!)
-                        query.managedObjectContext?.save(&error)
-                    }
-                }
-                completion(results: queryResults, error: error)
-        })
-    }
-    
     private func handleResponseForQuery(query: Query, response: AnyObject) -> [QueryResult] {
         var queryResults: [QueryResult] = []
         queryResults = handleServiceDataResponseForQuery(query, response: response).results
-        query.offsetValue += queryResults.count // TODO this assumes query requests are performed serially. Not currently a safe assumption
         return queryResults
     }
     
@@ -80,7 +69,6 @@ class DataStore: NSObject {
         var results: [QueryResult] = []
         let dataWrapper = ServiceData()
         if let dictionary = response as? [NSObject : AnyObject] {
-            NSLog("%@", dictionary)
             ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper, mappingNames: false)
             if let entityDictionaries = dataWrapper.data as? [[NSObject : AnyObject]] {
                 for entityDictionary in entityDictionaries {
@@ -105,126 +93,6 @@ class DataStore: NSObject {
             }
         }
         return (dataWrapper, results)
-    }
-    
-    private func linksForLinkProfile(profile: String) -> [NSObject:AnyObject] {
-        // TODO check these values and move to constants
-        let limitProximity = 25
-        let limitContent = 25
-        let currentUserId = self.proxibaseClient.userId ?? "" // TODO should be better
-        
-        var activeLinks : [[NSObject:AnyObject]] = [[:]]
-        
-        // TODO change profile type to an enum
-        switch profile {
-        case "patch", "beacon":
-            activeLinks = [[
-                    "type" : "proximity",
-                    "schema" : "beacon",
-                    "links" : true,
-                    "count" : true,
-                    "limit" : limitProximity,
-                    "direction" : "out"
-                ],
-                [
-                    "type" : "proximity",
-                    "schema" : "place",
-                    "links" : true,
-                    "count" : true,
-                    "limit" : 1,
-                    "direction" : "out"
-                ],
-                [
-                    "type" : "content",
-                    "schema" : "message",
-                    "links" : true,
-                    "count" : true,
-                    "limit" : limitContent,
-                    "direction" : "both"
-                ],
-                [
-                    "type" : "watch",
-                    "schema" : "user",
-                    "links" : true,
-                    "count" : true,
-                    "limit" : 1,
-                    "direction" : "in",
-                    "where" : ["_from" : currentUserId]
-                ],
-                [
-                    "type" : "like",
-                    "schema" : "user",
-                    "links" : true,
-                    "count" : true,
-                    "limit" : 1,
-                    "direction" : "in",
-                    "where" : ["_from" : currentUserId]
-                ],
-                [
-                    "type" : "content",
-                    "schema" : "message",
-                    "links" : true,
-                    "count" : true,
-                    "limit" : 1,
-                    "direction" : "in",
-                    "where" : ["_creator" : currentUserId]
-                ]]
-        case "message":
-            activeLinks = [[
-                    "type" : "content",
-                    "schema" : "message",
-                    "links" : true,
-                    "count" : true,
-                    "limit" : 1,
-                    "direction" : "both"
-                ],
-                [
-                    "type" : "content",
-                    "schema" : "patch",
-                    "links" : true,
-                    "count" : true,
-                    "limit" : 1,
-                    "direction" : "out"
-                ],
-                [
-                    "type" : "share",
-                    "schema" : "patch",
-                    "links" : true,
-                    "count" : true,
-                    "limit" : 1,
-                    "direction" : "out"
-                ],
-                [
-                    "type" : "share",
-                    "schema" : "message",
-                    "links" : true,
-                    "count" : true,
-                    "limit" : 1,
-                    "direction" : "out"
-                ],
-                [
-                    "type" : "share",
-                    "schema" : "user",
-                    "links" : true,
-                    "count" : true,
-                    "limit" : 5,
-                    "direction" : "out"
-                ],
-                [
-                    "type" : "like",
-                    "schema" : "user",
-                    "links" : true,
-                    "count" : true,
-                    "limit" : 1,
-                    "direction" : "in",
-                    "where" : ["_from" : currentUserId]
-                ]
-            ]
-            
-        default:()
-        }
-        
-        return ["shortcuts" : true, "active" : activeLinks]
     }
     
     private func currentUserLocation() -> CLLocationCoordinate2D {

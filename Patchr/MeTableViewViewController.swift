@@ -20,8 +20,6 @@ class MeTableViewViewController: QueryResultTableViewController {
         
         let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
         query.name = "Comments by current user"
-        query.limitValue = 25
-        query.path = ""
         self.managedObjectContext.save(nil)
         self.query = query
         dataStore.loadMoreResultsFor(self.query, completion: { (results, error) -> Void in
@@ -50,7 +48,7 @@ class MeTableViewViewController: QueryResultTableViewController {
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
+        //self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
     }
     
     @IBAction func logoutButtonAction(sender: AnyObject) {

@@ -437,7 +437,7 @@
                                                 <segue destination="ATs-GG-DRN" kind="presentation" id="WKA-tH-M3A"/>
                                             </connections>
                                         </button>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Patch Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bHj-ol-mkD">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Patch Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bHj-ol-mkD">
                                             <rect key="frame" x="8" y="74" width="95" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -508,6 +508,11 @@
                     <navigationItem key="navigationItem" title="Patch Detail" id="MdG-P4-WEw">
                         <barButtonItem key="rightBarButtonItem" systemItem="action" id="zk4-NW-1bd"/>
                     </navigationItem>
+                    <connections>
+                        <outlet property="patchCategoryLabel" destination="YwE-l7-mVO" id="XZF-2M-bof"/>
+                        <outlet property="patchImageView" destination="351-k9-dO8" id="GsQ-BX-Jtm"/>
+                        <outlet property="patchNameLabel" destination="bHj-ol-mkD" id="nZS-3i-vhZ"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oIA-ch-XmS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

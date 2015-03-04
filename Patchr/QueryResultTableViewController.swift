@@ -31,7 +31,7 @@ class QueryResultTableViewController: UITableViewController {
         return delegate
     }()
     
-    private lazy var fetchedResultsController: NSFetchedResultsController = {
+    internal lazy var fetchedResultsController: NSFetchedResultsController = {
         
         let fetchRequest = NSFetchRequest(entityName: QueryResult.entityName())
         
