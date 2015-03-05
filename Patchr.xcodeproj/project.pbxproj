@@ -70,6 +70,8 @@
 		7DC9D4941A9D4FAD00234E3C /* NotificationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC9D4921A9D4FAD00234E3C /* NotificationTableViewCell.swift */; };
 		7DC9D4951A9D4FAD00234E3C /* NotificationTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7DC9D4931A9D4FAD00234E3C /* NotificationTableViewCell.xib */; };
 		7DC9D49A1A9D597400234E3C /* AutoSizingLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DC9D4991A9D597400234E3C /* AutoSizingLabel.m */; };
+		7DE975EB1AA7D69500C1ECE9 /* FetchedResultsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE975EA1AA7D69500C1ECE9 /* FetchedResultsTableViewController.swift */; };
+		7DE975EE1AA7F72400C1ECE9 /* ModelUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE975ED1AA7F72400C1ECE9 /* ModelUtilities.m */; };
 		844D6E351AA4D01200EE71ED /* DebugViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844D6E341AA4D01200EE71ED /* DebugViewController.swift */; };
 		844D6E371AA6550400EE71ED /* PhotoChooserUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */; };
 		8468F81C1A9D095E007D6EE6 /* CreatePatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8468F81B1A9D095E007D6EE6 /* CreatePatchViewController.swift */; };
@@ -186,6 +188,9 @@
 		7DC9D4931A9D4FAD00234E3C /* NotificationTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NotificationTableViewCell.xib; sourceTree = "<group>"; };
 		7DC9D4981A9D597400234E3C /* AutoSizingLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoSizingLabel.h; sourceTree = "<group>"; };
 		7DC9D4991A9D597400234E3C /* AutoSizingLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutoSizingLabel.m; sourceTree = "<group>"; };
+		7DE975EA1AA7D69500C1ECE9 /* FetchedResultsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchedResultsTableViewController.swift; sourceTree = "<group>"; };
+		7DE975EC1AA7F72400C1ECE9 /* ModelUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelUtilities.h; sourceTree = "<group>"; };
+		7DE975ED1AA7F72400C1ECE9 /* ModelUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelUtilities.m; sourceTree = "<group>"; };
 		844D6E341AA4D01200EE71ED /* DebugViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugViewController.swift; sourceTree = "<group>"; };
 		844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoChooserUI.swift; sourceTree = "<group>"; };
 		8468F81B1A9D095E007D6EE6 /* CreatePatchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreatePatchViewController.swift; sourceTree = "<group>"; };
@@ -274,8 +279,9 @@
 				7D01FA341A7024E200DD6DFA /* JSONResponseSerializerWithData.h */,
 				7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */,
 				7DA7306B1A71A0EE008C25FA /* Model.xcdatamodeld */,
-				7DA730951A71B962008C25FA /* QueryResultTableViewController.swift */,
+				7DE975EA1AA7D69500C1ECE9 /* FetchedResultsTableViewController.swift */,
 				7D7095D61A71BE3200F835C4 /* FetchControllerDelegate.swift */,
+				7DA730951A71B962008C25FA /* QueryResultTableViewController.swift */,
 				7DA3D9111A72D5A60082D2AB /* DataStore.swift */,
 				7D40B9411A7864A000F9954C /* NotificationsTableViewController.swift */,
 				7D40B9521A79AB0200F9954C /* NearbyPatchesTableViewController.swift */,
@@ -387,6 +393,8 @@
 				7D6E26511A7B18CB000128A7 /* Statistic.m */,
 				7DB6E0FC1A8177060017A42F /* User.h */,
 				7DB6E0FD1A8177060017A42F /* User.m */,
+				7DE975EC1AA7F72400C1ECE9 /* ModelUtilities.h */,
+				7DE975ED1AA7F72400C1ECE9 /* ModelUtilities.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -635,6 +643,7 @@
 				7D40B9531A79AB0200F9954C /* NearbyPatchesTableViewController.swift in Sources */,
 				7D3F26D41A76F77E0015F8E8 /* _Photo.m in Sources */,
 				7D40B9511A79A6FD00F9954C /* ProviderMap.m in Sources */,
+				7DE975EE1AA7F72400C1ECE9 /* ModelUtilities.m in Sources */,
 				7DA7308E1A71ACC9008C25FA /* _ServiceObject.m in Sources */,
 				7D7096021A71D55C00F835C4 /* QueryResult.m in Sources */,
 				7D56EE8B1A70616500BFCC32 /* SwiftyJSON.swift in Sources */,
@@ -654,6 +663,7 @@
 				7D3F26DB1A7706610015F8E8 /* _Notification.m in Sources */,
 				7DA7306D1A71A0EE008C25FA /* Model.xcdatamodeld in Sources */,
 				7D40B9501A79A6FD00F9954C /* _ProviderMap.m in Sources */,
+				7DE975EB1AA7D69500C1ECE9 /* FetchedResultsTableViewController.swift in Sources */,
 				7D3F26D31A76F77E0015F8E8 /* _Location.m in Sources */,
 				844D6E371AA6550400EE71ED /* PhotoChooserUI.swift in Sources */,
 				7DA730891A71ACC9008C25FA /* _Entity.m in Sources */,

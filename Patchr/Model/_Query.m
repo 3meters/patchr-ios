@@ -5,6 +5,7 @@
 
 const struct QueryAttributes QueryAttributes = {
 	.name = @"name",
+	.parameters = @"parameters",
 };
 
 const struct QueryRelationships QueryRelationships = {
@@ -41,6 +42,8 @@ const struct QueryRelationships QueryRelationships = {
 }
 
 @dynamic name;
+
+@dynamic parameters;
 
 @dynamic queryResults;
 

@@ -21,6 +21,18 @@ extern const struct ServiceBaseAttributes {
 	__unsafe_unretained NSString *type;
 } ServiceBaseAttributes;
 
+extern const struct ServiceBaseRelationships {
+	__unsafe_unretained NSString *created;
+	__unsafe_unretained NSString *creator;
+	__unsafe_unretained NSString *owned;
+	__unsafe_unretained NSString *owner;
+} ServiceBaseRelationships;
+
+@class ServiceBase;
+@class ServiceBase;
+@class ServiceBase;
+@class ServiceBase;
+
 @interface ServiceBaseID : ServiceObjectID {}
 @end
 
@@ -94,6 +106,38 @@ extern const struct ServiceBaseAttributes {
 
 //- (BOOL)validateType:(id*)value_ error:(NSError**)error_;
 
+@property (nonatomic, strong) NSSet *created;
+
+- (NSMutableSet*)createdSet;
+
+@property (nonatomic, strong) ServiceBase *creator;
+
+//- (BOOL)validateCreator:(id*)value_ error:(NSError**)error_;
+
+@property (nonatomic, strong) NSSet *owned;
+
+- (NSMutableSet*)ownedSet;
+
+@property (nonatomic, strong) ServiceBase *owner;
+
+//- (BOOL)validateOwner:(id*)value_ error:(NSError**)error_;
+
+@end
+
+@interface _ServiceBase (CreatedCoreDataGeneratedAccessors)
+- (void)addCreated:(NSSet*)value_;
+- (void)removeCreated:(NSSet*)value_;
+- (void)addCreatedObject:(ServiceBase*)value_;
+- (void)removeCreatedObject:(ServiceBase*)value_;
+
+@end
+
+@interface _ServiceBase (OwnedCoreDataGeneratedAccessors)
+- (void)addOwned:(NSSet*)value_;
+- (void)removeOwned:(NSSet*)value_;
+- (void)addOwnedObject:(ServiceBase*)value_;
+- (void)removeOwnedObject:(ServiceBase*)value_;
+
 @end
 
 @interface _ServiceBase (CoreDataGeneratedPrimitiveAccessors)
@@ -142,5 +186,17 @@ extern const struct ServiceBaseAttributes {
 
 - (NSDate*)primitiveSortDate;
 - (void)setPrimitiveSortDate:(NSDate*)value;
+
+- (NSMutableSet*)primitiveCreated;
+- (void)setPrimitiveCreated:(NSMutableSet*)value;
+
+- (ServiceBase*)primitiveCreator;
+- (void)setPrimitiveCreator:(ServiceBase*)value;
+
+- (NSMutableSet*)primitiveOwned;
+- (void)setPrimitiveOwned:(NSMutableSet*)value;
+
+- (ServiceBase*)primitiveOwner;
+- (void)setPrimitiveOwner:(ServiceBase*)value;
 
 @end

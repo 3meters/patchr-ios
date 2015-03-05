@@ -1,6 +1,7 @@
 #import "Patch.h"
 #import "PACategory.h"
 #import "Place.h"
+#import "Message.h"
 
 @interface Patch ()
 
@@ -21,6 +22,22 @@
     
     if (dictionary[@"place"]) {
         patch.place = [Place setPropertiesFromDictionary:dictionary[@"place"] onObject:[Place insertInManagedObjectContext:patch.managedObjectContext] mappingNames:mapNames];
+    }
+    
+    if ([dictionary[@"linked"] isKindOfClass:[NSArray class]]) {
+        // Configure relationships
+        for (id link in dictionary[@"linked"]) {
+            if ([link isKindOfClass:[NSDictionary class]]) {
+                NSDictionary *linkDictionary = link;
+                if ([linkDictionary[@"schema"] isEqualToString:@"message"]) {
+                    Message *message = [Message fetchOrInsertOneById:linkDictionary[@"_id"] inManagedObjectContext:patch.managedObjectContext];
+                    message = [Message setPropertiesFromDictionary:linkDictionary onObject:message mappingNames:mapNames];
+                    [patch.messagesSet addObject:message];
+                } else {
+                    NSLog(@"WARNING: Unhandled linked object schema: %@", linkDictionary[@"schema"]);
+                }
+            }
+        }
     }
     
     // Note: Doesn't seem like signalFence is currently in use

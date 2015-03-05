@@ -28,5 +28,6 @@
 #import "Location.h"
 #import "Photo.h"
 #import "Message.h"
+#import "User.h"
 
 #endif

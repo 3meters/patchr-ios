@@ -19,8 +19,9 @@ public class FetchControllerDelegate: NSFetchedResultsControllerDelegate {
     public var onUpdate: ((cell: UITableViewCell, object: AnyObject) -> Void)?
     public var ignoreNextUpdates: Bool = false
     
-    init(tableView: UITableView) {
+    init(tableView: UITableView, onUpdate: ((cell: UITableViewCell, object: AnyObject) -> Void)?) {
         self.tableView = tableView
+        self.onUpdate = onUpdate
     }
     
     public func controllerWillChangeContent(controller: NSFetchedResultsController)  {
@@ -61,7 +62,9 @@ public class FetchControllerDelegate: NSFetchedResultsControllerDelegate {
         case .Delete:
             tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
         case .Update:
-            onUpdate?(cell: tableView.cellForRowAtIndexPath(indexPath!)!, object: anObject)
+            if let cell = tableView.cellForRowAtIndexPath(indexPath!) {
+                onUpdate?(cell: cell, object: anObject)
+            }
         case .Move:
             // Stupid and ugly, rdar://17684030
             if !contains(sectionsBeingAdded, newIndexPath!.section) && !contains(sectionsBeingRemoved, indexPath!.section) {

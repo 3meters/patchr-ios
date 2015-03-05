@@ -10,9 +10,11 @@ extern const struct MessageAttributes {
 } MessageAttributes;
 
 extern const struct MessageRelationships {
+	__unsafe_unretained NSString *patch;
 	__unsafe_unretained NSString *replyTo;
 } MessageRelationships;
 
+@class Patch;
 @class User;
 
 @interface MessageID : EntityID {}
@@ -32,6 +34,10 @@ extern const struct MessageRelationships {
 
 //- (BOOL)validateRootId:(id*)value_ error:(NSError**)error_;
 
+@property (nonatomic, strong) Patch *patch;
+
+//- (BOOL)validatePatch:(id*)value_ error:(NSError**)error_;
+
 @property (nonatomic, strong) User *replyTo;
 
 //- (BOOL)validateReplyTo:(id*)value_ error:(NSError**)error_;
@@ -45,6 +51,9 @@ extern const struct MessageRelationships {
 
 - (NSString*)primitiveRootId;
 - (void)setPrimitiveRootId:(NSString*)value;
+
+- (Patch*)primitivePatch;
+- (void)setPrimitivePatch:(Patch*)value;
 
 - (User*)primitiveReplyTo;
 - (void)setPrimitiveReplyTo:(User*)value;

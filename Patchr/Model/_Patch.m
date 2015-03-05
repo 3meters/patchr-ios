@@ -9,6 +9,7 @@ const struct PatchAttributes PatchAttributes = {
 
 const struct PatchRelationships PatchRelationships = {
 	.category = @"category",
+	.messages = @"messages",
 	.place = @"place",
 };
 
@@ -68,6 +69,17 @@ const struct PatchRelationships PatchRelationships = {
 }
 
 @dynamic category;
+
+@dynamic messages;
+
+- (NSMutableSet*)messagesSet {
+	[self willAccessValueForKey:@"messages"];
+
+	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"messages"];
+
+	[self didAccessValueForKey:@"messages"];
+	return result;
+}
 
 @dynamic place;
 

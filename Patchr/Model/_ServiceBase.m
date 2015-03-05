@@ -20,6 +20,13 @@ const struct ServiceBaseAttributes ServiceBaseAttributes = {
 	.type = @"type",
 };
 
+const struct ServiceBaseRelationships ServiceBaseRelationships = {
+	.created = @"created",
+	.creator = @"creator",
+	.owned = @"owned",
+	.owner = @"owner",
+};
+
 @implementation ServiceBaseID
 @end
 
@@ -123,6 +130,32 @@ const struct ServiceBaseAttributes ServiceBaseAttributes = {
 @dynamic sortDate;
 
 @dynamic type;
+
+@dynamic created;
+
+- (NSMutableSet*)createdSet {
+	[self willAccessValueForKey:@"created"];
+
+	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"created"];
+
+	[self didAccessValueForKey:@"created"];
+	return result;
+}
+
+@dynamic creator;
+
+@dynamic owned;
+
+- (NSMutableSet*)ownedSet {
+	[self willAccessValueForKey:@"owned"];
+
+	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"owned"];
+
+	[self didAccessValueForKey:@"owned"];
+	return result;
+}
+
+@dynamic owner;
 
 @end
 

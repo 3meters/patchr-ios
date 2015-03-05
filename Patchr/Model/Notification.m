@@ -31,6 +31,10 @@
         notification.photoBig = [Photo setPropertiesFromDictionary:dictionary[@"photoBig"] onObject:[Photo insertInManagedObjectContext:notification.managedObjectContext] mappingNames:mapNames];
     }
     
+    
+    NSLog(@"%@", dictionary);
+    NSLog(@"%@", notification);
+    
     return notification;
 }
 

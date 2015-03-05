@@ -64,25 +64,16 @@ class ExploreTableViewController: QueryResultTableViewController {
     }
 
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
-        if let queryResult = object as? QueryResult {
-            if let patch = queryResult.entity_ as? Patch {
-                if let patchCell = cell as? PatchTableViewCell {
-                    patchCell.nameLabel.text = patch.name
-                    patchCell.nameLabel.sizeToFit()
-                    patchCell.categoryLabel.text = patch.category.name
-                    patchCell.detailsLabel.text = "\(patch.numberOfMessages) Messages  \(patch.numberOfWatchers) Watching"
-                    patchCell.imageViewThumb.image = nil
-                    if patch.photo != nil && patch.photo.photoURL() != nil {
-                        patchCell.imageViewThumb.setImageWithURL(patch.photo.photoURL())
-                    }
-                } else {
-                    cell.textLabel?.text = "\(patch.name)"
-                }
-            } else {
-                cell.textLabel?.text = "Unknown QueryResult entity type"
-            }
-        } else {
-            cell.textLabel?.text = "Object \(String.fromCString(object_getClassName(object)))"
+        let queryResult = object as QueryResult
+        let patch = queryResult.entity_ as Patch
+        let patchCell = cell as PatchTableViewCell
+        patchCell.nameLabel.text = patch.name
+        patchCell.nameLabel.sizeToFit()
+        patchCell.categoryLabel.text = patch.category.name
+        patchCell.detailsLabel.text = "\(patch.numberOfMessages) Messages  \(patch.numberOfWatchers) Watching"
+        patchCell.imageViewThumb.image = nil
+        if patch.photo != nil && patch.photo.photoURL() != nil {
+            patchCell.imageViewThumb.setImageWithURL(patch.photo.photoURL())
         }
     }
     

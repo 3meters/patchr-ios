@@ -46,7 +46,6 @@
                     </imageView>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="urW-PS-H6D">
                         <rect key="frame" x="66" y="275" width="24" height="24"/>
-                        <color key="backgroundColor" red="1" green="0.55199464109999996" blue="0.067082077099999998" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="24" id="esU-EX-8Zv"/>
                             <constraint firstAttribute="height" constant="24" id="fer-JH-VAc"/>

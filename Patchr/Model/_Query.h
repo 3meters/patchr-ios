@@ -5,6 +5,7 @@
 
 extern const struct QueryAttributes {
 	__unsafe_unretained NSString *name;
+	__unsafe_unretained NSString *parameters;
 } QueryAttributes;
 
 extern const struct QueryRelationships {
@@ -12,6 +13,8 @@ extern const struct QueryRelationships {
 } QueryRelationships;
 
 @class QueryResult;
+
+@class NSDictionary;
 
 @interface QueryID : NSManagedObjectID {}
 @end
@@ -25,6 +28,10 @@ extern const struct QueryRelationships {
 @property (nonatomic, strong) NSString* name;
 
 //- (BOOL)validateName:(id*)value_ error:(NSError**)error_;
+
+@property (nonatomic, strong) NSDictionary* parameters;
+
+//- (BOOL)validateParameters:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSSet *queryResults;
 
@@ -44,6 +51,9 @@ extern const struct QueryRelationships {
 
 - (NSString*)primitiveName;
 - (void)setPrimitiveName:(NSString*)value;
+
+- (NSDictionary*)primitiveParameters;
+- (void)setPrimitiveParameters:(NSDictionary*)value;
 
 - (NSMutableSet*)primitiveQueryResults;
 - (void)setPrimitiveQueryResults:(NSMutableSet*)value;

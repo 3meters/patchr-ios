@@ -9,6 +9,7 @@ const struct MessageAttributes MessageAttributes = {
 };
 
 const struct MessageRelationships MessageRelationships = {
+	.patch = @"patch",
 	.replyTo = @"replyTo",
 };
 
@@ -44,6 +45,8 @@ const struct MessageRelationships MessageRelationships = {
 @dynamic replyToId;
 
 @dynamic rootId;
+
+@dynamic patch;
 
 @dynamic replyTo;
 

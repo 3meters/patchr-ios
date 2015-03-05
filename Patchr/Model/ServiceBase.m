@@ -1,4 +1,5 @@
 #import "ServiceBase.h"
+#import "ModelUtilities.h"
 
 @interface ServiceBase ()
 
@@ -7,6 +8,29 @@
 @end
 
 @implementation ServiceBase
+
++ (id)fetchOneById:(NSString *)id_ inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext {
+    
+    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:[[self class] entityName]];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:ServiceBaseAttributes.id_ ascending:NO];
+    fetchRequest.sortDescriptors = @[sortDescriptor];
+    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"%K = %@", ServiceBaseAttributes.id_, id_];
+    
+    NSError *error;
+    NSArray *results = [managedObjectContext executeFetchRequest:fetchRequest error:&error];
+    NSAssert(!error, @"Error fetching MediaItem");
+    id item = [results firstObject];
+    return item;
+}
+
++ (id)fetchOrInsertOneById:(NSString *)id_ inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext {
+    ServiceBase *item = [[self class] fetchOneById:id_ inManagedObjectContext:managedObjectContext];
+    if (!item) {
+        item = [[self class] insertInManagedObjectContext:managedObjectContext];
+        item.id_ = id_;
+    }
+    return item;
+}
 
 + (ServiceBase *)setPropertiesFromDictionary:(NSDictionary *)dictionary
                                     onObject:(ServiceBase *)base
@@ -36,6 +60,14 @@
     
     if ([dictionary[@"sortDate"] isKindOfClass:[NSNumber class]]) {
         base.sortDate = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"sortDate"] doubleValue]/1000];
+    }
+    
+    if ([dictionary[@"creator"] isKindOfClass:[NSDictionary class]]) {
+        if ([ModelUtilities modelClassForSchema:dictionary[@"creator"][@"schema"]]) {
+            Class modelClass = [ModelUtilities modelClassForSchema:dictionary[@"creator"][@"schema"]];
+            id creator = [modelClass fetchOrInsertOneById:dictionary[@"creator"][@"_id"] inManagedObjectContext:base.managedObjectContext];
+            base.creator = [modelClass setPropertiesFromDictionary:dictionary[@"creator"] onObject:creator mappingNames:mapNames];
+        }
     }
     
     // TODO it looks like creator, owner, and modifier objects are sometimes returned too, but we'll do indirect

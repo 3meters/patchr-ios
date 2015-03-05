@@ -10,10 +10,12 @@ extern const struct PatchAttributes {
 
 extern const struct PatchRelationships {
 	__unsafe_unretained NSString *category;
+	__unsafe_unretained NSString *messages;
 	__unsafe_unretained NSString *place;
 } PatchRelationships;
 
 @class PACategory;
+@class Message;
 @class Place;
 
 @interface PatchID : EntityID {}
@@ -37,9 +39,21 @@ extern const struct PatchRelationships {
 
 //- (BOOL)validateCategory:(id*)value_ error:(NSError**)error_;
 
+@property (nonatomic, strong) NSSet *messages;
+
+- (NSMutableSet*)messagesSet;
+
 @property (nonatomic, strong) Place *place;
 
 //- (BOOL)validatePlace:(id*)value_ error:(NSError**)error_;
+
+@end
+
+@interface _Patch (MessagesCoreDataGeneratedAccessors)
+- (void)addMessages:(NSSet*)value_;
+- (void)removeMessages:(NSSet*)value_;
+- (void)addMessagesObject:(Message*)value_;
+- (void)removeMessagesObject:(Message*)value_;
 
 @end
 
@@ -53,6 +67,9 @@ extern const struct PatchRelationships {
 
 - (PACategory*)primitiveCategory;
 - (void)setPrimitiveCategory:(PACategory*)value;
+
+- (NSMutableSet*)primitiveMessages;
+- (void)setPrimitiveMessages:(NSMutableSet*)value;
 
 - (Place*)primitivePlace;
 - (void)setPrimitivePlace:(Place*)value;

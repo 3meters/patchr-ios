@@ -50,8 +50,9 @@ class DataStore: NSObject {
                 completion(results: self.handleResponseForQuery(query, response: response!), error: error)
             })
         case "Messages for patch":
-            // TODO need mechanism to pass patchId through query
-            self.proxibaseClient.fetchMessagesForPatch("pa.123.todo", completion: { (response, error) -> Void in
+            // TODO need better mechanism to pass patchId through query
+            let patchId = query.parameters["patchId"] as String
+            self.proxibaseClient.fetchMessagesForPatch(patchId, completion: { (response, error) -> Void in
                 completion(results: self.handleResponseForQuery(query, response: response!), error: error)
             })
         default:
@@ -74,7 +75,14 @@ class DataStore: NSObject {
                 for entityDictionary in entityDictionaries {
                     if let schema = entityDictionary["schema"] as? String {
                         if let modelType = self.schemaDictionary[schema] {
-                            let entityModel = modelType.insertInManagedObjectContext(self.managedObjectContext) as Entity
+                            
+                            var entityModel : Entity
+                            if let entityId = entityDictionary["_id"] as? String {
+                                entityModel = modelType.fetchOrInsertOneById(entityId, inManagedObjectContext: self.managedObjectContext) as Entity
+                            } else {
+                                entityModel = modelType.insertInManagedObjectContext(self.managedObjectContext) as Entity
+                            }
+                            
                             modelType.setPropertiesFromDictionary(entityDictionary, onObject: entityModel, mappingNames: true)
                             let queryResult = QueryResult.insertInManagedObjectContext(self.managedObjectContext) as QueryResult
                             queryResult.query = query

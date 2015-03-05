@@ -13,6 +13,7 @@ class NotificationsTableViewController: QueryResultTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.registerNib(UINib(nibName: "NotificationTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
+        // TODO consolidate this workaround across the table view controllers
         // iOS 7 doesn't support the new style self-sizing cells
         // http://stackoverflow.com/a/26283017/2247399
         if NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_7_1 {
@@ -57,35 +58,28 @@ class NotificationsTableViewController: QueryResultTableViewController {
     }
     
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
-        if let queryResult = object as? QueryResult {
-            if let notification = queryResult.entity_ as? Notification {
-                if let notificationCell = cell as? NotificationTableViewCell {
-                    var notificationSummaryAttributedText = NSMutableAttributedString(HTML: notification.summary)
-                    notificationSummaryAttributedText.enumerateFontsInRange(NSMakeRange(0, notificationSummaryAttributedText.length), includeUndefined: true, usingBlock: { (font, range, stop) -> Void in
-                        var newFont = font
-                        if newFont == nil {
-                            newFont = NSAttributedString.defaultFont()
-                        }
-                        newFont = newFont.fontWithSize(notificationCell.summaryLabel.font.pointSize)
-                        notificationSummaryAttributedText.setFont(newFont, range: range)
-                    })
-                    notificationCell.summaryLabel.attributedText = notificationSummaryAttributedText
-                    notificationCell.notificationImageView.image = nil
-                    if let photo = notification.photoBig {
-                        notificationCell.notificationImageMaxHeightConstraint.constant = 10000
-                        notificationCell.notificationImageView.setImageWithURL(photo.photoURL())
-                    } else {
-                        notificationCell.notificationImageMaxHeightConstraint.constant = 0
-                    }
-                } else {
-                    cell.textLabel?.text = notification.summary
-                }
-            } else {
-                cell.textLabel?.text = "Unknown QueryResult entity type"
-            }
+        let queryResult = object as QueryResult
+        let notification = queryResult.entity_ as Notification
+        let notificationCell = cell as NotificationTableViewCell
+        notificationCell.summaryLabel.text = notification.summary
+        notificationCell.summaryLabel.sizeToFit()
+        
+        notificationCell.notificationImageView.image = nil
+        if let photo = notification.photoBig {
+            notificationCell.notificationImageMaxHeightConstraint.constant = 10000
+            notificationCell.notificationImageView.setImageWithURL(photo.photoURL())
         } else {
-            cell.textLabel?.text = "Object \(String.fromCString(object_getClassName(object)))"
+            notificationCell.notificationImageMaxHeightConstraint.constant = 0
         }
+        
+        notificationCell.avatarImageView.image = nil;
+        if let avatarPhotoURL = notification.photo?.photoURL() {
+            notificationCell.avatarImageView.setImageWithURL(avatarPhotoURL)
+        } else {
+            notificationCell.avatarImageView.image = UIImage(named: "Placeholder other user profile")
+        }
+        
+        notificationCell.dateLabel.text = notification.createdDate.description
     }
 
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {

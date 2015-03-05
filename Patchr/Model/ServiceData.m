@@ -15,7 +15,13 @@
                                 mappingNames:(BOOL)mapNames {
     serviceData.count = dictionary[@"count"];
     serviceData.date = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"date"] doubleValue]/1000];
-    serviceData.data = dictionary[@"data"];
+    if ([dictionary[@"data"] isKindOfClass:[NSDictionary class]]) {
+        // Normalize a single dictionary into an array with a single object to simplify handling later on
+        serviceData.data = [NSArray arrayWithObject:dictionary[@"data"]];
+    } else {
+        serviceData.data = dictionary[@"data"];
+    }
+    
     serviceData.more = dictionary[@"more"];
     serviceData.time = dictionary[@"time"];
     return serviceData;

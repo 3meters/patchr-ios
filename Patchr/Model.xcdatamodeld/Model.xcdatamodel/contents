@@ -28,6 +28,7 @@
     <entity name="Message" representedClassName="Message" parentEntity="Entity" syncable="YES">
         <attribute name="replyToId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="rootId" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="patch" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Patch" inverseName="messages" inverseEntity="Patch" syncable="YES"/>
         <relationship name="replyTo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="replies" inverseEntity="User" syncable="YES"/>
     </entity>
     <entity name="Notification" representedClassName="Notification" parentEntity="Entity" syncable="YES">
@@ -52,6 +53,7 @@
     <entity name="Patch" representedClassName="Patch" parentEntity="Entity" syncable="YES">
         <attribute name="signalFence" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <relationship name="category" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PACategory" inverseName="patches" inverseEntity="PACategory" syncable="YES"/>
+        <relationship name="messages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Message" inverseName="patch" inverseEntity="Message" syncable="YES"/>
         <relationship name="place" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Place" inverseName="patch" inverseEntity="Place" syncable="YES"/>
     </entity>
     <entity name="Photo" representedClassName="Photo" parentEntity="ServiceObject" syncable="YES">
@@ -87,6 +89,11 @@
     </entity>
     <entity name="Query" representedClassName="Query" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="parameters" optional="YES" attributeType="Transformable" syncable="YES">
+            <userInfo>
+                <entry key="attributeValueClassName" value="NSDictionary"/>
+            </userInfo>
+        </attribute>
         <relationship name="queryResults" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="QueryResult" inverseName="query" inverseEntity="QueryResult" syncable="YES"/>
     </entity>
     <entity name="QueryResult" representedClassName="QueryResult" syncable="YES">
@@ -110,6 +117,10 @@
         <attribute name="schema" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="sortDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="created" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ServiceBase" inverseName="creator" inverseEntity="ServiceBase" syncable="YES"/>
+        <relationship name="creator" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ServiceBase" inverseName="created" inverseEntity="ServiceBase" syncable="YES"/>
+        <relationship name="owned" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ServiceBase" inverseName="owner" inverseEntity="ServiceBase" syncable="YES"/>
+        <relationship name="owner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ServiceBase" inverseName="owned" inverseEntity="ServiceBase" syncable="YES"/>
     </entity>
     <entity name="ServiceObject" representedClassName="ServiceObject" isAbstract="YES" syncable="YES">
         <attribute name="updateScope" optional="YES" attributeType="String" syncable="YES"/>
@@ -146,16 +157,16 @@
     <elements>
         <element name="Entity" positionX="-63" positionY="-18" width="128" height="238"/>
         <element name="Location" positionX="-18" positionY="54" width="128" height="163"/>
-        <element name="Message" positionX="-18" positionY="135" width="128" height="88"/>
+        <element name="Message" positionX="-18" positionY="135" width="128" height="103"/>
         <element name="Notification" positionX="0" positionY="144" width="128" height="193"/>
         <element name="PACategory" positionX="-9" positionY="144" width="128" height="118"/>
-        <element name="Patch" positionX="-54" positionY="0" width="128" height="88"/>
+        <element name="Patch" positionX="-54" positionY="0" width="128" height="103"/>
         <element name="Photo" positionX="-9" positionY="63" width="128" height="180"/>
         <element name="Place" positionX="-36" positionY="18" width="128" height="178"/>
         <element name="ProviderMap" positionX="0" positionY="153" width="128" height="148"/>
-        <element name="Query" positionX="-18" positionY="36" width="128" height="75"/>
+        <element name="Query" positionX="-18" positionY="36" width="128" height="88"/>
         <element name="QueryResult" positionX="-18" positionY="36" width="128" height="103"/>
-        <element name="ServiceBase" positionX="0" positionY="63" width="128" height="255"/>
+        <element name="ServiceBase" positionX="0" positionY="63" width="128" height="313"/>
         <element name="ServiceObject" positionX="18" positionY="72" width="128" height="60"/>
         <element name="Statistic" positionX="-18" positionY="135" width="128" height="133"/>
         <element name="User" positionX="-9" positionY="144" width="128" height="328"/>

@@ -27,14 +27,18 @@
 
 - (NSURL *)photoURL {
     // TODO complete implementation is quite complicated. See Photo.java in Android project
-    if ([self.source isEqualToString:@"aircandi.images"]) {
+    if ([self.source isEqualToString:@"aircandi.images"] || [self.source isEqualToString:@"aircandi"]) {
         NSString *mediaImagesBaseURL = @"http://aircandi-images.s3.amazonaws.com/";
+        NSString *path = [mediaImagesBaseURL stringByAppendingString:self.prefix];
+        return [NSURL URLWithString:path];
+    } else if ([self.source isEqualToString:@"aircandi.users"]) {
+        NSString *mediaImagesBaseURL = @"http://aircandi-users.s3.amazonaws.com/";
         NSString *path = [mediaImagesBaseURL stringByAppendingString:self.prefix];
         return [NSURL URLWithString:path];
     } else {
         NSLog(@"Unknown photo source: %@", self.source);
+        return [NSURL URLWithString:self.prefix];
     }
-    return nil;
 }
 
 @end

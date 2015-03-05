@@ -36,15 +36,9 @@ class MeTableViewViewController: QueryResultTableViewController {
     }
     
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
-        if let queryResult = object as? QueryResult {
-            if let message = queryResult.entity_ as? Message {
-                cell.textLabel?.text = message.description_
-            } else {
-                cell.textLabel?.text = "Unknown QueryResult entity type"
-            }
-        } else {
-            cell.textLabel?.text = "Object \(String.fromCString(object_getClassName(object)))"
-        }
+        let queryResult = object as QueryResult
+        let message = queryResult.entity_ as Message
+        cell.textLabel?.text = message.description_
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
