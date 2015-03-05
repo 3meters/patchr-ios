@@ -29,13 +29,26 @@ class RegistrationTableViewController: UITableViewController {
     @IBAction func joinButtonAction(sender: AnyObject) {
     
         let parameters = NSMutableDictionary()
-        ProxibaseClient.sharedInstance.createUser(fullNameTextField.text, email: emailTextField.text, password: passwordTextField.text, parameters: parameters) { (response, error) in
+        let proxibase = ProxibaseClient.sharedInstance
+        proxibase.createUser(fullNameTextField.text, email: emailTextField.text, password: passwordTextField.text, parameters: parameters) { (response, error) in
             
             if error == nil {
-                // Successful registration and sign-in. Move to the main scene.
-                let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-                let viewController = UIStoryboard(name:"Main", bundle:NSBundle.mainBundle()).instantiateInitialViewController() as UIViewController;
-                appDelegate.window!.setRootViewController(viewController, animated: true)
+            
+                let userInfo = ["area": "Yaletown"] // TODO: Fix this up
+                
+                proxibase.updateUser(userInfo) { response, error in
+                
+                    if let error = error {
+                        println("Error Updating User Info: \(error)")
+                    }
+                    
+
+                    // Successful registration and sign-in. Move to the main scene.
+                    let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+                    let viewController = UIStoryboard(name:"Main", bundle:NSBundle.mainBundle()).instantiateInitialViewController() as UIViewController;
+                    appDelegate.window!.setRootViewController(viewController, animated: true)
+                }
+            
             }
             // TODO: What could go wrong here?
         }

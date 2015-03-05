@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 
+
 class DebugViewController: UIViewController
 {
     @IBOutlet weak var serverURIField: UITextField!
@@ -26,5 +27,24 @@ class DebugViewController: UIViewController
         
         userDefaults.setObject(serverURIField.text, forKey:"com.3meters.patchr.ios.serverURI")
     }
+    
+    
+//      S3 Setup
+//
+//      {
+//          key: 'AKIAIYU2FPHC2AOUG3CA',
+//          secret: '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',
+//          region: 'us-west-2',
+//          bucket: 'aircandi-images',
+//      }
 
+    let PatchrS3Key    = "AKIAIYU2FPHC2AOUG3CA"
+    let PatchrS3Secret = "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"
+    
+
+
+    @IBAction func testButtonAction(sender: AnyObject)
+    {
+        println("test")
+    }
 }

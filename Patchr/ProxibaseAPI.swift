@@ -76,18 +76,21 @@ public class ProxibaseClient {
         sessionManager.responseSerializer = JSONResponseSerializerWithData()
         
 
-//      S3
+//      S3 Setup
+//
 //      {
-//        key: 'AKIAIYU2FPHC2AOUG3CA',
-//        secret: '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',
-//        region: 'us-west-2',
-//        bucket: 'aircandi-images',
+//          key: 'AKIAIYU2FPHC2AOUG3CA',
+//          secret: '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',
+//          region: 'us-west-2',
+//          bucket: 'aircandi-images',
 //      }
 
         let PatchrS3Key    = "AKIAIYU2FPHC2AOUG3CA"
         let PatchrS3Secret = "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"
         
         s3Manager = AFAmazonS3Manager(accessKeyID: PatchrS3Key, secret: PatchrS3Secret)
+        s3Manager.requestSerializer.region = AFAmazonS3USWest2Region
+        s3Manager.requestSerializer.bucket = "aircandi-images"
         
     }
     
@@ -129,7 +132,14 @@ public class ProxibaseClient {
         })
     }
     
-    // Send an auth/signout message. 
+    private func discardCredentials()
+    {
+        userId = nil;
+        sessionKey = nil;
+        writeCredentialsToUserDefaults()
+    }
+    
+    // Send an auth/signout message.
     //
     // Discard credentials whether or not the server thinks we are signed out.
     // The completion closure is always performed asynchronously.
@@ -137,20 +147,13 @@ public class ProxibaseClient {
     public func signOut(completion:(response: AnyObject?, error: NSError?) -> Void)
     {
         if self.authenticated {
-            self.performGETRequestFor("auth/signout", parameters: [:],
-                completion: { (response, error) -> Void in
-                    if error == nil {
-                        self.userId = nil;
-                        self.sessionKey = nil;
-                        self.writeCredentialsToUserDefaults()
-                    }
-                    
-                    completion(response: response, error: error)
-                })
+            self.performGETRequestFor("auth/signout", parameters: [:]) { response, error in
+
+                self.discardCredentials()
+                completion(response: response, error: error)
+            }
         } else {
-            self.userId = nil;
-            self.sessionKey = nil;
-            writeCredentialsToUserDefaults()
+            discardCredentials()
             
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 completion(response: nil, error: nil)
@@ -158,10 +161,12 @@ public class ProxibaseClient {
         }
     }
     
+    public typealias ProxibaseCompletionBlock = (response: AnyObject?, error: NSError?) -> Void
+    
     // Create a new user with the provided name, email and password.
     // • Additional optional information (like profile photo) is sent in the parameters dictionary
-    // •
-    public func createUser(name: String, email: String, password: String, parameters: NSDictionary? = nil, completion:(response: AnyObject?, error: NSError?) -> Void)
+    //
+    public func createUser(name: String, email: String, password: String, parameters: NSDictionary? = nil, completion: ProxibaseCompletionBlock)
     {
         let parameters = ["data": ["name": name,
                                    "email": email,
@@ -171,8 +176,7 @@ public class ProxibaseClient {
                           "installId": installId
                          ]
         
-        self.performPOSTRequestFor("user/create", parameters: parameters,
-            completion: { (response, error) -> Void in
+        self.performPOSTRequestFor("user/create", parameters: parameters) { response, error in
                 if error == nil {
                     // After creating a user, the user is left in a logged-in state, so process the response
                     // to extract the credentials.
@@ -182,8 +186,30 @@ public class ProxibaseClient {
                 // - User email exists already.
                 // - Other server failures?
                 completion(response: response, error: error)
-        })
+        }
     }
+
+    // Update the currently signed-in user's information. Only provide fields that you want to change.
+    
+    public func updateUser(userInfo: NSDictionary, completion: ProxibaseCompletionBlock)
+    {
+        assert(self.authenticated, "ProxibaseClient must be authenticated prior to editing the user")
+        if let userId = self.userId {
+        
+            if let photo = userInfo["photo"] as? UIImage
+            {
+                println("## there is a photo")
+            }
+            
+            let parameters = ["data": userInfo]
+            
+            self.performPOSTRequestFor("data/users/\(userId)", parameters: parameters) { response, error in
+                completion(response: response, error: error)
+            }
+        }
+    }
+    
+
     
     public func fetchNearbyPatches(location: CLLocationCoordinate2D, radius: NSInteger, limit: NSInteger = 50, skip: NSInteger = 0, links: [Link] = [], completion:(response: AnyObject?, error: NSError?) -> Void) {
         var allLinks = self.standardPatchLinks() + links
