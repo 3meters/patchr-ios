@@ -25,6 +25,38 @@ func PatchrUserDefaultKey(subKey: String) -> String
     return "com.3meters.patchr.ios." + subKey
 }
 
+let globalGregorianCalendar = NSCalendar(calendarIdentifier: NSGregorianCalendar)
+
+public func DateTimeTag() -> String!
+{
+    let date = NSDate()
+
+    if let dc = globalGregorianCalendar?.components(.CalendarUnitYear | .CalendarUnitMonth | .CalendarUnitDay |
+                                                    .CalendarUnitHour | .CalendarUnitMinute | .CalendarUnitSecond, fromDate: date)
+    {
+        return String(format:"%04d%02d%02d_%02d%02d%02d", dc.year, dc.month, dc.day, dc.hour, dc.minute, dc.second)
+    }
+    return nil
+}
+
+var temporaryFileCount = 0
+
+func TemporaryFileURLForImage(image: UIImage) -> NSURL?
+{
+    let imageData = UIImageJPEGRepresentation(image, /*compressionQuality*/0.75)
+    if let imageData = imageData {
+    
+        // Note: This method of getting a temporary file path is not the recommended method. See the docs for NSTemporaryDirectory.
+        let temporaryFilePath = NSTemporaryDirectory() + "patchr_temp_file_\(temporaryFileCount).jpg"
+        println(temporaryFilePath)
+        
+        if imageData.writeToFile(temporaryFilePath, atomically: false) {
+            return NSURL(fileURLWithPath: temporaryFilePath)
+        }
+    }
+    return nil
+}
+
 public class ProxibaseClient {
 
     // Use this in Swift 1.2
@@ -39,7 +71,6 @@ public class ProxibaseClient {
     }
     
     private let sessionManager: AFHTTPSessionManager
-    private let s3Manager: AFAmazonS3Manager
     
     public var userId : NSString?
     public var sessionKey : NSString?
@@ -74,9 +105,9 @@ public class ProxibaseClient {
 
         sessionManager.requestSerializer = AFJSONRequestSerializer(writingOptions: nil)
         sessionManager.responseSerializer = JSONResponseSerializerWithData()
-        
-
-//      S3 Setup
+    }
+    
+// MARK: S3 Uploading
 //
 //      {
 //          key: 'AKIAIYU2FPHC2AOUG3CA',
@@ -84,15 +115,62 @@ public class ProxibaseClient {
 //          region: 'us-west-2',
 //          bucket: 'aircandi-images',
 //      }
-
-        let PatchrS3Key    = "AKIAIYU2FPHC2AOUG3CA"
-        let PatchrS3Secret = "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"
-        
-        s3Manager = AFAmazonS3Manager(accessKeyID: PatchrS3Key, secret: PatchrS3Secret)
-        s3Manager.requestSerializer.region = AFAmazonS3USWest2Region
-        s3Manager.requestSerializer.bucket = "aircandi-images"
-        
+    private let PatchrS3Key    = "AKIAIYU2FPHC2AOUG3CA"
+    private let PatchrS3Secret = "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"
+    
+    public typealias S3UploadCompletionBlock = (/*result*/AnyObject?, NSError?) -> Void
+    
+    public func uploadImageToS3(image:UIImage, bucket:String, key:String, completion:S3UploadCompletionBlock)
+    {
+        if let imageURL = TemporaryFileURLForImage(image) {
+            uploadFileToS3(imageURL, contentType: "image/jpeg", bucket: bucket, key: key) { result, error in
+                completion(result, error)
+                
+                NSFileManager.defaultManager().removeItemAtURL(imageURL, error: nil)
+            }
+        }
     }
+    
+    // Uploads a file from the local file URL to the specified bucket in the 3meters S3 storage space. The file is stored with
+    // the provided key.
+    //
+    // The upload occurs asynchronously and when completed, the completion block will be called with a result and error arguments.
+    // A successful result includes information like the following in the result argument of the S3UploadCompletionBlock
+    //
+    // Optional(<AWSS3TransferManagerUploadOutput: 0x7fc580c79b90> {
+    //     ETag = "\"6f2a09d19a6ae845d5916de4543984e5\"";
+    //     serverSideEncryption = 0;
+    //     versionId = 8JYaCWNaozIQIhF2pR1xYFy6W8hhbFPP;
+    // })
+
+    public func uploadFileToS3(fileURL: NSURL, contentType: String, bucket: String, key: String, completion:S3UploadCompletionBlock)
+    {
+        // TODO: Static Credentials are not recommended, but ok for development
+        
+        // NOTE: I can't get Swift to recognize the enum values for AWSRegionTypes and AWSS3ObjectCannedACLs, so I have used
+        // rawValue: initializers here.
+        
+        let credProvider = AWSStaticCredentialsProvider.credentialsWithAccessKey(PatchrS3Key, secretKey: PatchrS3Secret)
+        let serviceConfig = AWSServiceConfiguration(region: AWSRegionType(rawValue: 3/*'us-west-2'*/)!, credentialsProvider: credProvider)
+
+        let uploadRequest = AWSS3TransferManagerUploadRequest()
+        uploadRequest.bucket = bucket
+        uploadRequest.key = key
+        uploadRequest.body = fileURL
+        uploadRequest.ACL = AWSS3ObjectCannedACL(rawValue: 2/*AWSS3ObjectCannedACLPublicRead*/)!
+        uploadRequest.contentType = contentType
+        
+        let transferManager = AWSS3TransferManager(configuration: serviceConfig, identifier: "AWS-Patcher")
+
+        let task = transferManager.upload(uploadRequest)
+        
+        task.continueWithExecutor(BFExecutor.mainThreadExecutor(), withBlock: { (task) -> AnyObject! in
+            completion(task.result, task.error)
+            
+            return nil // return nil to indicate the task is complete
+        })
+    }
+
     
     private func writeCredentialsToUserDefaults()
     {
@@ -184,27 +262,62 @@ public class ProxibaseClient {
                 }
                 // TODO: What can go wrong here? 
                 // - User email exists already.
+                //        message = "Duplicate value not allowed: E11000 duplicate key error index: prox_stage.users.$email_1  dup key: { : \"test@patchr.com\" }";
+
                 // - Other server failures?
                 completion(response: response, error: error)
         }
     }
 
     // Update the currently signed-in user's information. Only provide fields that you want to change.
-    
+    //
+    // There is special processing performed for the "photo" key, which may contain a UIImage on input.
+    // If this is the case, then the image is uploaded to the users bucket on S3 and then, when that upload
+    // is completed, the user record is updated with the photo field.
     public func updateUser(userInfo: NSDictionary, completion: ProxibaseCompletionBlock)
     {
         assert(self.authenticated, "ProxibaseClient must be authenticated prior to editing the user")
         if let userId = self.userId {
-        
-            if let photo = userInfo["photo"] as? UIImage
-            {
-                println("## there is a photo")
-            }
+
+            // The queue and semaphore are used to synchronize the (optional) upload to S3 with the
+            // update of the record on the server. The S3 upload, if present, must complete first before
+            // the database update.
             
-            let parameters = ["data": userInfo]
+            let queue = dispatch_queue_create("update-user-queue", DISPATCH_QUEUE_SERIAL)
+            let semaphore = dispatch_semaphore_create(0)
             
-            self.performPOSTRequestFor("data/users/\(userId)", parameters: parameters) { response, error in
-                completion(response: response, error: error)
+            if let mutableUserInfo = userInfo.mutableCopyWithZone(nil) as? NSMutableDictionary {
+                
+                dispatch_async(queue) {
+                    if let photo = userInfo["photo"] as? UIImage
+                    {
+                        let profilePhotoKey = "\(userId)_\(DateTimeTag()).jpg"
+                        
+                        let photoDict = [
+                            "width":  Int(photo.size.width),  // width/height are in points...should be pixels?
+                            "height": Int(photo.size.height),
+                            "source": "aircandi.users",
+                            "prefix": profilePhotoKey]
+                        
+                        self.uploadImageToS3(photo, bucket: "aircandi-users", key: profilePhotoKey) { result, error in
+                        
+                            mutableUserInfo["photo"] = photoDict
+                            dispatch_semaphore_signal(semaphore)
+                        }
+                    }
+                    else
+                    {
+                        dispatch_semaphore_signal(semaphore)
+                    }
+                }
+                
+                dispatch_async(queue) {
+                    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
+                    let parameters = ["data": mutableUserInfo]
+                    self.performPOSTRequestFor("data/users/\(userId)", parameters: parameters) { response, error in
+                        completion(response: response, error: error)
+                    }
+                }
             }
         }
     }

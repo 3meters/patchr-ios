@@ -30,27 +30,45 @@ class RegistrationTableViewController: UITableViewController {
     
         let parameters = NSMutableDictionary()
         let proxibase = ProxibaseClient.sharedInstance
+        let queue = dispatch_queue_create("join-queue", DISPATCH_QUEUE_SERIAL)
+        let semaphore = dispatch_semaphore_create(0)
+        
         proxibase.createUser(fullNameTextField.text, email: emailTextField.text, password: passwordTextField.text, parameters: parameters) { (response, error) in
             
             if error == nil {
             
-                let userInfo = ["area": "Yaletown"] // TODO: Fix this up
+                var userInfo = NSMutableDictionary()
+                
+                if let image = self.avatarImageView.image
+                {
+                    userInfo["photo"] = image
+                }
                 
                 proxibase.updateUser(userInfo) { response, error in
                 
                     if let error = error {
                         println("Error Updating User Info: \(error)")
                     }
-                    
-
-                    // Successful registration and sign-in. Move to the main scene.
-                    let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-                    let viewController = UIStoryboard(name:"Main", bundle:NSBundle.mainBundle()).instantiateInitialViewController() as UIViewController;
-                    appDelegate.window!.setRootViewController(viewController, animated: true)
+                    dispatch_semaphore_signal(semaphore)
                 }
             
+                dispatch_async(queue) {
+                    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
+                    
+                    // Successful registration and sign-in. Move to the main scene.
+                    dispatch_async(dispatch_get_main_queue())
+                    {
+                        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+                        let viewController = UIStoryboard(name:"Main", bundle:NSBundle.mainBundle()).instantiateInitialViewController() as UIViewController;
+                        appDelegate.window!.setRootViewController(viewController, animated: true)
+                    }
+                }
             }
-            // TODO: What could go wrong here?
+            else
+            {
+                // Error creating user on server. Maybe display a message or something.
+                // TODO: What could go wrong here?
+            }
         }
     }
     

@@ -11,8 +11,8 @@
 
 #import <AFNetworking/AFNetworking.h>
 #import <AFNetworkActivityLogger/AFNetworkActivityLogger.h>
-#import <AFAmazonS3Manager/AFAmazonS3Manager.h>
 #import <UIImageView+AFNetworking.h>
+#import "S3.h"
 #import "JSONResponseSerializerWithData.h"
 #import <RMCoreDataStack/RMCoreDataStack.h>
 #import <OHAttributedStringAdditions.h>

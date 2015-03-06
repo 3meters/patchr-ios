@@ -83,7 +83,8 @@ class CreatePatchViewController: UIViewController,
         patchLocationMap.setRegion(currentRegion, animated: false)
         patchLocationMap.addAnnotation(self)
     }
-    
+
+
     
     @IBAction func saveButton(sender: AnyObject) {
 

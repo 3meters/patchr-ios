@@ -1,6 +1,4 @@
 PODS:
-  - AFAmazonS3Manager (3.2.1):
-    - AFNetworking/NSURLConnection (~> 2.4)
   - AFNetworkActivityLogger (2.0.4):
     - AFNetworking/NSURLConnection (~> 2.0)
     - AFNetworking/NSURLSession (~> 2.0)
@@ -25,21 +23,62 @@ PODS:
   - AFNetworking/UIKit (2.5.1):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
+  - AWSiOSSDKv2/AWSCore (2.0.16):
+    - Bolts (~> 1.1.0)
+    - FMDB (~> 2.4)
+    - GZIP (~> 1.0.3)
+    - Mantle (~> 1.4)
+    - Reachability (~> 3.1)
+    - TMCache (~> 1.2.1)
+    - UICKeyChainStore (< 3.0)
+    - XMLDictionary (~> 1.4.0)
+  - AWSiOSSDKv2/S3 (2.0.16):
+    - AWSiOSSDKv2/AWSCore
+    - Bolts (~> 1.1.0)
+    - FMDB (~> 2.4)
+    - GZIP (~> 1.0.3)
+    - Mantle (~> 1.4)
+    - Reachability (~> 3.1)
+    - TMCache (~> 1.2.1)
+    - UICKeyChainStore (< 3.0)
+    - XMLDictionary (~> 1.4.0)
+  - Bolts (1.1.4)
+  - FMDB (2.5):
+    - FMDB/standard (= 2.5)
+  - FMDB/common (2.5)
+  - FMDB/standard (2.5):
+    - FMDB/common
+  - GZIP (1.0.3)
+  - Mantle (1.5.4):
+    - Mantle/extobjc (= 1.5.4)
+  - Mantle/extobjc (1.5.4)
   - OHAttributedStringAdditions (1.2.0)
+  - Reachability (3.2)
   - RMCoreDataStack (0.1.4)
+  - TMCache (1.2.3)
+  - UICKeyChainStore (2.0.4)
+  - XMLDictionary (1.4)
 
 DEPENDENCIES:
-  - AFAmazonS3Manager (~> 3.2)
   - AFNetworkActivityLogger (~> 2.0)
   - AFNetworking (~> 2.0)
+  - AWSiOSSDKv2/S3 (~> 2.0)
   - OHAttributedStringAdditions
   - RMCoreDataStack
 
 SPEC CHECKSUMS:
-  AFAmazonS3Manager: 31a694e8db6f2cc2576ce0d4cc8619c1f5a084c0
   AFNetworkActivityLogger: cdaa92ea0d544835babe0ba097e7806182d8f837
   AFNetworking: 8bee59492a6ff15d69130efa4d0dc67e0094a52a
+  AWSiOSSDKv2: bcf17afda187f45901b07369f1f59bfbc68922bc
+  Bolts: dd9fb8433d67f5acc3b6b4d1379bbc5513d716c1
+  FMDB: 0efa188cf0dd1ce82c27a478cd5f5fa245308677
+  GZIP: f27c434ffee5e9a9b34f4e9c19e91350fa8bbde1
+  Mantle: d5fbaf30fbc58031223af13812c060e15934a1fe
   OHAttributedStringAdditions: 7e8e310db6ee2584933ce2fa2dcb5bea2a5e76f0
+  Reachability: 1ef8adf5c4e3d362f96515d4278f68dad3c26930
   RMCoreDataStack: 0c00a15fa117ffe9530fa16e30df3e0863ba2939
+  TMCache: 11589ef8c40909114a5e60132711c9a559e01d97
+  UICKeyChainStore: 2399076d0950e20fe859b8f817548cf6ca542dd7
+  XMLDictionary: 735e81b9a043e220b0d24e9d4f16719606f2e0fc
 
 COCOAPODS: 0.35.0

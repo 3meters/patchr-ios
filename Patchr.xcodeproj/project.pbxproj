@@ -74,6 +74,7 @@
 		844D6E371AA6550400EE71ED /* PhotoChooserUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */; };
 		8468F81C1A9D095E007D6EE6 /* CreatePatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8468F81B1A9D095E007D6EE6 /* CreatePatchViewController.swift */; };
 		8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8468F8211A9D09D1007D6EE6 /* Localizable.strings */; };
+		84EF12AC1AA904700043EBBA /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EF12AB1AA904700043EBBA /* Utilities.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -189,6 +190,7 @@
 		844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoChooserUI.swift; sourceTree = "<group>"; };
 		8468F81B1A9D095E007D6EE6 /* CreatePatchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreatePatchViewController.swift; sourceTree = "<group>"; };
 		8468F8201A9D09D1007D6EE6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		84EF12AB1AA904700043EBBA /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		9D5919BEF434463FF4349942 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A80DE63116DE3050C0FEC4EE /* Pods-Patchr.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.debug.xcconfig"; sourceTree = "<group>"; };
 		A9B11FC184124D485DAA2948 /* Pods-Patchr.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.release.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.release.xcconfig"; sourceTree = "<group>"; };
@@ -261,6 +263,7 @@
 				7DA730701A71ACA5008C25FA /* Model */,
 				7D01FA371A705C6600DD6DFA /* Third Party */,
 				7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */,
+				84EF12AB1AA904700043EBBA /* Utilities.swift */,
 				7D3D39EF1A6F116E00A44CB2 /* ProxibaseAPI.swift */,
 				8468F81B1A9D095E007D6EE6 /* CreatePatchViewController.swift */,
 				844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */,
@@ -650,6 +653,7 @@
 				7DA3D9121A72D5A60082D2AB /* DataStore.swift in Sources */,
 				7D3F26DB1A7706610015F8E8 /* _Notification.m in Sources */,
 				7DA7306D1A71A0EE008C25FA /* Model.xcdatamodeld in Sources */,
+				84EF12AC1AA904700043EBBA /* Utilities.swift in Sources */,
 				7D40B9501A79A6FD00F9954C /* _ProviderMap.m in Sources */,
 				7DE975EB1AA7D69500C1ECE9 /* FetchedResultsTableViewController.swift in Sources */,
 				7D3F26D31A76F77E0015F8E8 /* _Location.m in Sources */,
