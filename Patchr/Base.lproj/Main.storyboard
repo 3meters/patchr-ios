@@ -52,7 +52,7 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qCS-q0-JWo">
-                                <rect key="frame" x="16" y="187" width="79" height="30"/>
+                                <rect key="frame" x="16" y="237" width="79" height="30"/>
                                 <state key="normal" title="Test Button">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -60,11 +60,28 @@
                                     <action selector="testButtonAction:" destination="4k6-Mw-cDx" eventType="touchUpInside" id="xGN-o5-F1w"/>
                                 </connections>
                             </button>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="WHF-ff-8jo">
+                                <rect key="frame" x="99" y="165" width="189" height="29"/>
+                                <segments>
+                                    <segment title="Staging"/>
+                                    <segment title="Production"/>
+                                </segments>
+                                <connections>
+                                    <action selector="serverControlAction:" destination="4k6-Mw-cDx" eventType="valueChanged" id="KuC-el-Uva"/>
+                                </connections>
+                            </segmentedControl>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Server" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="98z-Nu-NFu">
+                                <rect key="frame" x="16" y="168" width="50" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="Debug Options" id="2Nn-ku-JwO"/>
                     <connections>
+                        <outlet property="serverControl" destination="WHF-ff-8jo" id="L2k-Y9-Tkh"/>
                         <outlet property="serverURIField" destination="CzB-3n-v5u" id="EB2-uG-8WZ"/>
                     </connections>
                 </viewController>

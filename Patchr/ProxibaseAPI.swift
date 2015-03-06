@@ -85,6 +85,8 @@ public class ProxibaseClient {
         return (userId != nil && sessionKey != nil)
     }
     
+    public let StagingURI = "https://api.aircandi.com:8443/v1/"
+    public let ProductionURI = "https://api.aircandi.com/v1/"
     
     required public init() {
     
@@ -92,7 +94,7 @@ public class ProxibaseClient {
         var serverURI = userDefaults.stringForKey(PatchrUserDefaultKey("serverURI"))
 
         if serverURI == nil || serverURI?.utf16Count == 0 {
-            serverURI = "https://api.aircandi.com/v1/"
+            serverURI = ProductionURI
             userDefaults.setObject(serverURI, forKey: PatchrUserDefaultKey("serverURI"))
         }
 
