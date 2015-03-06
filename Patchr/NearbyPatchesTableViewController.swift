@@ -57,6 +57,11 @@ class NearbyPatchesTableViewController: QueryResultTableViewController {
                 patchDetailViewController.patch = self.selectedPatch
                 self.selectedPatch = nil
             }
+        case "MapViewSegue":
+            if let mapViewController = segue.destinationViewController as? FetchedResultsMapViewController {
+                mapViewController.managedObjectContext = self.managedObjectContext
+                mapViewController.fetchRequest = self.fetchedResultsController.fetchRequest
+            }
         default: ()
         }
     }

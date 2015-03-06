@@ -25,6 +25,8 @@
     
     if (dictionary[@"location"]) {
         entity.location = [Location setPropertiesFromDictionary:dictionary[@"location"] onObject:[Location insertInManagedObjectContext:entity.managedObjectContext] mappingNames:mapNames];
+    } else if (!entity.location) {
+        NSLog(@"WARNING: No location found on entity %@", entity.id_);
     }
     
     if ([dictionary[@"linkedCount"] isKindOfClass:[NSDictionary class]]) {

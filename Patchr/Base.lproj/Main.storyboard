@@ -399,7 +399,7 @@
                     <navigationItem key="navigationItem" title="Nearby" id="GNV-HW-5Kk">
                         <barButtonItem key="leftBarButtonItem" title="Map" id="3Nc-Dd-3YH">
                             <connections>
-                                <segue destination="umW-Ch-3Od" kind="show" id="aqr-cO-OGv"/>
+                                <segue destination="umW-Ch-3Od" kind="show" identifier="MapViewSegue" id="aqr-cO-OGv"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="HBn-yl-RSy">
@@ -463,7 +463,7 @@
                                                 <segue destination="ATs-GG-DRN" kind="presentation" id="WKA-tH-M3A"/>
                                             </connections>
                                         </button>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Patch Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bHj-ol-mkD">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Patch Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bHj-ol-mkD">
                                             <rect key="frame" x="8" y="74" width="95" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -570,10 +570,10 @@
             </objects>
             <point key="canvasLocation" x="5040" y="-3545"/>
         </scene>
-        <!--View Controller-->
+        <!--Fetched Results Map View Controller-->
         <scene sceneID="Re0-ic-jOO">
             <objects>
-                <viewController id="umW-Ch-3Od" sceneMemberID="viewController">
+                <viewController id="umW-Ch-3Od" customClass="FetchedResultsMapViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="xYF-hJ-V9z"/>
                         <viewControllerLayoutGuide type="bottom" id="Ev1-hJ-dVK"/>
@@ -582,7 +582,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="EP3-6S-3xM">
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EP3-6S-3xM">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                             </mapView>
                         </subviews>
@@ -595,6 +595,9 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="Tav-LK-DD6"/>
+                    <connections>
+                        <outlet property="mapView" destination="EP3-6S-3xM" id="AzY-E6-wni"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZtI-z3-h4S" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -844,7 +847,7 @@
                     <navigationItem key="navigationItem" title="Explore" id="kNn-z3-zAF">
                         <barButtonItem key="leftBarButtonItem" title="Map" id="elV-yK-HLU">
                             <connections>
-                                <segue destination="umW-Ch-3Od" kind="show" id="cGH-YD-j5U"/>
+                                <segue destination="umW-Ch-3Od" kind="show" identifier="MapViewSegue" id="cGH-YD-j5U"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="9Wf-h2-7sU">
@@ -1070,9 +1073,9 @@
         <image name="Placeholder patch header" width="216" height="144"/>
     </resources>
     <inferredMetricsTieBreakers>
+        <segue reference="Z9b-z0-EWI"/>
+        <segue reference="cGH-YD-j5U"/>
         <segue reference="nea-bY-Zi0"/>
         <segue reference="WKA-tH-M3A"/>
-        <segue reference="aqr-cO-OGv"/>
-        <segue reference="Z9b-z0-EWI"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -43,6 +43,7 @@
 		7D7095D71A71BE3200F835C4 /* FetchControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7095D61A71BE3200F835C4 /* FetchControllerDelegate.swift */; };
 		7D7096011A71D55C00F835C4 /* _QueryResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7095FE1A71D55C00F835C4 /* _QueryResult.m */; };
 		7D7096021A71D55C00F835C4 /* QueryResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7096001A71D55C00F835C4 /* QueryResult.m */; };
+		7D77FC7F1AAA2E0C00AA8284 /* FetchedResultsMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D77FC7D1AAA2E0C00AA8284 /* FetchedResultsMapViewController.swift */; };
 		7D9C9E3D1A9BAFCE0069E332 /* PatchDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */; };
 		7DA3D9121A72D5A60082D2AB /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA3D9111A72D5A60082D2AB /* DataStore.swift */; };
 		7DA7306A1A70714C008C25FA /* JSONResponseSerializerWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */; };
@@ -142,6 +143,8 @@
 		7D7095FE1A71D55C00F835C4 /* _QueryResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _QueryResult.m; path = Model/_QueryResult.m; sourceTree = "<group>"; };
 		7D7095FF1A71D55C00F835C4 /* QueryResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QueryResult.h; path = Model/QueryResult.h; sourceTree = "<group>"; };
 		7D7096001A71D55C00F835C4 /* QueryResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QueryResult.m; path = Model/QueryResult.m; sourceTree = "<group>"; };
+		7D77FC7D1AAA2E0C00AA8284 /* FetchedResultsMapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchedResultsMapViewController.swift; sourceTree = "<group>"; };
+		7D77FC801AAA313C00AA8284 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchDetailViewController.swift; sourceTree = "<group>"; };
 		7DA3D9111A72D5A60082D2AB /* DataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		7DA7306C1A71A0EE008C25FA /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
@@ -278,6 +281,7 @@
 				7DA7306B1A71A0EE008C25FA /* Model.xcdatamodeld */,
 				7DE975EA1AA7D69500C1ECE9 /* FetchedResultsTableViewController.swift */,
 				7D7095D61A71BE3200F835C4 /* FetchControllerDelegate.swift */,
+				7D77FC7D1AAA2E0C00AA8284 /* FetchedResultsMapViewController.swift */,
 				7DA730951A71B962008C25FA /* QueryResultTableViewController.swift */,
 				7DA3D9111A72D5A60082D2AB /* DataStore.swift */,
 				7D40B9411A7864A000F9954C /* NotificationsTableViewController.swift */,
@@ -395,6 +399,7 @@
 		A0DA2C2AA90D81631E6BF68D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7D77FC801AAA313C00AA8284 /* CoreLocation.framework */,
 				7D03C3D61A980D9400BAFD19 /* MapKit.framework */,
 				3B36067AA93A3B743CFCA837 /* libPods-Patchr.a */,
 				9D5919BEF434463FF4349942 /* libPods.a */,
@@ -610,6 +615,7 @@
 				7D01FA361A7024E200DD6DFA /* JSONResponseSerializerWithData.m in Sources */,
 				7D6E264D1A7AEE91000128A7 /* ExploreTableViewController.swift in Sources */,
 				7D3F26D61A76F77E0015F8E8 /* Photo.m in Sources */,
+				7D77FC7F1AAA2E0C00AA8284 /* FetchedResultsMapViewController.swift in Sources */,
 				7DC9D4911A9D46D100234E3C /* RegistrationTableViewController.swift in Sources */,
 				7DA730931A71ACC9008C25FA /* ServiceBase.m in Sources */,
 				7DA7308C1A71ACC9008C25FA /* _Query.m in Sources */,
