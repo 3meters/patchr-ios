@@ -7,6 +7,7 @@
 extern const struct EntityAttributes {
 	__unsafe_unretained NSString *count;
 	__unsafe_unretained NSString *description_;
+	__unsafe_unretained NSString *linkedCounts;
 	__unsafe_unretained NSString *patchId;
 	__unsafe_unretained NSString *privacy;
 	__unsafe_unretained NSString *rank;
@@ -16,18 +17,16 @@ extern const struct EntityAttributes {
 } EntityAttributes;
 
 extern const struct EntityRelationships {
-	__unsafe_unretained NSString *linksInCounts;
-	__unsafe_unretained NSString *linksOutCounts;
 	__unsafe_unretained NSString *location;
 	__unsafe_unretained NSString *photo;
 	__unsafe_unretained NSString *queryResults;
 } EntityRelationships;
 
-@class Statistic;
-@class Statistic;
 @class Location;
 @class Photo;
 @class QueryResult;
+
+@class NSDictionary;
 
 @interface EntityID : ServiceBaseID {}
 @end
@@ -49,6 +48,10 @@ extern const struct EntityRelationships {
 @property (nonatomic, strong) NSString* description_;
 
 //- (BOOL)validateDescription_:(id*)value_ error:(NSError**)error_;
+
+@property (nonatomic, strong) NSDictionary* linkedCounts;
+
+//- (BOOL)validateLinkedCounts:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSString* patchId;
 
@@ -82,14 +85,6 @@ extern const struct EntityRelationships {
 
 //- (BOOL)validateSubtitle:(id*)value_ error:(NSError**)error_;
 
-@property (nonatomic, strong) NSSet *linksInCounts;
-
-- (NSMutableSet*)linksInCountsSet;
-
-@property (nonatomic, strong) NSSet *linksOutCounts;
-
-- (NSMutableSet*)linksOutCountsSet;
-
 @property (nonatomic, strong) Location *location;
 
 //- (BOOL)validateLocation:(id*)value_ error:(NSError**)error_;
@@ -101,22 +96,6 @@ extern const struct EntityRelationships {
 @property (nonatomic, strong) NSSet *queryResults;
 
 - (NSMutableSet*)queryResultsSet;
-
-@end
-
-@interface _Entity (LinksInCountsCoreDataGeneratedAccessors)
-- (void)addLinksInCounts:(NSSet*)value_;
-- (void)removeLinksInCounts:(NSSet*)value_;
-- (void)addLinksInCountsObject:(Statistic*)value_;
-- (void)removeLinksInCountsObject:(Statistic*)value_;
-
-@end
-
-@interface _Entity (LinksOutCountsCoreDataGeneratedAccessors)
-- (void)addLinksOutCounts:(NSSet*)value_;
-- (void)removeLinksOutCounts:(NSSet*)value_;
-- (void)addLinksOutCountsObject:(Statistic*)value_;
-- (void)removeLinksOutCountsObject:(Statistic*)value_;
 
 @end
 
@@ -138,6 +117,9 @@ extern const struct EntityRelationships {
 
 - (NSString*)primitiveDescription_;
 - (void)setPrimitiveDescription_:(NSString*)value;
+
+- (NSDictionary*)primitiveLinkedCounts;
+- (void)setPrimitiveLinkedCounts:(NSDictionary*)value;
 
 - (NSString*)primitivePatchId;
 - (void)setPrimitivePatchId:(NSString*)value;
@@ -162,12 +144,6 @@ extern const struct EntityRelationships {
 
 - (NSString*)primitiveSubtitle;
 - (void)setPrimitiveSubtitle:(NSString*)value;
-
-- (NSMutableSet*)primitiveLinksInCounts;
-- (void)setPrimitiveLinksInCounts:(NSMutableSet*)value;
-
-- (NSMutableSet*)primitiveLinksOutCounts;
-- (void)setPrimitiveLinksOutCounts:(NSMutableSet*)value;
 
 - (Location*)primitiveLocation;
 - (void)setPrimitiveLocation:(Location*)value;

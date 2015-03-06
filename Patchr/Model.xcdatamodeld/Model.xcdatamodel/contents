@@ -3,14 +3,17 @@
     <entity name="Entity" representedClassName="Entity" isAbstract="YES" parentEntity="ServiceBase" syncable="YES">
         <attribute name="count" optional="YES" attributeType="Integer 64" defaultValueString="0.0" syncable="YES"/>
         <attribute name="description_" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="linkedCounts" optional="YES" attributeType="Transformable" syncable="YES">
+            <userInfo>
+                <entry key="attributeValueClassName" value="NSDictionary"/>
+            </userInfo>
+        </attribute>
         <attribute name="patchId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="privacy" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="rank" optional="YES" attributeType="Integer 64" defaultValueString="0.0" syncable="YES"/>
         <attribute name="reason" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="score" optional="YES" attributeType="Integer 64" defaultValueString="0.0" syncable="YES"/>
         <attribute name="subtitle" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="linksInCounts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Statistic" inverseName="entityIn" inverseEntity="Statistic" syncable="YES"/>
-        <relationship name="linksOutCounts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Statistic" inverseName="entityOut" inverseEntity="Statistic" syncable="YES"/>
         <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Location" inverseName="entity_" inverseEntity="Location" syncable="YES"/>
         <relationship name="photo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Photo" inverseName="entity_" inverseEntity="Photo" syncable="YES"/>
         <relationship name="queryResults" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="QueryResult" inverseName="entity_" inverseEntity="QueryResult" syncable="YES"/>
@@ -125,14 +128,6 @@
     <entity name="ServiceObject" representedClassName="ServiceObject" isAbstract="YES" syncable="YES">
         <attribute name="updateScope" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
-    <entity name="Statistic" representedClassName="Statistic" parentEntity="ServiceObject" syncable="YES">
-        <attribute name="count" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
-        <attribute name="enabled" optional="YES" attributeType="Boolean" syncable="YES"/>
-        <attribute name="schema" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="entityIn" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Entity" inverseName="linksInCounts" inverseEntity="Entity" syncable="YES"/>
-        <relationship name="entityOut" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Entity" inverseName="linksOutCounts" inverseEntity="Entity" syncable="YES"/>
-    </entity>
     <entity name="User" representedClassName="User" parentEntity="Entity" syncable="YES">
         <attribute name="area" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="authSource" optional="YES" attributeType="String" syncable="YES"/>
@@ -155,7 +150,7 @@
         <relationship name="replies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Message" inverseName="replyTo" inverseEntity="Message" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Entity" positionX="-63" positionY="-18" width="128" height="238"/>
+        <element name="Entity" positionX="-63" positionY="-18" width="128" height="223"/>
         <element name="Location" positionX="-18" positionY="54" width="128" height="163"/>
         <element name="Message" positionX="-18" positionY="135" width="128" height="103"/>
         <element name="Notification" positionX="0" positionY="144" width="128" height="193"/>
@@ -168,7 +163,6 @@
         <element name="QueryResult" positionX="-18" positionY="36" width="128" height="103"/>
         <element name="ServiceBase" positionX="0" positionY="63" width="128" height="313"/>
         <element name="ServiceObject" positionX="18" positionY="72" width="128" height="60"/>
-        <element name="Statistic" positionX="-18" positionY="135" width="128" height="133"/>
         <element name="User" positionX="-9" positionY="144" width="128" height="328"/>
     </elements>
 </model>

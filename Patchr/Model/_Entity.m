@@ -6,6 +6,7 @@
 const struct EntityAttributes EntityAttributes = {
 	.count = @"count",
 	.description_ = @"description_",
+	.linkedCounts = @"linkedCounts",
 	.patchId = @"patchId",
 	.privacy = @"privacy",
 	.rank = @"rank",
@@ -15,8 +16,6 @@ const struct EntityAttributes EntityAttributes = {
 };
 
 const struct EntityRelationships EntityRelationships = {
-	.linksInCounts = @"linksInCounts",
-	.linksOutCounts = @"linksOutCounts",
 	.location = @"location",
 	.photo = @"photo",
 	.queryResults = @"queryResults",
@@ -89,6 +88,8 @@ const struct EntityRelationships EntityRelationships = {
 
 @dynamic description_;
 
+@dynamic linkedCounts;
+
 @dynamic patchId;
 
 @dynamic privacy;
@@ -136,28 +137,6 @@ const struct EntityRelationships EntityRelationships = {
 }
 
 @dynamic subtitle;
-
-@dynamic linksInCounts;
-
-- (NSMutableSet*)linksInCountsSet {
-	[self willAccessValueForKey:@"linksInCounts"];
-
-	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"linksInCounts"];
-
-	[self didAccessValueForKey:@"linksInCounts"];
-	return result;
-}
-
-@dynamic linksOutCounts;
-
-- (NSMutableSet*)linksOutCountsSet {
-	[self willAccessValueForKey:@"linksOutCounts"];
-
-	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"linksOutCounts"];
-
-	[self didAccessValueForKey:@"linksOutCounts"];
-	return result;
-}
 
 @dynamic location;
 

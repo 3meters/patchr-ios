@@ -1,7 +1,6 @@
 #import "Entity.h"
 #import "Photo.h"
 #import "Location.h"
-#import "Statistic.h"
 
 @interface Entity ()
 
@@ -28,22 +27,8 @@
         entity.location = [Location setPropertiesFromDictionary:dictionary[@"location"] onObject:[Location insertInManagedObjectContext:entity.managedObjectContext] mappingNames:mapNames];
     }
     
-    if ([dictionary[@"linksInCounts"] isKindOfClass:[NSArray class]]) {
-        for (id object in dictionary[@"linksInCounts"]) {
-            if ([object isKindOfClass:[NSDictionary class]]) {
-                Statistic *stat = [Statistic setPropertiesFromDictionary:object onObject:[Statistic insertInManagedObjectContext:entity.managedObjectContext] mappingNames:mapNames];
-                [entity addLinksInCountsObject:stat];
-            }
-        }
-    }
-    
-    if ([dictionary[@"linksOutCounts"] isKindOfClass:[NSArray class]]) {
-        for (id object in dictionary[@"linksOutCounts"]) {
-            if ([object isKindOfClass:[NSDictionary class]]) {
-                Statistic *stat = [Statistic setPropertiesFromDictionary:object onObject:[Statistic insertInManagedObjectContext:entity.managedObjectContext] mappingNames:mapNames];
-                [entity addLinksOutCountsObject:stat];
-            }
-        }
+    if ([dictionary[@"linkedCount"] isKindOfClass:[NSDictionary class]]) {
+        entity.linkedCounts = dictionary[@"linkedCount"];
     }
     
     entity.reason = dictionary[@"reason"];
@@ -55,24 +40,30 @@
 }
 
 - (NSNumber *)numberOfLikes {
-    return [self countForStatWithType:@"like" schema:@"user"];
+    return [self countForStatWithType:@"like" schema:@"users"];
 }
 
 - (NSNumber *)numberOfWatchers {
-    return [self countForStatWithType:@"watch" schema:@"user"];
+    return [self countForStatWithType:@"watch" schema:@"users"];
 }
 
 - (NSNumber *)numberOfMessages {
-    return [self countForStatWithType:@"content" schema:@"message"];
+    return [self countForStatWithType:@"content" schema:@"messages"];
 }
 
 - (NSNumber *)countForStatWithType:(NSString *)type schema:(NSString *)schema {
-    for (Statistic *stat in self.linksInCounts) {
-        if ([stat.type isEqualToString:type] && [stat.schema isEqualToString:schema]) {
-            return stat.count;
+    if ([self.linkedCounts[@"from"] isKindOfClass:[NSDictionary class]]) {
+        NSDictionary *fromLinkedCounts = self.linkedCounts[@"from"];
+        for (NSObject *key in fromLinkedCounts.allKeys) {
+            if ([key isEqual:schema] && [fromLinkedCounts[key] isKindOfClass:[NSDictionary class]]) {
+                NSDictionary *schemaDict = fromLinkedCounts[key];
+                if ([schemaDict[type] isKindOfClass:[NSNumber class]]) {
+                    return schemaDict[type];
+                }
+            }
         }
     }
-    return @0;
+    return nil; // Not found
 }
 
 @end
