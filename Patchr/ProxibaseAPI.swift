@@ -20,42 +20,94 @@
 import Foundation
 import CoreLocation
 
-func PatchrUserDefaultKey(subKey: String) -> String
-{
-    return "com.3meters.patchr.ios." + subKey
-}
+enum ServerStatusCode : Float {
 
-let globalGregorianCalendar = NSCalendar(calendarIdentifier: NSGregorianCalendar)
-
-public func DateTimeTag() -> String!
-{
-    let date = NSDate()
-
-    if let dc = globalGregorianCalendar?.components(.CalendarUnitYear | .CalendarUnitMonth | .CalendarUnitDay |
-                                                    .CalendarUnitHour | .CalendarUnitMinute | .CalendarUnitSecond, fromDate: date)
-    {
-        return String(format:"%04d%02d%02d_%02d%02d%02d", dc.year, dc.month, dc.day, dc.hour, dc.minute, dc.second)
-    }
-    return nil
-}
-
-var temporaryFileCount = 0
-
-func TemporaryFileURLForImage(image: UIImage) -> NSURL?
-{
-    let imageData = UIImageJPEGRepresentation(image, /*compressionQuality*/0.75)
-    if let imageData = imageData {
+    case None = 0.0
     
-        // Note: This method of getting a temporary file path is not the recommended method. See the docs for NSTemporaryDirectory.
-        let temporaryFilePath = NSTemporaryDirectory() + "patchr_temp_file_\(temporaryFileCount).jpg"
-        println(temporaryFilePath)
-        
-        if imageData.writeToFile(temporaryFilePath, atomically: false) {
-            return NSURL(fileURLWithPath: temporaryFilePath)
+    case BAD_REQUEST = 400.0
+    
+    case MISSING_PARAM        = 400.1
+    case BAD_PARAM            = 400.11
+    case BAD_TYPE             = 400.12
+    case BAD_VALUE            = 400.13
+    case BAD_JSON             = 400.14
+    case BAD_USER_AUTH_PARAMS = 400.21
+    case BAD_VERSION          = 400.4
+    case BAD_APPLINK          = 400.5
+
+    case UNAUTHORIZED                 = 401.0
+    case UNAUTHORIZED_CREDENTIALS     = 401.1
+    case UNAUTHORIZED_SESSION_EXPIRED = 401.2
+    case UNAUTHORIZED_NOT_HUMAN       = 401.3
+    case UNAUTHORIZED_EMAIL_NOT_FOUND = 401.4
+
+    case FORBIDDEN                    = 403.0
+    case FORBIDDEN_DUPLICATE          = 403.1
+    case FORBIDDEN_DUPLICATE_LIKELY   = 403.11
+    case FORBIDDEN_USER_PASSWORD_WEAK = 403.21
+    case FORBIDDEN_VIA_API_ONLY       = 403.22
+    case FORBIDDEN_LIMIT_EXCEEDED     = 403.3
+}
+
+// Given an NSError from AFNetworking, provide simple access to a select few pieces of information that
+// should be there.
+//
+// userInfo: {
+//      JSONResponseSerializerWithDataKey: {
+//          error: {
+//              code: Double,
+//              message: String,
+//          }
+//      },
+//      NSLocalizedDescription: String
+
+
+
+struct ServerError
+{
+    let error: NSError
+    
+    var response: NSDictionary?
+    var message = LocalizedString("Unknown Error")
+    var code: ServerStatusCode = .None
+    var localizedDescription = LocalizedString("(No Description)")
+    
+    init?(_ error: NSError?)
+    {
+        if let error = error {
+            self.error = error
+            let userInfoDictionary = (error.userInfo as NSDictionary?)
+            
+            response = (userInfoDictionary?[JSONResponseSerializerWithDataKey] as NSDictionary?)
+            let responseErrorDictionary = response?["error"] as NSDictionary?
+
+            if let responseDict = responseErrorDictionary {
+                if let responseMessage = responseDict["message"] as? String {
+                    message = responseMessage
+                }
+                if let responseCode = responseDict["code"] as? Float {
+                    code = ServerStatusCode(rawValue: responseCode)!
+                }
+            }
+            if let userInfo = userInfoDictionary
+            {
+                if let description = userInfo["NSLocalizedDescription"] as? String {
+                    localizedDescription = description
+                }
+            }
+            
+            println("Proxibase Error Summary")
+            println(message)
+            println(code)
+            println(localizedDescription)
+        }
+        else
+        {
+            return nil
         }
     }
-    return nil
 }
+
 
 public class ProxibaseClient {
 
@@ -208,7 +260,7 @@ public class ProxibaseClient {
                 completion(response: response, error: nil)
             },
             failure: { (dataTask, error) -> Void in
-                completion(response: error?.userInfo?[JSONResponseSerializerWithDataKey], error: error)
+                completion(response: ServerError(error)?.response, error: error)
         })
     }
     
@@ -394,7 +446,7 @@ public class ProxibaseClient {
             },
             failure: { (dataTask, error) -> Void in
                 let response = dataTask.response as? NSHTTPURLResponse
-                completion(response: error?.userInfo?[JSONResponseSerializerWithDataKey], error: error)
+                completion(response: ServerError(error)?.response, error: error)
         })
     }
     
@@ -410,7 +462,7 @@ public class ProxibaseClient {
             },
             failure: { (dataTask, error) -> Void in
                 let response = dataTask.response as? NSHTTPURLResponse
-                completion(response: error?.userInfo?[JSONResponseSerializerWithDataKey], error: error)
+                completion(response: ServerError(error)?.response, error: error)
         })
     }
     

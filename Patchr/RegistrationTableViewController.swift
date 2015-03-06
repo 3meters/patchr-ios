@@ -35,8 +35,20 @@ class RegistrationTableViewController: UITableViewController {
         
         proxibase.createUser(fullNameTextField.text, email: emailTextField.text, password: passwordTextField.text, parameters: parameters) { (response, error) in
             
-            if error == nil {
-            
+            if let error = ServerError(error)
+            {
+                var errorMessage = error.message
+
+                if error.code == .FORBIDDEN_DUPLICATE {
+                    errorMessage = LocalizedString("Email address already in use.")
+                }
+                
+                let alert = UIAlertController(title: LocalizedString("Registration Failure"), message: errorMessage, preferredStyle: .Alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: { _ in }))
+                self.presentViewController(alert, animated: true) {}
+            }
+            else
+            {
                 var userInfo = NSMutableDictionary()
                 
                 if let image = self.avatarImageView.image
@@ -63,11 +75,6 @@ class RegistrationTableViewController: UITableViewController {
                         appDelegate.window!.setRootViewController(viewController, animated: true)
                     }
                 }
-            }
-            else
-            {
-                // Error creating user on server. Maybe display a message or something.
-                // TODO: What could go wrong here?
             }
         }
     }

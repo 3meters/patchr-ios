@@ -9,30 +9,6 @@
 import Foundation
 import MapKit
 
-func LocalizedString(str: String, comment:String) -> String
-{
-    return NSLocalizedString(str, comment: comment)
-}
-
-func LocalizedString(str: String) -> String
-{
-    return LocalizedString("[]"+str, str)
-}
-
-// Utility to show some information about subview frames.
-
-func showSubviews(view: UIView, level: Int = 0)
-{
-    var indent = ""
-    for i in 0..<level {
-        indent += "  "
-    }
-    var count = 0
-    for subview in view.subviews {
-        println("\(indent)\(count++). \(subview.frame)")
-        showSubviews(subview as UIView, level: level + 1)
-    }
-}
 
 class CreatePatchViewController: UIViewController,
                                  MKAnnotation, // lets us provide annotation information for map view
