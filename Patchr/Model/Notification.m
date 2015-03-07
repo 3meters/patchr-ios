@@ -24,6 +24,10 @@
     notification.priority = dictionary[@"priority"];
     notification.trigger = dictionary[@"trigger"];
     notification.summary = dictionary[@"summary"];
+    if (notification.summary) {
+        // TODO the API currently returns an HTML-like summary and we need to figure out how to handle it nicely (attributed string?)
+        notification.summary = [Notification stringByStrippingHTMLFromString:notification.summary];
+    }
     notification.event = dictionary[@"event"];
     notification.ticker = dictionary[@"ticker"];
     
@@ -36,6 +40,15 @@
     NSLog(@"%@", notification);
     
     return notification;
+}
+
+#pragma mark Private Internal
+
++ (NSString *)stringByStrippingHTMLFromString:(NSString *)string {
+    NSRange range;
+    while ((range = [string rangeOfString:@"<[^>]+>" options:NSRegularExpressionSearch]).location != NSNotFound)
+        string = [string stringByReplacingCharactersInRange:range withString:@""];
+    return string;
 }
 
 @end
