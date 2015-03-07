@@ -63,6 +63,7 @@ class ExploreTableViewController: QueryResultTableViewController {
             if let mapViewController = segue.destinationViewController as? FetchedResultsMapViewController {
                 mapViewController.managedObjectContext = self.managedObjectContext
                 mapViewController.fetchRequest = self.fetchedResultsController.fetchRequest
+                mapViewController.dataStore = self.dataStore
             }
         default: ()
         }
