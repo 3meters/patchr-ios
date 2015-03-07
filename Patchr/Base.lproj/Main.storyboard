@@ -597,6 +597,7 @@
                     <navigationItem key="navigationItem" id="Tav-LK-DD6"/>
                     <connections>
                         <outlet property="mapView" destination="EP3-6S-3xM" id="AzY-E6-wni"/>
+                        <segue destination="dFa-9F-rNC" kind="show" identifier="PatchDetailSegue" id="ode-oE-WBF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZtI-z3-h4S" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1073,9 +1074,9 @@
         <image name="Placeholder patch header" width="216" height="144"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Z9b-z0-EWI"/>
-        <segue reference="cGH-YD-j5U"/>
-        <segue reference="nea-bY-Zi0"/>
         <segue reference="WKA-tH-M3A"/>
+        <segue reference="ode-oE-WBF"/>
+        <segue reference="cGH-YD-j5U"/>
+        <segue reference="Z9b-z0-EWI"/>
     </inferredMetricsTieBreakers>
 </document>

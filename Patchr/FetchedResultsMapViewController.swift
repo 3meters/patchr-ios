@@ -14,7 +14,22 @@ class FetchedResultsMapViewController: UIViewController, MKMapViewDelegate, NSFe
     @IBOutlet weak var mapView: MKMapView!
     
     var managedObjectContext: NSManagedObjectContext!
-    var fetchRequest: NSFetchRequest! // TODO override setter to force FRC performFetch
+    var dataStore: DataStore!
+    
+    // If you modify the properties of the fetchRequest, you need to follow these instructions from the Apple docs:
+    //
+    //    Modifying the Fetch Request
+    //
+    //    You cannot simply change the fetch request to modify the results. If you want to change the fetch request, you must:
+    //
+    //    1. If you are using a cache, delete it (using deleteCacheWithName:). Typically you should not use a cache if you are changing the fetch request.
+    //    2. Change the fetch request.
+    //    3. Invoke performFetch:.
+    
+    var fetchRequest: NSFetchRequest!
+    
+    var selectedPatch: Patch?
+
     
     internal lazy var fetchedResultsController: NSFetchedResultsController = {
         return NSFetchedResultsController(fetchRequest: self.fetchRequest, managedObjectContext: self.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
@@ -22,22 +37,69 @@ class FetchedResultsMapViewController: UIViewController, MKMapViewDelegate, NSFe
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.mapView.delegate = self
         self.fetchedResultsController.delegate = self;
         self.fetchedResultsController.performFetch(nil)
         self.reloadAnnotations()
-        // Does some fancy map math to fit the annotations into the zoomed view
-        self.mapView.showAnnotations(self.mapView.annotations, animated: true)
+    }
+    
+    var token: dispatch_once_t = 0
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        dispatch_once(&token, { () -> Void in
+            // Does some fancy map math to fit the annotations into the view.
+            // Only do it on the initial view appearance
+            self.mapView.showAnnotations(self.mapView.annotations, animated: true)
+        })
+        
+    }
+    
+    // TODO consolidate the duplicated segue logic
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        if segue.identifier == nil {
+            return
+        }
+        
+        switch segue.identifier! {
+        case "PatchDetailSegue":
+            if let patchDetailViewController = segue.destinationViewController as? PatchDetailViewController {
+                patchDetailViewController.managedObjectContext = self.managedObjectContext
+                patchDetailViewController.dataStore = self.dataStore
+                patchDetailViewController.patch = self.selectedPatch
+                self.selectedPatch = nil
+            }
+        default: ()
+        }
     }
     
     // MARK: MKMapViewDelegate
     
     func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
+        
+        if let currentUserLocationAnnotation = annotation as? MKUserLocation {
+            return nil; // Keep default "blue dot" view for current location
+        }
+        
         let reuseIdentifier = "AnnotationViewIdentifier"
         var annotationView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseIdentifier)
         if annotationView == nil {
             annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseIdentifier)
+            annotationView.canShowCallout = true
+            annotationView.rightCalloutAccessoryView = UIButton.buttonWithType(UIButtonType.DetailDisclosure) as UIButton
         }
         return annotationView
+    }
+    
+    func mapView(mapView: MKMapView!, annotationView view: MKAnnotationView!, calloutAccessoryControlTapped control: UIControl!) {
+        if let entityAnnotation = view.annotation as? EntityAnnotation {
+            if let patch = entityAnnotation.entity as? Patch {
+                self.selectedPatch = patch
+                self.performSegueWithIdentifier("PatchDetailSegue", sender: view)
+            }
+        }
     }
     
     // MARK: NSFetchedResultsControllerDelegate
@@ -81,8 +143,10 @@ class FetchedResultsMapViewController: UIViewController, MKMapViewDelegate, NSFe
 class EntityAnnotation: NSObject, MKAnnotation {
     var coordinate: CLLocationCoordinate2D
     var title: String
+    var entity: Entity
     
     init(entity: Entity) {
+        self.entity = entity
         self.coordinate = entity.location.coordinate
         self.title = entity.name
     }
