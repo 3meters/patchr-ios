@@ -61,6 +61,11 @@ class CreatePatchViewController: UIViewController,
     }
 
 
+    func locationDictionary(coordinate: CLLocationCoordinate2D) -> NSDictionary
+    {
+        // TODO: 25 is bogus. What should this be?
+        return ["accuracy":25, "geometry":[coordinate.longitude, coordinate.latitude], "lat": coordinate.latitude, "lng":coordinate.longitude]
+    }
     
     @IBAction func saveButton(sender: AnyObject) {
 
@@ -76,6 +81,18 @@ class CreatePatchViewController: UIViewController,
         println("privacy: \(privacy)")
         println("location: \(patchLocation.latitude), \(patchLocation.longitude)")
         println("image:    \(patchImage)")
+        
+        let proxibase = ProxibaseClient.sharedInstance
+        
+        let parameters: NSDictionary = ["name": name,
+                                        "visibility": privacy,
+                                        "category": proxibase.categories[type] as AnyObject,
+                                        "location": locationDictionary(patchLocation) as AnyObject,
+                                        "photo": patchImage as AnyObject
+                                       ]
+        
+        ProxibaseClient.sharedInstance.createObject("data/patches", parameters: parameters) { response, error in
+        }
         
         // TODO: Actually do the save here
 

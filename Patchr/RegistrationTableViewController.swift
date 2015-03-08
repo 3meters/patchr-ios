@@ -18,6 +18,8 @@ class RegistrationTableViewController: UITableViewController {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
 
+    private var defaultProfileImage: UIImage?
+    
     lazy var photoChooserUI: PhotoChooserUI = { PhotoChooserUI(hostViewController: self) }()
     
     @IBAction func avatarSetButtonAction(sender: AnyObject) {
@@ -30,52 +32,35 @@ class RegistrationTableViewController: UITableViewController {
     
         let parameters = NSMutableDictionary()
         let proxibase = ProxibaseClient.sharedInstance
-        let queue = dispatch_queue_create("join-queue", DISPATCH_QUEUE_SERIAL)
-        let semaphore = dispatch_semaphore_create(0)
+        
+        if let image = self.avatarImageView.image {
+            if defaultProfileImage != image {
+                parameters["photo"] = image
+            }
+        }
         
         proxibase.createUser(fullNameTextField.text, email: emailTextField.text, password: passwordTextField.text, parameters: parameters) { (response, error) in
             
-            if let error = ServerError(error)
-            {
-                var errorMessage = error.message
-
-                if error.code == .FORBIDDEN_DUPLICATE {
-                    errorMessage = LocalizedString("Email address already in use.")
-                }
-                
-                let alert = UIAlertController(title: LocalizedString("Registration Failure"), message: errorMessage, preferredStyle: .Alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: { _ in }))
-                self.presentViewController(alert, animated: true) {}
-            }
-            else
-            {
-                var userInfo = NSMutableDictionary()
-                
-                if let image = self.avatarImageView.image
+            dispatch_async(dispatch_get_main_queue()) {
+                if let error = ServerError(error)
                 {
-                    userInfo["photo"] = image
-                }
-                
-                proxibase.updateUser(userInfo) { response, error in
-                
-                    if let error = error {
-                        println("Error Updating User Info: \(error)")
+                    var errorMessage = error.message
+
+                    if error.code == .FORBIDDEN_DUPLICATE {
+                        errorMessage = LocalizedString("Email address already in use.")
                     }
-                    dispatch_semaphore_signal(semaphore)
-                }
-            
-                dispatch_async(queue) {
-                    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
                     
-                    // Successful registration and sign-in. Move to the main scene.
-                    dispatch_async(dispatch_get_main_queue())
-                    {
-                        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-                        let viewController = UIStoryboard(name:"Main", bundle:NSBundle.mainBundle()).instantiateInitialViewController() as UIViewController;
-                        appDelegate.window!.setRootViewController(viewController, animated: true)
-                    }
+                    let alert = UIAlertController(title: LocalizedString("Registration Failure"), message: errorMessage, preferredStyle: .Alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: { _ in }))
+                    self.presentViewController(alert, animated: true) {}
                 }
-            }
+                else
+                {
+                    let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+                    let viewController = UIStoryboard(name:"Main", bundle:NSBundle.mainBundle()).instantiateInitialViewController() as UIViewController;
+                    appDelegate.window!.setRootViewController(viewController, animated: true)
+                }
+            }   
         }
     }
     
@@ -87,6 +72,8 @@ class RegistrationTableViewController: UITableViewController {
 
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        
+        defaultProfileImage = avatarImageView.image
         
         let notificationCenter = NSNotificationCenter.defaultCenter()
         observerObject = notificationCenter.addObserverForName(UITextFieldTextDidChangeNotification, object: nil, queue: nil)

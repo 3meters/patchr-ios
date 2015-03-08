@@ -62,7 +62,6 @@ enum ServerStatusCode : Float {
 //      NSLocalizedDescription: String
 
 
-
 struct ServerError
 {
     let error: NSError
@@ -108,6 +107,19 @@ struct ServerError
     }
 }
 
+// Given a response from the server, iterate over all the objects returned in the "data" result field.
+func forEachDictionaryInServiceResponse(response: [NSObject:AnyObject], block:([NSObject:AnyObject]) -> Void)
+{
+    let dataWrapper = ServiceData()
+
+    ServiceData.setPropertiesFromDictionary(response, onObject: dataWrapper, mappingNames: false)
+    if let objectDictionaries = dataWrapper.data as? [[NSObject : AnyObject]] {
+        for objectDictionary in objectDictionaries {
+            block(objectDictionary)
+        }
+    }
+}
+
 
 public class ProxibaseClient {
 
@@ -123,7 +135,7 @@ public class ProxibaseClient {
     }
     
     private let sessionManager: AFHTTPSessionManager
-    
+
     public var userId : NSString?
     public var sessionKey : NSString?
     
@@ -140,13 +152,15 @@ public class ProxibaseClient {
     public let StagingURI = "https://api.aircandi.com:8443/v1/"
     public let ProductionURI = "https://api.aircandi.com/v1/"
     
+    public var categories = [String:NSDictionary]()
+    
     required public init() {
     
         let userDefaults = NSUserDefaults.standardUserDefaults()
         var serverURI = userDefaults.stringForKey(PatchrUserDefaultKey("serverURI"))
 
         if serverURI == nil || serverURI?.utf16Count == 0 {
-            serverURI = ProductionURI
+            serverURI = StagingURI
             userDefaults.setObject(serverURI, forKey: PatchrUserDefaultKey("serverURI"))
         }
 
@@ -159,6 +173,25 @@ public class ProxibaseClient {
 
         sessionManager.requestSerializer = AFJSONRequestSerializer(writingOptions: nil)
         sessionManager.responseSerializer = JSONResponseSerializerWithData()
+        
+        self.fetchAllCategories() { response, error in
+
+            if let error = error {
+                self.categories = ["general":["id":"general","name":"General","photo": ["prefix":"img_group.png","source":"assets.categories"],"categories":[]]]
+            }
+            else
+            {
+                dispatch_async(dispatch_get_main_queue()) {
+                    var categories = [String:NSDictionary]()
+                    
+                    forEachDictionaryInServiceResponse(response as [NSObject:AnyObject]) { objectDictionary in
+                        let object = objectDictionary as NSDictionary
+                        categories[object["id"] as NSString] = object
+                    }
+                    self.categories = categories
+                }
+            }
+        }
     }
     
 // MARK: S3 Uploading
@@ -232,6 +265,13 @@ public class ProxibaseClient {
         userDefaults.setObject(userId, forKey: PatchrUserDefaultKey("userId"))
         userDefaults.setObject(sessionKey, forKey: PatchrUserDefaultKey("sessionKey"))
     }
+
+    private func discardCredentials()
+    {
+        userId = nil;
+        sessionKey = nil;
+        writeCredentialsToUserDefaults()
+    }
     
     private func handleSuccessfulSignInResponse(response:AnyObject)
     {
@@ -253,23 +293,17 @@ public class ProxibaseClient {
     {
         let parameters = ["email" : email, "password" : password, "installId" : installId]
         self.sessionManager.POST("auth/signin", parameters: parameters,
-            success: { (dataTask, response) -> Void in
+            success: { _, response in
             
                 self.handleSuccessfulSignInResponse(response)
                 
                 completion(response: response, error: nil)
             },
-            failure: { (dataTask, error) -> Void in
+            failure: { _, error in
                 completion(response: ServerError(error)?.response, error: error)
         })
     }
     
-    private func discardCredentials()
-    {
-        userId = nil;
-        sessionKey = nil;
-        writeCredentialsToUserDefaults()
-    }
     
     // Send an auth/signout message.
     //
@@ -296,38 +330,116 @@ public class ProxibaseClient {
     public typealias ProxibaseCompletionBlock = (response: AnyObject?, error: NSError?) -> Void
     
     // Create a new user with the provided name, email and password.
-    // • Additional optional information (like profile photo) is sent in the parameters dictionary
+    // • Additional information (like profile photo) may optionally be sent in the parameters dictionary
     //
     public func createUser(name: String, email: String, password: String, parameters: NSDictionary? = nil, completion: ProxibaseCompletionBlock)
     {
-        let parameters = ["data": ["name": name,
-                                   "email": email,
-                                   "password": password
-                                  ],
-                          "secret": "larissa",
-                          "installId": installId
-                         ]
+        let createParameters = [
+            "data": ["name": name,
+                     "email": email,
+                     "password": password
+                    ],
+            "secret": "larissa",
+            "installId": installId
+        ]
         
-        self.performPOSTRequestFor("user/create", parameters: parameters) { response, error in
-                if error == nil {
-                    // After creating a user, the user is left in a logged-in state, so process the response
-                    // to extract the credentials.
-                    self.handleSuccessfulSignInResponse(response!)
-                }
-                // TODO: What can go wrong here? 
-                // - User email exists already.
-                //        message = "Duplicate value not allowed: E11000 duplicate key error index: prox_stage.users.$email_1  dup key: { : \"test@patchr.com\" }";
+        self.performPOSTRequestFor("user/create", parameters: createParameters) { response, error in
+        
+            let queue = dispatch_queue_create("user-create-queue", DISPATCH_QUEUE_SERIAL)
+            if error == nil {
 
-                // - Other server failures?
+                // After creating a user, the user is left in a logged-in state, so process the response
+                // to extract the credentials.
+                self.handleSuccessfulSignInResponse(response!)
+                
+                // If there were other parameters sent in the create request, then perform an update to get
+                // them onto the server
+                if parameters != nil && parameters!.count > 0
+                {
+
+                    let semaphore = dispatch_semaphore_create(0)
+                    dispatch_async(queue)
+                    {
+                        self.updateUser(parameters!) { updateResponse, updateError in
+
+                            if let error = updateError {
+                                // If the update fails, then the user-creation still succeeded.
+                                // Log the second error, but don't take any action.
+                                
+                                println("** Error during update after user creation")
+                                println(updateError)
+                            }
+                            dispatch_semaphore_signal(semaphore)
+                        }
+                    }
+                    
+                    dispatch_async(queue)
+                    {
+                        let s = semaphore // bogus
+                        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
+                    }
+                }
+            }
+            // Invoke the caller's completion routine _after_ the update (if any) finishes. Pass the result of
+            // the create operation.
+            dispatch_async(queue) {
                 completion(response: response, error: error)
+            }
         }
     }
 
+    
+    enum S3Bucket
+    {
+        case Users
+        case Images
+    }
+    
+    let bucketInfo: [S3Bucket:(name:String, source:String)] =
+        [.Users:  ("aircandi-users", "aircandi.users"),
+         .Images: ("aircandi-images", "aircandi.images")]
+
+    func queuePhotoUploadInParameters(parameters: NSMutableDictionary, queue: dispatch_queue_t, bucket: S3Bucket)
+    {
+        assert(self.authenticated, "ProxibaseClient must be authenticated prior to editing the user")
+        if let userId = self.userId
+        {
+            if let photo = parameters["photo"] as? UIImage
+            {
+                let semaphore = dispatch_semaphore_create(0)
+                
+                let profilePhotoKey = "\(userId)_\(DateTimeTag()).jpg"
+                
+                let photoDict = [
+                    "width":  Int(photo.size.width),  // width/height are in points...should be pixels?
+                    "height": Int(photo.size.height),
+                    "source": self.bucketInfo[bucket]!.source,
+                    "prefix": profilePhotoKey]
+                
+                dispatch_async(queue) {
+                    self.uploadImageToS3(photo, bucket: self.bucketInfo[bucket]!.name, key: profilePhotoKey) { result, error in
+                        
+                        if error == nil {
+                            parameters["photo"] = photoDict
+                        }
+                        dispatch_semaphore_signal(semaphore)
+                    }
+                }
+                
+                dispatch_async(queue) {
+                    let sem = semaphore // bogus! Avoids an invalid compiler error in Swift 1.1
+                    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
+                }
+            }
+        }
+    }
+    
     // Update the currently signed-in user's information. Only provide fields that you want to change.
     //
     // There is special processing performed for the "photo" key, which may contain a UIImage on input.
     // If this is the case, then the image is uploaded to the users bucket on S3 and then, when that upload
     // is completed, the user record is updated with the photo field.
+    
     public func updateUser(userInfo: NSDictionary, completion: ProxibaseCompletionBlock)
     {
         assert(self.authenticated, "ProxibaseClient must be authenticated prior to editing the user")
@@ -337,36 +449,13 @@ public class ProxibaseClient {
             // update of the record on the server. The S3 upload, if present, must complete first before
             // the database update.
             
-            let queue = dispatch_queue_create("update-user-queue", DISPATCH_QUEUE_SERIAL)
-            let semaphore = dispatch_semaphore_create(0)
             
-            if let mutableUserInfo = userInfo.mutableCopyWithZone(nil) as? NSMutableDictionary {
+            if let mutableUserInfo = userInfo.mutableCopy() as? NSMutableDictionary {
+                
+                let queue = dispatch_queue_create("update-user-queue", DISPATCH_QUEUE_SERIAL)
+                queuePhotoUploadInParameters(mutableUserInfo, queue: queue, bucket: .Users)
                 
                 dispatch_async(queue) {
-                    if let photo = userInfo["photo"] as? UIImage
-                    {
-                        let profilePhotoKey = "\(userId)_\(DateTimeTag()).jpg"
-                        
-                        let photoDict = [
-                            "width":  Int(photo.size.width),  // width/height are in points...should be pixels?
-                            "height": Int(photo.size.height),
-                            "source": "aircandi.users",
-                            "prefix": profilePhotoKey]
-                        
-                        self.uploadImageToS3(photo, bucket: "aircandi-users", key: profilePhotoKey) { result, error in
-                        
-                            mutableUserInfo["photo"] = photoDict
-                            dispatch_semaphore_signal(semaphore)
-                        }
-                    }
-                    else
-                    {
-                        dispatch_semaphore_signal(semaphore)
-                    }
-                }
-                
-                dispatch_async(queue) {
-                    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
                     let parameters = ["data": mutableUserInfo]
                     self.performPOSTRequestFor("data/users/\(userId)", parameters: parameters) { response, error in
                         completion(response: response, error: error)
@@ -376,7 +465,25 @@ public class ProxibaseClient {
         }
     }
     
-
+    public func createObject(path:String, parameters: NSDictionary, completion: ProxibaseCompletionBlock)
+    {
+        let properties = parameters.mutableCopy() as NSMutableDictionary
+        
+        
+        if properties["photo"]?.dynamicType === UIImage.self
+        {
+        
+        }
+        
+        performPOSTRequestFor(path, parameters: properties) { response, error in
+            completion(response: response, error: error)
+        }
+    }
+    
+    public func fetchAllCategories(completion: ProxibaseCompletionBlock)
+    {
+        self.performGETRequestFor("patches/categories", parameters: [:], completion: completion)
+    }
     
     public func fetchNearbyPatches(location: CLLocationCoordinate2D, radius: NSInteger, limit: NSInteger = 50, skip: NSInteger = 0, links: [Link] = [], completion:(response: AnyObject?, error: NSError?) -> Void) {
         var allLinks = self.standardPatchLinks() + links
