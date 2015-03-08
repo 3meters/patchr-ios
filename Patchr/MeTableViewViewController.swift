@@ -10,13 +10,33 @@ import UIKit
 
 class MeTableViewViewController: QueryResultTableViewController {
     @IBOutlet weak var currentUserNameField: UILabel!
+    @IBOutlet weak var currentUserProfilePhoto: UIImageView!
+    @IBOutlet weak var currentUserEmailField: UILabel!
     
     override func viewDidLoad() {
     
         super.viewDidLoad()
         
-        // Cheat for now to put the current user name into the view. This only works after a sign-in.
-        currentUserNameField.text = ProxibaseClient.sharedInstance.userName
+        let userQuery = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
+        userQuery.name = "Current user"
+        dataStore.loadMoreResultsFor(userQuery) { results, error in
+            println("current user query returned result")
+            if results.count == 1 {
+                let user = results[0].entity_ as User
+                println(user)
+                println(user.photo)
+                
+                self.currentUserNameField.text = user.name
+                self.currentUserEmailField.text = user.email
+
+                if let thePhoto = user.photo
+                {
+                    self.currentUserProfilePhoto.setImageWithURL(thePhoto.photoURL())
+                }
+                
+                println(error)
+            }
+        }
         
         let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
         query.name = "Comments by current user"

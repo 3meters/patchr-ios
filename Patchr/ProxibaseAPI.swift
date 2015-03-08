@@ -140,8 +140,8 @@ public class ProxibaseClient {
     public var sessionKey : NSString?
     
     // These will only be valid after a sign-in.
-    public var userName: NSString?      // These are a convenience for now, but eventually we should
-    public var userEmail: NSString?     // keep track of a full user record for the signed-in user.
+//    public var userName: NSString?      // These are a convenience for now, but eventually we should
+//    public var userEmail: NSString?     // keep track of a full user record for the signed-in user.
 
     public var installId: String
     
@@ -279,8 +279,6 @@ public class ProxibaseClient {
         
         self.userId = json["session"]["_owner"].string
         self.sessionKey = json["session"]["key"].string
-        self.userName = json["user"]["name"].string
-        self.userEmail = json["user"]["email"].string
         
         self.writeCredentialsToUserDefaults()
     }
@@ -468,21 +466,26 @@ public class ProxibaseClient {
     public func createObject(path:String, parameters: NSDictionary, completion: ProxibaseCompletionBlock)
     {
         let properties = parameters.mutableCopy() as NSMutableDictionary
+        let queue = dispatch_queue_create("create-object-queue", DISPATCH_QUEUE_SERIAL)
         
+        queuePhotoUploadInParameters(properties, queue: queue, bucket: .Images)
         
-        if properties["photo"]?.dynamicType === UIImage.self
+        dispatch_async(queue)
         {
-        
-        }
-        
-        performPOSTRequestFor(path, parameters: properties) { response, error in
-            completion(response: response, error: error)
+            self.performPOSTRequestFor(path, parameters: properties) { response, error in
+                completion(response: response, error: error)
+            }
         }
     }
     
     public func fetchAllCategories(completion: ProxibaseCompletionBlock)
     {
         self.performGETRequestFor("patches/categories", parameters: [:], completion: completion)
+    }
+    
+    public func fetchCurrentUser(completion: ProxibaseCompletionBlock)
+    {
+        self.performGETRequestFor("data/users/\(userId!)", parameters: [:], completion: completion)
     }
     
     public func fetchNearbyPatches(location: CLLocationCoordinate2D, radius: NSInteger, limit: NSInteger = 50, skip: NSInteger = 0, links: [Link] = [], completion:(response: AnyObject?, error: NSError?) -> Void) {

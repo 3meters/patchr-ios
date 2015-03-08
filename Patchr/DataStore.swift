@@ -19,7 +19,8 @@ class DataStore: NSObject {
         return [
             "notification" : Notification.self,
             "patch" : Patch.self,
-            "message" : Message.self
+            "message" : Message.self,
+            "user": User.self
         ]
     }()
     
@@ -55,6 +56,10 @@ class DataStore: NSObject {
             self.proxibaseClient.fetchMessagesForPatch(patchId, completion: { (response, error) -> Void in
                 completion(results: self.handleResponseForQuery(query, response: response!), error: error)
             })
+        case "Current user":
+            self.proxibaseClient.fetchCurrentUser() { response, error in
+                completion(results: self.handleResponseForQuery(query, response: response!), error: error)
+            }
         default:
             assert(false, "Unknown query name \(query.name)")
         }

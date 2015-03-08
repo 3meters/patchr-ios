@@ -463,7 +463,7 @@
                                                 <segue destination="ATs-GG-DRN" kind="presentation" id="WKA-tH-M3A"/>
                                             </connections>
                                         </button>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Patch Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bHj-ol-mkD">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Patch Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bHj-ol-mkD">
                                             <rect key="frame" x="8" y="74" width="95" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -909,7 +909,7 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2k0-90-6sQ">
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="92"/>
                                     <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Placeholder current user profile" translatesAutoresizingMaskIntoConstraints="NO" id="dfz-F8-5Ue">
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Placeholder current user profile" translatesAutoresizingMaskIntoConstraints="NO" id="dfz-F8-5Ue">
                                             <rect key="frame" x="8" y="16" width="60" height="60"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="60" id="UDX-AT-tFc"/>
@@ -917,8 +917,14 @@
                                             </constraints>
                                         </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Current User Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="95Y-fw-S1K">
-                                            <rect key="frame" x="76" y="35" width="148" height="21"/>
+                                            <rect key="frame" x="84" y="16" width="148" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Email" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gDA-KL-QRU">
+                                            <rect key="frame" x="84" y="45" width="42" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
@@ -926,16 +932,18 @@
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <constraints>
                                         <constraint firstAttribute="centerY" secondItem="dfz-F8-5Ue" secondAttribute="centerY" id="Cnd-LP-gVZ"/>
-                                        <constraint firstItem="95Y-fw-S1K" firstAttribute="leading" secondItem="dfz-F8-5Ue" secondAttribute="trailing" constant="8" id="O87-2A-kSI"/>
+                                        <constraint firstItem="95Y-fw-S1K" firstAttribute="leading" secondItem="dfz-F8-5Ue" secondAttribute="trailing" constant="16" id="O87-2A-kSI"/>
+                                        <constraint firstItem="gDA-KL-QRU" firstAttribute="leading" secondItem="dfz-F8-5Ue" secondAttribute="trailing" constant="16" id="UMt-lh-Bby"/>
                                         <constraint firstItem="dfz-F8-5Ue" firstAttribute="leading" secondItem="2k0-90-6sQ" secondAttribute="leading" constant="8" id="UTI-mB-cDV"/>
-                                        <constraint firstItem="dfz-F8-5Ue" firstAttribute="centerY" secondItem="95Y-fw-S1K" secondAttribute="centerY" constant="0.5" id="kT0-PW-4OF"/>
+                                        <constraint firstItem="gDA-KL-QRU" firstAttribute="top" secondItem="95Y-fw-S1K" secondAttribute="bottom" constant="8" id="V2h-hk-1qS"/>
+                                        <constraint firstItem="dfz-F8-5Ue" firstAttribute="centerY" secondItem="95Y-fw-S1K" secondAttribute="centerY" constant="19.5" id="kT0-PW-4OF"/>
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="APO-1d-fZp">
                                     <rect key="frame" x="0.0" y="92" width="600" height="45"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Recent Comments" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ne1-pq-y7c">
-                                            <rect key="frame" x="8" y="12" width="144" height="21"/>
+                                            <rect key="frame" x="8" y="12" width="143.5" height="20.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
@@ -986,7 +994,9 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="currentUserEmailField" destination="gDA-KL-QRU" id="yOw-xg-gQ2"/>
                         <outlet property="currentUserNameField" destination="95Y-fw-S1K" id="FD8-bf-uiN"/>
+                        <outlet property="currentUserProfilePhoto" destination="dfz-F8-5Ue" id="JkS-z1-crL"/>
                         <segue destination="dFa-9F-rNC" kind="show" identifier="PatchDetailSegue" id="nea-bY-Zi0"/>
                     </connections>
                 </tableViewController>
@@ -1074,9 +1084,9 @@
         <image name="Placeholder patch header" width="216" height="144"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="WKA-tH-M3A"/>
-        <segue reference="ode-oE-WBF"/>
-        <segue reference="cGH-YD-j5U"/>
         <segue reference="Z9b-z0-EWI"/>
+        <segue reference="cGH-YD-j5U"/>
+        <segue reference="nea-bY-Zi0"/>
+        <segue reference="WKA-tH-M3A"/>
     </inferredMetricsTieBreakers>
 </document>
