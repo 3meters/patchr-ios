@@ -72,11 +72,14 @@ class RegistrationTableViewController: UITableViewController {
     }
     
     var observerObject: NSObjectProtocol? = nil
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        defaultProfileImage = avatarImageView.image
+    }
 
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        
-        defaultProfileImage = avatarImageView.image
         
         let notificationCenter = NSNotificationCenter.defaultCenter()
         observerObject = notificationCenter.addObserverForName(UITextFieldTextDidChangeNotification, object: nil, queue: nil)
