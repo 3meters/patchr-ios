@@ -5,8 +5,8 @@ target 'Patchr' do
 pod 'AFNetworking', '~> 2.0'
 pod 'AFNetworkActivityLogger', '~> 2.0'
 pod 'AWSiOSSDKv2/S3', '~> 2.0'
-pod 'OHAttributedStringAdditions'
 pod 'RMCoreDataStack'
+pod 'PBWebViewController', '~> 0.3'
 
 end
 

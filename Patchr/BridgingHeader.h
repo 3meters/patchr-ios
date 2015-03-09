@@ -15,7 +15,7 @@
 #import "S3.h"
 #import "JSONResponseSerializerWithData.h"
 #import <RMCoreDataStack/RMCoreDataStack.h>
-#import <OHAttributedStringAdditions.h>
+#import <PBWebViewController.h>
 #import "Patch.h"
 #import "Place.h"
 #import "Query.h"

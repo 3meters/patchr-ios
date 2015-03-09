@@ -34,6 +34,9 @@ class ExploreTableViewController: QueryResultTableViewController {
         dataStore.loadMoreResultsFor(self.query, completion: { (results, error) -> Void in
             NSLog("Default query fetch for tableview")
         })
+        
+        // Sets search bar under nav bar initially
+        self.tableView.contentOffset = CGPointMake(0, self.searchDisplayController?.searchBar.frame.size.height ?? 0)
     }
     
     override func viewWillAppear(animated: Bool) {

@@ -52,7 +52,7 @@ PODS:
   - Mantle (1.5.4):
     - Mantle/extobjc (= 1.5.4)
   - Mantle/extobjc (1.5.4)
-  - OHAttributedStringAdditions (1.2.0)
+  - PBWebViewController (0.3)
   - Reachability (3.2)
   - RMCoreDataStack (0.1.4)
   - TMCache (1.2.3)
@@ -63,7 +63,7 @@ DEPENDENCIES:
   - AFNetworkActivityLogger (~> 2.0)
   - AFNetworking (~> 2.0)
   - AWSiOSSDKv2/S3 (~> 2.0)
-  - OHAttributedStringAdditions
+  - PBWebViewController (~> 0.3)
   - RMCoreDataStack
 
 SPEC CHECKSUMS:
@@ -74,7 +74,7 @@ SPEC CHECKSUMS:
   FMDB: 0efa188cf0dd1ce82c27a478cd5f5fa245308677
   GZIP: f27c434ffee5e9a9b34f4e9c19e91350fa8bbde1
   Mantle: d5fbaf30fbc58031223af13812c060e15934a1fe
-  OHAttributedStringAdditions: 7e8e310db6ee2584933ce2fa2dcb5bea2a5e76f0
+  PBWebViewController: 0a36bbd0f82741d9457177c9c37f5ff747cba312
   Reachability: 1ef8adf5c4e3d362f96515d4278f68dad3c26930
   RMCoreDataStack: 0c00a15fa117ffe9530fa16e30df3e0863ba2939
   TMCache: 11589ef8c40909114a5e60132711c9a559e01d97
