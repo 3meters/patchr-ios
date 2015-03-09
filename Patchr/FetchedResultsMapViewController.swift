@@ -143,11 +143,15 @@ class FetchedResultsMapViewController: UIViewController, MKMapViewDelegate, NSFe
 class EntityAnnotation: NSObject, MKAnnotation {
     var coordinate: CLLocationCoordinate2D
     var title: String
+    var subtitle: String?
     var entity: Entity
     
     init(entity: Entity) {
         self.entity = entity
         self.coordinate = entity.location.coordinate
         self.title = entity.name
+        if let patch = entity as? Patch {
+            self.subtitle = patch.category?.name
+        }
     }
 }
