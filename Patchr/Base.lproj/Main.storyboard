@@ -641,15 +641,6 @@
                                         <rect key="frame" x="-1" y="125" width="600" height="125"/>
                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                     </imageView>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="PATCH TYPE GOES HERE" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="15F-mw-T2s">
-                                        <rect key="frame" x="10" y="188" width="571" height="15"/>
-                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                        <textInputTraits key="textInputTraits" returnKeyType="done"/>
-                                        <connections>
-                                            <outlet property="delegate" destination="Qcu-U9-IGD" id="A6h-w7-zGf"/>
-                                        </connections>
-                                    </textField>
                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="PATCH NAME GOES HERE" clearsOnBeginEditing="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Tb6-Ky-EDU">
                                         <rect key="frame" x="10" y="206" width="252" height="30"/>
                                         <constraints>
@@ -673,10 +664,19 @@
                                         </segments>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </segmentedControl>
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="p4q-ac-If7">
+                                        <rect key="frame" x="10" y="169" width="566" height="30"/>
+                                        <state key="normal">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <segue destination="fk0-fn-vde" kind="presentation" id="OWb-v6-fT6"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstItem="15F-mw-T2s" firstAttribute="leading" secondItem="C0H-Dn-OjY" secondAttribute="leading" constant="10" id="4xx-zD-FXw"/>
                                     <constraint firstItem="iL9-Yf-PmQ" firstAttribute="leading" secondItem="C0H-Dn-OjY" secondAttribute="leading" constant="-1" id="7dM-83-AgZ"/>
                                     <constraint firstAttribute="trailing" secondItem="GK1-rz-oQv" secondAttribute="trailing" constant="59" id="A4V-s6-X61"/>
                                     <constraint firstItem="GK1-rz-oQv" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Tb6-Ky-EDU" secondAttribute="trailing" constant="10" id="EzK-M0-BAz"/>
@@ -684,17 +684,17 @@
                                     <constraint firstItem="iL9-Yf-PmQ" firstAttribute="top" secondItem="C0H-Dn-OjY" secondAttribute="top" constant="1" id="NSJ-52-BQx"/>
                                     <constraint firstItem="Tb6-Ky-EDU" firstAttribute="leading" secondItem="C0H-Dn-OjY" secondAttribute="leading" constant="10" id="RKP-lp-aGD"/>
                                     <constraint firstAttribute="trailing" secondItem="5Bn-ID-RCf" secondAttribute="trailing" constant="41" id="Rla-bV-cCN"/>
-                                    <constraint firstAttribute="trailing" secondItem="15F-mw-T2s" secondAttribute="trailing" constant="59" id="VBK-aX-n0J"/>
                                     <constraint firstAttribute="trailing" secondItem="iL9-Yf-PmQ" secondAttribute="trailing" constant="41" id="bfA-ih-nO8"/>
                                     <constraint firstAttribute="bottom" secondItem="GK1-rz-oQv" secondAttribute="bottom" constant="16" id="dCC-NG-VkQ"/>
                                     <constraint firstAttribute="bottom" secondItem="5Bn-ID-RCf" secondAttribute="bottom" id="ekH-w0-QTe"/>
                                     <constraint firstAttribute="trailing" secondItem="00E-ps-FvE" secondAttribute="trailing" constant="64" id="lFJ-eT-3sw"/>
                                     <constraint firstItem="5Bn-ID-RCf" firstAttribute="leading" secondItem="C0H-Dn-OjY" secondAttribute="leading" constant="-1" id="qpR-9m-Vd5"/>
                                     <constraint firstAttribute="bottom" secondItem="Tb6-Ky-EDU" secondAttribute="bottom" constant="14" id="s1P-9Y-Peg"/>
-                                    <constraint firstItem="Tb6-Ky-EDU" firstAttribute="top" secondItem="15F-mw-T2s" secondAttribute="bottom" constant="3" id="uc0-CO-i5V"/>
                                     <constraint firstItem="00E-ps-FvE" firstAttribute="top" secondItem="C0H-Dn-OjY" secondAttribute="top" constant="8" id="uzr-9L-3Bl"/>
                                     <constraint firstAttribute="height" constant="250" id="wY7-YP-atf"/>
                                     <constraint firstAttribute="bottom" secondItem="iL9-Yf-PmQ" secondAttribute="bottom" id="wlT-GK-a11"/>
+                                    <constraint firstItem="p4q-ac-If7" firstAttribute="leading" secondItem="C0H-Dn-OjY" secondAttribute="leading" constant="10" id="y0o-Ni-5yO"/>
+                                    <constraint firstItem="p4q-ac-If7" firstAttribute="top" secondItem="C0H-Dn-OjY" secondAttribute="top" constant="169" id="ycK-LS-fiL"/>
                                 </constraints>
                             </view>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="6PZ-ht-8K7">
@@ -739,9 +739,10 @@
                         <outlet property="patchImageView" destination="iL9-Yf-PmQ" id="TqP-bI-2sW"/>
                         <outlet property="patchLocationMap" destination="6PZ-ht-8K7" id="wwq-Fc-RHK"/>
                         <outlet property="patchNameField" destination="Tb6-Ky-EDU" id="lMk-Oq-ec5"/>
-                        <outlet property="patchTypeField" destination="15F-mw-T2s" id="e16-Hq-hpD"/>
+                        <outlet property="patchTypeButton" destination="p4q-ac-If7" id="vQq-yH-lU5"/>
                         <outlet property="photoButton" destination="00E-ps-FvE" id="jja-Dg-GvH"/>
                         <outlet property="privacyControl" destination="GK1-rz-oQv" id="z00-qQ-iON"/>
+                        <segue destination="fk0-fn-vde" kind="presentation" identifier="SelectPatchType" modalPresentationStyle="currentContext" id="tLO-hD-7G7"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sue-Q5-eDe" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -752,7 +753,38 @@
                     </connections>
                 </pongPressGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="4935" y="-2036"/>
+            <point key="canvasLocation" x="4762" y="-2036"/>
+        </scene>
+        <!--Select Patch Type-->
+        <scene sceneID="jz1-v7-anz">
+            <objects>
+                <tableViewController id="6Lh-li-b23" customClass="PatchTypeViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="hPQ-eO-0xd">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PatchTypeCell" id="TGi-ao-KjA">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="TGi-ao-KjA" id="r1j-pz-n0e">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="6Lh-li-b23" id="LK3-Mx-vAL"/>
+                            <outlet property="delegate" destination="6Lh-li-b23" id="cSt-vo-v2p"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Select Patch Type" id="dtr-4j-qhX"/>
+                    <connections>
+                        <segue destination="Z6z-ae-zjC" kind="unwind" identifier="PatchTypeUnwind" unwindAction="unwindFromPatchType:" id="faZ-DK-ZeX"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="47d-lZ-bL3" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="Z6z-ae-zjC" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="6359" y="-2051"/>
         </scene>
         <!--Nearby-->
         <scene sceneID="I2B-94-DKt">
@@ -1084,6 +1116,24 @@
             </objects>
             <point key="canvasLocation" x="4228" y="-3545"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="pxK-nz-cTz">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="fk0-fn-vde" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="A4g-t5-L9X">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="6Lh-li-b23" kind="relationship" relationship="rootViewController" id="sqA-qn-VMw"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dPH-tj-GWx" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5547" y="-2051"/>
+        </scene>
     </scenes>
     <resources>
         <image name="Placeholder current user profile" width="141" height="141"/>
@@ -1094,5 +1144,6 @@
         <segue reference="cGH-YD-j5U"/>
         <segue reference="nea-bY-Zi0"/>
         <segue reference="WKA-tH-M3A"/>
+        <segue reference="tLO-hD-7G7"/>
     </inferredMetricsTieBreakers>
 </document>

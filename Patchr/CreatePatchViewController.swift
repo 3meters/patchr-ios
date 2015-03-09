@@ -16,13 +16,22 @@ class CreatePatchViewController: UIViewController,
                                  UITextFieldDelegate // For text field details
 {
     @IBOutlet weak var photoButton: UIButton!
-    @IBOutlet weak var patchTypeField: UITextField!
     @IBOutlet weak var patchNameField: UITextField!
     @IBOutlet weak var patchImageView: UIImageView!
     @IBOutlet weak var patchImageTintView: UIImageView!
     @IBOutlet weak var privacyControl: UISegmentedControl!
     @IBOutlet weak var patchLocationMap: MKMapView!
 
+    @IBOutlet weak var patchTypeButton: UIButton!
+    
+    
+    var patchType: String! { // value is the 'id' of the category
+        didSet {
+            let newTitle = ProxibaseClient.sharedInstance.categories[patchType]?["name"] as String
+            
+            patchTypeButton.setTitle(newTitle, forState: .Normal)
+        }
+    }
     lazy var photoChooserUI: PhotoChooserUI = { return PhotoChooserUI(hostViewController:self) }()
 
     // MARK: UITextFieldDelegate
@@ -39,11 +48,7 @@ class CreatePatchViewController: UIViewController,
     
     func textFieldDidEndEditing(textField: UITextField) {
         if textField.text == "" {
-            if textField == patchTypeField
-            {
-                textField.text = LocalizedString("Unknown Type")
-            }
-            else if textField == patchNameField
+            if textField == patchNameField
             {
                 textField.text = LocalizedString("Untitled Patch")
             }
@@ -53,11 +58,18 @@ class CreatePatchViewController: UIViewController,
 
     override func viewWillAppear(animated: Bool)
     {
-        // Get the map showing the region around the user
+        if patchType == nil {
         
-        var currentRegion = MKCoordinateRegionMakeWithDistance(self.coordinate, 2000, 2000)
-        patchLocationMap.setRegion(currentRegion, animated: false)
-        patchLocationMap.addAnnotation(self)
+            self.performSegueWithIdentifier("SelectPatchType", sender: nil)
+        }
+        else
+        {
+            // Get the map showing the region around the user
+            
+            var currentRegion = MKCoordinateRegionMakeWithDistance(self.coordinate, 2000, 2000)
+            patchLocationMap.setRegion(currentRegion, animated: false)
+            patchLocationMap.addAnnotation(self)
+        }
     }
 
 
@@ -71,7 +83,7 @@ class CreatePatchViewController: UIViewController,
     @IBAction func saveButton(sender: AnyObject) {
 
         let name = patchNameField.text
-        let type = patchTypeField.text
+        let type = patchType
         let privacy = privacyControl.selectedSegmentIndex == 0 ? "private" : "public"
         let patchLocation = coordinate
         let patchImage = patchImageView.image
@@ -153,5 +165,27 @@ class CreatePatchViewController: UIViewController,
             self.patchImageView.image = uiImage
         }
     }
+    
+    // MARK: Segue stuff
+    
+    @IBAction func tappedPatchTypeField(sender: AnyObject)
+    {
+        self.performSegueWithIdentifier("SelectPatchType", sender: nil)
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    
+        println(self)
+        println(sender)
+        if let navController = segue.destinationViewController as? UINavigationController
+        {
+            if let patchTypeViewController = navController.topViewController as? PatchTypeViewController
+            {
+                patchTypeViewController.selectedType = patchTypeButton.titleLabel!.text ?? ""
+                patchTypeViewController.hostView = self
+            }
+        }
+    }
 
+    @IBAction func unwindFromPatchType(segue: UIStoryboardSegue) {}
 }
