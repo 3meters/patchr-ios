@@ -59,10 +59,10 @@ class SettingsTableViewController: UITableViewController, MFMailComposeViewContr
                 UIApplication.sharedApplication().openURL(url)
             }
         } else if selectedCell == self.termsOfServiceTableViewCell {
-            let termsURLString = "http://3meters.com" // TODO: need real URL
+            let termsURLString = "http://patchr.com/terms"
             self.pushWebViewController(NSURL(string: termsURLString))
         } else if selectedCell == self.privacyPolicyTableViewCell {
-            let privacyPolicyURLString = "http://3meters.com" // TODO: need real URL
+            let privacyPolicyURLString = "http://patchr.com/privacy"
             self.pushWebViewController(NSURL(string: privacyPolicyURLString))
         } else if selectedCell == self.softwareLicensesTableViewCell {
             let softwareLicensesURLString = "http://3meters.com" // TODO: need real URL

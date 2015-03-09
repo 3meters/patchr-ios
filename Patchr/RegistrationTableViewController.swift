@@ -65,7 +65,10 @@ class RegistrationTableViewController: UITableViewController {
     }
     
     @IBAction func termsOfServiceButtonAction(sender: AnyObject) {
-        UIApplication.sharedApplication().openURL(NSURL(string: "http://patchr.com/terms")!)
+        let webViewController = PBWebViewController()
+        webViewController.URL = NSURL(string: "http://patchr.com/terms")!
+        webViewController.showsNavigationToolbar = false
+        self.navigationController?.pushViewController(webViewController, animated: true)
     }
     
     var observerObject: NSObjectProtocol? = nil
