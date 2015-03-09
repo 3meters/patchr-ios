@@ -108,11 +108,11 @@
 #define COCOAPODS_VERSION_MINOR_Mantle_extobjc 5
 #define COCOAPODS_VERSION_PATCH_Mantle_extobjc 4
 
-// OHAttributedStringAdditions
-#define COCOAPODS_POD_AVAILABLE_OHAttributedStringAdditions
-#define COCOAPODS_VERSION_MAJOR_OHAttributedStringAdditions 1
-#define COCOAPODS_VERSION_MINOR_OHAttributedStringAdditions 2
-#define COCOAPODS_VERSION_PATCH_OHAttributedStringAdditions 0
+// PBWebViewController
+#define COCOAPODS_POD_AVAILABLE_PBWebViewController
+#define COCOAPODS_VERSION_MAJOR_PBWebViewController 0
+#define COCOAPODS_VERSION_MINOR_PBWebViewController 3
+#define COCOAPODS_VERSION_PATCH_PBWebViewController 0
 
 // RMCoreDataStack
 #define COCOAPODS_POD_AVAILABLE_RMCoreDataStack

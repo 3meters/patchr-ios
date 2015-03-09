@@ -69,6 +69,8 @@
 		7DC9D4941A9D4FAD00234E3C /* NotificationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC9D4921A9D4FAD00234E3C /* NotificationTableViewCell.swift */; };
 		7DC9D4951A9D4FAD00234E3C /* NotificationTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7DC9D4931A9D4FAD00234E3C /* NotificationTableViewCell.xib */; };
 		7DC9D49A1A9D597400234E3C /* AutoSizingLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DC9D4991A9D597400234E3C /* AutoSizingLabel.m */; };
+		7DE393E71AAE43AD00D1B80E /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */; };
+		7DE393E91AAE4BF600D1B80E /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7DE393E81AAE4BF600D1B80E /* MessageUI.framework */; };
 		7DE975EB1AA7D69500C1ECE9 /* FetchedResultsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE975EA1AA7D69500C1ECE9 /* FetchedResultsTableViewController.swift */; };
 		7DE975EE1AA7F72400C1ECE9 /* ModelUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE975ED1AA7F72400C1ECE9 /* ModelUtilities.m */; };
 		842CF7591AAA73550078334A /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EF12AB1AA904700043EBBA /* Utilities.swift */; };
@@ -187,6 +189,8 @@
 		7DC9D4931A9D4FAD00234E3C /* NotificationTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NotificationTableViewCell.xib; sourceTree = "<group>"; };
 		7DC9D4981A9D597400234E3C /* AutoSizingLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoSizingLabel.h; sourceTree = "<group>"; };
 		7DC9D4991A9D597400234E3C /* AutoSizingLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutoSizingLabel.m; sourceTree = "<group>"; };
+		7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
+		7DE393E81AAE4BF600D1B80E /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		7DE975EA1AA7D69500C1ECE9 /* FetchedResultsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchedResultsTableViewController.swift; sourceTree = "<group>"; };
 		7DE975EC1AA7F72400C1ECE9 /* ModelUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelUtilities.h; sourceTree = "<group>"; };
 		7DE975ED1AA7F72400C1ECE9 /* ModelUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelUtilities.m; sourceTree = "<group>"; };
@@ -206,6 +210,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7DE393E91AAE4BF600D1B80E /* MessageUI.framework in Frameworks */,
 				7D03C3D71A980D9400BAFD19 /* MapKit.framework in Frameworks */,
 				329E8C34AA0DAB5B16518B8A /* libPods-Patchr.a in Frameworks */,
 			);
@@ -300,6 +305,7 @@
 				7DC9D4931A9D4FAD00234E3C /* NotificationTableViewCell.xib */,
 				7DC9D4981A9D597400234E3C /* AutoSizingLabel.h */,
 				7DC9D4991A9D597400234E3C /* AutoSizingLabel.m */,
+				7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */,
 			);
 			path = Patchr;
 			sourceTree = "<group>";
@@ -400,6 +406,7 @@
 		A0DA2C2AA90D81631E6BF68D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7DE393E81AAE4BF600D1B80E /* MessageUI.framework */,
 				7D77FC801AAA313C00AA8284 /* CoreLocation.framework */,
 				7D03C3D61A980D9400BAFD19 /* MapKit.framework */,
 				3B36067AA93A3B743CFCA837 /* libPods-Patchr.a */,
@@ -645,6 +652,7 @@
 				7DE975EE1AA7F72400C1ECE9 /* ModelUtilities.m in Sources */,
 				7DA7308E1A71ACC9008C25FA /* _ServiceObject.m in Sources */,
 				7D7096021A71D55C00F835C4 /* QueryResult.m in Sources */,
+				7DE393E71AAE43AD00D1B80E /* SettingsTableViewController.swift in Sources */,
 				7D56EE8B1A70616500BFCC32 /* SwiftyJSON.swift in Sources */,
 				844D6E351AA4D01200EE71ED /* DebugViewController.swift in Sources */,
 				7DA7308B1A71ACC9008C25FA /* _Place.m in Sources */,
