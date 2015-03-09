@@ -13,6 +13,8 @@ class PatchDetailViewController: FetchedResultsTableViewController {
     @IBOutlet weak var patchImageView: UIImageView!
     @IBOutlet weak var patchNameLabel: UILabel!
     @IBOutlet weak var patchCategoryLabel: UILabel!
+    @IBOutlet weak var watchButton: UIButton!
+    @IBOutlet weak var likeButton: UIButton!
     
     var managedObjectContext: NSManagedObjectContext!
     var query : Query!
@@ -93,6 +95,16 @@ class PatchDetailViewController: FetchedResultsTableViewController {
         }
         
         notificationCell.dateLabel.text = message.createdDate.description
+    }
+    
+    @IBAction func watchAction(sender: AnyObject)
+    {
+        println("watch")
+    }
+    
+    @IBAction func likeAction(sender: AnyObject)
+    {
+        println("like")
     }
     
     override func fetchedResultsControllerForViewController(viewController: UIViewController) -> NSFetchedResultsController {

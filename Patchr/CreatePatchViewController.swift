@@ -63,7 +63,8 @@ class CreatePatchViewController: UIViewController,
 
     func locationDictionary(coordinate: CLLocationCoordinate2D) -> NSDictionary
     {
-        // TODO: 25 is bogus. What should this be?
+        // TODO: 25 is bogus. What should this be? Maybe work with a CLLocation object to get accuracy values.
+        // Q: How is geometry different from lat/lng
         return ["accuracy":25, "geometry":[coordinate.longitude, coordinate.latitude], "lat": coordinate.latitude, "lng":coordinate.longitude]
     }
     
@@ -71,32 +72,44 @@ class CreatePatchViewController: UIViewController,
 
         let name = patchNameField.text
         let type = patchTypeField.text
-        let privacy = privacyControl.selectedSegmentIndex
+        let privacy = privacyControl.selectedSegmentIndex == 0 ? "private" : "public"
         let patchLocation = coordinate
         let patchImage = patchImageView.image
-        
-        println("SAVE PATCH")
-        println("name:    \(name)")
-        println("type:    \(type)")
-        println("privacy: \(privacy)")
-        println("location: \(patchLocation.latitude), \(patchLocation.longitude)")
-        println("image:    \(patchImage)")
         
         let proxibase = ProxibaseClient.sharedInstance
         
         let parameters: NSDictionary = ["name": name,
                                         "visibility": privacy,
-                                        "category": proxibase.categories[type] as AnyObject,
+                                        "category": proxibase.categories[type]! as AnyObject,
                                         "location": locationDictionary(patchLocation) as AnyObject,
-                                        "photo": patchImage as AnyObject
+                                        "photo": patchImage! as AnyObject
                                        ]
         
-        ProxibaseClient.sharedInstance.createObject("data/patches", parameters: parameters) { response, error in
-        }
-        
-        // TODO: Actually do the save here
+        proxibase.createObject("data/patches", parameters: parameters) { response, error in
+            dispatch_async(dispatch_get_main_queue())
+            {
+                if let error = ServerError(error) {
+                    println("Create Patch Error")
+                    println(error)
 
-        self.performSegueWithIdentifier("CreatePatchUnwind", sender: nil)
+                    let alert = UIAlertController(title: LocalizedString("Error"), message: error.message, preferredStyle: .Alert)
+                    alert.addAction(UIAlertAction(title: LocalizedString("OK"), style: .Cancel, handler: { _ in }))
+                    self.presentViewController(alert, animated: true) {}
+                }
+                else
+                {
+                    println("Create Patch Successful")
+                    println(response)
+                    if let patchID = (response?["data"] as NSDictionary?)?["_id"] as? String
+                    {
+                        println("Created patch id \(patchID)")
+                        proxibase.createLink(fromType:.User, fromID: nil, linkType:.Create, toType:.Patch, toID: patchID) {_, _ in }
+                    }
+
+                    self.performSegueWithIdentifier("CreatePatchUnwind", sender: nil)
+                }
+            }
+        }
     }
     
     
@@ -119,7 +132,7 @@ class CreatePatchViewController: UIViewController,
         // that seems like a bug because changing the location in the debug menu fixed it.
         // ...and now I saw it crash on the Phone too. So I'm going to see what happens with a default CLLocation
         let locationManager = CLLocationManager()
-                let location = CLLocationManager().location
+        let location = CLLocationManager().location
         return location != nil ? location.coordinate : CLLocation().coordinate
 
     }()

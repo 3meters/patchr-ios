@@ -177,7 +177,7 @@ public class ProxibaseClient {
         self.fetchAllCategories() { response, error in
 
             if let error = error {
-                self.categories = ["general":["id":"general","name":"General","photo": ["prefix":"img_group.png","source":"assets.categories"],"categories":[]]]
+                self.categories = ["general":["id":"general","name":"General","photo": ["prefix":"img_group.png","source":"assets.categories"]]]
             }
             else
             {
@@ -185,7 +185,10 @@ public class ProxibaseClient {
                     var categories = [String:NSDictionary]()
                     
                     forEachDictionaryInServiceResponse(response as [NSObject:AnyObject]) { objectDictionary in
-                        let object = objectDictionary as NSDictionary
+                        var object = (objectDictionary as NSDictionary).mutableCopy() as NSMutableDictionary
+                        // The server returns us an empty array of "categories" for each category, but will not
+                        // accept these from us, so remove them here.
+                        object.removeObjectForKey("categories")
                         categories[object["id"] as NSString] = object
                     }
                     self.categories = categories
@@ -463,6 +466,8 @@ public class ProxibaseClient {
         }
     }
     
+    // patch = "data/patch", for example
+    //
     public func createObject(path:String, parameters: NSDictionary, completion: ProxibaseCompletionBlock)
     {
         let properties = parameters.mutableCopy() as NSMutableDictionary
@@ -472,9 +477,45 @@ public class ProxibaseClient {
         
         dispatch_async(queue)
         {
-            self.performPOSTRequestFor(path, parameters: properties) { response, error in
+            let postParameters = ["data":properties]
+            self.performPOSTRequestFor(path, parameters: postParameters) { response, error in
+                if let error = error {
+                    println("createObject failed:")
+                    println(error)
+                }
                 completion(response: response, error: error)
             }
+        }
+    }
+    
+    public enum EntityType: String { // TODO: Used in createLink, but should probably merge with LinkDestination if possible.
+        case Beacon = "beacon"
+        case Message = "message"
+        case Patch = "patch"
+        case Place = "place"
+        case User = "user"
+    }
+
+    public func createLink(#fromType: EntityType, var fromID: String?, linkType: LinkType, toType: EntityType, var toID: String?, completion: ProxibaseCompletionBlock)
+    {
+        if fromType == .User && fromID == nil {
+            fromID = self.userId
+        }
+        if toType == .User && toID == nil {
+            toID = self.userId
+        }
+        let linkParameters: NSDictionary = [
+            "_from": fromID!,
+            "fromSchema": fromType.rawValue,
+            "_to": toID!,
+            "toSchema": toType.rawValue,
+            "type": linkType.rawValue
+        ]
+        
+        let postParameters = ["data":linkParameters]
+        
+        self.performPOSTRequestFor("data/links", parameters: postParameters) { response, error in
+            completion(response: response, error: error)
         }
     }
     
