@@ -17,26 +17,15 @@ class MeTableViewViewController: QueryResultTableViewController {
     
         super.viewDidLoad()
         
-        let userQuery = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
-        userQuery.name = "Current user"
-        dataStore.loadMoreResultsFor(userQuery) { results, error in
-            println("current user query returned result")
-            if results.count == 1 {
-                let user = results[0].entity_ as User
-                println(user)
-                println(user.photo)
-                
-                self.currentUserNameField.text = user.name
-                self.currentUserEmailField.text = user.email
+        dataStore.withCurrentUser(completion: { user in
+            self.currentUserNameField.text = user.name
+            self.currentUserEmailField.text = user.email
 
-                if let thePhoto = user.photo
-                {
-                    self.currentUserProfilePhoto.setImageWithURL(thePhoto.photoURL())
-                }
-                
-                println(error)
+            if let thePhoto = user.photo
+            {
+                self.currentUserProfilePhoto.setImageWithURL(thePhoto.photoURL())
             }
-        }
+        })
         
         let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
         query.name = "Comments by current user"

@@ -110,6 +110,17 @@ class PatchDetailViewController: FetchedResultsTableViewController {
     override func fetchedResultsControllerForViewController(viewController: UIViewController) -> NSFetchedResultsController {
         return self.fetchedResultsController
     }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if let navigationController = segue.destinationViewController as? UINavigationController {
+            if let postMessageViewController = navigationController.topViewController as? PostMessageViewController {
+                // pass along the data store
+                postMessageViewController.dataStore = self.dataStore
+                postMessageViewController.receiverString = patch.name
+                postMessageViewController.patchID = patch.id_
+            }
+        }
+    }
 
     @IBAction func unwindFromCreateMessage(segue: UIStoryboardSegue) {}
     @IBAction func unwindFromCreatePatch(segue: UIStoryboardSegue) {}

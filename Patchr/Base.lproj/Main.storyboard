@@ -463,7 +463,7 @@
                                                 <segue destination="ATs-GG-DRN" kind="presentation" id="WKA-tH-M3A"/>
                                             </connections>
                                         </button>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Patch Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bHj-ol-mkD">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Patch Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bHj-ol-mkD">
                                             <rect key="frame" x="8" y="74" width="95" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -585,13 +585,13 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="XXX" translatesAutoresizingMaskIntoConstraints="NO" id="uhV-E5-tUm">
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uhV-E5-tUm">
                                 <rect key="frame" x="98" y="122" width="486" height="432"/>
-                                <color key="backgroundColor" red="0.97331874704242827" green="1" blue="0.86202740315169868" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="bu0-aT-iV3" userLabel="Attached Image">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="bu0-aT-iV3" userLabel="Attached Image">
                                 <rect key="frame" x="0.0" y="554" width="600" height="46"/>
                                 <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                 <constraints>
@@ -645,10 +645,10 @@
                     <navigationItem key="navigationItem" title="Create/Edit Message" id="dmn-cF-eT0">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="Xs6-s5-RM1">
                             <connections>
-                                <segue destination="eww-OE-9xb" kind="unwind" unwindAction="unwindFromCreateMessage:" id="Iag-7n-w8i"/>
+                                <segue destination="eww-OE-9xb" kind="unwind" unwindAction="unwindFromCreateMessage:" id="ts9-RY-VbR"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Send" id="eoU-s0-DAw">
+                        <barButtonItem key="rightBarButtonItem" title="Post" id="eoU-s0-DAw">
                             <connections>
                                 <action selector="sendButtonAction:" destination="RIj-zQ-Zaq" id="HKv-7r-kML"/>
                             </connections>
@@ -660,6 +660,8 @@
                         <outlet property="messageTextView" destination="uhV-E5-tUm" id="6X7-6D-5Vn"/>
                         <outlet property="receiverLabel" destination="CXg-PC-ftG" id="Ac2-8D-06q"/>
                         <outlet property="sendButton" destination="eoU-s0-DAw" id="O1A-TA-JsZ"/>
+                        <outlet property="userProfileImage" destination="TAP-Ne-Iwb" id="fZb-2a-dnE"/>
+                        <segue destination="eww-OE-9xb" kind="unwind" identifier="CreateMessageUnwindToPatchDetail" unwindAction="unwindFromCreateMessage:" id="ZPr-Jm-Ze1"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="535-uz-S2O" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1391,10 +1393,10 @@
         <image name="Placeholder patch header" width="216" height="144"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="lsa-hP-PPZ"/>
-        <segue reference="tnz-4R-3lC"/>
-        <segue reference="cGH-YD-j5U"/>
-        <segue reference="tLO-hD-7G7"/>
         <segue reference="Z9b-z0-EWI"/>
+        <segue reference="cGH-YD-j5U"/>
+        <segue reference="lsa-hP-PPZ"/>
+        <segue reference="WKA-tH-M3A"/>
+        <segue reference="tLO-hD-7G7"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -30,6 +30,32 @@ class DataStore: NSObject {
         self.locationManager = locationManager
         super.init()
     }
+
+    private var _currentUser: User? = nil
+    
+    func withCurrentUser(refresh:Bool = false, completion: (User) -> Void)
+    {
+        if refresh || _currentUser == nil
+        {
+            let userQuery = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
+            userQuery.name = "Current user"
+            self.loadMoreResultsFor(userQuery) { results, error in
+                if results.count == 1
+                {
+                    let user = results[0].entity_ as User
+                    self._currentUser = user
+                    dispatch_async(dispatch_get_main_queue())
+                    {
+                        completion(self._currentUser!)
+                    }
+                }
+            }
+        }
+        else {
+            completion(self._currentUser!)
+        }
+    }
+    
     
     func loadMoreResultsFor(query: Query, completion:(results: [QueryResult], error: NSError?) -> Void) {
         
