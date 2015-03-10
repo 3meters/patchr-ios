@@ -65,19 +65,30 @@ class PostMessageViewController: UIViewController
                             println(error)
                         }
                     }
-                    self.performSegueWithIdentifier("CreateMessageUnwindToPatchDetail", sender: nil)
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self.performSegueWithIdentifier("CreateMessageUnwindToPatchDetail", sender: nil)
+                    }
                 }
             }
         }
-        println("send")
     }
     @IBAction func addPhotoButtonAction(sender: AnyObject) {
-        println("add photo")
-        photoChooser.choosePhoto() { image in
-            
-            let heightConstraint = self.attachedImageView.constraints()[0] as NSLayoutConstraint
-            heightConstraint.constant = 200
-            self.attachedImageView.image = image
+        let heightConstraint = self.attachedImageView.constraints()[0] as NSLayoutConstraint
+        if self.attachedImageView.image == nil {
+          photoChooser.choosePhoto() { [unowned self] image in
+                self.addPhotoButton.setTitle(LocalizedString("Remove Photo"), forState: .Normal)
+                heightConstraint.constant = 200 // or whatever
+                self.attachedImageView.image = image
+                self.messageTextView.scrollRangeToVisible(self.messageTextView.selectedRange)
+                self.updatePostButton()
+          }
+        }
+        else
+        {
+            addPhotoButton.setTitle(LocalizedString("Add Photo"), forState: .Normal)
+            heightConstraint.constant = 46 // or whatever
+            attachedImageView.image = nil
+            updatePostButton()
         }
     }
     
@@ -90,6 +101,39 @@ class PostMessageViewController: UIViewController
         dataStore.withCurrentUser(completion: { user in
             self.userProfileImage.setImageWithURL(user.photo.photoURL())
         })
+    }
+    
+    var observerObject: NSObjectProtocol! = nil
+    
+
+    private func updatePostButton() {
+        let hasContent = (attachedImageView.image != nil) || (messageTextView.text.utf16Count > 0)
+        sendButton.enabled = hasContent
+    }
+    
+    // Note: did(Appear\Disappear) are called the first time the view appears as well as when the photo
+    // chooser view is closed, so it's not a one-time-only call like didLoad
+    
+    override func viewDidAppear(animated: Bool) {
+        assert(messageTextView.window != nil) // requirement for calling becomeFirstResponder
+        messageTextView.becomeFirstResponder()
+        
+        observerObject =
+            NSNotificationCenter.defaultCenter().addObserverForName(UITextViewTextDidChangeNotification, object: messageTextView, queue: nil)
+            { [unowned self] note in
+                self.updatePostButton()
+                
+                #if DEBUG
+                if self.messageTextView.text == "Here's to the crazy ones." {
+                    self.messageTextView.text = "Here's to the crazy ones, the misfits, the rebels, the troublemakers, the round pegs in the square holes... the ones who see things differently -- they're not fond of rules... You can quote them, disagree with them, glorify or vilify them, but the only thing you can't do is ignore them because they change things... they push the human race forward, and while some may see them as the crazy ones, we see genius, because the ones who are crazy enough to think that they can change the world, are the ones who do.\n\nHere's to the crazy ones, the misfits, the rebels, the troublemakers, the round pegs in the square holes... the ones who see things differently -- they're not fond of rules... You can quote them, disagree with them, glorify or vilify them, but the only thing you can't do is ignore them because they change things... they push the human race forward, and while some may see them as the crazy ones, we see genius, because the ones who are crazy enough to think that they can change the world, are the ones who do.\n"
+                }
+                #endif
+        }
+        updatePostButton()
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        NSNotificationCenter.defaultCenter().removeObserver(observerObject)
     }
 }
 

@@ -21,7 +21,7 @@ class PhotoChooserUI: NSObject,
                       UIActionSheetDelegate,
                       UIImagePickerControllerDelegate, UINavigationControllerDelegate // both needed for UIImagePicker
 {
-    private var hostViewController: UIViewController
+    private weak var hostViewController: UIViewController?
     private var finishedChoosing: ((UIImage) -> Void)? = nil
     
     init(hostViewController: UIViewController)
@@ -34,7 +34,7 @@ class PhotoChooserUI: NSObject,
     // MARK: Photo UI
     
     private lazy var imagePickerController: UIImagePickerController = {
-        return UIImagePickerController(rootViewController: self.hostViewController)
+        return UIImagePickerController(rootViewController: self.hostViewController!)
     }()
     
     private enum PhotoButtonFunction {
@@ -82,14 +82,14 @@ class PhotoChooserUI: NSObject,
             photoButtonFunctionMap[sheet.addButtonWithTitle(LocalizedString("Photo Search"))] = .SearchPhoto
         }
         
-        sheet.showInView(hostViewController.view)
+        sheet.showInView(hostViewController?.view)
     }
     
     private func choosePhotoFromLibrary()
     {
         let pickerController = UIImagePickerController()
         pickerController.delegate = self
-        self.hostViewController.presentViewController(pickerController, animated: true, completion: nil)
+        self.hostViewController?.presentViewController(pickerController, animated: true, completion: nil)
     }
 
     private func takePhotoWithCamera()
@@ -97,7 +97,7 @@ class PhotoChooserUI: NSObject,
         let pickerController = UIImagePickerController()
         pickerController.sourceType = .Camera
         pickerController.delegate = self
-        self.hostViewController.presentViewController(pickerController, animated: true, completion: nil)
+        self.hostViewController?.presentViewController(pickerController, animated: true, completion: nil)
     }
 
     private func searchForPhoto()
@@ -170,7 +170,7 @@ class PhotoChooserUI: NSObject,
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject])
     {
-        hostViewController.dismissViewControllerAnimated(true, completion: nil)
+        hostViewController?.dismissViewControllerAnimated(true, completion: nil)
         if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
             self.finishedChoosing!(image)
         }
@@ -178,7 +178,7 @@ class PhotoChooserUI: NSObject,
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController)
     {
-        hostViewController.dismissViewControllerAnimated(true, completion: nil)
+        hostViewController?.dismissViewControllerAnimated(true, completion: nil)
     }
  
 }

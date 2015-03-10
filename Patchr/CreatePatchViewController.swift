@@ -44,7 +44,7 @@ class CreatePatchViewController: UIViewController,
         return false
     }
     
-    // A stopgap for empty patch name/types
+    // A stopgap for empty patch names
     
     func textFieldDidEndEditing(textField: UITextField) {
         if textField.text == "" {
@@ -58,8 +58,8 @@ class CreatePatchViewController: UIViewController,
 
     override func viewWillAppear(animated: Bool)
     {
-        if patchType == nil {
-        
+        if patchType == nil
+        {
             self.performSegueWithIdentifier("SelectPatchType", sender: nil)
         }
         else

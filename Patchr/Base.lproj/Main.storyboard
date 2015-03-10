@@ -648,7 +648,7 @@
                                 <segue destination="eww-OE-9xb" kind="unwind" unwindAction="unwindFromCreateMessage:" id="ts9-RY-VbR"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Post" id="eoU-s0-DAw">
+                        <barButtonItem key="rightBarButtonItem" enabled="NO" title="Post" id="eoU-s0-DAw">
                             <connections>
                                 <action selector="sendButtonAction:" destination="RIj-zQ-Zaq" id="HKv-7r-kML"/>
                             </connections>
