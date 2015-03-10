@@ -31,7 +31,7 @@ class ExploreTableViewController: QueryResultTableViewController {
         query.name = "Explore patches"
         self.managedObjectContext.save(nil)
         self.query = query
-        dataStore.loadMoreResultsFor(self.query, completion: { (results, error) -> Void in
+        dataStore.refreshResultsFor(self.query, completion: { (results, error) -> Void in
             NSLog("Default query fetch for tableview")
         })
         

@@ -29,9 +29,12 @@ class NearbyPatchesTableViewController: QueryResultTableViewController {
         query.name = "Nearby patches"
         self.managedObjectContext.save(nil)
         self.query = query
-        self.dataStore.loadMoreResultsFor(self.query, completion: { (results, error) -> Void in
-            NSLog("Default query fetch for tableview")
-        })
+        
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: "pullToRefreshAction:", forControlEvents: UIControlEvents.ValueChanged)
+        self.refreshControl = refreshControl
+        self.refreshControl?.beginRefreshing()
+        self.pullToRefreshAction(self.refreshControl!)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -93,4 +96,24 @@ class NearbyPatchesTableViewController: QueryResultTableViewController {
     }
     
     @IBAction func unwindFromCreatePatch(segue: UIStoryboardSegue) {}
+    
+    // MARK: Private Internal
+    
+    func pullToRefreshAction(sender: AnyObject) -> Void {
+        self.dataStore.refreshResultsFor(self.query, completion: { (results, error) -> Void in
+            delay(0.1, { () -> () in
+                self.refreshControl?.endRefreshing()
+                return
+            })
+        })
+    }
+}
+
+func delay(delay:Double, closure:()->()) {
+    dispatch_after(
+        dispatch_time(
+            DISPATCH_TIME_NOW,
+            Int64(delay * Double(NSEC_PER_SEC))
+        ),
+        dispatch_get_main_queue(), closure)
 }
