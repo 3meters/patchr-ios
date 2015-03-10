@@ -356,10 +356,10 @@
             </objects>
             <point key="canvasLocation" x="-430" y="-96"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Splash Nav Controller-->
         <scene sceneID="7EM-ML-lSf">
             <objects>
-                <navigationController storyboardIdentifier="SplashNavigationController" automaticallyAdjustsScrollViewInsets="NO" id="68Q-Wu-ATt" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="SplashNavigationController" title="Splash Nav Controller" automaticallyAdjustsScrollViewInsets="NO" id="68Q-Wu-ATt" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="BeC-pL-V9p">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -786,10 +786,10 @@
             </objects>
             <point key="canvasLocation" x="6359" y="-2051"/>
         </scene>
-        <!--Nearby-->
+        <!--Nearby Nav Controller-->
         <scene sceneID="I2B-94-DKt">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Qof-Oi-YrS" sceneMemberID="viewController">
+                <navigationController title="Nearby Nav Controller" automaticallyAdjustsScrollViewInsets="NO" id="Qof-Oi-YrS" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Nearby" id="wSA-7d-zPX"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="EYT-lW-enh">
@@ -835,10 +835,10 @@
             </objects>
             <point key="canvasLocation" x="3094" y="-2036"/>
         </scene>
-        <!--Notifications-->
+        <!--Notifications Nav Controller-->
         <scene sceneID="goo-Ek-lAR">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Tfh-ka-aQD" sceneMemberID="viewController">
+                <navigationController title="Notifications Nav Controller" automaticallyAdjustsScrollViewInsets="NO" id="Tfh-ka-aQD" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Notifications" id="qxB-6H-hf3"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="v0i-fK-16E">
@@ -1049,10 +1049,10 @@
             </objects>
             <point key="canvasLocation" x="3094" y="-557"/>
         </scene>
-        <!--Notifications-->
+        <!--Notification Settings-->
         <scene sceneID="pkQ-Tl-Woc">
             <objects>
-                <tableViewController id="SsM-Ni-hUT" sceneMemberID="viewController">
+                <tableViewController title="Notification Settings" id="SsM-Ni-hUT" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="GBJ-mX-an5">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1092,10 +1092,10 @@
             </objects>
             <point key="canvasLocation" x="3955" y="-557"/>
         </scene>
-        <!--Explore-->
+        <!--Explore Nav Controller-->
         <scene sceneID="dTR-CX-oon">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="cit-av-u7D" sceneMemberID="viewController">
+                <navigationController title="Explore Nav Controller" automaticallyAdjustsScrollViewInsets="NO" id="cit-av-u7D" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Explore" id="f8s-Ou-JTE"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="INd-5V-UXD">
@@ -1221,10 +1221,10 @@
             </objects>
             <point key="canvasLocation" x="2282" y="-557"/>
         </scene>
-        <!--Me-->
+        <!--Me Nav-->
         <scene sceneID="lXS-tD-cY4">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="SeP-eo-R0a" sceneMemberID="viewController">
+                <navigationController title="Me Nav" automaticallyAdjustsScrollViewInsets="NO" id="SeP-eo-R0a" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Me" id="GXO-7y-m5x"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="JjU-7G-nSI">
@@ -1240,10 +1240,10 @@
             </objects>
             <point key="canvasLocation" x="1470" y="-557"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Create Patch Nav Controller-->
         <scene sceneID="rNJ-I5-bfg">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="ATs-GG-DRN" sceneMemberID="viewController">
+                <navigationController title="Create Patch Nav Controller" automaticallyAdjustsScrollViewInsets="NO" id="ATs-GG-DRN" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="QsX-Lv-4VS">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -1258,10 +1258,10 @@
             </objects>
             <point key="canvasLocation" x="4123" y="-2036"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Create Message Nav Controller-->
         <scene sceneID="PJq-9p-NHX">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="11d-az-MmN" sceneMemberID="viewController">
+                <navigationController title="Create Message Nav Controller" automaticallyAdjustsScrollViewInsets="NO" id="11d-az-MmN" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="h0T-kT-jCP">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -1276,10 +1276,10 @@
             </objects>
             <point key="canvasLocation" x="4228" y="-3545"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Select Patch Nav Controller-->
         <scene sceneID="pxK-nz-cTz">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="fk0-fn-vde" sceneMemberID="viewController">
+                <navigationController title="Select Patch Nav Controller" automaticallyAdjustsScrollViewInsets="NO" id="fk0-fn-vde" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="A4g-t5-L9X">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -1300,9 +1300,9 @@
         <image name="Placeholder patch header" width="216" height="144"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="nea-bY-Zi0"/>
+        <segue reference="lsa-hP-PPZ"/>
+        <segue reference="tnz-4R-3lC"/>
         <segue reference="cGH-YD-j5U"/>
-        <segue reference="WKA-tH-M3A"/>
         <segue reference="tLO-hD-7G7"/>
         <segue reference="Z9b-z0-EWI"/>
     </inferredMetricsTieBreakers>
