@@ -69,7 +69,9 @@ public class FetchControllerDelegate: NSFetchedResultsControllerDelegate {
             // Stupid and ugly, rdar://17684030
             if !contains(sectionsBeingAdded, newIndexPath!.section) && !contains(sectionsBeingRemoved, indexPath!.section) {
                 tableView.moveRowAtIndexPath(indexPath!, toIndexPath: newIndexPath!)
-                onUpdate?(cell: tableView.cellForRowAtIndexPath(indexPath!)!, object: anObject)
+                if let cell = tableView.cellForRowAtIndexPath(indexPath!) {
+                    onUpdate?(cell: cell, object: anObject)
+                }
             } else {
                 tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
                 tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
