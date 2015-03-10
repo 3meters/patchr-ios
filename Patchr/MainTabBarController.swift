@@ -41,7 +41,7 @@ class MainTabBarController: UITabBarController, RMCoreDataStackDelegate, CLLocat
                 // iOS 7
                 self.locationManager.startUpdatingLocation() // Prompts automatically
             }
-        } else if CLLocationManager.authorizationStatus() == .Authorized || CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+        } else if (CLLocationManager.authorizationStatus() == .AuthorizedAlways || CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse) {
             self.locationManager.startUpdatingLocation()
         }
         
@@ -63,7 +63,7 @@ class MainTabBarController: UITabBarController, RMCoreDataStackDelegate, CLLocat
     // MARK: CLLocationManagerDelegate
     
     func locationManager(manager: CLLocationManager!, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-        if status == .Authorized || status == .AuthorizedWhenInUse {
+        if status == .AuthorizedAlways || status == .AuthorizedWhenInUse {
             manager.startUpdatingLocation()
         } else if status == CLAuthorizationStatus.Denied {
             SCLAlertView().showWarning(self, title:"Location Disabled", subTitle: "You can enable location access in Settings → Patchr → Location", closeButtonTitle: "OK", duration: 0.0)
