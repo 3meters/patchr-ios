@@ -75,6 +75,7 @@
 		7DE975EE1AA7F72400C1ECE9 /* ModelUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE975ED1AA7F72400C1ECE9 /* ModelUtilities.m */; };
 		842CF7591AAA73550078334A /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EF12AB1AA904700043EBBA /* Utilities.swift */; };
 		843523C31AAE2FE600739447 /* PatchTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843523C21AAE2FE600739447 /* PatchTypeViewController.swift */; };
+		843523C51AAE70B800739447 /* PostMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843523C41AAE70B800739447 /* PostMessageViewController.swift */; };
 		844D6E351AA4D01200EE71ED /* DebugViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844D6E341AA4D01200EE71ED /* DebugViewController.swift */; };
 		844D6E371AA6550400EE71ED /* PhotoChooserUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */; };
 		8468F81C1A9D095E007D6EE6 /* CreatePatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8468F81B1A9D095E007D6EE6 /* CreatePatchViewController.swift */; };
@@ -196,6 +197,7 @@
 		7DE975EC1AA7F72400C1ECE9 /* ModelUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelUtilities.h; sourceTree = "<group>"; };
 		7DE975ED1AA7F72400C1ECE9 /* ModelUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelUtilities.m; sourceTree = "<group>"; };
 		843523C21AAE2FE600739447 /* PatchTypeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTypeViewController.swift; sourceTree = "<group>"; };
+		843523C41AAE70B800739447 /* PostMessageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostMessageViewController.swift; sourceTree = "<group>"; };
 		844D6E341AA4D01200EE71ED /* DebugViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugViewController.swift; sourceTree = "<group>"; };
 		844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoChooserUI.swift; sourceTree = "<group>"; };
 		8468F81B1A9D095E007D6EE6 /* CreatePatchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreatePatchViewController.swift; sourceTree = "<group>"; };
@@ -277,10 +279,11 @@
 				84EF12AB1AA904700043EBBA /* Utilities.swift */,
 				7D3D39EF1A6F116E00A44CB2 /* ProxibaseAPI.swift */,
 				8468F81B1A9D095E007D6EE6 /* CreatePatchViewController.swift */,
+				843523C41AAE70B800739447 /* PostMessageViewController.swift */,
+				843523C21AAE2FE600739447 /* PatchTypeViewController.swift */,
 				844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */,
 				844D6E341AA4D01200EE71ED /* DebugViewController.swift */,
 				7D3D39D21A6F086F00A44CB2 /* Main.storyboard */,
-				843523C21AAE2FE600739447 /* PatchTypeViewController.swift */,
 				7D3D39D51A6F086F00A44CB2 /* Images.xcassets */,
 				7D2610FE1AAE736100FA0F8E /* LaunchStoryboard.storyboard */,
 				7D3D39EE1A6F09CC00A44CB2 /* BridgingHeader.h */,
@@ -624,6 +627,7 @@
 				7DA730911A71ACC9008C25FA /* Place.m in Sources */,
 				7D7096011A71D55C00F835C4 /* _QueryResult.m in Sources */,
 				7D01FA361A7024E200DD6DFA /* JSONResponseSerializerWithData.m in Sources */,
+				843523C51AAE70B800739447 /* PostMessageViewController.swift in Sources */,
 				7D6E264D1A7AEE91000128A7 /* ExploreTableViewController.swift in Sources */,
 				7D3F26D61A76F77E0015F8E8 /* Photo.m in Sources */,
 				7D77FC7F1AAA2E0C00AA8284 /* FetchedResultsMapViewController.swift in Sources */,

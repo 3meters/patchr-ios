@@ -553,7 +553,7 @@
         <!--Create/Edit Message-->
         <scene sceneID="PMg-6k-d8r">
             <objects>
-                <viewController id="RIj-zQ-Zaq" sceneMemberID="viewController">
+                <viewController id="RIj-zQ-Zaq" customClass="PostMessageViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="GeX-42-m1y"/>
                         <viewControllerLayoutGuide type="bottom" id="Wiw-ZZ-tii"/>
@@ -561,7 +561,86 @@
                     <view key="view" contentMode="scaleToFill" id="RRz-fl-QSU">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" alpha="0.5" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="dgb-HU-i5j" userLabel="Receiver Tint">
+                                <rect key="frame" x="0.0" y="64" width="600" height="40"/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="kvX-9e-yUl"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="To:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g4H-Bk-YXd">
+                                <rect key="frame" x="63" y="76" width="19" height="17"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Receiver" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CXg-PC-ftG">
+                                <rect key="frame" x="102" y="73" width="414" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="Q5S-bf-Qql"/>
+                                    <constraint firstAttribute="width" constant="414" id="ZXa-g3-SWE"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="XXX" translatesAutoresizingMaskIntoConstraints="NO" id="uhV-E5-tUm">
+                                <rect key="frame" x="98" y="122" width="486" height="432"/>
+                                <color key="backgroundColor" red="0.97331874704242827" green="1" blue="0.86202740315169868" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="bu0-aT-iV3" userLabel="Attached Image">
+                                <rect key="frame" x="0.0" y="554" width="600" height="46"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="46" id="28r-7P-VTI"/>
+                                </constraints>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LPR-aO-cWd">
+                                <rect key="frame" x="510" y="562" width="74" height="28"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="28" id="vr3-Nw-eay"/>
+                                </constraints>
+                                <state key="normal" title="Add Photo">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="addPhotoButtonAction:" destination="RIj-zQ-Zaq" eventType="touchUpInside" id="tL4-xP-Hzk"/>
+                                </connections>
+                            </button>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="TAP-Ne-Iwb" userLabel="Profile Photo">
+                                <rect key="frame" x="18" y="124" width="64" height="64"/>
+                                <color key="backgroundColor" red="1" green="0.83007472962903672" blue="0.69279524206392407" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="64" id="mxD-gW-dAO"/>
+                                    <constraint firstAttribute="width" constant="64" id="o3Q-0V-Cki"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="LPR-aO-cWd" firstAttribute="trailing" secondItem="RRz-fl-QSU" secondAttribute="trailingMargin" id="21X-Ci-MNm"/>
+                            <constraint firstItem="Wiw-ZZ-tii" firstAttribute="top" secondItem="LPR-aO-cWd" secondAttribute="bottom" constant="10" id="3Rw-OG-3JT"/>
+                            <constraint firstItem="dgb-HU-i5j" firstAttribute="centerY" secondItem="g4H-Bk-YXd" secondAttribute="centerY" id="3jo-xj-mKD"/>
+                            <constraint firstItem="dgb-HU-i5j" firstAttribute="top" secondItem="GeX-42-m1y" secondAttribute="bottom" id="AuT-NZ-Dps"/>
+                            <constraint firstItem="dgb-HU-i5j" firstAttribute="leading" secondItem="RRz-fl-QSU" secondAttribute="leadingMargin" constant="-16" id="JNF-wf-vh6"/>
+                            <constraint firstItem="uhV-E5-tUm" firstAttribute="top" secondItem="dgb-HU-i5j" secondAttribute="bottom" constant="18" id="Kvg-nB-peC"/>
+                            <constraint firstItem="uhV-E5-tUm" firstAttribute="trailing" secondItem="RRz-fl-QSU" secondAttribute="trailingMargin" id="LfM-Jc-3VJ"/>
+                            <constraint firstItem="TAP-Ne-Iwb" firstAttribute="trailing" secondItem="g4H-Bk-YXd" secondAttribute="trailing" id="RLo-XI-j8v"/>
+                            <constraint firstItem="TAP-Ne-Iwb" firstAttribute="leading" secondItem="RRz-fl-QSU" secondAttribute="leadingMargin" constant="2" id="VN0-mN-xNp"/>
+                            <constraint firstItem="uhV-E5-tUm" firstAttribute="leading" secondItem="TAP-Ne-Iwb" secondAttribute="trailing" constant="16" id="bRk-6h-lW1"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="bu0-aT-iV3" secondAttribute="trailing" constant="-16" id="c4c-iy-gMJ"/>
+                            <constraint firstItem="bu0-aT-iV3" firstAttribute="leading" secondItem="RRz-fl-QSU" secondAttribute="leadingMargin" constant="-16" id="cdB-gZ-9em"/>
+                            <constraint firstItem="Wiw-ZZ-tii" firstAttribute="top" secondItem="bu0-aT-iV3" secondAttribute="bottom" id="g7b-ep-2Ha"/>
+                            <constraint firstItem="TAP-Ne-Iwb" firstAttribute="top" secondItem="dgb-HU-i5j" secondAttribute="bottom" constant="20" id="gbo-S2-P2h"/>
+                            <constraint firstItem="CXg-PC-ftG" firstAttribute="leading" secondItem="g4H-Bk-YXd" secondAttribute="trailing" constant="20" id="otB-Wb-NDG"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="dgb-HU-i5j" secondAttribute="trailing" constant="-16" id="tA9-7M-MCw"/>
+                            <constraint firstItem="bu0-aT-iV3" firstAttribute="top" secondItem="uhV-E5-tUm" secondAttribute="bottom" id="vm6-W1-sop"/>
+                            <constraint firstItem="dgb-HU-i5j" firstAttribute="centerY" secondItem="CXg-PC-ftG" secondAttribute="centerY" id="wTh-Xd-vRX"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="dgb-HU-i5j" secondAttribute="trailing" constant="-16" id="yrZ-uB-7VJ"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Create/Edit Message" id="dmn-cF-eT0">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="Xs6-s5-RM1">
@@ -569,7 +648,19 @@
                                 <segue destination="eww-OE-9xb" kind="unwind" unwindAction="unwindFromCreateMessage:" id="Iag-7n-w8i"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Send" id="eoU-s0-DAw">
+                            <connections>
+                                <action selector="sendButtonAction:" destination="RIj-zQ-Zaq" id="HKv-7r-kML"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="addPhotoButton" destination="LPR-aO-cWd" id="FFd-3m-kqU"/>
+                        <outlet property="attachedImageView" destination="bu0-aT-iV3" id="BY8-gP-6Vm"/>
+                        <outlet property="messageTextView" destination="uhV-E5-tUm" id="6X7-6D-5Vn"/>
+                        <outlet property="receiverLabel" destination="CXg-PC-ftG" id="Ac2-8D-06q"/>
+                        <outlet property="sendButton" destination="eoU-s0-DAw" id="O1A-TA-JsZ"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="535-uz-S2O" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="eww-OE-9xb" userLabel="Exit" sceneMemberID="exit"/>
