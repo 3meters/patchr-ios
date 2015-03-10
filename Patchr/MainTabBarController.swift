@@ -43,24 +43,11 @@ class MainTabBarController: UITabBarController, RMCoreDataStackDelegate, CLLocat
             }
         } else if CLLocationManager.authorizationStatus() == .Authorized || CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
             self.locationManager.startUpdatingLocation()
-        } else {
-            // TODO notify that location is not enabled?
         }
         
         self.dataStore = DataStore(managedObjectContext: self.coreDataStack.managedObjectContext, proxibaseClient: ProxibaseClient.sharedInstance, locationManager: self.locationManager)
         
         self.initializeViewControllers()
-    }
-    
-    @IBAction func logoutButtonAction(sender: UIButton) {
-        ProxibaseClient.sharedInstance.signOut { (response, error) -> Void in
-            if error != nil {
-                NSLog("Error during logout \(error)")
-            }
-            let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-            let destinationViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as UIViewController
-            appDelegate.window!.setRootViewController(destinationViewController, animated: true)
-        }
     }
     
     // MARK: RMCoreDataStackDelegate
@@ -79,9 +66,7 @@ class MainTabBarController: UITabBarController, RMCoreDataStackDelegate, CLLocat
         if status == .Authorized || status == .AuthorizedWhenInUse {
             manager.startUpdatingLocation()
         } else if status == CLAuthorizationStatus.Denied {
-            let alert = UIAlertController(title: "Location Services Disabled", message: "This app relies on your location to find Patches near you!", preferredStyle: UIAlertControllerStyle.Alert)
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
-            self.presentViewController(alert, animated: true, completion: nil)
+            SCLAlertView().showWarning(self, title:"Location Disabled", subTitle: "You can enable location access in Settings → Patchr → Location", closeButtonTitle: "OK", duration: 0.0)
         }
     }
     

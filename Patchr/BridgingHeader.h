@@ -16,6 +16,7 @@
 #import "JSONResponseSerializerWithData.h"
 #import <RMCoreDataStack/RMCoreDataStack.h>
 #import <PBWebViewController.h>
+#import <SCLAlertView.h>
 #import "Patch.h"
 #import "Place.h"
 #import "Query.h"
