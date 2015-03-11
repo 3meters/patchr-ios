@@ -148,6 +148,8 @@ class DataStore: NSObject {
                             var entityModel : Entity
                             if let entityId = entityDictionary["_id"] as? String {
                                 entityModel = modelType.fetchOrInsertOneById(entityId, inManagedObjectContext: self.managedObjectContext) as Entity
+                            } else if let entityId = entityDictionary["id"] as? String { // Old API doesn't have the underscore (?)
+                                entityModel = modelType.fetchOrInsertOneById(entityId, inManagedObjectContext: self.managedObjectContext) as Entity
                             } else {
                                 entityModel = modelType.insertInManagedObjectContext(self.managedObjectContext) as Entity
                             }

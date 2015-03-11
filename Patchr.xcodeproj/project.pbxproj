@@ -44,6 +44,7 @@
 		7D7096011A71D55C00F835C4 /* _QueryResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7095FE1A71D55C00F835C4 /* _QueryResult.m */; };
 		7D7096021A71D55C00F835C4 /* QueryResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7096001A71D55C00F835C4 /* QueryResult.m */; };
 		7D77FC7F1AAA2E0C00AA8284 /* FetchedResultsMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D77FC7D1AAA2E0C00AA8284 /* FetchedResultsMapViewController.swift */; };
+		7D9651941AAFBD02000C5718 /* PatchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9651931AAFBD02000C5718 /* PatchTableViewController.swift */; };
 		7D9C9E3D1A9BAFCE0069E332 /* PatchDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */; };
 		7DA3D9121A72D5A60082D2AB /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA3D9111A72D5A60082D2AB /* DataStore.swift */; };
 		7DA7306A1A70714C008C25FA /* JSONResponseSerializerWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */; };
@@ -150,6 +151,7 @@
 		7D7096001A71D55C00F835C4 /* QueryResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QueryResult.m; path = Model/QueryResult.m; sourceTree = "<group>"; };
 		7D77FC7D1AAA2E0C00AA8284 /* FetchedResultsMapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchedResultsMapViewController.swift; sourceTree = "<group>"; };
 		7D77FC801AAA313C00AA8284 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		7D9651931AAFBD02000C5718 /* PatchTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTableViewController.swift; sourceTree = "<group>"; };
 		7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchDetailViewController.swift; sourceTree = "<group>"; };
 		7DA3D9111A72D5A60082D2AB /* DataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		7DA7306C1A71A0EE008C25FA /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
@@ -291,10 +293,11 @@
 				7D01FA341A7024E200DD6DFA /* JSONResponseSerializerWithData.h */,
 				7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */,
 				7DA7306B1A71A0EE008C25FA /* Model.xcdatamodeld */,
-				7DE975EA1AA7D69500C1ECE9 /* FetchedResultsTableViewController.swift */,
 				7D7095D61A71BE3200F835C4 /* FetchControllerDelegate.swift */,
 				7D77FC7D1AAA2E0C00AA8284 /* FetchedResultsMapViewController.swift */,
+				7DE975EA1AA7D69500C1ECE9 /* FetchedResultsTableViewController.swift */,
 				7DA730951A71B962008C25FA /* QueryResultTableViewController.swift */,
+				7D9651931AAFBD02000C5718 /* PatchTableViewController.swift */,
 				7DA3D9111A72D5A60082D2AB /* DataStore.swift */,
 				7D40B9411A7864A000F9954C /* NotificationsTableViewController.swift */,
 				7D40B9521A79AB0200F9954C /* NearbyPatchesTableViewController.swift */,
@@ -667,6 +670,7 @@
 				7D40B94A1A79A36D00F9954C /* _PACategory.m in Sources */,
 				7D40B94B1A79A36D00F9954C /* PACategory.m in Sources */,
 				7D021ABE1A9409450047DAAE /* SignInTableViewController.swift in Sources */,
+				7D9651941AAFBD02000C5718 /* PatchTableViewController.swift in Sources */,
 				7D3D39F01A6F116E00A44CB2 /* ProxibaseAPI.swift in Sources */,
 				7D0BAD4C1A96CEB0002E602D /* MainTabBarController.swift in Sources */,
 				7D668A991A9C08DC005EDAF8 /* PatchTableViewCell.swift in Sources */,

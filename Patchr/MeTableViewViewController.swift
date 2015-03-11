@@ -13,6 +13,17 @@ class MeTableViewViewController: QueryResultTableViewController {
     @IBOutlet weak var currentUserProfilePhoto: UIImageView!
     @IBOutlet weak var currentUserEmailField: UILabel!
     
+    private var _query: Query!
+    override func query() -> Query {
+        if self._query == nil {
+            let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
+            query.name = "Comments by current user"
+            self.managedObjectContext.save(nil)
+            self._query = query
+        }
+        return self._query
+    }
+    
     override func viewDidLoad() {
     
         super.viewDidLoad()
@@ -25,14 +36,6 @@ class MeTableViewViewController: QueryResultTableViewController {
             {
                 self.currentUserProfilePhoto.setImageWithURL(thePhoto.photoURL())
             }
-        })
-        
-        let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
-        query.name = "Comments by current user"
-        self.managedObjectContext.save(nil)
-        self.query = query
-        dataStore.refreshResultsFor(self.query, completion: { (results, error) -> Void in
-            NSLog("Default query fetch for tableview")
         })
     }
     

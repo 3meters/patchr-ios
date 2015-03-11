@@ -10,6 +10,17 @@ import UIKit
 
 class NotificationsTableViewController: QueryResultTableViewController {
     
+    private var _query: Query!
+    override func query() -> Query {
+        if self._query == nil {
+            let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
+            query.name = "Notifications for current user"
+            self.managedObjectContext.save(nil)
+            self._query = query
+        }
+        return self._query
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.registerNib(UINib(nibName: "NotificationTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
@@ -23,14 +34,6 @@ class NotificationsTableViewController: QueryResultTableViewController {
             // iOS 7
             self.tableView.rowHeight = 100
         }
-        
-        let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
-        query.name = "Notifications for current user"
-        self.managedObjectContext.save(nil)
-        self.query = query
-        dataStore.refreshResultsFor(self.query, completion: { (results, error) -> Void in
-            NSLog("Default query fetch for tableview")
-        })
     }
     
     override func viewWillAppear(animated: Bool) {
