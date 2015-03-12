@@ -119,6 +119,10 @@ class PatchDetailViewController: FetchedResultsTableViewController {
                 postMessageViewController.receiverString = patch.name
                 postMessageViewController.patchID = patch.id_
             }
+            if let editPatchViewController = navigationController.topViewController as? CreateEditPatchViewController {
+                // pass along the patch to edit.
+                editPatchViewController.patch = patch
+            }
         }
     }
 

@@ -503,6 +503,11 @@ public class ProxibaseClient {
         }
     }
     
+    public func deleteObject(path:String, completion: ProxibaseCompletionBlock)
+    {
+        self.performDELETERequestFor(path, parameters: NSDictionary(), completion: completion)
+    }
+    
     public enum EntityType: String { // TODO: Used in createLink, but should probably merge with LinkDestination if possible.
         case Beacon = "beacon"
         case Message = "message"
@@ -544,7 +549,7 @@ public class ProxibaseClient {
         self.performGETRequestFor("data/users/\(userId!)", parameters: [:], completion: completion)
     }
     
-    public func fetchNearbyPatches(location: CLLocationCoordinate2D, radius: NSInteger, limit: NSInteger = 50, skip: NSInteger = 0, links: [Link] = [], completion:(response: AnyObject?, error: NSError?) -> Void) {
+    public func fetchNearbyPatches(location: CLLocationCoordinate2D, radius: NSInteger, limit: NSInteger = 50, skip: NSInteger = 0, links: [Link] = [], completion: ProxibaseCompletionBlock) {
         var allLinks = self.standardPatchLinks() + links
         let parameters = [
             "location" : [
@@ -569,7 +574,7 @@ public class ProxibaseClient {
         self.performPOSTRequestFor("find/patches/\(patchId)", parameters: parameters, completion: completion)
     }
     
-    public func fetchNotifications(limit: NSInteger = 50, skip: NSInteger = 0, completion:(response: AnyObject?, error: NSError?) -> Void) {
+    public func fetchNotifications(limit: NSInteger = 50, skip: NSInteger = 0, completion: ProxibaseCompletionBlock) {
         let parameters : Dictionary<String, AnyObject> = [
             "entityId" : self.userId ?? "",
             "cursor" : [
@@ -600,13 +605,20 @@ public class ProxibaseClient {
         self.performPOSTRequestFor("find/messages", parameters: [:], completion: completion)
     }
     
-    public func performPOSTRequestFor(path: NSString, var parameters : NSDictionary, completion:(response: AnyObject?, error: NSError?) -> Void) {
-        if self.authenticated {
+    private func authenticatedParameters(var parameters: NSDictionary) -> NSDictionary
+    {
+        if self.authenticated
+        {
             var authParameters = NSMutableDictionary(dictionary: ["user" : self.userId!, "session" : self.sessionKey!])
             authParameters.addEntriesFromDictionary(parameters)
             parameters = authParameters
         }
-        self.sessionManager.POST(path, parameters: parameters,
+        return parameters
+    }
+    
+    public func performPOSTRequestFor(path: NSString, var parameters : NSDictionary, completion: ProxibaseCompletionBlock)
+    {
+        self.sessionManager.POST(path, parameters: authenticatedParameters(parameters),
             success: { (dataTask, response) -> Void in
                 completion(response: response, error: nil)
             },
@@ -616,13 +628,9 @@ public class ProxibaseClient {
         })
     }
     
-    public func performGETRequestFor(path: NSString, var parameters : NSDictionary, completion:(response: AnyObject?, error: NSError?) -> Void) {
-        if self.authenticated {
-            var authParameters = NSMutableDictionary(dictionary: ["user" : self.userId!, "session" : self.sessionKey!])
-            authParameters.addEntriesFromDictionary(parameters)
-            parameters = authParameters
-        }
-        self.sessionManager.GET(path, parameters: parameters,
+    public func performGETRequestFor(path: NSString, var parameters : NSDictionary, completion: ProxibaseCompletionBlock)
+    {
+        self.sessionManager.GET(path, parameters: authenticatedParameters(parameters),
             success: { (dataTask, response) -> Void in
                 completion(response: response, error: nil)
             },
@@ -630,6 +638,18 @@ public class ProxibaseClient {
                 let response = dataTask.response as? NSHTTPURLResponse
                 completion(response: ServerError(error)?.response, error: error)
         })
+    }
+    
+    public func performDELETERequestFor(path: NSString, var parameters: NSDictionary, completion: ProxibaseCompletionBlock)
+    {
+        self.sessionManager.DELETE(path, parameters: authenticatedParameters(parameters),
+            success: { dataTask, response in
+                completion(response: response, error: nil)
+            },
+            failure: {dataTask, error in
+                let response = dataTask.response as? NSHTTPURLResponse
+                completion(response: ServerError(error)?.response, error: error)
+            })
     }
     
     public func standardPatchLinks() -> [Link] {

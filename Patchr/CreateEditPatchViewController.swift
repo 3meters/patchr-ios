@@ -17,6 +17,7 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
         private let PrivacyRow = 0
         private let LocationRow = 1
     private let TypeSection = 3
+        private let DefaultTypeRow = 2 // "Place"
     private let ButtonSection = 4
         private let CreateButtonRow = 0
         private let DeleteButtonRow = 1 // in initial table view. Won't necessarily be at this index after viewDidLoad
@@ -33,10 +34,10 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
     @IBOutlet weak var changeImageButton: UIButton!
     @IBOutlet weak var publicPatchCell: UITableViewCell!
     @IBOutlet weak var patchLocationCell: UITableViewCell!
-    @IBOutlet weak var createPatchButtonCell: UITableViewCell!
-    @IBOutlet weak var createPatchButton: UIButton!
-    @IBOutlet weak var deletePatchButtonCell: UITableViewCell!
-    @IBOutlet weak var deletePatchButton: UIButton!
+    @IBOutlet weak var customButtonCell: UITableViewCell!
+    @IBOutlet weak var customButton: UIButton!
+
+    @IBOutlet weak var saveButton: UIBarButtonItem!
 
     
     var patchSwitchView: UISwitch!
@@ -63,7 +64,9 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
     // An array of the patch type IDs in the UI, indexed by row in the patch type section of the UI.
     let patchTypeIDs = ["event", "group", "place", "project"]
     
-    // The patch 'category' id of the currently selected patch type
+    // The patch 'category' id of the currently selected patch type. This value is stored in the UI as the
+    // index in the type section of the table of the item with a checkmark.
+    // Setting this value to an invalid category id will set it to the default value.
     var patchType: String {
         get {
             
@@ -77,17 +80,24 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
                 }
             }
             assert(false, "No selected patch type")
-            return "place"
+            return patchTypeIDs[DefaultTypeRow]
         }
         set {
             var wasSet = false
+            var defaultCell: UITableViewCell!
             
             for row in 0..<patchTypeIDs.count {
                 let cell = tableView.cellForRowAtIndexPath(NSIndexPath(forRow: row, inSection: TypeSection))
                 cell?.accessoryType = (patchTypeIDs[row] == newValue) ? .Checkmark : .None
                 wasSet = wasSet || (patchTypeIDs[row] == newValue)
+                if row == DefaultTypeRow {
+                    defaultCell = cell
+                }
             }
-            //assert(wasSet, "Invalid patch type '\(newValue)")
+            if !wasSet
+            {
+                defaultCell.accessoryType = .Checkmark
+            }
         }
     }
 
@@ -104,16 +114,23 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
         if isEditingPatch
         {
             patchName = patch?.name ?? LocalizedString("Unknown Patch")
-            patchDescription = patch?.description ?? ""
+            patchDescription = patch?.description_ ?? ""
+            patchImageView.setImageWithURL(patch?.photo.photoURL())
             patchPrivacy = patch?.privacy! ?? "private"
+            patchLocation = patch?.location.locationValue
+            patchType = (patch?.category.id_)!
+            customButton.setTitle("Delete Patch", forState: .Normal)
+            customButton.setTitleColor(UIColor.redColor(), forState: .Normal)
         }
         else
         {
             let locationManager = AppDelegate.appDelegate().locationManager
             patchLocation = locationManager.location
-            println(patchLocation)
-            
-            deletePatchButtonCell.hidden = true
+
+            assert(navigationItem.rightBarButtonItem == saveButton)
+            navigationItem.rightBarButtonItem = nil
+            customButton.setTitle("Create Patch", forState: .Normal)
+        
             patchSwitchView.on = true
         }
     }
@@ -141,8 +158,27 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
             self.patchImageView.image = image
         }
     }
+    
+    @IBAction func customButtonAction(sender: AnyObject)
+    {
+        if isEditingPatch
+        {
+            deletePatchButtonAction(sender)
+        }
+        else
+        {
+            createPatchButtonAction(sender)
+        }
+    }
+    
+    func ErrorNotificationAlert(title: String, message: String, onDismiss: () -> Void)
+    {
+        let alert = UIAlertController(title: LocalizedString("Error"), message: message, preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: LocalizedString("OK"), style: .Cancel, handler: { _ in }))
+        self.presentViewController(alert, animated: true) {}
+    }
 
-    @IBAction func createPatchButtonAction(sender: AnyObject)
+    func createPatchButtonAction(sender: AnyObject)
     {
         println("create patch button")
         println("patch name: \(patchName)")
@@ -169,9 +205,7 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
                     println("Create Patch Error")
                     println(error)
 
-                    let alert = UIAlertController(title: LocalizedString("Error"), message: error.message, preferredStyle: .Alert)
-                    alert.addAction(UIAlertAction(title: LocalizedString("OK"), style: .Cancel, handler: { _ in }))
-                    self.presentViewController(alert, animated: true) {}
+                    self.ErrorNotificationAlert(LocalizedString("Error"), message: error.message) {}
                 }
                 else
                 {
@@ -189,9 +223,42 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
         }
     }
 
+    func ActionConfirmationAlert(title: String, message: String, actionTitle: String, cancelTitle: String, onDismiss: (Bool) -> Void)
+    {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
 
-    @IBAction func deletePatchButtonAction(sender: AnyObject) {
+        alert.addAction(UIAlertAction(title: actionTitle, style: .Destructive, handler: { _ in onDismiss(true) }))
+        alert.addAction(UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) }))
+        self.presentViewController(alert, animated: true) {}
     }
+
+    func deletePatchButtonAction(sender: AnyObject)
+    {
+        self.ActionConfirmationAlert(LocalizedString("Confirm Delete"), message: LocalizedString("Are you sure you want to delete this?"), actionTitle: LocalizedString("Delete"), cancelTitle: LocalizedString("Cancel")) { doIt in
+
+            let patchPath = "data/patches/\((self.patch?.id_)!)"
+            ProxibaseClient.sharedInstance.deleteObject(patchPath) { response, error in
+                if let serverError = ServerError(error)
+                {
+                    println(error)
+                    self.ErrorNotificationAlert(LocalizedString("Error"), message: serverError.message) {}
+                }
+                else
+                {
+                    println(response)
+                    self.performSegueWithIdentifier("UnwindFromCreateEditPatch", sender: nil)
+                    // TODO: This needs to unwind farther, since we need to unwind two levels
+                }
+            }
+            
+        }
+        println("delete patch button")
+    }
+
+    @IBAction func saveButtonAction(sender: AnyObject) {
+        println("save button")
+    }
+
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
@@ -311,7 +378,14 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
     
     func updateCreatePatchButton()
     {
-        createPatchButton.enabled = (patchName.utf16Count > 0)
+        if isEditingPatch
+        {
+            saveButton.enabled = (patchName.utf16Count > 0)
+        }
+        else
+        {
+            customButton.enabled = (patchName.utf16Count > 0)
+        }
     }
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?)
