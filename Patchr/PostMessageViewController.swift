@@ -30,7 +30,9 @@ class PostMessageViewController: UIViewController
     @IBAction func sendButtonAction(sender: AnyObject) {
         let parameters: NSMutableDictionary = [
             "description": messageTextView.text!,
-            "type": "root"
+            "type": "root",
+            "links" : [["_to": patchID,
+                       "type": "content"]]
         ]
 
         if attachedImageView.image != nil {
@@ -49,32 +51,15 @@ class PostMessageViewController: UIViewController
             }
             else
             {
-                println("!! Message create success")
-                println(response)
-                
-                if let messageID = (response?["data"] as NSDictionary?)?["_id"] as? String
-                {
-                    proxibase.createLink(fromType: .User, fromID: nil, linkType: .Create, toType: .Message, toID: messageID) { response, error in
-                        if let error = ServerError(error) {
-                            println("Link 1 (Create) Create Error")
-                            println(error)
-                        }
-                    }
-                    proxibase.createLink(fromType: .Message, fromID: messageID, linkType: .Content, toType: .Patch, toID: self.patchID) { response, error in
-                        if let error = ServerError(error) {
-                            println("Link 2 (Content) Create Error")
-                            println(error)
-                        }
-                    }
-                    dispatch_async(dispatch_get_main_queue()) {
-                        self.performSegueWithIdentifier("CreateMessageUnwindToPatchDetail", sender: nil)
-                    }
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.performSegueWithIdentifier("CreateMessageUnwindToPatchDetail", sender: nil)
                 }
             }
         }
     }
     
-    // Dismiss the keyboad by tapping outside the message view.
+    // Dismiss the keyboard by tapping outside the message view.
+    
     @IBAction func tapOutsideMessageView(sender: AnyObject) {
         if messageTextView.isFirstResponder() {
             messageTextView.endEditing(false)
@@ -84,13 +69,13 @@ class PostMessageViewController: UIViewController
     @IBAction func addPhotoButtonAction(sender: AnyObject) {
         let heightConstraint = self.attachedImageView.constraints()[0] as NSLayoutConstraint
         if self.attachedImageView.image == nil {
-          photoChooser.choosePhoto() { [unowned self] image in
+            photoChooser.choosePhoto() { [unowned self] image in
                 self.addPhotoButton.setTitle(LocalizedString("Remove Photo"), forState: .Normal)
                 heightConstraint.constant = 200 // or whatever
                 self.attachedImageView.image = image
                 self.messageTextView.scrollRangeToVisible(self.messageTextView.selectedRange)
                 self.updatePostButton()
-          }
+            }
         }
         else
         {
