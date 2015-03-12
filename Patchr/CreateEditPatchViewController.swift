@@ -149,6 +149,22 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
         observerObject?.stopObserving()
     }
     
+    func ActionConfirmationAlert(title: String, message: String, actionTitle: String, cancelTitle: String, onDismiss: (Bool) -> Void)
+    {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+
+        alert.addAction(UIAlertAction(title: actionTitle, style: .Destructive, handler: { _ in onDismiss(true) }))
+        alert.addAction(UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) }))
+        self.presentViewController(alert, animated: true) {}
+    }
+
+    func ErrorNotificationAlert(title: String, message: String, onDismiss: () -> Void)
+    {
+        let alert = UIAlertController(title: LocalizedString("Error"), message: message, preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: LocalizedString("OK"), style: .Cancel, handler: { _ in }))
+        self.presentViewController(alert, animated: true) {}
+    }
+
     @IBAction func changeBannerButtonAction(sender: AnyObject)
     {
         endFieldEditing()
@@ -171,12 +187,7 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
         }
     }
     
-    func ErrorNotificationAlert(title: String, message: String, onDismiss: () -> Void)
-    {
-        let alert = UIAlertController(title: LocalizedString("Error"), message: message, preferredStyle: .Alert)
-        alert.addAction(UIAlertAction(title: LocalizedString("OK"), style: .Cancel, handler: { _ in }))
-        self.presentViewController(alert, animated: true) {}
-    }
+
 
     func createPatchButtonAction(sender: AnyObject)
     {
@@ -190,13 +201,15 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
         
         let proxibase = ProxibaseClient.sharedInstance
         
-        let parameters: NSDictionary = ["name": patchName,
-                                        "visibility": patchPrivacy,
-                                        "description": patchDescription,
-                                        "category": proxibase.categories[patchType]! as AnyObject,
-                                        "location": patchLocation! as AnyObject,
-                                        "photo": patchImage as AnyObject
-                                       ]
+        let parameters: NSDictionary = [
+                "name": patchName,
+                "visibility": patchPrivacy,
+                "description": patchDescription,
+                "category": proxibase.categories[patchType]! as AnyObject,
+                "location": patchLocation! as AnyObject,
+                "photo": patchImage as AnyObject,
+                "links": [["_from": (ProxibaseClient.sharedInstance.userId)!, "type": "create"]]
+               ]
         
         proxibase.createObject("data/patches", parameters: parameters) { response, error in
             dispatch_async(dispatch_get_main_queue())
@@ -214,7 +227,6 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
                     if let patchID = (response?["data"] as NSDictionary?)?["_id"] as? String
                     {
                         println("Created patch id \(patchID)")
-                        proxibase.createLink(fromType:.User, fromID: nil, linkType:.Create, toType:.Patch, toID: patchID) {_, _ in }
                     }
 
                     self.performSegueWithIdentifier("UnwindFromCreateEditPatch", sender: nil)
@@ -223,14 +235,6 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
         }
     }
 
-    func ActionConfirmationAlert(title: String, message: String, actionTitle: String, cancelTitle: String, onDismiss: (Bool) -> Void)
-    {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-
-        alert.addAction(UIAlertAction(title: actionTitle, style: .Destructive, handler: { _ in onDismiss(true) }))
-        alert.addAction(UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) }))
-        self.presentViewController(alert, animated: true) {}
-    }
 
     func deletePatchButtonAction(sender: AnyObject)
     {
@@ -310,23 +314,6 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
             default:
                 endFieldEditing()
                 return nil
-        }
-    }
-    
-//    enum PatchType: String {
-//        case Event = "event"
-//        case Group = "group"
-//        case Place = "place"
-//        case Project = "r"
-//    }
-    
-    
-    func setSelectedPatchType(typeRow: Int)
-    {
-        // Is there some way to do this without going back and forth to rawValue?
-        for row in 0 ..< patchTypeIDs.count {
-            let cell = tableView.cellForRowAtIndexPath(NSIndexPath(forRow: row, inSection: TypeSection))
-            cell?.accessoryType = (row == typeRow) ? .Checkmark : .None
         }
     }
     

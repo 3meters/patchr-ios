@@ -31,7 +31,7 @@ class PostMessageViewController: UIViewController
         let parameters: NSMutableDictionary = [
             "description": messageTextView.text!,
             "type": "root",
-            "links" : [["_to": patchID,
+            "links": [["_to": patchID,
                        "type": "content"]]
         ]
 
