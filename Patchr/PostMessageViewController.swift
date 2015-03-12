@@ -107,7 +107,9 @@ class PostMessageViewController: UIViewController
         }
         
         dataStore.withCurrentUser(completion: { user in
-            self.userProfileImage.setImageWithURL(user.photo.photoURL())
+            if let photoURL = user.photo?.photoURL() {
+                self.userProfileImage.setImageWithURL(photoURL)
+            }
         })
     }
     

@@ -21,7 +21,7 @@
     
     if (dictionary[@"photo"]) {
         entity.photo = [Photo setPropertiesFromDictionary:dictionary[@"photo"] onObject:[Photo insertInManagedObjectContext:entity.managedObjectContext] mappingNames:mapNames];
-    }
+    } // TODO: It might make sense to set a default photo here
     
     if (dictionary[@"location"]) {
         entity.location = [Location setPropertiesFromDictionary:dictionary[@"location"] onObject:[Location insertInManagedObjectContext:entity.managedObjectContext] mappingNames:mapNames];
