@@ -45,6 +45,7 @@
 		7D7096021A71D55C00F835C4 /* QueryResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D7096001A71D55C00F835C4 /* QueryResult.m */; };
 		7D77FC7F1AAA2E0C00AA8284 /* FetchedResultsMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D77FC7D1AAA2E0C00AA8284 /* FetchedResultsMapViewController.swift */; };
 		7D9651941AAFBD02000C5718 /* PatchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9651931AAFBD02000C5718 /* PatchTableViewController.swift */; };
+		7D970C811AB24F15008A4FC7 /* ImageDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D970C801AB24F15008A4FC7 /* ImageDetailViewController.swift */; };
 		7D9C9E3D1A9BAFCE0069E332 /* PatchDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */; };
 		7DA3D9121A72D5A60082D2AB /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA3D9111A72D5A60082D2AB /* DataStore.swift */; };
 		7DA7306A1A70714C008C25FA /* JSONResponseSerializerWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */; };
@@ -153,6 +154,7 @@
 		7D77FC801AAA313C00AA8284 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		7D9651931AAFBD02000C5718 /* PatchTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTableViewController.swift; sourceTree = "<group>"; };
 		7D970C7F1AB2185D008A4FC7 /* PAEnums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PAEnums.h; path = Model/PAEnums.h; sourceTree = "<group>"; };
+		7D970C801AB24F15008A4FC7 /* ImageDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDetailViewController.swift; sourceTree = "<group>"; };
 		7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchDetailViewController.swift; sourceTree = "<group>"; };
 		7DA3D9111A72D5A60082D2AB /* DataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		7DA7306C1A71A0EE008C25FA /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
@@ -316,6 +318,7 @@
 				7DC9D4981A9D597400234E3C /* AutoSizingLabel.h */,
 				7DC9D4991A9D597400234E3C /* AutoSizingLabel.m */,
 				7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */,
+				7D970C801AB24F15008A4FC7 /* ImageDetailViewController.swift */,
 			);
 			path = Patchr;
 			sourceTree = "<group>";
@@ -645,6 +648,7 @@
 				7DB6E0FF1A8177060017A42F /* User.m in Sources */,
 				7DA730961A71B962008C25FA /* QueryResultTableViewController.swift in Sources */,
 				7DA7308F1A71ACC9008C25FA /* Entity.m in Sources */,
+				7D970C811AB24F15008A4FC7 /* ImageDetailViewController.swift in Sources */,
 				7DC9D49A1A9D597400234E3C /* AutoSizingLabel.m in Sources */,
 				841082CB1AB1013300803ECE /* PatchMapViewController.swift in Sources */,
 				7DA730941A71ACC9008C25FA /* ServiceObject.m in Sources */,

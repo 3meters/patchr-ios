@@ -8,7 +8,9 @@
 
 import UIKit
 
-class NotificationsTableViewController: QueryResultTableViewController {
+class NotificationsTableViewController: QueryResultTableViewController, NotificationTableViewCellDelegate {
+    
+    private var selectedDetailImage: UIImage?
     
     private var _query: Query!
     override func query() -> Query {
@@ -56,6 +58,11 @@ class NotificationsTableViewController: QueryResultTableViewController {
                 queryResultTable.managedObjectContext = self.managedObjectContext
                 queryResultTable.dataStore = self.dataStore
             }
+        case "ImageDetailSegue":
+            if let imageDetailViewController = segue.destinationViewController as? ImageDetailViewController {
+                imageDetailViewController.image = self.selectedDetailImage
+                self.selectedDetailImage = nil
+            }
         default: ()
         }
     }
@@ -64,6 +71,7 @@ class NotificationsTableViewController: QueryResultTableViewController {
         let queryResult = object as QueryResult
         let notification = queryResult.entity_ as Notification
         let notificationCell = cell as NotificationTableViewCell
+        notificationCell.delegate = self
         notificationCell.summaryLabel.text = notification.summary
         notificationCell.summaryLabel.sizeToFit()
         
@@ -87,5 +95,13 @@ class NotificationsTableViewController: QueryResultTableViewController {
 
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         //self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
+    }
+    
+    // MARK: NotificationTableViewCellDelegate
+    func tableViewCell(cell: NotificationTableViewCell, didTapOnView view: UIView) {
+        if view == cell.notificationImageView && cell.notificationImageView.image != nil {
+            self.selectedDetailImage = cell.notificationImageView.image
+            self.performSegueWithIdentifier("ImageDetailSegue", sender: view)
+        }
     }
 }

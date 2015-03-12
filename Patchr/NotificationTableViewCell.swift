@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol NotificationTableViewCellDelegate: NSObjectProtocol {
+    func tableViewCell(cell: NotificationTableViewCell, didTapOnView view: UIView)
+}
+
 class NotificationTableViewCell: UITableViewCell {
 
     @IBOutlet weak var avatarImageView: UIImageView!
@@ -16,4 +20,20 @@ class NotificationTableViewCell: UITableViewCell {
     @IBOutlet weak var iconImageView: UIImageView!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var notificationImageMaxHeightConstraint: NSLayoutConstraint!
+    
+    weak var delegate: NotificationTableViewCellDelegate?
+
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: "tapGestureRecognizerAction:")
+        self.notificationImageView.addGestureRecognizer(tapGestureRecognizer)
+    }
+    
+    // MARK: Private Internal
+    
+    func tapGestureRecognizerAction(sender: AnyObject) {
+        if sender.view != nil {
+            self.delegate?.tableViewCell(self, didTapOnView: sender.view!)
+        }
+    }
 }

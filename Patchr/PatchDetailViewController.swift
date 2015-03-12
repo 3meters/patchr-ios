@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PatchDetailViewController: FetchedResultsTableViewController {
+class PatchDetailViewController: FetchedResultsTableViewController, NotificationTableViewCellDelegate {
     
     @IBOutlet weak var patchImageView: UIImageView!
     @IBOutlet weak var patchNameLabel: UILabel!
@@ -20,6 +20,8 @@ class PatchDetailViewController: FetchedResultsTableViewController {
     var query : Query!
     var dataStore: DataStore!
     var patch: Patch!
+    
+    private var selectedDetailImage: UIImage?
     
     private lazy var fetchControllerDelegate: FetchControllerDelegate = {
         return FetchControllerDelegate(tableView: self.tableView, onUpdate: self.configureCell)
@@ -75,6 +77,7 @@ class PatchDetailViewController: FetchedResultsTableViewController {
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
         let message = object as Message
         let notificationCell = cell as NotificationTableViewCell
+        notificationCell.delegate = self
         notificationCell.summaryLabel.text = message.description_
         
         notificationCell.notificationImageView.image = nil
@@ -112,13 +115,39 @@ class PatchDetailViewController: FetchedResultsTableViewController {
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if let navigationController = segue.destinationViewController as? UINavigationController {
-            if let postMessageViewController = navigationController.topViewController as? PostMessageViewController {
-                // pass along the data store
-                postMessageViewController.dataStore = self.dataStore
-                postMessageViewController.receiverString = patch.name
-                postMessageViewController.patchID = patch.id_
+        if segue.identifier == nil {
+            return
+        }
+        
+        switch segue.identifier! {
+        case "ImageDetailSegue":
+            if let imageDetailViewController = segue.destinationViewController as? ImageDetailViewController {
+                imageDetailViewController.image = self.selectedDetailImage
+                self.selectedDetailImage = nil
             }
+        case "CreateMessageSegue" :
+            if let navigationController = segue.destinationViewController as? UINavigationController {
+                if let postMessageViewController = navigationController.topViewController as? PostMessageViewController {
+                    // pass along the data store
+                    postMessageViewController.dataStore = self.dataStore
+                    postMessageViewController.receiverString = patch.name
+                    postMessageViewController.patchID = patch.id_
+                }
+            }
+        default: ()
+        }
+    }
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        // TODO show action sheet with options for messages
+    }
+    
+    // MARK: NotificationTableViewCellDelegate
+    
+    func tableViewCell(cell: NotificationTableViewCell, didTapOnView view: UIView) {
+        if view == cell.notificationImageView && cell.notificationImageView.image != nil {
+            self.selectedDetailImage = cell.notificationImageView.image
+            self.performSegueWithIdentifier("ImageDetailSegue", sender: view)
         }
     }
 

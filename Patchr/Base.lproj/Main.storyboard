@@ -436,7 +436,7 @@
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
                                             <connections>
-                                                <segue destination="11d-az-MmN" kind="presentation" id="Kap-wc-mJL"/>
+                                                <segue destination="11d-az-MmN" kind="presentation" identifier="CreateMessageSegue" id="Kap-wc-mJL"/>
                                             </connections>
                                         </button>
                                     </subviews>
@@ -459,7 +459,7 @@
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
                                         </button>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Patch Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bHj-ol-mkD">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Patch Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bHj-ol-mkD">
                                             <rect key="frame" x="8" y="74" width="95" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -540,6 +540,7 @@
                         <outlet property="patchCategoryLabel" destination="YwE-l7-mVO" id="XZF-2M-bof"/>
                         <outlet property="patchImageView" destination="351-k9-dO8" id="GsQ-BX-Jtm"/>
                         <outlet property="patchNameLabel" destination="bHj-ol-mkD" id="nZS-3i-vhZ"/>
+                        <segue destination="JI7-e9-z3O" kind="show" identifier="ImageDetailSegue" id="F0u-ce-h5n"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oIA-ch-XmS" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -770,8 +771,8 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="MUB-WK-JX7" id="sjr-0q-QZU">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Placeholder patch header" translatesAutoresizingMaskIntoConstraints="NO" id="voc-oH-Jfu">
-                                                    <rect key="frame" x="0.0" y="0.0" width="600" height="199.5"/>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="Placeholder patch header" translatesAutoresizingMaskIntoConstraints="NO" id="voc-oH-Jfu">
+                                                    <rect key="frame" x="0.0" y="0.0" width="600" height="200"/>
                                                 </imageView>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pjH-D5-7gH">
                                                     <rect key="frame" x="15" y="8" width="107" height="30"/>
@@ -1057,6 +1058,7 @@
                     <navigationItem key="navigationItem" title="Notifications" id="9Oo-tG-hhM"/>
                     <connections>
                         <segue destination="dFa-9F-rNC" kind="show" identifier="PatchDetailSegue" id="lsa-hP-PPZ"/>
+                        <segue destination="JI7-e9-z3O" kind="show" identifier="ImageDetailSegue" id="FFb-eP-2Fv"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="O5p-tj-uEe" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1468,6 +1470,39 @@
             </objects>
             <point key="canvasLocation" x="1470" y="-557"/>
         </scene>
+        <!--Image Detail View Controller-->
+        <scene sceneID="lts-oG-zkA">
+            <objects>
+                <viewController id="JI7-e9-z3O" customClass="ImageDetailViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="jSt-mS-eMx"/>
+                        <viewControllerLayoutGuide type="bottom" id="kkd-DJ-duA"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="yID-2L-ZDF">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="a1l-2M-7r2">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="a1l-2M-7r2" firstAttribute="leading" secondItem="yID-2L-ZDF" secondAttribute="leadingMargin" constant="-16" id="EME-nN-ved"/>
+                            <constraint firstItem="a1l-2M-7r2" firstAttribute="top" secondItem="jSt-mS-eMx" secondAttribute="bottom" constant="-64" id="JVl-0j-e2T"/>
+                            <constraint firstItem="kkd-DJ-duA" firstAttribute="top" secondItem="a1l-2M-7r2" secondAttribute="bottom" constant="-49" id="aoi-Qh-wIB"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="a1l-2M-7r2" secondAttribute="trailing" constant="-16" id="ivy-Bs-Lce"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="t3m-UG-N6T"/>
+                    <connections>
+                        <outlet property="mainImageView" destination="a1l-2M-7r2" id="kZk-Nr-mNx"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="u88-zG-lht" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4156" y="-4249"/>
+        </scene>
         <!--Create Message Nav Controller-->
         <scene sceneID="PJq-9p-NHX">
             <objects>
@@ -1510,9 +1545,10 @@
         <image name="Placeholder patch header" width="216" height="144"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="opk-EE-uhG"/>
+        <segue reference="lsa-hP-PPZ"/>
+        <segue reference="FFb-eP-2Fv"/>
         <segue reference="cGH-YD-j5U"/>
-        <segue reference="ode-oE-WBF"/>
+        <segue reference="opk-EE-uhG"/>
         <segue reference="Z9b-z0-EWI"/>
     </inferredMetricsTieBreakers>
 </document>
