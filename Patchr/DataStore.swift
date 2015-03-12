@@ -39,7 +39,7 @@ class DataStore: NSObject {
         {
             let userQuery = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
             userQuery.name = "Current user"
-            self.loadMoreResultsFor(userQuery) { results, error in
+            self.refreshResultsFor(userQuery) { results, error in
                 if results.count == 1
                 {
                     let user = results[0].entity_ as User
@@ -56,8 +56,45 @@ class DataStore: NSObject {
         }
     }
     
+    func refreshResultsFor(query: Query, completion:(results: [QueryResult], error: NSError?) -> Void) {
+
+        func refreshCompletion(response: AnyObject?, error: NSError?) -> Void {
+            let results = self.handleResponseForQuery(query, response: response!)
+            let resultsSet = NSSet(array: results)
+            // We need to purge all query results for the query that are not in the current result set
+            for existingQueryResult in query.queryResults.allObjects {
+                if !resultsSet.containsObject(existingQueryResult) {
+                    self.managedObjectContext.deleteObject(existingQueryResult as NSManagedObject)
+                }
+            }
+            // query.offset = results.count
+            self.managedObjectContext.save(nil)
+            completion(results: results, error: error)
+        }
+        
+        switch query.name {
+            
+        case "Nearby patches":
+            self.proxibaseClient.fetchNearbyPatches(self.currentUserLocation(), radius: 10000, completion:refreshCompletion)
+        case "Notifications for current user":
+            self.proxibaseClient.fetchNotifications(completion: refreshCompletion)
+        case "Explore patches":
+            self.proxibaseClient.fetchMostMessagedPatches(completion: refreshCompletion)
+        case "Comments by current user":
+            self.proxibaseClient.fetchMessagesOwnedByCurrentUser(completion: refreshCompletion)
+        case "Messages for patch":
+            // TODO need better mechanism to pass patchId through query
+            let patchId = query.parameters["patchId"] as String
+            self.proxibaseClient.fetchMessagesForPatch(patchId, completion: refreshCompletion)
+        case "Current user":
+            self.proxibaseClient.fetchCurrentUser(refreshCompletion)
+        default:
+            assert(false, "No refreshResultsFor implementation for query name \(query.name)")
+        }
+    }
     
-    func loadMoreResultsFor(query: Query, completion:(results: [QueryResult], error: NSError?) -> Void) {
+    @availability(iOS, unavailable, renamed="refreshResultsFor")
+    func loadMoreResultsFor(query: Query, completion:(results: [QueryResult], error: NSError?) -> Void)  {
         
         switch query.name {
         case "Nearby patches":
@@ -103,6 +140,7 @@ class DataStore: NSObject {
         if let dictionary = response as? [NSObject : AnyObject] {
             ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper, mappingNames: false)
             if let entityDictionaries = dataWrapper.data as? [[NSObject : AnyObject]] {
+                var resultPosition = 0; // + query.offset
                 for entityDictionary in entityDictionaries {
                     if let schema = entityDictionary["schema"] as? String {
                         if let modelType = self.schemaDictionary[schema] {
@@ -110,17 +148,31 @@ class DataStore: NSObject {
                             var entityModel : Entity
                             if let entityId = entityDictionary["_id"] as? String {
                                 entityModel = modelType.fetchOrInsertOneById(entityId, inManagedObjectContext: self.managedObjectContext) as Entity
+                            } else if let entityId = entityDictionary["id"] as? String { // Old API doesn't have the underscore (?)
+                                entityModel = modelType.fetchOrInsertOneById(entityId, inManagedObjectContext: self.managedObjectContext) as Entity
                             } else {
                                 entityModel = modelType.insertInManagedObjectContext(self.managedObjectContext) as Entity
                             }
                             
                             modelType.setPropertiesFromDictionary(entityDictionary, onObject: entityModel, mappingNames: true)
-                            let queryResult = QueryResult.insertInManagedObjectContext(self.managedObjectContext) as QueryResult
+                            
+                            var queryResult: QueryResult!;
+                            for existingQueryResult in entityModel.queryResults.allObjects as [QueryResult] {
+                                if existingQueryResult.query == query {
+                                    queryResult = existingQueryResult
+                                }
+                            }
+                            
+                            if queryResult == nil {
+                                queryResult = QueryResult.insertInManagedObjectContext(self.managedObjectContext) as QueryResult
+                            }
+                            
                             queryResult.query = query
                             queryResult.entity_ = entityModel
-                            queryResult.position = entityModel.position != nil ? entityModel.position : entityModel.rank
+                            queryResult.position = resultPosition++
                             //queryResult.rank = entityModel.rank
                             queryResult.sortDate = entityModel.sortDate
+                            
                             results.append(queryResult)
                         } else {
                             assert(false, "Unknown schema: \(schema)")

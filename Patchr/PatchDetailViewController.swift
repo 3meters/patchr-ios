@@ -60,7 +60,7 @@ class PatchDetailViewController: FetchedResultsTableViewController {
         query.parameters = ["patchId" : patch.id_]
         self.managedObjectContext.save(nil)
         self.query = query
-        dataStore.loadMoreResultsFor(self.query, completion: { (results, error) -> Void in
+        dataStore.refreshResultsFor(self.query, completion: { (results, error) -> Void in
             
         })
     }
