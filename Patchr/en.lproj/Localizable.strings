@@ -2,7 +2,7 @@
   Localizable.strings
   Patchr
 
-  Created by Brent on 2015-02-23.
+  Created by Brent Marykuca on 2015-02-23.
   Copyright (c) 2015 3meters. All rights reserved.
 */
 
@@ -30,3 +30,5 @@
 "[]Group" = "Group";
 "[]Place" = "Place";
 "[]Project" = "Project";
+"[]Here" = "Here";
+

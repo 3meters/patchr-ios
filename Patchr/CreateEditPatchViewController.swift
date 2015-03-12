@@ -10,7 +10,6 @@ import Foundation
 import MapKit
 
 class CreateEditPatchViewController: UITableViewController, UITableViewDataSource, UITableViewDelegate
-
 {
     private let NameSection = 0
     private let BannerSection = 1
@@ -200,6 +199,28 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
         if patchName.utf16Count == 0 {
             patchNameField.becomeFirstResponder()
         }
+        
+        let userLocation = AppDelegate.appDelegate().locationManager.location
+        
+        var distanceString = ""
+        
+        if let patchLocation = patchLocation {
+        
+            let distanceFromPatch = patchLocation.distanceFromLocation(userLocation)
+            if distanceFromPatch < 20.0
+            {
+                distanceString = LocalizedString("Here")
+            }
+            else if distanceFromPatch < 1500.0
+            {
+                distanceString = String(format:"%d meters", Int(distanceFromPatch))
+            }
+            else
+            {
+                distanceString = String(format:"%3.1f km", distanceFromPatch / 1000)
+            }
+        }
+        patchLocationCell.detailTextLabel?.text = distanceString
     }
 
     private func endFieldEditing()
@@ -296,7 +317,7 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?)
     {
         if let destinationViewController = segue.destinationViewController as? PatchMapViewController {
-            destinationViewController.location = patchLocation
+            destinationViewController.locationProvider = self
         }
     }
  
