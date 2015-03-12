@@ -29,7 +29,8 @@ class PostMessageViewController: UIViewController
     
     @IBAction func sendButtonAction(sender: AnyObject) {
         let parameters: NSMutableDictionary = [
-            "description": messageTextView.text!
+            "description": messageTextView.text!,
+            "type": "root"
         ]
 
         if attachedImageView.image != nil {
