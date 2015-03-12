@@ -1,5 +1,5 @@
 //
-//  MessageViewController.swift
+//  PostMessageViewController.swift
 //  Patchr
 //
 //  Created by Brent on 2015-03-09.
@@ -103,8 +103,7 @@ class PostMessageViewController: UIViewController
         })
     }
     
-    var observerObject: NSObjectProtocol! = nil
-    
+    var observerObject: TextViewChangeObserver! = nil
 
     private func updatePostButton() {
         let hasContent = (attachedImageView.image != nil) || (messageTextView.text.utf16Count > 0)
@@ -118,19 +117,17 @@ class PostMessageViewController: UIViewController
         assert(messageTextView.window != nil) // requirement for calling becomeFirstResponder
         messageTextView.becomeFirstResponder()
         
-        observerObject =
-            NSNotificationCenter.defaultCenter().addObserverForName(UITextViewTextDidChangeNotification, object: messageTextView, queue: nil)
-            { [unowned self] note in
-                self.updatePostButton()
-                
-                #if DEBUG
-                if self.messageTextView.text == "Here's to the crazy ones." {
-                    self.messageTextView.text = "Here's to the crazy ones, the misfits, the rebels, the troublemakers, the round pegs in the square holes... the ones who see things differently -- they're not fond of rules... You can quote them, disagree with them, glorify or vilify them, but the only thing you can't do is ignore them because they change things... they push the human race forward, and while some may see them as the crazy ones, we see genius, because the ones who are crazy enough to think that they can change the world, are the ones who do.\n\nHere's to the crazy ones, the misfits, the rebels, the troublemakers, the round pegs in the square holes... the ones who see things differently -- they're not fond of rules... You can quote them, disagree with them, glorify or vilify them, but the only thing you can't do is ignore them because they change things... they push the human race forward, and while some may see them as the crazy ones, we see genius, because the ones who are crazy enough to think that they can change the world, are the ones who do.\n"
-                }
-                #endif
+        observerObject = TextViewChangeObserver(messageTextView) { [unowned self] in
+            self.updatePostButton()
+            
+            #if DEBUG
+            if self.messageTextView.text == "Here's to the crazy ones." {
+                self.messageTextView.text = "Here's to the crazy ones, the misfits, the rebels, the troublemakers, the round pegs in the square holes... the ones who see things differently -- they're not fond of rules... You can quote them, disagree with them, glorify or vilify them, but the only thing you can't do is ignore them because they change things... they push the human race forward, and while some may see them as the crazy ones, we see genius, because the ones who are crazy enough to think that they can change the world, are the ones who do.\n\nHere's to the crazy ones, the misfits, the rebels, the troublemakers, the round pegs in the square holes... the ones who see things differently -- they're not fond of rules... You can quote them, disagree with them, glorify or vilify them, but the only thing you can't do is ignore them because they change things... they push the human race forward, and while some may see them as the crazy ones, we see genius, because the ones who are crazy enough to think that they can change the world, are the ones who do.\n"
+            }
+            #endif
         }
-        updatePostButton()
     }
+
     
     override func viewDidDisappear(animated: Bool) {
         NSNotificationCenter.defaultCenter().removeObserver(observerObject)

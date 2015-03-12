@@ -466,6 +466,20 @@ public class ProxibaseClient {
         }
     }
     
+    public func convertLocationProperties(properties: NSMutableDictionary)
+    {
+        if let location = properties["location"] as? CLLocation
+        {
+            properties["location"] = [
+                "accuracy":location.horizontalAccuracy,
+                "geometry": [
+                    location.coordinate.longitude,
+                    location.coordinate.latitude],
+                "lat": location.coordinate.latitude,
+                "lng": location.coordinate.longitude]
+        }
+    }
+    
     // patch = "data/patch", for example
     //
     public func createObject(path:String, parameters: NSDictionary, completion: ProxibaseCompletionBlock)
@@ -473,6 +487,7 @@ public class ProxibaseClient {
         let properties = parameters.mutableCopy() as NSMutableDictionary
         let queue = dispatch_queue_create("create-object-queue", DISPATCH_QUEUE_SERIAL)
         
+        convertLocationProperties(properties)
         queuePhotoUploadInParameters(properties, queue: queue, bucket: .Images)
         
         dispatch_async(queue)

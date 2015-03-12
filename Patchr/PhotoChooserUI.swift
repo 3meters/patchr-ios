@@ -77,10 +77,10 @@ class PhotoChooserUI: NSObject,
         {
             photoButtonFunctionMap[sheet.addButtonWithTitle(LocalizedString("Choose From Library"))] = .ChoosePhoto
         }
-        if photoSearchAvailable
-        {
-            photoButtonFunctionMap[sheet.addButtonWithTitle(LocalizedString("Photo Search"))] = .SearchPhoto
-        }
+//        if photoSearchAvailable
+//        {
+//            photoButtonFunctionMap[sheet.addButtonWithTitle(LocalizedString("Photo Search"))] = .SearchPhoto
+//        }
         
         sheet.showInView(hostViewController?.view)
     }

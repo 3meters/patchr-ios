@@ -70,3 +70,44 @@ func TemporaryFileURLForImage(image: UIImage) -> NSURL?
     return nil
 }
 
+
+// Opportunity here to make this generic.
+
+class TextViewChangeObserver
+{
+    var observerObject:NSObjectProtocol
+
+    init(_ textView: UITextView, action: () -> ()) {
+        observerObject = NSNotificationCenter.defaultCenter().addObserverForName(UITextViewTextDidChangeNotification, object: textView, queue: nil)
+        { note in
+            action()
+        }
+    }
+
+    func stopObserving()
+    {
+        NSNotificationCenter.defaultCenter().removeObserver(observerObject)
+    }
+    
+    deinit {
+        print("-- deinit Change observer")
+    }
+}
+
+class TextFieldChangeObserver
+{
+    var observerObject: NSObjectProtocol
+
+    init(_ textField:UITextField, action: () -> ()) {
+        observerObject = NSNotificationCenter.defaultCenter().addObserverForName(UITextFieldTextDidChangeNotification, object: textField, queue: nil)
+        { note in
+            action()
+        }
+    }
+
+    func stopObserving()
+    {
+        NSNotificationCenter.defaultCenter().removeObserver(observerObject)
+    }
+}
+

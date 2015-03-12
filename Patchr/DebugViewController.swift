@@ -36,14 +36,14 @@ class DebugViewController: UIViewController
         }
     }
     
-    var observerObject: NSObjectProtocol? = nil
-
+    var observerObject: TextFieldChangeObserver?
+    
     override func viewWillAppear(animated: Bool) {
     
         super.viewWillAppear(animated)
         serverURIField.text = userDefaults.stringForKey("com.3meters.patchr.ios.serverURI")
         
-        observerObject = NSNotificationCenter.defaultCenter().addObserverForName(UITextFieldTextDidChangeNotification, object: nil, queue: nil) { _ in
+        observerObject = TextFieldChangeObserver(serverURIField) { [unowned self] in
             self.updateSegmentControl()
         }
         uriAtStart = serverURIField.text
@@ -54,9 +54,8 @@ class DebugViewController: UIViewController
         super.viewWillDisappear(animated)
         
         userDefaults.setObject(serverURIField.text, forKey:"com.3meters.patchr.ios.serverURI")
-        if let observer = observerObject {
-            NSNotificationCenter.defaultCenter().removeObserver(observer)
-        }
+
+        observerObject?.stopObserving()
 
         // If the URI changed and we were signed in then sign out
         if uriAtStart != serverURIField.text {

@@ -20,3 +20,13 @@
 "[](No Description)" = "(No Description)";
 "[]Add Photo" = "Add Photo";
 "[]Remove Photo" = "Remove Photo";
+
+// New Create Patch Scene
+"[]Patch Name" = "Patch Name";
+"[]Description" = "Description";
+"[]Public Patch" = "Public Patch";
+"[]Location" = "Location";
+"[]Event" = "Event";
+"[]Group" = "Group";
+"[]Place" = "Place";
+"[]Project" = "Project";
