@@ -76,11 +76,9 @@
 		7DE975EE1AA7F72400C1ECE9 /* ModelUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE975ED1AA7F72400C1ECE9 /* ModelUtilities.m */; };
 		841082CB1AB1013300803ECE /* PatchMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841082CA1AB1013300803ECE /* PatchMapViewController.swift */; };
 		842CF7591AAA73550078334A /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EF12AB1AA904700043EBBA /* Utilities.swift */; };
-		843523C31AAE2FE600739447 /* PatchTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843523C21AAE2FE600739447 /* PatchTypeViewController.swift */; };
 		843523C51AAE70B800739447 /* PostMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843523C41AAE70B800739447 /* PostMessageViewController.swift */; };
 		844D6E351AA4D01200EE71ED /* DebugViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844D6E341AA4D01200EE71ED /* DebugViewController.swift */; };
 		844D6E371AA6550400EE71ED /* PhotoChooserUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */; };
-		8468F81C1A9D095E007D6EE6 /* OldCreatePatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8468F81B1A9D095E007D6EE6 /* OldCreatePatchViewController.swift */; };
 		8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8468F8211A9D09D1007D6EE6 /* Localizable.strings */; };
 		84A6BB641AAF970A00B7440B /* CreateEditPatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A6BB631AAF970A00B7440B /* CreateEditPatchViewController.swift */; };
 		84EF12AC1AA904700043EBBA /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EF12AB1AA904700043EBBA /* Utilities.swift */; };
@@ -201,11 +199,9 @@
 		7DE975EC1AA7F72400C1ECE9 /* ModelUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelUtilities.h; sourceTree = "<group>"; };
 		7DE975ED1AA7F72400C1ECE9 /* ModelUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelUtilities.m; sourceTree = "<group>"; };
 		841082CA1AB1013300803ECE /* PatchMapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchMapViewController.swift; sourceTree = "<group>"; };
-		843523C21AAE2FE600739447 /* PatchTypeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTypeViewController.swift; sourceTree = "<group>"; };
 		843523C41AAE70B800739447 /* PostMessageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostMessageViewController.swift; sourceTree = "<group>"; };
 		844D6E341AA4D01200EE71ED /* DebugViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugViewController.swift; sourceTree = "<group>"; };
 		844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoChooserUI.swift; sourceTree = "<group>"; };
-		8468F81B1A9D095E007D6EE6 /* OldCreatePatchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OldCreatePatchViewController.swift; sourceTree = "<group>"; };
 		8468F8201A9D09D1007D6EE6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		84A6BB631AAF970A00B7440B /* CreateEditPatchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateEditPatchViewController.swift; sourceTree = "<group>"; };
 		84EF12AB1AA904700043EBBA /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
@@ -284,11 +280,9 @@
 				7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */,
 				84EF12AB1AA904700043EBBA /* Utilities.swift */,
 				7D3D39EF1A6F116E00A44CB2 /* ProxibaseAPI.swift */,
-				8468F81B1A9D095E007D6EE6 /* OldCreatePatchViewController.swift */,
 				84A6BB631AAF970A00B7440B /* CreateEditPatchViewController.swift */,
 				841082CA1AB1013300803ECE /* PatchMapViewController.swift */,
 				843523C41AAE70B800739447 /* PostMessageViewController.swift */,
-				843523C21AAE2FE600739447 /* PatchTypeViewController.swift */,
 				844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */,
 				844D6E341AA4D01200EE71ED /* DebugViewController.swift */,
 				7D3D39D21A6F086F00A44CB2 /* Main.storyboard */,
@@ -648,7 +642,6 @@
 				7D40B9421A7864A000F9954C /* NotificationsTableViewController.swift in Sources */,
 				7DB6E0FF1A8177060017A42F /* User.m in Sources */,
 				7DA730961A71B962008C25FA /* QueryResultTableViewController.swift in Sources */,
-				8468F81C1A9D095E007D6EE6 /* OldCreatePatchViewController.swift in Sources */,
 				7DA7308F1A71ACC9008C25FA /* Entity.m in Sources */,
 				7DC9D49A1A9D597400234E3C /* AutoSizingLabel.m in Sources */,
 				841082CB1AB1013300803ECE /* PatchMapViewController.swift in Sources */,
@@ -669,7 +662,6 @@
 				7DE975EE1AA7F72400C1ECE9 /* ModelUtilities.m in Sources */,
 				7DA7308E1A71ACC9008C25FA /* _ServiceObject.m in Sources */,
 				7D7096021A71D55C00F835C4 /* QueryResult.m in Sources */,
-				843523C31AAE2FE600739447 /* PatchTypeViewController.swift in Sources */,
 				7DE393E71AAE43AD00D1B80E /* SettingsTableViewController.swift in Sources */,
 				7D56EE8B1A70616500BFCC32 /* SwiftyJSON.swift in Sources */,
 				844D6E351AA4D01200EE71ED /* DebugViewController.swift in Sources */,

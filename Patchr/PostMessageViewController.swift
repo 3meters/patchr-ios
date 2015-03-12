@@ -72,6 +72,14 @@ class PostMessageViewController: UIViewController
             }
         }
     }
+    
+    // Dismiss the keyboad by tapping outside the message view.
+    @IBAction func tapOutsideMessageView(sender: AnyObject) {
+        if messageTextView.isFirstResponder() {
+            messageTextView.endEditing(false)
+        }
+    }
+    
     @IBAction func addPhotoButtonAction(sender: AnyObject) {
         let heightConstraint = self.attachedImageView.constraints()[0] as NSLayoutConstraint
         if self.attachedImageView.image == nil {
