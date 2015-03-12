@@ -13,12 +13,17 @@ const struct EntityAttributes EntityAttributes = {
 	.reason = @"reason",
 	.score = @"score",
 	.subtitle = @"subtitle",
+	.visibility = @"visibility",
 };
 
 const struct EntityRelationships EntityRelationships = {
 	.location = @"location",
 	.photo = @"photo",
 	.queryResults = @"queryResults",
+};
+
+const struct EntityUserInfo EntityUserInfo = {
+	.additionalHeaderFileName = @"PAEnums.h",
 };
 
 @implementation EntityID
@@ -59,6 +64,11 @@ const struct EntityRelationships EntityRelationships = {
 	}
 	if ([key isEqualToString:@"scoreValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"score"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"visibilityValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"visibility"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
@@ -137,6 +147,26 @@ const struct EntityRelationships EntityRelationships = {
 }
 
 @dynamic subtitle;
+
+@dynamic visibility;
+
+- (PAVisibilityLevel)visibilityValue {
+	NSNumber *result = [self visibility];
+	return [result shortValue];
+}
+
+- (void)setVisibilityValue:(PAVisibilityLevel)value_ {
+	[self setVisibility:@(value_)];
+}
+
+- (PAVisibilityLevel)primitiveVisibilityValue {
+	NSNumber *result = [self primitiveVisibility];
+	return [result shortValue];
+}
+
+- (void)setPrimitiveVisibilityValue:(PAVisibilityLevel)value_ {
+	[self setPrimitiveVisibility:@(value_)];
+}
 
 @dynamic location;
 

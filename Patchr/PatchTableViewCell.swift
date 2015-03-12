@@ -15,6 +15,7 @@ class PatchTableViewCell: UITableViewCell {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var categoryLabel: UILabel!
     @IBOutlet weak var detailsLabel: UILabel!
+    @IBOutlet weak var visibilityImageView: UIImageView!
     
     override var layoutMargins: UIEdgeInsets { get { return UIEdgeInsetsZero } set(newVal) {} }
 }

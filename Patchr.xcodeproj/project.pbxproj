@@ -152,6 +152,7 @@
 		7D77FC7D1AAA2E0C00AA8284 /* FetchedResultsMapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchedResultsMapViewController.swift; sourceTree = "<group>"; };
 		7D77FC801AAA313C00AA8284 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		7D9651931AAFBD02000C5718 /* PatchTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTableViewController.swift; sourceTree = "<group>"; };
+		7D970C7F1AB2185D008A4FC7 /* PAEnums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PAEnums.h; path = Model/PAEnums.h; sourceTree = "<group>"; };
 		7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchDetailViewController.swift; sourceTree = "<group>"; };
 		7DA3D9111A72D5A60082D2AB /* DataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		7DA7306C1A71A0EE008C25FA /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
@@ -408,6 +409,7 @@
 				7DB6E0FD1A8177060017A42F /* User.m */,
 				7DE975EC1AA7F72400C1ECE9 /* ModelUtilities.h */,
 				7DE975ED1AA7F72400C1ECE9 /* ModelUtilities.m */,
+				7D970C7F1AB2185D008A4FC7 /* PAEnums.h */,
 			);
 			name = Model;
 			sourceTree = "<group>";

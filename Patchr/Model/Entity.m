@@ -38,6 +38,12 @@
     entity.count = dictionary[@"count"];
     entity.rank = dictionary[@"rank"];
     
+    if ([dictionary[@"visibility"] isEqual:@"public"]) {
+        entity.visibilityValue = PAVisibilityLevelPublic;
+    } else {
+        entity.visibilityValue = PAVisibilityLevelPrivate;
+    }
+    
     return entity;
 }
 

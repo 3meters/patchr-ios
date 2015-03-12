@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6254" systemVersion="14C109" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6751" systemVersion="14C109" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Entity" representedClassName="Entity" isAbstract="YES" parentEntity="ServiceBase" syncable="YES">
         <attribute name="count" optional="YES" attributeType="Integer 64" defaultValueString="0.0" syncable="YES"/>
         <attribute name="description_" optional="YES" attributeType="String" syncable="YES"/>
@@ -14,9 +14,17 @@
         <attribute name="reason" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="score" optional="YES" attributeType="Integer 64" defaultValueString="0.0" syncable="YES"/>
         <attribute name="subtitle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="visibility" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES">
+            <userInfo>
+                <entry key="attributeValueScalarType" value="PAVisibilityLevel"/>
+            </userInfo>
+        </attribute>
         <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Location" inverseName="entity_" inverseEntity="Location" syncable="YES"/>
         <relationship name="photo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Photo" inverseName="entity_" inverseEntity="Photo" syncable="YES"/>
         <relationship name="queryResults" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="QueryResult" inverseName="entity_" inverseEntity="QueryResult" syncable="YES"/>
+        <userInfo>
+            <entry key="additionalHeaderFileName" value="PAEnums.h"/>
+        </userInfo>
     </entity>
     <entity name="Location" representedClassName="Location" parentEntity="ServiceObject" syncable="YES">
         <attribute name="accuracy" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
@@ -150,7 +158,7 @@
         <relationship name="replies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Message" inverseName="replyTo" inverseEntity="Message" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Entity" positionX="-63" positionY="-18" width="128" height="223"/>
+        <element name="Entity" positionX="-63" positionY="-18" width="128" height="238"/>
         <element name="Location" positionX="-18" positionY="54" width="128" height="163"/>
         <element name="Message" positionX="-18" positionY="135" width="128" height="103"/>
         <element name="Notification" positionX="0" positionY="144" width="128" height="193"/>

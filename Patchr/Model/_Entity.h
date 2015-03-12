@@ -4,6 +4,8 @@
 @import CoreData;
 #import "ServiceBase.h"
 
+#import "PAEnums.h"
+
 extern const struct EntityAttributes {
 	__unsafe_unretained NSString *count;
 	__unsafe_unretained NSString *description_;
@@ -14,6 +16,7 @@ extern const struct EntityAttributes {
 	__unsafe_unretained NSString *reason;
 	__unsafe_unretained NSString *score;
 	__unsafe_unretained NSString *subtitle;
+	__unsafe_unretained NSString *visibility;
 } EntityAttributes;
 
 extern const struct EntityRelationships {
@@ -21,6 +24,10 @@ extern const struct EntityRelationships {
 	__unsafe_unretained NSString *photo;
 	__unsafe_unretained NSString *queryResults;
 } EntityRelationships;
+
+extern const struct EntityUserInfo {
+	__unsafe_unretained NSString *additionalHeaderFileName;
+} EntityUserInfo;
 
 @class Location;
 @class Photo;
@@ -85,6 +92,14 @@ extern const struct EntityRelationships {
 
 //- (BOOL)validateSubtitle:(id*)value_ error:(NSError**)error_;
 
+@property (nonatomic, strong) NSNumber* visibility;
+
+@property (atomic) PAVisibilityLevel visibilityValue;
+- (PAVisibilityLevel)visibilityValue;
+- (void)setVisibilityValue:(PAVisibilityLevel)value_;
+
+//- (BOOL)validateVisibility:(id*)value_ error:(NSError**)error_;
+
 @property (nonatomic, strong) Location *location;
 
 //- (BOOL)validateLocation:(id*)value_ error:(NSError**)error_;
@@ -144,6 +159,12 @@ extern const struct EntityRelationships {
 
 - (NSString*)primitiveSubtitle;
 - (void)setPrimitiveSubtitle:(NSString*)value;
+
+- (NSNumber*)primitiveVisibility;
+- (void)setPrimitiveVisibility:(NSNumber*)value;
+
+- (PAVisibilityLevel)primitiveVisibilityValue;
+- (void)setPrimitiveVisibilityValue:(PAVisibilityLevel)value_;
 
 - (Location*)primitiveLocation;
 - (void)setPrimitiveLocation:(Location*)value;

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6751" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <objects>
@@ -40,14 +40,23 @@
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="q17-68-g6J">
+                        <rect key="frame" x="0.0" y="70" width="30" height="30"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="30" id="EFM-Qc-fe6"/>
+                            <constraint firstAttribute="height" constant="30" id="vmJ-C5-OJb"/>
+                        </constraints>
+                    </imageView>
                 </subviews>
                 <constraints>
                     <constraint firstItem="cAv-5v-jrt" firstAttribute="leading" secondItem="1IK-Gb-HNs" secondAttribute="leading" id="31d-Cp-vwc"/>
                     <constraint firstItem="cAv-5v-jrt" firstAttribute="trailing" secondItem="1IK-Gb-HNs" secondAttribute="trailing" id="6Y8-5v-9Pw"/>
                     <constraint firstItem="hHX-Wu-vRN" firstAttribute="leading" secondItem="YCP-ap-PEz" secondAttribute="trailing" constant="8" id="9k6-dc-lkK"/>
+                    <constraint firstItem="YCP-ap-PEz" firstAttribute="bottom" secondItem="q17-68-g6J" secondAttribute="bottom" id="AlK-sc-qF3"/>
                     <constraint firstItem="YCP-ap-PEz" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="-8" id="FaV-Zs-2Ke"/>
                     <constraint firstItem="hHX-Wu-vRN" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="1" id="GnB-eT-XOw"/>
                     <constraint firstItem="hHX-Wu-vRN" firstAttribute="leading" secondItem="1IK-Gb-HNs" secondAttribute="leading" id="NWW-jj-oDH"/>
+                    <constraint firstItem="YCP-ap-PEz" firstAttribute="leading" secondItem="q17-68-g6J" secondAttribute="leading" id="bAz-92-dN5"/>
                     <constraint firstAttribute="bottomMargin" secondItem="YCP-ap-PEz" secondAttribute="bottom" constant="-9" id="o8z-TE-UT0"/>
                     <constraint firstItem="YCP-ap-PEz" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="-8" id="p2R-lh-EVa"/>
                     <constraint firstItem="1IK-Gb-HNs" firstAttribute="top" secondItem="hHX-Wu-vRN" secondAttribute="bottom" constant="10" id="sSb-SJ-jY3"/>
@@ -62,8 +71,9 @@
                 <outlet property="detailsLabel" destination="cAv-5v-jrt" id="Ndb-ps-0ir"/>
                 <outlet property="imageViewThumb" destination="YCP-ap-PEz" id="NAU-Zj-Rau"/>
                 <outlet property="nameLabel" destination="hHX-Wu-vRN" id="9Kd-nK-AVT"/>
+                <outlet property="visibilityImageView" destination="q17-68-g6J" id="TVd-W7-uyM"/>
             </connections>
-            <point key="canvasLocation" x="568" y="368"/>
+            <point key="canvasLocation" x="568" y="367"/>
         </tableViewCell>
     </objects>
 </document>

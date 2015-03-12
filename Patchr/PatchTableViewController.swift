@@ -71,6 +71,8 @@ class PatchTableViewController: QueryResultTableViewController {
         if patch.photo != nil && patch.photo.photoURL() != nil {
             patchCell.imageViewThumb.setImageWithURL(patch.photo.photoURL())
         }
+        
+        patchCell.visibilityImageView.image = (patch.visibilityValue == PAVisibilityLevel.Private) ? UIImage(named: "TableViewCellLock") : nil
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
