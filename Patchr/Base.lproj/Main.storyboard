@@ -458,6 +458,9 @@
                                             <state key="normal" title="Edit">
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
+                                            <connections>
+                                                <segue destination="x7o-MZ-1Z6" kind="presentation" identifier="EditPatchSegue" id="Unb-0x-aoh"/>
+                                            </connections>
                                         </button>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Patch Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bHj-ol-mkD">
                                             <rect key="frame" x="8" y="74" width="95" height="21"/>
@@ -905,39 +908,19 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="NxM-XF-fPR" id="Wcn-rU-m5x">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wi5-Dk-qLU">
+                                                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wi5-Dk-qLU">
                                                     <rect key="frame" x="255" y="7" width="90" height="30"/>
-                                                    <state key="normal" title="Create Patch">
+                                                    <state key="normal" title="&lt;custom&gt;">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
-                                                        <action selector="createPatchButtonAction:" destination="6cK-9t-35c" eventType="touchUpInside" id="RXM-bD-QDh"/>
+                                                        <action selector="customButtonAction:" destination="6cK-9t-35c" eventType="touchUpInside" id="jiS-vu-qk6"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstAttribute="centerX" secondItem="Wi5-Dk-qLU" secondAttribute="centerX" id="6GV-XW-cdQ"/>
                                                 <constraint firstAttribute="centerY" secondItem="Wi5-Dk-qLU" secondAttribute="centerY" id="fIl-sh-hJL"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="ykH-ZQ-RTD">
-                                        <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ykH-ZQ-RTD" id="2Yj-qA-92Z">
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6d0-ZK-zct">
-                                                    <rect key="frame" x="255" y="7" width="90" height="30"/>
-                                                    <state key="normal" title="Delete Patch">
-                                                        <color key="titleColor" red="1" green="0.17810381054097013" blue="0.14900207768883644" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
-                                                </button>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstAttribute="centerY" secondItem="6d0-ZK-zct" secondAttribute="centerY" id="FQm-z5-Lsr"/>
-                                                <constraint firstAttribute="centerX" secondItem="6d0-ZK-zct" secondAttribute="centerX" id="Gd9-5o-4ng"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -955,18 +938,22 @@
                                 <segue destination="oyv-MQ-wjW" kind="unwind" identifier="UnwindFromCreateEditPatch" unwindAction="unwindFromCreatePatch:" id="K1k-eM-oRe"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Save" id="BMu-zz-AmC">
+                            <connections>
+                                <action selector="saveButtonAction:" destination="6cK-9t-35c" id="kCO-mb-8EK"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="changeImageButton" destination="pjH-D5-7gH" id="EVL-m4-qCx"/>
-                        <outlet property="createPatchButton" destination="Wi5-Dk-qLU" id="Vnk-Km-SAa"/>
-                        <outlet property="createPatchButtonCell" destination="NxM-XF-fPR" id="IJW-Xl-3j6"/>
-                        <outlet property="deletePatchButton" destination="6d0-ZK-zct" id="pYA-1t-uZ4"/>
-                        <outlet property="deletePatchButtonCell" destination="ykH-ZQ-RTD" id="UBU-OO-5nj"/>
+                        <outlet property="customButton" destination="Wi5-Dk-qLU" id="Oye-Cm-gj3"/>
+                        <outlet property="navigationItem" destination="NkS-Ib-cyM" id="aLo-B0-ZCZ"/>
                         <outlet property="patchDescriptionField" destination="xHD-bu-Kg8" id="Fze-1g-qiE"/>
                         <outlet property="patchImageView" destination="voc-oH-Jfu" id="4CX-RH-ops"/>
                         <outlet property="patchLocationCell" destination="yZY-Ug-lw9" id="gYh-Vu-XSq"/>
                         <outlet property="patchNameField" destination="Crq-To-uFo" id="lPE-Ew-Esc"/>
                         <outlet property="publicPatchCell" destination="j3D-Fb-pck" id="1vR-tO-J7i"/>
+                        <outlet property="saveButton" destination="BMu-zz-AmC" id="f0n-Rv-wIb"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dVP-ZA-h1g" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1545,10 +1532,10 @@
         <image name="Placeholder patch header" width="216" height="144"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="lsa-hP-PPZ"/>
         <segue reference="FFb-eP-2Fv"/>
         <segue reference="cGH-YD-j5U"/>
-        <segue reference="opk-EE-uhG"/>
+        <segue reference="ode-oE-WBF"/>
+        <segue reference="Unb-0x-aoh"/>
         <segue reference="Z9b-z0-EWI"/>
     </inferredMetricsTieBreakers>
 </document>

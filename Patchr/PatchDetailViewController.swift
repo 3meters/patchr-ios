@@ -125,6 +125,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, Notification
                 imageDetailViewController.image = self.selectedDetailImage
                 self.selectedDetailImage = nil
             }
+
         case "CreateMessageSegue" :
             if let navigationController = segue.destinationViewController as? UINavigationController {
                 if let postMessageViewController = navigationController.topViewController as? PostMessageViewController {
@@ -132,6 +133,13 @@ class PatchDetailViewController: FetchedResultsTableViewController, Notification
                     postMessageViewController.dataStore = self.dataStore
                     postMessageViewController.receiverString = patch.name
                     postMessageViewController.patchID = patch.id_
+                }
+            }
+        case "EditPatchSegue" :
+            if let navigationController = segue.destinationViewController as? UINavigationController {
+                if let editPatchViewController = navigationController.topViewController as? CreateEditPatchViewController {
+                    // pass along the patch to edit.
+                    editPatchViewController.patch = patch
                 }
             }
         default: ()

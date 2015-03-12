@@ -26,4 +26,9 @@
     return CLLocationCoordinate2DMake(self.latValue, self.lngValue);
 }
 
+- (CLLocation*) locationValue
+{
+    return [[CLLocation alloc] initWithLatitude:self.latValue longitude:self.lngValue];
+}
+
 @end

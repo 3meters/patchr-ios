@@ -31,4 +31,8 @@
 "[]Place" = "Place";
 "[]Project" = "Project";
 "[]Here" = "Here";
+"[]Confirm Delete" = "Confirm Delete";
+"[]Cancel" = "Cancel";
+"[]Delete" = "Delete";
+"[]Are you sure you want to delete this?" = "Are you sure you want to delete this?";
 
