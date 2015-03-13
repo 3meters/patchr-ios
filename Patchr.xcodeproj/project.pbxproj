@@ -46,6 +46,8 @@
 		7D77FC7F1AAA2E0C00AA8284 /* FetchedResultsMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D77FC7D1AAA2E0C00AA8284 /* FetchedResultsMapViewController.swift */; };
 		7D9651941AAFBD02000C5718 /* PatchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9651931AAFBD02000C5718 /* PatchTableViewController.swift */; };
 		7D970C811AB24F15008A4FC7 /* ImageDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D970C801AB24F15008A4FC7 /* ImageDetailViewController.swift */; };
+		7D970C841AB26021008A4FC7 /* MessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D970C821AB26021008A4FC7 /* MessageTableViewCell.swift */; };
+		7D970C851AB26021008A4FC7 /* MessageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7D970C831AB26021008A4FC7 /* MessageTableViewCell.xib */; };
 		7D9C9E3D1A9BAFCE0069E332 /* PatchDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */; };
 		7DA3D9121A72D5A60082D2AB /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA3D9111A72D5A60082D2AB /* DataStore.swift */; };
 		7DA7306A1A70714C008C25FA /* JSONResponseSerializerWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */; };
@@ -155,6 +157,8 @@
 		7D9651931AAFBD02000C5718 /* PatchTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTableViewController.swift; sourceTree = "<group>"; };
 		7D970C7F1AB2185D008A4FC7 /* PAEnums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PAEnums.h; path = Model/PAEnums.h; sourceTree = "<group>"; };
 		7D970C801AB24F15008A4FC7 /* ImageDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageDetailViewController.swift; sourceTree = "<group>"; };
+		7D970C821AB26021008A4FC7 /* MessageTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageTableViewCell.swift; sourceTree = "<group>"; };
+		7D970C831AB26021008A4FC7 /* MessageTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MessageTableViewCell.xib; sourceTree = "<group>"; };
 		7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchDetailViewController.swift; sourceTree = "<group>"; };
 		7DA3D9111A72D5A60082D2AB /* DataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		7DA7306C1A71A0EE008C25FA /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
@@ -315,6 +319,8 @@
 				7DC9D4901A9D46D100234E3C /* RegistrationTableViewController.swift */,
 				7DC9D4921A9D4FAD00234E3C /* NotificationTableViewCell.swift */,
 				7DC9D4931A9D4FAD00234E3C /* NotificationTableViewCell.xib */,
+				7D970C821AB26021008A4FC7 /* MessageTableViewCell.swift */,
+				7D970C831AB26021008A4FC7 /* MessageTableViewCell.xib */,
 				7DC9D4981A9D597400234E3C /* AutoSizingLabel.h */,
 				7DC9D4991A9D597400234E3C /* AutoSizingLabel.m */,
 				7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */,
@@ -522,6 +528,7 @@
 				8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */,
 				7D3D39D41A6F086F00A44CB2 /* Main.storyboard in Resources */,
 				7D668A9A1A9C08DC005EDAF8 /* PatchTableViewCell.xib in Resources */,
+				7D970C851AB26021008A4FC7 /* MessageTableViewCell.xib in Resources */,
 				7D3D39D61A6F086F00A44CB2 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -664,6 +671,7 @@
 				7DC9D4941A9D4FAD00234E3C /* NotificationTableViewCell.swift in Sources */,
 				7D40B9531A79AB0200F9954C /* NearbyPatchesTableViewController.swift in Sources */,
 				7D3F26D41A76F77E0015F8E8 /* _Photo.m in Sources */,
+				7D970C841AB26021008A4FC7 /* MessageTableViewCell.swift in Sources */,
 				7D40B9511A79A6FD00F9954C /* ProviderMap.m in Sources */,
 				7DE975EE1AA7F72400C1ECE9 /* ModelUtilities.m in Sources */,
 				7DA7308E1A71ACC9008C25FA /* _ServiceObject.m in Sources */,

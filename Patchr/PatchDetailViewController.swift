@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PatchDetailViewController: FetchedResultsTableViewController, NotificationTableViewCellDelegate {
+class PatchDetailViewController: FetchedResultsTableViewController, MessageTableViewCellDelegate {
     
     @IBOutlet weak var patchImageView: UIImageView!
     @IBOutlet weak var patchNameLabel: UILabel!
@@ -22,6 +22,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, Notification
     var patch: Patch!
     
     private var selectedDetailImage: UIImage?
+    private var messageDateFormatter: NSDateFormatter!
     
     private lazy var fetchControllerDelegate: FetchControllerDelegate = {
         return FetchControllerDelegate(tableView: self.tableView, onUpdate: self.configureCell)
@@ -45,13 +46,12 @@ class PatchDetailViewController: FetchedResultsTableViewController, Notification
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.tableView.registerNib(UINib(nibName: "NotificationTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
+        self.tableView.registerNib(UINib(nibName: "MessageTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
         // TODO consolidate this workaround across the table view controllers
         // iOS 7 doesn't support the new style self-sizing cells
         // http://stackoverflow.com/a/26283017/2247399
         if NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_7_1 {
             self.tableView.rowHeight = UITableViewAutomaticDimension;
-            self.tableView.estimatedRowHeight = 100.0;
         } else {
             // iOS 7
             self.tableView.rowHeight = 100
@@ -65,6 +65,12 @@ class PatchDetailViewController: FetchedResultsTableViewController, Notification
         dataStore.refreshResultsFor(self.query, completion: { (results, error) -> Void in
             
         })
+        
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
+        dateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
+        dateFormatter.doesRelativeDateFormatting = true
+        self.messageDateFormatter = dateFormatter
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -74,30 +80,42 @@ class PatchDetailViewController: FetchedResultsTableViewController, Notification
         self.patchCategoryLabel.text = patch.category?.name
     }
     
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.tableView.reloadData()
+    }
+    
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
         let message = object as Message
-        let notificationCell = cell as NotificationTableViewCell
-        notificationCell.delegate = self
-        notificationCell.summaryLabel.text = message.description_
+        let messageCell = cell as MessageTableViewCell
+        messageCell.delegate = self
+        messageCell.messageBodyLabel.text = message.description_
         
-        notificationCell.notificationImageView.image = nil
+        messageCell.messageImageView.image = nil
         if let photo = message.photo {
-            notificationCell.notificationImageMaxHeightConstraint.constant = 10000
-            notificationCell.notificationImageView.setImageWithURL(photo.photoURL())
+            messageCell.messageImageView.setImageWithURL(photo.photoURL())
+            messageCell.messageImageViewMaxHeightConstraint.constant = 10000
         } else {
-            notificationCell.notificationImageMaxHeightConstraint.constant = 0
+            messageCell.messageImageViewMaxHeightConstraint.constant = 0
         }
         
-        notificationCell.avatarImageView.image = nil;
+        messageCell.userAvatarImageView.image = nil
+        messageCell.userNameLabel.text = nil
         if let creator = message.creator as? User {
+            messageCell.userNameLabel.text = creator.name
             if let creatorPhotoURL = creator.photo?.photoURL() {
-                notificationCell.avatarImageView.setImageWithURL(creatorPhotoURL)
+                messageCell.userAvatarImageView.setImageWithURL(creatorPhotoURL)
             } else {
-                notificationCell.avatarImageView.image = UIImage(named: "Placeholder other user profile")
+                messageCell.userAvatarImageView.image = UIImage(named: "Placeholder other user profile")
             }
         }
         
-        notificationCell.dateLabel.text = message.createdDate.description
+        messageCell.likesLabel.text = nil
+        if message.numberOfLikes?.integerValue > 0 {
+            messageCell.likesLabel.text = "\(message.numberOfLikes?.integerValue) Likes"
+        }
+        
+        messageCell.createdDateLabel.text = self.messageDateFormatter.stringFromDate(message.createdDate)
     }
     
     @IBAction func watchAction(sender: AnyObject)
@@ -150,15 +168,27 @@ class PatchDetailViewController: FetchedResultsTableViewController, Notification
         // TODO show action sheet with options for messages
     }
     
+    override func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        let message = self.fetchedResultsController.objectAtIndexPath(indexPath) as Message
+        if message.photo != nil {
+            return 274
+        } else {
+            return 122.5
+        }
+    }
+    
     // MARK: NotificationTableViewCellDelegate
     
-    func tableViewCell(cell: NotificationTableViewCell, didTapOnView view: UIView) {
-        if view == cell.notificationImageView && cell.notificationImageView.image != nil {
-            self.selectedDetailImage = cell.notificationImageView.image
+    func tableViewCell(cell: MessageTableViewCell, didTapOnView view: UIView) {
+        if view == cell.messageImageView && cell.messageImageView.image != nil {
+            self.selectedDetailImage = cell.messageImageView.image
             self.performSegueWithIdentifier("ImageDetailSegue", sender: view)
         }
     }
 
-    @IBAction func unwindFromCreateMessage(segue: UIStoryboardSegue) {}
+    @IBAction func unwindFromCreateMessage(segue: UIStoryboardSegue) {
+        dataStore.refreshResultsFor(self.query, completion: { (results, error) -> Void in })
+    }
+    
     @IBAction func unwindFromCreatePatch(segue: UIStoryboardSegue) {}
 }
