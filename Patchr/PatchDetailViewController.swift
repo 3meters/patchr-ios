@@ -59,27 +59,24 @@ class PatchDetailViewController: FetchedResultsTableViewController, MessageTable
         proxibase.findLink(proxibase.userId!, toID: patch.id_, linkType: linkType) { response, error in
             dispatch_async(dispatch_get_main_queue())
             {
-                if error == nil
+                if let serverError = ServerError(error)
                 {
-                    if let linkArray = (response as NSDictionary)["data"] as? NSArray
-                    {
-                        if linkArray.count > 0
-                        {
-                            let linkObject: NSDictionary = linkArray[0] as NSDictionary
-                            let linkIDString = linkObject["_id"] as? String
-                            setter(linkIDString)
-                            linkButton.setTitle(titles.1, forState: .Normal)
-                        }
-                        else
-                        {
-                            setter(nil)
-                            linkButton.setTitle(titles.0, forState: .Normal)
-                        }
-                    }
+                    // ServerError initializer logs the error. Not much else to do here.
                 }
                 else
                 {
-                    println(error)
+                    let serverResponse = ServerResponse(response)
+                    
+                    if serverResponse.resultCount > 0
+                    {
+                        setter(serverResponse.resultID)
+                        linkButton.setTitle(titles.1, forState: .Normal)
+                    }
+                    else
+                    {
+                        setter(nil)
+                        linkButton.setTitle(titles.0, forState: .Normal)
+                    }
                 }
             }
         }

@@ -169,21 +169,6 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
         observerObject?.stopObserving()
     }
     
-    func ActionConfirmationAlert(title: String, message: String, actionTitle: String, cancelTitle: String, onDismiss: (Bool) -> Void)
-    {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-
-        alert.addAction(UIAlertAction(title: actionTitle, style: .Destructive, handler: { _ in onDismiss(true) }))
-        alert.addAction(UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) }))
-        self.presentViewController(alert, animated: true) {}
-    }
-
-    func ErrorNotificationAlert(title: String, message: String, onDismiss: () -> Void)
-    {
-        let alert = UIAlertController(title: LocalizedString("Error"), message: message, preferredStyle: .Alert)
-        alert.addAction(UIAlertAction(title: LocalizedString("OK"), style: .Cancel, handler: { _ in }))
-        self.presentViewController(alert, animated: true) {}
-    }
 
     @IBAction func changeBannerButtonAction(sender: AnyObject)
     {
@@ -217,11 +202,13 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
                 "name": patchName,
                 "visibility": patchPrivacy,
                 "category": proxibase.categories[patchType]! as AnyObject,
-                "location": patchLocation! as AnyObject,
                 "photo": patchImage as AnyObject,
                 "links": [["_from": (ProxibaseClient.sharedInstance.userId)!, "type": "create"]]
                ]
         
+        if patchLocation != nil {
+            parameters["location"] = patchLocation!
+        }
         if patchDescription != nil {
             parameters["description"] = patchDescription
         }
@@ -240,10 +227,12 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
                 else
                 {
                     println("Create Patch Successful")
-                    println(response)
-                    if let patchID = (response?["data"] as NSDictionary?)?["_id"] as? String
+                    
+                    let serverResponse = ServerResponse(response)
+                    
+                    if serverResponse.resultCount == 1
                     {
-                        println("Created patch id \(patchID)")
+                        println("Created patch \(serverResponse.resultID)")
                     }
 
                     self.performSegueWithIdentifier("UnwindFromCreateEditPatch", sender: nil)

@@ -121,4 +121,27 @@ func != (a: CLLocationCoordinate2D, b: CLLocationCoordinate2D) -> Bool
     return !(a == b)
 }
 
+extension UIViewController
+{
+    func ActionConfirmationAlert(title: String, message: String, actionTitle: String, cancelTitle: String, onDismiss: (Bool) -> Void)
+    {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+
+        alert.addAction(UIAlertAction(title: actionTitle, style: .Destructive, handler: { _ in onDismiss(true) }))
+        alert.addAction(UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) }))
+        self.presentViewController(alert, animated: true) {}
+    }
+
+    func ErrorNotificationAlert(title: String, message: String, onDismiss: (() -> Void)? = nil)
+    {
+        let alert = UIAlertController(title: LocalizedString("Error"), message: message, preferredStyle: .Alert)
+        alert.addAction(
+            UIAlertAction(title: LocalizedString("OK"), style: .Cancel) { _ in
+                if onDismiss != nil {
+                    onDismiss!()
+                }
+            })
+        self.presentViewController(alert, animated: true) {}
+    }
+}
 

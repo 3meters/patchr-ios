@@ -40,14 +40,10 @@ class PostMessageViewController: UIViewController
         }
         
         let proxibase = ProxibaseClient.sharedInstance
-        proxibase.createObject("data/messages", parameters: parameters) { response, error in
+        proxibase.createObject("data/messages", parameters: parameters) { _, error in
             if let error = ServerError(error)
             {
-                println("## Create Message POST request failed")
-                println("Parameters:")
-                println(parameters)
-                println("Error:")
-                println(error)
+                self.ErrorNotificationAlert(LocalizedString("Failed to create message"), message: error.message)
             }
             else
             {

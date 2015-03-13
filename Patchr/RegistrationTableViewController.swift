@@ -39,7 +39,7 @@ class RegistrationTableViewController: UITableViewController {
             }
         }
         
-        proxibase.createUser(fullNameTextField.text, email: emailTextField.text, password: passwordTextField.text, parameters: parameters) { (response, error) in
+        proxibase.createUser(fullNameTextField.text, email: emailTextField.text, password: passwordTextField.text, parameters: parameters) { (_, error) in
             
             dispatch_async(dispatch_get_main_queue()) {
                 if let error = ServerError(error)

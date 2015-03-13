@@ -107,17 +107,72 @@ struct ServerError
     }
 }
 
-// Given a response from the server, iterate over all the objects returned in the "data" result field.
-func forEachDictionaryInServiceResponse(response: [NSObject:AnyObject], block:([NSObject:AnyObject]) -> Void)
-{
-    let dataWrapper = ServiceData()
+// The JSON response serializer produces an NSDictionary. This class wraps it and provides more consistent and
+// less casty access to things we care about.
 
-    ServiceData.setPropertiesFromDictionary(response, onObject: dataWrapper, mappingNames: false)
-    if let objectDictionaries = dataWrapper.data as? [[NSObject : AnyObject]] {
-        for objectDictionary in objectDictionaries {
-            block(objectDictionary)
+struct ServerResponse
+{
+    var responseDictionary: NSDictionary
+    
+    var resultCount: Int
+    
+    init(_ responseObject: AnyObject?)
+    {
+        responseDictionary = responseObject as NSDictionary
+        println(responseDictionary)
+        resultCount = (responseDictionary["count"] as NSNumber).integerValue
+        
+    }
+    
+    var resultObjects: NSArray
+    {
+        get {
+            if resultCount == 0 {
+                return NSArray()
+            }
+            else if resultCount == 1 {
+                return NSArray(object: responseDictionary["data"] as NSDictionary)
+            }
+            else {
+                return responseDictionary["data"] as NSArray
+            }
         }
     }
+    
+    // Single-result accessors
+    //
+    var resultObject: NSDictionary {
+        assert(resultCount == 1, "resultObject called when there are more than one result objects")
+        if let resultDict = responseDictionary["data"] as? NSDictionary
+        {
+            return resultDict
+        }
+        if let resultArray = responseDictionary["data"] as? NSArray
+        {
+            return resultArray[0] as NSDictionary
+        }
+        
+        assert(false, "Unexpected result")
+
+        return NSDictionary()
+    }
+    
+    var resultID: String {
+        get {
+            return self.resultObject["_id"] as String
+        }
+    }
+    
+    // Given a response from the server, iterate over all the objects returned in the "data" result field.
+    
+    func forEachResultObject(block:(NSDictionary) -> Void)
+    {
+        for object in self.resultObjects
+        {
+            block(object as NSDictionary)
+        }
+    }
+
 }
 
 
@@ -139,10 +194,6 @@ public class ProxibaseClient {
     public var userId : NSString?
     public var sessionKey : NSString?
     
-    // These will only be valid after a sign-in.
-//    public var userName: NSString?      // These are a convenience for now, but eventually we should
-//    public var userEmail: NSString?     // keep track of a full user record for the signed-in user.
-
     public var installId: String
     
     public var authenticated : Bool {
@@ -176,20 +227,26 @@ public class ProxibaseClient {
         
         self.fetchAllCategories() { response, error in
 
-            if let error = error {
+            if let serverError = ServerError(error)
+            {
+                // TODO: Default is "place" now.
                 self.categories = ["general":["id":"general","name":"General","photo": ["prefix":"img_group.png","source":"assets.categories"]]]
             }
             else
             {
-                dispatch_async(dispatch_get_main_queue()) {
+                dispatch_async(dispatch_get_main_queue())
+                {
                     var categories = [String:NSDictionary]()
+
+                    let serverResponse = ServerResponse(response)
                     
-                    forEachDictionaryInServiceResponse(response as [NSObject:AnyObject]) { objectDictionary in
-                        var object = (objectDictionary as NSDictionary).mutableCopy() as NSMutableDictionary
+                    serverResponse.forEachResultObject { resultObject in
+                    
+                        var mutableObject = resultObject.mutableCopy() as NSMutableDictionary
                         // The server returns us an empty array of "categories" for each category, but will not
                         // accept these from us, so remove them here.
-                        object.removeObjectForKey("categories")
-                        categories[object["id"] as NSString] = object
+                        mutableObject.removeObjectForKey("categories")
+                        categories[mutableObject["id"] as NSString] = mutableObject
                     }
                     self.categories = categories
                 }
@@ -276,7 +333,7 @@ public class ProxibaseClient {
         writeCredentialsToUserDefaults()
     }
     
-    private func handleSuccessfulSignInResponse(response:AnyObject)
+    private func handleSuccessfulSignInResponse(response: AnyObject)
     {
         let json = JSON(response)
         
@@ -290,7 +347,7 @@ public class ProxibaseClient {
     // The completion block will be called asynchronously in either case.
     // If signin is successful, then the credentials from the server will be written to user defaults
     
-    public func signIn(email: NSString, password : NSString, completion:(response: AnyObject?, error: NSError?) -> Void)
+    public func signIn(email: NSString, password : NSString, completion: ProxibaseCompletionBlock)
     {
         let parameters = ["email" : email, "password" : password, "installId" : installId]
         self.sessionManager.POST("auth/signin", parameters: parameters,
@@ -449,7 +506,6 @@ public class ProxibaseClient {
             // The queue and semaphore are used to synchronize the (optional) upload to S3 with the
             // update of the record on the server. The S3 upload, if present, must complete first before
             // the database update.
-            
             
             if let mutableUserInfo = userInfo.mutableCopy() as? NSMutableDictionary {
                 
