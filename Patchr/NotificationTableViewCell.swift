@@ -19,6 +19,7 @@ class NotificationTableViewCell: UITableViewCell {
     @IBOutlet weak var notificationImageView: UIImageView!
     @IBOutlet weak var iconImageView: UIImageView!
     @IBOutlet weak var dateLabel: UILabel!
+    
     @IBOutlet weak var notificationImageMaxHeightConstraint: NSLayoutConstraint!
     
     weak var delegate: NotificationTableViewCellDelegate?
