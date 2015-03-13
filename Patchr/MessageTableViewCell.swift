@@ -8,6 +8,8 @@
 
 import UIKit
 
+// TODO: Create a more generic protocol. This is basically the same as NotificationTableViewCellDelegate.
+//  func tableViewCell(cell: UITableViewCell, didTapOnView view: UIView)
 protocol MessageTableViewCellDelegate: NSObjectProtocol {
     func tableViewCell(cell: MessageTableViewCell, didTapOnView view: UIView)
 }

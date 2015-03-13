@@ -237,6 +237,9 @@ class PatchDetailViewController: FetchedResultsTableViewController, MessageTable
     
     override func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         let message = self.fetchedResultsController.objectAtIndexPath(indexPath) as Message
+        // NOTE: These estimates significantly impact the scrolling performance of the table view when using dynamic cell heights.
+        // TODO: The current values are commonly observed cell heights when using an iPhone 6, but we will likely want to tweak 
+        //  the estimates based on the width of the table view to provide better support for different device types.
         if message.photo != nil {
             return 274
         } else {
@@ -254,6 +257,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, MessageTable
     }
 
     @IBAction func unwindFromCreateMessage(segue: UIStoryboardSegue) {
+        // Refresh results when unwinding from Patch edit/create screen to pickup any changes.
         dataStore.refreshResultsFor(self.query, completion: { (results, error) -> Void in })
     }
     
