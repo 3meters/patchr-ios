@@ -40,4 +40,8 @@
 "[]Error" = "Error";
 "[]OK" = "OK";
 "[]Edit Patch" = "Edit Patch";
+"[]Like" = "Like";
+"[]Unlike" = "Unlike";
+"[]Watch" = "Watch";
+"[]Unwatch" = "Unwatch";
 

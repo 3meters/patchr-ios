@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6751" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="RLI-9C-tAd">
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -539,9 +540,11 @@
                         <barButtonItem key="rightBarButtonItem" systemItem="action" id="zk4-NW-1bd"/>
                     </navigationItem>
                     <connections>
+                        <outlet property="likeButton" destination="vYh-eO-CMR" id="BNB-8g-ly5"/>
                         <outlet property="patchCategoryLabel" destination="YwE-l7-mVO" id="XZF-2M-bof"/>
                         <outlet property="patchImageView" destination="351-k9-dO8" id="GsQ-BX-Jtm"/>
                         <outlet property="patchNameLabel" destination="bHj-ol-mkD" id="nZS-3i-vhZ"/>
+                        <outlet property="watchButton" destination="TWm-Ce-UN2" id="0cS-S2-nb0"/>
                         <segue destination="JI7-e9-z3O" kind="show" identifier="ImageDetailSegue" id="F0u-ce-h5n"/>
                     </connections>
                 </tableViewController>
@@ -1531,10 +1534,10 @@
         <image name="Placeholder patch header" width="216" height="144"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="FFb-eP-2Fv"/>
         <segue reference="cGH-YD-j5U"/>
         <segue reference="ode-oE-WBF"/>
         <segue reference="Unb-0x-aoh"/>
+        <segue reference="F0u-ce-h5n"/>
         <segue reference="Z9b-z0-EWI"/>
     </inferredMetricsTieBreakers>
 </document>

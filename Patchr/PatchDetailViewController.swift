@@ -20,6 +20,9 @@ class PatchDetailViewController: FetchedResultsTableViewController, Notification
     var query : Query!
     var dataStore: DataStore!
     var patch: Patch!
+
+    var likeLink: String? = nil
+    var watchLink: String? = nil
     
     private var selectedDetailImage: UIImage?
     
@@ -43,6 +46,50 @@ class PatchDetailViewController: FetchedResultsTableViewController, Notification
         return controller
     }()
     
+    // Note: I tried to use 'inout linkID: String', but that didn't seem to work. The 'setter' closure
+    // serves the purpose of setting the ID variable to the correct value after the query completes.
+    
+    private func refreshLinkValue(linkType: LinkType, linkButton: UIButton, linkID: String?, titles:(String, String), setter: (String?) -> Void)
+    {
+        let linkIDValue: String? = linkID
+        let proxibase = ProxibaseClient.sharedInstance
+        let lt = linkType.rawValue
+        
+        proxibase.findLink(proxibase.userId!, toID: patch.id_, linkType: linkType) { response, error in
+            dispatch_async(dispatch_get_main_queue())
+            {
+                if error == nil
+                {
+                    if let linkArray = (response as NSDictionary)["data"] as? NSArray
+                    {
+                        if linkArray.count > 0
+                        {
+                            let linkObject: NSDictionary = linkArray[0] as NSDictionary
+                            let linkIDString = linkObject["_id"] as? String
+                            setter(linkIDString)
+                            linkButton.setTitle(titles.1, forState: .Normal)
+                        }
+                        else
+                        {
+                            setter(nil)
+                            linkButton.setTitle(titles.0, forState: .Normal)
+                        }
+                    }
+                }
+                else
+                {
+                    println(error)
+                }
+            }
+        }
+    }
+    
+    private func refreshLikeAndWatch()
+    {
+        refreshLinkValue(.Like, linkButton: self.likeButton, linkID: self.likeLink, titles: ("Like","Unlike")) { newValue in self.likeLink = newValue }
+        refreshLinkValue(.Watch, linkButton: self.watchButton, linkID: self.watchLink, titles: ("Watch", "Unwatch")) { newValue in self.watchLink = newValue }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.registerNib(UINib(nibName: "NotificationTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
@@ -65,6 +112,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, Notification
         dataStore.refreshResultsFor(self.query, completion: { (results, error) -> Void in
             
         })
+        refreshLikeAndWatch()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -100,14 +148,33 @@ class PatchDetailViewController: FetchedResultsTableViewController, Notification
         notificationCell.dateLabel.text = message.createdDate.description
     }
     
+    private func toggleLinkState(linkValue: String?, ofType linkType: LinkType)
+    {
+        let proxibase = ProxibaseClient.sharedInstance
+        if let linkID = linkValue
+        {
+            proxibase.deleteLink(linkID) { _, _ in
+                self.refreshLikeAndWatch()
+            }
+        }
+        else
+        {
+            proxibase.createLink(proxibase.userId!, toID: patch.id_, linkType: linkType) { _, _ in
+                dispatch_async(dispatch_get_main_queue()){
+                    self.refreshLikeAndWatch()
+                }
+            }
+        }
+    }
+    
     @IBAction func watchAction(sender: AnyObject)
     {
-        println("watch")
+        toggleLinkState(watchLink, ofType: .Watch)
     }
     
     @IBAction func likeAction(sender: AnyObject)
     {
-        println("like")
+        toggleLinkState(likeLink, ofType: .Like)
     }
     
     override func fetchedResultsControllerForViewController(viewController: UIViewController) -> NSFetchedResultsController {

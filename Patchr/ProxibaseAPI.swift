@@ -513,35 +513,36 @@ public class ProxibaseClient {
         self.performDELETERequestFor(path, parameters: NSDictionary(), completion: completion)
     }
     
-    public enum EntityType: String { // TODO: Used in createLink, but should probably merge with LinkDestination if possible.
-        case Beacon = "beacon"
-        case Message = "message"
-        case Patch = "patch"
-        case Place = "place"
-        case User = "user"
-    }
-
-    public func createLink(#fromType: EntityType, var fromID: String?, linkType: LinkType, toType: EntityType, var toID: String?, completion: ProxibaseCompletionBlock)
+    public func deleteLink(linkID: String, completion: ProxibaseCompletionBlock? = nil)
     {
-        if fromType == .User && fromID == nil {
-            fromID = self.userId
+        let linkPath = "data/links/\(linkID)"
+        self.performDELETERequestFor(linkPath, parameters: NSDictionary()) { response, error in
+            if let completionBlock = completion
+            {
+                completionBlock(response: response, error: error)
+            }
         }
-        if toType == .User && toID == nil {
-            toID = self.userId
-        }
+    }
+    public func createLink(fromID: String, toID: String, linkType: LinkType, completion: ProxibaseCompletionBlock)
+    {
         let linkParameters: NSDictionary = [
-            "_from": fromID!,
-            "fromSchema": fromType.rawValue,
-            "_to": toID!,
-            "toSchema": toType.rawValue,
+            "_from": fromID,
+            "_to": toID,
             "type": linkType.rawValue
         ]
         
-        let postParameters = ["data":linkParameters]
+        let postParameters = ["data": linkParameters]
         
         self.performPOSTRequestFor("data/links", parameters: postParameters) { response, error in
             completion(response: response, error: error)
         }
+    }
+    
+    public func findLink(fromID: String, toID: String, linkType: LinkType, completion: ProxibaseCompletionBlock)
+    {
+        let query: NSDictionary = ["query": ["_from": fromID, "_to": toID, "type": linkType.rawValue]]
+
+        self.performGETRequestFor("find/links", parameters: query, completion: completion)
     }
     
     public func fetchAllCategories(completion: ProxibaseCompletionBlock)
