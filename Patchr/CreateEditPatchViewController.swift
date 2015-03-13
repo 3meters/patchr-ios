@@ -52,11 +52,11 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
     
     // Patch Properties
     
-    var patchName:String  { get { return patchNameField.text ?? "" }
-                            set { patchNameField.text = newValue }}
+    var patchName: String  { get { return patchNameField.text ?? "" }
+                             set { patchNameField.text = newValue }}
     
-    var patchDescription:String  { get { return patchDescriptionField.text ?? "" }
-                                   set { patchDescriptionField.text = newValue }}
+    var patchDescription: String?  { get { return patchDescriptionField.text }
+                                     set { patchDescriptionField.text = newValue }}
     
     var patchImage: UIImage { get { return patchImageView.image ?? UIImage(named: "Placeholder patch header")! }
                               set { patchImageView.image = newValue }}
@@ -116,9 +116,17 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
         
         if isEditingPatch
         {
+            navigationItem.title = LocalizedString("Edit Patch")
             patchName = patch?.name ?? LocalizedString("Unknown Patch")
-            patchDescription = patch?.description_ ?? ""
-            patchImageView.setImageWithURL(patch?.photo.photoURL())
+            patchDescription = patch?.description_
+            if let photo = patch?.photo
+            {
+                patchImageView.setImageWithURL(photo.photoURL())
+            }
+            else
+            {
+                patchImageView.image = nil
+            }
             originalPatchImage = patchImage // save for comparison at update time
             patchPrivacy = patch?.privacy! ?? "private"
             patchLocation = patch?.location.locationValue
@@ -203,26 +211,23 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
 
     func createPatchButtonAction(sender: AnyObject)
     {
-        println("create patch button")
-        println("patch name: \(patchName)")
-        println("patch description: \(patchDescription)")
-        println("patch type: \(patchType)")
-        println("patch banner: \(patchImage)")
-        println("patch privacy: \(patchPrivacy)")
-        println("patch location: \(patchLocation)")
-        
         let proxibase = ProxibaseClient.sharedInstance
         
-        let parameters: NSDictionary = [
+        let parameters: NSMutableDictionary = [
                 "name": patchName,
                 "visibility": patchPrivacy,
-                "description": patchDescription,
                 "category": proxibase.categories[patchType]! as AnyObject,
                 "location": patchLocation! as AnyObject,
                 "photo": patchImage as AnyObject,
                 "links": [["_from": (ProxibaseClient.sharedInstance.userId)!, "type": "create"]]
                ]
         
+        if patchDescription != nil {
+            parameters["description"] = patchDescription
+        }
+        
+        println("Create Patch Parameters")
+        println(parameters)
         proxibase.createObject("data/patches", parameters: parameters) { response, error in
             dispatch_async(dispatch_get_main_queue())
             {
