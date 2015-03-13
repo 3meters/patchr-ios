@@ -111,3 +111,14 @@ class TextFieldChangeObserver
     }
 }
 
+func == (a: CLLocationCoordinate2D, b: CLLocationCoordinate2D) -> Bool
+{
+    return a.latitude == b.latitude && a.longitude == b.longitude
+}
+
+func != (a: CLLocationCoordinate2D, b: CLLocationCoordinate2D) -> Bool
+{
+    return !(a == b)
+}
+
+

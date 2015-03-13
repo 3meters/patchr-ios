@@ -35,4 +35,8 @@
 "[]Cancel" = "Cancel";
 "[]Delete" = "Delete";
 "[]Are you sure you want to delete this?" = "Are you sure you want to delete this?";
+"[]Delete Patch" = "Delete Patch";
+"[]Create Patch" = "Create Patch";
+"[]Error" = "Error";
+"[]OK" = "OK";
 

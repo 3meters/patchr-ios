@@ -22,10 +22,15 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
         private let CreateButtonRow = 0
         private let DeleteButtonRow = 1 // in initial table view. Won't necessarily be at this index after viewDidLoad
     
-    // Configured by previous scene
+    // Configured by previous scene when editing
     
     var patch: Patch?
     
+    // Also used for Editing
+    
+    private var isEditingPatch: Bool { return patch != nil }
+    private var originalPatchImage: UIImage?
+
     // UI outlets and views
     
     @IBOutlet weak var patchNameField: UITextField!
@@ -101,8 +106,6 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
         }
     }
 
-
-    private var isEditingPatch: Bool { return patch != nil }
     
     // When view loads, configure for create or edit.
     //
@@ -116,10 +119,18 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
             patchName = patch?.name ?? LocalizedString("Unknown Patch")
             patchDescription = patch?.description_ ?? ""
             patchImageView.setImageWithURL(patch?.photo.photoURL())
+            originalPatchImage = patchImage // save for comparison at update time
             patchPrivacy = patch?.privacy! ?? "private"
             patchLocation = patch?.location.locationValue
-            patchType = (patch?.category.id_)!
-            customButton.setTitle("Delete Patch", forState: .Normal)
+            
+            // Slight hack. Because the UI isn't displayed yet, the cells I am using to back
+            // the patch type aren't loaded yet. They'll be loaded on the next turn of the runloop
+            // so do this later.
+            
+            dispatch_async(dispatch_get_main_queue()) {
+                self.patchType = (self.patch?.category.id_)!
+            }
+            customButton.setTitle(LocalizedString("Delete Patch"), forState: .Normal)
             customButton.setTitleColor(UIColor.redColor(), forState: .Normal)
         }
         else
@@ -129,7 +140,7 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
 
             assert(navigationItem.rightBarButtonItem == saveButton)
             navigationItem.rightBarButtonItem = nil
-            customButton.setTitle("Create Patch", forState: .Normal)
+            customButton.setTitle(LocalizedString("Create Patch"), forState: .Normal)
         
             patchSwitchView.on = true
         }
@@ -143,6 +154,7 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
         }
         updateCreatePatchButton()
     }
+    
     
     override func viewWillDisappear(animated: Bool)
     {
@@ -235,6 +247,56 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
         }
     }
 
+    
+    func updatePatch()
+    {
+        let proxibase = ProxibaseClient.sharedInstance
+        
+        let parameters = NSMutableDictionary()
+        
+        if patchName != patch!.name {
+            parameters["name"] = patchName
+        }
+        if patchDescription != patch!.description_ {
+            parameters["description"] = patchDescription
+        }
+        if patchPrivacy != patch!.privacy {
+            parameters["visibility"] = patchPrivacy
+        }
+        if patchType != patch!.category.id_ {
+            parameters["category"] = proxibase.categories[patchType]!
+        }
+        if patchLocation!.coordinate != patch!.location.locationValue.coordinate {
+            parameters["location"] = patchLocation
+        }
+        if patchImage !== originalPatchImage {
+            parameters["photo"] = patchImage
+        }
+        
+        println("UpdatePatch Parameters")
+        println(parameters)
+        
+        proxibase.updateObject("data/patches/\(patch!.id_)", parameters: parameters) { response, error in
+            dispatch_async(dispatch_get_main_queue())
+            {
+                if let error = ServerError(error)
+                {
+                    println("Update Patch Error")
+                    println(error)
+
+                    self.ErrorNotificationAlert(LocalizedString("Error"), message: error.message) {}
+                }
+                else
+                {
+                    println("Update Patch Successful")
+                    println(response)
+
+                    self.performSegueWithIdentifier("UnwindFromCreateEditPatch", sender: nil)
+                }
+            }
+        }
+    }
+
 
     func deletePatchButtonAction(sender: AnyObject)
     {
@@ -261,6 +323,7 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
 
     @IBAction func saveButtonAction(sender: AnyObject) {
         println("save button")
+        updatePatch()
     }
 
     

@@ -480,12 +480,13 @@ public class ProxibaseClient {
         }
     }
     
-    // patch = "data/patch", for example
+    // path can be a collection name (i.e. "data/patches", "data/messages") to create a new object.
+    // path can also be an object path (i.e. "data/patches/pa.xyz" to update an existing object.
     //
-    public func createObject(path:String, parameters: NSDictionary, completion: ProxibaseCompletionBlock)
+    private func postObject(path:String, parameters: NSDictionary, completion: ProxibaseCompletionBlock)
     {
         let properties = parameters.mutableCopy() as NSMutableDictionary
-        let queue = dispatch_queue_create("create-object-queue", DISPATCH_QUEUE_SERIAL)
+        let queue = dispatch_queue_create("post-object-queue", DISPATCH_QUEUE_SERIAL)
         
         convertLocationProperties(properties)
         queuePhotoUploadInParameters(properties, queue: queue, bucket: .Images)
@@ -493,14 +494,18 @@ public class ProxibaseClient {
         dispatch_async(queue)
         {
             let postParameters = ["data":properties]
-            self.performPOSTRequestFor(path, parameters: postParameters) { response, error in
-                if let error = error {
-                    println("createObject failed:")
-                    println(error)
-                }
-                completion(response: response, error: error)
-            }
+            self.performPOSTRequestFor(path, parameters: postParameters, completion: completion)
         }
+    }
+
+    public func createObject(path: String, parameters: NSDictionary, completion: ProxibaseCompletionBlock)
+    {
+        postObject(path, parameters: parameters, completion: completion)
+    }
+    
+    public func updateObject(path: String, parameters: NSDictionary, completion: ProxibaseCompletionBlock)
+    {
+        postObject(path, parameters: parameters, completion: completion)
     }
     
     public func deleteObject(path:String, completion: ProxibaseCompletionBlock)
