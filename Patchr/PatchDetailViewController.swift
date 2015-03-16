@@ -26,6 +26,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, MessageTable
     
     private var selectedDetailImage: UIImage?
     private var messageDateFormatter: NSDateFormatter!
+    private var offscreenCells: NSMutableDictionary!
     
     private lazy var fetchControllerDelegate: FetchControllerDelegate = {
         return FetchControllerDelegate(tableView: self.tableView, onUpdate: self.configureCell)
@@ -91,15 +92,6 @@ class PatchDetailViewController: FetchedResultsTableViewController, MessageTable
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.registerNib(UINib(nibName: "MessageTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
-        // TODO consolidate this workaround across the table view controllers
-        // iOS 7 doesn't support the new style self-sizing cells
-        // http://stackoverflow.com/a/26283017/2247399
-        if NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_7_1 {
-            self.tableView.rowHeight = UITableViewAutomaticDimension;
-        } else {
-            // iOS 7
-            self.tableView.rowHeight = 100
-        }
         
         let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
         query.name = "Messages for patch"
@@ -116,6 +108,8 @@ class PatchDetailViewController: FetchedResultsTableViewController, MessageTable
         dateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
         dateFormatter.doesRelativeDateFormatting = true
         self.messageDateFormatter = dateFormatter
+        
+        self.offscreenCells = NSMutableDictionary()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -127,21 +121,23 @@ class PatchDetailViewController: FetchedResultsTableViewController, MessageTable
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        self.tableView.reloadData()
+        self.tableView.reloadData() // NOTE: seems to be necessary to prevent a stange tableview jump bug on push transition
     }
     
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
+        
         let message = object as Message
         let messageCell = cell as MessageTableViewCell
         messageCell.delegate = self
+        
         messageCell.messageBodyLabel.text = message.description_
         
         messageCell.messageImageView.image = nil
         if let photo = message.photo {
             messageCell.messageImageView.setImageWithURL(photo.photoURL())
-            messageCell.messageImageViewMaxHeightConstraint.constant = 10000
+//            messageCell.messageImageViewMaxHeightConstraint.constant = 10000
         } else {
-            messageCell.messageImageViewMaxHeightConstraint.constant = 0
+//            messageCell.messageImageViewMaxHeightConstraint.constant = 0
         }
         
         messageCell.userAvatarImageView.image = nil
@@ -232,16 +228,28 @@ class PatchDetailViewController: FetchedResultsTableViewController, MessageTable
         // TODO show action sheet with options for messages
     }
     
-    override func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        let message = self.fetchedResultsController.objectAtIndexPath(indexPath) as Message
-        // NOTE: These estimates significantly impact the scrolling performance of the table view when using dynamic cell heights.
-        // TODO: The current values are commonly observed cell heights when using an iPhone 6, but we will likely want to tweak 
-        //  the estimates based on the width of the table view to provide better support for different device types.
-        if message.photo != nil {
-            return 274
-        } else {
-            return 122.5
+    // https://github.com/smileyborg/TableViewCellWithAutoLayout
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        
+        let reuseIdentifier = "Cell"
+        var cell = self.offscreenCells.objectForKey(reuseIdentifier) as? UITableViewCell
+        if cell == nil {
+            let nibObjects = NSBundle.mainBundle().loadNibNamed("MessageTableViewCell", owner: self, options: nil)
+            cell = nibObjects[0] as? UITableViewCell
+            self.offscreenCells.setObject(cell!, forKey: reuseIdentifier)
+            cell?.setTranslatesAutoresizingMaskIntoConstraints(false)
         }
+        
+        let message = self.fetchedResultsController.objectAtIndexPath(indexPath) as Message
+        self.configureCell(cell!, object: message)
+        cell?.setNeedsUpdateConstraints()
+        cell?.updateConstraintsIfNeeded()
+        cell?.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: 311)
+        cell?.setNeedsLayout()
+        cell?.layoutIfNeeded()
+        var height = cell!.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height
+        height += 1
+        return height
     }
     
     // MARK: NotificationTableViewCellDelegate

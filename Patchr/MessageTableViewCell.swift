@@ -35,6 +35,18 @@ class MessageTableViewCell: UITableViewCell {
         self.messageImageView.addGestureRecognizer(tapGestureRecognizer)
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.contentView.setNeedsLayout()
+        self.contentView.layoutIfNeeded()
+        
+        updatePreferredMaxLayoutWidth(self.patchNameLabel)
+        updatePreferredMaxLayoutWidth(self.userNameLabel)
+        updatePreferredMaxLayoutWidth(self.createdDateLabel)
+        updatePreferredMaxLayoutWidth(self.messageBodyLabel)
+        updatePreferredMaxLayoutWidth(self.likesLabel)
+    }
+    
     // MARK: Private Internal
     
     func tapGestureRecognizerAction(sender: AnyObject) {
@@ -42,4 +54,9 @@ class MessageTableViewCell: UITableViewCell {
             self.delegate?.tableViewCell(self, didTapOnView: sender.view!)
         }
     }
+    
+    func updatePreferredMaxLayoutWidth(label: UILabel) -> Void {
+        label.preferredMaxLayoutWidth = CGRectGetWidth(label.frame)
+    }
+    
 }
