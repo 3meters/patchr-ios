@@ -125,6 +125,12 @@ class PatchDetailViewController: FetchedResultsTableViewController, MessageTable
     }
     
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
+        // The cell width seems to incorrect occassionally
+        if CGRectGetWidth(cell.bounds) != CGRectGetWidth(self.tableView.bounds) {
+            cell.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: CGRectGetHeight(cell.frame))
+            cell.setNeedsLayout()
+            cell.layoutIfNeeded()
+        }
         
         let message = object as Message
         let messageCell = cell as MessageTableViewCell
@@ -135,9 +141,10 @@ class PatchDetailViewController: FetchedResultsTableViewController, MessageTable
         messageCell.messageImageView.image = nil
         if let photo = message.photo {
             messageCell.messageImageView.setImageWithURL(photo.photoURL())
-//            messageCell.messageImageViewMaxHeightConstraint.constant = 10000
+            let imageMarginTop : CGFloat = 10.0;
+            messageCell.messageImageContainerHeight.constant = messageCell.messageImageView.frame.height + imageMarginTop
         } else {
-//            messageCell.messageImageViewMaxHeightConstraint.constant = 0
+            messageCell.messageImageContainerHeight.constant = 0;
         }
         
         messageCell.userAvatarImageView.image = nil
@@ -151,11 +158,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, MessageTable
             }
         }
         
-        messageCell.likesLabel.text = nil
-        if message.numberOfLikes?.integerValue > 0 {
-            messageCell.likesLabel.text = "\(message.numberOfLikes?.integerValue) Likes"
-        }
-        
+        messageCell.likesLabel.text = "\(message.numberOfLikes?.integerValue ?? 0) Likes"
         messageCell.createdDateLabel.text = self.messageDateFormatter.stringFromDate(message.createdDate)
     }
     
@@ -230,21 +233,19 @@ class PatchDetailViewController: FetchedResultsTableViewController, MessageTable
     
     // https://github.com/smileyborg/TableViewCellWithAutoLayout
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        
         let reuseIdentifier = "Cell"
         var cell = self.offscreenCells.objectForKey(reuseIdentifier) as? UITableViewCell
         if cell == nil {
             let nibObjects = NSBundle.mainBundle().loadNibNamed("MessageTableViewCell", owner: self, options: nil)
             cell = nibObjects[0] as? UITableViewCell
             self.offscreenCells.setObject(cell!, forKey: reuseIdentifier)
-            cell?.setTranslatesAutoresizingMaskIntoConstraints(false)
         }
         
         let message = self.fetchedResultsController.objectAtIndexPath(indexPath) as Message
         self.configureCell(cell!, object: message)
         cell?.setNeedsUpdateConstraints()
         cell?.updateConstraintsIfNeeded()
-        cell?.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: 311)
+        cell?.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: CGRectGetHeight(cell!.frame))
         cell?.setNeedsLayout()
         cell?.layoutIfNeeded()
         var height = cell!.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height

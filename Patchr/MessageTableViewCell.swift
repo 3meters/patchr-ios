@@ -24,8 +24,7 @@ class MessageTableViewCell: UITableViewCell {
     @IBOutlet weak var messageImageView: UIImageView!
     @IBOutlet weak var likesLabel: UILabel!
 
-    @IBOutlet weak var messageImageViewMaxHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var messageImageViewTopSpaceConstraint: NSLayoutConstraint!
+    @IBOutlet weak var messageImageContainerHeight: NSLayoutConstraint!
     
     weak var delegate: MessageTableViewCellDelegate?
     
