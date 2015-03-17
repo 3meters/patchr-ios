@@ -1012,7 +1012,7 @@
         <scene sceneID="I2B-94-DKt">
             <objects>
                 <navigationController title="Nearby Nav Controller" automaticallyAdjustsScrollViewInsets="NO" id="Qof-Oi-YrS" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Nearby" id="wSA-7d-zPX"/>
+                    <tabBarItem key="tabBarItem" title="Nearby" image="UITabBarItemNearby" id="wSA-7d-zPX"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="EYT-lW-enh">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -1062,7 +1062,7 @@
         <scene sceneID="goo-Ek-lAR">
             <objects>
                 <navigationController title="Notifications Nav Controller" automaticallyAdjustsScrollViewInsets="NO" id="Tfh-ka-aQD" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Notifications" id="qxB-6H-hf3"/>
+                    <tabBarItem key="tabBarItem" title="Notifications" image="UITabBarItemNotifications" id="qxB-6H-hf3"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="v0i-fK-16E">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -1319,7 +1319,7 @@
         <scene sceneID="dTR-CX-oon">
             <objects>
                 <navigationController title="Explore Nav Controller" automaticallyAdjustsScrollViewInsets="NO" id="cit-av-u7D" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Explore" id="f8s-Ou-JTE"/>
+                    <tabBarItem key="tabBarItem" title="Explore" image="UITabBarItemExplore" id="f8s-Ou-JTE"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="INd-5V-UXD">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -1448,7 +1448,7 @@
         <scene sceneID="lXS-tD-cY4">
             <objects>
                 <navigationController title="Me Nav" automaticallyAdjustsScrollViewInsets="NO" id="SeP-eo-R0a" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Me" id="GXO-7y-m5x"/>
+                    <tabBarItem key="tabBarItem" title="Me" image="UITabBarItemMe" id="GXO-7y-m5x"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="JjU-7G-nSI">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -1536,6 +1536,10 @@
     <resources>
         <image name="Placeholder current user profile" width="141" height="141"/>
         <image name="Placeholder patch header" width="216" height="144"/>
+        <image name="UITabBarItemExplore" width="30" height="30"/>
+        <image name="UITabBarItemMe" width="30" height="30"/>
+        <image name="UITabBarItemNearby" width="30" height="30"/>
+        <image name="UITabBarItemNotifications" width="30" height="30"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="cGH-YD-j5U"/>
