@@ -25,7 +25,7 @@
     notification.trigger = dictionary[@"trigger"];
     notification.summary = dictionary[@"summary"];
     if (notification.summary) {
-        // TODO the API currently returns an HTML-like summary and we need to figure out how to handle it nicely (attributed string?)
+        // TODO: the API currently returns an HTML-like summary and we need to figure out how to handle it nicely (attributed string?)
         notification.summary = [Notification stringByStrippingHTMLFromString:notification.summary];
     }
     notification.event = dictionary[@"event"];

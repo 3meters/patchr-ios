@@ -83,48 +83,13 @@ class DataStore: NSObject {
         case "Comments by current user":
             self.proxibaseClient.fetchMessagesOwnedByCurrentUser(completion: refreshCompletion)
         case "Messages for patch":
-            // TODO need better mechanism to pass patchId through query
+            // TODO: need better mechanism to pass patchId through query
             let patchId = query.parameters["patchId"] as String
             self.proxibaseClient.fetchMessagesForPatch(patchId, completion: refreshCompletion)
         case "Current user":
             self.proxibaseClient.fetchCurrentUser(refreshCompletion)
         default:
             assert(false, "No refreshResultsFor implementation for query name \(query.name)")
-        }
-    }
-    
-    @availability(iOS, unavailable, renamed="refreshResultsFor")
-    func loadMoreResultsFor(query: Query, completion:(results: [QueryResult], error: NSError?) -> Void)  {
-        
-        switch query.name {
-        case "Nearby patches":
-            self.proxibaseClient.fetchNearbyPatches(self.currentUserLocation(), radius: 10000, completion: { (response, error) -> Void in
-                completion(results: self.handleResponseForQuery(query, response: response!), error: error)
-            })
-        case "Notifications for current user":
-            self.proxibaseClient.fetchNotifications(completion: { (response, error) -> Void in
-                completion(results: self.handleResponseForQuery(query, response: response!), error: error)
-            })
-        case "Explore patches":
-            self.proxibaseClient.fetchMostMessagedPatches(completion: { (response, error) -> Void in
-                completion(results: self.handleResponseForQuery(query, response: response!), error: error)
-            })
-        case "Comments by current user":
-            self.proxibaseClient.fetchMessagesOwnedByCurrentUser(completion: { (response, error) -> Void in
-                completion(results: self.handleResponseForQuery(query, response: response!), error: error)
-            })
-        case "Messages for patch":
-            // TODO need better mechanism to pass patchId through query
-            let patchId = query.parameters["patchId"] as String
-            self.proxibaseClient.fetchMessagesForPatch(patchId, completion: { (response, error) -> Void in
-                completion(results: self.handleResponseForQuery(query, response: response!), error: error)
-            })
-        case "Current user":
-            self.proxibaseClient.fetchCurrentUser() { response, error in
-                completion(results: self.handleResponseForQuery(query, response: response!), error: error)
-            }
-        default:
-            assert(false, "Unknown query name \(query.name)")
         }
     }
     
@@ -191,7 +156,7 @@ class DataStore: NSObject {
             return locationManager.location.coordinate
         } else {
             // Fallback location
-            // TODO we can be more creative with this:
+            // TODO: we can be more creative with this:
             // - store/retrieve location in NSUserDefaults
             // - likely get a nearby major city based on timezone
             return CLLocationCoordinate2D(latitude: 49.2845280, longitude: -123.1092720)

@@ -26,7 +26,7 @@ class NotificationsTableViewController: QueryResultTableViewController, Notifica
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.registerNib(UINib(nibName: "NotificationTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
-        // TODO consolidate this workaround across the table view controllers
+        // TODO: consolidate this workaround across the table view controllers
         // iOS 7 doesn't support the new style self-sizing cells
         // http://stackoverflow.com/a/26283017/2247399
         if NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_7_1 {

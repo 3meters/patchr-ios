@@ -450,6 +450,7 @@
 				7D3D39C61A6F086F00A44CB2 /* Frameworks */,
 				7D3D39C71A6F086F00A44CB2 /* Resources */,
 				A73C0D055776F8D329577BE0 /* Copy Pods Resources */,
+				7DFA37DB1AB7B87B00CFCEE1 /* Warn about TODO: and FIXME: */,
 			);
 			buildRules = (
 			);
@@ -599,7 +600,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "command -v mogenerator2 >/dev/null 2>&1 || {\n    echo >&2 \"Falling back to /usr/local/bin/mogenerator\";\n    /usr/local/bin/mogenerator --v2 --model Patchr/Model.xcdatamodeld --human-dir Patchr/Model/ --output-dir Patchr/Model; exit 0;\n}\nmogenerator --v2 --model Patchr/Model.xcdatamodeld --human-dir Patchr/Model/ --output-dir Patchr/Model";
+			shellScript = "command -v mogenerator >/dev/null 2>&1 || {\n    echo >&2 \"warning: Falling back to /usr/local/bin/mogenerator\";\n    /usr/local/bin/mogenerator --v2 --model Patchr/Model.xcdatamodeld --human-dir Patchr/Model/ --output-dir Patchr/Model; exit 0;\n}\nmogenerator --v2 --model Patchr/Model.xcdatamodeld --human-dir Patchr/Model/ --output-dir Patchr/Model";
+		};
+		7DFA37DB1AB7B87B00CFCEE1 /* Warn about TODO: and FIXME: */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Warn about TODO: and FIXME:";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "KEYWORDS=\"TODO:|FIXME:|\\?\\?\\?:|\\!\\!\\!:\"\nfind \"${SRCROOT}\" -path \"${SRCROOT}\"/Pods -prune -o \\( -name \"*.h\" -or -name \"*.m\" -or -name \"*.swift\" \\) -print0 | xargs -0 egrep --with-filename --line-number --only-matching \"($KEYWORDS).*\\$\" | perl -p -e \"s/($KEYWORDS)/ warning: \\$1/\"";
 		};
 		A73C0D055776F8D329577BE0 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;

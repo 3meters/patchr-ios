@@ -56,7 +56,7 @@ class FetchedResultsMapViewController: UIViewController, MKMapViewDelegate, NSFe
         
     }
     
-    // TODO consolidate the duplicated segue logic
+    // TODO: consolidate the duplicated segue logic
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
         if segue.identifier == nil {
@@ -109,7 +109,7 @@ class FetchedResultsMapViewController: UIViewController, MKMapViewDelegate, NSFe
         let queryResult = anObject as? QueryResult
         if queryResult == nil { return }
         
-        // TODO we can do better than a full reload
+        // TODO: we can do better than a full reload
         switch type {
         case .Insert:
             self.mapView.addAnnotation(EntityAnnotation(entity: queryResult!.entity_))

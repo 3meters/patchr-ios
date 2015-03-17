@@ -218,7 +218,7 @@ public class ProxibaseClient {
         userId     = userDefaults.stringForKey(PatchrUserDefaultKey("userId"))
         sessionKey = userDefaults.stringForKey(PatchrUserDefaultKey("sessionKey"))
         
-        installId = "1" // TODO
+        installId = "1" // TODO:
         
         sessionManager = AFHTTPSessionManager(baseURL: NSURL(string: serverURI!))
 

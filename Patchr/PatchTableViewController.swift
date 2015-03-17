@@ -34,7 +34,7 @@ class PatchTableViewController: QueryResultTableViewController {
         }
     }
     
-    // TODO consolidate the duplicated segue logic
+    // TODO: consolidate the duplicated segue logic
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
         if segue.identifier == nil {
