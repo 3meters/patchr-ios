@@ -57,6 +57,7 @@ PODS:
   - RMCoreDataStack (0.1.4)
   - SCLAlertView-Objective-C (0.5.6)
   - TMCache (1.2.3)
+  - UIActionSheet+Blocks (0.8.1)
   - UICKeyChainStore (2.0.4)
   - XMLDictionary (1.4)
 
@@ -67,6 +68,7 @@ DEPENDENCIES:
   - PBWebViewController (~> 0.3)
   - RMCoreDataStack
   - SCLAlertView-Objective-C (~> 0.5.6)
+  - UIActionSheet+Blocks (~> 0.8.1)
 
 SPEC CHECKSUMS:
   AFNetworkActivityLogger: cdaa92ea0d544835babe0ba097e7806182d8f837
@@ -81,6 +83,7 @@ SPEC CHECKSUMS:
   RMCoreDataStack: 0c00a15fa117ffe9530fa16e30df3e0863ba2939
   SCLAlertView-Objective-C: 257de4171414dbc32bc3bfdcb61093fc0906536c
   TMCache: 11589ef8c40909114a5e60132711c9a559e01d97
+  UIActionSheet+Blocks: c8b9c02f3d08964e8f7a4202f004a639c15eab80
   UICKeyChainStore: 2399076d0950e20fe859b8f817548cf6ca542dd7
   XMLDictionary: 735e81b9a043e220b0d24e9d4f16719606f2e0fc
 

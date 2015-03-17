@@ -537,7 +537,11 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Patch Detail" id="MdG-P4-WEw">
-                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="zk4-NW-1bd"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="zk4-NW-1bd">
+                            <connections>
+                                <action selector="shareButtonAction:" destination="dFa-9F-rNC" id="m6x-37-npR"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="likeButton" destination="vYh-eO-CMR" id="BNB-8g-ly5"/>

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PatchDetailViewController: FetchedResultsTableViewController, MessageTableViewCellDelegate {
+class PatchDetailViewController: FetchedResultsTableViewController, MessageTableViewCellDelegate, UIActionSheetDelegate {
     
     @IBOutlet weak var patchImageView: UIImageView!
     @IBOutlet weak var patchNameLabel: UILabel!
@@ -119,11 +119,6 @@ class PatchDetailViewController: FetchedResultsTableViewController, MessageTable
         self.patchCategoryLabel.text = patch.category?.name
     }
     
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.tableView.reloadData() // NOTE: seems to be necessary to prevent a stange tableview jump bug on push transition
-    }
-    
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
         // The cell width seems to incorrect occassionally
         if CGRectGetWidth(cell.bounds) != CGRectGetWidth(self.tableView.bounds) {
@@ -191,6 +186,17 @@ class PatchDetailViewController: FetchedResultsTableViewController, MessageTable
         toggleLinkState(likeLink, ofType: .Like)
     }
     
+    @IBAction func shareButtonAction(sender: UIBarButtonItem) {
+        
+        // TODO: Confirm messaging
+        let patchURL = NSURL(string: "http://patchr.com/patch/\(self.patch.id_)") ?? NSURL(string: "http://patchr.com")!
+        let shareText = "You've been invited to the \(self.patch.name) patch! \n\n\(patchURL.absoluteString!) \n\nGet the Patchr app at http://patchr.com"
+        var activityItems : [AnyObject] = [shareText]
+        
+        let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+        self.presentViewController(activityViewController, animated: true, completion: nil)
+    }
+    
     override func fetchedResultsControllerForViewController(viewController: UIViewController) -> NSFetchedResultsController {
         return self.fetchedResultsController
     }
@@ -228,7 +234,41 @@ class PatchDetailViewController: FetchedResultsTableViewController, MessageTable
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        // TODO show action sheet with options for messages
+        let canDelete = true; // TODO: determine if current user has delete permission for message
+        let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: "Cancel", destructiveButtonTitle: canDelete ? "Delete" : nil)
+        sheet.addButtonWithTitle("Like")
+        sheet.addButtonWithTitle("Share")
+        sheet.addButtonWithTitle("Report Abuse")
+        sheet.showFromTabBar(self.tabBarController?.tabBar)
+        sheet.willDismissBlock = { (actionSheet, index) -> Void in
+            tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        }
+        sheet.tapBlock = { (actionSheet, index) -> Void in
+            if index == actionSheet.cancelButtonIndex {
+                
+            } else if index == actionSheet.destructiveButtonIndex {
+                NSLog("Destructive button")
+                UIAlertView(title: "Not implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
+            } else {
+                // Switching on the button title is less than ideal, but there seems to be issues with 
+                // using the firstOtherButtonIndex property. Once iOS 7 support is dropped, move to UIAlertController
+                let buttonTitle = actionSheet.buttonTitleAtIndex(index)
+                switch buttonTitle {
+                case "Report Abuse":
+                    // TODO: report abuse
+                    UIAlertView(title: "Not implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
+                case "Like":
+                    // TODO:
+                    UIAlertView(title: "Not implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
+                case "Share":
+                    UIAlertView(title: "Not implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
+                default:
+                    UIAlertView(title: "Not implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
+                    NSLog("No action configured for button with title: \(buttonTitle)")
+                }
+            }
+            
+        }
     }
     
     // https://github.com/smileyborg/TableViewCellWithAutoLayout
