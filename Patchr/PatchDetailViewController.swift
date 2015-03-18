@@ -8,7 +8,9 @@
 
 import UIKit
 
-class PatchDetailViewController: FetchedResultsTableViewController, MessageTableViewCellDelegate, UIActionSheetDelegate {
+class PatchDetailViewController: FetchedResultsTableViewController, TableViewCellDelegate, UIActionSheetDelegate {
+    
+    private let cellNibName = "MessageTableViewCell"
     
     @IBOutlet weak var patchImageView: UIImageView!
     @IBOutlet weak var patchNameLabel: UILabel!
@@ -26,7 +28,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, MessageTable
     
     private var selectedDetailImage: UIImage?
     private var messageDateFormatter: NSDateFormatter!
-    private var offscreenCells: NSMutableDictionary!
+    private var offscreenCells: NSMutableDictionary = NSMutableDictionary()
     
     private lazy var fetchControllerDelegate: FetchControllerDelegate = {
         return FetchControllerDelegate(tableView: self.tableView, onUpdate: self.configureCell)
@@ -91,7 +93,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, MessageTable
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.tableView.registerNib(UINib(nibName: "MessageTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
+        self.tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: "Cell")
         
         let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
         query.name = "Messages for patch"
@@ -108,8 +110,6 @@ class PatchDetailViewController: FetchedResultsTableViewController, MessageTable
         dateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
         dateFormatter.doesRelativeDateFormatting = true
         self.messageDateFormatter = dateFormatter
-        
-        self.offscreenCells = NSMutableDictionary()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -271,18 +271,19 @@ class PatchDetailViewController: FetchedResultsTableViewController, MessageTable
         }
     }
     
+    // TODO: This is duplicated in NotificationTableViewController
     // https://github.com/smileyborg/TableViewCellWithAutoLayout
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         let reuseIdentifier = "Cell"
         var cell = self.offscreenCells.objectForKey(reuseIdentifier) as? UITableViewCell
         if cell == nil {
-            let nibObjects = NSBundle.mainBundle().loadNibNamed("MessageTableViewCell", owner: self, options: nil)
+            let nibObjects = NSBundle.mainBundle().loadNibNamed(cellNibName, owner: self, options: nil)
             cell = nibObjects[0] as? UITableViewCell
             self.offscreenCells.setObject(cell!, forKey: reuseIdentifier)
         }
         
-        let message = self.fetchedResultsController.objectAtIndexPath(indexPath) as Message
-        self.configureCell(cell!, object: message)
+        let object: AnyObject = self.fetchedResultsController.objectAtIndexPath(indexPath)
+        self.configureCell(cell!, object: object)
         cell?.setNeedsUpdateConstraints()
         cell?.updateConstraintsIfNeeded()
         cell?.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: CGRectGetHeight(cell!.frame))
@@ -295,9 +296,10 @@ class PatchDetailViewController: FetchedResultsTableViewController, MessageTable
     
     // MARK: NotificationTableViewCellDelegate
     
-    func tableViewCell(cell: MessageTableViewCell, didTapOnView view: UIView) {
-        if view == cell.messageImageView && cell.messageImageView.image != nil {
-            self.selectedDetailImage = cell.messageImageView.image
+    func tableViewCell(cell: UITableViewCell, didTapOnView view: UIView) {
+        let messageCell = cell as MessageTableViewCell
+        if view == messageCell.messageImageView && messageCell.messageImageView.image != nil {
+            self.selectedDetailImage = messageCell.messageImageView.image
             self.performSegueWithIdentifier("ImageDetailSegue", sender: view)
         }
     }

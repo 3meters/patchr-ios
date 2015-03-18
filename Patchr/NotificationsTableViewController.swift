@@ -8,9 +8,12 @@
 
 import UIKit
 
-class NotificationsTableViewController: QueryResultTableViewController, NotificationTableViewCellDelegate {
+class NotificationsTableViewController: QueryResultTableViewController, TableViewCellDelegate {
+    
+    private let cellNibName = "NotificationTableViewCell"
     
     private var selectedDetailImage: UIImage?
+    private var offscreenCells: NSMutableDictionary = NSMutableDictionary()
     
     private var _query: Query!
     override func query() -> Query {
@@ -25,25 +28,8 @@ class NotificationsTableViewController: QueryResultTableViewController, Notifica
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.tableView.registerNib(UINib(nibName: "NotificationTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
-        // TODO: consolidate this workaround across the table view controllers
-        // iOS 7 doesn't support the new style self-sizing cells
-        // http://stackoverflow.com/a/26283017/2247399
-        if NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_7_1 {
-            self.tableView.rowHeight = UITableViewAutomaticDimension;
-            self.tableView.estimatedRowHeight = 100.0;
-        } else {
-            // iOS 7
-            self.tableView.rowHeight = 100
-        }
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        self.clearsSelectionOnViewWillAppear = false;
-        if let selectedIndexPath = self.tableView.indexPathForSelectedRow() {
-            self.tableView.deselectRowAtIndexPath(selectedIndexPath, animated: animated)
-        }
+        self.tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: "Cell")
+        // TODO: add pull to refresh
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -68,39 +54,75 @@ class NotificationsTableViewController: QueryResultTableViewController, Notifica
     }
     
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
+        
+        // The cell width seems to incorrect occassionally
+        if CGRectGetWidth(cell.bounds) != CGRectGetWidth(self.tableView.bounds) {
+            cell.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: CGRectGetHeight(cell.frame))
+            cell.setNeedsLayout()
+            cell.layoutIfNeeded()
+        }
+        
         let queryResult = object as QueryResult
         let notification = queryResult.entity_ as Notification
         let notificationCell = cell as NotificationTableViewCell
         notificationCell.delegate = self
-        notificationCell.summaryLabel.text = notification.summary
-        notificationCell.summaryLabel.sizeToFit()
+        notificationCell.messageBodyLabel.text = notification.summary
         
-        notificationCell.notificationImageView.image = nil
+        notificationCell.messageImageView.image = nil
         if let photo = notification.photoBig {
-            notificationCell.notificationImageMaxHeightConstraint.constant = 10000
-            notificationCell.notificationImageView.setImageWithURL(photo.photoURL())
+            let imageMarginTop : CGFloat = 10.0;
+            notificationCell.messageImageContainerHeight.constant = notificationCell.messageImageView.frame.height + imageMarginTop
+            notificationCell.messageImageView.setImageWithURL(photo.photoURL())
         } else {
-            notificationCell.notificationImageMaxHeightConstraint.constant = 0
+            notificationCell.messageImageContainerHeight.constant = 0
         }
         
-        notificationCell.avatarImageView.image = nil;
+        notificationCell.userAvatarImageView.image = nil;
         if let avatarPhotoURL = notification.photo?.photoURL() {
-            notificationCell.avatarImageView.setImageWithURL(avatarPhotoURL)
+            notificationCell.userAvatarImageView.setImageWithURL(avatarPhotoURL)
         } else {
-            notificationCell.avatarImageView.image = UIImage(named: "Placeholder other user profile")
+            notificationCell.userAvatarImageView.image = UIImage(named: "Placeholder other user profile")
         }
         
-        notificationCell.dateLabel.text = notification.createdDate.description
+        notificationCell.createdDateLabel.text = notification.createdDate.description
+        notificationCell.iconImageView.backgroundColor = UIColor.orangeColor()
     }
 
+    // MARK: UITableViewDelegate
+    
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         //self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
     }
     
-    // MARK: NotificationTableViewCellDelegate
-    func tableViewCell(cell: NotificationTableViewCell, didTapOnView view: UIView) {
-        if view == cell.notificationImageView && cell.notificationImageView.image != nil {
-            self.selectedDetailImage = cell.notificationImageView.image
+    // TODO: This is duplicated in PatchDetailViewController
+    // https://github.com/smileyborg/TableViewCellWithAutoLayout
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        let reuseIdentifier = "Cell"
+        var cell = self.offscreenCells.objectForKey(reuseIdentifier) as? UITableViewCell
+        if cell == nil {
+            let nibObjects = NSBundle.mainBundle().loadNibNamed(cellNibName, owner: self, options: nil)
+            cell = nibObjects[0] as? UITableViewCell
+            self.offscreenCells.setObject(cell!, forKey: reuseIdentifier)
+        }
+        
+        let object: AnyObject = self.fetchedResultsController.objectAtIndexPath(indexPath)
+        self.configureCell(cell!, object: object)
+        cell?.setNeedsUpdateConstraints()
+        cell?.updateConstraintsIfNeeded()
+        cell?.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: CGRectGetHeight(cell!.frame))
+        cell?.setNeedsLayout()
+        cell?.layoutIfNeeded()
+        var height = cell!.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height
+        height += 1
+        return height
+    }
+    
+    // MARK: TableViewCellDelegate
+    
+    func tableViewCell(cell: UITableViewCell, didTapOnView view: UIView) {
+        let notificationCell = cell as NotificationTableViewCell
+        if view == notificationCell.messageImageView && notificationCell.messageImageView.image != nil {
+            self.selectedDetailImage = notificationCell.messageImageView.image
             self.performSegueWithIdentifier("ImageDetailSegue", sender: view)
         }
     }
