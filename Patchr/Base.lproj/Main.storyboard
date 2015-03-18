@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6751" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="RLI-9C-tAd">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6751" systemVersion="14C1510" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="RLI-9C-tAd">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
@@ -424,11 +424,11 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <view key="tableHeaderView" contentMode="scaleToFill" id="3Vt-wC-ZaE" userLabel="DetailView">
-                            <rect key="frame" x="0.0" y="64" width="600" height="168"/>
+                            <rect key="frame" x="0.0" y="64" width="600" height="300"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="06h-6Z-89S" userLabel="AddMsgView">
-                                    <rect key="frame" x="0.0" y="121" width="600" height="47"/>
+                                    <rect key="frame" x="0.0" y="253" width="600" height="47"/>
                                     <subviews>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="taQ-to-sH1">
                                             <rect key="frame" x="253" y="9" width="95" height="30"/>
@@ -448,13 +448,13 @@
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6IV-aV-u0s" userLabel="HeaderView">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="122"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="254"/>
                                     <subviews>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Placeholder patch header" translatesAutoresizingMaskIntoConstraints="NO" id="351-k9-dO8">
-                                            <rect key="frame" x="0.0" y="0.0" width="600" height="122"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="254"/>
                                         </imageView>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZMG-a1-W19">
-                                            <rect key="frame" x="562" y="92" width="30" height="30"/>
+                                            <rect key="frame" x="562" y="224" width="30" height="30"/>
                                             <state key="normal" title="Edit">
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
@@ -462,15 +462,15 @@
                                                 <segue destination="x7o-MZ-1Z6" kind="presentation" identifier="EditPatchSegue" id="Unb-0x-aoh"/>
                                             </connections>
                                         </button>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Patch Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bHj-ol-mkD">
-                                            <rect key="frame" x="8" y="74" width="95" height="21"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Patch Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.70000000000000018" translatesAutoresizingMaskIntoConstraints="NO" id="bHj-ol-mkD">
+                                            <rect key="frame" x="67" y="180" width="150" height="34"/>
+                                            <fontDescription key="fontDescription" type="system" weight="light" pointSize="28"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Patch Category" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YwE-l7-mVO">
-                                            <rect key="frame" x="8" y="96" width="120" height="21"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <rect key="frame" x="67" y="157" width="115" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" weight="light" pointSize="17"/>
                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
@@ -492,6 +492,24 @@
                                                 <action selector="likeAction:" destination="dFa-9F-rNC" eventType="touchUpInside" id="VEl-FK-BTq"/>
                                             </connections>
                                         </button>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QHh-aS-8Rc">
+                                            <rect key="frame" x="67" y="214" width="44" height="30"/>
+                                            <state key="normal" title="2 likes">
+                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <connections>
+                                                <action selector="numberOfLikesButtonAction:" destination="dFa-9F-rNC" eventType="touchUpInside" id="jzq-oE-TSj"/>
+                                            </connections>
+                                        </button>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7J4-1W-AIu">
+                                            <rect key="frame" x="128" y="214" width="75" height="30"/>
+                                            <state key="normal" title="5 watching">
+                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <connections>
+                                                <action selector="numberOfWatchersButtonAction:" destination="dFa-9F-rNC" eventType="touchUpInside" id="Itg-ib-ddT"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <constraints>
@@ -499,17 +517,34 @@
                                         <constraint firstItem="351-k9-dO8" firstAttribute="top" secondItem="6IV-aV-u0s" secondAttribute="top" id="AZ8-21-sSL"/>
                                         <constraint firstItem="YwE-l7-mVO" firstAttribute="leading" secondItem="6IV-aV-u0s" secondAttribute="leading" constant="8" id="Kvr-sl-uJ9"/>
                                         <constraint firstAttribute="bottom" secondItem="ZMG-a1-W19" secondAttribute="bottom" id="LB9-oK-Ica"/>
+                                        <constraint firstItem="7J4-1W-AIu" firstAttribute="leading" secondItem="QHh-aS-8Rc" secondAttribute="trailing" constant="17" id="LuR-Rj-LNs"/>
                                         <constraint firstAttribute="trailing" secondItem="351-k9-dO8" secondAttribute="trailing" id="NBm-ov-HdQ"/>
+                                        <constraint firstItem="QHh-aS-8Rc" firstAttribute="leading" secondItem="bHj-ol-mkD" secondAttribute="leading" id="NmS-wC-twD"/>
+                                        <constraint firstItem="bHj-ol-mkD" firstAttribute="leading" secondItem="6IV-aV-u0s" secondAttribute="leading" constant="67" id="Qbu-Lb-eza"/>
                                         <constraint firstItem="bHj-ol-mkD" firstAttribute="leading" secondItem="6IV-aV-u0s" secondAttribute="leading" constant="8" id="Tby-A6-LxZ"/>
                                         <constraint firstItem="TWm-Ce-UN2" firstAttribute="leading" secondItem="vYh-eO-CMR" secondAttribute="trailing" constant="8" id="Was-Yt-oXc"/>
                                         <constraint firstAttribute="bottom" secondItem="351-k9-dO8" secondAttribute="bottom" id="adC-Lg-n6P"/>
+                                        <constraint firstItem="bHj-ol-mkD" firstAttribute="top" secondItem="YwE-l7-mVO" secondAttribute="bottom" constant="2" id="az2-Y5-nbk"/>
+                                        <constraint firstItem="QHh-aS-8Rc" firstAttribute="top" secondItem="bHj-ol-mkD" secondAttribute="bottom" id="bF8-5S-hTR"/>
                                         <constraint firstAttribute="trailing" secondItem="TWm-Ce-UN2" secondAttribute="trailing" constant="8" id="caz-uf-jYp"/>
+                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="bHj-ol-mkD" secondAttribute="trailing" constant="10" id="ceD-lc-CaQ"/>
+                                        <constraint firstAttribute="bottom" secondItem="bHj-ol-mkD" secondAttribute="bottom" constant="40" id="cfv-QP-Swm"/>
                                         <constraint firstAttribute="trailing" secondItem="ZMG-a1-W19" secondAttribute="trailing" constant="8" id="e9D-bI-wr2"/>
                                         <constraint firstItem="351-k9-dO8" firstAttribute="leading" secondItem="6IV-aV-u0s" secondAttribute="leading" id="gMM-ql-Z7v"/>
                                         <constraint firstItem="vYh-eO-CMR" firstAttribute="top" secondItem="6IV-aV-u0s" secondAttribute="top" constant="8" id="hxy-L3-t6R"/>
+                                        <constraint firstItem="bHj-ol-mkD" firstAttribute="leading" secondItem="YwE-l7-mVO" secondAttribute="leading" id="rZD-br-5kI"/>
                                         <constraint firstAttribute="bottom" secondItem="YwE-l7-mVO" secondAttribute="bottom" constant="5" id="t1x-Yq-uU5"/>
                                         <constraint firstItem="TWm-Ce-UN2" firstAttribute="top" secondItem="6IV-aV-u0s" secondAttribute="top" constant="8" id="vsJ-hC-l7m"/>
+                                        <constraint firstItem="7J4-1W-AIu" firstAttribute="centerY" secondItem="QHh-aS-8Rc" secondAttribute="centerY" id="yUG-hU-43z"/>
                                     </constraints>
+                                    <variation key="default">
+                                        <mask key="constraints">
+                                            <exclude reference="1tZ-Rd-KRQ"/>
+                                            <exclude reference="Kvr-sl-uJ9"/>
+                                            <exclude reference="t1x-Yq-uU5"/>
+                                            <exclude reference="Tby-A6-LxZ"/>
+                                        </mask>
+                                    </variation>
                                 </view>
                             </subviews>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -545,6 +580,8 @@
                     </navigationItem>
                     <connections>
                         <outlet property="likeButton" destination="vYh-eO-CMR" id="BNB-8g-ly5"/>
+                        <outlet property="numberOfLikesButton" destination="QHh-aS-8Rc" id="8Ua-lT-jnn"/>
+                        <outlet property="numberOfWatchersButton" destination="7J4-1W-AIu" id="Up3-hu-heD"/>
                         <outlet property="patchCategoryLabel" destination="YwE-l7-mVO" id="XZF-2M-bof"/>
                         <outlet property="patchImageView" destination="351-k9-dO8" id="GsQ-BX-Jtm"/>
                         <outlet property="patchNameLabel" destination="bHj-ol-mkD" id="nZS-3i-vhZ"/>
@@ -780,7 +817,7 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="MUB-WK-JX7" id="sjr-0q-QZU">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Placeholder patch header" translatesAutoresizingMaskIntoConstraints="NO" id="voc-oH-Jfu">
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="Placeholder patch header" translatesAutoresizingMaskIntoConstraints="NO" id="voc-oH-Jfu">
                                                     <rect key="frame" x="0.0" y="0.0" width="600" height="200"/>
                                                 </imageView>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pjH-D5-7gH">
@@ -1536,10 +1573,10 @@
     <resources>
         <image name="Placeholder current user profile" width="141" height="141"/>
         <image name="Placeholder patch header" width="216" height="144"/>
-        <image name="UITabBarItemExplore" width="30" height="30"/>
-        <image name="UITabBarItemMe" width="30" height="30"/>
+        <image name="UITabBarItemExplore" width="48" height="32"/>
+        <image name="UITabBarItemMe" width="48" height="32"/>
         <image name="UITabBarItemNearby" width="30" height="30"/>
-        <image name="UITabBarItemNotifications" width="30" height="30"/>
+        <image name="UITabBarItemNotifications" width="48" height="32"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="cGH-YD-j5U"/>

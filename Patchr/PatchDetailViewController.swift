@@ -17,6 +17,8 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     @IBOutlet weak var patchCategoryLabel: UILabel!
     @IBOutlet weak var watchButton: UIButton!
     @IBOutlet weak var likeButton: UIButton!
+    @IBOutlet weak var numberOfLikesButton: UIButton!
+    @IBOutlet weak var numberOfWatchersButton: UIButton!
     
     var managedObjectContext: NSManagedObjectContext!
     var query : Query!
@@ -110,6 +112,12 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
         dateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
         dateFormatter.doesRelativeDateFormatting = true
         self.messageDateFormatter = dateFormatter
+        
+        let likesTitle = self.patch.numberOfLikes?.integerValue == 1 ? "\(self.patch.numberOfLikes) like" : "\(self.patch.numberOfLikes) likes"
+        self.numberOfLikesButton.setTitle(likesTitle, forState: UIControlState.Normal)
+        
+        let watchersTitle = self.patch.numberOfWatchers?.integerValue == 1 ? "\(self.patch.numberOfWatchers) watcher" : "\(self.patch.numberOfWatchers) watchers"
+        self.numberOfWatchersButton.setTitle(watchersTitle, forState: UIControlState.Normal)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -155,6 +163,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
         
         messageCell.likesLabel.text = "\(message.numberOfLikes?.integerValue ?? 0) Likes"
         messageCell.createdDateLabel.text = self.messageDateFormatter.stringFromDate(message.createdDate)
+        messageCell.patchNameLabel.text = self.patch.name
     }
     
     private func toggleLinkState(linkValue: String?, ofType linkType: LinkType)
@@ -196,6 +205,15 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
         let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
         self.presentViewController(activityViewController, animated: true, completion: nil)
     }
+    
+    @IBAction func numberOfLikesButtonAction(sender: UIButton) {
+        UIAlertView(title: "Not Implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
+    }
+    
+    @IBAction func numberOfWatchersButtonAction(sender: UIButton) {
+        UIAlertView(title: "Not Implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
+    }
+    
     
     override func fetchedResultsControllerForViewController(viewController: UIViewController) -> NSFetchedResultsController {
         return self.fetchedResultsController
