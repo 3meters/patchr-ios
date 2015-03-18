@@ -102,7 +102,7 @@ class PhotoChooserUI: NSObject,
 
     private func searchForPhoto()
     {
-        // TODO: searchForPhoto() unimplemented
+        // Deferred https://github.com/steamclock/patchr/issues/41
     }
     
     private func useLatestPhoto()

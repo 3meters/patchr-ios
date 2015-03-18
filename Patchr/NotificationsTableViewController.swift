@@ -29,7 +29,6 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: "Cell")
-        // TODO: add pull to refresh
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {

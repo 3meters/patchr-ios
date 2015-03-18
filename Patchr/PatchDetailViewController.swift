@@ -197,7 +197,6 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     
     @IBAction func shareButtonAction(sender: UIBarButtonItem) {
         
-        // TODO: Confirm messaging
         let patchURL = NSURL(string: "http://patchr.com/patch/\(self.patch.id_)") ?? NSURL(string: "http://patchr.com")!
         let shareText = "You've been invited to the \(self.patch.name) patch! \n\n\(patchURL.absoluteString!) \n\nGet the Patchr app at http://patchr.com"
         var activityItems : [AnyObject] = [shareText]
@@ -273,10 +272,8 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
                 let buttonTitle = actionSheet.buttonTitleAtIndex(index)
                 switch buttonTitle {
                 case "Report Abuse":
-                    // TODO: report abuse
                     UIAlertView(title: "Not implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
                 case "Like":
-                    // TODO:
                     UIAlertView(title: "Not implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
                 case "Share":
                     UIAlertView(title: "Not implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()

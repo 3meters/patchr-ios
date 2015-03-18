@@ -87,7 +87,6 @@ class RegistrationTableViewController: UITableViewController {
             self.joinButton.enabled = (self.fullNameTextField.text.utf16Count > 0) &&
                                       (self.passwordTextField.text.utf16Count >= 6) &&
                                       (self.emailTextField.text.utf16Count > 0)
-                                      // TODO: Better screening for email addresses
         }
     }
 

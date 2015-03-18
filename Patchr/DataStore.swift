@@ -83,7 +83,6 @@ class DataStore: NSObject {
         case "Comments by current user":
             self.proxibaseClient.fetchMessagesOwnedByCurrentUser(completion: refreshCompletion)
         case "Messages for patch":
-            // TODO: need better mechanism to pass patchId through query
             let patchId = query.parameters["patchId"] as String
             self.proxibaseClient.fetchMessagesForPatch(patchId, completion: refreshCompletion)
         case "Current user":
@@ -156,7 +155,6 @@ class DataStore: NSObject {
             return locationManager.location.coordinate
         } else {
             // Fallback location
-            // TODO: we can be more creative with this:
             // - store/retrieve location in NSUserDefaults
             // - likely get a nearby major city based on timezone
             return CLLocationCoordinate2D(latitude: 49.2845280, longitude: -123.1092720)

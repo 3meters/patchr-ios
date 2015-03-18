@@ -26,7 +26,6 @@
 }
 
 - (NSURL *)photoURL {
-    // TODO: complete implementation is quite complicated. See Photo.java in Android project
     if ([self.source isEqualToString:@"aircandi.images"] || [self.source isEqualToString:@"aircandi"]) {
         NSString *mediaImagesBaseURL = @"http://aircandi-images.s3.amazonaws.com/";
         NSString *path = [mediaImagesBaseURL stringByAppendingString:self.prefix];

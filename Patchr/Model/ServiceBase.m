@@ -41,7 +41,6 @@
     base.type = dictionary[@"type"];
     base.locked = dictionary[@"locked"];
     base.position = dictionary[@"position"];
-    // base.data = dictionary[@"data"]; // TODO:
     base.ownerId = (mapNames && dictionary[@"_owner"]) ? dictionary[@"_owner"] : dictionary[@"owner"];
     base.creatorId = (mapNames && dictionary[@"_creator"]) ? dictionary[@"_creator"] : dictionary[@"creator"];
     base.modifierId = (mapNames && dictionary[@"_modifier"]) ? dictionary[@"_modifier"] : dictionary[@"modifier"];
@@ -69,9 +68,6 @@
             base.creator = [modelClass setPropertiesFromDictionary:dictionary[@"creator"] onObject:creator mappingNames:mapNames];
         }
     }
-    
-    // TODO: it looks like creator, owner, and modifier objects are sometimes returned too, but we'll do indirect
-    // lookups using their IDs for now
     
     return base;
 }

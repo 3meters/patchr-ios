@@ -88,7 +88,7 @@
             </objects>
             <point key="canvasLocation" x="-507" y="-1599"/>
         </scene>
-        <!--Splash-->
+        <!--Splash View Controller-->
         <scene sceneID="2dW-lr-3zd">
             <objects>
                 <viewController id="4Dp-xR-Xy4" customClass="SplashViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
@@ -100,56 +100,131 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="29n-GC-HwU">
-                                <rect key="frame" x="276" y="95" width="48" height="30"/>
-                                <state key="normal" title="Sign In">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <segue destination="vJ2-ei-F6q" kind="show" id="XGq-iy-6Uq"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="owS-Gg-EZi">
-                                <rect key="frame" x="261" y="133" width="78" height="30"/>
-                                <state key="normal" title="Join Patchr">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <segue destination="Wd0-T0-nbO" kind="show" id="PRR-B4-iJY"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KyU-3x-QP1">
-                                <rect key="frame" x="277" y="171" width="41" height="30"/>
-                                <state key="normal" title="Guest">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="guestButtonAction:" destination="4Dp-xR-Xy4" eventType="touchUpInside" id="9lf-cO-HGA"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="z0K-2q-xfQ">
-                                <rect key="frame" x="277" y="242" width="46" height="30"/>
-                                <state key="normal" title="Debug">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <segue destination="4k6-Mw-cDx" kind="show" id="Sfq-y9-s68"/>
-                                </connections>
-                            </button>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SplashBackground" translatesAutoresizingMaskIntoConstraints="NO" id="OXz-o2-Eeh">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                            </imageView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sFm-fO-YTR">
+                                <rect key="frame" x="170" y="150" width="260" height="300"/>
+                                <subviews>
+                                    <view alpha="0.40000000000000002" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L5J-70-L5S">
+                                        <rect key="frame" x="0.0" y="0.0" width="260" height="300"/>
+                                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="layer.cornerRadius" value="2"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </view>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YdQ-7q-x5N">
+                                        <rect key="frame" x="12" y="127" width="236" height="44"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="44" id="PTP-Bi-RSb"/>
+                                        </constraints>
+                                        <state key="normal" title="SIGN IN">
+                                            <color key="titleColor" red="0.90196079015731812" green="0.90196079015731812" blue="0.90196079015731812" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="layer.borderWidth" value="0.5"/>
+                                            <userDefinedRuntimeAttribute type="color" keyPath="layer.borderUIColor">
+                                                <color key="value" red="0.90196079015731812" green="0.90196079015731812" blue="0.90196079015731812" alpha="1" colorSpace="calibratedRGB"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="layer.cornerRadius" value="4"/>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <segue destination="vJ2-ei-F6q" kind="show" id="9VB-vq-Jad"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BnI-aM-YgE">
+                                        <rect key="frame" x="12" y="179" width="236" height="44"/>
+                                        <state key="normal" title="JOIN PATCHR">
+                                            <color key="titleColor" red="0.90196079015731812" green="0.90196079015731812" blue="0.90196079015731812" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="layer.borderWidth" value="0.5"/>
+                                            <userDefinedRuntimeAttribute type="color" keyPath="layer.borderUIColor">
+                                                <color key="value" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="layer.cornerRadius" value="4"/>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <segue destination="Wd0-T0-nbO" kind="show" id="cm1-cE-kzV"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GvZ-Cc-Ifh">
+                                        <rect key="frame" x="12" y="231" width="236" height="44"/>
+                                        <state key="normal" title="GUEST">
+                                            <color key="titleColor" red="0.90196079015731812" green="0.90196079015731812" blue="0.90196079015731812" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="layer.borderWidth" value="0.75"/>
+                                            <userDefinedRuntimeAttribute type="color" keyPath="layer.borderUIColor">
+                                                <color key="value" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
+                                            </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="layer.cornerRadius" value="4"/>
+                                        </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="guestButtonAction:" destination="4Dp-xR-Xy4" eventType="touchUpInside" id="PMg-oz-GJb"/>
+                                        </connections>
+                                    </button>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SplashLogo" translatesAutoresizingMaskIntoConstraints="NO" id="wjY-1d-8WD">
+                                        <rect key="frame" x="49" y="25" width="162" height="82"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="82" id="9jm-rM-VwJ"/>
+                                            <constraint firstAttribute="width" constant="162" id="lUV-9l-Cvj"/>
+                                        </constraints>
+                                    </imageView>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iHs-4k-bYr">
+                                        <rect key="frame" x="49" y="25" width="162" height="82"/>
+                                        <state key="normal">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="debugButtonAction:" destination="4Dp-xR-Xy4" eventType="touchUpInside" id="EoQ-UT-pa2"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="YdQ-7q-x5N" firstAttribute="leading" secondItem="sFm-fO-YTR" secondAttribute="leading" constant="12" id="7jv-Qp-5ry"/>
+                                    <constraint firstItem="wjY-1d-8WD" firstAttribute="leading" secondItem="iHs-4k-bYr" secondAttribute="leading" id="89L-uf-EqP"/>
+                                    <constraint firstItem="YdQ-7q-x5N" firstAttribute="top" secondItem="wjY-1d-8WD" secondAttribute="bottom" constant="20" id="GTm-Oi-GoF"/>
+                                    <constraint firstAttribute="trailing" secondItem="YdQ-7q-x5N" secondAttribute="trailing" constant="12" id="HM9-8V-XFk"/>
+                                    <constraint firstItem="L5J-70-L5S" firstAttribute="leading" secondItem="sFm-fO-YTR" secondAttribute="leading" id="HQz-G7-6yH"/>
+                                    <constraint firstAttribute="height" constant="300" id="IaT-1r-bTf"/>
+                                    <constraint firstAttribute="trailing" secondItem="L5J-70-L5S" secondAttribute="trailing" id="JZN-gA-KIg"/>
+                                    <constraint firstAttribute="centerX" secondItem="wjY-1d-8WD" secondAttribute="centerX" id="Mnf-9R-Gig"/>
+                                    <constraint firstAttribute="bottom" secondItem="L5J-70-L5S" secondAttribute="bottom" id="OUj-NX-gky"/>
+                                    <constraint firstItem="GvZ-Cc-Ifh" firstAttribute="top" secondItem="BnI-aM-YgE" secondAttribute="bottom" constant="8" id="PZh-gg-SVu"/>
+                                    <constraint firstItem="wjY-1d-8WD" firstAttribute="top" secondItem="sFm-fO-YTR" secondAttribute="top" constant="25" id="QcT-x6-J0O"/>
+                                    <constraint firstItem="YdQ-7q-x5N" firstAttribute="trailing" secondItem="BnI-aM-YgE" secondAttribute="trailing" id="STm-Bg-EHB"/>
+                                    <constraint firstItem="wjY-1d-8WD" firstAttribute="top" secondItem="iHs-4k-bYr" secondAttribute="top" id="T84-L6-3gp"/>
+                                    <constraint firstItem="wjY-1d-8WD" firstAttribute="bottom" secondItem="iHs-4k-bYr" secondAttribute="bottom" id="Uh8-BR-wMn"/>
+                                    <constraint firstAttribute="width" constant="260" id="awr-XS-Bvw"/>
+                                    <constraint firstItem="GvZ-Cc-Ifh" firstAttribute="leading" secondItem="BnI-aM-YgE" secondAttribute="leading" id="c85-Hq-rFc"/>
+                                    <constraint firstItem="GvZ-Cc-Ifh" firstAttribute="height" secondItem="BnI-aM-YgE" secondAttribute="height" id="cST-LB-DkR"/>
+                                    <constraint firstItem="YdQ-7q-x5N" firstAttribute="leading" secondItem="BnI-aM-YgE" secondAttribute="leading" id="d3G-AM-H2F"/>
+                                    <constraint firstItem="BnI-aM-YgE" firstAttribute="top" secondItem="YdQ-7q-x5N" secondAttribute="bottom" constant="8" id="epp-Zx-EnY"/>
+                                    <constraint firstItem="YdQ-7q-x5N" firstAttribute="height" secondItem="BnI-aM-YgE" secondAttribute="height" id="oOb-jJ-Thq"/>
+                                    <constraint firstItem="GvZ-Cc-Ifh" firstAttribute="trailing" secondItem="BnI-aM-YgE" secondAttribute="trailing" id="pHp-qC-esZ"/>
+                                    <constraint firstItem="L5J-70-L5S" firstAttribute="top" secondItem="sFm-fO-YTR" secondAttribute="top" id="wGf-Qh-efN"/>
+                                    <constraint firstItem="wjY-1d-8WD" firstAttribute="trailing" secondItem="iHs-4k-bYr" secondAttribute="trailing" id="xvF-JN-JVa"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="owS-Gg-EZi" firstAttribute="centerX" secondItem="29n-GC-HwU" secondAttribute="centerX" id="Hh4-eI-zYc"/>
-                            <constraint firstItem="z0K-2q-xfQ" firstAttribute="top" secondItem="KyU-3x-QP1" secondAttribute="bottom" constant="41" id="PFB-am-Jfx"/>
-                            <constraint firstItem="KyU-3x-QP1" firstAttribute="top" secondItem="owS-Gg-EZi" secondAttribute="bottom" constant="8" id="VH8-Zx-hCU"/>
-                            <constraint firstItem="KyU-3x-QP1" firstAttribute="centerX" secondItem="owS-Gg-EZi" secondAttribute="centerX" constant="-2.5" id="Wyi-VC-77g"/>
-                            <constraint firstItem="z0K-2q-xfQ" firstAttribute="centerX" secondItem="KyU-3x-QP1" secondAttribute="centerX" constant="2.5" id="gFa-T8-Uip"/>
-                            <constraint firstItem="29n-GC-HwU" firstAttribute="top" secondItem="J2k-NV-Lnj" secondAttribute="bottom" constant="31" id="lZ5-Gp-PIU"/>
-                            <constraint firstItem="owS-Gg-EZi" firstAttribute="top" secondItem="29n-GC-HwU" secondAttribute="bottom" constant="8" id="q23-wE-0c6"/>
-                            <constraint firstAttribute="centerX" secondItem="29n-GC-HwU" secondAttribute="centerX" id="sbx-GS-Q96"/>
+                            <constraint firstItem="OXz-o2-Eeh" firstAttribute="leading" secondItem="16e-CO-ZpJ" secondAttribute="leadingMargin" constant="-16" id="HlP-fP-EsX"/>
+                            <constraint firstItem="qw7-FQ-ASh" firstAttribute="top" secondItem="OXz-o2-Eeh" secondAttribute="bottom" id="JFT-5t-J5c"/>
+                            <constraint firstAttribute="centerX" secondItem="sFm-fO-YTR" secondAttribute="centerX" id="MuF-tP-gGx"/>
+                            <constraint firstItem="OXz-o2-Eeh" firstAttribute="top" secondItem="J2k-NV-Lnj" secondAttribute="bottom" constant="-64" id="NbJ-0E-heD"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="OXz-o2-Eeh" secondAttribute="trailing" constant="-16" id="NoY-qz-n1Y"/>
+                            <constraint firstAttribute="centerY" secondItem="sFm-fO-YTR" secondAttribute="centerY" id="Wu1-WI-Jxd"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Splash" id="JWQ-gH-IgX"/>
+                    <navigationItem key="navigationItem" id="JWQ-gH-IgX"/>
+                    <connections>
+                        <segue destination="4k6-Mw-cDx" kind="show" identifier="DebugSettingsSegue" id="2ih-Xg-B7w"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="E7u-sg-H31" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -1573,16 +1648,18 @@
     <resources>
         <image name="Placeholder current user profile" width="141" height="141"/>
         <image name="Placeholder patch header" width="216" height="144"/>
+        <image name="SplashBackground" width="333" height="208"/>
+        <image name="SplashLogo" width="170" height="170"/>
         <image name="UITabBarItemExplore" width="48" height="32"/>
         <image name="UITabBarItemMe" width="48" height="32"/>
         <image name="UITabBarItemNearby" width="30" height="30"/>
         <image name="UITabBarItemNotifications" width="48" height="32"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="cGH-YD-j5U"/>
         <segue reference="ode-oE-WBF"/>
+        <segue reference="cGH-YD-j5U"/>
         <segue reference="Unb-0x-aoh"/>
         <segue reference="F0u-ce-h5n"/>
-        <segue reference="Z9b-z0-EWI"/>
+        <segue reference="cm1-cE-kzV"/>
     </inferredMetricsTieBreakers>
 </document>

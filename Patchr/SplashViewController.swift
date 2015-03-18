@@ -9,12 +9,34 @@
 import UIKit
 
 class SplashViewController: UIViewController {
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+    
+    override func prefersStatusBarHidden() -> Bool {
+        return true
+    }
 
+    @IBAction func debugButtonAction(sender: UIButton) {
+    #if DEBUG
+        self.performSegueWithIdentifier("DebugSettingsSegue", sender: sender)
+    #endif
+    }
+    
     @IBAction func guestButtonAction(sender: UIButton) {
         let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         let destinationViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateInitialViewController() as UIViewController
         appDelegate.window!.setRootViewController(destinationViewController, animated: true)
     }
+    
+    
 }
 
 extension UIWindow {

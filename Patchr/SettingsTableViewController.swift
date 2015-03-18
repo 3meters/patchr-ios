@@ -52,7 +52,7 @@ class SettingsTableViewController: UITableViewController, MFMailComposeViewContr
                 }
             }
         } else if selectedCell == self.rateTableViewCell {
-            let appId = "1234567890" // TODO: Need real app ID once iTunes connect account is available
+            let appId = "1234567890"
             let appStoreURL = "itms-apps://itunes.apple.com/app/id\(appId)"
             self.tableView.deselectRowAtIndexPath(indexPath, animated: true)
             if let url = NSURL(string: appStoreURL) {

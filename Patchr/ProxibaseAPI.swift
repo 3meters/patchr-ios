@@ -218,7 +218,7 @@ public class ProxibaseClient {
         userId     = userDefaults.stringForKey(PatchrUserDefaultKey("userId"))
         sessionKey = userDefaults.stringForKey(PatchrUserDefaultKey("sessionKey"))
         
-        installId = "1" // TODO:
+        installId = "1"
         
         sessionManager = AFHTTPSessionManager(baseURL: NSURL(string: serverURI!))
 
@@ -292,8 +292,6 @@ public class ProxibaseClient {
 
     public func uploadFileToS3(fileURL: NSURL, contentType: String, bucket: String, key: String, completion:S3UploadCompletionBlock)
     {
-        // TODO: Static Credentials are not recommended, but ok for development
-        
         // NOTE: I can't get Swift to recognize the enum values for AWSRegionTypes and AWSS3ObjectCannedACLs, so I have used
         // rawValue: initializers here.
         
