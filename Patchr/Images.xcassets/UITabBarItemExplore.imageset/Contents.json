@@ -2,12 +2,12 @@
   "images" : [
     {
       "idiom" : "universal",
-      "scale" : "1x"
+      "scale" : "1x",
+      "filename" : "explore.pdf"
     },
     {
       "idiom" : "universal",
-      "scale" : "2x",
-      "filename" : "globe1460x60.png"
+      "scale" : "2x"
     },
     {
       "idiom" : "universal",
