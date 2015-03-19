@@ -288,51 +288,27 @@
 			isa = PBXGroup;
 			children = (
 				7DA730701A71ACA5008C25FA /* Model */,
-				7D01FA371A705C6600DD6DFA /* Third Party */,
-				7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */,
-				84EF12AB1AA904700043EBBA /* Utilities.swift */,
-				7D3D39EF1A6F116E00A44CB2 /* ProxibaseAPI.swift */,
-				84A6BB631AAF970A00B7440B /* CreateEditPatchViewController.swift */,
-				841082CA1AB1013300803ECE /* PatchMapViewController.swift */,
-				843523C41AAE70B800739447 /* PostMessageViewController.swift */,
-				844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */,
-				844D6E341AA4D01200EE71ED /* DebugViewController.swift */,
-				7D3D39D21A6F086F00A44CB2 /* Main.storyboard */,
-				7D3D39D51A6F086F00A44CB2 /* Images.xcassets */,
-				7D2610FE1AAE736100FA0F8E /* LaunchStoryboard.storyboard */,
-				7D3D39EE1A6F09CC00A44CB2 /* BridgingHeader.h */,
-				7D3D39CC1A6F086F00A44CB2 /* Supporting Files */,
-				7D01FA341A7024E200DD6DFA /* JSONResponseSerializerWithData.h */,
-				7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */,
-				7DA7306B1A71A0EE008C25FA /* Model.xcdatamodeld */,
-				7D7095D61A71BE3200F835C4 /* FetchControllerDelegate.swift */,
-				7D77FC7D1AAA2E0C00AA8284 /* FetchedResultsMapViewController.swift */,
-				7DE975EA1AA7D69500C1ECE9 /* FetchedResultsTableViewController.swift */,
-				7DA730951A71B962008C25FA /* QueryResultTableViewController.swift */,
-				7D9651931AAFBD02000C5718 /* PatchTableViewController.swift */,
-				7DA3D9111A72D5A60082D2AB /* DataStore.swift */,
-				7D40B9411A7864A000F9954C /* NotificationsTableViewController.swift */,
-				7D40B9521A79AB0200F9954C /* NearbyPatchesTableViewController.swift */,
-				7D6E26461A7AB93F000128A7 /* MeTableViewViewController.swift */,
-				7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */,
-				7D6E264C1A7AEE91000128A7 /* ExploreTableViewController.swift */,
-				7D021ABD1A9409450047DAAE /* SignInTableViewController.swift */,
-				7D021AC11A9423080047DAAE /* SplashViewController.swift */,
-				7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */,
-				7D668A971A9C08DC005EDAF8 /* PatchTableViewCell.swift */,
-				7D668A981A9C08DC005EDAF8 /* PatchTableViewCell.xib */,
-				7DC9D4901A9D46D100234E3C /* RegistrationTableViewController.swift */,
-				7DC9D4921A9D4FAD00234E3C /* NotificationTableViewCell.swift */,
-				7DC9D4931A9D4FAD00234E3C /* NotificationTableViewCell.xib */,
-				7D970C821AB26021008A4FC7 /* MessageTableViewCell.swift */,
-				7D970C831AB26021008A4FC7 /* MessageTableViewCell.xib */,
+				7DF828561ABB87D9009E46FD /* View Controllers */,
+				7DF828571ABB8804009E46FD /* Views */,
 				7DC9D4981A9D597400234E3C /* AutoSizingLabel.h */,
-				7DC9D4991A9D597400234E3C /* AutoSizingLabel.m */,
-				7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */,
-				7D970C801AB24F15008A4FC7 /* ImageDetailViewController.swift */,
-				7D239F141AB8E6D300488F8F /* MediaTableViewCell.swift */,
+				7D3D39EE1A6F09CC00A44CB2 /* BridgingHeader.h */,
 				7D39D3C31ABA21B200275759 /* CALayer+XibConfiguration.h */,
+				7D01FA341A7024E200DD6DFA /* JSONResponseSerializerWithData.h */,
+				7DC9D4991A9D597400234E3C /* AutoSizingLabel.m */,
 				7D39D3C41ABA21B200275759 /* CALayer+XibConfiguration.m */,
+				7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */,
+				7D2610FE1AAE736100FA0F8E /* LaunchStoryboard.storyboard */,
+				7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */,
+				7DA3D9111A72D5A60082D2AB /* DataStore.swift */,
+				7D7095D61A71BE3200F835C4 /* FetchControllerDelegate.swift */,
+				844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */,
+				7D3D39EF1A6F116E00A44CB2 /* ProxibaseAPI.swift */,
+				84EF12AB1AA904700043EBBA /* Utilities.swift */,
+				7D3D39D51A6F086F00A44CB2 /* Images.xcassets */,
+				7D3D39D21A6F086F00A44CB2 /* Main.storyboard */,
+				7DA7306B1A71A0EE008C25FA /* Model.xcdatamodeld */,
+				7D3D39CC1A6F086F00A44CB2 /* Supporting Files */,
+				7D01FA371A705C6600DD6DFA /* Third Party */,
 			);
 			path = Patchr;
 			sourceTree = "<group>";
@@ -429,6 +405,46 @@
 				7D970C7F1AB2185D008A4FC7 /* PAEnums.h */,
 			);
 			name = Model;
+			sourceTree = "<group>";
+		};
+		7DF828561ABB87D9009E46FD /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				84A6BB631AAF970A00B7440B /* CreateEditPatchViewController.swift */,
+				844D6E341AA4D01200EE71ED /* DebugViewController.swift */,
+				7D6E264C1A7AEE91000128A7 /* ExploreTableViewController.swift */,
+				7D77FC7D1AAA2E0C00AA8284 /* FetchedResultsMapViewController.swift */,
+				7DE975EA1AA7D69500C1ECE9 /* FetchedResultsTableViewController.swift */,
+				7D970C801AB24F15008A4FC7 /* ImageDetailViewController.swift */,
+				7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */,
+				7D6E26461A7AB93F000128A7 /* MeTableViewViewController.swift */,
+				7D40B9521A79AB0200F9954C /* NearbyPatchesTableViewController.swift */,
+				7D40B9411A7864A000F9954C /* NotificationsTableViewController.swift */,
+				7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */,
+				841082CA1AB1013300803ECE /* PatchMapViewController.swift */,
+				7D9651931AAFBD02000C5718 /* PatchTableViewController.swift */,
+				843523C41AAE70B800739447 /* PostMessageViewController.swift */,
+				7DA730951A71B962008C25FA /* QueryResultTableViewController.swift */,
+				7DC9D4901A9D46D100234E3C /* RegistrationTableViewController.swift */,
+				7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */,
+				7D021ABD1A9409450047DAAE /* SignInTableViewController.swift */,
+				7D021AC11A9423080047DAAE /* SplashViewController.swift */,
+			);
+			name = "View Controllers";
+			sourceTree = "<group>";
+		};
+		7DF828571ABB8804009E46FD /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				7D239F141AB8E6D300488F8F /* MediaTableViewCell.swift */,
+				7D970C821AB26021008A4FC7 /* MessageTableViewCell.swift */,
+				7D970C831AB26021008A4FC7 /* MessageTableViewCell.xib */,
+				7DC9D4921A9D4FAD00234E3C /* NotificationTableViewCell.swift */,
+				7DC9D4931A9D4FAD00234E3C /* NotificationTableViewCell.xib */,
+				7D668A971A9C08DC005EDAF8 /* PatchTableViewCell.swift */,
+				7D668A981A9C08DC005EDAF8 /* PatchTableViewCell.xib */,
+			);
+			name = Views;
 			sourceTree = "<group>";
 		};
 		A0DA2C2AA90D81631E6BF68D /* Frameworks */ = {

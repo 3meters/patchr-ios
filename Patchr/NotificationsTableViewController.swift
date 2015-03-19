@@ -14,6 +14,7 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
     
     private var selectedDetailImage: UIImage?
     private var offscreenCells: NSMutableDictionary = NSMutableDictionary()
+    private var messageDateFormatter: NSDateFormatter!
     
     private var _query: Query!
     override func query() -> Query {
@@ -29,6 +30,12 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: "Cell")
+        
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
+        dateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
+        dateFormatter.doesRelativeDateFormatting = true
+        self.messageDateFormatter = dateFormatter
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -77,8 +84,16 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
         }
         
         notificationCell.userAvatarImageView.pa_setImageWithURL(notification.photo?.photoURL(), placeholder: UIImage(named: "UserAvatarDefault"))        
-        notificationCell.createdDateLabel.text = notification.createdDate.description
-        notificationCell.iconImageView.backgroundColor = UIColor.orangeColor()
+        notificationCell.createdDateLabel.text = self.messageDateFormatter.stringFromDate(notification.createdDate)
+        
+        notificationCell.iconImageView.tintColor = self.view.window?.tintColor
+        if notification.type == "media" {
+            notificationCell.iconImageView.image = UIImage(named: "NotificationIconMediaLight")
+        } else if notification.type == "message" {
+            notificationCell.iconImageView.image = UIImage(named: "NotificationIconMessageLight")
+        } else if notification.type == "watch" {
+            notificationCell.iconImageView.image = UIImage(named: "NotificationIconWatchLight")
+        }
     }
 
     // MARK: UITableViewDelegate
