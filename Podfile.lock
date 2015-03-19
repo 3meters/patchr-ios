@@ -52,6 +52,7 @@ PODS:
   - Mantle (1.5.4):
     - Mantle/extobjc (= 1.5.4)
   - Mantle/extobjc (1.5.4)
+  - MBProgressHUD (0.9.1)
   - PBWebViewController (0.3)
   - Reachability (3.2)
   - RMCoreDataStack (0.1.4)
@@ -65,6 +66,7 @@ DEPENDENCIES:
   - AFNetworkActivityLogger (~> 2.0)
   - AFNetworking (~> 2.0)
   - AWSiOSSDKv2/S3 (~> 2.0)
+  - MBProgressHUD (~> 0.9.1)
   - PBWebViewController (~> 0.3)
   - RMCoreDataStack
   - SCLAlertView-Objective-C (~> 0.5.6)
@@ -78,6 +80,7 @@ SPEC CHECKSUMS:
   FMDB: 0efa188cf0dd1ce82c27a478cd5f5fa245308677
   GZIP: f27c434ffee5e9a9b34f4e9c19e91350fa8bbde1
   Mantle: d5fbaf30fbc58031223af13812c060e15934a1fe
+  MBProgressHUD: f3747dcbd45a9e855a6b0674550651e0b7ed250c
   PBWebViewController: 0a36bbd0f82741d9457177c9c37f5ff747cba312
   Reachability: 1ef8adf5c4e3d362f96515d4278f68dad3c26930
   RMCoreDataStack: 0c00a15fa117ffe9530fa16e30df3e0863ba2939

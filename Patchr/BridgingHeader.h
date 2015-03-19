@@ -18,6 +18,7 @@
 #import <PBWebViewController.h>
 #import <UIActionSheet+Blocks.h>
 #import <SCLAlertView.h>
+#import <MBProgressHUD.h>
 #import "Patch.h"
 #import "Place.h"
 #import "Query.h"

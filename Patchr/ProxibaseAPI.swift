@@ -216,7 +216,7 @@ public class ProxibaseClient {
         }
 
         userId     = userDefaults.stringForKey(PatchrUserDefaultKey("userId"))
-        sessionKey = userDefaults.stringForKey(PatchrUserDefaultKey("sessionKey"))
+        sessionKey = userDefaults.stringForKey(PatchrUserDefaultKey("sessionKey")) // TODO: We should store this more securely
         
         installId = "1"
         

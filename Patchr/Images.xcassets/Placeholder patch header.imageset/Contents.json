@@ -2,16 +2,18 @@
   "images" : [
     {
       "idiom" : "universal",
-      "scale" : "1x"
+      "scale" : "1x",
+      "filename" : "star-light-orange-background-pictures-388383665274-2.png"
     },
     {
       "idiom" : "universal",
-      "scale" : "2x"
+      "scale" : "2x",
+      "filename" : "star-light-orange-background-pictures-388383665274-1.png"
     },
     {
       "idiom" : "universal",
       "scale" : "3x",
-      "filename" : "star-light-orange-background-pictures-388383665274.jpg"
+      "filename" : "star-light-orange-background-pictures-388383665274.png"
     }
   ],
   "info" : {
