@@ -612,7 +612,7 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6IV-aV-u0s" userLabel="HeaderView">
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="254"/>
                                     <subviews>
-                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Placeholder patch header" translatesAutoresizingMaskIntoConstraints="NO" id="351-k9-dO8">
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="351-k9-dO8">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="254"/>
                                         </imageView>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZMG-a1-W19">
@@ -1743,7 +1743,7 @@
         <image name="UITabBarItemNotifications" width="48" height="32"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="opk-EE-uhG"/>
+        <segue reference="Unb-0x-aoh"/>
         <segue reference="PGe-ho-h5m"/>
         <segue reference="cGH-YD-j5U"/>
         <segue reference="F0u-ce-h5n"/>
