@@ -76,13 +76,7 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
             notificationCell.messageImageContainerHeight.constant = 0
         }
         
-        notificationCell.userAvatarImageView.image = nil;
-        if let avatarPhotoURL = notification.photo?.photoURL() {
-            notificationCell.userAvatarImageView.pa_setImageWithURL(avatarPhotoURL)
-        } else {
-            notificationCell.userAvatarImageView.image = UIImage(named: "Placeholder other user profile")
-        }
-        
+        notificationCell.userAvatarImageView.pa_setImageWithURL(notification.photo?.photoURL(), placeholder: UIImage(named: "UserAvatarDefault"))        
         notificationCell.createdDateLabel.text = notification.createdDate.description
         notificationCell.iconImageView.backgroundColor = UIColor.orangeColor()
     }

@@ -90,6 +90,12 @@ class PatchTableViewController: QueryResultTableViewController {
 extension UIImageView {
     
     func pa_setImageWithURL(url: NSURL?, placeholder: UIImage?) {
+        
+        if url == nil {
+            self.image = placeholder
+            return
+        }
+        
         self.sd_setImageWithURL(url, placeholderImage: placeholder, completed: { (image, error, cacheType, url) -> Void in
             
             if error != nil {

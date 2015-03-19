@@ -89,9 +89,7 @@ class PostMessageViewController: UIViewController
         }
         
         dataStore.withCurrentUser(completion: { user in
-            if let photoURL = user.photo?.photoURL() {
-                self.userProfileImage.pa_setImageWithURL(photoURL)
-            }
+            self.userProfileImage.pa_setImageWithURL(user.photo?.photoURL(), placeholder: UIImage(named: "UserAvatarDefault"))
         })
     }
     

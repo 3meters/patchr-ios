@@ -59,6 +59,12 @@ class DataStore: NSObject {
     func refreshResultsFor(query: Query, completion:(results: [QueryResult], error: NSError?) -> Void) {
 
         func refreshCompletion(response: AnyObject?, error: NSError?) -> Void {
+            
+            if error != nil {
+                completion(results: [], error: error)
+                return
+            }
+            
             let results = self.handleResponseForQuery(query, response: response!)
             let resultsSet = NSSet(array: results)
             // We need to purge all query results for the query that are not in the current result set

@@ -647,12 +647,6 @@ public class ProxibaseClient {
     public func fetchMostMessagedPatches(limit: NSInteger = 50, skip: NSInteger = 0, completion:(response: AnyObject?, error: NSError?) -> Void) {
         var allLinks = self.standardPatchLinks()
         let parameters : Dictionary<String, AnyObject> = [
-            "entityId" : self.userId ?? "",
-            "cursor" : [
-                "sort" : ["modifiedDate" : -1],
-                "skip" : skip,
-                "limit" : limit
-            ],
             "type" : "content"
             //"links" : allLinks.map { $0.toDictionary() } // Doesn't work the same as /find API
         ]

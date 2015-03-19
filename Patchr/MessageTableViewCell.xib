@@ -16,14 +16,14 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="TaR-dt-0cq">
+                    <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" image="UserAvatarDefault" translatesAutoresizingMaskIntoConstraints="NO" id="TaR-dt-0cq">
                         <rect key="frame" x="8" y="30" width="50" height="50"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="50" id="Iut-66-DOf"/>
                             <constraint firstAttribute="height" constant="50" id="Ygv-4X-iXd"/>
                         </constraints>
                     </imageView>
-                    <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalCompressionResistancePriority="751" text="Rob" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m6L-Nb-Bin">
+                    <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="1000" verticalCompressionResistancePriority="751" text="Rob" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m6L-Nb-Bin">
                         <rect key="frame" x="67" y="30" width="33" height="21"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
@@ -43,7 +43,7 @@
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Patch name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0TT-YB-aeS">
+                    <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="Patch name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0TT-YB-aeS">
                         <rect key="frame" x="67" y="8" width="79" height="18"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
@@ -104,10 +104,12 @@
                     <constraint firstItem="m6L-Nb-Bin" firstAttribute="top" secondItem="TaR-dt-0cq" secondAttribute="top" id="oB9-HR-jwj"/>
                     <constraint firstItem="Jtz-MW-UwR" firstAttribute="top" secondItem="EuJ-uZ-wD2" secondAttribute="bottom" constant="8" id="oUM-qU-Ajx"/>
                     <constraint firstItem="Jtz-MW-UwR" firstAttribute="leading" secondItem="EuJ-uZ-wD2" secondAttribute="leading" id="rvT-YA-ml0"/>
+                    <constraint firstItem="h8L-WQ-6XO" firstAttribute="top" secondItem="m6L-Nb-Bin" secondAttribute="bottom" constant="4" id="wyT-ce-zKL"/>
                 </constraints>
                 <variation key="default">
                     <mask key="constraints">
                         <exclude reference="8MH-R1-kxK"/>
+                        <exclude reference="B64-cA-TdC"/>
                     </mask>
                 </variation>
             </tableViewCellContentView>
@@ -124,4 +126,7 @@
             <point key="canvasLocation" x="437.5" y="709"/>
         </tableViewCell>
     </objects>
+    <resources>
+        <image name="UserAvatarDefault" width="250" height="250"/>
+    </resources>
 </document>

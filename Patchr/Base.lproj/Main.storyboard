@@ -1537,7 +1537,7 @@
         <scene sceneID="7bn-tw-SU5">
             <objects>
                 <tableViewController id="Yps-DA-nZY" customClass="MeTableViewViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Bd2-pt-XmN">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="200" sectionHeaderHeight="22" sectionFooterHeight="22" id="Bd2-pt-XmN">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -1548,7 +1548,7 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2k0-90-6sQ">
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="92"/>
                                     <subviews>
-                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Placeholder current user profile" translatesAutoresizingMaskIntoConstraints="NO" id="dfz-F8-5Ue">
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="UserAvatarDefault" translatesAutoresizingMaskIntoConstraints="NO" id="dfz-F8-5Ue">
                                             <rect key="frame" x="8" y="16" width="60" height="60"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="60" id="UDX-AT-tFc"/>
@@ -1637,6 +1637,7 @@
                         <outlet property="currentUserNameField" destination="95Y-fw-S1K" id="FD8-bf-uiN"/>
                         <outlet property="currentUserProfilePhoto" destination="dfz-F8-5Ue" id="JkS-z1-crL"/>
                         <segue destination="dFa-9F-rNC" kind="show" identifier="PatchDetailSegue" id="nea-bY-Zi0"/>
+                        <segue destination="JI7-e9-z3O" kind="show" identifier="ImageDetailSegue" id="air-6a-QwR"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="d5F-Ho-WS6" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1741,12 +1742,13 @@
         <image name="UITabBarItemMe" width="48" height="32"/>
         <image name="UITabBarItemNearby" width="30" height="30"/>
         <image name="UITabBarItemNotifications" width="48" height="32"/>
+        <image name="UserAvatarDefault" width="250" height="250"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Unb-0x-aoh"/>
-        <segue reference="PGe-ho-h5m"/>
-        <segue reference="cGH-YD-j5U"/>
-        <segue reference="F0u-ce-h5n"/>
         <segue reference="Z9b-z0-EWI"/>
+        <segue reference="cGH-YD-j5U"/>
+        <segue reference="nea-bY-Zi0"/>
+        <segue reference="air-6a-QwR"/>
+        <segue reference="Unb-0x-aoh"/>
     </inferredMetricsTieBreakers>
 </document>

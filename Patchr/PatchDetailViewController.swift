@@ -154,11 +154,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
         messageCell.userNameLabel.text = nil
         if let creator = message.creator as? User {
             messageCell.userNameLabel.text = creator.name
-            if let creatorPhotoURL = creator.photo?.photoURL() {
-                messageCell.userAvatarImageView.pa_setImageWithURL(creatorPhotoURL)
-            } else {
-                messageCell.userAvatarImageView.image = UIImage(named: "Placeholder other user profile")
-            }
+            messageCell.userAvatarImageView.pa_setImageWithURL(creator.photo?.photoURL(), placeholder: UIImage(named: "UserAvatarDefault"))
         }
         
         messageCell.likesLabel.text = "\(message.numberOfLikes?.integerValue ?? 0) Likes"
@@ -309,7 +305,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
         return height
     }
     
-    // MARK: NotificationTableViewCellDelegate
+    // MARK: TableViewCellDelegate
     
     func tableViewCell(cell: UITableViewCell, didTapOnView view: UIView) {
         let messageCell = cell as MessageTableViewCell
