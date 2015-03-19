@@ -34,7 +34,7 @@ class MeTableViewViewController: QueryResultTableViewController {
 
             if let thePhoto = user.photo
             {
-                self.currentUserProfilePhoto.setImageWithURL(thePhoto.photoURL())
+                self.currentUserProfilePhoto.pa_setImageWithURL(thePhoto.photoURL())
             }
         })
     }

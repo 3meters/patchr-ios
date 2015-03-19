@@ -11,7 +11,8 @@
 
 typedef NS_ENUM(NSInteger, PAVisibilityLevel) {
     PAVisibilityLevelPublic,
-    PAVisibilityLevelPrivate
+    PAVisibilityLevelPrivate,
+    PAVisibilityLevelUnknown
 };
 
 #endif

@@ -57,6 +57,9 @@ PODS:
   - Reachability (3.2)
   - RMCoreDataStack (0.1.4)
   - SCLAlertView-Objective-C (0.5.6)
+  - SDWebImage (3.7.2):
+    - SDWebImage/Core (= 3.7.2)
+  - SDWebImage/Core (3.7.2)
   - TMCache (1.2.3)
   - UIActionSheet+Blocks (0.8.1)
   - UICKeyChainStore (2.0.4)
@@ -70,6 +73,7 @@ DEPENDENCIES:
   - PBWebViewController (~> 0.3)
   - RMCoreDataStack
   - SCLAlertView-Objective-C (~> 0.5.6)
+  - SDWebImage (~> 3.7.2)
   - UIActionSheet+Blocks (~> 0.8.1)
 
 SPEC CHECKSUMS:
@@ -85,6 +89,7 @@ SPEC CHECKSUMS:
   Reachability: 1ef8adf5c4e3d362f96515d4278f68dad3c26930
   RMCoreDataStack: 0c00a15fa117ffe9530fa16e30df3e0863ba2939
   SCLAlertView-Objective-C: 257de4171414dbc32bc3bfdcb61093fc0906536c
+  SDWebImage: 71b7cdc1d1721d6a82ed62889030225f2c249e29
   TMCache: 11589ef8c40909114a5e60132711c9a559e01d97
   UIActionSheet+Blocks: c8b9c02f3d08964e8f7a4202f004a639c15eab80
   UICKeyChainStore: 2399076d0950e20fe859b8f817548cf6ca542dd7

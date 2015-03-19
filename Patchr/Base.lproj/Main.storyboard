@@ -539,7 +539,7 @@
         <scene sceneID="Lop-BW-eMS">
             <objects>
                 <tableViewController id="uO7-Qs-6EE" customClass="NearbyPatchesTableViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="6Xg-xJ-HeZ">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="140" sectionHeaderHeight="22" sectionFooterHeight="22" id="6Xg-xJ-HeZ">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -1280,7 +1280,7 @@
         <scene sceneID="jsW-SU-Umj">
             <objects>
                 <tableViewController id="Czf-DV-Qgd" customClass="ExploreTableViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="8q9-By-124">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="140" sectionHeaderHeight="22" sectionFooterHeight="22" id="8q9-By-124">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -1743,9 +1743,9 @@
         <image name="UITabBarItemNotifications" width="48" height="32"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="ode-oE-WBF"/>
+        <segue reference="opk-EE-uhG"/>
+        <segue reference="PGe-ho-h5m"/>
         <segue reference="cGH-YD-j5U"/>
-        <segue reference="Unb-0x-aoh"/>
         <segue reference="F0u-ce-h5n"/>
         <segue reference="Z9b-z0-EWI"/>
     </inferredMetricsTieBreakers>

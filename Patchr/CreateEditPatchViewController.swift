@@ -121,7 +121,7 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
             patchDescription = patch?.description_
             if let photo = patch?.photo
             {
-                patchImageView.setImageWithURL(photo.photoURL())
+                patchImageView.pa_setImageWithURL(photo.photoURL())
             }
             else
             {

@@ -40,8 +40,10 @@
     
     if ([dictionary[@"visibility"] isEqual:@"public"]) {
         entity.visibilityValue = PAVisibilityLevelPublic;
-    } else {
+    } else if ([dictionary[@"visibility"] isEqual:@"private"]){
         entity.visibilityValue = PAVisibilityLevelPrivate;
+    } else {
+        entity.visibilityValue = PAVisibilityLevelUnknown;
     }
     
     return entity;

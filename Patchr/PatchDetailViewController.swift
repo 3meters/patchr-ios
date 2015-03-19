@@ -122,7 +122,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        self.patchImageView.setImageWithURL(patch.photo?.photoURL())
+        self.patchImageView.pa_setImageWithURL(patch.photo?.photoURL())
         self.patchNameLabel.text = patch.name
         self.patchCategoryLabel.text = patch.category?.name
     }
@@ -143,7 +143,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
         
         messageCell.messageImageView.image = nil
         if let photo = message.photo {
-            messageCell.messageImageView.setImageWithURL(photo.photoURL())
+            messageCell.messageImageView.pa_setImageWithURL(photo.photoURL())
             let imageMarginTop : CGFloat = 10.0;
             messageCell.messageImageContainerHeight.constant = messageCell.messageImageView.frame.height + imageMarginTop
         } else {
@@ -155,7 +155,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
         if let creator = message.creator as? User {
             messageCell.userNameLabel.text = creator.name
             if let creatorPhotoURL = creator.photo?.photoURL() {
-                messageCell.userAvatarImageView.setImageWithURL(creatorPhotoURL)
+                messageCell.userAvatarImageView.pa_setImageWithURL(creatorPhotoURL)
             } else {
                 messageCell.userAvatarImageView.image = UIImage(named: "Placeholder other user profile")
             }

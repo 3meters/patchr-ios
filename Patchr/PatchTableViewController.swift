@@ -15,15 +15,6 @@ class PatchTableViewController: QueryResultTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.registerNib(UINib(nibName: "PatchTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
-        // iOS 7 doesn't support the new style self-sizing cells
-        // http://stackoverflow.com/a/26283017/2247399
-        if NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_7_1 {
-            self.tableView.rowHeight = UITableViewAutomaticDimension;
-            self.tableView.estimatedRowHeight = 100.0;
-        } else {
-            // iOS 7
-            self.tableView.rowHeight = 100
-        }
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -60,16 +51,23 @@ class PatchTableViewController: QueryResultTableViewController {
     }
     
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
+        
+        // The cell width seems to incorrect occassionally
+        if CGRectGetWidth(cell.bounds) != CGRectGetWidth(self.tableView.bounds) {
+            cell.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: CGRectGetHeight(cell.frame))
+            cell.setNeedsLayout()
+            cell.layoutIfNeeded()
+        }
+        
         let queryResult = object as QueryResult
         let patch = queryResult.entity_ as Patch
         let patchCell = cell as PatchTableViewCell
         patchCell.nameLabel.text = patch.name
-        patchCell.nameLabel.sizeToFit()
         patchCell.categoryLabel.text = patch.category.name
-        patchCell.detailsLabel.text = "\(patch.numberOfMessages) Messages  \(patch.numberOfWatchers) Watching"
+        patchCell.detailsLabel.text = "\(patch.numberOfMessages ?? 0) Messages  \(patch.numberOfWatchers ?? 0) Watching"
         patchCell.imageViewThumb.image = nil
-        if patch.photo != nil && patch.photo.photoURL() != nil {
-            patchCell.imageViewThumb.setImageWithURL(patch.photo.photoURL())
+        if patch.photo != nil {
+            patchCell.imageViewThumb.pa_setImageWithURL(patch.photo.photoURL())
         }
         
         patchCell.visibilityImageView.image = (patch.visibilityValue == PAVisibilityLevel.Private) ? UIImage(named: "TableViewCellLock") : nil
@@ -87,4 +85,30 @@ class PatchTableViewController: QueryResultTableViewController {
     }
     
     @IBAction func unwindFromCreatePatch(segue: UIStoryboardSegue) {}
+}
+
+extension UIImageView {
+    
+    func pa_setImageWithURL(url: NSURL?, placeholder: UIImage?) {
+        self.sd_setImageWithURL(url, placeholderImage: placeholder, completed: { (image, error, cacheType, url) -> Void in
+            
+            if error != nil {
+                return
+            }
+            
+            if cacheType == SDImageCacheType.None || cacheType == SDImageCacheType.Disk {
+                // Animate if image wasn't cached
+                UIView.transitionWithView(self, duration: 0.3, options: UIViewAnimationOptions.TransitionCrossDissolve, animations: { () -> Void in
+                    self.image = image;
+                    }, completion: nil)
+            } else {
+                self.image = image
+            }
+            
+        })
+    }
+    
+    func pa_setImageWithURL(url: NSURL?) {
+        self.pa_setImageWithURL(url, placeholder: nil)
+    }
 }

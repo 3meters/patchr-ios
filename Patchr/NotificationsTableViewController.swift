@@ -71,14 +71,14 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
         if let photo = notification.photoBig {
             let imageMarginTop : CGFloat = 10.0;
             notificationCell.messageImageContainerHeight.constant = notificationCell.messageImageView.frame.height + imageMarginTop
-            notificationCell.messageImageView.setImageWithURL(photo.photoURL())
+            notificationCell.messageImageView.pa_setImageWithURL(photo.photoURL())
         } else {
             notificationCell.messageImageContainerHeight.constant = 0
         }
         
         notificationCell.userAvatarImageView.image = nil;
         if let avatarPhotoURL = notification.photo?.photoURL() {
-            notificationCell.userAvatarImageView.setImageWithURL(avatarPhotoURL)
+            notificationCell.userAvatarImageView.pa_setImageWithURL(avatarPhotoURL)
         } else {
             notificationCell.userAvatarImageView.image = UIImage(named: "Placeholder other user profile")
         }

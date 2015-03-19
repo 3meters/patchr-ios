@@ -20,7 +20,7 @@ class ImageDetailViewController: UIViewController {
         if self.image != nil {
             self.mainImageView.image = self.image
         } else if imageURL != nil {
-            self.mainImageView.setImageWithURL(self.imageURL)
+            self.mainImageView.pa_setImageWithURL(self.imageURL)
         }
     }
 }
