@@ -111,6 +111,7 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
     //
     override func viewDidLoad()
     {
+        super.viewDidLoad()
         patchSwitchView = UISwitch()
         publicPatchCell.accessoryView = patchSwitchView
         
@@ -157,6 +158,7 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
     var observerObject: TextFieldChangeObserver?
     
     override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
         observerObject = TextFieldChangeObserver(patchNameField) { [unowned self] in
             self.updateCreatePatchButton()
         }
@@ -166,6 +168,7 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
     
     override func viewWillDisappear(animated: Bool)
     {
+        super.viewWillDisappear(animated)
         observerObject?.stopObserving()
     }
     

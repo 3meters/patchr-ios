@@ -104,6 +104,7 @@ class PostMessageViewController: UIViewController
     // chooser view is closed, so it's not a one-time-only call like didLoad
     
     override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
         assert(messageTextView.window != nil) // requirement for calling becomeFirstResponder
         messageTextView.becomeFirstResponder()
         
@@ -120,6 +121,7 @@ class PostMessageViewController: UIViewController
 
     
     override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
         NSNotificationCenter.defaultCenter().removeObserver(observerObject)
     }
 }

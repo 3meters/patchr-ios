@@ -911,7 +911,6 @@
                             </button>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="TAP-Ne-Iwb" userLabel="Profile Photo">
                                 <rect key="frame" x="18" y="124" width="64" height="64"/>
-                                <color key="backgroundColor" red="1" green="0.83007472962903672" blue="0.69279524206392407" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="64" id="mxD-gW-dAO"/>
                                     <constraint firstAttribute="width" constant="64" id="o3Q-0V-Cki"/>
