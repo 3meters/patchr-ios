@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MeTableViewViewController: QueryResultTableViewController, TableViewCellDelegate {
+class MeTableViewViewController: QueryResultTableViewController, TableViewCellDelegate, UITextFieldDelegate {
     
     private let cellNibName = "MessageTableViewCell"
     
@@ -126,6 +126,14 @@ class MeTableViewViewController: QueryResultTableViewController, TableViewCellDe
             let destinationViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as UIViewController
             appDelegate.window!.setRootViewController(destinationViewController, animated: true)
         }
+    }
+    
+    @IBAction func watchingButtonAction(sender: UIButton) {
+        UIAlertView(title: "Not Implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
+    }
+    
+    @IBAction func ownerButtonAction(sender: UIButton) {
+        UIAlertView(title: "Not Implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
     }
     
     // MARK: TableViewCellDelegate

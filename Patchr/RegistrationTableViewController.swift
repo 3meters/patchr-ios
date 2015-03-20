@@ -18,9 +18,25 @@ class RegistrationTableViewController: UITableViewController {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
 
+    @IBOutlet weak var dummyField: UITextField!
     private var defaultProfileImage: UIImage?
     
     lazy var photoChooserUI: PhotoChooserUI = { PhotoChooserUI(hostViewController: self) }()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        defaultProfileImage = avatarImageView.image
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        self.configureSignInButtons()
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        self.fullNameTextField.becomeFirstResponder()
+    }
     
     @IBAction func avatarSetButtonAction(sender: AnyObject) {
         photoChooserUI.choosePhoto() { uiImage in
@@ -71,29 +87,45 @@ class RegistrationTableViewController: UITableViewController {
         self.navigationController?.pushViewController(webViewController, animated: true)
     }
     
-    var observerObject: NSObjectProtocol? = nil
+    @IBAction func textFieldEditingChangedAction(sender: AnyObject) {
+        self.configureSignInButtons()
+    }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        defaultProfileImage = avatarImageView.image
-    }
-
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
+    // MARK: UITextFieldDelegate
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
         
-        let notificationCenter = NSNotificationCenter.defaultCenter()
-        observerObject = notificationCenter.addObserverForName(UITextFieldTextDidChangeNotification, object: nil, queue: nil)
-        { _ in
-            self.joinButton.enabled = (self.fullNameTextField.text.utf16Count > 0) &&
-                                      (self.passwordTextField.text.utf16Count >= 6) &&
-                                      (self.emailTextField.text.utf16Count > 0)
+        if textField == self.fullNameTextField {
+            self.emailTextField.becomeFirstResponder()
+            return false
+        } else if textField == self.emailTextField {
+            self.passwordTextField.becomeFirstResponder()
+            return false
+        } else if textField == self.passwordTextField {
+            
+            // Kind of lame. Rely on bar button as the signal
+            if self.doneBarButtonItem.enabled {
+                self.joinButtonAction(textField)
+                textField.resignFirstResponder()
+            }
+            return false
         }
+        
+        return true
     }
 
-    override func viewWillDisappear(animated: Bool) {
-        let notificationCenter = NSNotificationCenter.defaultCenter()
-        if let observer = observerObject {
-            notificationCenter.removeObserver(observer)
+    
+    // MARK: Private Internal
+    
+    func configureSignInButtons() {
+        var enableSignIn = false
+        if !self.fullNameTextField.isEmpty &&
+            !self.emailTextField.isEmpty &&
+            self.passwordTextField.text.utf16Count >= 6 {
+            enableSignIn = true
         }
+        self.joinButton.enabled = enableSignIn
+        self.joinButton.alpha = enableSignIn ? 1.0 : 0.4
+        self.doneBarButtonItem.enabled = enableSignIn        
     }
 }
