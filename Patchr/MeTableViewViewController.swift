@@ -53,14 +53,6 @@ class MeTableViewViewController: QueryResultTableViewController, TableViewCellDe
         })
     }
     
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        self.clearsSelectionOnViewWillAppear = false;
-        if let selectedIndexPath = self.tableView.indexPathForSelectedRow() {
-            self.tableView.deselectRowAtIndexPath(selectedIndexPath, animated: animated)
-        }
-    }
-    
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == nil {
             return

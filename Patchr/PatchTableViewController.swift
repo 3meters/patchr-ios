@@ -17,14 +17,6 @@ class PatchTableViewController: QueryResultTableViewController {
         self.tableView.registerNib(UINib(nibName: "PatchTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
     }
     
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        self.clearsSelectionOnViewWillAppear = false;
-        if let selectedIndexPath = self.tableView.indexPathForSelectedRow() {
-            self.tableView.deselectRowAtIndexPath(selectedIndexPath, animated: animated)
-        }
-    }
-    
     // TODO: consolidate the duplicated segue logic
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         

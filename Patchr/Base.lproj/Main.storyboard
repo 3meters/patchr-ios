@@ -1363,6 +1363,7 @@
                     <nil name="viewControllers"/>
                     <connections>
                         <segue destination="Uve-fK-JGK" kind="relationship" relationship="rootViewController" id="VEg-St-9DP"/>
+                        <segue destination="dFa-9F-rNC" kind="show" identifier="PatchDetailSegue" id="ogA-ZN-KnA"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Am2-qS-eLi" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1914,10 +1915,10 @@
         <image name="UserAvatarDefault" width="250" height="250"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Z9b-z0-EWI"/>
-        <segue reference="cGH-YD-j5U"/>
-        <segue reference="nea-bY-Zi0"/>
+        <segue reference="ogA-ZN-KnA"/>
         <segue reference="air-6a-QwR"/>
+        <segue reference="cGH-YD-j5U"/>
         <segue reference="Unb-0x-aoh"/>
+        <segue reference="Z9b-z0-EWI"/>
     </inferredMetricsTieBreakers>
 </document>

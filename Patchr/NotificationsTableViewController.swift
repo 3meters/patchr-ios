@@ -16,6 +16,8 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
     private var offscreenCells: NSMutableDictionary = NSMutableDictionary()
     private var messageDateFormatter: NSDateFormatter!
     
+    private var selectedPatch: Patch?
+    
     private var _query: Query!
     override func query() -> Query {
         if self._query == nil {
@@ -46,9 +48,12 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
         
         switch segue.identifier! {
         case "PatchDetailSegue":
-            if let queryResultTable = segue.destinationViewController as? QueryResultTableViewController {
-                queryResultTable.managedObjectContext = self.managedObjectContext
-                queryResultTable.dataStore = self.dataStore
+            if let patchDetailViewController = segue.destinationViewController as? PatchDetailViewController {
+                patchDetailViewController.managedObjectContext = self.managedObjectContext
+                patchDetailViewController.dataStore = self.dataStore
+                patchDetailViewController.patch = self.selectedPatch
+                NSLog("\(self.selectedPatch)")
+                self.selectedPatch = nil
             }
         case "ImageDetailSegue":
             if let imageDetailViewController = segue.destinationViewController as? ImageDetailViewController {
@@ -99,6 +104,23 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
     // MARK: UITableViewDelegate
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as QueryResult
+        let notification = queryResult.entity_ as Notification
+        NSLog("\(notification.targetId)")
+        self.dataStore.withEntity(notification.targetId, refresh: false) { (entity) -> Void in
+            if let patch = entity as? Patch {
+                self.selectedPatch = patch
+                self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
+            } else {
+                // Try again with the parentId.
+                self.dataStore.withEntity(notification.parentId, refresh: false, completion: { (entity) -> Void in
+                    if let patch = entity as? Patch {
+                        self.selectedPatch = patch
+                        self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
+                    }
+                })
+            }
+        }
         //self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
     }
     

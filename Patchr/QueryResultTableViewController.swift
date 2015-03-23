@@ -53,6 +53,14 @@ class QueryResultTableViewController: FetchedResultsTableViewController {
         self.pullToRefreshAction(self.refreshControl!)
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        self.clearsSelectionOnViewWillAppear = false;
+        if let selectedIndexPath = self.tableView.indexPathForSelectedRow() {
+            self.tableView.deselectRowAtIndexPath(selectedIndexPath, animated: animated)
+        }
+    }
+    
     func pullToRefreshAction(sender: AnyObject) -> Void {
         self.dataStore.refreshResultsFor(self.query(), completion: { (results, error) -> Void in
             // Delay seems to be necessary to avoid visual glitch with UIRefreshControl

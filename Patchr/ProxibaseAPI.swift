@@ -657,6 +657,10 @@ public class ProxibaseClient {
         self.performPOSTRequestFor("find/messages", parameters: [:], completion: completion)
     }
     
+    public func findPatch(entityId: String, completion: ProxibaseCompletionBlock) {
+        self.performGETRequestFor("find/patches/\(entityId)", parameters: [:], completion: completion)
+    }
+    
     private func authenticatedParameters(var parameters: NSDictionary) -> NSDictionary
     {
         if self.authenticated

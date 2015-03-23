@@ -56,6 +56,49 @@ class DataStore: NSObject {
         }
     }
     
+    func withEntity(entityId:String, refresh:Bool = false, completion: (Entity?) -> Void) {
+        
+        switch entityId {
+        case let isPatch where entityId.hasPrefix("pa."):
+            withPatch(entityId, refresh: refresh, completion: completion)
+        default:
+            NSLog("WARNING: withEntity not currently implemented for id of form \(entityId)")
+            completion(nil)
+        }
+        
+    }
+    
+    func withPatch(patchId:String, refresh:Bool = false, completion: (Patch?) -> Void) {
+        
+        var patch = Patch.fetchOneById(patchId, inManagedObjectContext: self.managedObjectContext) as Patch?
+        
+        if refresh || patch == nil {
+            
+            self.proxibaseClient.findPatch(patchId, completion: { (response, error) -> Void in
+                if error != nil {
+                    NSLog("\(error)")
+                    completion(patch)
+                } else {
+                    if let dictionary = response as? [NSObject : AnyObject] {
+                        let dataWrapper = ServiceData()
+                        ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper, mappingNames: false)
+                        if let entityDictionaries = dataWrapper.data as? [[NSObject : AnyObject]] {
+                            if entityDictionaries.count == 1 {
+                                NSLog("\(entityDictionaries[0])")
+                                patch = Patch.fetchOrInsertOneById(patchId, inManagedObjectContext: self.managedObjectContext) as Patch?
+                                Patch.setPropertiesFromDictionary(entityDictionaries[0], onObject: patch, mappingNames: true)
+                            }
+                        }
+                    }
+                    completion(patch)
+                }
+            })
+            
+        } else {
+            completion(patch)
+        }
+    }
+    
     func refreshResultsFor(query: Query, completion:(results: [QueryResult], error: NSError?) -> Void) {
 
         func refreshCompletion(response: AnyObject?, error: NSError?) -> Void {
