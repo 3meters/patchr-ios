@@ -52,7 +52,6 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
                 patchDetailViewController.managedObjectContext = self.managedObjectContext
                 patchDetailViewController.dataStore = self.dataStore
                 patchDetailViewController.patch = self.selectedPatch
-                NSLog("\(self.selectedPatch)")
                 self.selectedPatch = nil
             }
         case "ImageDetailSegue":
@@ -106,7 +105,6 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as QueryResult
         let notification = queryResult.entity_ as Notification
-        NSLog("\(notification.targetId)")
         self.dataStore.withEntity(notification.targetId, refresh: false) { (entity) -> Void in
             if let patch = entity as? Patch {
                 self.selectedPatch = patch

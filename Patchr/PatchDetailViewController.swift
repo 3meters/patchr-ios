@@ -97,6 +97,8 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
         super.viewDidLoad()
         self.tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: "Cell")
         
+        self.navigationItem.title = patch.name
+        
         let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
         query.name = "Messages for patch"
         query.parameters = ["patchId" : patch.id_]
@@ -113,16 +115,16 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
         dateFormatter.doesRelativeDateFormatting = true
         self.messageDateFormatter = dateFormatter
         
-        let likesTitle = self.patch.numberOfLikes?.integerValue == 1 ? "\(self.patch.numberOfLikes) like" : "\(self.patch.numberOfLikes) likes"
+        let likesTitle = self.patch.numberOfLikes?.integerValue == 1 ? "\(self.patch.numberOfLikes) like" : "\(self.patch.numberOfLikes ?? 0) likes"
         self.numberOfLikesButton.setTitle(likesTitle, forState: UIControlState.Normal)
         
-        let watchersTitle = self.patch.numberOfWatchers?.integerValue == 1 ? "\(self.patch.numberOfWatchers) watcher" : "\(self.patch.numberOfWatchers) watchers"
+        let watchersTitle = self.patch.numberOfWatchers?.integerValue == 1 ? "\(self.patch.numberOfWatchers) watcher" : "\(self.patch.numberOfWatchers ?? 0) watchers"
         self.numberOfWatchersButton.setTitle(watchersTitle, forState: UIControlState.Normal)
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        self.patchImageView.pa_setImageWithURL(patch.photo?.photoURL())
+        self.patchImageView.pa_setImageWithURL(patch.photo?.photoURL(), placeholder: UIImage(named: "PatchDefault"))
         self.patchNameLabel.text = patch.name
         self.patchCategoryLabel.text = patch.category?.name
     }

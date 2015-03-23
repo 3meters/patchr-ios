@@ -84,7 +84,6 @@ class DataStore: NSObject {
                         ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper, mappingNames: false)
                         if let entityDictionaries = dataWrapper.data as? [[NSObject : AnyObject]] {
                             if entityDictionaries.count == 1 {
-                                NSLog("\(entityDictionaries[0])")
                                 patch = Patch.fetchOrInsertOneById(patchId, inManagedObjectContext: self.managedObjectContext) as Patch?
                                 Patch.setPropertiesFromDictionary(entityDictionaries[0], onObject: patch, mappingNames: true)
                             }

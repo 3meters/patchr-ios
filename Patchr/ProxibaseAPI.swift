@@ -676,7 +676,6 @@ public class ProxibaseClient {
     {
         self.sessionManager.POST(path, parameters: authenticatedParameters(parameters),
             success: { (dataTask, response) -> Void in
-                println("\(response)")
                 completion(response: response, error: nil)
             },
             failure: { (dataTask, error) -> Void in

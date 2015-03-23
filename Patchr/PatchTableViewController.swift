@@ -57,11 +57,7 @@ class PatchTableViewController: QueryResultTableViewController {
         patchCell.nameLabel.text = patch.name
         patchCell.categoryLabel.text = patch.category.name
         patchCell.detailsLabel.text = "\(patch.numberOfMessages ?? 0) Messages  \(patch.numberOfWatchers ?? 0) Watching"
-        patchCell.imageViewThumb.image = nil
-        if patch.photo != nil {
-            patchCell.imageViewThumb.pa_setImageWithURL(patch.photo.photoURL())
-        }
-        
+        patchCell.imageViewThumb.pa_setImageWithURL(patch.photo?.photoURL(), placeholder: UIImage(named: "PatchDefault"))
         patchCell.visibilityImageView.image = (patch.visibilityValue == PAVisibilityLevel.Private) ? UIImage(named: "TableViewCellLock") : nil
     }
     

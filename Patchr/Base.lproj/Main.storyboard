@@ -1072,7 +1072,7 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="MUB-WK-JX7" id="sjr-0q-QZU">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="Placeholder patch header" translatesAutoresizingMaskIntoConstraints="NO" id="voc-oH-Jfu">
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="PatchDefault" translatesAutoresizingMaskIntoConstraints="NO" id="voc-oH-Jfu">
                                                     <rect key="frame" x="0.0" y="0.0" width="600" height="200"/>
                                                 </imageView>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pjH-D5-7gH">
@@ -1905,7 +1905,7 @@
     <resources>
         <image name="IconEditLight" width="60" height="60"/>
         <image name="IconWatchLight" width="120" height="120"/>
-        <image name="Placeholder patch header" width="650" height="433"/>
+        <image name="PatchDefault" width="1000" height="500"/>
         <image name="SplashBackground" width="1000" height="625"/>
         <image name="SplashLogo" width="512" height="512"/>
         <image name="UITabBarItemExplore" width="48" height="32"/>
@@ -1916,8 +1916,8 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="ogA-ZN-KnA"/>
-        <segue reference="air-6a-QwR"/>
         <segue reference="cGH-YD-j5U"/>
+        <segue reference="F0u-ce-h5n"/>
         <segue reference="Unb-0x-aoh"/>
         <segue reference="Z9b-z0-EWI"/>
     </inferredMetricsTieBreakers>
