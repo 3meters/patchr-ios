@@ -104,9 +104,13 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
         query.parameters = ["patchId" : patch.id_]
         self.managedObjectContext.save(nil)
         self.query = query
-        dataStore.refreshResultsFor(self.query, completion: { (results, error) -> Void in
-            
-        })
+        
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: "pullToRefreshAction:", forControlEvents: UIControlEvents.ValueChanged)
+        self.refreshControl = refreshControl
+        self.refreshControl?.beginRefreshing()
+        self.pullToRefreshAction(self.refreshControl!)
+        
         refreshLikeAndWatch()
         
         let dateFormatter = NSDateFormatter()
@@ -323,4 +327,14 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     }
     
     @IBAction func unwindFromCreatePatch(segue: UIStoryboardSegue) {}
+    
+    func pullToRefreshAction(sender: AnyObject) -> Void {
+        self.dataStore.refreshResultsFor(self.query, completion: { (results, error) -> Void in
+            // Delay seems to be necessary to avoid visual glitch with UIRefreshControl
+            delay(0.1, { () -> () in
+                self.refreshControl?.endRefreshing()
+                return
+            })
+        })
+    }
 }
