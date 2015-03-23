@@ -25,6 +25,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         AFNetworkActivityLogger.sharedLogger().startLogging()
         #endif
         
+        Parse.setApplicationId("GUFW6Fjjdy2mcsQS8IuC4zGNFRsPwKP4lY1xFD2A", clientKey: "5Y2weaOeqJlwBCftjp3f3wlqGYias5IOomESIc86")
+        
         self.locationManager.delegate = self
         
         if CLLocationManager.authorizationStatus() == .NotDetermined {
@@ -51,7 +53,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         
         self.window?.tintColor = UIColor(hue: 33/360, saturation: 1.0, brightness: 0.9, alpha: 1.0)
         
+        self.registerForPushNotifications()
+        
         return true
+    }
+    
+    func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
+        NSLog("didRegisterForRemoteNotificationsWithDeviceToken")
+        let parseInstallation = PFInstallation.currentInstallation()
+        parseInstallation.setDeviceTokenFromData(deviceToken)
+        parseInstallation.saveInBackground()
+    }
+    
+    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
+        NSLog("didReceiveRemoteNotification")
+        PFPush.handlePush(userInfo)
+    }
+    
+    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
+        NSLog("didReceiveRemoteNotification fetchCompletionHandler")
+        completionHandler(UIBackgroundFetchResult.NoData)
     }
 
     // MARK: CLLocationManagerDelegate
@@ -67,6 +88,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     }
     
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [CLLocation]!) {}
+    
+    func registerForPushNotifications() {
+        
+        let application = UIApplication.sharedApplication()
+        
+        // http://stackoverflow.com/a/28742391/2247399
+        if application.respondsToSelector("registerUserNotificationSettings:") {
+            
+            let types: UIUserNotificationType = (.Alert | .Badge | .Sound)
+            let settings: UIUserNotificationSettings = UIUserNotificationSettings(forTypes: types, categories: nil)
+            
+            application.registerUserNotificationSettings(settings)
+            application.registerForRemoteNotifications()
+            
+        } else {
+            // Register for Push Notifications before iOS 8
+            application.registerForRemoteNotificationTypes(.Alert | .Badge | .Sound)
+        }
+    }
+}
 
+extension UIApplication {
+    
+    func isInstalledViaAppStore() -> Bool {
+        
+    #if (arch(i386) || arch(x86_64)) && os(iOS)
+        // Simulator http://stackoverflow.com/a/24869607/2247399
+        return false
+    #else
+        let receiptURL = NSBundle.mainBundle().appStoreReceiptURL
+        if receiptURL?.path?.rangeOfString("sandboxReceipt") == nil {
+            return true
+        }
+        return false
+    #endif
+        
+    }
 }
     

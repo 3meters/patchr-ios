@@ -25,9 +25,11 @@ class SplashViewController: UIViewController {
     }
 
     @IBAction func debugButtonAction(sender: UIButton) {
-    #if DEBUG
-        self.performSegueWithIdentifier("DebugSettingsSegue", sender: sender)
-    #endif
+        
+        if !UIApplication.sharedApplication().isInstalledViaAppStore() {
+            self.performSegueWithIdentifier("DebugSettingsSegue", sender: sender)
+        }
+
     }
     
     @IBAction func guestButtonAction(sender: UIButton) {

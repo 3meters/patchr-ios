@@ -120,6 +120,12 @@
 #define COCOAPODS_VERSION_MINOR_PBWebViewController 3
 #define COCOAPODS_VERSION_PATCH_PBWebViewController 0
 
+// Parse
+#define COCOAPODS_POD_AVAILABLE_Parse
+#define COCOAPODS_VERSION_MAJOR_Parse 1
+#define COCOAPODS_VERSION_MINOR_Parse 6
+#define COCOAPODS_VERSION_PATCH_Parse 5
+
 // RMCoreDataStack
 #define COCOAPODS_POD_AVAILABLE_RMCoreDataStack
 #define COCOAPODS_VERSION_MAJOR_RMCoreDataStack 0

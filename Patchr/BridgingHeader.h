@@ -20,6 +20,7 @@
 #import <SCLAlertView.h>
 #import <MBProgressHUD.h>
 #import <SDWebImage/UIImageView+WebCache.h>
+#import <Parse.h>
 #import "Patch.h"
 #import "Place.h"
 #import "Query.h"

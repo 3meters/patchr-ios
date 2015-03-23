@@ -512,6 +512,10 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+## Parse
+
+See https://www.parse.com/about/terms
+
 ## RMCoreDataStack
 
 Copyright (c) 2014 Rob MacEachern <rob@robmaceachern.com>

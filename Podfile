@@ -11,6 +11,7 @@ pod 'SCLAlertView-Objective-C', '~> 0.5.6'
 pod 'UIActionSheet+Blocks', '~> 0.8.1'
 pod 'MBProgressHUD', '~> 0.9.1'
 pod 'SDWebImage', '~> 3.7.2'
+pod 'Parse'
 
 end
 
