@@ -61,7 +61,7 @@ class QueryResultTableViewController: FetchedResultsTableViewController {
         }
     }
     
-    func pullToRefreshAction(sender: AnyObject) -> Void {
+    func pullToRefreshAction(sender: AnyObject?) -> Void {
         self.dataStore.refreshResultsFor(self.query(), completion: { (results, error) -> Void in
             // Delay seems to be necessary to avoid visual glitch with UIRefreshControl
             delay(0.1, { () -> () in

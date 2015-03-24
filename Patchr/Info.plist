@@ -24,6 +24,11 @@
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location is used to find nearby patches</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+		<string>fetch</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchStoryboard</string>
 	<key>UIMainStoryboardFile</key>

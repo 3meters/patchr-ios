@@ -29,6 +29,11 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
         return self._query
     }
     
+    override func awakeFromNib() {
+        super.awakeFromNib()
+         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:", name: PAApplicationDidReceiveRemoteNotification, object: nil)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: "Cell")
@@ -38,6 +43,17 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
         dateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
         dateFormatter.doesRelativeDateFormatting = true
         self.messageDateFormatter = dateFormatter
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        self.navigationController?.tabBarItem.badgeValue = nil
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        // We keep the notification center observer for the duration of the application life
+        // NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -105,21 +121,7 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as QueryResult
         let notification = queryResult.entity_ as Notification
-        self.dataStore.withEntity(notification.targetId, refresh: false) { (entity) -> Void in
-            if let patch = entity as? Patch {
-                self.selectedPatch = patch
-                self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
-            } else {
-                // Try again with the parentId.
-                self.dataStore.withEntity(notification.parentId, refresh: false, completion: { (entity) -> Void in
-                    if let patch = entity as? Patch {
-                        self.selectedPatch = patch
-                        self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
-                    }
-                })
-            }
-        }
-        //self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
+        self.segueWith(notification.targetId, parentId: notification.parentId)
     }
     
     // TODO: This is duplicated in PatchDetailViewController
@@ -152,6 +154,68 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
         if view == notificationCell.messageImageView && notificationCell.messageImageView.image != nil {
             self.selectedDetailImage = notificationCell.messageImageView.image
             self.performSegueWithIdentifier("ImageDetailSegue", sender: view)
+        }
+    }
+    
+    // MARK: Private Internal
+    
+    func handleRemoteNotification(notification: NSNotification) {
+
+        if let userInfo = notification.userInfo {
+            
+            if let stateRaw = userInfo["receivedInApplicationState"] as? Int {
+                
+                if let applicationState = UIApplicationState(rawValue: stateRaw) {
+                    
+                    let parentId = userInfo["parentId"] as? String
+                    let targetId = userInfo["targetId"] as? String
+                    
+                    // Only refresh notifications if view has already been loaded
+                    if self.isViewLoaded() {
+                        self.refreshControl?.beginRefreshing()
+                        self.pullToRefreshAction(self.refreshControl)
+                    }
+                    
+                    switch applicationState {
+                    case .Active: // App was active when remote notification was received
+                        
+                        if self.tabBarController?.selectedViewController == self.navigationController && self.navigationController?.topViewController == self {
+                            // This view controller is currently visible. Don't badge.
+                        } else {
+                            self.navigationController?.tabBarItem.badgeValue = ""
+                        }
+
+                        // TODO: for patch detail. auto refresh the entity detail if it is open and the target or parent of the target of a notification
+                    case .Inactive: // App was resumed or launched via remote notification
+                        
+                        // Select the notifications tab and then segue as if the user had selected the notification
+                        self.tabBarController?.selectedViewController = self.navigationController
+                        self.segueWith(targetId, parentId: parentId, refreshEntities: true)
+                        
+                    case .Background:
+                        ()
+                    }
+                }
+            }
+        }
+    }
+    
+    func segueWith(targetId: String?, parentId: String?, refreshEntities: Bool = false) {
+        if targetId == nil { return }
+        self.dataStore.withEntity(targetId!, refresh: refreshEntities) { (entity) -> Void in
+            if let patch = entity as? Patch {
+                self.selectedPatch = patch
+                self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
+            } else {
+                // Try again with the parentId.
+                if parentId == nil { return }
+                self.dataStore.withEntity(parentId!, refresh: refreshEntities, completion: { (entity) -> Void in
+                    if let patch = entity as? Patch {
+                        self.selectedPatch = patch
+                        self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
+                    }
+                })
+            }
         }
     }
 }

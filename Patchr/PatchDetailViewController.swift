@@ -131,6 +131,16 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
         self.patchImageView.pa_setImageWithURL(patch.photo?.photoURL(), placeholder: UIImage(named: "PatchDefault"))
         self.patchNameLabel.text = patch.name
         self.patchCategoryLabel.text = patch.category?.name
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:", name: PAApplicationDidReceiveRemoteNotification, object: nil)
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
+    deinit {
+        NSLog("deinit")
     }
     
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
@@ -328,7 +338,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     
     @IBAction func unwindFromCreatePatch(segue: UIStoryboardSegue) {}
     
-    func pullToRefreshAction(sender: AnyObject) -> Void {
+    func pullToRefreshAction(sender: AnyObject?) -> Void {
         self.dataStore.refreshResultsFor(self.query, completion: { (results, error) -> Void in
             // Delay seems to be necessary to avoid visual glitch with UIRefreshControl
             delay(0.1, { () -> () in
@@ -336,5 +346,27 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
                 return
             })
         })
+    }
+    
+    // MARK: Private Internal
+    
+    func handleRemoteNotification(notification: NSNotification) {
+        NSLog("PatchDetail handleRemoteNotification in \(self.title)")
+        if let userInfo = notification.userInfo {
+            
+            let parentId = userInfo["parentId"] as? String
+            let targetId = userInfo["targetId"] as? String
+            
+            let impactedByNotification = self.patch?.id_ == parentId || self.patch?.id_ == targetId
+            
+            // Only refresh notifications if view has already been loaded
+            // and the notification is related to this Patch
+            if self.isViewLoaded() && impactedByNotification {
+                NSLog("PatchDetail handleRemoteNotification is refreshing")
+                self.refreshControl?.beginRefreshing()
+                self.pullToRefreshAction(self.refreshControl)
+                self.refreshLikeAndWatch()
+            }
+        }
     }
 }

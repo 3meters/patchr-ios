@@ -8,6 +8,8 @@
 
 import UIKit
 
+let PAApplicationDidReceiveRemoteNotification = "PAApplicationDidReceiveRemoteNotification"
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate {
 
@@ -59,20 +61,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     }
     
     func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
-        NSLog("didRegisterForRemoteNotificationsWithDeviceToken")
+
         let parseInstallation = PFInstallation.currentInstallation()
         parseInstallation.setDeviceTokenFromData(deviceToken)
         parseInstallation.saveInBackground()
     }
     
-    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
-        NSLog("didReceiveRemoteNotification")
-        PFPush.handlePush(userInfo)
-    }
-    
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
-        NSLog("didReceiveRemoteNotification fetchCompletionHandler")
-        completionHandler(UIBackgroundFetchResult.NoData)
+        
+        var augmentedUserInfo = NSMutableDictionary(dictionary: userInfo)
+        augmentedUserInfo["receivedInApplicationState"] = application.applicationState.rawValue
+        NSNotificationCenter.defaultCenter().postNotificationName(PAApplicationDidReceiveRemoteNotification, object: self, userInfo: augmentedUserInfo)
+        completionHandler(.NewData)
     }
 
     // MARK: CLLocationManagerDelegate
