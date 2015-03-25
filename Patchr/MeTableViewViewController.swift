@@ -42,6 +42,9 @@ class MeTableViewViewController: QueryResultTableViewController, TableViewCellDe
         dateFormatter.doesRelativeDateFormatting = true
         self.messageDateFormatter = dateFormatter
         
+        self.currentUserNameField.text = nil
+        self.currentUserEmailField.text = nil
+        
         dataStore.withCurrentUser(completion: { user in
             self.currentUserNameField.text = user.name
             self.currentUserEmailField.text = user.email

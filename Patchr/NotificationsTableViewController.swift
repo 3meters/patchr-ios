@@ -50,10 +50,8 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
         self.navigationController?.tabBarItem.badgeValue = nil
     }
     
-    override func viewDidDisappear(animated: Bool) {
-        super.viewDidDisappear(animated)
-        // We keep the notification center observer for the duration of the application life
-        // NSNotificationCenter.defaultCenter().removeObserver(self)
+    deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {

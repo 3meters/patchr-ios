@@ -59,9 +59,9 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     
     private func refreshLinkValue(linkType: LinkType, linkButton: UIButton, linkID: String?, titles:(String, String), setter: (String?) -> Void)
     {
-        let linkIDValue: String? = linkID
+        //let linkIDValue: String? = linkID
         let proxibase = ProxibaseClient.sharedInstance
-        let lt = linkType.rawValue
+        //let lt = linkType.rawValue
         
         proxibase.findLink(proxibase.userId!, toID: patch.id_, linkType: linkType) { response, error in
             dispatch_async(dispatch_get_main_queue())
@@ -93,6 +93,11 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     {
         refreshLinkValue(.Like, linkButton: self.likeButton, linkID: self.likeLink, titles: ("Like","Unlike")) { newValue in self.likeLink = newValue }
         refreshLinkValue(.Watch, linkButton: self.watchButton, linkID: self.watchLink, titles: ("Watch", "Unwatch")) { newValue in self.watchLink = newValue }
+    }
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:", name: PAApplicationDidReceiveRemoteNotification, object: nil)
     }
     
     override func viewDidLoad() {
@@ -133,11 +138,9 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
         self.patchImageView.pa_setImageWithURL(patch.photo?.photoURL(), placeholder: UIImage(named: "PatchDefault"))
         self.patchNameLabel.text = patch.name
         self.patchCategoryLabel.text = patch.category?.name
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:", name: PAApplicationDidReceiveRemoteNotification, object: nil)
     }
     
-    override func viewDidDisappear(animated: Bool) {
-        super.viewDidDisappear(animated)
+    deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
