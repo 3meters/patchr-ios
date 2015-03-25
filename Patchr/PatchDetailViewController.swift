@@ -349,7 +349,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     // MARK: Private Internal
     
     func handleRemoteNotification(notification: NSNotification) {
-        NSLog("PatchDetail handleRemoteNotification in \(self.title)")
+        
         if let userInfo = notification.userInfo {
             
             let parentId = userInfo["parentId"] as? String
@@ -360,7 +360,6 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
             // Only refresh notifications if view has already been loaded
             // and the notification is related to this Patch
             if self.isViewLoaded() && impactedByNotification {
-                NSLog("PatchDetail handleRemoteNotification is refreshing")
                 self.refreshControl?.beginRefreshing()
                 self.pullToRefreshAction(self.refreshControl)
                 self.refreshLikeAndWatch()
