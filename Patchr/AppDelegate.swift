@@ -55,9 +55,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         
         self.window?.tintColor = UIColor(hue: 33/360, saturation: 1.0, brightness: 0.9, alpha: 1.0)
         
-        self.registerForPushNotifications()
+        self.registerForRemoteNotifications()
         
         return true
+    }
+    
+    func applicationDidBecomeActive(application: UIApplication) {
+        application.applicationIconBadgeNumber = 0
+        if PFInstallation.currentInstallation().badge != 0 {
+            PFInstallation.currentInstallation().badge = 0
+            PFInstallation.currentInstallation().saveEventually()
+        }
     }
     
     func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
@@ -89,7 +97,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [CLLocation]!) {}
     
-    func registerForPushNotifications() {
+    func registerForRemoteNotifications() {
         
         let application = UIApplication.sharedApplication()
         
