@@ -33,7 +33,9 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     private var offscreenCells: NSMutableDictionary = NSMutableDictionary()
     
     private lazy var fetchControllerDelegate: FetchControllerDelegate = {
-        return FetchControllerDelegate(tableView: self.tableView, onUpdate: self.configureCell)
+        return FetchControllerDelegate(tableView: self.tableView, onUpdate: { [weak self] (cell, object) -> Void in
+            return self?.configureCell(cell, object: object) ?? ()
+        })
     }()
     
     internal lazy var fetchedResultsController: NSFetchedResultsController = {
@@ -137,10 +139,6 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         NSNotificationCenter.defaultCenter().removeObserver(self)
-    }
-    
-    deinit {
-        NSLog("deinit")
     }
     
     override func configureCell(cell: UITableViewCell, object: AnyObject) {

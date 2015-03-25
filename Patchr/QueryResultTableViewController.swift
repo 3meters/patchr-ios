@@ -14,7 +14,9 @@ class QueryResultTableViewController: FetchedResultsTableViewController {
     var dataStore: DataStore!
     
     private lazy var fetchControllerDelegate: FetchControllerDelegate = {
-        return FetchControllerDelegate(tableView: self.tableView, self.configureCell)
+        return FetchControllerDelegate(tableView: self.tableView, onUpdate: { [weak self] (cell, object) -> Void in
+            return self?.configureCell(cell, object: object) ?? ()
+        })
     }()
     
     internal lazy var fetchedResultsController: NSFetchedResultsController = {
