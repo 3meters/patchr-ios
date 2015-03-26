@@ -4,6 +4,7 @@
 #import "_QueryResult.h"
 
 const struct QueryResultAttributes QueryResultAttributes = {
+	.modificationDate = @"modificationDate",
 	.position = @"position",
 	.sortDate = @"sortDate",
 };
@@ -47,6 +48,8 @@ const struct QueryResultRelationships QueryResultRelationships = {
 
 	return keyPaths;
 }
+
+@dynamic modificationDate;
 
 @dynamic position;
 

@@ -19,14 +19,38 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     @IBOutlet weak var likeButton: UIButton!
     @IBOutlet weak var numberOfLikesButton: UIButton!
     @IBOutlet weak var numberOfWatchersButton: UIButton!
+    @IBOutlet weak var editPatchButton: UIButton!
+    @IBOutlet weak var contextButton: UIButton!
     
     var managedObjectContext: NSManagedObjectContext!
     var query : Query!
     var dataStore: DataStore!
     var patch: Patch!
 
-    var likeLink: String? = nil
-    var watchLink: String? = nil
+    var likeLinkId: String? = nil
+    var watchLinkId: String? = nil
+    var watchLinkEnabled: Bool? = nil
+    var watchLinkHasBeenQueried: Bool = false
+    
+    // Note: This result is only valid after refreshing the link status
+    var patchMembershipStatus : PatchMembershipStatus {
+        
+        if !watchLinkHasBeenQueried { return .Unknown }
+        
+        if self.watchLinkId == nil { return .NonMember }
+        
+        if let enabled = self.watchLinkEnabled {
+            
+            if enabled {
+                return .Member
+            } else {
+                return .Pending
+            }
+            
+        } else {
+            return .Pending
+        }
+    }
     
     private var selectedDetailImage: UIImage?
     private var messageDateFormatter: NSDateFormatter!
@@ -57,33 +81,29 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     // Note: I tried to use 'inout linkID: String', but that didn't seem to work. The 'setter' closure
     // serves the purpose of setting the ID variable to the correct value after the query completes.
     
-    private func refreshLinkValue(linkType: LinkType, linkButton: UIButton, linkID: String?, titles:(String, String), setter: (String?) -> Void)
+    private func refreshLinkValue(linkType: LinkType, linkButton: UIButton, linkID: String?, setter: (NSDictionary?) -> Void)
     {
-        //let linkIDValue: String? = linkID
         let proxibase = ProxibaseClient.sharedInstance
-        //let lt = linkType.rawValue
         
         proxibase.findLink(proxibase.userId!, toID: patch.id_, linkType: linkType) { response, error in
-            dispatch_async(dispatch_get_main_queue())
+            if let serverError = ServerError(error)
             {
-                if let serverError = ServerError(error)
+                // ServerError initializer logs the error. Not much else to do here.
+            }
+            else
+            {
+                let serverResponse = ServerResponse(response)
+                self.watchLinkHasBeenQueried = true
+                
+                if serverResponse.resultCount == 1
                 {
-                    // ServerError initializer logs the error. Not much else to do here.
+                    setter(serverResponse.resultObject)
+                    linkButton.selected = true
                 }
                 else
                 {
-                    let serverResponse = ServerResponse(response)
-                    
-                    if serverResponse.resultCount > 0
-                    {
-                        setter(serverResponse.resultID)
-                        linkButton.setTitle(titles.1, forState: .Normal)
-                    }
-                    else
-                    {
-                        setter(nil)
-                        linkButton.setTitle(titles.0, forState: .Normal)
-                    }
+                    setter(nil)
+                    linkButton.selected = false
                 }
             }
         }
@@ -91,8 +111,57 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     
     private func refreshLikeAndWatch()
     {
-        refreshLinkValue(.Like, linkButton: self.likeButton, linkID: self.likeLink, titles: ("Like","Unlike")) { newValue in self.likeLink = newValue }
-        refreshLinkValue(.Watch, linkButton: self.watchButton, linkID: self.watchLink, titles: ("Watch", "Unwatch")) { newValue in self.watchLink = newValue }
+        refreshLinkValue(.Like, linkButton: self.likeButton, linkID: self.likeLinkId) {  (linkDictionary) -> Void in
+            self.likeLinkId = linkDictionary?["_id"] as? String
+            self.updatePatchDetailUI()
+        }
+        refreshLinkValue(.Watch, linkButton: self.watchButton, linkID: self.watchLinkId) { (linkDictionary) -> Void in
+            self.watchLinkId = linkDictionary?["_id"] as? String
+            self.watchLinkEnabled = linkDictionary?["enabled"] as? Bool
+            self.updatePatchDetailUI()
+        }
+    }
+    
+    func updatePatchDetailUI() {
+        
+        self.navigationItem.title = patch.name
+        self.patchNameLabel.text = patch.name
+        self.patchCategoryLabel.text = patch.category?.name
+        self.patchImageView.pa_setImageWithURL(patch.photo?.photoURL(), placeholder: UIImage(named: "PatchDefault"))
+        
+        let likesTitle = self.patch.numberOfLikes?.integerValue == 1 ? "\(self.patch.numberOfLikes) like" : "\(self.patch.numberOfLikes ?? 0) likes"
+        self.numberOfLikesButton.setTitle(likesTitle, forState: UIControlState.Normal)
+        
+        let watchersTitle = "\(self.patch.numberOfWatchers ?? 0) watching"
+        self.numberOfWatchersButton.setTitle(watchersTitle, forState: UIControlState.Normal)
+        
+        self.dataStore.withCurrentUser(refresh: false) { (user) -> Void in
+            if self.patch.ownerId? == user.id_ {
+                self.editPatchButton.alpha = 1
+            }
+        }
+        
+        switch self.patchMembershipStatus {
+        case .Member:
+            self.contextButton.setTitle("Add Message", forState: .Normal)
+        case .Pending:
+            self.contextButton.setTitle("Cancel Join Request", forState: .Normal)
+        case .NonMember:
+            if self.patch.visibilityValue == .Private {
+                self.contextButton.setTitle("Request to Join", forState: .Normal)
+            } else {
+                self.contextButton.setTitle("Add Message", forState: .Normal)
+            }
+        case .Unknown:
+            self.contextButton.setTitle("", forState: .Normal)
+        }
+        
+        self.contextButton.enabled = self.patchMembershipStatus != .Unknown
+        
+        if self.patchMembershipStatus != .Unknown {
+            self.watchButton.alpha = 1
+            self.likeButton.alpha = self.patch.visibilityValue == PAVisibilityLevel.Public || self.patchMembershipStatus == .Member ? 1 : 0
+        }
     }
     
     override func awakeFromNib() {
@@ -103,8 +172,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: "Cell")
-        
-        self.navigationItem.title = patch.name
+        self.tableView.delaysContentTouches = false
         
         let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
         query.name = "Messages for patch"
@@ -117,27 +185,26 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
         self.refreshControl = refreshControl
         self.refreshControl?.beginRefreshing()
         self.pullToRefreshAction(self.refreshControl!)
-        
-        refreshLikeAndWatch()
-        
+
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
         dateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
         dateFormatter.doesRelativeDateFormatting = true
         self.messageDateFormatter = dateFormatter
         
-        let likesTitle = self.patch.numberOfLikes?.integerValue == 1 ? "\(self.patch.numberOfLikes) like" : "\(self.patch.numberOfLikes ?? 0) likes"
-        self.numberOfLikesButton.setTitle(likesTitle, forState: UIControlState.Normal)
+        self.contextButton.enabled = false
+        self.contextButton.setTitle("", forState: .Normal)
         
-        let watchersTitle = self.patch.numberOfWatchers?.integerValue == 1 ? "\(self.patch.numberOfWatchers) watcher" : "\(self.patch.numberOfWatchers ?? 0) watchers"
-        self.numberOfWatchersButton.setTitle(watchersTitle, forState: UIControlState.Normal)
+        self.likeButton.alpha = 0
+        self.watchButton.alpha = 0
+        self.editPatchButton.alpha = 0
+        
+        refreshLikeAndWatch()
+        updatePatchDetailUI()
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        self.patchImageView.pa_setImageWithURL(patch.photo?.photoURL(), placeholder: UIImage(named: "PatchDefault"))
-        self.patchNameLabel.text = patch.name
-        self.patchCategoryLabel.text = patch.category?.name
     }
     
     deinit {
@@ -167,11 +234,13 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
             messageCell.messageImageContainerHeight.constant = 0;
         }
         
-        messageCell.userAvatarImageView.image = nil
-        messageCell.userNameLabel.text = nil
         if let creator = message.creator as? User {
             messageCell.userNameLabel.text = creator.name
             messageCell.userAvatarImageView.pa_setImageWithURL(creator.photo?.photoURL(), placeholder: UIImage(named: "UserAvatarDefault"))
+        } else {
+            messageCell.userNameLabel.text = nil
+            messageCell.userAvatarImageView.image = nil
+            NSLog("No creator for message!")
         }
         
         messageCell.likesLabel.text = "\(message.numberOfLikes?.integerValue ?? 0) Likes"
@@ -185,27 +254,25 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
         if let linkID = linkValue
         {
             proxibase.deleteLink(linkID) { _, _ in
-                self.refreshLikeAndWatch()
+                self.refreshPatchAndMessages({ (error) -> Void in })
             }
         }
         else
         {
             proxibase.createLink(proxibase.userId!, toID: patch.id_, linkType: linkType) { _, _ in
-                dispatch_async(dispatch_get_main_queue()){
-                    self.refreshLikeAndWatch()
-                }
+                self.refreshPatchAndMessages({ (error) -> Void in })
             }
         }
     }
     
     @IBAction func watchAction(sender: AnyObject)
     {
-        toggleLinkState(watchLink, ofType: .Watch)
+        toggleLinkState(watchLinkId, ofType: .Watch)
     }
     
     @IBAction func likeAction(sender: AnyObject)
     {
-        toggleLinkState(likeLink, ofType: .Like)
+        toggleLinkState(likeLinkId, ofType: .Like)
     }
     
     @IBAction func shareButtonAction(sender: UIBarButtonItem) {
@@ -264,6 +331,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
         let canDelete = true; // TODO: determine if current user has delete permission for message
         let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: "Cancel", destructiveButtonTitle: canDelete ? "Delete" : nil)
         sheet.addButtonWithTitle("Like")
@@ -333,21 +401,58 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     }
 
     @IBAction func unwindFromCreateMessage(segue: UIStoryboardSegue) {
-        // Refresh results when unwinding from Patch edit/create screen to pickup any changes.
-        dataStore.refreshResultsFor(self.query, completion: { (results, error) -> Void in })
+        // Refresh results when unwinding from Message screen to pickup any changes.
+        self.refreshPatchAndMessages { (error) -> Void in }
     }
     
-    @IBAction func unwindFromCreatePatch(segue: UIStoryboardSegue) {}
+    @IBAction func unwindFromCreatePatch(segue: UIStoryboardSegue) {
+        // Refresh results when unwinding from Patch edit/create screen to pickup any changes.
+        self.refreshPatchAndMessages { (error) -> Void in }
+    }
     
     func pullToRefreshAction(sender: AnyObject?) -> Void {
-        self.dataStore.refreshResultsFor(self.query, completion: { (results, error) -> Void in
+        self.refreshPatchAndMessages { (error) -> Void in
             // Delay seems to be necessary to avoid visual glitch with UIRefreshControl
             delay(0.1, { () -> () in
                 self.refreshControl?.endRefreshing()
                 return
             })
+        }
+    }
+    
+    // Refreshes the query and likes/watches, and calls updatePatchDetailUI before completion
+    func refreshPatchAndMessages(completion:(error: NSError?) -> Void) {
+        self.refreshLikeAndWatch()
+        self.dataStore.refreshResultsFor(self.query, completion: { (_, error) -> Void in
+            self.updatePatchDetailUI()
+            completion(error: error)
         })
     }
+    
+    @IBAction func contextButtonAction(sender: UIButton) {
+        switch self.patchMembershipStatus {
+        case .Member:
+            self.performSegueWithIdentifier("CreateMessageSegue", sender: self)
+        case .Pending:
+            let proxibase = ProxibaseClient.sharedInstance
+            if self.watchLinkId != nil {
+                proxibase.deleteLink(self.watchLinkId!) { _, _ in
+                    self.refreshLikeAndWatch()
+                }
+            }
+        case .NonMember:
+            if self.patch.visibilityValue == .Public {
+                self.performSegueWithIdentifier("CreateMessageSegue", sender: self)
+            } else {
+                let proxibase = ProxibaseClient.sharedInstance
+                proxibase.createLink(proxibase.userId!, toID: patch.id_, linkType: .Watch) { _, _ in
+                    self.refreshLikeAndWatch()
+                }
+            }
+        case .Unknown: () // No-op
+        }
+    }
+    
     
     // MARK: Private Internal
     
@@ -369,4 +474,11 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
             }
         }
     }
+}
+
+enum PatchMembershipStatus : String {
+    case Member = "Member"
+    case Pending = "Pending"
+    case NonMember = "NonMember"
+    case Unknown = "Unknown"
 }

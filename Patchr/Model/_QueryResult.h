@@ -4,6 +4,7 @@
 @import CoreData;
 
 extern const struct QueryResultAttributes {
+	__unsafe_unretained NSString *modificationDate;
 	__unsafe_unretained NSString *position;
 	__unsafe_unretained NSString *sortDate;
 } QueryResultAttributes;
@@ -24,6 +25,10 @@ extern const struct QueryResultRelationships {
 + (NSString*)entityName;
 + (NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_;
 @property (nonatomic, readonly, strong) QueryResultID* objectID;
+
+@property (nonatomic, strong) NSDate* modificationDate;
+
+//- (BOOL)validateModificationDate:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSNumber* position;
 
@@ -48,6 +53,9 @@ extern const struct QueryResultRelationships {
 @end
 
 @interface _QueryResult (CoreDataGeneratedPrimitiveAccessors)
+
+- (NSDate*)primitiveModificationDate;
+- (void)setPrimitiveModificationDate:(NSDate*)value;
 
 - (NSNumber*)primitivePosition;
 - (void)setPrimitivePosition:(NSNumber*)value;

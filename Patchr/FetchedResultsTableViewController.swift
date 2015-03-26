@@ -24,6 +24,14 @@ class FetchedResultsTableViewController: UITableViewController, FetchedResultsVi
         cell.textLabel?.text = object.description
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        // While the tableView is off-screen, the visibile cells may have missed some calls to configureCell()
+        if let visibleRowIndexPaths = self.tableView.indexPathsForVisibleRows() {
+            self.tableView.reloadRowsAtIndexPaths(visibleRowIndexPaths, withRowAnimation: .None)
+        }
+    }
+    
     // MARK: Table view data source
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {

@@ -25,7 +25,8 @@
     }
     
     if ([dictionary[@"linked"] isKindOfClass:[NSArray class]]) {
-        // Configure relationships
+        // Configure patch-specific relationships
+        
         for (id link in dictionary[@"linked"]) {
             if ([link isKindOfClass:[NSDictionary class]]) {
                 NSDictionary *linkDictionary = link;

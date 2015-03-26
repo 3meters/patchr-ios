@@ -76,7 +76,7 @@ class DataStore: NSObject {
             
             self.proxibaseClient.findPatch(patchId, completion: { (response, error) -> Void in
                 if error != nil {
-                    NSLog("\(error)")
+                    //NSLog("\(error)")
                     completion(patch)
                 } else {
                     if let dictionary = response as? [NSObject : AnyObject] {
@@ -88,6 +88,11 @@ class DataStore: NSObject {
                                 Patch.setPropertiesFromDictionary(entityDictionaries[0], onObject: patch, mappingNames: true)
                             }
                         }
+                        for queryResult in patch?.queryResults?.allObjects as? [QueryResult] ?? [] {
+                            // Poke each impacted queryResult to trigger NSFetchedResultsController callbacks
+                            queryResult.modificationDate = NSDate()
+                        }
+                        self.managedObjectContext.save(nil)
                     }
                     completion(patch)
                 }
@@ -117,6 +122,16 @@ class DataStore: NSObject {
             }
             // query.offset = results.count
             self.managedObjectContext.save(nil)
+            
+            // Hacky: The explore patches API doesn't return fully populated Patch objects so we need to go through and refetch everything :(
+            if query.name == "Explore patches" {
+                for queryResult in results {
+                    if let patch = queryResult.entity_ as? Patch {
+                        withPatch(patch.id_, refresh: true, completion: { (_) -> Void in })
+                    }
+                }
+            }
+            
             completion(results: results, error: error)
         }
         

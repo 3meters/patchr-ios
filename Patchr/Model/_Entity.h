@@ -10,6 +10,8 @@ extern const struct EntityAttributes {
 	__unsafe_unretained NSString *count;
 	__unsafe_unretained NSString *description_;
 	__unsafe_unretained NSString *linkedCounts;
+	__unsafe_unretained NSString *numberOfLikes;
+	__unsafe_unretained NSString *numberOfWatchers;
 	__unsafe_unretained NSString *patchId;
 	__unsafe_unretained NSString *privacy;
 	__unsafe_unretained NSString *rank;
@@ -59,6 +61,22 @@ extern const struct EntityUserInfo {
 @property (nonatomic, strong) NSDictionary* linkedCounts;
 
 //- (BOOL)validateLinkedCounts:(id*)value_ error:(NSError**)error_;
+
+@property (nonatomic, strong) NSNumber* numberOfLikes;
+
+@property (atomic) int64_t numberOfLikesValue;
+- (int64_t)numberOfLikesValue;
+- (void)setNumberOfLikesValue:(int64_t)value_;
+
+//- (BOOL)validateNumberOfLikes:(id*)value_ error:(NSError**)error_;
+
+@property (nonatomic, strong) NSNumber* numberOfWatchers;
+
+@property (atomic) int64_t numberOfWatchersValue;
+- (int64_t)numberOfWatchersValue;
+- (void)setNumberOfWatchersValue:(int64_t)value_;
+
+//- (BOOL)validateNumberOfWatchers:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSString* patchId;
 
@@ -135,6 +153,18 @@ extern const struct EntityUserInfo {
 
 - (NSDictionary*)primitiveLinkedCounts;
 - (void)setPrimitiveLinkedCounts:(NSDictionary*)value;
+
+- (NSNumber*)primitiveNumberOfLikes;
+- (void)setPrimitiveNumberOfLikes:(NSNumber*)value;
+
+- (int64_t)primitiveNumberOfLikesValue;
+- (void)setPrimitiveNumberOfLikesValue:(int64_t)value_;
+
+- (NSNumber*)primitiveNumberOfWatchers;
+- (void)setPrimitiveNumberOfWatchers:(NSNumber*)value;
+
+- (int64_t)primitiveNumberOfWatchersValue;
+- (void)setPrimitiveNumberOfWatchersValue:(int64_t)value_;
 
 - (NSString*)primitivePatchId;
 - (void)setPrimitivePatchId:(NSString*)value;

@@ -35,7 +35,7 @@
         NSString *path = [mediaImagesBaseURL stringByAppendingString:self.prefix];
         return [NSURL URLWithString:path];
     } else {
-        NSLog(@"Unknown photo source: %@", self.source);
+        //NSLog(@"Unknown photo source: %@", self.source);
         return [NSURL URLWithString:self.prefix];
     }
 }

@@ -21,16 +21,16 @@
     
     if (dictionary[@"photo"]) {
         entity.photo = [Photo setPropertiesFromDictionary:dictionary[@"photo"] onObject:[Photo insertInManagedObjectContext:entity.managedObjectContext] mappingNames:mapNames];
-    } // TODO: It might make sense to set a default photo here
+    }
     
     if (dictionary[@"location"]) {
         entity.location = [Location setPropertiesFromDictionary:dictionary[@"location"] onObject:[Location insertInManagedObjectContext:entity.managedObjectContext] mappingNames:mapNames];
-    } else if (!entity.location) {
-        NSLog(@"WARNING: No location found on entity %@", entity.id_);
     }
     
     if ([dictionary[@"linkedCount"] isKindOfClass:[NSDictionary class]]) {
         entity.linkedCounts = dictionary[@"linkedCount"];
+        entity.numberOfLikes = [Entity countForStatWithType:@"like" schema:@"users" inLinkedCounts:entity.linkedCounts];
+        entity.numberOfWatchersValue = [[Entity countForStatWithType:@"watch" schema:@"users" inLinkedCounts:entity.linkedCounts] integerValue];
     }
     
     entity.reason = dictionary[@"reason"];
@@ -43,18 +43,12 @@
     } else if ([dictionary[@"visibility"] isEqual:@"private"]){
         entity.visibilityValue = PAVisibilityLevelPrivate;
     } else {
-        entity.visibilityValue = PAVisibilityLevelUnknown;
+        if (!entity.visibility) {
+            entity.visibilityValue = PAVisibilityLevelUnknown;
+        }
     }
     
     return entity;
-}
-
-- (NSNumber *)numberOfLikes {
-    return [self countForStatWithType:@"like" schema:@"users"];
-}
-
-- (NSNumber *)numberOfWatchers {
-    return [self countForStatWithType:@"watch" schema:@"users"];
 }
 
 - (NSNumber *)numberOfMessages {
@@ -62,8 +56,12 @@
 }
 
 - (NSNumber *)countForStatWithType:(NSString *)type schema:(NSString *)schema {
-    if ([self.linkedCounts[@"from"] isKindOfClass:[NSDictionary class]]) {
-        NSDictionary *fromLinkedCounts = self.linkedCounts[@"from"];
+    return [Entity countForStatWithType:type schema:schema inLinkedCounts:self.linkedCounts];
+}
+
++ (NSNumber *)countForStatWithType:(NSString *)type schema:(NSString *)schema inLinkedCounts:(NSDictionary *)linkedCounts {
+    if ([linkedCounts[@"from"] isKindOfClass:[NSDictionary class]]) {
+        NSDictionary *fromLinkedCounts = linkedCounts[@"from"];
         for (NSObject *key in fromLinkedCounts.allKeys) {
             if ([key isEqual:schema] && [fromLinkedCounts[key] isKindOfClass:[NSDictionary class]]) {
                 NSDictionary *schemaDict = fromLinkedCounts[key];

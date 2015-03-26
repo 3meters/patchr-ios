@@ -24,7 +24,7 @@
                         </constraints>
                     </imageView>
                     <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="1000" verticalCompressionResistancePriority="751" text="Rob" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m6L-Nb-Bin">
-                        <rect key="frame" x="67" y="30" width="33" height="21"/>
+                        <rect key="frame" x="67" y="30" width="182" height="21"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="21" id="oSP-4X-GJ7"/>
@@ -95,7 +95,7 @@
                     <constraint firstItem="h8L-WQ-6XO" firstAttribute="leading" secondItem="EuJ-uZ-wD2" secondAttribute="leading" id="EAc-Ng-iRm"/>
                     <constraint firstItem="0TT-YB-aeS" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="GpA-kc-Ty0"/>
                     <constraint firstItem="TaR-dt-0cq" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="H1p-Ay-XWU"/>
-                    <constraint firstItem="dwP-9n-4tK" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="m6L-Nb-Bin" secondAttribute="trailing" constant="8" id="IsW-Rf-rV3"/>
+                    <constraint firstItem="dwP-9n-4tK" firstAttribute="leading" secondItem="m6L-Nb-Bin" secondAttribute="trailing" constant="8" id="IsW-Rf-rV3"/>
                     <constraint firstItem="h8L-WQ-6XO" firstAttribute="leading" secondItem="m6L-Nb-Bin" secondAttribute="leading" id="KDU-eM-EcE"/>
                     <constraint firstItem="m6L-Nb-Bin" firstAttribute="top" secondItem="0TT-YB-aeS" secondAttribute="bottom" constant="4" id="ODn-4W-Is5"/>
                     <constraint firstAttribute="trailingMargin" secondItem="dwP-9n-4tK" secondAttribute="trailing" constant="4" id="Xef-Wa-aN3"/>

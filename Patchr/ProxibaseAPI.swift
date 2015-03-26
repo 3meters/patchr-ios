@@ -119,7 +119,6 @@ struct ServerResponse
     init(_ responseObject: AnyObject?)
     {
         responseDictionary = responseObject as NSDictionary
-        println(responseDictionary)
         resultCount = (responseDictionary["count"] as NSNumber).integerValue
         
     }
@@ -626,7 +625,7 @@ public class ProxibaseClient {
     }
     
     public func fetchMessagesForPatch(patchId: String, limit: NSInteger = 50, skip: NSInteger = 0, links: [Link] = [], completion:(response: AnyObject?, error: NSError?) -> Void) {
-        let allLinks = [Link(from: .Messages, type: .Content, linkFields: "_id")] + links
+        let allLinks = [Link(from: .Messages, type: .Content, linkFields: "_id")] + links + standardPatchLinks()
         let parameters = [
             "refs" : "_id,name,photo,schema",
             "linked" : allLinks.map { $0.toDictionary() }
@@ -647,8 +646,8 @@ public class ProxibaseClient {
     public func fetchMostMessagedPatches(limit: NSInteger = 50, skip: NSInteger = 0, completion:(response: AnyObject?, error: NSError?) -> Void) {
         var allLinks = self.standardPatchLinks()
         let parameters : Dictionary<String, AnyObject> = [
-            "type" : "content"
-            //"links" : allLinks.map { $0.toDictionary() } // Doesn't work the same as /find API
+            "type" : "content",
+            "linked" : allLinks.map { $0.toDictionary() } // Doesn't work the same as /find API
         ]
         self.performPOSTRequestFor("stats/to/patches/from/messages", parameters: parameters, completion: completion)
     }
@@ -658,7 +657,10 @@ public class ProxibaseClient {
     }
     
     public func findPatch(entityId: String, completion: ProxibaseCompletionBlock) {
-        self.performGETRequestFor("find/patches/\(entityId)", parameters: [:], completion: completion)
+        let parameters = [
+            "linked" : standardPatchLinks().map { $0.toDictionary() }
+        ]
+        self.performPOSTRequestFor("find/patches/\(entityId)", parameters: parameters, completion: completion)
     }
     
     private func authenticatedParameters(var parameters: NSDictionary) -> NSDictionary
@@ -709,10 +711,10 @@ public class ProxibaseClient {
     }
     
     public func standardPatchLinks() -> [Link] {
+        
         return [
-            Link(to: .Beacons, type: .Proximity, limit: 10),
             Link(to: .Places, type: .Proximity, limit: 10),
-            Link(from: .Messages, type: .Content, limit: 2),
+            //Link(from: .Messages, type: .Content, limit: 2, subLinks: [Link(from: .Users, type: .Create)]),
             Link(from: .Messages, type: .Content, count: true),
             Link(from: .Users, type: .Like, count: true),
             Link(from: .Users, type: .Watch, count: true)
@@ -726,22 +728,28 @@ public class Link {
     public var type: LinkType?
     public var limit: UInt?
     public var count: Bool?
-    public var linkFields: String?
+    public var linkFields: AnyObject?
+    public var linkedFilter : [NSObject : AnyObject]?
+    public var subLinks : [Link]?
     
-    init(to: LinkDestination, type: LinkType, limit: UInt? = nil, count: Bool? = nil, linkFields: String? = nil) {
+    init(to: LinkDestination, type: LinkType, limit: UInt? = nil, count: Bool? = nil, linkFields: AnyObject? = nil, linkedFilter: [NSObject : AnyObject]? = nil, subLinks: [Link]? = nil) {
         self.to = to
         self.type = type
         self.limit = limit
         self.count = count
         self.linkFields = linkFields
+        self.linkedFilter = linkedFilter
+        self.subLinks = subLinks
     }
     
-    init(from: LinkDestination, type: LinkType, limit: UInt? = nil, count: Bool? = nil, linkFields: String? = nil) {
+    init(from: LinkDestination, type: LinkType, limit: UInt? = nil, count: Bool? = nil, linkFields: AnyObject? = nil, linkedFilter: [NSObject : AnyObject]? = nil, subLinks: [Link]? = nil) {
         self.from = from
         self.type = type
         self.limit = limit
         self.count = count
         self.linkFields = linkFields
+        self.linkedFilter = linkedFilter
+        self.subLinks = subLinks
     }
     
     func toDictionary() -> Dictionary<String, AnyObject> {
@@ -764,6 +772,15 @@ public class Link {
         if linkFields != nil {
             dictionary["linkFields"] = linkFields
         }
+        
+        if linkedFilter != nil {
+            dictionary["linkedFilter"] = linkedFilter
+        }
+        
+        if subLinks != nil {
+            dictionary["linked"] = self.subLinks!.map { $0.toDictionary() }
+        }
+        
         return dictionary
     }
 }

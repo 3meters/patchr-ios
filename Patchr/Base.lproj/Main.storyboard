@@ -683,25 +683,35 @@
                             <rect key="frame" x="0.0" y="64" width="600" height="300"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
-                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="06h-6Z-89S" userLabel="AddMsgView">
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="06h-6Z-89S" userLabel="Context Bar">
                                     <rect key="frame" x="0.0" y="253" width="600" height="47"/>
                                     <subviews>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="taQ-to-sH1">
-                                            <rect key="frame" x="253" y="9" width="95" height="30"/>
+                                            <rect key="frame" x="8" y="4" width="584" height="39"/>
                                             <state key="normal" title="Add Message">
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
                                             <connections>
-                                                <segue destination="11d-az-MmN" kind="presentation" identifier="CreateMessageSegue" id="Kap-wc-mJL"/>
+                                                <action selector="contextButtonAction:" destination="dFa-9F-rNC" eventType="touchUpInside" id="BdO-aN-9W7"/>
                                             </connections>
                                         </button>
                                     </subviews>
                                     <color key="backgroundColor" red="0.95124707554848487" green="0.95438391266969702" blue="0.95123523842727276" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <constraints>
+                                        <constraint firstAttribute="trailing" secondItem="taQ-to-sH1" secondAttribute="trailing" constant="8" id="Icc-Ew-MTS"/>
+                                        <constraint firstItem="taQ-to-sH1" firstAttribute="top" secondItem="06h-6Z-89S" secondAttribute="top" constant="4" id="RII-tM-m4Y"/>
+                                        <constraint firstAttribute="bottom" secondItem="taQ-to-sH1" secondAttribute="bottom" constant="4" id="dDe-Di-r0X"/>
                                         <constraint firstAttribute="height" constant="47" id="nWQ-bD-tLe"/>
                                         <constraint firstAttribute="centerY" secondItem="taQ-to-sH1" secondAttribute="centerY" id="ryb-NO-WHC"/>
+                                        <constraint firstItem="taQ-to-sH1" firstAttribute="leading" secondItem="06h-6Z-89S" secondAttribute="leading" constant="8" id="xGq-ku-eal"/>
                                         <constraint firstAttribute="centerX" secondItem="taQ-to-sH1" secondAttribute="centerX" id="zqh-gq-d8z"/>
                                     </constraints>
+                                    <variation key="default">
+                                        <mask key="constraints">
+                                            <exclude reference="ryb-NO-WHC"/>
+                                            <exclude reference="zqh-gq-d8z"/>
+                                        </mask>
+                                    </variation>
                                 </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6IV-aV-u0s" userLabel="HeaderView">
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="254"/>
@@ -730,20 +740,22 @@
                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TWm-Ce-UN2">
-                                            <rect key="frame" x="548" y="8" width="44" height="30"/>
-                                            <state key="normal" title="Watch">
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TWm-Ce-UN2">
+                                            <rect key="frame" x="532" y="8" width="60" height="60"/>
+                                            <state key="normal" image="IconWatchDark">
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
+                                            <state key="selected" image="IconWatchLight"/>
                                             <connections>
                                                 <action selector="watchAction:" destination="dFa-9F-rNC" eventType="touchUpInside" id="S3h-j5-gWa"/>
                                             </connections>
                                         </button>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vYh-eO-CMR">
-                                            <rect key="frame" x="510" y="8" width="30" height="30"/>
-                                            <state key="normal" title="Like">
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vYh-eO-CMR">
+                                            <rect key="frame" x="464" y="8" width="60" height="60"/>
+                                            <state key="normal" image="IconLikeDark">
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
+                                            <state key="selected" image="IconLikeLight"/>
                                             <connections>
                                                 <action selector="likeAction:" destination="dFa-9F-rNC" eventType="touchUpInside" id="VEl-FK-BTq"/>
                                             </connections>
@@ -835,6 +847,8 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="contextButton" destination="taQ-to-sH1" id="u2I-yk-lZ1"/>
+                        <outlet property="editPatchButton" destination="ZMG-a1-W19" id="gdV-B9-X8Z"/>
                         <outlet property="likeButton" destination="vYh-eO-CMR" id="BNB-8g-ly5"/>
                         <outlet property="numberOfLikesButton" destination="QHh-aS-8Rc" id="8Ua-lT-jnn"/>
                         <outlet property="numberOfWatchersButton" destination="7J4-1W-AIu" id="Up3-hu-heD"/>
@@ -843,6 +857,7 @@
                         <outlet property="patchNameLabel" destination="bHj-ol-mkD" id="nZS-3i-vhZ"/>
                         <outlet property="watchButton" destination="TWm-Ce-UN2" id="0cS-S2-nb0"/>
                         <segue destination="JI7-e9-z3O" kind="show" identifier="ImageDetailSegue" id="F0u-ce-h5n"/>
+                        <segue destination="11d-az-MmN" kind="presentation" identifier="CreateMessageSegue" id="sNP-m8-m5g"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oIA-ch-XmS" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1904,6 +1919,9 @@
     </scenes>
     <resources>
         <image name="IconEditLight" width="60" height="60"/>
+        <image name="IconLikeDark" width="60" height="60"/>
+        <image name="IconLikeLight" width="60" height="60"/>
+        <image name="IconWatchDark" width="60" height="60"/>
         <image name="IconWatchLight" width="120" height="120"/>
         <image name="PatchDefault" width="1000" height="500"/>
         <image name="SplashBackground" width="1000" height="625"/>
@@ -1915,10 +1933,10 @@
         <image name="UserAvatarDefault" width="250" height="250"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="ogA-ZN-KnA"/>
         <segue reference="cGH-YD-j5U"/>
-        <segue reference="F0u-ce-h5n"/>
+        <segue reference="ogA-ZN-KnA"/>
         <segue reference="Unb-0x-aoh"/>
+        <segue reference="F0u-ce-h5n"/>
         <segue reference="Z9b-z0-EWI"/>
     </inferredMetricsTieBreakers>
 </document>

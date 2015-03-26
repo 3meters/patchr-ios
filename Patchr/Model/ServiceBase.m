@@ -69,6 +69,33 @@
         }
     }
     
+    if ([dictionary[@"linked"] isKindOfClass:[NSArray class]]) {
+        // Configure ServiceBase-specific relationships
+        
+        for (id link in dictionary[@"linked"]) {
+            
+            if ([link isKindOfClass:[NSDictionary class]]) {
+                
+                NSDictionary *linkDictionary = link;
+                
+                if ([ModelUtilities modelClassForSchema:linkDictionary[@"schema"]]) {
+                    
+                    Class modelClass = [ModelUtilities modelClassForSchema:linkDictionary[@"schema"]];
+                    ServiceBase *modelObject = [modelClass fetchOrInsertOneById:linkDictionary[@"_id"] inManagedObjectContext:base.managedObjectContext];
+                    [modelClass setPropertiesFromDictionary:linkDictionary onObject:modelObject mappingNames:mapNames];
+
+                    if (base.creatorId == modelObject.id_) {
+                        base.creator = modelObject;
+                    }
+                    
+                    if (base.ownerId == modelObject.id_) {
+                        base.owner = modelObject;
+                    }
+                }
+            }
+        }
+    }
+    
     return base;
 }
 

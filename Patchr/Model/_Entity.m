@@ -7,6 +7,8 @@ const struct EntityAttributes EntityAttributes = {
 	.count = @"count",
 	.description_ = @"description_",
 	.linkedCounts = @"linkedCounts",
+	.numberOfLikes = @"numberOfLikes",
+	.numberOfWatchers = @"numberOfWatchers",
 	.patchId = @"patchId",
 	.privacy = @"privacy",
 	.rank = @"rank",
@@ -57,6 +59,16 @@ const struct EntityUserInfo EntityUserInfo = {
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
+	if ([key isEqualToString:@"numberOfLikesValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"numberOfLikes"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"numberOfWatchersValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"numberOfWatchers"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
 	if ([key isEqualToString:@"rankValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"rank"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
@@ -99,6 +111,46 @@ const struct EntityUserInfo EntityUserInfo = {
 @dynamic description_;
 
 @dynamic linkedCounts;
+
+@dynamic numberOfLikes;
+
+- (int64_t)numberOfLikesValue {
+	NSNumber *result = [self numberOfLikes];
+	return [result longLongValue];
+}
+
+- (void)setNumberOfLikesValue:(int64_t)value_ {
+	[self setNumberOfLikes:@(value_)];
+}
+
+- (int64_t)primitiveNumberOfLikesValue {
+	NSNumber *result = [self primitiveNumberOfLikes];
+	return [result longLongValue];
+}
+
+- (void)setPrimitiveNumberOfLikesValue:(int64_t)value_ {
+	[self setPrimitiveNumberOfLikes:@(value_)];
+}
+
+@dynamic numberOfWatchers;
+
+- (int64_t)numberOfWatchersValue {
+	NSNumber *result = [self numberOfWatchers];
+	return [result longLongValue];
+}
+
+- (void)setNumberOfWatchersValue:(int64_t)value_ {
+	[self setNumberOfWatchers:@(value_)];
+}
+
+- (int64_t)primitiveNumberOfWatchersValue {
+	NSNumber *result = [self primitiveNumberOfWatchers];
+	return [result longLongValue];
+}
+
+- (void)setPrimitiveNumberOfWatchersValue:(int64_t)value_ {
+	[self setPrimitiveNumberOfWatchers:@(value_)];
+}
 
 @dynamic patchId;
 
