@@ -169,6 +169,7 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
     override func viewWillDisappear(animated: Bool)
     {
         super.viewWillDisappear(animated)
+        self.endFieldEditing()
         observerObject?.stopObserving()
     }
     

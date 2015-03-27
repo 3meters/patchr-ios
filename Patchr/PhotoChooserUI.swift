@@ -149,20 +149,24 @@ class PhotoChooserUI: NSObject,
     {
         if buttonIndex != actionSheet.cancelButtonIndex
         {
-            switch photoButtonFunctionMap[buttonIndex]! {
-
-            case .UseLatestPhoto:
-                useLatestPhoto()
-                
-            case .TakePhoto:
-                takePhotoWithCamera()
-                
-            case .ChoosePhoto:
-                choosePhotoFromLibrary()
-                
-            case .SearchPhoto:
-                searchForPhoto()
-            }
+            // There are some strange visual artifacts with the share sheet and the presented 
+            // view controllers. Adding a small delay seems to prevent them.
+            delay(0.4, { () -> () in
+                switch self.photoButtonFunctionMap[buttonIndex]! {
+                    
+                case .UseLatestPhoto:
+                    self.useLatestPhoto()
+                    
+                case .TakePhoto:
+                    self.takePhotoWithCamera()
+                    
+                case .ChoosePhoto:
+                    self.choosePhotoFromLibrary()
+                    
+                case .SearchPhoto:
+                    self.searchForPhoto()
+                }
+            })
         }
     }
 

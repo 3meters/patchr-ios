@@ -26,6 +26,7 @@ class PostMessageViewController: UIViewController
     @IBOutlet weak var addPhotoButton: UIButton!
     @IBOutlet weak var attachedImageView: UIImageView!
     @IBOutlet weak var userProfileImage: UIImageView!
+    @IBOutlet weak var accessoryInputView: UIView!
     
     @IBAction func sendButtonAction(sender: AnyObject) {
         let parameters: NSMutableDictionary = [
@@ -82,6 +83,12 @@ class PostMessageViewController: UIViewController
         }
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.accessoryInputView.removeFromSuperview() // detach from storyboard before setting as input accessory
+        self.messageTextView.inputAccessoryView = self.accessoryInputView
+    }
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         if let receiverString = receiverString {
@@ -118,8 +125,12 @@ class PostMessageViewController: UIViewController
             #endif
         }
     }
-
     
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.messageTextView.resignFirstResponder()
+    }
+
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         NSNotificationCenter.defaultCenter().removeObserver(observerObject)

@@ -763,6 +763,7 @@
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QHh-aS-8Rc">
                                             <rect key="frame" x="67" y="214" width="44" height="30"/>
                                             <state key="normal" title="2 likes">
+                                                <color key="titleColor" red="0.98845826439999995" green="0.98845826439999995" blue="0.98845826439999995" alpha="1" colorSpace="calibratedRGB"/>
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
                                             <connections>
@@ -772,6 +773,7 @@
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7J4-1W-AIu">
                                             <rect key="frame" x="128" y="214" width="75" height="30"/>
                                             <state key="normal" title="5 watching">
+                                                <color key="titleColor" red="0.98845826439999995" green="0.98845826439999995" blue="0.98845826439999995" alpha="1" colorSpace="calibratedRGB"/>
                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
                                             <connections>
@@ -858,6 +860,8 @@
                         <outlet property="watchButton" destination="TWm-Ce-UN2" id="0cS-S2-nb0"/>
                         <segue destination="JI7-e9-z3O" kind="show" identifier="ImageDetailSegue" id="F0u-ce-h5n"/>
                         <segue destination="11d-az-MmN" kind="presentation" identifier="CreateMessageSegue" id="sNP-m8-m5g"/>
+                        <segue destination="z5c-9W-9Sy" kind="show" identifier="WatchingListSegue" id="ZkF-VU-9mQ"/>
+                        <segue destination="z5c-9W-9Sy" kind="show" identifier="LikeListSegue" id="ZOc-oS-e3t"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oIA-ch-XmS" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -907,23 +911,10 @@
                             </textView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="bu0-aT-iV3" userLabel="Attached Image">
                                 <rect key="frame" x="0.0" y="554" width="600" height="46"/>
-                                <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="46" id="28r-7P-VTI"/>
                                 </constraints>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LPR-aO-cWd">
-                                <rect key="frame" x="510" y="562" width="74" height="28"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="28" id="vr3-Nw-eay"/>
-                                </constraints>
-                                <state key="normal" title="Add Photo">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="addPhotoButtonAction:" destination="RIj-zQ-Zaq" eventType="touchUpInside" id="tL4-xP-Hzk"/>
-                                </connections>
-                            </button>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="TAP-Ne-Iwb" userLabel="Profile Photo">
                                 <rect key="frame" x="18" y="124" width="64" height="64"/>
                                 <constraints>
@@ -931,12 +922,25 @@
                                     <constraint firstAttribute="width" constant="64" id="o3Q-0V-Cki"/>
                                 </constraints>
                             </imageView>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NGr-tv-HED">
+                                <rect key="frame" x="0.0" y="502" width="600" height="44"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eLI-Z0-NB4">
+                                        <rect key="frame" x="8" y="0.0" width="60" height="44"/>
+                                        <state key="normal" image="UIButtonCamera">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="addPhotoButtonAction:" destination="RIj-zQ-Zaq" eventType="touchUpInside" id="zfd-Xy-XBI"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <gestureRecognizers/>
                         <constraints>
-                            <constraint firstItem="LPR-aO-cWd" firstAttribute="trailing" secondItem="RRz-fl-QSU" secondAttribute="trailingMargin" id="21X-Ci-MNm"/>
-                            <constraint firstItem="Wiw-ZZ-tii" firstAttribute="top" secondItem="LPR-aO-cWd" secondAttribute="bottom" constant="10" id="3Rw-OG-3JT"/>
                             <constraint firstItem="dgb-HU-i5j" firstAttribute="centerY" secondItem="g4H-Bk-YXd" secondAttribute="centerY" id="3jo-xj-mKD"/>
                             <constraint firstItem="dgb-HU-i5j" firstAttribute="top" secondItem="GeX-42-m1y" secondAttribute="bottom" id="AuT-NZ-Dps"/>
                             <constraint firstItem="dgb-HU-i5j" firstAttribute="leading" secondItem="RRz-fl-QSU" secondAttribute="leadingMargin" constant="-16" id="JNF-wf-vh6"/>
@@ -972,7 +976,8 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="addPhotoButton" destination="LPR-aO-cWd" id="FFd-3m-kqU"/>
+                        <outlet property="accessoryInputView" destination="NGr-tv-HED" id="KgG-Nw-JND"/>
+                        <outlet property="addPhotoButton" destination="eLI-Z0-NB4" id="w0b-I2-TTS"/>
                         <outlet property="attachedImageView" destination="bu0-aT-iV3" id="BY8-gP-6Vm"/>
                         <outlet property="messageTextView" destination="uhV-E5-tUm" id="6X7-6D-5Vn"/>
                         <outlet property="receiverLabel" destination="CXg-PC-ftG" id="Ac2-8D-06q"/>
@@ -1847,6 +1852,32 @@
             </objects>
             <point key="canvasLocation" x="1470" y="-557"/>
         </scene>
+        <!--Table View Controller-->
+        <scene sceneID="Zkn-0N-HTc">
+            <objects>
+                <tableViewController id="z5c-9W-9Sy" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="vt0-0K-tFn">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="C7k-bs-F0H">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="C7k-bs-F0H" id="QYu-5k-6cG">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="z5c-9W-9Sy" id="Z7m-D5-B04"/>
+                            <outlet property="delegate" destination="z5c-9W-9Sy" id="05H-3C-45K"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="V8m-gH-MSr" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3323" y="-4467"/>
+        </scene>
         <!--Image Detail View Controller-->
         <scene sceneID="lts-oG-zkA">
             <objects>
@@ -1926,6 +1957,7 @@
         <image name="PatchDefault" width="1000" height="500"/>
         <image name="SplashBackground" width="1000" height="625"/>
         <image name="SplashLogo" width="512" height="512"/>
+        <image name="UIButtonCamera" width="30" height="30"/>
         <image name="UITabBarItemExplore" width="48" height="32"/>
         <image name="UITabBarItemMe" width="48" height="32"/>
         <image name="UITabBarItemNearby" width="30" height="30"/>
@@ -1936,6 +1968,7 @@
         <segue reference="cGH-YD-j5U"/>
         <segue reference="ogA-ZN-KnA"/>
         <segue reference="Unb-0x-aoh"/>
+        <segue reference="ZOc-oS-e3t"/>
         <segue reference="F0u-ce-h5n"/>
         <segue reference="Z9b-z0-EWI"/>
     </inferredMetricsTieBreakers>
