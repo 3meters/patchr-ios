@@ -9,6 +9,10 @@
 import UIKit
 import CoreLocation
 
+enum DataStoreQueryName : String {
+    case LikersForPatch = "Likers for patch"
+}
+
 class DataStore: NSObject {
     
     var proxibaseClient : ProxibaseClient
@@ -150,6 +154,12 @@ class DataStore: NSObject {
             self.proxibaseClient.fetchMessagesForPatch(patchId, completion: refreshCompletion)
         case "Current user":
             self.proxibaseClient.fetchCurrentUser(refreshCompletion)
+        case "Likers for patch":
+            let patchId = query.parameters["patchId"] as String
+            self.proxibaseClient.fetchLikersForPatch(patchId, completion: refreshCompletion)
+        case "Watchers for patch":
+            let patchId = query.parameters["patchId"] as String
+            self.proxibaseClient.fetchLikersForPatch(patchId, completion: refreshCompletion)
         default:
             assert(false, "No refreshResultsFor implementation for query name \(query.name)")
         }

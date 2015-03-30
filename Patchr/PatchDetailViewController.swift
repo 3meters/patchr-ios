@@ -203,10 +203,6 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
         updatePatchDetailUI()
     }
     
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-    
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
@@ -287,12 +283,13 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     
     @IBAction func numberOfLikesButtonAction(sender: UIButton) {
         UIAlertView(title: "Not Implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
+        //self.performSegueWithIdentifier("LikeListSegue", sender: self)
     }
     
     @IBAction func numberOfWatchersButtonAction(sender: UIButton) {
         UIAlertView(title: "Not Implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
+        //self.performSegueWithIdentifier("WatchingListSegue", sender: self)
     }
-    
     
     override func fetchedResultsControllerForViewController(viewController: UIViewController) -> NSFetchedResultsController {
         return self.fetchedResultsController
@@ -325,6 +322,13 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
                     // pass along the patch to edit.
                     editPatchViewController.patch = patch
                 }
+            }
+        case "LikeListSegue", "WatchingListSegue" :
+            if let userListViewController = segue.destinationViewController as? UserTableViewController {
+                userListViewController.managedObjectContext = self.managedObjectContext
+                userListViewController.dataStore = self.dataStore
+                userListViewController.patchId = self.patch.id_
+                userListViewController.filter = segue.identifier == "LikeListSegue" ? .Likers : .Watchers
             }
         default: ()
         }

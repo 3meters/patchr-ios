@@ -37,7 +37,7 @@
                         <viewControllerLayoutGuide type="bottom" id="13D-xo-wyu"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="qMX-2Z-cyl">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="64" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Server Address" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EeI-u7-aDo">
@@ -98,7 +98,7 @@
                         <viewControllerLayoutGuide type="bottom" id="qw7-FQ-ASh"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="16e-CO-ZpJ">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="64" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SplashBackground" translatesAutoresizingMaskIntoConstraints="NO" id="OXz-o2-Eeh">
@@ -240,7 +240,7 @@
                         <viewControllerLayoutGuide type="bottom" id="Phx-u4-XiD"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Hja-Fw-jek">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="64" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -255,7 +255,7 @@
             <objects>
                 <tableViewController id="vJ2-ei-F6q" customClass="SignInTableViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="lVH-Ov-LDb" customClass="SaneFirstResponderTableView" customModule="Patchr" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="64" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <sections>
@@ -332,7 +332,7 @@
                                                     </constraints>
                                                 </view>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UEG-J8-q47">
-                                                    <rect key="frame" x="20" y="128" width="584" height="1"/>
+                                                    <rect key="frame" x="20" y="128" width="560" height="1"/>
                                                     <color key="backgroundColor" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="1" id="fHN-ka-4Te"/>
@@ -374,7 +374,6 @@
                                                 <constraint firstItem="S5F-2d-yoJ" firstAttribute="leading" secondItem="L6G-Ul-CNs" secondAttribute="leading" id="Vx5-XM-MdD"/>
                                                 <constraint firstItem="4hC-di-2FT" firstAttribute="leading" secondItem="VK8-QA-boe" secondAttribute="trailing" constant="8" id="WC8-AH-SfC"/>
                                                 <constraint firstItem="grs-N8-XlJ" firstAttribute="leading" secondItem="L6G-Ul-CNs" secondAttribute="leading" id="WFK-T1-SPK"/>
-                                                <constraint firstItem="S5F-2d-yoJ" firstAttribute="top" secondItem="2Bg-4P-zvL" secondAttribute="top" constant="-52" id="ZSZ-Yh-bOR"/>
                                                 <constraint firstItem="VK8-QA-boe" firstAttribute="top" secondItem="2Bg-4P-zvL" secondAttribute="bottom" constant="8" id="ZSo-Xd-Pd8"/>
                                                 <constraint firstItem="L6G-Ul-CNs" firstAttribute="leading" secondItem="anV-4q-5yq" secondAttribute="leadingMargin" constant="12" id="cHv-0W-aym"/>
                                                 <constraint firstItem="S5F-2d-yoJ" firstAttribute="leading" secondItem="2Bg-4P-zvL" secondAttribute="leading" id="dJG-LT-6n6"/>
@@ -383,17 +382,12 @@
                                                 <constraint firstItem="S5F-2d-yoJ" firstAttribute="top" secondItem="L6G-Ul-CNs" secondAttribute="bottom" constant="8" id="fn9-qy-B34"/>
                                                 <constraint firstItem="4hC-di-2FT" firstAttribute="trailing" secondItem="2Bg-4P-zvL" secondAttribute="trailing" id="i55-vb-tUh"/>
                                                 <constraint firstItem="VK8-QA-boe" firstAttribute="leading" secondItem="2Bg-4P-zvL" secondAttribute="leading" id="meB-b3-2ae"/>
+                                                <constraint firstItem="L6G-Ul-CNs" firstAttribute="trailing" secondItem="UEG-J8-q47" secondAttribute="trailing" id="pVb-kh-k7C"/>
                                                 <constraint firstItem="S5F-2d-yoJ" firstAttribute="trailing" secondItem="L6G-Ul-CNs" secondAttribute="trailing" constant="24" id="sVC-3x-HFv"/>
-                                                <constraint firstItem="UEG-J8-q47" firstAttribute="trailing" secondItem="S5F-2d-yoJ" secondAttribute="trailing" id="y85-Go-sWv"/>
                                                 <constraint firstItem="L6G-Ul-CNs" firstAttribute="top" secondItem="anV-4q-5yq" secondAttribute="topMargin" constant="20" id="y8e-Fa-HJ2"/>
                                                 <constraint firstItem="UEG-J8-q47" firstAttribute="top" secondItem="S5F-2d-yoJ" secondAttribute="bottom" constant="4" id="yJY-RG-tNH"/>
                                                 <constraint firstItem="S5F-2d-yoJ" firstAttribute="height" secondItem="L6G-Ul-CNs" secondAttribute="height" id="zdP-HL-AN9"/>
                                             </constraints>
-                                            <variation key="default">
-                                                <mask key="constraints">
-                                                    <exclude reference="ZSZ-Yh-bOR"/>
-                                                </mask>
-                                            </variation>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                 </cells>
@@ -428,7 +422,7 @@
             <objects>
                 <tableViewController id="Wd0-T0-nbO" customClass="RegistrationTableViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="vbz-YP-V42" customClass="SaneFirstResponderTableView" customModule="Patchr" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="64" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <sections>
@@ -1852,10 +1846,10 @@
             </objects>
             <point key="canvasLocation" x="1470" y="-557"/>
         </scene>
-        <!--Table View Controller-->
+        <!--User Table View Controller-->
         <scene sceneID="Zkn-0N-HTc">
             <objects>
-                <tableViewController id="z5c-9W-9Sy" sceneMemberID="viewController">
+                <tableViewController id="z5c-9W-9Sy" customClass="UserTableViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="vt0-0K-tFn">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1965,11 +1959,11 @@
         <image name="UserAvatarDefault" width="250" height="250"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="cGH-YD-j5U"/>
         <segue reference="ogA-ZN-KnA"/>
-        <segue reference="Unb-0x-aoh"/>
         <segue reference="ZOc-oS-e3t"/>
+        <segue reference="Unb-0x-aoh"/>
         <segue reference="F0u-ce-h5n"/>
-        <segue reference="Z9b-z0-EWI"/>
+        <segue reference="cGH-YD-j5U"/>
+        <segue reference="cm1-cE-kzV"/>
     </inferredMetricsTieBreakers>
 </document>

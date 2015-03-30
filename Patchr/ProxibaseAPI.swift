@@ -633,6 +633,15 @@ public class ProxibaseClient {
         self.performPOSTRequestFor("find/patches/\(patchId)", parameters: parameters, completion: completion)
     }
     
+    public func fetchLikersForPatch(patchId: String, limit: NSInteger = 50, skip: NSInteger = 0, links: [Link] = [], completion:(response: AnyObject?, error: NSError?) -> Void) {
+        let allLinks = [Link(to: .Patches, type: .Like, linkFields: "_id")] + links + standardPatchLinks()
+        let parameters = [
+            "refs" : "_id,name,photo,schema",
+            "linked" : allLinks.map { $0.toDictionary() }
+        ]
+        self.performPOSTRequestFor("find/patches/\(patchId)", parameters: parameters, completion: completion)
+    }
+    
     public func fetchNotifications(limit: NSInteger = 50, skip: NSInteger = 0, completion: ProxibaseCompletionBlock) {
         var allLinks = self.standardPatchLinks()
         let parameters = [
@@ -790,6 +799,7 @@ public enum LinkDestination : String {
     case Places = "places"
     case Messages = "messages"
     case Users = "users"
+    case Patches = "patches"
 }
 
 public enum LinkType : String {
