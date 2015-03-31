@@ -21,6 +21,8 @@
 #import <MBProgressHUD.h>
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <Parse.h>
+#import <UIDevice-Hardware.h>
+#import <Lockbox.h>
 #import "Patch.h"
 #import "Place.h"
 #import "Query.h"

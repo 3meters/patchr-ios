@@ -18,7 +18,7 @@ static const CFTimeInterval kBFViewAnimationDuration = 0.25f;
 
 @interface BFAppLinkReturnToRefererController ()
 
-@property (nonatomic, strong, readwrite) UINavigationController *attachedToNavController; // TODO: rename
+@property (nonatomic, strong, readwrite) UINavigationController *attachedToNavController; // TODO rename
 
 @end
 
@@ -90,7 +90,7 @@ static const CFTimeInterval kBFViewAnimationDuration = 0.25f;
         _view.includeStatusBarInSize = BFIncludeStatusBarInSizeAlways;
     }
 
-    // TODO:
+    // TODO
 //    _view.refererAppLink = _refererAppLink;
 }
 

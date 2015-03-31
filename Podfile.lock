@@ -49,6 +49,7 @@ PODS:
   - FMDB/standard (2.5):
     - FMDB/common
   - GZIP (1.0.3)
+  - Lockbox (2.1.0)
   - Mantle (1.5.4):
     - Mantle/extobjc (= 1.5.4)
   - Mantle/extobjc (1.5.4)
@@ -65,12 +66,14 @@ PODS:
   - TMCache (1.2.3)
   - UIActionSheet+Blocks (0.8.1)
   - UICKeyChainStore (2.0.4)
+  - UIDevice-Hardware (0.1.5)
   - XMLDictionary (1.4)
 
 DEPENDENCIES:
   - AFNetworkActivityLogger (~> 2.0)
   - AFNetworking (~> 2.0)
   - AWSiOSSDKv2/S3 (~> 2.0)
+  - Lockbox
   - MBProgressHUD (~> 0.9.1)
   - Parse
   - PBWebViewController (~> 0.3)
@@ -78,25 +81,28 @@ DEPENDENCIES:
   - SCLAlertView-Objective-C (~> 0.5.6)
   - SDWebImage (~> 3.7.2)
   - UIActionSheet+Blocks (~> 0.8.1)
+  - UIDevice-Hardware
 
 SPEC CHECKSUMS:
-  AFNetworkActivityLogger: cdaa92ea0d544835babe0ba097e7806182d8f837
-  AFNetworking: 8bee59492a6ff15d69130efa4d0dc67e0094a52a
-  AWSiOSSDKv2: bcf17afda187f45901b07369f1f59bfbc68922bc
-  Bolts: dd9fb8433d67f5acc3b6b4d1379bbc5513d716c1
-  FMDB: 0efa188cf0dd1ce82c27a478cd5f5fa245308677
-  GZIP: f27c434ffee5e9a9b34f4e9c19e91350fa8bbde1
-  Mantle: d5fbaf30fbc58031223af13812c060e15934a1fe
-  MBProgressHUD: f3747dcbd45a9e855a6b0674550651e0b7ed250c
+  AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
+  AFNetworking: 10e85a00bb0f475124e4ff2677bf15693b2c1523
+  AWSiOSSDKv2: 0673594b4202053945bf1d7c0691b48be55404be
+  Bolts: f8e2f94edbf9fec7bb8de5ecaaa3aa6b7de6f64e
+  FMDB: 96e8f1bcc1329e269330f99770ad4285d9003e52
+  GZIP: f0863fda354e8f83316508c0a2c7bbe385e39129
+  Lockbox: 16442da35d9d4286966936763be728a931d589c3
+  Mantle: 60acd0cd363e27d945bda0a6b8e90577112d28f3
+  MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
   Parse: a21db4037d70a68a4ec64ecc0f327ed475cc14f8
-  PBWebViewController: 0a36bbd0f82741d9457177c9c37f5ff747cba312
-  Reachability: 1ef8adf5c4e3d362f96515d4278f68dad3c26930
-  RMCoreDataStack: 0c00a15fa117ffe9530fa16e30df3e0863ba2939
-  SCLAlertView-Objective-C: 257de4171414dbc32bc3bfdcb61093fc0906536c
+  PBWebViewController: 909b1505da6ba7c5c82519a6457246027926061e
+  Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
+  RMCoreDataStack: fec31b8fd8796f55822680f4f170f0186ca9198a
+  SCLAlertView-Objective-C: e36e3657617a2469f64fcfc3bbf56343f3aef54b
   SDWebImage: 71b7cdc1d1721d6a82ed62889030225f2c249e29
-  TMCache: 11589ef8c40909114a5e60132711c9a559e01d97
-  UIActionSheet+Blocks: c8b9c02f3d08964e8f7a4202f004a639c15eab80
-  UICKeyChainStore: 2399076d0950e20fe859b8f817548cf6ca542dd7
-  XMLDictionary: 735e81b9a043e220b0d24e9d4f16719606f2e0fc
+  TMCache: 5f68bc38d741aa8df4c63131b847522783665d81
+  UIActionSheet+Blocks: 7fdab45fc8f15ac2dc1cd65af1470746600b5f46
+  UICKeyChainStore: 69eb0c3a6f669bccf16ba88de3b9069b71501361
+  UIDevice-Hardware: b3695e58e0385155932e7889c32ed12e844e14a3
+  XMLDictionary: f9f51601ba76678b594ab485f2b00ec1fed23724
 
 COCOAPODS: 0.35.0

@@ -27,7 +27,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         AFNetworkActivityLogger.sharedLogger().startLogging()
         #endif
         
-        Parse.setApplicationId("GUFW6Fjjdy2mcsQS8IuC4zGNFRsPwKP4lY1xFD2A", clientKey: "5Y2weaOeqJlwBCftjp3f3wlqGYias5IOomESIc86")
+        Parse.setApplicationId("EonZJ4FXEADijslgqXCkg37sOGpB7AB9lDYxoHtz", clientKey: "5QRFlRQ3j7gkxyJ2cBYbHTK98WRQhoHCnHdpEKSD")
+        
+        ProxibaseClient.sharedInstance.registerInstallStandard { (response, error) -> Void in
+            if error != nil {
+                NSLog("Error during registerInstall: \(error)")
+            }
+        }
         
         self.locationManager.delegate = self
         

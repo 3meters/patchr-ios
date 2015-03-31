@@ -193,7 +193,24 @@ public class ProxibaseClient {
     public var userId : NSString?
     public var sessionKey : NSString?
     
-    public var installId: String
+    private var cachedInstallationIdentifier : String?
+    public var installationIdentifier : String {
+        
+        if cachedInstallationIdentifier == nil {
+            
+            let installationIdentifierKey = "installationIdentifier"
+            var storedInstallationIdentifier = Lockbox.stringForKey(installationIdentifierKey) as String?
+            
+            if storedInstallationIdentifier == nil {
+                storedInstallationIdentifier = NSUUID().UUIDString
+                Lockbox.setString(storedInstallationIdentifier, forKey: installationIdentifierKey)
+            }
+            
+            cachedInstallationIdentifier = storedInstallationIdentifier
+            
+        }
+        return cachedInstallationIdentifier!
+    }
     
     public var authenticated : Bool {
         return (userId != nil && sessionKey != nil)
@@ -216,8 +233,6 @@ public class ProxibaseClient {
 
         userId     = userDefaults.stringForKey(PatchrUserDefaultKey("userId"))
         sessionKey = userDefaults.stringForKey(PatchrUserDefaultKey("sessionKey")) // TODO: We should store this more securely
-        
-        installId = "1"
         
         sessionManager = AFHTTPSessionManager(baseURL: NSURL(string: serverURI!))
 
@@ -346,7 +361,7 @@ public class ProxibaseClient {
     
     public func signIn(email: NSString, password : NSString, completion: ProxibaseCompletionBlock)
     {
-        let parameters = ["email" : email, "password" : password, "installId" : installId]
+        let parameters = ["email" : email, "password" : password, "installId" : self.installationIdentifier]
         self.sessionManager.POST("auth/signin", parameters: parameters,
             success: { _, response in
             
@@ -395,7 +410,7 @@ public class ProxibaseClient {
                      "password": password
                     ],
             "secret": "larissa",
-            "installId": installId
+            "installId": self.installationIdentifier
         ]
         
         self.performPOSTRequestFor("user/create", parameters: createParameters) { response, error in
@@ -670,6 +685,36 @@ public class ProxibaseClient {
             "linked" : standardPatchLinks().map { $0.toDictionary() }
         ]
         self.performPOSTRequestFor("find/patches/\(entityId)", parameters: parameters, completion: completion)
+    }
+    
+    public func registerInstallStandard(completion:(response: AnyObject?, error: NSError?) -> Void) {
+        let installId = self.installationIdentifier
+        let parseInstallId = PFInstallation.currentInstallation().installationId
+        let clientVersionName = NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleShortVersionString") as String
+        let clientVersionCode = (NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleVersion") as String).toInt()!
+        let clientPackageName = NSBundle.mainBundle().bundleIdentifier!
+        let deviceName = UIDevice.currentDevice().modelIdentifier()
+        let deviceType = "ios"
+        let deviceVersionName = UIDevice.currentDevice().systemVersion
+        
+        self.registerInstall(installId, parseInstallId: parseInstallId, clientVersionName: clientVersionName, clientVersionCode: clientVersionCode, clientPackageName: clientPackageName, deviceName: deviceName, deviceType: deviceType, deviceVersionName: deviceVersionName, completion: completion)
+    }
+    
+    public func registerInstall(installId: String, parseInstallId: String, clientVersionName: String, clientVersionCode: Int, clientPackageName: String, deviceName: String, deviceType: String, deviceVersionName: String, completion:(response: AnyObject?, error: NSError?) -> Void) {
+        let parameters = [
+            "install" :
+                [
+                    "installId" : installId,
+                    "parseInstallId" : parseInstallId,
+                    "clientVersionName" : clientVersionName,
+                    "clientVersionCode" : clientVersionCode,
+                    "clientPackageName" : clientPackageName,
+                    "deviceName" : deviceName,
+                    "deviceType" : deviceType,
+                    "deviceVersionName" : deviceVersionName
+            ]
+        ]
+        self.performPOSTRequestFor("do/registerInstall", parameters: parameters, completion: completion)
     }
     
     private func authenticatedParameters(var parameters: NSDictionary) -> NSDictionary
