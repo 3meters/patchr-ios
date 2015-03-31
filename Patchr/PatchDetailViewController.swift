@@ -263,11 +263,13 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     
     @IBAction func watchAction(sender: AnyObject)
     {
+        self.watchButton.selected = !self.watchButton.selected
         toggleLinkState(watchLinkId, ofType: .Watch)
     }
     
     @IBAction func likeAction(sender: AnyObject)
     {
+        self.likeButton.selected = !self.likeButton.selected
         toggleLinkState(likeLinkId, ofType: .Like)
     }
     
