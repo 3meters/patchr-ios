@@ -9,6 +9,7 @@
 import UIKit
 
 let PAApplicationDidReceiveRemoteNotification = "PAApplicationDidReceiveRemoteNotification"
+let PAapplicationDidBecomeActiveWithNonZeroBadge = "PAapplicationDidBecomeActiveWithNonZeroBadge"
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate {
@@ -67,7 +68,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     }
     
     func applicationDidBecomeActive(application: UIApplication) {
+        
+        if application.applicationIconBadgeNumber > 0 {
+            NSNotificationCenter.defaultCenter().postNotificationName(PAapplicationDidBecomeActiveWithNonZeroBadge, object: self, userInfo: nil)
+        }
+        
         application.applicationIconBadgeNumber = 0
+        
         if PFInstallation.currentInstallation().badge != 0 {
             PFInstallation.currentInstallation().badge = 0
             PFInstallation.currentInstallation().saveEventually()

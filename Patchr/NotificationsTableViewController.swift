@@ -32,6 +32,7 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
     override func awakeFromNib() {
         super.awakeFromNib()
          NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:", name: PAApplicationDidReceiveRemoteNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleApplicationDidBecomeActiveWithNonZeroBadge:", name: PAapplicationDidBecomeActiveWithNonZeroBadge, object: nil)
     }
     
     override func viewDidLoad() {
@@ -183,18 +184,40 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
                             self.navigationController?.tabBarItem.badgeValue = ""
                         }
 
-                        // TODO: for patch detail. auto refresh the entity detail if it is open and the target or parent of the target of a notification
                     case .Inactive: // App was resumed or launched via remote notification
                         
                         // Select the notifications tab and then segue as if the user had selected the notification
                         self.tabBarController?.selectedViewController = self.navigationController
+                        
+                        // Pop back to root if necessary
+                        if self.navigationController?.topViewController != self {
+                            self.navigationController?.popToRootViewControllerAnimated(false)
+                        }
+                        
                         self.segueWith(targetId, parentId: parentId, refreshEntities: true)
+                        
+                        // Clear tab badge here if it was previously set
+                        self.navigationController?.tabBarItem.badgeValue = nil
                         
                     case .Background:
                         ()
                     }
                 }
             }
+        }
+    }
+    
+    func handleApplicationDidBecomeActiveWithNonZeroBadge(notification: NSNotification) {
+        
+        // Badge the tab if it isn't already selected
+        if self.tabBarController?.selectedViewController != self.navigationController {
+            self.navigationController?.tabBarItem.badgeValue = ""
+        }
+        
+        // Only refresh notifications if view has already been loaded
+        if self.isViewLoaded() {
+            self.refreshControl?.beginRefreshing()
+            self.pullToRefreshAction(self.refreshControl)
         }
     }
     

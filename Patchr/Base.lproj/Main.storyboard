@@ -1959,11 +1959,11 @@
         <image name="UserAvatarDefault" width="250" height="250"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="ogA-ZN-KnA"/>
-        <segue reference="ZOc-oS-e3t"/>
-        <segue reference="Unb-0x-aoh"/>
-        <segue reference="F0u-ce-h5n"/>
-        <segue reference="cGH-YD-j5U"/>
         <segue reference="cm1-cE-kzV"/>
+        <segue reference="TRw-aY-jNm"/>
+        <segue reference="cGH-YD-j5U"/>
+        <segue reference="FFb-eP-2Fv"/>
+        <segue reference="lsa-hP-PPZ"/>
+        <segue reference="ZOc-oS-e3t"/>
     </inferredMetricsTieBreakers>
 </document>
