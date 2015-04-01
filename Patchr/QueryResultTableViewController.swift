@@ -51,8 +51,6 @@ class QueryResultTableViewController: FetchedResultsTableViewController {
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: "pullToRefreshAction:", forControlEvents: UIControlEvents.ValueChanged)
         self.refreshControl = refreshControl
-        self.refreshControl?.beginRefreshing()
-        self.pullToRefreshAction(self.refreshControl!)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -61,9 +59,19 @@ class QueryResultTableViewController: FetchedResultsTableViewController {
         if let selectedIndexPath = self.tableView.indexPathForSelectedRow() {
             self.tableView.deselectRowAtIndexPath(selectedIndexPath, animated: animated)
         }
+        self.refreshQueryResults(false)
     }
     
     func pullToRefreshAction(sender: AnyObject?) -> Void {
+        self.refreshQueryResults(true)
+    }
+    
+    func refreshQueryResults(animateRefreshControl: Bool) {
+        
+        if animateRefreshControl {
+            self.refreshControl?.beginRefreshing()
+        }
+        
         self.dataStore.refreshResultsFor(self.query(), completion: { (results, error) -> Void in
             // Delay seems to be necessary to avoid visual glitch with UIRefreshControl
             delay(0.1, { () -> () in
@@ -71,6 +79,7 @@ class QueryResultTableViewController: FetchedResultsTableViewController {
                 return
             })
         })
+        
     }
 }
 

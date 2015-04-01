@@ -1046,7 +1046,7 @@
                                                         <constraint firstAttribute="height" constant="30" id="SDT-t3-14z"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <textInputTraits key="textInputTraits"/>
+                                                    <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
                                                 </textField>
                                             </subviews>
                                             <constraints>
@@ -1067,7 +1067,7 @@
                                                         <constraint firstAttribute="height" constant="30" id="E0d-X9-yT9"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <textInputTraits key="textInputTraits"/>
+                                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 </textField>
                                             </subviews>
                                             <constraints>
@@ -1086,8 +1086,8 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="MUB-WK-JX7" id="sjr-0q-QZU">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="PatchDefault" translatesAutoresizingMaskIntoConstraints="NO" id="voc-oH-Jfu">
-                                                    <rect key="frame" x="0.0" y="0.0" width="600" height="200"/>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="PatchDefault" translatesAutoresizingMaskIntoConstraints="NO" id="voc-oH-Jfu">
+                                                    <rect key="frame" x="0.0" y="0.0" width="600" height="199"/>
                                                 </imageView>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pjH-D5-7gH">
                                                     <rect key="frame" x="15" y="8" width="107" height="30"/>
@@ -1220,8 +1220,8 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="NxM-XF-fPR" id="Wcn-rU-m5x">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wi5-Dk-qLU">
-                                                    <rect key="frame" x="255" y="7" width="90" height="30"/>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wi5-Dk-qLU">
+                                                    <rect key="frame" x="265" y="7" width="70" height="30"/>
                                                     <state key="normal" title="&lt;custom&gt;">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
