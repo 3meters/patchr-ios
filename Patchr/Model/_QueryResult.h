@@ -10,12 +10,12 @@ extern const struct QueryResultAttributes {
 } QueryResultAttributes;
 
 extern const struct QueryResultRelationships {
-	__unsafe_unretained NSString *entity_;
 	__unsafe_unretained NSString *query;
+	__unsafe_unretained NSString *result;
 } QueryResultRelationships;
 
-@class Entity;
 @class Query;
+@class ServiceBase;
 
 @interface QueryResultID : NSManagedObjectID {}
 @end
@@ -42,13 +42,13 @@ extern const struct QueryResultRelationships {
 
 //- (BOOL)validateSortDate:(id*)value_ error:(NSError**)error_;
 
-@property (nonatomic, strong) Entity *entity_;
-
-//- (BOOL)validateEntity_:(id*)value_ error:(NSError**)error_;
-
 @property (nonatomic, strong) Query *query;
 
 //- (BOOL)validateQuery:(id*)value_ error:(NSError**)error_;
+
+@property (nonatomic, strong) ServiceBase *result;
+
+//- (BOOL)validateResult:(id*)value_ error:(NSError**)error_;
 
 @end
 
@@ -66,10 +66,10 @@ extern const struct QueryResultRelationships {
 - (NSDate*)primitiveSortDate;
 - (void)setPrimitiveSortDate:(NSDate*)value;
 
-- (Entity*)primitiveEntity_;
-- (void)setPrimitiveEntity_:(Entity*)value;
-
 - (Query*)primitiveQuery;
 - (void)setPrimitiveQuery:(Query*)value;
+
+- (ServiceBase*)primitiveResult;
+- (void)setPrimitiveResult:(ServiceBase*)value;
 
 @end

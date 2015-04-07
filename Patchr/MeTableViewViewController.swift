@@ -80,7 +80,7 @@ class MeTableViewViewController: QueryResultTableViewController, TableViewCellDe
         }
         
         let queryResult = object as QueryResult
-        let message = queryResult.entity_ as Message
+        let message = queryResult.result as Message
         let messageCell = cell as MessageTableViewCell
         messageCell.delegate = self
         

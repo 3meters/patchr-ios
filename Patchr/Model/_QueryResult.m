@@ -10,8 +10,8 @@ const struct QueryResultAttributes QueryResultAttributes = {
 };
 
 const struct QueryResultRelationships QueryResultRelationships = {
-	.entity_ = @"entity_",
 	.query = @"query",
+	.result = @"result",
 };
 
 @implementation QueryResultID
@@ -73,9 +73,9 @@ const struct QueryResultRelationships QueryResultRelationships = {
 
 @dynamic sortDate;
 
-@dynamic entity_;
-
 @dynamic query;
+
+@dynamic result;
 
 @end
 

@@ -25,6 +25,7 @@ const struct ServiceBaseRelationships ServiceBaseRelationships = {
 	.creator = @"creator",
 	.owned = @"owned",
 	.owner = @"owner",
+	.queryResults = @"queryResults",
 };
 
 @implementation ServiceBaseID
@@ -156,6 +157,17 @@ const struct ServiceBaseRelationships ServiceBaseRelationships = {
 }
 
 @dynamic owner;
+
+@dynamic queryResults;
+
+- (NSMutableSet*)queryResultsSet {
+	[self willAccessValueForKey:@"queryResults"];
+
+	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"queryResults"];
+
+	[self didAccessValueForKey:@"queryResults"];
+	return result;
+}
 
 @end
 

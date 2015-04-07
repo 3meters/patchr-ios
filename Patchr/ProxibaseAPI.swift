@@ -606,6 +606,12 @@ public class ProxibaseClient {
         }
     }
     
+    public func updateLink(linkId: String, enabled: Bool, completion: ProxibaseCompletionBlock)
+    {
+        let parameters = ["data": ["enabled": enabled]]
+        self.performPOSTRequestFor("data/links/\(linkId)", parameters: parameters, completion: completion)
+    }
+    
     public func findLink(fromID: String, toID: String, linkType: LinkType, completion: ProxibaseCompletionBlock)
     {
         let query: NSDictionary = ["query": ["_from": fromID, "_to": toID, "type": linkType.rawValue]]
@@ -648,11 +654,20 @@ public class ProxibaseClient {
         self.performPOSTRequestFor("find/patches/\(patchId)", parameters: parameters, completion: completion)
     }
     
-    public func fetchLikersForPatch(patchId: String, limit: NSInteger = 50, skip: NSInteger = 0, links: [Link] = [], completion:(response: AnyObject?, error: NSError?) -> Void) {
-        let allLinks = [Link(to: .Patches, type: .Like, linkFields: "_id")] + links + standardPatchLinks()
+    public func fetchPatchWithLikerLinks(patchId: String, limit: NSInteger = 50, skip: NSInteger = 0, links: [Link] = [], completion:(response: AnyObject?, error: NSError?) -> Void) {
+        let allLinks = [] + links + standardPatchLinks()
         let parameters = [
             "refs" : "_id,name,photo,schema",
-            "linked" : allLinks.map { $0.toDictionary() }
+            "links" : Link(from: .Users, type: .Like).toDictionary()
+        ]
+        self.performPOSTRequestFor("find/patches/\(patchId)", parameters: parameters, completion: completion)
+    }
+    
+    public func fetchPatchWithWatcherLinks(patchId: String, limit: NSInteger = 50, skip: NSInteger = 0, links: [Link] = [], completion:(response: AnyObject?, error: NSError?) -> Void) {
+        let allLinks = [] + links + standardPatchLinks()
+        let parameters = [
+            "refs" : "_id,name,photo,schema",
+            "links" : Link(from: .Users, type: .Watch).toDictionary()
         ]
         self.performPOSTRequestFor("find/patches/\(patchId)", parameters: parameters, completion: completion)
     }
@@ -685,6 +700,10 @@ public class ProxibaseClient {
             "linked" : standardPatchLinks().map { $0.toDictionary() }
         ]
         self.performPOSTRequestFor("find/patches/\(entityId)", parameters: parameters, completion: completion)
+    }
+    
+    public func findUser(userId: String, completion: ProxibaseCompletionBlock) {
+        self.performPOSTRequestFor("find/users/\(userId)", parameters: [:], completion: completion)
     }
     
     public func registerInstallStandard(completion:(response: AnyObject?, error: NSError?) -> Void) {

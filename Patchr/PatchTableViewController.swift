@@ -52,7 +52,7 @@ class PatchTableViewController: QueryResultTableViewController {
         }
         
         let queryResult = object as QueryResult
-        let patch = queryResult.entity_ as Patch
+        let patch = queryResult.result as Patch
         let patchCell = cell as PatchTableViewCell
         patchCell.nameLabel.text = patch.name
         patchCell.categoryLabel.text = patch.category.name
@@ -63,7 +63,7 @@ class PatchTableViewController: QueryResultTableViewController {
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryResult {
-            if let patch = queryResult.entity_ as? Patch {
+            if let patch = queryResult.result as? Patch {
                 self.selectedPatch = patch
                 self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
                 return

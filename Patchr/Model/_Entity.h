@@ -24,7 +24,6 @@ extern const struct EntityAttributes {
 extern const struct EntityRelationships {
 	__unsafe_unretained NSString *location;
 	__unsafe_unretained NSString *photo;
-	__unsafe_unretained NSString *queryResults;
 } EntityRelationships;
 
 extern const struct EntityUserInfo {
@@ -33,7 +32,6 @@ extern const struct EntityUserInfo {
 
 @class Location;
 @class Photo;
-@class QueryResult;
 
 @class NSDictionary;
 
@@ -126,18 +124,6 @@ extern const struct EntityUserInfo {
 
 //- (BOOL)validatePhoto:(id*)value_ error:(NSError**)error_;
 
-@property (nonatomic, strong) NSSet *queryResults;
-
-- (NSMutableSet*)queryResultsSet;
-
-@end
-
-@interface _Entity (QueryResultsCoreDataGeneratedAccessors)
-- (void)addQueryResults:(NSSet*)value_;
-- (void)removeQueryResults:(NSSet*)value_;
-- (void)addQueryResultsObject:(QueryResult*)value_;
-- (void)removeQueryResultsObject:(QueryResult*)value_;
-
 @end
 
 @interface _Entity (CoreDataGeneratedPrimitiveAccessors)
@@ -201,8 +187,5 @@ extern const struct EntityUserInfo {
 
 - (Photo*)primitivePhoto;
 - (void)setPrimitivePhoto:(Photo*)value;
-
-- (NSMutableSet*)primitiveQueryResults;
-- (void)setPrimitiveQueryResults:(NSMutableSet*)value;
 
 @end

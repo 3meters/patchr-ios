@@ -10,7 +10,8 @@ import UIKit
 import CoreLocation
 
 enum DataStoreQueryName : String {
-    case LikersForPatch = "Likers for patch"
+    case LikersLinksForPatch = "Likers for patch"
+    case WatchersLinksForPatch = "Watchers for patch"
 }
 
 class DataStore: NSObject {
@@ -19,12 +20,13 @@ class DataStore: NSObject {
     private var managedObjectContext : NSManagedObjectContext
     private var locationManager : CLLocationManager
     
-    private lazy var schemaDictionary : [String : Entity.Type] = {
+    private lazy var schemaDictionary : [String : ServiceBase.Type] = {
         return [
             "notification" : Notification.self,
             "patch" : Patch.self,
             "message" : Message.self,
-            "user": User.self
+            "user": User.self,
+            "link": PALink.self
         ]
     }()
     
@@ -46,7 +48,7 @@ class DataStore: NSObject {
             self.refreshResultsFor(userQuery) { results, error in
                 if results.count == 1
                 {
-                    let user = results[0].entity_ as User
+                    let user = results[0].result as User
                     self._currentUser = user
                     dispatch_async(dispatch_get_main_queue())
                     {
@@ -60,11 +62,15 @@ class DataStore: NSObject {
         }
     }
     
+    // NOTE: avoid using this method
     func withEntity(entityId:String, refresh:Bool = false, completion: (Entity?) -> Void) {
         
+        // TODO: switching on id prefix is almost certainly a bad idea.
         switch entityId {
         case let isPatch where entityId.hasPrefix("pa."):
             withPatch(entityId, refresh: refresh, completion: completion)
+        case let isUser where entityId.hasPrefix("us."):
+            withUser(entityId, refresh: refresh, completion: completion)
         default:
             NSLog("WARNING: withEntity not currently implemented for id of form \(entityId)")
             completion(nil)
@@ -72,38 +78,73 @@ class DataStore: NSObject {
         
     }
     
-    func withPatch(patchId:String, refresh:Bool = false, completion: (Patch?) -> Void) {
+    private func findModelType(type:ServiceBase.Type, withId id:String, completion: (response: AnyObject?, error: NSError?) -> Void) {
         
-        var patch = Patch.fetchOneById(patchId, inManagedObjectContext: self.managedObjectContext) as Patch?
+        if let patchType = type as? Patch.Type {
+            self.proxibaseClient.findPatch(id, completion: completion)
+        } else if let userType = type as? User.Type {
+            self.proxibaseClient.findUser(id, completion: completion)
+        }
         
-        if refresh || patch == nil {
+    }
+    
+    private func withModel(modelType:ServiceBase.Type, id:String, refresh:Bool = false, completion: (ServiceBase) -> Void) {
+        var object = modelType.fetchOneById(id, inManagedObjectContext: self.managedObjectContext)
+        
+        if refresh || object == nil {
             
-            self.proxibaseClient.findPatch(patchId, completion: { (response, error) -> Void in
+            self.findModelType(modelType, withId: id, completion: { (response, error) -> Void in
+                
                 if error != nil {
-                    //NSLog("\(error)")
-                    completion(patch)
+                    
+                    completion(object)
+                    
                 } else {
+                    
                     if let dictionary = response as? [NSObject : AnyObject] {
+                        
                         let dataWrapper = ServiceData()
                         ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper, mappingNames: false)
+                        
                         if let entityDictionaries = dataWrapper.data as? [[NSObject : AnyObject]] {
+                            
                             if entityDictionaries.count == 1 {
-                                patch = Patch.fetchOrInsertOneById(patchId, inManagedObjectContext: self.managedObjectContext) as Patch?
-                                Patch.setPropertiesFromDictionary(entityDictionaries[0], onObject: patch, mappingNames: true)
+                                object = modelType.fetchOrInsertOneById(id, inManagedObjectContext: self.managedObjectContext)
+                                modelType.setPropertiesFromDictionary(entityDictionaries[0], onObject: object, mappingNames: true)
                             }
+                            
                         }
-                        for queryResult in patch?.queryResults?.allObjects as? [QueryResult] ?? [] {
+                        
+                        for queryResult in object?.queryResults?.allObjects as? [QueryResult] ?? [] {
                             // Poke each impacted queryResult to trigger NSFetchedResultsController callbacks
                             queryResult.modificationDate = NSDate()
                         }
+                        
                         self.managedObjectContext.save(nil)
+                        
                     }
-                    completion(patch)
+                    
+                    completion(object)
+                    
                 }
             })
             
         } else {
-            completion(patch)
+            
+            completion(object)
+            
+        }
+    }
+    
+    func withPatch(patchId:String, refresh:Bool = false, completion: (Patch?) -> Void) {
+        self.withModel(Patch.self, id: patchId, refresh: refresh) { (model) -> Void in
+            completion(model as? Patch)
+        }
+    }
+    
+    func withUser(userId:String, refresh:Bool = false, completion: (User?) -> Void) {
+        self.withModel(User.self, id: userId, refresh: refresh) { (model) -> Void in
+            completion(model as? User)
         }
     }
     
@@ -130,7 +171,7 @@ class DataStore: NSObject {
             // Hacky: The explore patches API doesn't return fully populated Patch objects so we need to go through and refetch everything :(
             if query.name == "Explore patches" {
                 for queryResult in results {
-                    if let patch = queryResult.entity_ as? Patch {
+                    if let patch = queryResult.result as? Patch {
                         withPatch(patch.id_, refresh: true, completion: { (_) -> Void in })
                     }
                 }
@@ -154,12 +195,12 @@ class DataStore: NSObject {
             self.proxibaseClient.fetchMessagesForPatch(patchId, completion: refreshCompletion)
         case "Current user":
             self.proxibaseClient.fetchCurrentUser(refreshCompletion)
-        case "Likers for patch":
+        case DataStoreQueryName.LikersLinksForPatch.rawValue:
             let patchId = query.parameters["patchId"] as String
-            self.proxibaseClient.fetchLikersForPatch(patchId, completion: refreshCompletion)
-        case "Watchers for patch":
+            self.proxibaseClient.fetchPatchWithLikerLinks(patchId, completion: refreshCompletion)
+        case DataStoreQueryName.WatchersLinksForPatch.rawValue:
             let patchId = query.parameters["patchId"] as String
-            self.proxibaseClient.fetchLikersForPatch(patchId, completion: refreshCompletion)
+            self.proxibaseClient.fetchPatchWithWatcherLinks(patchId, completion: refreshCompletion)
         default:
             assert(false, "No refreshResultsFor implementation for query name \(query.name)")
         }
@@ -167,11 +208,63 @@ class DataStore: NSObject {
     
     private func handleResponseForQuery(query: Query, response: AnyObject) -> [QueryResult] {
         var queryResults: [QueryResult] = []
-        queryResults = handleServiceDataResponseForQuery(query, response: response).results
+        switch query.name {
+        case DataStoreQueryName.LikersLinksForPatch.rawValue, DataStoreQueryName.WatchersLinksForPatch.rawValue:
+            // QueryResults will be PALink type
+            let json = JSON(response)
+            let links = json["data"]["links"]
+            for (index: String, subJson: JSON) in links {
+                let position = index.toInt() ?? 0 // TODO: This will end up being something like: index.toInt() + query.offset
+                if let queryResult = self.extractQueryResultFrom(subJson, query: query, resultPositionValue: position) {
+                    queryResults.append(queryResult)
+                }
+            }
+        default:
+            queryResults = handleServiceDataResponseForQuery(query, response: response).results
+        }
         return queryResults
     }
     
+    private func extractQueryResultFrom(entityJSON: JSON, query: Query, resultPositionValue: Int) -> QueryResult? {
+        
+        var queryResult: QueryResult!
+        
+        if let schema = entityJSON["schema"].string {
+            
+            if let modelType = self.schemaDictionary[schema] {
+                
+                var entityModel : ServiceBase
+                if let entityId = entityJSON["_id"].string {
+                    entityModel = modelType.fetchOrInsertOneById(entityId, inManagedObjectContext: self.managedObjectContext) as ServiceBase
+                } else if let entityId = entityJSON["id"].string { // Old API doesn't have the underscore (?)
+                    entityModel = modelType.fetchOrInsertOneById(entityId, inManagedObjectContext: self.managedObjectContext) as ServiceBase
+                } else {
+                    entityModel = modelType.insertInManagedObjectContext(self.managedObjectContext) as ServiceBase
+                }
+                
+                modelType.setPropertiesFromDictionary(entityJSON.dictionaryObject, onObject: entityModel, mappingNames: true)
+                
+                for existingQueryResult in entityModel.queryResults.allObjects as [QueryResult] {
+                    if existingQueryResult.query == query {
+                        queryResult = existingQueryResult
+                    }
+                }
+                
+                if queryResult == nil {
+                    queryResult = QueryResult.insertInManagedObjectContext(self.managedObjectContext) as QueryResult
+                }
+                
+                queryResult.query = query
+                queryResult.result = entityModel
+                queryResult.position = resultPositionValue
+                queryResult.sortDate = entityModel.sortDate
+            }
+        }
+        return queryResult
+    }
+    
     private func handleServiceDataResponseForQuery(query: Query, response: AnyObject) -> (serviceData: ServiceData, results: [QueryResult]) {
+
         var results: [QueryResult] = []
         let dataWrapper = ServiceData()
         if let dictionary = response as? [NSObject : AnyObject] {
@@ -205,7 +298,7 @@ class DataStore: NSObject {
                             }
                             
                             queryResult.query = query
-                            queryResult.entity_ = entityModel
+                            queryResult.result = entityModel
                             queryResult.position = resultPosition++
                             //queryResult.rank = entityModel.rank
                             queryResult.sortDate = entityModel.sortDate

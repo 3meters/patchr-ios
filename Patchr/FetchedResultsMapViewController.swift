@@ -112,7 +112,9 @@ class FetchedResultsMapViewController: UIViewController, MKMapViewDelegate, NSFe
         // TODO: we can do better than a full reload
         switch type {
         case .Insert:
-            self.mapView.addAnnotation(EntityAnnotation(entity: queryResult!.entity_))
+            if let entity = queryResult!.result as? Entity {
+                self.mapView.addAnnotation(EntityAnnotation(entity: entity))
+            }
         case .Delete:
             self.reloadAnnotations()
         case .Update:
@@ -131,8 +133,8 @@ class FetchedResultsMapViewController: UIViewController, MKMapViewDelegate, NSFe
         if let fetchedObjects = self.fetchedResultsController.fetchedObjects {
             for object in fetchedObjects {
                 if let queryResult = object as? QueryResult {
-                    if queryResult.entity_.location != nil {
-                        self.mapView.addAnnotation(EntityAnnotation(entity: queryResult.entity_))
+                    if let entity = queryResult.result as? Entity {
+                        self.mapView.addAnnotation(EntityAnnotation(entity: entity))
                     }
                 }
             }

@@ -35,6 +35,8 @@
 		7D40B9501A79A6FD00F9954C /* _ProviderMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D40B94D1A79A6FD00F9954C /* _ProviderMap.m */; };
 		7D40B9511A79A6FD00F9954C /* ProviderMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D40B94F1A79A6FD00F9954C /* ProviderMap.m */; };
 		7D40B9531A79AB0200F9954C /* NearbyPatchesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D40B9521A79AB0200F9954C /* NearbyPatchesTableViewController.swift */; };
+		7D5545861AD33B1D007150E5 /* UserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5545841AD33B1D007150E5 /* UserTableViewCell.swift */; };
+		7D5545871AD33B1D007150E5 /* UserTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7D5545851AD33B1D007150E5 /* UserTableViewCell.xib */; };
 		7D56EE8B1A70616500BFCC32 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */; };
 		7D56EE8C1A70617200BFCC32 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */; };
 		7D56EE8D1A70618800BFCC32 /* ProxibaseAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3D39EF1A6F116E00A44CB2 /* ProxibaseAPI.swift */; };
@@ -71,6 +73,8 @@
 		7DB6E0F91A8174E90017A42F /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DB6E0F71A8174E90017A42F /* Message.m */; };
 		7DB6E0FE1A8177060017A42F /* _User.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DB6E0FB1A8177060017A42F /* _User.m */; };
 		7DB6E0FF1A8177060017A42F /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DB6E0FD1A8177060017A42F /* User.m */; };
+		7DC1763E1ACDFF010051BA6C /* _PALink.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DC1763B1ACDFF010051BA6C /* _PALink.m */; };
+		7DC1763F1ACDFF010051BA6C /* PALink.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DC1763D1ACDFF010051BA6C /* PALink.m */; };
 		7DC9D4911A9D46D100234E3C /* RegistrationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC9D4901A9D46D100234E3C /* RegistrationTableViewController.swift */; };
 		7DC9D4941A9D4FAD00234E3C /* NotificationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC9D4921A9D4FAD00234E3C /* NotificationTableViewCell.swift */; };
 		7DC9D4951A9D4FAD00234E3C /* NotificationTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7DC9D4931A9D4FAD00234E3C /* NotificationTableViewCell.xib */; };
@@ -150,6 +154,8 @@
 		7D40B94E1A79A6FD00F9954C /* ProviderMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProviderMap.h; path = Model/ProviderMap.h; sourceTree = "<group>"; };
 		7D40B94F1A79A6FD00F9954C /* ProviderMap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProviderMap.m; path = Model/ProviderMap.m; sourceTree = "<group>"; };
 		7D40B9521A79AB0200F9954C /* NearbyPatchesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearbyPatchesTableViewController.swift; sourceTree = "<group>"; };
+		7D5545841AD33B1D007150E5 /* UserTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTableViewCell.swift; sourceTree = "<group>"; };
+		7D5545851AD33B1D007150E5 /* UserTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserTableViewCell.xib; sourceTree = "<group>"; };
 		7D668A971A9C08DC005EDAF8 /* PatchTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTableViewCell.swift; sourceTree = "<group>"; };
 		7D668A981A9C08DC005EDAF8 /* PatchTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PatchTableViewCell.xib; sourceTree = "<group>"; };
 		7D6E26461A7AB93F000128A7 /* MeTableViewViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeTableViewViewController.swift; sourceTree = "<group>"; };
@@ -202,6 +208,10 @@
 		7DB6E0FB1A8177060017A42F /* _User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _User.m; path = Model/_User.m; sourceTree = "<group>"; };
 		7DB6E0FC1A8177060017A42F /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = User.h; path = Model/User.h; sourceTree = "<group>"; };
 		7DB6E0FD1A8177060017A42F /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = User.m; path = Model/User.m; sourceTree = "<group>"; };
+		7DC1763A1ACDFF010051BA6C /* _PALink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _PALink.h; path = Model/_PALink.h; sourceTree = "<group>"; };
+		7DC1763B1ACDFF010051BA6C /* _PALink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _PALink.m; path = Model/_PALink.m; sourceTree = "<group>"; };
+		7DC1763C1ACDFF010051BA6C /* PALink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PALink.h; path = Model/PALink.h; sourceTree = "<group>"; };
+		7DC1763D1ACDFF010051BA6C /* PALink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PALink.m; path = Model/PALink.m; sourceTree = "<group>"; };
 		7DC9D4901A9D46D100234E3C /* RegistrationTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegistrationTableViewController.swift; sourceTree = "<group>"; };
 		7DC9D4921A9D4FAD00234E3C /* NotificationTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationTableViewCell.swift; sourceTree = "<group>"; };
 		7DC9D4931A9D4FAD00234E3C /* NotificationTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NotificationTableViewCell.xib; sourceTree = "<group>"; };
@@ -357,6 +367,8 @@
 				7D3F26D81A7706610015F8E8 /* _Notification.m */,
 				7D40B9461A79A36D00F9954C /* _PACategory.h */,
 				7D40B9471A79A36D00F9954C /* _PACategory.m */,
+				7DC1763A1ACDFF010051BA6C /* _PALink.h */,
+				7DC1763B1ACDFF010051BA6C /* _PALink.m */,
 				7DA730731A71ACC9008C25FA /* _Patch.h */,
 				7DA730741A71ACC9008C25FA /* _Patch.m */,
 				7D3F26CD1A76F77E0015F8E8 /* _Photo.h */,
@@ -381,10 +393,15 @@
 				7D3F26D01A76F77E0015F8E8 /* Location.m */,
 				7DB6E0F61A8174E90017A42F /* Message.h */,
 				7DB6E0F71A8174E90017A42F /* Message.m */,
+				7DE975EC1AA7F72400C1ECE9 /* ModelUtilities.h */,
+				7DE975ED1AA7F72400C1ECE9 /* ModelUtilities.m */,
 				7D3F26D91A7706610015F8E8 /* Notification.h */,
 				7D3F26DA1A7706610015F8E8 /* Notification.m */,
 				7D40B9481A79A36D00F9954C /* PACategory.h */,
 				7D40B9491A79A36D00F9954C /* PACategory.m */,
+				7D970C7F1AB2185D008A4FC7 /* PAEnums.h */,
+				7DC1763C1ACDFF010051BA6C /* PALink.h */,
+				7DC1763D1ACDFF010051BA6C /* PALink.m */,
 				7DA7307F1A71ACC9008C25FA /* Patch.h */,
 				7DA730801A71ACC9008C25FA /* Patch.m */,
 				7D3F26D11A76F77E0015F8E8 /* Photo.h */,
@@ -405,9 +422,6 @@
 				7DA730881A71ACC9008C25FA /* ServiceObject.m */,
 				7DB6E0FC1A8177060017A42F /* User.h */,
 				7DB6E0FD1A8177060017A42F /* User.m */,
-				7DE975EC1AA7F72400C1ECE9 /* ModelUtilities.h */,
-				7DE975ED1AA7F72400C1ECE9 /* ModelUtilities.m */,
-				7D970C7F1AB2185D008A4FC7 /* PAEnums.h */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -442,6 +456,8 @@
 		7DF828571ABB8804009E46FD /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				7D5545841AD33B1D007150E5 /* UserTableViewCell.swift */,
+				7D5545851AD33B1D007150E5 /* UserTableViewCell.xib */,
 				7D239F141AB8E6D300488F8F /* MediaTableViewCell.swift */,
 				7D970C821AB26021008A4FC7 /* MessageTableViewCell.swift */,
 				7D970C831AB26021008A4FC7 /* MessageTableViewCell.xib */,
@@ -559,6 +575,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D5545871AD33B1D007150E5 /* UserTableViewCell.xib in Resources */,
 				7DC9D4951A9D4FAD00234E3C /* NotificationTableViewCell.xib in Resources */,
 				7D2610FF1AAE736100FA0F8E /* LaunchStoryboard.storyboard in Resources */,
 				8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */,
@@ -689,6 +706,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				7DB6E0FE1A8177060017A42F /* _User.m in Sources */,
+				7D5545861AD33B1D007150E5 /* UserTableViewCell.swift in Sources */,
+				7DC1763E1ACDFF010051BA6C /* _PALink.m in Sources */,
 				7DA730911A71ACC9008C25FA /* Place.m in Sources */,
 				7D7096011A71D55C00F835C4 /* _QueryResult.m in Sources */,
 				7D01FA361A7024E200DD6DFA /* JSONResponseSerializerWithData.m in Sources */,
@@ -721,6 +740,7 @@
 				7D3F26D51A76F77E0015F8E8 /* Location.m in Sources */,
 				7DC9D4941A9D4FAD00234E3C /* NotificationTableViewCell.swift in Sources */,
 				7D40B9531A79AB0200F9954C /* NearbyPatchesTableViewController.swift in Sources */,
+				7DC1763F1ACDFF010051BA6C /* PALink.m in Sources */,
 				7D3F26D41A76F77E0015F8E8 /* _Photo.m in Sources */,
 				7D970C841AB26021008A4FC7 /* MessageTableViewCell.swift in Sources */,
 				7D40B9511A79A6FD00F9954C /* ProviderMap.m in Sources */,

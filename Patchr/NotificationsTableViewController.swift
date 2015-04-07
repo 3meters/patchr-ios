@@ -88,7 +88,7 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
         }
         
         let queryResult = object as QueryResult
-        let notification = queryResult.entity_ as Notification
+        let notification = queryResult.result as Notification
         let notificationCell = cell as NotificationTableViewCell
         notificationCell.delegate = self
         notificationCell.messageBodyLabel.text = notification.summary
@@ -119,7 +119,7 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as QueryResult
-        let notification = queryResult.entity_ as Notification
+        let notification = queryResult.result as Notification
         self.segueWith(notification.targetId, parentId: notification.parentId)
     }
     

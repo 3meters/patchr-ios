@@ -21,7 +21,6 @@ const struct EntityAttributes EntityAttributes = {
 const struct EntityRelationships EntityRelationships = {
 	.location = @"location",
 	.photo = @"photo",
-	.queryResults = @"queryResults",
 };
 
 const struct EntityUserInfo EntityUserInfo = {
@@ -223,17 +222,6 @@ const struct EntityUserInfo EntityUserInfo = {
 @dynamic location;
 
 @dynamic photo;
-
-@dynamic queryResults;
-
-- (NSMutableSet*)queryResultsSet {
-	[self willAccessValueForKey:@"queryResults"];
-
-	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"queryResults"];
-
-	[self didAccessValueForKey:@"queryResults"];
-	return result;
-}
 
 @end
 

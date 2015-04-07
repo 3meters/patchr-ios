@@ -23,7 +23,6 @@
         </attribute>
         <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Location" inverseName="entity_" inverseEntity="Location" syncable="YES"/>
         <relationship name="photo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Photo" inverseName="entity_" inverseEntity="Photo" syncable="YES"/>
-        <relationship name="queryResults" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="QueryResult" inverseName="entity_" inverseEntity="QueryResult" syncable="YES"/>
         <userInfo>
             <entry key="additionalHeaderFileName" value="PAEnums.h"/>
         </userInfo>
@@ -62,6 +61,13 @@
         <relationship name="categories" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PACategory" inverseName="categories" inverseEntity="PACategory" syncable="YES"/>
         <relationship name="patches" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Patch" inverseName="category" inverseEntity="Patch" syncable="YES"/>
         <relationship name="photo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Photo" inverseName="category" inverseEntity="Photo" syncable="YES"/>
+    </entity>
+    <entity name="PALink" representedClassName="PALink" parentEntity="ServiceBase" syncable="YES">
+        <attribute name="enabled" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="fromId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="fromSchema" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="toId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="toSchema" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="Patch" representedClassName="Patch" parentEntity="Entity" syncable="YES">
         <attribute name="signalFence" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
@@ -113,8 +119,8 @@
         <attribute name="modificationDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="position" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="sortDate" optional="YES" attributeType="Date" syncable="YES"/>
-        <relationship name="entity_" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Entity" inverseName="queryResults" inverseEntity="Entity" syncable="YES"/>
         <relationship name="query" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Query" inverseName="queryResults" inverseEntity="Query" syncable="YES"/>
+        <relationship name="result" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ServiceBase" inverseName="queryResults" inverseEntity="ServiceBase" syncable="YES"/>
     </entity>
     <entity name="ServiceBase" representedClassName="ServiceBase" isAbstract="YES" parentEntity="ServiceObject" syncable="YES">
         <attribute name="activityDate" optional="YES" attributeType="Date" syncable="YES"/>
@@ -135,6 +141,7 @@
         <relationship name="creator" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ServiceBase" inverseName="created" inverseEntity="ServiceBase" syncable="YES"/>
         <relationship name="owned" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ServiceBase" inverseName="owner" inverseEntity="ServiceBase" syncable="YES"/>
         <relationship name="owner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ServiceBase" inverseName="owned" inverseEntity="ServiceBase" syncable="YES"/>
+        <relationship name="queryResults" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="QueryResult" inverseName="result" inverseEntity="QueryResult" syncable="YES"/>
     </entity>
     <entity name="ServiceObject" representedClassName="ServiceObject" isAbstract="YES" syncable="YES">
         <attribute name="updateScope" optional="YES" attributeType="String" syncable="YES"/>
@@ -161,18 +168,19 @@
         <relationship name="replies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Message" inverseName="replyTo" inverseEntity="Message" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Entity" positionX="-63" positionY="-18" width="128" height="270"/>
+        <element name="Entity" positionX="-63" positionY="-18" width="128" height="253"/>
         <element name="Location" positionX="-18" positionY="54" width="128" height="163"/>
         <element name="Message" positionX="-18" positionY="135" width="128" height="103"/>
         <element name="Notification" positionX="0" positionY="144" width="128" height="193"/>
         <element name="PACategory" positionX="-9" positionY="144" width="128" height="118"/>
+        <element name="PALink" positionX="-18" positionY="135" width="128" height="118"/>
         <element name="Patch" positionX="-54" positionY="0" width="128" height="103"/>
         <element name="Photo" positionX="-9" positionY="63" width="128" height="180"/>
         <element name="Place" positionX="-36" positionY="18" width="128" height="178"/>
         <element name="ProviderMap" positionX="0" positionY="153" width="128" height="148"/>
         <element name="Query" positionX="-18" positionY="36" width="128" height="88"/>
         <element name="QueryResult" positionX="-18" positionY="36" width="128" height="120"/>
-        <element name="ServiceBase" positionX="0" positionY="63" width="128" height="313"/>
+        <element name="ServiceBase" positionX="0" positionY="63" width="128" height="330"/>
         <element name="ServiceObject" positionX="18" positionY="72" width="128" height="60"/>
         <element name="User" positionX="-9" positionY="144" width="128" height="328"/>
     </elements>

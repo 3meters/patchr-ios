@@ -61,6 +61,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         }
         
         self.window?.tintColor = UIColor(hue: 33/360, saturation: 1.0, brightness: 0.9, alpha: 1.0)
+        UISwitch.appearance().onTintColor = self.window?.tintColor
         
         self.registerForRemoteNotifications()
         

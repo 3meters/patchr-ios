@@ -36,5 +36,6 @@
 #import "Photo.h"
 #import "Message.h"
 #import "User.h"
+#import "PALink.h"
 
 #endif
