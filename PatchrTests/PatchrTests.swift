@@ -114,7 +114,8 @@ class PatchrTests: XCTestCase {
         var expectation = self.expectationWithDescription("Fetch patches with the most messages")
         let client = ProxibaseClient()
         client.signIn("rob@robmaceachern.com", password: "test9090") { (response, error) -> Void in
-            client.fetchMostMessagedPatches(completion: { (response, error) -> Void in
+            let location = CLLocationCoordinate2D(latitude: 49.2845280, longitude: -123.1092720)
+            client.fetchInterestingPatches(location, completion: { (response, error) -> Void in
                 if error == nil && response != nil {
                     //NSLog("\(response)")
                     expectation.fulfill()

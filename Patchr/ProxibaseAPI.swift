@@ -682,13 +682,16 @@ public class ProxibaseClient {
         self.performPOSTRequestFor("user/getNotifications", parameters: parameters, completion: completion)
     }
     
-    public func fetchMostMessagedPatches(limit: NSInteger = 50, skip: NSInteger = 0, completion:(response: AnyObject?, error: NSError?) -> Void) {
+    public func fetchInterestingPatches(location: CLLocationCoordinate2D, limit: NSInteger = 50, skip: NSInteger = 0, completion:(response: AnyObject?, error: NSError?) -> Void) {
         var allLinks = self.standardPatchLinks()
         let parameters : Dictionary<String, AnyObject> = [
-            "type" : "content",
+            "location" : [
+                "lat" : location.latitude,
+                "lng" : location.longitude
+            ],
             "linked" : allLinks.map { $0.toDictionary() } // Doesn't work the same as /find API
         ]
-        self.performPOSTRequestFor("stats/to/patches/from/messages", parameters: parameters, completion: completion)
+        self.performPOSTRequestFor("patches/interesting", parameters: parameters, completion: completion)
     }
     
     public func fetchMessagesOwnedByCurrentUser(limit: NSInteger = 50, skip: NSInteger = 0, links: [Link] = [], completion:(response: AnyObject?, error: NSError?) -> Void) {

@@ -168,26 +168,19 @@ class DataStore: NSObject {
             // query.offset = results.count
             self.managedObjectContext.save(nil)
             
-            // Hacky: The explore patches API doesn't return fully populated Patch objects so we need to go through and refetch everything :(
-            if query.name == "Explore patches" {
-                for queryResult in results {
-                    if let patch = queryResult.result as? Patch {
-                        withPatch(patch.id_, refresh: true, completion: { (_) -> Void in })
-                    }
-                }
-            }
-            
             completion(results: results, error: error)
         }
+        
+        let defaultRadius = 10000
         
         switch query.name {
             
         case "Nearby patches":
-            self.proxibaseClient.fetchNearbyPatches(self.currentUserLocation(), radius: 10000, completion:refreshCompletion)
+            self.proxibaseClient.fetchNearbyPatches(self.currentUserLocation(), radius: defaultRadius, completion:refreshCompletion)
         case "Notifications for current user":
             self.proxibaseClient.fetchNotifications(completion: refreshCompletion)
         case "Explore patches":
-            self.proxibaseClient.fetchMostMessagedPatches(completion: refreshCompletion)
+            self.proxibaseClient.fetchInterestingPatches(self.currentUserLocation(), completion: refreshCompletion)
         case "Comments by current user":
             self.proxibaseClient.fetchMessagesOwnedByCurrentUser(completion: refreshCompletion)
         case "Messages for patch":

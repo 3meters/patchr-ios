@@ -30,7 +30,7 @@
     if ([dictionary[@"linkedCount"] isKindOfClass:[NSDictionary class]]) {
         entity.linkedCounts = dictionary[@"linkedCount"];
         entity.numberOfLikes = [Entity countForStatWithType:@"like" schema:@"users" inLinkedCounts:entity.linkedCounts];
-        entity.numberOfWatchersValue = [[Entity countForStatWithType:@"watch" schema:@"users" inLinkedCounts:entity.linkedCounts] integerValue];
+        entity.numberOfWatchers = [Entity countForStatWithType:@"watch" schema:@"users" inLinkedCounts:entity.linkedCounts];
     }
     
     entity.reason = dictionary[@"reason"];
