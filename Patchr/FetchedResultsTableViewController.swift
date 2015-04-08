@@ -26,10 +26,13 @@ class FetchedResultsTableViewController: UITableViewController, FetchedResultsVi
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        
         // While the tableView is off-screen, the visibile cells may have missed some calls to configureCell()
         if let visibleRowIndexPaths = self.tableView.indexPathsForVisibleRows() {
             self.tableView.reloadRowsAtIndexPaths(visibleRowIndexPaths, withRowAnimation: .None)
         }
+        
+        self.tableView.separatorInset = UIEdgeInsetsZero
     }
     
     // MARK: Table view data source
@@ -54,6 +57,15 @@ class FetchedResultsTableViewController: UITableViewController, FetchedResultsVi
         // There doesn't seem to be a nice way to register cells when using UISearchDisplayController,
         // so we just grab them from the original table.
         let cell = self.tableView.dequeueReusableCellWithIdentifier("Cell") as UITableViewCell
+        cell.separatorInset = UIEdgeInsetsZero
+        
+        if cell.respondsToSelector("layoutMargins") {
+            cell.layoutMargins = UIEdgeInsetsZero
+        }
+
+        if cell.respondsToSelector("preservesSuperviewLayoutMargins") {
+            cell.preservesSuperviewLayoutMargins = false
+        }
         var object : AnyObject = self.fetchedResultsControllerForViewController(self).sections![indexPath.section].objects[indexPath.row]
         configureCell(cell, object: object)
         return cell
