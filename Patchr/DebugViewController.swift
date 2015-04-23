@@ -18,15 +18,17 @@ class DebugViewController: UIViewController
     
     let userDefaults = { NSUserDefaults.standardUserDefaults() }()
     
+
+    
     var uriAtStart: String = ""
     
     private func updateSegmentControl()
     {
-        if serverURIField.text == ProxibaseClient.sharedInstance.StagingURI
+        if serverURIField.text == ProxibaseClient.sharedInstance.ProductionURI
         {
             serverControl.selectedSegmentIndex = 0
         }
-        else if serverURIField.text == ProxibaseClient.sharedInstance.ProductionURI
+        else if serverURIField.text == ProxibaseClient.sharedInstance.StagingURI
         {
             serverControl.selectedSegmentIndex = 1
         }
@@ -68,9 +70,9 @@ class DebugViewController: UIViewController
     @IBAction func serverControlAction(sender: AnyObject)
     {
         if serverControl.selectedSegmentIndex == 0 {
-            serverURIField.text = ProxibaseClient.sharedInstance.StagingURI
-        } else if serverControl.selectedSegmentIndex == 1 {
             serverURIField.text = ProxibaseClient.sharedInstance.ProductionURI
+        } else if serverControl.selectedSegmentIndex == 1 {
+            serverURIField.text = ProxibaseClient.sharedInstance.StagingURI
         }
     }
     

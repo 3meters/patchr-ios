@@ -224,10 +224,11 @@ public class ProxibaseClient {
     required public init() {
     
         let userDefaults = NSUserDefaults.standardUserDefaults()
+
         var serverURI = userDefaults.stringForKey(PatchrUserDefaultKey("serverURI"))
 
         if serverURI == nil || serverURI?.utf16Count == 0 {
-            serverURI = StagingURI
+            serverURI = ProductionURI
             userDefaults.setObject(serverURI, forKey: PatchrUserDefaultKey("serverURI"))
         }
 
