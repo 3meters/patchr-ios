@@ -18,9 +18,7 @@ NSString *const JSONResponseSerializerWithDataKey = @"JSONResponseSerializerWith
     id JSONObject = [super responseObjectForResponse:response data:data error:error];
     if (*error != nil) {
         NSMutableDictionary *userInfo = [(*error).userInfo mutableCopy];
-        if (data == nil) {
-            userInfo[JSONResponseSerializerWithDataKey] = nil;
-        } else {
+        if (data != nil) {
             id responseJSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
             userInfo[JSONResponseSerializerWithDataKey] = responseJSON;
         }
