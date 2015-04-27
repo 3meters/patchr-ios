@@ -77,8 +77,8 @@ struct ServerError
             self.error = error
             let userInfoDictionary = (error.userInfo as NSDictionary?)
             
-            response = (userInfoDictionary?[JSONResponseSerializerWithDataKey] as NSDictionary?)
-            let responseErrorDictionary = response?["error"] as NSDictionary?
+            response = (userInfoDictionary?[JSONResponseSerializerWithDataKey] as! NSDictionary?)
+            let responseErrorDictionary = response?["error"] as! NSDictionary?
 
             if let responseDict = responseErrorDictionary {
                 if let responseMessage = responseDict["message"] as? String {
@@ -118,8 +118,8 @@ struct ServerResponse
     
     init(_ responseObject: AnyObject?)
     {
-        responseDictionary = responseObject as NSDictionary
-        resultCount = (responseDictionary["count"] as NSNumber).integerValue
+        responseDictionary = responseObject as! NSDictionary
+        resultCount = (responseDictionary["count"] as! NSNumber).integerValue
         
     }
     
@@ -130,10 +130,10 @@ struct ServerResponse
                 return NSArray()
             }
             else if resultCount == 1 {
-                return NSArray(object: responseDictionary["data"] as NSDictionary)
+                return NSArray(object: responseDictionary["data"] as! NSDictionary)
             }
             else {
-                return responseDictionary["data"] as NSArray
+                return responseDictionary["data"] as! NSArray
             }
         }
     }
@@ -148,7 +148,7 @@ struct ServerResponse
         }
         if let resultArray = responseDictionary["data"] as? NSArray
         {
-            return resultArray[0] as NSDictionary
+            return resultArray[0] as! NSDictionary
         }
         
         assert(false, "Unexpected result")
@@ -158,7 +158,7 @@ struct ServerResponse
     
     var resultID: String {
         get {
-            return self.resultObject["_id"] as String
+            return self.resultObject["_id"] as! String
         }
     }
     
@@ -168,7 +168,7 @@ struct ServerResponse
     {
         for object in self.resultObjects
         {
-            block(object as NSDictionary)
+            block(object as! NSDictionary)
         }
     }
 
@@ -178,15 +178,17 @@ struct ServerResponse
 public class ProxibaseClient {
 
     // Use this in Swift 1.2
-    // static let sharedInstance = ProxibaseClient()
+    static let sharedInstance = ProxibaseClient()
     
     // Else use this in Swift 1.1
+    /*
     class var sharedInstance: ProxibaseClient {
         struct Static {
             static let instance: ProxibaseClient = ProxibaseClient()
         }
         return Static.instance
     }
+    */
     
     private let sessionManager: AFHTTPSessionManager
 
@@ -227,7 +229,7 @@ public class ProxibaseClient {
 
         var serverURI = userDefaults.stringForKey(PatchrUserDefaultKey("serverURI"))
 
-        if serverURI == nil || serverURI?.utf16Count == 0 {
+        if serverURI == nil {
             serverURI = ProductionURI
             userDefaults.setObject(serverURI, forKey: PatchrUserDefaultKey("serverURI"))
         }
@@ -257,11 +259,11 @@ public class ProxibaseClient {
                     
                     serverResponse.forEachResultObject { resultObject in
                     
-                        var mutableObject = resultObject.mutableCopy() as NSMutableDictionary
+                        var mutableObject = resultObject.mutableCopy() as! NSMutableDictionary
                         // The server returns us an empty array of "categories" for each category, but will not
                         // accept these from us, so remove them here.
                         mutableObject.removeObjectForKey("categories")
-                        categories[mutableObject["id"] as NSString] = mutableObject
+                        categories[mutableObject["id"] as! NSString as String] = mutableObject
                     }
                     self.categories = categories
                 }
@@ -277,6 +279,10 @@ public class ProxibaseClient {
 //          region: 'us-west-2',
 //          bucket: 'aircandi-images',
 //      }
+// TODO: switch to iam credentials
+//
+// TODO: store in aws cognito or some remote storage that is loaded on app launch
+//
     private let PatchrS3Key    = "AKIAIYU2FPHC2AOUG3CA"
     private let PatchrS3Secret = "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"
     
@@ -310,7 +316,10 @@ public class ProxibaseClient {
         // NOTE: I can't get Swift to recognize the enum values for AWSRegionTypes and AWSS3ObjectCannedACLs, so I have used
         // rawValue: initializers here.
         
-        let credProvider = AWSStaticCredentialsProvider.credentialsWithAccessKey(PatchrS3Key, secretKey: PatchrS3Secret)
+        // George: no longer compiles in aws 2.1.1
+        // let credProvider = AWSStaticCredentialsProvider.credentialsWithAccessKey(PatchrS3Key, secretKey: PatchrS3Secret)
+        
+        let credProvider = AWSStaticCredentialsProvider(accessKey: PatchrS3Key, secretKey: PatchrS3Secret)
         let serviceConfig = AWSServiceConfiguration(region: AWSRegionType(rawValue: 3/*'us-west-2'*/)!, credentialsProvider: credProvider)
 
         let uploadRequest = AWSS3TransferManagerUploadRequest()
@@ -320,7 +329,11 @@ public class ProxibaseClient {
         uploadRequest.ACL = AWSS3ObjectCannedACL(rawValue: 2/*AWSS3ObjectCannedACLPublicRead*/)!
         uploadRequest.contentType = contentType
         
-        let transferManager = AWSS3TransferManager(configuration: serviceConfig, identifier: "AWS-Patcher")
+        // George: no longer compiles in aws 2.1.1
+        // let transferManager = AWSS3TransferManager(configuration: serviceConfig, identifier: "AWS-Patcher")
+        AWSS3TransferManager.registerS3TransferManagerWithConfiguration(serviceConfig, forKey: "AWS-Patchr")
+
+        let transferManager = AWSS3TransferManager.S3TransferManagerForKey("AWS-Patchr")
 
         let task = transferManager.upload(uploadRequest)
         
@@ -554,7 +567,7 @@ public class ProxibaseClient {
     //
     private func postObject(path:String, parameters: NSDictionary, completion: ProxibaseCompletionBlock)
     {
-        let properties = parameters.mutableCopy() as NSMutableDictionary
+        let properties = parameters.mutableCopy() as! NSMutableDictionary
         let queue = dispatch_queue_create("post-object-queue", DISPATCH_QUEUE_SERIAL)
         
         convertLocationProperties(properties)
@@ -713,8 +726,8 @@ public class ProxibaseClient {
     public func registerInstallStandard(completion:(response: AnyObject?, error: NSError?) -> Void) {
         let installId = self.installationIdentifier
         let parseInstallId = PFInstallation.currentInstallation().installationId
-        let clientVersionName = NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleShortVersionString") as String
-        let clientVersionCode = (NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleVersion") as String).toInt()!
+        let clientVersionName = NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleShortVersionString") as! String
+        let clientVersionCode = (NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleVersion") as! String).toInt()!
         let clientPackageName = NSBundle.mainBundle().bundleIdentifier!
         let deviceName = UIDevice.currentDevice().modelIdentifier()
         let deviceType = "ios"
@@ -745,7 +758,7 @@ public class ProxibaseClient {
         if self.authenticated
         {
             var authParameters = NSMutableDictionary(dictionary: ["user" : self.userId!, "session" : self.sessionKey!])
-            authParameters.addEntriesFromDictionary(parameters)
+            authParameters.addEntriesFromDictionary(parameters as [NSObject : AnyObject])
             parameters = authParameters
         }
         return parameters
@@ -753,7 +766,7 @@ public class ProxibaseClient {
     
     public func performPOSTRequestFor(path: NSString, var parameters : NSDictionary, completion: ProxibaseCompletionBlock)
     {
-        self.sessionManager.POST(path, parameters: authenticatedParameters(parameters),
+        self.sessionManager.POST(path as String, parameters: authenticatedParameters(parameters),
             success: { (dataTask, response) -> Void in
                 completion(response: response, error: nil)
             },
@@ -765,7 +778,7 @@ public class ProxibaseClient {
     
     public func performGETRequestFor(path: NSString, var parameters : NSDictionary, completion: ProxibaseCompletionBlock)
     {
-        self.sessionManager.GET(path, parameters: authenticatedParameters(parameters),
+        self.sessionManager.GET(path as String, parameters: authenticatedParameters(parameters),
             success: { (dataTask, response) -> Void in
                 completion(response: response, error: nil)
             },
@@ -777,7 +790,7 @@ public class ProxibaseClient {
     
     public func performDELETERequestFor(path: NSString, var parameters: NSDictionary, completion: ProxibaseCompletionBlock)
     {
-        self.sessionManager.DELETE(path, parameters: authenticatedParameters(parameters),
+        self.sessionManager.DELETE(path as String, parameters: authenticatedParameters(parameters),
             success: { dataTask, response in
                 completion(response: response, error: nil)
             },

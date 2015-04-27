@@ -70,13 +70,14 @@ class MainTabBarController: UITabBarController, RMCoreDataStackDelegate, CLLocat
         }
     }
     
-    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [CLLocation]!) {}
+    // George: commenting out in order to compile on swift 1.2
+    // func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [CLLocation]!) {}
     
     // MARK: Private internal
     
     func initializeViewControllers() {
         for viewController in self.viewControllers! {
-            let navController = viewController as UINavigationController
+            let navController = viewController as! UINavigationController
             if let queryResultTable = navController.topViewController as? QueryResultTableViewController {
                 queryResultTable.managedObjectContext = self.coreDataStack.managedObjectContext
                 queryResultTable.dataStore = self.dataStore

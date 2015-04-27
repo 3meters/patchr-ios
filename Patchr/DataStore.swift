@@ -43,12 +43,12 @@ class DataStore: NSObject {
     {
         if refresh || _currentUser == nil
         {
-            let userQuery = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
+            let userQuery = Query.insertInManagedObjectContext(self.managedObjectContext) as! Query
             userQuery.name = "Current user"
             self.refreshResultsFor(userQuery) { results, error in
                 if results.count == 1
                 {
-                    let user = results[0].result as User
+                    let user = results[0].result as! User
                     self._currentUser = user
                     dispatch_async(dispatch_get_main_queue())
                     {
@@ -115,9 +115,11 @@ class DataStore: NSObject {
                             
                         }
                         
-                        for queryResult in object?.queryResults?.allObjects as? [QueryResult] ?? [] {
+                        // George: swift 1.2 conversion
+                        // for queryResult in object?.queryResults?.allObjects as? [QueryResult] ?? []{
+                        for queryResult in object.queryResults {
                             // Poke each impacted queryResult to trigger NSFetchedResultsController callbacks
-                            queryResult.modificationDate = NSDate()
+                            (queryResult as! QueryResult).modificationDate = NSDate()
                         }
                         
                         self.managedObjectContext.save(nil)
@@ -160,9 +162,9 @@ class DataStore: NSObject {
             let results = self.handleResponseForQuery(query, response: response!)
             let resultsSet = NSSet(array: results)
             // We need to purge all query results for the query that are not in the current result set
-            for existingQueryResult in query.queryResults.allObjects {
+            for existingQueryResult in query.queryResults {
                 if !resultsSet.containsObject(existingQueryResult) {
-                    self.managedObjectContext.deleteObject(existingQueryResult as NSManagedObject)
+                    self.managedObjectContext.deleteObject(existingQueryResult as! NSManagedObject)
                 }
             }
             // query.offset = results.count
@@ -184,15 +186,15 @@ class DataStore: NSObject {
         case "Comments by current user":
             self.proxibaseClient.fetchMessagesOwnedByCurrentUser(completion: refreshCompletion)
         case "Messages for patch":
-            let patchId = query.parameters["patchId"] as String
+            let patchId = query.parameters["patchId"] as! String
             self.proxibaseClient.fetchMessagesForPatch(patchId, completion: refreshCompletion)
         case "Current user":
             self.proxibaseClient.fetchCurrentUser(refreshCompletion)
         case DataStoreQueryName.LikersLinksForPatch.rawValue:
-            let patchId = query.parameters["patchId"] as String
+            let patchId = query.parameters["patchId"] as! String
             self.proxibaseClient.fetchPatchWithLikerLinks(patchId, completion: refreshCompletion)
         case DataStoreQueryName.WatchersLinksForPatch.rawValue:
-            let patchId = query.parameters["patchId"] as String
+            let patchId = query.parameters["patchId"] as! String
             self.proxibaseClient.fetchPatchWithWatcherLinks(patchId, completion: refreshCompletion)
         default:
             assert(false, "No refreshResultsFor implementation for query name \(query.name)")
@@ -232,19 +234,20 @@ class DataStore: NSObject {
                 } else if let entityId = entityJSON["id"].string { // Old API doesn't have the underscore (?)
                     entityModel = modelType.fetchOrInsertOneById(entityId, inManagedObjectContext: self.managedObjectContext) as ServiceBase
                 } else {
-                    entityModel = modelType.insertInManagedObjectContext(self.managedObjectContext) as ServiceBase
+                    entityModel = modelType.insertInManagedObjectContext(self.managedObjectContext) as! ServiceBase
                 }
                 
                 modelType.setPropertiesFromDictionary(entityJSON.dictionaryObject, onObject: entityModel, mappingNames: true)
                 
-                for existingQueryResult in entityModel.queryResults.allObjects as [QueryResult] {
+                for obj in entityModel.queryResults {
+                    let existingQueryResult = obj as! QueryResult
                     if existingQueryResult.query == query {
                         queryResult = existingQueryResult
                     }
                 }
                 
                 if queryResult == nil {
-                    queryResult = QueryResult.insertInManagedObjectContext(self.managedObjectContext) as QueryResult
+                    queryResult = QueryResult.insertInManagedObjectContext(self.managedObjectContext) as! QueryResult
                 }
                 
                 queryResult.query = query
@@ -270,24 +273,25 @@ class DataStore: NSObject {
                             
                             var entityModel : Entity
                             if let entityId = entityDictionary["_id"] as? String {
-                                entityModel = modelType.fetchOrInsertOneById(entityId, inManagedObjectContext: self.managedObjectContext) as Entity
+                                entityModel = modelType.fetchOrInsertOneById(entityId, inManagedObjectContext: self.managedObjectContext) as! Entity
                             } else if let entityId = entityDictionary["id"] as? String { // Old API doesn't have the underscore (?)
-                                entityModel = modelType.fetchOrInsertOneById(entityId, inManagedObjectContext: self.managedObjectContext) as Entity
+                                entityModel = modelType.fetchOrInsertOneById(entityId, inManagedObjectContext: self.managedObjectContext) as! Entity
                             } else {
-                                entityModel = modelType.insertInManagedObjectContext(self.managedObjectContext) as Entity
+                                entityModel = modelType.insertInManagedObjectContext(self.managedObjectContext) as! Entity
                             }
                             
                             modelType.setPropertiesFromDictionary(entityDictionary, onObject: entityModel, mappingNames: true)
                             
                             var queryResult: QueryResult!;
-                            for existingQueryResult in entityModel.queryResults.allObjects as [QueryResult] {
+                            for obj in entityModel.queryResults {
+                                let existingQueryResult = obj as! QueryResult
                                 if existingQueryResult.query == query {
                                     queryResult = existingQueryResult
                                 }
                             }
                             
                             if queryResult == nil {
-                                queryResult = QueryResult.insertInManagedObjectContext(self.managedObjectContext) as QueryResult
+                                queryResult = QueryResult.insertInManagedObjectContext(self.managedObjectContext) as! QueryResult
                             }
                             
                             queryResult.query = query

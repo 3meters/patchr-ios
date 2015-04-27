@@ -72,8 +72,8 @@ class RegistrationTableViewController: UITableViewController {
                 }
                 else
                 {
-                    let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-                    let viewController = UIStoryboard(name:"Main", bundle:NSBundle.mainBundle()).instantiateInitialViewController() as UIViewController;
+                    let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+                    let viewController = UIStoryboard(name:"Main", bundle:NSBundle.mainBundle()).instantiateInitialViewController() as! UIViewController;
                     appDelegate.window!.setRootViewController(viewController, animated: true)
                 }
             }   
@@ -121,7 +121,7 @@ class RegistrationTableViewController: UITableViewController {
         var enableSignIn = false
         if !self.fullNameTextField.isEmpty &&
             !self.emailTextField.isEmpty &&
-            self.passwordTextField.text.utf16Count >= 6 {
+            (count(self.passwordTextField.text.utf16) >= 6) {
             enableSignIn = true
         }
         self.joinButton.enabled = enableSignIn

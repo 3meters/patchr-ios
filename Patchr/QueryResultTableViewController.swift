@@ -23,10 +23,20 @@ class QueryResultTableViewController: FetchedResultsTableViewController {
         
         let fetchRequest = NSFetchRequest(entityName: QueryResult.entityName())
         
+        /*
+        TODO: George: Swift 1.2 cannot find symbol QueryResultAttributes
         fetchRequest.sortDescriptors = [
             NSSortDescriptor(key: QueryResultAttributes.position, ascending: true),
             NSSortDescriptor(key: QueryResultAttributes.sortDate, ascending: false)
         ]
+        */
+        
+        fetchRequest.sortDescriptors = [
+            NSSortDescriptor(key: "position", ascending: true),
+            NSSortDescriptor(key: "sortDate", ascending: false)
+        ]
+
+        
         fetchRequest.predicate = NSPredicate(format: "query == %@", self.query())
         
         let controller = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)

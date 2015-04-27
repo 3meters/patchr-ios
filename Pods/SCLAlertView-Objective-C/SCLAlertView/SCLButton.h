@@ -29,15 +29,15 @@ typedef NS_ENUM(NSInteger, SCLActionType)
  */
 @property SCLActionType actionType;
 
-/** TODO
+/** Set action button block.
  *
  * TODO
  */
 @property (nonatomic, copy) SCLActionBlock actionBlock;
 
-/** TODO
+/** Set Validation button block.
  *
- * TODO
+ * Set one kind of validation and keeps the alert visible until the validation is successful
  */
 @property (nonatomic, copy) SCLValidationBlock validationBlock;
 

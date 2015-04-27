@@ -21,7 +21,7 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
     private var _query: Query!
     override func query() -> Query {
         if self._query == nil {
-            let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
+            let query = Query.insertInManagedObjectContext(self.managedObjectContext) as! Query
             query.name = "Notifications for current user"
             self.managedObjectContext.save(nil)
             self._query = query
@@ -87,9 +87,9 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
             cell.layoutIfNeeded()
         }
         
-        let queryResult = object as QueryResult
-        let notification = queryResult.result as Notification
-        let notificationCell = cell as NotificationTableViewCell
+        let queryResult = object as! QueryResult
+        let notification = queryResult.result as! Notification
+        let notificationCell = cell as! NotificationTableViewCell
         notificationCell.delegate = self
         notificationCell.messageBodyLabel.text = notification.summary
         
@@ -118,8 +118,8 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
     // MARK: UITableViewDelegate
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as QueryResult
-        let notification = queryResult.result as Notification
+        let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as! QueryResult
+        let notification = queryResult.result as! Notification
         self.segueWith(notification.targetId, parentId: notification.parentId)
     }
     
@@ -149,7 +149,7 @@ class NotificationsTableViewController: QueryResultTableViewController, TableVie
     // MARK: TableViewCellDelegate
     
     func tableViewCell(cell: UITableViewCell, didTapOnView view: UIView) {
-        let notificationCell = cell as NotificationTableViewCell
+        let notificationCell = cell as! NotificationTableViewCell
         if view == notificationCell.messageImageView && notificationCell.messageImageView.image != nil {
             self.selectedDetailImage = notificationCell.messageImageView.image
             self.performSegueWithIdentifier("ImageDetailSegue", sender: view)

@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     
     class func appDelegate() -> AppDelegate
     {
-        return UIApplication.sharedApplication().delegate as AppDelegate
+        return UIApplication.sharedApplication().delegate as! AppDelegate
     }
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
@@ -93,7 +93,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         
         var augmentedUserInfo = NSMutableDictionary(dictionary: userInfo)
         augmentedUserInfo["receivedInApplicationState"] = application.applicationState.rawValue
-        NSNotificationCenter.defaultCenter().postNotificationName(PAApplicationDidReceiveRemoteNotification, object: self, userInfo: augmentedUserInfo)
+        NSNotificationCenter.defaultCenter().postNotificationName(PAApplicationDidReceiveRemoteNotification, object: self, userInfo: augmentedUserInfo as [NSObject : AnyObject])
         completionHandler(.NewData)
     }
 
@@ -104,12 +104,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
             manager.startUpdatingLocation()
         } else if status == CLAuthorizationStatus.Denied {
             let windowList = UIApplication.sharedApplication().windows
-            let topWindow = windowList[windowList.count - 1] as UIWindow
+            let topWindow = windowList[windowList.count - 1] as! UIWindow
             SCLAlertView().showWarning(topWindow.rootViewController, title:"Location Disabled", subTitle: "You can enable location access in Settings → Patchr → Location", closeButtonTitle: "OK", duration: 0.0)
         }
     }
     
-    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [CLLocation]!) {}
+    // George: Commenting out to compile under swift 1.2
+    // func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [CLLocation]!) {}
     
     func registerForRemoteNotifications() {
         

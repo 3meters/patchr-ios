@@ -85,7 +85,7 @@ class SettingsTableViewController: UITableViewController, MFMailComposeViewContr
     }
     
     func build() -> String {
-        return NSBundle.mainBundle().objectForInfoDictionaryKey(kCFBundleVersionKey) as? String ?? "Unknown"
+        return NSBundle.mainBundle().objectForInfoDictionaryKey("kCFBundleVersionKey") as? String ?? "Unknown"
     }
     
     func pushWebViewController(url: NSURL?) -> Void {

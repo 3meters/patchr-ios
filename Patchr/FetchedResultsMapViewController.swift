@@ -88,7 +88,7 @@ class FetchedResultsMapViewController: UIViewController, MKMapViewDelegate, NSFe
         if annotationView == nil {
             annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseIdentifier)
             annotationView.canShowCallout = true
-            annotationView.rightCalloutAccessoryView = UIButton.buttonWithType(UIButtonType.DetailDisclosure) as UIButton
+            annotationView.rightCalloutAccessoryView = UIButton.buttonWithType(UIButtonType.DetailDisclosure) as! UIButton
         }
         return annotationView
     }
