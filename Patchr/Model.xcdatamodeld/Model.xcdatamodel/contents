@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6751" systemVersion="14C1510" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6751" systemVersion="14C109" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Entity" representedClassName="Entity" isAbstract="YES" parentEntity="ServiceBase" syncable="YES">
         <attribute name="count" optional="YES" attributeType="Integer 64" defaultValueString="0.0" syncable="YES"/>
         <attribute name="description_" optional="YES" attributeType="String" syncable="YES"/>
@@ -168,20 +168,20 @@
         <relationship name="replies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Message" inverseName="replyTo" inverseEntity="Message" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Entity" positionX="-63" positionY="-18" width="128" height="253"/>
-        <element name="Location" positionX="-18" positionY="54" width="128" height="163"/>
-        <element name="Message" positionX="-18" positionY="135" width="128" height="103"/>
-        <element name="Notification" positionX="0" positionY="144" width="128" height="193"/>
-        <element name="PACategory" positionX="-9" positionY="144" width="128" height="118"/>
-        <element name="PALink" positionX="-18" positionY="135" width="128" height="118"/>
-        <element name="Patch" positionX="-54" positionY="0" width="128" height="103"/>
-        <element name="Photo" positionX="-9" positionY="63" width="128" height="180"/>
-        <element name="Place" positionX="-36" positionY="18" width="128" height="178"/>
-        <element name="ProviderMap" positionX="0" positionY="153" width="128" height="148"/>
-        <element name="Query" positionX="-18" positionY="36" width="128" height="88"/>
-        <element name="QueryResult" positionX="-18" positionY="36" width="128" height="120"/>
-        <element name="ServiceBase" positionX="0" positionY="63" width="128" height="330"/>
-        <element name="ServiceObject" positionX="18" positionY="72" width="128" height="60"/>
-        <element name="User" positionX="-9" positionY="144" width="128" height="328"/>
+        <element name="Entity" positionX="-99" positionY="-154" width="128" height="253"/>
+        <element name="Location" positionX="-452" positionY="278" width="128" height="163"/>
+        <element name="Message" positionX="279" positionY="-36" width="128" height="103"/>
+        <element name="Notification" positionX="279" positionY="95" width="128" height="193"/>
+        <element name="PACategory" positionX="-450" positionY="98" width="128" height="118"/>
+        <element name="PALink" positionX="-288" positionY="-243" width="128" height="118"/>
+        <element name="Patch" positionX="81" positionY="-243" width="128" height="103"/>
+        <element name="Photo" positionX="-693" positionY="90" width="128" height="180"/>
+        <element name="Place" positionX="279" positionY="-243" width="128" height="178"/>
+        <element name="ProviderMap" positionX="-452" positionY="450" width="128" height="148"/>
+        <element name="Query" positionX="-216" positionY="117" width="128" height="88"/>
+        <element name="QueryResult" positionX="-218" positionY="267" width="128" height="120"/>
+        <element name="ServiceBase" positionX="-450" positionY="-243" width="128" height="330"/>
+        <element name="ServiceObject" positionX="-695" positionY="-45" width="128" height="60"/>
+        <element name="User" positionX="81" positionY="-108" width="128" height="328"/>
     </elements>
 </model>
