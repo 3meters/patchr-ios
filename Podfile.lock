@@ -2,69 +2,62 @@ PODS:
   - AFNetworkActivityLogger (2.0.4):
     - AFNetworking/NSURLConnection (~> 2.0)
     - AFNetworking/NSURLSession (~> 2.0)
-  - AFNetworking (2.5.1):
-    - AFNetworking/NSURLConnection (= 2.5.1)
-    - AFNetworking/NSURLSession (= 2.5.1)
-    - AFNetworking/Reachability (= 2.5.1)
-    - AFNetworking/Security (= 2.5.1)
-    - AFNetworking/Serialization (= 2.5.1)
-    - AFNetworking/UIKit (= 2.5.1)
-  - AFNetworking/NSURLConnection (2.5.1):
+  - AFNetworking (2.5.3):
+    - AFNetworking/NSURLConnection (= 2.5.3)
+    - AFNetworking/NSURLSession (= 2.5.3)
+    - AFNetworking/Reachability (= 2.5.3)
+    - AFNetworking/Security (= 2.5.3)
+    - AFNetworking/Serialization (= 2.5.3)
+    - AFNetworking/UIKit (= 2.5.3)
+  - AFNetworking/NSURLConnection (2.5.3):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-  - AFNetworking/NSURLSession (2.5.1):
+  - AFNetworking/NSURLSession (2.5.3):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-  - AFNetworking/Reachability (2.5.1)
-  - AFNetworking/Security (2.5.1)
-  - AFNetworking/Serialization (2.5.1)
-  - AFNetworking/UIKit (2.5.1):
+  - AFNetworking/Reachability (2.5.3)
+  - AFNetworking/Security (2.5.3)
+  - AFNetworking/Serialization (2.5.3)
+  - AFNetworking/UIKit (2.5.3):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
-  - AWSiOSSDKv2/AWSCore (2.0.16):
+  - AWSCore (2.1.1):
     - Bolts (~> 1.1.0)
-    - FMDB (~> 2.4)
     - GZIP (~> 1.0.3)
     - Mantle (~> 1.4)
     - Reachability (~> 3.1)
-    - TMCache (~> 1.2.1)
-    - UICKeyChainStore (< 3.0)
+    - UICKeyChainStore (~> 2.0)
     - XMLDictionary (~> 1.4.0)
-  - AWSiOSSDKv2/S3 (2.0.16):
-    - AWSiOSSDKv2/AWSCore
+  - AWSS3 (2.1.1):
+    - AWSCore (= 2.1.1)
     - Bolts (~> 1.1.0)
-    - FMDB (~> 2.4)
-    - GZIP (~> 1.0.3)
     - Mantle (~> 1.4)
-    - Reachability (~> 3.1)
     - TMCache (~> 1.2.1)
-    - UICKeyChainStore (< 3.0)
-    - XMLDictionary (~> 1.4.0)
-  - Bolts (1.1.4)
-  - FMDB (2.5):
-    - FMDB/standard (= 2.5)
-  - FMDB/common (2.5)
-  - FMDB/standard (2.5):
-    - FMDB/common
+  - Bolts (1.1.5):
+    - Bolts/AppLinks (= 1.1.5)
+    - Bolts/Tasks (= 1.1.5)
+  - Bolts/AppLinks (1.1.5):
+    - Bolts/Tasks
+  - Bolts/Tasks (1.1.5)
   - GZIP (1.0.3)
   - Lockbox (2.1.0)
   - Mantle (1.5.4):
     - Mantle/extobjc (= 1.5.4)
   - Mantle/extobjc (1.5.4)
   - MBProgressHUD (0.9.1)
-  - Parse (1.6.5):
+  - Parse (1.7.2):
     - Bolts (~> 1.1)
   - PBWebViewController (0.3)
   - Reachability (3.2)
   - RMCoreDataStack (0.1.4)
-  - SCLAlertView-Objective-C (0.5.6)
+  - SCLAlertView-Objective-C (0.7.0)
   - SDWebImage (3.7.2):
     - SDWebImage/Core (= 3.7.2)
   - SDWebImage/Core (3.7.2)
-  - TMCache (1.2.3)
-  - UIActionSheet+Blocks (0.8.1)
+  - TMCache (1.2.4)
+  - UIActionSheet+Blocks (0.9)
   - UICKeyChainStore (2.0.4)
   - UIDevice-Hardware (0.1.5)
   - XMLDictionary (1.4)
@@ -72,37 +65,37 @@ PODS:
 DEPENDENCIES:
   - AFNetworkActivityLogger (~> 2.0)
   - AFNetworking (~> 2.0)
-  - AWSiOSSDKv2/S3 (~> 2.0)
+  - AWSS3
   - Lockbox
   - MBProgressHUD (~> 0.9.1)
   - Parse
   - PBWebViewController (~> 0.3)
   - RMCoreDataStack
-  - SCLAlertView-Objective-C (~> 0.5.6)
+  - SCLAlertView-Objective-C (~> 0.7)
   - SDWebImage (~> 3.7.2)
-  - UIActionSheet+Blocks (~> 0.8.1)
+  - UIActionSheet+Blocks (~> 0.9)
   - UIDevice-Hardware
 
 SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
-  AFNetworking: 10e85a00bb0f475124e4ff2677bf15693b2c1523
-  AWSiOSSDKv2: 0673594b4202053945bf1d7c0691b48be55404be
-  Bolts: f8e2f94edbf9fec7bb8de5ecaaa3aa6b7de6f64e
-  FMDB: 96e8f1bcc1329e269330f99770ad4285d9003e52
+  AFNetworking: e1d86c2a96bb5d2e7408da36149806706ee122fe
+  AWSCore: 0e82eabc27a96d765b1e2ad4d30b96c1cd298300
+  AWSS3: 891d269735be0f3c63eab5a2d1ee9d788f2c64ee
+  Bolts: aac24961496d504aa56fc267cde95162a71bac39
   GZIP: f0863fda354e8f83316508c0a2c7bbe385e39129
   Lockbox: 16442da35d9d4286966936763be728a931d589c3
   Mantle: 60acd0cd363e27d945bda0a6b8e90577112d28f3
   MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
-  Parse: a21db4037d70a68a4ec64ecc0f327ed475cc14f8
+  Parse: e1959adb9fe2fcd4736dac20b3ac691d47a4f06c
   PBWebViewController: 909b1505da6ba7c5c82519a6457246027926061e
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   RMCoreDataStack: fec31b8fd8796f55822680f4f170f0186ca9198a
-  SCLAlertView-Objective-C: e36e3657617a2469f64fcfc3bbf56343f3aef54b
+  SCLAlertView-Objective-C: 0491ea966dba9b3713178e2ffbcd0a148dc5b271
   SDWebImage: 71b7cdc1d1721d6a82ed62889030225f2c249e29
-  TMCache: 5f68bc38d741aa8df4c63131b847522783665d81
-  UIActionSheet+Blocks: 7fdab45fc8f15ac2dc1cd65af1470746600b5f46
+  TMCache: a93984b045a5ee84bd8941bd5e0b54296059cc52
+  UIActionSheet+Blocks: e180b7dad0a721ab7f212ac9742af799008bb358
   UICKeyChainStore: 69eb0c3a6f669bccf16ba88de3b9069b71501361
   UIDevice-Hardware: b3695e58e0385155932e7889c32ed12e844e14a3
   XMLDictionary: f9f51601ba76678b594ab485f2b00ec1fed23724
 
-COCOAPODS: 0.36.3
+COCOAPODS: 0.36.4
