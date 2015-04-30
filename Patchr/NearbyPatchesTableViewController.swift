@@ -13,7 +13,7 @@ class NearbyPatchesTableViewController: PatchTableViewController {
     private var _query: Query!
     override func query() -> Query {
         if self._query == nil {
-            let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
+            let query = Query.insertInManagedObjectContext(self.managedObjectContext) as! Query
             query.name = "Nearby patches"
             self.managedObjectContext.save(nil)
             self._query = query

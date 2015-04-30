@@ -56,7 +56,7 @@ class FetchedResultsTableViewController: UITableViewController, FetchedResultsVi
         // The reason for the self.tableView here is because of UISearchDisplayController.
         // There doesn't seem to be a nice way to register cells when using UISearchDisplayController,
         // so we just grab them from the original table.
-        let cell = self.tableView.dequeueReusableCellWithIdentifier("Cell") as UITableViewCell
+        let cell = self.tableView.dequeueReusableCellWithIdentifier("Cell") as! UITableViewCell
         cell.separatorInset = UIEdgeInsetsZero
         
         if cell.respondsToSelector("layoutMargins") {

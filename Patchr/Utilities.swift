@@ -26,7 +26,7 @@ func showSubviews(view: UIView, level: Int = 0) {
 	var count = 0
 	for subview in view.subviews {
 		println("\(indent)\(count++). \(subview.frame)")
-		showSubviews(subview as UIView, level: level + 1)
+		showSubviews(subview as! UIView, level: level + 1)
 	}
 }
 

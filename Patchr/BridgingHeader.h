@@ -12,7 +12,7 @@
 #import <AFNetworking/AFNetworking.h>
 #import <AFNetworkActivityLogger/AFNetworkActivityLogger.h>
 #import <UIImageView+AFNetworking.h>
-#import "S3.h"
+#import <AWSS3/AWSS3.h>
 #import "JSONResponseSerializerWithData.h"
 #import <RMCoreDataStack/RMCoreDataStack.h>
 #import <PBWebViewController.h>

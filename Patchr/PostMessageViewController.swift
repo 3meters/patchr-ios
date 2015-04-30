@@ -64,7 +64,7 @@ class PostMessageViewController: UIViewController
     }
     
     @IBAction func addPhotoButtonAction(sender: AnyObject) {
-        let heightConstraint = self.attachedImageView.constraints()[0] as NSLayoutConstraint
+        let heightConstraint = self.attachedImageView.constraints()[0] as! NSLayoutConstraint
         if self.attachedImageView.image == nil {
             photoChooser.choosePhoto() { [unowned self] image in
                 self.addPhotoButton.setTitle(LocalizedString("Remove Photo"), forState: .Normal)
@@ -103,7 +103,7 @@ class PostMessageViewController: UIViewController
     var observerObject: TextViewChangeObserver! = nil
 
     private func updatePostButton() {
-        let hasContent = (attachedImageView.image != nil) || (messageTextView.text.utf16Count > 0)
+        let hasContent = (attachedImageView.image != nil) || (count(messageTextView.text.utf16) > 0)
         sendButton.enabled = hasContent
     }
     

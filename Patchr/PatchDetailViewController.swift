@@ -65,9 +65,18 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     internal lazy var fetchedResultsController: NSFetchedResultsController = {
         
         let fetchRequest = NSFetchRequest(entityName: Message.entityName())
+        
+        /*
+        George: swift 1.2 cannot find symbol ServiceBaseAttributes
         fetchRequest.sortDescriptors = [
             NSSortDescriptor(key: ServiceBaseAttributes.createdDate, ascending: false)
         ]
+        */
+        
+        fetchRequest.sortDescriptors = [
+            NSSortDescriptor(key: "createdDate", ascending: false)
+        ]
+        
         fetchRequest.predicate = NSPredicate(format: "\(MessageRelationships.patch) == %@", self.patch)
         
         let controller = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
@@ -85,7 +94,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     {
         let proxibase = ProxibaseClient.sharedInstance
         
-        proxibase.findLink(proxibase.userId!, toID: patch.id_, linkType: linkType) { response, error in
+        proxibase.findLink(proxibase.userId! as String, toID: patch.id_, linkType: linkType) { response, error in
             if let serverError = ServerError(error)
             {
                 // ServerError initializer logs the error. Not much else to do here.
@@ -136,7 +145,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
         self.numberOfWatchersButton.setTitle(watchersTitle, forState: UIControlState.Normal)
         
         self.dataStore.withCurrentUser(refresh: false) { (user) -> Void in
-            if self.patch.ownerId? == user.id_ {
+            if self.patch.ownerId == user.id_ {
                 self.editPatchButton.alpha = 1
             }
         }
@@ -174,7 +183,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
         self.tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: "Cell")
         self.tableView.delaysContentTouches = false
         
-        let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
+        let query = Query.insertInManagedObjectContext(self.managedObjectContext) as! Query
         query.name = "Messages for patch"
         query.parameters = ["patchId" : patch.id_]
         self.managedObjectContext.save(nil)
@@ -222,8 +231,8 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
             cell.layoutIfNeeded()
         }
         
-        let message = object as Message
-        let messageCell = cell as MessageTableViewCell
+        let message = object as! Message
+        let messageCell = cell as! MessageTableViewCell
         messageCell.delegate = self
         
         messageCell.messageBodyLabel.text = message.description_
@@ -262,7 +271,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
         }
         else
         {
-            proxibase.createLink(proxibase.userId!, toID: patch.id_, linkType: linkType) { _, _ in
+            proxibase.createLink(proxibase.userId! as String, toID: patch.id_, linkType: linkType) { _, _ in
                 self.refreshPatchAndMessages({ (error) -> Void in })
             }
         }
@@ -404,7 +413,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     // MARK: TableViewCellDelegate
     
     func tableViewCell(cell: UITableViewCell, didTapOnView view: UIView) {
-        let messageCell = cell as MessageTableViewCell
+        let messageCell = cell as! MessageTableViewCell
         if view == messageCell.messageImageView && messageCell.messageImageView.image != nil {
             self.selectedDetailImage = messageCell.messageImageView.image
             self.performSegueWithIdentifier("ImageDetailSegue", sender: view)
@@ -456,7 +465,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
                 self.performSegueWithIdentifier("CreateMessageSegue", sender: self)
             } else {
                 let proxibase = ProxibaseClient.sharedInstance
-                proxibase.createLink(proxibase.userId!, toID: patch.id_, linkType: .Watch) { _, _ in
+                proxibase.createLink(proxibase.userId! as String, toID: patch.id_, linkType: .Watch) { _, _ in
                     self.refreshLikeAndWatch()
                 }
             }

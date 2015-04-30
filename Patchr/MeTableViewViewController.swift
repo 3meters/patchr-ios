@@ -23,7 +23,7 @@ class MeTableViewViewController: QueryResultTableViewController, TableViewCellDe
     private var _query: Query!
     override func query() -> Query {
         if self._query == nil {
-            let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
+            let query = Query.insertInManagedObjectContext(self.managedObjectContext) as! Query
             query.name = "Comments by current user"
             self.managedObjectContext.save(nil)
             self._query = query
@@ -79,12 +79,12 @@ class MeTableViewViewController: QueryResultTableViewController, TableViewCellDe
             cell.layoutIfNeeded()
         }
         
-        let queryResult = object as QueryResult
-        let message = queryResult.result as Message
-        let messageCell = cell as MessageTableViewCell
+        let queryResult = object as! QueryResult
+        let message = queryResult.result as! Message
+        let messageCell = cell as! MessageTableViewCell
         messageCell.delegate = self
         
-        messageCell.patchNameLabel.text = message.type? == "share" ? "Shared by" : ""
+        messageCell.patchNameLabel.text = message.type == "share" ? "Shared by" : ""
         messageCell.messageBodyLabel.text = message.description_
         
         messageCell.messageImageView.image = nil
@@ -117,8 +117,8 @@ class MeTableViewViewController: QueryResultTableViewController, TableViewCellDe
             if error != nil {
                 NSLog("Error during logout \(error)")
             }
-            let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-            let destinationViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as UIViewController
+            let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            let destinationViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as! UIViewController
             appDelegate.window!.setRootViewController(destinationViewController, animated: true)
         }
     }
@@ -134,7 +134,7 @@ class MeTableViewViewController: QueryResultTableViewController, TableViewCellDe
     // MARK: TableViewCellDelegate
     
     func tableViewCell(cell: UITableViewCell, didTapOnView view: UIView) {
-        let messageCell = cell as MessageTableViewCell
+        let messageCell = cell as! MessageTableViewCell
         if view == messageCell.messageImageView && messageCell.messageImageView.image != nil {
             self.selectedDetailImage = messageCell.messageImageView.image
             self.performSegueWithIdentifier("ImageDetailSegue", sender: view)
