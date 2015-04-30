@@ -161,11 +161,14 @@ class DataStore: NSObject {
             }
             
             let results = self.handleResponseForQuery(query, response: response!)
-            let resultsSet = NSSet(array: results)
+            let resultsSet = Set(results)
+            
             // We need to purge all query results for the query that are not in the current result set
-            for existingQueryResult in query.queryResults {
-                if !resultsSet.containsObject(existingQueryResult) {
-                    self.managedObjectContext.deleteObject(existingQueryResult as! NSManagedObject)
+            for obj in query.queryResults {
+                if let result = obj as? QueryResult {
+                    if !resultsSet.contains(result) {
+                        self.managedObjectContext.deleteObject(result)
+                    }
                 }
             }
             // query.offset = results.count
