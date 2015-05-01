@@ -41,21 +41,20 @@ class SignInTableViewController: UITableViewController, UITextFieldDelegate {
     @IBAction func signInButtonAction(sender: NSObject) {
         
         signInErrorMessage.text = ""
-        
-        let hud = MBProgressHUD(window: self.view.window)
-        hud.graceTime = 0.5
-        hud.show(true)
+
+		let progress = MBProgressHUD.showHUDAddedTo(self.view.window, animated: true)
+		progress.mode = MBProgressHUDMode.Indeterminate
+		progress.labelText = "Signing in"
+		progress.show(true)
         
         ProxibaseClient.sharedInstance.signIn(self.emailTextField.text, password: self.passwordTextField.text) { (response, error) -> Void in
+			progress.hide(true, afterDelay: 1.0)
             if (error != nil) {
                 NSLog("Login error \(error!)")
                 if let loginErrorMessage: AnyObject = (response!["error"] as! NSDictionary)["message"] {
                     self.signInErrorMessage.text = loginErrorMessage as? String
                 }
-                hud.hide(true)
             } else {
-                hud.hide(true)
-                
                 // Store email address
                 NSUserDefaults.standardUserDefaults().setObject(self.emailTextField.text, forKey: PatchrUserDefaultKey("userEmail"))
                 NSUserDefaults.standardUserDefaults().synchronize()
