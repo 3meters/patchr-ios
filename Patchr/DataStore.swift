@@ -324,7 +324,7 @@ class DataStore: NSObject {
             // Fallback location
             // - store/retrieve location in NSUserDefaults
             // - likely get a nearby major city based on timezone
-            return CLLocationCoordinate2D(latitude: 49.2845280, longitude: -123.1092720)
+            return CLLocationCoordinate2D(latitude: 47.593677669, longitude: -122.1595818)
         }
     }
 }
