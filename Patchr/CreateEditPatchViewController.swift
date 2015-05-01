@@ -328,7 +328,7 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        if patchName.utf16Count == 0 {
+        if patchName.isEmpty {
             patchNameField.becomeFirstResponder()
         }
         
@@ -392,7 +392,7 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
         }
     }
     
-    override func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView
+    override func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
     {
         let view = UILabel(frame: CGRect(x:10, y: 0, width: 100, height:20))
         
@@ -409,7 +409,7 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
             let font = UIFont.preferredFontForTextStyle(UIFontTextStyleSubheadline)
             attributes.setValue(font, forKey: NSFontAttributeName)
             
-            view.attributedText = NSMutableAttributedString(string: "PATCH TYPE", attributes: attributes)
+            view.attributedText = NSMutableAttributedString(string: "PATCH TYPE", attributes: attributes as [NSObject : AnyObject])
         }
         view.backgroundColor = UIColor(white:0.92, alpha: 1.0)
         return view
@@ -428,11 +428,11 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
     {
         if isEditingPatch
         {
-            saveButton.enabled = (patchName.utf16Count > 0)
+            saveButton.enabled = (count(patchName.utf16) > 0)
         }
         else
         {
-            customButton.enabled = (patchName.utf16Count > 0)
+            customButton.enabled = (count(patchName.utf16) > 0)
         }
     }
 

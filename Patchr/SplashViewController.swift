@@ -33,8 +33,8 @@ class SplashViewController: UIViewController {
     }
     
     @IBAction func guestButtonAction(sender: UIButton) {
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-        let destinationViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateInitialViewController() as UIViewController
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let destinationViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateInitialViewController() as! UIViewController
         appDelegate.window!.setRootViewController(destinationViewController, animated: true)
     }
     

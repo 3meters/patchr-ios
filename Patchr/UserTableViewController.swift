@@ -36,7 +36,7 @@ class UserTableViewController: QueryResultTableViewController, UserTableViewCell
     private var _query: Query!
     override func query() -> Query {
         if self._query == nil {
-            let query = Query.insertInManagedObjectContext(self.managedObjectContext) as Query
+            let query = Query.insertInManagedObjectContext(self.managedObjectContext) as! Query
             
             switch self.filter {
             case .Likers:
@@ -55,11 +55,11 @@ class UserTableViewController: QueryResultTableViewController, UserTableViewCell
     
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
         
-        let queryResult = object as QueryResult
-        let userCell = cell as UserTableViewCell
+        let queryResult = object as! QueryResult
+        let userCell = cell as! UserTableViewCell
         userCell.delegate = self
         
-        let link = queryResult.result as PALink
+        let link = queryResult.result as! PALink
         self.dataStore.withUser(link.fromId, refresh: true) { (user) -> Void in
             if user != nil {
                 

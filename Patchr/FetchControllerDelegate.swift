@@ -10,7 +10,7 @@
 import CoreData
 import UIKit
 
-public class FetchControllerDelegate: NSFetchedResultsControllerDelegate {
+public class FetchControllerDelegate: NSObject, NSFetchedResultsControllerDelegate {
     
     private var sectionsBeingAdded: [Int] = []
     private var sectionsBeingRemoved: [Int] = []
@@ -23,7 +23,7 @@ public class FetchControllerDelegate: NSFetchedResultsControllerDelegate {
         self.tableView = tableView
         self.onUpdate = onUpdate
     }
-    
+
     public func controllerWillChangeContent(controller: NSFetchedResultsController)  {
         if ignoreNextUpdates {
             return
@@ -33,7 +33,7 @@ public class FetchControllerDelegate: NSFetchedResultsControllerDelegate {
         sectionsBeingRemoved = []
         tableView.beginUpdates()
     }
-    
+
     public func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType)  {
         if ignoreNextUpdates {
             return
@@ -50,7 +50,7 @@ public class FetchControllerDelegate: NSFetchedResultsControllerDelegate {
             return
         }
     }
-    
+
     public func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
         if ignoreNextUpdates {
             return
@@ -80,7 +80,7 @@ public class FetchControllerDelegate: NSFetchedResultsControllerDelegate {
             return
         }
     }
-    
+
     public func controllerDidChangeContent(controller: NSFetchedResultsController)  {
         if ignoreNextUpdates {
             ignoreNextUpdates = false

@@ -49,7 +49,7 @@ class SignInTableViewController: UITableViewController, UITextFieldDelegate {
         ProxibaseClient.sharedInstance.signIn(self.emailTextField.text, password: self.passwordTextField.text) { (response, error) -> Void in
             if (error != nil) {
                 NSLog("Login error \(error!)")
-                if let loginErrorMessage: AnyObject = (response!["error"] as NSDictionary)["message"] {
+                if let loginErrorMessage: AnyObject = (response!["error"] as! NSDictionary)["message"] {
                     self.signInErrorMessage.text = loginErrorMessage as? String
                 }
                 hud.hide(true)
@@ -61,8 +61,8 @@ class SignInTableViewController: UITableViewController, UITextFieldDelegate {
                 NSUserDefaults.standardUserDefaults().synchronize()
                 self.passwordTextField.text = nil
                 
-                let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-                let destinationViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateInitialViewController() as UIViewController
+                let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+                let destinationViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateInitialViewController() as! UIViewController
                 appDelegate.window!.setRootViewController(destinationViewController, animated: true)
             }
         }

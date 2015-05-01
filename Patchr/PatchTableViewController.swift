@@ -51,9 +51,9 @@ class PatchTableViewController: QueryResultTableViewController {
             cell.layoutIfNeeded()
         }
         
-        let queryResult = object as QueryResult
-        let patch = queryResult.result as Patch
-        let patchCell = cell as PatchTableViewCell
+        let queryResult = object as! QueryResult
+        let patch = queryResult.result as! Patch
+        let patchCell = cell as! PatchTableViewCell
         patchCell.nameLabel.text = patch.name
         patchCell.categoryLabel.text = patch.category.name
         
