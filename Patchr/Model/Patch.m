@@ -15,18 +15,18 @@
                               onObject:(Patch *)patch
                           mappingNames:(BOOL)mapNames {
     patch = (Patch *) [Entity setPropertiesFromDictionary:dictionary onObject:patch mappingNames:mapNames];
-    
+
     if (dictionary[@"category"]) {
         patch.category = [PACategory setPropertiesFromDictionary:dictionary[@"category"] onObject:[PACategory insertInManagedObjectContext:patch.managedObjectContext] mappingNames:mapNames];
     }
-    
+
     if (dictionary[@"place"]) {
         patch.place = [Place setPropertiesFromDictionary:dictionary[@"place"] onObject:[Place insertInManagedObjectContext:patch.managedObjectContext] mappingNames:mapNames];
     }
-    
+
     if ([dictionary[@"linked"] isKindOfClass:[NSArray class]]) {
         // Configure patch-specific relationships
-        
+
         for (id link in dictionary[@"linked"]) {
             if ([link isKindOfClass:[NSDictionary class]]) {
                 NSDictionary *linkDictionary = link;
@@ -34,15 +34,20 @@
                     Message *message = [Message fetchOrInsertOneById:linkDictionary[@"_id"] inManagedObjectContext:patch.managedObjectContext];
                     message = [Message setPropertiesFromDictionary:linkDictionary onObject:message mappingNames:mapNames];
                     [patch.messagesSet addObject:message];
+                }
+                else if ([linkDictionary[@"schema"] isEqualToString:@"place"]) {
+                    Place *place = [Place fetchOrInsertOneById:linkDictionary[@"_id"] inManagedObjectContext:patch.managedObjectContext];
+                    place = [Place setPropertiesFromDictionary:linkDictionary onObject:place mappingNames:mapNames];
+                    patch.place = place;
                 } else {
                     NSLog(@"WARNING: Unhandled linked object schema: %@", linkDictionary[@"schema"]);
                 }
             }
         }
     }
-    
+
     // Note: Doesn't seem like signalFence is currently in use
-    
+
     return patch;
 }
 
