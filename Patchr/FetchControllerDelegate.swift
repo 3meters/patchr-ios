@@ -23,7 +23,8 @@ public class FetchControllerDelegate: NSFetchedResultsControllerDelegate {
         self.tableView = tableView
         self.onUpdate = onUpdate
     }
-    
+
+	@objc
     public func controllerWillChangeContent(controller: NSFetchedResultsController)  {
         if ignoreNextUpdates {
             return
@@ -33,7 +34,8 @@ public class FetchControllerDelegate: NSFetchedResultsControllerDelegate {
         sectionsBeingRemoved = []
         tableView.beginUpdates()
     }
-    
+
+	@objc
     public func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType)  {
         if ignoreNextUpdates {
             return
@@ -50,7 +52,8 @@ public class FetchControllerDelegate: NSFetchedResultsControllerDelegate {
             return
         }
     }
-    
+
+	@objc
     public func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
         if ignoreNextUpdates {
             return
@@ -80,7 +83,8 @@ public class FetchControllerDelegate: NSFetchedResultsControllerDelegate {
             return
         }
     }
-    
+
+	@objc
     public func controllerDidChangeContent(controller: NSFetchedResultsController)  {
         if ignoreNextUpdates {
             ignoreNextUpdates = false
