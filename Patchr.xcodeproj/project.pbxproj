@@ -15,7 +15,6 @@
 		7D03C3D71A980D9400BAFD19 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D03C3D61A980D9400BAFD19 /* MapKit.framework */; };
 		7D0BAD4C1A96CEB0002E602D /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */; };
 		7D239F151AB8E6D300488F8F /* MediaTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D239F141AB8E6D300488F8F /* MediaTableViewCell.swift */; };
-		7D2610FF1AAE736100FA0F8E /* LaunchStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D2610FE1AAE736100FA0F8E /* LaunchStoryboard.storyboard */; };
 		7D39D3C51ABA21B200275759 /* CALayer+XibConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D39D3C41ABA21B200275759 /* CALayer+XibConfiguration.m */; };
 		7D3D39CF1A6F086F00A44CB2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */; };
 		7D3D39D41A6F086F00A44CB2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D3D39D21A6F086F00A44CB2 /* Main.storyboard */; };
@@ -119,7 +118,6 @@
 		7D03C3D61A980D9400BAFD19 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		7D239F141AB8E6D300488F8F /* MediaTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaTableViewCell.swift; sourceTree = "<group>"; };
-		7D2610FE1AAE736100FA0F8E /* LaunchStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchStoryboard.storyboard; sourceTree = "<group>"; };
 		7D39D3C31ABA21B200275759 /* CALayer+XibConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CALayer+XibConfiguration.h"; sourceTree = "<group>"; };
 		7D39D3C41ABA21B200275759 /* CALayer+XibConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CALayer+XibConfiguration.m"; sourceTree = "<group>"; };
 		7D3D39C91A6F086F00A44CB2 /* Patchr.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Patchr.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -520,7 +518,6 @@
 		E2CE38A01AEFC14C00710227 /* Storyboards */ = {
 			isa = PBXGroup;
 			children = (
-				7D2610FE1AAE736100FA0F8E /* LaunchStoryboard.storyboard */,
 				7D3D39D21A6F086F00A44CB2 /* Main.storyboard */,
 				E2EFD2651AF44214003937D4 /* Lobby.storyboard */,
 				E2EFD26D1AF44911003937D4 /* Archive.storyboard */,
@@ -624,7 +621,6 @@
 			files = (
 				7D5545871AD33B1D007150E5 /* UserTableViewCell.xib in Resources */,
 				7DC9D4951A9D4FAD00234E3C /* NotificationTableViewCell.xib in Resources */,
-				7D2610FF1AAE736100FA0F8E /* LaunchStoryboard.storyboard in Resources */,
 				E2EFD26E1AF44911003937D4 /* Archive.storyboard in Resources */,
 				E2EFD2661AF44214003937D4 /* Lobby.storyboard in Resources */,
 				8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */,

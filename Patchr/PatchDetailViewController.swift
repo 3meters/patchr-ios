@@ -12,6 +12,8 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
     
     private let cellNibName = "MessageTableViewCell"
     
+    var selectedMessage: Message?
+    
     @IBOutlet weak var patchImageView: UIImageView!
     @IBOutlet weak var patchNameLabel: UILabel!
     @IBOutlet weak var patchCategoryLabel: UILabel!
@@ -338,6 +340,12 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
         }
         
         switch segue.identifier! {
+        case "MessageDetailSegue":
+            if let controller = segue.destinationViewController as? MessageDetailViewController {
+                patchDetailViewController.managedObjectContext = self.managedObjectContext
+                patchDetailViewController.dataStore = self.dataStore
+                patchDetailViewController.patch = self.selectedPatch
+            }
         case "ImageDetailSegue":
             if let imageDetailViewController = segue.destinationViewController as? ImageDetailViewController {
                 imageDetailViewController.image = self.selectedDetailImage
@@ -371,6 +379,16 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
         }
     }
     
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        if let message = self.fetchedResultsController.objectAtIndexPath(indexPath) as? Message {
+            self.selectedMessage = message
+            self.performSegueWithIdentifier("MessageDetailSegue", sender: self)
+            return
+        }
+        assert(false, "Couldn't set selectedMessage")
+    }
+    
+    /*
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
         let canDelete = true; // TODO: determine if current user has delete permission for message
@@ -408,7 +426,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
             }
             
         }
-    }
+    }*/
     
     // TODO: This is duplicated in NotificationTableViewController
     // https://github.com/smileyborg/TableViewCellWithAutoLayout
