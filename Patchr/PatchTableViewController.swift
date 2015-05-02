@@ -79,8 +79,6 @@ class PatchTableViewController: QueryResultTableViewController {
         }
         assert(false, "Couldn't set selectedPatch")
     }
-    
-    @IBAction func unwindFromCreatePatch(segue: UIStoryboardSegue) {}
 }
 
 extension UIImageView {

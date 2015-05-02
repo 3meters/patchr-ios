@@ -348,8 +348,7 @@ class CreateEditPatchViewController: UITableViewController, UITableViewDataSourc
 				}
 				else {
 					println(response)
-					self.performSegueWithIdentifier("UnwindFromCreateEditPatch", sender: nil)
-					// TODO: This needs to unwind farther, since we need to unwind two levels
+					self.performSegueWithIdentifier("UnwindFromDeletePatch", sender: nil)
 				}
 			}
 		}

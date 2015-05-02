@@ -23,14 +23,6 @@ class QueryResultTableViewController: FetchedResultsTableViewController {
         
         let fetchRequest = NSFetchRequest(entityName: QueryResult.entityName())
         
-        /*
-        TODO: George: Swift 1.2 cannot find symbol QueryResultAttributes
-        fetchRequest.sortDescriptors = [
-            NSSortDescriptor(key: QueryResultAttributes.position, ascending: true),
-            NSSortDescriptor(key: QueryResultAttributes.sortDate, ascending: false)
-        ]
-        */
-
         fetchRequest.sortDescriptors = [
             NSSortDescriptor(key: "position", ascending: true),
             NSSortDescriptor(key: "sortDate", ascending: false)
@@ -89,6 +81,14 @@ class QueryResultTableViewController: FetchedResultsTableViewController {
             })
         })
         
+    }
+    
+    @IBAction func unwindFromCreatePatch(segue: UIStoryboardSegue) {
+        self.refreshQueryResults(false)
+    }
+    
+    @IBAction func unwindFromDeletePatch(segue: UIStoryboardSegue) {
+        self.refreshQueryResults(false)
     }
 }
 
