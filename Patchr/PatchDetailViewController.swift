@@ -276,6 +276,27 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
             }
         }
     }
+
+	func deleteMessage(message: Message!) {
+		self.ActionConfirmationAlert(LocalizedString("Confirm Delete"), message: LocalizedString("Are you sure you want to delete this?"), actionTitle: LocalizedString("Delete"), cancelTitle: LocalizedString("Cancel")) {
+			doIt in
+
+			let messagePath = "data/messages/\((message?.id_)!)"
+			ProxibaseClient.sharedInstance.deleteObject(messagePath) {
+				response, error in
+				if let serverError = ServerError(error) {
+					println(error)
+					self.ErrorNotificationAlert(LocalizedString("Error"), message: serverError.message) {}
+				}
+				else {
+					println(response)
+					self.managedObjectContext.deleteObject(message)
+					self.refreshPatchAndMessages({ (error) -> Void in })
+				}
+			}
+		}
+		println("delete message button")
+	}
     
     @IBAction func watchAction(sender: AnyObject)
     {
@@ -354,7 +375,9 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
         
         let canDelete = true; // TODO: determine if current user has delete permission for message
         let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: "Cancel", destructiveButtonTitle: canDelete ? "Delete" : nil)
-        sheet.addButtonWithTitle("Like")
+		let message = self.fetchedResultsController.objectAtIndexPath(indexPath) as! Message
+
+		sheet.addButtonWithTitle("Like")
         sheet.addButtonWithTitle("Share")
         sheet.addButtonWithTitle("Report Abuse")
         sheet.showFromTabBar(self.tabBarController?.tabBar)
@@ -366,7 +389,7 @@ class PatchDetailViewController: FetchedResultsTableViewController, TableViewCel
                 
             } else if index == actionSheet.destructiveButtonIndex {
                 NSLog("Destructive button")
-                UIAlertView(title: "Not implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
+				self.deleteMessage(message)
             } else {
                 // Switching on the button title is less than ideal, but there seems to be issues with 
                 // using the firstOtherButtonIndex property. Once iOS 7 support is dropped, move to UIAlertController
