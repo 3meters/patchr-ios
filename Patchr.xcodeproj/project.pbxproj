@@ -93,6 +93,8 @@
 		84A6BB641AAF970A00B7440B /* CreateEditPatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A6BB631AAF970A00B7440B /* CreateEditPatchViewController.swift */; };
 		84EF12AC1AA904700043EBBA /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EF12AB1AA904700043EBBA /* Utilities.swift */; };
 		E215995F1AEFDA3F002C936F /* Photo.m in Sources */ = {isa = PBXBuildFile; fileRef = E215995E1AEFDA3F002C936F /* Photo.m */; };
+		E2EFD2661AF44214003937D4 /* Lobby.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E2EFD2651AF44214003937D4 /* Lobby.storyboard */; };
+		E2EFD26E1AF44911003937D4 /* Archive.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E2EFD26D1AF44911003937D4 /* Archive.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -234,6 +236,8 @@
 		A80DE63116DE3050C0FEC4EE /* Pods-Patchr.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.debug.xcconfig"; sourceTree = "<group>"; };
 		A9B11FC184124D485DAA2948 /* Pods-Patchr.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.release.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.release.xcconfig"; sourceTree = "<group>"; };
 		E215995E1AEFDA3F002C936F /* Photo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Photo.m; path = ../../../../.Trash/Photo.m; sourceTree = "<group>"; };
+		E2EFD2651AF44214003937D4 /* Lobby.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Lobby.storyboard; sourceTree = "<group>"; };
+		E2EFD26D1AF44911003937D4 /* Archive.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Archive.storyboard; sourceTree = "<group>"; };
 		F5B1CF9518B65D4EA512C8F1 /* Pods-PatchrTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrTests/Pods-PatchrTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -518,6 +522,8 @@
 			children = (
 				7D2610FE1AAE736100FA0F8E /* LaunchStoryboard.storyboard */,
 				7D3D39D21A6F086F00A44CB2 /* Main.storyboard */,
+				E2EFD2651AF44214003937D4 /* Lobby.storyboard */,
+				E2EFD26D1AF44911003937D4 /* Archive.storyboard */,
 			);
 			name = Storyboards;
 			sourceTree = "<group>";
@@ -619,6 +625,8 @@
 				7D5545871AD33B1D007150E5 /* UserTableViewCell.xib in Resources */,
 				7DC9D4951A9D4FAD00234E3C /* NotificationTableViewCell.xib in Resources */,
 				7D2610FF1AAE736100FA0F8E /* LaunchStoryboard.storyboard in Resources */,
+				E2EFD26E1AF44911003937D4 /* Archive.storyboard in Resources */,
+				E2EFD2661AF44214003937D4 /* Lobby.storyboard in Resources */,
 				8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */,
 				7D3D39D41A6F086F00A44CB2 /* Main.storyboard in Resources */,
 				7D668A9A1A9C08DC005EDAF8 /* PatchTableViewCell.xib in Resources */,

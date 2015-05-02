@@ -1,5 +1,5 @@
 //
-//  SplashViewController.swift
+//  LobbyViewController.swift
 //  Patchr
 //
 //  Created by Rob MacEachern on 2015-02-17.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SplashViewController: UIViewController {
+class LobbyViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)

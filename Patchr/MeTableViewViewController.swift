@@ -15,6 +15,8 @@ class MeTableViewViewController: QueryResultTableViewController, TableViewCellDe
     @IBOutlet weak var currentUserNameField: UILabel!
     @IBOutlet weak var currentUserProfilePhoto: UIImageView!
     @IBOutlet weak var currentUserEmailField: UILabel!
+    @IBOutlet weak var currentWatching: UIButton!
+    @IBOutlet weak var currentOwns: UIButton!
     
     private var selectedDetailImage: UIImage?
     private var messageDateFormatter: NSDateFormatter!
@@ -118,7 +120,7 @@ class MeTableViewViewController: QueryResultTableViewController, TableViewCellDe
                 NSLog("Error during logout \(error)")
             }
             let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-            let destinationViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as! UIViewController
+            let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as! UIViewController
             appDelegate.window!.setRootViewController(destinationViewController, animated: true)
         }
     }

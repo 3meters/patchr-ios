@@ -51,12 +51,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         }
 
         
-        // If the connection to the database is considered valid, then start at the usual spot, otherwise start at the splash scene.
+        // If the connection to the database is considered valid, then start at the usual spot, otherwise start at the lobby scene.
         
         if ProxibaseClient.sharedInstance.authenticated {
             self.window?.rootViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateInitialViewController() as? UIViewController;
         } else {
-            let rootController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as? UIViewController
+            let rootController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as? UIViewController
             self.window?.rootViewController = rootController
         }
         
