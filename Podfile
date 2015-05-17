@@ -14,6 +14,7 @@ pod 'SDWebImage', '~> 3.7.2'
 pod 'Parse'
 pod 'UIDevice-Hardware'
 pod 'Lockbox'
+pod 'IDMPhotoBrowser'
 
 end
 
