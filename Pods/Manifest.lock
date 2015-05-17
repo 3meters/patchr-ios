@@ -41,18 +41,24 @@ PODS:
   - Bolts/AppLinks (1.1.5):
     - Bolts/Tasks
   - Bolts/Tasks (1.1.5)
+  - DACircularProgress (2.3.1)
   - GZIP (1.0.3)
+  - IDMPhotoBrowser (1.6.2):
+    - AFNetworking
+    - DACircularProgress
+    - pop
   - Lockbox (2.1.0)
   - Mantle (1.5.4):
     - Mantle/extobjc (= 1.5.4)
   - Mantle/extobjc (1.5.4)
   - MBProgressHUD (0.9.1)
-  - Parse (1.7.2):
-    - Bolts (~> 1.1)
+  - Parse (1.7.2.2):
+    - Bolts/Tasks (>= 1.1.5)
   - PBWebViewController (0.3)
+  - pop (1.0.7)
   - Reachability (3.2)
-  - RMCoreDataStack (0.1.4)
-  - SCLAlertView-Objective-C (0.7.0)
+  - RMCoreDataStack (0.1.5)
+  - SCLAlertView-Objective-C (0.7.1)
   - SDWebImage (3.7.2):
     - SDWebImage/Core (= 3.7.2)
   - SDWebImage/Core (3.7.2)
@@ -66,6 +72,7 @@ DEPENDENCIES:
   - AFNetworkActivityLogger (~> 2.0)
   - AFNetworking (~> 2.0)
   - AWSS3
+  - IDMPhotoBrowser
   - Lockbox
   - MBProgressHUD (~> 0.9.1)
   - Parse
@@ -82,15 +89,18 @@ SPEC CHECKSUMS:
   AWSCore: 0e82eabc27a96d765b1e2ad4d30b96c1cd298300
   AWSS3: 891d269735be0f3c63eab5a2d1ee9d788f2c64ee
   Bolts: aac24961496d504aa56fc267cde95162a71bac39
+  DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   GZIP: f0863fda354e8f83316508c0a2c7bbe385e39129
+  IDMPhotoBrowser: ebbfa6690456b72dd92d93b7bc11d71519f4d06d
   Lockbox: 16442da35d9d4286966936763be728a931d589c3
   Mantle: 60acd0cd363e27d945bda0a6b8e90577112d28f3
   MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
-  Parse: e1959adb9fe2fcd4736dac20b3ac691d47a4f06c
+  Parse: 6187586a80eb7b4960d755f85e1353148a611f87
   PBWebViewController: 909b1505da6ba7c5c82519a6457246027926061e
+  pop: 628ffc631644601567ee8bfaaaea493ebd7d0923
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
-  RMCoreDataStack: fec31b8fd8796f55822680f4f170f0186ca9198a
-  SCLAlertView-Objective-C: 0491ea966dba9b3713178e2ffbcd0a148dc5b271
+  RMCoreDataStack: 0dbd55179c5d4944b663bc75346ce7d850e60242
+  SCLAlertView-Objective-C: 19edce0d6f9de55316d8b9fe49a9953173a457f7
   SDWebImage: 71b7cdc1d1721d6a82ed62889030225f2c249e29
   TMCache: a93984b045a5ee84bd8941bd5e0b54296059cc52
   UIActionSheet+Blocks: e180b7dad0a721ab7f212ac9742af799008bb358

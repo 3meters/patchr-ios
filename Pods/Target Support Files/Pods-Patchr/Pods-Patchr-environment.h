@@ -84,11 +84,23 @@
 #define COCOAPODS_VERSION_MINOR_Bolts_Tasks 1
 #define COCOAPODS_VERSION_PATCH_Bolts_Tasks 5
 
+// DACircularProgress
+#define COCOAPODS_POD_AVAILABLE_DACircularProgress
+#define COCOAPODS_VERSION_MAJOR_DACircularProgress 2
+#define COCOAPODS_VERSION_MINOR_DACircularProgress 3
+#define COCOAPODS_VERSION_PATCH_DACircularProgress 1
+
 // GZIP
 #define COCOAPODS_POD_AVAILABLE_GZIP
 #define COCOAPODS_VERSION_MAJOR_GZIP 1
 #define COCOAPODS_VERSION_MINOR_GZIP 0
 #define COCOAPODS_VERSION_PATCH_GZIP 3
+
+// IDMPhotoBrowser
+#define COCOAPODS_POD_AVAILABLE_IDMPhotoBrowser
+#define COCOAPODS_VERSION_MAJOR_IDMPhotoBrowser 1
+#define COCOAPODS_VERSION_MINOR_IDMPhotoBrowser 6
+#define COCOAPODS_VERSION_PATCH_IDMPhotoBrowser 2
 
 // Lockbox
 #define COCOAPODS_POD_AVAILABLE_Lockbox
@@ -122,15 +134,16 @@
 
 // Parse
 #define COCOAPODS_POD_AVAILABLE_Parse
-#define COCOAPODS_VERSION_MAJOR_Parse 1
-#define COCOAPODS_VERSION_MINOR_Parse 7
-#define COCOAPODS_VERSION_PATCH_Parse 2
+// This library does not follow semantic-versioning,
+// so we were not able to define version macros.
+// Please contact the author.
+// Version: 1.7.2.2.
 
 // RMCoreDataStack
 #define COCOAPODS_POD_AVAILABLE_RMCoreDataStack
 #define COCOAPODS_VERSION_MAJOR_RMCoreDataStack 0
 #define COCOAPODS_VERSION_MINOR_RMCoreDataStack 1
-#define COCOAPODS_VERSION_PATCH_RMCoreDataStack 4
+#define COCOAPODS_VERSION_PATCH_RMCoreDataStack 5
 
 // Reachability
 #define COCOAPODS_POD_AVAILABLE_Reachability
@@ -142,7 +155,7 @@
 #define COCOAPODS_POD_AVAILABLE_SCLAlertView_Objective_C
 #define COCOAPODS_VERSION_MAJOR_SCLAlertView_Objective_C 0
 #define COCOAPODS_VERSION_MINOR_SCLAlertView_Objective_C 7
-#define COCOAPODS_VERSION_PATCH_SCLAlertView_Objective_C 0
+#define COCOAPODS_VERSION_PATCH_SCLAlertView_Objective_C 1
 
 // SDWebImage
 #define COCOAPODS_POD_AVAILABLE_SDWebImage
@@ -185,4 +198,10 @@
 #define COCOAPODS_VERSION_MAJOR_XMLDictionary 1
 #define COCOAPODS_VERSION_MINOR_XMLDictionary 4
 #define COCOAPODS_VERSION_PATCH_XMLDictionary 0
+
+// pop
+#define COCOAPODS_POD_AVAILABLE_pop
+#define COCOAPODS_VERSION_MAJOR_pop 1
+#define COCOAPODS_VERSION_MINOR_pop 0
+#define COCOAPODS_VERSION_PATCH_pop 7
 
