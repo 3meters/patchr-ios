@@ -6,9 +6,14 @@
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
 
-public class Constants {
-    public static let pageSizeDefault = 20
-    public static let pageSizeNearby = 50
-    public static let pageSizeExplore = 20
-    public static let pageSizeNotifications = 20
-}
+let pageSizeDefault = 20
+let pageSizeNearby = 50
+let pageSizeExplore = 20
+let pageSizeNotifications = 20
+
+let Device = UIDevice.currentDevice()
+
+private let iosVersion = NSString(string: Device.systemVersion).doubleValue
+
+let iOS8 = iosVersion >= 8
+let iOS7 = iosVersion >= 7 && iosVersion < 8
