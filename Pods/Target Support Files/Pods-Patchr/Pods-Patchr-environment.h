@@ -175,6 +175,12 @@
 #define COCOAPODS_VERSION_MINOR_TMCache 2
 #define COCOAPODS_VERSION_PATCH_TMCache 4
 
+// Toast
+#define COCOAPODS_POD_AVAILABLE_Toast
+#define COCOAPODS_VERSION_MAJOR_Toast 2
+#define COCOAPODS_VERSION_MINOR_Toast 4
+#define COCOAPODS_VERSION_PATCH_Toast 0
+
 // UIActionSheet+Blocks
 #define COCOAPODS_POD_AVAILABLE_UIActionSheet_Blocks
 #define COCOAPODS_VERSION_MAJOR_UIActionSheet_Blocks 0
@@ -193,11 +199,23 @@
 #define COCOAPODS_VERSION_MINOR_UIDevice_Hardware 1
 #define COCOAPODS_VERSION_PATCH_UIDevice_Hardware 5
 
+// UIScrollView-InfiniteScroll
+#define COCOAPODS_POD_AVAILABLE_UIScrollView_InfiniteScroll
+#define COCOAPODS_VERSION_MAJOR_UIScrollView_InfiniteScroll 0
+#define COCOAPODS_VERSION_MINOR_UIScrollView_InfiniteScroll 7
+#define COCOAPODS_VERSION_PATCH_UIScrollView_InfiniteScroll 2
+
 // XMLDictionary
 #define COCOAPODS_POD_AVAILABLE_XMLDictionary
 #define COCOAPODS_VERSION_MAJOR_XMLDictionary 1
 #define COCOAPODS_VERSION_MINOR_XMLDictionary 4
 #define COCOAPODS_VERSION_PATCH_XMLDictionary 0
+
+// libPhoneNumber-iOS
+#define COCOAPODS_POD_AVAILABLE_libPhoneNumber_iOS
+#define COCOAPODS_VERSION_MAJOR_libPhoneNumber_iOS 0
+#define COCOAPODS_VERSION_MINOR_libPhoneNumber_iOS 8
+#define COCOAPODS_VERSION_PATCH_libPhoneNumber_iOS 5
 
 // pop
 #define COCOAPODS_POD_AVAILABLE_pop

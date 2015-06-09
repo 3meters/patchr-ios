@@ -15,6 +15,9 @@ pod 'Parse'
 pod 'UIDevice-Hardware'
 pod 'Lockbox'
 pod 'IDMPhotoBrowser'
+pod 'Toast', '~> 2.4'
+pod 'UIScrollView-InfiniteScroll'
+pod 'libPhoneNumber-iOS', '~> 0.7'
 
 end
 

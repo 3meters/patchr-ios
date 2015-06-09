@@ -64,6 +64,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_resource "AWSS3/AWSS3/Resources/s3-2006-03-01.json"
   install_resource "IDMPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
   install_resource "IDMPhotoBrowser/Classes/IDMPBLocalizations.bundle"
+  install_resource "libPhoneNumber-iOS/libPhoneNumber/NBPhoneNumberMetadata.plist"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_resource "AWSCore/AWSCore/CognitoIdentity/Resources/cognito-identity-2014-06-30.json"
@@ -72,6 +73,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_resource "AWSS3/AWSS3/Resources/s3-2006-03-01.json"
   install_resource "IDMPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
   install_resource "IDMPhotoBrowser/Classes/IDMPBLocalizations.bundle"
+  install_resource "libPhoneNumber-iOS/libPhoneNumber/NBPhoneNumberMetadata.plist"
 fi
 if [[ "$CONFIGURATION" == "AdHoc" ]]; then
   install_resource "AWSCore/AWSCore/CognitoIdentity/Resources/cognito-identity-2014-06-30.json"
@@ -80,6 +82,7 @@ if [[ "$CONFIGURATION" == "AdHoc" ]]; then
   install_resource "AWSS3/AWSS3/Resources/s3-2006-03-01.json"
   install_resource "IDMPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
   install_resource "IDMPhotoBrowser/Classes/IDMPBLocalizations.bundle"
+  install_resource "libPhoneNumber-iOS/libPhoneNumber/NBPhoneNumberMetadata.plist"
 fi
 
 rsync -avr --copy-links --no-relative --exclude '*/.svn/*' --files-from="$RESOURCES_TO_COPY" / "${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"

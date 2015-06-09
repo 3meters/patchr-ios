@@ -47,6 +47,7 @@ PODS:
     - AFNetworking
     - DACircularProgress
     - pop
+  - libPhoneNumber-iOS (0.8.5)
   - Lockbox (2.1.0)
   - Mantle (1.5.4):
     - Mantle/extobjc (= 1.5.4)
@@ -63,9 +64,11 @@ PODS:
     - SDWebImage/Core (= 3.7.2)
   - SDWebImage/Core (3.7.2)
   - TMCache (1.2.4)
+  - Toast (2.4)
   - UIActionSheet+Blocks (0.9)
   - UICKeyChainStore (2.0.4)
   - UIDevice-Hardware (0.1.5)
+  - UIScrollView-InfiniteScroll (0.7.2)
   - XMLDictionary (1.4)
 
 DEPENDENCIES:
@@ -73,6 +76,7 @@ DEPENDENCIES:
   - AFNetworking (~> 2.0)
   - AWSS3
   - IDMPhotoBrowser
+  - libPhoneNumber-iOS (~> 0.7)
   - Lockbox
   - MBProgressHUD (~> 0.9.1)
   - Parse
@@ -80,8 +84,10 @@ DEPENDENCIES:
   - RMCoreDataStack
   - SCLAlertView-Objective-C (~> 0.7)
   - SDWebImage (~> 3.7.2)
+  - Toast (~> 2.4)
   - UIActionSheet+Blocks (~> 0.9)
   - UIDevice-Hardware
+  - UIScrollView-InfiniteScroll
 
 SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
@@ -92,6 +98,7 @@ SPEC CHECKSUMS:
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   GZIP: f0863fda354e8f83316508c0a2c7bbe385e39129
   IDMPhotoBrowser: ebbfa6690456b72dd92d93b7bc11d71519f4d06d
+  libPhoneNumber-iOS: b8ccd23576379caca37c7cbdd554addf384459ed
   Lockbox: 16442da35d9d4286966936763be728a931d589c3
   Mantle: 60acd0cd363e27d945bda0a6b8e90577112d28f3
   MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
@@ -103,9 +110,11 @@ SPEC CHECKSUMS:
   SCLAlertView-Objective-C: 19edce0d6f9de55316d8b9fe49a9953173a457f7
   SDWebImage: 71b7cdc1d1721d6a82ed62889030225f2c249e29
   TMCache: a93984b045a5ee84bd8941bd5e0b54296059cc52
+  Toast: 0773b8fc0e97352ca6054517bec7ebdd4110029d
   UIActionSheet+Blocks: e180b7dad0a721ab7f212ac9742af799008bb358
   UICKeyChainStore: 69eb0c3a6f669bccf16ba88de3b9069b71501361
   UIDevice-Hardware: b3695e58e0385155932e7889c32ed12e844e14a3
+  UIScrollView-InfiniteScroll: cfa860f96f5a2e3b4575d59fe6d08d337093ac2a
   XMLDictionary: f9f51601ba76678b594ab485f2b00ec1fed23724
 
 COCOAPODS: 0.36.4
