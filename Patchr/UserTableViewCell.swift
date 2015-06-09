@@ -17,25 +17,25 @@ protocol UserTableViewCellDelegate {
 
 class UserTableViewCell: UITableViewCell {
 
-    @IBOutlet weak var avatarImageView: UIImageView!
-    @IBOutlet weak var usernameLabel: UILabel!
-    @IBOutlet weak var locationLabel: UILabel!
-    @IBOutlet weak var ownerLabel: UILabel!
-    @IBOutlet weak var approvedLabel: UILabel!
+    @IBOutlet weak var userPhoto: UIImageView!
+    @IBOutlet weak var userName: UILabel!
+    @IBOutlet weak var area: UILabel!
+    @IBOutlet weak var owner: UILabel!
+    @IBOutlet weak var approved: UILabel!
     @IBOutlet weak var approvedSwitch: UISwitch!
     @IBOutlet weak var removeButton: UIButton!
-    
+
     weak var delegate: UserTableViewCellDelegate?
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
         self.removeButton.imageView?.contentMode = UIViewContentMode.Center
     }
-    
+
     @IBAction func approvedSwitchValueChangedAction(sender: UISwitch) {
         self.delegate?.userTableViewCell?(self, approvalSwitchValueChanged: self.approvedSwitch)
     }
-    
+
     @IBAction func removeButtonTouchUpInsideAction(sender: UIButton) {
         self.delegate?.userTableViewCell?(self, removeButtonTapped: self.removeButton)
     }

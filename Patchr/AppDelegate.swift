@@ -12,13 +12,11 @@ let PAApplicationDidReceiveRemoteNotification = "PAApplicationDidReceiveRemoteNo
 let PAapplicationDidBecomeActiveWithNonZeroBadge = "PAapplicationDidBecomeActiveWithNonZeroBadge"
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    var locationManager = CLLocationManager()
     
-    class func appDelegate() -> AppDelegate
-    {
+    class func appDelegate() -> AppDelegate {
         return UIApplication.sharedApplication().delegate as! AppDelegate
     }
     
@@ -26,46 +24,53 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         
         #if DEBUG
         AFNetworkActivityLogger.sharedLogger().startLogging()
+        AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelDebug
         #endif
-        
+
+        /* Setup parse for push notifications */
         Parse.setApplicationId("EonZJ4FXEADijslgqXCkg37sOGpB7AB9lDYxoHtz", clientKey: "5QRFlRQ3j7gkxyJ2cBYbHTK98WRQhoHCnHdpEKSD")
         
-        ProxibaseClient.sharedInstance.registerInstallStandard { (response, error) -> Void in
+        DataController.proxibase.registerInstallStandard { (response, error) -> Void in
             if error != nil {
                 NSLog("Error during registerInstall: \(error)")
             }
         }
-        
-        self.locationManager.delegate = self
-        
-        if CLLocationManager.authorizationStatus() == .NotDetermined {
-            if self.locationManager.respondsToSelector(Selector("requestWhenInUseAuthorization")) {
-                // iOS 8
-                self.locationManager.requestWhenInUseAuthorization()
-            } else {
-                // iOS 7
-                self.locationManager.startUpdatingLocation() // Prompts automatically
-            }
-        } else if CLLocationManager.authorizationStatus() == .AuthorizedAlways || CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
-            self.locationManager.startUpdatingLocation()
-        }
 
-        
-        // If the connection to the database is considered valid, then start at the usual spot, otherwise start at the lobby scene.
-        
-        if ProxibaseClient.sharedInstance.authenticated {
-            self.window?.rootViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateInitialViewController() as? UIViewController;
+        /* If we have an authenticated user then start at the usual spot, otherwise start at the lobby scene. */
+        if UserController.instance.authenticated {
+			self.window?.rootViewController = UIStoryboard(
+                name: "Main",
+                bundle: NSBundle.mainBundle()).instantiateInitialViewController() as? UIViewController;
         } else {
-            let rootController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as? UIViewController
+            let rootController = UIStoryboard(
+                name: "Lobby",
+                bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as? UIViewController
             self.window?.rootViewController = rootController
         }
         
-        self.window?.tintColor = UIColor(hue: 33/360, saturation: 1.0, brightness: 0.9, alpha: 1.0)
+        /* Get the latest on the authenticated user if we have one */
+        if UserController.instance.authenticated {
+            UserController.instance.signinAuto()
+        }
+        
+        self.window?.tintColor = AirUi.brandColor
         UISwitch.appearance().onTintColor = self.window?.tintColor
         
         self.registerForRemoteNotifications()
         
         return true
+    }
+    
+    func applicationDidEnterBackground(application: UIApplication) {
+        NSNotificationCenter.defaultCenter().postNotificationName(Event.ApplicationDidEnterBackground.rawValue, object: nil)
+    }
+
+    func applicationWillEnterForeground(application: UIApplication){
+        NSNotificationCenter.defaultCenter().postNotificationName(Event.ApplicationWillEnterForeground.rawValue, object: nil)
+    }
+    
+    func applicationWillResignActive(application: UIApplication){
+        NSNotificationCenter.defaultCenter().postNotificationName(Event.ApplicationWillResignActive.rawValue, object: nil)
     }
     
     func applicationDidBecomeActive(application: UIApplication) {
@@ -80,16 +85,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
             PFInstallation.currentInstallation().badge = 0
             PFInstallation.currentInstallation().saveEventually()
         }
+        NSNotificationCenter.defaultCenter().postNotificationName(Event.ApplicationDidBecomeActive.rawValue, object: nil)
     }
     
     func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
-
         let parseInstallation = PFInstallation.currentInstallation()
         parseInstallation.setDeviceTokenFromData(deviceToken)
         parseInstallation.saveInBackground()
     }
     
-    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
+    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject],
+        fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
         
         var augmentedUserInfo = NSMutableDictionary(dictionary: userInfo)
         augmentedUserInfo["receivedInApplicationState"] = application.applicationState.rawValue
@@ -97,20 +103,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         completionHandler(.NewData)
     }
 
-    // MARK: CLLocationManagerDelegate
-    
-    func locationManager(manager: CLLocationManager!, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-        if status == .AuthorizedAlways || status == .AuthorizedWhenInUse {
-            manager.startUpdatingLocation()
-        } else if status == CLAuthorizationStatus.Denied {
-            let windowList = UIApplication.sharedApplication().windows
-            let topWindow = windowList[windowList.count - 1] as! UIWindow
-            SCLAlertView().showWarning(topWindow.rootViewController, title:"Location Disabled", subTitle: "You can enable location access in Settings → Patchr → Location", closeButtonTitle: "OK", duration: 0.0)
-        }
-    }
-
-    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {}
-    
     func registerForRemoteNotifications() {
         
         let application = UIApplication.sharedApplication()

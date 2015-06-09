@@ -2,10 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:ballard.gpx">
+   </FileRef>
+   <FileRef
       location = "group:Patchr.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
    </FileRef>
-
 </Workspace>

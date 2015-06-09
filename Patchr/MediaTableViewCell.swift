@@ -14,28 +14,28 @@ protocol TableViewCellDelegate: NSObjectProtocol {
 
 class MediaTableViewCell: UITableViewCell {
     
-    @IBOutlet weak var userAvatarImageView: UIImageView!
-    @IBOutlet weak var createdDateLabel: UILabel!
-    @IBOutlet weak var messageBodyLabel: UILabel!
-    @IBOutlet weak var messageImageView: UIImageView!
-    
-    @IBOutlet weak var messageImageContainerHeight: NSLayoutConstraint!
+    @IBOutlet weak var userPhoto: UIImageView!
+    @IBOutlet weak var createdDate: UILabel!
+    @IBOutlet weak var description_: UILabel!
+    @IBOutlet weak var photo: UIImageView!
+    @IBOutlet weak var photoHolderHeight: NSLayoutConstraint!
     
     weak var delegate: TableViewCellDelegate?
 
     override func awakeFromNib() {
         super.awakeFromNib()
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: "tapGestureRecognizerAction:")
-        self.messageImageView.addGestureRecognizer(tapGestureRecognizer)
+        self.photo.addGestureRecognizer(tapGestureRecognizer)
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
+
         self.contentView.setNeedsLayout()
         self.contentView.layoutIfNeeded()
         
-        updatePreferredMaxLayoutWidth(self.createdDateLabel)
-        updatePreferredMaxLayoutWidth(self.messageBodyLabel)
+        updatePreferredMaxLayoutWidth(self.createdDate)
+        updatePreferredMaxLayoutWidth(self.description_)
     }
     
     // MARK: Private Internal

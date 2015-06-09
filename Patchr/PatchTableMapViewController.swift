@@ -9,12 +9,9 @@
 import UIKit
 import MapKit
 
-class FetchedResultsMapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsControllerDelegate {
+class FetchedResultsMapViewController: UIViewController, NSFetchedResultsControllerDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
-    
-    var managedObjectContext: NSManagedObjectContext!
-    var dataStore: DataStore!
     
     // If you modify the properties of the fetchRequest, you need to follow these instructions from the Apple docs:
     //
@@ -27,13 +24,12 @@ class FetchedResultsMapViewController: UIViewController, MKMapViewDelegate, NSFe
     //    3. Invoke performFetch:.
     
     var fetchRequest: NSFetchRequest!
-    
     var selectedPatch: Patch?
-
+    var token: dispatch_once_t = 0
     
     internal lazy var fetchedResultsController: NSFetchedResultsController = {
-        return NSFetchedResultsController(fetchRequest: self.fetchRequest, managedObjectContext: self.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
-        }()
+        return NSFetchedResultsController(fetchRequest: self.fetchRequest, managedObjectContext: DataController.instance.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,8 +39,6 @@ class FetchedResultsMapViewController: UIViewController, MKMapViewDelegate, NSFe
         self.reloadAnnotations()
     }
     
-    var token: dispatch_once_t = 0
-    
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -53,7 +47,6 @@ class FetchedResultsMapViewController: UIViewController, MKMapViewDelegate, NSFe
             // Only do it on the initial view appearance
             self.mapView.showAnnotations(self.mapView.annotations, animated: true)
         })
-        
     }
     
     // TODO: consolidate the duplicated segue logic
@@ -66,8 +59,6 @@ class FetchedResultsMapViewController: UIViewController, MKMapViewDelegate, NSFe
         switch segue.identifier! {
         case "PatchDetailSegue":
             if let patchDetailViewController = segue.destinationViewController as? PatchDetailViewController {
-                patchDetailViewController.managedObjectContext = self.managedObjectContext
-                patchDetailViewController.dataStore = self.dataStore
                 patchDetailViewController.patch = self.selectedPatch
                 self.selectedPatch = nil
             }
@@ -75,7 +66,46 @@ class FetchedResultsMapViewController: UIViewController, MKMapViewDelegate, NSFe
         }
     }
     
-    // MARK: MKMapViewDelegate
+    private func reloadAnnotations() -> Void {
+        self.mapView.removeAnnotations(self.mapView.annotations)
+        if let fetchedObjects = self.fetchedResultsController.fetchedObjects {
+            for object in fetchedObjects {
+                if let queryResult = object as? QueryItem {
+                    if let entity = queryResult.object as? Entity {
+                        self.mapView.addAnnotation(EntityAnnotation(entity: entity))
+                    }
+                }
+            }
+        }
+    }
+}
+
+extension FetchedResultsMapViewController: NSFetchedResultsControllerDelegate {
+    
+    func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+        
+        let queryResult = anObject as? QueryItem
+        if queryResult == nil { return }
+        
+        // TODO: we can do better than a full reload
+        switch type {
+        case .Insert:
+            if let entity = queryResult!.object as? Entity {
+                self.mapView.addAnnotation(EntityAnnotation(entity: entity))
+            }
+        case .Delete:
+            self.reloadAnnotations()
+        case .Update:
+            self.reloadAnnotations()
+        case .Move:
+            self.reloadAnnotations()
+        default:
+            return
+        }
+    }
+}
+
+extension FetchedResultsMapViewController: MKMapViewDelegate {
     
     func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
         
@@ -101,45 +131,6 @@ class FetchedResultsMapViewController: UIViewController, MKMapViewDelegate, NSFe
             }
         }
     }
-    
-    // MARK: NSFetchedResultsControllerDelegate
-    
-    func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
-        
-        let queryResult = anObject as? QueryResult
-        if queryResult == nil { return }
-        
-        // TODO: we can do better than a full reload
-        switch type {
-        case .Insert:
-            if let entity = queryResult!.result as? Entity {
-                self.mapView.addAnnotation(EntityAnnotation(entity: entity))
-            }
-        case .Delete:
-            self.reloadAnnotations()
-        case .Update:
-            self.reloadAnnotations()
-        case .Move:
-            self.reloadAnnotations()
-        default:
-            return
-        }
-    }
-    
-    // MARK: Private Internal
-    
-    func reloadAnnotations() -> Void {
-        self.mapView.removeAnnotations(self.mapView.annotations)
-        if let fetchedObjects = self.fetchedResultsController.fetchedObjects {
-            for object in fetchedObjects {
-                if let queryResult = object as? QueryResult {
-                    if let entity = queryResult.result as? Entity {
-                        self.mapView.addAnnotation(EntityAnnotation(entity: entity))
-                    }
-                }
-            }
-        }
-    }
 }
 
 class EntityAnnotation: NSObject, MKAnnotation {
@@ -153,7 +144,7 @@ class EntityAnnotation: NSObject, MKAnnotation {
         self.coordinate = entity.location.coordinate
         self.title = entity.name
         if let patch = entity as? Patch {
-            self.subtitle = patch.category?.name
+            self.subtitle = patch.type
         }
     }
 }

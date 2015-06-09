@@ -20,22 +20,34 @@
 #import <SCLAlertView.h>
 #import <MBProgressHUD.h>
 #import <SDWebImage/UIImageView+WebCache.h>
+#import <SDWebImage/UIButton+WebCache.h>
 #import <Parse.h>
 #import <UIDevice-Hardware.h>
 #import <Lockbox.h>
+#import <IDMPhoto.h>
+#import <IDMPhotoBrowser.h>
+#import <UIScrollView+InfiniteScroll.h>
+#import <UIView+Toast.h>
+#import <NBPhoneNumberUtil.h>
+#import <NBPhoneNumber.h>
+#import "NGAParallaxMotion.h"
+#import "GCPlaceholderTextView.h"
+
 #import "Patch.h"
 #import "Place.h"
 #import "Query.h"
-#import "QueryResult.h"
+#import "QueryItem.h"
 #import "ServiceData.h"
 #import "Notification.h"
 #import "Entity.h"
 #import "ServiceBase.h"
-#import "PACategory.h"
+#import "RichType.h"
 #import "Location.h"
 #import "Photo.h"
 #import "Message.h"
 #import "User.h"
-#import "PALink.h"
+#import "Link.h"
+#import "Shortcut.h"
+
 
 #endif

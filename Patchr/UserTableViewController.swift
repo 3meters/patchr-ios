@@ -9,138 +9,170 @@
 import UIKit
 
 enum UserTableFilter {
-    case Likers
-    case Watchers
+	case PatchLikers
+	case PatchWatchers
+    case MessageLikers
 }
 
-class UserTableViewController: QueryResultTableViewController, UserTableViewCellDelegate {
-    
-    private let cellNibName = "UserTableViewCell"
-    
-    var patch: Patch!
-    var filter: UserTableFilter = .Watchers
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: "Cell")
-        self.tableView.delaysContentTouches = false
-        
-        switch self.filter {
-        case .Watchers:
-            self.navigationItem.title = "Watchers"
-        case .Likers:
-            self.navigationItem.title = "Likers"
+class UserTableViewController: QueryTableViewController {
+
+	private let cellNibName = "UserTableViewCell"
+
+	var patch:          Patch!
+    var message:        Message!
+	var selectedUser:   User?
+	var filter:         UserTableFilter = .PatchWatchers
+	private var _query: Query!
+
+	override func query() -> Query {
+		if self._query == nil {
+			let query = Query.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Query
+
+			switch self.filter {
+				case .PatchLikers:
+					query.name = DataStoreQueryName.LikersForPatch.rawValue
+                    query.pageSize = DataController.proxibase.pageSizeDefault
+                    query.parameters = ["entity": patch]
+				case .PatchWatchers:
+					query.name = DataStoreQueryName.WatchersForPatch.rawValue
+                    query.pageSize = DataController.proxibase.pageSizeDefault
+                    query.parameters = ["entity": patch]
+                case .MessageLikers:
+                    query.name = DataStoreQueryName.LikersForMessage.rawValue
+                    query.pageSize = DataController.proxibase.pageSizeDefault
+                    query.parameters = ["entity": message]
+			}
+
+			DataController.instance.managedObjectContext.save(nil)
+			self._query = query
+		}
+		return self._query
+	}
+
+	override func viewDidLoad() {
+		super.viewDidLoad()
+
+		self.tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: "Cell")
+		self.tableView.delaysContentTouches = false
+
+		switch self.filter {
+			case .PatchWatchers:
+				self.navigationItem.title = "Watchers"
+			case .PatchLikers, .MessageLikers:
+				self.navigationItem.title = "Likers"
+		}
+	}
+
+	override func configureCell(cell: UITableViewCell, object: AnyObject) {
+
+		// The cell width seems to incorrect occassionally
+		if CGRectGetWidth(cell.bounds) != CGRectGetWidth(self.tableView.bounds) {
+			cell.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: CGRectGetHeight(cell.frame))
+			cell.setNeedsLayout()
+			cell.layoutIfNeeded()
+		}
+
+		let queryResult = object as! QueryItem
+		let user = queryResult.object as! User
+		let cell = cell as! UserTableViewCell
+		cell.delegate = self
+
+		cell.userName.text = user.name
+        cell.userPhoto.setImageWithPhoto(user.getPhotoManaged(), animate: cell.userPhoto.image == nil)
+		cell.area.text = user.area?.uppercaseString
+        if self.patch != nil {
+            cell.owner.text = user.id_ == self.patch.ownerId ? "OWNER" : nil
         }
-    }
-    
-    private var _query: Query!
-    override func query() -> Query {
-        if self._query == nil {
-            let query = Query.insertInManagedObjectContext(self.managedObjectContext) as! Query
-            
-            switch self.filter {
-            case .Likers:
-                query.name = DataStoreQueryName.LikersLinksForPatch.rawValue
-            case .Watchers:
-                query.name = DataStoreQueryName.WatchersLinksForPatch.rawValue
-            }
-            
-            query.parameters = ["patchId" : self.patch.id_]
-            
-            self.managedObjectContext.save(nil)
-            self._query = query
-        }
-        return self._query
-    }
-    
-    override func configureCell(cell: UITableViewCell, object: AnyObject) {
+
+		cell.userName.hidden = cell.userName.text == nil
+		cell.area.hidden = cell.area.text == nil
+		cell.owner.hidden = cell.owner.text == nil
+
+		// Private patch owner controls controls
+        cell.removeButton?.hidden = true
+        cell.approved?.hidden = true
+        cell.approvedSwitch?.hidden = true
         
-        let queryResult = object as! QueryResult
-        let userCell = cell as! UserTableViewCell
-        userCell.delegate = self
-        
-        let link = queryResult.result as! PALink
-        self.dataStore.withUser(link.fromId, refresh: true) { (user) -> Void in
-            if user != nil {
-                
-                userCell.usernameLabel.text = user!.name
-                userCell.locationLabel.text = user!.area
-                userCell.ownerLabel.text = user!.id_ == self.patch.creatorId ? "Owner" : nil
-                userCell.avatarImageView.pa_setImageWithURL(user!.photo?.photoURL(), placeholder: UIImage(named: "UserAvatarDefault"))
-                userCell.approvedSwitch.on = link.enabledValue
-                
-                userCell.usernameLabel.hidden = userCell.usernameLabel.text == nil
-                userCell.locationLabel.hidden = userCell.locationLabel.text == nil
-                userCell.ownerLabel.hidden = userCell.ownerLabel.text == nil
-                
-                // Private patch owner controls controls
-                if self.filter == .Watchers && self.patch.visibilityValue == PAVisibilityLevel.Private {
-                    
-                    self.dataStore.withCurrentUser(refresh: false, completion: { (currentUser) -> Void in
-                        
-                        var hideCellAdminControls : Bool = true
-                        
-                        if currentUser.id_ == self.patch.creatorId {
-                            
-                            if user!.id_ != currentUser.id_ {
-                                // Only show admin controls if current user is patch owner AND 
-                                // the cell is not the current user's cell
-                                hideCellAdminControls = false
-                            }
-                            
+		if self.filter == .PatchWatchers && self.patch.visibility == "private" {
+            
+            if let currentUser = UserController.instance.currentUser {
+                if currentUser.id_ == self.patch.ownerId {
+                    if user.id_ != currentUser.id_ {
+                        cell.removeButton?.hidden = false
+                        cell.approved?.hidden = false
+                        cell.approvedSwitch?.hidden = false
+                        cell.approvedSwitch?.on = false
+                        if (user.link != nil && user.link.type == "watch") {
+                            cell.approvedSwitch?.on = user.link.enabledValue
                         }
-                        
-                        userCell.removeButton.hidden = hideCellAdminControls
-                        userCell.approvedLabel.text = hideCellAdminControls ? nil : "Approved:"
-                        userCell.approvedLabel.hidden = hideCellAdminControls
-                        userCell.approvedSwitch.hidden = hideCellAdminControls
-                    })
-                }
-                
-            }
-        }
-    }
-    
-    // MARK: UserTableViewCellDelegate
-    
-    func userTableViewCell(userTableViewCell: UserTableViewCell, approvalSwitchValueChanged approvalSwitch: UISwitch) {
-        if let indexPath = self.tableView.indexPathForCell(userTableViewCell) {
-            if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryResult {
-                if let link = queryResult.result as? PALink {
-                    approvalSwitch.enabled = false
-                    let linkEnabled = approvalSwitch.on
-                    ProxibaseClient.sharedInstance.updateLink(link.id_, enabled: linkEnabled, completion: { (response, error) -> Void in
-                        if error != nil {
-                            SCLAlertView().showError(self, title:"Error", subTitle: error!.localizedDescription , closeButtonTitle: "OK", duration: 0.0)
-                            // Toggle the switch since it failed
-                            approvalSwitch.on = !linkEnabled
-                        } else {
-                            link.enabledValue = linkEnabled
-                            self.managedObjectContext.save(nil)
-                        }
-                        approvalSwitch.enabled = true
-                    })
+                    }
                 }
             }
-        }
-    }
+		}
+	}
+}
+
+/*--------------------------------------------------------------------------------------------
+ * Extensions
+ *--------------------------------------------------------------------------------------------*/
+
+extension UserTableViewController: UITableViewDelegate {
     
-    func userTableViewCell(userTableViewCell: UserTableViewCell, removeButtonTapped removeButton: UIButton) {
-        if let indexPath = self.tableView.indexPathForCell(userTableViewCell) {
-            if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryResult {
-                if let link = queryResult.result as? PALink {
-                    ProxibaseClient.sharedInstance.deleteLink(link.id_, completion: { (response, error) -> Void in
-                        if error != nil {
-                            SCLAlertView().showError(self, title:"Error", subTitle: error!.localizedDescription , closeButtonTitle: "OK", duration: 0.0)
-                        } else {
-                            self.managedObjectContext.deleteObject(link)
-                            self.managedObjectContext.deleteObject(queryResult)
-                            self.managedObjectContext.save(nil)
-                        }
-                    })
-                }
-            }
-        }
-    }
-   
+	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
+			if let user = queryResult.object as? User {
+				self.selectedUser = user
+				self.performSegueWithIdentifier("UserDetailSegue", sender: self)
+				return
+			}
+		}
+		assert(false, "Couldn't set selectedUser")
+	}
+}
+
+extension UserTableViewController: UserTableViewCellDelegate {
+    
+//	func userTableViewCell(userTableViewCell: UserTableViewCell, approvalSwitchValueChanged approvalSwitch: UISwitch) {
+//		if let indexPath = self.tableView.indexPathForCell(userTableViewCell) {
+//			if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
+//				if let link = queryResult.object as? Link {
+//					approvalSwitch.enabled = false
+//					let linkEnabled = approvalSwitch.on
+//					DataController.proxibase.enableLinkById(link.id_, enabled: linkEnabled, completion: {
+//						(response, error) -> Void in
+//						if error != nil {
+//							SCLAlertView().showError(self, title: "Error", subTitle: error!.localizedDescription, closeButtonTitle: "OK", duration: 0.0)
+//							// Toggle the switch since it failed
+//							approvalSwitch.on = !linkEnabled
+//						}
+//						else {
+//							link.enabledValue = linkEnabled
+//							DataController.instance.managedObjectContext.save(nil)
+//						}
+//						approvalSwitch.enabled = true
+//					})
+//				}
+//			}
+//		}
+//	}
+//
+//	func userTableViewCell(userTableViewCell: UserTableViewCell, removeButtonTapped removeButton: UIButton) {
+//		if let indexPath = self.tableView.indexPathForCell(userTableViewCell) {
+//			if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
+//				if let link = queryResult.object as? Link {
+//					DataController.proxibase.deleteLinkById(link.id_, completion: {
+//						(response, error) -> Void in
+//						if error != nil {
+//							SCLAlertView().showError(self, title: "Error", subTitle: error!.localizedDescription, closeButtonTitle: "OK", duration: 0.0)
+//						}
+//						else {
+//							DataController.instance.managedObjectContext.deleteObject(link)
+//							DataController.instance.managedObjectContext.deleteObject(queryResult)
+//							DataController.instance.managedObjectContext.save(nil)
+//						}
+//					})
+//				}
+//			}
+//		}
+//	}
 }

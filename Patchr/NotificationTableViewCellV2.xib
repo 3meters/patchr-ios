@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
@@ -16,32 +16,32 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="c93-v8-v2J" customClass="AirImageView" customModule="Patchr" customModuleProvider="target">
-                        <rect key="frame" x="8" y="12" width="48" height="48"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="c93-v8-v2J" userLabel="user_photo" customClass="AirImageView" customModule="Patchr" customModuleProvider="target">
+                        <rect key="frame" x="8" y="12" width="50" height="50"/>
+                        <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="48" id="PJd-M4-AXX"/>
-                            <constraint firstAttribute="height" constant="48" id="zka-fN-QSA"/>
+                            <constraint firstAttribute="width" constant="50" id="PJd-M4-AXX"/>
+                            <constraint firstAttribute="height" constant="50" id="zka-fN-QSA"/>
                         </constraints>
                     </imageView>
-                    <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="This is a multiline message comment that will say something that people will like" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BTv-Gi-ogT" customClass="AutoSizingLabel">
-                        <rect key="frame" x="65" y="12" width="238" height="61"/>
+                    <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="This is a multiline message comment that will say something that people will like" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="241" translatesAutoresizingMaskIntoConstraints="NO" id="BTv-Gi-ogT" userLabel="description" customClass="AutoSizingLabel">
+                        <rect key="frame" x="67" y="12" width="236" height="61"/>
                         <fontDescription key="fontDescription" type="system" weight="light" pointSize="17"/>
                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="1000" text="02 Mar" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k4O-Bb-7oC">
-                        <rect key="frame" x="93" y="228" width="210" height="18"/>
+                    <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="1000" text="02 Mar" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k4O-Bb-7oC" userLabel="created_date">
+                        <rect key="frame" x="95" y="223" width="208" height="18"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="n3N-Wg-lFa">
-                        <rect key="frame" x="65" y="73" width="238" height="148"/>
+                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="n3N-Wg-lFa" userLabel="photo_holder">
+                        <rect key="frame" x="67" y="73" width="240" height="148"/>
                         <subviews>
-                            <imageView autoresizesSubviews="NO" clipsSubviews="YES" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="mEK-Mo-Kp8" customClass="AirImageView" customModule="Patchr" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="14" width="238" height="134"/>
+                            <imageView autoresizesSubviews="NO" clipsSubviews="YES" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="mEK-Mo-Kp8" userLabel="photo" customClass="AirImageView" customModule="Patchr" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="8" width="240" height="135"/>
                                 <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="mEK-Mo-Kp8" secondAttribute="height" multiplier="16:9" id="JRe-7q-ukX"/>
@@ -50,21 +50,13 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="mEK-Mo-Kp8" firstAttribute="leading" secondItem="n3N-Wg-lFa" secondAttribute="leading" id="CAm-mS-Jyv"/>
-                            <constraint firstAttribute="trailing" secondItem="mEK-Mo-Kp8" secondAttribute="trailing" id="M8C-bu-o74"/>
+                            <constraint firstItem="mEK-Mo-Kp8" firstAttribute="trailing" secondItem="n3N-Wg-lFa" secondAttribute="trailing" id="M8C-bu-o74"/>
                             <constraint firstAttribute="height" constant="148" id="V38-w0-BPq"/>
-                            <constraint firstItem="mEK-Mo-Kp8" firstAttribute="top" secondItem="n3N-Wg-lFa" secondAttribute="top" constant="12" id="ZTP-q5-UPx"/>
-                            <constraint firstAttribute="bottom" secondItem="mEK-Mo-Kp8" secondAttribute="bottom" id="nLk-vr-Uj3"/>
-                            <constraint firstItem="mEK-Mo-Kp8" firstAttribute="top" secondItem="n3N-Wg-lFa" secondAttribute="top" constant="15" id="zDF-7G-eH8"/>
+                            <constraint firstItem="mEK-Mo-Kp8" firstAttribute="top" secondItem="n3N-Wg-lFa" secondAttribute="top" constant="8" id="wop-Yt-6Gy"/>
                         </constraints>
-                        <variation key="default">
-                            <mask key="constraints">
-                                <exclude reference="ZTP-q5-UPx"/>
-                                <exclude reference="zDF-7G-eH8"/>
-                            </mask>
-                        </variation>
                     </view>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uOK-9G-kgV">
-                        <rect key="frame" x="65" y="227" width="20" height="20"/>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uOK-9G-kgV" userLabel="type">
+                        <rect key="frame" x="67" y="222" width="20" height="20"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="20" id="P63-PQ-Pl2"/>
                             <constraint firstAttribute="height" constant="20" id="ujd-dc-52M"/>
@@ -75,7 +67,7 @@
                 <constraints>
                     <constraint firstItem="BTv-Gi-ogT" firstAttribute="leading" secondItem="c93-v8-v2J" secondAttribute="trailing" constant="9" id="5zn-Dc-lq2"/>
                     <constraint firstItem="n3N-Wg-lFa" firstAttribute="top" secondItem="BTv-Gi-ogT" secondAttribute="bottom" id="6pB-mU-A8X"/>
-                    <constraint firstAttribute="trailingMargin" secondItem="n3N-Wg-lFa" secondAttribute="trailing" constant="4" id="FoR-tn-3ZJ"/>
+                    <constraint firstAttribute="trailing" secondItem="n3N-Wg-lFa" secondAttribute="trailing" constant="8" id="FoR-tn-3ZJ"/>
                     <constraint firstItem="uOK-9G-kgV" firstAttribute="leading" secondItem="n3N-Wg-lFa" secondAttribute="leading" id="GhN-Jf-Gt6"/>
                     <constraint firstItem="k4O-Bb-7oC" firstAttribute="leading" secondItem="uOK-9G-kgV" secondAttribute="trailing" constant="8" id="PPT-4E-v2i"/>
                     <constraint firstItem="BTv-Gi-ogT" firstAttribute="top" secondItem="OrX-vM-sQY" secondAttribute="topMargin" constant="4" id="TRJ-uD-Xc3"/>
@@ -83,19 +75,20 @@
                     <constraint firstItem="uOK-9G-kgV" firstAttribute="centerY" secondItem="k4O-Bb-7oC" secondAttribute="centerY" id="bAZ-d8-uAe"/>
                     <constraint firstItem="k4O-Bb-7oC" firstAttribute="top" secondItem="mEK-Mo-Kp8" secondAttribute="bottom" constant="7" id="bP4-tY-RS7"/>
                     <constraint firstAttribute="trailingMargin" secondItem="BTv-Gi-ogT" secondAttribute="trailing" constant="4" id="cQk-G6-Ist"/>
-                    <constraint firstItem="BTv-Gi-ogT" firstAttribute="leading" secondItem="n3N-Wg-lFa" secondAttribute="leading" id="ccq-j9-BeU"/>
+                    <constraint firstItem="n3N-Wg-lFa" firstAttribute="leading" secondItem="BTv-Gi-ogT" secondAttribute="leading" id="ccq-j9-BeU"/>
                     <constraint firstAttribute="trailingMargin" secondItem="k4O-Bb-7oC" secondAttribute="trailing" constant="4" id="dMl-54-CQ3"/>
                     <constraint firstItem="c93-v8-v2J" firstAttribute="top" secondItem="BTv-Gi-ogT" secondAttribute="top" id="wn1-Mj-7ul"/>
                     <constraint firstItem="c93-v8-v2J" firstAttribute="leading" secondItem="OrX-vM-sQY" secondAttribute="leadingMargin" id="z2h-4s-d1r"/>
                 </constraints>
             </tableViewCellContentView>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <connections>
-                <outlet property="createdDate" destination="k4O-Bb-7oC" id="1IF-Yj-lDf"/>
-                <outlet property="description_" destination="BTv-Gi-ogT" id="Ezl-JF-sEc"/>
+                <outlet property="createdDate" destination="k4O-Bb-7oC" id="93M-EK-6eC"/>
+                <outlet property="description_" destination="BTv-Gi-ogT" id="WkN-ti-HAm"/>
                 <outlet property="iconImageView" destination="uOK-9G-kgV" id="ZYn-WA-PDi"/>
-                <outlet property="photo" destination="mEK-Mo-Kp8" id="KZt-9c-Pe5"/>
-                <outlet property="photoHolderHeight" destination="V38-w0-BPq" id="23M-nb-pcW"/>
-                <outlet property="userPhoto" destination="c93-v8-v2J" id="kFC-hK-mb7"/>
+                <outlet property="photo" destination="mEK-Mo-Kp8" id="fQy-RH-hfM"/>
+                <outlet property="photoHolderHeight" destination="V38-w0-BPq" id="jlZ-C4-SLT"/>
+                <outlet property="userPhoto" destination="c93-v8-v2J" id="nfR-mV-KgZ"/>
             </connections>
             <point key="canvasLocation" x="437.5" y="674.5"/>
         </tableViewCell>

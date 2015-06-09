@@ -49,7 +49,8 @@ public func DateTimeTag() -> String! {
 var temporaryFileCount = 0
 
 func TemporaryFileURLForImage(image: UIImage) -> NSURL? {
-	let imageData = UIImageJPEGRepresentation(image, /*compressionQuality*/0.75)
+    
+	let imageData = UIImageJPEGRepresentation(image, /*compressionQuality*/0.70)
 	if let imageData = imageData {
 		// Note: This method of getting a temporary file path is not the recommended method. See the docs for NSTemporaryDirectory.
 		let temporaryFilePath
@@ -63,16 +64,15 @@ func TemporaryFileURLForImage(image: UIImage) -> NSURL? {
 	return nil
 }
 
-
 // Opportunity here to make this generic.
 
 class TextViewChangeObserver {
 	var observerObject: NSObjectProtocol
 
 	init(_ textView: UITextView, action: () -> ()) {
-		observerObject = NSNotificationCenter.defaultCenter().addObserverForName(UITextViewTextDidChangeNotification, object: textView, queue: nil)
-		{
+		observerObject = NSNotificationCenter.defaultCenter().addObserverForName(UITextViewTextDidChangeNotification, object: textView, queue: nil) {
 			note in
+            
 			action()
 		}
 	}
@@ -90,8 +90,7 @@ class TextFieldChangeObserver {
 	var observerObject: NSObjectProtocol
 
 	init(_ textField: UITextField, action: () -> ()) {
-		observerObject = NSNotificationCenter.defaultCenter().addObserverForName(UITextFieldTextDidChangeNotification, object: textField, queue: nil)
-		{
+		observerObject = NSNotificationCenter.defaultCenter().addObserverForName(UITextFieldTextDidChangeNotification, object: textField, queue: nil) {
 			note in
 			action()
 		}
@@ -111,27 +110,26 @@ func !=(a: CLLocationCoordinate2D, b: CLLocationCoordinate2D) -> Bool {
 }
 
 extension UIViewController {
+    
 	func ActionConfirmationAlert(title: String, message: String, actionTitle: String, cancelTitle: String, onDismiss: (Bool) -> Void) {
+        
 		let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-
 		alert.addAction(UIAlertAction(title: actionTitle, style: .Destructive, handler: { _ in onDismiss(true) }))
 		alert.addAction(UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) }))
-		self.presentViewController(alert, animated: true) {
-		}
+        
+		self.presentViewController(alert, animated: true) {}
 	}
 
 	func ErrorNotificationAlert(title: String, message: String, onDismiss: (() -> Void)? = nil) {
-		let alert
-		= UIAlertController(title: LocalizedString("Error"), message: message, preferredStyle: .Alert)
-		alert.addAction(
-		UIAlertAction(title: LocalizedString("OK"), style: .Cancel) {
-			_ in
+        
+		let alert = UIAlertController(title: LocalizedString("Error"), message: message, preferredStyle: .Alert)
+		alert.addAction( UIAlertAction(title: LocalizedString("OK"), style: .Cancel) { _ in
 			if onDismiss != nil {
 				onDismiss!()
 			}
 		})
-		self.presentViewController(alert, animated: true) {
-		}
+        
+		self.presentViewController(alert, animated: true) {}
 	}
 }
 

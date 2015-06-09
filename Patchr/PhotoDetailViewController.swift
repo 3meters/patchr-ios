@@ -13,14 +13,17 @@ class ImageDetailViewController: UIViewController {
     var image: UIImage?
     var imageURL: NSURL?
 
-    @IBOutlet weak var mainImageView: UIImageView!
+    @IBOutlet weak var imageView: UIImageView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         if self.image != nil {
-            self.mainImageView.image = self.image
+            self.imageView.image = self.image
         } else if imageURL != nil {
-            self.mainImageView.pa_setImageWithURL(self.imageURL)
+            var photo = Photo.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Photo
+            photo.prefix = self.imageURL!.absoluteString
+            photo.source = PhotoSource.generic.rawValue;
+            self.imageView.setImageWithPhoto(photo)
         }
     }
 }

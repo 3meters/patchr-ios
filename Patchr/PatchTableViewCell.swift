@@ -11,11 +11,27 @@ import UIKit
 class PatchTableViewCell: UITableViewCell {
 
 
-    @IBOutlet weak var imageViewThumb: UIImageView!
-    @IBOutlet weak var nameLabel: UILabel!
-    @IBOutlet weak var categoryLabel: UILabel!
-    @IBOutlet weak var detailsLabel: UILabel!
-    @IBOutlet weak var visibilityImageView: UIImageView!
+    @IBOutlet weak var photo: UIImageView!
+    @IBOutlet weak var name: UILabel!
+    @IBOutlet weak var type: UILabel!
+    @IBOutlet weak var status: UILabel!
+    @IBOutlet weak var visibility: UIImageView!
+    @IBOutlet weak var placeName: UILabel!
+    @IBOutlet weak var messageCount: UILabel!
+    @IBOutlet weak var watchingCount: UILabel!
+    @IBOutlet weak var distance: UILabel!
     
-    override var layoutMargins: UIEdgeInsets { get { return UIEdgeInsetsZero } set(newVal) {} }
+    override var layoutMargins: UIEdgeInsets {
+		get { return UIEdgeInsetsZero }
+		set (newVal) {}
+	}
+    
+    override func prepareForReuse() {
+        name?.text = nil
+        type?.text = nil
+        placeName?.text = nil
+        messageCount?.text = nil
+        watchingCount?.text = nil
+        distance?.text = nil
+    }
 }

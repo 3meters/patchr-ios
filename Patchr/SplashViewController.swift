@@ -10,8 +10,12 @@ import UIKit
 
 class LobbyViewController: UIViewController {
     
+    @IBOutlet weak var logo: UIButton!
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        self.view.endEditing(true)
+        self.logo?.imageView?.tintColor = AirUi.brandColor
         self.navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     
@@ -24,21 +28,11 @@ class LobbyViewController: UIViewController {
         return true
     }
 
-    @IBAction func debugButtonAction(sender: UIButton) {
-        
-        if !UIApplication.sharedApplication().isInstalledViaAppStore() {
-            self.performSegueWithIdentifier("DebugSettingsSegue", sender: sender)
-        }
-
-    }
-    
     @IBAction func guestButtonAction(sender: UIButton) {
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         let destinationViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateInitialViewController() as! UIViewController
         appDelegate.window!.setRootViewController(destinationViewController, animated: true)
     }
-    
-    
 }
 
 extension UIWindow {

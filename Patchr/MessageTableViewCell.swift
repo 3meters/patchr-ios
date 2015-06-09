@@ -10,14 +10,15 @@ import UIKit
 
 class MessageTableViewCell: MediaTableViewCell {
     
-    @IBOutlet weak var patchNameLabel: UILabel!
-    @IBOutlet weak var userNameLabel: UILabel!
-    @IBOutlet weak var likesLabel: UILabel!
+    @IBOutlet weak var patchName: UILabel!
+    @IBOutlet weak var userName: UILabel!
+    @IBOutlet weak var likes: UILabel!
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        updatePreferredMaxLayoutWidth(self.patchNameLabel)
-        updatePreferredMaxLayoutWidth(self.userNameLabel)
-        updatePreferredMaxLayoutWidth(self.likesLabel)
+
+        updatePreferredMaxLayoutWidth(self.patchName)
+        updatePreferredMaxLayoutWidth(self.userName)
+        updatePreferredMaxLayoutWidth(self.likes)
     }
 }
