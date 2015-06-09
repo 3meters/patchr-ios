@@ -31,7 +31,7 @@ class DataController: NSObject {
 	private var coreDataStack: RMCoreDataStack!
 
 	var managedObjectContext: NSManagedObjectContext!
-    var activityDate: Int
+    var activityDate: Int64
 
 	private lazy var schemaDictionary: [String:ServiceBase.Type] = {
 		return [
@@ -44,7 +44,7 @@ class DataController: NSObject {
 	}()
 
 	private override init() {
-        activityDate = Int(floor(NSDate().timeIntervalSince1970 * 1000))
+        activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
 		super.init()
 
 		let coreDataConfiguration = RMCoreDataConfiguration()

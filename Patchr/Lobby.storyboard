@@ -729,7 +729,7 @@
         <image name="imgCityScape" width="1000" height="625"/>
         <image name="imgDefaultUser" width="250" height="250"/>
         <image name="imgEditDark" width="40" height="40"/>
-        <image name="imgPatchDark" width="40" height="40"/>
+        <image name="imgPatchDark" width="60" height="60"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

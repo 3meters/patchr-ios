@@ -275,7 +275,7 @@ class EntityEditViewController: UITableViewController {
                     let serverResponse = ServerResponse(response)
                     if serverResponse.resultCount == 1 {
                         println("Created entity \(serverResponse.resultID)")
-                        DataController.instance.activityDate = Int(floor(NSDate().timeIntervalSince1970 * 1000))
+                        DataController.instance.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
                     }
                     
                     self.dismissViewControllerAnimated(true, completion: nil)
@@ -328,7 +328,7 @@ class EntityEditViewController: UITableViewController {
                 }
                 else {
                     println("Update entity successful")
-                    DataController.instance.activityDate = Int(floor(NSDate().timeIntervalSince1970 * 1000))
+                    DataController.instance.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
                     self.dismissViewControllerAnimated(true, completion: nil)
                     progress.mode = MBProgressHUDMode.Text
                     progress.labelText = self.progressFinishLabel

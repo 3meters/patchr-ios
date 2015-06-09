@@ -20,7 +20,7 @@ class PatchTableViewController: QueryTableViewController {
     var user: User!
 	var selectedPatch: Patch?
 	var filter: PatchListFilter = .Nearby
-    var activityDate: Int?
+    var activityDate: Int64?
     
 	private var _query: Query!
 

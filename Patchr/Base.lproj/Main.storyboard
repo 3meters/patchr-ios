@@ -761,7 +761,7 @@
             <objects>
                 <tableViewController title="Notification Settings" hidesBottomBarWhenPushed="YES" id="CiR-XU-M8e" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="G4y-ya-7MJ">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <sections>
@@ -1060,7 +1060,7 @@
                                                             <state key="normal" image="imgLikeDark">
                                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                             </state>
-                                                            <state key="selected" image="8C3C7493-19D0-4581-9FA2-0A91931034D4"/>
+                                                            <state key="selected" image="E3CD72E5-EF93-4926-8B74-6DDCB32D4EE0"/>
                                                             <connections>
                                                                 <action selector="likeAction:" destination="dFa-9F-rNC" eventType="touchUpInside" id="VEl-FK-BTq"/>
                                                             </connections>
@@ -1078,7 +1078,7 @@
                                                             <state key="normal" image="imgWatchDark">
                                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                             </state>
-                                                            <state key="selected" image="6402C6DC-B234-45DE-8923-AF5187E4B030"/>
+                                                            <state key="selected" image="6CA4759D-F4A4-41B1-AED7-F0BF890727D6"/>
                                                             <connections>
                                                                 <action selector="watchAction:" destination="dFa-9F-rNC" eventType="touchUpInside" id="S3h-j5-gWa"/>
                                                             </connections>
@@ -1623,10 +1623,10 @@
                         <viewControllerLayoutGuide type="bottom" id="PPO-dW-56A"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="W3s-jZ-ueJ">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="QAb-bg-jV3">
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="QAb-bg-jV3">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="739"/>
                                 <gestureRecognizers/>
                                 <connections>
@@ -1775,14 +1775,14 @@
             <objects>
                 <tableViewController hidesBottomBarWhenPushed="YES" id="D0x-w5-h7x" customClass="SettingsTableViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="A67-MQ-X8l">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                         <view key="tableFooterView" contentMode="scaleToFill" id="LLO-at-3mw">
-                            <rect key="frame" x="0.0" y="388" width="414" height="44"/>
+                            <rect key="frame" x="0.0" y="368" width="320" height="44"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="v1.0 build 29" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T7X-7P-C1Q">
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="v1.0 build 29" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T7X-7P-C1Q">
                                     <rect key="frame" x="158" y="11" width="99" height="21"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -2391,7 +2391,7 @@
             <objects>
                 <tableViewController id="z5c-9W-9Sy" userLabel="User List" customClass="UserTableViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="110" sectionHeaderHeight="22" sectionFooterHeight="22" id="vt0-0K-tFn">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -2573,7 +2573,7 @@
                         <viewControllerLayoutGuide type="bottom" id="cB3-b8-p6s"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="vPj-Dz-zj6">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Enable development mode:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xai-Ch-IYV" userLabel="dev_mode_label">
@@ -2650,7 +2650,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="6402C6DC-B234-45DE-8923-AF5187E4B030" width="40" height="40">
+        <image name="6CA4759D-F4A4-41B1-AED7-F0BF890727D6" width="40" height="40">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw
@@ -2807,7 +2807,7 @@ sgC1ALcAuQC7AL0AwgDZANsA3SJPIlQiXyJoInsifyKSIp0ipiKrIrMitiK7IsoiziLVIt0i6iLvIvEi
 8yL4IwAjAyMIIxAjEyMlIygjLQAAAAAAAAIBAAAAAAAAAEIAAAAAAAAAAAAAAAAAACMvA
 </mutableData>
         </image>
-        <image name="8C3C7493-19D0-4581-9FA2-0A91931034D4" width="40" height="40">
+        <image name="E3CD72E5-EF93-4926-8B74-6DDCB32D4EE0" width="40" height="40">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw
