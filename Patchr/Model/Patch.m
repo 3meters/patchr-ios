@@ -1,7 +1,7 @@
 #import "Patch.h"
-#import "PACategory.h"
-#import "Place.h"
-#import "Message.h"
+#import "Link.h"
+#import "Shortcut.h"
+#import "Patchr-Swift.h"
 
 @interface Patch ()
 
@@ -14,39 +14,55 @@
 + (Patch *)setPropertiesFromDictionary:(NSDictionary *)dictionary
                               onObject:(Patch *)patch
                           mappingNames:(BOOL)mapNames {
+    
     patch = (Patch *) [Entity setPropertiesFromDictionary:dictionary onObject:patch mappingNames:mapNames];
 
-    if (dictionary[@"category"]) {
-        patch.category = [PACategory setPropertiesFromDictionary:dictionary[@"category"] onObject:[PACategory insertInManagedObjectContext:patch.managedObjectContext] mappingNames:mapNames];
+    patch.countMessagesValue = 0;
+    if (dictionary[@"linkCount"]) {
+        patch.countMessages = [Entity countForStatWithType:@"content" schema:@"messages" enabled:@"true" direction:@"from" inLinkCounts:dictionary[@"linkCount"]];
     }
-
-    if (dictionary[@"place"]) {
-        patch.place = [Place setPropertiesFromDictionary:dictionary[@"place"] onObject:[Place insertInManagedObjectContext:patch.managedObjectContext] mappingNames:mapNames];
-    }
-
-    if ([dictionary[@"linked"] isKindOfClass:[NSArray class]]) {
-        // Configure patch-specific relationships
-
-        for (id link in dictionary[@"linked"]) {
-            if ([link isKindOfClass:[NSDictionary class]]) {
-                NSDictionary *linkDictionary = link;
-                if ([linkDictionary[@"schema"] isEqualToString:@"message"]) {
-                    Message *message = [Message fetchOrInsertOneById:linkDictionary[@"_id"] inManagedObjectContext:patch.managedObjectContext];
-                    message = [Message setPropertiesFromDictionary:linkDictionary onObject:message mappingNames:mapNames];
-                    [patch.messagesSet addObject:message];
-                }
-                else if ([linkDictionary[@"schema"] isEqualToString:@"place"]) {
-                    Place *place = [Place fetchOrInsertOneById:linkDictionary[@"_id"] inManagedObjectContext:patch.managedObjectContext];
-                    place = [Place setPropertiesFromDictionary:linkDictionary onObject:place mappingNames:mapNames];
-                    patch.place = place;
-                } else {
-                    NSLog(@"WARNING: Unhandled linked object schema: %@", linkDictionary[@"schema"]);
+    
+    patch.place = nil;
+    if (dictionary[@"linked"]) {
+        for (id linkMap in dictionary[@"linked"]) {
+            if ([linkMap isKindOfClass:[NSDictionary class]]) {
+                if ([linkMap[@"schema"] isEqualToString: @"place"]) {
+                    NSString *entityId = [[NSString alloc] initWithString:linkMap[@"_id"]];
+                    NSString *decoratedId = [Shortcut decorateId:entityId];
+                    id shortcut = [Shortcut fetchOrInsertOneById:decoratedId inManagedObjectContext:patch.managedObjectContext];
+                    patch.place = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut mappingNames:mapNames];
                 }
             }
         }
     }
-
-    // Note: Doesn't seem like signalFence is currently in use
+    
+    patch.userWatchStatusValue = PAWatchStatusNonMember;  // Default for convenience property
+    patch.userWatchId = nil;
+    patch.userLikesValue = NO;
+    patch.userLikesId = nil;
+    patch.userHasMessagedValue = NO;
+    
+    if ([dictionary[@"links"] isKindOfClass:[NSArray class]]) {
+        for (id linkMap in dictionary[@"links"]) {
+            if ([linkMap isKindOfClass:[NSDictionary class]]) {
+                
+                if ([linkMap[@"fromSchema"] isEqualToString:@"message"] && [linkMap[@"type"] isEqualToString:@"content"]) {
+                    patch.userHasMessagedValue = YES;
+                }
+                else if ([linkMap[@"fromSchema"] isEqualToString:@"user"] && [linkMap[@"type"] isEqualToString:@"like"]) {
+                    patch.userLikesId = linkMap[@"_id"];
+                    patch.userLikesValue = YES;
+                }
+                else if ([linkMap[@"fromSchema"] isEqualToString:@"user"] && [linkMap[@"type"] isEqualToString:@"watch"]) {
+                    patch.userWatchId = linkMap[@"_id"];
+                    patch.userWatchStatusValue = PAWatchStatusPending;
+                    if ([[linkMap objectForKey:@"enabled"]boolValue] == YES) {
+                        patch.userWatchStatusValue = PAWatchStatusMember;
+                    }
+                }
+            }
+        }
+    }
 
     return patch;
 }

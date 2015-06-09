@@ -12,10 +12,6 @@ const struct ProviderMapAttributes ProviderMapAttributes = {
 	.yelp = @"yelp",
 };
 
-const struct ProviderMapRelationships ProviderMapRelationships = {
-	.place = @"place",
-};
-
 @implementation ProviderMapID
 @end
 
@@ -56,8 +52,6 @@ const struct ProviderMapRelationships ProviderMapRelationships = {
 @dynamic googleReference;
 
 @dynamic yelp;
-
-@dynamic place;
 
 @end
 

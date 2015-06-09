@@ -4,14 +4,15 @@
 #import "_QueryItem.h"
 
 const struct QueryItemAttributes QueryItemAttributes = {
+	.distance = @"distance",
 	.modifiedDate = @"modifiedDate",
 	.position = @"position",
 	.sortDate = @"sortDate",
 };
 
 const struct QueryItemRelationships QueryItemRelationships = {
+	.object = @"object",
 	.query = @"query",
-	.serviceBase = @"serviceBase",
 };
 
 @implementation QueryItemID
@@ -40,6 +41,11 @@ const struct QueryItemRelationships QueryItemRelationships = {
 + (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key {
 	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
 
+	if ([key isEqualToString:@"distanceValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"distance"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
 	if ([key isEqualToString:@"positionValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"position"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
@@ -47,6 +53,26 @@ const struct QueryItemRelationships QueryItemRelationships = {
 	}
 
 	return keyPaths;
+}
+
+@dynamic distance;
+
+- (float)distanceValue {
+	NSNumber *result = [self distance];
+	return [result floatValue];
+}
+
+- (void)setDistanceValue:(float)value_ {
+	[self setDistance:@(value_)];
+}
+
+- (float)primitiveDistanceValue {
+	NSNumber *result = [self primitiveDistance];
+	return [result floatValue];
+}
+
+- (void)setPrimitiveDistanceValue:(float)value_ {
+	[self setPrimitiveDistance:@(value_)];
 }
 
 @dynamic modifiedDate;
@@ -73,9 +99,9 @@ const struct QueryItemRelationships QueryItemRelationships = {
 
 @dynamic sortDate;
 
-@dynamic query;
+@dynamic object;
 
-@dynamic serviceBase;
+@dynamic query;
 
 @end
 

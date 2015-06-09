@@ -1,18 +1,19 @@
-#import "PALink.h"
+#import "Link.h"
 
-@interface PALink ()
+@interface Link ()
 
 // Private interface goes here.
 
 @end
 
-@implementation PALink
+@implementation Link
 
 + (instancetype)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                                   onObject:(PALink *)link
+                                   onObject:(Link *)link
                                mappingNames:(BOOL)mapNames {
-    
-    link = (PALink *)[ServiceBase setPropertiesFromDictionary:dictionary onObject:link mappingNames:mapNames];
+        
+    link.id_ = (mapNames && dictionary[@"_id"]) ? dictionary[@"_id"] : dictionary[@"id"];
+    link.type = dictionary[@"type"];
     link.toSchema = dictionary[@"toSchema"];
     link.toId = dictionary[@"_to"];
     link.fromSchema = dictionary[@"fromSchema"];

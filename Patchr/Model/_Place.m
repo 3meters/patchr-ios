@@ -5,7 +5,6 @@
 
 const struct PlaceAttributes PlaceAttributes = {
 	.address = @"address",
-	.applinkDate = @"applinkDate",
 	.city = @"city",
 	.country = @"country",
 	.phone = @"phone",
@@ -14,7 +13,7 @@ const struct PlaceAttributes PlaceAttributes = {
 };
 
 const struct PlaceRelationships PlaceRelationships = {
-	.patch = @"patch",
+	.category = @"category",
 	.provider = @"provider",
 };
 
@@ -49,8 +48,6 @@ const struct PlaceRelationships PlaceRelationships = {
 
 @dynamic address;
 
-@dynamic applinkDate;
-
 @dynamic city;
 
 @dynamic country;
@@ -61,7 +58,7 @@ const struct PlaceRelationships PlaceRelationships = {
 
 @dynamic region;
 
-@dynamic patch;
+@dynamic category;
 
 @dynamic provider;
 

@@ -1,37 +1,39 @@
 // DO NOT EDIT. This file is machine-generated and constantly overwritten.
-// Make changes to PALink.m instead.
+// Make changes to Link.m instead.
 
-#import "_PALink.h"
+#import "_Link.h"
 
-const struct PALinkAttributes PALinkAttributes = {
+const struct LinkAttributes LinkAttributes = {
 	.enabled = @"enabled",
 	.fromId = @"fromId",
 	.fromSchema = @"fromSchema",
+	.id_ = @"id_",
 	.toId = @"toId",
 	.toSchema = @"toSchema",
+	.type = @"type",
 };
 
-@implementation PALinkID
+@implementation LinkID
 @end
 
-@implementation _PALink
+@implementation _Link
 
 + (id)insertInManagedObjectContext:(NSManagedObjectContext*)moc_ {
 	NSParameterAssert(moc_);
-	return [NSEntityDescription insertNewObjectForEntityForName:@"PALink" inManagedObjectContext:moc_];
+	return [NSEntityDescription insertNewObjectForEntityForName:@"Link" inManagedObjectContext:moc_];
 }
 
 + (NSString*)entityName {
-	return @"PALink";
+	return @"Link";
 }
 
 + (NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_ {
 	NSParameterAssert(moc_);
-	return [NSEntityDescription entityForName:@"PALink" inManagedObjectContext:moc_];
+	return [NSEntityDescription entityForName:@"Link" inManagedObjectContext:moc_];
 }
 
-- (PALinkID*)objectID {
-	return (PALinkID*)[super objectID];
+- (LinkID*)objectID {
+	return (LinkID*)[super objectID];
 }
 
 + (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key {
@@ -70,9 +72,13 @@ const struct PALinkAttributes PALinkAttributes = {
 
 @dynamic fromSchema;
 
+@dynamic id_;
+
 @dynamic toId;
 
 @dynamic toSchema;
+
+@dynamic type;
 
 @end
 

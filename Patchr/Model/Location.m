@@ -12,6 +12,7 @@
 + (Location *)setPropertiesFromDictionary:(NSDictionary *)dictionary
                                  onObject:(Location *)location
                              mappingNames:(BOOL)mapNames {
+    
     location.lat = dictionary[@"lat"];
     location.lng = dictionary[@"lng"];
     location.altitude = dictionary[@"altitude"];
@@ -19,6 +20,7 @@
     location.bearing = dictionary[@"bearing"];
     location.speed = dictionary[@"speed"];
     location.provider = dictionary[@"provider"];
+    
     return location;
 }
 
@@ -26,8 +28,7 @@
     return CLLocationCoordinate2DMake(self.latValue, self.lngValue);
 }
 
-- (CLLocation*) locationValue
-{
+- (CLLocation*) locationValue {
     return [[CLLocation alloc] initWithLatitude:self.latValue longitude:self.lngValue];
 }
 

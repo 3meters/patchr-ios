@@ -1,25 +1,27 @@
 // DO NOT EDIT. This file is machine-generated and constantly overwritten.
-// Make changes to PALink.h instead.
+// Make changes to Link.h instead.
 
 @import CoreData;
-#import "ServiceBase.h"
+#import "ServiceObject.h"
 
-extern const struct PALinkAttributes {
+extern const struct LinkAttributes {
 	__unsafe_unretained NSString *enabled;
 	__unsafe_unretained NSString *fromId;
 	__unsafe_unretained NSString *fromSchema;
+	__unsafe_unretained NSString *id_;
 	__unsafe_unretained NSString *toId;
 	__unsafe_unretained NSString *toSchema;
-} PALinkAttributes;
+	__unsafe_unretained NSString *type;
+} LinkAttributes;
 
-@interface PALinkID : ServiceBaseID {}
+@interface LinkID : ServiceObjectID {}
 @end
 
-@interface _PALink : ServiceBase {}
+@interface _Link : ServiceObject {}
 + (id)insertInManagedObjectContext:(NSManagedObjectContext*)moc_;
 + (NSString*)entityName;
 + (NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_;
-@property (nonatomic, readonly, strong) PALinkID* objectID;
+@property (nonatomic, readonly, strong) LinkID* objectID;
 
 @property (nonatomic, strong) NSNumber* enabled;
 
@@ -37,6 +39,10 @@ extern const struct PALinkAttributes {
 
 //- (BOOL)validateFromSchema:(id*)value_ error:(NSError**)error_;
 
+@property (nonatomic, strong) NSString* id_;
+
+//- (BOOL)validateId_:(id*)value_ error:(NSError**)error_;
+
 @property (nonatomic, strong) NSString* toId;
 
 //- (BOOL)validateToId:(id*)value_ error:(NSError**)error_;
@@ -45,9 +51,13 @@ extern const struct PALinkAttributes {
 
 //- (BOOL)validateToSchema:(id*)value_ error:(NSError**)error_;
 
+@property (nonatomic, strong) NSString* type;
+
+//- (BOOL)validateType:(id*)value_ error:(NSError**)error_;
+
 @end
 
-@interface _PALink (CoreDataGeneratedPrimitiveAccessors)
+@interface _Link (CoreDataGeneratedPrimitiveAccessors)
 
 - (NSNumber*)primitiveEnabled;
 - (void)setPrimitiveEnabled:(NSNumber*)value;
@@ -60,6 +70,9 @@ extern const struct PALinkAttributes {
 
 - (NSString*)primitiveFromSchema;
 - (void)setPrimitiveFromSchema:(NSString*)value;
+
+- (NSString*)primitiveId_;
+- (void)setPrimitiveId_:(NSString*)value;
 
 - (NSString*)primitiveToId;
 - (void)setPrimitiveToId:(NSString*)value;

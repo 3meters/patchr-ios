@@ -8,20 +8,14 @@ extern const struct PhotoAttributes {
 	__unsafe_unretained NSString *createdDate;
 	__unsafe_unretained NSString *height;
 	__unsafe_unretained NSString *prefix;
+	__unsafe_unretained NSString *resizerActive;
+	__unsafe_unretained NSString *resizerHeight;
+	__unsafe_unretained NSString *resizerWidth;
 	__unsafe_unretained NSString *source;
 	__unsafe_unretained NSString *suffix;
+	__unsafe_unretained NSString *usingDefault;
 	__unsafe_unretained NSString *width;
 } PhotoAttributes;
-
-extern const struct PhotoRelationships {
-	__unsafe_unretained NSString *category;
-	__unsafe_unretained NSString *entity_;
-	__unsafe_unretained NSString *notification;
-} PhotoRelationships;
-
-@class PACategory;
-@class Entity;
-@class Notification;
 
 @interface PhotoID : ServiceObjectID {}
 @end
@@ -48,6 +42,30 @@ extern const struct PhotoRelationships {
 
 //- (BOOL)validatePrefix:(id*)value_ error:(NSError**)error_;
 
+@property (nonatomic, strong) NSNumber* resizerActive;
+
+@property (atomic) BOOL resizerActiveValue;
+- (BOOL)resizerActiveValue;
+- (void)setResizerActiveValue:(BOOL)value_;
+
+//- (BOOL)validateResizerActive:(id*)value_ error:(NSError**)error_;
+
+@property (nonatomic, strong) NSNumber* resizerHeight;
+
+@property (atomic) int32_t resizerHeightValue;
+- (int32_t)resizerHeightValue;
+- (void)setResizerHeightValue:(int32_t)value_;
+
+//- (BOOL)validateResizerHeight:(id*)value_ error:(NSError**)error_;
+
+@property (nonatomic, strong) NSNumber* resizerWidth;
+
+@property (atomic) int32_t resizerWidthValue;
+- (int32_t)resizerWidthValue;
+- (void)setResizerWidthValue:(int32_t)value_;
+
+//- (BOOL)validateResizerWidth:(id*)value_ error:(NSError**)error_;
+
 @property (nonatomic, strong) NSString* source;
 
 //- (BOOL)validateSource:(id*)value_ error:(NSError**)error_;
@@ -56,6 +74,14 @@ extern const struct PhotoRelationships {
 
 //- (BOOL)validateSuffix:(id*)value_ error:(NSError**)error_;
 
+@property (nonatomic, strong) NSNumber* usingDefault;
+
+@property (atomic) BOOL usingDefaultValue;
+- (BOOL)usingDefaultValue;
+- (void)setUsingDefaultValue:(BOOL)value_;
+
+//- (BOOL)validateUsingDefault:(id*)value_ error:(NSError**)error_;
+
 @property (nonatomic, strong) NSNumber* width;
 
 @property (atomic) int32_t widthValue;
@@ -63,18 +89,6 @@ extern const struct PhotoRelationships {
 - (void)setWidthValue:(int32_t)value_;
 
 //- (BOOL)validateWidth:(id*)value_ error:(NSError**)error_;
-
-@property (nonatomic, strong) PACategory *category;
-
-//- (BOOL)validateCategory:(id*)value_ error:(NSError**)error_;
-
-@property (nonatomic, strong) Entity *entity_;
-
-//- (BOOL)validateEntity_:(id*)value_ error:(NSError**)error_;
-
-@property (nonatomic, strong) Notification *notification;
-
-//- (BOOL)validateNotification:(id*)value_ error:(NSError**)error_;
 
 @end
 
@@ -92,25 +106,40 @@ extern const struct PhotoRelationships {
 - (NSString*)primitivePrefix;
 - (void)setPrimitivePrefix:(NSString*)value;
 
+- (NSNumber*)primitiveResizerActive;
+- (void)setPrimitiveResizerActive:(NSNumber*)value;
+
+- (BOOL)primitiveResizerActiveValue;
+- (void)setPrimitiveResizerActiveValue:(BOOL)value_;
+
+- (NSNumber*)primitiveResizerHeight;
+- (void)setPrimitiveResizerHeight:(NSNumber*)value;
+
+- (int32_t)primitiveResizerHeightValue;
+- (void)setPrimitiveResizerHeightValue:(int32_t)value_;
+
+- (NSNumber*)primitiveResizerWidth;
+- (void)setPrimitiveResizerWidth:(NSNumber*)value;
+
+- (int32_t)primitiveResizerWidthValue;
+- (void)setPrimitiveResizerWidthValue:(int32_t)value_;
+
 - (NSString*)primitiveSource;
 - (void)setPrimitiveSource:(NSString*)value;
 
 - (NSString*)primitiveSuffix;
 - (void)setPrimitiveSuffix:(NSString*)value;
 
+- (NSNumber*)primitiveUsingDefault;
+- (void)setPrimitiveUsingDefault:(NSNumber*)value;
+
+- (BOOL)primitiveUsingDefaultValue;
+- (void)setPrimitiveUsingDefaultValue:(BOOL)value_;
+
 - (NSNumber*)primitiveWidth;
 - (void)setPrimitiveWidth:(NSNumber*)value;
 
 - (int32_t)primitiveWidthValue;
 - (void)setPrimitiveWidthValue:(int32_t)value_;
-
-- (PACategory*)primitiveCategory;
-- (void)setPrimitiveCategory:(PACategory*)value;
-
-- (Entity*)primitiveEntity_;
-- (void)setPrimitiveEntity_:(Entity*)value;
-
-- (Notification*)primitiveNotification;
-- (void)setPrimitiveNotification:(Notification*)value;
 
 @end

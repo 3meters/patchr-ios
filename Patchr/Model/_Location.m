@@ -13,10 +13,6 @@ const struct LocationAttributes LocationAttributes = {
 	.speed = @"speed",
 };
 
-const struct LocationRelationships LocationRelationships = {
-	.entity_ = @"entity_",
-};
-
 @implementation LocationID
 @end
 
@@ -198,8 +194,6 @@ const struct LocationRelationships LocationRelationships = {
 - (void)setPrimitiveSpeedValue:(double)value_ {
 	[self setPrimitiveSpeed:@(value_)];
 }
-
-@dynamic entity_;
 
 @end
 

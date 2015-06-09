@@ -22,18 +22,16 @@ extern const struct ServiceBaseAttributes {
 } ServiceBaseAttributes;
 
 extern const struct ServiceBaseRelationships {
-	__unsafe_unretained NSString *created;
 	__unsafe_unretained NSString *creator;
-	__unsafe_unretained NSString *owned;
+	__unsafe_unretained NSString *modifier;
 	__unsafe_unretained NSString *owner;
-	__unsafe_unretained NSString *queryResults;
+	__unsafe_unretained NSString *queryItems;
 } ServiceBaseRelationships;
 
-@class ServiceBase;
-@class ServiceBase;
-@class ServiceBase;
-@class ServiceBase;
-@class QueryResult;
+@class Shortcut;
+@class Shortcut;
+@class Shortcut;
+@class QueryItem;
 
 @interface ServiceBaseID : ServiceObjectID {}
 @end
@@ -108,49 +106,29 @@ extern const struct ServiceBaseRelationships {
 
 //- (BOOL)validateType:(id*)value_ error:(NSError**)error_;
 
-@property (nonatomic, strong) NSSet *created;
-
-- (NSMutableSet*)createdSet;
-
-@property (nonatomic, strong) ServiceBase *creator;
+@property (nonatomic, strong) Shortcut *creator;
 
 //- (BOOL)validateCreator:(id*)value_ error:(NSError**)error_;
 
-@property (nonatomic, strong) NSSet *owned;
+@property (nonatomic, strong) Shortcut *modifier;
 
-- (NSMutableSet*)ownedSet;
+//- (BOOL)validateModifier:(id*)value_ error:(NSError**)error_;
 
-@property (nonatomic, strong) ServiceBase *owner;
+@property (nonatomic, strong) Shortcut *owner;
 
 //- (BOOL)validateOwner:(id*)value_ error:(NSError**)error_;
 
-@property (nonatomic, strong) NSSet *queryResults;
+@property (nonatomic, strong) NSSet *queryItems;
 
-- (NSMutableSet*)queryResultsSet;
-
-@end
-
-@interface _ServiceBase (CreatedCoreDataGeneratedAccessors)
-- (void)addCreated:(NSSet*)value_;
-- (void)removeCreated:(NSSet*)value_;
-- (void)addCreatedObject:(ServiceBase*)value_;
-- (void)removeCreatedObject:(ServiceBase*)value_;
+- (NSMutableSet*)queryItemsSet;
 
 @end
 
-@interface _ServiceBase (OwnedCoreDataGeneratedAccessors)
-- (void)addOwned:(NSSet*)value_;
-- (void)removeOwned:(NSSet*)value_;
-- (void)addOwnedObject:(ServiceBase*)value_;
-- (void)removeOwnedObject:(ServiceBase*)value_;
-
-@end
-
-@interface _ServiceBase (QueryResultsCoreDataGeneratedAccessors)
-- (void)addQueryResults:(NSSet*)value_;
-- (void)removeQueryResults:(NSSet*)value_;
-- (void)addQueryResultsObject:(QueryResult*)value_;
-- (void)removeQueryResultsObject:(QueryResult*)value_;
+@interface _ServiceBase (QueryItemsCoreDataGeneratedAccessors)
+- (void)addQueryItems:(NSSet*)value_;
+- (void)removeQueryItems:(NSSet*)value_;
+- (void)addQueryItemsObject:(QueryItem*)value_;
+- (void)removeQueryItemsObject:(QueryItem*)value_;
 
 @end
 
@@ -201,19 +179,16 @@ extern const struct ServiceBaseRelationships {
 - (NSDate*)primitiveSortDate;
 - (void)setPrimitiveSortDate:(NSDate*)value;
 
-- (NSMutableSet*)primitiveCreated;
-- (void)setPrimitiveCreated:(NSMutableSet*)value;
+- (Shortcut*)primitiveCreator;
+- (void)setPrimitiveCreator:(Shortcut*)value;
 
-- (ServiceBase*)primitiveCreator;
-- (void)setPrimitiveCreator:(ServiceBase*)value;
+- (Shortcut*)primitiveModifier;
+- (void)setPrimitiveModifier:(Shortcut*)value;
 
-- (NSMutableSet*)primitiveOwned;
-- (void)setPrimitiveOwned:(NSMutableSet*)value;
+- (Shortcut*)primitiveOwner;
+- (void)setPrimitiveOwner:(Shortcut*)value;
 
-- (ServiceBase*)primitiveOwner;
-- (void)setPrimitiveOwner:(ServiceBase*)value;
-
-- (NSMutableSet*)primitiveQueryResults;
-- (void)setPrimitiveQueryResults:(NSMutableSet*)value;
+- (NSMutableSet*)primitiveQueryItems;
+- (void)setPrimitiveQueryItems:(NSMutableSet*)value;
 
 @end

@@ -14,12 +14,6 @@ extern const struct LocationAttributes {
 	__unsafe_unretained NSString *speed;
 } LocationAttributes;
 
-extern const struct LocationRelationships {
-	__unsafe_unretained NSString *entity_;
-} LocationRelationships;
-
-@class Entity;
-
 @interface LocationID : ServiceObjectID {}
 @end
 
@@ -81,10 +75,6 @@ extern const struct LocationRelationships {
 
 //- (BOOL)validateSpeed:(id*)value_ error:(NSError**)error_;
 
-@property (nonatomic, strong) Entity *entity_;
-
-//- (BOOL)validateEntity_:(id*)value_ error:(NSError**)error_;
-
 @end
 
 @interface _Location (CoreDataGeneratedPrimitiveAccessors)
@@ -127,8 +117,5 @@ extern const struct LocationRelationships {
 
 - (double)primitiveSpeedValue;
 - (void)setPrimitiveSpeedValue:(double)value_;
-
-- (Entity*)primitiveEntity_;
-- (void)setPrimitiveEntity_:(Entity*)value;
 
 @end

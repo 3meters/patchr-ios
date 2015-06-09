@@ -13,17 +13,25 @@
 + (ServiceData *)setPropertiesFromDictionary:(NSDictionary *)dictionary
                                     onObject:(ServiceData *)serviceData
                                 mappingNames:(BOOL)mapNames {
+    
     serviceData.count = dictionary[@"count"];
     serviceData.date = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"date"] doubleValue]/1000];
-    if ([dictionary[@"data"] isKindOfClass:[NSDictionary class]]) {
-        // Normalize a single dictionary into an array with a single object to simplify handling later on
+    serviceData.more = dictionary[@"more"];
+    serviceData.time = dictionary[@"time"];
+    
+    if ([dictionary[@"data"] isEqual:[NSNull null]]) {
+        /* We rely on a tenuous NULL indicator that the call failed the query parameter */
+        serviceData.noopValue = YES;
+    }
+    else if ([dictionary[@"data"] isKindOfClass:[NSDictionary class]]) {
+        /* Wrap the object in an array to simplify handling later on */
         serviceData.data = [NSArray arrayWithObject:dictionary[@"data"]];
-    } else {
+    }
+    else {
+        /* Should be an array of objects */
         serviceData.data = dictionary[@"data"];
     }
     
-    serviceData.more = dictionary[@"more"];
-    serviceData.time = dictionary[@"time"];
     return serviceData;
 }
 
@@ -49,6 +57,14 @@
 
 - (void)setTimeValue:(double)timeValue {
     self.time = [NSNumber numberWithDouble:timeValue];
+}
+
+- (BOOL)noopValue {
+    return self.noop.boolValue;
+}
+
+- (void)setNoopValue:(BOOL)noopValue {
+    self.noop = [NSNumber numberWithBool:noopValue];
 }
 
 @end

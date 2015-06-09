@@ -5,20 +5,27 @@
 
 const struct EntityAttributes EntityAttributes = {
 	.count = @"count",
+	.countLikes = @"countLikes",
+	.countPending = @"countPending",
+	.countWatching = @"countWatching",
 	.description_ = @"description_",
-	.linkedCounts = @"linkedCounts",
-	.numberOfLikes = @"numberOfLikes",
-	.numberOfWatchers = @"numberOfWatchers",
+	.distance = @"distance",
+	.linkCounts = @"linkCounts",
 	.patchId = @"patchId",
-	.privacy = @"privacy",
 	.rank = @"rank",
 	.reason = @"reason",
 	.score = @"score",
 	.subtitle = @"subtitle",
+	.userLikes = @"userLikes",
+	.userLikesId = @"userLikesId",
+	.userWatchId = @"userWatchId",
+	.userWatchJustApproved = @"userWatchJustApproved",
+	.userWatchStatus = @"userWatchStatus",
 	.visibility = @"visibility",
 };
 
 const struct EntityRelationships EntityRelationships = {
+	.link = @"link",
 	.location = @"location",
 	.photo = @"photo",
 };
@@ -58,13 +65,23 @@ const struct EntityUserInfo EntityUserInfo = {
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
-	if ([key isEqualToString:@"numberOfLikesValue"]) {
-		NSSet *affectingKey = [NSSet setWithObject:@"numberOfLikes"];
+	if ([key isEqualToString:@"countLikesValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"countLikes"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
-	if ([key isEqualToString:@"numberOfWatchersValue"]) {
-		NSSet *affectingKey = [NSSet setWithObject:@"numberOfWatchers"];
+	if ([key isEqualToString:@"countPendingValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"countPending"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"countWatchingValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"countWatching"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"distanceValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"distance"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
@@ -78,8 +95,18 @@ const struct EntityUserInfo EntityUserInfo = {
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
-	if ([key isEqualToString:@"visibilityValue"]) {
-		NSSet *affectingKey = [NSSet setWithObject:@"visibility"];
+	if ([key isEqualToString:@"userLikesValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"userLikes"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"userWatchJustApprovedValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"userWatchJustApproved"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"userWatchStatusValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"userWatchStatus"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
@@ -107,53 +134,91 @@ const struct EntityUserInfo EntityUserInfo = {
 	[self setPrimitiveCount:@(value_)];
 }
 
+@dynamic countLikes;
+
+- (int64_t)countLikesValue {
+	NSNumber *result = [self countLikes];
+	return [result longLongValue];
+}
+
+- (void)setCountLikesValue:(int64_t)value_ {
+	[self setCountLikes:@(value_)];
+}
+
+- (int64_t)primitiveCountLikesValue {
+	NSNumber *result = [self primitiveCountLikes];
+	return [result longLongValue];
+}
+
+- (void)setPrimitiveCountLikesValue:(int64_t)value_ {
+	[self setPrimitiveCountLikes:@(value_)];
+}
+
+@dynamic countPending;
+
+- (int64_t)countPendingValue {
+	NSNumber *result = [self countPending];
+	return [result longLongValue];
+}
+
+- (void)setCountPendingValue:(int64_t)value_ {
+	[self setCountPending:@(value_)];
+}
+
+- (int64_t)primitiveCountPendingValue {
+	NSNumber *result = [self primitiveCountPending];
+	return [result longLongValue];
+}
+
+- (void)setPrimitiveCountPendingValue:(int64_t)value_ {
+	[self setPrimitiveCountPending:@(value_)];
+}
+
+@dynamic countWatching;
+
+- (int64_t)countWatchingValue {
+	NSNumber *result = [self countWatching];
+	return [result longLongValue];
+}
+
+- (void)setCountWatchingValue:(int64_t)value_ {
+	[self setCountWatching:@(value_)];
+}
+
+- (int64_t)primitiveCountWatchingValue {
+	NSNumber *result = [self primitiveCountWatching];
+	return [result longLongValue];
+}
+
+- (void)setPrimitiveCountWatchingValue:(int64_t)value_ {
+	[self setPrimitiveCountWatching:@(value_)];
+}
+
 @dynamic description_;
 
-@dynamic linkedCounts;
+@dynamic distance;
 
-@dynamic numberOfLikes;
-
-- (int64_t)numberOfLikesValue {
-	NSNumber *result = [self numberOfLikes];
-	return [result longLongValue];
+- (float)distanceValue {
+	NSNumber *result = [self distance];
+	return [result floatValue];
 }
 
-- (void)setNumberOfLikesValue:(int64_t)value_ {
-	[self setNumberOfLikes:@(value_)];
+- (void)setDistanceValue:(float)value_ {
+	[self setDistance:@(value_)];
 }
 
-- (int64_t)primitiveNumberOfLikesValue {
-	NSNumber *result = [self primitiveNumberOfLikes];
-	return [result longLongValue];
+- (float)primitiveDistanceValue {
+	NSNumber *result = [self primitiveDistance];
+	return [result floatValue];
 }
 
-- (void)setPrimitiveNumberOfLikesValue:(int64_t)value_ {
-	[self setPrimitiveNumberOfLikes:@(value_)];
+- (void)setPrimitiveDistanceValue:(float)value_ {
+	[self setPrimitiveDistance:@(value_)];
 }
 
-@dynamic numberOfWatchers;
-
-- (int64_t)numberOfWatchersValue {
-	NSNumber *result = [self numberOfWatchers];
-	return [result longLongValue];
-}
-
-- (void)setNumberOfWatchersValue:(int64_t)value_ {
-	[self setNumberOfWatchers:@(value_)];
-}
-
-- (int64_t)primitiveNumberOfWatchersValue {
-	NSNumber *result = [self primitiveNumberOfWatchers];
-	return [result longLongValue];
-}
-
-- (void)setPrimitiveNumberOfWatchersValue:(int64_t)value_ {
-	[self setPrimitiveNumberOfWatchers:@(value_)];
-}
+@dynamic linkCounts;
 
 @dynamic patchId;
-
-@dynamic privacy;
 
 @dynamic rank;
 
@@ -199,25 +264,73 @@ const struct EntityUserInfo EntityUserInfo = {
 
 @dynamic subtitle;
 
+@dynamic userLikes;
+
+- (BOOL)userLikesValue {
+	NSNumber *result = [self userLikes];
+	return [result boolValue];
+}
+
+- (void)setUserLikesValue:(BOOL)value_ {
+	[self setUserLikes:@(value_)];
+}
+
+- (BOOL)primitiveUserLikesValue {
+	NSNumber *result = [self primitiveUserLikes];
+	return [result boolValue];
+}
+
+- (void)setPrimitiveUserLikesValue:(BOOL)value_ {
+	[self setPrimitiveUserLikes:@(value_)];
+}
+
+@dynamic userLikesId;
+
+@dynamic userWatchId;
+
+@dynamic userWatchJustApproved;
+
+- (BOOL)userWatchJustApprovedValue {
+	NSNumber *result = [self userWatchJustApproved];
+	return [result boolValue];
+}
+
+- (void)setUserWatchJustApprovedValue:(BOOL)value_ {
+	[self setUserWatchJustApproved:@(value_)];
+}
+
+- (BOOL)primitiveUserWatchJustApprovedValue {
+	NSNumber *result = [self primitiveUserWatchJustApproved];
+	return [result boolValue];
+}
+
+- (void)setPrimitiveUserWatchJustApprovedValue:(BOOL)value_ {
+	[self setPrimitiveUserWatchJustApproved:@(value_)];
+}
+
+@dynamic userWatchStatus;
+
+- (PAWatchStatus)userWatchStatusValue {
+	NSNumber *result = [self userWatchStatus];
+	return [result shortValue];
+}
+
+- (void)setUserWatchStatusValue:(PAWatchStatus)value_ {
+	[self setUserWatchStatus:@(value_)];
+}
+
+- (PAWatchStatus)primitiveUserWatchStatusValue {
+	NSNumber *result = [self primitiveUserWatchStatus];
+	return [result shortValue];
+}
+
+- (void)setPrimitiveUserWatchStatusValue:(PAWatchStatus)value_ {
+	[self setPrimitiveUserWatchStatus:@(value_)];
+}
+
 @dynamic visibility;
 
-- (PAVisibilityLevel)visibilityValue {
-	NSNumber *result = [self visibility];
-	return [result shortValue];
-}
-
-- (void)setVisibilityValue:(PAVisibilityLevel)value_ {
-	[self setVisibility:@(value_)];
-}
-
-- (PAVisibilityLevel)primitiveVisibilityValue {
-	NSNumber *result = [self primitiveVisibility];
-	return [result shortValue];
-}
-
-- (void)setPrimitiveVisibilityValue:(PAVisibilityLevel)value_ {
-	[self setPrimitiveVisibility:@(value_)];
-}
+@dynamic link;
 
 @dynamic location;
 

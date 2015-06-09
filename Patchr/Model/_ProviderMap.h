@@ -13,12 +13,6 @@ extern const struct ProviderMapAttributes {
 	__unsafe_unretained NSString *yelp;
 } ProviderMapAttributes;
 
-extern const struct ProviderMapRelationships {
-	__unsafe_unretained NSString *place;
-} ProviderMapRelationships;
-
-@class Place;
-
 @interface ProviderMapID : ServiceObjectID {}
 @end
 
@@ -52,10 +46,6 @@ extern const struct ProviderMapRelationships {
 
 //- (BOOL)validateYelp:(id*)value_ error:(NSError**)error_;
 
-@property (nonatomic, strong) Place *place;
-
-//- (BOOL)validatePlace:(id*)value_ error:(NSError**)error_;
-
 @end
 
 @interface _ProviderMap (CoreDataGeneratedPrimitiveAccessors)
@@ -77,8 +67,5 @@ extern const struct ProviderMapRelationships {
 
 - (NSString*)primitiveYelp;
 - (void)setPrimitiveYelp:(NSString*)value;
-
-- (Place*)primitivePlace;
-- (void)setPrimitivePlace:(Place*)value;
 
 @end
