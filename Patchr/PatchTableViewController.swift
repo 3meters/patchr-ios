@@ -66,7 +66,8 @@ class PatchTableViewController: QueryTableViewController {
 		switch self.filter {
 			case .Nearby:
 				self.navigationItem.title = "Nearby"
-                self.tableView.registerNib(UINib(nibName: "PatchLargeTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
+                let nibName = SCREEN_NARROW ? "PatchNormalTableViewCell" : "PatchLargeTableViewCell"
+                self.tableView.registerNib(UINib(nibName: nibName, bundle: nil), forCellReuseIdentifier: "Cell")
 			case .Explore:
 				self.navigationItem.title = "Explore"
                 self.tableView.registerNib(UINib(nibName: "PatchNormalTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
@@ -120,14 +121,19 @@ class PatchTableViewController: QueryTableViewController {
         }
         
         if cell.visibility != nil {
-            cell.visibility?.tintColor = AirUi.brandColor
+            cell.visibility?.tintColor(AirUi.brandColor)
             cell.visibility.hidden = (patch.visibility == "public")
         }
         
         if (cell.status != nil) {
             cell.status.hidden = true
-            if (patch.userWatchStatusValue == .Pending) {
+            cell.statusWidth.constant = CGFloat(0)
+            if (patch.userWatchStatusValue == .Pending && !SCREEN_NARROW) {
                 cell.status.hidden = false
+                cell.statusWidth.constant = CGFloat(70)
+            }
+            else {
+                
             }
         }
         
@@ -166,7 +172,6 @@ class PatchTableViewController: QueryTableViewController {
             gradient.endPoint = CGPoint(x: 0.5, y: 1)
             cell.photo.layer.insertSublayer(gradient, atIndex: 0)
         }
-        
         cell.photo.setImageWithPhoto(patch.getPhotoManaged(), animate: cell.photo.image == nil)
     }
 
@@ -234,4 +239,12 @@ extension PatchTableViewController: UITableViewDelegate {
 		}
 		assert(false, "Couldn't set selectedPatch")
 	}
+    
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        var height: CGFloat = 136
+        if self.filter == .Nearby && !SCREEN_NARROW {
+            height = 159
+        }
+        return height
+    }
 }

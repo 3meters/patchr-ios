@@ -43,7 +43,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 
 		self.finishedChoosing = finishedChoosing
 
-		let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: "Cancel", destructiveButtonTitle: nil)
+		let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: nil, destructiveButtonTitle: nil)
 
 		let cameraRollAvailable   = UIImagePickerController.isSourceTypeAvailable(.SavedPhotosAlbum)
 		let cameraAvailable       = UIImagePickerController.isSourceTypeAvailable(.Camera)
@@ -59,6 +59,9 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 		if cameraAvailable {
 			photoButtonFunctionMap[sheet.addButtonWithTitle("Take a new photo")] = .TakePhoto
 		}
+        
+        sheet.addButtonWithTitle("Cancel")
+        sheet.cancelButtonIndex = sheet.numberOfButtons - 1
 
 		sheet.showInView(hostViewController?.view)
 	}

@@ -13,8 +13,6 @@ class MessageEditViewController: EntityEditViewController {
 	var toString: String?	// name of patch this message links to
     var patchId: String?    // id of patch this message links to
     
-    var observerObject: TextViewChangeObserver! = nil
-    
 	@IBOutlet weak var userPhotoImage:   	UIImageView!
     @IBOutlet weak var userNameLabel:       UILabel!
 	@IBOutlet weak var toName:              UILabel!
@@ -36,6 +34,7 @@ class MessageEditViewController: EntityEditViewController {
             self.progressStartLabel = "Updating"
             self.progressFinishLabel = "Updated!"
             navigationItem.title = LocalizedString("Edit patch")
+            self.descriptionField!.placeholder = "Message"
             
             /* Navigation bar buttons */
             var deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
@@ -49,7 +48,7 @@ class MessageEditViewController: EntityEditViewController {
             self.progressStartLabel = "Posting"
             self.progressFinishLabel = "Posted!"
             
-            self.descriptionField!.placeholder = "What's happening?"
+            self.descriptionField!.placeholder = "Message"
             
             if let toString = toString {
                 toName.text = toString
@@ -65,33 +64,6 @@ class MessageEditViewController: EntityEditViewController {
             var doneButton   = UIBarButtonItem(title: "Post", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
             self.navigationItem.rightBarButtonItems = [doneButton]
         }
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-    
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        assert(descriptionField.window != nil) // requirement for calling becomeFirstResponder
-        //descriptionField.becomeFirstResponder()
-        
-        observerObject = TextViewChangeObserver(descriptionField) {
-            [unowned self] in
-            self.draw()
-        }
-    }
-    
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        self.descriptionField.resignFirstResponder()
-    }
-    
-    override func viewDidDisappear(animated: Bool) {
-        super.viewDidDisappear(animated)
-        observerObject.stopObserving()
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -151,8 +123,6 @@ class MessageEditViewController: EntityEditViewController {
             self.setPhotoButton!.fadeIn()
         }
     }
-    
-    override func draw() { /* Block */ }
     
     override func gather(parameters: NSMutableDictionary) -> NSMutableDictionary {
         

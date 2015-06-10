@@ -29,7 +29,7 @@ class EntityEditViewController: UITableViewController {
     
     var spacer: UIBarButtonItem {
         var space = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
-        space.width = 20
+        space.width = SPACER_WIDTH
         return space
     }
 
@@ -65,6 +65,15 @@ class EntityEditViewController: UITableViewController {
         photoImage.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Fill
         photoImage.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
 
+        if photoGroup == nil {
+            self.setPhotoButton.alpha = 0
+            self.editPhotoButton.alpha = 0
+            self.clearPhotoButton.alpha = 0
+            if !editMode {
+                self.setPhotoButton.fadeIn()
+            }
+        }
+        
         if self.descriptionField != nil {
             self.descriptionField!.placeholderColor = AirUi.hintColor
             self.descriptionField!.scrollEnabled = false
@@ -121,7 +130,12 @@ class EntityEditViewController: UITableViewController {
 		else {
 			self.photoDirty = (entity!.photo != photo)
 		}
-        self.draw()
+        
+        if self.photoGroup == nil {
+            self.editPhotoButton.fadeOut()
+            self.clearPhotoButton.fadeOut()
+            self.setPhotoButton.fadeIn()
+        }
     }
     
     @IBAction func setPhotoAction(sender: AnyObject) {
@@ -131,7 +145,11 @@ class EntityEditViewController: UITableViewController {
             self.photo = image
             self.usingPhotoDefault = false
             self.photoDirty = true
-            self.draw()
+            if self.photoGroup == nil {
+                self.editPhotoButton.fadeIn()
+                self.clearPhotoButton.fadeIn()
+                self.setPhotoButton.fadeOut()
+            }
         }
     }
     
@@ -186,6 +204,10 @@ class EntityEditViewController: UITableViewController {
         
         /* Photo */
         if entity!.photo != nil {
+            if photoGroup == nil {
+                self.editPhotoButton.fadeIn()
+                self.clearPhotoButton.fadeIn()
+            }
             photoImage.setImageWithPhoto(entity!.photo)
             usingPhotoDefault = false
         }
@@ -193,17 +215,6 @@ class EntityEditViewController: UITableViewController {
             photo = UIImage(named: self.defaultPhotoName!)!
             usingPhotoDefault = true
         }
-    }
-
-    func draw() {
-        
-        /* Any ui updates required based on current state */
-        
-        /* Photo buttons */
-        var hasImage = (photo != nil)
-        editPhotoButton.hidden = !hasImage
-        clearPhotoButton.hidden = !hasImage
-        setPhotoButton.hidden = hasImage
     }
 
 	func save() {
@@ -370,10 +381,10 @@ class EntityEditViewController: UITableViewController {
             return false
 		}
 		else {
-            if nameField != nil && !name!.isEmpty {
+            if nameField != nil && name != nil {
                 return true
             }
-            if descriptionField != nil && !description_!.isEmpty {
+            if descriptionField != nil && description_ != nil {
                 return true
             }
             if photoDirty {
@@ -470,7 +481,7 @@ class EntityEditViewController: UITableViewController {
     
     var name: String? {
         get {
-            return (nameField == nil) ? nil : nameField.text
+            return (nameField == nil || nameField.text == "") ? nil : nameField.text
         }
         set {
             if nameField != nil {
@@ -481,7 +492,7 @@ class EntityEditViewController: UITableViewController {
     
     var description_: String? {
         get {
-            return (descriptionField == nil) ? nil : descriptionField.text
+            return (descriptionField == nil || descriptionField.text == "") ? nil : descriptionField.text
         }
         set {
             if descriptionField != nil {

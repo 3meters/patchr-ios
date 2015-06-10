@@ -70,7 +70,7 @@ class MessageDetailViewController: UITableViewController {
             var editButton   = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
             var spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
             var deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: Selector("deleteAction"))
-            spacer.width = 20
+            spacer.width = SPACER_WIDTH
             self.navigationItem.rightBarButtonItems = [shareButton, spacer, deleteButton, spacer, editButton]
         }
         else {
@@ -259,10 +259,10 @@ class MessageDetailViewController: UITableViewController {
 
 		/* Like button */
 
-		likeButton.imageView?.tintColor = UIColor.blackColor()
+		likeButton.imageView?.tintColor(UIColor.blackColor())
 		likeButton.alpha = 0.5
 		if message!.userLikesValue {
-			likeButton.imageView?.tintColor = AirUi.brandColor
+			likeButton.imageView?.tintColor(AirUi.brandColor)
 			likeButton.alpha = 1
 		}
 
@@ -343,9 +343,16 @@ extension MessageDetailViewController: UITableViewDelegate {
 					: CGFloat(self.description_.frame.origin.y * 2 + self.description_.frame.size.height)
 		}
 		else if indexPath.row == 4 {
-			return (self.message!.photo == nil)
-					? CGFloat(0)
-					: super.tableView(tableView, heightForRowAtIndexPath: indexPath) as CGFloat!
+            
+            /* Size so photo aspect ratio is 4:3 */
+            var height: CGFloat = 0
+            if self.message!.photo != nil {
+                height = ((UIScreen.mainScreen().bounds.size.width - 24) * 0.75)
+                return height
+            }
+            else {
+                return super.tableView(tableView, heightForRowAtIndexPath: indexPath) as CGFloat!
+            }
 		}
 		else {
 			var height = super.tableView(tableView, heightForRowAtIndexPath: indexPath) as CGFloat!

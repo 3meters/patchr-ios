@@ -111,7 +111,10 @@ extension UIButton {
             return
         }
         
-        photo.resizer(true, height: Int(self.frame.size.height), width: Int(self.frame.size.width))
+        var resizerHeight = self.frame.size.height * PIXEL_SCALE
+        var resizerWidth = self.frame.size.width * PIXEL_SCALE
+        
+        photo.resizer(true, height: Int(resizerHeight), width: Int(resizerWidth))
         let url = photo.uriWrapped()
 
         if let imageButton = self as? AirImageButton {
@@ -182,7 +185,10 @@ extension UIImageView {
             return
         }
         
-        photo.resizer(true, height: Int(self.frame.size.height), width: Int(self.frame.size.width))
+        var resizerHeight = self.frame.size.height * PIXEL_SCALE
+        var resizerWidth = self.frame.size.width * PIXEL_SCALE
+        
+        photo.resizer(true, height: Int(resizerHeight), width: Int(resizerWidth))
         let url = photo.uriWrapped()
         
         self.sd_setImageWithURL(url, completed: { (image, error, cacheType, url) -> Void in
@@ -216,6 +222,19 @@ extension UIImageView {
                 self.image = image
             }            
         })
+    }
+    
+    func tintColor(color: UIColor) {
+        assert(self.image != nil, "Image must be set before calling tintColor")
+        /*
+        * Required because xcode IB doesn't handle template mode correctly for ios7
+        * http://stackoverflow.com/questions/25997993/how-to-use-template-rendering-mode-in-xcode-6-interface-builder
+        */
+        if IOS7 {
+            let templateImage: UIImage = self.image!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+            self.image = templateImage
+        }
+        self.tintColor = color
     }
 }
 

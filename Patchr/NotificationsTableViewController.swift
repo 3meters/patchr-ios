@@ -77,9 +77,6 @@ class NotificationsTableViewController: QueryTableViewController {
 		cell.delegate = self
 
 		cell.description_.text = nil
-//		cell.photo.image = nil
-//		cell.userPhoto.image = nil
-
 		cell.description_.text = notification.summary
 
 		if let photo = notification.photoBig {
@@ -93,7 +90,6 @@ class NotificationsTableViewController: QueryTableViewController {
         cell.userPhoto.setImageWithPhoto(notification.getPhotoManaged(), animate: cell.userPhoto.image == nil)
 		cell.createdDate.text = self.messageDateFormatter.stringFromDate(notification.createdDate)
 
-		cell.iconImageView.tintColor = AirUi.brandColor
 		if notification.type == "media" {
 			cell.iconImageView.image = UIImage(named: "imgMediaLight")
 		}
@@ -103,9 +99,13 @@ class NotificationsTableViewController: QueryTableViewController {
 		else if notification.type == "watch" {
 			cell.iconImageView.image = UIImage(named: "imgWatchLight")
 		}
+        else if notification.type == "like" {
+            cell.iconImageView.image = UIImage(named: "imgLikeLight")
+        }
 		else if notification.type == "share" {
 			cell.iconImageView.image = UIImage(named: "imgShareLight")
 		}
+        cell.iconImageView.tintColor(AirUi.brandColor)
 	}
 
     func segueWith(targetId: String?, parentId: String?, refreshEntities: Bool = false) {

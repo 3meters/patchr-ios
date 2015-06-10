@@ -50,12 +50,7 @@ class UserEditViewController: EntityEditViewController {
             bind()
         }
     }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        draw()
-    }
-    
+        
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         if !editMode {

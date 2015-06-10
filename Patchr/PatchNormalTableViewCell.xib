@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
@@ -22,6 +22,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="127" height="127"/>
                                 <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
+                                    <constraint firstAttribute="height" constant="127" id="Evc-Gz-JnX"/>
                                     <constraint firstAttribute="width" secondItem="YCP-ap-PEz" secondAttribute="height" multiplier="1:1" id="rYE-pR-TIR"/>
                                 </constraints>
                             </imageView>
@@ -50,9 +51,10 @@
                                     <constraint firstAttribute="height" constant="16" id="vmJ-C5-OJb"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="REQUESTED" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qwt-ae-wok" userLabel="status">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalCompressionResistancePriority="250" text="REQUESTED" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qwt-ae-wok" userLabel="status">
                                 <rect key="frame" x="260" y="51" width="75" height="16"/>
                                 <constraints>
+                                    <constraint firstAttribute="width" constant="75" id="1C4-vn-1e6"/>
                                     <constraint firstAttribute="height" constant="16" id="BZ7-US-BRS"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="13"/>
@@ -143,6 +145,12 @@
                                     <constraint firstAttribute="height" constant="1" id="8F7-Ja-kPB"/>
                                 </constraints>
                             </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="here" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Fy-HT-9Qn" userLabel="distance">
+                                <rect key="frame" x="8" y="102" width="27" height="17"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="14"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -150,6 +158,8 @@
                             <constraint firstAttribute="bottom" secondItem="YCP-ap-PEz" secondAttribute="bottom" id="519-fo-C1i"/>
                             <constraint firstItem="YCP-ap-PEz" firstAttribute="leading" secondItem="gLN-T0-qRK" secondAttribute="leading" id="Edh-R4-dlg"/>
                             <constraint firstItem="q17-68-g6J" firstAttribute="centerY" secondItem="1IK-Gb-HNs" secondAttribute="centerY" id="KAf-HM-DGC"/>
+                            <constraint firstItem="YCP-ap-PEz" firstAttribute="leading" secondItem="3Fy-HT-9Qn" secondAttribute="leading" constant="-8" id="Kgz-Nk-3Jo"/>
+                            <constraint firstItem="YCP-ap-PEz" firstAttribute="bottom" secondItem="3Fy-HT-9Qn" secondAttribute="bottom" constant="8" id="Oey-fi-eQn"/>
                             <constraint firstAttribute="trailing" secondItem="hHX-Wu-vRN" secondAttribute="trailing" constant="8" id="SEZ-j3-zbm"/>
                             <constraint firstItem="q17-68-g6J" firstAttribute="leading" secondItem="1IK-Gb-HNs" secondAttribute="trailing" constant="8" id="Sdr-Pt-oCR"/>
                             <constraint firstItem="hHX-Wu-vRN" firstAttribute="leading" secondItem="YCP-ap-PEz" secondAttribute="trailing" constant="12" id="Vdu-Cg-ynY"/>
@@ -180,11 +190,14 @@
             </tableViewCellContentView>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <connections>
+                <outlet property="distance" destination="3Fy-HT-9Qn" id="6IE-sb-0DW"/>
                 <outlet property="messageCount" destination="eBY-Va-J1A" id="UsK-yX-8iI"/>
                 <outlet property="name" destination="hHX-Wu-vRN" id="fDk-Rh-jID"/>
                 <outlet property="photo" destination="YCP-ap-PEz" id="uK8-PN-sfy"/>
+                <outlet property="photoHeight" destination="Evc-Gz-JnX" id="pR0-2s-Kyn"/>
                 <outlet property="placeName" destination="kVo-vg-o2u" id="09z-Pl-E9F"/>
                 <outlet property="status" destination="qwt-ae-wok" id="DQC-0b-HDH"/>
+                <outlet property="statusWidth" destination="1C4-vn-1e6" id="dcZ-SO-HFS"/>
                 <outlet property="type" destination="1IK-Gb-HNs" id="M5m-8p-BfY"/>
                 <outlet property="visibility" destination="q17-68-g6J" id="rOS-wy-pth"/>
                 <outlet property="watchingCount" destination="oKi-Sk-y87" id="L9s-SZ-2Ia"/>

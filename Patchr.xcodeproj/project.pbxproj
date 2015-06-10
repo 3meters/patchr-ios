@@ -499,13 +499,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		E20C1FB81AFE4E7400A471E9 /* Helpers */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Helpers;
-			sourceTree = "<group>";
-		};
 		E215995A1AEFC193002C936F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -520,7 +513,6 @@
 			isa = PBXGroup;
 			children = (
 				E2F618E01B026BF30055D09C /* Delegates */,
-				E20C1FB81AFE4E7400A471E9 /* Helpers */,
 				E2CE389F1AEFBF7600710227 /* Widgets */,
 				E2CE38A01AEFC14C00710227 /* Storyboards */,
 				7DF828571ABB8804009E46FD /* Views */,

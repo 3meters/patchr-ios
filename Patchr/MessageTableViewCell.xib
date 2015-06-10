@@ -73,7 +73,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="02 Mar" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dwP-9n-4tK" userLabel="created_date">
-                        <rect key="frame" x="257" y="30" width="46" height="18"/>
+                        <rect key="frame" x="257" y="32" width="46" height="18"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
                         <color key="textColor" red="0.60000002379999995" green="0.60000002379999995" blue="0.60000002379999995" alpha="1" colorSpace="calibratedRGB"/>
@@ -95,10 +95,10 @@
                     <constraint firstItem="m6L-Nb-Bin" firstAttribute="leading" secondItem="TaR-dt-0cq" secondAttribute="trailing" constant="9" id="fVv-9a-iCu"/>
                     <constraint firstAttribute="trailingMargin" secondItem="h8L-WQ-6XO" secondAttribute="trailing" constant="4" id="fux-7Z-wC8"/>
                     <constraint firstAttribute="trailing" secondItem="EuJ-uZ-wD2" secondAttribute="trailing" constant="8" id="kBG-OT-7v3"/>
-                    <constraint firstItem="m6L-Nb-Bin" firstAttribute="top" secondItem="dwP-9n-4tK" secondAttribute="top" id="mc8-gE-oku"/>
                     <constraint firstItem="m6L-Nb-Bin" firstAttribute="top" secondItem="TaR-dt-0cq" secondAttribute="top" id="oB9-HR-jwj"/>
                     <constraint firstItem="Jtz-MW-UwR" firstAttribute="top" secondItem="EuJ-uZ-wD2" secondAttribute="bottom" constant="8" id="oUM-qU-Ajx"/>
                     <constraint firstItem="Jtz-MW-UwR" firstAttribute="leading" secondItem="EuJ-uZ-wD2" secondAttribute="leading" id="rvT-YA-ml0"/>
+                    <constraint firstItem="dwP-9n-4tK" firstAttribute="baseline" secondItem="m6L-Nb-Bin" secondAttribute="baseline" id="tYi-h6-iz4"/>
                     <constraint firstItem="h8L-WQ-6XO" firstAttribute="top" secondItem="m6L-Nb-Bin" secondAttribute="bottom" constant="4" id="wyT-ce-zKL"/>
                 </constraints>
             </tableViewCellContentView>

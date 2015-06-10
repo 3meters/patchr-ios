@@ -91,7 +91,7 @@ class UserDetailViewController: QueryTableViewController {
             var signoutButton = UIBarButtonItem(title: "Sign out", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSignout"))
             var settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSettings"))
             var spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
-            spacer.width = 20
+            spacer.width = SPACER_WIDTH
             self.navigationItem.rightBarButtonItems = [settingsButton, spacer, editButton]
             self.navigationItem.leftBarButtonItems = [signoutButton]
             self.navigationItem.title = "Me"

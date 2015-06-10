@@ -28,9 +28,9 @@ class SettingsTableViewController: UITableViewController, MFMailComposeViewContr
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let calendar = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)
-        let year = calendar?.component(NSCalendarUnit.YearCalendarUnit, fromDate: NSDate()) ?? 2015
-        self.buildInformationLabel.text = "©\(year) 3meters. Version \(appVersion()) (\(build()))"
+        
+        let components = NSCalendar.currentCalendar().components(.YearCalendarUnit | .MonthCalendarUnit | .DayCalendarUnit, fromDate: NSDate())
+        self.buildInformationLabel.text = "©\(components.year) 3meters. Version \(appVersion()) (\(build()))"
         
         if let user = UserController.instance.currentUser {
             if user.developerValue {

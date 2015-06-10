@@ -123,3 +123,16 @@ class PlaceDetailViewController: UITableViewController {
         self.tableView.reloadData()
 	}    
 }
+
+extension PlaceDetailViewController: UITableViewDelegate {
+    
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        
+        var height = super.tableView(tableView, heightForRowAtIndexPath: indexPath) as CGFloat!
+        if indexPath.row == 0 {
+            /* Size so photo aspect ratio is 16:10 */
+            height = UIScreen.mainScreen().bounds.size.width * 0.625
+        }
+        return height
+    }
+}

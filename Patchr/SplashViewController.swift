@@ -14,16 +14,9 @@ class LobbyViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        
         self.view.endEditing(true)
-        /* 
-         * Required because xcode IB doesn't handle template mode correctly for ios7
-         * http://stackoverflow.com/questions/25997993/how-to-use-template-rendering-mode-in-xcode-6-interface-builder
-         */
-        if iOS7 {
-            let templateImage: UIImage = self.logo.imageView!.image!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
-            self.logo.imageView?.image = templateImage
-        }
-        self.logo.tintColor = AirUi.brandColor
+        self.logo.imageView!.tintColor(AirUi.brandColor)
         self.navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     

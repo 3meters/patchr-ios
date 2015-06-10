@@ -46,18 +46,19 @@ class PatchDetailViewController: QueryTableViewController {
     @IBOutlet weak var likeActivity:   UIActivityIndicatorView!
     @IBOutlet weak var watchActivity:  UIActivityIndicatorView!
     
+    @IBOutlet weak var headerSection:  UIView!
     @IBOutlet weak var bannerGroup:    UIView!
     @IBOutlet weak var titlingGroup:   UIView!
     @IBOutlet weak var buttonGroup:    UIView!
     
     @IBOutlet weak var infoGroup:      UIView!
-    @IBOutlet weak var infoName: UILabel!
-    @IBOutlet weak var infoType: UILabel!
-    @IBOutlet weak var infoLockImage: UIImageView!
+    @IBOutlet weak var infoName:       UILabel!
+    @IBOutlet weak var infoType:       UILabel!
+    @IBOutlet weak var infoLockImage:  UIImageView!
     @IBOutlet weak var infoVisibility: UILabel!
-    @IBOutlet weak var infoDistance: UILabel!
-    @IBOutlet weak var infoDescription: UILabel!
-    @IBOutlet weak var infoOwner: UILabel!
+    @IBOutlet weak var infoDistance:   UILabel!
+    @IBOutlet weak var infoDescription:UILabel!
+    @IBOutlet weak var infoOwner:      UILabel!
     
     @IBOutlet weak var patchPhotoTop:  NSLayoutConstraint!
     @IBOutlet weak var placeButton:    UIButton!
@@ -133,8 +134,8 @@ class PatchDetailViewController: QueryTableViewController {
         
         /* UI prep */
         tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
-        lockImage.tintColor = AirUi.brandColor
-        infoLockImage.tintColor = AirUi.brandColor
+        lockImage.tintColor(AirUi.brandColor)
+        infoLockImage.tintColor(AirUi.brandColor)
         likeButton.alpha = 0.0
         watchButton.alpha = 0.0
         likesButton.alpha = 0.0
@@ -150,7 +151,7 @@ class PatchDetailViewController: QueryTableViewController {
         var shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
         var addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: Selector("addAction"))
         var spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
-        spacer.width = 20
+        spacer.width = SPACER_WIDTH
         if isOwner {
             let editImage = UIImage(named: "imgEditLight")
             var editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
@@ -180,9 +181,19 @@ class PatchDetailViewController: QueryTableViewController {
             draw()
         }
     }
-    
+
     override func viewDidAppear(animated: Bool){
         super.viewDidAppear(animated)
+        
+        /* Super hack to resize the table header to fit the contents */
+        var headerView: UIView = self.tableView.tableHeaderView!
+        var height = contextButton.frame.height + bannerGroup.frame.height
+        var newFrame: CGRect = self.tableView.tableHeaderView!.frame;
+        
+        newFrame.size.height = height
+        headerView.frame = newFrame
+        self.tableView.tableHeaderView = headerView
+        
         refresh(force: true)
     }
 
@@ -479,13 +490,13 @@ class PatchDetailViewController: QueryTableViewController {
         
         if (patch!.visibility == "public" || patch!.userWatchStatusValue == .Member || isOwner) {
             if patch!.userLikesValue {
-                likeButton.imageView?.tintColor = AirUi.brandColor
+                likeButton.imageView?.tintColor(AirUi.brandColor)
                 if likeButton.alpha <= 0.5 {
                     likeButton.fadeIn(alpha: 1.0)
                 }
             }
             else {
-                likeButton.imageView?.tintColor = UIColor.whiteColor()
+                likeButton.imageView?.tintColor(UIColor.whiteColor())
                 if likeButton.alpha <= 0.5 {
                     likeButton.fadeIn(alpha: 0.7)
                 }
@@ -495,13 +506,13 @@ class PatchDetailViewController: QueryTableViewController {
         /* Watch button */
         
         if (patch!.userWatchStatusValue == .Member || patch!.userWatchStatusValue == .Pending){
-            watchButton.imageView?.tintColor = AirUi.brandColor
+            watchButton.imageView?.tintColor(AirUi.brandColor)
             if watchButton.alpha <= 0.5 {
                 watchButton.fadeIn(alpha: 1.0)
             }
         }
         else {
-            watchButton.imageView?.tintColor = UIColor.whiteColor()
+            watchButton.imageView?.tintColor(UIColor.whiteColor())
             if watchButton.alpha <= 0.5 {
                 watchButton.fadeIn(alpha: 0.7)
             }

@@ -20,6 +20,8 @@ class PatchTableViewCell: UITableViewCell {
     @IBOutlet weak var messageCount: UILabel!
     @IBOutlet weak var watchingCount: UILabel!
     @IBOutlet weak var distance: UILabel!
+    @IBOutlet weak var photoHeight: NSLayoutConstraint!
+    @IBOutlet weak var statusWidth: NSLayoutConstraint!
     
     override var layoutMargins: UIEdgeInsets {
 		get { return UIEdgeInsetsZero }

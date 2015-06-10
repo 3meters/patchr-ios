@@ -82,11 +82,6 @@ class PatchEditViewController: EntityEditViewController {
 		}
 	}
 
-	override func viewWillAppear(animated: Bool) {
-		super.viewWillAppear(animated)
-		draw()
-	}
-
     /*--------------------------------------------------------------------------------------------
     * Events
     *--------------------------------------------------------------------------------------------*/
@@ -279,6 +274,11 @@ extension PatchEditViewController: UITableViewDelegate{
             if indexPath.row == 1 {
                 var height: CGFloat = textViewHeightForRowAtIndexPath(indexPath)
                 return height < 48 ? 48 : height
+            }
+            else if indexPath.row == 2 {
+                /* Size so photo aspect ratio is 16:10 */
+                var height: CGFloat = ((UIScreen.mainScreen().bounds.size.width - 36) * 0.625) + 24
+                return height
             }
         }
         return super.tableView(tableView, heightForRowAtIndexPath: indexPath)
