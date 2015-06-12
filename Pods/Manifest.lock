@@ -42,6 +42,7 @@ PODS:
     - Bolts/Tasks
   - Bolts/Tasks (1.1.5)
   - DACircularProgress (2.3.1)
+  - DZNEmptyDataSet (1.5.2)
   - GZIP (1.0.3)
   - IDMPhotoBrowser (1.6.2):
     - AFNetworking
@@ -75,6 +76,7 @@ DEPENDENCIES:
   - AFNetworkActivityLogger (~> 2.0)
   - AFNetworking (~> 2.0)
   - AWSS3
+  - DZNEmptyDataSet
   - IDMPhotoBrowser
   - libPhoneNumber-iOS (~> 0.7)
   - Lockbox
@@ -96,6 +98,7 @@ SPEC CHECKSUMS:
   AWSS3: 891d269735be0f3c63eab5a2d1ee9d788f2c64ee
   Bolts: aac24961496d504aa56fc267cde95162a71bac39
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
+  DZNEmptyDataSet: 741da409081a4bf707c949c964623a6ad1799772
   GZIP: f0863fda354e8f83316508c0a2c7bbe385e39129
   IDMPhotoBrowser: ebbfa6690456b72dd92d93b7bc11d71519f4d06d
   libPhoneNumber-iOS: b8ccd23576379caca37c7cbdd554addf384459ed
