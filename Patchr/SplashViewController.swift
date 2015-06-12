@@ -30,9 +30,11 @@ class LobbyViewController: UIViewController {
     }
 
     @IBAction func guestButtonAction(sender: UIButton) {
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        let destinationViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateInitialViewController() as! UIViewController
-        appDelegate.window!.setRootViewController(destinationViewController, animated: true)
+        Alert("Not implemented yet!")
+        
+//        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+//        let destinationViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateInitialViewController() as! UIViewController
+//        appDelegate.window!.setRootViewController(destinationViewController, animated: true)
     }
 }
 
