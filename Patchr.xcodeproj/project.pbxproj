@@ -109,6 +109,8 @@
 		E27DB4051B06477A0090D023 /* QueryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = E27DB4041B06477A0090D023 /* QueryItem.m */; };
 		E27DB4081B0647960090D023 /* _QueryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = E27DB4071B0647960090D023 /* _QueryItem.m */; };
 		E2A099FC1B06B20D00257B8B /* PatchNormalTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2A099FB1B06B20D00257B8B /* PatchNormalTableViewCell.xib */; };
+		E2C7C5C21B2A0B730045038A /* NotificationSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */; };
+		E2C7C5C41B2A19720045038A /* DefaultSettings.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2C7C5C31B2A19720045038A /* DefaultSettings.plist */; };
 		E2D25DC81B23892000E51461 /* UserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D25DC71B23892000E51461 /* UserController.swift */; };
 		E2D25DCD1B23917800E51461 /* UserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D25DC71B23892000E51461 /* UserController.swift */; };
 		E2D25DCF1B2391A700E51461 /* EntityEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D25DCE1B2391A700E51461 /* EntityEditViewController.swift */; };
@@ -285,6 +287,8 @@
 		E27DB4061B0647960090D023 /* _QueryItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _QueryItem.h; path = Model/_QueryItem.h; sourceTree = "<group>"; };
 		E27DB4071B0647960090D023 /* _QueryItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _QueryItem.m; path = Model/_QueryItem.m; sourceTree = "<group>"; };
 		E2A099FB1B06B20D00257B8B /* PatchNormalTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PatchNormalTableViewCell.xib; sourceTree = "<group>"; };
+		E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationSettingsViewController.swift; sourceTree = "<group>"; };
+		E2C7C5C31B2A19720045038A /* DefaultSettings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultSettings.plist; sourceTree = "<group>"; };
 		E2D25DC71B23892000E51461 /* UserController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UserController.swift; path = Patchr/UserController.swift; sourceTree = "<group>"; };
 		E2D25DCE1B2391A700E51461 /* EntityEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityEditViewController.swift; sourceTree = "<group>"; };
 		E2D6BE301B0BADA000273538 /* NotificationTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NotificationTableViewCell.xib; sourceTree = "<group>"; };
@@ -505,6 +509,7 @@
 				E25327CA1B13D34B00990A81 /* Sounds */,
 				8468F8211A9D09D1007D6EE6 /* Localizable.strings */,
 				7D3D39D51A6F086F00A44CB2 /* Images.xcassets */,
+				E2C7C5C31B2A19720045038A /* DefaultSettings.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -570,6 +575,7 @@
 				7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */,
 				9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */,
 				E25327BB1B10FBE700990A81 /* NearbyTableViewController.swift */,
+				E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */,
 				7D40B9411A7864A000F9954C /* NotificationsTableViewController.swift */,
 				7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */,
 				841082CA1AB1013300803ECE /* PatchMapViewController.swift */,
@@ -773,6 +779,7 @@
 				E2EFD2661AF44214003937D4 /* Lobby.storyboard in Resources */,
 				E2D6BE311B0BADA000273538 /* NotificationTableViewCell.xib in Resources */,
 				8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */,
+				E2C7C5C41B2A19720045038A /* DefaultSettings.plist in Resources */,
 				7D3D39D41A6F086F00A44CB2 /* Main.storyboard in Resources */,
 				E20004DA1B07A78C00425694 /* PatchLargeTableViewCell.xib in Resources */,
 				E2A099FC1B06B20D00257B8B /* PatchNormalTableViewCell.xib in Resources */,
@@ -931,6 +938,7 @@
 				7DC9D49A1A9D597400234E3C /* AutoSizingLabel.m in Sources */,
 				E27DB4081B0647960090D023 /* _QueryItem.m in Sources */,
 				841082CB1AB1013300803ECE /* PatchMapViewController.swift in Sources */,
+				E2C7C5C21B2A0B730045038A /* NotificationSettingsViewController.swift in Sources */,
 				7DA730941A71ACC9008C25FA /* ServiceObject.m in Sources */,
 				7DA730901A71ACC9008C25FA /* Patch.m in Sources */,
 				7DA7308A1A71ACC9008C25FA /* _Patch.m in Sources */,

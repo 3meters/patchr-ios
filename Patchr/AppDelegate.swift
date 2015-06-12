@@ -24,13 +24,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         #if DEBUG
         AFNetworkActivityLogger.sharedLogger().startLogging()
-        AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelInfo
+        AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelWarn
         #endif
+        
+        /* Load setting defaults */
+        let defaultSettingsFile: NSString = NSBundle.mainBundle().pathForResource("DefaultSettings", ofType: "plist")!
+        let settingsDictionary: NSDictionary = NSDictionary(contentsOfFile: defaultSettingsFile as String)!
+        NSUserDefaults.standardUserDefaults().registerDefaults(settingsDictionary as [NSObject : AnyObject])
 
         /* Setup parse for push notifications */
         Parse.setApplicationId("EonZJ4FXEADijslgqXCkg37sOGpB7AB9lDYxoHtz", clientKey: "5QRFlRQ3j7gkxyJ2cBYbHTK98WRQhoHCnHdpEKSD")
         
-        DataController.proxibase.registerInstallStandard { (response, error) -> Void in
+        DataController.proxibase.registerInstallStandard {
+            response, error in
             if error != nil {
                 NSLog("Error during registerInstall: \(error)")
             }
