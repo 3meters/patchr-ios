@@ -21,3 +21,6 @@ let IOS7 = iosVersion >= 7 && iosVersion < 8
 let SCREEN_NARROW = (UIScreen.mainScreen().bounds.size.width == 320)
 let PIXEL_SCALE: CGFloat = UIScreen.mainScreen().scale
 let SPACER_WIDTH: CGFloat = 12
+
+let URI_PROXIBASE_SEARCH_IMAGES: String = "https://api.datamarket.azure.com/Bing/Search/v1/Image"
+let BING_ACCESS_KEY: String = "bNm8LpZdJma/cbJdDiwHq+TGwzVF7nW+QF9vWdPh/Rg"
