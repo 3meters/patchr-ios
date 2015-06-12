@@ -375,12 +375,12 @@
                     </tableView>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="Register" id="AHc-Hu-MMy" userLabel="nav_bar">
-                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="ae2-17-Agq">
+                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="ae2-17-Agq" userLabel="nav_cancel_button">
                             <connections>
-                                <action selector="cancelAction:" destination="tMe-pp-m8T" id="ugs-yC-vs4"/>
+                                <action selector="cancelAction:" destination="tMe-pp-m8T" id="RcY-0p-Pgk"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Join" id="0ka-oS-NhH">
+                        <barButtonItem key="rightBarButtonItem" title="Join" id="0ka-oS-NhH" userLabel="nav_done_button">
                             <connections>
                                 <action selector="doneAction:" destination="tMe-pp-m8T" id="oaX-96-sCp"/>
                             </connections>
@@ -416,7 +416,7 @@
                         <sections>
                             <tableViewSection id="gNV-xg-0Gp">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="245" id="kUi-2B-sm7" customClass="AirTableViewCell">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="292" id="kUi-2B-sm7" customClass="AirTableViewCell">
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="kUi-2B-sm7" id="af4-dX-Be7" userLabel="content_group">
                                             <autoresizingMask key="autoresizingMask"/>
@@ -442,6 +442,14 @@
                                                         <constraint firstAttribute="bottom" secondItem="GeI-Zt-roe" secondAttribute="bottom" id="y26-7f-FVY"/>
                                                     </constraints>
                                                 </view>
+                                                <textField hidden="YES" opaque="NO" clipsSubviews="YES" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Password (6 characters or more)" adjustsFontSizeToFit="NO" minimumFontSize="18" translatesAutoresizingMaskIntoConstraints="NO" id="mbH-Rf-dnw" userLabel="user_password">
+                                                    <rect key="frame" x="16" y="80" width="288" height="44"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="44" id="BGg-d4-s98"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="18"/>
+                                                    <textInputTraits key="textInputTraits" returnKeyType="go" secureTextEntry="YES"/>
+                                                </textField>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email" adjustsFontSizeToFit="NO" minimumFontSize="18" translatesAutoresizingMaskIntoConstraints="NO" id="6Ix-yz-cVJ" userLabel="user_email">
                                                     <rect key="frame" x="16" y="80" width="288" height="44"/>
                                                     <constraints>
@@ -467,39 +475,34 @@
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <userDefinedRuntimeAttributes>
-                                                        <userDefinedRuntimeAttribute type="string" keyPath="layer.borderWidth" value="0.5"/>
-                                                        <userDefinedRuntimeAttribute type="color" keyPath="layer.borderUIColor">
-                                                            <color key="value" red="0.69999999999999996" green="0.69999999999999996" blue="0.69999999999999996" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                                            <real key="value" value="0.5"/>
                                                         </userDefinedRuntimeAttribute>
-                                                        <userDefinedRuntimeAttribute type="string" keyPath="layer.cornerRadius" value="4"/>
+                                                        <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                            <integer key="value" value="4"/>
+                                                        </userDefinedRuntimeAttribute>
+                                                        <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                                            <color key="value" red="0.80000001192092896" green="0.80000001192092896" blue="0.80000001192092896" alpha="1" colorSpace="calibratedRGB"/>
+                                                        </userDefinedRuntimeAttribute>
                                                     </userDefinedRuntimeAttributes>
                                                     <connections>
-                                                        <action selector="resetAction:" destination="Uk3-Dh-Kn8" eventType="touchUpInside" id="q1q-NQ-XpR"/>
+                                                        <action selector="doneAction:" destination="Uk3-Dh-Kn8" eventType="touchUpInside" id="ulS-nE-8C8"/>
                                                     </connections>
                                                 </button>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sign in error message" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="s5i-IA-Q4E" userLabel="error_message">
-                                                    <rect key="frame" x="16" y="180" width="288" height="48"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="48" id="pnA-yr-4HJ"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
-                                                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="6Ix-yz-cVJ" firstAttribute="leading" secondItem="af4-dX-Be7" secondAttribute="leading" constant="16" id="4XG-fN-6Db"/>
-                                                <constraint firstItem="s5i-IA-Q4E" firstAttribute="leading" secondItem="af4-dX-Be7" secondAttribute="leading" constant="16" id="6HB-8e-kgW"/>
                                                 <constraint firstItem="6Ix-yz-cVJ" firstAttribute="top" secondItem="o5g-G4-dI5" secondAttribute="bottom" constant="16" id="A3N-v0-iM9"/>
-                                                <constraint firstItem="s5i-IA-Q4E" firstAttribute="top" secondItem="LWJ-zI-Boa" secondAttribute="bottom" id="AzR-9x-0fP"/>
+                                                <constraint firstItem="mbH-Rf-dnw" firstAttribute="leading" secondItem="af4-dX-Be7" secondAttribute="leading" constant="16" id="EeZ-7C-Joe"/>
                                                 <constraint firstItem="o5g-G4-dI5" firstAttribute="top" secondItem="af4-dX-Be7" secondAttribute="top" id="Fad-fc-nj9"/>
                                                 <constraint firstItem="o5g-G4-dI5" firstAttribute="leading" secondItem="af4-dX-Be7" secondAttribute="leading" id="GaD-OW-s61"/>
                                                 <constraint firstItem="9xA-nX-5di" firstAttribute="leading" secondItem="af4-dX-Be7" secondAttribute="leading" constant="16" id="P0X-8t-BoT"/>
+                                                <constraint firstItem="mbH-Rf-dnw" firstAttribute="top" secondItem="o5g-G4-dI5" secondAttribute="bottom" constant="16" id="YLn-V2-b8T"/>
                                                 <constraint firstAttribute="trailing" secondItem="6Ix-yz-cVJ" secondAttribute="trailing" constant="16" id="YVv-OZ-i1o"/>
                                                 <constraint firstItem="LWJ-zI-Boa" firstAttribute="top" secondItem="9xA-nX-5di" secondAttribute="bottom" constant="7" id="cEl-ZA-o11"/>
                                                 <constraint firstAttribute="trailing" secondItem="o5g-G4-dI5" secondAttribute="trailing" id="eHi-bQ-p93"/>
+                                                <constraint firstAttribute="trailing" secondItem="mbH-Rf-dnw" secondAttribute="trailing" constant="16" id="ilz-Qw-DOw"/>
                                                 <constraint firstAttribute="trailing" secondItem="9xA-nX-5di" secondAttribute="trailing" constant="16" id="kLR-9u-RM5"/>
-                                                <constraint firstAttribute="trailing" secondItem="s5i-IA-Q4E" secondAttribute="trailing" constant="16" id="lKT-fq-uIF"/>
                                                 <constraint firstItem="9xA-nX-5di" firstAttribute="top" secondItem="6Ix-yz-cVJ" secondAttribute="bottom" id="rhp-YN-CCy"/>
                                                 <constraint firstItem="LWJ-zI-Boa" firstAttribute="leading" secondItem="af4-dX-Be7" secondAttribute="leading" constant="16" id="ujJ-uh-xNU"/>
                                                 <constraint firstAttribute="trailing" secondItem="LWJ-zI-Boa" secondAttribute="trailing" constant="16" id="xOS-KO-JJH"/>
@@ -515,9 +518,14 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Password reset" id="kfr-CP-IBO" userLabel="nav_bar">
-                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="OSZ-PO-yMe" userLabel="button_nav_done">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="bQs-JQ-GGQ" userLabel="nav_cancel_button">
                             <connections>
-                                <action selector="resetAction:" destination="Uk3-Dh-Kn8" id="q0F-fi-QsC"/>
+                                <action selector="cancelAction:" destination="Uk3-Dh-Kn8" id="m5Y-Km-VD0"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="OSZ-PO-yMe" userLabel="nav_done_button">
+                            <connections>
+                                <action selector="doneAction:" destination="Uk3-Dh-Kn8" id="Kf3-74-rwE"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -525,7 +533,8 @@
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
                         <outlet property="emailField" destination="6Ix-yz-cVJ" id="JdF-N2-d8h"/>
-                        <outlet property="errorLabel" destination="s5i-IA-Q4E" id="7kN-zB-8pH"/>
+                        <outlet property="messageLabel" destination="GeI-Zt-roe" id="pTB-V0-J80"/>
+                        <outlet property="passwordField" destination="mbH-Rf-dnw" id="pE4-al-F5O"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mtK-AB-shh" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -553,7 +562,7 @@
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="44" id="TG9-m3-Gdp"/>
                                                     </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="18"/>
                                                     <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="emailAddress" returnKeyType="next"/>
                                                 </textField>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fdy-Ar-MpE" userLabel="rule">
@@ -563,12 +572,12 @@
                                                         <constraint firstAttribute="height" constant="1" id="F6q-OR-hFT"/>
                                                     </constraints>
                                                 </view>
-                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Password" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="vYC-yK-reY" userLabel="user_password">
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Password (6 characters or more)" adjustsFontSizeToFit="NO" minimumFontSize="18" translatesAutoresizingMaskIntoConstraints="NO" id="vYC-yK-reY" userLabel="user_password">
                                                     <rect key="frame" x="8" y="72" width="304" height="44"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="44" id="bQe-vM-vK4"/>
                                                     </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="18"/>
                                                     <textInputTraits key="textInputTraits" returnKeyType="go" secureTextEntry="YES"/>
                                                 </textField>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HZl-Vc-4ct" userLabel="rule">
@@ -597,7 +606,7 @@
                                                         <userDefinedRuntimeAttribute type="string" keyPath="layer.cornerRadius" value="4"/>
                                                     </userDefinedRuntimeAttributes>
                                                     <connections>
-                                                        <action selector="signInAction:" destination="8no-yf-GVU" eventType="touchUpInside" id="mPB-Ch-cYi"/>
+                                                        <action selector="doneAction:" destination="8no-yf-GVU" eventType="touchUpInside" id="MiD-Va-Xj5"/>
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="E2e-fK-4Rp" userLabel="button_join">
@@ -620,13 +629,10 @@
                                                             <integer key="value" value="4"/>
                                                         </userDefinedRuntimeAttribute>
                                                     </userDefinedRuntimeAttributes>
+                                                    <connections>
+                                                        <segue destination="tMe-pp-m8T" kind="push" id="HwG-zD-VAa"/>
+                                                    </connections>
                                                 </button>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sign in error message" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wfm-jp-9vJ" userLabel="error_message">
-                                                    <rect key="frame" x="85" y="252" width="150" height="19"/>
-                                                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="16"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="TJy-wa-OfZ" userLabel="button_forgot_password">
                                                     <rect key="frame" x="8" y="188" width="148" height="48"/>
                                                     <constraints>
@@ -658,7 +664,6 @@
                                                 <constraint firstItem="vYC-yK-reY" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leadingMargin" id="Ha3-8P-zAH"/>
                                                 <constraint firstItem="E2e-fK-4Rp" firstAttribute="width" secondItem="TJy-wa-OfZ" secondAttribute="width" id="Ni6-Qa-sW1"/>
                                                 <constraint firstItem="fdy-Ar-MpE" firstAttribute="top" secondItem="gwA-or-tej" secondAttribute="bottom" constant="4" id="OCx-FX-X5C"/>
-                                                <constraint firstAttribute="centerX" secondItem="Wfm-jp-9vJ" secondAttribute="centerX" id="PtU-mQ-IG4"/>
                                                 <constraint firstItem="gwA-or-tej" firstAttribute="trailing" secondItem="dW2-jv-QWR" secondAttribute="trailingMargin" id="R7S-Tp-rCi"/>
                                                 <constraint firstItem="fdy-Ar-MpE" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leadingMargin" id="YOj-cK-5Ir"/>
                                                 <constraint firstItem="HZl-Vc-4ct" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leadingMargin" id="Yfq-n5-Wse"/>
@@ -671,7 +676,6 @@
                                                 <constraint firstItem="E2e-fK-4Rp" firstAttribute="trailing" secondItem="dW2-jv-QWR" secondAttribute="trailingMargin" id="tLq-qs-2q8"/>
                                                 <constraint firstItem="E2e-fK-4Rp" firstAttribute="top" secondItem="4dm-py-zhQ" secondAttribute="bottom" constant="8" id="vb0-vv-xI7"/>
                                                 <constraint firstItem="vYC-yK-reY" firstAttribute="trailing" secondItem="dW2-jv-QWR" secondAttribute="trailingMargin" id="yS2-3n-2XK"/>
-                                                <constraint firstItem="Wfm-jp-9vJ" firstAttribute="top" secondItem="E2e-fK-4Rp" secondAttribute="bottom" constant="16" id="yeZ-9w-gAN"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -684,19 +688,22 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Sign In" id="BCr-WB-FyH" userLabel="nav_bar">
-                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="94P-mh-sAr" userLabel="button_nav_done">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="Kme-kH-Tdq" userLabel="nav_cancel_button">
                             <connections>
-                                <action selector="signInAction:" destination="8no-yf-GVU" id="PXT-w7-4Hh"/>
+                                <action selector="cancelAction:" destination="8no-yf-GVU" id="NJ9-gH-sx8"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="94P-mh-sAr" userLabel="nave_done_button">
+                            <connections>
+                                <action selector="doneAction:" destination="8no-yf-GVU" id="Atq-nL-oIG"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
-                        <outlet property="emaiField" destination="gwA-or-tej" id="v1u-ro-sAk"/>
-                        <outlet property="errorLabel" destination="Wfm-jp-9vJ" id="MU0-Lz-X3S"/>
+                        <outlet property="emailField" destination="gwA-or-tej" id="JaC-xw-4RH"/>
                         <outlet property="passwordField" destination="vYC-yK-reY" id="H1a-EO-ptG"/>
-                        <outlet property="signInBarButtonItem" destination="94P-mh-sAr" id="M1R-ix-VBc"/>
                         <outlet property="signInButton" destination="4dm-py-zhQ" id="drh-2W-B3T"/>
                     </connections>
                 </tableViewController>
@@ -725,10 +732,10 @@
         </scene>
     </scenes>
     <resources>
-        <image name="imgCancelDark" width="32" height="32"/>
+        <image name="imgCancelDark" width="48" height="48"/>
         <image name="imgCityScape" width="1000" height="625"/>
         <image name="imgDefaultUser" width="250" height="250"/>
-        <image name="imgEditDark" width="40" height="40"/>
+        <image name="imgEditDark" width="60" height="60"/>
         <image name="imgPatchDark" width="60" height="60"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
@@ -736,4 +743,7 @@
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
+    <inferredMetricsTieBreakers>
+        <segue reference="HwG-zD-VAa"/>
+    </inferredMetricsTieBreakers>
 </document>

@@ -677,28 +677,6 @@ class PatchDetailViewController: QueryTableViewController {
         refreshQueryItems(force: true)
 	}
 
-	private func deleteMessage(message: Message!) {
-		self.ActionConfirmationAlert(LocalizedString("Confirm Delete"), message: LocalizedString("Are you sure you want to delete this?"), actionTitle: LocalizedString("Delete"), cancelTitle: LocalizedString("Cancel")) {
-			doIt in
-
-			let messagePath = "data/messages/\((message?.id_)!)"
-			DataController.proxibase.deleteObject(messagePath) {
-				response, error in
-				if let serverError = ServerError(error) {
-					println(error)
-					self.ErrorNotificationAlert(LocalizedString("Error"), message: serverError.message) {
-					}
-				}
-				else {
-					println(response)
-					DataController.instance.managedObjectContext.deleteObject(message)
-					self.refresh()
-				}
-			}
-		}
-		println("delete message button")
-	}
-
 	func handleRemoteNotification(notification: NSNotification) {
 
 		if let userInfo = notification.userInfo {

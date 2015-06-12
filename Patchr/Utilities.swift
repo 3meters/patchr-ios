@@ -111,25 +111,33 @@ func !=(a: CLLocationCoordinate2D, b: CLLocationCoordinate2D) -> Bool {
 
 extension UIViewController {
     
-	func ActionConfirmationAlert(title: String, message: String, actionTitle: String, cancelTitle: String, onDismiss: (Bool) -> Void) {
+    func Alert(title: String?, message: String? = nil, cancelButtonTitle: String = "OK") {
         
-		let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-		alert.addAction(UIAlertAction(title: actionTitle, style: .Destructive, handler: { _ in onDismiss(true) }))
-		alert.addAction(UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) }))
+        if objc_getClass("UIAlertController") != nil {
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: cancelButtonTitle, style: .Cancel, handler: nil))
+            self.presentViewController(alert, animated: true) {}
+        }
+        else {
+            UIAlertView(title: title, message: message, delegate: nil, cancelButtonTitle: cancelButtonTitle).show()
+        }
+    }
+    
+    func ActionConfirmationAlert(title: String? = nil, message: String? = nil,
+        actionTitle: String, cancelTitle: String,
+        delegate: AnyObject? = nil, onDismiss: (Bool) -> Void) {
         
-		self.presentViewController(alert, animated: true) {}
-	}
-
-	func ErrorNotificationAlert(title: String, message: String, onDismiss: (() -> Void)? = nil) {
-        
-		let alert = UIAlertController(title: LocalizedString("Error"), message: message, preferredStyle: .Alert)
-		alert.addAction( UIAlertAction(title: LocalizedString("OK"), style: .Cancel) { _ in
-			if onDismiss != nil {
-				onDismiss!()
-			}
-		})
-        
-		self.presentViewController(alert, animated: true) {}
+        if objc_getClass("UIAlertController") != nil {
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: actionTitle, style: .Destructive, handler: { _ in onDismiss(true) }))
+            alert.addAction(UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) }))
+            self.presentViewController(alert, animated: true) {}
+        }
+        else {
+            var alert = UIAlertView(title: title, message: message, delegate: delegate, cancelButtonTitle: nil)
+            alert.addButtonWithTitle(actionTitle)
+            alert.addButtonWithTitle(cancelTitle)
+            alert.show()
+        }
 	}
 }
-

@@ -1168,7 +1168,7 @@
                                                             <state key="normal" image="imgLikeDark">
                                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                             </state>
-                                                            <state key="selected" image="AC7704FF-1C43-48B2-8C16-B31F20106890"/>
+                                                            <state key="selected" image="F1638B79-B5EE-48DE-8FB8-CBD7109EE7C3"/>
                                                             <connections>
                                                                 <action selector="likeAction:" destination="dFa-9F-rNC" eventType="touchUpInside" id="VEl-FK-BTq"/>
                                                             </connections>
@@ -1186,7 +1186,7 @@
                                                             <state key="normal" image="imgWatchDark">
                                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                             </state>
-                                                            <state key="selected" image="930C2B5B-26EA-49DB-9D9A-F3E9D4CA4461"/>
+                                                            <state key="selected" image="263040AF-BCB6-47F8-A457-542610CD10AB"/>
                                                             <connections>
                                                                 <action selector="watchAction:" destination="dFa-9F-rNC" eventType="touchUpInside" id="S3h-j5-gWa"/>
                                                             </connections>
@@ -1894,8 +1894,8 @@
                             <rect key="frame" x="0.0" y="432" width="414" height="44"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="v1.0 build 29" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T7X-7P-C1Q" userLabel="version_info_label">
-                                    <rect key="frame" x="158" y="11" width="99" height="21"/>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="v1.0 build 29" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T7X-7P-C1Q" userLabel="version_info_label">
+                                    <rect key="frame" x="156" y="11" width="104" height="21"/>
                                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="18"/>
                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                     <nil key="highlightedColor"/>
@@ -2842,7 +2842,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="930C2B5B-26EA-49DB-9D9A-F3E9D4CA4461" width="40" height="40">
+        <image name="263040AF-BCB6-47F8-A457-542610CD10AB" width="40" height="40">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw
@@ -2999,7 +2999,7 @@ sgC1ALcAuQC7AL0AwgDZANsA3SJPIlQiXyJoInsifyKSIp0ipiKrIrMitiK7IsoiziLVIt0i6iLvIvEi
 8yL4IwAjAyMIIxAjEyMlIygjLQAAAAAAAAIBAAAAAAAAAEIAAAAAAAAAAAAAAAAAACMvA
 </mutableData>
         </image>
-        <image name="AC7704FF-1C43-48B2-8C16-B31F20106890" width="40" height="40">
+        <image name="F1638B79-B5EE-48DE-8FB8-CBD7109EE7C3" width="40" height="40">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGPj9YJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsLzI4O1UkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw

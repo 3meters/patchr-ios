@@ -146,7 +146,7 @@ class MessageDetailViewController: UITableViewController {
 	}
 
 	@IBAction func reportAction(sender: AnyObject) {
-		UIAlertView(title: "Not implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
+		Alert("Not implemented")
 	}
 
 	@IBAction func likeAction(sender: AnyObject) {
@@ -221,7 +221,7 @@ class MessageDetailViewController: UITableViewController {
 	}
 
 	func deleteAction() {
-		UIAlertView(title: "Not implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
+		Alert("Not implemented")
 	}
 
 	/*--------------------------------------------------------------------------------------------

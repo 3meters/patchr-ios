@@ -12,13 +12,13 @@ import MessageUI
 class SettingsTableViewController: UITableViewController, MFMailComposeViewControllerDelegate {
     
     
-    @IBOutlet weak var notificationsTableViewCell: UITableViewCell!
-    @IBOutlet weak var sendFeedbackTableViewCell: UITableViewCell!
-    @IBOutlet weak var rateTableViewCell: UITableViewCell!
-    @IBOutlet weak var termsOfServiceTableViewCell: UITableViewCell!
-    @IBOutlet weak var privacyPolicyTableViewCell: UITableViewCell!
-    @IBOutlet weak var softwareLicensesTableViewCell: UITableViewCell!
-    @IBOutlet weak var developmentTableViewCell: UITableViewCell!
+    @IBOutlet weak var notificationsCell: UITableViewCell!
+    @IBOutlet weak var sendFeedbackCell: UITableViewCell!
+    @IBOutlet weak var rateCell: UITableViewCell!
+    @IBOutlet weak var termsOfServiceCell: UITableViewCell!
+    @IBOutlet weak var privacyPolicyCell: UITableViewCell!
+    @IBOutlet weak var softwareLicensesCell: UITableViewCell!
+    @IBOutlet weak var developmentCell: UITableViewCell!
 
     @IBOutlet weak var buildInformationLabel: UILabel!
     
@@ -34,9 +34,17 @@ class SettingsTableViewController: UITableViewController, MFMailComposeViewContr
         
         if let user = UserController.instance.currentUser {
             if user.developerValue {
-                developmentTableViewCell.hidden = false
+                developmentCell.hidden = false
             }
         }
+        
+        self.notificationsCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
+        self.sendFeedbackCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
+        self.rateCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
+        self.termsOfServiceCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
+        self.privacyPolicyCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
+        self.softwareLicensesCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
+        self.developmentCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -65,10 +73,10 @@ extension SettingsTableViewController: UITableViewDelegate {
         
         let selectedCell = tableView.cellForRowAtIndexPath(indexPath)
         
-        if selectedCell == self.notificationsTableViewCell {
+        if selectedCell == self.notificationsCell {
             self.performSegueWithIdentifier("NotificationSettingsSegue", sender: selectedCell)
         }
-        else if selectedCell == self.sendFeedbackTableViewCell {
+        else if selectedCell == self.sendFeedbackCell {
             let email = "feedback@3meters.com"
             let subject = "Feedback for Patchr iOS"
             if MFMailComposeViewController.canSendMail() {
@@ -86,7 +94,7 @@ extension SettingsTableViewController: UITableViewDelegate {
                 }
             }
         }
-        else if selectedCell == self.rateTableViewCell {
+        else if selectedCell == self.rateCell {
             let appId = "1234567890"
             let appStoreURL = "itms-apps://itunes.apple.com/app/id\(appId)"
             self.tableView.deselectRowAtIndexPath(indexPath, animated: true)
@@ -94,19 +102,19 @@ extension SettingsTableViewController: UITableViewDelegate {
                 UIApplication.sharedApplication().openURL(url)
             }
         }
-        else if selectedCell == self.termsOfServiceTableViewCell {
+        else if selectedCell == self.termsOfServiceCell {
             let termsURLString = "http://patchr.com/terms"
             self.pushWebViewController(NSURL(string: termsURLString))
         }
-        else if selectedCell == self.privacyPolicyTableViewCell {
+        else if selectedCell == self.privacyPolicyCell {
             let privacyPolicyURLString = "http://patchr.com/privacy"
             self.pushWebViewController(NSURL(string: privacyPolicyURLString))
         }
-        else if selectedCell == self.softwareLicensesTableViewCell {
+        else if selectedCell == self.softwareLicensesCell {
             let softwareLicensesURLString = "http://patchr.com/android" // TODO: need real URL
             self.pushWebViewController(NSURL(string: softwareLicensesURLString))
         }
-        else if selectedCell == self.developmentTableViewCell {
+        else if selectedCell == self.developmentCell {
             self.performSegueWithIdentifier("DevelopmentSettingsSegue", sender: selectedCell)
         }
         else {

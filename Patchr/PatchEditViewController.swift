@@ -173,12 +173,12 @@ class PatchEditViewController: EntityEditViewController {
 	override func isValid() -> Bool {
         
         if nameField.isEmpty {
-            UIAlertView(title: "Enter a name for the patch.", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
+            Alert("Enter a name for the patch.", message: nil, cancelButtonTitle: "OK")
             return false
         }
         
 		if type == nil {
-			UIAlertView(title: "Select a patch type.", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
+			Alert("Select a patch type.", message: nil, cancelButtonTitle: "OK")
 			return false
 		}
 
@@ -313,7 +313,7 @@ extension PatchEditViewController: UITableViewDelegate{
             
             case (0, 5):
                 tableView.deselectRowAtIndexPath(indexPath, animated: true)
-                UIAlertView(title: "Will launch place picker when implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
+                Alert("Will launch place picker when implemented")
             
             case (1, let row):
                 tableView.deselectRowAtIndexPath(indexPath, animated: true)

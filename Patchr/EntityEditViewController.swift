@@ -111,7 +111,7 @@ class EntityEditViewController: UITableViewController {
     *--------------------------------------------------------------------------------------------*/
     
     @IBAction func editPhotoAction(sender: AnyObject){
-        UIAlertView(title: "Will launch photo editor when implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
+        Alert("Will launch photo editor when implemented")
     }
     
     @IBAction func clearPhotoAction(sender: AnyObject) {
@@ -167,27 +167,30 @@ class EntityEditViewController: UITableViewController {
             if !isDirty() {
                 self.dismissViewControllerAnimated(true, completion: nil)
                 return
-            }            
+            }
             
-            var alert = UIAlertView()
-            alert.title = "Do want to discard your editing changes?"
-            alert.addButtonWithTitle("Discard")
-            alert.addButtonWithTitle("Cancel")
-            alert.delegate = self
-            alert.show()
+            ActionConfirmationAlert(
+                title: "Do you want to discard your editing changes?",
+                actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
+                    doIt in
+                    if doIt {
+                        self.dismissViewControllerAnimated(true, completion: nil)
+                    }
+                }
         }
     }
     
     @IBAction func deleteAction(sender: AnyObject) {
         
-        self.ActionConfirmationAlert(LocalizedString("Confirm Delete"),
-            message: LocalizedString("Are you sure you want to delete this?"),
-            actionTitle: LocalizedString("Delete"),
-            cancelTitle: LocalizedString("Cancel")) {
+        self.ActionConfirmationAlert(
+            title: "Confirm Delete",
+            message: "Are you sure you want to delete this?",
+            actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
                 doIt in
-                
-                self.delete()
-        }
+                if doIt {
+                    self.delete()
+                }
+            }
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -272,16 +275,17 @@ class EntityEditViewController: UITableViewController {
             response, error in
             
             self.processing = false
-            progress.hide(true, afterDelay: 1.0)
 
             dispatch_async(dispatch_get_main_queue()) {
                 if let error = ServerError(error) {
+                    progress.hide(true)
                     println("Insert entity error")
                     println(error)
                     println(parameters)
-                    self.ErrorNotificationAlert(LocalizedString("Error"), message: error.message) { }
+                    self.Alert(LocalizedString("Error"), message: error.message)
                 }
                 else {
+                    progress.hide(true, afterDelay: 1.0)
                     println("Insert entity successful")
                     let serverResponse = ServerResponse(response)
                     if serverResponse.resultCount == 1 {
@@ -320,24 +324,26 @@ class EntityEditViewController: UITableViewController {
             response, error in
             
             self.processing = false
-            progress.hide(true, afterDelay: 1.0)
 
             dispatch_async(dispatch_get_main_queue()) {
                 if error != nil && error?.domain == "Proxibase" {
+                    progress.hide(true)
                     println("Update entity error")
                     println(error)
                     println(parameters)
                     if let userInfoDictionary = (error!.userInfo as NSDictionary?) {
-                        self.ErrorNotificationAlert(LocalizedString("Error"), message: userInfoDictionary["message"] as! String) { }
+                        self.Alert(LocalizedString("Error"), message: userInfoDictionary["message"] as? String)
                     }
                 }
                 else if let error = ServerError(error) {
+                    progress.hide(true)
                     println("Update entity error")
                     println(error)
                     println(parameters)
-                    self.ErrorNotificationAlert(LocalizedString("Error"), message: error.message) { }
+                    self.Alert(LocalizedString("Error"), message: error.message)
                 }
                 else {
+                    progress.hide(true, afterDelay: 1.0)
                     println("Update entity successful")
                     DataController.instance.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
                     self.dismissViewControllerAnimated(true, completion: nil)
@@ -355,7 +361,7 @@ class EntityEditViewController: UITableViewController {
             response, error in
             if let serverError = ServerError(error) {
                 println(error)
-                self.ErrorNotificationAlert(LocalizedString("Error"), message: serverError.message) { }
+                self.Alert(LocalizedString("Error"), message: serverError.message)
             }
             else {
                 DataController.instance.managedObjectContext.deleteObject(self.entity!)
@@ -437,12 +443,13 @@ class EntityEditViewController: UITableViewController {
                 return
             }
             
-            var alert = UIAlertView()
-            alert.title = "Do you want to discard your editing changes?"
-            alert.addButtonWithTitle("Discard")
-            alert.addButtonWithTitle("Cancel")
-            alert.delegate = self
-            alert.show()
+            ActionConfirmationAlert(title: "Do you want to discard your editing changes?",
+                actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
+                action in
+                if action {
+                    self.dismissViewControllerAnimated(true, completion: nil)
+                }
+            }
             backClicked = false
         }
     }
@@ -526,8 +533,12 @@ extension EntityEditViewController: UIGestureRecognizerDelegate {
 
 extension EntityEditViewController: UIAlertViewDelegate {
     
+    /* Just here to support ios7 */
     func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
-        if (buttonIndex == 0) {
+        if alertView.buttonTitleAtIndex(buttonIndex).lowercaseString == "delete" {
+            self.delete()
+        }
+        else if alertView.buttonTitleAtIndex(buttonIndex).lowercaseString == "discard" {
             self.dismissViewControllerAnimated(true, completion: nil)
         }
     }

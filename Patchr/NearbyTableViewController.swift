@@ -65,11 +65,11 @@ class NearbyTableViewController: PatchTableViewController {
         var lat = trunc(loc.coordinate.latitude * 100) / 100
         var lng = trunc(loc.coordinate.longitude * 100) / 100
         
-        var message = "Location accepted: lat: \(lat), lng: \(lng), acc: \(loc.horizontalAccuracy)m, age: \(howRecent)s"
+        var message = "Location accepted ***: lat: \(lat), lng: \(lng), acc: \(loc.horizontalAccuracy)m, age: \(howRecent)s"
         
         if let locOld = notification.userInfo!["locationOld"] as? CLLocation {
             let moved = Int(loc.distanceFromLocation(locOld))
-            message = "Location accepted: lat: \(lat), lng: \(lng), acc: \(loc.horizontalAccuracy)m, age: \(howRecent)s, moved: \(moved)m"
+            message = "Location accepted ***: lat: \(lat), lng: \(lng), acc: \(loc.horizontalAccuracy)m, age: \(howRecent)s, moved: \(moved)m"
         }
         
         if self.userDefaults.boolForKey("com.3meters.patchr.ios.devModeEnabled") {
@@ -96,10 +96,24 @@ class NearbyTableViewController: PatchTableViewController {
             /* Always reset location after a network error */
             if error != nil {
                 LocationController.instance.locationLocked = nil
+                if let error = ServerError(error) {
+                    /* User credentials probably need to be refreshed */
+                    if error.code == ServerStatusCode.UNAUTHORIZED {
+                        let rootController = UIStoryboard(
+                            name: "Lobby",
+                            bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as? UIViewController
+                        self.view.window?.rootViewController = rootController
+                        self.progress!.hide(true)
+                        self.refreshControl!.endRefreshing()
+                        return
+                    }
+                }
             }
             
-            if !query.executedValue {
-                AudioController.instance.play(Sound.greeting.rawValue)
+            if self.userDefaults.boolForKey("com.3meters.patchr.ios.SoundEffects") {
+                if !query.executedValue {
+                    AudioController.instance.play(Sound.greeting.rawValue)
+                }
             }
             
             self.activityDate = DataController.instance.activityDate
@@ -120,27 +134,27 @@ class NearbyTableViewController: PatchTableViewController {
     /*
      * We only get these callbacks if nearby is the current view controller.
      */
-    override func applicationDidEnterBackground() {
-        super.applicationDidEnterBackground()
-        
-        unregisterForLocationNotifications()
-        LocationController.instance.stopUpdates()
-    }
-    
-    override func applicationWillEnterForeground(){
-        super.applicationWillEnterForeground()
-        
-        /*
-         * When patchr comes back into the foreground after after the
-         * device has moved to a new location, we get a single location update
-         * which will be from last fix obtained before patchr went into the
-         * background. To be conservative, we clear our old location fix and
-         * treat this like a manual refresh.
-         */
-        LocationController.instance.locationLocked = nil
-        registerForLocationNotifications()
-        LocationController.instance.startUpdates()
-    }
+//    override func applicationDidEnterBackground() {
+//        super.applicationDidEnterBackground()
+//        
+//        unregisterForLocationNotifications()
+//        LocationController.instance.stopUpdates()
+//    }
+//    
+//    override func applicationWillEnterForeground(){
+//        super.applicationWillEnterForeground()
+//        
+//        /*
+//         * When patchr comes back into the foreground after after the
+//         * device has moved to a new location, we get a single location update
+//         * which will be from last fix obtained before patchr went into the
+//         * background. To be conservative, we clear our old location fix and
+//         * treat this like a manual refresh.
+//         */
+//        LocationController.instance.locationLocked = nil
+//        registerForLocationNotifications()
+//        LocationController.instance.startUpdates()
+//    }
     
     func registerForLocationNotifications() {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "didUpdateLocation:",

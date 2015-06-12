@@ -137,7 +137,7 @@ class MessageEditViewController: EntityEditViewController {
     override func isValid() -> Bool {
         
         if self.description_!.isEmpty {
-            UIAlertView(title: "Enter a message.", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
+            Alert("Enter a message.", message: nil, cancelButtonTitle: "OK")
             return false
         }
         

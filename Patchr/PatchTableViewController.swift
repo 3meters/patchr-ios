@@ -83,16 +83,6 @@ class PatchTableViewController: QueryTableViewController {
 		}
     }
     
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        registerForAppNotifications()
-    }
-    
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated)
-        unregisterForAppNotifications()
-    }
-    
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
         
         // The cell width seems to incorrect occassionally
@@ -193,34 +183,7 @@ class PatchTableViewController: QueryTableViewController {
 				}
 			default: ()
 		}
-	}
-    
-    /*
-    * We only get these callbacks if nearby is the current view controller.
-    */
-    func applicationDidEnterBackground() {
-        /* User either switched away from patchr or turned their screen off. */
-        println("Application entered background")
-    }
-    
-    func applicationWillEnterForeground(){
-        /* User either switched to patchr or turned their screen back on. */
-        println("Application will enter foreground")
-    }
-    
-    func registerForAppNotifications() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground",
-            name: Event.ApplicationDidEnterBackground.rawValue, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationWillEnterForeground",
-            name: Event.ApplicationWillEnterForeground.rawValue, object: nil)
-    }
-    
-    func unregisterForAppNotifications(){
-        NSNotificationCenter.defaultCenter().removeObserver(self,
-            name: Event.ApplicationDidEnterBackground.rawValue, object: nil)
-        NSNotificationCenter.defaultCenter().removeObserver(self,
-            name: Event.ApplicationWillEnterForeground.rawValue, object: nil)
-    }
+	}    
 }
 
 /*--------------------------------------------------------------------------------------------

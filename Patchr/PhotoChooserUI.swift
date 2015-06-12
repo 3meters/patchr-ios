@@ -83,8 +83,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 
 	private func searchForPhoto() {
         chosenPhotoFunction = .SearchPhoto
-		UIAlertView(title: "Will launch photo search when implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
-		// Deferred https://github.com/steamclock/patchr/issues/41
+		self.hostViewController!.Alert("Will launch photo search when implemented")
 	}
 
 	private func addPhotoToAlbum(image: UIImage, toAlbum albumName: String, handler: CompletionHandler) {
