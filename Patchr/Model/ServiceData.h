@@ -13,11 +13,13 @@
 @interface ServiceData : NSObject
 
 @property (nonatomic, strong) NSNumber *count;
-@property (nonatomic, strong) id data; // NSArray or NSDictionary
+@property (nonatomic, strong) id data;      // NSArray or NSDictionary
 @property (nonatomic, strong) NSDate *date;
 @property (nonatomic, strong) NSNumber *more;
 @property (nonatomic, strong) NSNumber *time;
 @property (nonatomic, strong) NSNumber *noop;
+@property (nonatomic, strong) id user;      // NSDictionary
+@property (nonatomic, strong) id session;   // NSDictionary
 
 @property (atomic, setter=setCountValue:) int32_t countValue;
 @property (atomic, setter=setMoreValue:) BOOL moreValue;

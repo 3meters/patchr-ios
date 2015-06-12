@@ -32,6 +32,14 @@
         serviceData.data = dictionary[@"data"];
     }
     
+    if ([dictionary[@"user"] isKindOfClass:[NSDictionary class]]) {
+        serviceData.user = dictionary[@"user"];
+    }
+    
+    if ([dictionary[@"session"] isKindOfClass:[NSDictionary class]]) {
+        serviceData.session = dictionary[@"session"];
+    }
+    
     return serviceData;
 }
 
