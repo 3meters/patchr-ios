@@ -58,12 +58,16 @@ class LocationController: NSObject {
     }
     
     func stopUpdates(){
+        println("Location updates stopped")
+        println("***************************************")
         if self.locationManager != nil {
             self.locationManager.stopUpdatingLocation()
         }
     }
     
     func startUpdates(){
+        println("Location updates started")
+        println("***************************************")
         
         if CLLocationManager.authorizationStatus() == .NotDetermined {
             if self.locationManager.respondsToSelector(Selector("requestWhenInUseAuthorization")) {
@@ -142,6 +146,7 @@ extension LocationController: CLLocationManagerDelegate {
                     let moved = Int(location.distanceFromLocation(locPrev))
                     message = "Location received: lat: \(lat), lng: \(lng), acc: \(location.horizontalAccuracy)m, age: \(age)s, moved: \(moved)m"
                 }
+                println(message)
             }
             
             if !isValidLocation(location, oldLocation: self.locationLocked) {
