@@ -64,6 +64,16 @@ class DevelopmentViewController: UIViewController {
 		}
 	}
     
+    @IBAction func clearImageCacheAction(sender: AnyObject) {
+        let imageCache = SDImageCache.sharedImageCache()
+        imageCache.clearDisk()
+        imageCache.clearMemory()
+        self.view.makeToast("Image cache cleared",
+            duration: 3.0,
+            position: CSToastPositionCenter)
+        AudioController.instance.play(Sound.pop.rawValue)        
+    }
+    
     private func updateSegmentControl() {
         if serverUriField.text == DataController.proxibase.ProductionURI {
             serverTargetOption.selectedSegmentIndex = 0
