@@ -13,10 +13,36 @@ class MainTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		delegate = self
-//        let imageCache = SDImageCache.sharedImageCache()
-//        imageCache.clearDisk()
-//        imageCache.clearMemory()
+        registerForAppNotifications()
     }
+    
+    /*
+    * We only get these callbacks if nearby is the current view controller.
+    */
+    func applicationDidEnterBackground() {
+        /* User either switched away from patchr or turned their screen off. */
+        println("Application entered background")
+    }
+    
+    func applicationWillEnterForeground(){
+        /* User either switched to patchr or turned their screen back on. */
+        println("Application will enter foreground")
+        LocationController.instance.locationLocked = nil
+    }
+    
+    func registerForAppNotifications() {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground",
+            name: Event.ApplicationDidEnterBackground.rawValue, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationWillEnterForeground",
+            name: Event.ApplicationWillEnterForeground.rawValue, object: nil)
+    }
+    
+    func unregisterForAppNotifications(){
+        NSNotificationCenter.defaultCenter().removeObserver(self,
+            name: Event.ApplicationDidEnterBackground.rawValue, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self,
+            name: Event.ApplicationWillEnterForeground.rawValue, object: nil)
+    }    
 }
 
 extension MainTabBarController: UITabBarControllerDelegate {

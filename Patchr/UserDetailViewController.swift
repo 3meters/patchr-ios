@@ -154,6 +154,10 @@ class UserDetailViewController: QueryTableViewController {
 			if error != nil {
 				NSLog("Error during logout \(error)")
 			}
+            
+            /* Make sure state is cleared */
+            LocationController.instance.locationLocked = nil
+
 			let appDelegate               = UIApplication.sharedApplication().delegate as! AppDelegate
 			let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as! UIViewController
 			appDelegate.window!.setRootViewController(destinationViewController, animated: true)
