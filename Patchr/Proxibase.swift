@@ -328,7 +328,7 @@ public class Proxibase {
 
     public func updatePassword(userId: NSString, password: NSString, passwordNew: NSString,  completion: ProxibaseCompletionBlock) {
         let parameters = ["userId": userId, "oldPassword": password, "newPassword": passwordNew, "installId": installationIdentifier]
-        sessionManager.POST("user/changepw", parameters: parameters,
+        sessionManager.POST("user/changepw", parameters: authenticatedParameters(parameters),
             success: {
                 _, response in
                 completion(response: response, error: nil)
@@ -352,8 +352,8 @@ public class Proxibase {
         })
     }
     
-    public func resetPassword(password: NSString, sessionKey: NSString, completion: ProxibaseCompletionBlock) {
-        let parameters = ["password": password, "session": sessionKey, "installId": installationIdentifier]
+    public func resetPassword(password: NSString, userId: NSString, sessionKey: NSString, completion: ProxibaseCompletionBlock) {
+        let parameters = ["password": password, "user": userId, "session": sessionKey, "installId": installationIdentifier]
         sessionManager.POST("user/resetpw", parameters: parameters,
             success: {
                 _, response in
@@ -820,6 +820,7 @@ struct ServerError {
 	var response:             NSDictionary?
 	var message:              String           = LocalizedString("Unknown Error")
 	var code:                 ServerStatusCode = .None
+    var status:               Int              = 0
 	var localizedDescription: String           = LocalizedString("(No Description)")
 
 	init?(_ error: NSError?) {
@@ -838,6 +839,9 @@ struct ServerError {
 				if let responseCode = responseDict["code"] as? Float {
 					code = ServerStatusCode(rawValue: responseCode)!
 				}
+                if let responseStatus = responseDict["status"] as? Int {
+                    status = responseStatus
+                }
 			}
 			if let userInfo = userInfoDictionary {
 				if let description = userInfo["NSLocalizedDescription"] as? String {
@@ -1083,5 +1087,7 @@ enum ServerStatusCode: Float {
 	case FORBIDDEN_USER_PASSWORD_WEAK = 403.21
 	case FORBIDDEN_VIA_API_ONLY       = 403.22
 	case FORBIDDEN_LIMIT_EXCEEDED     = 403.3
+    
+    case NOT_FOUND                    = 404.0
 }
 
