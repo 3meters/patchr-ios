@@ -64,37 +64,49 @@ class UserEditViewController: EntityEditViewController {
 
 	@IBAction func joinAction(sender: AnyObject) {
         
+        if processing { return }
+        
         if !isValid() { return }
     
-        let proxibase = DataController.proxibase
-        var parameters = NSMutableDictionary()
-        parameters = self.gather(parameters)
+        processing = true
+        
+        let progress = MBProgressHUD.showHUDAddedTo(self.view.window, animated: true)
+        progress.mode = MBProgressHUDMode.Indeterminate
+        progress.labelText = "Registering..."
+        progress.show(true)
+        
+        var parameters = self.gather(NSMutableDictionary())
         
         if let image = self.photoImage.imageForState(.Normal) {
             parameters["photo"] = image
         }
         
-        proxibase.insertUser(nameField.text, email: emailField.text, password: passwordField.text, parameters: parameters) { (_, error) in
+        DataController.proxibase.insertUser(nameField.text, email: emailField.text, password: passwordField.text, parameters: parameters) {
+            _, error in
+            
+            self.processing = false
             
             dispatch_async(dispatch_get_main_queue()) {
-                if let error = ServerError(error) {
-                    var errorMessage = error.message
-
-                    if error.code == .FORBIDDEN_DUPLICATE {
-                        errorMessage = LocalizedString("Email address already in use.")
+                if let serverError = ServerError(error) {
+                    progress.hide(true)
+                    var message = serverError.message
+                    if serverError.code == .FORBIDDEN_DUPLICATE {
+                        message = LocalizedString("Email address already in use.")
                     }
-                    
-                    let alert = UIAlertController(title: LocalizedString("Registration Failure"), message: errorMessage, preferredStyle: .Alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: { _ in }))
-                    self.presentViewController(alert, animated: true) {}
+                    self.Alert("Registration failure", message: message)
                 }
                 else {
+                    progress.hide(true, afterDelay: 1.0)
                     let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
                     let viewController = UIStoryboard(name:"Main", bundle:NSBundle.mainBundle()).instantiateInitialViewController() as! UIViewController;
                     appDelegate.window!.setRootViewController(viewController, animated: true)
                 }
             }   
         }
+    }
+    
+    @IBAction override func cancelAction(sender: AnyObject){
+        self.navigationController?.popViewControllerAnimated(true)
     }
     
     @IBAction func termsAction(sender: AnyObject) {
@@ -166,18 +178,18 @@ class UserEditViewController: EntityEditViewController {
     override func isValid() -> Bool {
         
         if nameField.isEmpty {
-            UIAlertView(title: "Enter a name.", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
+            Alert("Enter a name.", message: nil, cancelButtonTitle: "OK")
             return false
         }
         
         if emailField.isEmpty {
-            UIAlertView(title: "Enter an email address.", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
+            Alert("Enter an email address.", message: nil, cancelButtonTitle: "OK")
             return false
         }
 
 		if !editMode {
             if (count(passwordField.text.utf16) < 6) {
-                UIAlertView(title: "Enter a password with six characters or more.", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
+                Alert("Enter a password with six characters or more.", message: nil, cancelButtonTitle: "OK")
                 return false
             }
         }

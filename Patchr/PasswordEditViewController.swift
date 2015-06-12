@@ -10,21 +10,29 @@ import UIKit
 
 class PasswordEditViewController: UITableViewController, UITextFieldDelegate {
 
+    var processing: Bool = false
+
     @IBOutlet weak var passwordField: UITextField!
     @IBOutlet weak var passwordNewField: UITextField!
-    @IBOutlet weak var errorLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.errorLabel.text = nil
         self.passwordField.delegate = self
         self.passwordNewField.delegate = self
     }
     
+    override func viewDidAppear(animated: Bool) {
+        self.passwordField.becomeFirstResponder()
+    }
+    
     @IBAction func doneAction(sender: NSObject) {
         
-        errorLabel.text = ""
+        if processing { return }
+        
+        if !isValid() { return }
+        
+        processing = true
 
 		let progress = MBProgressHUD.showHUDAddedTo(self.view.window, animated: true)
 		progress.mode = MBProgressHUDMode.Indeterminate
@@ -33,18 +41,34 @@ class PasswordEditViewController: UITableViewController, UITextFieldDelegate {
         
         DataController.proxibase.updatePassword(UserController.instance.currentUser.id_,
             password: passwordField.text,
-            passwordNew: passwordNewField.text) { (response, error) -> Void in
+            passwordNew: passwordNewField.text) {
+            response, error in
                 
-			progress.hide(true, afterDelay: 1.0)
-            if (error != nil) {
-                NSLog("Login error \(error!)")
-                if let loginErrorMessage: AnyObject = (response!["error"] as! NSDictionary)["message"] {
-                    self.errorLabel.text = loginErrorMessage as? String
-                }
-            } else {
-                /* Return to profile editing */
+            self.processing = false
+                
+            if let serverError = ServerError(error) {
+                progress.hide(true)
+                self.Alert(serverError.message)
+            }
+            else {
+                progress.hide(true, afterDelay: 1.0)
+                self.dismissViewControllerAnimated(true, completion: nil)
+                progress.mode = MBProgressHUDMode.Text
+                progress.labelText = "Password changed"
             }
         }
+    }
+    
+    @IBAction func cancelAction(sender: AnyObject){
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func isValid() -> Bool {
+        if (count(passwordNewField.text.utf16) < 6) {
+            Alert("Enter a new password with six characters or more.")
+            return false
+        }
+        return true
     }
 }
 
