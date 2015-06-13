@@ -72,7 +72,7 @@ class NearbyTableViewController: PatchTableViewController {
             message = "Location accepted ***: lat: \(lat), lng: \(lng), acc: \(loc.horizontalAccuracy)m, age: \(howRecent)s, moved: \(moved)m"
         }
         
-        if self.userDefaults.boolForKey("com.3meters.patchr.ios.devModeEnabled") {
+        if self.userDefaults.boolForKey(PatchrUserDefaultKey("devModeEnabled")) {
             self.view.makeToast(message,
                 duration: 3.0,
                 position: CSToastPositionCenter)
@@ -110,7 +110,7 @@ class NearbyTableViewController: PatchTableViewController {
                 }
             }
             
-            if self.userDefaults.boolForKey("com.3meters.patchr.ios.SoundEffects") {
+            if self.userDefaults.boolForKey(PatchrUserDefaultKey("SoundEffects")) {
                 if !query.executedValue {
                     AudioController.instance.play(Sound.greeting.rawValue)
                 }

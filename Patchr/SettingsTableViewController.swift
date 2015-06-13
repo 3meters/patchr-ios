@@ -30,7 +30,7 @@ class SettingsTableViewController: UITableViewController, MFMailComposeViewContr
         super.viewDidLoad()
         
         let components = NSCalendar.currentCalendar().components(.YearCalendarUnit | .MonthCalendarUnit | .DayCalendarUnit, fromDate: NSDate())
-        self.buildInformationLabel.text = "©\(components.year) 3meters. Version \(appVersion()) (\(build()))"
+        self.buildInformationLabel.text = "©\(components.year) 3meters LLC - Version \(appVersion()) (\(build()))"
         
         if let user = UserController.instance.currentUser {
             if user.developerValue {
@@ -56,7 +56,7 @@ class SettingsTableViewController: UITableViewController, MFMailComposeViewContr
     }
     
     func build() -> String {
-        return NSBundle.mainBundle().objectForInfoDictionaryKey("kCFBundleVersionKey") as? String ?? "Unknown"
+        return NSBundle.mainBundle().objectForInfoDictionaryKey(kCFBundleVersionKey as String) as? String ?? "Unknown"
     }
     
     func pushWebViewController(url: NSURL?) -> Void {

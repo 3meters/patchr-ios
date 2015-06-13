@@ -53,7 +53,6 @@ class UserTableViewController: QueryTableViewController {
 		super.viewDidLoad()
 
 		self.tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: "Cell")
-		self.tableView.delaysContentTouches = false
 
 		switch self.filter {
 			case .PatchWatchers:

@@ -136,7 +136,7 @@ extension LocationController: CLLocationManagerDelegate {
             
             var age = abs(trunc(location.timestamp.timeIntervalSinceNow * 100) / 100)
             
-            if self.userDefaults.boolForKey("com.3meters.patchr.ios.devModeEnabled") {
+            if self.userDefaults.boolForKey(PatchrUserDefaultKey("devModeEnabled")) {
                 var lat = trunc(location.coordinate.latitude * 100) / 100
                 var lng = trunc(location.coordinate.longitude * 100) / 100
                 

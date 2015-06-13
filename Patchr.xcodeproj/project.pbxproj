@@ -111,6 +111,7 @@
 		E2A099FC1B06B20D00257B8B /* PatchNormalTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2A099FB1B06B20D00257B8B /* PatchNormalTableViewCell.xib */; };
 		E2C7C5C21B2A0B730045038A /* NotificationSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */; };
 		E2C7C5C41B2A19720045038A /* DefaultSettings.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2C7C5C31B2A19720045038A /* DefaultSettings.plist */; };
+		E2C7C5C61B2B491A0045038A /* PhotoPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C7C5C51B2B491A0045038A /* PhotoPickerViewController.swift */; };
 		E2D25DC81B23892000E51461 /* UserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D25DC71B23892000E51461 /* UserController.swift */; };
 		E2D25DCD1B23917800E51461 /* UserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D25DC71B23892000E51461 /* UserController.swift */; };
 		E2D25DCF1B2391A700E51461 /* EntityEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D25DCE1B2391A700E51461 /* EntityEditViewController.swift */; };
@@ -289,6 +290,7 @@
 		E2A099FB1B06B20D00257B8B /* PatchNormalTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PatchNormalTableViewCell.xib; sourceTree = "<group>"; };
 		E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationSettingsViewController.swift; sourceTree = "<group>"; };
 		E2C7C5C31B2A19720045038A /* DefaultSettings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultSettings.plist; sourceTree = "<group>"; };
+		E2C7C5C51B2B491A0045038A /* PhotoPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoPickerViewController.swift; sourceTree = "<group>"; };
 		E2D25DC71B23892000E51461 /* UserController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UserController.swift; path = Patchr/UserController.swift; sourceTree = "<group>"; };
 		E2D25DCE1B2391A700E51461 /* EntityEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityEditViewController.swift; sourceTree = "<group>"; };
 		E2D6BE301B0BADA000273538 /* NotificationTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NotificationTableViewCell.xib; sourceTree = "<group>"; };
@@ -581,8 +583,9 @@
 				841082CA1AB1013300803ECE /* PatchMapViewController.swift */,
 				7D77FC7D1AAA2E0C00AA8284 /* PatchTableMapViewController.swift */,
 				7D9651931AAFBD02000C5718 /* PatchTableViewController.swift */,
-				E25327DC1B1795E000990A81 /* PlaceDetailViewController.swift */,
 				7D970C801AB24F15008A4FC7 /* PhotoDetailViewController.swift */,
+				E2C7C5C51B2B491A0045038A /* PhotoPickerViewController.swift */,
+				E25327DC1B1795E000990A81 /* PlaceDetailViewController.swift */,
 				7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */,
 				7D021AC11A9423080047DAAE /* SplashViewController.swift */,
 				7D6E26461A7AB93F000128A7 /* UserDetailViewController.swift */,
@@ -975,6 +978,7 @@
 				E2F6C9241B1BDD500067D959 /* Shortcut.m in Sources */,
 				7D021ABE1A9409450047DAAE /* SignInEditViewController.swift in Sources */,
 				7D9651941AAFBD02000C5718 /* PatchTableViewController.swift in Sources */,
+				E2C7C5C61B2B491A0045038A /* PhotoPickerViewController.swift in Sources */,
 				7D3D39F01A6F116E00A44CB2 /* Proxibase.swift in Sources */,
 				7D0BAD4C1A96CEB0002E602D /* MainTabBarController.swift in Sources */,
 				7D668A991A9C08DC005EDAF8 /* PatchTableViewCell.swift in Sources */,

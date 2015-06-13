@@ -57,7 +57,6 @@ class MessageDetailViewController: UITableViewController {
 		self.messageDateFormatter = dateFormatter
 
         /* Ui tweaks */
-		self.tableView.delaysContentTouches = false
 		self.photo.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
 		self.userPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
 		self.patchPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
@@ -348,11 +347,8 @@ extension MessageDetailViewController: UITableViewDelegate {
             var height: CGFloat = 0
             if self.message!.photo != nil {
                 height = ((UIScreen.mainScreen().bounds.size.width - 24) * 0.75)
-                return height
             }
-            else {
-                return super.tableView(tableView, heightForRowAtIndexPath: indexPath) as CGFloat!
-            }
+            return height
 		}
 		else {
 			var height = super.tableView(tableView, heightForRowAtIndexPath: indexPath) as CGFloat!

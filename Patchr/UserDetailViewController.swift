@@ -69,7 +69,6 @@ class UserDetailViewController: QueryTableViewController {
 		super.viewDidLoad()
 
 		tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: "Cell")
-		tableView.delaysContentTouches = false
 
 		let dateFormatter = NSDateFormatter()
 		dateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle

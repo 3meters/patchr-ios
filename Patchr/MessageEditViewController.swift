@@ -12,12 +12,14 @@ class MessageEditViewController: EntityEditViewController {
 
 	var toString: String?	// name of patch this message links to
     var patchId: String?    // id of patch this message links to
+    var photoChosen: Bool = false
     
 	@IBOutlet weak var userPhotoImage:   	UIImageView!
     @IBOutlet weak var userNameLabel:       UILabel!
 	@IBOutlet weak var toName:              UILabel!
-    @IBOutlet weak var descriptionHeight:   NSLayoutConstraint!
-    @IBOutlet weak var photoHeight:         NSLayoutConstraint!
+    
+    @IBOutlet weak var descriptionCell: UITableViewCell!
+    @IBOutlet weak var photoCell: UITableViewCell!
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -66,6 +68,19 @@ class MessageEditViewController: EntityEditViewController {
         }
     }
     
+    override func viewDidAppear(animated: Bool) {
+        if photoChosen {
+            photoChosen = false
+            var rowFrame = self.tableView.rectForRowAtIndexPath(NSIndexPath(forRow: 2, inSection: 0))
+            var currentOffsetBottom = self.tableView.contentOffset.y + self.tableView.frame.size.height
+            var currentRowBottom = rowFrame.origin.y + rowFrame.size.height
+            var newOffset = self.tableView.contentOffset.y + (currentRowBottom - currentOffsetBottom)
+            if newOffset > 0 {
+                self.tableView.setContentOffset(CGPoint(x: 0, y: newOffset), animated: true)
+            }
+        }
+    }
+    
     /*--------------------------------------------------------------------------------------------
     * Events
     *--------------------------------------------------------------------------------------------*/
@@ -73,6 +88,8 @@ class MessageEditViewController: EntityEditViewController {
     @IBAction override func clearPhotoAction(sender: AnyObject) {
         
         photo = nil
+        self.photoActive = false
+        self.tableView.reloadData() // So cell can be resized
         self.setPhotoButton!.fadeIn()
         self.photoGroup!.fadeOut()
         
@@ -85,11 +102,16 @@ class MessageEditViewController: EntityEditViewController {
     }
     
     @IBAction override func setPhotoAction(sender: AnyObject) {
+        
+        /* This completion block gets called before the controller reappears. */
         photoChooser.choosePhoto() {
             [unowned self] image in
             
+            self.photoChosen = true
+            
             self.photo = image
             self.usingPhotoDefault = false
+            self.photoActive = true
             
             if !self.editMode {
                 self.photoDirty = (self.photo != nil)
@@ -97,7 +119,13 @@ class MessageEditViewController: EntityEditViewController {
             else {
                 self.photoDirty = (self.entity!.photo != self.photo)
             }
+            /*
+             * We need to make sure heightForRowAtIndexPath gets fired
+             * to reset the cell height to accomodate the photo.
+             */
+            self.tableView.reloadData()
             
+            /* Toggle display */
             self.setPhotoButton!.fadeOut()
             self.photoGroup!.fadeIn()
         }
@@ -116,7 +144,9 @@ class MessageEditViewController: EntityEditViewController {
         
         /* User photo */
         self.userPhotoImage.setImageWithPhoto(message.creator.getPhotoManaged())
-        if entity!.photo != nil {
+        
+        /* Primary photo */
+        if self.photoActive {
             self.photoGroup!.fadeIn()
         }
         else {
@@ -148,8 +178,34 @@ class MessageEditViewController: EntityEditViewController {
     * Properties
     *--------------------------------------------------------------------------------------------*/
 
-	// Note: did(Appear\Disappear) are called the first time the view appears as well as when the photo
-	// chooser view is closed, so it's not a one-time-only call like didLoad
-
 }
+
+extension MessageEditViewController: UITableViewDelegate{
+    
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        if indexPath.section == 0 {
+            if indexPath.row == 1 { // Description
+                var height: CGFloat = textViewHeightForRowAtIndexPath(indexPath)
+                return height < 48 ? 48 : height
+            }
+            else if indexPath.row == 2 { // Photo
+                /* Size so photo aspect ratio is 4:3 */
+                var height: CGFloat = ((UIScreen.mainScreen().bounds.size.width - 32) * 0.75) + 16
+                if !self.photoActive {
+                    height = 64 // Leave enough room for set photo button
+                }
+                return height
+            }
+        }
+        return super.tableView(tableView, heightForRowAtIndexPath: indexPath)
+    }
+    
+    private func textViewHeightForRowAtIndexPath(indexPath: NSIndexPath) -> CGFloat {
+        let textViewWidth: CGFloat = descriptionField!.frame.size.width
+        let size: CGSize = descriptionField.sizeThatFits(CGSizeMake(textViewWidth, CGFloat(FLT_MAX)))
+        return size.height;
+    }
+}
+
+
 

@@ -22,6 +22,7 @@ class EntityEditViewController: UITableViewController {
 	var backClicked = false
 	var keyboardVisible = false
 	var photoDirty: Bool = false
+    var photoActive: Bool = false
 
 	var editMode: Bool {
 		return entity != nil
@@ -136,6 +137,8 @@ class EntityEditViewController: UITableViewController {
             self.clearPhotoButton.fadeOut()
             self.setPhotoButton.fadeIn()
         }
+        
+        photoActive = false
     }
     
     @IBAction func setPhotoAction(sender: AnyObject) {
@@ -145,6 +148,7 @@ class EntityEditViewController: UITableViewController {
             self.photo = image
             self.usingPhotoDefault = false
             self.photoDirty = true
+            self.photoActive = true
             if self.photoGroup == nil {
                 self.editPhotoButton.fadeIn()
                 self.clearPhotoButton.fadeIn()
@@ -213,10 +217,12 @@ class EntityEditViewController: UITableViewController {
             }
             photoImage.setImageWithPhoto(entity!.photo)
             usingPhotoDefault = false
+            photoActive = true
         }
         else if self.collection != "messages" {
-            photo = UIImage(named: self.defaultPhotoName!)!
+            photo = UIImage(named: self.defaultPhotoName!)! // Sets photoImage
             usingPhotoDefault = true
+            photoActive = false
         }
     }
 

@@ -104,7 +104,6 @@ class PatchDetailViewController: QueryTableViewController {
 		super.viewDidLoad()
 
 		tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: "Cell")
-		tableView.delaysContentTouches = false
         let bannerTapGestureRecognizer = UITapGestureRecognizer(target: self, action: "flipToInfo:")
         self.bannerGroup.addGestureRecognizer(bannerTapGestureRecognizer)
         let infoTapGestureRecognizer = UITapGestureRecognizer(target: self, action: "flipToBanner:")

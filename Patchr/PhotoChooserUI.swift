@@ -83,7 +83,8 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 
 	private func searchForPhoto() {
         chosenPhotoFunction = .SearchPhoto
-		self.hostViewController!.Alert("Will launch photo search when implemented")
+        let pickerController = PhotoPickerViewController()
+        self.hostViewController?.presentViewController(pickerController, animated: true, completion: nil)
 	}
 
 	private func addPhotoToAlbum(image: UIImage, toAlbum albumName: String, handler: CompletionHandler) {
