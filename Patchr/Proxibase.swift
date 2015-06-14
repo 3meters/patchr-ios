@@ -514,6 +514,38 @@ public class Proxibase {
 			}
 		}
 	}
+    
+    /*--------------------------------------------------------------------------------------------
+    * PUBLIC: Bing
+    *--------------------------------------------------------------------------------------------*/
+    
+    public func loadSearchImages(query: String, limit: Int64 = 50, offset: Int64 = 0, maxImageSize: Int = 500000, maxDimen: Int = 1280, completion: (response:AnyObject?, error:NSError?) -> Void) {
+        
+        if let bingSessionManager: AFHTTPSessionManager = AFHTTPSessionManager(baseURL: NSURL(string: URI_PROXIBASE_SEARCH_IMAGES)) {
+            
+            let requestSerializer: AFJSONRequestSerializer = AFJSONRequestSerializer(writingOptions: nil)
+            requestSerializer.setAuthorizationHeaderFieldWithUsername(nil, password: BING_ACCESS_KEY)
+            bingSessionManager.requestSerializer = requestSerializer
+            bingSessionManager.responseSerializer = JSONResponseSerializerWithData()
+            
+            var queryEncoded: String = query.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+            var bingUrl = "Image?Query=%27" + queryEncoded + "%27"
+                + "&Market=%27en-US%27&Adult=%27Strict%27&ImageFilters=%27size%3alarge%27"
+                + "&$top=\(limit + 1)"
+                + "&$skip=\(offset)"
+                + "&$format=Json"
+            
+            bingSessionManager.GET(bingUrl, parameters: nil,
+                success: {
+                    _, response in
+                    completion(response: response, error: nil)
+                },
+                failure: {
+                    _, error in
+                    completion(response: ServerError(error)?.response, error: error)
+            })
+        }
+    }
 
 	/*--------------------------------------------------------------------------------------------
 	 * User and install

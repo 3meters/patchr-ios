@@ -364,7 +364,7 @@ class PatchDetailViewController: QueryTableViewController {
 
 	@IBAction func unwindFromMessageEdit(segue: UIStoryboardSegue) {
 		// Refresh results when unwinding from Message screen to pickup any changes.
-		self.refresh()
+        self.refreshQueryItems(force: true)
 	}
 
 	@IBAction override func unwindFromPatchEdit(segue: UIStoryboardSegue) {

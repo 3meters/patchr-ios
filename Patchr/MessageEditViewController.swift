@@ -31,17 +31,24 @@ class MessageEditViewController: EntityEditViewController {
         self.collection = "messages"
         self.photoGroup!.alpha = 0
         self.setPhotoButton.alpha = 0
-
+        self.descriptionField!.placeholder = "Message"
+        
         if editMode {
             self.progressStartLabel = "Updating"
             self.progressFinishLabel = "Updated!"
             navigationItem.title = LocalizedString("Edit patch")
-            self.descriptionField!.placeholder = "Message"
             
             /* Navigation bar buttons */
             var deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
             var doneButton   = UIBarButtonItem(title: "Save", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
             self.navigationItem.rightBarButtonItems = [doneButton, spacer, deleteButton]
+            
+            /* Box the description to make edit mode more obvious */
+            self.descriptionField!.borderWidth = 0.5
+            self.descriptionField!.borderColor = AirUi.windowColor
+            self.descriptionField!.cornerRadius = 4
+            self.descriptionField!.textContainer.lineFragmentPadding = 0
+            self.descriptionField!.textContainerInset = UIEdgeInsetsMake(8, 8, 8, 8)
             
             /* Pull state from patch we are editing */
             bind()
@@ -49,8 +56,7 @@ class MessageEditViewController: EntityEditViewController {
         else {
             self.progressStartLabel = "Posting"
             self.progressFinishLabel = "Posted!"
-            
-            self.descriptionField!.placeholder = "Message"
+            self.descriptionField!.placeholderColor = UIColor.clearColor()
             
             if let toString = toString {
                 toName.text = toString
@@ -79,6 +85,10 @@ class MessageEditViewController: EntityEditViewController {
                 self.tableView.setContentOffset(CGPoint(x: 0, y: newOffset), animated: true)
             }
         }
+        
+        if !editMode && self.firstAppearance {
+            self.descriptionField.becomeFirstResponder()
+        }
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -89,7 +99,7 @@ class MessageEditViewController: EntityEditViewController {
         
         photo = nil
         self.photoActive = false
-        self.tableView.reloadData() // So cell can be resized
+        self.tableView.reloadData() // Triggers row resizing
         self.setPhotoButton!.fadeIn()
         self.photoGroup!.fadeOut()
         
@@ -105,11 +115,16 @@ class MessageEditViewController: EntityEditViewController {
         
         /* This completion block gets called before the controller reappears. */
         photoChooser.choosePhoto() {
-            [unowned self] image in
+            [unowned self] image, imageResult in
+            
+            if image != nil {
+                self.photo = image
+            }
+            else {
+                self.photoImage.setImageWithImageResult(imageResult!, animate: true)
+            }
             
             self.photoChosen = true
-            
-            self.photo = image
             self.usingPhotoDefault = false
             self.photoActive = true
             
@@ -121,7 +136,8 @@ class MessageEditViewController: EntityEditViewController {
             }
             /*
              * We need to make sure heightForRowAtIndexPath gets fired
-             * to reset the cell height to accomodate the photo.
+             * to reset the cell height to accomodate the photo. viewDidAppear
+             * has logic to make sure the photo is scrolled into view.
              */
             self.tableView.reloadData()
             
@@ -166,12 +182,16 @@ class MessageEditViewController: EntityEditViewController {
     
     override func isValid() -> Bool {
         
-        if self.description_!.isEmpty {
-            Alert("Enter a message.", message: nil, cancelButtonTitle: "OK")
+        if ((self.description_ == nil || self.description_!.isEmpty) && self.photo == nil) {
+            Alert("Add message or photo", message: nil, cancelButtonTitle: "OK")
             return false
         }
         
         return true
+    }
+    
+    override func performBack(animated: Bool = true) {
+        self.performSegueWithIdentifier("UnwindFromMessageEdit", sender: self)
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -207,5 +227,11 @@ extension MessageEditViewController: UITableViewDelegate{
     }
 }
 
+extension EntityEditViewController: UITextViewDelegate {
+    
+    func textViewDidEndEditing(textView: UITextView) {
+        self.descriptionField.placeholderColor = UIColor.lightGrayColor()
+    }
+}
 
 

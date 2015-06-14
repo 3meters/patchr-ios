@@ -68,7 +68,7 @@ class MessageDetailViewController: UITableViewController {
             let editImage    = UIImage(named: "imgEditLight")
             var editButton   = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
             var spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
-            var deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: Selector("deleteAction"))
+            var deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: Selector("deleteAction:"))
             spacer.width = SPACER_WIDTH
             self.navigationItem.rightBarButtonItems = [shareButton, spacer, deleteButton, spacer, editButton]
         }
@@ -147,6 +147,18 @@ class MessageDetailViewController: UITableViewController {
 	@IBAction func reportAction(sender: AnyObject) {
 		Alert("Not implemented")
 	}
+    
+    @IBAction func deleteAction(sender: AnyObject) {
+        self.ActionConfirmationAlert(
+            title: "Confirm Delete",
+            message: "Are you sure you want to delete this?",
+            actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
+                doIt in
+                if doIt {
+                    self.delete()
+                }
+        }
+    }
 
 	@IBAction func likeAction(sender: AnyObject) {
 
@@ -217,10 +229,6 @@ class MessageDetailViewController: UITableViewController {
 
 	func editAction() {
 		self.performSegueWithIdentifier("MessageEditSegue", sender: self)
-	}
-
-	func deleteAction() {
-		Alert("Not implemented")
 	}
 
 	/*--------------------------------------------------------------------------------------------
@@ -295,6 +303,24 @@ class MessageDetailViewController: UITableViewController {
 
 		self.tableView.reloadData()
 	}
+    
+    func delete() {
+        
+        let entityPath = "data/messages/\((self.message?.id_)!)"
+        DataController.proxibase.deleteObject(entityPath) {
+            response, error in
+            if let serverError = ServerError(error) {
+                println(error)
+                self.Alert(LocalizedString("Error"), message: serverError.message)
+            }
+            else {
+                DataController.instance.managedObjectContext.deleteObject(self.message!)
+                if DataController.instance.managedObjectContext.save(nil) {
+                    self.navigationController?.popViewControllerAnimated(true)
+                }
+            }
+        }
+    }
 
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
 

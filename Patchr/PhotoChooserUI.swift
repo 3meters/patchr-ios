@@ -25,7 +25,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
     
     private weak var hostViewController: UIViewController?
 	private var photoButtonFunctionMap = [Int: PhotoButtonFunction]()
-	private var finishedChoosing: ((UIImage) -> Void)? = nil
+	private var finishedChoosing: ((UIImage?, ImageResult?) -> Void)? = nil
     private var library: ALAssetsLibrary?
     private var chosenPhotoFunction: PhotoButtonFunction?
 
@@ -39,7 +39,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 		super.init()
 	}
 
-	func choosePhoto(finishedChoosing: (UIImage) -> Void) {
+	func choosePhoto(finishedChoosing: (UIImage?, ImageResult?) -> Void) {
 
 		self.finishedChoosing = finishedChoosing
 
@@ -83,8 +83,13 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 
 	private func searchForPhoto() {
         chosenPhotoFunction = .SearchPhoto
-        let pickerController = PhotoPickerViewController()
-        self.hostViewController?.presentViewController(pickerController, animated: true, completion: nil)
+        let pickerNavController = UIStoryboard(
+            name: "Main",
+            bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("PhotoPickerNavController") as? UINavigationController
+        if let pickerController = pickerNavController?.topViewController as? PhotoPickerViewController {
+            pickerController.delegate = self
+            self.hostViewController?.presentViewController(pickerNavController!, animated: true, completion: nil)
+        }
 	}
 
 	private func addPhotoToAlbum(image: UIImage, toAlbum albumName: String, handler: CompletionHandler) {
@@ -148,6 +153,23 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 	}
 }
 
+protocol PhotoPickerControllerDelegate {
+    func photoPickerController(picker: PhotoPickerViewController, didFinishPickingPhoto imageResult: ImageResult) -> Void
+    func photoPickerControllerDidCancel(picker: PhotoPickerViewController) -> Void
+}
+
+extension PhotoChooserUI: PhotoPickerControllerDelegate {
+    
+    func photoPickerController(picker: PhotoPickerViewController, didFinishPickingPhoto imageResult: ImageResult) -> Void {
+        hostViewController?.dismissViewControllerAnimated(true, completion: nil)
+        self.finishedChoosing!(nil, imageResult)
+    }
+    
+    func photoPickerControllerDidCancel(picker: PhotoPickerViewController) {
+        hostViewController?.dismissViewControllerAnimated(true, completion: nil)
+    }
+}
+
 extension PhotoChooserUI: UIImagePickerControllerDelegate {
     
 	func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject:AnyObject]) {
@@ -160,11 +182,11 @@ extension PhotoChooserUI: UIImagePickerControllerDelegate {
                 self.addPhotoToAlbum(image, toAlbum: "Patchr") {
                     (success) -> Void in
                     print("Image added to Patchr album: \(success)");
-                    self.finishedChoosing!(image)
+                    self.finishedChoosing!(image, nil)
                 }
             }
             else {
-                self.finishedChoosing!(image)
+                self.finishedChoosing!(image, nil)
             }
 		}
 	}

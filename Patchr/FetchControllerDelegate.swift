@@ -18,6 +18,7 @@ public class FetchControllerDelegate: NSObject, NSFetchedResultsControllerDelega
 
 	public var onUpdate:          ((cell:UITableViewCell, object:AnyObject) -> Void)?
 	public var ignoreNextUpdates: Bool = false
+    public var rowAnimation: UITableViewRowAnimation = .Right
 
 	init(tableView: UITableView, onUpdate: ((cell:UITableViewCell, object:AnyObject) -> Void)?) {
 		self.tableView = tableView
@@ -31,7 +32,7 @@ public class FetchControllerDelegate: NSObject, NSFetchedResultsControllerDelega
 
 		sectionsBeingAdded = []
 		sectionsBeingRemoved = []
-		tableView.beginUpdates()
+        tableView.beginUpdates()
 	}
 
 	public func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo,
@@ -62,9 +63,9 @@ public class FetchControllerDelegate: NSObject, NSFetchedResultsControllerDelega
 
 		switch type {
 			case .Insert:
-				tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Automatic)
+				tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: self.rowAnimation)
 			case .Delete:
-				tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
+				tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: self.rowAnimation)
 			case .Update:
 				if let cell = tableView.cellForRowAtIndexPath(indexPath!) {
 					onUpdate?(cell: cell, object: anObject)
@@ -91,7 +92,7 @@ public class FetchControllerDelegate: NSObject, NSFetchedResultsControllerDelega
 			ignoreNextUpdates = false
 		}
 		else {
-			tableView.endUpdates()
+            tableView.endUpdates()
 		}
 	}
 }

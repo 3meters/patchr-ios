@@ -41,8 +41,10 @@ class FetchedResultsTableViewController: UITableViewController {
         // There doesn't seem to be a nice way to register cells when using UISearchDisplayController,
         // so we just grab them from the original table.
         //let cell: UITableViewCell  = UITableViewCell()
-                let cell = self.tableView.dequeueReusableCellWithIdentifier("Cell") as! UITableViewCell
+        let cell = self.tableView.dequeueReusableCellWithIdentifier("Cell") as! UITableViewCell
         cell.separatorInset = UIEdgeInsetsZero
+        cell.layer.shouldRasterize = true
+        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
         
         if cell.respondsToSelector("layoutMargins") {
             cell.layoutMargins = UIEdgeInsetsZero

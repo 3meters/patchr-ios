@@ -18,6 +18,7 @@ class EntityEditViewController: UITableViewController {
     var progressFinishLabel: String?
     
 	var processing: Bool = false
+    var firstAppearance: Bool = true
     var usingPhotoDefault: Bool = true
 	var backClicked = false
 	var keyboardVisible = false
@@ -99,6 +100,7 @@ class EntityEditViewController: UITableViewController {
     
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
+        self.firstAppearance = false
 		self.endFieldEditing()
 	}
     
@@ -143,9 +145,14 @@ class EntityEditViewController: UITableViewController {
     
     @IBAction func setPhotoAction(sender: AnyObject) {
         photoChooser.choosePhoto() {
-            [unowned self] image in
+            [unowned self] image, imageResult in
             
-            self.photo = image
+            if image != nil {
+                self.photo = image
+            }
+            else {
+                self.photoImage.setImageWithImageResult(imageResult!, animate: true)
+            }
             self.usingPhotoDefault = false
             self.photoDirty = true
             self.photoActive = true
@@ -169,7 +176,7 @@ class EntityEditViewController: UITableViewController {
         }
         else {
             if !isDirty() {
-                self.dismissViewControllerAnimated(true, completion: nil)
+                self.performBack(animated: true)
                 return
             }
             
@@ -178,7 +185,7 @@ class EntityEditViewController: UITableViewController {
                 actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
                     doIt in
                     if doIt {
-                        self.dismissViewControllerAnimated(true, completion: nil)
+                        self.performBack(animated: true)
                     }
                 }
         }
@@ -299,7 +306,7 @@ class EntityEditViewController: UITableViewController {
                         DataController.instance.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
                     }
                     
-                    self.dismissViewControllerAnimated(true, completion: nil)
+                    self.performBack(animated: true)
                     progress.mode = MBProgressHUDMode.Text
                     progress.labelText = self.progressFinishLabel
                 }
@@ -352,7 +359,7 @@ class EntityEditViewController: UITableViewController {
                     progress.hide(true, afterDelay: 1.0)
                     println("Update entity successful")
                     DataController.instance.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
-                    self.dismissViewControllerAnimated(true, completion: nil)
+                    self.performBack(animated: true)
                     progress.mode = MBProgressHUDMode.Text
                     progress.labelText = self.progressFinishLabel
                 }
@@ -372,10 +379,15 @@ class EntityEditViewController: UITableViewController {
             else {
                 DataController.instance.managedObjectContext.deleteObject(self.entity!)
                 if DataController.instance.managedObjectContext.save(nil) {
-                    self.dismissViewControllerAnimated(true, completion: nil)
+                    self.performBack()
                 }
             }
         }
+    }
+    
+    func performBack(animated: Bool = true) {
+        /* Override in subclasses for control of dismiss/pop process */
+        self.dismissViewControllerAnimated(animated, completion: nil)
     }
     
 	func isDirty() -> Bool {
@@ -445,7 +457,7 @@ class EntityEditViewController: UITableViewController {
         if backClicked {
             
             if !isDirty() {
-                self.dismissViewControllerAnimated(true, completion: nil)
+                self.performBack(animated: true)
                 return
             }
             
@@ -453,7 +465,7 @@ class EntityEditViewController: UITableViewController {
                 actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
                 action in
                 if action {
-                    self.dismissViewControllerAnimated(true, completion: nil)
+                    self.performBack(animated: true)
                 }
             }
             backClicked = false
@@ -545,7 +557,7 @@ extension EntityEditViewController: UIAlertViewDelegate {
             self.delete()
         }
         else if alertView.buttonTitleAtIndex(buttonIndex).lowercaseString == "discard" {
-            self.dismissViewControllerAnimated(true, completion: nil)
+            self.performBack(animated: true)
         }
     }
 }

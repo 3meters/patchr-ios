@@ -154,6 +154,38 @@ extension UIButton {
             }
         })
     }
+    
+    func setImageWithImageResult(imageResult: ImageResult, animate: Bool = true) {
+        
+        if let imageView = self as? AirImageButton {
+            imageView.startActivity()
+        }
+        
+        var url = NSURL(string: imageResult.mediaUrl!)
+        
+        self.sd_setImageWithURL(url,forState:UIControlState.Normal, completed: { (image, error, cacheType, url) -> Void in
+            
+            if let imageView = self as? AirImageButton {
+                imageView.stopActivity()
+            }
+            
+            if error != nil {
+                println("Image fetch failed: " + error.localizedDescription)
+                println(url?.standardizedURL)
+                self.setImage(UIImage(named: "imgBroken250Light"), forState:UIControlState.Normal)
+                return
+            }
+            
+            if animate || cacheType == SDImageCacheType.None || cacheType == SDImageCacheType.Disk {
+                UIView.transitionWithView(self, duration: 0.5, options: UIViewAnimationOptions.TransitionCrossDissolve,
+                    animations: { () -> Void in
+                        self.setImage(image, forState:UIControlState.Normal)
+                    }, completion: nil)
+            } else {
+                self.setImage(image, forState:UIControlState.Normal)
+            }
+        })
+    }
 }
 
 extension UIImageView {
@@ -221,6 +253,76 @@ extension UIImageView {
             } else {
                 self.image = image
             }            
+        })
+    }
+    
+    func setImageWithThumbnail(thumbnail: Thumbnail, animate: Bool = true) {
+        
+        if let imageView = self as? AirImageView {
+            imageView.startActivity()
+        }
+        
+        var url = NSURL(string: thumbnail.mediaUrl!)
+        
+        self.sd_setImageWithURL(url, completed: { (image, error, cacheType, url) -> Void in
+            
+            if let imageView = self as? AirImageView {
+                imageView.stopActivity()
+            }
+            
+            if error != nil {
+                println("Image fetch failed: " + error.localizedDescription)
+                println(url?.standardizedURL)
+                self.image = UIImage(named: "imgBroken250Light")
+                return
+            }
+            
+            if !animate {
+                self.image = image
+            }
+            else {
+                if cacheType == SDImageCacheType.None || cacheType == SDImageCacheType.Disk {
+                    UIView.transitionWithView(self, duration: 0.5, options: UIViewAnimationOptions.TransitionCrossDissolve,
+                        animations: { () -> Void in
+                            self.image = image
+                        }, completion: nil)
+                }
+                else {
+                    self.image = image
+                }
+            }
+        })
+    }
+    
+    func setImageWithImageResult(imageResult: ImageResult, animate: Bool = true) {
+        
+        if let imageView = self as? AirImageView {
+            imageView.startActivity()
+        }
+        
+        var url = NSURL(string: imageResult.mediaUrl!)
+        
+        self.sd_setImageWithURL(url, completed: { (image, error, cacheType, url) -> Void in
+            
+            if let imageView = self as? AirImageView {
+                imageView.stopActivity()
+            }
+            
+            if error != nil {
+                println("Image fetch failed: " + error.localizedDescription)
+                println(url?.standardizedURL)
+                self.image = UIImage(named: "imgBroken250Light")
+                return
+            }
+            
+            if animate || cacheType == SDImageCacheType.None || cacheType == SDImageCacheType.Disk {
+                UIView.transitionWithView(self, duration: 0.5, options: UIViewAnimationOptions.TransitionCrossDissolve,
+                    animations: { () -> Void in
+                        self.image = image
+                    }, completion: nil)
+            } else {
+                self.image = image
+            }
         })
     }
     

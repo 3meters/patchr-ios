@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import ObjectiveC
 
 func LocalizedString(str: String, comment: String) -> String {
 	return NSLocalizedString(str, comment: comment)
