@@ -250,10 +250,13 @@ public class Proxibase {
 		performPOSTRequestFor("find/patches/\(patchId)", parameters: parameters, completion: completion)
 	}
 
-	public func fetchUsersThatWatchPatch(patchId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
+    public func fetchUsersThatWatchPatch(patchId: String, isOwner: Bool = false, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
         
 		/* Used to show a list of users that are watching a patch or have a pending watch request for the patch. */
         var linked: [String:AnyObject] = ["from": "users", "type": "watch", "limit": pageSizeDefault, "skip": skip, "more": true, "linkFields": "type,enabled"]
+        if !isOwner {
+            linked["filter"] = ["enabled": true]
+        }
         var parameters: [String:AnyObject] = [
             "linked": User.extras(&linked),
             "promote": "linked",
@@ -656,50 +659,50 @@ public class Proxibase {
 	 * Link profiles
 	 *--------------------------------------------------------------------------------------------*/
 
-	private func standardPatchLinks() -> [Link] {
+	private func standardPatchLinks() -> [LinkSpec] {
 
         var links = [
             //Link(to: .Places, type: .Proximity, fields: "_id,name,photo,schema", linkFields: "_id,type,schema" ), // Place the patch is linked to
-            Link(from: .Messages, type: .Content, count: true), // Count of messages linked to the patch
-            Link(from: .Users, type: .Like, count: true), // Count of users that like the patch
-            Link(from: .Users, type: .Watch, count: true) // Count of users that are watching the patch
+            LinkSpec(from: .Messages, type: .Content, count: true), // Count of messages linked to the patch
+            LinkSpec(from: .Users, type: .Like, count: true), // Count of users that like the patch
+            LinkSpec(from: .Users, type: .Watch, count: true) // Count of users that are watching the patch
         ]
         
         let userDefaults = NSUserDefaults.standardUserDefaults()
         
         if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
-            links.append(Link(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId]))
-            links.append(Link(from: .Users, type: .Watch, fields: "_id,type,enabled,schema", filter: ["_from": userId]))
-            links.append(Link(from: .Messages, type: .Content, limit: 1, fields: "_id,type,schema", filter: ["_creator": userId]))
+            links.append(LinkSpec(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId]))
+            links.append(LinkSpec(from: .Users, type: .Watch, fields: "_id,type,enabled,schema", filter: ["_from": userId]))
+            links.append(LinkSpec(from: .Messages, type: .Content, limit: 1, fields: "_id,type,schema", filter: ["_creator": userId]))
         }
 
         return links
 	}
 
-	private func standardMessageLinks() -> [Link] {
+	private func standardMessageLinks() -> [LinkSpec] {
         
         var links = [
-            Link(from: .Users, type: .Like, count: true), // Count of users that like this message
-            Link(to: .Patches, type: .Content, limit: 1), // Patch the message is linked to
-            Link(to: .Messages, type: .Share, limit: 1), // Message this message is sharing
-            Link(to: .Patches, type: .Share, limit: 1), // Patch this message is sharing
-            Link(to: .Users, type: .Share, limit: 5)   // Users this message is shared with
+            LinkSpec(from: .Users, type: .Like, count: true), // Count of users that like this message
+            LinkSpec(to: .Patches, type: .Content, limit: 1), // Patch the message is linked to
+            LinkSpec(to: .Messages, type: .Share, limit: 1), // Message this message is sharing
+            LinkSpec(to: .Patches, type: .Share, limit: 1), // Patch this message is sharing
+            LinkSpec(to: .Users, type: .Share, limit: 5)   // Users this message is shared with
         ]
         
         let userDefaults = NSUserDefaults.standardUserDefaults()
         
         if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
-            links.append(Link(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId]))
+            links.append(LinkSpec(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId]))
         }
         
         return links
 	}
 
-	private func standardUserLinks() -> [Link] {
+	private func standardUserLinks() -> [LinkSpec] {
 
 		return [
-			Link(to: .Patches, type: .Create, count: true), // Count of patches the user created
-			Link(to: .Patches, type: .Watch, count: true), // Count of patches the user is watching
+			LinkSpec(to: .Patches, type: .Create, count: true), // Count of patches the user created
+			LinkSpec(to: .Patches, type: .Watch, count: true), // Count of patches the user is watching
 		]
 	}
 
@@ -984,7 +987,8 @@ extension UIImage {
     }
 }
 
-public class Link {
+public class LinkSpec {
+    
 	public var to:           LinkDestination?
 	public var from:         LinkDestination?
 	public var type:         LinkType?
@@ -995,11 +999,11 @@ public class Link {
     public var fields:       AnyObject?
 	public var linkFields:   AnyObject?
 	public var linkedFilter: [NSObject:AnyObject]?
-	public var subLinks:     [Link]?
+	public var subLinks:     [LinkSpec]?
 
     init(to: LinkDestination, type: LinkType, enabled: Bool? = nil, limit: UInt? = nil, count: Bool? = nil,
         fields: AnyObject? = nil, filter: [NSObject:AnyObject]? = nil,
-        linkFields: AnyObject? = nil, linkedFilter: [NSObject:AnyObject]? = nil, subLinks: [Link]? = nil) {
+        linkFields: AnyObject? = nil, linkedFilter: [NSObject:AnyObject]? = nil, subLinks: [LinkSpec]? = nil) {
 		self.to = to
 		self.type = type
         self.enabled = enabled
@@ -1014,7 +1018,7 @@ public class Link {
 
 	init(from: LinkDestination, type: LinkType, enabled: Bool? = nil, limit: UInt? = nil, count: Bool? = nil,
         fields: AnyObject? = nil, filter: [NSObject:AnyObject]? = nil,
-        linkFields: AnyObject? = nil, linkedFilter: [NSObject:AnyObject]? = nil, subLinks: [Link]? = nil) {
+        linkFields: AnyObject? = nil, linkedFilter: [NSObject:AnyObject]? = nil, subLinks: [LinkSpec]? = nil) {
 		self.from = from
 		self.type = type
         self.enabled = enabled

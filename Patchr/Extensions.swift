@@ -77,9 +77,9 @@ extension Patch {
         
         if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
             var links = [
-                Link(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId]),
-                Link(from: .Users, type: .Watch, fields: "_id,type,enabled,schema", filter: ["_from": userId]),
-                Link(from: .Messages, type: .Content, limit: 1, fields: "_id,type,schema", filter: ["_creator": userId]),
+                LinkSpec(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId]),
+                LinkSpec(from: .Users, type: .Watch, fields: "_id,type,enabled,schema", filter: ["_from": userId]),
+                LinkSpec(from: .Messages, type: .Content, limit: 1, fields: "_id,type,schema", filter: ["_creator": userId]),
             ]
             
             let array = links.map {
@@ -95,8 +95,8 @@ extension Patch {
     static func linked() -> [[String:AnyObject]]? {
         
         var links = [
-            Link(to: .Places, type: .Proximity, fields: "_id,name,photo,schema,type" ), // Place the patch is linked to
-            Link(from: .Users, type: .Create, fields: "_id,name,photo,schema,type" ), // User who created the patch
+            LinkSpec(to: .Places, type: .Proximity, fields: "_id,name,photo,schema,type" ), // Place the patch is linked to
+            LinkSpec(from: .Users, type: .Create, fields: "_id,name,photo,schema,type" ), // User who created the patch
         ]
         
         let array = links.map {
@@ -109,9 +109,9 @@ extension Patch {
     static func linkCount() -> [[String:AnyObject]]? {
         
         var links = [
-            Link(from: .Messages, type: .Content),  // Count of messages linked to the patch
-            Link(from: .Users, type: .Like),        // Count of users that like the patch
-            Link(from: .Users, type: .Watch, enabled: true)        // Count of users that are watching the patch
+            LinkSpec(from: .Messages, type: .Content),  // Count of messages linked to the patch
+            LinkSpec(from: .Users, type: .Like),        // Count of users that like the patch
+            LinkSpec(from: .Users, type: .Watch, enabled: true)        // Count of users that are watching the patch
         ]
         
         let array = links.map {
@@ -143,7 +143,7 @@ extension Message {
         
         if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
             var links = [
-                Link(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId])
+                LinkSpec(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId])
             ]
             let array = links.map {
                 $0.toDictionary() // Returns an array of maps
@@ -157,11 +157,11 @@ extension Message {
     static func linked() -> [[String:AnyObject]]? {
         
         var links = [
-            Link(to: .Patches, type: .Content, fields: "_id,name,photo,schema,type", limit: 1), // Patch the message is linked to
-            Link(from: .Users, type: .Create, fields: "_id,name,photo,schema,type" ), // User who created the message
-            Link(to: .Messages, type: .Share, limit: 1), // Message this message is sharing
-            Link(to: .Patches, type: .Share, limit: 1), // Patch this message is sharing
-            Link(to: .Users, type: .Share, limit: 5)   // Users this message is shared with
+            LinkSpec(to: .Patches, type: .Content, fields: "_id,name,photo,schema,type", limit: 1), // Patch the message is linked to
+            LinkSpec(from: .Users, type: .Create, fields: "_id,name,photo,schema,type" ), // User who created the message
+            LinkSpec(to: .Messages, type: .Share, limit: 1), // Message this message is sharing
+            LinkSpec(to: .Patches, type: .Share, limit: 1), // Patch this message is sharing
+            LinkSpec(to: .Users, type: .Share, limit: 5)   // Users this message is shared with
         ]
         
         let array = links.map {
@@ -174,7 +174,7 @@ extension Message {
     static func linkCount() -> [[String:AnyObject]]? {
         
         var links = [
-            Link(from: .Users, type: .Like)
+            LinkSpec(from: .Users, type: .Like)
         ]
         
         let array = links.map {
@@ -211,8 +211,8 @@ extension User {
     static func linkCount() -> [[String:AnyObject]]? {
         
         var links = [
-            Link(to: .Patches, type: .Create), // Count of patches the user created
-            Link(to: .Patches, type: .Watch, enabled: true), // Count of patches the user is watching
+            LinkSpec(to: .Patches, type: .Create), // Count of patches the user created
+            LinkSpec(to: .Patches, type: .Watch, enabled: true), // Count of patches the user is watching
         ]
         
         let array = links.map {
