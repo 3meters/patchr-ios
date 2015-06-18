@@ -131,47 +131,49 @@ extension UserTableViewController: UITableViewDelegate {
 
 extension UserTableViewController: UserTableViewCellDelegate {
     
-//	func userTableViewCell(userTableViewCell: UserTableViewCell, approvalSwitchValueChanged approvalSwitch: UISwitch) {
-//		if let indexPath = self.tableView.indexPathForCell(userTableViewCell) {
-//			if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
-//				if let link = queryResult.object as? Link {
-//					approvalSwitch.enabled = false
-//					let linkEnabled = approvalSwitch.on
-//					DataController.proxibase.enableLinkById(link.id_, enabled: linkEnabled, completion: {
-//						(response, error) -> Void in
-//						if error != nil {
-//							SCLAlertView().showError(self, title: "Error", subTitle: error!.localizedDescription, closeButtonTitle: "OK", duration: 0.0)
-//							// Toggle the switch since it failed
-//							approvalSwitch.on = !linkEnabled
-//						}
-//						else {
-//							link.enabledValue = linkEnabled
-//							DataController.instance.managedObjectContext.save(nil)
-//						}
-//						approvalSwitch.enabled = true
-//					})
-//				}
-//			}
-//		}
-//	}
-//
-//	func userTableViewCell(userTableViewCell: UserTableViewCell, removeButtonTapped removeButton: UIButton) {
-//		if let indexPath = self.tableView.indexPathForCell(userTableViewCell) {
-//			if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
-//				if let link = queryResult.object as? Link {
-//					DataController.proxibase.deleteLinkById(link.id_, completion: {
-//						(response, error) -> Void in
-//						if error != nil {
-//							SCLAlertView().showError(self, title: "Error", subTitle: error!.localizedDescription, closeButtonTitle: "OK", duration: 0.0)
-//						}
-//						else {
-//							DataController.instance.managedObjectContext.deleteObject(link)
-//							DataController.instance.managedObjectContext.deleteObject(queryResult)
-//							DataController.instance.managedObjectContext.save(nil)
-//						}
-//					})
-//				}
-//			}
-//		}
-//	}
+	func userTableViewCell(userTableViewCell: UserTableViewCell, approvalSwitchValueChanged approvalSwitch: UISwitch) {
+        
+		if let indexPath = self.tableView.indexPathForCell(userTableViewCell) {
+			if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
+				if let user = queryResult.object as? User {
+					approvalSwitch.enabled = false
+					let linkEnabled = approvalSwitch.on
+					DataController.proxibase.enableLinkById(user.link.id_, enabled: linkEnabled, completion: {
+						(response, error) -> Void in
+						if error != nil {
+							SCLAlertView().showError(self, title: "Error", subTitle: error!.localizedDescription, closeButtonTitle: "OK", duration: 0.0)
+							// Toggle the switch since it failed
+							approvalSwitch.on = !linkEnabled
+						}
+						else {
+							user.link.enabledValue = linkEnabled
+							DataController.instance.managedObjectContext.save(nil)
+						}
+						approvalSwitch.enabled = true
+					})
+				}
+			}
+		}
+	}
+
+	func userTableViewCell(userTableViewCell: UserTableViewCell, removeButtonTapped removeButton: UIButton) {
+        
+		if let indexPath = self.tableView.indexPathForCell(userTableViewCell) {
+			if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
+				if let user = queryResult.object as? User {
+					DataController.proxibase.deleteLinkById(user.link.id_, completion: {
+						(response, error) -> Void in
+						if error != nil {
+							SCLAlertView().showError(self, title: "Error", subTitle: error!.localizedDescription, closeButtonTitle: "OK", duration: 0.0)
+						}
+						else {
+							DataController.instance.managedObjectContext.deleteObject(user.link)
+							DataController.instance.managedObjectContext.deleteObject(queryResult)
+							DataController.instance.managedObjectContext.save(nil)
+						}
+					})
+				}
+			}
+		}
+	}
 }

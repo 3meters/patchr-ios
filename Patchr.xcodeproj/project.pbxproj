@@ -398,8 +398,6 @@
 		7D3D39CB1A6F086F00A44CB2 /* Patchr */ = {
 			isa = PBXGroup;
 			children = (
-				E24A872A1B323F2500E6F96B /* Fabric.framework */,
-				E24A872B1B323F2500E6F96B /* Crashlytics.framework */,
 				E2D25DC61B22164300E51461 /* Controllers */,
 				E2F618D71AFFB5430055D09C /* Helpers */,
 				E215995D1AEFCD1E002C936F /* Ui */,
@@ -509,6 +507,8 @@
 			children = (
 				E25327E11B1A285500990A81 /* Accelerate.framework */,
 				E25327CB1B13D3FF00990A81 /* AVFoundation.framework */,
+				E24A872B1B323F2500E6F96B /* Crashlytics.framework */,
+				E24A872A1B323F2500E6F96B /* Fabric.framework */,
 				7DE393E81AAE4BF600D1B80E /* MessageUI.framework */,
 				7D77FC801AAA313C00AA8284 /* CoreLocation.framework */,
 				7D03C3D61A980D9400BAFD19 /* MapKit.framework */,

@@ -264,6 +264,11 @@ class DataController: NSObject {
             query.offsetValue = 0
             query.executedValue = false
         }
+        
+        var isOwner = false
+        if entity != nil && entity.creator != nil {
+            isOwner = (entity.creator.entityId == UserController.instance.currentUser.id_)
+        }
 
         var skip = 0
         if paging {
@@ -300,7 +305,7 @@ class DataController: NSObject {
 				DataController.proxibase.fetchUsersThatLikePatch(entityId, criteria: criteria, skip: skip, completion: refreshCompletion)
 
 			case DataStoreQueryName.WatchersForPatch.rawValue:
-				DataController.proxibase.fetchUsersThatWatchPatch(entityId, criteria: criteria, skip: skip, completion: refreshCompletion)
+                DataController.proxibase.fetchUsersThatWatchPatch(entityId, isOwner: isOwner, criteria: criteria, skip: skip, completion: refreshCompletion)
 
             case DataStoreQueryName.LikersForMessage.rawValue:
                 DataController.proxibase.fetchUsersThatLikeMessage(entityId, criteria: criteria, skip: skip, completion: refreshCompletion)
