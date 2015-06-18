@@ -142,3 +142,9 @@ extension UIViewController {
         }
 	}
 }
+
+extension String {
+    var length: Int {
+        return count(self)
+    }
+}
