@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Fabric
+import Crashlytics
 
 let PAApplicationDidReceiveRemoteNotification = "PAApplicationDidReceiveRemoteNotification"
 let PAapplicationDidBecomeActiveWithNonZeroBadge = "PAapplicationDidBecomeActiveWithNonZeroBadge"
@@ -31,6 +33,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let defaultSettingsFile: NSString = NSBundle.mainBundle().pathForResource("DefaultSettings", ofType: "plist")!
         let settingsDictionary: NSDictionary = NSDictionary(contentsOfFile: defaultSettingsFile as String)!
         NSUserDefaults.standardUserDefaults().registerDefaults(settingsDictionary as [NSObject : AnyObject])
+        
+        /* Initialize Crashlytics */
+        Fabric.with([Crashlytics()])        
 
         /* Setup parse for push notifications */
         Parse.setApplicationId("EonZJ4FXEADijslgqXCkg37sOGpB7AB9lDYxoHtz", clientKey: "5QRFlRQ3j7gkxyJ2cBYbHTK98WRQhoHCnHdpEKSD")

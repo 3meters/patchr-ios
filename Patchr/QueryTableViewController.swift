@@ -57,6 +57,10 @@ class QueryTableViewController: FetchedResultsTableViewController {
 		return Query()
 	}
 
+    /*--------------------------------------------------------------------------------------------
+    * Lifecycle
+    *--------------------------------------------------------------------------------------------*/
+    
 	override func viewDidLoad() {
 		super.viewDidLoad()
         
@@ -74,7 +78,6 @@ class QueryTableViewController: FetchedResultsTableViewController {
         progress!.removeFromSuperViewOnHide = false
         progress!.userInteractionEnabled = false
         progress!.activityIndicatorColor = AirUi.brandColorDark
-        progress!.show(true)
 	}
 
 	override func viewWillAppear(animated: Bool) {
@@ -92,10 +95,14 @@ class QueryTableViewController: FetchedResultsTableViewController {
             refreshQueryItems()
         }
     }
-
+    
 	override func fetchedResultsControllerForViewController(viewController: UIViewController) -> NSFetchedResultsController {
 		return fetchedResultsController
 	}
+
+    /*--------------------------------------------------------------------------------------------
+    * Methods
+    *--------------------------------------------------------------------------------------------*/
 
 	func pullToRefreshAction(sender: AnyObject?) -> Void {
         refreshQueryItems(force: true)

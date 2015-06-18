@@ -51,17 +51,21 @@ class PatchTableViewController: QueryTableViewController {
 		return self._query
 	}
     
+    /*--------------------------------------------------------------------------------------------
+    * Lifecycle
+    *--------------------------------------------------------------------------------------------*/
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         /* A bit of UI tweaking */
-        tableView.backgroundColor = AirUi.windowColor
-        tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
+        self.tableView.backgroundColor = AirUi.windowColor
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
         
         /* Add a little bit of room at the bottom of the table */
         var footer: UIView = UIView(frame:CGRectMake(0, 0, 1, 8))
         footer.backgroundColor = UIColor.clearColor()
-        tableView.tableFooterView = footer;        
+        self.tableView.tableFooterView = footer;
 
 		switch self.filter {
 			case .Nearby:
@@ -82,6 +86,10 @@ class PatchTableViewController: QueryTableViewController {
                 self.tableView.registerNib(UINib(nibName: "PatchNormalTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
 		}
     }
+    
+    /*--------------------------------------------------------------------------------------------
+    * Lifecycle
+    *--------------------------------------------------------------------------------------------*/
     
     override func configureCell(cell: UITableViewCell, object: AnyObject) {
         

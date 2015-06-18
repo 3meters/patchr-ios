@@ -8,6 +8,7 @@
 
 import UIKit
 import MessageUI
+import Crashlytics
 
 class SettingsTableViewController: UITableViewController, MFMailComposeViewControllerDelegate {
     
@@ -115,6 +116,7 @@ extension SettingsTableViewController: UITableViewDelegate {
             self.pushWebViewController(NSURL(string: softwareLicensesURLString))
         }
         else if selectedCell == self.developmentCell {
+            Crashlytics.sharedInstance().crash()
             self.performSegueWithIdentifier("DevelopmentSettingsSegue", sender: selectedCell)
         }
         else {

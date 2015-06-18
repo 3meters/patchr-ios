@@ -88,6 +88,8 @@
 		E215995F1AEFDA3F002C936F /* Photo.m in Sources */ = {isa = PBXBuildFile; fileRef = E215995E1AEFDA3F002C936F /* Photo.m */; };
 		E241D15A1B1B3FCE00702E01 /* UIView+BorderLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = E241D1591B1B3FCE00702E01 /* UIView+BorderLayer.m */; };
 		E24A87261B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */; };
+		E24A872C1B323F2500E6F96B /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E24A872A1B323F2500E6F96B /* Fabric.framework */; };
+		E24A872D1B323F2500E6F96B /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E24A872B1B323F2500E6F96B /* Crashlytics.framework */; };
 		E25327B21B0FCE9C00990A81 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25327B11B0FCE9C00990A81 /* Constants.swift */; };
 		E25327B61B1000C000990A81 /* AirImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25327B51B1000C000990A81 /* AirImageView.swift */; };
 		E25327B81B103ECA00990A81 /* AirImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25327B71B103ECA00990A81 /* AirImageButton.swift */; };
@@ -264,6 +266,8 @@
 		E241D1581B1B3FCE00702E01 /* UIView+BorderLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+BorderLayer.h"; sourceTree = "<group>"; };
 		E241D1591B1B3FCE00702E01 /* UIView+BorderLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+BorderLayer.m"; sourceTree = "<group>"; };
 		E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThumbnailCollectionViewCell.swift; sourceTree = "<group>"; };
+		E24A872A1B323F2500E6F96B /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = SOURCE_ROOT; };
+		E24A872B1B323F2500E6F96B /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = SOURCE_ROOT; };
 		E25327B11B0FCE9C00990A81 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		E25327B51B1000C000990A81 /* AirImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirImageView.swift; sourceTree = "<group>"; };
 		E25327B71B103ECA00990A81 /* AirImageButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirImageButton.swift; sourceTree = "<group>"; };
@@ -329,6 +333,8 @@
 				7DE393E91AAE4BF600D1B80E /* MessageUI.framework in Frameworks */,
 				7D03C3D71A980D9400BAFD19 /* MapKit.framework in Frameworks */,
 				329E8C34AA0DAB5B16518B8A /* libPods-Patchr.a in Frameworks */,
+				E24A872C1B323F2500E6F96B /* Fabric.framework in Frameworks */,
+				E24A872D1B323F2500E6F96B /* Crashlytics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -392,6 +398,8 @@
 		7D3D39CB1A6F086F00A44CB2 /* Patchr */ = {
 			isa = PBXGroup;
 			children = (
+				E24A872A1B323F2500E6F96B /* Fabric.framework */,
+				E24A872B1B323F2500E6F96B /* Crashlytics.framework */,
 				E2D25DC61B22164300E51461 /* Controllers */,
 				E2F618D71AFFB5430055D09C /* Helpers */,
 				E215995D1AEFCD1E002C936F /* Ui */,
@@ -704,6 +712,7 @@
 				7D3D39C71A6F086F00A44CB2 /* Resources */,
 				A73C0D055776F8D329577BE0 /* Copy Pods Resources */,
 				7DFA37DB1AB7B87B00CFCEE1 /* Warn about TODO: and FIXME: */,
+				E24A87291B323DEA00E6F96B /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -898,6 +907,19 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Patchr/Pods-Patchr-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		E24A87291B323DEA00E6F96B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Fabric.framework/run 3f03e3891f0d0c56c4bc1c393db5efe2aa0f90c7 98cfca9f6ecedc65a98564ec3e3af57052f396d78d3bce7483d33c035a2a6c66";
 		};
 		E93A507302B2D732EA6670A7 /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1155,6 +1177,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = Patchr/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1178,6 +1204,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = Patchr/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1276,6 +1306,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = Patchr/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
