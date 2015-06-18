@@ -34,6 +34,7 @@ class MessageEditViewController: EntityEditViewController {
         self.descriptionField!.placeholder = "Message"
         
         if editMode {
+            
             self.progressStartLabel = "Updating"
             self.progressFinishLabel = "Updated!"
             navigationItem.title = LocalizedString("Edit patch")
@@ -54,6 +55,7 @@ class MessageEditViewController: EntityEditViewController {
             bind()
         }
         else {
+            
             self.progressStartLabel = "Posting"
             self.progressFinishLabel = "Posted!"
             self.descriptionField!.placeholderColor = UIColor.clearColor()
@@ -64,6 +66,7 @@ class MessageEditViewController: EntityEditViewController {
             
             if let user = UserController.instance.currentUser {
                 self.userPhotoImage.setImageWithPhoto(user.getPhotoManaged())
+                self.userNameLabel.text = user.name
             }
             
             self.setPhotoButton!.fadeIn()
@@ -160,6 +163,7 @@ class MessageEditViewController: EntityEditViewController {
         
         /* User photo */
         self.userPhotoImage.setImageWithPhoto(message.creator.getPhotoManaged())
+        self.userNameLabel.text = message.creator.name
         
         /* Primary photo */
         if self.photoActive {
