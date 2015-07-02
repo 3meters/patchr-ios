@@ -57,9 +57,6 @@ extension MainTabBarController: UITabBarControllerDelegate {
                 if navigationController.tabBarItem.title?.lowercaseString == "explore" {
                     controller.filter = PatchListFilter.Explore
                 }
-                else {
-                    controller.filter  = PatchListFilter.Nearby
-                }
             }
         }
                 
