@@ -43,6 +43,9 @@
                     <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="Patch name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0TT-YB-aeS" userLabel="patch_name">
                         <rect key="frame" x="65" y="8" width="79" height="18"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="18" id="jfD-W3-ZcH"/>
+                        </constraints>
                         <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
                         <color key="textColor" red="0.60000002379999995" green="0.60000002379999995" blue="0.60000002379999995" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
@@ -68,6 +71,9 @@
                     <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="1 Like" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jtz-MW-UwR" userLabel="like">
                         <rect key="frame" x="65" y="272" width="39" height="18"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="18" id="GNc-ud-yCh"/>
+                        </constraints>
                         <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
                         <color key="textColor" red="0.98431372549019602" green="0.5490196078431373" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
@@ -95,7 +101,7 @@
                     <constraint firstItem="m6L-Nb-Bin" firstAttribute="leading" secondItem="TaR-dt-0cq" secondAttribute="trailing" constant="9" id="fVv-9a-iCu"/>
                     <constraint firstAttribute="trailingMargin" secondItem="h8L-WQ-6XO" secondAttribute="trailing" constant="4" id="fux-7Z-wC8"/>
                     <constraint firstAttribute="trailing" secondItem="EuJ-uZ-wD2" secondAttribute="trailing" constant="8" id="kBG-OT-7v3"/>
-                    <constraint firstItem="m6L-Nb-Bin" firstAttribute="top" secondItem="TaR-dt-0cq" secondAttribute="top" id="oB9-HR-jwj"/>
+                    <constraint firstItem="TaR-dt-0cq" firstAttribute="top" secondItem="m6L-Nb-Bin" secondAttribute="top" id="oB9-HR-jwj"/>
                     <constraint firstItem="Jtz-MW-UwR" firstAttribute="top" secondItem="EuJ-uZ-wD2" secondAttribute="bottom" constant="8" id="oUM-qU-Ajx"/>
                     <constraint firstItem="Jtz-MW-UwR" firstAttribute="leading" secondItem="EuJ-uZ-wD2" secondAttribute="leading" id="rvT-YA-ml0"/>
                     <constraint firstItem="dwP-9n-4tK" firstAttribute="baseline" secondItem="m6L-Nb-Bin" secondAttribute="baseline" id="tYi-h6-iz4"/>
@@ -107,7 +113,9 @@
                 <outlet property="createdDate" destination="dwP-9n-4tK" id="tVJ-g5-sLx"/>
                 <outlet property="description_" destination="h8L-WQ-6XO" id="GS8-2F-Frh"/>
                 <outlet property="likes" destination="Jtz-MW-UwR" id="d4O-ak-JdR"/>
+                <outlet property="likesHeight" destination="GNc-ud-yCh" id="r5D-Uu-ynC"/>
                 <outlet property="patchName" destination="0TT-YB-aeS" id="gHZ-M6-ccC"/>
+                <outlet property="patchNameHeight" destination="jfD-W3-ZcH" id="iVk-bn-GDW"/>
                 <outlet property="photo" destination="eQH-ua-j18" id="Gg6-9z-Phj"/>
                 <outlet property="photoHolderHeight" destination="y4D-PR-ElG" id="JWo-fd-CTG"/>
                 <outlet property="userName" destination="m6L-Nb-Bin" id="liS-aQ-UuF"/>

@@ -630,6 +630,7 @@ class PatchDetailViewController: QueryTableViewController {
 		cell.description_.text = nil
 		cell.userName.text = nil
 		cell.patchName.text = nil
+        cell.patchNameHeight.constant = 0
 
 		cell.description_.text = message.description_
 
@@ -647,6 +648,7 @@ class PatchDetailViewController: QueryTableViewController {
 		}
 
 		cell.likes.hidden = true
+        cell.likesHeight.constant = 0
 		if message.countLikes != nil {
 			if message.countLikes?.integerValue != 0 {
 				let likesTitle = message.countLikes?.integerValue == 1
@@ -654,6 +656,7 @@ class PatchDetailViewController: QueryTableViewController {
 						: "\(message.countLikes ?? 0) likes"
 				cell.likes.text = likesTitle
 				cell.likes.hidden = false
+                cell.likesHeight.constant = 18
 			}
 		}
         
