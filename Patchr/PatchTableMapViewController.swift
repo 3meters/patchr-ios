@@ -9,7 +9,7 @@
 import UIKit
 import MapKit
 
-class FetchedResultsMapViewController: UIViewController, NSFetchedResultsControllerDelegate {
+class PatchTableMapViewController: UIViewController, NSFetchedResultsControllerDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
     
@@ -80,7 +80,7 @@ class FetchedResultsMapViewController: UIViewController, NSFetchedResultsControl
     }
 }
 
-extension FetchedResultsMapViewController: NSFetchedResultsControllerDelegate {
+extension PatchTableMapViewController: NSFetchedResultsControllerDelegate {
     
     func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
         
@@ -105,7 +105,7 @@ extension FetchedResultsMapViewController: NSFetchedResultsControllerDelegate {
     }
 }
 
-extension FetchedResultsMapViewController: MKMapViewDelegate {
+extension PatchTableMapViewController: MKMapViewDelegate {
     
     func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
         

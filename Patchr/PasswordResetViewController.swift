@@ -57,17 +57,20 @@ class PasswordResetViewController: UITableViewController, UITextFieldDelegate {
             
             self.processing = false
             
-            if let serverError = ServerError(error) {
-                progress.hide(true)
+            progress.hide(true, afterDelay: 1.0)
+            if var error = ServerError(error) {
                 self.emailConfirmed = false
-                var message = serverError.message
-                if serverError.code == .UNAUTHORIZED {
-                    message = "This email address has not been used with this installation. Please contact support to reset your password."
+                if error.code == .UNAUTHORIZED {
+                    error.message = "This email address has not been used with this installation. Please contact support to reset your password."
+                    self.handleError(error, errorActionType: .ALERT)
                 }
-                else if serverError.code == .NOT_FOUND {
-                    message = "The email address could not be found."
+                else if error.code == .NOT_FOUND {
+                    error.message = "The email address could not be found."
+                    self.handleError(error, errorActionType: .ALERT)
                 }
-                self.Alert(message)
+                else {
+                    self.handleError(error)
+                }
             }
             else {
                 if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
@@ -79,7 +82,6 @@ class PasswordResetViewController: UITableViewController, UITextFieldDelegate {
                     }
                 }
                 
-                progress.hide(true, afterDelay: 1.0)
                 self.emailConfirmed = true
                 self.messageLabel.text = "Email address confirmed, enter a new password:"
                 self.emailField.fadeOut()
@@ -102,12 +104,11 @@ class PasswordResetViewController: UITableViewController, UITextFieldDelegate {
             
             self.processing = false
             
-            if let serverError = ServerError(error) {
-                progress.hide(true)
-                self.Alert(serverError.message)
+            progress.hide(true, afterDelay: 1.0)
+            if let error = ServerError(error) {
+                self.handleError(error)
             }
             else {
-                progress.hide(true, afterDelay: 1.0)
                 self.navigationController?.popViewControllerAnimated(true)
             }
         }

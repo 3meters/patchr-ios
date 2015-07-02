@@ -19,11 +19,13 @@ class EntityEditViewController: UITableViewController {
     
 	var processing: Bool = false
     var firstAppearance: Bool = true
-    var usingPhotoDefault: Bool = true
 	var backClicked = false
 	var keyboardVisible = false
+    
+    var usingPhotoDefault: Bool = true
 	var photoDirty: Bool = false
     var photoActive: Bool = false
+    var photoChosen: Bool = false
 
 	var editMode: Bool {
 		return entity != nil
@@ -43,6 +45,7 @@ class EntityEditViewController: UITableViewController {
 	@IBOutlet weak var descriptionField: GCPlaceholderTextView!
     
     @IBOutlet weak var photoGroup:   	 UIView?
+    @IBOutlet weak var buttonScrim:      UIView?
 	@IBOutlet weak var photoImage:   	 UIButton!
 	@IBOutlet weak var setPhotoButton:   UIButton!
     @IBOutlet weak var editPhotoButton:  UIButton!
@@ -67,17 +70,25 @@ class EntityEditViewController: UITableViewController {
         photoImage.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Fill
         photoImage.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
 
-        if photoGroup == nil {
-            self.setPhotoButton.alpha = 0
-            self.editPhotoButton.alpha = 0
-            self.clearPhotoButton.alpha = 0
-            if !editMode {
-                self.setPhotoButton.fadeIn()
-            }
-        }
+        self.setPhotoButton.alpha = 0
+        self.editPhotoButton.alpha = 0
+        self.clearPhotoButton.alpha = 0
+        self.photoGroup?.alpha = 0
         
+        if entity?.photo != nil {
+            self.editPhotoButton.fadeIn()
+            self.clearPhotoButton.fadeIn()
+            self.photoGroup?.fadeIn()
+        }
+        else {
+            if self.collection == "patches" || self.collection == "users" {
+                self.photoGroup?.fadeIn()
+            }
+            self.setPhotoButton.fadeIn()
+        }
+    
         if self.descriptionField != nil {
-            self.descriptionField!.placeholderColor = AirUi.hintColor
+            self.descriptionField!.placeholderColor = Colors.hintColor
             self.descriptionField!.scrollEnabled = false
             self.descriptionField!.delegate = self
             self.descriptionField!.textContainer.lineFragmentPadding = 0
@@ -134,33 +145,20 @@ class EntityEditViewController: UITableViewController {
 			self.photoDirty = (entity!.photo != photo)
 		}
         
-        if self.photoGroup == nil {
-            self.editPhotoButton.fadeOut()
-            self.clearPhotoButton.fadeOut()
-            self.setPhotoButton.fadeIn()
+        self.editPhotoButton.fadeOut()
+        self.clearPhotoButton.fadeOut()
+        if self.collection == "messages" {
+            self.photoGroup?.fadeOut()
         }
+        self.setPhotoButton.fadeIn()
         
         photoActive = false
     }
     
     @IBAction func setPhotoAction(sender: AnyObject) {
         photoChooser.choosePhoto() {
-            [unowned self] image, imageResult in
-            
-            if image != nil {
-                self.photo = image
-            }
-            else {
-                self.photoImage.setImageWithImageResult(imageResult!, animate: true)
-            }
-            self.usingPhotoDefault = false
-            self.photoDirty = true
-            self.photoActive = true
-            if self.photoGroup == nil {
-                self.editPhotoButton.fadeIn()
-                self.clearPhotoButton.fadeIn()
-                self.setPhotoButton.fadeOut()
-            }
+            [weak self] image, imageResult in
+            self?.photoChosen(image, imageResult: imageResult)
         }
     }
     
@@ -211,26 +209,52 @@ class EntityEditViewController: UITableViewController {
     func bind() {
         
         /* Name and description */
-        name = entity!.name
+        name = entity?.name
         if descriptionField != nil {
-            description_ = entity!.description_
+            description_ = entity?.description_
         }
         
         /* Photo */
-        if entity!.photo != nil {
-            if photoGroup == nil {
-                self.editPhotoButton.fadeIn()
-                self.clearPhotoButton.fadeIn()
-            }
-            photoImage.setImageWithPhoto(entity!.photo)
+        if entity?.photo != nil {
+            photoImage.setImageWithPhoto(entity!.photo!)
             usingPhotoDefault = false
             photoActive = true
         }
-        else if self.collection != "messages" {
-            photo = UIImage(named: self.defaultPhotoName!)! // Sets photoImage
+        else {
+            if self.collection == "patches" || self.collection == "users" {
+                photo = UIImage(named: self.defaultPhotoName!)! // Sets photoImage
+            }
             usingPhotoDefault = true
             photoActive = false
         }
+    }
+    
+    func photoChosen(image: UIImage?, imageResult: ImageResult?) -> Void {
+        
+        if image != nil {
+            self.photo = image
+        }
+        else {
+            self.photoImage.setImageWithImageResult(imageResult!, animate: true)
+        }
+        
+        if !self.editMode {
+            self.photoDirty = (self.photo != nil)
+        }
+        else {
+            self.photoDirty = (self.entity!.photo != self.photo)
+        }
+        
+        self.usingPhotoDefault = false
+        
+        self.photoDirty = true
+        self.photoActive = true
+        self.photoChosen = true
+        
+        self.editPhotoButton.fadeIn()
+        self.clearPhotoButton.fadeIn()
+        self.setPhotoButton.fadeOut()
+        self.photoGroup?.fadeIn()
     }
 
 	func save() {
@@ -280,26 +304,21 @@ class EntityEditViewController: UITableViewController {
         progress.square = true
         progress.show(true)
         
-        let proxibase = DataController.proxibase
         var parameters = NSMutableDictionary()
         parameters = self.gather(parameters)
         
-        proxibase.insertObject("data/\(collection!)", parameters: parameters) {
+        DataController.proxibase.insertObject("data/\(collection!)", parameters: parameters) {
             response, error in
             
             self.processing = false
 
             dispatch_async(dispatch_get_main_queue()) {
+                
+                progress.hide(true, afterDelay: 1.0)
                 if let error = ServerError(error) {
-                    progress.hide(true)
-                    println("Insert entity error")
-                    println(error)
-                    println(parameters)
-                    self.Alert(LocalizedString("Error"), message: error.message)
+                    self.handleError(error)
                 }
                 else {
-                    progress.hide(true, afterDelay: 1.0)
-                    println("Insert entity successful")
                     let serverResponse = ServerResponse(response)
                     if serverResponse.resultCount == 1 {
                         println("Created entity \(serverResponse.resultID)")
@@ -327,36 +346,23 @@ class EntityEditViewController: UITableViewController {
         progress.square = true
         progress.show(true)
         
-        let proxibase  = DataController.proxibase
         var parameters = NSMutableDictionary()
         parameters = self.gather(parameters)
         
         let path = "data/\(self.collection!)/\(entity!.id_)"
         
-        proxibase.updateObject(path, parameters: parameters) {
+        DataController.proxibase.updateObject(path, parameters: parameters) {
             response, error in
             
             self.processing = false
 
             dispatch_async(dispatch_get_main_queue()) {
-                if error != nil && error?.domain == "Proxibase" {
-                    progress.hide(true)
-                    println("Update entity error")
-                    println(error)
-                    println(parameters)
-                    if let userInfoDictionary = (error!.userInfo as NSDictionary?) {
-                        self.Alert(LocalizedString("Error"), message: userInfoDictionary["message"] as? String)
-                    }
-                }
-                else if let error = ServerError(error) {
-                    progress.hide(true)
-                    println("Update entity error")
-                    println(error)
-                    println(parameters)
-                    self.Alert(LocalizedString("Error"), message: error.message)
+                
+                progress.hide(true, afterDelay: 1.0)
+                if let error = ServerError(error) {
+                    self.handleError(error)
                 }
                 else {
-                    progress.hide(true, afterDelay: 1.0)
                     println("Update entity successful")
                     DataController.instance.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
                     self.performBack(animated: true)
@@ -369,12 +375,19 @@ class EntityEditViewController: UITableViewController {
     
     func delete() {
         
+        if processing {
+            return
+        }
+        processing = true
+        
         let entityPath = "data/\(self.collection!)/\((self.entity?.id_)!)"
         DataController.proxibase.deleteObject(entityPath) {
             response, error in
-            if let serverError = ServerError(error) {
-                println(error)
-                self.Alert(LocalizedString("Error"), message: serverError.message)
+            
+            self.processing = false
+            
+            if let error = ServerError(error) {
+                self.handleError(error)
             }
             else {
                 DataController.instance.managedObjectContext.deleteObject(self.entity!)

@@ -44,7 +44,7 @@ class PlaceDetailViewController: UITableViewController {
         progress!.opacity = 0.0
         progress!.removeFromSuperViewOnHide = true
         progress!.userInteractionEnabled = false
-        progress!.activityIndicatorColor = AirUi.brandColorDark
+        progress!.activityIndicatorColor = Colors.brandColorDark
         progress!.show(true)
 	}
 

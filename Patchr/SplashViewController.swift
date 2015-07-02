@@ -16,7 +16,7 @@ class LobbyViewController: UIViewController {
         super.viewWillAppear(animated)
         
         self.view.endEditing(true)
-        self.logo.imageView!.tintColor(AirUi.brandColor)
+        self.logo.imageView!.tintColor(Colors.brandColor)
         self.navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     
@@ -50,13 +50,16 @@ extension UIWindow {
         UIView.transitionWithView(self,
             duration: 0.65,
             options: UIViewAnimationOptions.TransitionCrossDissolve,
-            animations: { () -> Void in
+            animations: {
+                () -> Void in
+                
                 // The animation enabling/disabling are to address a status bar
                 // issue on the destination view controller. http://stackoverflow.com/a/8505364/2247399
                 let oldState = UIView.areAnimationsEnabled()
                 UIView.setAnimationsEnabled(false)
                 self.rootViewController = rootViewController
                 UIView.setAnimationsEnabled(oldState)
-            }) { (_) -> Void in }
+            })
+            { (_) -> Void in } // Trailing closure
     }
 }

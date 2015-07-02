@@ -66,7 +66,7 @@ class QueryTableViewController: FetchedResultsTableViewController {
         
         /* Hookup refresh control */
 		let refreshControl = UIRefreshControl()
-        refreshControl.tintColor = AirUi.brandColor
+        refreshControl.tintColor = Colors.brandColor
 		refreshControl.addTarget(self, action: "pullToRefreshAction:", forControlEvents: UIControlEvents.ValueChanged)
 		self.refreshControl = refreshControl
         
@@ -77,7 +77,8 @@ class QueryTableViewController: FetchedResultsTableViewController {
         progress!.opacity = 0.0
         progress!.removeFromSuperViewOnHide = false
         progress!.userInteractionEnabled = false
-        progress!.activityIndicatorColor = AirUi.brandColorDark
+        progress!.activityIndicatorColor = Colors.brandColorDark
+        progress!.hide(false)
 	}
 
 	override func viewWillAppear(animated: Bool) {
@@ -92,8 +93,15 @@ class QueryTableViewController: FetchedResultsTableViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         if !self.query().executedValue {
-            refreshQueryItems()
+            self.refreshQueryItems(force: false)
         }
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.refreshControl?.endRefreshing()
+        self.progress!.hide(true)
+        self.tableView.finishInfiniteScroll()
     }
     
 	override func fetchedResultsControllerForViewController(viewController: UIViewController) -> NSFetchedResultsController {
@@ -105,30 +113,43 @@ class QueryTableViewController: FetchedResultsTableViewController {
     *--------------------------------------------------------------------------------------------*/
 
 	func pullToRefreshAction(sender: AnyObject?) -> Void {
-        refreshQueryItems(force: true)
+        self.refreshQueryItems(force: true)
 	}
 
     func refreshQueryItems(force: Bool = false, paging: Bool = false) {
         
+        if !self.query().executedValue {
+            self.progress?.show(true)
+        }
+        
         DataController.instance.refreshItemsFor(query(), force: force, paging: paging, completion: {
-            (results, query, error) -> Void in
+            [weak self] results, query, error in
             
             // Delay seems to be necessary to avoid visual glitch with UIRefreshControl
             delay(0.5, {
                 () -> () in
-                self.refreshControl?.endRefreshing()
-                self.progress!.hide(true)
-                self.query().executedValue = true
-                self.query().offsetValue = Int32(self.fetchedResultsController.fetchedObjects!.count)
                 
-                self.tableView.finishInfiniteScroll()
+                self?.refreshControl?.endRefreshing()
+                self?.progress!.hide(true)
+                self?.tableView.finishInfiniteScroll()
+                
                 if query.moreValue {
-                    self.tableView.addInfiniteScrollWithHandler({(scrollView) -> Void in
-                        self.refreshQueryItems(force: false, paging: true)
+                    self?.tableView.addInfiniteScrollWithHandler({(scrollView) -> Void in
+                        self?.refreshQueryItems(force: false, paging: true)
                     })
                 }
                 else {
-                    self.tableView.removeInfiniteScroll()
+                    self?.tableView.removeInfiniteScroll()
+                }
+                
+                if let error = ServerError(error) {
+                    self?.handleError(error)
+                }
+                else {
+                    self?.query().executedValue = true
+                    if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
+                        self?.query().offsetValue = Int32(fetchedObjects.count)
+                    }
                 }
                 return
             })
@@ -136,15 +157,11 @@ class QueryTableViewController: FetchedResultsTableViewController {
     }
     
 	@IBAction func unwindFromCreatePatch(segue: UIStoryboardSegue) {
-        refreshQueryItems()
-	}
-
-	@IBAction func unwindFromDeletePatch(segue: UIStoryboardSegue) {
-        //refreshQueryItems()
+        self.refreshQueryItems(force: false)
 	}
 
     @IBAction func unwindFromPatchEdit(segue: UIStoryboardSegue) {
-        refreshQueryItems()
+        self.refreshQueryItems(force: false)
     }
 }
 

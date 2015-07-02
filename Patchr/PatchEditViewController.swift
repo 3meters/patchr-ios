@@ -32,17 +32,21 @@ class PatchEditViewController: EntityEditViewController {
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
     
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        self.collection = "patches"
+        self.defaultPhotoName = "imgDefaultPatch"
+    }
+    
 	override func viewDidLoad() {
 		super.viewDidLoad()
         
-        self.collection = "patches"
-        self.defaultPhotoName = "imgDefaultPatch"
 		self.patchSwitchView = UISwitch()
-        
 		self.publicCell.accessoryView = patchSwitchView
         self.descriptionField.placeholder = "Tell people about your patch"
         
         if editMode {
+            
             self.progressStartLabel = "Updating"
             self.progressFinishLabel = "Updated!"
             navigationItem.title = LocalizedString("Edit patch")
@@ -53,10 +57,9 @@ class PatchEditViewController: EntityEditViewController {
             var saveButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
             self.navigationItem.rightBarButtonItems = [saveButton, spacer, deleteButton]
             
-            /* Pull state from patch we are editing */
-            bind()
         }
         else {
+            
             self.progressStartLabel = "Patching"
             self.progressFinishLabel = "Activated!"
             navigationItem.title = LocalizedString("Make patch")
@@ -66,12 +69,8 @@ class PatchEditViewController: EntityEditViewController {
                 updateLocation(loc)
             }
             
-            /* Photo default */
-            photo = UIImage(named: "imgDefaultPatch")!
-            usingPhotoDefault = true
-            
             /* Big do it button */
-            createButton.targetForAction(Selector("doneAction"), withSender: nil)
+            createButton.targetForAction(Selector("doneAction:"), withSender: nil)
             
             /* Public by default */
             patchSwitchView.on = true
@@ -80,6 +79,8 @@ class PatchEditViewController: EntityEditViewController {
             var saveButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
             self.navigationItem.rightBarButtonItems = [saveButton]
 		}
+        
+        bind()
 	}
 
     /*--------------------------------------------------------------------------------------------
@@ -101,29 +102,27 @@ class PatchEditViewController: EntityEditViewController {
     override func bind() {
         super.bind()
         
-        let patch = entity as! Patch
-        
-        /* Visibility */
-        
-        visibility = patch.visibility! ?? "private"
-        
-        /* Location */
-        
-        if let loc = patch.location {
-            updateLocation(loc.locationValue)
-        }
-        
-        /* Type */
-        
-        // Slight hack. Because the UI isn't displayed yet, the cells I am using to back
-        // the patch type aren't loaded yet. They'll be loaded on the next turn of the runloop
-        // so do this later.
-        
-        if patch.type != nil {
-            dispatch_async(dispatch_get_main_queue()) {
-                self.type = (patch.type)!
+        if let patch = entity as? Patch {
+            
+            /* Visibility */
+            visibility = patch.visibility! ?? "private"
+            
+            /* Location */
+            if let loc = patch.location {
+                updateLocation(loc.locationValue)
             }
-        }
+            
+            /* Type */
+            
+            // Slight hack. Because the UI isn't displayed yet, the cells I am using to back
+            // the patch type aren't loaded yet. They'll be loaded on the next turn of the runloop
+            // so do this later.
+            if patch.type != nil {
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.type = (patch.type)!
+                }
+            }
+        }        
     }
     
     override func gather(parameters: NSMutableDictionary) -> NSMutableDictionary {
@@ -204,7 +203,11 @@ class PatchEditViewController: EntityEditViewController {
         location = loc
         CLGeocoder().reverseGeocodeLocation(loc) {  // Requires network
             placemarks, error in
-            if error == nil {
+            
+            if let error = ServerError(error) {
+                self.handleError(error)
+            }
+            else {
                 if placemarks.count > 0 {
                     let pm = placemarks[0] as! CLPlacemark
                     self.locationCell.detailTextLabel?.text = pm.name
@@ -357,6 +360,6 @@ extension PatchEditViewController: UITableViewDelegate{
     private func textViewHeightForRowAtIndexPath(indexPath: NSIndexPath) -> CGFloat {
         let textViewWidth: CGFloat = descriptionField!.frame.size.width
         let size: CGSize = descriptionField.sizeThatFits(CGSizeMake(textViewWidth, CGFloat(FLT_MAX)))
-        return size.height;
+        return size.height + 48;
     }
 }

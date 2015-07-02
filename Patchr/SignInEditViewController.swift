@@ -54,13 +54,11 @@ class SignInEditViewController: UITableViewController, UITextFieldDelegate {
             
             self.processing = false
             
-            if let serverError = ServerError(error) {
-                progress.hide(true)
-                self.Alert(serverError.message)
+            progress.hide(true, afterDelay: 1.0)
+            if let error = ServerError(error) {
+                self.handleError(error)
             }
-            else {
-                progress.hide(true, afterDelay: 1.0)
-                
+            else {                
                 // Store email address
                 NSUserDefaults.standardUserDefaults().setObject(self.emailField.text, forKey: PatchrUserDefaultKey("userEmail"))
                 NSUserDefaults.standardUserDefaults().synchronize()

@@ -46,12 +46,11 @@ class PasswordEditViewController: UITableViewController, UITextFieldDelegate {
                 
             self.processing = false
                 
-            if let serverError = ServerError(error) {
-                progress.hide(true)
-                self.Alert(serverError.message)
+            progress.hide(true, afterDelay: 1.0)
+            if let error = ServerError(error) {
+                self.handleError(error)
             }
             else {
-                progress.hide(true, afterDelay: 1.0)
                 self.dismissViewControllerAnimated(true, completion: nil)
                 progress.mode = MBProgressHUDMode.Text
                 progress.labelText = "Password changed"

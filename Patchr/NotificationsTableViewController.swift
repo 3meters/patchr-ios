@@ -16,6 +16,7 @@ class NotificationsTableViewController: QueryTableViewController {
 	private var messageDateFormatter: NSDateFormatter!
 	private var selectedPatch:        Patch?
 	private var selectedMessage:      Message?
+    private var selectedEntityId:     String?
 	private var _query:               Query!
     
 	override func query() -> Query {
@@ -104,37 +105,45 @@ class NotificationsTableViewController: QueryTableViewController {
 		else if notification.type == "share" {
 			cell.iconImageView.image = UIImage(named: "imgShareLight")
 		}
-        cell.iconImageView.tintColor(AirUi.brandColor)
+        cell.iconImageView.tintColor(Colors.brandColor)
 	}
 
     func segueWith(targetId: String?, parentId: String?, refreshEntities: Bool = false) {
         if targetId == nil { return }
         
-        DataController.instance.withEntityId(targetId!, refresh: refreshEntities) {
-            (entity) -> Void in
-            
-            if let patch = entity as? Patch {
-                self.selectedPatch = patch
-                self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
-            }
-            else if let message = entity as? Message {
-                self.selectedMessage = message
-                self.performSegueWithIdentifier("MessageDetailSegue", sender: self)
-            }
-            else {
-                // Try again with the parentId.
-                if parentId == nil {
-                    return
-                }
-                DataController.instance.withEntityId(parentId!, refresh: refreshEntities, completion: {
-                    (entity) -> Void in
-                    if let patch = entity as? Patch {
-                        self.selectedPatch = patch
-                        self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
-                    }
-                })
-            }
+        self.selectedEntityId = targetId
+        if targetId!.hasPrefix("pa.") {
+            self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
         }
+        else if targetId!.hasPrefix("me.") {
+            self.performSegueWithIdentifier("MessageDetailSegue", sender: self)
+        }
+        
+//        DataController.instance.withEntityId(targetId!, refresh: refreshEntities) {
+//            (entity) -> Void in
+//            
+//            if let patch = entity as? Patch {
+//                self.selectedPatch = patch
+//                self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
+//            }
+//            else if let message = entity as? Message {
+//                self.selectedMessage = message
+//                self.performSegueWithIdentifier("MessageDetailSegue", sender: self)
+//            }
+//            else {
+//                // Try again with the parentId.
+//                if parentId == nil {
+//                    return
+//                }
+//                DataController.instance.withEntityId(parentId!, refresh: refreshEntities, completion: {
+//                    (entity) -> Void in
+//                    if let patch = entity as? Patch {
+//                        self.selectedPatch = patch
+//                        self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
+//                    }
+//                })
+//            }
+//        }
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -146,13 +155,17 @@ class NotificationsTableViewController: QueryTableViewController {
         switch segue.identifier! {
         case "PatchDetailSegue":
             if let controller = segue.destinationViewController as? PatchDetailViewController {
-                controller.patch = self.selectedPatch
-                self.selectedPatch = nil
+                controller.patchId = self.selectedEntityId
+                self.selectedEntityId = nil
+//                controller.patch = self.selectedPatch
+//                self.selectedPatch = nil
             }
         case "MessageDetailSegue":
             if let controller = segue.destinationViewController as? MessageDetailViewController {
-                controller.message = self.selectedMessage
-                self.selectedMessage = nil
+                controller.messageId = self.selectedEntityId
+                self.selectedEntityId = nil
+//                controller.message = self.selectedMessage
+//                self.selectedMessage = nil
             }
         default: ()
         }
@@ -227,9 +240,11 @@ class NotificationsTableViewController: QueryTableViewController {
 extension NotificationsTableViewController: UITableViewDelegate {
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let queryResult  = self.fetchedResultsController.objectAtIndexPath(indexPath) as! QueryItem
-        let notification = queryResult.object as! Notification
-        self.segueWith(notification.targetId, parentId: notification.parentId)
+        if let queryResult  = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
+            if let notification = queryResult.object as? Notification {
+                self.segueWith(notification.targetId, parentId: notification.parentId)
+            }
+        }
     }
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {

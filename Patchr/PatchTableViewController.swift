@@ -59,7 +59,7 @@ class PatchTableViewController: QueryTableViewController {
         super.viewDidLoad()
         
         /* A bit of UI tweaking */
-        self.tableView.backgroundColor = AirUi.windowColor
+        self.tableView.backgroundColor = Colors.windowColor
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
         
         /* Add a little bit of room at the bottom of the table */
@@ -119,7 +119,7 @@ class PatchTableViewController: QueryTableViewController {
         }
         
         if cell.visibility != nil {
-            cell.visibility?.tintColor(AirUi.brandColor)
+            cell.visibility?.tintColor(Colors.brandColor)
             cell.visibility.hidden = (patch.visibility == "public")
         }
         
@@ -186,7 +186,7 @@ class PatchTableViewController: QueryTableViewController {
 					self.selectedPatch = nil
 				}
 			case "MapViewSegue":
-				if let controller = segue.destinationViewController as? FetchedResultsMapViewController {
+				if let controller = segue.destinationViewController as? PatchTableMapViewController {
 					controller.fetchRequest = self.fetchedResultsController.fetchRequest
 				}
 			default: ()

@@ -28,7 +28,6 @@ import AVFoundation
  */
 
 public class Proxibase {
-    
 	public typealias ProxibaseCompletionBlock = (response:AnyObject?, error:NSError?) -> Void
 	public typealias S3UploadCompletionBlock = (/*result*/AnyObject?, NSError?) -> Void
 
@@ -37,11 +36,11 @@ public class Proxibase {
 
 	private let PatchrS3Key    = "AKIAIYU2FPHC2AOUG3CA"
 	private let PatchrS3Secret = "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"
-    
-    let pageSizeDefault: Int = 20
-    let pageSizeNearby: Int = 50
-    let pageSizeExplore: Int = 20
-    let pageSizeNotifications: Int = 20
+
+	let pageSizeDefault:       Int = 20
+	let pageSizeNearby:        Int = 50
+	let pageSizeExplore:       Int = 20
+	let pageSizeNotifications: Int = 20
 
 	let bucketInfo: [S3Bucket:(name:String, source:String)] = [
 			.Users: ("aircandi-users", "aircandi.users"),
@@ -68,7 +67,7 @@ public class Proxibase {
 
 	required public init() {
 		let userDefaults = NSUserDefaults.standardUserDefaults()
-        
+
 		var serverURI = userDefaults.stringForKey(PatchrUserDefaultKey("serverURI"))
 
 		if serverURI == nil {
@@ -78,6 +77,7 @@ public class Proxibase {
 
 		sessionManager = AFHTTPSessionManager(baseURL: NSURL(string: serverURI!))
 		sessionManager.requestSerializer = AFJSONRequestSerializer(writingOptions: nil)
+        sessionManager.requestSerializer.timeoutInterval = NSTimeInterval(TIMEOUT_REQUEST)
 		sessionManager.responseSerializer = JSONResponseSerializerWithData()
 	}
 
@@ -85,202 +85,211 @@ public class Proxibase {
 	 * PUBLIC: Fetch one
 	 *--------------------------------------------------------------------------------------------*/
 
-    public func fetchPatchById(entityId: String, criteria: [String:AnyObject], completion: ProxibaseCompletionBlock) {
-        
-        var parameters: [String:AnyObject] = [:]
-        Patch.extras(&parameters)
-        if !criteria.isEmpty {
-            parameters["query"] = criteria
-        }
+	public func fetchPatchById(entityId: String, criteria: [String:AnyObject], completion: ProxibaseCompletionBlock) {
+
+		var parameters: [String:AnyObject] = [:]
+		Patch.extras(&parameters)
+		if !criteria.isEmpty {
+			parameters["query"] = criteria
+		}
 		performPOSTRequestFor("find/patches/\(entityId)", parameters: parameters, completion: completion)
 	}
 
 	public func fetchMessageById(messageId: String, criteria: [String:AnyObject], completion: ProxibaseCompletionBlock) {
-        
-        var parameters: [String:AnyObject] = [:]
-        Message.extras(&parameters)
-        if !criteria.isEmpty {
-            parameters["query"] = criteria
-        }
+
+		var parameters: [String:AnyObject] = [:]
+		Message.extras(&parameters)
+		if !criteria.isEmpty {
+			parameters["query"] = criteria
+		}
 		performPOSTRequestFor("find/messages/\(messageId)", parameters: parameters, completion: completion)
 	}
 
 	public func fetchUserById(userId: String, criteria: [String:AnyObject], completion: ProxibaseCompletionBlock) {
-        
-        var parameters: [String:AnyObject] = [:]
-        User.extras(&parameters)
-        if !criteria.isEmpty {
-            parameters["query"] = criteria
-        }
+
+		var parameters: [String:AnyObject] = [:]
+		User.extras(&parameters)
+		if !criteria.isEmpty {
+			parameters["query"] = criteria
+		}
 		performPOSTRequestFor("find/users/\(userId)", parameters: parameters, completion: completion)
 	}
 
-    public func fetchPlaceById(id: String, criteria: [String:AnyObject], completion: ProxibaseCompletionBlock) {
-        
-        var parameters: [String:AnyObject] = [:]
-        Place.extras(&parameters)
-        if !criteria.isEmpty {
-            parameters["query"] = criteria
-        }
-        performPOSTRequestFor("find/places/\(id)", parameters: parameters, completion: completion)
-    }
-    
-    public func fetchLinkFromId(fromID: String, toID: String, linkType: LinkType, completion: ProxibaseCompletionBlock) {
-        /*
-        * Currently only used to get the state of the current user watching or liking a patch.
-        * TODO: Can probably make this part of the patch fetch.
-        */
-        let query: NSDictionary	= ["query": ["_from": fromID, "_to": toID, "type": linkType.rawValue]]
-        performGETRequestFor("find/links", parameters: query, completion: completion)
-    }
-    
-    /*--------------------------------------------------------------------------------------------
-    * PUBLIC: Fetch collection
-    *--------------------------------------------------------------------------------------------*/
-    
+	public func fetchPlaceById(id: String, criteria: [String:AnyObject], completion: ProxibaseCompletionBlock) {
+
+		var parameters: [String:AnyObject] = [:]
+		Place.extras(&parameters)
+		if !criteria.isEmpty {
+			parameters["query"] = criteria
+		}
+		performPOSTRequestFor("find/places/\(id)", parameters: parameters, completion: completion)
+	}
+
+	public func fetchLinkFromId(fromID: String, toID: String, linkType: LinkType, completion: ProxibaseCompletionBlock) {
+		/*
+		* Currently only used to get the state of the current user watching or liking a patch.
+		* TODO: Can probably make this part of the patch fetch.
+		*/
+		let query: NSDictionary = ["query": ["_from": fromID, "_to": toID, "type": linkType.rawValue]]
+		performGETRequestFor("find/links", parameters: query, completion: completion)
+	}
+
+	/*--------------------------------------------------------------------------------------------
+	* PUBLIC: Fetch collection
+	*--------------------------------------------------------------------------------------------*/
+
 	public func fetchNearbyPatches(location: CLLocationCoordinate2D?, radius: UInt = 10000, skip: Int = 0, completion: ProxibaseCompletionBlock) {
 
 		if let loc = location as CLLocationCoordinate2D! {
-            var parameters: [String:AnyObject] = [
-                "location": [
-                    "lat": loc.latitude,
-                    "lng": loc.longitude
-                ],
-                "radius": radius,
-                "limit": pageSizeNearby,
-                "skip": skip,
-                "more": false,
-                "rest": true,
-            ]
-            Patch.extras(&parameters)
-            performPOSTRequestFor("patches/near", parameters: parameters, completion: completion)
+			var parameters: [String:AnyObject] = [
+					"location": [
+							"lat": loc.latitude,
+							"lng": loc.longitude
+					],
+					"radius": radius,
+					"limit": pageSizeNearby,
+					"skip": skip,
+					"more": false,
+					"rest": true,
+			]
+			Patch.extras(&parameters)
+			performPOSTRequestFor("patches/near", parameters: parameters, completion: completion)
 		}
 	}
 
 	public func fetchNotifications(skip: Int = 0, completion: ProxibaseCompletionBlock) {
-        
-        let parameters = [
-            "limit": pageSizeNotifications,
-            "skip": skip,
-            "more": true,
-        ]
-        performPOSTRequestFor("user/getNotifications", parameters: parameters, completion: completion)
+
+		let parameters = [
+				"limit": pageSizeNotifications,
+				"skip": skip,
+				"more": true,
+		]
+		performPOSTRequestFor("user/getNotifications", parameters: parameters, completion: completion)
 	}
 
 	public func fetchInterestingPatches(location: CLLocationCoordinate2D?, skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
 
-        if let loc = location as CLLocationCoordinate2D! {
-            var parameters: [String:AnyObject] = [
-				"location": [
-                    "lat": loc.latitude,
-                    "lng": loc.longitude
-				],
+        var parameters: [String:AnyObject] = [
                 "limit": pageSizeExplore,
                 "skip": skip,
                 "more": true,
-			]
-            Patch.extras(&parameters)
-			performPOSTRequestFor("patches/interesting", parameters: parameters, completion: completion)
+        ]
+        
+        if let loc = location as CLLocationCoordinate2D! {
+            parameters["location"] = [
+                "lat": loc.latitude,
+                "lng": loc.longitude
+            ]
         }
+
+		Patch.extras(&parameters)
+		performPOSTRequestFor("patches/interesting", parameters: parameters, completion: completion)
 	}
 
-    public func fetchMessagesOwnedByUser(userId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
-        
-        var linked: [String:AnyObject] = ["to": "messages", "type": "create", "limit": pageSizeDefault, "skip": skip, "more": true]
-        var parameters: [String:AnyObject] = [
-            "linked": Message.extras(&linked),
-            "promote": "linked",
-        ]
-        if !criteria.isEmpty {
-            parameters["query"] = criteria
-        }
-        performPOSTRequestFor("find/users/\(userId)", parameters: parameters, completion: completion)
+	public func fetchMessagesOwnedByUser(userId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
+
+		var linked:     [String:AnyObject]
+										   = ["to": "messages", "type": "create", "limit": pageSizeDefault, "skip": skip, "more": true]
+		var parameters: [String:AnyObject] = [
+				"linked": Message.extras(&linked),
+				"promote": "linked",
+		]
+		if !criteria.isEmpty {
+			parameters["query"] = criteria
+		}
+		performPOSTRequestFor("find/users/\(userId)", parameters: parameters, completion: completion)
 	}
 
 	public func fetchMessagesForPatch(patchId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
 
-        var linked: [String:AnyObject] = ["from": "messages", "type": "content", "limit": pageSizeDefault, "skip": skip, "more": true]
-        var parameters: [String:AnyObject] = [
-            "linked": Message.extras(&linked),
-            "promote": "linked",
-        ]
-        if !criteria.isEmpty {
-            parameters["query"] = criteria
-        }
+		var linked:     [String:AnyObject]
+										   = ["from": "messages", "type": "content", "limit": pageSizeDefault, "skip": skip, "more": true]
+		var parameters: [String:AnyObject] = [
+				"linked": Message.extras(&linked),
+				"promote": "linked",
+		]
+		if !criteria.isEmpty {
+			parameters["query"] = criteria
+		}
 		performPOSTRequestFor("find/patches/\(patchId)", parameters: parameters, completion: completion)
 	}
-    
-    public func fetchPatchesOwnedByUser(userId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
-        
-        var linked: [String:AnyObject] = ["to": "patches", "type": "create", "limit": pageSizeDefault, "skip": skip, "more": true]
-        var parameters: [String:AnyObject] = [
-            "linked": Patch.extras(&linked),
-            "promote": "linked",
-        ]
-        if !criteria.isEmpty {
-            parameters["query"] = criteria
-        }
-        performPOSTRequestFor("find/users/\(userId)", parameters: parameters, completion: completion)
-    }
 
-    public func fetchPatchesUserIsWatching(userId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
-        
-        var linked: [String:AnyObject] = ["to": "patches", "type": "watch", "limit": pageSizeDefault, "skip": skip, "more": true, "linkFields": "type,enabled"]
-        var parameters: [String:AnyObject] = [
-            "linked": Patch.extras(&linked),
-            "promote": "linked",
-        ]
-        if !criteria.isEmpty {
-            parameters["query"] = criteria
-        }
-        performPOSTRequestFor("find/users/\(userId)", parameters: parameters, completion: completion)
-    }
-    
+	public func fetchPatchesOwnedByUser(userId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
+
+		var linked:     [String:AnyObject]
+										   = ["to": "patches", "type": "create", "limit": pageSizeDefault, "skip": skip, "more": true]
+		var parameters: [String:AnyObject] = [
+				"linked": Patch.extras(&linked),
+				"promote": "linked",
+		]
+		if !criteria.isEmpty {
+			parameters["query"] = criteria
+		}
+		performPOSTRequestFor("find/users/\(userId)", parameters: parameters, completion: completion)
+	}
+
+	public func fetchPatchesUserIsWatching(userId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
+
+		var linked:     [String:AnyObject]
+										   = ["to": "patches", "type": "watch", "limit": pageSizeDefault, "skip": skip, "more": true, "linkFields": "type,enabled"]
+		var parameters: [String:AnyObject] = [
+				"linked": Patch.extras(&linked),
+				"promote": "linked",
+		]
+		if !criteria.isEmpty {
+			parameters["query"] = criteria
+		}
+		performPOSTRequestFor("find/users/\(userId)", parameters: parameters, completion: completion)
+	}
+
 	public func fetchUsersThatLikePatch(patchId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
-        
+
 		/* Used to show a list of users that currently like a patch. */
-        var linked: [String:AnyObject] = ["from": "users", "type": "like", "limit": pageSizeDefault, "skip": skip, "more": true]
-        var parameters: [String:AnyObject] = [
-            "linked": User.extras(&linked),
-            "promote": "linked",
-        ]
-        if !criteria.isEmpty {
-            parameters["query"] = criteria
-        }
+		var linked:     [String:AnyObject]
+										   = ["from": "users", "type": "like", "limit": pageSizeDefault, "skip": skip, "more": true]
+		var parameters: [String:AnyObject] = [
+				"linked": User.extras(&linked),
+				"promote": "linked",
+		]
+		if !criteria.isEmpty {
+			parameters["query"] = criteria
+		}
 		performPOSTRequestFor("find/patches/\(patchId)", parameters: parameters, completion: completion)
 	}
 
-    public func fetchUsersThatWatchPatch(patchId: String, isOwner: Bool = false, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
-        
+	public func fetchUsersThatWatchPatch(patchId: String, isOwner: Bool = false, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
+
 		/* Used to show a list of users that are watching a patch or have a pending watch request for the patch. */
-        var linked: [String:AnyObject] = ["from": "users", "type": "watch", "limit": pageSizeDefault, "skip": skip, "more": true, "linkFields": "type,enabled"]
-        if !isOwner {
-            linked["filter"] = ["enabled": true]
-        }
-        var parameters: [String:AnyObject] = [
-            "linked": User.extras(&linked),
-            "promote": "linked",
-        ]
-        if !criteria.isEmpty {
-            parameters["query"] = criteria
-        }
+		var linked: [String:AnyObject]
+		= ["from": "users", "type": "watch", "limit": pageSizeDefault, "skip": skip, "more": true, "linkFields": "type,enabled"]
+		if !isOwner {
+			linked["filter"] = ["enabled": true]
+		}
+		var parameters: [String:AnyObject] = [
+				"linked": User.extras(&linked),
+				"promote": "linked",
+		]
+		if !criteria.isEmpty {
+			parameters["query"] = criteria
+		}
 		performPOSTRequestFor("find/patches/\(patchId)", parameters: parameters, completion: completion)
 	}
 
-    public func fetchUsersThatLikeMessage(messageId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
-        
-        /* Used to show a list of users that currently like a message. */
-        var linked: [String:AnyObject] = ["from": "users", "type": "like", "limit": pageSizeDefault, "skip": skip, "more": true]
-        var parameters: [String:AnyObject] = [
-            "linked": User.extras(&linked),
-            "promote": "linked",
-        ]
-        if !criteria.isEmpty {
-            parameters["query"] = criteria
-        }
-        performPOSTRequestFor("find/messages/\(messageId)", parameters: parameters, completion: completion)
-    }
-    
+	public func fetchUsersThatLikeMessage(messageId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
+
+		/* Used to show a list of users that currently like a message. */
+		var linked:     [String:AnyObject]
+										   = ["from": "users", "type": "like", "limit": pageSizeDefault, "skip": skip, "more": true]
+		var parameters: [String:AnyObject] = [
+				"linked": User.extras(&linked),
+				"promote": "linked",
+		]
+		if !criteria.isEmpty {
+			parameters["query"] = criteria
+		}
+		performPOSTRequestFor("find/messages/\(messageId)", parameters: parameters, completion: completion)
+	}
+
 	/*--------------------------------------------------------------------------------------------
 	 * PUBLIC: Modify
 	 *--------------------------------------------------------------------------------------------*/
@@ -294,12 +303,12 @@ public class Proxibase {
 		let parameters = ["email": email, "password": password, "installId": installationIdentifier]
 		sessionManager.POST("auth/signin", parameters: parameters,
 							success: {
-								_, response in
+								dataTask, response in
 								UserController.instance.handleSuccessfulSignInResponse(response)
 								completion(response: response, error: nil)
 							},
 							failure: {
-								_, error in
+								dataTask, error in
 								completion(response: ServerError(error)?.response, error: error)
 							})
 	}
@@ -329,45 +338,47 @@ public class Proxibase {
 		}
 	}
 
-    public func updatePassword(userId: NSString, password: NSString, passwordNew: NSString,  completion: ProxibaseCompletionBlock) {
-        let parameters = ["userId": userId, "oldPassword": password, "newPassword": passwordNew, "installId": installationIdentifier]
-        sessionManager.POST("user/changepw", parameters: authenticatedParameters(parameters),
-            success: {
-                _, response in
-                completion(response: response, error: nil)
-            },
-            failure: {
-                _, error in
-                completion(response: ServerError(error)?.response, error: error)
-        })
-    }
-    
-    public func requestPasswordReset(email: NSString, completion: ProxibaseCompletionBlock) {
-        let parameters = ["email": email, "installId": installationIdentifier]
-        sessionManager.POST("user/reqresetpw", parameters: parameters,
-            success: {
-                _, response in
-                completion(response: response, error: nil)
-            },
-            failure: {
-                _, error in
-                completion(response: ServerError(error)?.response, error: error)
-        })
-    }
-    
-    public func resetPassword(password: NSString, userId: NSString, sessionKey: NSString, completion: ProxibaseCompletionBlock) {
-        let parameters = ["password": password, "user": userId, "session": sessionKey, "installId": installationIdentifier]
-        sessionManager.POST("user/resetpw", parameters: parameters,
-            success: {
-                _, response in
-                completion(response: response, error: nil)
-            },
-            failure: {
-                _, error in
-                completion(response: ServerError(error)?.response, error: error)
-        })
-    }
-    
+	public func updatePassword(userId: NSString, password: NSString, passwordNew: NSString, completion: ProxibaseCompletionBlock) {
+		let parameters
+		= ["userId": userId, "oldPassword": password, "newPassword": passwordNew, "installId": installationIdentifier]
+		sessionManager.POST("user/changepw", parameters: authenticatedParameters(parameters),
+							success: {
+								dataTask, response in
+								completion(response: response, error: nil)
+							},
+							failure: {
+								dataTask, error in
+								completion(response: ServerError(error)?.response, error: error)
+							})
+	}
+
+	public func requestPasswordReset(email: NSString, completion: ProxibaseCompletionBlock) {
+		let parameters = ["email": email, "installId": installationIdentifier]
+		sessionManager.POST("user/reqresetpw", parameters: parameters,
+							success: {
+								dataTask, response in
+								completion(response: response, error: nil)
+							},
+							failure: {
+								dataTask, error in
+								completion(response: ServerError(error)?.response, error: error)
+							})
+	}
+
+	public func resetPassword(password: NSString, userId: NSString, sessionKey: NSString, completion: ProxibaseCompletionBlock) {
+		let parameters
+		= ["password": password, "user": userId, "session": sessionKey, "installId": installationIdentifier]
+		sessionManager.POST("user/resetpw", parameters: parameters,
+							success: {
+								dataTask, response in
+								completion(response: response, error: nil)
+							},
+							failure: {
+								dataTask, error in
+								completion(response: ServerError(error)?.response, error: error)
+							})
+	}
+
 	public func insertUser(name: String, email: String, password: String, parameters: NSDictionary? = nil, completion: ProxibaseCompletionBlock) {
 		/*
 		 * Create a new user with the provided name, email and password.
@@ -517,38 +528,38 @@ public class Proxibase {
 			}
 		}
 	}
-    
-    /*--------------------------------------------------------------------------------------------
-    * PUBLIC: Bing
-    *--------------------------------------------------------------------------------------------*/
-    
-    public func loadSearchImages(query: String, limit: Int64 = 50, offset: Int64 = 0, maxImageSize: Int = 500000, maxDimen: Int = 1280, completion: (response:AnyObject?, error:NSError?) -> Void) {
-        
-        if let bingSessionManager: AFHTTPSessionManager = AFHTTPSessionManager(baseURL: NSURL(string: URI_PROXIBASE_SEARCH_IMAGES)) {
-            
-            let requestSerializer: AFJSONRequestSerializer = AFJSONRequestSerializer(writingOptions: nil)
-            requestSerializer.setAuthorizationHeaderFieldWithUsername(nil, password: BING_ACCESS_KEY)
-            bingSessionManager.requestSerializer = requestSerializer
-            bingSessionManager.responseSerializer = JSONResponseSerializerWithData()
-            
-            var queryEncoded: String = query.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
-            var bingUrl = "Image?Query=%27" + queryEncoded + "%27"
-                + "&Market=%27en-US%27&Adult=%27Strict%27&ImageFilters=%27size%3alarge%27"
-                + "&$top=\(limit + 1)"
-                + "&$skip=\(offset)"
-                + "&$format=Json"
-            
-            bingSessionManager.GET(bingUrl, parameters: nil,
-                success: {
-                    _, response in
-                    completion(response: response, error: nil)
-                },
-                failure: {
-                    _, error in
-                    completion(response: ServerError(error)?.response, error: error)
-            })
-        }
-    }
+
+	/*--------------------------------------------------------------------------------------------
+	* PUBLIC: Bing
+	*--------------------------------------------------------------------------------------------*/
+
+	public func loadSearchImages(query: String, limit: Int64 = 50, offset: Int64 = 0, maxImageSize: Int = 500000, maxDimen: Int = 1280, completion: (response:AnyObject?, error:NSError?) -> Void) {
+
+		if let bingSessionManager: AFHTTPSessionManager = AFHTTPSessionManager(baseURL: NSURL(string: URI_PROXIBASE_SEARCH_IMAGES)) {
+			let requestSerializer: AFJSONRequestSerializer = AFJSONRequestSerializer(writingOptions: nil)
+			requestSerializer.setAuthorizationHeaderFieldWithUsername(nil, password: BING_ACCESS_KEY)
+			bingSessionManager.requestSerializer = requestSerializer
+			bingSessionManager.responseSerializer = JSONResponseSerializerWithData()
+
+			var queryEncoded: String
+						= query.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+			var bingUrl = "Image?Query=%27" + queryEncoded + "%27"
+					+ "&Market=%27en-US%27&Adult=%27Strict%27&ImageFilters=%27size%3alarge%27"
+					+ "&$top=\(limit + 1)"
+					+ "&$skip=\(offset)"
+					+ "&$format=Json"
+
+			bingSessionManager.GET(bingUrl, parameters: nil,
+								   success: {
+									   dataTask, response in
+									   completion(response: response, error: nil)
+								   },
+								   failure: {
+									   dataTask, error in
+									   completion(response: ServerError(error)?.response, error: error)
+								   })
+		}
+	}
 
 	/*--------------------------------------------------------------------------------------------
 	 * User and install
@@ -573,16 +584,16 @@ public class Proxibase {
 	}
 
 	private func authenticatedParameters(var parameters: NSDictionary) -> NSDictionary {
-        /* Skip if already includes a sessionKey */
-        if parameters["session"] == nil {
-            if UserController.instance.authenticated {
-                let userId         = UserController.instance.userId as NSString?
-                let sessionKey     = UserController.instance.sessionKey as NSString?
-                var authParameters = NSMutableDictionary(dictionary: ["user": userId! as NSString, "session": sessionKey! as NSString])
-                authParameters.addEntriesFromDictionary(parameters as [NSObject:AnyObject])
-                parameters = authParameters
-            }
-        }
+		/* Skip if already includes a sessionKey */
+		if parameters["session"] == nil {
+			if UserController.instance.authenticated {
+				let userId         = UserController.instance.userId as NSString?
+				let sessionKey     = UserController.instance.sessionKey as NSString?
+				var authParameters = NSMutableDictionary(dictionary: ["user": userId! as NSString, "session": sessionKey! as NSString])
+				authParameters.addEntriesFromDictionary(parameters as [NSObject:AnyObject])
+				parameters = authParameters
+			}
+		}
 		return parameters
 	}
 
@@ -600,17 +611,17 @@ public class Proxibase {
 
 		convertLocationProperties(properties)
 
-        /* I believe this blocks until completed */
+		/* I believe this blocks until completed */
 		queuePhotoUploadInParameters(properties, queue: queue, bucket: .Images)
 
 		dispatch_async(queue) {
-            /*
-             * If photo parameter is still set to UIImage then s3 upload failed 
-             */
-            if let photo = properties["photo"] as? UIImage {
-                completion(response: nil, error: NSError(domain: "Proxibase", code: 100, userInfo: ["message": "Image save failed"]))
-                return
-            }
+			/*
+			 * If photo parameter is still set to UIImage then s3 upload failed
+			 */
+			if let photo = properties["photo"] as? UIImage {
+				completion(response: nil, error: NSError(domain: "Aws", code: 100, userInfo: ["message": "Image save failed"]))
+				return
+			}
 			let postParameters = ["data": properties]
 			self.performPOSTRequestFor(path, parameters: postParameters, completion: completion)
 		}
@@ -619,11 +630,11 @@ public class Proxibase {
 	private func performPOSTRequestFor(path: NSString, var parameters: NSDictionary, completion: ProxibaseCompletionBlock) {
 		sessionManager.POST(path as String, parameters: authenticatedParameters(parameters),
 							success: {
-								(dataTask, response) -> Void in
+								dataTask, response in
 								completion(response: response, error: nil)
 							},
 							failure: {
-								(dataTask, error) -> Void in
+								dataTask, error in
 								let response = dataTask.response as? NSHTTPURLResponse
 								completion(response: ServerError(error)?.response, error: error)
 							})
@@ -632,11 +643,11 @@ public class Proxibase {
 	private func performGETRequestFor(path: NSString, var parameters: NSDictionary, completion: ProxibaseCompletionBlock) {
 		sessionManager.GET(path as String, parameters: authenticatedParameters(parameters),
 						   success: {
-							   (dataTask, response) -> Void in
+							   dataTask, response in
 							   completion(response: response, error: nil)
 						   },
 						   failure: {
-							   (dataTask, error) -> Void in
+							   dataTask, error in
 							   let response = dataTask.response as? NSHTTPURLResponse
 							   completion(response: ServerError(error)?.response, error: error)
 						   })
@@ -661,48 +672,48 @@ public class Proxibase {
 
 	private func standardPatchLinks() -> [LinkSpec] {
 
-        var links = [
-            //Link(to: .Places, type: .Proximity, fields: "_id,name,photo,schema", linkFields: "_id,type,schema" ), // Place the patch is linked to
-            LinkSpec(from: .Messages, type: .Content, count: true), // Count of messages linked to the patch
-            LinkSpec(from: .Users, type: .Like, count: true), // Count of users that like the patch
-            LinkSpec(from: .Users, type: .Watch, count: true) // Count of users that are watching the patch
-        ]
-        
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        
-        if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
-            links.append(LinkSpec(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId]))
-            links.append(LinkSpec(from: .Users, type: .Watch, fields: "_id,type,enabled,schema", filter: ["_from": userId]))
-            links.append(LinkSpec(from: .Messages, type: .Content, limit: 1, fields: "_id,type,schema", filter: ["_creator": userId]))
-        }
+		var links = [
+				//Link(to: .Places, type: .Proximity, fields: "_id,name,photo,schema", linkFields: "_id,type,schema" ), // Place the patch is linked to
+				LinkSpec(from: .Messages, type: .Content, count: true), // Count of messages linked to the patch
+				LinkSpec(from: .Users, type: .Like, count: true), // Count of users that like the patch
+				LinkSpec(from: .Users, type: .Watch, count: true) // Count of users that are watching the patch
+		]
 
-        return links
+		let userDefaults = NSUserDefaults.standardUserDefaults()
+
+		if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
+			links.append(LinkSpec(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId]))
+			links.append(LinkSpec(from: .Users, type: .Watch, fields: "_id,type,enabled,schema", filter: ["_from": userId]))
+			links.append(LinkSpec(from: .Messages, type: .Content, limit: 1, fields: "_id,type,schema", filter: ["_creator": userId]))
+		}
+
+		return links
 	}
 
 	private func standardMessageLinks() -> [LinkSpec] {
-        
-        var links = [
-            LinkSpec(from: .Users, type: .Like, count: true), // Count of users that like this message
-            LinkSpec(to: .Patches, type: .Content, limit: 1), // Patch the message is linked to
-            LinkSpec(to: .Messages, type: .Share, limit: 1), // Message this message is sharing
-            LinkSpec(to: .Patches, type: .Share, limit: 1), // Patch this message is sharing
-            LinkSpec(to: .Users, type: .Share, limit: 5)   // Users this message is shared with
-        ]
-        
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        
-        if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
-            links.append(LinkSpec(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId]))
-        }
-        
-        return links
+
+		var links = [
+				LinkSpec(from: .Users, type: .Like, count: true), // Count of users that like this message
+				LinkSpec(to: .Patches, type: .Content, limit: 1), // Patch the message is linked to
+				LinkSpec(to: .Messages, type: .Share, limit: 1), // Message this message is sharing
+				LinkSpec(to: .Patches, type: .Share, limit: 1), // Patch this message is sharing
+				LinkSpec(to: .Users, type: .Share, limit: 5)   // Users this message is shared with
+		]
+
+		let userDefaults = NSUserDefaults.standardUserDefaults()
+
+		if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
+			links.append(LinkSpec(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId]))
+		}
+
+		return links
 	}
 
 	private func standardUserLinks() -> [LinkSpec] {
 
 		return [
-			LinkSpec(to: .Patches, type: .Create, count: true), // Count of patches the user created
-			LinkSpec(to: .Patches, type: .Watch, count: true), // Count of patches the user is watching
+				LinkSpec(to: .Patches, type: .Create, count: true), // Count of patches the user created
+				LinkSpec(to: .Patches, type: .Watch, count: true), // Count of patches the user is watching
 		]
 	}
 
@@ -711,25 +722,25 @@ public class Proxibase {
 	 *--------------------------------------------------------------------------------------------*/
 
 	private func queuePhotoUploadInParameters(parameters: NSMutableDictionary, queue: dispatch_queue_t, bucket: S3Bucket) {
-        
+
 		assert(UserController.instance.authenticated, "ProxibaseClient must be authenticated prior to editing the user")
-        
+
 		if let userId = UserController.instance.userId {
 			if let photo = parameters["photo"] as? UIImage {
 				let semaphore = dispatch_semaphore_create(0)
-                
-                var image = photo
-                
-                /* Ensure image is resized before upload */
-                var scalingNeeded: Bool = (photo.size.width > 1280 || photo.size.height > 1280)
-                if (scalingNeeded) {
-                    let rect: CGRect = AVMakeRectWithAspectRatioInsideRect(photo.size, CGRectMake(0,0,1280, 1280))
-                    image = photo.resizeTo(rect.size)
-                }
-                else {
-                    image = photo.normalizedImage()
-                }
-                
+
+				var image               = photo
+
+				/* Ensure image is resized before upload */
+				var scalingNeeded: Bool = (photo.size.width > 1280 || photo.size.height > 1280)
+				if (scalingNeeded) {
+					let rect: CGRect = AVMakeRectWithAspectRatioInsideRect(photo.size, CGRectMake(0, 0, 1280, 1280))
+					image = photo.resizeTo(rect.size)
+				}
+				else {
+					image = photo.normalizedImage()
+				}
+
 				let profilePhotoKey = "\(userId)_\(DateTimeTag()).jpg"
 
 				let photoDict = [
@@ -830,7 +841,6 @@ public class Proxibase {
 					"lng": location.coordinate.longitude]
 		}
 	}
-
 }
 
 /*--------------------------------------------------------------------------------------------
@@ -851,12 +861,12 @@ struct ServerError {
 	*      },
 	*      NSLocalizedDescription: String
 	*/
-	let error:                NSError
-	var response:             NSDictionary?
-	var message:              String           = LocalizedString("Unknown Error")
-	var code:                 ServerStatusCode = .None
-    var status:               Int              = 0
-	var localizedDescription: String           = LocalizedString("(No Description)")
+	let error:       NSError
+	var code:        ServerStatusCode = .None
+	var status:      Int?             = 200
+	var response:    NSDictionary?
+	var message:     String           = LocalizedString("Unknown Error")
+	var description: String           = LocalizedString("(No Description)")
 
 	init?(_ error: NSError?) {
 		if let error = error {
@@ -874,20 +884,19 @@ struct ServerError {
 				if let responseCode = responseDict["code"] as? Float {
 					code = ServerStatusCode(rawValue: responseCode)!
 				}
-                if let responseStatus = responseDict["status"] as? Int {
-                    status = responseStatus
-                }
-			}
-			if let userInfo = userInfoDictionary {
-				if let description = userInfo["NSLocalizedDescription"] as? String {
-					localizedDescription = description
+				if let responseStatus = responseDict["status"] as? Int {
+					status = responseStatus
 				}
 			}
 
-			println("Proxibase Error Summary")
-			println(message)
-			println(code)
-			println(localizedDescription)
+			if let userInfo = userInfoDictionary {
+				if let localizedDescription = userInfo["NSLocalizedDescription"] as? String {
+					description = localizedDescription
+				}
+                if let userMessage = userInfo["message"] as? String {   // Used for s3 failures
+                    message = userMessage
+                }
+			}
 		}
 		else {
 			return nil
@@ -960,72 +969,45 @@ struct ServerResponse {
 	}
 }
 
-extension UIImage {
-    
-    func resizeTo(size:CGSize) -> UIImage {
-        
-        let hasAlpha = false
-        let scale: CGFloat = 1.0 // Automatically use scale factor of main screen
-        
-        UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
-        self.drawInRect(CGRect(origin: CGPointZero, size: size))
-        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        
-        return scaledImage
-    }
-    
-    func normalizedImage() -> UIImage {
-        if self.imageOrientation == UIImageOrientation.Up {
-            return self
-        }
-        UIGraphicsBeginImageContextWithOptions(self.size, true, self.scale)
-        self.drawInRect(CGRect(origin: CGPoint(x: 0, y: 0), size: self.size))
-        let normalizedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-        return normalizedImage;
-    }
-}
-
 public class LinkSpec {
-    
+
 	public var to:           LinkDestination?
 	public var from:         LinkDestination?
 	public var type:         LinkType?
-    public var enabled:      Bool?
+	public var enabled:      Bool?
 	public var limit:        UInt?
 	public var count:        Bool?
-    public var filter:       [NSObject:AnyObject]?
-    public var fields:       AnyObject?
+	public var filter:       [NSObject:AnyObject]?
+	public var fields:       AnyObject?
 	public var linkFields:   AnyObject?
 	public var linkedFilter: [NSObject:AnyObject]?
 	public var subLinks:     [LinkSpec]?
 
-    init(to: LinkDestination, type: LinkType, enabled: Bool? = nil, limit: UInt? = nil, count: Bool? = nil,
-        fields: AnyObject? = nil, filter: [NSObject:AnyObject]? = nil,
-        linkFields: AnyObject? = nil, linkedFilter: [NSObject:AnyObject]? = nil, subLinks: [LinkSpec]? = nil) {
+	init(to: LinkDestination, type: LinkType, enabled: Bool? = nil, limit: UInt? = nil, count: Bool? = nil,
+		 fields: AnyObject? = nil, filter: [NSObject:AnyObject]? = nil,
+		 linkFields: AnyObject? = nil, linkedFilter: [NSObject:AnyObject]? = nil, subLinks: [LinkSpec]? = nil) {
 		self.to = to
 		self.type = type
-        self.enabled = enabled
+		self.enabled = enabled
 		self.limit = limit
 		self.count = count
-        self.fields = fields
-        self.filter = filter
+		self.fields = fields
+		self.filter = filter
 		self.linkFields = linkFields
 		self.linkedFilter = linkedFilter
 		self.subLinks = subLinks
 	}
 
 	init(from: LinkDestination, type: LinkType, enabled: Bool? = nil, limit: UInt? = nil, count: Bool? = nil,
-        fields: AnyObject? = nil, filter: [NSObject:AnyObject]? = nil,
-        linkFields: AnyObject? = nil, linkedFilter: [NSObject:AnyObject]? = nil, subLinks: [LinkSpec]? = nil) {
+		 fields: AnyObject? = nil, filter: [NSObject:AnyObject]? = nil,
+		 linkFields: AnyObject? = nil, linkedFilter: [NSObject:AnyObject]? = nil, subLinks: [LinkSpec]? = nil) {
 		self.from = from
 		self.type = type
-        self.enabled = enabled
+		self.enabled = enabled
 		self.limit = limit
 		self.count = count
-        self.fields = fields
-        self.filter = filter
+		self.fields = fields
+		self.filter = filter
 		self.linkFields = linkFields
 		self.linkedFilter = linkedFilter
 		self.subLinks = subLinks
@@ -1042,21 +1024,21 @@ public class LinkSpec {
 		if type != nil {
 			dictionary["type"] = type!.rawValue
 		}
-        if enabled != nil {
-            dictionary["enabled"] = enabled!
-        }
+		if enabled != nil {
+			dictionary["enabled"] = enabled!
+		}
 		if limit != nil {
 			dictionary["limit"] = limit!
 		}
 		if count != nil {
 			dictionary["count"] = count!
 		}
-        if fields != nil {
-            dictionary["fields"] = fields
-        }
-        if filter != nil {
-            dictionary["filter"] = filter
-        }
+		if fields != nil {
+			dictionary["fields"] = fields
+		}
+		if filter != nil {
+			dictionary["filter"] = filter
+		}
 		if linkFields != nil {
 			dictionary["linkFields"] = linkFields
 		}
@@ -1123,7 +1105,166 @@ enum ServerStatusCode: Float {
 	case FORBIDDEN_USER_PASSWORD_WEAK = 403.21
 	case FORBIDDEN_VIA_API_ONLY       = 403.22
 	case FORBIDDEN_LIMIT_EXCEEDED     = 403.3
-    
-    case NOT_FOUND                    = 404.0
+
+	case NOT_FOUND = 404.0
+}
+
+/**
+HTTP status codes as per http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+The RF2616 standard is completely covered (http://www.ietf.org/rfc/rfc2616.txt)
+*/
+
+enum HTTPStatusCode: Int {
+	// Informational
+	case Continue                      = 100
+	case SwitchingProtocols            = 101
+	case Processing                    = 102
+
+	// Success
+	case OK                            = 200
+	case Created                       = 201
+	case Accepted                      = 202
+	case NonAuthoritativeInformation   = 203
+	case NoContent                     = 204
+	case ResetContent                  = 205
+	case PartialContent                = 206
+	case MultiStatus                   = 207
+	case AlreadyReported               = 208
+	case IMUsed                        = 226
+
+	// Redirections
+	case MultipleChoices               = 300
+	case MovedPermanently              = 301
+	case Found                         = 302
+	case SeeOther                      = 303
+	case NotModified                   = 304
+	case UseProxy                      = 305
+	case SwitchProxy                   = 306
+	case TemporaryRedirect             = 307
+	case PermanentRedirect             = 308
+
+	// Client Errors
+	case BadRequest                    = 400
+	case Unauthorized                  = 401
+	case PaymentRequired               = 402
+	case Forbidden                     = 403
+	case NotFound                      = 404
+	case MethodNotAllowed              = 405
+	case NotAcceptable                 = 406
+	case ProxyAuthenticationRequired   = 407
+	case RequestTimeout                = 408
+	case Conflict                      = 409
+	case Gone                          = 410
+	case LengthRequired                = 411
+	case PreconditionFailed            = 412
+	case RequestEntityTooLarge         = 413
+	case RequestURITooLong             = 414
+	case UnsupportedMediaType          = 415
+	case RequestedRangeNotSatisfiable  = 416
+	case ExpectationFailed             = 417
+	case ImATeapot                     = 418
+	case AuthenticationTimeout         = 419
+	case UnprocessableEntity           = 422
+	case Locked                        = 423
+	case FailedDependency              = 424
+	case UpgradeRequired               = 426
+	case PreconditionRequired          = 428
+	case TooManyRequests               = 429
+	case RequestHeaderFieldsTooLarge   = 431
+	case LoginTimeout                  = 440
+	case NoResponse                    = 444
+	case RetryWith                     = 449
+	case UnavailableForLegalReasons    = 451
+	case RequestHeaderTooLarge         = 494
+	case CertError                     = 495
+	case NoCert                        = 496
+	case HTTPToHTTPS                   = 497
+	case TokenExpired                  = 498
+	case ClientClosedRequest           = 499
+
+	// Server Errors
+	case InternalServerError           = 500
+	case NotImplemented                = 501
+	case BadGateway                    = 502
+	case ServiceUnavailable            = 503
+	case GatewayTimeout                = 504
+	case HTTPVersionNotSupported       = 505
+	case VariantAlsoNegotiates         = 506
+	case InsufficientStorage           = 507
+	case LoopDetected                  = 508
+	case BandwidthLimitExceeded        = 509
+	case NotExtended                   = 510
+	case NetworkAuthenticationRequired = 511
+	case NetworkTimeoutError           = 599
+}
+
+extension HTTPStatusCode {
+	/// Informational - Request received, continuing process.
+	var isInformational: Bool {
+		return inRange(100 ... 200)
+	}
+	/// Success - The action was successfully received, understood, and accepted.
+	var isSuccess: Bool {
+		return inRange(200 ... 299)
+	}
+	/// Redirection - Further action must be taken in order to complete the request.
+	var isRedirection: Bool {
+		return inRange(300 ... 399)
+	}
+	/// Client Error - The request contains bad syntax or cannot be fulfilled.
+	var isClientError: Bool {
+		return inRange(400 ... 499)
+	}
+	/// Server Error - The server failed to fulfill an apparently valid request.
+	var isServerError: Bool {
+		return inRange(500 ... 599)
+	}
+
+	/// :returns: true if the status code is in the provided range, false otherwise.
+	private func inRange(range: Range<Int>) -> Bool {
+		return contains(range, rawValue)
+	}
+}
+
+extension HTTPStatusCode {
+	var localizedReasonPhrase: String {
+		return NSHTTPURLResponse.localizedStringForStatusCode(rawValue)
+	}
+}
+
+// MARK: - Printing
+
+extension HTTPStatusCode: DebugPrintable, Printable {
+	var description: String {
+		return "\(rawValue) - \(localizedReasonPhrase)"
+	}
+	var debugDescription: String {
+		return "HTTPStatusCode:\(description)"
+	}
+}
+
+// MARK: - HTTP URL Response
+
+extension HTTPStatusCode {
+	/// Obtains a possible status code from an optional HTTP URL response.
+	init?(HTTPResponse: NSHTTPURLResponse?) {
+		if let value = HTTPResponse?.statusCode {
+			self.init(rawValue: value)
+		}
+		else {
+			return nil
+		}
+	}
+}
+
+extension NSHTTPURLResponse {
+	var statusCodeValue: HTTPStatusCode? {
+		return HTTPStatusCode(HTTPResponse: self)
+	}
+
+	@availability(iOS, introduced = 7.0)
+	convenience init?(URL url: NSURL, statusCode: HTTPStatusCode, HTTPVersion: String?, headerFields: [NSObject:AnyObject]?) {
+		self.init(URL: url, statusCode: statusCode.rawValue, HTTPVersion: HTTPVersion, headerFields: headerFields)
+	}
 }
 

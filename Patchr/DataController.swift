@@ -139,9 +139,12 @@ class DataController: NSObject {
                 }
                 
                 fetchByEntityType(entityType, withId: id, criteria: criteria, completion: {
-                    (response, error) -> Void in
+                    response, error in
                     
-                    if error != nil {
+                    if let error = ServerError(error) {
+                        if let controller = self.getCurrentViewController() {
+                            controller.handleError(error)
+                        }
                         completion(nil)
                     }
                     else {
@@ -397,8 +400,8 @@ class DataController: NSObject {
             return dataWrapper
         }
         return nil
-    }
-    
+    }    
+
     // Returns the most recently presented UIViewController (visible)
     func getCurrentViewController() -> UIViewController? {
         

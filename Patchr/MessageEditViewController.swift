@@ -12,7 +12,6 @@ class MessageEditViewController: EntityEditViewController {
 
 	var toString: String?	// name of patch this message links to
     var patchId: String?    // id of patch this message links to
-    var photoChosen: Bool = false
     
 	@IBOutlet weak var userPhotoImage:   	UIImageView!
     @IBOutlet weak var userNameLabel:       UILabel!
@@ -24,13 +23,15 @@ class MessageEditViewController: EntityEditViewController {
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        self.collection = "messages"
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.collection = "messages"
-        self.photoGroup!.alpha = 0
-        self.setPhotoButton.alpha = 0
         self.descriptionField!.placeholder = "Message"
         
         if editMode {
@@ -46,7 +47,7 @@ class MessageEditViewController: EntityEditViewController {
             
             /* Box the description to make edit mode more obvious */
             self.descriptionField!.borderWidth = 0.5
-            self.descriptionField!.borderColor = AirUi.windowColor
+            self.descriptionField!.borderColor = Colors.windowColor
             self.descriptionField!.cornerRadius = 4
             self.descriptionField!.textContainer.lineFragmentPadding = 0
             self.descriptionField!.textContainerInset = UIEdgeInsetsMake(8, 8, 8, 8)
@@ -68,8 +69,6 @@ class MessageEditViewController: EntityEditViewController {
                 self.userPhotoImage.setImageWithPhoto(user.getPhotoManaged())
                 self.userNameLabel.text = user.name
             }
-            
-            self.setPhotoButton!.fadeIn()
             
             /* Navigation bar buttons */
             var doneButton   = UIBarButtonItem(title: "Post", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
@@ -99,55 +98,19 @@ class MessageEditViewController: EntityEditViewController {
     *--------------------------------------------------------------------------------------------*/
 
     @IBAction override func clearPhotoAction(sender: AnyObject) {
+        super.clearPhotoAction(sender)
         
-        photo = nil
-        self.photoActive = false
         self.tableView.reloadData() // Triggers row resizing
-        self.setPhotoButton!.fadeIn()
-        self.photoGroup!.fadeOut()
-        
-        if editMode {
-            self.photoDirty = (entity!.photo != photo)
-        }
-        else {
-            self.photoDirty = false
-        }
     }
     
-    @IBAction override func setPhotoAction(sender: AnyObject) {
-        
-        /* This completion block gets called before the controller reappears. */
-        photoChooser.choosePhoto() {
-            [unowned self] image, imageResult in
-            
-            if image != nil {
-                self.photo = image
-            }
-            else {
-                self.photoImage.setImageWithImageResult(imageResult!, animate: true)
-            }
-            
-            self.photoChosen = true
-            self.usingPhotoDefault = false
-            self.photoActive = true
-            
-            if !self.editMode {
-                self.photoDirty = (self.photo != nil)
-            }
-            else {
-                self.photoDirty = (self.entity!.photo != self.photo)
-            }
-            /*
-             * We need to make sure heightForRowAtIndexPath gets fired
-             * to reset the cell height to accomodate the photo. viewDidAppear
-             * has logic to make sure the photo is scrolled into view.
-             */
-            self.tableView.reloadData()
-            
-            /* Toggle display */
-            self.setPhotoButton!.fadeOut()
-            self.photoGroup!.fadeIn()
-        }
+    override func photoChosen(image: UIImage?, imageResult: ImageResult?) {
+        super.photoChosen(image, imageResult: imageResult)
+        /*
+        * We need to make sure heightForRowAtIndexPath gets fired
+        * to reset the cell height to accomodate the photo. viewDidAppear
+        * has logic to make sure the photo is scrolled into view.
+        */
+        self.tableView.reloadData()
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -157,20 +120,10 @@ class MessageEditViewController: EntityEditViewController {
     override func bind() {
         super.bind()
         
-        /* Only called once when controller is loaded */
-        
-        let message = entity as! Message
-        
-        /* User photo */
-        self.userPhotoImage.setImageWithPhoto(message.creator.getPhotoManaged())
-        self.userNameLabel.text = message.creator.name
-        
-        /* Primary photo */
-        if self.photoActive {
-            self.photoGroup!.fadeIn()
-        }
-        else {
-            self.setPhotoButton!.fadeIn()
+        if let message = entity as? Message {
+            /* User */
+            self.userPhotoImage.setImageWithPhoto(message.creator.getPhotoManaged())
+            self.userNameLabel.text = message.creator.name
         }
     }
     
@@ -210,7 +163,7 @@ extension MessageEditViewController: UITableViewDelegate{
         if indexPath.section == 0 {
             if indexPath.row == 1 { // Description
                 var height: CGFloat = textViewHeightForRowAtIndexPath(indexPath)
-                return height < 48 ? 48 : height
+                return height < 96 ? 96 : height
             }
             else if indexPath.row == 2 { // Photo
                 /* Size so photo aspect ratio is 4:3 */
@@ -227,7 +180,7 @@ extension MessageEditViewController: UITableViewDelegate{
     private func textViewHeightForRowAtIndexPath(indexPath: NSIndexPath) -> CGFloat {
         let textViewWidth: CGFloat = descriptionField!.frame.size.width
         let size: CGSize = descriptionField.sizeThatFits(CGSizeMake(textViewWidth, CGFloat(FLT_MAX)))
-        return size.height;
+        return size.height + 16;
     }
 }
 

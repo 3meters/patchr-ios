@@ -20,21 +20,25 @@ class UserEditViewController: EntityEditViewController {
 	/*--------------------------------------------------------------------------------------------
 	* Lifecycle
 	*--------------------------------------------------------------------------------------------*/
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
         self.collection = "users"
         self.defaultPhotoName = "imgDefaultUser"
-        
-        if !editMode {
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+                
+        if editMode {
+            navigationItem.title = LocalizedString("Edit profile")
+            self.progressStartLabel = "Updating"
+            self.progressFinishLabel = "Updated!"
+        }
+        else {
             navigationItem.title = LocalizedString("Register")
             self.progressStartLabel = "Registering"
             self.progressFinishLabel = "Registered!"
-            
-            /* Photo default */
-            photo = UIImage(named: "imgDefaultUser")!
-            usingPhotoDefault = true
             
             /* Use tab order when inserting users */
             nameField.delegate = self
@@ -43,12 +47,8 @@ class UserEditViewController: EntityEditViewController {
                 passwordField.delegate = self
             }
         }
-        else {
-            navigationItem.title = LocalizedString("Edit profile")
-            self.progressStartLabel = "Updating"
-            self.progressFinishLabel = "Updated!"
-            bind()
-        }
+        
+        bind()
     }
         
     override func viewDidAppear(animated: Bool) {
@@ -82,21 +82,24 @@ class UserEditViewController: EntityEditViewController {
         }
         
         DataController.proxibase.insertUser(nameField.text, email: emailField.text, password: passwordField.text, parameters: parameters) {
-            _, error in
+            response, error in
             
             self.processing = false
             
+            /* Make sure ui updates happen on the main thread */
             dispatch_async(dispatch_get_main_queue()) {
-                if let serverError = ServerError(error) {
-                    progress.hide(true)
-                    var message = serverError.message
-                    if serverError.code == .FORBIDDEN_DUPLICATE {
-                        message = LocalizedString("Email address already in use.")
+                
+                progress.hide(true, afterDelay: 1.0)
+                if var error = ServerError(error) {
+                    if error.code == .FORBIDDEN_DUPLICATE {
+                        error.message = LocalizedString("Email address already in use.")
+                        self.handleError(error, errorActionType: .ALERT)
                     }
-                    self.Alert("Registration failure", message: message)
+                    else {
+                        self.handleError(error)
+                    }
                 }
                 else {
-                    progress.hide(true, afterDelay: 1.0)
                     let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
                     let viewController = UIStoryboard(name:"Main", bundle:NSBundle.mainBundle()).instantiateInitialViewController() as! UIViewController;
                     appDelegate.window!.setRootViewController(viewController, animated: true)
@@ -123,12 +126,11 @@ class UserEditViewController: EntityEditViewController {
     override func bind() {
         super.bind()
         
-        let user = entity as! User
-        
-        email = user.email
-        
-        if areaField != nil {
-            area = user.area
+        if let user = entity as? User {
+            self.email = user.email            
+            if self.areaField != nil && user.area != nil {
+                self.area = user.area
+            }
         }
     }
     

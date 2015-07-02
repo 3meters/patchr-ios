@@ -139,13 +139,13 @@ extension UserTableViewController: UserTableViewCellDelegate {
 					approvalSwitch.enabled = false
 					let linkEnabled = approvalSwitch.on
 					DataController.proxibase.enableLinkById(user.link.id_, enabled: linkEnabled, completion: {
-						(response, error) -> Void in
-						if error != nil {
-							SCLAlertView().showError(self, title: "Error", subTitle: error!.localizedDescription, closeButtonTitle: "OK", duration: 0.0)
-							// Toggle the switch since it failed
-							approvalSwitch.on = !linkEnabled
-						}
-						else {
+						response, error in
+                        
+                        if let error = ServerError(error) {
+                            approvalSwitch.on = !linkEnabled
+                            self.handleError(error, errorActionType: .ALERT)
+                        }
+                        else {
 							user.link.enabledValue = linkEnabled
 							DataController.instance.managedObjectContext.save(nil)
 						}
@@ -162,11 +162,12 @@ extension UserTableViewController: UserTableViewCellDelegate {
 			if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
 				if let user = queryResult.object as? User {
 					DataController.proxibase.deleteLinkById(user.link.id_, completion: {
-						(response, error) -> Void in
-						if error != nil {
-							SCLAlertView().showError(self, title: "Error", subTitle: error!.localizedDescription, closeButtonTitle: "OK", duration: 0.0)
-						}
-						else {
+						response, error in
+                        
+                        if let error = ServerError(error) {
+                            self.handleError(error, errorActionType: .ALERT)
+                        }
+                        else {
 							DataController.instance.managedObjectContext.deleteObject(user.link)
 							DataController.instance.managedObjectContext.deleteObject(queryResult)
 							DataController.instance.managedObjectContext.save(nil)

@@ -43,7 +43,12 @@ class DevelopmentViewController: UIViewController {
 		if uriAtStart != serverUriField.text {
 			if UserController.instance.authenticated {
 				DataController.proxibase.signOut() {
-					_, _ in }
+					response, error in
+                    
+                    if let error = ServerError(error) {
+                        self.handleError(error)
+                    }
+                }
 			}
 		}
 	}

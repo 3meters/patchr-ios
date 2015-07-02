@@ -80,10 +80,11 @@ class MessageDetailViewController: UITableViewController {
 		self.description_.text?.removeAll(keepCapacity: false)
 		self.createdDate.text?.removeAll(keepCapacity: false)
 		self.photo.imageView?.image = nil
-		self.patchName.titleLabel?.text?.removeAll(keepCapacity: false)
+		self.patchName.setTitle(nil, forState: .Normal)
 		self.patchPhoto.imageView?.image = nil
-		self.userName.titleLabel?.text?.removeAll(keepCapacity: false)
+		self.userName.setTitle(nil, forState: .Normal)
 		self.userPhoto.imageView?.image = nil
+        self.likesButton.setTitle(nil, forState: .Normal)
 	}
 
 	override func viewWillAppear(animated: Bool) {
@@ -165,11 +166,16 @@ class MessageDetailViewController: UITableViewController {
 		likeButton.enabled = false
 		likeActivity.startAnimating()
 		likeButton.alpha = 0.0
+        
 		if message!.userLikesValue {
 			DataController.proxibase.deleteLinkById(message!.userLikesId!) {
 				response, error in
+                
 				self.likeActivity.stopAnimating()
-				if error == nil {
+                if let error = ServerError(error) {
+                    self.handleError(error)
+                }
+                else {
 					if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
 						if serviceData.countValue == 1 {
 							self.message!.userLikesId = nil
@@ -185,8 +191,12 @@ class MessageDetailViewController: UITableViewController {
 		else {
 			DataController.proxibase.insertLink(UserController.instance.userId! as String, toID: message!.id_, linkType: .Like) {
 				response, error in
+                
 				self.likeActivity.stopAnimating()
-				if error == nil {
+                if let error = ServerError(error) {
+                    self.handleError(error)
+                }
+                else {
 					if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
 						if serviceData.countValue == 1 {
 							self.message!.userLikesId = UserController.instance.userId!
@@ -269,7 +279,7 @@ class MessageDetailViewController: UITableViewController {
 		likeButton.imageView?.tintColor(UIColor.blackColor())
 		likeButton.alpha = 0.5
 		if message!.userLikesValue {
-			likeButton.imageView?.tintColor(AirUi.brandColor)
+			likeButton.imageView?.tintColor(Colors.brandColor)
 			likeButton.alpha = 1
 		}
 
@@ -309,9 +319,9 @@ class MessageDetailViewController: UITableViewController {
         let entityPath = "data/messages/\((self.message?.id_)!)"
         DataController.proxibase.deleteObject(entityPath) {
             response, error in
-            if let serverError = ServerError(error) {
-                println(error)
-                self.Alert(LocalizedString("Error"), message: serverError.message)
+            
+            if let error = ServerError(error) {
+                self.handleError(error)
             }
             else {
                 DataController.instance.managedObjectContext.deleteObject(self.message!)
@@ -362,23 +372,25 @@ class MessageDetailViewController: UITableViewController {
 extension MessageDetailViewController: UITableViewDelegate {
 
 	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-		if indexPath.row == 2 {
-			return (self.message!.description_ == nil)
-					? CGFloat(0)
-					: CGFloat(self.description_.frame.origin.y * 2 + self.description_.frame.size.height)
-		}
-		else if indexPath.row == 4 {
-            
-            /* Size so photo aspect ratio is 4:3 */
-            var height: CGFloat = 0
-            if self.message!.photo != nil {
-                height = ((UIScreen.mainScreen().bounds.size.width - 24) * 0.75)
+        
+        if let message = self.message {
+            if indexPath.row == 2 {
+                return (message.description_ == nil)
+                    ? CGFloat(0)
+                    : CGFloat(self.description_.frame.origin.y * 2 + self.description_.frame.size.height)
             }
-            return height
-		}
-		else {
-			var height = super.tableView(tableView, heightForRowAtIndexPath: indexPath) as CGFloat!
-			return height
-		}
+            else if indexPath.row == 4 {
+                
+                /* Size so photo aspect ratio is 4:3 */
+                var height: CGFloat = 0
+                if message.photo != nil {
+                    height = ((UIScreen.mainScreen().bounds.size.width - 24) * 0.75)
+                }
+                return height
+            }
+        }
+        
+        var height = super.tableView(tableView, heightForRowAtIndexPath: indexPath) as CGFloat!
+        return height
 	}
 }

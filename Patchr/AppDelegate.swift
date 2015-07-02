@@ -42,7 +42,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         DataController.proxibase.registerInstallStandard {
             response, error in
-            if error != nil {
+            
+            if let error = ServerError(error) {
+                /*
+                 * If install registration fails the device will not accurately track notifications.
+                 */
                 NSLog("Error during registerInstall: \(error)")
             }
         }
@@ -64,7 +68,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             UserController.instance.signinAuto()
         }
         
-        self.window?.tintColor = AirUi.brandColor
+        self.window?.tintColor = Colors.brandColor
         UISwitch.appearance().onTintColor = self.window?.tintColor
         
         self.registerForRemoteNotifications()

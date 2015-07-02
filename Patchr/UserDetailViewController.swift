@@ -149,7 +149,8 @@ class UserDetailViewController: QueryTableViewController {
 	func actionSignout() {
 
 		DataController.proxibase.signOut {
-			(response, error) -> Void in
+			response, error in
+            
 			if error != nil {
 				NSLog("Error during logout \(error)")
 			}
@@ -269,7 +270,7 @@ class UserDetailViewController: QueryTableViewController {
 
 	override func pullToRefreshAction(sender: AnyObject?) -> Void {
 		self.refresh(force: true)
-        refreshQueryItems(force: true)
+        self.refreshQueryItems(force: true)
 	}
 }
 

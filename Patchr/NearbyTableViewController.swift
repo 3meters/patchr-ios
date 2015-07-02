@@ -33,7 +33,7 @@ class NearbyTableViewController: PatchTableViewController {
     override func viewDidAppear(animated: Bool) {
         /* We do this here so user can see the changes */
         if DataController.instance.activityDate > self.activityDate {
-            refreshQueryItems(force: true)
+            self.refreshQueryItems(force: true)
         }
     }
     
@@ -73,9 +73,7 @@ class NearbyTableViewController: PatchTableViewController {
         }
         
         if self.userDefaults.boolForKey(PatchrUserDefaultKey("devModeEnabled")) {
-            self.view.makeToast(message,
-                duration: 3.0,
-                position: CSToastPositionCenter)
+            self.Toast(message)
             AudioController.instance.play(Sound.pop.rawValue)
         }
         
@@ -91,23 +89,26 @@ class NearbyTableViewController: PatchTableViewController {
         }
         
         DataController.instance.refreshItemsFor(query(), force: false, paging: false, completion: {
-            (results, query, error) -> Void in
+            results, query, error in
             
-            /* Always reset location after a network error */
-            if error != nil {
+            if let error = ServerError(error) {
+                
+                /* Always reset location after a network error */
                 LocationController.instance.locationLocked = nil
-                if let error = ServerError(error) {
-                    /* User credentials probably need to be refreshed */
-                    if error.code == ServerStatusCode.UNAUTHORIZED {
-                        let rootController = UIStoryboard(
-                            name: "Lobby",
-                            bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as? UIViewController
-                        self.view.window?.rootViewController = rootController
-                        self.progress!.hide(true)
-                        self.refreshControl!.endRefreshing()
-                        return
-                    }
+                
+                /* User credentials probably need to be refreshed */
+                if error.code == ServerStatusCode.UNAUTHORIZED {
+                    let controller = UIStoryboard(
+                        name: "Lobby",
+                        bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as? UIViewController
+                    self.view.window?.rootViewController = controller
                 }
+                else {
+                    self.handleError(error)
+                }
+                self.progress!.hide(true)
+                self.refreshControl!.endRefreshing()
+                return
             }
             
             if self.userDefaults.boolForKey(PatchrUserDefaultKey("SoundEffects")) {
@@ -120,7 +121,6 @@ class NearbyTableViewController: PatchTableViewController {
             
             // Delay seems to be necessary to avoid visual glitch with UIRefreshControl
             delay(0.5, {
-                () -> () in
                 
                 /* Flag query as having been executed at least once */
                 self.progress!.hide(true)

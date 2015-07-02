@@ -85,7 +85,7 @@ class PhotoPickerViewController: UICollectionViewController {
         progress!.opacity = 0.0
         progress!.removeFromSuperViewOnHide = false
         progress!.userInteractionEnabled = false
-        progress!.activityIndicatorColor = AirUi.brandColorDark
+        progress!.activityIndicatorColor = Colors.brandColorDark
         progress!.hide(false)
         
         /* Calculate thumbnail width */
@@ -121,8 +121,8 @@ class PhotoPickerViewController: UICollectionViewController {
             response, error in
             
             self.progress!.hide(true)
-            if let serverError = ServerError(error) {
-                self.Alert(serverError.message)
+            if let error = ServerError(error) {
+                self.handleError(error)
             }
             else {
                 if let
@@ -247,7 +247,7 @@ extension PhotoPickerViewController : UICollectionViewDataSource {
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(self.reuseIdentifier, forIndexPath: indexPath) as! UICollectionViewCell
-        cell.backgroundColor = AirUi.windowColor
+        cell.backgroundColor = Colors.windowColor
         cell.layer.shouldRasterize = true
         cell.layer.rasterizationScale = UIScreen.mainScreen().scale
         self.configureCell(cell, object: self.imageForIndexPath(indexPath))

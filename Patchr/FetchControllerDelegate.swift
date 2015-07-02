@@ -18,7 +18,7 @@ public class FetchControllerDelegate: NSObject, NSFetchedResultsControllerDelega
 
 	public var onUpdate:          ((cell:UITableViewCell, object:AnyObject) -> Void)?
 	public var ignoreNextUpdates: Bool = false
-    public var rowAnimation: UITableViewRowAnimation = .Right
+    public var rowAnimation: UITableViewRowAnimation = .Fade
 
 	init(tableView: UITableView, onUpdate: ((cell:UITableViewCell, object:AnyObject) -> Void)?) {
 		self.tableView = tableView

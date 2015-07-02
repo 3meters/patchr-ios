@@ -133,8 +133,8 @@ class PatchDetailViewController: QueryTableViewController {
         
         /* UI prep */
         tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
-        lockImage.tintColor(AirUi.brandColor)
-        infoLockImage.tintColor(AirUi.brandColor)
+        lockImage.tintColor(Colors.brandColor)
+        infoLockImage.tintColor(Colors.brandColor)
         likeButton.alpha = 0.0
         watchButton.alpha = 0.0
         likesButton.alpha = 0.0
@@ -227,7 +227,10 @@ class PatchDetailViewController: QueryTableViewController {
                 response, error in
                 
                 self.watchActivity.stopAnimating()
-                if error == nil {
+                if let error = ServerError(error) {
+                    self.handleError(error)
+                }
+                else {
                     if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
                         self.patch!.userWatchId = nil
                         self.patch!.userWatchStatusValue = .NonMember
@@ -243,7 +246,10 @@ class PatchDetailViewController: QueryTableViewController {
                 response, error in
                 
                 self.watchActivity.stopAnimating()
-                if error == nil {
+                if let error = ServerError(error) {
+                    self.handleError(error)
+                }
+                else {
                     if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
                         self.patch!.userWatchId = nil
                         self.patch!.userWatchStatusValue = .NonMember
@@ -259,7 +265,10 @@ class PatchDetailViewController: QueryTableViewController {
                 response, error in
                 
                 self.watchActivity.stopAnimating()
-                if error == nil {
+                if let error = ServerError(error) {
+                    self.handleError(error)
+                }
+                else {
                     if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
                         if serviceData.countValue == 1 {
                             if let entityDictionaries = serviceData.data as? [[String:NSObject]] {
@@ -293,7 +302,10 @@ class PatchDetailViewController: QueryTableViewController {
                 response, error in
                 
                 self.likeActivity.stopAnimating()
-                if error == nil {
+                if let error = ServerError(error) {
+                    self.handleError(error)
+                }
+                else {
                     if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
                         self.patch!.userLikesId = nil
                         self.patch!.userLikesValue = false
@@ -309,7 +321,10 @@ class PatchDetailViewController: QueryTableViewController {
                 response, error in
                 
                 self.likeActivity.stopAnimating()
-                if error == nil {
+                if let error = ServerError(error) {
+                    self.handleError(error)
+                }
+                else {
                     if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
                         if serviceData.countValue == 1 {
                             if let entityDictionaries = serviceData.data as? [[String:NSObject]] {
@@ -345,15 +360,27 @@ class PatchDetailViewController: QueryTableViewController {
         }
         else if contextAction == .CancelJoinRequest {
             DataController.proxibase.deleteLinkById(patch!.userWatchId!) {
-                _, _ in
-                self.patch!.userWatchStatusValue = .NonMember
+                response, error in
+                
+                if let error = ServerError(error) {
+                    self.handleError(error)
+                }
+                else {
+                    self.patch!.userWatchStatusValue = .NonMember
+                }
                 self.draw()
             }
         }
         else if contextAction == .SubmitJoinRequest {
             DataController.proxibase.insertLink(UserController.instance.userId! as String, toID: patch!.id_, linkType: .Watch) {
-                _, _ in
-                self.patch!.userWatchStatusValue = .Pending
+                response, error in
+                
+                if let error = ServerError(error) {
+                    self.handleError(error)
+                }
+                else {
+                    self.patch!.userWatchStatusValue = .Pending
+                }
                 self.draw()
             }
         }
@@ -489,7 +516,7 @@ class PatchDetailViewController: QueryTableViewController {
         
         if (patch!.visibility == "public" || patch!.userWatchStatusValue == .Member || isOwner) {
             if patch!.userLikesValue {
-                likeButton.imageView?.tintColor(AirUi.brandColor)
+                likeButton.imageView?.tintColor(Colors.brandColor)
                 if likeButton.alpha <= 0.5 {
                     likeButton.fadeIn(alpha: 1.0)
                 }
@@ -505,7 +532,7 @@ class PatchDetailViewController: QueryTableViewController {
         /* Watch button */
         
         if (patch!.userWatchStatusValue == .Member || patch!.userWatchStatusValue == .Pending){
-            watchButton.imageView?.tintColor(AirUi.brandColor)
+            watchButton.imageView?.tintColor(Colors.brandColor)
             if watchButton.alpha <= 0.5 {
                 watchButton.fadeIn(alpha: 1.0)
             }
@@ -673,7 +700,7 @@ class PatchDetailViewController: QueryTableViewController {
 
 	override func pullToRefreshAction(sender: AnyObject?) -> Void {
         self.refresh(force: true)
-        refreshQueryItems(force: true)
+        self.refreshQueryItems(force: true)
 	}
 
 	func handleRemoteNotification(notification: NSNotification) {
