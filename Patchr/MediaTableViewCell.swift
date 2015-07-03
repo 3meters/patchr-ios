@@ -14,10 +14,10 @@ protocol TableViewCellDelegate: NSObjectProtocol {
 
 class MediaTableViewCell: UITableViewCell {
     
-    @IBOutlet weak var userPhoto: UIImageView!
+    @IBOutlet weak var userPhoto: AirImageView!
     @IBOutlet weak var createdDate: UILabel!
     @IBOutlet weak var description_: UILabel!
-    @IBOutlet weak var photo: UIImageView!
+    @IBOutlet weak var photo: AirImageView!
     @IBOutlet weak var photoHolderHeight: NSLayoutConstraint!
     
     weak var delegate: TableViewCellDelegate?
@@ -42,7 +42,7 @@ class MediaTableViewCell: UITableViewCell {
     
     func tapGestureRecognizerAction(sender: AnyObject) {
         if sender.view != nil {
-            self.delegate?.tableViewCell(self, didTapOnView: sender.view!)
+            self.delegate?.tableViewCell(self, didTapOnView: sender.view!!)
         }
     }
     

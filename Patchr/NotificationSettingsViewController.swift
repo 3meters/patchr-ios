@@ -37,14 +37,14 @@ class NotificationSettingsViewController: UITableViewController {
         self.soundEffectsCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
         self.soundNotificationsCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)        
         
-        self.patchesNearbyCell.accessoryView = makeSwitch(.MessagesForPatchesNearby, state: userDefaults.boolForKey(PatchrUserDefaultKey("MessagesForPatchesNearby")))
-        self.patchesWatchingCell.accessoryView = makeSwitch(.MessagesForPatchesWatching, state: userDefaults.boolForKey(PatchrUserDefaultKey("MessagesForPatchesWatching")))
-        self.patchesOwnsCell.accessoryView = makeSwitch(.MessagesForPatchesOwns, state: userDefaults.boolForKey(PatchrUserDefaultKey("MessagesForPatchesOwns")))
-        self.sharingMessagesCell.accessoryView = makeSwitch(.MessagesSharing, state: userDefaults.boolForKey(PatchrUserDefaultKey("MessagesSharing")))
-        self.likePatchesCell.accessoryView = makeSwitch(.LikePatch, state: userDefaults.boolForKey(PatchrUserDefaultKey("LikePatch")))
-        self.likeMessagesCell.accessoryView = makeSwitch(.LikeMessage, state: userDefaults.boolForKey(PatchrUserDefaultKey("LikeMessage")))
-        self.soundEffectsCell.accessoryView = makeSwitch(.SoundEffects, state: userDefaults.boolForKey(PatchrUserDefaultKey("SoundEffects")))
-        self.soundNotificationsCell.accessoryView = makeSwitch(.SoundForNotifications, state: userDefaults.boolForKey(PatchrUserDefaultKey("SoundForNotifications")))
+        self.patchesNearbyCell.accessoryView = makeSwitch(.MessagesForPatchesNearby, state: userDefaults.boolForKey(Utils.PatchrUserDefaultKey("MessagesForPatchesNearby")))
+        self.patchesWatchingCell.accessoryView = makeSwitch(.MessagesForPatchesWatching, state: userDefaults.boolForKey(Utils.PatchrUserDefaultKey("MessagesForPatchesWatching")))
+        self.patchesOwnsCell.accessoryView = makeSwitch(.MessagesForPatchesOwns, state: userDefaults.boolForKey(Utils.PatchrUserDefaultKey("MessagesForPatchesOwns")))
+        self.sharingMessagesCell.accessoryView = makeSwitch(.MessagesSharing, state: userDefaults.boolForKey(Utils.PatchrUserDefaultKey("MessagesSharing")))
+        self.likePatchesCell.accessoryView = makeSwitch(.LikePatch, state: userDefaults.boolForKey(Utils.PatchrUserDefaultKey("LikePatch")))
+        self.likeMessagesCell.accessoryView = makeSwitch(.LikeMessage, state: userDefaults.boolForKey(Utils.PatchrUserDefaultKey("LikeMessage")))
+        self.soundEffectsCell.accessoryView = makeSwitch(.SoundEffects, state: userDefaults.boolForKey(Utils.PatchrUserDefaultKey("SoundEffects")))
+        self.soundNotificationsCell.accessoryView = makeSwitch(.SoundForNotifications, state: userDefaults.boolForKey(Utils.PatchrUserDefaultKey("SoundForNotifications")))
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -54,28 +54,28 @@ class NotificationSettingsViewController: UITableViewController {
     func toggle(sender: AnyObject?) {
         if let switcher = sender as? UISwitch {
             if switcher.tag == NotificationType.MessagesForPatchesNearby.rawValue {
-                userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("MessagesForPatchesNearby"))
+                userDefaults.setBool(switcher.on, forKey: Utils.PatchrUserDefaultKey("MessagesForPatchesNearby"))
             }
             else if switcher.tag == NotificationType.MessagesForPatchesWatching.rawValue {
-                userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("MessagesForPatchesWatching"))
+                userDefaults.setBool(switcher.on, forKey: Utils.PatchrUserDefaultKey("MessagesForPatchesWatching"))
             }
             else if switcher.tag == NotificationType.MessagesForPatchesOwns.rawValue {
-                userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("MessagesForPatchesOwns"))
+                userDefaults.setBool(switcher.on, forKey: Utils.PatchrUserDefaultKey("MessagesForPatchesOwns"))
             }
             else if switcher.tag == NotificationType.MessagesSharing.rawValue {
-                userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("MessagesSharing"))
+                userDefaults.setBool(switcher.on, forKey: Utils.PatchrUserDefaultKey("MessagesSharing"))
             }
             else if switcher.tag == NotificationType.LikePatch.rawValue {
-                userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("LikePatch"))
+                userDefaults.setBool(switcher.on, forKey: Utils.PatchrUserDefaultKey("LikePatch"))
             }
             else if switcher.tag == NotificationType.LikeMessage.rawValue {
-                userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("LikeMessage"))
+                userDefaults.setBool(switcher.on, forKey: Utils.PatchrUserDefaultKey("LikeMessage"))
             }
             else if switcher.tag == NotificationType.SoundEffects.rawValue {
-                userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("SoundEffects"))
+                userDefaults.setBool(switcher.on, forKey: Utils.PatchrUserDefaultKey("SoundEffects"))
             }
             else if switcher.tag == NotificationType.SoundForNotifications.rawValue {
-                userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("SoundForNotifications"))
+                userDefaults.setBool(switcher.on, forKey: Utils.PatchrUserDefaultKey("SoundForNotifications"))
             }
         }
     }

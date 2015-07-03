@@ -1100,14 +1100,14 @@
                                                             <color key="textColor" red="0.60000002384185791" green="0.60000002384185791" blue="0.60000002384185791" alpha="1" colorSpace="calibratedRGB"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="imgLockLight" translatesAutoresizingMaskIntoConstraints="NO" id="kbx-2h-LYr" userLabel="info_lock_img">
+                                                        <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="imgLockLight" translatesAutoresizingMaskIntoConstraints="NO" id="kbx-2h-LYr" userLabel="info_lock_img">
                                                             <rect key="frame" x="73" y="37" width="16" height="16"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="16" id="Kfq-FB-p9j"/>
                                                                 <constraint firstAttribute="height" constant="16" id="tLf-km-bJd"/>
                                                             </constraints>
                                                         </imageView>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="PRIVATE" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2ea-Ie-glh" userLabel="info_visibility">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="PRIVATE" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2ea-Ie-glh" userLabel="info_visibility">
                                                             <rect key="frame" x="93" y="34" width="57" height="21"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="21" id="NBn-rk-XMa"/>
@@ -1161,7 +1161,7 @@
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Jay Massena" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hFq-TK-eqj" userLabel="info_owner">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Jay Massena" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hFq-TK-eqj" userLabel="info_owner">
                                                     <rect key="frame" x="111" y="218" width="83" height="17"/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
                                                     <color key="textColor" red="1" green="0.50196078430000002" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -1977,31 +1977,7 @@
                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
                             <inset key="sectionInset" minX="4" minY="4" maxX="4" maxY="4"/>
                         </collectionViewFlowLayout>
-                        <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ThumbnailCell" id="P3e-0J-fpW" customClass="ThumbnailCollectionViewCell" customModule="Patchr" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                    <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="McI-ul-0t8" userLabel="thumbnail_image">
-                                            <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
-                                        </imageView>
-                                    </subviews>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                </view>
-                                <constraints>
-                                    <constraint firstItem="McI-ul-0t8" firstAttribute="top" secondItem="P3e-0J-fpW" secondAttribute="top" id="1xa-5v-srC"/>
-                                    <constraint firstAttribute="bottom" secondItem="McI-ul-0t8" secondAttribute="bottom" id="AXm-Wm-FMW"/>
-                                    <constraint firstItem="McI-ul-0t8" firstAttribute="leading" secondItem="P3e-0J-fpW" secondAttribute="leading" id="HXa-Ib-nj4"/>
-                                    <constraint firstAttribute="trailing" secondItem="McI-ul-0t8" secondAttribute="trailing" id="J7S-EX-wqS"/>
-                                </constraints>
-                                <connections>
-                                    <outlet property="thumbnail" destination="McI-ul-0t8" id="0D3-Hs-lp5"/>
-                                </connections>
-                            </collectionViewCell>
-                        </cells>
+                        <cells/>
                         <connections>
                             <outlet property="dataSource" destination="37C-UP-kKb" id="MxO-1W-PTS"/>
                             <outlet property="delegate" destination="37C-UP-kKb" id="4ri-q0-Eux"/>
@@ -2015,6 +1991,9 @@
                         </barButtonItem>
                     </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+                    <connections>
+                        <outlet property="collectionView" destination="Cqt-rS-bga" id="5wb-Ym-RNQ"/>
+                    </connections>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="R8j-3J-zfS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -2981,12 +2960,12 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="yeS-kC-pXZ"/>
-        <segue reference="5gi-H6-rYN"/>
-        <segue reference="IOJ-HZ-5D3"/>
-        <segue reference="W2H-Y3-qfq"/>
-        <segue reference="xAO-Qh-0VB"/>
         <segue reference="mR4-Hl-YsE"/>
+        <segue reference="xAO-Qh-0VB"/>
+        <segue reference="nFc-O9-AY5"/>
+        <segue reference="neb-F4-nDQ"/>
         <segue reference="aqr-cO-OGv"/>
+        <segue reference="sNP-m8-m5g"/>
+        <segue reference="ZkF-VU-9mQ"/>
     </inferredMetricsTieBreakers>
 </document>

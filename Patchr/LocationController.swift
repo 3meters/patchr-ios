@@ -113,19 +113,26 @@ class LocationController: NSObject {
     }
 }
 
+func ==(a: CLLocationCoordinate2D, b: CLLocationCoordinate2D) -> Bool {
+    return a.latitude == b.latitude && a.longitude == b.longitude
+}
+
+func !=(a: CLLocationCoordinate2D, b: CLLocationCoordinate2D) -> Bool {
+    return !(a == b)
+}
+
 extension LocationController: CLLocationManagerDelegate {
 
 	func locationManager(manager: CLLocationManager!, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+        
 		if status == .AuthorizedAlways || status == .AuthorizedWhenInUse {
 			manager.startUpdatingLocation()
-		} else if status == CLAuthorizationStatus.Denied {
+		}
+        else if status == CLAuthorizationStatus.Denied {
             let windowList = UIApplication.sharedApplication().windows
             let topWindow = windowList[windowList.count - 1] as! UIWindow
-            SCLAlertView().showWarning(topWindow.rootViewController,
-                title:"Location Disabled",
-                subTitle: "You can enable location access in Settings → Patchr → Location",
-                closeButtonTitle: "OK",
-                duration: 0.0)
+            topWindow.rootViewController?.Alert("Location Disabled",
+                message: "You can enable location access in Settings → Patchr → Location")
 		}
 	}
     
@@ -136,7 +143,7 @@ extension LocationController: CLLocationManagerDelegate {
             
             var age = abs(trunc(location.timestamp.timeIntervalSinceNow * 100) / 100)
             
-            if self.userDefaults.boolForKey(PatchrUserDefaultKey("devModeEnabled")) {
+            if self.userDefaults.boolForKey(Utils.PatchrUserDefaultKey("devModeEnabled")) {
                 var lat = trunc(location.coordinate.latitude * 100) / 100
                 var lng = trunc(location.coordinate.longitude * 100) / 100
                 

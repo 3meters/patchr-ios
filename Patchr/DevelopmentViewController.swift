@@ -22,8 +22,8 @@ class DevelopmentViewController: UIViewController {
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
         
-        devModeSwitch.on = userDefaults.boolForKey(PatchrUserDefaultKey("devModeEnabled"))
-		serverUriField.text = userDefaults.stringForKey(PatchrUserDefaultKey("serverURI"))
+        devModeSwitch.on = userDefaults.boolForKey(Utils.PatchrUserDefaultKey("devModeEnabled"))
+		serverUriField.text = userDefaults.stringForKey(Utils.PatchrUserDefaultKey("serverURI"))
         
 		observerObject = TextFieldChangeObserver(serverUriField) {
 			[unowned self] in
@@ -35,7 +35,7 @@ class DevelopmentViewController: UIViewController {
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
 
-		userDefaults.setObject(serverUriField.text, forKey: PatchrUserDefaultKey("serverURI"))
+		userDefaults.setObject(serverUriField.text, forKey: Utils.PatchrUserDefaultKey("serverURI"))
 
 		observerObject?.stopObserving()
 
@@ -54,7 +54,7 @@ class DevelopmentViewController: UIViewController {
 	}
     
     @IBAction func devModeAction(sender: AnyObject) {
-        userDefaults.setBool(devModeSwitch.on, forKey: PatchrUserDefaultKey("devModeEnabled"))
+        userDefaults.setBool(devModeSwitch.on, forKey: Utils.PatchrUserDefaultKey("devModeEnabled"))
         if devModeSwitch.on {
             AudioController.instance.play(Sound.pop.rawValue)
         }
@@ -73,9 +73,7 @@ class DevelopmentViewController: UIViewController {
         let imageCache = SDImageCache.sharedImageCache()
         imageCache.clearDisk()
         imageCache.clearMemory()
-        self.view.makeToast("Image cache cleared",
-            duration: 3.0,
-            position: CSToastPositionCenter)
+        self.Toast("Image cache cleared")
         AudioController.instance.play(Sound.pop.rawValue)        
     }
     

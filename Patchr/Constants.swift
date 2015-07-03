@@ -25,6 +25,7 @@ let TIMEOUT_REQUEST: Int = 10   // Seconds
 
 let URI_PROXIBASE_SEARCH_IMAGES: String = "https://api.datamarket.azure.com/Bing/Search/v1"
 let BING_ACCESS_KEY: String = "bNm8LpZdJma/cbJdDiwHq+TGwzVF7nW+QF9vWdPh/Rg"
+let NAMESPACE: String = "com.3meters.patchr.ios."
 
 public struct Colors {
     static let accentColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0.75), blue: CGFloat(1), alpha: CGFloat(1))

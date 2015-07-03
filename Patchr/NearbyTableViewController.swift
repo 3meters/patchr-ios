@@ -73,7 +73,7 @@ class NearbyTableViewController: PatchTableViewController {
             message = "Location accepted ***: lat: \(lat), lng: \(lng), acc: \(loc.horizontalAccuracy)m, age: \(howRecent)s, moved: \(moved)m"
         }
         
-        if self.userDefaults.boolForKey(PatchrUserDefaultKey("devModeEnabled")) {
+        if self.userDefaults.boolForKey(Utils.PatchrUserDefaultKey("devModeEnabled")) {
             self.Toast(message)
             AudioController.instance.play(Sound.pop.rawValue)
         }
@@ -112,7 +112,7 @@ class NearbyTableViewController: PatchTableViewController {
                 return
             }
             
-            if self.userDefaults.boolForKey(PatchrUserDefaultKey("SoundEffects")) {
+            if self.userDefaults.boolForKey(Utils.PatchrUserDefaultKey("SoundEffects")) {
                 if !query.executedValue {
                     AudioController.instance.play(Sound.greeting.rawValue)
                 }

@@ -33,7 +33,7 @@ class PatchDetailViewController: QueryTableViewController {
 
 	/* Outlets are initialized before viewDidLoad is called */
 
-    @IBOutlet weak var patchPhoto:     UIImageView!
+    @IBOutlet weak var patchPhoto:     AirImageView!
     @IBOutlet weak var patchName:      UILabel!
     @IBOutlet weak var patchType:      UILabel!
     @IBOutlet weak var visibility:     UILabel!
@@ -799,7 +799,7 @@ extension PatchDetailViewController: TableViewCellDelegate {
 	func tableViewCell(cell: UITableViewCell, didTapOnView view: UIView) {
 		let messageCell = cell as! MessageTableViewCell
 		if view == messageCell.photo && messageCell.photo.image != nil {
-			AirUi.instance.showPhotoBrowser(messageCell.photo.image, view: view, viewController: self)
+			Shared.showPhotoBrowser(messageCell.photo.image, view: view, viewController: self)
 		}
 	}
 }

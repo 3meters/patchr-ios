@@ -11,7 +11,7 @@ import UIKit
 class PatchTableViewCell: UITableViewCell {
 
 
-    @IBOutlet weak var photo: UIImageView!
+    @IBOutlet weak var photo: AirImageView!
     @IBOutlet weak var name: UILabel!
     @IBOutlet weak var type: UILabel!
     @IBOutlet weak var status: UILabel!

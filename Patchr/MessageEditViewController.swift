@@ -13,7 +13,7 @@ class MessageEditViewController: EntityEditViewController {
 	var toString: String?	// name of patch this message links to
     var patchId: String?    // id of patch this message links to
     
-	@IBOutlet weak var userPhotoImage:   	UIImageView!
+	@IBOutlet weak var userPhotoImage:   	AirImageView!
     @IBOutlet weak var userNameLabel:       UILabel!
 	@IBOutlet weak var toName:              UILabel!
     
@@ -38,7 +38,7 @@ class MessageEditViewController: EntityEditViewController {
             
             self.progressStartLabel = "Updating"
             self.progressFinishLabel = "Updated!"
-            navigationItem.title = LocalizedString("Edit patch")
+            navigationItem.title = Utils.LocalizedString("Edit patch")
             
             /* Navigation bar buttons */
             var deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")

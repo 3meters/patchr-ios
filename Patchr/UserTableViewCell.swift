@@ -17,7 +17,7 @@ protocol UserTableViewCellDelegate {
 
 class UserTableViewCell: UITableViewCell {
 
-    @IBOutlet weak var userPhoto: UIImageView!
+    @IBOutlet weak var userPhoto: AirImageView!
     @IBOutlet weak var userName: UILabel!
     @IBOutlet weak var area: UILabel!
     @IBOutlet weak var owner: UILabel!

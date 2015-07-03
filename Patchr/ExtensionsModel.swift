@@ -75,7 +75,7 @@ extension Patch {
         
         let userDefaults = NSUserDefaults.standardUserDefaults()
         
-        if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
+        if let userId = userDefaults.stringForKey(Utils.PatchrUserDefaultKey("userId")) {
             var links = [
                 LinkSpec(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId]),
                 LinkSpec(from: .Users, type: .Watch, fields: "_id,type,enabled,schema", filter: ["_from": userId]),
@@ -141,7 +141,7 @@ extension Message {
         
         let userDefaults = NSUserDefaults.standardUserDefaults()
         
-        if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
+        if let userId = userDefaults.stringForKey(Utils.PatchrUserDefaultKey("userId")) {
             var links = [
                 LinkSpec(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId])
             ]
@@ -378,13 +378,14 @@ class GooglePlusProxy {
     * Setting refresh to 60 minutes.
     */
     static func convert(uri: String!, size: Int32!, dimension: ResizeDimension!) -> String {
-        var uriEncoded: String = uri.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+        
+        let queryString = (CFURLCreateStringByAddingPercentEscapes(nil, uri as NSString, nil, ":/?@!$&'()*+,;=" as NSString, CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)) as NSString) as String
         if dimension == ResizeDimension.width {
-            var converted = "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url=\(uriEncoded)&container=focus&resize_w=\(size)&no_expand=1&refresh=3600"
+            var converted = "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url=\(queryString)&container=focus&resize_w=\(size)&no_expand=1&refresh=3600"
             return converted
         }
         else {
-            var converted = "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url=\(uriEncoded)&container=focus&resize_h=\(size)&no_expand=1&refresh=3600"
+            var converted = "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url=\(queryString)&container=focus&resize_h=\(size)&no_expand=1&refresh=3600"
             return converted
         }
     }

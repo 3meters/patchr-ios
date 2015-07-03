@@ -16,7 +16,7 @@ class PlaceDetailViewController: UITableViewController {
 
     /* Outlets are initialized before viewDidLoad is called */
     
-    @IBOutlet weak var photo: UIImageView!
+    @IBOutlet weak var photo: AirImageView!
     @IBOutlet weak var name: UILabel!
     @IBOutlet weak var category: UILabel!
     @IBOutlet weak var address: UILabel!

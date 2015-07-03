@@ -24,7 +24,7 @@ class UserDetailViewController: QueryTableViewController {
 
 	@IBOutlet weak var userName:       UILabel!
 	@IBOutlet weak var userEmail:      UILabel!
-	@IBOutlet weak var userPhoto:      UIButton!
+	@IBOutlet weak var userPhoto:      AirImageButton!
 	@IBOutlet weak var watchingButton: UIButton!
 	@IBOutlet weak var ownsButton:     UIButton!
 
@@ -138,7 +138,7 @@ class UserDetailViewController: QueryTableViewController {
 	}
 
 	@IBAction func actionUserPhoto(sender: AnyObject) {
-		AirUi.instance.showPhotoBrowser(userPhoto.imageForState(.Normal), view: sender as! UIView, viewController: self)
+		Shared.showPhotoBrowser(userPhoto.imageForState(.Normal), view: sender as! UIView, viewController: self)
 	}
 
     @IBAction func unwindFromUserEdit(segue: UIStoryboardSegue) {
@@ -320,7 +320,7 @@ extension UserDetailViewController: TableViewCellDelegate {
 	func tableViewCell(cell: UITableViewCell, didTapOnView view: UIView) {
 		let messageCell = cell as! MessageTableViewCell
 		if view == messageCell.photo && messageCell.photo.image != nil {
-			AirUi.instance.showPhotoBrowser(messageCell.photo.image, view: view, viewController: self)
+			Shared.showPhotoBrowser(messageCell.photo.image, view: view, viewController: self)
 		}
 	}
 }

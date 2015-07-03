@@ -16,7 +16,7 @@ class PhotoPickerViewController: UICollectionViewController {
     
     var searchBar: UISearchBar?
     var progress: MBProgressHUD?
-    var delegate: PhotoPickerControllerDelegate?
+    var pickerDelegate: PhotoPickerControllerDelegate?
     
     var largePhotoIndexPath : NSIndexPath? {
         didSet {
@@ -57,7 +57,8 @@ class PhotoPickerViewController: UICollectionViewController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-        assert(self.delegate != nil, "Delegate must be set on PhotoPickerViewController")
+        
+        collectionView!.registerNib(UINib(nibName: "ThumbnailCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: reuseIdentifier)
 	}
 
 	override func viewWillAppear(animated: Bool) {
@@ -140,15 +141,7 @@ class PhotoPickerViewController: UICollectionViewController {
                             let imageResult = ImageResult.setPropertiesFromDictionary(imageResultDict as! NSDictionary, onObject: ImageResult())
                             
                             var usable = false;
-                            if (imageResult.fileSize <= self.maxImageSize
-                                && imageResult.height <= self.maxDimen
-                                && imageResult.width <= self.maxDimen) {
-                                    usable = true
-                            }
-                            
-                            if (usable) {
-                                usable = (imageResult.thumbnail != nil && imageResult.thumbnail!.mediaUrl != nil);
-                            }
+                            usable = (imageResult.thumbnail != nil && imageResult.thumbnail!.mediaUrl != nil);
                             
                             if (usable) {
                                 for tempImageResult in self.imageResults {
@@ -186,22 +179,22 @@ class PhotoPickerViewController: UICollectionViewController {
 	 *--------------------------------------------------------------------------------------------*/
     
     @IBAction func cancelAction(sender: AnyObject){
-        self.delegate!.photoPickerControllerDidCancel(self)
+        self.pickerDelegate!.photoPickerControllerDidCancel()
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     
 	/*--------------------------------------------------------------------------------------------
 	* Methods
 	*--------------------------------------------------------------------------------------------*/
-    
 
     func configureCell(cell: UICollectionViewCell, object: AnyObject) {
         
-        let imageResult = object as! ImageResult
-        let cell = cell as! ThumbnailCollectionViewCell
-        
-        cell.imageResult = imageResult
-        cell.thumbnail.setImageWithThumbnail(imageResult.thumbnail!, animate: false)
+        if let thumbCell = cell as? ThumbnailCollectionViewCell, imageResult = object as? ImageResult {
+            if let imageView = thumbCell.thumbnail {
+                thumbCell.imageResult = imageResult
+                imageView.setImageWithThumbnail(imageResult.thumbnail!, animate: false)
+            }
+        }
     }
     
     func imageForIndexPath(indexPath: NSIndexPath) -> ImageResult {
@@ -232,10 +225,29 @@ extension PhotoPickerViewController: UISearchBarDelegate {
 
 extension PhotoPickerViewController : UICollectionViewDelegate {
     
-    override func collectionView(collectionView: UICollectionView, shouldSelectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
-        var imageResult = self.imageForIndexPath(indexPath)
-        delegate!.photoPickerController(self, didFinishPickingPhoto: imageResult)
-        return true
+    override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) -> Void {
+        
+        if let cell = collectionView.cellForItemAtIndexPath(indexPath) as? ThumbnailCollectionViewCell {
+            
+            var photo = IDMPhoto(image:cell.thumbnail.image)
+            var photos = Array([photo])
+            var browser = AirPhotoBrowser(photos:photos as [AnyObject], animatedFromView: cell.thumbnail)
+            
+            browser.usePopAnimation = true
+            browser.scaleImage = cell.thumbnail.image  // Used because final image might have different aspect ratio than initially
+            browser.useWhiteBackgroundColor = true
+            browser.disableVerticalSwipe = false
+            browser.forceHideStatusBar = false
+            browser.displayDoneButton = false
+            browser.addNavigationBar()
+            browser.navigationItem.title = "Preview"
+            browser.displayToolbar = false
+            browser.addToolbar()
+            browser.pickerDelegate = self.pickerDelegate  // Pass delegate through
+            browser.imageResult = self.imageForIndexPath(indexPath)
+            
+            presentViewController(browser, animated:true, completion:nil)
+        }
     }
 }
 

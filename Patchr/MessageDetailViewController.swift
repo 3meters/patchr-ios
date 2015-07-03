@@ -28,12 +28,12 @@ class MessageDetailViewController: UITableViewController {
 	/* Outlets are initialized before viewDidLoad is called */
 
 	@IBOutlet weak var patchName:    UIButton!
-	@IBOutlet weak var patchPhoto:   UIButton!
-	@IBOutlet weak var userPhoto:    UIButton!
+	@IBOutlet weak var patchPhoto:   AirImageButton!
+	@IBOutlet weak var userPhoto:    AirImageButton!
 	@IBOutlet weak var userName:     UIButton!
 	@IBOutlet weak var description_: UILabel!
 	@IBOutlet weak var createdDate:  UILabel!
-	@IBOutlet weak var photo:        UIButton!
+	@IBOutlet weak var photo:        AirImageButton!
 	@IBOutlet weak var likeButton:   UIButton!
 	@IBOutlet weak var likesButton:  UIButton!
 	@IBOutlet weak var likeActivity: UIActivityIndicatorView!
@@ -142,7 +142,7 @@ class MessageDetailViewController: UITableViewController {
 	}
 
 	@IBAction func photoAction(sender: AnyObject) {
-		AirUi.instance.showPhotoBrowser(self.photo.imageForState(.Normal), view: sender as! UIView, viewController: self)
+        Shared.showPhotoBrowser(self.photo.imageForState(.Normal), view: sender as! UIView, viewController: self)
 	}
 
 	@IBAction func reportAction(sender: AnyObject) {

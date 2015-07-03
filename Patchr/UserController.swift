@@ -21,10 +21,10 @@ class UserController: NSObject {
         
 		let userDefaults = NSUserDefaults.standardUserDefaults()
 
-		userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId"))
-		sessionKey = userDefaults.stringForKey(PatchrUserDefaultKey("sessionKey")) // TODO: We should store this more securely
-        jsonUser = userDefaults.stringForKey(PatchrUserDefaultKey("user"))
-        jsonSession = userDefaults.stringForKey(PatchrUserDefaultKey("session"))
+		userId = userDefaults.stringForKey(Utils.PatchrUserDefaultKey("userId"))
+		sessionKey = userDefaults.stringForKey(Utils.PatchrUserDefaultKey("sessionKey")) // TODO: We should store this more securely
+        jsonUser = userDefaults.stringForKey(Utils.PatchrUserDefaultKey("user"))
+        jsonSession = userDefaults.stringForKey(Utils.PatchrUserDefaultKey("session"))
 	}
 
 	var authenticated: Bool {
@@ -59,10 +59,10 @@ class UserController: NSObject {
 
 	private func writeCredentialsToUserDefaults() {
         let userDefaults = NSUserDefaults.standardUserDefaults()
-        userDefaults.setObject(jsonUser, forKey: PatchrUserDefaultKey("user"))
-        userDefaults.setObject(jsonSession, forKey: PatchrUserDefaultKey("sesson"))
-        userDefaults.setObject(userId, forKey: PatchrUserDefaultKey("userId"))
-        userDefaults.setObject(sessionKey, forKey: PatchrUserDefaultKey("sessionKey"))
+        userDefaults.setObject(jsonUser, forKey: Utils.PatchrUserDefaultKey("user"))
+        userDefaults.setObject(jsonSession, forKey: Utils.PatchrUserDefaultKey("sesson"))
+        userDefaults.setObject(userId, forKey: Utils.PatchrUserDefaultKey("userId"))
+        userDefaults.setObject(sessionKey, forKey: Utils.PatchrUserDefaultKey("sessionKey"))
     }
 
 	func fetchCurrentUser(){

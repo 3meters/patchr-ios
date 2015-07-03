@@ -49,7 +49,7 @@ class PatchEditViewController: EntityEditViewController {
             
             self.progressStartLabel = "Updating"
             self.progressFinishLabel = "Updated!"
-            navigationItem.title = LocalizedString("Edit patch")
+            navigationItem.title = Utils.LocalizedString("Edit patch")
             createButton.hidden = true
             
             /* Navigation bar buttons */
@@ -62,7 +62,7 @@ class PatchEditViewController: EntityEditViewController {
             
             self.progressStartLabel = "Patching"
             self.progressFinishLabel = "Activated!"
-            navigationItem.title = LocalizedString("Make patch")
+            navigationItem.title = Utils.LocalizedString("Make patch")
             
             /* Use current location */
             if let loc = LocationController.instance.getLocation() {

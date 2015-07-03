@@ -46,7 +46,7 @@ class EntityEditViewController: UITableViewController {
     
     @IBOutlet weak var photoGroup:   	 UIView?
     @IBOutlet weak var buttonScrim:      UIView?
-	@IBOutlet weak var photoImage:   	 UIButton!
+	@IBOutlet weak var photoImage:   	 AirImageButton!
 	@IBOutlet weak var setPhotoButton:   UIButton!
     @IBOutlet weak var editPhotoButton:  UIButton!
     @IBOutlet weak var clearPhotoButton: UIButton!
@@ -235,7 +235,7 @@ class EntityEditViewController: UITableViewController {
             self.photo = image
         }
         else {
-            self.photoImage.setImageWithImageResult(imageResult!, animate: true)
+            self.photoImage.setImageWithImageResult(imageResult!)
         }
         
         if !self.editMode {

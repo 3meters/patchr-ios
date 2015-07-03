@@ -31,12 +31,12 @@ class UserEditViewController: EntityEditViewController {
         super.viewDidLoad()
                 
         if editMode {
-            navigationItem.title = LocalizedString("Edit profile")
+            navigationItem.title = Utils.LocalizedString("Edit profile")
             self.progressStartLabel = "Updating"
             self.progressFinishLabel = "Updated!"
         }
         else {
-            navigationItem.title = LocalizedString("Register")
+            navigationItem.title = Utils.LocalizedString("Register")
             self.progressStartLabel = "Registering"
             self.progressFinishLabel = "Registered!"
             
@@ -92,7 +92,7 @@ class UserEditViewController: EntityEditViewController {
                 progress.hide(true, afterDelay: 1.0)
                 if var error = ServerError(error) {
                     if error.code == .FORBIDDEN_DUPLICATE {
-                        error.message = LocalizedString("Email address already in use.")
+                        error.message = Utils.LocalizedString("Email address already in use.")
                         self.handleError(error, errorActionType: .ALERT)
                     }
                     else {

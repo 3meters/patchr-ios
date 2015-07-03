@@ -22,7 +22,7 @@ class SignInEditViewController: UITableViewController, UITextFieldDelegate {
         self.emailField.delegate = self
         self.passwordField.delegate = self
         
-        self.emailField.text = NSUserDefaults.standardUserDefaults().objectForKey(PatchrUserDefaultKey("userEmail")) as? String
+        self.emailField.text = NSUserDefaults.standardUserDefaults().objectForKey(Utils.PatchrUserDefaultKey("userEmail")) as? String
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -60,7 +60,7 @@ class SignInEditViewController: UITableViewController, UITextFieldDelegate {
             }
             else {                
                 // Store email address
-                NSUserDefaults.standardUserDefaults().setObject(self.emailField.text, forKey: PatchrUserDefaultKey("userEmail"))
+                NSUserDefaults.standardUserDefaults().setObject(self.emailField.text, forKey: Utils.PatchrUserDefaultKey("userEmail"))
                 NSUserDefaults.standardUserDefaults().synchronize()
                 self.passwordField.text = nil
                 

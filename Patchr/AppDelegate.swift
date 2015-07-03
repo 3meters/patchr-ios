@@ -98,7 +98,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         if PFInstallation.currentInstallation().badge != 0 {
             PFInstallation.currentInstallation().badge = 0
-            PFInstallation.currentInstallation().saveEventually()
+            PFInstallation.currentInstallation().saveEventually(nil)
         }
         NSNotificationCenter.defaultCenter().postNotificationName(Event.ApplicationDidBecomeActive.rawValue, object: nil)
     }
@@ -106,7 +106,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
         let parseInstallation = PFInstallation.currentInstallation()
         parseInstallation.setDeviceTokenFromData(deviceToken)
-        parseInstallation.saveInBackground()
+        parseInstallation.saveInBackgroundWithBlock(nil)
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject],

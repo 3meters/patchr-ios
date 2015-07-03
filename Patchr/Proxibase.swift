@@ -68,11 +68,11 @@ public class Proxibase {
 	required public init() {
 		let userDefaults = NSUserDefaults.standardUserDefaults()
 
-		var serverURI = userDefaults.stringForKey(PatchrUserDefaultKey("serverURI"))
+		var serverURI = userDefaults.stringForKey(Utils.PatchrUserDefaultKey("serverURI"))
 
 		if serverURI == nil {
 			serverURI = ProductionURI
-			userDefaults.setObject(serverURI, forKey: PatchrUserDefaultKey("serverURI"))
+			userDefaults.setObject(serverURI, forKey: Utils.PatchrUserDefaultKey("serverURI"))
 		}
 
 		sessionManager = AFHTTPSessionManager(baseURL: NSURL(string: serverURI!))
@@ -681,7 +681,7 @@ public class Proxibase {
 
 		let userDefaults = NSUserDefaults.standardUserDefaults()
 
-		if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
+		if let userId = userDefaults.stringForKey(Utils.PatchrUserDefaultKey("userId")) {
 			links.append(LinkSpec(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId]))
 			links.append(LinkSpec(from: .Users, type: .Watch, fields: "_id,type,enabled,schema", filter: ["_from": userId]))
 			links.append(LinkSpec(from: .Messages, type: .Content, limit: 1, fields: "_id,type,schema", filter: ["_creator": userId]))
@@ -702,7 +702,7 @@ public class Proxibase {
 
 		let userDefaults = NSUserDefaults.standardUserDefaults()
 
-		if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
+		if let userId = userDefaults.stringForKey(Utils.PatchrUserDefaultKey("userId")) {
 			links.append(LinkSpec(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId]))
 		}
 
@@ -729,7 +729,7 @@ public class Proxibase {
 			if let photo = parameters["photo"] as? UIImage {
 				let semaphore = dispatch_semaphore_create(0)
 
-				var image               = photo
+				var image = photo
 
 				/* Ensure image is resized before upload */
 				var scalingNeeded: Bool = (photo.size.width > 1280 || photo.size.height > 1280)
@@ -741,7 +741,7 @@ public class Proxibase {
 					image = photo.normalizedImage()
 				}
 
-				let profilePhotoKey = "\(userId)_\(DateTimeTag()).jpg"
+				let profilePhotoKey = "\(userId)_\(Utils.DateTimeTag()).jpg"
 
 				let photoDict = [
 						"width": Int(image.size.width), // width/height are in points...should be pixels?
@@ -769,7 +769,7 @@ public class Proxibase {
 	}
 
 	private func uploadImageToS3(image: UIImage, bucket: String, key: String, completion: S3UploadCompletionBlock) {
-		if let imageURL = TemporaryFileURLForImage(image) {
+		if let imageURL = Utils.TemporaryFileURLForImage(image) {
 			uploadFileToS3(imageURL, contentType: "image/jpeg", bucket: bucket, key: key) {
 				result, error in
 				completion(result, error)
@@ -819,7 +819,7 @@ public class Proxibase {
 		let transferManager = AWSS3TransferManager.S3TransferManagerForKey("AWS-Patchr")
 		let task            = transferManager.upload(uploadRequest)
 
-		task.continueWithExecutor(BFExecutor.mainThreadExecutor(), withBlock: {
+		task.continueWithExecutor(AWSExecutor.mainThreadExecutor(), withBlock: {
 			(task) -> AnyObject! in
 			completion(task.result, task.error)
 			return nil // return nil to indicate the task is complete
@@ -865,8 +865,8 @@ struct ServerError {
 	var code:        ServerStatusCode = .None
 	var status:      Int?             = 200
 	var response:    NSDictionary?
-	var message:     String           = LocalizedString("Unknown Error")
-	var description: String           = LocalizedString("(No Description)")
+	var message:     String           = Utils.LocalizedString("Unknown Error")
+	var description: String           = Utils.LocalizedString("(No Description)")
 
 	init?(_ error: NSError?) {
 		if let error = error {

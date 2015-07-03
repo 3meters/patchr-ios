@@ -16,8 +16,6 @@
 #import "JSONResponseSerializerWithData.h"
 #import <RMCoreDataStack/RMCoreDataStack.h>
 #import <PBWebViewController.h>
-#import <UIActionSheet+Blocks.h>
-#import <SCLAlertView.h>
 #import <MBProgressHUD.h>
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <SDWebImage/UIButton+WebCache.h>
@@ -27,13 +25,11 @@
 #import <IDMPhoto.h>
 #import <IDMPhotoBrowser.h>
 #import <UIScrollView+InfiniteScroll.h>
-#import <UIView+Toast.h>
 #import <NBPhoneNumberUtil.h>
 #import <NBPhoneNumber.h>
 #import "NGAParallaxMotion.h"
 #import "GCPlaceholderTextView.h"
 #import "UIView+BorderLayer.h"
-#import <UIScrollView+EmptyDataSet.h>
 
 #import "Patch.h"
 #import "Place.h"

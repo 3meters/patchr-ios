@@ -87,7 +87,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
             name: "Main",
             bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("PhotoPickerNavController") as? UINavigationController
         if let pickerController = pickerNavController?.topViewController as? PhotoPickerViewController {
-            pickerController.delegate = self
+            pickerController.pickerDelegate = self
             self.hostViewController?.presentViewController(pickerNavController!, animated: true, completion: nil)
         }
 	}
@@ -154,18 +154,18 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 }
 
 protocol PhotoPickerControllerDelegate {
-    func photoPickerController(picker: PhotoPickerViewController, didFinishPickingPhoto imageResult: ImageResult) -> Void
-    func photoPickerControllerDidCancel(picker: PhotoPickerViewController) -> Void
+    func photoPickerController(didFinishPickingPhoto imageResult: ImageResult) -> Void
+    func photoPickerControllerDidCancel() -> Void
 }
 
 extension PhotoChooserUI: PhotoPickerControllerDelegate {
     
-    func photoPickerController(picker: PhotoPickerViewController, didFinishPickingPhoto imageResult: ImageResult) -> Void {
+    func photoPickerController(didFinishPickingPhoto imageResult: ImageResult) -> Void {
         hostViewController?.dismissViewControllerAnimated(true, completion: nil)
         self.finishedChoosing!(nil, imageResult)
     }
     
-    func photoPickerControllerDidCancel(picker: PhotoPickerViewController) {
+    func photoPickerControllerDidCancel() {
         hostViewController?.dismissViewControllerAnimated(true, completion: nil)
     }
 }

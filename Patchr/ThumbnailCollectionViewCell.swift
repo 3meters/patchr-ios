@@ -12,7 +12,7 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
     
     var imageResult: ImageResult?
     
-    @IBOutlet weak var thumbnail: UIImageView!
+    @IBOutlet weak var thumbnail: AirImageView!
     
     override var layoutMargins: UIEdgeInsets {
         get { return UIEdgeInsetsZero }
