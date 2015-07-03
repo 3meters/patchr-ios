@@ -189,7 +189,7 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 		
 		if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0"))
 		{
-			self.modalPresentationStyle = UIModalPresentationCustom;
+            self.modalPresentationStyle = UIModalPresentationCustom;
 			self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
             self.modalPresentationCapturesStatusBarAppearance = YES;
 		}
@@ -295,7 +295,7 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
     [scrollView setCenter:translatedPoint];
     
     float newY = scrollView.center.y - viewHalfHeight;
-    float newAlpha = 1 - abs(newY)/viewHeight; //abs(newY)/viewHeight * 1.8;
+    float newAlpha = 1 - fabsf(newY)/viewHeight; //abs(newY)/viewHeight * 1.8;
     
     self.view.opaque = YES;
     
@@ -375,6 +375,7 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 
 - (void)performPresentAnimation {
     self.view.alpha = 0.0f;
+    _pagingScrollView.alpha = 0.0f;
     
     UIImage *imageFromView = _scaleImage ? _scaleImage : [self getImageFromView:_senderViewForAnimation];
     imageFromView = [self rotateImageToCurrentOrientation:imageFromView];
@@ -399,6 +400,7 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
     
     void (^completion)() = ^() {
         self.view.alpha = 1.0f;
+        _pagingScrollView.alpha = 1.0f;
         resizableImageView.backgroundColor = [UIColor colorWithWhite:(_useWhiteBackgroundColor) ? 1 : 0 alpha:1];
         [fadeView removeFromSuperview];
         [resizableImageView removeFromSuperview];
@@ -428,9 +430,13 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 }
 
 - (void)performCloseAnimationWithScrollView:(IDMZoomingScrollView*)scrollView {
-    float fadeAlpha = 1 - abs(scrollView.frame.origin.y)/scrollView.frame.size.height;
+    float fadeAlpha = 1 - fabs(scrollView.frame.origin.y)/scrollView.frame.size.height;
     
     UIImage *imageFromView = [scrollView.photo underlyingImage];
+    if (!imageFromView && [scrollView.photo respondsToSelector:@selector(placeholderImage)]) {
+        imageFromView = [scrollView.photo placeholderImage];
+    }
+    
     //imageFromView = [self rotateImageToCurrentOrientation:imageFromView];
     
     CGRect screenBound = [[UIScreen mainScreen] bounds];
@@ -546,9 +552,6 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 #pragma mark - View Lifecycle
 
 - (void)viewDidLoad {
-    // Transition animation
-    [self performPresentAnimation];
-    
     // View
 	self.view.backgroundColor = [UIColor colorWithWhite:(_useWhiteBackgroundColor ? 1 : 0) alpha:1];
     
@@ -565,6 +568,9 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 	_pagingScrollView.backgroundColor = [UIColor clearColor];
     _pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
 	[self.view addSubview:_pagingScrollView];
+    
+    // Transition animation
+    [self performPresentAnimation];
     
     UIInterfaceOrientation currentOrientation = [UIApplication sharedApplication].statusBarOrientation;
     
@@ -864,6 +870,9 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 			return [photo underlyingImage];
 		} else {
             [photo loadUnderlyingImageAndNotify];
+            if ([photo respondsToSelector:@selector(placeholderImage)]) {
+                return [photo placeholderImage];
+            }
 		}
 	}
     
@@ -1253,11 +1262,22 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
             self.activityViewController = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
             
             __typeof__(self) __weak selfBlock = self;
-            [self.activityViewController setCompletionHandler:^(NSString *activityType, BOOL completed) {
-                [selfBlock hideControlsAfterDelay];
-                selfBlock.activityViewController = nil;
-            }];
-            
+			
+			if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0"))
+			{
+				[self.activityViewController setCompletionWithItemsHandler:^(NSString *activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+					[selfBlock hideControlsAfterDelay];
+					selfBlock.activityViewController = nil;
+				}];
+			}
+			else
+			{
+				[self.activityViewController setCompletionHandler:^(NSString *activityType, BOOL completed) {
+					[selfBlock hideControlsAfterDelay];
+					selfBlock.activityViewController = nil;
+				}];
+			}
+			
             [self presentViewController:self.activityViewController animated:YES completion:nil];
         }
         else

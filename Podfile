@@ -7,25 +7,13 @@ pod 'AFNetworkActivityLogger', '~> 2.0'
 pod 'AWSS3'
 pod 'RMCoreDataStack'
 pod 'PBWebViewController', '~> 0.3'
-pod 'SCLAlertView-Objective-C', '~> 0.7'
-pod 'UIActionSheet+Blocks', '~> 0.9'
 pod 'MBProgressHUD', '~> 0.9.1'
 pod 'SDWebImage', '~> 3.7.2'
 pod 'Parse'
 pod 'UIDevice-Hardware'
 pod 'Lockbox'
-pod 'IDMPhotoBrowser'
-pod 'Toast', '~> 2.4'
+pod 'IDMPhotoBrowser', :git => "https://github.com/ideaismobile/IDMPhotoBrowser.git", :tag => "1.7"
 pod 'UIScrollView-InfiniteScroll'
 pod 'libPhoneNumber-iOS', '~> 0.7'
-pod 'DZNEmptyDataSet'
 
 end
-
-target 'PatchrTests' do
-
-pod 'AFNetworking', '~> 2.0'
-pod 'AFNetworkActivityLogger', '~> 2.0'
-
-end
-
