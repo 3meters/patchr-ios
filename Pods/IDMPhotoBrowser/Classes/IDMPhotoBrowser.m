@@ -552,6 +552,7 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 #pragma mark - View Lifecycle
 
 - (void)viewDidLoad {
+    
     // View
 	self.view.backgroundColor = [UIColor colorWithWhite:(_useWhiteBackgroundColor ? 1 : 0) alpha:1];
     
@@ -568,9 +569,6 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 	_pagingScrollView.backgroundColor = [UIColor clearColor];
     _pagingScrollView.contentSize = [self contentSizeForPagingScrollView];
 	[self.view addSubview:_pagingScrollView];
-    
-    // Transition animation
-    [self performPresentAnimation];
     
     UIInterfaceOrientation currentOrientation = [UIApplication sharedApplication].statusBarOrientation;
     
@@ -660,6 +658,10 @@ NSLocalizedStringFromTableInBundle((key), nil, [NSBundle bundleWithPath:[[NSBund
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    
+    // Transition animation  Jayma: Moved from viewDidLoad
+    [self performPresentAnimation];
+    
     // Update
     [self reloadData];
     
