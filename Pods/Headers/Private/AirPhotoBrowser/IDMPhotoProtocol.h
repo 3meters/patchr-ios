@@ -1,0 +1,1 @@
+../../../../../../../code/AirPhotoBrowser/Classes/IDMPhotoProtocol.h

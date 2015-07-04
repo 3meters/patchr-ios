@@ -12,7 +12,7 @@ pod 'SDWebImage', '~> 3.7.2'
 pod 'Parse'
 pod 'UIDevice-Hardware'
 pod 'Lockbox'
-pod 'IDMPhotoBrowser', :git => "https://github.com/ideaismobile/IDMPhotoBrowser.git", :tag => "1.7"
+pod 'AirPhotoBrowser', :path => '~/code/AirPhotoBrowser'
 pod 'UIScrollView-InfiniteScroll'
 pod 'libPhoneNumber-iOS', '~> 0.7'
 

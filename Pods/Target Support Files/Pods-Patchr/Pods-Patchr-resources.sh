@@ -58,18 +58,18 @@ install_resource()
   esac
 }
 if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_resource "IDMPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
-  install_resource "IDMPhotoBrowser/Classes/IDMPBLocalizations.bundle"
+  install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
+  install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPBLocalizations.bundle"
   install_resource "libPhoneNumber-iOS/libPhoneNumber/NBPhoneNumberMetadata.plist"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
-  install_resource "IDMPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
-  install_resource "IDMPhotoBrowser/Classes/IDMPBLocalizations.bundle"
+  install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
+  install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPBLocalizations.bundle"
   install_resource "libPhoneNumber-iOS/libPhoneNumber/NBPhoneNumberMetadata.plist"
 fi
 if [[ "$CONFIGURATION" == "AdHoc" ]]; then
-  install_resource "IDMPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
-  install_resource "IDMPhotoBrowser/Classes/IDMPBLocalizations.bundle"
+  install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
+  install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPBLocalizations.bundle"
   install_resource "libPhoneNumber-iOS/libPhoneNumber/NBPhoneNumberMetadata.plist"
 fi
 

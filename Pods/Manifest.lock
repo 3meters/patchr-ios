@@ -23,15 +23,15 @@ PODS:
   - AFNetworking/UIKit (2.5.4):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
+  - AirPhotoBrowser (1.7):
+    - AFNetworking
+    - DACircularProgress
+    - pop
   - AWSCore (2.2.0)
   - AWSS3 (2.2.0):
     - AWSCore (= 2.2.0)
   - Bolts/Tasks (1.2.0)
   - DACircularProgress (2.3.1)
-  - IDMPhotoBrowser (1.7):
-    - AFNetworking
-    - DACircularProgress
-    - pop
   - libPhoneNumber-iOS (0.8.5)
   - Lockbox (2.1.0)
   - MBProgressHUD (0.9.1)
@@ -49,9 +49,8 @@ PODS:
 DEPENDENCIES:
   - AFNetworkActivityLogger (~> 2.0)
   - AFNetworking (~> 2.0)
+  - AirPhotoBrowser (from `~/code/AirPhotoBrowser`)
   - AWSS3
-  - IDMPhotoBrowser (from `https://github.com/ideaismobile/IDMPhotoBrowser.git`, tag
-    `1.7`)
   - libPhoneNumber-iOS (~> 0.7)
   - Lockbox
   - MBProgressHUD (~> 0.9.1)
@@ -63,23 +62,17 @@ DEPENDENCIES:
   - UIScrollView-InfiniteScroll
 
 EXTERNAL SOURCES:
-  IDMPhotoBrowser:
-    :git: https://github.com/ideaismobile/IDMPhotoBrowser.git
-    :tag: '1.7'
-
-CHECKOUT OPTIONS:
-  IDMPhotoBrowser:
-    :git: https://github.com/ideaismobile/IDMPhotoBrowser.git
-    :tag: '1.7'
+  AirPhotoBrowser:
+    :path: ~/code/AirPhotoBrowser
 
 SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
   AFNetworking: 05edc0ac4c4c8cf57bcf4b84be5b0744b6d8e71e
+  AirPhotoBrowser: 0502a25b2ed5beb6d43d64dc47fbfdd69981d5d0
   AWSCore: 36712cbe827a50b81f1660349e0c202339797f23
   AWSS3: 5efcdff6010353fe53ef065be7760d60419c65b1
   Bolts: d176cb1e0012175589e389a9db49b85e27787576
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
-  IDMPhotoBrowser: bf2bbd7473e2a4f8443c86f57f6bde8a9cf9b539
   libPhoneNumber-iOS: b8ccd23576379caca37c7cbdd554addf384459ed
   Lockbox: 16442da35d9d4286966936763be728a931d589c3
   MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
@@ -91,4 +84,4 @@ SPEC CHECKSUMS:
   UIDevice-Hardware: b3695e58e0385155932e7889c32ed12e844e14a3
   UIScrollView-InfiniteScroll: cfa860f96f5a2e3b4575d59fe6d08d337093ac2a
 
-COCOAPODS: 0.36.4
+COCOAPODS: 0.38.0.beta.1
