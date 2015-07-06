@@ -74,7 +74,7 @@ class NearbyTableViewController: PatchTableViewController {
         }
         
         if self.userDefaults.boolForKey(Utils.PatchrUserDefaultKey("devModeEnabled")) {
-            self.Toast(message)
+            Shared.Toast(message)
             AudioController.instance.play(Sound.pop.rawValue)
         }
         

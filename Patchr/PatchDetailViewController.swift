@@ -145,6 +145,10 @@ class PatchDetailViewController: QueryTableViewController {
         
         likeButton.tintOff = UIColor.whiteColor()
         likeButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
+        likeButton.imageOn = UIImage(named: "imgStarFilledLight")
+        likeButton.imageOff = UIImage(named: "imgStarLight")
+        likeButton.messageOn = "Added to favorites"
+        likeButton.messageOff = "Removed from favorites"
         likeButton.alpha = 0.0
         
         /* Navigation bar buttons */
@@ -544,9 +548,11 @@ class PatchDetailViewController: QueryTableViewController {
 			cell.userName.text = creator.name
             cell.userPhoto.setImageWithPhoto(creator.getPhotoManaged(), animate: cell.userPhoto.image == nil)
 		}
+        
+        /* Likes button */
+        cell.likeButton.bindEntity(message)
 
 		cell.likes.hidden = true
-        cell.likesHeight.constant = 0
 		if message.countLikes != nil {
 			if message.countLikes?.integerValue != 0 {
 				let likesTitle = message.countLikes?.integerValue == 1
@@ -554,7 +560,6 @@ class PatchDetailViewController: QueryTableViewController {
 						: "\(message.countLikes ?? 0) likes"
 				cell.likes.text = likesTitle
 				cell.likes.hidden = false
-                cell.likesHeight.constant = 18
 			}
 		}
         

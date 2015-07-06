@@ -44,7 +44,7 @@ class AirPhotoBrowser: IDMPhotoBrowser {
         var actionButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("actionButtonPressed:"))
         
         likeButton.frame = CGRectMake(0, 0, 44, 44)
-        likeButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right:10)
+        likeButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: 8, bottom: 10, right:8)
         likeButton.hidden = (self.entity == nil)
         
         fixedSpacer.width = 16

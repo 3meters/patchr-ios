@@ -35,7 +35,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="This is a multiline message comment that will say something that people will like" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="236" translatesAutoresizingMaskIntoConstraints="NO" id="h8L-WQ-6XO" userLabel="description" customClass="AutoSizingLabel">
-                        <rect key="frame" x="65" y="55" width="238" height="61"/>
+                        <rect key="frame" x="65" y="55" width="238" height="84"/>
                         <fontDescription key="fontDescription" type="system" weight="light" pointSize="17"/>
                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
@@ -51,7 +51,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EuJ-uZ-wD2" userLabel="photo_holder">
-                        <rect key="frame" x="65" y="116" width="242" height="148"/>
+                        <rect key="frame" x="65" y="139" width="242" height="148"/>
                         <subviews>
                             <imageView autoresizesSubviews="NO" clipsSubviews="YES" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="eQH-ua-j18" userLabel="photo" customClass="AirImageView" customModule="Patchr" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="8" width="242" height="136"/>
@@ -68,16 +68,17 @@
                             <constraint firstAttribute="height" constant="148" id="y4D-PR-ElG"/>
                         </constraints>
                     </view>
-                    <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="1 Like" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jtz-MW-UwR" userLabel="like">
-                        <rect key="frame" x="65" y="272" width="39" height="18"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <button clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="woJ-Y6-bOV" userLabel="like_button" customClass="AirLikeButton" customModule="Patchr" customModuleProvider="target">
+                        <rect key="frame" x="63" y="293" width="24" height="24"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="18" id="GNc-ud-yCh"/>
+                            <constraint firstAttribute="height" constant="24" id="MdS-kD-cIy"/>
+                            <constraint firstAttribute="width" constant="24" id="xtN-eB-0c3"/>
                         </constraints>
-                        <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
-                        <color key="textColor" red="0.98431372549019602" green="0.5490196078431373" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <nil key="highlightedColor"/>
-                    </label>
+                        <inset key="imageEdgeInsets" minX="0.0" minY="2" maxX="0.0" maxY="2"/>
+                        <state key="normal" image="imgHeartLight">
+                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                        </state>
+                    </button>
                     <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="02 Mar" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dwP-9n-4tK" userLabel="created_date">
                         <rect key="frame" x="257" y="32" width="46" height="18"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -85,11 +86,23 @@
                         <color key="textColor" red="0.60000002379999995" green="0.60000002379999995" blue="0.60000002379999995" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="1 Like" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jtz-MW-UwR" userLabel="like">
+                        <rect key="frame" x="93" y="296" width="39" height="18"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="18" id="GNc-ud-yCh"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="15"/>
+                        <color key="textColor" red="0.98431372549019602" green="0.5490196078431373" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
                 </subviews>
                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                 <constraints>
+                    <constraint firstItem="h8L-WQ-6XO" firstAttribute="leading" secondItem="woJ-Y6-bOV" secondAttribute="leading" constant="2" id="0LP-Pl-7O8"/>
                     <constraint firstItem="EuJ-uZ-wD2" firstAttribute="top" secondItem="h8L-WQ-6XO" secondAttribute="bottom" id="9kI-Dp-HRC"/>
                     <constraint firstItem="0TT-YB-aeS" firstAttribute="leading" secondItem="m6L-Nb-Bin" secondAttribute="leading" id="Ciw-PQ-dhL"/>
+                    <constraint firstAttribute="bottom" secondItem="woJ-Y6-bOV" secondAttribute="bottom" constant="8" id="Cpe-4j-UMt"/>
                     <constraint firstItem="h8L-WQ-6XO" firstAttribute="leading" secondItem="EuJ-uZ-wD2" secondAttribute="leading" id="EAc-Ng-iRm"/>
                     <constraint firstItem="0TT-YB-aeS" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="GpA-kc-Ty0"/>
                     <constraint firstItem="TaR-dt-0cq" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="H1p-Ay-XWU"/>
@@ -97,23 +110,23 @@
                     <constraint firstItem="h8L-WQ-6XO" firstAttribute="leading" secondItem="m6L-Nb-Bin" secondAttribute="leading" id="KDU-eM-EcE"/>
                     <constraint firstItem="m6L-Nb-Bin" firstAttribute="top" secondItem="0TT-YB-aeS" secondAttribute="bottom" constant="4" id="ODn-4W-Is5"/>
                     <constraint firstAttribute="trailingMargin" secondItem="dwP-9n-4tK" secondAttribute="trailing" constant="4" id="Xef-Wa-aN3"/>
-                    <constraint firstAttribute="bottomMargin" secondItem="Jtz-MW-UwR" secondAttribute="bottom" priority="999" constant="8" id="Yyt-jF-gRU"/>
                     <constraint firstItem="m6L-Nb-Bin" firstAttribute="leading" secondItem="TaR-dt-0cq" secondAttribute="trailing" constant="9" id="fVv-9a-iCu"/>
                     <constraint firstAttribute="trailingMargin" secondItem="h8L-WQ-6XO" secondAttribute="trailing" constant="4" id="fux-7Z-wC8"/>
                     <constraint firstAttribute="trailing" secondItem="EuJ-uZ-wD2" secondAttribute="trailing" constant="8" id="kBG-OT-7v3"/>
                     <constraint firstItem="TaR-dt-0cq" firstAttribute="top" secondItem="m6L-Nb-Bin" secondAttribute="top" id="oB9-HR-jwj"/>
-                    <constraint firstItem="Jtz-MW-UwR" firstAttribute="top" secondItem="EuJ-uZ-wD2" secondAttribute="bottom" constant="8" id="oUM-qU-Ajx"/>
-                    <constraint firstItem="Jtz-MW-UwR" firstAttribute="leading" secondItem="EuJ-uZ-wD2" secondAttribute="leading" id="rvT-YA-ml0"/>
+                    <constraint firstItem="woJ-Y6-bOV" firstAttribute="top" secondItem="EuJ-uZ-wD2" secondAttribute="bottom" constant="6" id="rag-TB-P6X"/>
                     <constraint firstItem="dwP-9n-4tK" firstAttribute="baseline" secondItem="m6L-Nb-Bin" secondAttribute="baseline" id="tYi-h6-iz4"/>
+                    <constraint firstItem="Jtz-MW-UwR" firstAttribute="leading" secondItem="woJ-Y6-bOV" secondAttribute="trailing" constant="6" id="v3N-B1-BK4"/>
                     <constraint firstItem="h8L-WQ-6XO" firstAttribute="top" secondItem="m6L-Nb-Bin" secondAttribute="bottom" constant="4" id="wyT-ce-zKL"/>
+                    <constraint firstItem="Jtz-MW-UwR" firstAttribute="centerY" secondItem="woJ-Y6-bOV" secondAttribute="centerY" id="y8m-Xw-lVx"/>
                 </constraints>
             </tableViewCellContentView>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <connections>
                 <outlet property="createdDate" destination="dwP-9n-4tK" id="tVJ-g5-sLx"/>
                 <outlet property="description_" destination="h8L-WQ-6XO" id="GS8-2F-Frh"/>
+                <outlet property="likeButton" destination="woJ-Y6-bOV" id="oFa-Ra-mMz"/>
                 <outlet property="likes" destination="Jtz-MW-UwR" id="d4O-ak-JdR"/>
-                <outlet property="likesHeight" destination="GNc-ud-yCh" id="r5D-Uu-ynC"/>
                 <outlet property="patchName" destination="0TT-YB-aeS" id="gHZ-M6-ccC"/>
                 <outlet property="patchNameHeight" destination="jfD-W3-ZcH" id="iVk-bn-GDW"/>
                 <outlet property="photo" destination="eQH-ua-j18" id="Gg6-9z-Phj"/>
@@ -124,4 +137,7 @@
             <point key="canvasLocation" x="-181.5" y="296"/>
         </tableViewCell>
     </objects>
+    <resources>
+        <image name="imgHeartLight" width="40" height="40"/>
+    </resources>
 </document>

@@ -576,8 +576,6 @@
 				7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */,
 				E26B0C8B1B4577D000706F4A /* TextViewChangeObserver.swift */,
 				E26B0C8D1B45783700706F4A /* TextFieldChangeObserver.swift */,
-				E26B0C8F1B45C07D00706F4A /* AirPhotoBrowser.swift */,
-				E273B5351B488F2000888E73 /* AirPhotoPreview.swift */,
 			);
 			name = Components;
 			sourceTree = "<group>";
@@ -620,6 +618,8 @@
 			children = (
 				E2F618DE1B02667A0055D09C /* Edit */,
 				E2F618DF1B0267F50055D09C /* Base */,
+				E26B0C8F1B45C07D00706F4A /* AirPhotoBrowser.swift */,
+				E273B5351B488F2000888E73 /* AirPhotoPreview.swift */,
 				844D6E341AA4D01200EE71ED /* DevelopmentViewController.swift */,
 				7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */,
 				9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */,

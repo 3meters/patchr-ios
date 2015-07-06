@@ -67,6 +67,9 @@ class AirLikeButton: AirToggleButton {
                     }
                 }
                 
+                if self.messageOff != nil {
+                    Shared.Toast(self.messageOff)
+                }
                 NSNotificationCenter.defaultCenter().postNotificationName(Events.LikeDidChange, object: nil)
                 self.toggleOn(self.entity!.userLikesValue)
                 self.enabled = true
@@ -84,19 +87,17 @@ class AirLikeButton: AirToggleButton {
                 else {
                     if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
                         if serviceData.countValue == 1 {
-                            if self.entity is Message {
-                                self.entity!.userLikesId = UserController.instance.userId!
-                            }
-                            else if self.entity is Patch {
-                                if let entityDictionaries = serviceData.data as? [[String:NSObject]] {
-                                    let map = entityDictionaries[0]
-                                    self.entity!.userLikesId = map["_id"] as! String
-                                }
+                            if let entityDictionaries = serviceData.data as? [[String:NSObject]] {
+                                let map = entityDictionaries[0]
+                                self.entity!.userLikesId = map["_id"] as! String
                             }
                             self.entity!.userLikesValue = true
                             self.entity!.countLikesValue++
                         }
                     }
+                }
+                if self.messageOn != nil {
+                    Shared.Toast(self.messageOn)
                 }
                 NSNotificationCenter.defaultCenter().postNotificationName(Events.LikeDidChange, object: nil)
                 self.toggleOn(self.entity!.userLikesValue)

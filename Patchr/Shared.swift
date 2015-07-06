@@ -30,6 +30,25 @@ struct Shared {
         
         return browser
     }
+    
+    static func Toast(message: String?, duration: NSTimeInterval = 3.0) {
+        
+        if let controller = UIViewController.topMostViewController() {
+            var progress: MBProgressHUD
+            progress = MBProgressHUD.showHUDAddedTo(controller.view, animated: true)
+            progress.mode = MBProgressHUDMode.Text
+            progress.detailsLabelText = message
+            progress.margin = 10.0
+            progress.yOffset = Float((UIScreen.mainScreen().bounds.size.height / 2) - 200)
+            progress.opacity = 0.6
+            progress.cornerRadius = 16.0
+            progress.detailsLabelColor = Colors.hintColor
+            progress.detailsLabelFont = UIFont(name:"HelveticaNeue", size: 16)
+            progress.removeFromSuperViewOnHide = true
+            progress.userInteractionEnabled = false
+            progress.hide(true, afterDelay: duration)
+        }
+    }
 
     static func setTabBarVisible(visible:Bool, animated:Bool, viewController: UIViewController!) {
         

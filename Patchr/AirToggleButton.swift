@@ -15,6 +15,8 @@ class AirToggleButton: AirImageButton {
     var tintOff: UIColor = Colors.brandColor
     var tintOn: UIColor = Colors.brandColor
     var tintPending: UIColor = Colors.brandColor
+    var messageOn: String?
+    var messageOff: String?
     
     var toggledOn: Bool = false
     
@@ -44,6 +46,9 @@ class AirToggleButton: AirImageButton {
         else {
             self.setImage(imageOff, forState: .Normal)
             self.imageView?.tintColor(pending ? self.tintPending : self.tintOff)
+            if messageOff != nil {
+                Shared.Toast(messageOff)
+            }
         }
         self.toggledOn = on
     }

@@ -221,8 +221,9 @@ class MessageDetailViewController: UITableViewController {
 			self.description_.sizeToFit()
 			self.description_.hidden = false
 		}
+        
+        /* Photo */
 
-		//self.photo.setImage(nil, forState: UIControlState.Normal)
 		if message!.photo != nil {
 			self.photo.hidden = false
 			self.photo.setImageWithPhoto(message!.photo)
@@ -234,6 +235,7 @@ class MessageDetailViewController: UITableViewController {
 		}
 
 		/* Like button */
+        
         likeButton.bindEntity(self.message)
 
 		/* Likes button */

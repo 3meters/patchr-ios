@@ -42,7 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Fabric.with([Crashlytics()])
         
         /* Change default font for button bar items */
-        let customFont = UIFont(name:"HelveticaNeue-Light", size: 18)
+        let customFont = UIFont(name:"HelveticaNeue", size: 18)
         UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: customFont!], forState: UIControlState.Normal)
 
         /* Setup parse for push notifications */
