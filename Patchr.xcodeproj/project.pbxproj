@@ -583,8 +583,6 @@
 		E2CE389F1AEFBF7600710227 /* Widgets */ = {
 			isa = PBXGroup;
 			children = (
-				7DC9D4981A9D597400234E3C /* AutoSizingLabel.h */,
-				7DC9D4991A9D597400234E3C /* AutoSizingLabel.m */,
 				E2711C4A1AFD17E800CE71A1 /* AirTableViewCell.h */,
 				E2711C4B1AFD17E800CE71A1 /* AirTableViewCell.m */,
 				E2711C4D1AFD182F00CE71A1 /* AirTableView.h */,
@@ -594,6 +592,8 @@
 				E2A28E6C1B49D88800B3A2FE /* AirLikeButton.swift */,
 				E2A28E701B4A624300B3A2FE /* AirWatchButton.swift */,
 				E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */,
+				7DC9D4981A9D597400234E3C /* AutoSizingLabel.h */,
+				7DC9D4991A9D597400234E3C /* AutoSizingLabel.m */,
 				E25327DE1B1A282D00990A81 /* FXBlurView.h */,
 				E25327DF1B1A282D00990A81 /* FXBlurView.m */,
 				E25327D91B1625D900990A81 /* GCPlaceholderTextView.h */,

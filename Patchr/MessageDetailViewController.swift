@@ -226,7 +226,9 @@ class MessageDetailViewController: UITableViewController {
 
 		if message!.photo != nil {
 			self.photo.hidden = false
-			self.photo.setImageWithPhoto(message!.photo)
+            if self.photo.photoUrl == nil || self.photo.photoUrl?.absoluteString != self.message.photo.uriWrapped().absoluteString {
+                self.photo.setImageWithPhoto(message!.photo)                
+            }
 		}
 		else {
 			self.photo.hidden = true
