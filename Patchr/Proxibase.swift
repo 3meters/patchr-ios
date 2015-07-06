@@ -21,13 +21,14 @@ import Foundation
 import CoreLocation
 import Darwin
 import AVFoundation
+import Parse
 
 /*
  * Access control is set to public because that is the only way that
  * unit tests can use this class.
  */
-
 public class Proxibase {
+    
 	public typealias ProxibaseCompletionBlock = (response:AnyObject?, error:NSError?) -> Void
 	public typealias S3UploadCompletionBlock = (/*result*/AnyObject?, NSError?) -> Void
 
@@ -51,6 +52,7 @@ public class Proxibase {
 	private var cachedInstallationIdentifier: String?
 
 	public var installationIdentifier: String {
+        
 		if cachedInstallationIdentifier == nil {
 			let installationIdentifierKey    = "installationIdentifier"
 			var storedInstallationIdentifier = Lockbox.stringForKey(installationIdentifierKey) as String?

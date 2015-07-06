@@ -10,8 +10,16 @@ import UIKit
 
 class AirImageButton: UIButton {
 
-    var activity: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
+    var progress: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
     var photoUrl: NSURL?
+    
+    var widthConstraint: NSLayoutConstraint?
+    var heightConstraint: NSLayoutConstraint?
+    
+    var progressAuto: Bool = true
+    
+    private var progressStyle: UIActivityIndicatorViewStyle = .Gray
+    private var progressSize: CGFloat = 12
     
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -25,25 +33,37 @@ class AirImageButton: UIButton {
     
     func initialize(){
         
-        activity.setTranslatesAutoresizingMaskIntoConstraints(false)
-        self.addSubview(activity)
+        self.progress.setTranslatesAutoresizingMaskIntoConstraints(false)
+        self.addSubview(progress)
         
-        let xCenterConstraint = NSLayoutConstraint(item: activity, attribute: .CenterX, relatedBy: .Equal, toItem: self, attribute: .CenterX, multiplier: 1, constant: 0)
-        let yCenterConstraint = NSLayoutConstraint(item: activity, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1, constant: 0)
-        let widthConstraint = NSLayoutConstraint(item: activity, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 12)
-        let heightConstraint = NSLayoutConstraint(item: activity, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 12)
+        let xCenterConstraint = NSLayoutConstraint(item: progress, attribute: .CenterX, relatedBy: .Equal, toItem: self, attribute: .CenterX, multiplier: 1, constant: 0)
+        let yCenterConstraint = NSLayoutConstraint(item: progress, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1, constant: 0)
+        self.widthConstraint = NSLayoutConstraint(item: progress, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: self.progressSize)
+        self.heightConstraint = NSLayoutConstraint(item: progress, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: self.progressSize)
         
-        self.addConstraints([xCenterConstraint, yCenterConstraint, widthConstraint, heightConstraint])
+        self.addConstraints([xCenterConstraint, yCenterConstraint, widthConstraint!, heightConstraint!])
         
-        activity.hidesWhenStopped = true
+        self.progress.hidesWhenStopped = true
     }
     
-    func startActivity(){
-        activity.startAnimating()
+    func setProgressSize(size: CGFloat) {
+        self.progressSize = size
+        self.widthConstraint?.constant = size
+        self.heightConstraint?.constant = size
+        self.setNeedsUpdateConstraints()
+        self.updateConstraintsIfNeeded()
     }
     
-    func stopActivity(){
-        activity.stopAnimating()
+    func setProgressStyle(style: UIActivityIndicatorViewStyle) {
+        progress.activityIndicatorViewStyle = style
+    }
+    
+    func startProgress(){
+        progress.startAnimating()
+    }
+    
+    func stopProgress(){
+        progress.stopAnimating()
     }
     
     func setImageWithPhoto(photo: Photo, animate: Bool = true) {
@@ -77,8 +97,10 @@ class AirImageButton: UIButton {
         
         self.photoUrl = url
         
-        startActivity()
-        
+        if progressAuto {
+            startProgress()
+        }
+    
         self.sd_setImageWithURL(url,
             forState:UIControlState.Normal,
             completed: { image, error, cacheType, url in
@@ -89,7 +111,9 @@ class AirImageButton: UIButton {
     
     func setImageWithImageResult(imageResult: ImageResult, animate: Bool = true) {
         
-        startActivity()
+        if progressAuto {
+            startProgress()
+        }
         /*
          * Request image via resizer so size is capped.
          */
@@ -113,7 +137,9 @@ class AirImageButton: UIButton {
     
     func imageCompletion(image: UIImage?, error: NSError?, cacheType: SDImageCacheType, url: NSURL, animate: Bool = true) -> Void {
         
-        stopActivity()
+        if progressAuto {
+            stopProgress()
+        }
         
         if error != nil {
             println("Image fetch failed: " + error!.localizedDescription)

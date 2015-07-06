@@ -36,3 +36,7 @@ public struct Colors {
     static let hintColor: UIColor = UIColor(red: CGFloat(0.8), green: CGFloat(0.8), blue: CGFloat(0.8), alpha: CGFloat(1))
 }
 
+public struct Events {
+    static let LikeDidChange = "LikeDidChange"
+    static let WatchDidChange = "WatchDidChange"
+}

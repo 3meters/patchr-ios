@@ -8,7 +8,7 @@
 
 struct Shared {
 
-    static func showPhotoBrowser(image: UIImage!, view: UIView!, viewController: UIViewController!) -> AirPhotoBrowser {
+    static func showPhotoBrowser(image: UIImage!, view: UIView!, viewController: UIViewController!, entity: Entity?) -> AirPhotoBrowser {
         /*
         * Create browser (must be done each time photo browser is displayed. Photo
         * browser objects cannot be re-used)
@@ -20,12 +20,14 @@ struct Shared {
         browser.usePopAnimation = true
         browser.scaleImage = image  // Used because final image might have different aspect ratio than initially
         browser.useWhiteBackgroundColor = true
+        browser.forceHideStatusBar = true
         browser.disableVerticalSwipe = false
-        browser.forceHideStatusBar = false
-        browser.displayDoneButton = false
-        browser.addNavigationBar()
+        if entity != nil {
+            browser.linkedEntity = entity
+        }
         
-        viewController.presentViewController(browser, animated:true, completion:nil)
+        viewController.navigationController!.presentViewController(browser, animated:true, completion:nil)
+        
         return browser
     }
 

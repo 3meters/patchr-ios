@@ -138,7 +138,7 @@ class UserDetailViewController: QueryTableViewController {
 	}
 
 	@IBAction func actionUserPhoto(sender: AnyObject) {
-		Shared.showPhotoBrowser(userPhoto.imageForState(.Normal), view: sender as! UIView, viewController: self)
+        Shared.showPhotoBrowser(userPhoto.imageForState(.Normal), view: sender as! UIView, viewController: self, entity: nil)
 	}
 
     @IBAction func unwindFromUserEdit(segue: UIStoryboardSegue) {
@@ -203,7 +203,8 @@ class UserDetailViewController: QueryTableViewController {
 		let queryResult = object as! QueryItem
 		let message = queryResult.object as! Message
 		let messageCell = cell as! MessageTableViewCell
-
+        
+        messageCell.entity = message
 		messageCell.delegate = self
 
 		messageCell.description_.text = nil
@@ -320,7 +321,7 @@ extension UserDetailViewController: TableViewCellDelegate {
 	func tableViewCell(cell: UITableViewCell, didTapOnView view: UIView) {
 		let messageCell = cell as! MessageTableViewCell
 		if view == messageCell.photo && messageCell.photo.image != nil {
-			Shared.showPhotoBrowser(messageCell.photo.image, view: view, viewController: self)
+            Shared.showPhotoBrowser(messageCell.photo.image, view: view, viewController: self, entity: messageCell.entity)
 		}
 	}
 }

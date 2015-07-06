@@ -280,7 +280,7 @@ extension NotificationsTableViewController: TableViewCellDelegate {
 	func tableViewCell(cell: UITableViewCell, didTapOnView view: UIView) {
 		let notificationCell = cell as! NotificationTableViewCell
 		if view == notificationCell.photo && notificationCell.photo.image != nil {
-			Shared.showPhotoBrowser(notificationCell.photo.image, view: view, viewController: self)
+            Shared.showPhotoBrowser(notificationCell.photo.image, view: view, viewController: self, entity: nil)
 		}
 	}
 }

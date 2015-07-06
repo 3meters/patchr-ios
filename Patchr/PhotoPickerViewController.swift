@@ -16,7 +16,7 @@ class PhotoPickerViewController: UICollectionViewController {
     
     var searchBar: UISearchBar?
     var progress: MBProgressHUD?
-    var pickerDelegate: PhotoPickerControllerDelegate?
+    var pickerDelegate: PhotoBrowseControllerDelegate?
     
     var largePhotoIndexPath : NSIndexPath? {
         didSet {
@@ -179,7 +179,7 @@ class PhotoPickerViewController: UICollectionViewController {
 	 *--------------------------------------------------------------------------------------------*/
     
     @IBAction func cancelAction(sender: AnyObject){
-        self.pickerDelegate!.photoPickerControllerDidCancel()
+        self.pickerDelegate!.photoBrowseControllerDidCancel!()
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     
@@ -231,19 +231,15 @@ extension PhotoPickerViewController : UICollectionViewDelegate {
             
             var photo = IDMPhoto(image:cell.thumbnail.image)
             var photos = Array([photo])
-            var browser = AirPhotoBrowser(photos:photos as [AnyObject], animatedFromView: cell.thumbnail)
+            var browser = AirPhotoPreview(photos:photos as [AnyObject], animatedFromView: cell.thumbnail)
             
             browser.usePopAnimation = true
             browser.scaleImage = cell.thumbnail.image  // Used because final image might have different aspect ratio than initially
             browser.useWhiteBackgroundColor = true
             browser.disableVerticalSwipe = false
-            browser.forceHideStatusBar = false
-            browser.displayDoneButton = false
-            browser.addNavigationBar()
-            browser.navigationItem.title = "Preview"
-            browser.displayToolbar = false
-            browser.addToolbar()
-            browser.pickerDelegate = self.pickerDelegate  // Pass delegate through
+            browser.forceHideStatusBar = true
+            
+            browser.browseDelegate = self.pickerDelegate  // Pass delegate through
             browser.imageResult = self.imageForIndexPath(indexPath)
             
             presentViewController(browser, animated:true, completion:nil)

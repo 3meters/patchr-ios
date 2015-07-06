@@ -19,7 +19,6 @@
 #import <MBProgressHUD.h>
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <SDWebImage/UIButton+WebCache.h>
-#import <Parse.h>
 #import <UIDevice-Hardware.h>
 #import <Lockbox.h>
 #import <IDMPhoto.h>

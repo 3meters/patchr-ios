@@ -34,9 +34,8 @@ class MessageDetailViewController: UITableViewController {
 	@IBOutlet weak var description_: UILabel!
 	@IBOutlet weak var createdDate:  UILabel!
 	@IBOutlet weak var photo:        AirImageButton!
-	@IBOutlet weak var likeButton:   UIButton!
+	@IBOutlet weak var likeButton:   AirLikeButton!
 	@IBOutlet weak var likesButton:  UIButton!
-	@IBOutlet weak var likeActivity: UIActivityIndicatorView!
 
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
@@ -60,7 +59,6 @@ class MessageDetailViewController: UITableViewController {
 		self.photo.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
 		self.userPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
 		self.patchPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
-		likeActivity.stopAnimating()
 
 		/* Navigation bar buttons */
         var shareButton  = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
@@ -104,6 +102,8 @@ class MessageDetailViewController: UITableViewController {
 		if self.message != nil {
 			draw()
 		}
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "likeDidChange:", name: Events.LikeDidChange, object: nil)
 	}
 
 	override func viewDidLayoutSubviews() {
@@ -117,6 +117,10 @@ class MessageDetailViewController: UITableViewController {
 		super.viewDidAppear(animated)
 		refresh(force: true)
 	}
+    
+    override func viewDidDisappear(animated: Bool) {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
 
 	private func refresh(force: Bool = false) {
 		DataController.instance.withMessageId(messageId!, refresh: force) {
@@ -142,7 +146,8 @@ class MessageDetailViewController: UITableViewController {
 	}
 
 	@IBAction func photoAction(sender: AnyObject) {
-        Shared.showPhotoBrowser(self.photo.imageForState(.Normal), view: sender as! UIView, viewController: self)
+        var browser = Shared.showPhotoBrowser(self.photo.imageForState(.Normal), view: sender as! UIView, viewController: self, entity: self.message)
+        browser.target = self
 	}
 
 	@IBAction func reportAction(sender: AnyObject) {
@@ -160,57 +165,7 @@ class MessageDetailViewController: UITableViewController {
                 }
         }
     }
-
-	@IBAction func likeAction(sender: AnyObject) {
-
-		likeButton.enabled = false
-		likeActivity.startAnimating()
-		likeButton.alpha = 0.0
-        
-		if message!.userLikesValue {
-			DataController.proxibase.deleteLinkById(message!.userLikesId!) {
-				response, error in
-                
-				self.likeActivity.stopAnimating()
-                if let error = ServerError(error) {
-                    self.handleError(error)
-                }
-                else {
-					if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
-						if serviceData.countValue == 1 {
-							self.message!.userLikesId = nil
-							self.message!.userLikesValue = false
-							self.message!.countLikesValue--
-						}
-					}
-				}
-				self.draw()
-				self.likeButton.enabled = true
-			}
-		}
-		else {
-			DataController.proxibase.insertLink(UserController.instance.userId! as String, toID: message!.id_, linkType: .Like) {
-				response, error in
-                
-				self.likeActivity.stopAnimating()
-                if let error = ServerError(error) {
-                    self.handleError(error)
-                }
-                else {
-					if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
-						if serviceData.countValue == 1 {
-							self.message!.userLikesId = UserController.instance.userId!
-							self.message!.userLikesValue = true
-							self.message!.countLikesValue++
-						}
-					}
-				}
-				self.draw()
-				self.likeButton.enabled = true
-			}
-		}
-	}
-
+    
 	@IBAction func likesAction(sender: AnyObject) {
 		self.performSegueWithIdentifier("LikeListSegue", sender: self)
 	}
@@ -240,6 +195,10 @@ class MessageDetailViewController: UITableViewController {
 	func editAction() {
 		self.performSegueWithIdentifier("MessageEditSegue", sender: self)
 	}
+    
+    func likeDidChange(sender: NSNotification) {
+        self.draw()
+    }
 
 	/*--------------------------------------------------------------------------------------------
 	* Methods
@@ -275,13 +234,7 @@ class MessageDetailViewController: UITableViewController {
 		}
 
 		/* Like button */
-
-		likeButton.imageView?.tintColor(UIColor.blackColor())
-		likeButton.alpha = 0.5
-		if message!.userLikesValue {
-			likeButton.imageView?.tintColor(Colors.brandColor)
-			likeButton.alpha = 1
-		}
+        likeButton.bindEntity(self.message)
 
 		/* Likes button */
 

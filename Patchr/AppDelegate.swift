@@ -9,6 +9,7 @@
 import UIKit
 import Fabric
 import Crashlytics
+import Parse
 
 let PAApplicationDidReceiveRemoteNotification = "PAApplicationDidReceiveRemoteNotification"
 let PAapplicationDidBecomeActiveWithNonZeroBadge = "PAapplicationDidBecomeActiveWithNonZeroBadge"
@@ -34,8 +35,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let settingsDictionary: NSDictionary = NSDictionary(contentsOfFile: defaultSettingsFile as String)!
         NSUserDefaults.standardUserDefaults().registerDefaults(settingsDictionary as [NSObject : AnyObject])
         
+        /* Light gray is better than black */
+        window?.backgroundColor = Colors.windowColor
+        
         /* Initialize Crashlytics */
-        Fabric.with([Crashlytics()])        
+        Fabric.with([Crashlytics()])
+        
+        /* Change default font for button bar items */
+        let customFont = UIFont(name:"HelveticaNeue-Light", size: 18)
+        UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: customFont!], forState: UIControlState.Normal)
 
         /* Setup parse for push notifications */
         Parse.setApplicationId("EonZJ4FXEADijslgqXCkg37sOGpB7AB9lDYxoHtz", clientKey: "5QRFlRQ3j7gkxyJ2cBYbHTK98WRQhoHCnHdpEKSD")
@@ -135,6 +143,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // Register for Push Notifications before iOS 8
             application.registerForRemoteNotificationTypes(.Alert | .Badge | .Sound)
         }
+    }
+    
+    func application(application: UIApplication, supportedInterfaceOrientationsForWindow window: UIWindow?) -> Int {
+        if let controller = UIViewController.topMostViewController() {
+            if controller is AirPhotoBrowser || controller is AirPhotoPreview {
+                return Int(UIInterfaceOrientationMask.All.rawValue);
+            }
+            else {
+                return Int(UIInterfaceOrientationMask.Portrait.rawValue);
+            }
+        }
+        return Int(UIInterfaceOrientationMask.Portrait.rawValue);
     }
 }
 

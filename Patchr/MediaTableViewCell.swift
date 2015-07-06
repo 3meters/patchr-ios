@@ -14,6 +14,8 @@ protocol TableViewCellDelegate: NSObjectProtocol {
 
 class MediaTableViewCell: UITableViewCell {
     
+    var entity: Entity?
+    
     @IBOutlet weak var userPhoto: AirImageView!
     @IBOutlet weak var createdDate: UILabel!
     @IBOutlet weak var description_: UILabel!

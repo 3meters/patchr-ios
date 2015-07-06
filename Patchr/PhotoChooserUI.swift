@@ -153,19 +153,22 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 	}
 }
 
-protocol PhotoPickerControllerDelegate {
-    func photoPickerController(didFinishPickingPhoto imageResult: ImageResult) -> Void
-    func photoPickerControllerDidCancel() -> Void
+@objc protocol PhotoBrowseControllerDelegate {
+    optional func photoBrowseController(didFinishPickingPhoto imageResult: ImageResult) -> Void
+    optional func photoBrowseController(didLikePhoto liked: Bool) -> Void
+    optional func photoBrowseControllerDidCancel() -> Void
 }
 
-extension PhotoChooserUI: PhotoPickerControllerDelegate {
+extension PhotoChooserUI: PhotoBrowseControllerDelegate {
     
-    func photoPickerController(didFinishPickingPhoto imageResult: ImageResult) -> Void {
+    func photoBrowseController(didFinishPickingPhoto imageResult: ImageResult) -> Void {
         hostViewController?.dismissViewControllerAnimated(true, completion: nil)
         self.finishedChoosing!(nil, imageResult)
     }
     
-    func photoPickerControllerDidCancel() {
+    func photoBrowseController(didLikePhoto liked: Bool) { }
+    
+    func photoBrowseControllerDidCancel() {
         hostViewController?.dismissViewControllerAnimated(true, completion: nil)
     }
 }

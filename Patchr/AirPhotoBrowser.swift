@@ -10,45 +10,55 @@ import UIKit
 
 class AirPhotoBrowser: IDMPhotoBrowser {
     
-    var pickerDelegate: PhotoPickerControllerDelegate?
+    var browseDelegate: PhotoBrowseControllerDelegate?
     var imageResult: ImageResult?
+    var likes: Bool = false
+    var target: AnyObject?
+    var likeButton: AirLikeButton = AirLikeButton()
+    
+    var entity: Entity?
+    var linkedEntity: Entity? {
+        set {
+            self.entity = newValue
+                self.likeButton.bindEntity(self.entity)
+            likeButton.hidden = (self.entity == nil)
+        }
+        get {
+            return self.entity
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.displayDoneButton = false
+        configure()
     }
     
-    func addToolbar() {
+    func configure() {
         
-        /* Toolbar buttons */
-        var selectButton = UIBarButtonItem(title: "Use photo", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSelect"))
+        var toolbar: UIToolbar = super.toolbar
+        
         var flexSpacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)
         var fixedSpacer = UIBarButtonItem(barButtonSystemItem: .FixedSpace, target: self, action: nil)
+        var actionButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("actionButtonPressed:"))
+        
+        likeButton.frame = CGRectMake(0, 0, 44, 44)
+        likeButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right:10)
+        likeButton.hidden = (self.entity == nil)
+        
         fixedSpacer.width = 16
+        
+        var barLikeButton = UIBarButtonItem(customView: likeButton)
+        barLikeButton.target = self
+        barLikeButton.action = Selector("likeAction:")
         
         var items = [AnyObject]()
         items.append(flexSpacer)
-        items.append(selectButton)
+        items.append(barLikeButton)
         items.append(flexSpacer)
+        items.append(actionButton)
         
-        /* Toolbar */
-        let toolbar = UIToolbar()
-        toolbar.frame = CGRectMake(0, self.view.frame.size.height - 44, self.view.frame.size.width, 46)
-        toolbar.sizeToFit()
-        toolbar.clipsToBounds = true
-        toolbar.translucent = true
-        toolbar.setItems(items, animated: true)
-        self.view.addSubview(toolbar)
-    }
-    
-    func addNavigationBar() {
-        let navigationBar = UINavigationBar(frame: CGRectMake(0, 0, self.view.frame.size.width, 44 + 20)) // nav height + status bar height
-        navigationBar.translucent = true
-        navigationItem.rightBarButtonItems = [UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("doneButtonPressed:"))]
-        navigationBar.items = [navigationItem]
-        self.view.addSubview(navigationBar)
-    }
-    
-    func actionSelect() {
-        pickerDelegate?.photoPickerController(didFinishPickingPhoto: self.imageResult!)
+        toolbar.items = items
     }
 }

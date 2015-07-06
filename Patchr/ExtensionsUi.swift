@@ -42,14 +42,19 @@ extension UIImage {
 extension UIView {
     
     func fadeIn(duration: NSTimeInterval = 0.3, delay: NSTimeInterval = 0.0, alpha: CGFloat = 1.0, completion: ((Bool) -> Void) = {(finished: Bool) -> Void in}) {
-        UIView.animateWithDuration(duration, delay: delay, options: UIViewAnimationOptions.CurveEaseIn, animations: {
-            self.alpha = alpha
-            }, completion: completion)  }
+        if self.alpha != alpha {
+            UIView.animateWithDuration(duration, delay: delay, options: UIViewAnimationOptions.CurveEaseIn, animations: {
+                self.alpha = alpha
+                }, completion: completion)
+        }
+    }
     
     func fadeOut(duration: NSTimeInterval = 0.3, delay: NSTimeInterval = 0.0, alpha: CGFloat = 0.0, completion: (Bool) -> Void = {(finished: Bool) -> Void in}) {
-        UIView.animateWithDuration(duration, delay: delay, options: UIViewAnimationOptions.CurveEaseIn, animations: {
-            self.alpha = alpha
-            }, completion: completion)
+        if self.alpha != alpha {
+            UIView.animateWithDuration(duration, delay: delay, options: UIViewAnimationOptions.CurveEaseIn, animations: {
+                self.alpha = alpha
+                }, completion: completion)
+        }
     }
 
     func showSubviews(level: Int = 0) {
@@ -85,6 +90,56 @@ extension UIImageView {
 }
 
 extension UIViewController {
+    
+    // Returns the most recently presented UIViewController (visible)
+    class func topMostViewController() -> UIViewController? {
+        
+        // If the root view is a navigation controller, we can just return the visible ViewController
+        if let tabBarController = getTabBarController() {
+            if let navigationController = tabBarController.selectedViewController as? UINavigationController {
+                return navigationController.visibleViewController
+            }
+            return tabBarController.selectedViewController
+        }
+        
+        // If the root view is a navigation controller, we can just return the visible ViewController
+        if let navigationController = getNavigationController() {
+            return navigationController.visibleViewController
+        }
+        
+        // Otherwise, we must get the root UIViewController and iterate through presented views
+        if let rootController = UIApplication.sharedApplication().keyWindow?.rootViewController {
+            
+            var currentController: UIViewController! = rootController
+            
+            // Each ViewController keeps track of the views it has presented, so we
+            // can move from the head to the tail, which will always be the current view
+            while( currentController.presentedViewController != nil ) {
+                currentController = currentController.presentedViewController
+            }
+            
+            return currentController
+        }
+        return nil
+    }
+    
+    // Returns the navigation controller if it exists
+    class func getNavigationController() -> UINavigationController? {
+        
+        if let navigationController = UIApplication.sharedApplication().keyWindow?.rootViewController  {
+            return navigationController as? UINavigationController
+        }
+        return nil
+    }
+    
+    // Returns the navigation controller if it exists
+    class func getTabBarController() -> UITabBarController? {
+        
+        if let controller = UIApplication.sharedApplication().keyWindow?.rootViewController  {
+            return controller as? UITabBarController
+        }
+        return nil
+    }
     
     func handleError(error: ServerError, errorActionType: ErrorActionType = .AUTO, errorAction: ErrorAction = .NONE ) {
         
@@ -167,13 +222,13 @@ extension UIViewController {
     
     func Toast(message: String?, duration: NSTimeInterval = 3.0) {
         
-        if let controller = DataController.instance.getCurrentViewController() {
+        if let controller = UIViewController.topMostViewController() {
             var progress: MBProgressHUD
             progress = MBProgressHUD.showHUDAddedTo(controller.view, animated: true)
             progress.mode = MBProgressHUDMode.Text
             progress.detailsLabelText = message
             progress.margin = 10.0
-            progress.yOffset = Float((UIScreen.mainScreen().bounds.size.height / 2) - 100)
+            progress.yOffset = Float((UIScreen.mainScreen().bounds.size.height / 2) - 200)
             progress.opacity = 0.7
             progress.cornerRadius = 4.0
             progress.detailsLabelColor = Colors.windowColor
@@ -182,6 +237,40 @@ extension UIViewController {
             progress.userInteractionEnabled = false
             progress.hide(true, afterDelay: duration)
         }
+    }
+}
+
+extension UINavigationController {
+    
+    public override func supportedInterfaceOrientations() -> Int {
+        if visibleViewController != nil {
+            return visibleViewController.supportedInterfaceOrientations()
+        }
+        return super.supportedInterfaceOrientations()
+    }
+    
+    public override func shouldAutorotate() -> Bool {
+        if visibleViewController != nil {
+            return visibleViewController.shouldAutorotate()
+        }
+        return super.shouldAutorotate()
+    }
+}
+
+extension UITabBarController {
+    
+    public override func supportedInterfaceOrientations() -> Int {
+        if let selected = selectedViewController {
+            return selected.supportedInterfaceOrientations()
+        }
+        return super.supportedInterfaceOrientations()
+    }
+    
+    public override func shouldAutorotate() -> Bool {
+        if let selected = selectedViewController {
+            return selected.shouldAutorotate()
+        }
+        return super.shouldAutorotate()
     }
 }
 

@@ -37,14 +37,12 @@ class PatchDetailViewController: QueryTableViewController {
     @IBOutlet weak var patchName:      UILabel!
     @IBOutlet weak var patchType:      UILabel!
     @IBOutlet weak var visibility:     UILabel!
-    @IBOutlet weak var likeButton:     UIButton!
-    @IBOutlet weak var watchButton:    UIButton!
+    @IBOutlet weak var likeButton:     AirLikeButton!
+    @IBOutlet weak var watchButton:    AirWatchButton!
     @IBOutlet weak var likesButton:    UIButton!
     @IBOutlet weak var watchersButton: UIButton!
     @IBOutlet weak var contextButton:  UIButton!
     @IBOutlet weak var lockImage:      UIImageView!
-    @IBOutlet weak var likeActivity:   UIActivityIndicatorView!
-    @IBOutlet weak var watchActivity:  UIActivityIndicatorView!
     
     @IBOutlet weak var headerSection:  UIView!
     @IBOutlet weak var bannerGroup:    UIView!
@@ -135,15 +133,19 @@ class PatchDetailViewController: QueryTableViewController {
         tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
         lockImage.tintColor(Colors.brandColor)
         infoLockImage.tintColor(Colors.brandColor)
-        likeButton.alpha = 0.0
-        watchButton.alpha = 0.0
         likesButton.alpha = 0.0
         likesButtonWidth.constant = 0
         watchersButton.alpha = 0.0
-        likeActivity.stopAnimating()
-        watchActivity.stopAnimating()
         originalTop = patchPhotoTop.constant
         self.contextButton?.setTitle("", forState: .Normal)
+        
+        watchButton.tintOff = UIColor.whiteColor()
+        watchButton.tintPending = Colors.brandColor
+        watchButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
+        
+        likeButton.tintOff = UIColor.whiteColor()
+        likeButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
+        likeButton.alpha = 0.0
         
         /* Navigation bar buttons */
         
@@ -163,7 +165,7 @@ class PatchDetailViewController: QueryTableViewController {
     
     override func viewWillAppear(animated: Bool) {
         /*
-         * Entity could have been delete while we were away to check it.
+         * Entity could have been deleted while we were away to check it.
          */
         if self.patch != nil {
             let item = ServiceBase.fetchOneById(patchId, inManagedObjectContext: DataController.instance.managedObjectContext)
@@ -179,6 +181,9 @@ class PatchDetailViewController: QueryTableViewController {
         if self.patch != nil {
             draw()
         }
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "likeDidChange:", name: Events.LikeDidChange, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "watchDidChange:", name: Events.WatchDidChange, object: nil)
     }
 
     override func viewDidAppear(animated: Bool){
@@ -193,7 +198,12 @@ class PatchDetailViewController: QueryTableViewController {
         headerView.frame = newFrame
         self.tableView.tableHeaderView = headerView
         
+        /* Load the entity */
         refresh(force: true)
+    }
+
+    override func viewDidDisappear(animated: Bool) {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
 
 	private func refresh(force: Bool = false) {
@@ -211,136 +221,18 @@ class PatchDetailViewController: QueryTableViewController {
 			}
 		}
 	}
+    
+    override func prefersStatusBarHidden() -> Bool {
+        return false
+    }
+    
+    override func preferredStatusBarUpdateAnimation() -> UIStatusBarAnimation {
+        return UIStatusBarAnimation.Fade
+    }
 
 	/*--------------------------------------------------------------------------------------------
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
-
-	@IBAction func watchAction(sender: AnyObject) {
-        watchButton.enabled = false
-        watchActivity.startAnimating()
-        watchButton.alpha = 0.0
-        
-        if patch!.userWatchStatusValue == .Member {
-            /* TODO: If not owner then confirm leave */
-            DataController.proxibase.deleteLinkById(patch!.userWatchId!) {
-                response, error in
-                
-                self.watchActivity.stopAnimating()
-                if let error = ServerError(error) {
-                    self.handleError(error)
-                }
-                else {
-                    if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
-                        self.patch!.userWatchId = nil
-                        self.patch!.userWatchStatusValue = .NonMember
-                        self.patch!.countWatchingValue--
-                    }
-                }
-                self.draw()
-                self.watchButton.enabled = true
-            }
-        }
-        else if patch!.userWatchStatusValue == .Pending {
-            DataController.proxibase.deleteLinkById(patch!.userWatchId!) {
-                response, error in
-                
-                self.watchActivity.stopAnimating()
-                if let error = ServerError(error) {
-                    self.handleError(error)
-                }
-                else {
-                    if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
-                        self.patch!.userWatchId = nil
-                        self.patch!.userWatchStatusValue = .NonMember
-                    }
-                }
-                self.draw()
-                self.watchButton.enabled = true
-            }
-        }
-        else if patch!.userWatchStatusValue == .NonMember {
-            /* Service automatically sets enabled = false if user is not the patch owner */
-            DataController.proxibase.insertLink(UserController.instance.userId! as String, toID: patch!.id_, linkType: .Watch) {
-                response, error in
-                
-                self.watchActivity.stopAnimating()
-                if let error = ServerError(error) {
-                    self.handleError(error)
-                }
-                else {
-                    if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
-                        if serviceData.countValue == 1 {
-                            if let entityDictionaries = serviceData.data as? [[String:NSObject]] {
-                                let map = entityDictionaries[0]
-                                self.patch!.userWatchId = map["_id"] as! String
-                                if let enabled = map["enabled"] as? Bool {
-                                    if enabled {
-                                        self.patch!.userWatchStatusValue = .Member
-                                        self.patch!.countWatchingValue++
-                                    }
-                                    else {
-                                        self.patch!.userWatchStatusValue = .Pending
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                self.draw()
-                self.watchButton.enabled = true
-            }
-        }
-	}
-
-	@IBAction func likeAction(sender: AnyObject) {
-        likeButton.enabled = false
-        likeActivity.startAnimating()
-        likeButton.alpha = 0.0
-        if patch!.userLikesValue {
-            DataController.proxibase.deleteLinkById(patch!.userLikesId!) {
-                response, error in
-                
-                self.likeActivity.stopAnimating()
-                if let error = ServerError(error) {
-                    self.handleError(error)
-                }
-                else {
-                    if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
-                        self.patch!.userLikesId = nil
-                        self.patch!.userLikesValue = false
-                        self.patch!.countLikesValue--
-                    }
-                }
-                self.draw()
-                self.likeButton.enabled = true
-            }
-        }
-        else {
-            DataController.proxibase.insertLink(UserController.instance.userId! as String, toID: patch!.id_, linkType: .Like) {
-                response, error in
-                
-                self.likeActivity.stopAnimating()
-                if let error = ServerError(error) {
-                    self.handleError(error)
-                }
-                else {
-                    if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
-                        if serviceData.countValue == 1 {
-                            if let entityDictionaries = serviceData.data as? [[String:NSObject]] {
-                                let map = entityDictionaries[0]
-                                self.patch!.userLikesId = map["_id"] as! String
-                            }
-                            self.patch!.userLikesValue = true
-                            self.patch!.countLikesValue++
-                        }
-                    }
-                }
-                self.draw()
-                self.likeButton.enabled = true
-            }
-        }
-	}
 	
 	@IBAction func numberOfLikesButtonAction(sender: UIButton) {
 		self.performSegueWithIdentifier("LikeListSegue", sender: self)
@@ -440,11 +332,24 @@ class PatchDetailViewController: QueryTableViewController {
         }
     }
     
+    func likeDidChange(sender: NSNotification) {
+        self.draw()
+        self.tableView.reloadData()
+    }
+    
+    func watchDidChange(sender: NSNotification) {
+        self.draw()
+    }
+    
 	/*--------------------------------------------------------------------------------------------
 	 * Methods
 	 *--------------------------------------------------------------------------------------------*/
 
 	func draw() {
+        
+        if self.patch == nil {
+            return
+        }
         
 		self.patchName.text = patch!.name
         if patch.type != nil {
@@ -514,31 +419,23 @@ class PatchDetailViewController: QueryTableViewController {
 
 		/* Like button */
         
+        likeButton.bindEntity(self.patch)
         if (patch!.visibility == "public" || patch!.userWatchStatusValue == .Member || isOwner) {
-            if patch!.userLikesValue {
-                likeButton.imageView?.tintColor(Colors.brandColor)
-                if likeButton.alpha <= 0.5 {
-                    likeButton.fadeIn(alpha: 1.0)
-                }
-            }
-            else {
-                likeButton.imageView?.tintColor(UIColor.whiteColor())
-                if likeButton.alpha <= 0.5 {
-                    likeButton.fadeIn(alpha: 0.7)
-                }
-            }
+            likeButton.fadeIn(alpha: 1.0)
+        }
+        else {
+            likeButton.fadeOut(alpha: 0.0)
         }
         
         /* Watch button */
         
+        watchButton.bindEntity(self.patch)
         if (patch!.userWatchStatusValue == .Member || patch!.userWatchStatusValue == .Pending){
-            watchButton.imageView?.tintColor(Colors.brandColor)
             if watchButton.alpha <= 0.5 {
                 watchButton.fadeIn(alpha: 1.0)
             }
         }
         else {
-            watchButton.imageView?.tintColor(UIColor.whiteColor())
             if watchButton.alpha <= 0.5 {
                 watchButton.fadeIn(alpha: 0.7)
             }
@@ -625,6 +522,7 @@ class PatchDetailViewController: QueryTableViewController {
         let message = queryResult.object as! Message
 		let cell = cell as! MessageTableViewCell
 
+        cell.entity = message
 		cell.delegate = self
 
 		cell.description_.text = nil
@@ -799,7 +697,7 @@ extension PatchDetailViewController: TableViewCellDelegate {
 	func tableViewCell(cell: UITableViewCell, didTapOnView view: UIView) {
 		let messageCell = cell as! MessageTableViewCell
 		if view == messageCell.photo && messageCell.photo.image != nil {
-			Shared.showPhotoBrowser(messageCell.photo.image, view: view, viewController: self)
+            Shared.showPhotoBrowser(messageCell.photo.image, view: view, viewController: self, entity: messageCell.entity)
 		}
 	}
 }
