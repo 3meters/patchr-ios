@@ -30,13 +30,10 @@ PODS:
   - AWSCore (2.2.0)
   - AWSS3 (2.2.0):
     - AWSCore (= 2.2.0)
-  - Bolts/Tasks (1.2.0)
   - DACircularProgress (2.3.1)
   - libPhoneNumber-iOS (0.8.5)
   - Lockbox (2.1.0)
   - MBProgressHUD (0.9.1)
-  - Parse (1.7.5):
-    - Bolts/Tasks (>= 1.2.0)
   - PBWebViewController (0.3)
   - pop (1.0.7)
   - RMCoreDataStack (0.1.6)
@@ -54,7 +51,6 @@ DEPENDENCIES:
   - libPhoneNumber-iOS (~> 0.7)
   - Lockbox
   - MBProgressHUD (~> 0.9.1)
-  - Parse
   - PBWebViewController (~> 0.3)
   - RMCoreDataStack
   - SDWebImage (~> 3.7.2)
@@ -71,12 +67,10 @@ SPEC CHECKSUMS:
   AirPhotoBrowser: 0502a25b2ed5beb6d43d64dc47fbfdd69981d5d0
   AWSCore: 36712cbe827a50b81f1660349e0c202339797f23
   AWSS3: 5efcdff6010353fe53ef065be7760d60419c65b1
-  Bolts: d176cb1e0012175589e389a9db49b85e27787576
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   libPhoneNumber-iOS: b8ccd23576379caca37c7cbdd554addf384459ed
   Lockbox: 16442da35d9d4286966936763be728a931d589c3
   MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
-  Parse: 7c0f115eff3e0cea3fac08d50bda47154edb8832
   PBWebViewController: 909b1505da6ba7c5c82519a6457246027926061e
   pop: 628ffc631644601567ee8bfaaaea493ebd7d0923
   RMCoreDataStack: 58d81989a529a357dd1c5eda12a86ff5f13684b4
