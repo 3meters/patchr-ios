@@ -41,6 +41,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         /* Initialize Crashlytics */
         Fabric.with([Crashlytics()])
         
+        /* Initialize Creative sdk */
+        AdobeUXAuthManager.sharedManager().setAuthenticationParametersWithClientID(CREATIVE_SDK_CLIENT_ID, clientSecret: CREATIVE_SDK_CLIENT_SECRET, enableSignUp: false)
+        
         /* Change default font for button bar items */
         let customFont = UIFont(name:"HelveticaNeue", size: 18)
         UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: customFont!], forState: UIControlState.Normal)

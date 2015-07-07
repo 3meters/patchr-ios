@@ -118,7 +118,6 @@
 		5483D0325463AB9E278D863F /* NBMetadataHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8410B621D013A921E620EF71 /* NBMetadataHelper.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		55E6BDC353B8C186E5FE4565 /* UIKit+AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 5AE8A7F547270ABDB043C483 /* UIKit+AFNetworking.h */; };
 		56F1D90017F3BDA36A7BE340 /* IDMTapDetectingImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B71FDF2651488C5DB94A95 /* IDMTapDetectingImageView.h */; };
-		571111BF4FD8D3876BD833AE /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9A6F9F83163059851BD9AB7 /* SystemConfiguration.framework */; };
 		5A28706AFD0C05F020AB55D4 /* POPAnimationEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 506FD0CDF419E3C2AE64EECD /* POPAnimationEvent.mm */; };
 		5A6D616960429AE6EB880718 /* AWSSynchronizedMutableDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E88A6E7C1183049523784AB /* AWSSynchronizedMutableDictionary.h */; };
 		5A9F4C18D6DF15DC11C84817 /* AWSNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = E53E380D4BC4B5D270A8F784 /* AWSNetworking.m */; };
@@ -188,7 +187,6 @@
 		8BCB68F9DD12D3415A489D9D /* UIRefreshControl+AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E650AEB7BA522B6B5D5A755 /* UIRefreshControl+AFNetworking.h */; };
 		8CD7672F83E28B654BD6281F /* NBMetadataCoreTestMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 901F755017A5FF29E419082D /* NBMetadataCoreTestMapper.h */; };
 		8E8A88040C20CE14D65B3AE0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C799FD6F015E567766200B5 /* Foundation.framework */; };
-		8F29249CFE87041BE664004A /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9A6F9F83163059851BD9AB7 /* SystemConfiguration.framework */; };
 		8F398356BC48C341844C3A8E /* AFSecurityPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F92971C2587585B6FFA0D83C /* AFSecurityPolicy.h */; };
 		8FACC02765078C24A56EA02C /* AWSTMMemoryCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 063F748979CE5DD1F52B0EC4 /* AWSTMMemoryCache.h */; };
 		90B2427BDEFF588C4B5A05E5 /* UIButton+AFNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 88C61FC5278BB1873C1ED5C4 /* UIButton+AFNetworking.h */; };
@@ -264,7 +262,6 @@
 		BC4DE85537F37883E060F329 /* AFNetworkReachabilityManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 08D0A6A8A4CB4D765BE0FFA1 /* AFNetworkReachabilityManager.h */; };
 		BD3FF749BF8FE3A6B570682C /* AWSmetamacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BF45E6E9A6235E17464AEA1 /* AWSmetamacros.h */; };
 		BD465B5F9382F8C67593DAE9 /* NSError+AWSMTLModelException.m in Sources */ = {isa = PBXBuildFile; fileRef = EC62012844A50F4352E38350 /* NSError+AWSMTLModelException.m */; };
-		BD4FD777CB371BB68A5548CD /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9A6F9F83163059851BD9AB7 /* SystemConfiguration.framework */; };
 		BE8A3D172C1747CBD331530D /* AWSURLRequestRetryHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 293199C0CB949A6448918DF6 /* AWSURLRequestRetryHandler.h */; };
 		BF1A5E5DF9558B7F020B6B5B /* AWSSynchronizedMutableDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E83558D3F200891131A046B /* AWSSynchronizedMutableDictionary.m */; };
 		BF45BD4BF492B5CE859E3264 /* UIDevice-Hardware.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B1F08AEBDEEB5E095752BA3 /* UIDevice-Hardware.h */; };
@@ -328,6 +325,8 @@
 		E1BA4B25BF256D426862AF40 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C799FD6F015E567766200B5 /* Foundation.framework */; };
 		E1D8A4DD6E5DE74B2834D948 /* AWSCognitoIdentityResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A73DE3A3E7F3DFEBAC17658 /* AWSCognitoIdentityResources.m */; };
 		E2B5E2C8E9793EF8B73C4B97 /* NSValueTransformer+AWSMTLInversionAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = E784765BB5D0CD143FBAE06A /* NSValueTransformer+AWSMTLInversionAdditions.m */; };
+		E2F182EE1B4B4DD40020F6BB /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9A6F9F83163059851BD9AB7 /* SystemConfiguration.framework */; };
+		E2F182EF1B4B4DD50020F6BB /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9A6F9F83163059851BD9AB7 /* SystemConfiguration.framework */; };
 		E38AAA6C2CA50EA554DFD0AF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C799FD6F015E567766200B5 /* Foundation.framework */; };
 		E3A2629B1CC80E043C7EEEA2 /* AFNetworkActivityIndicatorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 8C6C1F966111F7CCCDAD4540 /* AFNetworkActivityIndicatorManager.h */; };
 		E4C863B9C19C0A70A02A9871 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C799FD6F015E567766200B5 /* Foundation.framework */; };
@@ -920,7 +919,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				04F663EFFD9B29641D47DD97 /* Foundation.framework in Frameworks */,
-				571111BF4FD8D3876BD833AE /* SystemConfiguration.framework in Frameworks */,
+				E2F182EF1B4B4DD50020F6BB /* SystemConfiguration.framework in Frameworks */,
 				C3514EF8DB0491CFBBEF7F02 /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -975,7 +974,6 @@
 				C677325829626E19D9F65930 /* MobileCoreServices.framework in Frameworks */,
 				47850FA5637F6955BBE17298 /* QuartzCore.framework in Frameworks */,
 				649EEDDC823210B2A62A6FBC /* Security.framework in Frameworks */,
-				8F29249CFE87041BE664004A /* SystemConfiguration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1045,10 +1043,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				D02FA9C46521215FD1030440 /* CoreGraphics.framework in Frameworks */,
+				E2F182EE1B4B4DD40020F6BB /* SystemConfiguration.framework in Frameworks */,
 				1F63F3D3A8E3E461553E8C67 /* Foundation.framework in Frameworks */,
 				11A34B4368BF5B476A6CB639 /* MobileCoreServices.framework in Frameworks */,
 				EC5AAB1457B914DC92F16601 /* Security.framework in Frameworks */,
-				BD4FD777CB371BB68A5548CD /* SystemConfiguration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

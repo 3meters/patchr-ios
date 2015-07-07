@@ -46,9 +46,6 @@ class AirToggleButton: AirImageButton {
         else {
             self.setImage(imageOff, forState: .Normal)
             self.imageView?.tintColor(pending ? self.tintPending : self.tintOff)
-            if messageOff != nil {
-                Shared.Toast(messageOff)
-            }
         }
         self.toggledOn = on
     }

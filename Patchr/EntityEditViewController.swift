@@ -125,7 +125,9 @@ class EntityEditViewController: UITableViewController {
     *--------------------------------------------------------------------------------------------*/
     
     @IBAction func editPhotoAction(sender: AnyObject){
-        Alert("Will launch photo editor when implemented")
+        let controller = AdobeUXImageEditorViewController(image: self.photo)
+        controller.delegate = self
+        presentViewController(controller, animated: true, completion: nil)
     }
     
     @IBAction func clearPhotoAction(sender: AnyObject) {
@@ -549,6 +551,18 @@ class EntityEditViewController: UITableViewController {
                     self.photoImage.setImage(newValue, forState: .Normal)
                 }, completion: nil)
         }
+    }
+}
+
+extension EntityEditViewController: AdobeUXImageEditorViewControllerDelegate {
+    
+    func photoEditor(editor: AdobeUXImageEditorViewController!, finishedWithImage image: UIImage!) {
+        self.photoChosen(image, imageResult: nil)
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func photoEditorCanceled(editor: AdobeUXImageEditorViewController!) {
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
 }
 

@@ -29,6 +29,8 @@
 #import "NGAParallaxMotion.h"
 #import "GCPlaceholderTextView.h"
 #import "UIView+BorderLayer.h"
+#import <AdobeCreativeSDKImage/AdobeCreativeSDKImage.h>
+#import <AdobeCreativeSDKFoundation/AdobeCreativeSDKFoundation.h>
 
 #import "Patch.h"
 #import "Place.h"
