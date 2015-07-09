@@ -1747,6 +1747,9 @@
                                                         </userDefinedRuntimeAttribute>
                                                         <userDefinedRuntimeAttribute type="string" keyPath="layer.cornerRadius" value="4"/>
                                                     </userDefinedRuntimeAttributes>
+                                                    <connections>
+                                                        <action selector="doneAction:" destination="6cK-9t-35c" eventType="touchUpInside" id="Cc0-EV-uu5"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <constraints>
@@ -2967,12 +2970,12 @@
         <image name="imgWatchLight" width="60" height="60"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Wvg-S3-NkD"/>
         <segue reference="fno-E3-fgC"/>
         <segue reference="aqr-cO-OGv"/>
+        <segue reference="sNP-m8-m5g"/>
+        <segue reference="mR4-Hl-YsE"/>
+        <segue reference="5MF-E5-yBl"/>
+        <segue reference="ZkF-VU-9mQ"/>
         <segue reference="W2H-Y3-qfq"/>
-        <segue reference="nFc-O9-AY5"/>
-        <segue reference="IOJ-HZ-5D3"/>
-        <segue reference="5gi-H6-rYN"/>
     </inferredMetricsTieBreakers>
 </document>
