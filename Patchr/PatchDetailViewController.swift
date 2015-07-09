@@ -115,7 +115,7 @@ class PatchDetailViewController: QueryTableViewController {
         
 		/* Apply gradient to banner */
 		var gradient: CAGradientLayer = CAGradientLayer()
-		gradient.frame = patchPhoto.bounds
+		gradient.frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width + 100, ((UIScreen.mainScreen().bounds.size.width - 24) * 0.75))
 		var startColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.5))  // Bottom
 		var endColor:   UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0))    // Top
 		gradient.colors = [endColor.CGColor, startColor.CGColor]
@@ -253,30 +253,33 @@ class PatchDetailViewController: QueryTableViewController {
             shareAction()
         }
         else if contextAction == .CancelJoinRequest {
-            DataController.proxibase.deleteLinkById(patch!.userWatchId!) {
-                response, error in
-                
-                if let error = ServerError(error) {
-                    self.handleError(error)
-                }
-                else {
-                    self.patch!.userWatchStatusValue = .NonMember
-                }
-                self.draw()
-            }
+            self.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+//            DataController.proxibase.deleteLinkById(patch!.userWatchId!) {
+//                response, error in
+//                
+//                if let error = ServerError(error) {
+//                    self.handleError(error)
+//                }
+//                else {
+//                    self.patch!.userWatchStatusValue = .NonMember
+//                }
+//                self.draw()
+//            }
         }
         else if contextAction == .SubmitJoinRequest {
-            DataController.proxibase.insertLink(UserController.instance.userId! as String, toID: patch!.id_, linkType: .Watch) {
-                response, error in
-                
-                if let error = ServerError(error) {
-                    self.handleError(error)
-                }
-                else {
-                    self.patch!.userWatchStatusValue = .Pending
-                }
-                self.draw()
-            }
+            self.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+            
+//            DataController.proxibase.insertLink(UserController.instance.userId! as String, toID: patch!.id_, linkType: .Watch) {
+//                response, error in
+//                
+//                if let error = ServerError(error) {
+//                    self.handleError(error)
+//                }
+//                else {
+//                    self.patch!.userWatchStatusValue = .Pending
+//                }
+//                self.draw()
+//            }
         }
         else if contextAction == .BrowseUsersWatching {
             self.performSegueWithIdentifier("WatchingListSegue", sender: self)
@@ -426,16 +429,6 @@ class PatchDetailViewController: QueryTableViewController {
         /* Watch button */
         
         watchButton.bindEntity(self.patch)
-        if (patch!.userWatchStatusValue == .Member || patch!.userWatchStatusValue == .Pending){
-            if watchButton.alpha <= 0.5 {
-                watchButton.fadeIn(alpha: 1.0)
-            }
-        }
-        else {
-            if watchButton.alpha <= 0.5 {
-                watchButton.fadeIn(alpha: 0.7)
-            }
-        }
         
         /* Info view */
         infoName.text = patch!.name

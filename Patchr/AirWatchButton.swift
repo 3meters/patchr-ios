@@ -32,7 +32,7 @@ class AirWatchButton: AirToggleButton {
 	func bindEntity(entity: Entity?) {
 		self.entity = entity
         if let patch = self.entity as? Patch {
-            toggleOn(patch.userWatchStatusValue == .Member)
+            toggleOn(patch.userWatchStatusValue == .Member, pending: patch.userWatchStatusValue == .Pending)
         }
         else {
             toggleOn(false)
