@@ -30,6 +30,7 @@ PODS:
   - AWSCore (2.2.0)
   - AWSS3 (2.2.0):
     - AWSCore (= 2.2.0)
+  - Branch (0.10.0)
   - DACircularProgress (2.3.1)
   - libPhoneNumber-iOS (0.8.5)
   - Lockbox (2.1.0)
@@ -48,6 +49,7 @@ DEPENDENCIES:
   - AFNetworking (~> 2.0)
   - AirPhotoBrowser (from `~/code/AirPhotoBrowser`)
   - AWSS3
+  - Branch
   - libPhoneNumber-iOS (~> 0.7)
   - Lockbox
   - MBProgressHUD (~> 0.9.1)
@@ -67,6 +69,7 @@ SPEC CHECKSUMS:
   AirPhotoBrowser: 0502a25b2ed5beb6d43d64dc47fbfdd69981d5d0
   AWSCore: 36712cbe827a50b81f1660349e0c202339797f23
   AWSS3: 5efcdff6010353fe53ef065be7760d60419c65b1
+  Branch: d31fe46ca1b969e6ab20e8e29d6541036a5f8cfb
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   libPhoneNumber-iOS: b8ccd23576379caca37c7cbdd554addf384459ed
   Lockbox: 16442da35d9d4286966936763be728a931d589c3
