@@ -41,6 +41,9 @@ class NotificationsTableViewController: QueryTableViewController {
 	}
 
 	override func viewDidLoad() {
+        
+        self.emptyMessage = "No notifications yet"
+        
 		super.viewDidLoad()
 
 		tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: "Cell")
@@ -118,32 +121,6 @@ class NotificationsTableViewController: QueryTableViewController {
         else if targetId!.hasPrefix("me.") {
             self.performSegueWithIdentifier("MessageDetailSegue", sender: self)
         }
-        
-//        DataController.instance.withEntityId(targetId!, refresh: refreshEntities) {
-//            (entity) -> Void in
-//            
-//            if let patch = entity as? Patch {
-//                self.selectedPatch = patch
-//                self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
-//            }
-//            else if let message = entity as? Message {
-//                self.selectedMessage = message
-//                self.performSegueWithIdentifier("MessageDetailSegue", sender: self)
-//            }
-//            else {
-//                // Try again with the parentId.
-//                if parentId == nil {
-//                    return
-//                }
-//                DataController.instance.withEntityId(parentId!, refresh: refreshEntities, completion: {
-//                    (entity) -> Void in
-//                    if let patch = entity as? Patch {
-//                        self.selectedPatch = patch
-//                        self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
-//                    }
-//                })
-//            }
-//        }
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -157,15 +134,11 @@ class NotificationsTableViewController: QueryTableViewController {
             if let controller = segue.destinationViewController as? PatchDetailViewController {
                 controller.patchId = self.selectedEntityId
                 self.selectedEntityId = nil
-//                controller.patch = self.selectedPatch
-//                self.selectedPatch = nil
             }
         case "MessageDetailSegue":
             if let controller = segue.destinationViewController as? MessageDetailViewController {
                 controller.messageId = self.selectedEntityId
                 self.selectedEntityId = nil
-//                controller.message = self.selectedMessage
-//                self.selectedMessage = nil
             }
         default: ()
         }

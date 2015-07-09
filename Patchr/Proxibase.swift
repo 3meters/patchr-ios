@@ -190,8 +190,7 @@ public class Proxibase {
 
 	public func fetchMessagesOwnedByUser(userId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
 
-		var linked:     [String:AnyObject]
-										   = ["to": "messages", "type": "create", "limit": pageSizeDefault, "skip": skip, "more": true]
+		var linked:     [String:AnyObject] = ["to": "messages", "type": "create", "limit": pageSizeDefault, "skip": skip, "more": true]
 		var parameters: [String:AnyObject] = [
 				"linked": Message.extras(&linked),
 				"promote": "linked",
@@ -204,8 +203,7 @@ public class Proxibase {
 
 	public func fetchMessagesForPatch(patchId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
 
-		var linked:     [String:AnyObject]
-										   = ["from": "messages", "type": "content", "limit": pageSizeDefault, "skip": skip, "more": true]
+		var linked:     [String:AnyObject] = ["from": "messages", "type": "content", "limit": pageSizeDefault, "skip": skip, "more": true]
 		var parameters: [String:AnyObject] = [
 				"linked": Message.extras(&linked),
 				"promote": "linked",
@@ -218,8 +216,7 @@ public class Proxibase {
 
 	public func fetchPatchesOwnedByUser(userId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
 
-		var linked:     [String:AnyObject]
-										   = ["to": "patches", "type": "create", "limit": pageSizeDefault, "skip": skip, "more": true]
+		var linked:     [String:AnyObject] = ["to": "patches", "type": "create", "limit": pageSizeDefault, "skip": skip, "more": true]
 		var parameters: [String:AnyObject] = [
 				"linked": Patch.extras(&linked),
 				"promote": "linked",
@@ -232,8 +229,7 @@ public class Proxibase {
 
 	public func fetchPatchesUserIsWatching(userId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
 
-		var linked:     [String:AnyObject]
-										   = ["to": "patches", "type": "watch", "limit": pageSizeDefault, "skip": skip, "more": true, "linkFields": "type,enabled"]
+		var linked:     [String:AnyObject] = ["to": "patches", "type": "watch", "limit": pageSizeDefault, "skip": skip, "more": true, "linkFields": "type,enabled"]
 		var parameters: [String:AnyObject] = [
 				"linked": Patch.extras(&linked),
 				"promote": "linked",
@@ -244,11 +240,23 @@ public class Proxibase {
 		performPOSTRequestFor("find/users/\(userId)", parameters: parameters, completion: completion)
 	}
 
+    public func fetchUsersFavoritePatches(userId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
+        
+        var linked:     [String:AnyObject] = ["to": "patches", "type": "like", "limit": pageSizeDefault, "skip": skip, "more": true]
+        var parameters: [String:AnyObject] = [
+            "linked": Patch.extras(&linked),
+            "promote": "linked",
+        ]
+        if !criteria.isEmpty {
+            parameters["query"] = criteria
+        }
+        performPOSTRequestFor("find/users/\(userId)", parameters: parameters, completion: completion)
+    }
+    
 	public func fetchUsersThatLikePatch(patchId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
 
 		/* Used to show a list of users that currently like a patch. */
-		var linked:     [String:AnyObject]
-										   = ["from": "users", "type": "like", "limit": pageSizeDefault, "skip": skip, "more": true]
+		var linked:     [String:AnyObject] = ["from": "users", "type": "like", "limit": pageSizeDefault, "skip": skip, "more": true]
 		var parameters: [String:AnyObject] = [
 				"linked": User.extras(&linked),
 				"promote": "linked",
@@ -262,8 +270,7 @@ public class Proxibase {
 	public func fetchUsersThatWatchPatch(patchId: String, isOwner: Bool = false, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
 
 		/* Used to show a list of users that are watching a patch or have a pending watch request for the patch. */
-		var linked: [String:AnyObject]
-		= ["from": "users", "type": "watch", "limit": pageSizeDefault, "skip": skip, "more": true, "linkFields": "type,enabled"]
+		var linked: [String:AnyObject] = ["from": "users", "type": "watch", "limit": pageSizeDefault, "skip": skip, "more": true, "linkFields": "type,enabled"]
 		if !isOwner {
 			linked["filter"] = ["enabled": true]
 		}

@@ -30,13 +30,47 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelWarn
         #endif
         
+        /* Light gray is better than black */
+        window?.backgroundColor = Colors.windowColor
+        
+        /* Initialize Branch */
+        Branch.getInstance().initSessionWithLaunchOptions(launchOptions) {
+            params, error in
+            
+            NSLog("Deep link: \(params.description)")
+            if let entityId = params["entityId"] as? String, entitySchema = params["entitySchema"] as? String {
+                
+                let storyBoard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+                
+                if entitySchema == "patch" {
+                    if let controller = storyBoard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
+                        controller.patchId = entityId
+                        /* Navigation bar buttons */
+                        var doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
+                        controller.navigationItem.leftBarButtonItems = [doneButton]
+                        var navController = UINavigationController()
+                        navController.viewControllers = [controller]
+                        UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
+                    }
+                }
+                else if entitySchema == "message" {
+                    if let controller = storyBoard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
+                        controller.messageId = entityId
+                        /* Navigation bar buttons */
+                        var doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
+                        controller.navigationItem.leftBarButtonItems = [doneButton]
+                        var navController = UINavigationController()
+                        navController.viewControllers = [controller]
+                        UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
+                    }
+                }
+            }
+        }
+        
         /* Load setting defaults */
         let defaultSettingsFile: NSString = NSBundle.mainBundle().pathForResource("DefaultSettings", ofType: "plist")!
         let settingsDictionary: NSDictionary = NSDictionary(contentsOfFile: defaultSettingsFile as String)!
         NSUserDefaults.standardUserDefaults().registerDefaults(settingsDictionary as [NSObject : AnyObject])
-        
-        /* Light gray is better than black */
-        window?.backgroundColor = Colors.windowColor
         
         /* Initialize Crashlytics */
         Fabric.with([Crashlytics()])
@@ -112,6 +146,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             PFInstallation.currentInstallation().saveEventually(nil)
         }
         NSNotificationCenter.defaultCenter().postNotificationName(Event.ApplicationDidBecomeActive.rawValue, object: nil)
+    }
+    
+    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
+        Shared.Toast("openUrl called: \(url.absoluteString!)")
+        if Branch.getInstance().handleDeepLink(url) {
+            NSLog("Branch handled deep link: \(url.absoluteString!)")
+            return true
+        }
+        return false
     }
     
     func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {

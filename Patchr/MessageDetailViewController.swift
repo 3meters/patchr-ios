@@ -179,18 +179,32 @@ class MessageDetailViewController: UITableViewController {
 	}
 
 	func shareAction() {
-
-		let messageURL
-									   = NSURL(string: "http://patchr.com/message/\(self.message!.id_)") ?? NSURL(string: "http://patchr.com")!
-		let shareText                  = "Checkout this patch message! \n\n\(messageURL.absoluteString!) \n\nGet the Patchr app at http://patchr.com"
-		var activityItems: [AnyObject] = [shareText]
-
-		let activityViewController = UIActivityViewController(
-		activityItems: activityItems,
-		applicationActivities: nil)
-
-		self.presentViewController(activityViewController, animated: true, completion: nil)
+        
+        if self.message != nil {
+            
+            Branch.getInstance().getShortURLWithParams(["entityId":self.messageId!, "entitySchema":"message"], andChannel: "patchr-ios", andFeature: BRANCH_FEATURE_TAG_SHARE, andCallback: {
+                (url: String?, error: NSError?) -> Void in
+                
+                if let error = ServerError(error) {
+                    UIViewController.topMostViewController()!.handleError(error)
+                }
+                else {
+                    NSLog("Branch link created: \(url!)")
+                    var message: MessageItem = MessageItem(entity: self.message!, shareUrl: url!)
+                    
+                    let activityViewController = UIActivityViewController(
+                        activityItems: [message],
+                        applicationActivities: nil)
+                    
+                    self.presentViewController(activityViewController, animated: true, completion: nil)
+                }
+            })
+        }
 	}
+    
+    func dismissAction(sender: AnyObject) {
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
 
 	func editAction() {
 		self.performSegueWithIdentifier("MessageEditSegue", sender: self)
@@ -324,6 +338,39 @@ class MessageDetailViewController: UITableViewController {
 	deinit {
 		NSNotificationCenter.defaultCenter().removeObserver(self)
 	}
+}
+
+class MessageItem: NSObject, UIActivityItemSource {
+    
+    var entity: Message
+    var shareUrl: String
+    
+    init(entity: Message, shareUrl: String) {
+        self.entity = entity
+        self.shareUrl = shareUrl
+    }
+    
+    func activityViewControllerPlaceholderItem(activityViewController: UIActivityViewController) -> AnyObject {
+        return ""
+    }
+    
+    func activityViewController(activityViewController: UIActivityViewController, itemForActivityType activityType: String) -> AnyObject? {
+        
+        var text = "Check out \(UserController.instance.currentUser.name)'s message to the \(self.entity.patch.name) patch! \(self.shareUrl) \n"
+        if activityType == UIActivityTypeMail {
+            return text
+        }
+        else {
+            return text
+        }
+    }
+    
+    func activityViewController(activityViewController: UIActivityViewController, subjectForActivityType activityType: String?) -> String {
+        if activityType == UIActivityTypeMail || activityType == "com.google.Gmail.ShareExtension" {
+            return "Message by \(UserController.instance.currentUser.name) on Patchr"
+        }
+        return ""
+    }
 }
 
 extension MessageDetailViewController: UITableViewDelegate {

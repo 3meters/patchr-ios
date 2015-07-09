@@ -18,8 +18,17 @@
 	<string>1.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>patchr</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
-	<string>83</string>
+	<string>85</string>
 	<key>Fabric</key>
 	<dict>
 		<key>APIKey</key>
@@ -36,8 +45,10 @@
 	</dict>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We use your location to alert you when there is patch activity nearby.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Discover nearby patches using location</string>
+	<string>We use your location to discover nearby patches.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
@@ -59,5 +70,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>branch_key</key>
+	<string>key_live_aabKfhL9u6piQ93E2lzVslklzraKnSc3</string>
 </dict>
 </plist>

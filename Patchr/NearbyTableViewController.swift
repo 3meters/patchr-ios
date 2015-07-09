@@ -89,6 +89,8 @@ class NearbyTableViewController: PatchTableViewController {
             self.progress!.show(true)
         }
         
+        Utils.updateCrashKeys()
+        
         DataController.instance.refreshItemsFor(query(), force: false, paging: false, completion: {
             results, query, error in
             

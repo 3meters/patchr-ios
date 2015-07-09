@@ -37,6 +37,10 @@ class AirPhotoBrowser: IDMPhotoBrowser {
     
     func configure() {
         
+        if self.entity?.creator != nil {
+            super.shareMessage = "Photo by \(self.entity!.creator.name) on Patchr"
+        }
+        
         var toolbar: UIToolbar = super.toolbar
         
         var flexSpacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)

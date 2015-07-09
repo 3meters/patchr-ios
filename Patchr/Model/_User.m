@@ -8,6 +8,7 @@ const struct UserAttributes UserAttributes = {
 	.developer = @"developer",
 	.email = @"email",
 	.password = @"password",
+	.patchesLikes = @"patchesLikes",
 	.patchesOwned = @"patchesOwned",
 	.patchesWatching = @"patchesWatching",
 	.role = @"role",
@@ -41,6 +42,11 @@ const struct UserAttributes UserAttributes = {
 
 	if ([key isEqualToString:@"developerValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"developer"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"patchesLikesValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"patchesLikes"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
@@ -83,6 +89,26 @@ const struct UserAttributes UserAttributes = {
 @dynamic email;
 
 @dynamic password;
+
+@dynamic patchesLikes;
+
+- (int64_t)patchesLikesValue {
+	NSNumber *result = [self patchesLikes];
+	return [result longLongValue];
+}
+
+- (void)setPatchesLikesValue:(int64_t)value_ {
+	[self setPatchesLikes:@(value_)];
+}
+
+- (int64_t)primitivePatchesLikesValue {
+	NSNumber *result = [self primitivePatchesLikes];
+	return [result longLongValue];
+}
+
+- (void)setPrimitivePatchesLikesValue:(int64_t)value_ {
+	[self setPrimitivePatchesLikes:@(value_)];
+}
 
 @dynamic patchesOwned;
 

@@ -319,6 +319,9 @@ class DataController: NSObject {
             case DataStoreQueryName.PatchesUserIsWatching.rawValue:
                 DataController.proxibase.fetchPatchesUserIsWatching(entityId, criteria: criteria, skip: skip, completion: refreshCompletion)
             
+            case DataStoreQueryName.FavoritePatches.rawValue:
+                DataController.proxibase.fetchUsersFavoritePatches(entityId, criteria: criteria, skip: skip, completion: refreshCompletion)
+            
 			default:
 				assert(false, "No refreshResultsFor implementation for query name \(query.name)")
 		}
@@ -422,6 +425,7 @@ enum DataStoreQueryName: String {
     case MessagesForPatch            = "MessagesForPatch"
 	case PatchesByUser               = "PatchesByUser"
     case PatchesUserIsWatching       = "PatchesUserIsWatching"
+    case FavoritePatches             = "FavoritePatches"
 }
 
 extension DataController: RMCoreDataStackDelegate {

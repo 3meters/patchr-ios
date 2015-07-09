@@ -12,6 +12,7 @@ enum PatchListFilter {
 	case Nearby
 	case Explore
 	case Watching
+    case Favorite
 	case Owns
 }
 
@@ -39,6 +40,10 @@ class PatchTableViewController: QueryTableViewController {
                     query.name = DataStoreQueryName.PatchesUserIsWatching.rawValue
                     query.pageSize = DataController.proxibase.pageSizeDefault
                     query.parameters = ["entity": user]
+                case .Favorite:
+                    query.name = DataStoreQueryName.FavoritePatches.rawValue
+                    query.pageSize = DataController.proxibase.pageSizeDefault
+                    query.parameters = ["entity": user]
                 case .Owns:
                     query.name = DataStoreQueryName.PatchesByUser.rawValue
                     query.pageSize = DataController.proxibase.pageSizeDefault
@@ -56,6 +61,20 @@ class PatchTableViewController: QueryTableViewController {
     *--------------------------------------------------------------------------------------------*/
     
     override func viewDidLoad() {
+        
+        switch self.filter {
+            case .Nearby:
+                self.emptyMessage = "No patches nearby"
+            case .Explore:
+                self.emptyMessage = "Discover popular patches here"
+            case .Watching:
+                self.emptyMessage = "Watch patches and browse them here"
+            case .Favorite:
+                self.emptyMessage = "Browse your favorite patches here"
+            case .Owns:
+                self.emptyMessage = "Make patches and browse them here"
+        }
+        
         super.viewDidLoad()
         
         /* A bit of UI tweaking */
@@ -80,6 +99,9 @@ class PatchTableViewController: QueryTableViewController {
 				self.tableView.contentOffset = CGPointMake(0, self.searchDisplayController?.searchBar.frame.size.height ?? 0) // Sets search bar under nav bar initially
 			case .Watching:
 				self.navigationItem.title = "Patches I'm watching"
+                self.tableView.registerNib(UINib(nibName: "PatchNormalTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
+            case .Favorite:
+                self.navigationItem.title = "Favorites"
                 self.tableView.registerNib(UINib(nibName: "PatchNormalTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
 			case .Owns:
 				self.navigationItem.title = "Patches I own"

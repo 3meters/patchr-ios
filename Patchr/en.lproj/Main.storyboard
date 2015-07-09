@@ -212,7 +212,7 @@
         <!--Message Detail-->
         <scene sceneID="VU4-xc-rjr">
             <objects>
-                <tableViewController storyboardIdentifier="MessageDetailViewController" title="Message Detail" id="NVd-x8-lxi" customClass="MessageDetailViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Message Detail" id="NVd-x8-lxi" customClass="MessageDetailViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="6qn-gn-qdZ" customClass="AirTableView">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1056,7 +1056,7 @@
         <!--Patch Detail-->
         <scene sceneID="rB4-TC-ftZ">
             <objects>
-                <tableViewController storyboardIdentifier="PatchDetailViewController" id="dFa-9F-rNC" userLabel="Patch Detail" customClass="PatchDetailViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="dFa-9F-rNC" userLabel="Patch Detail" customClass="PatchDetailViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="yjO-ph-XL5">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1272,8 +1272,23 @@
                                                 <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="t8t-DZ-4Sr" userLabel="button_group">
                                                     <rect key="frame" x="0.0" y="211" width="414" height="48"/>
                                                     <subviews>
+                                                        <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="1000" horizontalCompressionResistancePriority="250" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QHh-aS-8Rc" userLabel="likes_button">
+                                                            <rect key="frame" x="64" y="0.0" width="60" height="48"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="60" id="O5F-0z-mpK"/>
+                                                                <constraint firstAttribute="height" constant="48" id="g37-rf-U3x"/>
+                                                            </constraints>
+                                                            <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="16" maxY="0.0"/>
+                                                            <state key="normal" title="2 likes">
+                                                                <color key="titleColor" red="0.98845826439999995" green="0.98845826439999995" blue="0.98845826439999995" alpha="1" colorSpace="calibratedRGB"/>
+                                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                            </state>
+                                                            <connections>
+                                                                <action selector="numberOfLikesButtonAction:" destination="dFa-9F-rNC" eventType="touchUpInside" id="jzq-oE-TSj"/>
+                                                            </connections>
+                                                        </button>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7J4-1W-AIu" userLabel="watching_button">
-                                                            <rect key="frame" x="64" y="0.0" width="75" height="48"/>
+                                                            <rect key="frame" x="124" y="0.0" width="75" height="48"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="48" id="H1f-OD-2ZF"/>
                                                             </constraints>
@@ -1311,10 +1326,11 @@
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="48" id="8xt-1a-TlR"/>
                                                         <constraint firstAttribute="bottom" secondItem="vYh-eO-CMR" secondAttribute="bottom" id="BiR-fl-fea"/>
+                                                        <constraint firstItem="7J4-1W-AIu" firstAttribute="leading" secondItem="QHh-aS-8Rc" secondAttribute="trailing" id="Hat-Ln-JHi"/>
                                                         <constraint firstAttribute="bottom" secondItem="7J4-1W-AIu" secondAttribute="bottom" id="LGa-qQ-mKS"/>
-                                                        <constraint firstItem="7J4-1W-AIu" firstAttribute="leading" secondItem="t8t-DZ-4Sr" secondAttribute="leading" constant="64" id="OT9-3S-LUi"/>
                                                         <constraint firstItem="TWm-Ce-UN2" firstAttribute="leading" secondItem="vYh-eO-CMR" secondAttribute="trailing" constant="3" id="bQE-Ep-YOZ"/>
                                                         <constraint firstAttribute="bottom" secondItem="TWm-Ce-UN2" secondAttribute="bottom" id="gm7-nR-blg"/>
+                                                        <constraint firstAttribute="bottom" secondItem="QHh-aS-8Rc" secondAttribute="bottom" id="hZn-kH-CGg"/>
                                                         <constraint firstAttribute="trailing" secondItem="TWm-Ce-UN2" secondAttribute="trailing" id="qgo-qa-RpV"/>
                                                     </constraints>
                                                     <userDefinedRuntimeAttributes>
@@ -1331,6 +1347,7 @@
                                                 <constraint firstItem="t8t-DZ-4Sr" firstAttribute="leading" secondItem="6IV-aV-u0s" secondAttribute="leading" id="Heh-de-vIz"/>
                                                 <constraint firstItem="7be-lw-0zQ" firstAttribute="leading" secondItem="6IV-aV-u0s" secondAttribute="leading" id="MI5-No-Wkc"/>
                                                 <constraint firstItem="Ym3-k1-Ty5" firstAttribute="trailing" secondItem="351-k9-dO8" secondAttribute="trailing" constant="-24" id="ZAu-Ta-3yc"/>
+                                                <constraint firstItem="QHh-aS-8Rc" firstAttribute="leading" secondItem="bHj-ol-mkD" secondAttribute="leading" id="ZXn-wG-9YO"/>
                                                 <constraint firstAttribute="bottom" secondItem="351-k9-dO8" secondAttribute="bottom" constant="-36" id="beL-YF-lgr"/>
                                                 <constraint firstItem="t8t-DZ-4Sr" firstAttribute="top" secondItem="7be-lw-0zQ" secondAttribute="bottom" id="dMV-KE-ARp"/>
                                                 <constraint firstItem="Ym3-k1-Ty5" firstAttribute="leading" secondItem="351-k9-dO8" secondAttribute="leading" constant="24" id="dQK-MQ-Qbn"/>
@@ -1422,6 +1439,8 @@
                         <outlet property="infoType" destination="mjc-mH-aCL" id="y2b-dS-5u2"/>
                         <outlet property="infoVisibility" destination="2ea-Ie-glh" id="UdC-i6-JfA"/>
                         <outlet property="likeButton" destination="vYh-eO-CMR" id="BNB-8g-ly5"/>
+                        <outlet property="likesButton" destination="QHh-aS-8Rc" id="bPf-cH-8At"/>
+                        <outlet property="likesButtonWidth" destination="O5F-0z-mpK" id="Fc5-F1-EJg"/>
                         <outlet property="lockImage" destination="mtE-0h-abN" id="h7G-Ne-YmC"/>
                         <outlet property="patchName" destination="bHj-ol-mkD" id="Ywp-Tp-Y8G"/>
                         <outlet property="patchPhoto" destination="351-k9-dO8" id="xOn-Z1-W9m"/>
@@ -2967,12 +2986,12 @@
         <image name="imgWatchLight" width="60" height="60"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Wvg-S3-NkD"/>
-        <segue reference="fno-E3-fgC"/>
         <segue reference="aqr-cO-OGv"/>
-        <segue reference="W2H-Y3-qfq"/>
+        <segue reference="neb-F4-nDQ"/>
         <segue reference="nFc-O9-AY5"/>
-        <segue reference="IOJ-HZ-5D3"/>
+        <segue reference="xAO-Qh-0VB"/>
         <segue reference="5gi-H6-rYN"/>
+        <segue reference="IOJ-HZ-5D3"/>
+        <segue reference="mR4-Hl-YsE"/>
     </inferredMetricsTieBreakers>
 </document>

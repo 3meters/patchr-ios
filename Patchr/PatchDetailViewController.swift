@@ -39,7 +39,6 @@ class PatchDetailViewController: QueryTableViewController {
     @IBOutlet weak var visibility:     UILabel!
     @IBOutlet weak var likeButton:     AirLikeButton!
     @IBOutlet weak var watchButton:    AirWatchButton!
-    @IBOutlet weak var likesButton:    UIButton!
     @IBOutlet weak var watchersButton: UIButton!
     @IBOutlet weak var contextButton:  UIButton!
     @IBOutlet weak var lockImage:      UIImageView!
@@ -60,7 +59,6 @@ class PatchDetailViewController: QueryTableViewController {
     
     @IBOutlet weak var patchPhotoTop:  NSLayoutConstraint!
     @IBOutlet weak var placeButton:    UIButton!
-    @IBOutlet weak var likesButtonWidth: NSLayoutConstraint!
 
 	override func query() -> Query {
 		if self._query == nil {
@@ -98,6 +96,8 @@ class PatchDetailViewController: QueryTableViewController {
 		if patch != nil {
 			patchId = patch.id_
 		}
+        
+        super.showEmptyLabel = false
 
 		super.viewDidLoad()
 
@@ -133,8 +133,6 @@ class PatchDetailViewController: QueryTableViewController {
         tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
         lockImage.tintColor(Colors.brandColor)
         infoLockImage.tintColor(Colors.brandColor)
-        likesButton.alpha = 0.0
-        likesButtonWidth.constant = 0
         watchersButton.alpha = 0.0
         originalTop = patchPhotoTop.constant
         self.contextButton?.setTitle("", forState: .Normal)
@@ -296,7 +294,13 @@ class PatchDetailViewController: QueryTableViewController {
 	}
     
     @IBAction func placeAction(sender: AnyObject) {
-        self.performSegueWithIdentifier("PlaceDetailSegue", sender: self)
+        if self.patch != nil {
+            self.performSegueWithIdentifier("PlaceDetailSegue", sender: self)
+        }
+    }
+    
+    func dismissAction(sender: AnyObject) {
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
     
     func flipToInfo(sender: AnyObject) {
@@ -323,16 +327,31 @@ class PatchDetailViewController: QueryTableViewController {
     
     func shareAction() {
         
-        if patch != nil {
-            let patchURL                   = NSURL(string: "http://patchr.com/patch/\(self.patch!.id_)") ?? NSURL(string: "http://patchr.com")!
-            let shareText                  = "You've been invited to the \(self.patch!.name) patch! \n\n\(patchURL.absoluteString!) \n\nGet the Patchr app at http://patchr.com"
-            var activityItems: [AnyObject] = [shareText]
+        if self.patch != nil {
             
-            let activityViewController = UIActivityViewController(
-                activityItems: activityItems,
-                applicationActivities: nil)
-            
-            self.presentViewController(activityViewController, animated: true, completion: nil)
+            Branch.getInstance().getShortURLWithParams(["entityId":self.patchId!, "entitySchema":"patch"], andChannel: "patchr-ios", andFeature: BRANCH_FEATURE_TAG_INVITE, andCallback: {
+                (url: String?, error: NSError?) -> Void in
+                
+                if let error = ServerError(error) {
+                    UIViewController.topMostViewController()!.handleError(error)
+                }
+                else {
+                    NSLog("Branch link created: \(url!)")
+                    var patch: PatchItem = PatchItem(entity: self.patch!, shareUrl: url!)
+                    
+                    let activityViewController = UIActivityViewController(
+                        activityItems: [patch],
+                        applicationActivities: nil)
+                    
+                    if UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiom.Phone {
+                        self.presentViewController(activityViewController, animated: true, completion: nil)
+                    }
+                    else {
+                        let popup: UIPopoverController = UIPopoverController(contentViewController: activityViewController)
+                        popup.presentPopoverFromRect(CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/4, 0, 0), inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
+                    }
+                }
+            })
         }
     }
     
@@ -377,33 +396,6 @@ class PatchDetailViewController: QueryTableViewController {
         if visibility != nil {
             visibility.hidden = (patch!.visibility == "public")
             infoVisibility.hidden = (patch!.visibility == "public")
-        }
-        
-        /* Likes button */
-        
-        if patch?.countLikesValue == 0 {
-            if likesButton.alpha != 0 {
-                likesButton.fadeOut()
-                self.buttonGroup.layoutIfNeeded()
-                self.likesButtonWidth.constant = 0
-                UIView.animateWithDuration(0.2, animations: {
-                    self.buttonGroup.layoutIfNeeded()
-                })
-            }
-        }
-        else {
-            let likesTitle = self.patch!.countLikesValue == 1
-                ? "\(self.patch!.countLikes) like"
-                : "\(self.patch!.countLikes ?? 0) likes"
-            self.likesButton.setTitle(likesTitle, forState: UIControlState.Normal)
-            if likesButton.alpha == 0 {
-                likesButton.fadeIn()
-                self.buttonGroup.layoutIfNeeded()
-                self.likesButtonWidth.constant = 60
-                UIView.animateWithDuration(0.2, animations: {
-                    self.buttonGroup.layoutIfNeeded()
-                })
-            }
         }
         
         /* Watching button */
@@ -453,7 +445,6 @@ class PatchDetailViewController: QueryTableViewController {
         infoOwner.text = patch!.creator.name
         
         if isOwner {
-            /* TODO: Need to show pending request count */
             if patch!.countPendingValue > 0 {
                 if patch!.countPendingValue == 1 {
                     self.contextButton.setTitle("One member request".uppercaseString, forState: .Normal)
@@ -629,6 +620,38 @@ class PatchDetailViewController: QueryTableViewController {
 	deinit {
 		NSNotificationCenter.defaultCenter().removeObserver(self)
 	}
+}
+
+class PatchItem: NSObject, UIActivityItemSource {
+    
+    var entity: Patch
+    var shareUrl: String
+    
+    init(entity: Patch, shareUrl: String) {
+        self.entity = entity
+        self.shareUrl = shareUrl
+    }
+    
+    func activityViewControllerPlaceholderItem(activityViewController: UIActivityViewController) -> AnyObject {
+        return ""
+    }
+    
+    func activityViewController(activityViewController: UIActivityViewController, itemForActivityType activityType: String) -> AnyObject? {
+        var text = "\(UserController.instance.currentUser.name) has invited you to the \(self.entity.name) patch! \(self.shareUrl) \n"
+        if activityType == UIActivityTypeMail {
+            return text
+        }
+        else {
+            return text
+        }
+    }
+    
+    func activityViewController(activityViewController: UIActivityViewController, subjectForActivityType activityType: String?) -> String {
+        if activityType == UIActivityTypeMail || activityType == "com.google.Gmail.ShareExtension" {
+            return "Invitation to the \(self.entity.name) patch"
+        }
+        return ""
+    }
 }
 
 extension PatchDetailViewController: UITableViewDelegate {

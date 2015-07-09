@@ -38,6 +38,8 @@ class UserController: NSObject {
         jsonUser = nil
         jsonSession = nil
         writeCredentialsToUserDefaults()
+        Utils.updateCrashUser(nil)
+        Branch.getInstance().logout()
     }
 
 	func handleSuccessfulSignInResponse(response: AnyObject) {
@@ -69,6 +71,8 @@ class UserController: NSObject {
 		DataController.instance.withUserId(userId!, refresh: true, completion: {
 			user in
             self.currentUser = user
+            Branch.getInstance().setIdentity(user!.id_)
+            Utils.updateCrashUser(user)
 		})
 	}
     
@@ -83,6 +87,8 @@ class UserController: NSObject {
             User.setPropertiesFromDictionary(userMap as [NSObject : AnyObject], onObject: user, mappingNames: true)
             user.activityDate = NSDate(timeIntervalSince1970: 0) // Ensures that the user will be freshed from the service
             self.currentUser = user
+            Branch.getInstance().setIdentity(user.id_)
+            Utils.updateCrashUser(user)
         }
     }
 }

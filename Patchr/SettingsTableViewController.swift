@@ -8,7 +8,6 @@
 
 import UIKit
 import MessageUI
-import Crashlytics
 
 class SettingsTableViewController: UITableViewController, MFMailComposeViewControllerDelegate {
     

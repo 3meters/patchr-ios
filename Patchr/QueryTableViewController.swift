@@ -11,6 +11,9 @@ import UIKit
 class QueryTableViewController: FetchedResultsTableViewController {
     
     var progress: MBProgressHUD?
+    var showEmptyLabel: Bool = true
+    var emptyLabel: AirLabel = AirLabel(frame: CGRectMake(100, 100, 100, 100))
+    var emptyMessage: String?
     
 	private lazy var fetchControllerDelegate: FetchControllerDelegate = {
 		return FetchControllerDelegate(tableView: self.tableView, onUpdate: {
@@ -64,6 +67,8 @@ class QueryTableViewController: FetchedResultsTableViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
         
+        let window = UIApplication.sharedApplication().delegate?.window!
+        
         /* Hookup refresh control */
 		let refreshControl = UIRefreshControl()
         refreshControl.tintColor = Colors.brandColor
@@ -71,7 +76,7 @@ class QueryTableViewController: FetchedResultsTableViewController {
 		self.refreshControl = refreshControl
         
         /* Wacky activity control for body */
-        progress = MBProgressHUD.showHUDAddedTo(UIApplication.sharedApplication().delegate?.window!, animated: true)
+        progress = MBProgressHUD.showHUDAddedTo(window, animated: true)
         progress!.mode = MBProgressHUDMode.Indeterminate
         progress!.square = true
         progress!.opacity = 0.0
@@ -79,6 +84,26 @@ class QueryTableViewController: FetchedResultsTableViewController {
         progress!.userInteractionEnabled = false
         progress!.activityIndicatorColor = Colors.brandColorDark
         progress!.hide(false)
+        
+        /* Empty label */
+        if self.showEmptyLabel {
+            self.emptyLabel.alpha = 0
+            self.emptyLabel.layer.borderWidth = 1
+            self.emptyLabel.layer.borderColor = Colors.hintColor.CGColor
+            self.emptyLabel.font = UIFont(name: "HelveticaNeue-Light", size: 19)
+            self.emptyLabel.text = self.emptyMessage
+            self.emptyLabel.bounds.size.width = 160
+            self.emptyLabel.bounds.size.height = 160
+            self.emptyLabel.numberOfLines = 0
+            
+            self.view.addSubview(self.emptyLabel)
+            
+            self.emptyLabel.center = CGPointMake(UIScreen.mainScreen().bounds.size.width / 2, (UIScreen.mainScreen().bounds.size.height / 2) - 44);
+            self.emptyLabel.textAlignment = NSTextAlignment.Center
+            self.emptyLabel.textColor = UIColor(red: CGFloat(0.6), green: CGFloat(0.6), blue: CGFloat(0.6), alpha: CGFloat(1))
+            self.emptyLabel.layer.backgroundColor = UIColor.whiteColor().CGColor
+            self.emptyLabel.layer.cornerRadius = self.emptyLabel.bounds.size.width / 2
+        }
 	}
 
 	override func viewWillAppear(animated: Bool) {
@@ -122,6 +147,10 @@ class QueryTableViewController: FetchedResultsTableViewController {
             self.progress?.show(true)
         }
         
+        if self.showEmptyLabel && self.emptyLabel.alpha > 0 {
+            self.emptyLabel.fadeOut()
+        }
+        
         DataController.instance.refreshItemsFor(query(), force: force, paging: paging, completion: {
             [weak self] results, query, error in
             
@@ -149,6 +178,9 @@ class QueryTableViewController: FetchedResultsTableViewController {
                     self?.query().executedValue = true
                     if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
                         self?.query().offsetValue = Int32(fetchedObjects.count)
+                        if self?.emptyLabel != nil && fetchedObjects.count == 0 {
+                            self?.emptyLabel.fadeIn()
+                        }
                     }
                 }
                 return

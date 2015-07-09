@@ -75,7 +75,6 @@
 		E20004DA1B07A78C00425694 /* PatchLargeTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E20004D91B07A78C00425694 /* PatchLargeTableViewCell.xib */; };
 		E20004DF1B094ACA00425694 /* PasswordEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */; };
 		E20004E11B099CBD00425694 /* PasswordResetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004E01B099CBD00425694 /* PasswordResetViewController.swift */; };
-		E215995F1AEFDA3F002C936F /* Photo.m in Sources */ = {isa = PBXBuildFile; fileRef = E215995E1AEFDA3F002C936F /* Photo.m */; };
 		E241D15A1B1B3FCE00702E01 /* UIView+BorderLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = E241D1591B1B3FCE00702E01 /* UIView+BorderLayer.m */; };
 		E24A87261B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */; };
 		E25327B21B0FCE9C00990A81 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25327B11B0FCE9C00990A81 /* Constants.swift */; };
@@ -106,6 +105,10 @@
 		E2A28E6D1B49D88900B3A2FE /* AirLikeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A28E6C1B49D88800B3A2FE /* AirLikeButton.swift */; };
 		E2A28E6F1B4A602200B3A2FE /* AirToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */; };
 		E2A28E711B4A624300B3A2FE /* AirWatchButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A28E701B4A624300B3A2FE /* AirWatchButton.swift */; };
+		E2C720BD1B4C260200714B53 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C720BC1B4C260200714B53 /* Reachability.m */; };
+		E2C720BF1B4D914800714B53 /* AdobeCreativeSDKFoundationResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E2C720BE1B4D914800714B53 /* AdobeCreativeSDKFoundationResources.bundle */; };
+		E2C720C11B4D917100714B53 /* AdobeCreativeSDKImageResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E2C720C01B4D917100714B53 /* AdobeCreativeSDKImageResources.bundle */; };
+		E2C720C71B4EDAFE00714B53 /* AirLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C720C61B4EDAFE00714B53 /* AirLabel.swift */; };
 		E2C7C5C21B2A0B730045038A /* NotificationSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */; };
 		E2C7C5C41B2A19720045038A /* DefaultSettings.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2C7C5C31B2A19720045038A /* DefaultSettings.plist */; };
 		E2C7C5C61B2B491A0045038A /* PhotoPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C7C5C51B2B491A0045038A /* PhotoPickerViewController.swift */; };
@@ -124,6 +127,7 @@
 		E2F182EB1B4B4D1A0020F6BB /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E273B5331B483C5E00888E73 /* Accounts.framework */; };
 		E2F182EC1B4B4D250020F6BB /* AdobeCreativeSDKFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2F182CD1B4B37A80020F6BB /* AdobeCreativeSDKFoundation.framework */; };
 		E2F182ED1B4B4D490020F6BB /* libPods-Patchr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B36067AA93A3B743CFCA837 /* libPods-Patchr.a */; };
+		E2F182F11B4B56DD0020F6BB /* Photo.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F182F01B4B56DD0020F6BB /* Photo.m */; };
 		E2F618D61AFFACF00055D09C /* LocationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F618D51AFFACF00055D09C /* LocationController.swift */; };
 		E2F618E41B0523840055D09C /* MessageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2F618E31B0523840055D09C /* MessageTableViewCell.xib */; };
 		E2F6C9211B1BDC7A0067D959 /* _Shortcut.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F6C9201B1BDC7A0067D959 /* _Shortcut.m */; };
@@ -149,7 +153,6 @@
 		7D3D39C91A6F086F00A44CB2 /* Patchr.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Patchr.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D3D39CD1A6F086F00A44CB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = Patchr/Info.plist; sourceTree = "<group>"; };
 		7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Patchr/AppDelegate.swift; sourceTree = "<group>"; };
-		7D3D39D31A6F086F00A44CB2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		7D3D39D51A6F086F00A44CB2 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		7D3D39EE1A6F09CC00A44CB2 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BridgingHeader.h; path = Patchr/BridgingHeader.h; sourceTree = "<group>"; };
 		7D3D39EF1A6F116E00A44CB2 /* Proxibase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Proxibase.swift; path = Patchr/Proxibase.swift; sourceTree = "<group>"; };
@@ -241,7 +244,6 @@
 		E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordEditViewController.swift; sourceTree = "<group>"; };
 		E20004E01B099CBD00425694 /* PasswordResetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordResetViewController.swift; sourceTree = "<group>"; };
 		E20C1FB61AFE462500A471E9 /* Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Shared.swift; sourceTree = "<group>"; };
-		E215995E1AEFDA3F002C936F /* Photo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Photo.m; path = ../../../../.Trash/Photo.m; sourceTree = "<group>"; };
 		E241D1581B1B3FCE00702E01 /* UIView+BorderLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+BorderLayer.h"; sourceTree = "<group>"; };
 		E241D1591B1B3FCE00702E01 /* UIView+BorderLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+BorderLayer.m"; sourceTree = "<group>"; };
 		E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThumbnailCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -285,6 +287,12 @@
 		E2A28E6C1B49D88800B3A2FE /* AirLikeButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirLikeButton.swift; sourceTree = "<group>"; };
 		E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirToggleButton.swift; sourceTree = "<group>"; };
 		E2A28E701B4A624300B3A2FE /* AirWatchButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirWatchButton.swift; sourceTree = "<group>"; };
+		E2C720BB1B4C25C900714B53 /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		E2C720BC1B4C260200714B53 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		E2C720BE1B4D914800714B53 /* AdobeCreativeSDKFoundationResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKFoundationResources.bundle; path = ../AdobeCreativeSDKFoundation.framework/Versions/A/Resources/AdobeCreativeSDKFoundationResources.bundle; sourceTree = "<group>"; };
+		E2C720C01B4D917100714B53 /* AdobeCreativeSDKImageResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKImageResources.bundle; path = ../AdobeCreativeSDKImage.framework/Versions/A/Resources/AdobeCreativeSDKImageResources.bundle; sourceTree = "<group>"; };
+		E2C720C51B4D92F000714B53 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		E2C720C61B4EDAFE00714B53 /* AirLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirLabel.swift; sourceTree = "<group>"; };
 		E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationSettingsViewController.swift; sourceTree = "<group>"; };
 		E2C7C5C31B2A19720045038A /* DefaultSettings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultSettings.plist; sourceTree = "<group>"; };
 		E2C7C5C51B2B491A0045038A /* PhotoPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoPickerViewController.swift; sourceTree = "<group>"; };
@@ -296,6 +304,7 @@
 		E2EFD2651AF44214003937D4 /* Lobby.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Lobby.storyboard; sourceTree = "<group>"; };
 		E2F182CD1B4B37A80020F6BB /* AdobeCreativeSDKFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AdobeCreativeSDKFoundation.framework; sourceTree = "<group>"; };
 		E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AdobeCreativeSDKImage.framework; sourceTree = "<group>"; };
+		E2F182F01B4B56DD0020F6BB /* Photo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Photo.m; sourceTree = "<group>"; };
 		E2F618D51AFFACF00055D09C /* LocationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationController.swift; path = Patchr/LocationController.swift; sourceTree = "<group>"; };
 		E2F618E31B0523840055D09C /* MessageTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MessageTableViewCell.xib; sourceTree = "<group>"; };
 		E2F6C91F1B1BDC7A0067D959 /* _Shortcut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _Shortcut.h; path = Model/_Shortcut.h; sourceTree = "<group>"; };
@@ -320,13 +329,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				E2F182E71B4B4CF40020F6BB /* Crashlytics.framework in Frameworks */,
+				E2F182EC1B4B4D250020F6BB /* AdobeCreativeSDKFoundation.framework in Frameworks */,
 				E2F182D01B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework in Frameworks */,
 				E2F182E31B4B4AFD0020F6BB /* Parse.framework in Frameworks */,
 				E2F182ED1B4B4D490020F6BB /* libPods-Patchr.a in Frameworks */,
 				E2F182E81B4B4CFF0020F6BB /* Bolts.framework in Frameworks */,
 				E2F182E91B4B4D080020F6BB /* Social.framework in Frameworks */,
 				E2F182E61B4B4CEA0020F6BB /* Fabric.framework in Frameworks */,
-				E2F182EC1B4B4D250020F6BB /* AdobeCreativeSDKFoundation.framework in Frameworks */,
 				E2F182EB1B4B4D1A0020F6BB /* Accounts.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -406,7 +415,7 @@
 				7DA7307F1A71ACC9008C25FA /* Patch.h */,
 				7DA730801A71ACC9008C25FA /* Patch.m */,
 				7D3F26D11A76F77E0015F8E8 /* Photo.h */,
-				E215995E1AEFDA3F002C936F /* Photo.m */,
+				E2F182F01B4B56DD0020F6BB /* Photo.m */,
 				7DA730811A71ACC9008C25FA /* Place.h */,
 				7DA730821A71ACC9008C25FA /* Place.m */,
 				7D40B94E1A79A6FD00F9954C /* ProviderMap.h */,
@@ -473,6 +482,8 @@
 		E215995A1AEFC193002C936F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E2C720BE1B4D914800714B53 /* AdobeCreativeSDKFoundationResources.bundle */,
+				E2C720C01B4D917100714B53 /* AdobeCreativeSDKImageResources.bundle */,
 				E25327CA1B13D34B00990A81 /* Sounds */,
 				8468F8211A9D09D1007D6EE6 /* Localizable.strings */,
 				7D3D39D51A6F086F00A44CB2 /* Images.xcassets */,
@@ -524,6 +535,8 @@
 				7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */,
 				E26B0C8B1B4577D000706F4A /* TextViewChangeObserver.swift */,
 				E26B0C8D1B45783700706F4A /* TextFieldChangeObserver.swift */,
+				E2C720BB1B4C25C900714B53 /* Reachability.h */,
+				E2C720BC1B4C260200714B53 /* Reachability.m */,
 			);
 			name = Components;
 			sourceTree = "<group>";
@@ -537,6 +550,7 @@
 				E2711C4E1AFD182F00CE71A1 /* AirTableView.m */,
 				E25327B51B1000C000990A81 /* AirImageView.swift */,
 				E25327B71B103ECA00990A81 /* AirImageButton.swift */,
+				E2C720C61B4EDAFE00714B53 /* AirLabel.swift */,
 				E2A28E6C1B49D88800B3A2FE /* AirLikeButton.swift */,
 				E2A28E701B4A624300B3A2FE /* AirWatchButton.swift */,
 				E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */,
@@ -737,6 +751,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E2C720C11B4D917100714B53 /* AdobeCreativeSDKImageResources.bundle in Resources */,
+				E2C720BF1B4D914800714B53 /* AdobeCreativeSDKFoundationResources.bundle in Resources */,
 				7D3D39D41A6F086F00A44CB2 /* Main.storyboard in Resources */,
 				7D5545871AD33B1D007150E5 /* UserTableViewCell.xib in Resources */,
 				7DC9D4951A9D4FAD00234E3C /* NotificationTableViewCellV2.xib in Resources */,
@@ -908,7 +924,6 @@
 				7DE975EE1AA7F72400C1ECE9 /* ModelUtilities.m in Sources */,
 				7DA7308E1A71ACC9008C25FA /* _ServiceObject.m in Sources */,
 				7DE393E71AAE43AD00D1B80E /* SettingsTableViewController.swift in Sources */,
-				E215995F1AEFDA3F002C936F /* Photo.m in Sources */,
 				E2C7C5CB1B2CF2F80045038A /* ImageResult.swift in Sources */,
 				7D56EE8B1A70616500BFCC32 /* SwiftyJSON.swift in Sources */,
 				7D239F151AB8E6D300488F8F /* MediaTableViewCell.swift in Sources */,
@@ -935,12 +950,14 @@
 				E2D25DC81B23892000E51461 /* UserController.swift in Sources */,
 				E26B0C8E1B45783700706F4A /* TextFieldChangeObserver.swift in Sources */,
 				7D3F26DB1A7706610015F8E8 /* _Notification.m in Sources */,
+				E2C720BD1B4C260200714B53 /* Reachability.m in Sources */,
 				7DA7306D1A71A0EE008C25FA /* Model.xcdatamodeld in Sources */,
 				E25327B21B0FCE9C00990A81 /* Constants.swift in Sources */,
 				84EF12AC1AA904700043EBBA /* Utils.swift in Sources */,
 				7D40B9501A79A6FD00F9954C /* _ProviderMap.m in Sources */,
 				7DE975EB1AA7D69500C1ECE9 /* FetchedResultsTableViewController.swift in Sources */,
 				7D3F26D31A76F77E0015F8E8 /* _Location.m in Sources */,
+				E2F182F11B4B56DD0020F6BB /* Photo.m in Sources */,
 				E25327B81B103ECA00990A81 /* AirImageButton.swift in Sources */,
 				E20004E11B099CBD00425694 /* PasswordResetViewController.swift in Sources */,
 				844D6E371AA6550400EE71ED /* PhotoChooserUI.swift in Sources */,
@@ -948,6 +965,7 @@
 				7DA730891A71ACC9008C25FA /* _Entity.m in Sources */,
 				E2F6C9211B1BDC7A0067D959 /* _Shortcut.m in Sources */,
 				9FDCCCC0113B14385C08DA41 /* MessageDetailViewController.swift in Sources */,
+				E2C720C71B4EDAFE00714B53 /* AirLabel.swift in Sources */,
 				E2F6C9271B1C94E50067D959 /* Debug.m in Sources */,
 				E27DB4051B06477A0090D023 /* QueryItem.m in Sources */,
 				E26B0C901B45C07D00706F4A /* AirPhotoBrowser.swift in Sources */,
@@ -961,7 +979,7 @@
 		7D3D39D21A6F086F00A44CB2 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				7D3D39D31A6F086F00A44CB2 /* Base */,
+				E2C720C51B4D92F000714B53 /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -1128,6 +1146,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -1201,6 +1220,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -1310,6 +1330,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = AdHoc;
 		};

@@ -211,6 +211,7 @@ extension User {
     static func linkCount() -> [[String:AnyObject]]? {
         
         var links = [
+            LinkSpec(to: .Patches, type: .Like), // Count of patches the user has liked
             LinkSpec(to: .Patches, type: .Create), // Count of patches the user created
             LinkSpec(to: .Patches, type: .Watch, enabled: true), // Count of patches the user is watching
         ]

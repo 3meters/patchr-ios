@@ -27,6 +27,7 @@ class UserDetailViewController: QueryTableViewController {
 	@IBOutlet weak var userPhoto:      AirImageButton!
 	@IBOutlet weak var watchingButton: UIButton!
 	@IBOutlet weak var ownsButton:     UIButton!
+    @IBOutlet weak var likesButton:    UIButton!
 
 	private var _query: Query!
 
@@ -65,6 +66,8 @@ class UserDetailViewController: QueryTableViewController {
         if user != nil {
             userId = user.id_
         }
+        
+        super.showEmptyLabel = false
         
 		super.viewDidLoad()
 
@@ -127,6 +130,11 @@ class UserDetailViewController: QueryTableViewController {
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
 
+    @IBAction func actionBrowseFavorites(sender: UIButton) {
+        patchListFilter = PatchListFilter.Favorite
+        self.performSegueWithIdentifier("PatchListSegue", sender: self)
+    }
+    
 	@IBAction func actionBrowseWatching(sender: UIButton) {
         patchListFilter = PatchListFilter.Watching
         self.performSegueWithIdentifier("PatchListSegue", sender: self)
@@ -189,6 +197,9 @@ class UserDetailViewController: QueryTableViewController {
 		if user!.patchesOwned != nil {
 			ownsButton.setTitle("Owner: " + String(user!.patchesOwnedValue), forState: .Normal)
 		}
+        if user!.patchesLikes != nil {
+            likesButton.setTitle("Favorites: " + String(user!.patchesLikesValue), forState: .Normal)
+        }
 	}
 
 	override func configureCell(cell: UITableViewCell, object: AnyObject) {

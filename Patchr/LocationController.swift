@@ -73,11 +73,13 @@ class LocationController: NSObject {
             if self.locationManager.respondsToSelector(Selector("requestWhenInUseAuthorization")) {
                 // iOS 8
                 self.locationManager.requestWhenInUseAuthorization()
-            } else {
+            }
+            else {
                 // iOS 7
                 self.locationManager.startUpdatingLocation() // Prompts automatically
             }
-        } else if CLLocationManager.authorizationStatus() == .AuthorizedAlways
+        }
+        else if CLLocationManager.authorizationStatus() == .AuthorizedAlways
             || CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
             self.locationManager.startUpdatingLocation()
         }

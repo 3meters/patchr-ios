@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
@@ -68,7 +68,7 @@
                                             <userDefinedRuntimeAttribute type="string" keyPath="layer.cornerRadius" value="4"/>
                                         </userDefinedRuntimeAttributes>
                                         <connections>
-                                            <segue destination="8no-yf-GVU" kind="push" id="VoT-bn-oZL"/>
+                                            <segue destination="8no-yf-GVU" kind="show" id="VoT-bn-oZL"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dT6-CI-hvH" userLabel="join_button">
@@ -89,7 +89,7 @@
                                             <userDefinedRuntimeAttribute type="string" keyPath="layer.cornerRadius" value="4"/>
                                         </userDefinedRuntimeAttributes>
                                         <connections>
-                                            <segue destination="tMe-pp-m8T" kind="push" id="gEB-lU-Hsn"/>
+                                            <segue destination="tMe-pp-m8T" kind="show" id="gEB-lU-Hsn"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="K3K-PK-xXJ" userLabel="guest_button">
@@ -146,7 +146,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FQs-Hb-zDc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3034" y="-2300"/>
+            <point key="canvasLocation" x="-5688.75" y="-2429.5774647887324"/>
         </scene>
         <!--Register-->
         <scene sceneID="vgC-hF-YLE">
@@ -403,7 +403,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="taJ-ff-glV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2785" y="-1595"/>
+            <point key="canvasLocation" x="-5221.875" y="-1684.8591549295772"/>
         </scene>
         <!--Password Reset-->
         <scene sceneID="TZv-eH-Y93">
@@ -539,7 +539,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mtK-AB-shh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2173" y="-2300"/>
+            <point key="canvasLocation" x="-4074.375" y="-2429.5774647887324"/>
         </scene>
         <!--Sign In-->
         <scene sceneID="K4q-0i-rpY">
@@ -630,7 +630,7 @@
                                                         </userDefinedRuntimeAttribute>
                                                     </userDefinedRuntimeAttributes>
                                                     <connections>
-                                                        <segue destination="tMe-pp-m8T" kind="push" id="HwG-zD-VAa"/>
+                                                        <segue destination="tMe-pp-m8T" kind="show" id="HwG-zD-VAa"/>
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="TJy-wa-OfZ" userLabel="button_forgot_password">
@@ -650,7 +650,7 @@
                                                         <userDefinedRuntimeAttribute type="string" keyPath="layer.cornerRadius" value="4"/>
                                                     </userDefinedRuntimeAttributes>
                                                     <connections>
-                                                        <segue destination="Uk3-Dh-Kn8" kind="push" id="rRv-y1-h56"/>
+                                                        <segue destination="Uk3-Dh-Kn8" kind="show" id="rRv-y1-h56"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
@@ -709,7 +709,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eiB-GV-X0h" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2575" y="-2300"/>
+            <point key="canvasLocation" x="-4828.125" y="-2429.5774647887324"/>
         </scene>
         <!--Lobby Nav Controller-->
         <scene sceneID="0Ft-zb-7Hg">
@@ -728,7 +728,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0ha-62-Zcm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3016" y="-2327"/>
+            <point key="canvasLocation" x="-5655" y="-2458.0985915492956"/>
         </scene>
     </scenes>
     <resources>
@@ -738,11 +738,6 @@
         <image name="imgEditDark" width="60" height="60"/>
         <image name="imgPatchDark" width="60" height="60"/>
     </resources>
-    <simulatedMetricsContainer key="defaultSimulatedMetrics">
-        <simulatedStatusBarMetrics key="statusBar"/>
-        <simulatedOrientationMetrics key="orientation"/>
-        <simulatedScreenMetrics key="destination" type="retina4"/>
-    </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="gEB-lU-Hsn"/>
     </inferredMetricsTieBreakers>
