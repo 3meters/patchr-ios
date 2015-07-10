@@ -109,6 +109,8 @@
 		E2C720C71B4EDAFE00714B53 /* AirLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C720C61B4EDAFE00714B53 /* AirLabel.swift */; };
 		E2C720CA1B4F29D400714B53 /* AdobeCreativeSDKFoundationResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E2C720C81B4F29D400714B53 /* AdobeCreativeSDKFoundationResources.bundle */; };
 		E2C720CB1B4F29D400714B53 /* AdobeCreativeSDKImageResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E2C720C91B4F29D400714B53 /* AdobeCreativeSDKImageResources.bundle */; };
+		E2C720CD1B50169400714B53 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2C720CC1B50169400714B53 /* LaunchScreen.xib */; };
+		E2C720CF1B501E4100714B53 /* LaunchScreen2.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2C720CE1B501E4100714B53 /* LaunchScreen2.xib */; };
 		E2C7C5C21B2A0B730045038A /* NotificationSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */; };
 		E2C7C5C41B2A19720045038A /* DefaultSettings.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2C7C5C31B2A19720045038A /* DefaultSettings.plist */; };
 		E2C7C5C61B2B491A0045038A /* PhotoPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C7C5C51B2B491A0045038A /* PhotoPickerViewController.swift */; };
@@ -295,6 +297,8 @@
 		E2C720C61B4EDAFE00714B53 /* AirLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirLabel.swift; sourceTree = "<group>"; };
 		E2C720C81B4F29D400714B53 /* AdobeCreativeSDKFoundationResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKFoundationResources.bundle; path = Patchr/AdobeCreativeSDKFoundationResources.bundle; sourceTree = "<group>"; };
 		E2C720C91B4F29D400714B53 /* AdobeCreativeSDKImageResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKImageResources.bundle; path = Patchr/AdobeCreativeSDKImageResources.bundle; sourceTree = "<group>"; };
+		E2C720CC1B50169400714B53 /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
+		E2C720CE1B501E4100714B53 /* LaunchScreen2.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen2.xib; sourceTree = "<group>"; };
 		E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationSettingsViewController.swift; sourceTree = "<group>"; };
 		E2C7C5C31B2A19720045038A /* DefaultSettings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultSettings.plist; sourceTree = "<group>"; };
 		E2C7C5C51B2B491A0045038A /* PhotoPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoPickerViewController.swift; sourceTree = "<group>"; };
@@ -575,6 +579,8 @@
 			children = (
 				7D3D39D21A6F086F00A44CB2 /* Main.storyboard */,
 				E2EFD2651AF44214003937D4 /* Lobby.storyboard */,
+				E2C720CC1B50169400714B53 /* LaunchScreen.xib */,
+				E2C720CE1B501E4100714B53 /* LaunchScreen2.xib */,
 			);
 			name = Storyboards;
 			sourceTree = "<group>";
@@ -764,6 +770,7 @@
 				E2EFD2661AF44214003937D4 /* Lobby.storyboard in Resources */,
 				E2D6BE311B0BADA000273538 /* NotificationTableViewCell.xib in Resources */,
 				8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */,
+				E2C720CD1B50169400714B53 /* LaunchScreen.xib in Resources */,
 				E2C7C5C41B2A19720045038A /* DefaultSettings.plist in Resources */,
 				E20004DA1B07A78C00425694 /* PatchLargeTableViewCell.xib in Resources */,
 				E2A099FC1B06B20D00257B8B /* PatchNormalTableViewCell.xib in Resources */,
@@ -772,6 +779,7 @@
 				E25327D01B13DB3000990A81 /* notification_pop.aac in Resources */,
 				7D3D39D61A6F086F00A44CB2 /* Images.xcassets in Resources */,
 				E2F6C9291B1DF5500067D959 /* Notes.md in Resources */,
+				E2C720CF1B501E4100714B53 /* LaunchScreen2.xib in Resources */,
 				E2F618E41B0523840055D09C /* MessageTableViewCell.xib in Resources */,
 				E25327CD1B13DB2900990A81 /* notification_activity.aac in Resources */,
 			);

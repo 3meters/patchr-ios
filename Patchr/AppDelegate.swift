@@ -16,6 +16,10 @@ let PAapplicationDidBecomeActiveWithNonZeroBadge = "PAapplicationDidBecomeActive
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    
+    /*
+     * Routing
+     */
 
     var window: UIWindow?
     
@@ -32,40 +36,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         /* Light gray is better than black */
         window?.backgroundColor = Colors.windowColor
-        
-        /* Initialize Branch */
-        Branch.getInstance().initSessionWithLaunchOptions(launchOptions) {
-            params, error in
-            
-            NSLog("Deep link: \(params.description)")
-            if let entityId = params["entityId"] as? String, entitySchema = params["entitySchema"] as? String {
-                
-                let storyBoard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-                
-                if entitySchema == "patch" {
-                    if let controller = storyBoard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
-                        controller.patchId = entityId
-                        /* Navigation bar buttons */
-                        var doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
-                        controller.navigationItem.leftBarButtonItems = [doneButton]
-                        var navController = UINavigationController()
-                        navController.viewControllers = [controller]
-                        UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
-                    }
-                }
-                else if entitySchema == "message" {
-                    if let controller = storyBoard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
-                        controller.messageId = entityId
-                        /* Navigation bar buttons */
-                        var doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
-                        controller.navigationItem.leftBarButtonItems = [doneButton]
-                        var navController = UINavigationController()
-                        navController.viewControllers = [controller]
-                        UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
-                    }
-                }
+        UITabBar.appearance().selectedImageTintColor = Colors.brandColor
+        /* 
+         * Initialize Branch: The deepLinkHandler gets called every time the app opens.
+         * That means it should be a good place to handle all initial routing.
+         */
+        Branch.getInstance().initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
+            if let clickedBranchLink = params["+clicked_branch_link"] as? Bool where clickedBranchLink {
+                self.routeDeepLink(params, error: error)
+                return
             }
-        }
+        })
         
         /* Load setting defaults */
         let defaultSettingsFile: NSString = NSBundle.mainBundle().pathForResource("DefaultSettings", ofType: "plist")!
@@ -96,18 +77,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
 
-        /* If we have an authenticated user then start at the usual spot, otherwise start at the lobby scene. */
-        if UserController.instance.authenticated {
-			self.window?.rootViewController = UIStoryboard(
-                name: "Main",
-                bundle: NSBundle.mainBundle()).instantiateInitialViewController() as? UIViewController;
-        } else {
-            let rootController = UIStoryboard(
-                name: "Lobby",
-                bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as? UIViewController
-            self.window?.rootViewController = rootController
-        }
-        
         /* Get the latest on the authenticated user if we have one */
         if UserController.instance.authenticated {
             UserController.instance.signinAuto()
@@ -118,7 +87,63 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         self.registerForRemoteNotifications()
         
+        /* Show initial controller */
+        route()
+        
         return true
+    }
+    
+    func route() {
+        
+        /* Show initial controller */
+        self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
+        
+        /* If we have an authenticated user then start at the usual spot, otherwise start at the lobby scene. */
+        
+        if UserController.instance.authenticated {
+            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+            if let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController") as? UIViewController {
+                self.window?.setRootViewController(controller, animated: true)
+            }
+        }
+        else {
+            let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
+            if let controller = storyboard.instantiateViewControllerWithIdentifier("SplashNavigationController") as? UIViewController {
+                self.window?.setRootViewController(controller, animated: true)
+            }
+        }
+        
+        self.window?.makeKeyAndVisible()
+    }
+    
+    func routeDeepLink(params: NSDictionary?, error: NSError?) {
+        
+        if let entityId = params!["entityId"] as? String, entitySchema = params!["entitySchema"] as? String {
+            let storyBoard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+            
+            if entitySchema == "patch" {
+                if let controller = storyBoard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
+                    controller.patchId = entityId
+                    /* Navigation bar buttons */
+                    var doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
+                    controller.navigationItem.leftBarButtonItems = [doneButton]
+                    var navController = UINavigationController()
+                    navController.viewControllers = [controller]
+                    UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
+                }
+            }
+            else if entitySchema == "message" {
+                if let controller = storyBoard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
+                    controller.messageId = entityId
+                    /* Navigation bar buttons */
+                    var doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
+                    controller.navigationItem.leftBarButtonItems = [doneButton]
+                    var navController = UINavigationController()
+                    navController.viewControllers = [controller]
+                    UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
+                }
+            }
+        }
     }
     
     func applicationDidEnterBackground(application: UIApplication) {
@@ -149,7 +174,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
-        Shared.Toast("openUrl called: \(url.absoluteString!)")
         if Branch.getInstance().handleDeepLink(url) {
             NSLog("Branch handled deep link: \(url.absoluteString!)")
             return true

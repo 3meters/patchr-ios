@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="RLI-9C-tAd">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
@@ -191,7 +191,7 @@
         <!--Main Tab Bar Controller-->
         <scene sceneID="EQF-dk-fMx">
             <objects>
-                <tabBarController id="RLI-9C-tAd" customClass="MainTabBarController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="MainTabBarController" id="RLI-9C-tAd" customClass="MainTabBarController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <nil key="simulatedBottomBarMetrics"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="eDp-4n-n0n">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="49"/>
@@ -2978,4 +2978,5 @@
         <segue reference="ZkF-VU-9mQ"/>
         <segue reference="W2H-Y3-qfq"/>
     </inferredMetricsTieBreakers>
+    <color key="tintColor" red="1" green="0.50196078430000002" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

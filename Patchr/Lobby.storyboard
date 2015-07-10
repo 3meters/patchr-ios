@@ -3,30 +3,31 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Lobby-->
         <scene sceneID="ksM-5w-ZQs">
             <objects>
-                <viewController id="hEv-hm-1Yl" userLabel="Lobby" customClass="LobbyViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LobbyViewController" id="hEv-hm-1Yl" userLabel="Lobby" customClass="LobbyViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="a7N-wg-UkN"/>
                         <viewControllerLayoutGuide type="bottom" id="cqz-mf-L6a"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="h1X-d4-7iS">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="imgCityScape" translatesAutoresizingMaskIntoConstraints="NO" id="1XS-M2-Vio" userLabel="background">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="1XS-M2-Vio" secondAttribute="height" multiplier="40:71" id="0OV-J4-jj3"/>
-                                </constraints>
+                                <rect key="frame" x="-24" y="-4" width="368" height="508"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="parallaxIntensity">
+                                        <integer key="value" value="-40"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                             </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3D3-AL-q2n" userLabel="control_group">
-                                <rect key="frame" x="30" y="129" width="260" height="275"/>
+                                <rect key="frame" x="30" y="85" width="260" height="275"/>
                                 <subviews>
                                     <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="r7N-CJ-6QL" userLabel="brand_group">
                                         <rect key="frame" x="36" y="29" width="184" height="50"/>
@@ -127,33 +128,42 @@
                                     <constraint firstAttribute="centerX" secondItem="r7N-CJ-6QL" secondAttribute="centerX" constant="2" id="aZe-hn-Obi"/>
                                     <constraint firstAttribute="width" constant="260" id="waA-4W-RoC"/>
                                 </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="parallaxIntensity">
+                                        <integer key="value" value="10"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="cqz-mf-L6a" firstAttribute="top" secondItem="1XS-M2-Vio" secondAttribute="bottom" id="7D3-Ol-bta"/>
-                            <constraint firstItem="1XS-M2-Vio" firstAttribute="top" secondItem="a7N-wg-UkN" secondAttribute="bottom" constant="-64" id="NmX-eK-llw"/>
-                            <constraint firstAttribute="centerY" secondItem="3D3-AL-q2n" secondAttribute="centerY" constant="17.5" id="WVk-IC-yH2"/>
+                            <constraint firstItem="1XS-M2-Vio" firstAttribute="top" secondItem="a7N-wg-UkN" secondAttribute="bottom" constant="-24" id="4Ct-zu-g0q"/>
+                            <constraint firstItem="cqz-mf-L6a" firstAttribute="top" secondItem="1XS-M2-Vio" secondAttribute="bottom" constant="-24" id="Kse-Vo-sPB"/>
+                            <constraint firstItem="1XS-M2-Vio" firstAttribute="leading" secondItem="h1X-d4-7iS" secondAttribute="leading" constant="-24" id="SB1-gv-SlH"/>
+                            <constraint firstAttribute="centerY" secondItem="3D3-AL-q2n" secondAttribute="centerY" constant="18" id="WVk-IC-yH2"/>
+                            <constraint firstAttribute="trailing" secondItem="1XS-M2-Vio" secondAttribute="trailing" constant="-24" id="n9T-N6-GHB"/>
                             <constraint firstAttribute="centerX" secondItem="3D3-AL-q2n" secondAttribute="centerX" id="uOW-uw-ZhF"/>
                             <constraint firstAttribute="centerX" secondItem="1XS-M2-Vio" secondAttribute="centerX" id="wbb-G5-6tw"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="toX-Ib-TVi" userLabel="nav_bar"/>
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
                     <connections>
                         <outlet property="logo" destination="wSX-4a-KNV" id="DFO-pZ-8uq"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FQs-Hb-zDc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-5688.75" y="-2429.5774647887324"/>
+            <point key="canvasLocation" x="-5689" y="-2430"/>
         </scene>
         <!--Register-->
         <scene sceneID="vgC-hF-YLE">
             <objects>
                 <tableViewController id="tMe-pp-m8T" customClass="UserEditViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="UWP-hO-JbN" customClass="AirTableView">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <sections>
@@ -741,4 +751,5 @@
     <inferredMetricsTieBreakers>
         <segue reference="gEB-lU-Hsn"/>
     </inferredMetricsTieBreakers>
+    <color key="tintColor" red="1" green="0.50196078430000002" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

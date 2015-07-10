@@ -101,10 +101,10 @@ class NearbyTableViewController: PatchTableViewController {
                 
                 /* User credentials probably need to be refreshed */
                 if error.code == ServerStatusCode.UNAUTHORIZED {
-                    let controller = UIStoryboard(
-                        name: "Lobby",
-                        bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as? UIViewController
-                    self.view.window?.rootViewController = controller
+                    let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
+                    if let controller = storyboard.instantiateViewControllerWithIdentifier("SplashNavigationController") as? UIViewController {
+                        self.view.window?.setRootViewController(controller, animated: true)
+                    }
                 }
                 else {
                     self.handleError(error)
@@ -133,31 +133,6 @@ class NearbyTableViewController: PatchTableViewController {
             })
         })
     }
-    
-    /*
-     * We only get these callbacks if nearby is the current view controller.
-     */
-//    override func applicationDidEnterBackground() {
-//        super.applicationDidEnterBackground()
-//        
-//        unregisterForLocationNotifications()
-//        LocationController.instance.stopUpdates()
-//    }
-//    
-//    override func applicationWillEnterForeground(){
-//        super.applicationWillEnterForeground()
-//        
-//        /*
-//         * When patchr comes back into the foreground after after the
-//         * device has moved to a new location, we get a single location update
-//         * which will be from last fix obtained before patchr went into the
-//         * background. To be conservative, we clear our old location fix and
-//         * treat this like a manual refresh.
-//         */
-//        LocationController.instance.locationLocked = nil
-//        registerForLocationNotifications()
-//        LocationController.instance.startUpdates()
-//    }
     
     func registerForLocationNotifications() {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "didUpdateLocation:",
