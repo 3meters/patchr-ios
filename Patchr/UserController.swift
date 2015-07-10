@@ -13,6 +13,7 @@ class UserController: NSObject {
 	var currentUser: User!
 	var userId:      String?
 	var sessionKey:  String?
+    var userName: String?
     private var jsonUser: String?
     private var jsonSession: String?
 
@@ -53,6 +54,7 @@ class UserController: NSObject {
             jsonSession = jsonString
             println(jsonSession)
         }
+        userName = json["user"]["name"].string
         userId = json["session"]["_owner"].string
         sessionKey = json["session"]["key"].string
         writeCredentialsToUserDefaults()

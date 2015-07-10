@@ -58,15 +58,18 @@ class SignInEditViewController: UITableViewController, UITextFieldDelegate {
             if let error = ServerError(error) {
                 self.handleError(error)
             }
-            else {                
+            else {
                 // Store email address
                 NSUserDefaults.standardUserDefaults().setObject(self.emailField.text, forKey: Utils.PatchrUserDefaultKey("userEmail"))
                 NSUserDefaults.standardUserDefaults().synchronize()
                 self.passwordField.text = nil
                 
                 let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-                let destinationViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateInitialViewController() as! UIViewController
-                appDelegate.window!.setRootViewController(destinationViewController, animated: true)
+                let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+                if let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController") as? UIViewController {
+                    appDelegate.window?.setRootViewController(controller, animated: true)
+                    Shared.Toast("Signed in as \(UserController.instance.userName!)", controller: controller)
+                }
             }
         }
     }

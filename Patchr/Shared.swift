@@ -31,11 +31,15 @@ struct Shared {
         return browser
     }
     
-    static func Toast(message: String?, duration: NSTimeInterval = 3.0) {
+    static func Toast(message: String?, duration: NSTimeInterval = 3.0, var controller: UIViewController? = nil) {
         
-        if let controller = UIViewController.topMostViewController() {
+        if controller == nil {
+            controller = UIViewController.topMostViewController()
+        }
+        
+        if controller != nil {
             var progress: MBProgressHUD
-            progress = MBProgressHUD.showHUDAddedTo(controller.view, animated: true)
+            progress = MBProgressHUD.showHUDAddedTo(controller!.view, animated: true)
             progress.mode = MBProgressHUDMode.Text
             progress.detailsLabelText = message
             progress.margin = 10.0
