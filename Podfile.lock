@@ -34,6 +34,7 @@ PODS:
   - DACircularProgress (2.3.1)
   - libPhoneNumber-iOS (0.8.5)
   - Lockbox (2.1.0)
+  - MBContactPicker (0.2.0)
   - MBProgressHUD (0.9.1)
   - PBWebViewController (0.3)
   - pop (1.0.7)
@@ -52,6 +53,7 @@ DEPENDENCIES:
   - Branch
   - libPhoneNumber-iOS (~> 0.7)
   - Lockbox
+  - MBContactPicker
   - MBProgressHUD (~> 0.9.1)
   - PBWebViewController (~> 0.3)
   - RMCoreDataStack
@@ -73,6 +75,7 @@ SPEC CHECKSUMS:
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   libPhoneNumber-iOS: b8ccd23576379caca37c7cbdd554addf384459ed
   Lockbox: 16442da35d9d4286966936763be728a931d589c3
+  MBContactPicker: 223dd4d48c8e380da1daf53a8f7ea3527052f11c
   MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
   PBWebViewController: 909b1505da6ba7c5c82519a6457246027926061e
   pop: 628ffc631644601567ee8bfaaaea493ebd7d0923

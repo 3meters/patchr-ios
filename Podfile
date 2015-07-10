@@ -15,5 +15,6 @@ pod 'AirPhotoBrowser', :path => '~/code/AirPhotoBrowser'
 pod 'UIScrollView-InfiniteScroll'
 pod 'libPhoneNumber-iOS', '~> 0.7'
 pod 'Branch'
+pod 'MBContactPicker'
 
 end
