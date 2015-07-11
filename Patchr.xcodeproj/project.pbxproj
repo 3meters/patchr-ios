@@ -14,7 +14,6 @@
 		7D239F151AB8E6D300488F8F /* MediaTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D239F141AB8E6D300488F8F /* MediaTableViewCell.swift */; };
 		7D39D3C51ABA21B200275759 /* CALayer+XibConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D39D3C41ABA21B200275759 /* CALayer+XibConfiguration.m */; };
 		7D3D39CF1A6F086F00A44CB2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */; };
-		7D3D39D41A6F086F00A44CB2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D3D39D21A6F086F00A44CB2 /* Main.storyboard */; };
 		7D3D39D61A6F086F00A44CB2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D3D39D51A6F086F00A44CB2 /* Images.xcassets */; };
 		7D3D39F01A6F116E00A44CB2 /* Proxibase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3D39EF1A6F116E00A44CB2 /* Proxibase.swift */; };
 		7D3F26D31A76F77E0015F8E8 /* _Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D3F26CC1A76F77E0015F8E8 /* _Location.m */; };
@@ -75,6 +74,14 @@
 		E20004DA1B07A78C00425694 /* PatchLargeTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E20004D91B07A78C00425694 /* PatchLargeTableViewCell.xib */; };
 		E20004DF1B094ACA00425694 /* PasswordEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */; };
 		E20004E11B099CBD00425694 /* PasswordResetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004E01B099CBD00425694 /* PasswordResetViewController.swift */; };
+		E238BAC61B507E510094AF41 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D3D39D21A6F086F00A44CB2 /* Main.storyboard */; };
+		E238BACC1B50888C0094AF41 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BACB1B50888C0094AF41 /* SystemConfiguration.framework */; };
+		E238BACE1B50889A0094AF41 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BACD1B50889A0094AF41 /* libc++.dylib */; };
+		E238BAD01B5088A40094AF41 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BACF1B5088A40094AF41 /* MobileCoreServices.framework */; };
+		E238BAD21B508FCF0094AF41 /* AdobeCreativeSDKFoundationResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E238BAD11B508FCF0094AF41 /* AdobeCreativeSDKFoundationResources.bundle */; };
+		E238BAD41B508FE90094AF41 /* AdobeCreativeSDKImageResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E238BAD31B508FE90094AF41 /* AdobeCreativeSDKImageResources.bundle */; };
+		E238BAD61B50907F0094AF41 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BAD51B50907F0094AF41 /* Accounts.framework */; };
+		E238BAD81B5090870094AF41 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BAD71B5090870094AF41 /* Social.framework */; };
 		E241D15A1B1B3FCE00702E01 /* UIView+BorderLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = E241D1591B1B3FCE00702E01 /* UIView+BorderLayer.m */; };
 		E24A87261B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */; };
 		E25327B21B0FCE9C00990A81 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25327B11B0FCE9C00990A81 /* Constants.swift */; };
@@ -107,8 +114,6 @@
 		E2A28E711B4A624300B3A2FE /* AirWatchButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A28E701B4A624300B3A2FE /* AirWatchButton.swift */; };
 		E2C720BD1B4C260200714B53 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C720BC1B4C260200714B53 /* Reachability.m */; };
 		E2C720C71B4EDAFE00714B53 /* AirLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C720C61B4EDAFE00714B53 /* AirLabel.swift */; };
-		E2C720CA1B4F29D400714B53 /* AdobeCreativeSDKFoundationResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E2C720C81B4F29D400714B53 /* AdobeCreativeSDKFoundationResources.bundle */; };
-		E2C720CB1B4F29D400714B53 /* AdobeCreativeSDKImageResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E2C720C91B4F29D400714B53 /* AdobeCreativeSDKImageResources.bundle */; };
 		E2C720CD1B50169400714B53 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2C720CC1B50169400714B53 /* LaunchScreen.xib */; };
 		E2C720CF1B501E4100714B53 /* LaunchScreen2.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2C720CE1B501E4100714B53 /* LaunchScreen2.xib */; };
 		E2C7C5C21B2A0B730045038A /* NotificationSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */; };
@@ -125,8 +130,6 @@
 		E2F182E61B4B4CEA0020F6BB /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E24A872A1B323F2500E6F96B /* Fabric.framework */; };
 		E2F182E71B4B4CF40020F6BB /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E24A872B1B323F2500E6F96B /* Crashlytics.framework */; };
 		E2F182E81B4B4CFF0020F6BB /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E273B5181B48349900888E73 /* Bolts.framework */; };
-		E2F182E91B4B4D080020F6BB /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E273B5311B483C5500888E73 /* Social.framework */; };
-		E2F182EB1B4B4D1A0020F6BB /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E273B5331B483C5E00888E73 /* Accounts.framework */; };
 		E2F182EC1B4B4D250020F6BB /* AdobeCreativeSDKFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2F182CD1B4B37A80020F6BB /* AdobeCreativeSDKFoundation.framework */; };
 		E2F182ED1B4B4D490020F6BB /* libPods-Patchr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B36067AA93A3B743CFCA837 /* libPods-Patchr.a */; };
 		E2F182F11B4B56DD0020F6BB /* Photo.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F182F01B4B56DD0020F6BB /* Photo.m */; };
@@ -246,11 +249,18 @@
 		E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordEditViewController.swift; sourceTree = "<group>"; };
 		E20004E01B099CBD00425694 /* PasswordResetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordResetViewController.swift; sourceTree = "<group>"; };
 		E20C1FB61AFE462500A471E9 /* Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Shared.swift; sourceTree = "<group>"; };
+		E238BACB1B50888C0094AF41 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		E238BACD1B50889A0094AF41 /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
+		E238BACF1B5088A40094AF41 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		E238BAD11B508FCF0094AF41 /* AdobeCreativeSDKFoundationResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKFoundationResources.bundle; path = ../Frameworks/AdobeCreativeSDKFoundation.framework/Versions/A/Resources/AdobeCreativeSDKFoundationResources.bundle; sourceTree = "<group>"; };
+		E238BAD31B508FE90094AF41 /* AdobeCreativeSDKImageResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKImageResources.bundle; path = ../Frameworks/AdobeCreativeSDKImage.framework/Versions/A/Resources/AdobeCreativeSDKImageResources.bundle; sourceTree = "<group>"; };
+		E238BAD51B50907F0094AF41 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
+		E238BAD71B5090870094AF41 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		E241D1581B1B3FCE00702E01 /* UIView+BorderLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+BorderLayer.h"; sourceTree = "<group>"; };
 		E241D1591B1B3FCE00702E01 /* UIView+BorderLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+BorderLayer.m"; sourceTree = "<group>"; };
 		E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThumbnailCollectionViewCell.swift; sourceTree = "<group>"; };
-		E24A872A1B323F2500E6F96B /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = SOURCE_ROOT; };
-		E24A872B1B323F2500E6F96B /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = SOURCE_ROOT; };
+		E24A872A1B323F2500E6F96B /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = Frameworks/Fabric.framework; sourceTree = SOURCE_ROOT; };
+		E24A872B1B323F2500E6F96B /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Frameworks/Crashlytics.framework; sourceTree = SOURCE_ROOT; };
 		E25327B11B0FCE9C00990A81 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		E25327B51B1000C000990A81 /* AirImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirImageView.swift; sourceTree = "<group>"; };
 		E25327B71B103ECA00990A81 /* AirImageButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirImageButton.swift; sourceTree = "<group>"; };
@@ -276,10 +286,8 @@
 		E2711C4B1AFD17E800CE71A1 /* AirTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AirTableViewCell.m; sourceTree = "<group>"; };
 		E2711C4D1AFD182F00CE71A1 /* AirTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirTableView.h; sourceTree = "<group>"; };
 		E2711C4E1AFD182F00CE71A1 /* AirTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AirTableView.m; sourceTree = "<group>"; };
-		E273B5181B48349900888E73 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bolts.framework; sourceTree = "<group>"; };
-		E273B5191B48349900888E73 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
-		E273B5311B483C5500888E73 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
-		E273B5331B483C5E00888E73 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
+		E273B5181B48349900888E73 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Bolts.framework; path = Frameworks/Bolts.framework; sourceTree = "<group>"; };
+		E273B5191B48349900888E73 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = Frameworks/Parse.framework; sourceTree = "<group>"; };
 		E273B5351B488F2000888E73 /* AirPhotoPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirPhotoPreview.swift; sourceTree = "<group>"; };
 		E27DB4031B06477A0090D023 /* QueryItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QueryItem.h; path = Model/QueryItem.h; sourceTree = "<group>"; };
 		E27DB4041B06477A0090D023 /* QueryItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QueryItem.m; path = Model/QueryItem.m; sourceTree = "<group>"; };
@@ -291,12 +299,8 @@
 		E2A28E701B4A624300B3A2FE /* AirWatchButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirWatchButton.swift; sourceTree = "<group>"; };
 		E2C720BB1B4C25C900714B53 /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		E2C720BC1B4C260200714B53 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
-		E2C720BE1B4D914800714B53 /* AdobeCreativeSDKFoundationResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKFoundationResources.bundle; path = ../AdobeCreativeSDKFoundation.framework/Versions/A/Resources/AdobeCreativeSDKFoundationResources.bundle; sourceTree = "<group>"; };
-		E2C720C01B4D917100714B53 /* AdobeCreativeSDKImageResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKImageResources.bundle; path = ../AdobeCreativeSDKImage.framework/Versions/A/Resources/AdobeCreativeSDKImageResources.bundle; sourceTree = "<group>"; };
 		E2C720C51B4D92F000714B53 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E2C720C61B4EDAFE00714B53 /* AirLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirLabel.swift; sourceTree = "<group>"; };
-		E2C720C81B4F29D400714B53 /* AdobeCreativeSDKFoundationResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKFoundationResources.bundle; path = Patchr/AdobeCreativeSDKFoundationResources.bundle; sourceTree = "<group>"; };
-		E2C720C91B4F29D400714B53 /* AdobeCreativeSDKImageResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKImageResources.bundle; path = Patchr/AdobeCreativeSDKImageResources.bundle; sourceTree = "<group>"; };
 		E2C720CC1B50169400714B53 /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
 		E2C720CE1B501E4100714B53 /* LaunchScreen2.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen2.xib; sourceTree = "<group>"; };
 		E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationSettingsViewController.swift; sourceTree = "<group>"; };
@@ -308,8 +312,8 @@
 		E2D6BE301B0BADA000273538 /* NotificationTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NotificationTableViewCell.xib; sourceTree = "<group>"; };
 		E2DBD4EF1B0F65580006575C /* ExtensionsModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionsModel.swift; sourceTree = "<group>"; };
 		E2EFD2651AF44214003937D4 /* Lobby.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Lobby.storyboard; sourceTree = "<group>"; };
-		E2F182CD1B4B37A80020F6BB /* AdobeCreativeSDKFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AdobeCreativeSDKFoundation.framework; sourceTree = "<group>"; };
-		E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AdobeCreativeSDKImage.framework; sourceTree = "<group>"; };
+		E2F182CD1B4B37A80020F6BB /* AdobeCreativeSDKFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKFoundation.framework; path = Frameworks/AdobeCreativeSDKFoundation.framework; sourceTree = "<group>"; };
+		E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKImage.framework; path = Frameworks/AdobeCreativeSDKImage.framework; sourceTree = "<group>"; };
 		E2F182F01B4B56DD0020F6BB /* Photo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Photo.m; sourceTree = "<group>"; };
 		E2F618D51AFFACF00055D09C /* LocationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationController.swift; path = Patchr/LocationController.swift; sourceTree = "<group>"; };
 		E2F618E31B0523840055D09C /* MessageTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MessageTableViewCell.xib; sourceTree = "<group>"; };
@@ -334,15 +338,18 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E238BAD81B5090870094AF41 /* Social.framework in Frameworks */,
+				E238BAD61B50907F0094AF41 /* Accounts.framework in Frameworks */,
+				E238BAD01B5088A40094AF41 /* MobileCoreServices.framework in Frameworks */,
+				E238BACC1B50888C0094AF41 /* SystemConfiguration.framework in Frameworks */,
 				E2F182E71B4B4CF40020F6BB /* Crashlytics.framework in Frameworks */,
+				E2F182E31B4B4AFD0020F6BB /* Parse.framework in Frameworks */,
+				E2F182E81B4B4CFF0020F6BB /* Bolts.framework in Frameworks */,
+				E2F182E61B4B4CEA0020F6BB /* Fabric.framework in Frameworks */,
 				E2F182EC1B4B4D250020F6BB /* AdobeCreativeSDKFoundation.framework in Frameworks */,
 				E2F182D01B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework in Frameworks */,
-				E2F182E31B4B4AFD0020F6BB /* Parse.framework in Frameworks */,
+				E238BACE1B50889A0094AF41 /* libc++.dylib in Frameworks */,
 				E2F182ED1B4B4D490020F6BB /* libPods-Patchr.a in Frameworks */,
-				E2F182E81B4B4CFF0020F6BB /* Bolts.framework in Frameworks */,
-				E2F182E91B4B4D080020F6BB /* Social.framework in Frameworks */,
-				E2F182E61B4B4CEA0020F6BB /* Fabric.framework in Frameworks */,
-				E2F182EB1B4B4D1A0020F6BB /* Accounts.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -361,8 +368,6 @@
 		7D3D39C01A6F086F00A44CB2 = {
 			isa = PBXGroup;
 			children = (
-				E2C720C81B4F29D400714B53 /* AdobeCreativeSDKFoundationResources.bundle */,
-				E2C720C91B4F29D400714B53 /* AdobeCreativeSDKImageResources.bundle */,
 				7D3D39CB1A6F086F00A44CB2 /* Patchr */,
 				7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */,
 				E25327D11B13DEF800990A81 /* AudioController.swift */,
@@ -474,14 +479,17 @@
 		A0DA2C2AA90D81631E6BF68D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E238BAD71B5090870094AF41 /* Social.framework */,
+				E238BAD51B50907F0094AF41 /* Accounts.framework */,
+				E238BACF1B5088A40094AF41 /* MobileCoreServices.framework */,
+				E238BACB1B50888C0094AF41 /* SystemConfiguration.framework */,
 				E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */,
 				E2F182CD1B4B37A80020F6BB /* AdobeCreativeSDKFoundation.framework */,
-				E273B5331B483C5E00888E73 /* Accounts.framework */,
-				E273B5311B483C5500888E73 /* Social.framework */,
 				E273B5181B48349900888E73 /* Bolts.framework */,
 				E273B5191B48349900888E73 /* Parse.framework */,
 				E24A872B1B323F2500E6F96B /* Crashlytics.framework */,
 				E24A872A1B323F2500E6F96B /* Fabric.framework */,
+				E238BACD1B50889A0094AF41 /* libc++.dylib */,
 				3B36067AA93A3B743CFCA837 /* libPods-Patchr.a */,
 			);
 			name = Frameworks;
@@ -490,9 +498,9 @@
 		E215995A1AEFC193002C936F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				E2C720BE1B4D914800714B53 /* AdobeCreativeSDKFoundationResources.bundle */,
-				E2C720C01B4D917100714B53 /* AdobeCreativeSDKImageResources.bundle */,
 				E25327CA1B13D34B00990A81 /* Sounds */,
+				E238BAD31B508FE90094AF41 /* AdobeCreativeSDKImageResources.bundle */,
+				E238BAD11B508FCF0094AF41 /* AdobeCreativeSDKFoundationResources.bundle */,
 				8468F8211A9D09D1007D6EE6 /* Localizable.strings */,
 				7D3D39D51A6F086F00A44CB2 /* Images.xcassets */,
 				E2C7C5C31B2A19720045038A /* DefaultSettings.plist */,
@@ -761,27 +769,27 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7D3D39D41A6F086F00A44CB2 /* Main.storyboard in Resources */,
+				E238BAD41B508FE90094AF41 /* AdobeCreativeSDKImageResources.bundle in Resources */,
+				E238BAD21B508FCF0094AF41 /* AdobeCreativeSDKFoundationResources.bundle in Resources */,
+				E238BAC61B507E510094AF41 /* Main.storyboard in Resources */,
+				E2EFD2661AF44214003937D4 /* Lobby.storyboard in Resources */,
+				7D3D39D61A6F086F00A44CB2 /* Images.xcassets in Resources */,
 				7D5545871AD33B1D007150E5 /* UserTableViewCell.xib in Resources */,
 				7DC9D4951A9D4FAD00234E3C /* NotificationTableViewCellV2.xib in Resources */,
 				E26B0C921B46D01E00706F4A /* ThumbnailCollectionViewCell.xib in Resources */,
-				E2C720CA1B4F29D400714B53 /* AdobeCreativeSDKFoundationResources.bundle in Resources */,
-				E2C720CB1B4F29D400714B53 /* AdobeCreativeSDKImageResources.bundle in Resources */,
-				E2EFD2661AF44214003937D4 /* Lobby.storyboard in Resources */,
 				E2D6BE311B0BADA000273538 /* NotificationTableViewCell.xib in Resources */,
-				8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */,
 				E2C720CD1B50169400714B53 /* LaunchScreen.xib in Resources */,
-				E2C7C5C41B2A19720045038A /* DefaultSettings.plist in Resources */,
 				E20004DA1B07A78C00425694 /* PatchLargeTableViewCell.xib in Resources */,
 				E2A099FC1B06B20D00257B8B /* PatchNormalTableViewCell.xib in Resources */,
+				E2C720CF1B501E4100714B53 /* LaunchScreen2.xib in Resources */,
+				E2F618E41B0523840055D09C /* MessageTableViewCell.xib in Resources */,
+				8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */,
+				E2C7C5C41B2A19720045038A /* DefaultSettings.plist in Resources */,
 				E25327CE1B13DB3000990A81 /* notification_candi_discovered_soft.aac in Resources */,
 				E25327CF1B13DB3000990A81 /* notification_carme.aac in Resources */,
 				E25327D01B13DB3000990A81 /* notification_pop.aac in Resources */,
-				7D3D39D61A6F086F00A44CB2 /* Images.xcassets in Resources */,
-				E2F6C9291B1DF5500067D959 /* Notes.md in Resources */,
-				E2C720CF1B501E4100714B53 /* LaunchScreen2.xib in Resources */,
-				E2F618E41B0523840055D09C /* MessageTableViewCell.xib in Resources */,
 				E25327CD1B13DB2900990A81 /* notification_activity.aac in Resources */,
+				E2F6C9291B1DF5500067D959 /* Notes.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -871,7 +879,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./Fabric.framework/run 3f03e3891f0d0c56c4bc1c393db5efe2aa0f90c7 98cfca9f6ecedc65a98564ec3e3af57052f396d78d3bce7483d33c035a2a6c66";
+			shellScript = "./Frameworks/Fabric.framework/run 3f03e3891f0d0c56c4bc1c393db5efe2aa0f90c7 98cfca9f6ecedc65a98564ec3e3af57052f396d78d3bce7483d33c035a2a6c66";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1102,6 +1110,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					/Users/jaymassena/Downloads/AdobeCreativeSDKFrameworks,
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				INFOPLIST_FILE = Patchr/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
@@ -1177,6 +1186,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					/Users/jaymassena/Downloads/AdobeCreativeSDKFrameworks,
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				INFOPLIST_FILE = Patchr/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
@@ -1287,6 +1297,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					/Users/jaymassena/Downloads/AdobeCreativeSDKFrameworks,
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				INFOPLIST_FILE = Patchr/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
