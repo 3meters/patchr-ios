@@ -101,8 +101,11 @@ class UserEditViewController: EntityEditViewController {
                 }
                 else {
                     let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-                    let viewController = UIStoryboard(name:"Main", bundle:NSBundle.mainBundle()).instantiateInitialViewController() as! UIViewController;
-                    appDelegate.window!.setRootViewController(viewController, animated: true)
+                    let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+                    if let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController") as? UIViewController {
+                        appDelegate.window?.setRootViewController(controller, animated: true)
+                        Shared.Toast("Signed in as \(UserController.instance.userName!)", controller: controller)
+                    }
                 }
             }   
         }

@@ -17,10 +17,6 @@ let PAapplicationDidBecomeActiveWithNonZeroBadge = "PAapplicationDidBecomeActive
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
-    /*
-     * Routing
-     */
-
     var window: UIWindow?
     
     class func appDelegate() -> AppDelegate {
