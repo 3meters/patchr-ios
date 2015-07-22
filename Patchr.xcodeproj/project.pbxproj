@@ -287,6 +287,8 @@
 		84EF12AB1AA904700043EBBA /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		880FE917F305BDE29B1AA196 /* Pods-PatchrShare.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrShare.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrShare/Pods-PatchrShare.debug.xcconfig"; sourceTree = "<group>"; };
 		963D1BBA8F941C4BA95675EA /* Pods-Patchr.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.adhoc.xcconfig"; sourceTree = "<group>"; };
+		9FDCC0E4B19128061528347E /* PatchrShare-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PatchrShare-Bridging-Header.h"; sourceTree = "<group>"; };
+		9FDCC3D3D3A12CE707AF9EEB /* PatchrShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = file.entitlements; path = PatchrShare.entitlements; sourceTree = "<group>"; };
 		9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageDetailViewController.swift; sourceTree = "<group>"; };
 		A80DE63116DE3050C0FEC4EE /* Pods-Patchr.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.debug.xcconfig"; sourceTree = "<group>"; };
 		A9B11FC184124D485DAA2948 /* Pods-Patchr.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.release.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.release.xcconfig"; sourceTree = "<group>"; };
@@ -302,14 +304,12 @@
 		E238BAD31B508FE90094AF41 /* AdobeCreativeSDKImageResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKImageResources.bundle; path = ../Frameworks/AdobeCreativeSDKImage.framework/Versions/A/Resources/AdobeCreativeSDKImageResources.bundle; sourceTree = "<group>"; };
 		E238BAD51B50907F0094AF41 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		E238BAD71B5090870094AF41 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
-		E238BAD91B51C9CE0094AF41 /* PatchrShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = file.entitlements; name = PatchrShare.entitlements; path = ../Patchr/PatchrShare.entitlements; sourceTree = "<group>"; };
 		E238BADE1B51D3290094AF41 /* PatchrShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PatchrShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		E238BAE11B51D3290094AF41 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
 		E238BAE21B51D3290094AF41 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		E238BAE41B51D3290094AF41 /* PatchrShare.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = PatchrShare.storyboard; sourceTree = "<group>"; };
 		E238BAEE1B5405380094AF41 /* Patchr.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = Patchr.entitlements; path = Patchr/Patchr.entitlements; sourceTree = SOURCE_ROOT; };
 		E238BAF01B5429850094AF41 /* PatchPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PatchPickerViewController.swift; path = share/PatchPickerViewController.swift; sourceTree = SOURCE_ROOT; };
-		E238BAFB1B56F2A80094AF41 /* PatchrShare-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "PatchrShare-Bridging-Header.h"; path = "../Patchr/PatchrShare-Bridging-Header.h"; sourceTree = "<group>"; };
 		E238BAFC1B5712B40094AF41 /* PatchSearchCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PatchSearchCell.xib; path = share/PatchSearchCell.xib; sourceTree = SOURCE_ROOT; };
 		E238BAFE1B5715CF0094AF41 /* PatchSearchCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PatchSearchCell.swift; path = share/PatchSearchCell.swift; sourceTree = SOURCE_ROOT; };
 		E238BB051B571AFF0094AF41 /* ExtensionsPhoto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionsPhoto.swift; sourceTree = "<group>"; };
@@ -592,6 +592,8 @@
 				E28177731B5C394200D65AC1 /* Source */,
 				E28177741B5C396900D65AC1 /* Resources */,
 				E238BAE01B51D3290094AF41 /* Supporting Files */,
+				9FDCC0E4B19128061528347E /* PatchrShare-Bridging-Header.h */,
+				9FDCC3D3D3A12CE707AF9EEB /* PatchrShare.entitlements */,
 			);
 			name = PatchrShare;
 			path = share;
@@ -600,7 +602,6 @@
 		E238BAE01B51D3290094AF41 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				E238BAD91B51C9CE0094AF41 /* PatchrShare.entitlements */,
 				E238BAE11B51D3290094AF41 /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -659,7 +660,6 @@
 		E28177731B5C394200D65AC1 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				E238BAFB1B56F2A80094AF41 /* PatchrShare-Bridging-Header.h */,
 				E28177711B5C18BF00D65AC1 /* ExtensionsUi.swift */,
 				E238BAE21B51D3290094AF41 /* ShareViewController.swift */,
 				E238BAF01B5429850094AF41 /* PatchPickerViewController.swift */,
