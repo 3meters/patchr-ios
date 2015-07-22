@@ -121,7 +121,7 @@
 		E281776E1B5B0EE200D65AC1 /* Reporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = E281776D1B5B0EE200D65AC1 /* Reporting.swift */; };
 		E281776F1B5B0F4A00D65AC1 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EF12AB1AA904700043EBBA /* Utils.swift */; };
 		E28177721B5C18BF00D65AC1 /* ExtensionsUi.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28177711B5C18BF00D65AC1 /* ExtensionsUi.swift */; };
-		E28177761B5C39E200D65AC1 /* S3.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28177751B5C39E200D65AC1 /* S3.swift */; };
+		E28177761B5C39E200D65AC1 /* AwsS3.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28177751B5C39E200D65AC1 /* AwsS3.swift */; };
 		E281777A1B5C3C3200D65AC1 /* Proxibase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28177791B5C3C3200D65AC1 /* Proxibase.swift */; };
 		E281777C1B5D58CB00D65AC1 /* PatchSearchCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E238BAFC1B5712B40094AF41 /* PatchSearchCell.xib */; };
 		E281777F1B5D591400D65AC1 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E238BAE21B51D3290094AF41 /* ShareViewController.swift */; };
@@ -287,9 +287,9 @@
 		84EF12AB1AA904700043EBBA /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		880FE917F305BDE29B1AA196 /* Pods-PatchrShare.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrShare.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrShare/Pods-PatchrShare.debug.xcconfig"; sourceTree = "<group>"; };
 		963D1BBA8F941C4BA95675EA /* Pods-Patchr.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.adhoc.xcconfig"; sourceTree = "<group>"; };
-		9FDCC0E4B19128061528347E /* PatchrShare-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PatchrShare-Bridging-Header.h"; sourceTree = "<group>"; };
-		9FDCC3D3D3A12CE707AF9EEB /* PatchrShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = file.entitlements; path = PatchrShare.entitlements; sourceTree = "<group>"; };
+		9FDCC67342555A8E88594481 /* PatchrShare-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PatchrShare-Bridging-Header.h"; sourceTree = "<group>"; };
 		9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageDetailViewController.swift; sourceTree = "<group>"; };
+		9FDCCD65EB714D83C5A818FE /* PatchrShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = file.entitlements; path = PatchrShare.entitlements; sourceTree = "<group>"; };
 		A80DE63116DE3050C0FEC4EE /* Pods-Patchr.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.debug.xcconfig"; sourceTree = "<group>"; };
 		A9B11FC184124D485DAA2948 /* Pods-Patchr.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.release.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.release.xcconfig"; sourceTree = "<group>"; };
 		B3CABF391F6D74EFAA64D37F /* libPods-Patchr.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Patchr.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -353,7 +353,7 @@
 		E281776B1B5AB2D400D65AC1 /* OneShotLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OneShotLocationManager.swift; path = share/OneShotLocationManager.swift; sourceTree = SOURCE_ROOT; };
 		E281776D1B5B0EE200D65AC1 /* Reporting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reporting.swift; sourceTree = "<group>"; };
 		E28177711B5C18BF00D65AC1 /* ExtensionsUi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ExtensionsUi.swift; path = share/ExtensionsUi.swift; sourceTree = SOURCE_ROOT; };
-		E28177751B5C39E200D65AC1 /* S3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = S3.swift; path = share/S3.swift; sourceTree = SOURCE_ROOT; };
+		E28177751B5C39E200D65AC1 /* AwsS3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AwsS3.swift; path = share/AwsS3.swift; sourceTree = SOURCE_ROOT; };
 		E28177791B5C3C3200D65AC1 /* Proxibase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Proxibase.swift; path = share/Proxibase.swift; sourceTree = SOURCE_ROOT; };
 		E2A099FB1B06B20D00257B8B /* PatchNormalTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PatchNormalTableViewCell.xib; sourceTree = "<group>"; };
 		E2A28E6C1B49D88800B3A2FE /* AirLikeButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirLikeButton.swift; sourceTree = "<group>"; };
@@ -592,8 +592,6 @@
 				E28177731B5C394200D65AC1 /* Source */,
 				E28177741B5C396900D65AC1 /* Resources */,
 				E238BAE01B51D3290094AF41 /* Supporting Files */,
-				9FDCC0E4B19128061528347E /* PatchrShare-Bridging-Header.h */,
-				9FDCC3D3D3A12CE707AF9EEB /* PatchrShare.entitlements */,
 			);
 			name = PatchrShare;
 			path = share;
@@ -603,6 +601,7 @@
 			isa = PBXGroup;
 			children = (
 				E238BAE11B51D3290094AF41 /* Info.plist */,
+				9FDCCD65EB714D83C5A818FE /* PatchrShare.entitlements */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -665,8 +664,9 @@
 				E238BAF01B5429850094AF41 /* PatchPickerViewController.swift */,
 				E281776B1B5AB2D400D65AC1 /* OneShotLocationManager.swift */,
 				E238BAFE1B5715CF0094AF41 /* PatchSearchCell.swift */,
-				E28177751B5C39E200D65AC1 /* S3.swift */,
+				E28177751B5C39E200D65AC1 /* AwsS3.swift */,
 				E28177791B5C3C3200D65AC1 /* Proxibase.swift */,
+				9FDCC67342555A8E88594481 /* PatchrShare-Bridging-Header.h */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -1199,7 +1199,7 @@
 				E281777F1B5D591400D65AC1 /* ShareViewController.swift in Sources */,
 				E238BAFF1B5715CF0094AF41 /* PatchSearchCell.swift in Sources */,
 				E238BAF11B5429850094AF41 /* PatchPickerViewController.swift in Sources */,
-				E28177761B5C39E200D65AC1 /* S3.swift in Sources */,
+				E28177761B5C39E200D65AC1 /* AwsS3.swift in Sources */,
 				E23E02001B5873CB0035CCF0 /* SwiftyJSON.swift in Sources */,
 				E281777A1B5C3C3200D65AC1 /* Proxibase.swift in Sources */,
 				E281776C1B5AB2D400D65AC1 /* OneShotLocationManager.swift in Sources */,
