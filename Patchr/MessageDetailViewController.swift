@@ -18,25 +18,34 @@ class MessageDetailViewController: UITableViewController {
     
     private var isOwner: Bool {
         if let currentUser = UserController.instance.currentUser {
-            if message != nil {
+            if message != nil && message.creator != nil {
                 return currentUser.id_ == message.creator.entityId
             }
         }
         return false
     }
     
+    private var isPatchOwner: Bool {
+        if let currentUser = UserController.instance.currentUser {
+            if message != nil && message.patch != nil && message.patch.ownerId != nil {
+                return currentUser.id_ == message.patch.ownerId
+            }
+        }
+        return false
+    }
+
 	/* Outlets are initialized before viewDidLoad is called */
 
 	@IBOutlet weak var patchName:    UIButton!
 	@IBOutlet weak var patchPhoto:   AirImageButton!
 	@IBOutlet weak var userPhoto:    AirImageButton!
 	@IBOutlet weak var userName:     UIButton!
-	@IBOutlet weak var description_: UILabel!
 	@IBOutlet weak var createdDate:  UILabel!
-	@IBOutlet weak var photo:        AirImageButton!
+	@IBOutlet weak var messagePhoto: AirImageButton!
 	@IBOutlet weak var likeButton:   AirLikeButton!
 	@IBOutlet weak var likesButton:  UIButton!
-
+    @IBOutlet weak var description_: TTTAttributedLabel!
+    
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
 	 *--------------------------------------------------------------------------------------------*/
@@ -56,9 +65,17 @@ class MessageDetailViewController: UITableViewController {
 		self.messageDateFormatter = dateFormatter
 
         /* Ui tweaks */
-		self.photo.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
+		self.messagePhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
 		self.userPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
 		self.patchPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
+        
+        let linkColor = Colors.brandColorDark
+        let linkActiveColor = Colors.brandColorLight
+        
+        self.description_.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
+        self.description_.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
+        self.description_.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
+        self.description_.delegate = self
 
 		/* Navigation bar buttons */
         var shareButton  = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
@@ -70,6 +87,13 @@ class MessageDetailViewController: UITableViewController {
             spacer.width = SPACER_WIDTH
             self.navigationItem.rightBarButtonItems = [shareButton, spacer, deleteButton, spacer, editButton]
         }
+        else if isPatchOwner {
+            let removeImage    = UIImage(named: "imgCancelLight")
+            var removeButton   = UIBarButtonItem(image: removeImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("removeAction:"))
+            var spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
+            spacer.width = SPACER_WIDTH
+            self.navigationItem.rightBarButtonItems = [shareButton, spacer, removeButton]
+        }
         else {
             self.navigationItem.rightBarButtonItems = [shareButton]
         }
@@ -77,7 +101,7 @@ class MessageDetailViewController: UITableViewController {
 		/* Make sure any old content is cleared */
 		self.description_.text?.removeAll(keepCapacity: false)
 		self.createdDate.text?.removeAll(keepCapacity: false)
-		self.photo.imageView?.image = nil
+		self.messagePhoto.imageView?.image = nil
 		self.patchName.setTitle(nil, forState: .Normal)
 		self.patchPhoto.imageView?.image = nil
 		self.userName.setTitle(nil, forState: .Normal)
@@ -146,7 +170,7 @@ class MessageDetailViewController: UITableViewController {
 	}
 
 	@IBAction func photoAction(sender: AnyObject) {
-        var browser = Shared.showPhotoBrowser(self.photo.imageForState(.Normal), view: sender as! UIView, viewController: self, entity: self.message)
+        var browser = Shared.showPhotoBrowser(self.messagePhoto.imageForState(.Normal), view: sender as! UIView, viewController: self, entity: self.message)
         browser.target = self
 	}
 
@@ -162,6 +186,18 @@ class MessageDetailViewController: UITableViewController {
                 doIt in
                 if doIt {
                     self.delete()
+                }
+        }
+    }
+    
+    @IBAction func removeAction(sender: AnyObject) {
+        self.ActionConfirmationAlert(
+            title: "Confirm Remove",
+            message: "Are you sure you want to remove this message from the patch?",
+            actionTitle: "Remove", cancelTitle: "Cancel", delegate: self) {
+                doIt in
+                if doIt {
+                    self.remove()
                 }
         }
     }
@@ -239,15 +275,15 @@ class MessageDetailViewController: UITableViewController {
         /* Photo */
 
 		if message!.photo != nil {
-			self.photo.hidden = false
-            if self.photo.photoUrl == nil || self.photo.photoUrl?.absoluteString != self.message.photo.uriWrapped().absoluteString {
-                self.photo.setImageWithPhoto(message!.photo)                
+			self.messagePhoto.hidden = false
+            if !self.messagePhoto.linkedToPhoto(self.message!.photo) {
+                self.messagePhoto.setImageWithPhoto(message!.photo)
             }
 		}
 		else {
-			self.photo.hidden = true
-			self.photo.frame.size.height = 0
-			self.photo.sizeToFit()
+			self.messagePhoto.hidden = true
+			self.messagePhoto.frame.size.height = 0
+			self.messagePhoto.sizeToFit()
 		}
 
 		/* Like button */
@@ -278,7 +314,7 @@ class MessageDetailViewController: UITableViewController {
 			self.userPhoto.setImageWithPhoto(creator.getPhotoManaged())
 		}
 		else {
-			self.userName.setTitle("Unknown", forState: .Normal)
+			self.userName.setTitle("Deleted", forState: .Normal)
 			self.userPhoto.setImageWithPhoto(Entity.getDefaultPhoto("user"))
 		}
 
@@ -298,6 +334,25 @@ class MessageDetailViewController: UITableViewController {
                 DataController.instance.managedObjectContext.deleteObject(self.message!)
                 if DataController.instance.managedObjectContext.save(nil) {
                     self.navigationController?.popViewControllerAnimated(true)
+                }
+            }
+        }
+    }
+    
+    func remove() {
+                
+        if let fromId = self.message!.id_, toId = self.message!.patchId {
+            DataController.proxibase.deleteLink(fromId, toId: toId, linkType: LinkType.Content) {
+                response, error in
+                
+                if let error = ServerError(error) {
+                    UIViewController.topMostViewController()!.handleError(error)
+                }
+                else {
+                    DataController.instance.managedObjectContext.deleteObject(self.message!)
+                    if DataController.instance.managedObjectContext.save(nil) {
+                        self.navigationController?.popViewControllerAnimated(true)
+                    }
                 }
             }
         }
@@ -397,4 +452,11 @@ extension MessageDetailViewController: UITableViewDelegate {
         var height = super.tableView(tableView, heightForRowAtIndexPath: indexPath) as CGFloat!
         return height
 	}
+}
+
+extension MessageDetailViewController: TTTAttributedLabelDelegate {
+    
+    func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
+        UIApplication.sharedApplication().openURL(url)
+    }
 }

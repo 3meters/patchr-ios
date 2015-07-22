@@ -1,20 +1,32 @@
-# platform :ios, '6.0'
+
+source 'https://github.com/CocoaPods/Specs.git'
+
+platform :ios, '7.1'
 
 target 'Patchr' do
 
-pod 'AFNetworking', '~> 2.0'
+pod 'AFNetworking', '~> 2.5'
 pod 'AFNetworkActivityLogger', '~> 2.0'
-pod 'AWSS3'
+pod 'AWSS3', '~> 2.2.0'
 pod 'RMCoreDataStack'
-pod 'PBWebViewController', '~> 0.3'
+pod 'PBWebViewController', '~> 0.3'  # Used to show show web content for terms/policy/licensing
 pod 'MBProgressHUD', '~> 0.9.1'
 pod 'SDWebImage', '~> 3.7.2'
 pod 'UIDevice-Hardware'
-pod 'Lockbox'
-pod 'AirPhotoBrowser', :path => '~/code/AirPhotoBrowser'
+pod 'Lockbox'                       # Used to protect install info
 pod 'UIScrollView-InfiniteScroll'
 pod 'libPhoneNumber-iOS', '~> 0.7'
 pod 'Branch'
-pod 'MBContactPicker'
+pod 'AirPhotoBrowser', :path => '~/code/AirPhotoBrowser'
+pod 'TTTAttributedLabel'
 
 end
+
+target 'PatchrShare' do
+
+pod 'SDWebImage', '~> 3.7.2'
+pod 'AWSS3', '~> 2.2.0'
+
+end
+
+# link_with ['Patchr', 'PatchrShare']

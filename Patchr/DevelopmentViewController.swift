@@ -22,8 +22,8 @@ class DevelopmentViewController: UIViewController {
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
         
-        devModeSwitch.on = userDefaults.boolForKey(Utils.PatchrUserDefaultKey("devModeEnabled"))
-		serverUriField.text = userDefaults.stringForKey(Utils.PatchrUserDefaultKey("serverURI"))
+        devModeSwitch.on = userDefaults.boolForKey(PatchrUserDefaultKey("devModeEnabled"))
+		serverUriField.text = userDefaults.stringForKey(PatchrUserDefaultKey("serverURI"))
         
 		observerObject = TextFieldChangeObserver(serverUriField) {
 			[unowned self] in
@@ -35,7 +35,7 @@ class DevelopmentViewController: UIViewController {
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
 
-		userDefaults.setObject(serverUriField.text, forKey: Utils.PatchrUserDefaultKey("serverURI"))
+		userDefaults.setObject(serverUriField.text, forKey: PatchrUserDefaultKey("serverURI"))
 
 		observerObject?.stopObserving()
 
@@ -54,7 +54,7 @@ class DevelopmentViewController: UIViewController {
 	}
     
     @IBAction func devModeAction(sender: AnyObject) {
-        userDefaults.setBool(devModeSwitch.on, forKey: Utils.PatchrUserDefaultKey("devModeEnabled"))
+        userDefaults.setBool(devModeSwitch.on, forKey: PatchrUserDefaultKey("devModeEnabled"))
         if devModeSwitch.on {
             AudioController.instance.play(Sound.pop.rawValue)
         }

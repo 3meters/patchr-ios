@@ -34,6 +34,11 @@ class UserEditViewController: EntityEditViewController {
             navigationItem.title = Utils.LocalizedString("Edit profile")
             self.progressStartLabel = "Updating"
             self.progressFinishLabel = "Updated!"
+            
+            /* Navigation bar buttons */
+            var deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
+            var doneButton   = UIBarButtonItem(title: "Save", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
+            self.navigationItem.rightBarButtonItems = [doneButton, spacer, deleteButton]
         }
         else {
             navigationItem.title = Utils.LocalizedString("Register")
@@ -76,10 +81,6 @@ class UserEditViewController: EntityEditViewController {
         progress.show(true)
         
         var parameters = self.gather(NSMutableDictionary())
-        
-        if let image = self.photoImage.imageForState(.Normal) {
-            parameters["photo"] = image
-        }
         
         DataController.proxibase.insertUser(nameField.text, email: emailField.text, password: passwordField.text, parameters: parameters) {
             response, error in

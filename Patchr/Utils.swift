@@ -8,10 +8,7 @@
 
 import Foundation
 import ObjectiveC
-import Fabric
-import Crashlytics
-
-let globalGregorianCalendar = NSCalendar(calendarIdentifier: NSGregorianCalendar)
+import AVFoundation
 
 var temporaryFileCount = 0
 
@@ -25,12 +22,9 @@ struct Utils {
         return LocalizedString("[]" + str, comment: str)
     }
     
-    static func PatchrUserDefaultKey(subKey: String) -> String {
-        return NAMESPACE + subKey
-    }
-    
     static func DateTimeTag() -> String! {
         let date = NSDate()
+        let globalGregorianCalendar = NSCalendar(calendarIdentifier: NSGregorianCalendar)
         
         if let dc = globalGregorianCalendar?.components(.CalendarUnitYear | .CalendarUnitMonth | .CalendarUnitDay |
             .CalendarUnitHour | .CalendarUnitMinute | .CalendarUnitSecond, fromDate: date) {
@@ -55,56 +49,57 @@ struct Utils {
         return nil
     }
     
-    static func updateCrashKeys() {
-        
-        let reachability: Reachability = Reachability.reachabilityForInternetConnection()
-        let networkStatus: Int = reachability.currentReachabilityStatus().value
-        if networkStatus == 0 {
-            Crashlytics.sharedInstance().setBoolValue(false, forKey: "connected")
+    static func prepareImage(var image: UIImage) -> UIImage {
+        var scalingNeeded: Bool = (image.size.width > 1280 || image.size.height > 1280)
+        if (scalingNeeded) {
+            let rect: CGRect = AVMakeRectWithAspectRatioInsideRect(image.size, CGRectMake(0, 0, 1280, 1280))
+            image = image.resizeTo(rect.size)
         }
         else {
-            Crashlytics.sharedInstance().setBoolValue(true, forKey: "connected")
-            if networkStatus == 1 {
-                Crashlytics.sharedInstance().setObjectValue("wifi", forKey: "network_type")
-            }
-            else if networkStatus == 2 {
-                Crashlytics.sharedInstance().setObjectValue("wwan", forKey: "network_type")
-            }
+            image = image.normalizedImage()
         }
-
-        /* Identifies device/install combo */
-        Crashlytics.sharedInstance().setObjectValue(DataController.proxibase.installationIdentifier, forKey: "install_id")
-        
-        /* Location info */
-        let location: CLLocation? = LocationController.instance.currentLocation()
-        if location != nil {
-            var eventDate = location!.timestamp
-            var howRecent = abs(trunc(eventDate.timeIntervalSinceNow * 100) / 100)
-            Crashlytics.sharedInstance().setFloatValue(Float(location!.horizontalAccuracy), forKey: "location_accuracy")
-            Crashlytics.sharedInstance().setIntValue(Int32(howRecent), forKey: "location_age")
-        }
-        else {
-            Crashlytics.sharedInstance().setFloatValue(0, forKey: "location_accuracy")
-            Crashlytics.sharedInstance().setIntValue(0 , forKey: "location_age")
-        }
+        return image
     }
     
-    static func updateCrashUser(user: User?) {
-        if user != nil {
-            Crashlytics.sharedInstance().setUserIdentifier(user!.id_)
-            Crashlytics.sharedInstance().setUserName(user!.name)
-            Crashlytics.sharedInstance().setUserEmail(user!.email)
-        }
-        else {
-            Crashlytics.sharedInstance().setUserIdentifier(nil)
-            Crashlytics.sharedInstance().setUserName(nil)
-            Crashlytics.sharedInstance().setUserEmail(nil)
-        }
-    }
+    static func updateRecents(recent: [String:AnyObject]) {
     
-    static func hasConnectivity() -> Bool {
-        let reachability: Reachability = Reachability.reachabilityForInternetConnection()
-        let networkStatus: Int = reachability.currentReachabilityStatus().value
-        return networkStatus != 0
+        if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
+            if var recentPatches = groupDefaults.arrayForKey(PatchrUserDefaultKey("recent.patches")) as? [[String:AnyObject]] {
+        
+                /* Replace if found else append */
+                var index = 0
+                var found = false
+                for item in recentPatches {
+                    if (item["id_"] as! String) == (recent["id_"] as! String) {
+                        recentPatches[index] = recent
+                        found = true
+                        break
+                    }
+                    index++
+                }
+                
+                if !found {
+                    recentPatches.append(recent)
+                }
+                
+                /* Sort descending */
+                recentPatches.sort {
+                    item1, item2 in
+                    let date1 = item1["recentDate"] as! Int
+                    let date2 = item2["recentDate"] as! Int
+                    return date1 > date2 // > descending, < for ascending
+                }
+                
+                /* Trim to 10 most recent */
+                if recentPatches.count > 10 {
+                    recentPatches = Array(recentPatches[0..<10])
+                }
+                
+                groupDefaults.setObject(recentPatches, forKey:PatchrUserDefaultKey("recent.patches"))
+            }
+            else {
+                groupDefaults.setObject([recent], forKey:PatchrUserDefaultKey("recent.patches"))
+            }
+        }
     }
 }

@@ -24,40 +24,40 @@ PODS:
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
   - AirPhotoBrowser (1.7):
-    - AFNetworking
+    - AFNetworking (~> 2.0)
     - DACircularProgress
     - pop
-  - AWSCore (2.2.0)
-  - AWSS3 (2.2.0):
-    - AWSCore (= 2.2.0)
-  - Branch (0.10.0)
+  - AWSCore (2.2.2)
+  - AWSS3 (2.2.2):
+    - AWSCore (= 2.2.2)
+  - Branch (0.10.3)
   - DACircularProgress (2.3.1)
   - libPhoneNumber-iOS (0.8.5)
   - Lockbox (2.1.0)
-  - MBContactPicker (0.2.0)
   - MBProgressHUD (0.9.1)
   - PBWebViewController (0.3)
   - pop (1.0.7)
   - RMCoreDataStack (0.1.6)
-  - SDWebImage (3.7.2):
-    - SDWebImage/Core (= 3.7.2)
-  - SDWebImage/Core (3.7.2)
+  - SDWebImage (3.7.3):
+    - SDWebImage/Core (= 3.7.3)
+  - SDWebImage/Core (3.7.3)
+  - TTTAttributedLabel (1.13.4)
   - UIDevice-Hardware (0.1.5)
   - UIScrollView-InfiniteScroll (0.7.2)
 
 DEPENDENCIES:
   - AFNetworkActivityLogger (~> 2.0)
-  - AFNetworking (~> 2.0)
+  - AFNetworking (~> 2.5)
   - AirPhotoBrowser (from `~/code/AirPhotoBrowser`)
-  - AWSS3
+  - AWSS3 (~> 2.2.0)
   - Branch
   - libPhoneNumber-iOS (~> 0.7)
   - Lockbox
-  - MBContactPicker
   - MBProgressHUD (~> 0.9.1)
   - PBWebViewController (~> 0.3)
   - RMCoreDataStack
   - SDWebImage (~> 3.7.2)
+  - TTTAttributedLabel
   - UIDevice-Hardware
   - UIScrollView-InfiniteScroll
 
@@ -68,20 +68,20 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
   AFNetworking: 05edc0ac4c4c8cf57bcf4b84be5b0744b6d8e71e
-  AirPhotoBrowser: 0502a25b2ed5beb6d43d64dc47fbfdd69981d5d0
-  AWSCore: 36712cbe827a50b81f1660349e0c202339797f23
-  AWSS3: 5efcdff6010353fe53ef065be7760d60419c65b1
-  Branch: d31fe46ca1b969e6ab20e8e29d6541036a5f8cfb
+  AirPhotoBrowser: eb7af71a7269d8cf214b428d09f85333ef28ea7f
+  AWSCore: 3e969334460cc7ba16504fb2e074f59f95880800
+  AWSS3: 4f89fcc0ef11303f94f561310979a0d2ec816fff
+  Branch: d4df6da2a3533d5c950286a3753eb18d485bd8d0
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   libPhoneNumber-iOS: b8ccd23576379caca37c7cbdd554addf384459ed
   Lockbox: 16442da35d9d4286966936763be728a931d589c3
-  MBContactPicker: 223dd4d48c8e380da1daf53a8f7ea3527052f11c
   MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
   PBWebViewController: 909b1505da6ba7c5c82519a6457246027926061e
   pop: 628ffc631644601567ee8bfaaaea493ebd7d0923
   RMCoreDataStack: 58d81989a529a357dd1c5eda12a86ff5f13684b4
-  SDWebImage: 71b7cdc1d1721d6a82ed62889030225f2c249e29
+  SDWebImage: 1d2b1a1efda1ade1b00b6f8498865f8ddedc8a84
+  TTTAttributedLabel: 0a2ac7b2dd726d32a070dafb01446026b11e624f
   UIDevice-Hardware: b3695e58e0385155932e7889c32ed12e844e14a3
   UIScrollView-InfiniteScroll: cfa860f96f5a2e3b4575d59fe6d08d337093ac2a
 
-COCOAPODS: 0.38.0.beta.1
+COCOAPODS: 0.38.0

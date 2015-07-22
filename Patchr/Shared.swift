@@ -42,18 +42,18 @@ struct Shared {
             progress = MBProgressHUD.showHUDAddedTo(controller!.view, animated: true)
             progress.mode = MBProgressHUDMode.Text
             progress.detailsLabelText = message
-            progress.margin = 10.0
+            progress.margin = 20.0
             progress.yOffset = Float((UIScreen.mainScreen().bounds.size.height / 2) - 200)
-            progress.opacity = 0.6
-            progress.cornerRadius = 16.0
-            progress.detailsLabelColor = Colors.hintColor
+            progress.opacity = 0.7
+            progress.cornerRadius = 24.0
+            progress.detailsLabelColor = Colors.gray95pcntColor
             progress.detailsLabelFont = UIFont(name:"HelveticaNeue", size: 16)
             progress.removeFromSuperViewOnHide = true
             progress.userInteractionEnabled = false
             progress.hide(true, afterDelay: duration)
         }
     }
-
+    
     static func setTabBarVisible(visible:Bool, animated:Bool, viewController: UIViewController!) {
         
         //* This cannot be called before viewDidLayoutSubviews(), because the frame is not set before this time
@@ -80,5 +80,12 @@ struct Shared {
     
     static func tabBarIsVisible(viewController: UIViewController) ->Bool {
         return viewController.tabBarController?.tabBar.frame.origin.y < CGRectGetMaxY(viewController.view.frame)
-    }    
+    }
+    
+    
+    static func hasConnectivity() -> Bool {
+        let reachability: Reachability = Reachability.reachabilityForInternetConnection()
+        let networkStatus: Int = reachability.currentReachabilityStatus().value
+        return networkStatus != 0
+    }
 }

@@ -6,7 +6,6 @@
         <attribute name="countPending" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="countWatching" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="description_" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="distance" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
         <attribute name="linkCounts" optional="YES" attributeType="Transformable" syncable="YES">
             <userInfo>
                 <entry key="attributeValueClassName" value="NSDictionary"/>
@@ -76,9 +75,6 @@
         <attribute name="createdDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="height" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="prefix" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="resizerActive" optional="YES" attributeType="Boolean" syncable="YES"/>
-        <attribute name="resizerHeight" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
-        <attribute name="resizerWidth" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="source" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="suffix" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="usingDefault" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
@@ -166,13 +162,13 @@
         <attribute name="role" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Entity" positionX="-99" positionY="-154" width="128" height="360"/>
+        <element name="Entity" positionX="-99" positionY="-154" width="128" height="345"/>
         <element name="Link" positionX="-288" positionY="-243" width="128" height="150"/>
         <element name="Location" positionX="-452" positionY="278" width="128" height="150"/>
         <element name="Message" positionX="279" positionY="-36" width="128" height="60"/>
         <element name="Notification" positionX="279" positionY="95" width="128" height="195"/>
         <element name="Patch" positionX="81" positionY="-243" width="128" height="90"/>
-        <element name="Photo" positionX="-693" positionY="90" width="128" height="195"/>
+        <element name="Photo" positionX="-693" positionY="90" width="128" height="150"/>
         <element name="Place" positionX="279" positionY="-243" width="128" height="165"/>
         <element name="ProviderMap" positionX="-452" positionY="450" width="128" height="135"/>
         <element name="Query" positionX="-216" positionY="117" width="128" height="180"/>

@@ -22,10 +22,10 @@ class UserController: NSObject {
         
 		let userDefaults = NSUserDefaults.standardUserDefaults()
 
-		userId = userDefaults.stringForKey(Utils.PatchrUserDefaultKey("userId"))
-		sessionKey = userDefaults.stringForKey(Utils.PatchrUserDefaultKey("sessionKey")) // TODO: We should store this more securely
-        jsonUser = userDefaults.stringForKey(Utils.PatchrUserDefaultKey("user"))
-        jsonSession = userDefaults.stringForKey(Utils.PatchrUserDefaultKey("session"))
+		userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId"))
+		sessionKey = userDefaults.stringForKey(PatchrUserDefaultKey("sessionKey")) // TODO: We should store this more securely
+        jsonUser = userDefaults.stringForKey(PatchrUserDefaultKey("user"))
+        jsonSession = userDefaults.stringForKey(PatchrUserDefaultKey("session"))
 	}
 
 	var authenticated: Bool {
@@ -39,7 +39,7 @@ class UserController: NSObject {
         jsonUser = nil
         jsonSession = nil
         writeCredentialsToUserDefaults()
-        Utils.updateCrashUser(nil)
+        Reporting.updateCrashUser(nil)
         Branch.getInstance().logout()
     }
 
@@ -63,10 +63,18 @@ class UserController: NSObject {
 
 	private func writeCredentialsToUserDefaults() {
         let userDefaults = NSUserDefaults.standardUserDefaults()
-        userDefaults.setObject(jsonUser, forKey: Utils.PatchrUserDefaultKey("user"))
-        userDefaults.setObject(jsonSession, forKey: Utils.PatchrUserDefaultKey("sesson"))
-        userDefaults.setObject(userId, forKey: Utils.PatchrUserDefaultKey("userId"))
-        userDefaults.setObject(sessionKey, forKey: Utils.PatchrUserDefaultKey("sessionKey"))
+
+        userDefaults.setObject(jsonUser, forKey: PatchrUserDefaultKey("user"))
+        userDefaults.setObject(jsonSession, forKey: PatchrUserDefaultKey("sesson"))
+        userDefaults.setObject(userId, forKey: PatchrUserDefaultKey("userId"))
+        userDefaults.setObject(sessionKey, forKey: PatchrUserDefaultKey("sessionKey"))
+        
+        if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
+            groupDefaults.setObject(jsonUser, forKey: PatchrUserDefaultKey("user"))
+            groupDefaults.setObject(jsonSession, forKey: PatchrUserDefaultKey("sesson"))
+            groupDefaults.setObject(userId, forKey: PatchrUserDefaultKey("userId"))
+            groupDefaults.setObject(sessionKey, forKey: PatchrUserDefaultKey("sessionKey"))
+        }
     }
 
 	func fetchCurrentUser(){
@@ -74,7 +82,7 @@ class UserController: NSObject {
 			user in
             self.currentUser = user
             Branch.getInstance().setIdentity(user!.id_)
-            Utils.updateCrashUser(user)
+            Reporting.updateCrashUser(user)
 		})
 	}
     
@@ -90,7 +98,7 @@ class UserController: NSObject {
             user.activityDate = NSDate(timeIntervalSince1970: 0) // Ensures that the user will be freshed from the service
             self.currentUser = user
             Branch.getInstance().setIdentity(user.id_)
-            Utils.updateCrashUser(user)
+            Reporting.updateCrashUser(user)
         }
     }
 }

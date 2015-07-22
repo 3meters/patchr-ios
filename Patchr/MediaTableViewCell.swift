@@ -18,7 +18,7 @@ class MediaTableViewCell: UITableViewCell {
     
     @IBOutlet weak var userPhoto: AirImageView!
     @IBOutlet weak var createdDate: UILabel!
-    @IBOutlet weak var description_: UILabel!
+    @IBOutlet weak var description_: TTTAttributedLabel!
     @IBOutlet weak var photo: AirImageView!
     @IBOutlet weak var photoHolderHeight: NSLayoutConstraint!
     

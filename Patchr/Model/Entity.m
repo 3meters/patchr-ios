@@ -2,7 +2,7 @@
 #import "Photo.h"
 #import "Location.h"
 #import "Link.h"
-#import "Patchr-Swift.h"
+//#import "Patchr-Swift.h"
 #import <CoreLocation/CoreLocation.h>
 
 @interface Entity ()
@@ -12,6 +12,8 @@
 @end
 
 @implementation Entity
+
+
 
 + (Entity *)setPropertiesFromDictionary:(NSDictionary *)dictionary
                                onObject:(Entity *)entity
@@ -35,11 +37,6 @@
 
     if (dictionary[@"location"]) {
         entity.location = [Location setPropertiesFromDictionary:dictionary[@"location"] onObject:[Location insertInManagedObjectContext:entity.managedObjectContext] mappingNames:mapNames];
-        CLLocation *currentLocation = [LocationController.instance getLocation];
-        if (currentLocation != NULL){
-            CLLocation *location = [[CLLocation alloc] initWithLatitude:entity.location.latValue longitude:entity.location.lngValue];
-            entity.distanceValue = [currentLocation distanceFromLocation:location];
-        }
     }
     
     entity.linkCounts = dictionary[@"linkCount"];

@@ -181,7 +181,7 @@ class PatchTableViewController: QueryTableViewController {
             }
         }
         
-        /* Apply gradient to banner */
+        /* Apply gradient to photo */
         if !(cell.photo.layer.sublayers[0] is CAGradientLayer) {
             var gradient: CAGradientLayer = CAGradientLayer()
             gradient.frame = cell.photo.bounds
@@ -192,6 +192,7 @@ class PatchTableViewController: QueryTableViewController {
             gradient.endPoint = CGPoint(x: 0.5, y: 1)
             cell.photo.layer.insertSublayer(gradient, atIndex: 0)
         }
+        
         cell.photo.setImageWithPhoto(patch.getPhotoManaged(), animate: cell.photo.image == nil)
     }
 

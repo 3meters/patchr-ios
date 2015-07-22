@@ -32,6 +32,7 @@ class DataController: NSObject {
 
 	var managedObjectContext: NSManagedObjectContext!
     var activityDate: Int64
+    var currentPatch: Patch?    // Currently used for message context
 
 	private lazy var schemaDictionary: [String:ServiceBase.Type] = {
 		return [
@@ -378,7 +379,9 @@ class DataController: NSObject {
 							queryItem.sortDate = entity.sortDate
                             
                             if let patch = entity as? Patch {
-                                queryItem.distanceValue = patch.distanceValue
+                                if let distance = patch.distance() {
+                                    queryItem.distanceValue = distance
+                                }
                             }
 
 							items.append(queryItem)

@@ -22,7 +22,7 @@ class SignInEditViewController: UITableViewController, UITextFieldDelegate {
         self.emailField.delegate = self
         self.passwordField.delegate = self
         
-        self.emailField.text = NSUserDefaults.standardUserDefaults().objectForKey(Utils.PatchrUserDefaultKey("userEmail")) as? String
+        self.emailField.text = NSUserDefaults.standardUserDefaults().objectForKey(PatchrUserDefaultKey("userEmail")) as? String
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -43,9 +43,12 @@ class SignInEditViewController: UITableViewController, UITextFieldDelegate {
         if !isValid() { return }
         
         processing = true
+        
+        self.passwordField.resignFirstResponder()
 
 		let progress = MBProgressHUD.showHUDAddedTo(self.view.window, animated: true)
 		progress.mode = MBProgressHUDMode.Indeterminate
+        progress.minShowTime = 0.5
 		progress.labelText = "Signing in..."
 		progress.show(true)
         
@@ -54,13 +57,13 @@ class SignInEditViewController: UITableViewController, UITextFieldDelegate {
             
             self.processing = false
             
-            progress.hide(true, afterDelay: 1.0)
+            progress.hide(true)
             if let error = ServerError(error) {
                 self.handleError(error)
             }
             else {
                 // Store email address
-                NSUserDefaults.standardUserDefaults().setObject(self.emailField.text, forKey: Utils.PatchrUserDefaultKey("userEmail"))
+                NSUserDefaults.standardUserDefaults().setObject(self.emailField.text, forKey: PatchrUserDefaultKey("userEmail"))
                 NSUserDefaults.standardUserDefaults().synchronize()
                 self.passwordField.text = nil
                 

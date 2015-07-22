@@ -73,7 +73,7 @@ class NearbyTableViewController: PatchTableViewController {
             message = "Location accepted ***: lat: \(lat), lng: \(lng), acc: \(loc.horizontalAccuracy)m, age: \(howRecent)s, moved: \(moved)m"
         }
         
-        if self.userDefaults.boolForKey(Utils.PatchrUserDefaultKey("devModeEnabled")) {
+        if self.userDefaults.boolForKey(PatchrUserDefaultKey("devModeEnabled")) {
             Shared.Toast(message)
             AudioController.instance.play(Sound.pop.rawValue)
         }
@@ -89,7 +89,7 @@ class NearbyTableViewController: PatchTableViewController {
             self.progress!.show(true)
         }
         
-        Utils.updateCrashKeys()
+        Reporting.updateCrashKeys()
         
         DataController.instance.refreshItemsFor(query(), force: false, paging: false, completion: {
             results, query, error in
@@ -114,7 +114,7 @@ class NearbyTableViewController: PatchTableViewController {
                 return
             }
             
-            if self.userDefaults.boolForKey(Utils.PatchrUserDefaultKey("SoundEffects")) {
+            if self.userDefaults.boolForKey(PatchrUserDefaultKey("SoundEffects")) {
                 if !query.executedValue {
                     AudioController.instance.play(Sound.greeting.rawValue)
                 }

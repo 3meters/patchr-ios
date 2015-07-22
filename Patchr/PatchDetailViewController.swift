@@ -22,7 +22,7 @@ class PatchDetailViewController: QueryTableViewController {
     private var contextAction: ContextAction = .SharePatch
     private var isOwner: Bool {
         if let currentUser = UserController.instance.currentUser {
-            if patch != nil {
+            if patch != nil && patch.creator != nil {
                 return currentUser.id_ == patch.creator.entityId
             }
         }
@@ -115,7 +115,7 @@ class PatchDetailViewController: QueryTableViewController {
         
 		/* Apply gradient to banner */
 		var gradient: CAGradientLayer = CAGradientLayer()
-		gradient.frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width + 100, ((UIScreen.mainScreen().bounds.size.width - 24) * 0.75))
+		gradient.frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width + 100, ((UIScreen.mainScreen().bounds.size.width - 24) * 0.75) + 50)
 		var startColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.5))  // Bottom
 		var endColor:   UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0))    // Top
 		gradient.colors = [endColor.CGColor, startColor.CGColor]
@@ -219,6 +219,7 @@ class PatchDetailViewController: QueryTableViewController {
                     self.refreshQueryItems(force: true)
                 }
 				self.patch = patch
+                DataController.instance.currentPatch = patch    // Used for context for messages
 				self.draw()
 			}
 		}
@@ -432,10 +433,14 @@ class PatchDetailViewController: QueryTableViewController {
         
         /* Info view */
         infoName.text = patch!.name
-        infoType.text = patch!.type.uppercaseString + " PATCH"
+        if patch!.type != nil {
+            infoType.text = patch!.type.uppercaseString + " PATCH"
+        }
         infoDescription.text = patch!.description_
-        infoDistance.text = LocationController.instance.distancePretty(patch!.distanceValue)
-        infoOwner.text = patch!.creator.name
+        if let distance = patch.distance() {
+            infoDistance.text = LocationController.instance.distancePretty(distance)
+        }
+        infoOwner.text = patch!.creator?.name ?? "Deleted"
         
         if isOwner {
             if patch!.countPendingValue > 0 {
@@ -518,6 +523,14 @@ class PatchDetailViewController: QueryTableViewController {
 		cell.patchName.text = nil
         cell.patchNameHeight.constant = 0
 
+        let linkColor = Colors.brandColorDark
+        let linkActiveColor = Colors.brandColorLight
+        
+        cell.description_.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
+        cell.description_.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
+        cell.description_.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
+        cell.description_.delegate = self
+        
 		cell.description_.text = message.description_
 
 		if let photo = message.photo {
@@ -532,6 +545,10 @@ class PatchDetailViewController: QueryTableViewController {
 			cell.userName.text = creator.name
             cell.userPhoto.setImageWithPhoto(creator.getPhotoManaged(), animate: cell.userPhoto.image == nil)
 		}
+        else {
+            cell.userName.text = "Deleted"
+            cell.userPhoto.setImageWithPhoto(Entity.getDefaultPhoto("user"))
+        }
         
         /* Likes button */
         cell.likeButton.bindEntity(message)
@@ -721,6 +738,13 @@ extension PatchDetailViewController: TableViewCellDelegate {
             Shared.showPhotoBrowser(messageCell.photo.image, view: view, viewController: self, entity: messageCell.entity)
 		}
 	}
+}
+
+extension PatchDetailViewController: TTTAttributedLabelDelegate {
+    
+    func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
+        UIApplication.sharedApplication().openURL(url)
+    }
 }
 
 enum ContextAction: UInt {

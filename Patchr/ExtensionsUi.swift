@@ -144,12 +144,12 @@ extension UIViewController {
     func handleError(error: ServerError, errorActionType: ErrorActionType = .AUTO, errorAction: ErrorAction = .NONE ) {
         
         /* Show any required ui */
-        
+        var alertMessage: String = (error.message != nil ? error.message : error.description != nil ? error.description : "Unknown error")!
         if errorActionType == .AUTO || errorActionType == .TOAST {
-            Shared.Toast(error.description)
+            Shared.Toast(alertMessage)
         }
         else if errorActionType == .ALERT {
-            self.Alert(error.description)
+            self.Alert(alertMessage)
         }
         
         /* Perform any follow-up actions */
@@ -203,23 +203,38 @@ extension UIViewController {
     }
     
     func ActionConfirmationAlert(title: String? = nil, message: String? = nil,
-        actionTitle: String, cancelTitle: String,
+        actionTitle: String, cancelTitle: String, destructConfirmation: Bool = false,
         delegate: AnyObject? = nil, onDismiss: (Bool) -> Void) {
             
             if objc_getClass("UIAlertController") != nil {
                 let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-                alert.addAction(UIAlertAction(title: actionTitle, style: .Destructive, handler: { _ in onDismiss(true) }))
-                alert.addAction(UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) }))
-                self.presentViewController(alert, animated: true) {}
+                let okAction = UIAlertAction(title: actionTitle, style: .Destructive, handler: { _ in onDismiss(true) })
+                let cancelAction = UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) })
+                alert.addAction(okAction)
+                alert.addAction(cancelAction)
+                if destructConfirmation {
+                    alert.addTextFieldWithConfigurationHandler() {
+                        textField in
+                        textField.addTarget(delegate, action: Selector("alertTextFieldDidChange:"), forControlEvents: .EditingChanged)
+                    }
+                    okAction.enabled = false
+                }
+                self.presentViewController(alert, animated: true, completion: nil)
             }
             else {
                 var alert = UIAlertView(title: title, message: message, delegate: delegate, cancelButtonTitle: nil)
+                if destructConfirmation {
+                    alert.alertViewStyle = UIAlertViewStyle.PlainTextInput
+                    alert.delegate = delegate
+                }
                 alert.addButtonWithTitle(actionTitle)
                 alert.addButtonWithTitle(cancelTitle)
                 alert.show()
             }
     }
 }
+
+
 
 extension UINavigationController {
     

@@ -18,6 +18,7 @@ let PAapplicationDidBecomeActiveWithNonZeroBadge = "PAapplicationDidBecomeActive
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
+    var backgroundSessionCompletionHandler: (() -> Void)?
     
     class func appDelegate() -> AppDelegate {
         return UIApplication.sharedApplication().delegate as! AppDelegate
@@ -38,9 +39,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          * That means it should be a good place to handle all initial routing.
          */
         Branch.getInstance().initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
-            if let clickedBranchLink = params["+clicked_branch_link"] as? Bool where clickedBranchLink {
-                self.routeDeepLink(params, error: error)
-                return
+            if error == nil {
+                if let clickedBranchLink = params["+clicked_branch_link"] as? Bool where clickedBranchLink {
+                    self.routeDeepLink(params, error: error)
+                    return
+                }                
             }
         })
         
@@ -221,6 +224,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         return Int(UIInterfaceOrientationMask.Portrait.rawValue);
+    }
+    
+    func application(application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: () -> Void) {
+        /*
+         * This gets called if the share extension isn't running when the background data task 
+         * completes.
+         */
+        self.backgroundSessionCompletionHandler = completionHandler
+        NSLog("handleEventsForBackgroundURLSession called")
+        Shared.Toast("Message Posted!")
     }
 }
 

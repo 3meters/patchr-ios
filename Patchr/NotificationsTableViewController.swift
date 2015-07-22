@@ -80,6 +80,15 @@ class NotificationsTableViewController: QueryTableViewController {
 		cell.delegate = self
 
 		cell.description_.text = nil
+        
+        let linkColor = Colors.brandColorDark
+        let linkActiveColor = Colors.brandColorLight
+        
+        cell.description_.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
+        cell.description_.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
+        cell.description_.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
+        cell.description_.delegate = self
+        
 		cell.description_.text = notification.summary
 
 		if let photo = notification.photoBig {
@@ -256,4 +265,11 @@ extension NotificationsTableViewController: TableViewCellDelegate {
             Shared.showPhotoBrowser(notificationCell.photo.image, view: view, viewController: self, entity: nil)
 		}
 	}
+}
+
+extension NotificationsTableViewController: TTTAttributedLabelDelegate {
+    
+    func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
+        UIApplication.sharedApplication().openURL(url)
+    }
 }

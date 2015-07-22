@@ -12,7 +12,6 @@ extern const struct EntityAttributes {
 	__unsafe_unretained NSString *countPending;
 	__unsafe_unretained NSString *countWatching;
 	__unsafe_unretained NSString *description_;
-	__unsafe_unretained NSString *distance;
 	__unsafe_unretained NSString *linkCounts;
 	__unsafe_unretained NSString *patchId;
 	__unsafe_unretained NSString *rank;
@@ -87,14 +86,6 @@ extern const struct EntityUserInfo {
 @property (nonatomic, strong) NSString* description_;
 
 //- (BOOL)validateDescription_:(id*)value_ error:(NSError**)error_;
-
-@property (nonatomic, strong) NSNumber* distance;
-
-@property (atomic) float distanceValue;
-- (float)distanceValue;
-- (void)setDistanceValue:(float)value_;
-
-//- (BOOL)validateDistance:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSDictionary* linkCounts;
 
@@ -206,12 +197,6 @@ extern const struct EntityUserInfo {
 
 - (NSString*)primitiveDescription_;
 - (void)setPrimitiveDescription_:(NSString*)value;
-
-- (NSNumber*)primitiveDistance;
-- (void)setPrimitiveDistance:(NSNumber*)value;
-
-- (float)primitiveDistanceValue;
-- (void)setPrimitiveDistanceValue:(float)value_;
 
 - (NSDictionary*)primitiveLinkCounts;
 - (void)setPrimitiveLinkCounts:(NSDictionary*)value;

@@ -136,8 +136,10 @@ class PatchEditViewController: EntityEditViewController {
             if type != entity!.type {
                 parameters["type"] = nilToNull(type)
             }
-            if location!.coordinate != entity!.location.locationValue.coordinate {
-                parameters["location"] = nilToNull(location)
+            if location != nil && entity!.location != nil {
+                if location!.coordinate != entity!.location.locationValue.coordinate {
+                    parameters["location"] = nilToNull(location)
+                }
             }
         }
         else {

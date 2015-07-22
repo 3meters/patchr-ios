@@ -317,7 +317,7 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" tableViewCell="QzM-v7-YTj" id="Aqy-Wu-Mjm">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" text="You are gonna love this!" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="390" translatesAutoresizingMaskIntoConstraints="NO" id="mEW-6O-ASa" userLabel="description" customClass="AutoSizingLabel">
+                                                <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" text="You are gonna love this!" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="390" translatesAutoresizingMaskIntoConstraints="NO" id="mEW-6O-ASa" userLabel="description" customClass="TTTAttributedLabel">
                                                     <rect key="frame" x="12" y="8" width="390" height="24"/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="20"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -456,12 +456,12 @@
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina55"/>
                     <connections>
                         <outlet property="createdDate" destination="xhh-g7-dFD" id="L2J-aC-bw7"/>
-                        <outlet property="description_" destination="mEW-6O-ASa" id="pZ5-i4-R7C"/>
+                        <outlet property="description_" destination="mEW-6O-ASa" id="o4X-4x-IMM"/>
                         <outlet property="likeButton" destination="5KQ-kg-as3" id="VDD-AG-nqZ"/>
                         <outlet property="likesButton" destination="Xyp-ei-5Dw" id="FnC-ds-w7H"/>
+                        <outlet property="messagePhoto" destination="bM1-tF-5rl" id="32J-R9-Z4J"/>
                         <outlet property="patchName" destination="O2G-x1-h8c" id="kN2-uG-wyI"/>
                         <outlet property="patchPhoto" destination="JMq-JW-dYB" id="VG0-tN-QR1"/>
-                        <outlet property="photo" destination="bM1-tF-5rl" id="Fro-wH-F7K"/>
                         <outlet property="userName" destination="BQM-Ga-cka" id="T8V-Kh-2e7"/>
                         <outlet property="userPhoto" destination="9nD-sr-mMf" id="VxE-30-v5d"/>
                         <segue destination="dFa-9F-rNC" kind="show" identifier="PatchDetailSegue" id="xAO-Qh-0VB"/>
@@ -2970,13 +2970,13 @@
         <image name="imgWatchLight" width="60" height="60"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="fno-E3-fgC"/>
-        <segue reference="aqr-cO-OGv"/>
-        <segue reference="sNP-m8-m5g"/>
-        <segue reference="mR4-Hl-YsE"/>
+        <segue reference="5gi-H6-rYN"/>
         <segue reference="5MF-E5-yBl"/>
-        <segue reference="ZkF-VU-9mQ"/>
+        <segue reference="xAO-Qh-0VB"/>
+        <segue reference="IOJ-HZ-5D3"/>
         <segue reference="W2H-Y3-qfq"/>
+        <segue reference="aqr-cO-OGv"/>
+        <segue reference="Wvg-S3-NkD"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="1" green="0.50196078430000002" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

@@ -12,7 +12,7 @@ class AirImageView: UIImageView {
 
     var activity: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
     //var photo: Photo?
-    var photoUrl: NSURL?
+    var linkedPhotoUrl: NSURL?
     
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -47,9 +47,23 @@ class AirImageView: UIImageView {
         activity.stopAnimating()
     }
     
+    func linkedToPhoto(photo: Photo) -> Bool {
+        if linkedPhotoUrl == nil {
+            return false
+        }
+        
+        var frameHeightPixels = Int(self.frame.size.height * PIXEL_SCALE)
+        var frameWidthPixels = Int(self.frame.size.width * PIXEL_SCALE)
+        
+        let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!)
+        let url = PhotoUtils.urlSized(photoUrl, frameWidth: frameWidthPixels, frameHeight: frameHeightPixels, photoWidth: Int(photo.widthValue), photoHeight: Int(photo.heightValue))
+        
+        return (linkedPhotoUrl!.absoluteString == url.absoluteString)
+    }
+    
     func setImageWithPhoto(photo: Photo, animate: Bool = true) {
         
-        if photo.source == PhotoSource.resource.rawValue {
+        if photo.source == PhotoSource.resource {
             if animate {
                 UIView.transitionWithView(self,
                     duration: 0.5,
@@ -65,18 +79,13 @@ class AirImageView: UIImageView {
             return
         }
         
-        var resizerHeight = self.frame.size.height * PIXEL_SCALE
-        var resizerWidth = self.frame.size.width * PIXEL_SCALE
+        var frameHeightPixels = Int(self.frame.size.height * PIXEL_SCALE)
+        var frameWidthPixels = Int(self.frame.size.width * PIXEL_SCALE)
         
-        photo.resizer(true, height: Int(resizerHeight), width: Int(resizerWidth))
-        let url = photo.uriWrapped()
+        let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!)
+        let url = PhotoUtils.urlSized(photoUrl, frameWidth: frameWidthPixels, frameHeight: frameHeightPixels, photoWidth: Int(photo.widthValue), photoHeight: Int(photo.heightValue))
         
-        /* We already have the needed image */
-        if self.photoUrl?.absoluteString == url.absoluteString {
-            return
-        }
-        
-        self.photoUrl = url
+        self.linkedPhotoUrl = url
         
         startActivity()
         
@@ -91,7 +100,7 @@ class AirImageView: UIImageView {
         
         var url = NSURL(string: thumbnail.mediaUrl!)
         
-        self.photoUrl = url
+        self.linkedPhotoUrl = url
         
         self.sd_setImageWithURL(url,
             completed: { image, error, cacheType, url in
@@ -106,12 +115,7 @@ class AirImageView: UIImageView {
         
         var url = NSURL(string: imageResult.mediaUrl!)
         
-        /* We already have the needed image */
-        if self.photoUrl?.absoluteString == url!.absoluteString {
-            return
-        }
-        
-        self.photoUrl = url
+        self.linkedPhotoUrl = url
         
         self.sd_setImageWithURL(url,
             completed: { image, error, cacheType, url in
@@ -127,12 +131,16 @@ class AirImageView: UIImageView {
         if error != nil {
             println("Image fetch failed: " + error!.localizedDescription)
             println(url.standardizedURL)
+            self.contentMode = UIViewContentMode.Center
             self.image = UIImage(named: "imgBroken250Light")
             return
         }
+        else {
+            self.contentMode = UIViewContentMode.ScaleAspectFill
+        }
         
         /* Image returned is not the one we want anymore */
-        if self.photoUrl?.absoluteString != url.absoluteString {
+        if self.linkedPhotoUrl?.absoluteString != url.absoluteString {
             return
         }
         

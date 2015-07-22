@@ -193,15 +193,39 @@ class EntityEditViewController: UITableViewController {
     
     @IBAction func deleteAction(sender: AnyObject) {
         
-        self.ActionConfirmationAlert(
-            title: "Confirm Delete",
-            message: "Are you sure you want to delete this?",
-            actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
-                doIt in
-                if doIt {
-                    self.delete()
-                }
+        if self.entity is User {
+            self.ActionConfirmationAlert(
+                title: "Confirm account delete",
+                message: "Deleting your user account will erase all patches and messages you have created and cannot be undone. Enter YES to confirm.",
+                actionTitle: "Delete",
+                cancelTitle: "Cancel",
+                destructConfirmation: true,
+                delegate: self) {
+                    doIt in
+                    if doIt {
+                       self.delete()
+                    }
             }
+        }
+        else {
+            self.ActionConfirmationAlert(
+                title: "Confirm Delete",
+                message: "Are you sure you want to delete this?",
+                actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
+                    doIt in
+                    if doIt {
+                        self.delete()
+                    }
+                }
+        }
+    }
+    
+    func alertTextFieldDidChange(sender: AnyObject) {
+        if let alertController: UIAlertController = self.presentedViewController as? UIAlertController {
+            let confirm = alertController.textFields![0] as! UITextField
+            let okAction = alertController.actions[0] as! UIAlertAction
+            okAction.enabled = confirm.text == "YES"
+        }
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -234,10 +258,10 @@ class EntityEditViewController: UITableViewController {
     func photoChosen(image: UIImage?, imageResult: ImageResult?) -> Void {
         
         if image != nil {
-            self.photo = image
+            self.photo = image // Image ready so pushes into photoImage
         }
         else {
-            self.photoImage.setImageWithImageResult(imageResult!)
+            self.photoImage.setImageWithImageResult(imageResult!)  // Downloads and pushes into photoImage
         }
         
         if !self.editMode {
@@ -321,6 +345,23 @@ class EntityEditViewController: UITableViewController {
                     self.handleError(error)
                 }
                 else {
+                    if self.collection! == "messages" {
+                        if let patch = DataController.instance.currentPatch {
+                            
+                            var recent: [String:AnyObject] = ["id_":patch.id_, "name":patch.name]
+                            if patch.photo != nil {
+                                var photo: [String:AnyObject] = [
+                                    "prefix":patch.photo.prefix,
+                                    "source":patch.photo.source,
+                                    "width":Int(patch.photo.widthValue),
+                                    "height":Int(patch.photo.heightValue)]
+                                recent["photo"] = photo
+                                recent["recentDate"] = Int(NSDate().timeIntervalSince1970 * 1000)
+                            }
+                            
+                            Utils.updateRecents(recent)
+                        }
+                    }
                     let serverResponse = ServerResponse(response)
                     if serverResponse.resultCount == 1 {
                         println("Created entity \(serverResponse.resultID)")
@@ -382,19 +423,56 @@ class EntityEditViewController: UITableViewController {
         }
         processing = true
         
-        let entityPath = "data/\(self.collection!)/\((self.entity?.id_)!)"
-        DataController.proxibase.deleteObject(entityPath) {
-            response, error in
+        if let user = self.entity as? User {
             
-            self.processing = false
+            let entityPath = "data/user\((self.entity?.id_)!)?erase=true"
+            let userName: String = user.name
             
-            if let error = ServerError(error) {
-                self.handleError(error)
+            DataController.proxibase.deleteObject(entityPath) {
+                response, error in
+                
+                if let error = ServerError(error) {
+                    self.handleError(error)
+                }
+                else {
+                    /* Sign them out */
+                    DataController.proxibase.signOut {
+                        response, error in
+                        
+                        if error != nil {
+                            NSLog("Error during logout \(error)")
+                        }
+                        
+                        /* Return to the lobby */
+                        LocationController.instance.locationLocked = nil
+                        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+                        let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
+                        if let controller = storyboard.instantiateViewControllerWithIdentifier("SplashNavigationController") as? UIViewController {
+                            appDelegate.window?.setRootViewController(controller, animated: true)
+                            Shared.Toast("User \(userName) erased", controller: controller)
+                        }
+                    }
+                }
             }
-            else {
-                DataController.instance.managedObjectContext.deleteObject(self.entity!)
-                if DataController.instance.managedObjectContext.save(nil) {
-                    self.performBack()
+
+        }
+        else  {
+            
+            let entityPath = "data/\(self.collection!)/\((self.entity?.id_)!)"
+            
+            DataController.proxibase.deleteObject(entityPath) {
+                response, error in
+                
+                self.processing = false
+                
+                if let error = ServerError(error) {
+                    self.handleError(error)
+                }
+                else {
+                    DataController.instance.managedObjectContext.deleteObject(self.entity!)
+                    if DataController.instance.managedObjectContext.save(nil) {
+                        self.performBack()
+                    }
                 }
             }
         }
@@ -577,6 +655,12 @@ extension EntityEditViewController: UIGestureRecognizerDelegate {
 }
 
 extension EntityEditViewController: UIAlertViewDelegate {
+    /* Used by ActionConfirmationAlert for ios7 */
+    
+    func alertViewShouldEnableFirstOtherButton(alertView: UIAlertView) -> Bool {
+        let inputView: UITextField = alertView.textFieldAtIndex(0)!
+        return inputView.text == "YES"
+    }
     
     /* Just here to support ios7 */
     func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {

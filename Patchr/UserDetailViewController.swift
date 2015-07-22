@@ -86,7 +86,6 @@ class UserDetailViewController: QueryTableViewController {
         userEmail.text?.removeAll(keepCapacity: false)
         userPhoto.imageView?.image = nil        
         
-        /* Navigation bar buttons */
         if (isCurrentUser ) {
             let editImage = UIImage(named: "imgEditLight")
             var editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionEdit"))
@@ -166,12 +165,12 @@ class UserDetailViewController: QueryTableViewController {
             /* Make sure state is cleared */
             LocationController.instance.locationLocked = nil
 
-			let appDelegate               = UIApplication.sharedApplication().delegate as! AppDelegate
+			let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
 			let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as! UIViewController
 			appDelegate.window!.setRootViewController(destinationViewController, animated: true)
 		}
 	}
-
+    
 	func actionEdit() {
 		self.performSegueWithIdentifier("UserEditSegue", sender: nil)
 	}
@@ -221,6 +220,14 @@ class UserDetailViewController: QueryTableViewController {
 		messageCell.description_.text = nil
 		messageCell.userName.text = nil
 		messageCell.patchName.text = nil
+        
+        let linkColor = Colors.brandColorDark
+        let linkActiveColor = Colors.brandColorLight
+        
+        messageCell.description_.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
+        messageCell.description_.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
+        messageCell.description_.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
+        messageCell.description_.delegate = self
 
 		messageCell.description_.text = message.description_
 
@@ -253,7 +260,7 @@ class UserDetailViewController: QueryTableViewController {
 			messageCell.patchName.text = (message.type != nil && message.type == "share") ? "Shared by" : patch.name
 		}
 	}
-
+    
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
 		if segue.identifier == nil {
 			return
@@ -336,3 +343,11 @@ extension UserDetailViewController: TableViewCellDelegate {
 		}
 	}
 }
+
+extension UserDetailViewController: TTTAttributedLabelDelegate {
+    
+    func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
+        UIApplication.sharedApplication().openURL(url)
+    }
+}
+

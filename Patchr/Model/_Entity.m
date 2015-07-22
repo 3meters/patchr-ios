@@ -9,7 +9,6 @@ const struct EntityAttributes EntityAttributes = {
 	.countPending = @"countPending",
 	.countWatching = @"countWatching",
 	.description_ = @"description_",
-	.distance = @"distance",
 	.linkCounts = @"linkCounts",
 	.patchId = @"patchId",
 	.rank = @"rank",
@@ -77,11 +76,6 @@ const struct EntityUserInfo EntityUserInfo = {
 	}
 	if ([key isEqualToString:@"countWatchingValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"countWatching"];
-		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
-		return keyPaths;
-	}
-	if ([key isEqualToString:@"distanceValue"]) {
-		NSSet *affectingKey = [NSSet setWithObject:@"distance"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
@@ -195,26 +189,6 @@ const struct EntityUserInfo EntityUserInfo = {
 }
 
 @dynamic description_;
-
-@dynamic distance;
-
-- (float)distanceValue {
-	NSNumber *result = [self distance];
-	return [result floatValue];
-}
-
-- (void)setDistanceValue:(float)value_ {
-	[self setDistance:@(value_)];
-}
-
-- (float)primitiveDistanceValue {
-	NSNumber *result = [self primitiveDistance];
-	return [result floatValue];
-}
-
-- (void)setPrimitiveDistanceValue:(float)value_ {
-	[self setPrimitiveDistance:@(value_)];
-}
 
 @dynamic linkCounts;
 

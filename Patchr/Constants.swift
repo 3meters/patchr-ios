@@ -29,6 +29,10 @@ let NAMESPACE: String = "com.3meters.patchr.ios."
 let CREATIVE_SDK_CLIENT_ID = "924463f8481c4941a773fc9610fac9dd"
 let CREATIVE_SDK_CLIENT_SECRET = "e2cc5494-911d-4c66-a2b4-cc9ebab420ab"
 
+func PatchrUserDefaultKey(subKey: String) -> String {
+    return NAMESPACE + subKey
+}
+
 public struct Colors {
     static let accentColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0.75), blue: CGFloat(1), alpha: CGFloat(1))
     static let brandColor: UIColor = UIColor(red: CGFloat(1), green: CGFloat(0.55), blue: CGFloat(0), alpha: CGFloat(1))
@@ -36,9 +40,27 @@ public struct Colors {
     static let brandColorDark: UIColor = UIColor(red: CGFloat(0.93), green: CGFloat(0.42), blue: CGFloat(0), alpha: CGFloat(1))
     static let windowColor: UIColor = UIColor(red: CGFloat(0.9), green: CGFloat(0.9), blue: CGFloat(0.9), alpha: CGFloat(1))
     static let hintColor: UIColor = UIColor(red: CGFloat(0.8), green: CGFloat(0.8), blue: CGFloat(0.8), alpha: CGFloat(1))
+    static let gray95pcntColor: UIColor = UIColor(red: CGFloat(0.95), green: CGFloat(0.95), blue: CGFloat(0.95), alpha: CGFloat(1))
+    static let gray90pcntColor: UIColor = UIColor(red: CGFloat(0.9), green: CGFloat(0.9), blue: CGFloat(0.9), alpha: CGFloat(1))
 }
 
 public struct Events {
     static let LikeDidChange = "LikeDidChange"
     static let WatchDidChange = "WatchDidChange"
+}
+
+/*
+* Any photo from the device (camera, gallery) is store in s3 and source = aircandi.images|users
+* Any search photo is not stored in s3 and source = generic. (Deprecated)
+* Any search photo is stored in s3 and source = aircandi.images|users
+* Any patch photo from foursquare stays there and photo.source = foursquare.
+*/
+public struct PhotoSource {
+    static let aircandi_images = "aircandi.images"
+    static let aircandi_users  = "aircandi.users"
+    static let foursquare     = "foursquare"
+    static let google         = "google"
+    static let resource       = "resource"
+    static let bing           = "bing"
+    static let generic        = "generic"
 }

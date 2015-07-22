@@ -29,6 +29,14 @@ extension ServiceBase {
 
 extension Entity {
     
+    func distance() -> Float? {
+        if let currentLocation = LocationController.instance.getLocation(), location = self.location {
+            let entityLocation = CLLocation(latitude: location.latValue, longitude: location.lngValue)
+            return Float(currentLocation.distanceFromLocation(entityLocation))
+        }
+        return nil
+    }
+    
     func getPhotoManaged() -> Photo {
         var photo = self.photo
         if photo == nil {
@@ -50,7 +58,7 @@ extension Entity {
         
         var photo = Photo.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Photo
         photo.prefix = prefix
-        photo.source = PhotoSource.resource.rawValue;
+        photo.source = PhotoSource.resource
         
         return photo;
     }
@@ -75,7 +83,7 @@ extension Patch {
         
         let userDefaults = NSUserDefaults.standardUserDefaults()
         
-        if let userId = userDefaults.stringForKey(Utils.PatchrUserDefaultKey("userId")) {
+        if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
             var links = [
                 LinkSpec(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId]),
                 LinkSpec(from: .Users, type: .Watch, fields: "_id,type,enabled,schema", filter: ["_from": userId]),
@@ -141,7 +149,7 @@ extension Message {
         
         let userDefaults = NSUserDefaults.standardUserDefaults()
         
-        if let userId = userDefaults.stringForKey(Utils.PatchrUserDefaultKey("userId")) {
+        if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
             var links = [
                 LinkSpec(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId])
             ]
@@ -282,128 +290,4 @@ extension Shortcut {
         }
         return entityId
     }
-}
-
-enum ResizeDimension{
-    case height
-    case width
-}
-
-extension Photo {
-
-    func uri() -> NSURL {
-        return uriSized(self.widthValue, maxHeight: self.heightValue, wrapped: false)
-    }
-    
-    func uriWrapped() -> NSURL {
-        return uriSized(self.widthValue, maxHeight: self.heightValue, wrapped: true)
-    }
-    
-    private func uriSized(maxWidth: Int32, maxHeight: Int32, wrapped: Bool) -> NSURL {
-    
-        if self.source == PhotoSource.aircandi_images.rawValue
-            || self.source == "aircandi"
-            || self.source == PhotoSource.aircandi_users.rawValue {
-                
-                var path: String = ""
-                
-                if self.source == PhotoSource.aircandi_images.rawValue || self.source == "aircandi" {
-                    path = "http://aircandi-images.s3.amazonaws.com/\(self.prefix)"
-                }
-                else if self.source == PhotoSource.aircandi_users.rawValue {
-                    path = "http://aircandi-users.s3.amazonaws.com/\(self.prefix)"
-                }
-                else if self.source == PhotoSource.generic.rawValue {
-                    path = self.prefix
-                }
-                else {
-                    path = self.prefix
-                }
-                if wrapped && resizerActiveValue && resizerWidthValue != 0 && resizerHeightValue != 0 {
-                    /*
-                    * If photo comes with native height/width then use it otherwise
-                    * resize based on width.
-                    */
-                    if self.width != nil && self.height != nil {
-                        
-                        var photoAspectRatio: Float = Float(self.widthValue) / Float(self.heightValue)
-                        var targetAspectRatio: Float = Float(self.resizerWidthValue) / Float(self.resizerHeightValue)
-                        
-                        var dimension: ResizeDimension = (targetAspectRatio >= photoAspectRatio) ? ResizeDimension.width : ResizeDimension.height;
-                        var size: Int32 = (dimension == ResizeDimension.width) ? self.resizerWidthValue : self.resizerHeightValue
-                        var uriString = GooglePlusProxy.convert(path, size: size, dimension: dimension)
-                        
-                        return NSURL(string: uriString)!
-                    }
-                    else {
-                        var uriString = GooglePlusProxy.convert(path, size: self.resizerWidthValue, dimension: ResizeDimension.width)
-                        return NSURL(string: uriString)!
-                    }
-                }
-                
-                return NSURL(string: path)!
-        }
-        else if self.source == PhotoSource.foursquare.rawValue {
-            if wrapped && resizerActiveValue && resizerWidthValue != 0 && resizerHeightValue != 0 {
-                var path = "\(self.prefix)\(resizerWidthValue)x\(resizerHeightValue)\(self.suffix)"
-                return NSURL(string: path)!
-            }
-            else {
-                var path = self.prefix
-                if self.suffix != nil {
-                    path = path + "256x256" + self.suffix
-                }
-                return NSURL(string: path)!
-            }
-        }
-        else {
-            return NSURL(string: self.prefix)!
-        }
-    }
-    
-    func resizer(active: Bool, height: Int, width: Int) -> Void {
-        self.resizerActiveValue = active
-        if active {
-            self.resizerHeightValue = Int32(height)
-            self.resizerWidthValue = Int32(width)
-        }
-        else {
-            self.resizerHeightValue = 0
-            self.resizerWidthValue = 0
-        }
-    }
-}
-
-class GooglePlusProxy {
-    /*
-    * Setting refresh to 60 minutes.
-    */
-    static func convert(uri: String!, size: Int32!, dimension: ResizeDimension!) -> String {
-        
-        let queryString = (CFURLCreateStringByAddingPercentEscapes(nil, uri as NSString, nil, ":/?@!$&'()*+,;=" as NSString, CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)) as NSString) as String
-        if dimension == ResizeDimension.width {
-            var converted = "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url=\(queryString)&container=focus&resize_w=\(size)&no_expand=1&refresh=3600"
-            return converted
-        }
-        else {
-            var converted = "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url=\(queryString)&container=focus&resize_h=\(size)&no_expand=1&refresh=3600"
-            return converted
-        }
-    }
-}
-
-/*
-* Any photo from the device (camera, gallery) is store in s3 and source = aircandi.images|users
-* Any search photo is not stored in s3 and source = generic. (Deprecated)
-* Any search photo is stored in s3 and source = aircandi.images|users
-* Any patch photo from foursquare stays there and photo.source = foursquare.
-*/
-public enum PhotoSource: String {
-    case aircandi_images = "aircandi.images"
-    case aircandi_users  = "aircandi.users"
-    case foursquare     = "foursquare"
-    case google         = "google"
-    case resource       = "resource"
-    case bing           = "bing"
-    case generic        = "generic"
 }

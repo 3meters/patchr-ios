@@ -9,16 +9,23 @@
 #ifndef Patchr_BridgingHeader_h
 #define Patchr_BridgingHeader_h
 
+#import "JSONResponseSerializerWithData.h"
+#import "NGAParallaxMotion.h"
+#import "GCPlaceholderTextView.h"
+#import "UIView+BorderLayer.h"
+#import "Reachability.h"
+#import "AirTableView.h"
+
 #import <AFNetworking/AFNetworking.h>
 #import <AFNetworkActivityLogger/AFNetworkActivityLogger.h>
 #import <UIImageView+AFNetworking.h>
 #import <AWSS3/AWSS3.h>
-#import "JSONResponseSerializerWithData.h"
 #import <RMCoreDataStack/RMCoreDataStack.h>
 #import <PBWebViewController.h>
 #import <MBProgressHUD.h>
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <SDWebImage/UIButton+WebCache.h>
+#import <SDWebImage/SDImageCache.h>
 #import <UIDevice-Hardware.h>
 #import <Lockbox.h>
 #import <IDMPhoto.h>
@@ -26,13 +33,11 @@
 #import <UIScrollView+InfiniteScroll.h>
 #import <NBPhoneNumberUtil.h>
 #import <NBPhoneNumber.h>
-#import "NGAParallaxMotion.h"
-#import "GCPlaceholderTextView.h"
-#import "UIView+BorderLayer.h"
 #import <AdobeCreativeSDKFoundation/AdobeCreativeSDKFoundation.h>
 #import <AdobeCreativeSDKImage/AdobeCreativeSDKImage.h>
-#import "Reachability.h"
 #import <Branch.h>
+#import <TTTAttributedLabel.h>
+
 
 #import "Patch.h"
 #import "Place.h"
