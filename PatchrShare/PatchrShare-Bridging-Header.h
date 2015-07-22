@@ -14,6 +14,7 @@
 #import <AWSS3/AWSS3.h>
 #import <AWSCore/AWSCore.h>
 #import <MBProgressHUD.h>
+#import <Keys/PatchrKeys.h>
 
 #import "Photo.h"
 

@@ -3,6 +3,20 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 platform :ios, '7.1'
 
+plugin 'cocoapods-keys', {
+    :project => "Patchr",
+    :keys => [
+    "BingAccessKey",
+    "CreativeSdkClientId",
+    "CreativeSdkClientSecret",
+    "AwsS3Key",
+    "AwsS3Secret",
+    "ParseApplicationId",
+    "ParseApplicationKey",
+    "FabricApiKey",
+    "BranchKey"
+    ]}
+
 target 'Patchr' do
 
 pod 'AFNetworking', '~> 2.5'

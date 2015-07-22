@@ -10,8 +10,6 @@ import Foundation
 
 public class S3: NSObject {
     
-    private let PatchrS3Key    = "AKIAIYU2FPHC2AOUG3CA"
-    private let PatchrS3Secret = "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"
     private let bucket = "aircandi-images"
     private var uploads: [NSURLSessionTask: UploadInfo] = [:]
     
@@ -32,7 +30,8 @@ public class S3: NSObject {
         super.init()
         
         // Note: There are probably safer ways to store the AWS credentials.
-        let credentialsProvider = AWSStaticCredentialsProvider(accessKey: PatchrS3Key, secretKey: PatchrS3Secret)
+        let keys = PatchrKeys()
+        let credentialsProvider = AWSStaticCredentialsProvider(accessKey: keys.awsS3Key(), secretKey: keys.awsS3Secret())
         let configuration = AWSServiceConfiguration(region: AWSRegionType(rawValue: 3/*'us-west-2'*/)!, credentialsProvider: credentialsProvider)
         AWSServiceManager.defaultServiceManager().defaultServiceConfiguration = configuration
         

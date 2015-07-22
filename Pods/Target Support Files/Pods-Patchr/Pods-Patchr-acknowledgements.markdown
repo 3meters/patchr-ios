@@ -1,6 +1,10 @@
 # Acknowledgements
 This application makes use of the following third party libraries:
 
+## Keys
+
+MIT LICENSE Found in the repo
+
 ## AFNetworkActivityLogger
 
 Copyright (c) 2013 AFNetworking (http://afnetworking.com/)

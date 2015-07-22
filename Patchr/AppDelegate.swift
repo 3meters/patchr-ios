@@ -26,6 +26,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
+        let keys = PatchrKeys()
+        
         #if DEBUG
         AFNetworkActivityLogger.sharedLogger().startLogging()
         AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelWarn
@@ -56,14 +58,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Fabric.with([Crashlytics()])
         
         /* Initialize Creative sdk */
-        AdobeUXAuthManager.sharedManager().setAuthenticationParametersWithClientID(CREATIVE_SDK_CLIENT_ID, clientSecret: CREATIVE_SDK_CLIENT_SECRET, enableSignUp: false)
+        AdobeUXAuthManager.sharedManager().setAuthenticationParametersWithClientID(keys.creativeSdkClientId(), clientSecret: keys.creativeSdkClientSecret(), enableSignUp: false)
         
         /* Change default font for button bar items */
         let customFont = UIFont(name:"HelveticaNeue", size: 18)
         UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: customFont!], forState: UIControlState.Normal)
 
         /* Setup parse for push notifications */
-        Parse.setApplicationId("EonZJ4FXEADijslgqXCkg37sOGpB7AB9lDYxoHtz", clientKey: "5QRFlRQ3j7gkxyJ2cBYbHTK98WRQhoHCnHdpEKSD")
+        Parse.setApplicationId(keys.parseApplicationId(), clientKey: keys.parseApplicationKey())
         
         DataController.proxibase.registerInstallStandard {
             response, error in

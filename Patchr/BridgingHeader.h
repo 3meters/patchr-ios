@@ -37,6 +37,7 @@
 #import <AdobeCreativeSDKImage/AdobeCreativeSDKImage.h>
 #import <Branch.h>
 #import <TTTAttributedLabel.h>
+#import <Keys/PatchrKeys.h>
 
 
 #import "Patch.h"

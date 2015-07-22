@@ -24,10 +24,7 @@ let SPACER_WIDTH: CGFloat = 12
 let TIMEOUT_REQUEST: Int = 10   // Seconds
 
 let URI_PROXIBASE_SEARCH_IMAGES: String = "https://api.datamarket.azure.com/Bing/Search/v1"
-let BING_ACCESS_KEY: String = "bNm8LpZdJma/cbJdDiwHq+TGwzVF7nW+QF9vWdPh/Rg"
 let NAMESPACE: String = "com.3meters.patchr.ios."
-let CREATIVE_SDK_CLIENT_ID = "924463f8481c4941a773fc9610fac9dd"
-let CREATIVE_SDK_CLIENT_SECRET = "e2cc5494-911d-4c66-a2b4-cc9ebab420ab"
 
 func PatchrUserDefaultKey(subKey: String) -> String {
     return NAMESPACE + subKey

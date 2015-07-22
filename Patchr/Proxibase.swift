@@ -35,9 +35,6 @@ public class Proxibase {
 	public let StagingURI    = "https://api.aircandi.com:8443/v1/"
 	public let ProductionURI = "https://api.aircandi.com/v1/"
 
-	private let PatchrS3Key    = "AKIAIYU2FPHC2AOUG3CA"
-	private let PatchrS3Secret = "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"
-
 	let pageSizeDefault:       Int = 20
 	let pageSizeNearby:        Int = 50
 	let pageSizeExplore:       Int = 20
@@ -563,8 +560,9 @@ public class Proxibase {
 	public func loadSearchImages(query: String, limit: Int64 = 50, offset: Int64 = 0, maxImageSize: Int = 500000, maxDimen: Int = 1280, completion: (response:AnyObject?, error:NSError?) -> Void) {
 
 		if let bingSessionManager: AFHTTPSessionManager = AFHTTPSessionManager(baseURL: NSURL(string: URI_PROXIBASE_SEARCH_IMAGES)) {
+            let keys = PatchrKeys()
 			let requestSerializer: AFJSONRequestSerializer = AFJSONRequestSerializer(writingOptions: nil)
-			requestSerializer.setAuthorizationHeaderFieldWithUsername(nil, password: BING_ACCESS_KEY)
+			requestSerializer.setAuthorizationHeaderFieldWithUsername(nil, password: keys.bingAccessKey())
 			bingSessionManager.requestSerializer = requestSerializer
 			bingSessionManager.responseSerializer = JSONResponseSerializerWithData()
 
@@ -824,7 +822,8 @@ public class Proxibase {
 		* NOTE: I can't get Swift to recognize the enum values for AWSRegionTypes and AWSS3ObjectCannedACLs, so I have used
 		* rawValue: initializers here.
 		*/
-		let credProvider  = AWSStaticCredentialsProvider(accessKey: PatchrS3Key, secretKey: PatchrS3Secret)
+        let keys = PatchrKeys()
+		let credProvider  = AWSStaticCredentialsProvider(accessKey: keys.awsS3Key(), secretKey: keys.awsS3Secret())
 		let serviceConfig = AWSServiceConfiguration(region: AWSRegionType(rawValue: 3/*'us-west-2'*/)!, credentialsProvider: credProvider)
 		let uploadRequest = AWSS3TransferManagerUploadRequest()
 
