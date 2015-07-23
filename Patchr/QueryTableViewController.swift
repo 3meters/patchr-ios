@@ -80,10 +80,10 @@ class QueryTableViewController: FetchedResultsTableViewController {
         progress!.mode = MBProgressHUDMode.Indeterminate
         progress!.square = true
         progress!.opacity = 0.0
-        progress!.removeFromSuperViewOnHide = false
+        progress!.removeFromSuperViewOnHide = true
         progress!.userInteractionEnabled = false
         progress!.activityIndicatorColor = Colors.brandColorDark
-        progress!.hide(false)
+        progress!.show(true)
         
         /* Empty label */
         if self.showEmptyLabel {
@@ -122,10 +122,14 @@ class QueryTableViewController: FetchedResultsTableViewController {
         }
     }
     
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.progress!.hide(false)
+    }
+    
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         self.refreshControl?.endRefreshing()
-        self.progress!.hide(true)
         self.tableView.finishInfiniteScroll()
     }
     

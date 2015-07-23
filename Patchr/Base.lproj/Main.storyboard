@@ -806,7 +806,7 @@
             <objects>
                 <tableViewController hidesBottomBarWhenPushed="YES" id="CiR-XU-M8e" userLabel="Notification Settings" customClass="NotificationSettingsViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="G4y-ya-7MJ">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="calibratedRGB"/>
                         <sections>
@@ -1307,9 +1307,25 @@
                                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                             </state>
                                                         </button>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cXS-bO-Vkq" userLabel="map_button" customClass="AirImageButton" customModule="Patchr" customModuleProvider="target">
+                                                            <rect key="frame" x="0.0" y="0.0" width="48" height="48"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="48" id="40n-dM-Vz0"/>
+                                                                <constraint firstAttribute="height" constant="48" id="esg-9a-ZT0"/>
+                                                            </constraints>
+                                                            <inset key="imageEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
+                                                            <state key="normal" image="imgMapLight">
+                                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                            </state>
+                                                            <connections>
+                                                                <action selector="mapAction:" destination="dFa-9F-rNC" eventType="touchUpInside" id="erv-XH-8dh"/>
+                                                            </connections>
+                                                        </button>
                                                     </subviews>
                                                     <constraints>
+                                                        <constraint firstItem="cXS-bO-Vkq" firstAttribute="leading" secondItem="t8t-DZ-4Sr" secondAttribute="leading" id="09F-nC-YpN"/>
                                                         <constraint firstAttribute="height" constant="48" id="8xt-1a-TlR"/>
+                                                        <constraint firstAttribute="bottom" secondItem="cXS-bO-Vkq" secondAttribute="bottom" id="BYo-DN-aVQ"/>
                                                         <constraint firstAttribute="bottom" secondItem="vYh-eO-CMR" secondAttribute="bottom" id="BiR-fl-fea"/>
                                                         <constraint firstAttribute="bottom" secondItem="7J4-1W-AIu" secondAttribute="bottom" id="LGa-qQ-mKS"/>
                                                         <constraint firstItem="7J4-1W-AIu" firstAttribute="leading" secondItem="t8t-DZ-4Sr" secondAttribute="leading" constant="64" id="OT9-3S-LUi"/>
@@ -1423,6 +1439,7 @@
                         <outlet property="infoVisibility" destination="2ea-Ie-glh" id="UdC-i6-JfA"/>
                         <outlet property="likeButton" destination="vYh-eO-CMR" id="BNB-8g-ly5"/>
                         <outlet property="lockImage" destination="mtE-0h-abN" id="h7G-Ne-YmC"/>
+                        <outlet property="mapButton" destination="cXS-bO-Vkq" id="Miz-3v-Z2S"/>
                         <outlet property="patchName" destination="bHj-ol-mkD" id="Ywp-Tp-Y8G"/>
                         <outlet property="patchPhoto" destination="351-k9-dO8" id="xOn-Z1-W9m"/>
                         <outlet property="patchPhotoTop" destination="B4e-y5-ec8" id="p3z-M2-tI1"/>
@@ -1437,6 +1454,7 @@
                         <segue destination="z5c-9W-9Sy" kind="show" identifier="LikeListSegue" id="ZOc-oS-e3t"/>
                         <segue destination="eY6-0Y-Mmp" kind="show" identifier="PlaceDetailSegue" id="WPT-MI-TjZ"/>
                         <segue destination="fom-HZ-yYr" kind="presentation" identifier="PatchEditSegue" id="mR4-Hl-YsE"/>
+                        <segue destination="KFr-KQ-5B9" kind="show" identifier="PatchMapSegue" id="HbO-hl-kVs"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oIA-ch-XmS" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2076,14 +2094,14 @@
             <objects>
                 <tableViewController hidesBottomBarWhenPushed="YES" id="D0x-w5-h7x" customClass="SettingsTableViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="A67-MQ-X8l">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                         <view key="tableFooterView" contentMode="scaleToFill" id="LLO-at-3mw">
-                            <rect key="frame" x="0.0" y="432" width="414" height="44"/>
+                            <rect key="frame" x="0.0" y="368" width="600" height="44"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="v1.0 build 29" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T7X-7P-C1Q" userLabel="version_info_label">
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="v1.0 build 29" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T7X-7P-C1Q" userLabel="version_info_label">
                                     <rect key="frame" x="156" y="11" width="104" height="21"/>
                                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="18"/>
                                     <color key="textColor" red="0.0" green="0.75294117650000003" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -2758,7 +2776,7 @@
             <objects>
                 <tableViewController id="z5c-9W-9Sy" userLabel="User List" customClass="UserTableViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="110" sectionHeaderHeight="22" sectionFooterHeight="22" id="vt0-0K-tFn">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -2964,19 +2982,21 @@
         <image name="imgHeartLight" width="40" height="40"/>
         <image name="imgLockDark" width="22" height="22"/>
         <image name="imgLockLight" width="22" height="22"/>
+        <image name="imgMapLight" width="40" height="40"/>
         <image name="imgStarFilledLight" width="32" height="32"/>
         <image name="imgStarLight" width="40" height="40"/>
         <image name="imgWatch2Light" width="40" height="40"/>
         <image name="imgWatchLight" width="60" height="60"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="5gi-H6-rYN"/>
+        <segue reference="W2H-Y3-qfq"/>
         <segue reference="5MF-E5-yBl"/>
         <segue reference="xAO-Qh-0VB"/>
-        <segue reference="IOJ-HZ-5D3"/>
-        <segue reference="W2H-Y3-qfq"/>
+        <segue reference="ZkF-VU-9mQ"/>
+        <segue reference="sNP-m8-m5g"/>
+        <segue reference="HbO-hl-kVs"/>
+        <segue reference="mR4-Hl-YsE"/>
         <segue reference="aqr-cO-OGv"/>
-        <segue reference="Wvg-S3-NkD"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="1" green="0.50196078430000002" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

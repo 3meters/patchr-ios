@@ -26,6 +26,7 @@ class PatchTableMapViewController: UIViewController, NSFetchedResultsControllerD
     var fetchRequest: NSFetchRequest!
     var selectedPatch: Patch?
     var token: dispatch_once_t = 0
+    var nearestAnnotation: MKAnnotation?
     
     internal lazy var fetchedResultsController: NSFetchedResultsController = {
         return NSFetchedResultsController(fetchRequest: self.fetchRequest, managedObjectContext: DataController.instance.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
@@ -69,10 +70,23 @@ class PatchTableMapViewController: UIViewController, NSFetchedResultsControllerD
     private func reloadAnnotations() -> Void {
         self.mapView.removeAnnotations(self.mapView.annotations)
         if let fetchedObjects = self.fetchedResultsController.fetchedObjects {
+            var nearestDistance: Float = 1000000
             for object in fetchedObjects {
                 if let queryResult = object as? QueryItem {
                     if let entity = queryResult.object as? Entity {
-                        self.mapView.addAnnotation(EntityAnnotation(entity: entity))
+                        let annotation = EntityAnnotation(entity: entity)
+                        self.mapView.addAnnotation(annotation)
+                        
+                        if let currentLocation = LocationController.instance.getLocation() {
+                            if let loc = entity.location {
+                                var patchLocation = CLLocation(latitude: loc.latValue, longitude: loc.lngValue)
+                                let dist = Float(currentLocation.distanceFromLocation(patchLocation))  // in meters
+                                if dist < nearestDistance {
+                                    nearestDistance = dist
+                                    self.nearestAnnotation = annotation
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -119,8 +133,38 @@ extension PatchTableMapViewController: MKMapViewDelegate {
             annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseIdentifier)
             annotationView.canShowCallout = true
             annotationView.rightCalloutAccessoryView = UIButton.buttonWithType(UIButtonType.DetailDisclosure) as! UIButton
+            if let annotation = annotation as? EntityAnnotation {
+                if annotation.entity?.photo != nil {
+                    var imageView = AirImageView(frame: CGRectMake(0, 0, 40, 40))
+                    annotationView.leftCalloutAccessoryView = imageView
+                    imageView.contentMode = UIViewContentMode.ScaleAspectFill
+                }
+            }
         }
         return annotationView
+    }
+    
+    func mapView(mapView: MKMapView!, didAddAnnotationViews views: [AnyObject]!) {
+        if self.nearestAnnotation == nil {
+            mapView.selectAnnotation(mapView.annotations.last as! MKAnnotation, animated: true)
+        }
+        else {
+            for annotation in mapView.annotations {
+                if annotation.isEqual(self.nearestAnnotation) {
+                    mapView.selectAnnotation(annotation as! MKAnnotation, animated: true)
+                }
+            }
+        }
+    }
+    
+    func mapView(mapView: MKMapView!, didSelectAnnotationView view: MKAnnotationView!) {
+        if let imageView = view.leftCalloutAccessoryView as? AirImageView {
+            if let annotation = view.annotation as? EntityAnnotation {
+                if let photo = annotation.entity?.photo {
+                    imageView.setImageWithPhoto(photo, animate: true)
+                }
+            }
+        }
     }
     
     func mapView(mapView: MKMapView!, annotationView view: MKAnnotationView!, calloutAccessoryControlTapped control: UIControl!) {
@@ -134,17 +178,24 @@ extension PatchTableMapViewController: MKMapViewDelegate {
 }
 
 class EntityAnnotation: NSObject, MKAnnotation {
+    
     var coordinate: CLLocationCoordinate2D
     var title: String
     var subtitle: String?
-    var entity: Entity
+    var entity: Entity?
     
     init(entity: Entity) {
         self.entity = entity
         self.coordinate = entity.location.coordinate
         self.title = entity.name
         if let patch = entity as? Patch {
-            self.subtitle = patch.type
+            self.subtitle = patch.type.uppercaseString + " PATCH"
         }
+    }
+    
+    init(coordinate: CLLocationCoordinate2D, title: String?, subtitle: String?) {
+        self.coordinate = coordinate
+        self.title = title!
+        self.subtitle = subtitle
     }
 }

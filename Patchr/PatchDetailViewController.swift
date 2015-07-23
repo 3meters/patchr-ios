@@ -20,6 +20,7 @@ class PatchDetailViewController: QueryTableViewController {
 	private var offscreenCells:       NSMutableDictionary = NSMutableDictionary()
     private var _query: Query!
     private var contextAction: ContextAction = .SharePatch
+    
     private var isOwner: Bool {
         if let currentUser = UserController.instance.currentUser {
             if patch != nil && patch.creator != nil {
@@ -28,6 +29,7 @@ class PatchDetailViewController: QueryTableViewController {
         }
         return false
     }
+    
     private var originalTop: CGFloat = 0.0
     private var originalScrollTop: CGFloat = -64.0
 
@@ -39,6 +41,7 @@ class PatchDetailViewController: QueryTableViewController {
     @IBOutlet weak var visibility:     UILabel!
     @IBOutlet weak var likeButton:     AirLikeButton!
     @IBOutlet weak var watchButton:    AirWatchButton!
+    @IBOutlet weak var mapButton:      AirImageButton!
     @IBOutlet weak var watchersButton: UIButton!
     @IBOutlet weak var contextButton:  UIButton!
     @IBOutlet weak var lockImage:      UIImageView!
@@ -133,6 +136,7 @@ class PatchDetailViewController: QueryTableViewController {
         tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
         lockImage.tintColor(Colors.brandColor)
         infoLockImage.tintColor(Colors.brandColor)
+        mapButton.imageView?.tintColor = UIColor.whiteColor()
         watchersButton.alpha = 0.0
         originalTop = patchPhotoTop.constant
         self.contextButton?.setTitle("", forState: .Normal)
@@ -303,6 +307,12 @@ class PatchDetailViewController: QueryTableViewController {
         }
     }
     
+    @IBAction func mapAction(sender: AnyObject) {
+        if self.patch != nil {
+            self.performSegueWithIdentifier("PatchMapSegue", sender: self)
+        }
+    }
+    
     func dismissAction(sender: AnyObject) {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
@@ -401,6 +411,9 @@ class PatchDetailViewController: QueryTableViewController {
             visibility.hidden = (patch!.visibility == "public")
             infoVisibility.hidden = (patch!.visibility == "public")
         }
+        
+        /* Map button */
+        mapButton.hidden = (patch.location == nil)
         
         /* Watching button */
         
@@ -601,6 +614,11 @@ class PatchDetailViewController: QueryTableViewController {
 					controller.patch = self.patch
 					controller.filter = segue.identifier == "LikeListSegue" ? .PatchLikers : .PatchWatchers
 				}
+            case "PatchMapSegue":
+                if let controller = segue.destinationViewController as? PatchMapViewController {
+                    controller.locationDelegate = self
+                }
+            
 			default: ()
 		}
 	}
@@ -663,6 +681,44 @@ class PatchItem: NSObject, UIActivityItemSource {
         return ""
     }
 }
+
+extension PatchDetailViewController: MapViewDelegate {
+    
+    func locationForMap() -> CLLocation? {
+        if let location = self.patch?.location {
+            return CLLocation(latitude: self.patch.location.latValue, longitude: self.patch.location.lngValue)
+        }
+        return nil
+    }
+    
+    func locationChangedTo(location: CLLocation) {  }
+    
+    func locationEditable() -> Bool {
+        return false
+    }
+    
+    var locationTitle: String? {
+        get {
+            return self.patch?.name
+        }
+    }
+    
+    var locationSubtitle: String? {
+        get {
+            if let type = self.patch?.type {
+                return type.uppercaseString + " PATCH"
+            }
+            return nil
+        }
+    }
+    
+    var locationPhoto: AnyObject? {
+        get {
+            return self.patch?.photo
+        }
+    }
+}
+
 
 extension PatchDetailViewController: UITableViewDelegate {
     

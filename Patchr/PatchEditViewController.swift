@@ -194,7 +194,7 @@ class PatchEditViewController: EntityEditViewController {
         switch segue.identifier! {
             case "LocationEditSegue":
                 if let destinationViewController = segue.destinationViewController as? PatchMapViewController {
-                    destinationViewController.locationProvider = self
+                    destinationViewController.locationDelegate = self
                 }
             default: ()
         }
@@ -245,7 +245,7 @@ class PatchEditViewController: EntityEditViewController {
         }
     }
     
-    var location: CLLocation?
+    private var location: CLLocation?
     
     var type: String? {
         get {
@@ -270,6 +270,43 @@ class PatchEditViewController: EntityEditViewController {
             projectTypeCell.accessoryType = newValue == "project" ? .Checkmark : .None
         }
     }
+}
+
+extension PatchEditViewController: MapViewDelegate {
+    
+    func locationForMap() -> CLLocation? {
+        return self.location
+    }
+    
+    func locationChangedTo(location: CLLocation) -> Void {
+        self.location = location
+        updateLocation(location)
+    }
+    
+    func locationEditable() -> Bool {
+        return true
+    }
+    
+    var locationTitle: String? {
+        get {
+            return self.name
+        }
+    }
+    
+    var locationSubtitle: String? {
+        get {
+            if let type = self.type {
+                return type.uppercaseString + " PATCH"
+            }
+            return nil
+        }
+    }
+    
+    var locationPhoto: AnyObject? {
+        get {
+            return self.photo
+        }
+    }    
 }
 
 extension PatchEditViewController: UITableViewDelegate{
