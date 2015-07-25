@@ -202,12 +202,72 @@
                         <segue destination="Qof-Oi-YrS" kind="relationship" relationship="viewControllers" id="viX-QG-DYu"/>
                         <segue destination="Tfh-ka-aQD" kind="relationship" relationship="viewControllers" id="i91-nI-JEx"/>
                         <segue destination="cit-av-u7D" kind="relationship" relationship="viewControllers" id="SU8-4e-Xwv"/>
+                        <segue destination="N8X-QF-Qp5" kind="relationship" relationship="viewControllers" id="eEW-0r-Zj5"/>
                         <segue destination="SeP-eo-R0a" kind="relationship" relationship="viewControllers" id="2v0-PZ-X2w"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wBd-Ex-W2n" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-2384" y="-2578"/>
+        </scene>
+        <!--Search-->
+        <scene sceneID="wz2-pA-zWc">
+            <objects>
+                <tableViewController id="hwz-FD-sha" userLabel="Search" customClass="SearchViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="64" sectionHeaderHeight="22" sectionFooterHeight="22" id="kZT-Mq-1Bz">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="aZr-a0-ntB">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="aZr-a0-ntB" id="owc-Mr-4cr">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                                <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="hwz-FD-sha" id="d2t-6g-ULu"/>
+                            <outlet property="delegate" destination="hwz-FD-sha" id="pHu-rR-nmZ"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="hr3-Fp-6Ao">
+                        <nil key="title"/>
+                        <view key="titleView" contentMode="scaleToFill" id="ePL-Lj-eoc">
+                            <rect key="frame" x="16" y="6" width="568" height="33"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <subviews>
+                                <searchBar contentMode="redraw" fixedFrame="YES" searchBarStyle="minimal" placeholder="Search Patchr" translatesAutoresizingMaskIntoConstraints="NO" id="Jtp-kQ-AMt" userLabel="search_bar">
+                                    <rect key="frame" x="-16" y="-5" width="600" height="44"/>
+                                    <textInputTraits key="textInputTraits" returnKeyType="search"/>
+                                    <connections>
+                                        <outlet property="delegate" destination="hwz-FD-sha" id="vPc-Ng-cyx"/>
+                                    </connections>
+                                </searchBar>
+                            </subviews>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </view>
+                    </navigationItem>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="searchDisplayController" destination="OyB-WX-bGT" id="eZo-CO-X0G"/>
+                        <outlet property="superSearchBar" destination="Jtp-kQ-AMt" id="TBi-cH-DMr"/>
+                        <segue destination="dFa-9F-rNC" kind="show" identifier="PatchDetailSegue" id="g2G-Ye-RqX"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Vgy-nv-S02" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <searchDisplayController searchResultsTitle="Recent searches" id="OyB-WX-bGT">
+                    <connections>
+                        <outlet property="delegate" destination="hwz-FD-sha" id="ogq-Ab-YtV"/>
+                        <outlet property="searchBar" destination="Jtp-kQ-AMt" id="Otm-7g-xz1"/>
+                        <outlet property="searchContentsController" destination="hwz-FD-sha" id="yFF-We-CAm"/>
+                        <outlet property="searchResultsDataSource" destination="hwz-FD-sha" id="Kxr-hQ-win"/>
+                        <outlet property="searchResultsDelegate" destination="hwz-FD-sha" id="jUt-z9-pdf"/>
+                    </connections>
+                </searchDisplayController>
+            </objects>
+            <point key="canvasLocation" x="-1592" y="-2559"/>
         </scene>
         <!--Message Detail-->
         <scene sceneID="VU4-xc-rjr">
@@ -806,7 +866,7 @@
             <objects>
                 <tableViewController hidesBottomBarWhenPushed="YES" id="CiR-XU-M8e" userLabel="Notification Settings" customClass="NotificationSettingsViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="G4y-ya-7MJ">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="calibratedRGB"/>
                         <sections>
@@ -1051,7 +1111,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EhT-Mz-zSJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3650.625" y="-2461.2676056338028"/>
+            <point key="canvasLocation" x="4462" y="-2462"/>
         </scene>
         <!--Patch Detail-->
         <scene sceneID="rB4-TC-ftZ">
@@ -1192,7 +1252,7 @@
                                                         </userDefinedRuntimeAttribute>
                                                     </userDefinedRuntimeAttributes>
                                                 </imageView>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ym3-k1-Ty5" userLabel="place_button">
+                                                <button opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ym3-k1-Ty5" userLabel="place_button">
                                                     <rect key="frame" x="0.0" y="0.0" width="414" height="48"/>
                                                     <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
                                                     <constraints>
@@ -1200,7 +1260,7 @@
                                                     </constraints>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="18"/>
                                                     <inset key="contentEdgeInsets" minX="12" minY="0.0" maxX="12" maxY="0.0"/>
-                                                    <state key="normal" title="1885 134TH PL SE">
+                                                    <state key="normal" title="LINKED PLACE">
                                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
@@ -1216,7 +1276,7 @@
                                                 <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7be-lw-0zQ" userLabel="titling_group">
                                                     <rect key="frame" x="0.0" y="115" width="414" height="96"/>
                                                     <subviews>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Patch Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.70000000000000018" translatesAutoresizingMaskIntoConstraints="NO" id="bHj-ol-mkD" userLabel="patch_name">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="342" placeholderIntrinsicHeight="34" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.70000000000000018" translatesAutoresizingMaskIntoConstraints="NO" id="bHj-ol-mkD" userLabel="patch_name">
                                                             <rect key="frame" x="64" y="63" width="342" height="34"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="34" id="HEO-Qm-ZYD"/>
@@ -1225,7 +1285,7 @@
                                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Patch type" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YwE-l7-mVO" userLabel="patch_type">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="79" placeholderIntrinsicHeight="21" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YwE-l7-mVO" userLabel="patch_type">
                                                             <rect key="frame" x="64" y="40" width="79" height="21"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="21" id="kNK-7I-GqN"/>
@@ -1241,7 +1301,7 @@
                                                                 <constraint firstAttribute="width" constant="16" id="vdQ-d3-lT4"/>
                                                             </constraints>
                                                         </imageView>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="PRIVATE" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3rl-Xn-TEO" userLabel="visibility">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="65" placeholderIntrinsicHeight="21" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3rl-Xn-TEO" userLabel="visibility">
                                                             <rect key="frame" x="167" y="40" width="65" height="21"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="21" id="SZv-Xp-Sjc"/>
@@ -1442,7 +1502,7 @@
                         <outlet property="mapButton" destination="cXS-bO-Vkq" id="Miz-3v-Z2S"/>
                         <outlet property="patchName" destination="bHj-ol-mkD" id="Ywp-Tp-Y8G"/>
                         <outlet property="patchPhoto" destination="351-k9-dO8" id="xOn-Z1-W9m"/>
-                        <outlet property="patchPhotoTop" destination="B4e-y5-ec8" id="p3z-M2-tI1"/>
+                        <outlet property="patchPhotoTop" destination="B4e-y5-ec8" id="yb3-Nj-hye"/>
                         <outlet property="patchType" destination="YwE-l7-mVO" id="S3f-b2-WJi"/>
                         <outlet property="placeButton" destination="Ym3-k1-Ty5" id="2sz-4g-XGA"/>
                         <outlet property="titlingGroup" destination="7be-lw-0zQ" id="nEb-Tp-x4p"/>
@@ -1893,7 +1953,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZtI-z3-h4S" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-766" y="-2578"/>
+            <point key="canvasLocation" x="46" y="-2578"/>
         </scene>
         <!--Patch Map-->
         <scene sceneID="W4p-jk-LX2">
@@ -1908,7 +1968,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="QAb-bg-jV3">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="739"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="690"/>
                                 <gestureRecognizers/>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="t6W-7B-TM0" appends="YES" id="sXY-Zb-KLe"/>
@@ -2094,14 +2154,14 @@
             <objects>
                 <tableViewController hidesBottomBarWhenPushed="YES" id="D0x-w5-h7x" customClass="SettingsTableViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="A67-MQ-X8l">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                         <view key="tableFooterView" contentMode="scaleToFill" id="LLO-at-3mw">
-                            <rect key="frame" x="0.0" y="368" width="600" height="44"/>
+                            <rect key="frame" x="0.0" y="432" width="414" height="44"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="v1.0 build 29" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T7X-7P-C1Q" userLabel="version_info_label">
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="v1.0 build 29" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T7X-7P-C1Q" userLabel="version_info_label">
                                     <rect key="frame" x="156" y="11" width="104" height="21"/>
                                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="18"/>
                                     <color key="textColor" red="0.0" green="0.75294117650000003" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -2769,14 +2829,14 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3k4-VH-3qu" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="zCP-i9-mRw" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="1912.5" y="-2461.2676056338028"/>
+            <point key="canvasLocation" x="2724" y="-2462"/>
         </scene>
         <!--User List-->
         <scene sceneID="Zkn-0N-HTc">
             <objects>
                 <tableViewController id="z5c-9W-9Sy" userLabel="User List" customClass="UserTableViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="110" sectionHeaderHeight="22" sectionFooterHeight="22" id="vt0-0K-tFn">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -2892,7 +2952,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Z0r-4C-tJe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2653.125" y="-2461.2676056338028"/>
+            <point key="canvasLocation" x="3465" y="-2462"/>
         </scene>
         <!--Patch Edit Nav-->
         <scene sceneID="37u-Bz-ega">
@@ -2967,7 +3027,27 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="esK-UP-55s" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1153.125" y="-2461.2676056338028"/>
+            <point key="canvasLocation" x="1965" y="-2462"/>
+        </scene>
+        <!--Search Nav-->
+        <scene sceneID="AQV-gI-sRm">
+            <objects>
+                <navigationController title="Search Nav" automaticallyAdjustsScrollViewInsets="NO" id="N8X-QF-Qp5" userLabel="Search Nav" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Search" image="UITabBarItemSearch" id="CNx-sd-o6U"/>
+                    <toolbarItems/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="yzP-la-rcc">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="hwz-FD-sha" kind="relationship" relationship="rootViewController" id="pGk-Q7-2iy"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2Iz-B6-gqG" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1667" y="-2585"/>
         </scene>
     </scenes>
     <resources>
@@ -2976,6 +3056,7 @@
         <image name="UITabBarItemMe" width="48" height="32"/>
         <image name="UITabBarItemNearby" width="30" height="30"/>
         <image name="UITabBarItemNotifications" width="48" height="32"/>
+        <image name="UITabBarItemSearch" width="30" height="30"/>
         <image name="imgCancelDark" width="48" height="48"/>
         <image name="imgEditDark" width="60" height="60"/>
         <image name="imgEditLight" width="22" height="22"/>
@@ -2989,14 +3070,14 @@
         <image name="imgWatchLight" width="60" height="60"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="W2H-Y3-qfq"/>
-        <segue reference="5MF-E5-yBl"/>
-        <segue reference="xAO-Qh-0VB"/>
-        <segue reference="ZkF-VU-9mQ"/>
-        <segue reference="sNP-m8-m5g"/>
+        <segue reference="aqr-cO-OGv"/>
+        <segue reference="g2G-Ye-RqX"/>
         <segue reference="HbO-hl-kVs"/>
         <segue reference="mR4-Hl-YsE"/>
-        <segue reference="aqr-cO-OGv"/>
+        <segue reference="5MF-E5-yBl"/>
+        <segue reference="ZkF-VU-9mQ"/>
+        <segue reference="sNP-m8-m5g"/>
+        <segue reference="W2H-Y3-qfq"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="1" green="0.50196078430000002" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

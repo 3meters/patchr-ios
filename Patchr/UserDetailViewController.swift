@@ -201,7 +201,7 @@ class UserDetailViewController: QueryTableViewController {
         }
 	}
 
-	override func configureCell(cell: UITableViewCell, object: AnyObject) {
+	override func configureCell(cell: UITableViewCell, object: AnyObject, sizingOnly: Bool = false) {
 
 		// The cell width seems to incorrect occassionally
 		if CGRectGetWidth(cell.bounds) != CGRectGetWidth(self.tableView.bounds) {
@@ -233,10 +233,10 @@ class UserDetailViewController: QueryTableViewController {
 
 		if let photo = message.photo {
             messageCell.photo.setImageWithPhoto(photo, animate: messageCell.photo.image == nil)
-			messageCell.photoHolderHeight.constant = messageCell.photo.frame.height + 8
+            //messageCell.photoHolderHeight.constant = messageCell.photo.frame.height + 8
 		}
 		else {
-			messageCell.photoHolderHeight.constant = 0
+            //messageCell.photoHolderHeight.constant = 0
 		}
 
 		if message.creator != nil {

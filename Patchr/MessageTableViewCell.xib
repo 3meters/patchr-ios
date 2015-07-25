@@ -3,7 +3,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <objects>
@@ -16,6 +15,16 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
+                    <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="Patch name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0TT-YB-aeS" userLabel="patch_name">
+                        <rect key="frame" x="65" y="8" width="79" height="18"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="18" id="jfD-W3-ZcH"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
+                        <color key="textColor" red="0.60000002379999995" green="0.60000002379999995" blue="0.60000002379999995" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
                     <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="TaR-dt-0cq" userLabel="user_photo" customClass="AirImageView" customModule="Patchr" customModuleProvider="target">
                         <rect key="frame" x="8" y="30" width="48" height="48"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -35,39 +44,14 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="This is a multiline message comment that will say something that people will like" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="236" translatesAutoresizingMaskIntoConstraints="NO" id="h8L-WQ-6XO" userLabel="description" customClass="TTTAttributedLabel">
-                        <rect key="frame" x="65" y="55" width="238" height="84"/>
+                        <rect key="frame" x="65" y="55" width="238" height="78"/>
+                        <constraints>
+                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="24" id="wLB-3H-rKb"/>
+                        </constraints>
                         <fontDescription key="fontDescription" type="system" weight="light" pointSize="17"/>
                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" text="Patch name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0TT-YB-aeS" userLabel="patch_name">
-                        <rect key="frame" x="65" y="8" width="79" height="18"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="18" id="jfD-W3-ZcH"/>
-                        </constraints>
-                        <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
-                        <color key="textColor" red="0.60000002379999995" green="0.60000002379999995" blue="0.60000002379999995" alpha="1" colorSpace="calibratedRGB"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EuJ-uZ-wD2" userLabel="photo_holder">
-                        <rect key="frame" x="65" y="139" width="242" height="148"/>
-                        <subviews>
-                            <imageView autoresizesSubviews="NO" clipsSubviews="YES" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="eQH-ua-j18" userLabel="photo" customClass="AirImageView" customModule="Patchr" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="8" width="242" height="136"/>
-                                <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="eQH-ua-j18" secondAttribute="height" multiplier="16:9" id="dA4-aL-YWg"/>
-                                </constraints>
-                            </imageView>
-                        </subviews>
-                        <constraints>
-                            <constraint firstItem="eQH-ua-j18" firstAttribute="leading" secondItem="EuJ-uZ-wD2" secondAttribute="leading" id="BZu-3Z-Zbm"/>
-                            <constraint firstItem="eQH-ua-j18" firstAttribute="top" secondItem="EuJ-uZ-wD2" secondAttribute="top" constant="8" id="L9f-iN-nIV"/>
-                            <constraint firstAttribute="trailing" secondItem="eQH-ua-j18" secondAttribute="trailing" id="nDJ-hN-ZDS"/>
-                            <constraint firstAttribute="height" constant="148" id="y4D-PR-ElG"/>
-                        </constraints>
-                    </view>
                     <button clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="woJ-Y6-bOV" userLabel="like_button" customClass="AirLikeButton" customModule="Patchr" customModuleProvider="target">
                         <rect key="frame" x="63" y="293" width="24" height="24"/>
                         <constraints>
@@ -96,25 +80,32 @@
                         <color key="textColor" red="0.98431372549019602" green="0.5490196078431373" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <imageView autoresizesSubviews="NO" clipsSubviews="YES" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="eQH-ua-j18" userLabel="photo" customClass="AirImageView" customModule="Patchr" customModuleProvider="target">
+                        <rect key="frame" x="65" y="141" width="242" height="144"/>
+                        <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="144" id="j66-v2-IdI"/>
+                        </constraints>
+                    </imageView>
                 </subviews>
                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                 <constraints>
-                    <constraint firstItem="h8L-WQ-6XO" firstAttribute="leading" secondItem="woJ-Y6-bOV" secondAttribute="leading" constant="2" id="0LP-Pl-7O8"/>
-                    <constraint firstItem="EuJ-uZ-wD2" firstAttribute="top" secondItem="h8L-WQ-6XO" secondAttribute="bottom" id="9kI-Dp-HRC"/>
                     <constraint firstItem="0TT-YB-aeS" firstAttribute="leading" secondItem="m6L-Nb-Bin" secondAttribute="leading" id="Ciw-PQ-dhL"/>
-                    <constraint firstAttribute="bottom" secondItem="woJ-Y6-bOV" secondAttribute="bottom" constant="8" id="Cpe-4j-UMt"/>
-                    <constraint firstItem="h8L-WQ-6XO" firstAttribute="leading" secondItem="EuJ-uZ-wD2" secondAttribute="leading" id="EAc-Ng-iRm"/>
+                    <constraint firstItem="woJ-Y6-bOV" firstAttribute="bottom" secondItem="H2p-sc-9uM" secondAttribute="bottom" constant="-8" id="Cpe-4j-UMt"/>
                     <constraint firstItem="0TT-YB-aeS" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="GpA-kc-Ty0"/>
                     <constraint firstItem="TaR-dt-0cq" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="H1p-Ay-XWU"/>
                     <constraint firstItem="dwP-9n-4tK" firstAttribute="leading" secondItem="m6L-Nb-Bin" secondAttribute="trailing" constant="8" id="IsW-Rf-rV3"/>
+                    <constraint firstItem="eQH-ua-j18" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailing" constant="-8" id="J9G-Mq-zrT"/>
                     <constraint firstItem="h8L-WQ-6XO" firstAttribute="leading" secondItem="m6L-Nb-Bin" secondAttribute="leading" id="KDU-eM-EcE"/>
+                    <constraint firstItem="eQH-ua-j18" firstAttribute="leading" secondItem="m6L-Nb-Bin" secondAttribute="leading" id="KHp-0h-Kvb"/>
                     <constraint firstItem="m6L-Nb-Bin" firstAttribute="top" secondItem="0TT-YB-aeS" secondAttribute="bottom" constant="4" id="ODn-4W-Is5"/>
-                    <constraint firstAttribute="trailingMargin" secondItem="dwP-9n-4tK" secondAttribute="trailing" constant="4" id="Xef-Wa-aN3"/>
+                    <constraint firstItem="m6L-Nb-Bin" firstAttribute="leading" secondItem="woJ-Y6-bOV" secondAttribute="leading" constant="2" id="TaQ-XA-eCH"/>
+                    <constraint firstItem="woJ-Y6-bOV" firstAttribute="top" secondItem="eQH-ua-j18" secondAttribute="bottom" constant="8" id="Wub-lZ-JTR"/>
+                    <constraint firstItem="dwP-9n-4tK" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" constant="-4" id="Xef-Wa-aN3"/>
+                    <constraint firstItem="eQH-ua-j18" firstAttribute="top" secondItem="h8L-WQ-6XO" secondAttribute="bottom" constant="8" id="ero-8j-R01"/>
                     <constraint firstItem="m6L-Nb-Bin" firstAttribute="leading" secondItem="TaR-dt-0cq" secondAttribute="trailing" constant="9" id="fVv-9a-iCu"/>
-                    <constraint firstAttribute="trailingMargin" secondItem="h8L-WQ-6XO" secondAttribute="trailing" constant="4" id="fux-7Z-wC8"/>
-                    <constraint firstAttribute="trailing" secondItem="EuJ-uZ-wD2" secondAttribute="trailing" constant="8" id="kBG-OT-7v3"/>
+                    <constraint firstItem="h8L-WQ-6XO" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" constant="-4" id="fux-7Z-wC8"/>
                     <constraint firstItem="TaR-dt-0cq" firstAttribute="top" secondItem="m6L-Nb-Bin" secondAttribute="top" id="oB9-HR-jwj"/>
-                    <constraint firstItem="woJ-Y6-bOV" firstAttribute="top" secondItem="EuJ-uZ-wD2" secondAttribute="bottom" constant="6" id="rag-TB-P6X"/>
                     <constraint firstItem="dwP-9n-4tK" firstAttribute="baseline" secondItem="m6L-Nb-Bin" secondAttribute="baseline" id="tYi-h6-iz4"/>
                     <constraint firstItem="Jtz-MW-UwR" firstAttribute="leading" secondItem="woJ-Y6-bOV" secondAttribute="trailing" constant="6" id="v3N-B1-BK4"/>
                     <constraint firstItem="h8L-WQ-6XO" firstAttribute="top" secondItem="m6L-Nb-Bin" secondAttribute="bottom" constant="4" id="wyT-ce-zKL"/>
@@ -130,7 +121,8 @@
                 <outlet property="patchName" destination="0TT-YB-aeS" id="gHZ-M6-ccC"/>
                 <outlet property="patchNameHeight" destination="jfD-W3-ZcH" id="iVk-bn-GDW"/>
                 <outlet property="photo" destination="eQH-ua-j18" id="Gg6-9z-Phj"/>
-                <outlet property="photoHolderHeight" destination="y4D-PR-ElG" id="JWo-fd-CTG"/>
+                <outlet property="photoHeight" destination="j66-v2-IdI" id="ISs-DR-6mI"/>
+                <outlet property="photoTopSpace" destination="ero-8j-R01" id="sQf-pn-Djv"/>
                 <outlet property="userName" destination="m6L-Nb-Bin" id="liS-aQ-UuF"/>
                 <outlet property="userPhoto" destination="TaR-dt-0cq" id="nrG-nM-GdJ"/>
             </connections>

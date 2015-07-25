@@ -55,6 +55,7 @@ public struct Events {
 public struct PhotoSource {
     static let aircandi_images = "aircandi.images"
     static let aircandi_users  = "aircandi.users"
+    static let aircandi        = "aircandi"
     static let foursquare     = "foursquare"
     static let google         = "google"
     static let resource       = "resource"

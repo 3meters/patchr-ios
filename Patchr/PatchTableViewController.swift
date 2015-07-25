@@ -113,7 +113,7 @@ class PatchTableViewController: QueryTableViewController {
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
     
-    override func configureCell(cell: UITableViewCell, object: AnyObject) {
+    override func configureCell(cell: UITableViewCell, object: AnyObject, sizingOnly: Bool = false) {
         
         // The cell width seems to incorrect occassionally
         if CGRectGetWidth(cell.bounds) != CGRectGetWidth(self.tableView.bounds) {

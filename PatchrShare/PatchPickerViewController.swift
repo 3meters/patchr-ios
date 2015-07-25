@@ -193,10 +193,10 @@ extension PatchPickerViewController: UITableViewDelegate {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        var cell = tableView.dequeueReusableCellWithIdentifier("cell") as? PatchSearchCell
+        var cell = tableView.dequeueReusableCellWithIdentifier("cell") as? PatchSuggestCell
         if cell == nil {
-            let nib:Array = NSBundle.mainBundle().loadNibNamed("PatchSearchCell", owner: self, options: nil)
-            cell = nib[0] as? PatchSearchCell
+            let nib:Array = NSBundle.mainBundle().loadNibNamed("PatchSuggestCell", owner: self, options: nil)
+            cell = nib[0] as? PatchSuggestCell
             cell?.contentView.backgroundColor = UIColor.clearColor()
             cell?.backgroundColor = UIColor.clearColor()
         }
@@ -228,7 +228,7 @@ extension PatchPickerViewController: UITableViewDelegate {
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let selectedCell = tableView.cellForRowAtIndexPath(indexPath) as! PatchSearchCell
+        let selectedCell = tableView.cellForRowAtIndexPath(indexPath) as! PatchSuggestCell
         var patchJson: JSON = JSON(self.currentItems[indexPath.row])
         if let patch = patchJson.dictionaryObject {
             self.delegate?.patchPickerViewController!(self, selectedValue: patch)

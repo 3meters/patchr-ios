@@ -170,11 +170,11 @@ extension LocationController: CLLocationManagerDelegate {
             if let locLocked = self.locationLocked {
                 let moved = Int(location.distanceFromLocation(locLocked))
                 if moved < MIN_DISPLACEMENT {
-                    println("Location upgrade ignored: distance moved: \(moved)")
+                    println("Location update ignored: distance moved: \(moved)")
                     return
                 }
                 if Int(location.horizontalAccuracy) > Int(locLocked.horizontalAccuracy / 2.0) {
-                    println("Location upgrade ignored: current acc: \(Int(locLocked.horizontalAccuracy)) new acc: \(Int(location.horizontalAccuracy))")
+                    println("Location updated ignored: current acc: \(Int(locLocked.horizontalAccuracy)) new acc: \(Int(location.horizontalAccuracy))")
                     return
                 }
             }

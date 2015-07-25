@@ -83,6 +83,13 @@ class AirImageView: UIImageView {
         var frameWidthPixels = Int(self.frame.size.width * PIXEL_SCALE)
         
         let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!)
+        
+        if photoUrl.absoluteString == nil || photoUrl.absoluteString!.isEmpty {
+            var error = NSError(domain: "Photo error", code: 0, userInfo: [NSLocalizedDescriptionKey:"Photo has invalid source: \(photo.source!)"])
+            self.imageCompletion(nil, error: error, cacheType: nil, url: nil, animate: animate)
+            return
+        }
+        
         let url = PhotoUtils.urlSized(photoUrl, frameWidth: frameWidthPixels, frameHeight: frameHeightPixels, photoWidth: Int(photo.widthValue), photoHeight: Int(photo.heightValue))
         
         self.linkedPhotoUrl = url
@@ -124,13 +131,15 @@ class AirImageView: UIImageView {
         )
     }
 
-    func imageCompletion(image: UIImage?, error: NSError?, cacheType: SDImageCacheType, url: NSURL, animate: Bool = true) -> Void {
+    func imageCompletion(image: UIImage?, error: NSError?, cacheType: SDImageCacheType?, url: NSURL?, animate: Bool = true) -> Void {
         
         stopActivity()
         
         if error != nil {
             println("Image fetch failed: " + error!.localizedDescription)
-            println(url.standardizedURL)
+            if url != nil {
+                println(url?.standardizedURL!)
+            }
             self.contentMode = UIViewContentMode.Center
             self.image = UIImage(named: "imgBroken250Light")
             return
@@ -140,7 +149,7 @@ class AirImageView: UIImageView {
         }
         
         /* Image returned is not the one we want anymore */
-        if self.linkedPhotoUrl?.absoluteString != url.absoluteString {
+        if self.linkedPhotoUrl?.absoluteString != url?.absoluteString {
             return
         }
         

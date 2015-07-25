@@ -48,11 +48,11 @@ class UserController: NSObject {
         if let jsonString = json["user"].rawString() {
             jsonUser = jsonString
             println("User signed in:")
-            println(jsonUser)
+            println(jsonUser!)
         }
         if let jsonString = json["session"].rawString() {
             jsonSession = jsonString
-            println(jsonSession)
+            println(jsonSession!)
         }
         userName = json["user"]["name"].string
         userId = json["session"]["_owner"].string

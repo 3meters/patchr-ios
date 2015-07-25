@@ -13,7 +13,7 @@ class PhotoUtils {
     static func url(prefix: String, source: String) -> NSURL {
         var path: String = ""
         
-        if source == PhotoSource.aircandi_images {
+        if source == PhotoSource.aircandi_images || source == PhotoSource.aircandi {
             path = "http://aircandi-images.s3.amazonaws.com/\(prefix)"
         }
         else if source == PhotoSource.aircandi_users {

@@ -59,7 +59,7 @@ class FetchedResultsTableViewController: UITableViewController {
     }
 
     // Override this in subclasses to configure cells
-    func configureCell(cell: UITableViewCell, object: AnyObject) {
+    func configureCell(cell: UITableViewCell, object: AnyObject, sizingOnly: Bool = false) {
         cell.textLabel?.text = object.description
     }
     

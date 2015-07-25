@@ -155,18 +155,7 @@ class PatchDetailViewController: QueryTableViewController {
         
         /* Navigation bar buttons */
         
-        var shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
-        var addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: Selector("addAction"))
-        var spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
-        spacer.width = SPACER_WIDTH
-        if isOwner {
-            let editImage = UIImage(named: "imgEditLight")
-            var editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
-            self.navigationItem.rightBarButtonItems = [addButton, spacer, shareButton, spacer, editButton]
-        }
-        else {
-            self.navigationItem.rightBarButtonItems = [addButton, spacer, shareButton]
-        }
+        drawButtons()
 	}
     
     override func viewWillAppear(animated: Bool) {
@@ -224,6 +213,7 @@ class PatchDetailViewController: QueryTableViewController {
                 }
 				self.patch = patch
                 DataController.instance.currentPatch = patch    // Used for context for messages
+                self.drawButtons()
 				self.draw()
 			}
 		}
@@ -388,17 +378,17 @@ class PatchDetailViewController: QueryTableViewController {
             return
         }
         
+        /* Name, type and photo */
+        
 		self.patchName.text = patch!.name
-        if patch.type != nil {
-            self.patchType.text = patch!.type.uppercaseString + " PATCH"
-        }
+        self.patchType.text = patch.type == nil ? "PATCH" : patch!.type.uppercaseString + " PATCH"
         self.patchPhoto.setImageWithPhoto(patch!.getPhotoManaged(), animate: patchPhoto.image == nil)
         
         /* Place */
         
-        placeButton.hidden = (patch!.place == nil)
         if patch!.place != nil {
             placeButton.setTitle(patch!.place.name, forState: .Normal)
+            placeButton.fadeIn()
         }
 
         /* Privacy */
@@ -515,7 +505,23 @@ class PatchDetailViewController: QueryTableViewController {
         }
 	}
 
-	override func configureCell(cell: UITableViewCell, object: AnyObject) {
+    func drawButtons() {
+        
+        var shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
+        var addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: Selector("addAction"))
+        var spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
+        spacer.width = SPACER_WIDTH
+        if isOwner {
+            let editImage = UIImage(named: "imgEditLight")
+            var editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
+            self.navigationItem.rightBarButtonItems = [addButton, spacer, shareButton, spacer, editButton]
+        }
+        else {
+            self.navigationItem.rightBarButtonItems = [addButton, spacer, shareButton]
+        }
+    }
+    
+    override func configureCell(cell: UITableViewCell, object: AnyObject, sizingOnly: Bool = false) {
 
 		// The cell width seems to incorrect occassionally
 		if CGRectGetWidth(cell.bounds) != CGRectGetWidth(self.tableView.bounds) {
@@ -547,20 +553,28 @@ class PatchDetailViewController: QueryTableViewController {
 		cell.description_.text = message.description_
 
 		if let photo = message.photo {
-            cell.photo.setImageWithPhoto(photo, animate: cell.photo.image == nil)
-            cell.photoHolderHeight.constant = cell.photo.frame.height + 8
+            if !sizingOnly {
+                cell.photo.setImageWithPhoto(photo, animate: cell.photo.image == nil)
+            }
+            cell.photoTopSpace.constant = 8
+            cell.photoHeight.constant = cell.photo.bounds.size.width * 0.5625
 		}
         else {
-            cell.photoHolderHeight.constant = 0
+            cell.photoTopSpace.constant = 0
+            cell.photoHeight.constant = 0
         }
 
 		if let creator = message.creator {
 			cell.userName.text = creator.name
-            cell.userPhoto.setImageWithPhoto(creator.getPhotoManaged(), animate: cell.userPhoto.image == nil)
+            if !sizingOnly {
+                cell.userPhoto.setImageWithPhoto(creator.getPhotoManaged(), animate: cell.userPhoto.image == nil)
+            }
 		}
         else {
             cell.userName.text = "Deleted"
-            cell.userPhoto.setImageWithPhoto(Entity.getDefaultPhoto("user"))
+            if !sizingOnly {
+                cell.userPhoto.setImageWithPhoto(Entity.getDefaultPhoto("user"))
+            }
         }
         
         /* Likes button */
@@ -578,7 +592,6 @@ class PatchDetailViewController: QueryTableViewController {
 		}
         
 		cell.createdDate.text = self.messageDateFormatter.stringFromDate(message.createdDate)
-		cell.patchName.text = self.patch!.name
 	}
 
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -726,7 +739,7 @@ extension PatchDetailViewController: UITableViewDelegate {
         if patchPhotoTop != nil {
             /* Parallax effect when user scrolls down */
             let offset = scrollView.contentOffset.y
-            if offset >= originalScrollTop {
+            if offset >= originalScrollTop && offset <= 300 {
                 let movement = originalScrollTop - scrollView.contentOffset.y
                 let ratio: CGFloat = (movement <= 0) ? 0.50 : 1.0
                 patchPhotoTop.constant = originalTop + (-(movement) * ratio)
@@ -766,7 +779,7 @@ extension PatchDetailViewController: UITableViewDelegate {
 		let object: AnyObject = self.fetchedResultsController.objectAtIndexPath(indexPath)
 
 		/* Bind the data to the cell */
-		self.configureCell(cell!, object: object)
+        self.configureCell(cell!, object: object, sizingOnly: true)
 
 		/* Request a restraint pass */
 		cell?.setNeedsUpdateConstraints()

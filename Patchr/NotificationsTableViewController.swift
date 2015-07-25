@@ -64,7 +64,7 @@ class NotificationsTableViewController: QueryTableViewController {
     * Methods
     *--------------------------------------------------------------------------------------------*/
     
-	override func configureCell(cell: UITableViewCell, object: AnyObject) {
+	override func configureCell(cell: UITableViewCell, object: AnyObject, sizingOnly: Bool = false) {
 
 		// The cell width seems to incorrect occassionally
 		if CGRectGetWidth(cell.bounds) != CGRectGetWidth(self.tableView.bounds) {
@@ -93,10 +93,10 @@ class NotificationsTableViewController: QueryTableViewController {
 
 		if let photo = notification.photoBig {
             cell.photo.setImageWithPhoto(photo, animate: cell.photo.image == nil)
-			cell.photoHolderHeight.constant = cell.photo.frame.height + 8
+            //			cell.photoHolderHeight.constant = cell.photo.frame.height + 8
 		}
 		else {
-			cell.photoHolderHeight.constant = 0
+            //			cell.photoHolderHeight.constant = 0
 		}
 
         cell.userPhoto.setImageWithPhoto(notification.getPhotoManaged(), animate: cell.userPhoto.image == nil)
@@ -241,7 +241,7 @@ extension NotificationsTableViewController: UITableViewDelegate {
         
         let object: AnyObject = self.fetchedResultsController.objectAtIndexPath(indexPath)
         
-        self.configureCell(cell!, object: object)
+        self.configureCell(cell!, object: object, sizingOnly: true)
         
         cell?.setNeedsUpdateConstraints()
         cell?.updateConstraintsIfNeeded()
