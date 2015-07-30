@@ -18,7 +18,8 @@ class UserDetailViewController: QueryTableViewController {
 	private var messageDateFormatter: NSDateFormatter!
 	private var offscreenCells:       NSMutableDictionary = NSMutableDictionary()
 	private var isCurrentUser                             = false
-    private var patchListFilter: PatchListFilter? = nil
+    private var isGuest                                   = false
+    private var patchListFilter:      PatchListFilter?    = nil
 
 	/* Outlets are initialized before viewDidLoad is called */
 
@@ -58,9 +59,11 @@ class UserDetailViewController: QueryTableViewController {
 
 	override func viewDidLoad() {
         
-        if (user == nil && userId == nil && UserController.instance.currentUser != nil) {
-            user = UserController.instance.currentUser
-            isCurrentUser = true
+        isCurrentUser = (self.user == nil && self.userId == nil)
+        isGuest = !UserController.instance.authenticated
+        
+        if !isGuest && isCurrentUser {
+            self.user = UserController.instance.currentUser
         }
         
         if user != nil {
@@ -86,7 +89,14 @@ class UserDetailViewController: QueryTableViewController {
         userEmail.text?.removeAll(keepCapacity: false)
         userPhoto.imageView?.image = nil        
         
-        if (isCurrentUser ) {
+        if isCurrentUser && isGuest {
+            var signinButton = UIBarButtonItem(title: "Sign in", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSignin"))
+            var settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSettings"))
+            self.navigationItem.rightBarButtonItems = [settingsButton]
+            self.navigationItem.leftBarButtonItems = [signinButton]
+            self.navigationItem.title = "Guest"
+        }
+        else if isCurrentUser {
             let editImage = UIImage(named: "imgEditLight")
             var editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionEdit"))
             var signoutButton = UIBarButtonItem(title: "Sign out", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSignout"))
@@ -103,7 +113,7 @@ class UserDetailViewController: QueryTableViewController {
         /* Triggers query processing by results controller */
 		super.viewWillAppear(animated)
         
-        if user != nil {
+        if user != nil || isGuest {
             draw()
         }
 	}
@@ -114,15 +124,18 @@ class UserDetailViewController: QueryTableViewController {
     }
 
 	private func refresh(force: Bool = false) {
+
 		/* Refreshes the top object but not the message list */
-		DataController.instance.withUserId(userId!, refresh: force) {
-			user in
-            self.refreshControl?.endRefreshing()
-			if user != nil {
-				self.user = user
-				self.draw()
-			}
-		}
+        if !isGuest {
+            DataController.instance.withUserId(userId!, refresh: force) {
+                user in
+                self.refreshControl?.endRefreshing()
+                if user != nil {
+                    self.user = user
+                    self.draw()
+                }
+            }
+        }
 	}
 
 	/*--------------------------------------------------------------------------------------------
@@ -130,18 +143,24 @@ class UserDetailViewController: QueryTableViewController {
 	 *--------------------------------------------------------------------------------------------*/
 
     @IBAction func actionBrowseFavorites(sender: UIButton) {
-        patchListFilter = PatchListFilter.Favorite
-        self.performSegueWithIdentifier("PatchListSegue", sender: self)
+        if !isGuest {
+            patchListFilter = PatchListFilter.Favorite
+            self.performSegueWithIdentifier("PatchListSegue", sender: self)
+        }
     }
     
 	@IBAction func actionBrowseWatching(sender: UIButton) {
-        patchListFilter = PatchListFilter.Watching
-        self.performSegueWithIdentifier("PatchListSegue", sender: self)
+        if !isGuest {
+            patchListFilter = PatchListFilter.Watching
+            self.performSegueWithIdentifier("PatchListSegue", sender: self)
+        }
 	}
 
 	@IBAction func actionBrowseOwned(sender: UIButton) {
-        patchListFilter = PatchListFilter.Owns
-        self.performSegueWithIdentifier("PatchListSegue", sender: self)
+        if !isGuest {
+            patchListFilter = PatchListFilter.Owns
+            self.performSegueWithIdentifier("PatchListSegue", sender: self)
+        }
 	}
 
 	@IBAction func actionUserPhoto(sender: AnyObject) {
@@ -171,6 +190,15 @@ class UserDetailViewController: QueryTableViewController {
 		}
 	}
     
+    func actionSignin() {
+        
+        LocationController.instance.locationLocked = nil
+        let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
+        if let controller = storyboard.instantiateViewControllerWithIdentifier("SignInEditViewController") as? UIViewController {
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
+    }
+    
 	func actionEdit() {
 		self.performSegueWithIdentifier("UserEditSegue", sender: nil)
 	}
@@ -185,19 +213,31 @@ class UserDetailViewController: QueryTableViewController {
 
 	private func draw() {
         
-		userName.text = user!.name
-		userEmail.text = user!.email
-        userPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
-        userPhoto.setImageWithPhoto(user!.getPhotoManaged(), animate: userPhoto.imageView?.image == nil)
-        
-		if user!.patchesWatching != nil {
-			watchingButton.setTitle("Watching: " + String(user!.patchesWatchingValue), forState: .Normal)
-		}
-		if user!.patchesOwned != nil {
-			ownsButton.setTitle("Owner: " + String(user!.patchesOwnedValue), forState: .Normal)
-		}
-        if user!.patchesLikes != nil {
-            likesButton.setTitle("Favorites: " + String(user!.patchesLikesValue), forState: .Normal)
+        if isGuest {
+            userName.text = "Guest"
+            userEmail.text = "discover@3meters.com"
+            userPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
+            userPhoto.setImage(UIImage(named: "imgDefaultUser"), forState: .Normal)
+            //            userPhoto.imageView?.image = UIImage(named: "imgDefaultUser")
+            watchingButton.setTitle("Watching: --", forState: .Normal)
+            ownsButton.setTitle("Owner: --", forState: .Normal)
+            likesButton.setTitle("Favorites: --", forState: .Normal)
+        }
+        else {
+            userName.text = user!.name
+            userEmail.text = user!.email
+            userPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
+            userPhoto.setImageWithPhoto(user!.getPhotoManaged(), animate: userPhoto.imageView?.image == nil)
+            
+            if user!.patchesWatching != nil {
+                watchingButton.setTitle("Watching: " + String(user!.patchesWatchingValue), forState: .Normal)
+            }
+            if user!.patchesOwned != nil {
+                ownsButton.setTitle("Owner: " + String(user!.patchesOwnedValue), forState: .Normal)
+            }
+            if user!.patchesLikes != nil {
+                likesButton.setTitle("Favorites: " + String(user!.patchesLikesValue), forState: .Normal)
+            }
         }
 	}
 
@@ -292,8 +332,13 @@ class UserDetailViewController: QueryTableViewController {
 	}
 
 	override func pullToRefreshAction(sender: AnyObject?) -> Void {
-		self.refresh(force: true)
-        self.refreshQueryItems(force: true)
+        if !isGuest {
+            self.refresh(force: true)
+            self.refreshQueryItems(force: true)
+        }
+        else {
+            self.refreshControl?.endRefreshing()
+        }
 	}
 }
 

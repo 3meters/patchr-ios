@@ -245,6 +245,10 @@ class PatchDetailViewController: QueryTableViewController {
 	@IBAction func contextButtonAction(sender: UIButton) {
         
         if contextAction == .CreateMessage {
+            if !UserController.instance.authenticated {
+                Shared.Toast("Sign in to post messages")
+                return
+            }
             self.performSegueWithIdentifier("MessageEditSegue", sender: self)
         }
         else if contextAction == .SharePatch {
@@ -254,6 +258,10 @@ class PatchDetailViewController: QueryTableViewController {
             self.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
         }
         else if contextAction == .SubmitJoinRequest {
+            if !UserController.instance.authenticated {
+                Shared.Toast("Sign in to join patches")
+                return
+            }
             self.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
         }
         else if contextAction == .BrowseUsersWatching {
@@ -319,6 +327,10 @@ class PatchDetailViewController: QueryTableViewController {
     }
     
     func addAction() {
+        if !UserController.instance.authenticated {
+            Shared.Toast("Sign in to post messages")
+            return
+        }
         self.performSegueWithIdentifier("MessageEditSegue", sender: self)
     }
     
@@ -458,18 +470,18 @@ class PatchDetailViewController: QueryTableViewController {
             }
         }
         else {
-            if patch!.visibility == "public" {
-                if patch!.userHasMessagedValue {
+            if !UserController.instance.authenticated {
+                if patch!.visibility == "public" {
                     self.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
                     contextAction = .SharePatch
                 }
                 else {
-                    self.contextButton.setTitle("Post your first message".uppercaseString, forState: .Normal)
-                    contextAction = .CreateMessage
+                    self.contextButton.setTitle("Request to join".uppercaseString, forState: .Normal)
+                    contextAction = .SubmitJoinRequest
                 }
             }
             else {
-                if patch!.userWatchStatusValue == .Member {
+                if patch!.visibility == "public" {
                     if patch!.userHasMessagedValue {
                         self.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
                         contextAction = .SharePatch
@@ -479,23 +491,35 @@ class PatchDetailViewController: QueryTableViewController {
                         contextAction = .CreateMessage
                     }
                 }
-                else if patch!.userWatchStatusValue == .Pending {
-                    self.contextButton.setTitle("Cancel join request".uppercaseString, forState: .Normal)
-                    contextAction = .CancelJoinRequest
-                }
-                else if patch!.userWatchStatusValue == .NonMember {
-                    self.contextButton.setTitle("Request to join".uppercaseString, forState: .Normal)
-                    contextAction = .SubmitJoinRequest
-                }
-                
-                if patch!.userWatchJustApprovedValue {
-                    if patch!.userHasMessagedValue {
-                        self.contextButton.setTitle("Approved! Invite your friends".uppercaseString, forState: .Normal)
-                        contextAction = .SharePatch
+                else {
+                    if patch!.userWatchStatusValue == .Member {
+                        if patch!.userHasMessagedValue {
+                            self.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
+                            contextAction = .SharePatch
+                        }
+                        else {
+                            self.contextButton.setTitle("Post your first message".uppercaseString, forState: .Normal)
+                            contextAction = .CreateMessage
+                        }
                     }
-                    else {
-                        self.contextButton.setTitle("Approved! Post your first message".uppercaseString, forState: .Normal)
-                        contextAction = .CreateMessage
+                    else if patch!.userWatchStatusValue == .Pending {
+                        self.contextButton.setTitle("Cancel join request".uppercaseString, forState: .Normal)
+                        contextAction = .CancelJoinRequest
+                    }
+                    else if patch!.userWatchStatusValue == .NonMember {
+                        self.contextButton.setTitle("Request to join".uppercaseString, forState: .Normal)
+                        contextAction = .SubmitJoinRequest
+                    }
+                    
+                    if patch!.userWatchJustApprovedValue {
+                        if patch!.userHasMessagedValue {
+                            self.contextButton.setTitle("Approved! Invite your friends".uppercaseString, forState: .Normal)
+                            contextAction = .SharePatch
+                        }
+                        else {
+                            self.contextButton.setTitle("Approved! Post your first message".uppercaseString, forState: .Normal)
+                            contextAction = .CreateMessage
+                        }
                     }
                 }
             }

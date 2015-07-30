@@ -45,6 +45,11 @@ class AirWatchButton: AirToggleButton {
             return
         }
         
+        if !UserController.instance.authenticated {
+             Shared.Toast("Sign in to watch patches")
+            return
+        }
+        
         self.enabled = false
         self.startProgress()
         self.imageView?.alpha = 0.0

@@ -39,7 +39,7 @@ extension MainTabBarController: UITabBarControllerDelegate {
         if let navigationController = viewController as? UINavigationController {
             if let controller = navigationController.topViewController as? PatchTableViewController {
                 /*
-                 * Hacky to key on the label but haven't found a better way.
+                 * Super hackish to key on the label but haven't found a better way.
                  */
                 if navigationController.tabBarItem.title?.lowercaseString == "explore" {
                     controller.filter = PatchListFilter.Explore

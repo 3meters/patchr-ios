@@ -29,7 +29,6 @@ class AirLikeButton: AirToggleButton {
         super.initialize()
     }
 
-
 	func bindEntity(entity: Entity?) {
 		self.entity = entity
         if entity != nil {
@@ -43,6 +42,16 @@ class AirLikeButton: AirToggleButton {
     func onClick(sender: AnyObject) {
         
         if self.entity == nil {
+            return
+        }
+        
+        if !UserController.instance.authenticated {
+            if self.entity is Message {
+                Shared.Toast("Sign in to like messages")
+            }
+            else if self.entity is Patch {
+                Shared.Toast("Sign in to favorite patches")
+            }
             return
         }
         

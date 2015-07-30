@@ -163,7 +163,7 @@
             <objects>
                 <tableViewController id="tMe-pp-m8T" customClass="UserEditViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="UWP-hO-JbN" customClass="AirTableView">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <sections>
@@ -554,7 +554,7 @@
         <!--Sign In-->
         <scene sceneID="K4q-0i-rpY">
             <objects>
-                <tableViewController id="8no-yf-GVU" customClass="SignInEditViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="SignInEditViewController" id="8no-yf-GVU" customClass="SignInEditViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="bEn-HY-dNK" customClass="AirTableView">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -749,7 +749,7 @@
         <image name="imgPatchDark" width="60" height="60"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="gEB-lU-Hsn"/>
+        <segue reference="HwG-zD-VAa"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="1" green="0.50196078430000002" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

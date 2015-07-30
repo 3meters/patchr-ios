@@ -83,6 +83,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
+        else {
+            DataController.proxibase.registerInstallStandard {
+                response, error in
+                if let error = ServerError(error) {
+                    NSLog("Error during registerInstall: \(error)")
+                }
+            }
+        }
 
         self.window?.tintColor = Colors.brandColor
         UISwitch.appearance().onTintColor = self.window?.tintColor

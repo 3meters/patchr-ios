@@ -207,6 +207,11 @@ class DataController: NSObject {
             completion(queryItems: [], query: query, error: nil)
             return
         }
+        
+        if query.name == DataStoreQueryName.NotificationsForCurrentUser.rawValue && !UserController.instance.authenticated {
+            completion(queryItems: [], query: query, error: nil)
+            return
+        }
 
 		/* Callback when service call is complete */
 		func refreshCompletion(response: AnyObject?, error: NSError?) -> Void {
@@ -270,7 +275,7 @@ class DataController: NSObject {
         }
         
         var isOwner = false
-        if entity != nil && entity.creator != nil {
+        if entity != nil && entity.creator != nil && UserController.instance.authenticated {
             isOwner = (entity.creator.entityId == UserController.instance.currentUser.id_)
         }
 
