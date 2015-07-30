@@ -142,11 +142,18 @@ class ShareViewController: SLComposeServiceViewController, PatchPickerViewContro
                                 if error == nil {
                                     if let url = content as? NSURL {
                                         NSLog("Found url!: \(url.absoluteString!)")
+                                        /*
+                                         * When sharing url from chrome, the textView is set to the page
+                                         * title so is not empty.
+                                         */
                                         dispatch_async(dispatch_get_main_queue()) {
+                                            strongSelf.placeholder = nil
+                                            strongSelf.url = url
                                             if strongSelf.textView.text.isEmpty {
-                                                strongSelf.placeholder = nil
-                                                strongSelf.url = url
                                                 strongSelf.textView.text = "Shared link:\n\(url.absoluteString!)"
+                                            }
+                                            else {
+                                                strongSelf.textView.text = "\(strongSelf.textView.text)\nShared link:\n\(url.absoluteString!)"
                                             }
                                         }
                                     }

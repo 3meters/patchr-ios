@@ -51,7 +51,7 @@ extension Proxibase: NSURLSessionTaskDelegate {
     
     func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
         if task.error != nil {
-            NSLog("Session error while posting message: \(task.error?.localizedDescription)")
+            NSLog("Session error while posting message: \(task.error!.localizedDescription)")
         }
         else {
             NSLog("Message posted!")
@@ -59,9 +59,9 @@ extension Proxibase: NSURLSessionTaskDelegate {
                 
                 let patchId: String = ((patch["_id"] != nil) ? patch["_id"] : patch["id_"]) as! String
                 var recent: [String:AnyObject] = ["id_": patchId, "name":self.patch["name"]!]
+                recent["recentDate"] = Int(NSDate().timeIntervalSince1970 * 1000)
                 if self.patch["photo"] != nil {
                     recent["photo"] = self.patch["photo"]
-                    recent["recentDate"] = Int(NSDate().timeIntervalSince1970 * 1000)
                 }
                 
                 Utils.updateRecents(recent)                

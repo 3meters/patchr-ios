@@ -193,7 +193,7 @@ extension PatchPickerViewController: UITableViewDelegate {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        var cell = tableView.dequeueReusableCellWithIdentifier("cell") as? PatchSuggestCell
+        var cell = tableView.dequeueReusableCellWithIdentifier(CELL_IDENTIFIER) as? PatchSuggestCell
         if cell == nil {
             let nib:Array = NSBundle.mainBundle().loadNibNamed("PatchSuggestCell", owner: self, options: nil)
             cell = nib[0] as? PatchSuggestCell
