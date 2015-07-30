@@ -62,16 +62,29 @@ class SignInEditViewController: UITableViewController, UITextFieldDelegate {
                 self.handleError(error)
             }
             else {
+                
                 // Store email address
                 NSUserDefaults.standardUserDefaults().setObject(self.emailField.text, forKey: PatchrUserDefaultKey("userEmail"))
                 NSUserDefaults.standardUserDefaults().synchronize()
                 self.passwordField.text = nil
-                
-                let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-                let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-                if let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController") as? UIViewController {
-                    appDelegate.window?.setRootViewController(controller, animated: true)
-                    Shared.Toast("Signed in as \(UserController.instance.userName!)", controller: controller)
+                /*
+                * Register this install with the service particularly to capture the
+                * current user so location updates work properly. If install registration 
+                * fails the device will not accurately track notifications.
+                */
+                DataController.proxibase.registerInstallStandard {
+                    response, error in
+                    
+                    if let error = ServerError(error) {
+                        NSLog("Error during registerInstall: \(error)")
+                    }
+                    
+                    let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+                    let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+                    if let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController") as? UIViewController {
+                        appDelegate.window?.setRootViewController(controller, animated: true)
+                        Shared.Toast("Signed in as \(UserController.instance.userName!)", controller: controller)
+                    }
                 }
             }
         }

@@ -58,7 +58,6 @@
 		7DC1763F1ACDFF010051BA6C /* Link.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DC1763D1ACDFF010051BA6C /* Link.m */; };
 		7DC9D4911A9D46D100234E3C /* UserEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC9D4901A9D46D100234E3C /* UserEditViewController.swift */; };
 		7DC9D4941A9D4FAD00234E3C /* NotificationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC9D4921A9D4FAD00234E3C /* NotificationTableViewCell.swift */; };
-		7DC9D4951A9D4FAD00234E3C /* NotificationTableViewCellV2.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7DC9D4931A9D4FAD00234E3C /* NotificationTableViewCellV2.xib */; };
 		7DC9D49A1A9D597400234E3C /* AutoSizingLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DC9D4991A9D597400234E3C /* AutoSizingLabel.m */; };
 		7DD89F411AC62B90005CD004 /* UserTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD89F401AC62B90005CD004 /* UserTableViewController.swift */; };
 		7DE393E71AAE43AD00D1B80E /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */; };
@@ -143,6 +142,8 @@
 		E2C7C5C41B2A19720045038A /* DefaultSettings.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2C7C5C31B2A19720045038A /* DefaultSettings.plist */; };
 		E2C7C5C61B2B491A0045038A /* PhotoPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C7C5C51B2B491A0045038A /* PhotoPickerViewController.swift */; };
 		E2C7C5CB1B2CF2F80045038A /* ImageResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C7C5CA1B2CF2F80045038A /* ImageResult.swift */; };
+		E2CCAAE01B67CC0E0071170C /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CCAADF1B67CC0E0071170C /* NotificationController.swift */; };
+		E2CCAAE21B67EE2C0071170C /* chirp.caf in Resources */ = {isa = PBXBuildFile; fileRef = E2CCAAE11B67EE2C0071170C /* chirp.caf */; };
 		E2D25DC81B23892000E51461 /* UserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D25DC71B23892000E51461 /* UserController.swift */; };
 		E2D25DCF1B2391A700E51461 /* EntityEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D25DCE1B2391A700E51461 /* EntityEditViewController.swift */; };
 		E2D6BE311B0BADA000273538 /* NotificationTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2D6BE301B0BADA000273538 /* NotificationTableViewCell.xib */; };
@@ -276,7 +277,6 @@
 		7DC1763D1ACDFF010051BA6C /* Link.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Link.m; path = Model/Link.m; sourceTree = "<group>"; };
 		7DC9D4901A9D46D100234E3C /* UserEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserEditViewController.swift; sourceTree = "<group>"; };
 		7DC9D4921A9D4FAD00234E3C /* NotificationTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationTableViewCell.swift; sourceTree = "<group>"; };
-		7DC9D4931A9D4FAD00234E3C /* NotificationTableViewCellV2.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NotificationTableViewCellV2.xib; sourceTree = "<group>"; };
 		7DC9D4981A9D597400234E3C /* AutoSizingLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoSizingLabel.h; sourceTree = "<group>"; };
 		7DC9D4991A9D597400234E3C /* AutoSizingLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutoSizingLabel.m; sourceTree = "<group>"; };
 		7DD89F401AC62B90005CD004 /* UserTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTableViewController.swift; sourceTree = "<group>"; };
@@ -378,6 +378,8 @@
 		E2C7C5C31B2A19720045038A /* DefaultSettings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultSettings.plist; sourceTree = "<group>"; };
 		E2C7C5C51B2B491A0045038A /* PhotoPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoPickerViewController.swift; sourceTree = "<group>"; };
 		E2C7C5CA1B2CF2F80045038A /* ImageResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageResult.swift; sourceTree = "<group>"; };
+		E2CCAADF1B67CC0E0071170C /* NotificationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NotificationController.swift; path = Patchr/NotificationController.swift; sourceTree = "<group>"; };
+		E2CCAAE11B67EE2C0071170C /* chirp.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = chirp.caf; sourceTree = "<group>"; };
 		E2D25DC71B23892000E51461 /* UserController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UserController.swift; path = Patchr/UserController.swift; sourceTree = "<group>"; };
 		E2D25DCE1B2391A700E51461 /* EntityEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityEditViewController.swift; sourceTree = "<group>"; };
 		E2D6BE301B0BADA000273538 /* NotificationTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NotificationTableViewCell.xib; sourceTree = "<group>"; };
@@ -458,6 +460,7 @@
 				7D3D39EE1A6F09CC00A44CB2 /* BridgingHeader.h */,
 				7DA3D9111A72D5A60082D2AB /* DataController.swift */,
 				E2F618D51AFFACF00055D09C /* LocationController.swift */,
+				E2CCAADF1B67CC0E0071170C /* NotificationController.swift */,
 				7D3D39EF1A6F116E00A44CB2 /* Proxibase.swift */,
 				E2D25DC71B23892000E51461 /* UserController.swift */,
 				E238BAEE1B5405380094AF41 /* Patchr.entitlements */,
@@ -550,7 +553,6 @@
 				7D970C821AB26021008A4FC7 /* MessageTableViewCell.swift */,
 				E2F618E31B0523840055D09C /* MessageTableViewCell.xib */,
 				7DC9D4921A9D4FAD00234E3C /* NotificationTableViewCell.swift */,
-				7DC9D4931A9D4FAD00234E3C /* NotificationTableViewCellV2.xib */,
 				E2D6BE301B0BADA000273538 /* NotificationTableViewCell.xib */,
 				7D668A971A9C08DC005EDAF8 /* PatchTableViewCell.swift */,
 				E2A099FB1B06B20D00257B8B /* PatchNormalTableViewCell.xib */,
@@ -621,6 +623,7 @@
 		E25327CA1B13D34B00990A81 /* Sounds */ = {
 			isa = PBXGroup;
 			children = (
+				E2CCAAE11B67EE2C0071170C /* chirp.caf */,
 				E25327C61B13D34100990A81 /* notification_activity.aac */,
 				E25327C71B13D34100990A81 /* notification_candi_discovered_soft.aac */,
 				E25327C81B13D34200990A81 /* notification_carme.aac */,
@@ -946,11 +949,11 @@
 				E2EFD2661AF44214003937D4 /* Lobby.storyboard in Resources */,
 				7D3D39D61A6F086F00A44CB2 /* Images.xcassets in Resources */,
 				7D5545871AD33B1D007150E5 /* UserTableViewCell.xib in Resources */,
-				7DC9D4951A9D4FAD00234E3C /* NotificationTableViewCellV2.xib in Resources */,
 				E26B0C921B46D01E00706F4A /* ThumbnailCollectionViewCell.xib in Resources */,
 				E29F65511B61A9280000BEF4 /* PatchSearchCell.xib in Resources */,
 				E2D6BE311B0BADA000273538 /* NotificationTableViewCell.xib in Resources */,
 				E2C720CD1B50169400714B53 /* LaunchScreen.xib in Resources */,
+				E2CCAAE21B67EE2C0071170C /* chirp.caf in Resources */,
 				E20004DA1B07A78C00425694 /* PatchLargeTableViewCell.xib in Resources */,
 				E2A099FC1B06B20D00257B8B /* PatchNormalTableViewCell.xib in Resources */,
 				E2C720CF1B501E4100714B53 /* LaunchScreen2.xib in Resources */,
@@ -1141,6 +1144,7 @@
 				7D6E26471A7AB93F000128A7 /* UserDetailViewController.swift in Sources */,
 				7DA730921A71ACC9008C25FA /* Query.m in Sources */,
 				7DB6E0F81A8174E90017A42F /* _Message.m in Sources */,
+				E2CCAAE01B67CC0E0071170C /* NotificationController.swift in Sources */,
 				E2F6C9361B1E546F0067D959 /* RichType.m in Sources */,
 				7D39D3C51ABA21B200275759 /* CALayer+XibConfiguration.m in Sources */,
 				E25327C11B13942D00990A81 /* Shared.swift in Sources */,
@@ -1344,6 +1348,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_DISPLAY_NAME_SUFFIX = " α";
 				BUNDLE_ID_SUFFIX = "";
+				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
@@ -1419,6 +1424,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_DISPLAY_NAME_SUFFIX = "";
 				BUNDLE_ID_SUFFIX = "";
+				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
@@ -1529,6 +1535,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_DISPLAY_NAME_SUFFIX = " β";
 				BUNDLE_ID_SUFFIX = "";
+				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;

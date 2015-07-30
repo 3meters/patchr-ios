@@ -43,6 +43,7 @@ PODS:
     - SDWebImage/Core (= 3.7.3)
   - SDWebImage/Core (3.7.3)
   - TTTAttributedLabel (1.13.4)
+  - TWMessageBarManager (1.7.2)
   - UIDevice-Hardware (0.1.5)
   - UIScrollView-InfiniteScroll (0.7.2)
 
@@ -60,6 +61,7 @@ DEPENDENCIES:
   - RMCoreDataStack
   - SDWebImage (~> 3.7.2)
   - TTTAttributedLabel
+  - TWMessageBarManager
   - UIDevice-Hardware
   - UIScrollView-InfiniteScroll
 
@@ -86,6 +88,7 @@ SPEC CHECKSUMS:
   RMCoreDataStack: 58d81989a529a357dd1c5eda12a86ff5f13684b4
   SDWebImage: 1d2b1a1efda1ade1b00b6f8498865f8ddedc8a84
   TTTAttributedLabel: 0a2ac7b2dd726d32a070dafb01446026b11e624f
+  TWMessageBarManager: e7adc066ee425174f5dee79473fce913b1cd1662
   UIDevice-Hardware: b3695e58e0385155932e7889c32ed12e844e14a3
   UIScrollView-InfiniteScroll: cfa860f96f5a2e3b4575d59fe6d08d337093ac2a
 

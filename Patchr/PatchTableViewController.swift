@@ -90,22 +90,22 @@ class PatchTableViewController: QueryTableViewController {
 			case .Nearby:
 				self.navigationItem.title = "Nearby"
                 let nibName = SCREEN_NARROW ? "PatchNormalTableViewCell" : "PatchLargeTableViewCell"
-                self.tableView.registerNib(UINib(nibName: nibName, bundle: nil), forCellReuseIdentifier: "Cell")
+                self.tableView.registerNib(UINib(nibName: nibName, bundle: nil), forCellReuseIdentifier: CELL_IDENTIFIER)
 			case .Explore:
 				self.navigationItem.title = "Explore"
-                self.tableView.registerNib(UINib(nibName: "PatchNormalTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
+                self.tableView.registerNib(UINib(nibName: "PatchNormalTableViewCell", bundle: nil), forCellReuseIdentifier: CELL_IDENTIFIER)
 				self.searchDisplayController?.searchResultsTableView.rowHeight = self.tableView.rowHeight
 				self.searchDisplayController?.searchResultsTableView.estimatedRowHeight = self.tableView.estimatedRowHeight
 				self.tableView.contentOffset = CGPointMake(0, self.searchDisplayController?.searchBar.frame.size.height ?? 0) // Sets search bar under nav bar initially
 			case .Watching:
 				self.navigationItem.title = "Patches I'm watching"
-                self.tableView.registerNib(UINib(nibName: "PatchNormalTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
+                self.tableView.registerNib(UINib(nibName: "PatchNormalTableViewCell", bundle: nil), forCellReuseIdentifier: CELL_IDENTIFIER)
             case .Favorite:
                 self.navigationItem.title = "Favorites"
-                self.tableView.registerNib(UINib(nibName: "PatchNormalTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
+                self.tableView.registerNib(UINib(nibName: "PatchNormalTableViewCell", bundle: nil), forCellReuseIdentifier: CELL_IDENTIFIER)
 			case .Owns:
 				self.navigationItem.title = "Patches I own"
-                self.tableView.registerNib(UINib(nibName: "PatchNormalTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
+                self.tableView.registerNib(UINib(nibName: "PatchNormalTableViewCell", bundle: nil), forCellReuseIdentifier: CELL_IDENTIFIER)
 		}
     }
     

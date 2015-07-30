@@ -60,16 +60,34 @@ install_resource()
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPBLocalizations.bundle"
+  install_resource "TWMessageBarManager/Classes/Icons/icon-error.png"
+  install_resource "TWMessageBarManager/Classes/Icons/icon-error@2x.png"
+  install_resource "TWMessageBarManager/Classes/Icons/icon-info.png"
+  install_resource "TWMessageBarManager/Classes/Icons/icon-info@2x.png"
+  install_resource "TWMessageBarManager/Classes/Icons/icon-success.png"
+  install_resource "TWMessageBarManager/Classes/Icons/icon-success@2x.png"
   install_resource "libPhoneNumber-iOS/libPhoneNumber/NBPhoneNumberMetadata.plist"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPBLocalizations.bundle"
+  install_resource "TWMessageBarManager/Classes/Icons/icon-error.png"
+  install_resource "TWMessageBarManager/Classes/Icons/icon-error@2x.png"
+  install_resource "TWMessageBarManager/Classes/Icons/icon-info.png"
+  install_resource "TWMessageBarManager/Classes/Icons/icon-info@2x.png"
+  install_resource "TWMessageBarManager/Classes/Icons/icon-success.png"
+  install_resource "TWMessageBarManager/Classes/Icons/icon-success@2x.png"
   install_resource "libPhoneNumber-iOS/libPhoneNumber/NBPhoneNumberMetadata.plist"
 fi
 if [[ "$CONFIGURATION" == "AdHoc" ]]; then
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPBLocalizations.bundle"
+  install_resource "TWMessageBarManager/Classes/Icons/icon-error.png"
+  install_resource "TWMessageBarManager/Classes/Icons/icon-error@2x.png"
+  install_resource "TWMessageBarManager/Classes/Icons/icon-info.png"
+  install_resource "TWMessageBarManager/Classes/Icons/icon-info@2x.png"
+  install_resource "TWMessageBarManager/Classes/Icons/icon-success.png"
+  install_resource "TWMessageBarManager/Classes/Icons/icon-success@2x.png"
   install_resource "libPhoneNumber-iOS/libPhoneNumber/NBPhoneNumberMetadata.plist"
 fi
 

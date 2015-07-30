@@ -11,9 +11,6 @@ import Fabric
 import Crashlytics
 import Parse
 
-let PAApplicationDidReceiveRemoteNotification = "PAApplicationDidReceiveRemoteNotification"
-let PAapplicationDidBecomeActiveWithNonZeroBadge = "PAapplicationDidBecomeActiveWithNonZeroBadge"
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
@@ -25,6 +22,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+        
+        NSLog("Patchr launching...")
+        if launchOptions != nil {
+            NSLog("%@", launchOptions!)
+        }
         
         let keys = PatchrKeys()
         
@@ -67,31 +69,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         /* Setup parse for push notifications */
         Parse.setApplicationId(keys.parseApplicationId(), clientKey: keys.parseApplicationKey())
         
-        DataController.proxibase.registerInstallStandard {
-            response, error in
-            
-            if let error = ServerError(error) {
-                /*
-                 * If install registration fails the device will not accurately track notifications.
-                 */
-                NSLog("Error during registerInstall: \(error)")
-            }
-        }
-
         /* Get the latest on the authenticated user if we have one */
         if UserController.instance.authenticated {
             UserController.instance.signinAuto()
+            /*
+            * Register this install with the service. If install registration fails the
+            * device will not accurately track notifications.
+            */
+            DataController.proxibase.registerInstallStandard {
+                response, error in
+                if let error = ServerError(error) {
+                    NSLog("Error during registerInstall: \(error)")
+                }
+            }
         }
-        
+
         self.window?.tintColor = Colors.brandColor
         UISwitch.appearance().onTintColor = self.window?.tintColor
         
-        self.registerForRemoteNotifications()
+        NotificationController.instance.registerForRemoteNotifications()
         
         /* Show initial controller */
         route()
         
         return true
+    }
+    
+    /*--------------------------------------------------------------------------------------------
+    * Routing
+    *--------------------------------------------------------------------------------------------*/
+    
+    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
+        if Branch.getInstance().handleDeepLink(url) {
+            NSLog("Branch handled deep link: \(url.absoluteString!)")
+            return true
+        }
+        return false
     }
     
     func route() {
@@ -146,6 +159,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
+
+    /*--------------------------------------------------------------------------------------------
+    * Lifecycle
+    *--------------------------------------------------------------------------------------------*/
     
     func applicationDidEnterBackground(application: UIApplication) {
         NSNotificationCenter.defaultCenter().postNotificationName(Event.ApplicationDidEnterBackground.rawValue, object: nil)
@@ -160,60 +177,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationDidBecomeActive(application: UIApplication) {
-        
-        if application.applicationIconBadgeNumber > 0 {
-            NSNotificationCenter.defaultCenter().postNotificationName(PAapplicationDidBecomeActiveWithNonZeroBadge, object: self, userInfo: nil)
-        }
-        
-        application.applicationIconBadgeNumber = 0
-        
-        if PFInstallation.currentInstallation().badge != 0 {
-            PFInstallation.currentInstallation().badge = 0
-            PFInstallation.currentInstallation().saveEventually(nil)
-        }
         NSNotificationCenter.defaultCenter().postNotificationName(Event.ApplicationDidBecomeActive.rawValue, object: nil)
-    }
-    
-    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
-        if Branch.getInstance().handleDeepLink(url) {
-            NSLog("Branch handled deep link: \(url.absoluteString!)")
-            return true
-        }
-        return false
-    }
-    
-    func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
-        let parseInstallation = PFInstallation.currentInstallation()
-        parseInstallation.setDeviceTokenFromData(deviceToken)
-        parseInstallation.saveInBackgroundWithBlock(nil)
-    }
-    
-    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject],
-        fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
-        
-        var augmentedUserInfo = NSMutableDictionary(dictionary: userInfo)
-        augmentedUserInfo["receivedInApplicationState"] = application.applicationState.rawValue
-        NSNotificationCenter.defaultCenter().postNotificationName(PAApplicationDidReceiveRemoteNotification, object: self, userInfo: augmentedUserInfo as [NSObject : AnyObject])
-        completionHandler(.NewData)
-    }
-
-    func registerForRemoteNotifications() {
-        
-        let application = UIApplication.sharedApplication()
-        
-        // http://stackoverflow.com/a/28742391/2247399
-        if application.respondsToSelector("registerUserNotificationSettings:") {
-            
-            let types: UIUserNotificationType = (.Alert | .Badge | .Sound)
-            let settings: UIUserNotificationSettings = UIUserNotificationSettings(forTypes: types, categories: nil)
-            
-            application.registerUserNotificationSettings(settings)
-            application.registerForRemoteNotifications()
-            
-        } else {
-            // Register for Push Notifications before iOS 8
-            application.registerForRemoteNotificationTypes(.Alert | .Badge | .Sound)
-        }
     }
     
     func application(application: UIApplication, supportedInterfaceOrientationsForWindow window: UIWindow?) -> Int {
@@ -228,10 +192,50 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return Int(UIInterfaceOrientationMask.Portrait.rawValue);
     }
     
-    func application(application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: () -> Void) {
+    /*--------------------------------------------------------------------------------------------
+    * Notifications
+    *--------------------------------------------------------------------------------------------*/
+    
+    func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
+        NotificationController.instance.didRegisterForRemoteNotificationsWithDeviceToken(application, deviceToken: deviceToken)
+    }
+    
+    func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
+        NotificationController.instance.didFailToRegisterForRemoteNotificationsWithError(application, error: error)
+    }
+    
+    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
         /*
+         * This delegate method offers an opportunity for applications with the "remote-notification" 
+         * background mode to fetch appropriate new data in response to an incoming remote notification. 
+         * You should call the fetchCompletionHandler as soon as you're finished performing that operation, 
+         * so the system can accurately estimate its power and data cost.
+         * 
+         * This method will be invoked even if the application was launched or resumed because of the 
+         * remote notification. The respective delegate methods will be invoked first. Note that this 
+         * behavior is in contrast to application:didReceiveRemoteNotification:, which is not called in 
+         * those cases, and which will not be invoked if this method is implemented. 
+         *
+         * If app is in the background, this is called if the user taps on the notification in the
+         * pulldown tray.
+         */
+        NotificationController.instance.didReceiveRemoteNotification(application, userInfo: userInfo, fetchCompletionHandler: completionHandler)
+    }
+
+    /*--------------------------------------------------------------------------------------------
+    * Background Sessions
+    *--------------------------------------------------------------------------------------------*/
+    
+    func application(application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: () -> Void) {
+        /* 
+         * Applications using an NSURLSession with a background configuration may be launched or resumed in the background in order to handle the
+         * completion of tasks in that session, or to handle authentication. This method will be called with the identifier of the session needing
+         * attention. Once a session has been created from a configuration object with that identifier, the session's delegate will begin receiving
+         * callbacks. If such a session has already been created (if the app is being resumed, for instance), then the delegate will start receiving
+         * callbacks without any action by the application. You should call the completionHandler as soon as you're finished handling the callbacks.
+         *
          * This gets called if the share extension isn't running when the background data task 
-         * completes.
+         * completes. Use the identifier to reconstitute the URLSession.
          */
         self.backgroundSessionCompletionHandler = completionHandler
         NSLog("handleEventsForBackgroundURLSession called")

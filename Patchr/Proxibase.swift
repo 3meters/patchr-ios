@@ -531,7 +531,7 @@ public class Proxibase {
 		* If this is the case, then the image is uploaded to the users bucket on S3 and then, when that upload
 		* is completed, the user record is updated with the photo field.
 		*/
-		assert(UserController.instance.authenticated, "ProxibaseClient must be authenticated prior to editing the user")
+		assert(UserController.instance.authenticated, "Editing requites an authenticated user")
 		if let userId = UserController.instance.userId {
 			/*
 			* The queue and semaphore are used to synchronize the (optional) upload to S3 with the
@@ -607,6 +607,21 @@ public class Proxibase {
 		]
 		performPOSTRequestFor("do/registerInstall", parameters: parameters, completion: completion)
 	}
+
+    public func updateProximity(location: CLLocation, completion: (response:AnyObject?, error:NSError?) -> Void) {
+        let parameters = [
+            "installId": installationIdentifier,
+            "location": [
+                "accuracy": location.horizontalAccuracy,
+                "geometry": [
+                    location.coordinate.longitude,
+                    location.coordinate.latitude],
+                "lat": location.coordinate.latitude,
+                "lng": location.coordinate.longitude
+            ]
+        ]
+        performPOSTRequestFor("do/updateProximity", parameters: parameters, completion: completion)
+    }
 
 	private func authenticatedParameters(var parameters: NSDictionary) -> NSDictionary {
 		/* Skip if already includes a sessionKey */

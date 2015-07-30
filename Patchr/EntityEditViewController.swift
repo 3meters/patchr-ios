@@ -345,10 +345,13 @@ class EntityEditViewController: UITableViewController {
                     self.handleError(error)
                 }
                 else {
+                    
+                    /* Update recent patch list when a user sends a message */
                     if self.collection! == "messages" {
                         if let patch = DataController.instance.currentPatch {
                             
                             var recent: [String:AnyObject] = ["id_":patch.id_, "name":patch.name]
+                            recent["recentDate"] = Int(NSDate().timeIntervalSince1970 * 1000)
                             if patch.photo != nil {
                                 var photo: [String:AnyObject] = [
                                     "prefix":patch.photo.prefix,
@@ -356,12 +359,12 @@ class EntityEditViewController: UITableViewController {
                                     "width":Int(patch.photo.widthValue),
                                     "height":Int(patch.photo.heightValue)]
                                 recent["photo"] = photo
-                                recent["recentDate"] = Int(NSDate().timeIntervalSince1970 * 1000)
                             }
                             
                             Utils.updateRecents(recent)
                         }
                     }
+                    
                     let serverResponse = ServerResponse(response)
                     if serverResponse.resultCount == 1 {
                         println("Created entity \(serverResponse.resultID)")

@@ -33,6 +33,7 @@ pod 'libPhoneNumber-iOS', '~> 0.7'
 pod 'Branch'
 pod 'AirPhotoBrowser', :path => '~/code/AirPhotoBrowser'
 pod 'TTTAttributedLabel'
+pod 'TWMessageBarManager'
 
 end
 

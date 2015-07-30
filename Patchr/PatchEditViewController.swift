@@ -399,6 +399,6 @@ extension PatchEditViewController: UITableViewDelegate{
     private func textViewHeightForRowAtIndexPath(indexPath: NSIndexPath) -> CGFloat {
         let textViewWidth: CGFloat = descriptionField!.frame.size.width
         let size: CGSize = descriptionField.sizeThatFits(CGSizeMake(textViewWidth, CGFloat(FLT_MAX)))
-        return size.height + 48;
+        return size.height + 24;
     }
 }

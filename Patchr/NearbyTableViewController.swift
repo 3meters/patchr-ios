@@ -49,6 +49,14 @@ class NearbyTableViewController: PatchTableViewController {
     * Methods
     *--------------------------------------------------------------------------------------------*/
     
+    @IBAction func addPatchAction(sender: UIButton) {
+        if !UserController.instance.authenticated {
+            Shared.Toast("Sign in to create a new patch")
+            return
+        }
+        self.performSegueWithIdentifier("PatchEditSegue", sender: self)
+    }
+    
     override func refreshQueryItems(force: Bool = false, paging: Bool = false) {
         if force {
             LocationController.instance.locationLocked = nil
@@ -76,6 +84,14 @@ class NearbyTableViewController: PatchTableViewController {
         if self.userDefaults.boolForKey(PatchrUserDefaultKey("devModeEnabled")) {
             Shared.Toast(message)
             AudioController.instance.play(Sound.pop.rawValue)
+        }
+        
+        /*  Update location associated with this install */
+        DataController.proxibase.updateProximity(loc){
+            response, error in
+            if let error = ServerError(error) {
+                NSLog("Error during updateProximity: \(error)")
+            }
         }
         
         println(message)

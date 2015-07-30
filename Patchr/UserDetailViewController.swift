@@ -71,7 +71,7 @@ class UserDetailViewController: QueryTableViewController {
         
 		super.viewDidLoad()
 
-		tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: "Cell")
+		tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: CELL_IDENTIFIER)
 
 		let dateFormatter = NSDateFormatter()
 		dateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
@@ -228,16 +228,20 @@ class UserDetailViewController: QueryTableViewController {
         messageCell.description_.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
         messageCell.description_.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
         messageCell.description_.delegate = self
-
 		messageCell.description_.text = message.description_
-
-		if let photo = message.photo {
-            messageCell.photo.setImageWithPhoto(photo, animate: messageCell.photo.image == nil)
-            //messageCell.photoHolderHeight.constant = messageCell.photo.frame.height + 8
-		}
-		else {
-            //messageCell.photoHolderHeight.constant = 0
-		}
+        messageCell.description_.preferredMaxLayoutWidth = CGRectGetWidth(messageCell.description_.frame)
+        
+        if let photo = message.photo {
+            if !sizingOnly {
+                messageCell.photo.setImageWithPhoto(photo, animate: messageCell.photo.image == nil)
+            }
+            messageCell.photoTopSpace.constant = 8
+            messageCell.photoHeight.constant = messageCell.photo.bounds.size.width * 0.5625
+        }
+        else {
+            messageCell.photoTopSpace.constant = 0
+            messageCell.photoHeight.constant = 0
+        }
 
 		if message.creator != nil {
 			messageCell.userName.text = message.creator.name
@@ -310,12 +314,12 @@ extension  UserDetailViewController: UITableViewDelegate {
 
 		// https://github.com/smileyborg/TableViewCellWithAutoLayout
 
-		var cell = self.offscreenCells.objectForKey("Cell") as? UITableViewCell
+		var cell = self.offscreenCells.objectForKey(CELL_IDENTIFIER) as? UITableViewCell
 
 		if cell == nil {
 			let nibObjects = NSBundle.mainBundle().loadNibNamed(cellNibName, owner: self, options: nil)
 			cell = nibObjects[0] as? UITableViewCell
-			self.offscreenCells.setObject(cell!, forKey: "Cell")
+			self.offscreenCells.setObject(cell!, forKey: CELL_IDENTIFIER)
 		}
 
 		let object: AnyObject = self.fetchedResultsController.objectAtIndexPath(indexPath)

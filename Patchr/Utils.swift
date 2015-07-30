@@ -62,7 +62,7 @@ struct Utils {
     }
     
     static func updateRecents(recent: [String:AnyObject]) {
-    
+        
         if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
             if var recentPatches = groupDefaults.arrayForKey(PatchrUserDefaultKey("recent.patches")) as? [[String:AnyObject]] {
         

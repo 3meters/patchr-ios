@@ -118,9 +118,6 @@ class SearchViewController: UITableViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        if self.searchItems.count == 0 {
-            self.superSearchBar.becomeFirstResponder()
-        }
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -256,7 +253,12 @@ extension SearchViewController: UISearchBarDelegate {
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
         self.searchItems.removeAllObjects()
         self.tableView.reloadData()
+        self.superSearchBar.showsCancelButton = true
         self.emptyLabel.fadeOut()
+    }
+    
+    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
+        self.superSearchBar.showsCancelButton = false
     }
     
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
@@ -297,7 +299,7 @@ extension SearchViewController: UITableViewDelegate {
         }
         else {
         
-            var cell = tableView.dequeueReusableCellWithIdentifier("cell") as? PatchSearchCell
+            var cell = tableView.dequeueReusableCellWithIdentifier(CELL_IDENTIFIER) as? PatchSearchCell
             if cell == nil {
                 let nib:Array = NSBundle.mainBundle().loadNibNamed("PatchSearchCell", owner: self, options: nil)
                 cell = nib[0] as? PatchSearchCell

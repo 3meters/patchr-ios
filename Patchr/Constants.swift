@@ -25,6 +25,7 @@ let TIMEOUT_REQUEST: Int = 10   // Seconds
 
 let URI_PROXIBASE_SEARCH_IMAGES: String = "https://api.datamarket.azure.com/Bing/Search/v1"
 let NAMESPACE: String = "com.3meters.patchr.ios."
+let CELL_IDENTIFIER = "cell_identifier"
 
 func PatchrUserDefaultKey(subKey: String) -> String {
     return NAMESPACE + subKey

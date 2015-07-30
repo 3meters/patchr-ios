@@ -11,4 +11,5 @@ import UIKit
 class NotificationTableViewCell: MediaTableViewCell {
 
     @IBOutlet weak var iconImageView: UIImageView!
+    @IBOutlet weak var ageDot: UIView!
 }

@@ -52,7 +52,7 @@ class UserTableViewController: QueryTableViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
-		self.tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: "Cell")
+		self.tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: CELL_IDENTIFIER)
 
 		switch self.filter {
 			case .PatchWatchers:

@@ -104,7 +104,7 @@ class PatchDetailViewController: QueryTableViewController {
 
 		super.viewDidLoad()
 
-		tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: "Cell")
+		tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: CELL_IDENTIFIER)
         let bannerTapGestureRecognizer = UITapGestureRecognizer(target: self, action: "flipToInfo:")
         self.bannerGroup.addGestureRecognizer(bannerTapGestureRecognizer)
         let infoTapGestureRecognizer = UITapGestureRecognizer(target: self, action: "flipToBanner:")
@@ -140,6 +140,7 @@ class PatchDetailViewController: QueryTableViewController {
         watchersButton.alpha = 0.0
         originalTop = patchPhotoTop.constant
         self.contextButton?.setTitle("", forState: .Normal)
+        self.tableView.estimatedRowHeight = UITableViewAutomaticDimension
         
         watchButton.tintOff = UIColor.whiteColor()
         watchButton.tintPending = Colors.brandColor
@@ -198,6 +199,11 @@ class PatchDetailViewController: QueryTableViewController {
     }
 
     override func viewDidDisappear(animated: Bool) {
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.LikeDidChange, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.WatchDidChange, object: nil)
+    }
+    
+    deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
 
@@ -212,6 +218,7 @@ class PatchDetailViewController: QueryTableViewController {
                     self.refreshQueryItems(force: true)
                 }
 				self.patch = patch
+                self.patchId = patch!.id_
                 DataController.instance.currentPatch = patch    // Used for context for messages
                 self.drawButtons()
 				self.draw()
@@ -230,11 +237,7 @@ class PatchDetailViewController: QueryTableViewController {
 	/*--------------------------------------------------------------------------------------------
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
-	
-	@IBAction func numberOfLikesButtonAction(sender: UIButton) {
-		self.performSegueWithIdentifier("LikeListSegue", sender: self)
-	}
-
+    
 	@IBAction func numberOfWatchersButtonAction(sender: UIButton) {
 		self.performSegueWithIdentifier("WatchingListSegue", sender: self)
 	}
@@ -249,32 +252,9 @@ class PatchDetailViewController: QueryTableViewController {
         }
         else if contextAction == .CancelJoinRequest {
             self.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
-//            DataController.proxibase.deleteLinkById(patch!.userWatchId!) {
-//                response, error in
-//                
-//                if let error = ServerError(error) {
-//                    self.handleError(error)
-//                }
-//                else {
-//                    self.patch!.userWatchStatusValue = .NonMember
-//                }
-//                self.draw()
-//            }
         }
         else if contextAction == .SubmitJoinRequest {
             self.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
-            
-//            DataController.proxibase.insertLink(UserController.instance.userId! as String, toID: patch!.id_, linkType: .Watch) {
-//                response, error in
-//                
-//                if let error = ServerError(error) {
-//                    self.handleError(error)
-//                }
-//                else {
-//                    self.patch!.userWatchStatusValue = .Pending
-//                }
-//                self.draw()
-//            }
         }
         else if contextAction == .BrowseUsersWatching {
             self.performSegueWithIdentifier("WatchingListSegue", sender: self)
@@ -300,6 +280,23 @@ class PatchDetailViewController: QueryTableViewController {
     @IBAction func mapAction(sender: AnyObject) {
         if self.patch != nil {
             self.performSegueWithIdentifier("PatchMapSegue", sender: self)
+        }
+    }
+    
+    func handleRemoteNotification(notification: NSNotification) {
+        
+        if let userInfo = notification.userInfo {
+            let parentId = userInfo["parentId"] as? String
+            let targetId = userInfo["targetId"] as? String
+            
+            let impactedByNotification = self.patchId == parentId || self.patchId == targetId
+            
+            // Only refresh notifications if view has already been loaded
+            // and the notification is related to this Patch
+            if self.isViewLoaded() && impactedByNotification {
+                self.refreshControl?.beginRefreshing()
+                self.pullToRefreshAction(self.refreshControl)
+            }
         }
     }
     
@@ -547,10 +544,11 @@ class PatchDetailViewController: QueryTableViewController {
         
         cell.description_.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
         cell.description_.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
-        cell.description_.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
+        cell.description_.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
         cell.description_.delegate = self
         
 		cell.description_.text = message.description_
+        cell.description_.preferredMaxLayoutWidth = CGRectGetWidth(cell.description_.frame)
 
 		if let photo = message.photo {
             if !sizingOnly {
@@ -641,26 +639,6 @@ class PatchDetailViewController: QueryTableViewController {
         self.refreshQueryItems(force: true)
 	}
 
-	func handleRemoteNotification(notification: NSNotification) {
-
-		if let userInfo = notification.userInfo {
-			let parentId = userInfo["parentId"] as? String
-			let targetId = userInfo["targetId"] as? String
-
-			let impactedByNotification = self.patch?.id_ == parentId || self.patch?.id_ == targetId
-
-			// Only refresh notifications if view has already been loaded
-			// and the notification is related to this Patch
-			if self.isViewLoaded() && impactedByNotification {
-				self.refreshControl?.beginRefreshing()
-				self.pullToRefreshAction(self.refreshControl)
-			}
-		}
-	}
-
-	deinit {
-		NSNotificationCenter.defaultCenter().removeObserver(self)
-	}
 }
 
 class PatchItem: NSObject, UIActivityItemSource {
@@ -767,12 +745,12 @@ extension PatchDetailViewController: UITableViewDelegate {
 		// https://github.com/smileyborg/TableViewCellWithAutoLayout
 
 		/* Fetch or create our prototype cell */
-		var cell = self.offscreenCells.objectForKey("Cell") as? UITableViewCell
+		var cell = self.offscreenCells.objectForKey(CELL_IDENTIFIER) as? UITableViewCell
 
 		if cell == nil {
 			let nibObjects = NSBundle.mainBundle().loadNibNamed(cellNibName, owner: self, options: nil)
 			cell = nibObjects[0] as? UITableViewCell // Assumes only one view in the nib
-			self.offscreenCells.setObject(cell!, forKey: "Cell")
+			self.offscreenCells.setObject(cell!, forKey: CELL_IDENTIFIER)
 		}
 
 		/* Get the data */
@@ -783,10 +761,10 @@ extension PatchDetailViewController: UITableViewDelegate {
 
 		/* Request a restraint pass */
 		cell?.setNeedsUpdateConstraints()
-		cell?.updateConstraintsIfNeeded()
+        cell?.updateConstraintsIfNeeded()
 
 		/* Set the cell bounds using table width and cell height */
-		cell?.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: CGRectGetHeight(cell!.frame))
+		cell?.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: CGRectGetHeight(cell!.bounds))
 
 		/* Request a layout pass */
 		cell?.setNeedsLayout()
@@ -794,8 +772,13 @@ extension PatchDetailViewController: UITableViewDelegate {
 
 		/* Get height based on sizing to fit under compression using the current contraints */
 		var height = cell!.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
-
-		return height
+        
+        let queryResult  = object as! QueryItem
+        let entity = queryResult.object as! Entity
+        
+        //        NSLog("Height for row: \(entity.description_) \(height)")
+        
+        return height
 	}
 }
 
