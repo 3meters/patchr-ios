@@ -25,25 +25,25 @@
                                     <constraint firstAttribute="width" secondItem="YCP-ap-PEz" secondAttribute="height" multiplier="1:1" id="rYE-pR-TIR"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="here" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JU0-I1-ehC" userLabel="distance">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="here" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="27" translatesAutoresizingMaskIntoConstraints="NO" id="JU0-I1-ehC" userLabel="distance">
                                 <rect key="frame" x="8" y="125" width="27" height="17"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="14"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="1885 134TH PL SE" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kVo-vg-o2u" userLabel="place_name">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="1885 134TH PL SE" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="101" translatesAutoresizingMaskIntoConstraints="NO" id="kVo-vg-o2u" userLabel="place_name">
                                 <rect key="frame" x="162" y="8" width="101" height="15"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="12"/>
                                 <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Dillon's Birthday" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hHX-Wu-vRN" userLabel="name" customClass="AutoSizingLabel">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Dillon's Birthday" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="190" translatesAutoresizingMaskIntoConstraints="NO" id="hHX-Wu-vRN" userLabel="name" customClass="AutoSizingLabel">
                                 <rect key="frame" x="162" y="23" width="190" height="26"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="22"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="GROUP PATCH" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1IK-Gb-HNs" userLabel="type">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="GROUP PATCH" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="89" translatesAutoresizingMaskIntoConstraints="NO" id="1IK-Gb-HNs" userLabel="type">
                                 <rect key="frame" x="162" y="51" width="89" height="16"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="13"/>
                                 <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>

@@ -23,14 +23,13 @@ struct Utils {
     }
     
     static func DateTimeTag() -> String! {
-        let date = NSDate()
-        let globalGregorianCalendar = NSCalendar(calendarIdentifier: NSGregorianCalendar)
         
-        if let dc = globalGregorianCalendar?.components(.CalendarUnitYear | .CalendarUnitMonth | .CalendarUnitDay |
-            .CalendarUnitHour | .CalendarUnitMinute | .CalendarUnitSecond, fromDate: date) {
-                return String(format: "%04d%02d%02d_%02d%02d%02d", dc.year, dc.month, dc.day, dc.hour, dc.minute, dc.second)
-        }
-        return nil
+        let date = NSDate()     // Initialized to current date
+        let calendar = NSCalendar.currentCalendar()
+        let components = calendar.components(.CalendarUnitYear | .CalendarUnitMonth | .CalendarUnitDay |
+            .CalendarUnitHour | .CalendarUnitMinute | .CalendarUnitSecond, fromDate: date)
+        let dateTimeTag = String(format: "%04d%02d%02d_%02d%02d%02d", components.year, components.month, components.day, components.hour, components.minute, components.second)
+        return dateTimeTag
     }
     
     static func TemporaryFileURLForImage(image: UIImage) -> NSURL? {

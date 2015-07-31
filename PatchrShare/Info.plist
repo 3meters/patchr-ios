@@ -21,7 +21,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>85</string>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionAttributes</key>
@@ -31,16 +31,12 @@
 				<key>NSExtensionActivationSupportsImageWithMaxCount</key>
 				<integer>1</integer>
 				<key>NSExtensionActivationSupportsText</key>
-				<integer>1</integer>
+				<true/>
 				<key>NSExtensionActivationSupportsWebPageWithMaxCount</key>
 				<integer>1</integer>
 				<key>NSExtensionActivationSupportsWebURLWithMaxCount</key>
 				<integer>1</integer>
 			</dict>
-			<key>NSExtensionPointName</key>
-			<string>com.apple.share-services</string>
-			<key>NSExtensionPointVersion</key>
-			<string>1.0</string>
 		</dict>
 		<key>NSExtensionMainStoryboard</key>
 		<string>PatchrShare</string>
