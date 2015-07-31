@@ -1179,7 +1179,7 @@
                                                             <color key="textColor" red="0.60000002379999995" green="0.60000002379999995" blue="0.60000002379999995" alpha="1" colorSpace="calibratedRGB"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="top" horizontalHuggingPriority="251" verticalCompressionResistancePriority="752" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gpB-Pg-HNn" userLabel="info_description">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="top" horizontalHuggingPriority="251" verticalCompressionResistancePriority="752" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="382" translatesAutoresizingMaskIntoConstraints="NO" id="gpB-Pg-HNn" userLabel="info_description">
                                                             <rect key="frame" x="0.0" y="59" width="382" height="121"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" relation="lessThanOrEqual" constant="121" id="4Xq-MQ-9lb"/>
@@ -2075,7 +2075,7 @@
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3080 148th Ave SE" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Vq-md-Ja0" userLabel="address" customClass="AutoSizingLabel">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3080 148th Ave SE" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="380" translatesAutoresizingMaskIntoConstraints="NO" id="2Vq-md-Ja0" userLabel="address" customClass="AutoSizingLabel">
                                                     <rect key="frame" x="16" y="89" width="380" height="48"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="48" id="UPj-rk-clr"/>
@@ -3055,14 +3055,14 @@
         <image name="imgWatchLight" width="60" height="60"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="fno-E3-fgC"/>
         <segue reference="aqr-cO-OGv"/>
-        <segue reference="NVg-sh-qhX"/>
-        <segue reference="HbO-hl-kVs"/>
-        <segue reference="5MF-E5-yBl"/>
-        <segue reference="ZkF-VU-9mQ"/>
-        <segue reference="sNP-m8-m5g"/>
         <segue reference="W2H-Y3-qfq"/>
+        <segue reference="5MF-E5-yBl"/>
+        <segue reference="xAO-Qh-0VB"/>
+        <segue reference="mR4-Hl-YsE"/>
+        <segue reference="HbO-hl-kVs"/>
+        <segue reference="5gi-H6-rYN"/>
+        <segue reference="IOJ-HZ-5D3"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="1" green="0.50196078430000002" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

@@ -85,6 +85,14 @@ class NotificationsTableViewController: QueryTableViewController {
     * Events
     *--------------------------------------------------------------------------------------------*/
     
+    func dismissModal(sender: AnyObject?) {
+        if let button = sender as? UIBarButtonItem {
+            if let controller = button.target as? UIViewController {
+                controller.dismissViewControllerAnimated(true, completion: nil)
+            }
+        }
+    }
+    
     func handleRemoteNotification(notification: NSNotification) {
         
         if let userInfo = notification.userInfo {
@@ -113,14 +121,45 @@ class NotificationsTableViewController: QueryTableViewController {
                                 
                                 /* Show banner */
                                 let json:JSON = JSON(userInfo)
-                                let description = json["aps"]["alert"].string
+                                let alert = json["aps"]["alert"].string
+                                var description: String = alert!
+                                if json["description"] != nil {
+                                    description = json["description"].string!
+                                }
+                                var subtitle: String?
+                                if json["subtitle"] != nil && json["subtitle"].string != "subtitle" {
+                                    subtitle = json["subtitle"].string?.stringByReplacingOccurrencesOfString("<b>", withString: "", options: .LiteralSearch, range: nil)
+                                    subtitle = subtitle!.stringByReplacingOccurrencesOfString("</b>", withString: "", options: .LiteralSearch, range: nil)
+                                    if json["description"] == nil {
+                                        description = subtitle!
+                                    }
+                                    else {
+                                        description = "\(description)\n\n\(subtitle!)"
+                                    }
+                                }
                                 
-                                TWMessageBarManager.sharedInstance().styleSheet = AirStylesheet()
-                                
-                                TWMessageBarManager.sharedInstance().showMessageWithTitle("Notification",
-                                    description: description,
-                                    type: TWMessageBarMessageType.Info,
-                                    duration: 5.0) { }
+                                if json["photo"] != nil {
+                                    let prefix = json["photo"]["prefix"].string
+                                    let source = json["photo"]["source"].string
+                                    let width = json["photo"]["width"].int
+                                    let height = json["photo"]["height"].int
+                                    
+                                    var frameHeightPixels = Int(36 * PIXEL_SCALE)
+                                    var frameWidthPixels = Int(36 * PIXEL_SCALE)
+                                    
+                                    let photoUrl = PhotoUtils.url(prefix!, source: source!)
+                                    let photoUrlSized = PhotoUtils.urlSized(photoUrl, frameWidth: frameWidthPixels, frameHeight: frameHeightPixels, photoWidth: width, photoHeight: height)
+
+                                    SDWebImageManager.sharedManager().downloadImageWithURL(photoUrlSized, options: SDWebImageOptions.HighPriority, progress: nil, completed: {
+                                        (image:UIImage!, error:NSError!, cacheType:SDImageCacheType, finished:Bool, url:NSURL!) -> Void in
+                                        if image != nil && finished {
+                                            self.showNotificationBar(json["name"].string!, description: description, image: image, targetId: json["targetId"].string!)
+                                        }
+                                    })
+                                }
+                                else {
+                                    self.showNotificationBar("Notification", description: description, image: nil, targetId: json["targetId"].string!)
+                                }
                                 
                                 /* Add one because user isn't viewing nofications right now */
                                 incrementBadges()
@@ -280,6 +319,47 @@ class NotificationsTableViewController: QueryTableViewController {
         default: ()
         }
     }
+
+    func showNotificationBar(title: String, description: String, image: UIImage?, targetId: String) {
+        
+        TWMessageBarManager.sharedInstance().styleSheet = AirStylesheet(image: image)
+        TWMessageBarManager.sharedInstance().showMessageWithTitle(title,
+            description: description,
+            type: TWMessageBarMessageType.Info,
+            duration: 5.0) {
+                
+            if targetId.hasPrefix("me.") {
+                self.showViewControllerBySchema("message", targetId: targetId)
+            }
+            else if targetId.hasPrefix("pa.") {
+                self.showViewControllerBySchema("patch", targetId: targetId)
+            }
+        }
+    }
+    
+    func showViewControllerBySchema(schema: String, targetId: String) {
+        var controllerId: String?
+        if schema == "patch" {
+            controllerId = "PatchDetailViewController"
+        }
+        else if schema == "message" {
+            controllerId = "MessageDetailViewController"
+        }
+        
+        if controllerId != nil {
+            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+            if let controller = storyboard.instantiateViewControllerWithIdentifier(controllerId!) as? UIViewController {
+                if let patchController = controller as? PatchDetailViewController {
+                    patchController.patchId = targetId
+                }
+                else if let messageController = controller as? MessageDetailViewController {
+                    messageController.messageId = targetId
+                }
+                controller.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: Selector("dismissAction:"))
+                UIViewController.topMostViewController()?.presentViewController(UINavigationController(rootViewController: controller), animated: true, completion: nil)
+            }
+        }
+    }
     
     func clearBadges() {
         self.navigationController?.tabBarItem.badgeValue = nil
@@ -317,6 +397,13 @@ class NotificationsTableViewController: QueryTableViewController {
 }
 
 class AirStylesheet: NSObject, TWMessageBarStyleSheet {
+    
+    var image: UIImage?
+    
+    init(image: UIImage?) {
+        self.image = image
+    }
+    
     @objc func backgroundColorForMessageType(type: TWMessageBarMessageType) -> UIColor! {
         return Colors.brandColorDark
     }
@@ -326,7 +413,7 @@ class AirStylesheet: NSObject, TWMessageBarStyleSheet {
     }
     
     @objc func iconImageForMessageType(type: TWMessageBarMessageType) -> UIImage! {
-        let image = UIImage(named: "imgMessageDark")
+        let image = self.image ?? UIImage(named: "imgMessageDark")
         return image?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
     }
 }
