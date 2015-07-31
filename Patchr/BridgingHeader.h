@@ -15,6 +15,7 @@
 #import "UIView+BorderLayer.h"
 #import "Reachability.h"
 #import "AirTableView.h"
+#import "TTTAttributedLabel.h"
 
 #import <AFNetworking/AFNetworking.h>
 #import <AFNetworkActivityLogger/AFNetworkActivityLogger.h>
@@ -36,7 +37,6 @@
 #import <AdobeCreativeSDKFoundation/AdobeCreativeSDKFoundation.h>
 #import <AdobeCreativeSDKImage/AdobeCreativeSDKImage.h>
 #import <Branch.h>
-#import <TTTAttributedLabel.h>
 #import <TWMessageBarManager.h>
 #import <Keys/PatchrKeys.h>
 
