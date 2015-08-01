@@ -20,6 +20,7 @@ class NearbyTableViewController: PatchTableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         self.activityDate = DataController.instance.activityDate
         self.filter = .Nearby
     }

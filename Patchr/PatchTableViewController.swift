@@ -110,7 +110,18 @@ class PatchTableViewController: QueryTableViewController {
     }
     
     /*--------------------------------------------------------------------------------------------
-    * Lifecycle
+    * Events
+    *--------------------------------------------------------------------------------------------*/
+    
+    func mapAction(sender: AnyObject?) {
+        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableMapViewController") as? PatchTableMapViewController
+        controller!.fetchRequest = self.fetchedResultsController.fetchRequest
+        self.navigationController?.pushViewController(controller!, animated: true)
+    }
+    
+    /*--------------------------------------------------------------------------------------------
+    * Methods
     *--------------------------------------------------------------------------------------------*/
     
     override func configureCell(cell: UITableViewCell, object: AnyObject, sizingOnly: Bool = false) {
@@ -226,8 +237,10 @@ extension PatchTableViewController: UITableViewDelegate {
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
 			if let patch = queryResult.object as? Patch {
-				self.selectedPatch = patch
-				self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
+                let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+                let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController
+                controller!.patch = patch
+                self.navigationController?.pushViewController(controller!, animated: true)
 				return
 			}
 		}

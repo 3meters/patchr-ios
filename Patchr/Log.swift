@@ -12,25 +12,25 @@ struct Log {
     static func v(message: AnyObject?) {
         #if DEBUG
             if message != nil {
-                print(message, appendNewLine: true)
+                println(message!)
             }
         #endif
     }
     static func d(message: AnyObject?) {
         #if DEBUG
             if message != nil {
-                print(message, appendNewLine: true)
+                println(message!)
             }
         #endif
     }
     static func i(message: AnyObject?) {
         if message != nil {
-            print(message, appendNewLine: true)
+            println(message!)
         }
     }
     static func w(message: AnyObject?) {
         if message != nil {
-            print(message, appendNewLine: true)
+            println(message!)
         }
     }
 }

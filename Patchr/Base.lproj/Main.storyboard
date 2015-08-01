@@ -199,10 +199,9 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>
                     <connections>
-                        <segue destination="Qof-Oi-YrS" kind="relationship" relationship="viewControllers" id="viX-QG-DYu"/>
+                        <segue destination="u5x-d5-04K" kind="relationship" relationship="viewControllers" id="mCh-Uq-0w3"/>
                         <segue destination="Tfh-ka-aQD" kind="relationship" relationship="viewControllers" id="i91-nI-JEx"/>
-                        <segue destination="cit-av-u7D" kind="relationship" relationship="viewControllers" id="SU8-4e-Xwv"/>
-                        <segue destination="N8X-QF-Qp5" kind="relationship" relationship="viewControllers" id="eEW-0r-Zj5"/>
+                        <segue destination="N8X-QF-Qp5" kind="relationship" relationship="viewControllers" id="DYc-uM-Fr6"/>
                         <segue destination="SeP-eo-R0a" kind="relationship" relationship="viewControllers" id="2v0-PZ-X2w"/>
                     </connections>
                 </tabBarController>
@@ -267,7 +266,7 @@
                     </connections>
                 </searchDisplayController>
             </objects>
-            <point key="canvasLocation" x="-1592" y="-2559"/>
+            <point key="canvasLocation" x="-1580" y="-2543"/>
         </scene>
         <!--Message Detail-->
         <scene sceneID="VU4-xc-rjr">
@@ -815,16 +814,8 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Nearby" id="GNV-HW-5Kk">
-                        <barButtonItem key="leftBarButtonItem" title="Map" id="3Nc-Dd-3YH">
-                            <connections>
-                                <segue destination="umW-Ch-3Od" kind="show" identifier="MapViewSegue" id="aqr-cO-OGv"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="HBn-yl-RSy">
-                            <connections>
-                                <action selector="addPatchAction:" destination="uO7-Qs-6EE" id="85u-oy-3zG"/>
-                            </connections>
-                        </barButtonItem>
+                        <barButtonItem key="leftBarButtonItem" title="Map" id="3Nc-Dd-3YH"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="HBn-yl-RSy"/>
                     </navigationItem>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
@@ -1117,7 +1108,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EhT-Mz-zSJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4462" y="-2462"/>
+            <point key="canvasLocation" x="5274" y="-2462"/>
         </scene>
         <!--Patch Detail-->
         <scene sceneID="rB4-TC-ftZ">
@@ -1530,7 +1521,7 @@
         <!--Patch Edit-->
         <scene sceneID="NZW-vE-fuQ">
             <objects>
-                <tableViewController hidesBottomBarWhenPushed="YES" id="6cK-9t-35c" userLabel="Patch Edit" customClass="PatchEditViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="PatchEditViewController" hidesBottomBarWhenPushed="YES" id="6cK-9t-35c" userLabel="Patch Edit" customClass="PatchEditViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="JAH-IR-3qp" customClass="AirTableView">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1909,7 +1900,7 @@
         <!--Patch Table Map-->
         <scene sceneID="Re0-ic-jOO">
             <objects>
-                <viewController id="umW-Ch-3Od" userLabel="Patch Table Map" customClass="PatchTableMapViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PatchTableMapViewController" id="umW-Ch-3Od" userLabel="Patch Table Map" customClass="PatchTableMapViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="xYF-hJ-V9z"/>
                         <viewControllerLayoutGuide type="bottom" id="Ev1-hJ-dVK"/>
@@ -1918,7 +1909,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EP3-6S-3xM">
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EP3-6S-3xM">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                             </mapView>
                         </subviews>
@@ -1938,7 +1929,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZtI-z3-h4S" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="46" y="-2578"/>
+            <point key="canvasLocation" x="858" y="-2578"/>
         </scene>
         <!--Patch Map-->
         <scene sceneID="W4p-jk-LX2">
@@ -1952,7 +1943,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="QAb-bg-jV3">
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="QAb-bg-jV3">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="690"/>
                                 <gestureRecognizers/>
                                 <connections>
@@ -2814,7 +2805,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3k4-VH-3qu" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="zCP-i9-mRw" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="2724" y="-2462"/>
+            <point key="canvasLocation" x="3536" y="-2462"/>
         </scene>
         <!--User List-->
         <scene sceneID="Zkn-0N-HTc">
@@ -2937,12 +2928,12 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Z0r-4C-tJe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3465" y="-2462"/>
+            <point key="canvasLocation" x="4277" y="-2462"/>
         </scene>
         <!--Patch Edit Nav-->
         <scene sceneID="37u-Bz-ega">
             <objects>
-                <navigationController title="Patch Edit Nav" automaticallyAdjustsScrollViewInsets="NO" id="fom-HZ-yYr" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="PatchEditNavController" title="Patch Edit Nav" automaticallyAdjustsScrollViewInsets="NO" id="fom-HZ-yYr" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="gIe-mH-Mne"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="LGf-fP-bnP">
@@ -3012,14 +3003,15 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="esK-UP-55s" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1965" y="-2462"/>
+            <point key="canvasLocation" x="2777" y="-2462"/>
         </scene>
         <!--Search Nav-->
         <scene sceneID="AQV-gI-sRm">
             <objects>
-                <navigationController title="Search Nav" automaticallyAdjustsScrollViewInsets="NO" id="N8X-QF-Qp5" userLabel="Search Nav" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Search" image="UITabBarItemSearch" id="CNx-sd-o6U"/>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="N8X-QF-Qp5" userLabel="Search Nav" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" systemItem="search" id="CNx-sd-o6U"/>
                     <toolbarItems/>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="yzP-la-rcc">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -3034,6 +3026,83 @@
             </objects>
             <point key="canvasLocation" x="-1667" y="-2585"/>
         </scene>
+        <!--Instant Search-->
+        <scene sceneID="Nys-hG-Lay">
+            <objects>
+                <tableViewController storyboardIdentifier="InstantSearchViewController" id="nv7-ca-chd" userLabel="Instant Search" customClass="InstantSearchViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="64" sectionHeaderHeight="22" sectionFooterHeight="22" id="XeF-3a-8Uy">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <searchBar key="tableHeaderView" contentMode="redraw" placeholder="Search Patchr" id="DPY-x9-tpt">
+                            <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                            <textInputTraits key="textInputTraits"/>
+                        </searchBar>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="ElK-bO-TUX">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ElK-bO-TUX" id="Pxf-kV-AfR">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                                <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="nv7-ca-chd" id="Rnf-HQ-2ZI"/>
+                            <outlet property="delegate" destination="nv7-ca-chd" id="U9h-oC-fqT"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Search" id="GC9-p8-wFx"/>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="superSearchBar" destination="DPY-x9-tpt" id="NtP-ma-XlK"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Aw7-Vx-IGt" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-856" y="-2543"/>
+        </scene>
+        <!--Patch Nav-->
+        <scene sceneID="CxO-tp-fVg">
+            <objects>
+                <navigationController storyboardIdentifier="PatchNavigationController" id="u5x-d5-04K" userLabel="Patch Nav" customClass="PatchNavigationController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Patches" image="UITabBarItemNearby" id="QVY-vQ-NL1"/>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="MHE-YS-0Wd">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="dFa-9F-rNC" kind="show" identifier="PatchDetailSegue" id="QIn-lK-Pc6"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Rb3-b8-6Pi" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-206" y="-2585"/>
+        </scene>
+        <!--Instant Search Nav-->
+        <scene sceneID="ayu-YY-zLw">
+            <objects>
+                <navigationController storyboardIdentifier="InstantSearchNavigationController" automaticallyAdjustsScrollViewInsets="NO" id="2Z1-7d-ARY" userLabel="Instant Search Nav" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" systemItem="search" id="YKC-OA-sYz"/>
+                    <toolbarItems/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="58W-d4-dBa">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="nv7-ca-chd" kind="relationship" relationship="rootViewController" id="9dX-j6-RR1"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="TtF-lh-6Qx" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-909" y="-2585"/>
+        </scene>
     </scenes>
     <resources>
         <image name="UIButtonCamera" width="30" height="30"/>
@@ -3041,7 +3110,6 @@
         <image name="UITabBarItemMe" width="48" height="32"/>
         <image name="UITabBarItemNearby" width="30" height="30"/>
         <image name="UITabBarItemNotifications" width="48" height="32"/>
-        <image name="UITabBarItemSearch" width="30" height="30"/>
         <image name="imgCancelDark" width="48" height="48"/>
         <image name="imgEditDark" width="60" height="60"/>
         <image name="imgEditLight" width="22" height="22"/>
@@ -3055,14 +3123,13 @@
         <image name="imgWatchLight" width="60" height="60"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="aqr-cO-OGv"/>
-        <segue reference="W2H-Y3-qfq"/>
+        <segue reference="neb-F4-nDQ"/>
+        <segue reference="ode-oE-WBF"/>
         <segue reference="5MF-E5-yBl"/>
-        <segue reference="xAO-Qh-0VB"/>
-        <segue reference="mR4-Hl-YsE"/>
-        <segue reference="HbO-hl-kVs"/>
         <segue reference="5gi-H6-rYN"/>
         <segue reference="IOJ-HZ-5D3"/>
+        <segue reference="NVg-sh-qhX"/>
+        <segue reference="Eso-o1-Ie8"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="1" green="0.50196078430000002" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

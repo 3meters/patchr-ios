@@ -74,16 +74,18 @@ class PatchTableMapViewController: UIViewController, NSFetchedResultsControllerD
             for object in fetchedObjects {
                 if let queryResult = object as? QueryItem {
                     if let entity = queryResult.object as? Entity {
-                        let annotation = EntityAnnotation(entity: entity)
-                        self.mapView.addAnnotation(annotation)
-                        
-                        if let currentLocation = LocationController.instance.getLocation() {
-                            if let loc = entity.location {
-                                var patchLocation = CLLocation(latitude: loc.latValue, longitude: loc.lngValue)
-                                let dist = Float(currentLocation.distanceFromLocation(patchLocation))  // in meters
-                                if dist < nearestDistance {
-                                    nearestDistance = dist
-                                    self.nearestAnnotation = annotation
+                        if entity.location != nil {
+                            let annotation = EntityAnnotation(entity: entity)
+                            self.mapView.addAnnotation(annotation)
+                            
+                            if let currentLocation = LocationController.instance.getLocation() {
+                                if let loc = entity.location {
+                                    var patchLocation = CLLocation(latitude: loc.latValue, longitude: loc.lngValue)
+                                    let dist = Float(currentLocation.distanceFromLocation(patchLocation))  // in meters
+                                    if dist < nearestDistance {
+                                        nearestDistance = dist
+                                        self.nearestAnnotation = annotation
+                                    }
                                 }
                             }
                         }
