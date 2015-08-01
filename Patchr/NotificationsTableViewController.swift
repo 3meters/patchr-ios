@@ -190,7 +190,7 @@ class NotificationsTableViewController: QueryTableViewController {
     
     func applicationDidBecomeActive() {
         /* User either switched to patchr or turned their screen back on. */
-        println("Notifications tab: application did become active")
+        Log.d("Notifications tab: application did become active")
         if self.tabBarController?.selectedViewController == self.navigationController
             && self.navigationController?.topViewController == self {
                 // This view controller is currently visible. Don't badge.

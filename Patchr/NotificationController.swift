@@ -67,10 +67,10 @@ class NotificationController {
     
     func didReceiveRemoteNotification(application: UIApplication, userInfo: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
         
-        NSLog("Notification received...")
+        Log.d("Notification received...")
         let state: String = application.applicationState == .Background ? "background" : "foreground"
-        NSLog("App state: \(state)")
-        NSLog("%@", userInfo)
+        Log.d("App state: \(state)")
+        Log.d(String(format: "%@", userInfo))
         
         /* Tickle the activityDate so consumers know that something has happened */
         self.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
@@ -97,7 +97,7 @@ class NotificationController {
     }
     
     func didFailToRegisterForRemoteNotificationsWithError(application: UIApplication, error: NSError) {
-        println("failed to register for remote notifications: \(error)")
+        Log.w("failed to register for remote notifications: \(error)")
     }
     
     func registerForRemoteNotifications() {

@@ -135,6 +135,8 @@
 		E2A28E6F1B4A602200B3A2FE /* AirToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */; };
 		E2A28E711B4A624300B3A2FE /* AirWatchButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A28E701B4A624300B3A2FE /* AirWatchButton.swift */; };
 		E2C0D92F1B6BD55200E28CE9 /* TTTAttributedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D92E1B6BD55200E28CE9 /* TTTAttributedLabel.m */; };
+		E2C0D9311B6C415100E28CE9 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D9301B6C415100E28CE9 /* Log.swift */; };
+		E2C0D9321B6C46A100E28CE9 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D9301B6C415100E28CE9 /* Log.swift */; };
 		E2C720BD1B4C260200714B53 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C720BC1B4C260200714B53 /* Reachability.m */; };
 		E2C720C71B4EDAFE00714B53 /* AirLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C720C61B4EDAFE00714B53 /* AirLabel.swift */; };
 		E2C720CD1B50169400714B53 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2C720CC1B50169400714B53 /* LaunchScreen.xib */; };
@@ -371,6 +373,7 @@
 		E2A28E701B4A624300B3A2FE /* AirWatchButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirWatchButton.swift; sourceTree = "<group>"; };
 		E2C0D92D1B6BD55200E28CE9 /* TTTAttributedLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTTAttributedLabel.h; sourceTree = "<group>"; };
 		E2C0D92E1B6BD55200E28CE9 /* TTTAttributedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTTAttributedLabel.m; sourceTree = "<group>"; };
+		E2C0D9301B6C415100E28CE9 /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		E2C720BB1B4C25C900714B53 /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		E2C720BC1B4C260200714B53 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		E2C720C51B4D92F000714B53 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -771,6 +774,7 @@
 				E20C1FB61AFE462500A471E9 /* Shared.swift */,
 				84EF12AB1AA904700043EBBA /* Utils.swift */,
 				E281776D1B5B0EE200D65AC1 /* Reporting.swift */,
+				E2C0D9301B6C415100E28CE9 /* Log.swift */,
 			);
 			name = Shared;
 			sourceTree = "<group>";
@@ -1124,6 +1128,7 @@
 			files = (
 				7DB6E0FE1A8177060017A42F /* _User.m in Sources */,
 				E26B0C891B456F8A00706F4A /* ExtensionsUi.swift in Sources */,
+				E2C0D9311B6C415100E28CE9 /* Log.swift in Sources */,
 				E24A87261B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift in Sources */,
 				7D5545861AD33B1D007150E5 /* UserTableViewCell.swift in Sources */,
 				E2711C4C1AFD17E800CE71A1 /* AirTableViewCell.m in Sources */,
@@ -1240,6 +1245,7 @@
 			files = (
 				E281777F1B5D591400D65AC1 /* ShareViewController.swift in Sources */,
 				E238BAFF1B5715CF0094AF41 /* PatchSuggestCell.swift in Sources */,
+				E2C0D9321B6C46A100E28CE9 /* Log.swift in Sources */,
 				E238BAF11B5429850094AF41 /* PatchPickerViewController.swift in Sources */,
 				E28177761B5C39E200D65AC1 /* AwsS3.swift in Sources */,
 				E23E02001B5873CB0035CCF0 /* SwiftyJSON.swift in Sources */,

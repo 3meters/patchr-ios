@@ -56,7 +56,7 @@ class ShareViewController: SLComposeServiceViewController, PatchPickerViewContro
     override func presentationAnimationDidFinish() {
         super.presentationAnimationDidFinish()
         
-        NSLog("Presenting patchr extension")
+        Log.d("Presenting patchr extension")
         placeholder = "Your comments"
         
         for item: AnyObject in self.extensionContext!.inputItems {
@@ -64,7 +64,7 @@ class ShareViewController: SLComposeServiceViewController, PatchPickerViewContro
             let inputItem = item as! NSExtensionItem
             for provider in inputItem.attachments as! [NSItemProvider] {
                 
-                NSLog("Provider type: \(provider.registeredTypeIdentifiers)")
+                Log.d("Provider type: \(provider.registeredTypeIdentifiers)")
                 
                 /* Check for image */
                 
@@ -85,12 +85,12 @@ class ShareViewController: SLComposeServiceViewController, PatchPickerViewContro
                         
                         provider.loadItemForTypeIdentifier(identifier, options: nil) {
                             content, error in
-                            NSLog("Processing image")
-                            NSLog("Content: \(content)")
+                            Log.d("Processing image")
+                            Log.d("Content: \(content)")
                             
                             if error == nil {
                                 if let url = content as? NSURL {
-                                    NSLog("As NSURL...")
+                                    Log.d("As NSURL...")
                                     if let data = NSData(contentsOfURL: url) {
                                         dispatch_async(dispatch_get_main_queue(), {
                                             strongSelf.image = UIImage(data: data)
@@ -99,14 +99,14 @@ class ShareViewController: SLComposeServiceViewController, PatchPickerViewContro
                                     }
                                 }
                                 else if let data = content as? NSData {
-                                    NSLog("As NSData...")
+                                    Log.d("As NSData...")
                                     dispatch_async(dispatch_get_main_queue(), {
                                         strongSelf.image = UIImage(data: data)
                                         strongSelf.validateContent()
                                     })
                                 }
                                 else if let image = content as? UIImage {
-                                    NSLog("As UIImage...")
+                                    Log.d("As UIImage...")
                                     dispatch_async(dispatch_get_main_queue(), {
                                         strongSelf.image = image
                                         strongSelf.validateContent()
@@ -137,11 +137,11 @@ class ShareViewController: SLComposeServiceViewController, PatchPickerViewContro
                             
                             provider.loadItemForTypeIdentifier("public.url", options: nil) {
                                 content, error in
-                                NSLog("Processing url")
+                                Log.d("Processing url")
                                 
                                 if error == nil {
                                     if let url = content as? NSURL {
-                                        NSLog("Found url!: \(url.absoluteString!)")
+                                        Log.d("Found url!: \(url.absoluteString!)")
                                         /*
                                          * When sharing url from chrome, the textView is set to the page
                                          * title so is not empty.

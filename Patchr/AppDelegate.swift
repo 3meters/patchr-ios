@@ -23,9 +23,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        NSLog("Patchr launching...")
+        Log.d("Patchr launching...")
         if launchOptions != nil {
-            NSLog("%@", launchOptions!)
+            Log.d(String(format: "%@", launchOptions!))
         }
         
         let keys = PatchrKeys()
@@ -79,7 +79,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             DataController.proxibase.registerInstallStandard {
                 response, error in
                 if let error = ServerError(error) {
-                    NSLog("Error during registerInstall: \(error)")
+                    Log.w("Error during registerInstall: \(error)")
                 }
             }
         }
@@ -87,7 +87,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             DataController.proxibase.registerInstallStandard {
                 response, error in
                 if let error = ServerError(error) {
-                    NSLog("Error during registerInstall: \(error)")
+                    Log.w("Error during registerInstall: \(error)")
                 }
             }
         }
@@ -109,7 +109,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
         if Branch.getInstance().handleDeepLink(url) {
-            NSLog("Branch handled deep link: \(url.absoluteString!)")
+            Log.d("Branch handled deep link: \(url.absoluteString!)")
             return true
         }
         return false
@@ -246,7 +246,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          * completes. Use the identifier to reconstitute the URLSession.
          */
         self.backgroundSessionCompletionHandler = completionHandler
-        NSLog("handleEventsForBackgroundURLSession called")
+        Log.d("handleEventsForBackgroundURLSession called")
         Shared.Toast("Message Posted!")
     }
 }

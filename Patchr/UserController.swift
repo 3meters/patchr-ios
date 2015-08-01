@@ -47,12 +47,12 @@ class UserController: NSObject {
         let json = JSON(response)
         if let jsonString = json["user"].rawString() {
             jsonUser = jsonString
-            println("User signed in:")
-            println(jsonUser!)
+            Log.d("User signed in:")
+            Log.d(jsonUser!)
         }
         if let jsonString = json["session"].rawString() {
             jsonSession = jsonString
-            println(jsonSession!)
+            Log.d(jsonSession!)
         }
         userName = json["user"]["name"].string
         userId = json["session"]["_owner"].string

@@ -426,8 +426,8 @@ public class Proxibase {
                                  * If the update fails, then the user-creation still succeeded.
 								 * Log the second error, but don't take any action.
                                  */
-								println("** Error during update after user creation")
-								println(updateError)
+								Log.w("** Error during update after user creation")
+								Log.w(updateError)
 							}
 							dispatch_semaphore_signal(semaphore)
 						}

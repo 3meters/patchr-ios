@@ -68,7 +68,7 @@ class SearchViewController: UITableViewController {
                 location, error in
                 
                 if let loc = location {
-                    NSLog("One shot location received")
+                    Log.d("One shot location received")
                     self.locationCurrent = loc
                 }
                 self.manager = nil
@@ -157,7 +157,7 @@ class SearchViewController: UITableViewController {
         self.progress?.show(true)
         let searchString: String = self.searchString!
         
-        NSLog("Search call: \(searchString)")
+        Log.d("Search call: \(searchString)")
         
         var endpoint: String = "https://api.aircandi.com/v1/suggest"
         var request = NSMutableURLRequest(URL: NSURL(string: endpoint)!)

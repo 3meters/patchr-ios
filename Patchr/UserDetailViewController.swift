@@ -178,7 +178,7 @@ class UserDetailViewController: QueryTableViewController {
 			response, error in
             
 			if error != nil {
-				NSLog("Error during logout \(error)")
+				Log.w("Error during logout \(error)")
 			}
             
             /* Make sure state is cleared */

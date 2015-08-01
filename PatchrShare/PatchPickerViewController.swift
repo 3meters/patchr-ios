@@ -61,7 +61,7 @@ class PatchPickerViewController: UITableViewController {
                 location, error in
                 
                 if let loc = location {
-                    NSLog("One shot location received")
+                    Log.d("One shot location received")
                     self.locationCurrent = loc
                 }
                 self.manager = nil
@@ -132,7 +132,7 @@ class PatchPickerViewController: UITableViewController {
         self.searchInProgress = true
         let searchString = self.searchEdit.text
         
-        NSLog("Suggest call: \(searchString)")
+        Log.d("Suggest call: \(searchString)")
         
         var endpoint: String = "https://api.aircandi.com/v1/suggest"
         var request = NSMutableURLRequest(URL: NSURL(string: endpoint)!)

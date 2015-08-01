@@ -67,7 +67,7 @@ extension UIView {
         }
         var count = 0
         for subview in self.subviews {
-            println("\(indent)\(count++). \(subview.frame)")
+            Log.d("\(indent)\(count++). \(subview.frame)")
             subview.showSubviews(level: level + 1)
         }
     }
@@ -162,7 +162,7 @@ extension UIViewController {
                 response, error in
                 
                 if error != nil {
-                    NSLog("Error during logout \(error)")
+                    Log.w("Error during logout \(error)")
                 }
                 
                 /* Make sure state is cleared */
@@ -184,10 +184,10 @@ extension UIViewController {
             appDelegate.window!.setRootViewController(destinationViewController, animated: true)
         }
         
-        println("Network Error Summary")
-        println(error.message)
-        println(error.code)
-        println(error.description)
+        Log.w("Network Error Summary")
+        Log.w(error.message)
+        Log.w(error.code.rawValue)
+        Log.w(error.description)
     }
     
     func Alert(title: String?, message: String? = nil, cancelButtonTitle: String = "OK") {

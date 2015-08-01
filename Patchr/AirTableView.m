@@ -58,19 +58,16 @@
 }
 
 -(void)scrollRectToVisible:(CGRect)rect animated:(BOOL)animated {
-    // NSLog("ignoring call to scrollRectToVisible on UITableView")
     // UIScrollView responds strangely when a textfield becomes first responder
     // http://stackoverflow.com/a/12640831/2247399
     return;
 }
 
 -(void)scrollToNearestSelectedRowAtScrollPosition:(UITableViewScrollPosition)scrollPosition animated:(BOOL)animated {
-    // NSLog("ignoring call to scrollToNearestSelectedRowAtScrollPosition on UITableView")
     return;
 }
 
 -(void)scrollToRowAtIndexPath:(NSIndexPath *)indexPath atScrollPosition:(UITableViewScrollPosition)scrollPosition animated:(BOOL)animated {
-    // NSLog("ignoring call to scrollToRowAtIndexPath on UITableView")
     return;
 }
 

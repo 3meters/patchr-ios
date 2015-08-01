@@ -367,7 +367,7 @@ class EntityEditViewController: UITableViewController {
                     
                     let serverResponse = ServerResponse(response)
                     if serverResponse.resultCount == 1 {
-                        println("Created entity \(serverResponse.resultID)")
+                        Log.d("Created entity \(serverResponse.resultID)")
                         DataController.instance.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
                     }
                     
@@ -409,7 +409,7 @@ class EntityEditViewController: UITableViewController {
                     self.handleError(error)
                 }
                 else {
-                    println("Update entity successful")
+                    Log.d("Update entity successful")
                     DataController.instance.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
                     self.performBack(animated: true)
                     progress.mode = MBProgressHUDMode.Text
@@ -443,7 +443,7 @@ class EntityEditViewController: UITableViewController {
                         response, error in
                         
                         if error != nil {
-                            NSLog("Error during logout \(error)")
+                            Log.w("Error during logout \(error)")
                         }
                         
                         /* Return to the lobby */

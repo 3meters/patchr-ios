@@ -121,7 +121,7 @@ class DataController: NSObject {
 				withMessageId(entityId, refresh: refresh, completion: completion)
             
 			default:
-				NSLog("WARNING: withEntity not currently implemented for id of form \(entityId)")
+				Log.w("WARNING: withEntity not currently implemented for id of form \(entityId)")
 				completion(nil)
 		}
 	}
@@ -439,11 +439,11 @@ enum DataStoreQueryName: String {
 extension DataController: RMCoreDataStackDelegate {
     
 	func coreDataStack(stack: RMCoreDataStack!, didFinishInitializingWithInfo info: [NSObject:AnyObject]!) {
-		NSLog("[%@ %@]", reflect(self).summary, __FUNCTION__)
+        Log.d(String(format: "[%@ %@]", reflect(self).summary, __FUNCTION__))
 	}
 
 	func coreDataStack(stack: RMCoreDataStack!, failedInitializingWithInfo info: [NSObject:AnyObject]!) {
-		NSLog("[%@ %@]", reflect(self).summary, __FUNCTION__)
+        Log.d(String(format: "[%@ %@]", reflect(self).summary, __FUNCTION__))
 	}
 }
 

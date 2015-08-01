@@ -23,7 +23,7 @@ class MainTabBarController: UITabBarController {
     
     func applicationWillEnterForeground() {
         /* User either switched to patchr or turned their screen back on. */
-        println("Application will enter foreground")
+        Log.d("Application will enter foreground")
         LocationController.instance.locationLocked = nil
     }
     

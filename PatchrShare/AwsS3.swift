@@ -52,7 +52,7 @@ public class S3: NSObject {
     }
     
     func uploadImage(var image: UIImage, key: String) {
-        NSLog("Posting image to s3...")
+        Log.d("Posting image to s3...")
         image = Utils.prepareImage(image)   // resizing
         /*
          * We need to stash the image as a file in the shared container.
@@ -81,12 +81,12 @@ public class S3: NSObject {
             (task) -> AnyObject! in
             
             if task.error != nil {
-                NSLog("getPreSignedURL error: %@", task.error)
+                Log.w(String(format: "getPreSignedURL error: %@", task.error))
                 return nil
             }
             
             var preSignedUrl = task.result as! NSURL
-            NSLog("S3 upload pre-signedUrl: %@", preSignedUrl)
+            Log.d(String(format: "S3 upload pre-signedUrl: %@", preSignedUrl))
             
             var request = NSMutableURLRequest(URL: preSignedUrl)
             request.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringLocalCacheData
@@ -145,7 +145,7 @@ public class S3: NSObject {
 extension S3 : NSURLSessionDelegate {
     
     func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
-        NSLog("Did receive data: %@", NSString(data: data, encoding: NSUTF8StringEncoding)!)
+        Log.d(String(format: "Did receive data: %@", NSString(data: data, encoding: NSUTF8StringEncoding)!))
     }
     
     func URLSession(session: NSURLSession, uploadTask: NSURLSessionTask, didCompleteWithError error: NSError?) {
@@ -158,15 +158,15 @@ extension S3 : NSURLSessionDelegate {
             if NSFileManager.defaultManager().isDeletableFileAtPath(uploadInfo.fileUrl.path!) {
                 let success = NSFileManager.defaultManager().removeItemAtPath(uploadInfo.fileUrl.path!, error: &delError)
                 if !success {
-                    println("Error removing file at path: \(error?.description)")
+                    Log.w("Error removing file at path: \(error?.description)")
                 }
             }
 
             if error != nil {
-                NSLog("S3 upload task: %@ completed with error: %@", uploadTask, error!.localizedDescription)
+                Log.w(String(format: "S3 upload task: %@ completed with error: %@", uploadTask, error!.localizedDescription))
             }
             else {
-                NSLog("S3 upload task: %@ completed", uploadTask)
+                Log.d(String(format: "S3 upload task: %@ completed", uploadTask))
                 
                 /* AWS signed requests do not support ACL yet so it has to be set in a separate call. */
                 let aclRequest = AWSS3PutObjectAclRequest()
@@ -179,10 +179,10 @@ extension S3 : NSURLSessionDelegate {
                     
                     dispatch_async(dispatch_get_main_queue()){
                         if task.error != nil {
-                            NSLog("Error putObjectAcl: %@", task.error.localizedDescription);
+                            Log.w(String(format: "Error putObjectAcl: %@", task.error.localizedDescription))
                         }
                         else {
-                            NSLog("ACL for an uploaded file was changed successfully!");
+                            Log.d("ACL for an uploaded file was changed successfully!")
                         }
                     }
                     return nil

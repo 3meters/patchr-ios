@@ -153,9 +153,9 @@ class AirImageButton: UIButton {
         }
         
         if error != nil {
-            println("Image fetch failed: " + error!.localizedDescription)
+            Log.w("Image fetch failed: " + error!.localizedDescription)
             if url != nil {
-                println(url?.standardizedURL!)
+                Log.w(url?.absoluteString)
             }
             self.contentMode = UIViewContentMode.Center
             self.setImage(UIImage(named: "imgBroken250Light"), forState:UIControlState.Normal)

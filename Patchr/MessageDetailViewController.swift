@@ -225,7 +225,7 @@ class MessageDetailViewController: UITableViewController {
                     UIViewController.topMostViewController()!.handleError(error)
                 }
                 else {
-                    NSLog("Branch link created: \(url!)")
+                    Log.d("Branch link created: \(url!)")
                     var message: MessageItem = MessageItem(entity: self.message!, shareUrl: url!)
                     
                     let activityViewController = UIActivityViewController(

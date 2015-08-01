@@ -58,16 +58,16 @@ class LocationController: NSObject {
     }
     
     func stopUpdates(){
-        println("Location updates stopped")
-        println("***************************************")
+        Log.d("Location updates stopped")
+        Log.d("***************************************")
         if self.locationManager != nil {
             self.locationManager.stopUpdatingLocation()
         }
     }
     
     func startUpdates(){
-        println("Location updates started")
-        println("***************************************")
+        Log.d("Location updates started")
+        Log.d("***************************************")
         
         if CLLocationManager.authorizationStatus() == .NotDetermined {
             if self.locationManager.respondsToSelector(Selector("requestWhenInUseAuthorization")) {
@@ -139,7 +139,7 @@ extension LocationController: CLLocationManagerDelegate {
 	}
     
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
-        println("Location update received")
+        Log.d("Location update received")
         
         if let location = locations.last as? CLLocation {
             
@@ -155,7 +155,7 @@ extension LocationController: CLLocationManagerDelegate {
                     let moved = Int(location.distanceFromLocation(locPrev))
                     message = "Location received: lat: \(lat), lng: \(lng), acc: \(location.horizontalAccuracy)m, age: \(age)s, moved: \(moved)m"
                 }
-                println(message)
+                Log.d(message)
             }
             
             if !isValidLocation(location, oldLocation: self.locationLocked) {
@@ -163,18 +163,18 @@ extension LocationController: CLLocationManagerDelegate {
             }
             
             if Int(location.horizontalAccuracy) > ACCURACY_MINIMUM {
-                println("Location rejected for crap accuracy: \(Int(location.horizontalAccuracy))")
+                Log.d("Location rejected for crap accuracy: \(Int(location.horizontalAccuracy))")
                 return
             }
             
             if let locLocked = self.locationLocked {
                 let moved = Int(location.distanceFromLocation(locLocked))
                 if moved < MIN_DISPLACEMENT {
-                    println("Location update ignored: distance moved: \(moved)")
+                    Log.d("Location update ignored: distance moved: \(moved)")
                     return
                 }
                 if Int(location.horizontalAccuracy) > Int(locLocked.horizontalAccuracy / 2.0) {
-                    println("Location updated ignored: current acc: \(Int(locLocked.horizontalAccuracy)) new acc: \(Int(location.horizontalAccuracy))")
+                    Log.d("Location updated ignored: current acc: \(Int(locLocked.horizontalAccuracy)) new acc: \(Int(location.horizontalAccuracy))")
                     return
                 }
             }

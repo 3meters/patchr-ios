@@ -39,7 +39,7 @@ struct Utils {
              * Note: This method of getting a temporary file path is not the recommended method. See the docs for NSTemporaryDirectory. 
              */
             let temporaryFilePath = NSTemporaryDirectory() + "patchr_temp_file_\(temporaryFileCount).jpg"
-            println(temporaryFilePath)
+            Log.d(temporaryFilePath)
             
             if imageData.writeToFile(temporaryFilePath, atomically: false) {
                 return NSURL(fileURLWithPath: temporaryFilePath)

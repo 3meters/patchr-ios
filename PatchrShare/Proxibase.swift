@@ -20,7 +20,7 @@ class Proxibase: NSObject {
     var patch: [String:AnyObject]!
     
     func postMessage(message: [String:AnyObject], patch: [String:AnyObject]) {
-        NSLog("Posting message...")
+        Log.d("Posting message...")
         
         self.patch = patch
         
@@ -43,7 +43,7 @@ class Proxibase: NSObject {
 
 extension Proxibase: NSURLSessionDelegate {
     func URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession) {
-        NSLog("Session finished")
+        Log.d("Session finished")
     }
 }
 
@@ -51,10 +51,10 @@ extension Proxibase: NSURLSessionTaskDelegate {
     
     func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
         if task.error != nil {
-            NSLog("Session error while posting message: \(task.error!.localizedDescription)")
+            Log.w("Session error while posting message: \(task.error!.localizedDescription)")
         }
         else {
-            NSLog("Message posted!")
+            Log.d("Message posted!")
             if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
                 
                 let patchId: String = ((patch["_id"] != nil) ? patch["_id"] : patch["id_"]) as! String

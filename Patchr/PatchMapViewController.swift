@@ -26,7 +26,7 @@ class PatchMapViewController: UIViewController {
     @IBOutlet weak var mapView: MKMapView!
     
     deinit {
-        println("-- deinit PatchMapVC")
+        Log.d("-- deinit PatchMapVC")
     }
     
     override func viewWillAppear(animated: Bool) {

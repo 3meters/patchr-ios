@@ -76,7 +76,7 @@ class SignInEditViewController: UITableViewController, UITextFieldDelegate {
                     response, error in
                     
                     if let error = ServerError(error) {
-                        NSLog("Error during registerInstall: \(error)")
+                        Log.w("Error during registerInstall: \(error)")
                     }
                     
                     let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate

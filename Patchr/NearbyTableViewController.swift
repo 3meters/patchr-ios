@@ -90,11 +90,11 @@ class NearbyTableViewController: PatchTableViewController {
         DataController.proxibase.updateProximity(loc){
             response, error in
             if let error = ServerError(error) {
-                NSLog("Error during updateProximity: \(error)")
+                Log.w("Error during updateProximity: \(error)")
             }
         }
         
-        println(message)
+        Log.d(message)
         
         refresh()
     }

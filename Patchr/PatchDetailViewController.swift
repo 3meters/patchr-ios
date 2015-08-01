@@ -349,7 +349,7 @@ class PatchDetailViewController: QueryTableViewController {
                     UIViewController.topMostViewController()!.handleError(error)
                 }
                 else {
-                    NSLog("Branch link created: \(url!)")
+                    Log.d("Branch link created: \(url!)")
                     var patch: PatchItem = PatchItem(entity: self.patch!, shareUrl: url!)
                     
                     let activityViewController = UIActivityViewController(
@@ -800,7 +800,7 @@ extension PatchDetailViewController: UITableViewDelegate {
         let queryResult  = object as! QueryItem
         let entity = queryResult.object as! Entity
         
-        //        NSLog("Height for row: \(entity.description_) \(height)")
+        //        Log.d("Height for row: \(entity.description_) \(height)")
         
         return height
 	}

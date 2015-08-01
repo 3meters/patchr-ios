@@ -25,7 +25,7 @@
     } else if ([schema isEqualToString:@"place"]) {
         return [Place class];
     }
-    // NSLog(@"Unknown model class for schema %@", schema);
+    // Log.d(@"Unknown model class for schema %@", schema);
     return nil;
 }
 
