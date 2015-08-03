@@ -47,6 +47,11 @@ class SettingsTableViewController: UITableViewController, MFMailComposeViewContr
         self.developmentCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        setScreenName("Settings")
+    }
+    
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/

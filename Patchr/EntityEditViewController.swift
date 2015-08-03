@@ -351,7 +351,7 @@ class EntityEditViewController: UITableViewController {
                         if let patch = DataController.instance.currentPatch {
                             
                             var recent: [String:AnyObject] = ["id_":patch.id_, "name":patch.name]
-                            recent["recentDate"] = Int(NSDate().timeIntervalSince1970 * 1000)
+                            recent["recentDate"] = NSNumber(longLong: Int64(NSDate().timeIntervalSince1970 * 1000)) // Only way to store Int64 as AnyObject
                             if patch.photo != nil {
                                 var photo: [String:AnyObject] = [
                                     "prefix":patch.photo.prefix,

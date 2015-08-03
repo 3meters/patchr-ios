@@ -84,8 +84,8 @@ struct Utils {
                 /* Sort descending */
                 recentPatches.sort {
                     item1, item2 in
-                    let date1 = item1["recentDate"] as! Int
-                    let date2 = item2["recentDate"] as! Int
+                    let date1: Int64 = (item1["recentDate"] as! NSNumber).longLongValue
+                    let date2: Int64 = (item2["recentDate"] as! NSNumber).longLongValue
                     return date1 > date2 // > descending, < for ascending
                 }
                 

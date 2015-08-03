@@ -30,6 +30,7 @@ class DevelopmentViewController: UIViewController {
 			self.updateSegmentControl()
 		}
 		uriAtStart = serverUriField.text
+        setScreenName("DevelopmentSettings")
 	}
 
 	override func viewWillDisappear(animated: Bool) {

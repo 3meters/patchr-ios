@@ -141,12 +141,17 @@ extension UIViewController {
         return nil
     }
     
-    func handleError(error: ServerError, errorActionType: ErrorActionType = .AUTO, errorAction: ErrorAction = .NONE ) {
+    func handleError(error: ServerError, errorActionType: ErrorActionType = .AUTO, var errorAction: ErrorAction = .NONE ) {
         
         /* Show any required ui */
         var alertMessage: String = (error.message != nil ? error.message : error.description != nil ? error.description : "Unknown error")!
         if errorActionType == .AUTO || errorActionType == .TOAST {
+            
             Shared.Toast(alertMessage)
+            if error.code == .UNAUTHORIZED_SESSION_EXPIRED || error.code == .UNAUTHORIZED_CREDENTIALS {
+                errorAction = .SIGNOUT
+            }
+            
         }
         else if errorActionType == .ALERT {
             self.Alert(alertMessage)
@@ -232,6 +237,23 @@ extension UIViewController {
                 alert.show()
             }
     }
+
+    func setScreenName(name: String) {
+        self.title = name
+        self.sendScreenView()
+    }
+    
+    func sendScreenView() {
+        let tracker = GAI.sharedInstance().defaultTracker
+        tracker.set(kGAIScreenName, value: self.title)
+        tracker.send(GAIDictionaryBuilder.createScreenView().build() as [NSObject: AnyObject])
+    }
+    
+    func trackEvent(category: String, action: String, label: String, value: NSNumber?) {
+        let tracker = GAI.sharedInstance().defaultTracker
+        let trackDictionary = GAIDictionaryBuilder.createEventWithCategory(category, action: action, label: label, value: value).build()
+        tracker.send(trackDictionary as [NSObject: AnyObject])
+    }
 }
 
 
@@ -280,6 +302,7 @@ enum ErrorActionType: Int {
     case AUTO
     case ALERT
     case TOAST
+    case SILENT
 }
 
 enum ErrorAction: Int {

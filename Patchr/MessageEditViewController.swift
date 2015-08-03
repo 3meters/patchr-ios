@@ -76,6 +76,11 @@ class MessageEditViewController: EntityEditViewController {
         }
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        setScreenName("MessageEdit")
+    }
+    
     override func viewDidAppear(animated: Bool) {
         if photoChosen {
             photoChosen = false

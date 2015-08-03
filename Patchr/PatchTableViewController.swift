@@ -109,6 +109,23 @@ class PatchTableViewController: QueryTableViewController {
 		}
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        switch self.filter {
+        case .Nearby:
+            setScreenName("NearbyList")
+        case .Explore:
+            setScreenName("ExploreList")
+        case .Watching:
+            setScreenName("WatchingList")
+        case .Favorite:
+            setScreenName("FavoriteList")
+        case .Owns:
+            setScreenName("OwnsList")
+        }
+    }
+    
     /*--------------------------------------------------------------------------------------------
     * Events
     *--------------------------------------------------------------------------------------------*/

@@ -59,6 +59,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         /* Initialize Crashlytics */
         Fabric.with([Crashlytics()])
         
+        /* Initialize Google analytics */
+        var configureError:NSError?
+        GGLContext.sharedInstance().configureWithError(&configureError)
+        assert(configureError == nil, "Error configuring Google services: \(configureError)")
+        
+        // Optional: configure GAI options.
+        var gai = GAI.sharedInstance()
+        gai.trackerWithTrackingId("UA-33660954-6")
+        gai.trackUncaughtExceptions = true  // report uncaught exceptions
+        gai.defaultTracker.allowIDFACollection = true
+        #if DEBUG
+            gai.logger.logLevel = GAILogLevel.Verbose
+            gai.dispatchInterval = 5    // Seconds
+        #endif
+        
         /* Initialize Creative sdk */
         AdobeUXAuthManager.sharedManager().setAuthenticationParametersWithClientID(keys.creativeSdkClientId(), clientSecret: keys.creativeSdkClientSecret(), enableSignUp: false)
         

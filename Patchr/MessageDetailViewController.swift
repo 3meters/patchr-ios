@@ -128,6 +128,7 @@ class MessageDetailViewController: UITableViewController {
 		}
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "likeDidChange:", name: Events.LikeDidChange, object: nil)
+        setScreenName("MessageDetail")        
 	}
 
 	override func viewDidLayoutSubviews() {

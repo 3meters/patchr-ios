@@ -40,6 +40,11 @@ class PatchTableMapViewController: UIViewController, NSFetchedResultsControllerD
         self.reloadAnnotations()
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        setScreenName("PatchMapList")
+    }
+    
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         

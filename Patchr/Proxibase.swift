@@ -905,32 +905,29 @@ struct ServerError {
 	init?(_ error: NSError?) {
 		if let error = error {
 			self.error = error
-
-			let userInfoDictionary = (error.userInfo as NSDictionary?)
-
-			response = (userInfoDictionary?[JSONResponseSerializerWithDataKey] as! NSDictionary?)
-			let responseErrorDictionary = response?["error"] as! NSDictionary?
-
-			if let responseDict = responseErrorDictionary {
-				if let responseMessage = responseDict["message"] as? String {
-					message = responseMessage
-				}
-				if let responseCode = responseDict["code"] as? Float {
-					code = ServerStatusCode(rawValue: responseCode)!
-				}
-				if let responseStatus = responseDict["status"] as? Int {
-					status = responseStatus
-				}
-			}
-
-			if let userInfo = userInfoDictionary {
-				if let localizedDescription = userInfo["NSLocalizedDescription"] as? String {
-					description = localizedDescription
-				}
-                if let userMessage = userInfo["message"] as? String {   // Used for s3 failures
+            
+            if let userInfoDictionary = (error.userInfo as NSDictionary?) {
+                if let response = (userInfoDictionary[JSONResponseSerializerWithDataKey] as! NSDictionary?)
+                    , let responseErrorDictionary = response["error"] as! NSDictionary? {
+                    
+                    if let responseMessage = responseErrorDictionary["message"] as? String {
+                        message = responseMessage
+                    }
+                    if let responseCode = responseErrorDictionary["code"] as? Float {
+                        code = ServerStatusCode(rawValue: responseCode)!
+                    }
+                    if let responseStatus = responseErrorDictionary["status"] as? Int {
+                        status = responseStatus
+                    }
+                }
+                
+                if let localizedDescription = userInfoDictionary["NSLocalizedDescription"] as? String {
+                    description = localizedDescription
+                }
+                if let userMessage = userInfoDictionary["message"] as? String {   // Used for s3 failures
                     message = userMessage
                 }
-			}
+            }
 		}
 		else {
 			return nil

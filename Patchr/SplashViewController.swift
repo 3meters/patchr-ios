@@ -14,6 +14,7 @@ class LobbyViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        setScreenName("Lobby")
         
         self.view.endEditing(true)
         self.logo.imageView!.tintColor(Colors.brandColor)

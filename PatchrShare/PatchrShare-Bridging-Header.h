@@ -15,6 +15,7 @@
 #import <AWSCore/AWSCore.h>
 #import <MBProgressHUD.h>
 #import <Keys/PatchrKeys.h>
+#import <Google/Analytics.h>
 
 #import "Photo.h"
 

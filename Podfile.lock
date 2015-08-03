@@ -32,6 +32,19 @@ PODS:
     - AWSCore (= 2.2.2)
   - Branch (0.10.3)
   - DACircularProgress (2.3.1)
+  - Google/Analytics (1.0.7):
+    - Google/Core
+    - GoogleAnalytics (~> 3.12)
+  - Google/Core (1.0.7):
+    - GoogleNetworkingUtilities (~> 1.0)
+    - GoogleSymbolUtilities (~> 1.0)
+    - GoogleUtilities (~> 1.0)
+  - GoogleAnalytics (3.13.0)
+  - GoogleNetworkingUtilities (1.0.0):
+    - GoogleSymbolUtilities (~> 1.0)
+  - GoogleSymbolUtilities (1.0.0)
+  - GoogleUtilities (1.0.1):
+    - GoogleSymbolUtilities (~> 1.0)
   - Keys (1.0.0)
   - libPhoneNumber-iOS (0.8.5)
   - Lockbox (2.1.0)
@@ -52,6 +65,7 @@ DEPENDENCIES:
   - AirPhotoBrowser (from `~/code/AirPhotoBrowser`)
   - AWSS3 (~> 2.2.0)
   - Branch
+  - Google/Analytics (~> 1.0.0)
   - Keys (from `Pods/CocoaPodsKeys`)
   - libPhoneNumber-iOS (~> 0.7)
   - Lockbox
@@ -77,6 +91,11 @@ SPEC CHECKSUMS:
   AWSS3: 4f89fcc0ef11303f94f561310979a0d2ec816fff
   Branch: d4df6da2a3533d5c950286a3753eb18d485bd8d0
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
+  Google: 875f5a8ade86dd02e36586e4a54814843938c7f6
+  GoogleAnalytics: fcf1f1cad57ae1a9a53520018f0f680ceeeb8b49
+  GoogleNetworkingUtilities: 292992ab31b7b4ba32809a0e8b40e324cdfb2c0c
+  GoogleSymbolUtilities: a7b0feed1fe667c8d5e647177938d0ecd62d6948
+  GoogleUtilities: e3475cd4d45134221d2f3f3626095a1c49b62041
   Keys: 7d2ff6ff42f6903358267ce56e9392f83c31acfe
   libPhoneNumber-iOS: b8ccd23576379caca37c7cbdd554addf384459ed
   Lockbox: 16442da35d9d4286966936763be728a931d589c3

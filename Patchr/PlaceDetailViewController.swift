@@ -50,10 +50,11 @@ class PlaceDetailViewController: UITableViewController {
 
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
+        setScreenName("PlaceDetail")
         
         if self.place != nil {
             draw()
-        }
+        }        
 	}
     
     override func viewDidLayoutSubviews() {

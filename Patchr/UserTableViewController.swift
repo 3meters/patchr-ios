@@ -61,6 +61,19 @@ class UserTableViewController: QueryTableViewController {
 				self.navigationItem.title = "Likers"
 		}
 	}
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        switch self.filter {
+        case .PatchLikers:
+            setScreenName("UserListPatchLikers")
+        case .PatchWatchers:
+            setScreenName("UserListPatchWatchers")
+        case .MessageLikers:
+            setScreenName("UserListMessageLikers")
+        }
+    }
 
     override func configureCell(cell: UITableViewCell, object: AnyObject, sizingOnly: Bool = false) {
 

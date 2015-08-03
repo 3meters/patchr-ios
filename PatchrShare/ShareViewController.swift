@@ -10,7 +10,7 @@ import UIKit
 import Social
 import MobileCoreServices
 
-class ShareViewController: SLComposeServiceViewController, PatchPickerViewControllerDelegate {
+class ShareViewController: SLComposeServiceViewController, PatchTargetViewControllerDelegate {
 
     var userId: String?
     var sessionKey: String?
@@ -22,7 +22,7 @@ class ShareViewController: SLComposeServiceViewController, PatchPickerViewContro
     lazy var patchConfigurationItem: SLComposeSheetConfigurationItem = {
         let item = SLComposeSheetConfigurationItem()
         item.title = "Patch"
-        item.value = PatchPickerViewController.defaultPatch()
+        item.value = PatchTargetViewController.defaultPatch()
         item.tapHandler = self.showPatchPicker
         return item
     }()
@@ -192,11 +192,11 @@ class ShareViewController: SLComposeServiceViewController, PatchPickerViewContro
     func showPatchPicker(){
         
         let storyboard = UIStoryboard(name: "PatchrShare", bundle: NSBundle.mainBundle())
-        if let vc = storyboard.instantiateViewControllerWithIdentifier("PatchPickerViewController") as? PatchPickerViewController {
-            vc.patch = patchConfigurationItem.value
-            vc.delegate = self
-            vc.preferredContentSize = CGSizeMake(300, 300)
-            pushConfigurationViewController(vc)
+        if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTargetViewController") as? PatchTargetViewController {
+            controller.patch = patchConfigurationItem.value
+            controller.delegate = self
+            controller.preferredContentSize = CGSizeMake(300, 300)
+            pushConfigurationViewController(controller)
         }
     }
     
@@ -238,9 +238,9 @@ class ShareViewController: SLComposeServiceViewController, PatchPickerViewContro
     }
 }
 
-extension ShareViewController: PatchPickerViewControllerDelegate {
+extension ShareViewController: PatchTargetViewControllerDelegate {
     
-    func patchPickerViewController(sender: PatchPickerViewController, selectedValue: AnyObject) {
+    func patchPickerViewController(sender: PatchTargetViewController, selectedValue: AnyObject) {
         /*
          * Patch has been selected
          */

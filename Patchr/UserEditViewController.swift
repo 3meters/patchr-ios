@@ -55,7 +55,17 @@ class UserEditViewController: EntityEditViewController {
         
         bind()
     }
-        
+
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        if editMode {
+            setScreenName("UserEdit")
+        }
+        else {
+            setScreenName("UserCreate")
+        }
+    }
+    
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         if !editMode {

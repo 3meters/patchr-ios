@@ -82,6 +82,16 @@ class PatchEditViewController: EntityEditViewController {
         
         bind()
 	}
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        if editMode {
+            setScreenName("PatchEdit")
+        }
+        else {
+            setScreenName("PatchCreate")
+        }
+    }
 
     /*--------------------------------------------------------------------------------------------
     * Events

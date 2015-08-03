@@ -64,6 +64,8 @@ class PhotoPickerViewController: UICollectionViewController {
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
         
+        setScreenName("PhotoPicker")
+        
         if self.searchBar == nil {
             self.searchBarBoundsY = self.navigationController!.navigationBar.frame.size.height + UIApplication.sharedApplication().statusBarFrame.size.height
             self.searchBar = UISearchBar(frame: CGRectMake(0, self.searchBarBoundsY!, UIScreen.mainScreen().bounds.size.width, 44))

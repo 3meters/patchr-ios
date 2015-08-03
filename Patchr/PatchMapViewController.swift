@@ -44,6 +44,7 @@ class PatchMapViewController: UIViewController {
             subtitle: self.locationDelegate.locationSubtitle ?? "PATCH")
         
         mapView.addAnnotation(self.annotation)
+        setScreenName("PatchMap")        
     }
     
     override func viewWillDisappear(animated: Bool) {

@@ -1,4 +1,12 @@
 //
+//  PatchTargetViewController.swift
+//  Patchr
+//
+//  Created by Jay Massena on 8/2/15.
+//  Copyright (c) 2015 3meters. All rights reserved.
+//
+
+//
 //  ShareViewController.swift
 //  share
 //
@@ -10,17 +18,15 @@ import UIKit
 import Foundation
 import CoreLocation
 
-@objc(PatchPickerViewControllerDelegate)
-protocol PatchPickerViewControllerDelegate{
-    optional func patchPickerViewController(
-        sender: PatchPickerViewController,
+protocol PatchTargetViewControllerDelegate{
+     func patchPickerViewController(
+        sender: PatchTargetViewController,
         selectedValue: AnyObject)
 }
 
-@objc(PatchPickerViewController)
-class PatchPickerViewController: UITableViewController {
+class PatchTargetViewController: UITableViewController {
     
-    var delegate: PatchPickerViewControllerDelegate?
+    var delegate: PatchTargetViewControllerDelegate?
     
     var patch = "None"
     var userId: String?
@@ -56,16 +62,16 @@ class PatchPickerViewController: UITableViewController {
         if CLLocationManager.authorizationStatus() == .AuthorizedAlways
             || CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
                 
-            self.manager = OneShotLocationManager()
-            self.manager!.fetchWithCompletion {
-                location, error in
-                
-                if let loc = location {
-                    Log.d("One shot location received")
-                    self.locationCurrent = loc
+                self.manager = OneShotLocationManager()
+                self.manager!.fetchWithCompletion {
+                    location, error in
+                    
+                    if let loc = location {
+                        Log.d("One shot location received")
+                        self.locationCurrent = loc
+                    }
+                    self.manager = nil
                 }
-                self.manager = nil
-            }
         }
         
         self.title = "Choose Patch"
@@ -77,6 +83,15 @@ class PatchPickerViewController: UITableViewController {
         self.searchEdit.attributedPlaceholder = NSAttributedString(string: "Search for patches",
             attributes: [NSForegroundColorAttributeName:UIColor(red: CGFloat(0.8), green: CGFloat(0.8), blue: CGFloat(0.8), alpha: CGFloat(1))])
         self.searchEdit.addTarget(self, action: Selector("textFieldDidChange:"), forControlEvents: UIControlEvents.EditingChanged)
+        
+        let searchView = UIView(frame: CGRectMake(0, 0, 32, 24))
+        let imageView = UIImageView(frame: CGRectMake(8, 0, 24, 24))
+        imageView.image = UIImage(named: "imgSearchLight")
+        searchView.addSubview(imageView)
+        searchView.alpha = 0.5
+        
+        self.searchEdit.leftViewMode = UITextFieldViewMode.Always
+        self.searchEdit.leftView = searchView
         
         // Recents
         self.currentItems = recentItems
@@ -154,7 +169,7 @@ class PatchPickerViewController: UITableViewController {
             var location = [
                 "lat":coordinate.latitude,
                 "lng":coordinate.longitude
-            ] as [String:AnyObject]
+                ] as [String:AnyObject]
             body["location"] = location
             body["radius"] = 80000  // ~50 miles
             body["timeout"] = 2000  // two seconds
@@ -189,7 +204,7 @@ class PatchPickerViewController: UITableViewController {
     }
 }
 
-extension PatchPickerViewController: UITableViewDelegate {
+extension PatchTargetViewController: UITableViewDelegate {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
@@ -231,7 +246,7 @@ extension PatchPickerViewController: UITableViewDelegate {
         let selectedCell = tableView.cellForRowAtIndexPath(indexPath) as! PatchSuggestCell
         var patchJson: JSON = JSON(self.currentItems[indexPath.row])
         if let patch = patchJson.dictionaryObject {
-            self.delegate?.patchPickerViewController!(self, selectedValue: patch)
+            self.delegate?.patchPickerViewController(self, selectedValue: patch)
         }
     }
     

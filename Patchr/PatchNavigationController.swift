@@ -16,7 +16,7 @@ class PatchNavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.segmentsController = SegmentsController(navigationController: self, viewControllers: segmentViewControllers())
-        self.segmentedControl = UISegmentedControl(items: ["NEARBY","FAVORITES","EXPLORE"])
+        self.segmentedControl = UISegmentedControl(items: ["Nearby","Favorites","Explore"])
         self.segmentedControl.sizeToFit()
         self.segmentedControl.addTarget(self.segmentsController, action: Selector("indexDidChangeForSegmentedControl:"), forControlEvents: .ValueChanged)
         self.segmentedControl.selectedSegmentIndex = 0

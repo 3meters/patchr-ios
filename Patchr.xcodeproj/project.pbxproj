@@ -76,6 +76,8 @@
 		E20004DA1B07A78C00425694 /* PatchLargeTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E20004D91B07A78C00425694 /* PatchLargeTableViewCell.xib */; };
 		E20004DF1B094ACA00425694 /* PasswordEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */; };
 		E20004E11B099CBD00425694 /* PasswordResetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004E01B099CBD00425694 /* PasswordResetViewController.swift */; };
+		E224C3501B6ED27F00879775 /* PatchrShare.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E238BAE41B51D3290094AF41 /* PatchrShare.storyboard */; };
+		E224C3551B6EDBBE00879775 /* PatchTargetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */; };
 		E238BAC61B507E510094AF41 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D3D39D21A6F086F00A44CB2 /* Main.storyboard */; };
 		E238BACC1B50888C0094AF41 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BACB1B50888C0094AF41 /* SystemConfiguration.framework */; };
 		E238BACE1B50889A0094AF41 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BACD1B50889A0094AF41 /* libc++.dylib */; };
@@ -85,7 +87,6 @@
 		E238BAD61B50907F0094AF41 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BAD51B50907F0094AF41 /* Accounts.framework */; };
 		E238BAD81B5090870094AF41 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BAD71B5090870094AF41 /* Social.framework */; };
 		E238BAE81B51D3290094AF41 /* PatchrShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = E238BADE1B51D3290094AF41 /* PatchrShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		E238BAF11B5429850094AF41 /* PatchPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E238BAF01B5429850094AF41 /* PatchPickerViewController.swift */; };
 		E238BAFF1B5715CF0094AF41 /* PatchSuggestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E238BAFE1B5715CF0094AF41 /* PatchSuggestCell.swift */; };
 		E238BB021B5718E40094AF41 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25327B11B0FCE9C00990A81 /* Constants.swift */; };
 		E238BB061B571AFF0094AF41 /* ExtensionsPhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = E238BB051B571AFF0094AF41 /* ExtensionsPhoto.swift */; };
@@ -125,8 +126,6 @@
 		E281777A1B5C3C3200D65AC1 /* Proxibase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28177791B5C3C3200D65AC1 /* Proxibase.swift */; };
 		E281777C1B5D58CB00D65AC1 /* PatchSuggestCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E238BAFC1B5712B40094AF41 /* PatchSuggestCell.xib */; };
 		E281777F1B5D591400D65AC1 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E238BAE21B51D3290094AF41 /* ShareViewController.swift */; };
-		E28177801B5D592700D65AC1 /* PatchrShare.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E238BAE41B51D3290094AF41 /* PatchrShare.storyboard */; };
-		E29F654E1B61A0190000BEF4 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29F654D1B61A0190000BEF4 /* SearchViewController.swift */; };
 		E29F654F1B61A0780000BEF4 /* OneShotLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E281776B1B5AB2D400D65AC1 /* OneShotLocationManager.swift */; };
 		E29F65511B61A9280000BEF4 /* PatchSearchCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E29F65501B61A9280000BEF4 /* PatchSearchCell.xib */; };
 		E29F65531B61A9450000BEF4 /* PatchSearchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29F65521B61A9450000BEF4 /* PatchSearchCell.swift */; };
@@ -134,12 +133,15 @@
 		E2A28E6D1B49D88900B3A2FE /* AirLikeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A28E6C1B49D88800B3A2FE /* AirLikeButton.swift */; };
 		E2A28E6F1B4A602200B3A2FE /* AirToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */; };
 		E2A28E711B4A624300B3A2FE /* AirWatchButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A28E701B4A624300B3A2FE /* AirWatchButton.swift */; };
+		E2A5A87E1B6FBE3F006D6E81 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D3D39D51A6F086F00A44CB2 /* Images.xcassets */; };
+		E2A5A8801B6FCE98006D6E81 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */; };
+		E2A5A8811B6FDF5C006D6E81 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */; };
 		E2C0D92F1B6BD55200E28CE9 /* TTTAttributedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D92E1B6BD55200E28CE9 /* TTTAttributedLabel.m */; };
 		E2C0D9311B6C415100E28CE9 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D9301B6C415100E28CE9 /* Log.swift */; };
 		E2C0D9321B6C46A100E28CE9 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D9301B6C415100E28CE9 /* Log.swift */; };
-		E2C0D9341B6C825200E28CE9 /* InstantSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D9331B6C825100E28CE9 /* InstantSearchViewController.swift */; };
 		E2C0D9361B6D257B00E28CE9 /* SegmentsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D9351B6D257B00E28CE9 /* SegmentsController.swift */; };
 		E2C0D9381B6D2CC700E28CE9 /* PatchNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D9371B6D2CC700E28CE9 /* PatchNavigationController.swift */; };
+		E2C0D9401B6D77D200E28CE9 /* PatchSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D93F1B6D77D200E28CE9 /* PatchSearchViewController.swift */; };
 		E2C720BD1B4C260200714B53 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C720BC1B4C260200714B53 /* Reachability.m */; };
 		E2C720C71B4EDAFE00714B53 /* AirLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C720C61B4EDAFE00714B53 /* AirLabel.swift */; };
 		E2C720CD1B50169400714B53 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2C720CC1B50169400714B53 /* LaunchScreen.xib */; };
@@ -309,6 +311,7 @@
 		E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordEditViewController.swift; sourceTree = "<group>"; };
 		E20004E01B099CBD00425694 /* PasswordResetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordResetViewController.swift; sourceTree = "<group>"; };
 		E20C1FB61AFE462500A471E9 /* Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Shared.swift; sourceTree = "<group>"; };
+		E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTargetViewController.swift; sourceTree = "<group>"; };
 		E238BACB1B50888C0094AF41 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		E238BACD1B50889A0094AF41 /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
 		E238BACF1B5088A40094AF41 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
@@ -319,9 +322,8 @@
 		E238BADE1B51D3290094AF41 /* PatchrShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PatchrShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		E238BAE11B51D3290094AF41 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
 		E238BAE21B51D3290094AF41 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
-		E238BAE41B51D3290094AF41 /* PatchrShare.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = PatchrShare.storyboard; sourceTree = "<group>"; };
+		E238BAE41B51D3290094AF41 /* PatchrShare.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = PatchrShare.storyboard; path = PatchrShare/PatchrShare.storyboard; sourceTree = SOURCE_ROOT; };
 		E238BAEE1B5405380094AF41 /* Patchr.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = Patchr.entitlements; path = Patchr/Patchr.entitlements; sourceTree = SOURCE_ROOT; };
-		E238BAF01B5429850094AF41 /* PatchPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PatchPickerViewController.swift; path = PatchrShare/PatchPickerViewController.swift; sourceTree = SOURCE_ROOT; };
 		E238BAFC1B5712B40094AF41 /* PatchSuggestCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PatchSuggestCell.xib; path = PatchrShare/PatchSuggestCell.xib; sourceTree = SOURCE_ROOT; };
 		E238BAFE1B5715CF0094AF41 /* PatchSuggestCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PatchSuggestCell.swift; path = PatchrShare/PatchSuggestCell.swift; sourceTree = SOURCE_ROOT; };
 		E238BB051B571AFF0094AF41 /* ExtensionsPhoto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionsPhoto.swift; sourceTree = "<group>"; };
@@ -367,19 +369,19 @@
 		E28177711B5C18BF00D65AC1 /* ExtensionsUi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ExtensionsUi.swift; path = PatchrShare/ExtensionsUi.swift; sourceTree = SOURCE_ROOT; };
 		E28177751B5C39E200D65AC1 /* AwsS3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AwsS3.swift; path = PatchrShare/AwsS3.swift; sourceTree = SOURCE_ROOT; };
 		E28177791B5C3C3200D65AC1 /* Proxibase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Proxibase.swift; path = PatchrShare/Proxibase.swift; sourceTree = SOURCE_ROOT; };
-		E29F654D1B61A0190000BEF4 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		E29F65501B61A9280000BEF4 /* PatchSearchCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PatchSearchCell.xib; sourceTree = "<group>"; };
 		E29F65521B61A9450000BEF4 /* PatchSearchCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchSearchCell.swift; sourceTree = "<group>"; };
 		E2A099FB1B06B20D00257B8B /* PatchNormalTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PatchNormalTableViewCell.xib; sourceTree = "<group>"; };
 		E2A28E6C1B49D88800B3A2FE /* AirLikeButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirLikeButton.swift; sourceTree = "<group>"; };
 		E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirToggleButton.swift; sourceTree = "<group>"; };
 		E2A28E701B4A624300B3A2FE /* AirWatchButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirWatchButton.swift; sourceTree = "<group>"; };
+		E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Patchr/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E2C0D92D1B6BD55200E28CE9 /* TTTAttributedLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTTAttributedLabel.h; sourceTree = "<group>"; };
 		E2C0D92E1B6BD55200E28CE9 /* TTTAttributedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTTAttributedLabel.m; sourceTree = "<group>"; };
 		E2C0D9301B6C415100E28CE9 /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
-		E2C0D9331B6C825100E28CE9 /* InstantSearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstantSearchViewController.swift; sourceTree = "<group>"; };
 		E2C0D9351B6D257B00E28CE9 /* SegmentsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentsController.swift; sourceTree = "<group>"; };
 		E2C0D9371B6D2CC700E28CE9 /* PatchNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchNavigationController.swift; sourceTree = "<group>"; };
+		E2C0D93F1B6D77D200E28CE9 /* PatchSearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PatchSearchViewController.swift; path = PatchrShare/PatchSearchViewController.swift; sourceTree = SOURCE_ROOT; };
 		E2C720BB1B4C25C900714B53 /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		E2C720BC1B4C260200714B53 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		E2C720C51B4D92F000714B53 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -471,6 +473,7 @@
 				E25327D11B13DEF800990A81 /* AudioController.swift */,
 				7D3D39EE1A6F09CC00A44CB2 /* BridgingHeader.h */,
 				7DA3D9111A72D5A60082D2AB /* DataController.swift */,
+				E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */,
 				E2F618D51AFFACF00055D09C /* LocationController.swift */,
 				E2CCAADF1B67CC0E0071170C /* NotificationController.swift */,
 				7D3D39EF1A6F116E00A44CB2 /* Proxibase.swift */,
@@ -617,7 +620,7 @@
 			isa = PBXGroup;
 			children = (
 				E28177731B5C394200D65AC1 /* Source */,
-				E28177741B5C396900D65AC1 /* Resources */,
+				E2C0D93E1B6D6D8D00E28CE9 /* Resources */,
 				E238BAE01B51D3290094AF41 /* Supporting Files */,
 			);
 			path = PatchrShare;
@@ -687,21 +690,21 @@
 		E28177731B5C394200D65AC1 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				E28177711B5C18BF00D65AC1 /* ExtensionsUi.swift */,
-				E238BAE21B51D3290094AF41 /* ShareViewController.swift */,
-				E238BAF01B5429850094AF41 /* PatchPickerViewController.swift */,
-				E281776B1B5AB2D400D65AC1 /* OneShotLocationManager.swift */,
-				E238BAFE1B5715CF0094AF41 /* PatchSuggestCell.swift */,
 				E28177751B5C39E200D65AC1 /* AwsS3.swift */,
+				E28177711B5C18BF00D65AC1 /* ExtensionsUi.swift */,
+				E281776B1B5AB2D400D65AC1 /* OneShotLocationManager.swift */,
 				E28177791B5C3C3200D65AC1 /* Proxibase.swift */,
 				9FDCC67342555A8E88594481 /* PatchrShare-Bridging-Header.h */,
+				E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */,
+				E238BAE21B51D3290094AF41 /* ShareViewController.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
 		};
-		E28177741B5C396900D65AC1 /* Resources */ = {
+		E2C0D93E1B6D6D8D00E28CE9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E238BAFE1B5715CF0094AF41 /* PatchSuggestCell.swift */,
 				E238BAFC1B5712B40094AF41 /* PatchSuggestCell.xib */,
 				E238BAE41B51D3290094AF41 /* PatchrShare.storyboard */,
 			);
@@ -762,12 +765,11 @@
 				7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */,
 				841082CA1AB1013300803ECE /* PatchMapViewController.swift */,
 				E2C0D9371B6D2CC700E28CE9 /* PatchNavigationController.swift */,
+				E2C0D93F1B6D77D200E28CE9 /* PatchSearchViewController.swift */,
 				7D77FC7D1AAA2E0C00AA8284 /* PatchTableMapViewController.swift */,
 				7D9651931AAFBD02000C5718 /* PatchTableViewController.swift */,
 				E2C7C5C51B2B491A0045038A /* PhotoPickerViewController.swift */,
 				E25327DC1B1795E000990A81 /* PlaceDetailViewController.swift */,
-				E29F654D1B61A0190000BEF4 /* SearchViewController.swift */,
-				E2C0D9331B6C825100E28CE9 /* InstantSearchViewController.swift */,
 				7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */,
 				7D021AC11A9423080047DAAE /* SplashViewController.swift */,
 				7D6E26461A7AB93F000128A7 /* UserDetailViewController.swift */,
@@ -981,6 +983,7 @@
 				E2C7C5C41B2A19720045038A /* DefaultSettings.plist in Resources */,
 				E25327CE1B13DB3000990A81 /* notification_candi_discovered_soft.aac in Resources */,
 				E25327CF1B13DB3000990A81 /* notification_carme.aac in Resources */,
+				E2A5A8801B6FCE98006D6E81 /* GoogleService-Info.plist in Resources */,
 				E25327D01B13DB3000990A81 /* notification_pop.aac in Resources */,
 				E25327CD1B13DB2900990A81 /* notification_activity.aac in Resources */,
 				E2F6C9291B1DF5500067D959 /* Notes.md in Resources */,
@@ -991,7 +994,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E28177801B5D592700D65AC1 /* PatchrShare.storyboard in Resources */,
+				E2A5A87E1B6FBE3F006D6E81 /* Images.xcassets in Resources */,
+				E2A5A8811B6FDF5C006D6E81 /* GoogleService-Info.plist in Resources */,
+				E224C3501B6ED27F00879775 /* PatchrShare.storyboard in Resources */,
 				E281777C1B5D58CB00D65AC1 /* PatchSuggestCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1111,7 +1116,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo $CONFIGURATION\nif [ $CONFIGURATION == \"AdHoc\" ] || [ $CONFIGURATION == \"Release\" ]; then\necho \"Bumping share extension build number...\"\nplist=${SRCROOT}/${INFOPLIST_FILE}\n\n# increment the build number\nbuildnum=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${plist}\")\nif [[ \"${buildnum}\" == \"\" ]]; then\necho \"No build number in share extension $plist\"\nexit 2\nfi\n\nbuildnum=$(expr $buildnum + 1)\n/usr/libexec/Plistbuddy -c \"Set CFBundleVersion $buildnum\" \"${plist}\"\necho \"Bumped build number to $buildnum\"\n\nelse\necho $CONFIGURATION \" build - Not bumping build number.\"\nfi";
+			shellScript = "echo $CONFIGURATION\nif [ $CONFIGURATION == \"AdHoc\" ] || [ $CONFIGURATION == \"Release\" ]; then\necho \"Bumping share extension build number...\"\nplist=${PROJECT_DIR}/${TARGET_NAME}/${INFOPLIST_FILE}\n\n# increment the build number\nbuildnum=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${plist}\")\nif [[ \"${buildnum}\" == \"\" ]]; then\necho \"No build number in share extension $plist\"\nexit 2\nfi\n\nbuildnum=$(expr $buildnum + 1)\n/usr/libexec/Plistbuddy -c \"Set CFBundleVersion $buildnum\" \"${plist}\"\necho \"Bumped build number to $buildnum\"\n\nelse\necho $CONFIGURATION \" build - Not bumping build number.\"\nfi";
 		};
 		F81230B8409B59C3D83ABF01 /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1152,7 +1157,6 @@
 				7D77FC7F1AAA2E0C00AA8284 /* PatchTableMapViewController.swift in Sources */,
 				E25327DD1B1795E000990A81 /* PlaceDetailViewController.swift in Sources */,
 				E241D15A1B1B3FCE00702E01 /* UIView+BorderLayer.m in Sources */,
-				E29F654E1B61A0190000BEF4 /* SearchViewController.swift in Sources */,
 				7DC9D4911A9D46D100234E3C /* UserEditViewController.swift in Sources */,
 				7DA730931A71ACC9008C25FA /* ServiceBase.m in Sources */,
 				7DA7308C1A71ACC9008C25FA /* _Query.m in Sources */,
@@ -1186,7 +1190,6 @@
 				E2711C4F1AFD182F00CE71A1 /* AirTableView.m in Sources */,
 				7D3F26D51A76F77E0015F8E8 /* Location.m in Sources */,
 				E2C0D9381B6D2CC700E28CE9 /* PatchNavigationController.swift in Sources */,
-				E2C0D9341B6C825200E28CE9 /* InstantSearchViewController.swift in Sources */,
 				7DC9D4941A9D4FAD00234E3C /* NotificationTableViewCell.swift in Sources */,
 				E2F618D61AFFACF00055D09C /* LocationController.swift in Sources */,
 				7DC1763F1ACDFF010051BA6C /* Link.m in Sources */,
@@ -1236,6 +1239,7 @@
 				E25327B81B103ECA00990A81 /* AirImageButton.swift in Sources */,
 				E20004E11B099CBD00425694 /* PasswordResetViewController.swift in Sources */,
 				844D6E371AA6550400EE71ED /* PhotoChooserUI.swift in Sources */,
+				E2C0D9401B6D77D200E28CE9 /* PatchSearchViewController.swift in Sources */,
 				E2F6C9341B1E546F0067D959 /* _Link.m in Sources */,
 				7DA730891A71ACC9008C25FA /* _Entity.m in Sources */,
 				E2F6C9211B1BDC7A0067D959 /* _Shortcut.m in Sources */,
@@ -1258,13 +1262,13 @@
 				E281777F1B5D591400D65AC1 /* ShareViewController.swift in Sources */,
 				E238BAFF1B5715CF0094AF41 /* PatchSuggestCell.swift in Sources */,
 				E2C0D9321B6C46A100E28CE9 /* Log.swift in Sources */,
-				E238BAF11B5429850094AF41 /* PatchPickerViewController.swift in Sources */,
 				E28177761B5C39E200D65AC1 /* AwsS3.swift in Sources */,
 				E23E02001B5873CB0035CCF0 /* SwiftyJSON.swift in Sources */,
 				E281777A1B5C3C3200D65AC1 /* Proxibase.swift in Sources */,
 				E281776C1B5AB2D400D65AC1 /* OneShotLocationManager.swift in Sources */,
 				E28177671B59668000D65AC1 /* ExtensionsPhoto.swift in Sources */,
 				E28177721B5C18BF00D65AC1 /* ExtensionsUi.swift in Sources */,
+				E224C3551B6EDBBE00879775 /* PatchTargetViewController.swift in Sources */,
 				E238BB021B5718E40094AF41 /* Constants.swift in Sources */,
 				E281776F1B5B0F4A00D65AC1 /* Utils.swift in Sources */,
 			);
@@ -1338,6 +1342,7 @@
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
 				OTHER_SWIFT_FLAGS = "";
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1375,6 +1380,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1401,7 +1407,10 @@
 				INFOPLIST_FILE = Patchr/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "\"$(PODS_ROOT)\"";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PODS_ROOT)",
+				);
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = (
@@ -1477,7 +1486,10 @@
 				INFOPLIST_FILE = Patchr/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "\"$(PODS_ROOT)\"";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PODS_ROOT)",
+				);
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1562,6 +1574,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1588,7 +1601,10 @@
 				INFOPLIST_FILE = Patchr/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "\"$(PODS_ROOT)\"";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PODS_ROOT)",
+				);
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1646,6 +1662,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 880FE917F305BDE29B1AA196 /* Pods-PatchrShare.debug.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PatchrShare/PatchrShare.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1660,6 +1677,24 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"AWSCore\"",
+					"-l\"AWSS3\"",
+					"-l\"Keys\"",
+					"-l\"SDWebImage\"",
+					"-l\"sqlite3\"",
+					"-l\"z\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"ImageIO\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"-framework",
+					"\"UIKit\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
@@ -1672,6 +1707,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5CD38C9C4C2C2A4CAE6A2F5D /* Pods-PatchrShare.release.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PatchrShare/PatchrShare.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1682,6 +1718,24 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"AWSCore\"",
+					"-l\"AWSS3\"",
+					"-l\"Keys\"",
+					"-l\"SDWebImage\"",
+					"-l\"sqlite3\"",
+					"-l\"z\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"ImageIO\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"-framework",
+					"\"UIKit\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
@@ -1694,6 +1748,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2FA521C11CD1A45A8806279F /* Pods-PatchrShare.adhoc.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PatchrShare/PatchrShare.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1704,6 +1759,24 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"AWSCore\"",
+					"-l\"AWSS3\"",
+					"-l\"Keys\"",
+					"-l\"SDWebImage\"",
+					"-l\"sqlite3\"",
+					"-l\"z\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"ImageIO\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"-framework",
+					"\"UIKit\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;

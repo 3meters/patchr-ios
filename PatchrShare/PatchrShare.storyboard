@@ -7,7 +7,7 @@
         <!--Patch Picker View-->
         <scene sceneID="JYR-9n-iV5">
             <objects>
-                <tableViewController storyboardIdentifier="PatchPickerViewController" title="Patch Picker View" definesPresentationContext="YES" id="0Oi-2j-2u1" customClass="PatchPickerViewController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="PatchTargetViewController" title="Patch Picker View" definesPresentationContext="YES" id="0Oi-2j-2u1" customClass="PatchTargetViewController" customModule="PatchrShare" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="64" sectionHeaderHeight="22" sectionFooterHeight="22" id="Gxm-IP-7fK">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -61,7 +61,7 @@
         <!--Share View Controller-->
         <scene sceneID="Tg6-Wf-g7j">
             <objects>
-                <viewController id="Vvt-rq-Z54" customClass="ShareViewController" customModule="PatchrShare" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ShareViewController" id="Vvt-rq-Z54" customClass="ShareViewController" customModule="PatchrShare" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="ABV-ak-bWP"/>
                         <viewControllerLayoutGuide type="bottom" id="zAp-Xl-6Iy"/>

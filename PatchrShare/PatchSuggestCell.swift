@@ -11,8 +11,8 @@ import UIKit
 
 class PatchSuggestCell: UITableViewCell {
     
-    @IBOutlet weak var photo: UIImageView!
     @IBOutlet weak var name: UILabel!
+    @IBOutlet weak var photo: UIImageView!
     
     override func awakeFromNib() {
         super.awakeFromNib()

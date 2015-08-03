@@ -25,6 +25,11 @@ class SignInEditViewController: UITableViewController, UITextFieldDelegate {
         self.emailField.text = NSUserDefaults.standardUserDefaults().objectForKey(PatchrUserDefaultKey("userEmail")) as? String
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        setScreenName("SigninEdit")
+    }
+
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         

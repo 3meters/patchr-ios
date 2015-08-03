@@ -22,6 +22,11 @@ class PasswordEditViewController: UITableViewController, UITextFieldDelegate {
         self.passwordNewField.delegate = self
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        setScreenName("PasswordEdit")
+    }
+    
     override func viewDidAppear(animated: Bool) {
         self.passwordField.becomeFirstResponder()
     }

@@ -27,6 +27,11 @@ class PasswordResetViewController: UITableViewController, UITextFieldDelegate {
         self.passwordField.delegate = self
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        setScreenName("PasswordReset")
+    }
+    
     @IBAction func doneAction(sender: NSObject) {
         
         if processing { return }

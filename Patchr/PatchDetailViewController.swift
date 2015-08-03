@@ -180,6 +180,7 @@ class PatchDetailViewController: QueryTableViewController {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "likeDidChange:", name: Events.LikeDidChange, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "watchDidChange:", name: Events.WatchDidChange, object: nil)
+        setScreenName("PatchDetail")
     }
 
     override func viewDidAppear(animated: Bool){
@@ -356,7 +357,7 @@ class PatchDetailViewController: QueryTableViewController {
                         activityItems: [patch],
                         applicationActivities: nil)
                     
-                    if UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiom.Phone {
+                    if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
                         self.presentViewController(activityViewController, animated: true, completion: nil)
                     }
                     else {

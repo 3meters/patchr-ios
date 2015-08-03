@@ -72,6 +72,11 @@ class NotificationsTableViewController: QueryTableViewController {
         self.activityDate = NotificationController.instance.activityDate
 	}
 
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        setScreenName("NotificationList")
+    }
+    
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
         if NotificationController.instance.activityDate > self.activityDate {

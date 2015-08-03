@@ -112,6 +112,7 @@ class UserDetailViewController: QueryTableViewController {
 	override func viewWillAppear(animated: Bool) {
         /* Triggers query processing by results controller */
 		super.viewWillAppear(animated)
+        setScreenName("UserDetail")
         
         if user != nil || isGuest {
             draw()
