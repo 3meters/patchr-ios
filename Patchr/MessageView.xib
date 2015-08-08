@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MessageView" customModule="Patchr" customModuleProvider="target"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" verticalHuggingPriority="1000" id="H2p-sc-9uM" userLabel="MessageView" customClass="MessageView" customModule="Patchr" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="400" height="324"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Patch name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0TT-YB-aeS" userLabel="patch_name">
+                    <rect key="frame" x="65" y="8" width="79" height="18"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="18" id="jfD-W3-ZcH"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
+                    <color key="textColor" red="0.60000002379999995" green="0.60000002379999995" blue="0.60000002379999995" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="TaR-dt-0cq" userLabel="user_photo" customClass="AirImageView" customModule="Patchr" customModuleProvider="target">
+                    <rect key="frame" x="8" y="30" width="48" height="48"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="48" id="Iut-66-DOf"/>
+                        <constraint firstAttribute="height" constant="48" id="Ygv-4X-iXd"/>
+                    </constraints>
+                </imageView>
+                <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" text="Rob" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m6L-Nb-Bin" userLabel="user_name">
+                    <rect key="frame" x="65" y="30" width="269" height="21"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="21" id="oSP-4X-GJ7"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" text="02 Mar" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dwP-9n-4tK" userLabel="created_date">
+                    <rect key="frame" x="342" y="32" width="46" height="18"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
+                    <color key="textColor" red="0.60000002379999995" green="0.60000002379999995" blue="0.60000002379999995" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="This is a multiline message comment that will say something that people will like" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="236" translatesAutoresizingMaskIntoConstraints="NO" id="h8L-WQ-6XO" userLabel="description" customClass="TTTAttributedLabel">
+                    <rect key="frame" x="65" y="55" width="323" height="77"/>
+                    <constraints>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" priority="999" id="wLB-3H-rKb"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" weight="light" pointSize="17"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <imageView autoresizesSubviews="NO" clipsSubviews="YES" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="eQH-ua-j18" userLabel="photo" customClass="AirImageView" customModule="Patchr" customModuleProvider="target">
+                    <rect key="frame" x="65" y="140" width="327" height="144"/>
+                    <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" priority="999" constant="144" id="j66-v2-IdI"/>
+                    </constraints>
+                </imageView>
+                <button clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="woJ-Y6-bOV" userLabel="like_button" customClass="AirLikeButton" customModule="Patchr" customModuleProvider="target">
+                    <rect key="frame" x="63" y="292" width="24" height="24"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="24" id="MdS-kD-cIy"/>
+                        <constraint firstAttribute="width" constant="24" id="xtN-eB-0c3"/>
+                    </constraints>
+                    <inset key="imageEdgeInsets" minX="0.0" minY="2" maxX="0.0" maxY="2"/>
+                    <state key="normal" image="imgHeartLight">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                </button>
+                <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" text="1 Like" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jtz-MW-UwR" userLabel="likes">
+                    <rect key="frame" x="93" y="295" width="39" height="18"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="18" id="GNc-ud-yCh"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="15"/>
+                    <color key="textColor" red="0.98431372549019602" green="0.5490196078431373" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="0TT-YB-aeS" firstAttribute="leading" secondItem="m6L-Nb-Bin" secondAttribute="leading" id="Ciw-PQ-dhL"/>
+                <constraint firstItem="woJ-Y6-bOV" firstAttribute="bottom" secondItem="H2p-sc-9uM" secondAttribute="bottom" constant="-8" id="Cpe-4j-UMt"/>
+                <constraint firstItem="0TT-YB-aeS" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="GpA-kc-Ty0"/>
+                <constraint firstItem="TaR-dt-0cq" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="H1p-Ay-XWU"/>
+                <constraint firstItem="dwP-9n-4tK" firstAttribute="leading" secondItem="m6L-Nb-Bin" secondAttribute="trailing" constant="8" id="IsW-Rf-rV3"/>
+                <constraint firstItem="eQH-ua-j18" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailing" constant="-8" id="J9G-Mq-zrT"/>
+                <constraint firstItem="h8L-WQ-6XO" firstAttribute="leading" secondItem="m6L-Nb-Bin" secondAttribute="leading" id="KDU-eM-EcE"/>
+                <constraint firstItem="eQH-ua-j18" firstAttribute="leading" secondItem="m6L-Nb-Bin" secondAttribute="leading" id="KHp-0h-Kvb"/>
+                <constraint firstItem="m6L-Nb-Bin" firstAttribute="top" secondItem="0TT-YB-aeS" secondAttribute="bottom" constant="4" id="ODn-4W-Is5"/>
+                <constraint firstItem="m6L-Nb-Bin" firstAttribute="leading" secondItem="woJ-Y6-bOV" secondAttribute="leading" constant="2" id="TaQ-XA-eCH"/>
+                <constraint firstItem="woJ-Y6-bOV" firstAttribute="top" secondItem="eQH-ua-j18" secondAttribute="bottom" constant="8" id="Wub-lZ-JTR"/>
+                <constraint firstItem="dwP-9n-4tK" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" constant="-4" id="Xef-Wa-aN3"/>
+                <constraint firstItem="eQH-ua-j18" firstAttribute="top" secondItem="h8L-WQ-6XO" secondAttribute="bottom" constant="8" id="ero-8j-R01"/>
+                <constraint firstItem="m6L-Nb-Bin" firstAttribute="leading" secondItem="TaR-dt-0cq" secondAttribute="trailing" constant="9" id="fVv-9a-iCu"/>
+                <constraint firstItem="h8L-WQ-6XO" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" constant="-4" id="fux-7Z-wC8"/>
+                <constraint firstItem="TaR-dt-0cq" firstAttribute="top" secondItem="m6L-Nb-Bin" secondAttribute="top" id="oB9-HR-jwj"/>
+                <constraint firstItem="dwP-9n-4tK" firstAttribute="baseline" secondItem="m6L-Nb-Bin" secondAttribute="baseline" id="tYi-h6-iz4"/>
+                <constraint firstItem="Jtz-MW-UwR" firstAttribute="leading" secondItem="woJ-Y6-bOV" secondAttribute="trailing" constant="6" id="v3N-B1-BK4"/>
+                <constraint firstItem="h8L-WQ-6XO" firstAttribute="top" secondItem="m6L-Nb-Bin" secondAttribute="bottom" constant="4" id="wyT-ce-zKL"/>
+                <constraint firstItem="Jtz-MW-UwR" firstAttribute="centerY" secondItem="woJ-Y6-bOV" secondAttribute="centerY" id="y8m-Xw-lVx"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="createdDate" destination="dwP-9n-4tK" id="RON-Gy-QRf"/>
+                <outlet property="description_" destination="h8L-WQ-6XO" id="47U-Yf-qrq"/>
+                <outlet property="likeButton" destination="woJ-Y6-bOV" id="Wbi-ra-yub"/>
+                <outlet property="likes" destination="Jtz-MW-UwR" id="mFO-N0-9b9"/>
+                <outlet property="patchName" destination="0TT-YB-aeS" id="haK-ae-XuB"/>
+                <outlet property="patchNameHeight" destination="jfD-W3-ZcH" id="1V5-K7-BSY"/>
+                <outlet property="photo" destination="eQH-ua-j18" id="9iG-Mm-BXI"/>
+                <outlet property="photoHeight" destination="j66-v2-IdI" id="jWq-v2-ghn"/>
+                <outlet property="photoTopSpace" destination="ero-8j-R01" id="vwE-4i-8d7"/>
+                <outlet property="userName" destination="m6L-Nb-Bin" id="9Rb-qj-2Ym"/>
+                <outlet property="userPhoto" destination="TaR-dt-0cq" id="ut3-ZY-DE1"/>
+            </connections>
+            <point key="canvasLocation" x="495.5" y="347"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="imgHeartLight" width="40" height="40"/>
+    </resources>
+</document>

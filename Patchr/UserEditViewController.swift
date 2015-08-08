@@ -29,7 +29,9 @@ class UserEditViewController: EntityEditViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+        
+        self.photoView!.frame = CGRectMake(0, 0, 200, 200)
+        
         if editMode {
             navigationItem.title = Utils.LocalizedString("Edit profile")
             self.progressStartLabel = "Updating"

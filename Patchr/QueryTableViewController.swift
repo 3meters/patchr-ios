@@ -18,7 +18,8 @@ class QueryTableViewController: FetchedResultsTableViewController {
 	private lazy var fetchControllerDelegate: FetchControllerDelegate = {
 		return FetchControllerDelegate(tableView: self.tableView, onUpdate: {
 			[weak self] (cell, object) -> Void in
-			return self?.configureCell(cell, object: object) ?? ()
+            let queryResult = object as! QueryItem
+            return self?.bindCell(cell, object: queryResult.object, tableView: nil) ?? ()
 		})
 	}()
 

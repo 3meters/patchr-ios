@@ -66,6 +66,73 @@ extension Entity {
 
 extension Patch {
     
+    static func bindView(view: UIView, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) -> UIView {
+        
+        let patch = object as! Patch
+        let view = view as! PatchView
+        
+        view.name.text = patch.name
+        if patch.type != nil {
+            view.type.text = patch.type.uppercaseString + " PATCH"
+        }
+        
+        if view.placeName != nil {
+            view.placeName.hidden = true
+            view.placeName.text = nil
+            if patch.place != nil {
+                view.placeName.text = patch.place.name.uppercaseString
+                view.placeName.hidden = false
+            }
+        }
+        
+        if view.visibility != nil {
+            view.visibility?.tintColor(Colors.brandColor)
+            view.visibility.hidden = (patch.visibility == "public")
+        }
+        
+        if (view.status != nil) {
+            view.status.hidden = true
+            view.statusWidth.constant = CGFloat(0)
+            if (patch.userWatchStatusValue == .Pending && !SCREEN_NARROW) {
+                view.status.hidden = false
+                view.statusWidth.constant = CGFloat(70)
+            }
+            else {
+                
+            }
+        }
+        
+        if let numberOfMessages = patch.numberOfMessages {
+            if view.messageCount != nil {
+                view.messageCount.text = numberOfMessages.stringValue
+            }
+        }
+        
+        if let numberOfWatching = patch.countWatching {
+            if view.watchingCount != nil {
+                view.watchingCount.text = numberOfWatching.stringValue
+            }
+        }
+        
+        /* Distance */
+        if view.distance != nil {
+            view.distance.text = "--"
+            if let currentLocation = LocationController.instance.getLocation() {
+                if let loc = patch.location {
+                    var patchLocation = CLLocation(latitude: loc.latValue, longitude: loc.lngValue)
+                    let dist = Float(currentLocation.distanceFromLocation(patchLocation))  // in meters
+                    view.distance.text = LocationController.instance.distancePretty(dist)
+                }
+            }
+        }
+        
+        if !sizingOnly {
+            view.photo.setImageWithPhoto(patch.getPhotoManaged(), animate: view.photo.image == nil)
+        }
+        
+        return view
+    }
+    
     static func extras(inout parameters: [String:AnyObject]) -> [String:AnyObject] {
         if var links = Patch.links() {
             parameters["links"] = links
@@ -132,6 +199,74 @@ extension Patch {
 
 extension Message {
     
+    static func bindView(view: UIView, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) -> UIView {
+        
+        let message = object as! Message
+        let view = view as! MessageView
+        
+        view.entity = message
+        
+        view.description_.text = nil
+        view.userName.text = nil
+        view.patchName.text = nil
+        view.patchNameHeight.constant = 0
+        
+        let linkColor = Colors.brandColorDark
+        let linkActiveColor = Colors.brandColorLight
+        
+        view.description_.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
+        view.description_.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
+        view.description_.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
+        view.description_.text = message.description_
+        view.description_.preferredMaxLayoutWidth = CGRectGetWidth(view.description_.frame)
+        
+        if let photo = message.photo {
+            if !sizingOnly {
+                view.photo.setImageWithPhoto(photo, animate: view.photo.image == nil)
+            }
+            view.photoTopSpace.constant = 8
+            view.photoHeight.constant = view.photo.bounds.size.width * 0.5625
+        }
+        else {
+            view.photoTopSpace.constant = 0
+            view.photoHeight.constant = 0
+        }
+        
+        if let creator = message.creator {
+            view.userName.text = creator.name
+            if !sizingOnly {
+                view.userPhoto.setImageWithPhoto(creator.getPhotoManaged(), animate: view.userPhoto.image == nil)
+            }
+        }
+        else {
+            view.userName.text = "Deleted"
+            if !sizingOnly {
+                view.userPhoto.setImageWithPhoto(Entity.getDefaultPhoto("user"))
+            }
+        }
+        
+        /* Likes button */
+        view.likeButton.bindEntity(message)
+        
+        view.likes.hidden = true
+        if message.countLikes != nil {
+            if message.countLikes?.integerValue != 0 {
+                let likesTitle = message.countLikes?.integerValue == 1
+                    ? "\(message.countLikes) like"
+                    : "\(message.countLikes ?? 0) likes"
+                view.likes.text = likesTitle
+                view.likes.hidden = false
+            }
+        }
+        
+        view.createdDate.text = Utils.messageDateFormatter.stringFromDate(message.createdDate)
+        if let patch = message.patch {
+            view.patchName.text = (message.type != nil && message.type == "share") ? "Shared by" : patch.name
+        }
+        
+        return view
+    }
+    
     static func extras(inout parameters: [String:AnyObject]) -> [String:AnyObject] {
         if var links = Message.links() {
             parameters["links"] = links
@@ -195,6 +330,43 @@ extension Message {
 
 extension User {
     
+    static func bindView(view: UIView, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) {
+        
+        let user = object as! User
+        let view = view as! UserView
+        
+        view.userName.text = user.name
+        if !sizingOnly {
+            view.userPhoto.setImageWithPhoto(user.getPhotoManaged(), animate: view.userPhoto.image == nil)
+        }
+        view.area.text = user.area?.uppercaseString
+        
+        view.userName.hidden = view.userName.text == nil
+        view.area.hidden = view.area.text == nil
+        view.owner.hidden = view.owner.text == nil
+        
+        // Private patch owner controls controls
+        if let view = view as? UserApprovalView {
+            
+            view.entity = object as? Entity
+            view.removeButton?.hidden = true
+            view.approved?.hidden = true
+            view.approvedSwitch?.hidden = true
+            
+            if let currentUser = UserController.instance.currentUser {
+                if user.id_ != currentUser.id_ {
+                    view.removeButton?.hidden = false
+                    view.approved?.hidden = false
+                    view.approvedSwitch?.hidden = false
+                    view.approvedSwitch?.on = false
+                    if (user.link != nil && user.link.type == "watch") {
+                        view.approvedSwitch?.on = user.link.enabledValue
+                    }
+                }
+            }
+        }
+    }
+    
     static func extras(inout parameters: [String:AnyObject]) -> [String:AnyObject] {
         if var links = User.links() {
             parameters["links"] = links
@@ -229,6 +401,83 @@ extension User {
         }
         
         return array
+    }
+}
+
+extension Notification {
+    
+    static func bindView(view: UIView, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) -> UIView {
+        
+        let notification = object as! Notification
+        let view = view as! NotificationView
+        
+        view.description_.text = nil
+        
+        let linkColor = Colors.brandColorDark
+        let linkActiveColor = Colors.brandColorLight
+        
+        view.description_.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
+        view.description_.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
+        view.description_.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
+        view.description_.text = notification.summary
+        
+        if let photo = notification.photoBig {
+            if !sizingOnly {
+                view.photo.setImageWithPhoto(photo, animate: view.photo.image == nil)
+            }
+            view.photoTopSpace.constant = 8
+            view.photoHeight.constant = view.photo.bounds.size.width * 0.5625
+        }
+        else {
+            view.photoTopSpace.constant = 0
+            view.photoHeight.constant = 0
+        }
+        
+        if !sizingOnly {
+            view.userPhoto.setImageWithPhoto(notification.getPhotoManaged(), animate: view.userPhoto.image == nil)
+        }
+        view.createdDate.text = Utils.messageDateFormatter.stringFromDate(notification.createdDate)
+        
+        /* Age indicator */
+        view.ageDot.layer.backgroundColor = Colors.accentColor.CGColor
+        let now = NSDate()
+        
+        /* Age of notification in hours */
+        let interval = Int(now.timeIntervalSinceDate(NSDate(timeIntervalSince1970: notification.createdDate.timeIntervalSince1970)) / 3600)
+        if interval > 12 {
+            view.ageDot.alpha = 0.0
+        }
+        else if interval > 1 {
+            view.ageDot.alpha = 0.25
+        }
+        else {
+            view.ageDot.alpha = 1.0
+        }
+        
+        if notification.type == "media" {
+            view.iconImageView.image = UIImage(named: "imgMediaLight")
+        }
+        else if notification.type == "message" {
+            view.iconImageView.image = UIImage(named: "imgMessageLight")
+        }
+        else if notification.type == "watch" {
+            view.iconImageView.image = UIImage(named: "imgWatchLight")
+        }
+        else if notification.type == "like" {
+            if notification.targetId.hasPrefix("pa.") {
+                view.iconImageView.image = UIImage(named: "imgStarFilledLight")
+            }
+            else {
+                view.iconImageView.image = UIImage(named: "imgLikeLight")
+            }
+        }
+        else if notification.type == "share" {
+            view.iconImageView.image = UIImage(named: "imgShareLight")
+        }
+        
+        view.iconImageView.tintColor(Colors.brandColor)
+        
+        return view
     }
 }
 

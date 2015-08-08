@@ -273,7 +273,7 @@ extension PatchTargetViewController: UITableViewDelegate {
             let font = UIFont.preferredFontForTextStyle(UIFontTextStyleSubheadline)
             attributes.setValue(font, forKey: NSFontAttributeName)
             
-            let label = self.searchEditing ? "SUGGESTIONS" : "RECENT"
+            let label = self.searchEditing ? "SUGGESTIONS" : "RECENTS"
             
             view.attributedText = NSMutableAttributedString(string: label, attributes: attributes as [NSObject:AnyObject])
         }

@@ -13,7 +13,6 @@ class UserDetailViewController: QueryTableViewController {
 	var user:  User! = nil
     var userId: String?
 
-	private let cellNibName = "MessageTableViewCell"
 	private var selectedMessage:      Message?
 	private var messageDateFormatter: NSDateFormatter!
 	private var offscreenCells:       NSMutableDictionary = NSMutableDictionary()
@@ -70,17 +69,10 @@ class UserDetailViewController: QueryTableViewController {
             userId = user.id_
         }
         
+        self.contentViewName = "MessageView"
         super.showEmptyLabel = false
         
 		super.viewDidLoad()
-
-		tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: CELL_IDENTIFIER)
-
-		let dateFormatter = NSDateFormatter()
-		dateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
-		dateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
-		dateFormatter.doesRelativeDateFormatting = true
-		self.messageDateFormatter = dateFormatter
 
         /* UI prep */
         tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
@@ -241,70 +233,14 @@ class UserDetailViewController: QueryTableViewController {
             }
         }
 	}
-
-	override func configureCell(cell: UITableViewCell, object: AnyObject, sizingOnly: Bool = false) {
-
-		// The cell width seems to incorrect occassionally
-		if CGRectGetWidth(cell.bounds) != CGRectGetWidth(self.tableView.bounds) {
-			cell.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: CGRectGetHeight(cell.frame))
-			cell.setNeedsLayout()
-			cell.layoutIfNeeded()
-		}
-
-		let queryResult = object as! QueryItem
-		let message = queryResult.object as! Message
-		let messageCell = cell as! MessageTableViewCell
+    
+    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) {
         
-        messageCell.entity = message
-		messageCell.delegate = self
-
-		messageCell.description_.text = nil
-		messageCell.userName.text = nil
-		messageCell.patchName.text = nil
-        
-        let linkColor = Colors.brandColorDark
-        let linkActiveColor = Colors.brandColorLight
-        
-        messageCell.description_.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
-        messageCell.description_.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
-        messageCell.description_.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
-        messageCell.description_.delegate = self
-		messageCell.description_.text = message.description_
-        messageCell.description_.preferredMaxLayoutWidth = CGRectGetWidth(messageCell.description_.frame)
-        
-        if let photo = message.photo {
-            if !sizingOnly {
-                messageCell.photo.setImageWithPhoto(photo, animate: messageCell.photo.image == nil)
-            }
-            messageCell.photoTopSpace.constant = 8
-            messageCell.photoHeight.constant = messageCell.photo.bounds.size.width * 0.5625
-        }
-        else {
-            messageCell.photoTopSpace.constant = 0
-            messageCell.photoHeight.constant = 0
-        }
-
-		if message.creator != nil {
-			messageCell.userName.text = message.creator.name
-            messageCell.userPhoto.setImageWithPhoto(message.creator.getPhotoManaged(), animate: messageCell.userPhoto.image == nil)
-		}
-
-		messageCell.likes.hidden = true
-		if message.countLikes != nil {
-			if message.countLikes?.integerValue != 0 {
-				let likesTitle = message.countLikes?.integerValue == 1
-						? "\(message.countLikes) like"
-						: "\(message.countLikes ?? 0) likes"
-				messageCell.likes.text = likesTitle
-				messageCell.likes.hidden = false
-			}
-		}
-
-		messageCell.createdDate.text = self.messageDateFormatter.stringFromDate(message.createdDate)
-		if let patch = message.patch {
-			messageCell.patchName.text = (message.type != nil && message.type == "share") ? "Shared by" : patch.name
-		}
-	}
+        let messageView = cell.contentView.viewWithTag(1) as! MessageView
+        Message.bindView(messageView, object: object, tableView: tableView, sizingOnly: sizingOnly)
+        messageView.delegate = self
+        messageView.description_.delegate = self
+    }
     
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
 		if segue.identifier == nil {
@@ -362,36 +298,32 @@ extension  UserDetailViewController: UITableViewDelegate {
 
 		var cell = self.offscreenCells.objectForKey(CELL_IDENTIFIER) as? UITableViewCell
 
-		if cell == nil {
-			let nibObjects = NSBundle.mainBundle().loadNibNamed(cellNibName, owner: self, options: nil)
-			cell = nibObjects[0] as? UITableViewCell
-			self.offscreenCells.setObject(cell!, forKey: CELL_IDENTIFIER)
-		}
+        if cell == nil {
+            cell = buildCell(self.contentViewName!)
+            configureCell(cell!)
+            self.offscreenCells.setObject(cell!, forKey: CELL_IDENTIFIER)
+        }
 
-		let object: AnyObject = self.fetchedResultsController.objectAtIndexPath(indexPath)
+        /* Bind view to data for this row */
+        let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as! QueryItem
+        let boundView = Message.bindView(cell!.contentView.viewWithTag(1)!, object: queryResult.object, tableView: tableView) as! MessageView
 
-		self.configureCell(cell!, object: object)
-
-		cell?.setNeedsUpdateConstraints()
-		cell?.updateConstraintsIfNeeded()
-		cell?.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: CGRectGetHeight(cell!.frame))
-		cell?.setNeedsLayout()
-		cell?.layoutIfNeeded()
-
+        /* Get the actual height required for the cell */
 		var height = cell!.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
 
 		return height
 	}
 }
 
-extension UserDetailViewController: TableViewCellDelegate {
-
-	func tableViewCell(cell: UITableViewCell, didTapOnView view: UIView) {
-		let messageCell = cell as! MessageTableViewCell
-		if view == messageCell.photo && messageCell.photo.image != nil {
-            Shared.showPhotoBrowser(messageCell.photo.image, view: view, viewController: self, entity: messageCell.entity)
-		}
-	}
+extension UserDetailViewController: ViewDelegate {
+    
+    func view(container: UIView, didTapOnView view: UIView) {
+        if let view = view as? AirImageView, container = container as? MessageView {
+            if view.image != nil {
+                Shared.showPhotoBrowser(view.image, view: view, viewController: self, entity: container.entity)
+            }
+        }
+    }
 }
 
 extension UserDetailViewController: TTTAttributedLabelDelegate {

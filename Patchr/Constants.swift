@@ -6,26 +6,26 @@
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
 
-let pageSizeDefault = 20
-let pageSizeNearby = 50
-let pageSizeExplore = 20
-let pageSizeNotifications = 20
+let pageSizeDefault         = 20
+let pageSizeNearby          = 50
+let pageSizeExplore         = 20
+let pageSizeNotifications   = 20
 
-let Device = UIDevice.currentDevice()
+let Device      = UIDevice.currentDevice()
+let iosVersion  = NSString(string: Device.systemVersion).doubleValue
+let IOS9        = iosVersion >= 9
+let IOS8        = iosVersion >= 8
+let IOS7        = iosVersion >= 7 && iosVersion < 8
 
-let iosVersion = NSString(string: Device.systemVersion).doubleValue
-let IOS9 = iosVersion >= 9
-let IOS8 = iosVersion >= 8
-let IOS7 = iosVersion >= 7 && iosVersion < 8
+let SCREEN_NARROW           = (UIScreen.mainScreen().bounds.size.width == 320)
+let PIXEL_SCALE: CGFloat    = UIScreen.mainScreen().scale
+let SPACER_WIDTH: CGFloat   = 12
 
-let SCREEN_NARROW = (UIScreen.mainScreen().bounds.size.width == 320)
-let PIXEL_SCALE: CGFloat = UIScreen.mainScreen().scale
-let SPACER_WIDTH: CGFloat = 12
-let TIMEOUT_REQUEST: Int = 10   // Seconds
+let TIMEOUT_REQUEST: Int    = 10   // Seconds
 
-let URI_PROXIBASE_SEARCH_IMAGES: String = "https://api.datamarket.azure.com/Bing/Search/v1"
-let NAMESPACE: String = "com.3meters.patchr.ios."
-let CELL_IDENTIFIER = "cell_identifier"
+let URI_PROXIBASE_SEARCH_IMAGES: String     = "https://api.datamarket.azure.com/Bing/Search/v1"
+let NAMESPACE: String                       = "com.3meters.patchr.ios."
+let CELL_IDENTIFIER                         = "cell"
 
 func PatchrUserDefaultKey(subKey: String) -> String {
     return NAMESPACE + subKey
@@ -43,8 +43,19 @@ public struct Colors {
 }
 
 public struct Events {
-    static let LikeDidChange = "LikeDidChange"
-    static let WatchDidChange = "WatchDidChange"
+    static let LikeDidChange        = "LikeDidChange"
+    static let WatchDidChange       = "WatchDidChange"
+}
+
+public struct Schema {
+    static let ENTITY_BEACON        = "beacon"
+    static let ENTITY_MESSAGE       = "message"
+    static let ENTITY_NOTIFICATION  = "notification"
+    static let ENTITY_PATCH         = "patch"
+    static let ENTITY_PLACE         = "place"
+    static let ENTITY_USER          = "user"
+    static let PHOTO                = "photo"
+    static let LINK                 = "link"
 }
 
 /*

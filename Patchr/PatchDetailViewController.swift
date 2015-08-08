@@ -14,12 +14,12 @@ class PatchDetailViewController: QueryTableViewController {
     var patchId: String?
     var deleted = false
 
-	private let cellNibName = "MessageTableViewCell"
 	private var selectedMessage:      Message?
 	private var messageDateFormatter: NSDateFormatter!
 	private var offscreenCells:       NSMutableDictionary = NSMutableDictionary()
     private var _query: Query!
     private var contextAction: ContextAction = .SharePatch
+    private var shareButtonFunctionMap = [Int: ShareButtonFunction]()
     
     private var isOwner: Bool {
         if let currentUser = UserController.instance.currentUser {
@@ -100,21 +100,15 @@ class PatchDetailViewController: QueryTableViewController {
 			patchId = patch.id_
 		}
         
+        self.contentViewName = "MessageView"
         super.showEmptyLabel = false
 
 		super.viewDidLoad()
 
-		tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: CELL_IDENTIFIER)
         let bannerTapGestureRecognizer = UITapGestureRecognizer(target: self, action: "flipToInfo:")
         self.bannerGroup.addGestureRecognizer(bannerTapGestureRecognizer)
         let infoTapGestureRecognizer = UITapGestureRecognizer(target: self, action: "flipToBanner:")
         self.infoGroup.addGestureRecognizer(infoTapGestureRecognizer)
-
-		let dateFormatter = NSDateFormatter()
-		dateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
-		dateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
-		dateFormatter.doesRelativeDateFormatting = true
-		messageDateFormatter = dateFormatter
         
 		/* Apply gradient to banner */
 		var gradient: CAGradientLayer = CAGradientLayer()
@@ -206,33 +200,6 @@ class PatchDetailViewController: QueryTableViewController {
     
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
-    }
-
-	private func refresh(force: Bool = false) {
-		/* Refreshes the top object but not the message list */
-		DataController.instance.withPatchId(patchId!, refresh: force) {
-			patch in
-            
-			self.refreshControl?.endRefreshing()
-			if patch != nil {
-                if self.patch == nil {
-                    self.refreshQueryItems(force: true)
-                }
-				self.patch = patch
-                self.patchId = patch!.id_
-                DataController.instance.currentPatch = patch    // Used for context for messages
-                self.drawButtons()
-				self.draw()
-			}
-		}
-	}
-    
-    override func prefersStatusBarHidden() -> Bool {
-        return false
-    }
-    
-    override func preferredStatusBarUpdateAnimation() -> UIStatusBarAnimation {
-        return UIStatusBarAnimation.Fade
     }
 
 	/*--------------------------------------------------------------------------------------------
@@ -343,29 +310,14 @@ class PatchDetailViewController: QueryTableViewController {
         
         if self.patch != nil {
             
-            Branch.getInstance().getShortURLWithParams(["entityId":self.patchId!, "entitySchema":"patch"], andChannel: "patchr-ios", andFeature: BRANCH_FEATURE_TAG_INVITE, andCallback: {
-                (url: String?, error: NSError?) -> Void in
-                
-                if let error = ServerError(error) {
-                    UIViewController.topMostViewController()!.handleError(error)
-                }
-                else {
-                    Log.d("Branch link created: \(url!)")
-                    var patch: PatchItem = PatchItem(entity: self.patch!, shareUrl: url!)
-                    
-                    let activityViewController = UIActivityViewController(
-                        activityItems: [patch],
-                        applicationActivities: nil)
-                    
-                    if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-                        self.presentViewController(activityViewController, animated: true, completion: nil)
-                    }
-                    else {
-                        let popup: UIPopoverController = UIPopoverController(contentViewController: activityViewController)
-                        popup.presentPopoverFromRect(CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/4, 0, 0), inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
-                    }
-                }
-            })
+            let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: nil, destructiveButtonTitle: nil)
+            
+            shareButtonFunctionMap[sheet.addButtonWithTitle("Invite")] = .Share
+            shareButtonFunctionMap[sheet.addButtonWithTitle("Invite via")] = .ShareVia
+            sheet.addButtonWithTitle("Cancel")
+            sheet.cancelButtonIndex = sheet.numberOfButtons - 1
+            
+            sheet.showInView(self.view)
         }
     }
     
@@ -381,7 +333,7 @@ class PatchDetailViewController: QueryTableViewController {
 	/*--------------------------------------------------------------------------------------------
 	 * Methods
 	 *--------------------------------------------------------------------------------------------*/
-
+    
 	func draw() {
         
         if self.patch == nil {
@@ -542,81 +494,42 @@ class PatchDetailViewController: QueryTableViewController {
             self.navigationItem.rightBarButtonItems = [addButton, spacer, shareButton]
         }
     }
+
+    private func refresh(force: Bool = false) {
+        /* Refreshes the top object but not the message list */
+        DataController.instance.withPatchId(patchId!, refresh: force) {
+            patch in
+            
+            self.refreshControl?.endRefreshing()
+            if patch != nil {
+                if self.patch == nil {
+                    self.refreshQueryItems(force: true)
+                }
+                self.patch = patch
+                self.patchId = patch!.id_
+                DataController.instance.currentPatch = patch    // Used for context for messages
+                self.drawButtons()
+                self.draw()
+            }
+        }
+    }
     
-    override func configureCell(cell: UITableViewCell, object: AnyObject, sizingOnly: Bool = false) {
-
-		// The cell width seems to incorrect occassionally
-		if CGRectGetWidth(cell.bounds) != CGRectGetWidth(self.tableView.bounds) {
-			cell.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: CGRectGetHeight(cell.frame))
-			cell.setNeedsLayout()
-			cell.layoutIfNeeded()
-		}
-        
-        let queryResult = object as! QueryItem
-        let message = queryResult.object as! Message
-		let cell = cell as! MessageTableViewCell
-
-        cell.entity = message
-		cell.delegate = self
-
-		cell.description_.text = nil
-		cell.userName.text = nil
-		cell.patchName.text = nil
-        cell.patchNameHeight.constant = 0
-
-        let linkColor = Colors.brandColorDark
-        let linkActiveColor = Colors.brandColorLight
-        
-        cell.description_.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
-        cell.description_.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
-        cell.description_.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
-        cell.description_.delegate = self
-        
-		cell.description_.text = message.description_
-        cell.description_.preferredMaxLayoutWidth = CGRectGetWidth(cell.description_.frame)
-
-		if let photo = message.photo {
-            if !sizingOnly {
-                cell.photo.setImageWithPhoto(photo, animate: cell.photo.image == nil)
-            }
-            cell.photoTopSpace.constant = 8
-            cell.photoHeight.constant = cell.photo.bounds.size.width * 0.5625
-		}
-        else {
-            cell.photoTopSpace.constant = 0
-            cell.photoHeight.constant = 0
-        }
-
-		if let creator = message.creator {
-			cell.userName.text = creator.name
-            if !sizingOnly {
-                cell.userPhoto.setImageWithPhoto(creator.getPhotoManaged(), animate: cell.userPhoto.image == nil)
-            }
-		}
-        else {
-            cell.userName.text = "Deleted"
-            if !sizingOnly {
-                cell.userPhoto.setImageWithPhoto(Entity.getDefaultPhoto("user"))
-            }
-        }
-        
-        /* Likes button */
-        cell.likeButton.bindEntity(message)
-
-		cell.likes.hidden = true
-		if message.countLikes != nil {
-			if message.countLikes?.integerValue != 0 {
-				let likesTitle = message.countLikes?.integerValue == 1
-						? "\(message.countLikes) like"
-						: "\(message.countLikes ?? 0) likes"
-				cell.likes.text = likesTitle
-				cell.likes.hidden = false
-			}
-		}
-        
-		cell.createdDate.text = self.messageDateFormatter.stringFromDate(message.createdDate)
-	}
-
+    override func prefersStatusBarHidden() -> Bool {
+        return false
+    }
+    
+    override func preferredStatusBarUpdateAnimation() -> UIStatusBarAnimation {
+        return UIStatusBarAnimation.Fade
+    }
+    
+    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) {
+        let view = cell.contentView.viewWithTag(1) as! MessageView
+        Message.bindView(view, object: object, tableView: tableView, sizingOnly: sizingOnly)
+        view.delegate = self
+        view.description_.delegate = self
+        view.patchNameHeight.constant = 0
+    }
+    
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
 		if segue.identifier == nil {
 			return
@@ -664,37 +577,43 @@ class PatchDetailViewController: QueryTableViewController {
         self.refreshQueryItems(force: true)
 	}
 
-}
-
-class PatchItem: NSObject, UIActivityItemSource {
-    
-    var entity: Patch
-    var shareUrl: String
-    
-    init(entity: Patch, shareUrl: String) {
-        self.entity = entity
-        self.shareUrl = shareUrl
-    }
-    
-    func activityViewControllerPlaceholderItem(activityViewController: UIActivityViewController) -> AnyObject {
-        return ""
-    }
-    
-    func activityViewController(activityViewController: UIActivityViewController, itemForActivityType activityType: String) -> AnyObject? {
-        var text = "\(UserController.instance.currentUser.name) has invited you to the \(self.entity.name) patch! \(self.shareUrl) \n"
-        if activityType == UIActivityTypeMail {
-            return text
+    func shareUsing(patchr: Bool = true) {
+        
+        if patchr {
+            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+            let controller = storyboard.instantiateViewControllerWithIdentifier("MessageEditViewController") as? MessageEditViewController
+            /* viewDidLoad hasn't fired yet but awakeFromNib has */
+            controller?.shareEntity = self.patch
+            controller?.shareSchema = Schema.ENTITY_PATCH
+            controller?.shareId = self.patchId!
+            controller?.messageType = .Share
+            self.presentViewController(UINavigationController(rootViewController: controller!), animated: true, completion: nil)
         }
         else {
-            return text
+            Branch.getInstance().getShortURLWithParams(["entityId":self.patchId!, "entitySchema":"patch"], andChannel: "patchr-ios", andFeature: BRANCH_FEATURE_TAG_INVITE, andCallback: {
+                (url: String?, error: NSError?) -> Void in
+                
+                if let error = ServerError(error) {
+                    UIViewController.topMostViewController()!.handleError(error)
+                }
+                else {
+                    Log.d("Branch link created: \(url!)")
+                    var patch: PatchItem = PatchItem(entity: self.patch!, shareUrl: url!)
+                    
+                    let activityViewController = UIActivityViewController(
+                        activityItems: [patch],
+                        applicationActivities: nil)
+                    
+                    if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+                        self.presentViewController(activityViewController, animated: true, completion: nil)
+                    }
+                    else {
+                        let popup: UIPopoverController = UIPopoverController(contentViewController: activityViewController)
+                        popup.presentPopoverFromRect(CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/4, 0, 0), inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
+                    }
+                }
+            })
         }
-    }
-    
-    func activityViewController(activityViewController: UIActivityViewController, subjectForActivityType activityType: String?) -> String {
-        if activityType == UIActivityTypeMail || activityType == "com.google.Gmail.ShareExtension" {
-            return "Invitation to the \(self.entity.name) patch"
-        }
-        return ""
     }
 }
 
@@ -735,7 +654,6 @@ extension PatchDetailViewController: MapViewDelegate {
     }
 }
 
-
 extension PatchDetailViewController: UITableViewDelegate {
     
     override func scrollViewDidScroll(scrollView: UIScrollView) {
@@ -766,55 +684,55 @@ extension PatchDetailViewController: UITableViewDelegate {
 	}
 
 	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-
-		// https://github.com/smileyborg/TableViewCellWithAutoLayout
-
-		/* Fetch or create our prototype cell */
-		var cell = self.offscreenCells.objectForKey(CELL_IDENTIFIER) as? UITableViewCell
-
-		if cell == nil {
-			let nibObjects = NSBundle.mainBundle().loadNibNamed(cellNibName, owner: self, options: nil)
-			cell = nibObjects[0] as? UITableViewCell // Assumes only one view in the nib
-			self.offscreenCells.setObject(cell!, forKey: CELL_IDENTIFIER)
-		}
-
-		/* Get the data */
-		let object: AnyObject = self.fetchedResultsController.objectAtIndexPath(indexPath)
-
-		/* Bind the data to the cell */
-        self.configureCell(cell!, object: object, sizingOnly: true)
-
-		/* Request a restraint pass */
-		cell?.setNeedsUpdateConstraints()
-        cell?.updateConstraintsIfNeeded()
-
-		/* Set the cell bounds using table width and cell height */
-		cell?.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: CGRectGetHeight(cell!.bounds))
-
-		/* Request a layout pass */
-		cell?.setNeedsLayout()
-		cell?.layoutIfNeeded()
-
-		/* Get height based on sizing to fit under compression using the current contraints */
-		var height = cell!.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
         
-        let queryResult  = object as! QueryItem
-        let entity = queryResult.object as! Entity
+        var cell = self.offscreenCells.objectForKey(CELL_IDENTIFIER) as? UITableViewCell
         
-        //        Log.d("Height for row: \(entity.description_) \(height)")
+        if cell == nil {
+            cell = buildCell(self.contentViewName!)
+            configureCell(cell!)
+            self.offscreenCells.setObject(cell!, forKey: CELL_IDENTIFIER)
+        }
+        
+        /* view view to data for this row */
+        let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as! QueryItem
+        let boundView = Message.bindView(cell!.contentView.viewWithTag(1)!, object: queryResult.object, tableView: tableView) as! MessageView
+        boundView.patchNameHeight.constant = 0
+        
+        /* Get the actual height required for the cell */
+        var height = cell!.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
         
         return height
 	}
 }
 
-extension PatchDetailViewController: TableViewCellDelegate {
+extension PatchDetailViewController: ViewDelegate {
+    func view(container: UIView, didTapOnView view: UIView) {
+        if let view = view as? AirImageView, container = container as? MessageView {
+            if view.image != nil {
+                Shared.showPhotoBrowser(view.image, view: view, viewController: self, entity: container.entity)
+            }
+        }
+    }
+}
 
-	func tableViewCell(cell: UITableViewCell, didTapOnView view: UIView) {
-		let messageCell = cell as! MessageTableViewCell
-		if view == messageCell.photo && messageCell.photo.image != nil {
-            Shared.showPhotoBrowser(messageCell.photo.image, view: view, viewController: self, entity: messageCell.entity)
-		}
-	}
+extension PatchDetailViewController: UIActionSheetDelegate {
+    
+    func actionSheet(actionSheet: UIActionSheet, clickedButtonAtIndex buttonIndex: Int) {
+        if buttonIndex != actionSheet.cancelButtonIndex {
+            // There are some strange visual artifacts with the share sheet and the presented
+            // view controllers. Adding a small delay seems to prevent them.
+            delay(0.4, {
+                () -> () in
+                switch self.shareButtonFunctionMap[buttonIndex]! {
+                case .Share:
+                    self.shareUsing(patchr: true)
+                    
+                case .ShareVia:
+                    self.shareUsing(patchr: false)
+                }
+            })
+        }
+    }
 }
 
 extension PatchDetailViewController: TTTAttributedLabelDelegate {
@@ -822,6 +740,43 @@ extension PatchDetailViewController: TTTAttributedLabelDelegate {
     func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
         UIApplication.sharedApplication().openURL(url)
     }
+}
+
+class PatchItem: NSObject, UIActivityItemSource {
+    
+    var entity: Patch
+    var shareUrl: String
+    
+    init(entity: Patch, shareUrl: String) {
+        self.entity = entity
+        self.shareUrl = shareUrl
+    }
+    
+    func activityViewControllerPlaceholderItem(activityViewController: UIActivityViewController) -> AnyObject {
+        return ""
+    }
+    
+    func activityViewController(activityViewController: UIActivityViewController, itemForActivityType activityType: String) -> AnyObject? {
+        var text = "\(UserController.instance.currentUser.name) has invited you to the \(self.entity.name) patch! \(self.shareUrl) \n"
+        if activityType == UIActivityTypeMail {
+            return text
+        }
+        else {
+            return text
+        }
+    }
+    
+    func activityViewController(activityViewController: UIActivityViewController, subjectForActivityType activityType: String?) -> String {
+        if activityType == UIActivityTypeMail || activityType == "com.google.Gmail.ShareExtension" {
+            return "Invitation to the \(self.entity.name) patch"
+        }
+        return ""
+    }
+}
+
+private enum ShareButtonFunction {
+    case Share
+    case ShareVia
 }
 
 enum ContextAction: UInt {

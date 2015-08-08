@@ -25,6 +25,8 @@ class PatchTableViewController: QueryTableViewController {
     
 	private var _query: Query!
 
+    @IBOutlet weak var contentHolder: UIView!
+    
 	override func query() -> Query {
 		if self._query == nil {
 			let query = Query.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Query
@@ -77,6 +79,9 @@ class PatchTableViewController: QueryTableViewController {
         
         super.viewDidLoad()
         
+        /* Content view */
+        self.contentViewName = (SCREEN_NARROW || self.filter != .Nearby) ? "PatchNormalView" : "PatchLargeView"
+        
         /* A bit of UI tweaking */
         self.tableView.backgroundColor = Colors.windowColor
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
@@ -89,23 +94,17 @@ class PatchTableViewController: QueryTableViewController {
 		switch self.filter {
 			case .Nearby:
 				self.navigationItem.title = "Nearby"
-                let nibName = SCREEN_NARROW ? "PatchNormalTableViewCell" : "PatchLargeTableViewCell"
-                self.tableView.registerNib(UINib(nibName: nibName, bundle: nil), forCellReuseIdentifier: CELL_IDENTIFIER)
 			case .Explore:
 				self.navigationItem.title = "Explore"
-                self.tableView.registerNib(UINib(nibName: "PatchNormalTableViewCell", bundle: nil), forCellReuseIdentifier: CELL_IDENTIFIER)
 				self.searchDisplayController?.searchResultsTableView.rowHeight = self.tableView.rowHeight
 				self.searchDisplayController?.searchResultsTableView.estimatedRowHeight = self.tableView.estimatedRowHeight
 				self.tableView.contentOffset = CGPointMake(0, self.searchDisplayController?.searchBar.frame.size.height ?? 0) // Sets search bar under nav bar initially
 			case .Watching:
 				self.navigationItem.title = "Patches I'm watching"
-                self.tableView.registerNib(UINib(nibName: "PatchNormalTableViewCell", bundle: nil), forCellReuseIdentifier: CELL_IDENTIFIER)
             case .Favorite:
                 self.navigationItem.title = "Favorites"
-                self.tableView.registerNib(UINib(nibName: "PatchNormalTableViewCell", bundle: nil), forCellReuseIdentifier: CELL_IDENTIFIER)
 			case .Owns:
 				self.navigationItem.title = "Patches I own"
-                self.tableView.registerNib(UINib(nibName: "PatchNormalTableViewCell", bundle: nil), forCellReuseIdentifier: CELL_IDENTIFIER)
 		}
     }
     
@@ -141,87 +140,23 @@ class PatchTableViewController: QueryTableViewController {
     * Methods
     *--------------------------------------------------------------------------------------------*/
     
-    override func configureCell(cell: UITableViewCell, object: AnyObject, sizingOnly: Bool = false) {
+    override func configureCell(cell: UITableViewCell) {
         
-        // The cell width seems to incorrect occassionally
-        if CGRectGetWidth(cell.bounds) != CGRectGetWidth(self.tableView.bounds) {
-            cell.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: CGRectGetHeight(cell.frame))
-            cell.setNeedsLayout()
-            cell.layoutIfNeeded()
-        }
+        cell.contentView.backgroundColor = Colors.windowColor
         
-        let queryResult = object as! QueryItem
-        let patch = queryResult.object as! Patch
-        let cell = cell as! PatchTableViewCell
+        let view = cell.contentView.viewWithTag(1) as! BaseView
+        let views = Dictionary(dictionaryLiteral: ("view", view))
+        let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-8-[view]-8-|", options: nil, metrics: nil, views: views)
+        let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|-8-[view]|", options: nil, metrics: nil, views: views)
         
-        cell.name.text = patch.name
-        if patch.type != nil {
-            cell.type.text = patch.type.uppercaseString + " PATCH"
-        }
-        
-        if cell.placeName != nil {
-            cell.placeName.hidden = true
-            cell.placeName.text = nil
-            if patch.place != nil {
-                cell.placeName.text = patch.place.name.uppercaseString
-                cell.placeName.hidden = false
-            }
-        }
-        
-        if cell.visibility != nil {
-            cell.visibility?.tintColor(Colors.brandColor)
-            cell.visibility.hidden = (patch.visibility == "public")
-        }
-        
-        if (cell.status != nil) {
-            cell.status.hidden = true
-            cell.statusWidth.constant = CGFloat(0)
-            if (patch.userWatchStatusValue == .Pending && !SCREEN_NARROW) {
-                cell.status.hidden = false
-                cell.statusWidth.constant = CGFloat(70)
-            }
-            else {
-                
-            }
-        }
-        
-        if let numberOfMessages = patch.numberOfMessages {
-            if cell.messageCount != nil {
-                cell.messageCount.text = numberOfMessages.stringValue
-            }
-        }
-        
-        if let numberOfWatching = patch.countWatching {
-            if cell.watchingCount != nil {
-                cell.watchingCount.text = numberOfWatching.stringValue
-            }
-        }
-        
-        /* Distance */
-        if cell.distance != nil {
-            cell.distance.text = "--"
-            if let currentLocation = LocationController.instance.getLocation() {
-                if let loc = patch.location {
-                    var patchLocation = CLLocation(latitude: loc.latValue, longitude: loc.lngValue)
-                    let dist = Float(currentLocation.distanceFromLocation(patchLocation))  // in meters
-                    cell.distance.text = LocationController.instance.distancePretty(dist)
-                }
-            }
-        }
-        
-        /* Apply gradient to photo */
-        if !(cell.photo.layer.sublayers[0] is CAGradientLayer) {
-            var gradient: CAGradientLayer = CAGradientLayer()
-            gradient.frame = cell.photo.bounds
-            var startColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.2))  // Bottom
-            var endColor:   UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0))    // Top
-            gradient.colors = [endColor.CGColor, startColor.CGColor]
-            gradient.startPoint = CGPoint(x: 0.5, y: 0.5)
-            gradient.endPoint = CGPoint(x: 0.5, y: 1)
-            cell.photo.layer.insertSublayer(gradient, atIndex: 0)
-        }
-        
-        cell.photo.setImageWithPhoto(patch.getPhotoManaged(), animate: cell.photo.image == nil)
+        cell.contentView.addConstraints(horizontalConstraints)
+        cell.contentView.addConstraints(verticalConstraints)
+        cell.contentView.setNeedsLayout()
+    }
+    
+    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) {
+        let view = cell.contentView.viewWithTag(1) as! BaseView
+        Patch.bindView(view, object: object, tableView: tableView, sizingOnly: sizingOnly)
     }
 
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {

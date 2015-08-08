@@ -13,9 +13,8 @@ class MessageDetailViewController: UITableViewController {
 	var message:   Message!
 	var messageId: String?
     var deleted = false
+    private var shareButtonFunctionMap = [Int: ShareButtonFunction]()
 
-	var messageDateFormatter: NSDateFormatter!
-    
     private var isOwner: Bool {
         if let currentUser = UserController.instance.currentUser {
             if message != nil && message.creator != nil {
@@ -57,12 +56,6 @@ class MessageDetailViewController: UITableViewController {
 		}
 
 		super.viewDidLoad()
-
-		let dateFormatter = NSDateFormatter()
-		dateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
-		dateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
-		dateFormatter.doesRelativeDateFormatting = true
-		self.messageDateFormatter = dateFormatter
 
         /* Ui tweaks */
 		self.messagePhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
@@ -157,7 +150,11 @@ class MessageDetailViewController: UITableViewController {
 			}
 		}
 	}
-
+    
+    deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
 	/*--------------------------------------------------------------------------------------------
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
@@ -218,24 +215,14 @@ class MessageDetailViewController: UITableViewController {
 	func shareAction() {
         
         if self.message != nil {
+            let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: nil, destructiveButtonTitle: nil)
             
-            Branch.getInstance().getShortURLWithParams(["entityId":self.messageId!, "entitySchema":"message"], andChannel: "patchr-ios", andFeature: BRANCH_FEATURE_TAG_SHARE, andCallback: {
-                (url: String?, error: NSError?) -> Void in
-                
-                if let error = ServerError(error) {
-                    UIViewController.topMostViewController()!.handleError(error)
-                }
-                else {
-                    Log.d("Branch link created: \(url!)")
-                    var message: MessageItem = MessageItem(entity: self.message!, shareUrl: url!)
-                    
-                    let activityViewController = UIActivityViewController(
-                        activityItems: [message],
-                        applicationActivities: nil)
-                    
-                    self.presentViewController(activityViewController, animated: true, completion: nil)
-                }
-            })
+            shareButtonFunctionMap[sheet.addButtonWithTitle("Share")] = .Share
+            shareButtonFunctionMap[sheet.addButtonWithTitle("Share via")] = .ShareVia
+            sheet.addButtonWithTitle("Cancel")
+            sheet.cancelButtonIndex = sheet.numberOfButtons - 1
+            
+            sheet.showInView(self.view)
         }
 	}
     
@@ -266,7 +253,7 @@ class MessageDetailViewController: UITableViewController {
 
 		/* Message */
 
-		self.createdDate.text = self.messageDateFormatter.stringFromDate(message!.createdDate)
+		self.createdDate.text = Utils.messageDateFormatter.stringFromDate(message!.createdDate)
 		if message!.description_ != nil {
 			self.description_.text = message!.description_
 			self.description_.sizeToFit()
@@ -321,7 +308,7 @@ class MessageDetailViewController: UITableViewController {
 
 		self.tableView.reloadData()
 	}
-    
+
     func delete() {
         
         let entityPath = "data/messages/\((self.message?.id_)!)"
@@ -391,9 +378,91 @@ class MessageDetailViewController: UITableViewController {
 		}
 	}
 
-	deinit {
-		NSNotificationCenter.defaultCenter().removeObserver(self)
+    func shareUsing(patchr: Bool = true) {
+        
+        if patchr {
+            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+            let controller = storyboard.instantiateViewControllerWithIdentifier("MessageEditViewController") as? MessageEditViewController
+            /* viewDidLoad hasn't fired yet but awakeFromNib has */
+            controller?.shareEntity = self.message
+            controller?.shareSchema = Schema.ENTITY_MESSAGE
+            controller?.shareId = self.messageId!
+            controller?.messageType = .Share
+            self.presentViewController(UINavigationController(rootViewController: controller!), animated: true, completion: nil)
+        }
+        else {
+            Branch.getInstance().getShortURLWithParams(["entityId":self.messageId!, "entitySchema":"message"], andChannel: "patchr-ios", andFeature: BRANCH_FEATURE_TAG_SHARE, andCallback: {
+                (url: String?, error: NSError?) -> Void in
+                
+                if let error = ServerError(error) {
+                    UIViewController.topMostViewController()!.handleError(error)
+                }
+                else {
+                    Log.d("Branch link created: \(url!)")
+                    var message: MessageItem = MessageItem(entity: self.message!, shareUrl: url!)
+                    
+                    let activityViewController = UIActivityViewController(
+                        activityItems: [message],
+                        applicationActivities: nil)
+                    
+                    self.presentViewController(activityViewController, animated: true, completion: nil)
+                }
+            })
+        }
+    }
+}
+
+extension MessageDetailViewController: UITableViewDelegate {
+
+	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        
+        if let message = self.message {
+            if indexPath.row == 2 {
+                return (message.description_ == nil)
+                    ? CGFloat(0)
+                    : CGFloat(self.description_.frame.origin.y * 2 + self.description_.frame.size.height)
+            }
+            else if indexPath.row == 4 {
+                
+                /* Size so photo aspect ratio is 4:3 */
+                var height: CGFloat = 0
+                if message.photo != nil {
+                    height = ((UIScreen.mainScreen().bounds.size.width - 24) * 0.75)
+                }
+                return height
+            }
+        }
+        
+        var height = super.tableView(tableView, heightForRowAtIndexPath: indexPath) as CGFloat!
+        return height
 	}
+}
+
+extension MessageDetailViewController: UIActionSheetDelegate {
+    
+    func actionSheet(actionSheet: UIActionSheet, clickedButtonAtIndex buttonIndex: Int) {
+        if buttonIndex != actionSheet.cancelButtonIndex {
+            // There are some strange visual artifacts with the share sheet and the presented
+            // view controllers. Adding a small delay seems to prevent them.
+            delay(0.4, {
+                () -> () in
+                switch self.shareButtonFunctionMap[buttonIndex]! {
+                case .Share:
+                    self.shareUsing(patchr: true)
+                    
+                case .ShareVia:
+                    self.shareUsing(patchr: false)
+                }
+            })
+        }
+    }
+}
+
+extension MessageDetailViewController: TTTAttributedLabelDelegate {
+    
+    func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
+        UIApplication.sharedApplication().openURL(url)
+    }
 }
 
 class MessageItem: NSObject, UIActivityItemSource {
@@ -429,35 +498,7 @@ class MessageItem: NSObject, UIActivityItemSource {
     }
 }
 
-extension MessageDetailViewController: UITableViewDelegate {
-
-	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        
-        if let message = self.message {
-            if indexPath.row == 2 {
-                return (message.description_ == nil)
-                    ? CGFloat(0)
-                    : CGFloat(self.description_.frame.origin.y * 2 + self.description_.frame.size.height)
-            }
-            else if indexPath.row == 4 {
-                
-                /* Size so photo aspect ratio is 4:3 */
-                var height: CGFloat = 0
-                if message.photo != nil {
-                    height = ((UIScreen.mainScreen().bounds.size.width - 24) * 0.75)
-                }
-                return height
-            }
-        }
-        
-        var height = super.tableView(tableView, heightForRowAtIndexPath: indexPath) as CGFloat!
-        return height
-	}
-}
-
-extension MessageDetailViewController: TTTAttributedLabelDelegate {
-    
-    func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
-        UIApplication.sharedApplication().openURL(url)
-    }
+private enum ShareButtonFunction {
+    case Share
+    case ShareVia
 }

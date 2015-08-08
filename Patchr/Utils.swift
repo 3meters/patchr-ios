@@ -14,6 +14,14 @@ var temporaryFileCount = 0
 
 struct Utils {
     
+    static var messageDateFormatter: NSDateFormatter {
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
+        dateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
+        dateFormatter.doesRelativeDateFormatting = true
+        return dateFormatter
+    }
+    
     static func LocalizedString(str: String, comment: String) -> String {
         return NSLocalizedString(str, comment: comment)
     }

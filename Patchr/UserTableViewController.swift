@@ -16,12 +16,22 @@ enum UserTableFilter {
 
 class UserTableViewController: QueryTableViewController {
 
-	private let cellNibName = "UserTableViewCell"
-
 	var patch:          Patch!
     var message:        Message!
 	var selectedUser:   User?
 	var filter:         UserTableFilter = .PatchWatchers
+    
+    var watchListForOwner: Bool {
+        if self.filter == .PatchWatchers && self.patch.visibility == "private" {
+            if let currentUser = UserController.instance.currentUser {
+                if currentUser.id_ == self.patch.ownerId {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    
 	private var _query: Query!
 
 	override func query() -> Query {
@@ -51,12 +61,16 @@ class UserTableViewController: QueryTableViewController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-
-		self.tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: CELL_IDENTIFIER)
+        
+        /* Content view */
+        self.contentViewName = "UserView"
 
 		switch self.filter {
 			case .PatchWatchers:
 				self.navigationItem.title = "Watchers"
+                if watchListForOwner {
+                    self.contentViewName = "UserApprovalView"
+                }
 			case .PatchLikers, .MessageLikers:
 				self.navigationItem.title = "Likers"
 		}
@@ -74,53 +88,18 @@ class UserTableViewController: QueryTableViewController {
             setScreenName("UserListMessageLikers")
         }
     }
-
-    override func configureCell(cell: UITableViewCell, object: AnyObject, sizingOnly: Bool = false) {
-
-		// The cell width seems to incorrect occassionally
-		if CGRectGetWidth(cell.bounds) != CGRectGetWidth(self.tableView.bounds) {
-			cell.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: CGRectGetHeight(cell.frame))
-			cell.setNeedsLayout()
-			cell.layoutIfNeeded()
-		}
-
-		let queryResult = object as! QueryItem
-		let user = queryResult.object as! User
-		let cell = cell as! UserTableViewCell
-		cell.delegate = self
-
-		cell.userName.text = user.name
-        cell.userPhoto.setImageWithPhoto(user.getPhotoManaged(), animate: cell.userPhoto.image == nil)
-		cell.area.text = user.area?.uppercaseString
-        if self.patch != nil {
-            cell.owner.text = user.id_ == self.patch.ownerId ? "OWNER" : nil
-        }
-
-		cell.userName.hidden = cell.userName.text == nil
-		cell.area.hidden = cell.area.text == nil
-		cell.owner.hidden = cell.owner.text == nil
-
-		// Private patch owner controls controls
-        cell.removeButton?.hidden = true
-        cell.approved?.hidden = true
-        cell.approvedSwitch?.hidden = true
+    
+    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) {
         
-		if self.filter == .PatchWatchers && self.patch.visibility == "private" {
-            
-            if let currentUser = UserController.instance.currentUser {
-                if currentUser.id_ == self.patch.ownerId {
-                    if user.id_ != currentUser.id_ {
-                        cell.removeButton?.hidden = false
-                        cell.approved?.hidden = false
-                        cell.approvedSwitch?.hidden = false
-                        cell.approvedSwitch?.on = false
-                        if (user.link != nil && user.link.type == "watch") {
-                            cell.approvedSwitch?.on = user.link.enabledValue
-                        }
-                    }
-                }
-            }
-		}
+        let view = cell.contentView.viewWithTag(1) as! UserView
+        User.bindView(view, object: object, tableView: tableView, sizingOnly: sizingOnly)
+        let user = object as! User
+        if self.patch != nil {
+            view.owner.text = (user.id_ == self.patch.ownerId) ? "OWNER" : nil
+        }
+        if let view = view as? UserApprovalView {
+            view.delegate = self
+        }
 	}
 }
 
@@ -142,11 +121,11 @@ extension UserTableViewController: UITableViewDelegate {
 	}
 }
 
-extension UserTableViewController: UserTableViewCellDelegate {
+extension UserTableViewController: UserApprovalViewDelegate {
     
-	func userTableViewCell(userTableViewCell: UserTableViewCell, approvalSwitchValueChanged approvalSwitch: UISwitch) {
+	func userView(userView: UserApprovalView, approvalSwitchValueChanged approvalSwitch: UISwitch) {
         
-		if let indexPath = self.tableView.indexPathForCell(userTableViewCell) {
+		if let indexPath = self.tableView.indexPathForCell(userView.cell!) {
 			if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
 				if let user = queryResult.object as? User {
 					approvalSwitch.enabled = false
@@ -169,9 +148,9 @@ extension UserTableViewController: UserTableViewCellDelegate {
 		}
 	}
 
-	func userTableViewCell(userTableViewCell: UserTableViewCell, removeButtonTapped removeButton: UIButton) {
+	func userView(userView: UserApprovalView, removeButtonTapped removeButton: UIButton) {
         
-		if let indexPath = self.tableView.indexPathForCell(userTableViewCell) {
+		if let indexPath = self.tableView.indexPathForCell(userView.cell!) {
 			if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
 				if let user = queryResult.object as? User {
 					DataController.proxibase.deleteLinkById(user.link.id_, completion: {

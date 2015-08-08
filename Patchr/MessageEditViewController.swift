@@ -8,17 +8,29 @@
 
 import Foundation
 
+enum MessageType: Int {
+    case Content
+    case Share
+}
+
 class MessageEditViewController: EntityEditViewController {
 
-	var toString: String?	// name of patch this message links to
-    var patchId: String?    // id of patch this message links to
+    var messageType:    MessageType = .Content
+	var toString:       String?	// name of patch this message links to
+    var patchId:        String?    // id of patch this message links to
+    var shareId:        String?
+    var shareSchema:    String = Schema.PHOTO
+    var shareEntity:    Entity?
     
 	@IBOutlet weak var userPhotoImage:   	AirImageView!
     @IBOutlet weak var userNameLabel:       UILabel!
 	@IBOutlet weak var toName:              UILabel!
+    @IBOutlet weak var shareHolder:         UIView!
+    @IBOutlet weak var shareHolderHeight:   NSLayoutConstraint!
     
-    @IBOutlet weak var descriptionCell: UITableViewCell!
-    @IBOutlet weak var photoCell: UITableViewCell!
+    @IBOutlet weak var descriptionCell:     UITableViewCell!
+    @IBOutlet weak var photoCell:           UITableViewCell!
+    @IBOutlet weak var shareCell:           UITableViewCell!
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -33,37 +45,21 @@ class MessageEditViewController: EntityEditViewController {
         super.viewDidLoad()
         
         self.descriptionField!.placeholder = "Message"
+        self.photoView!.frame = CGRectMake(16, 0, self.photoHolder!.bounds.size.width - 32, self.photoHolder!.bounds.size.height)
         
-        if editMode {
+        if self.messageType == .Share {
             
-            self.progressStartLabel = "Updating"
-            self.progressFinishLabel = "Updated!"
-            navigationItem.title = Utils.LocalizedString("Edit patch")
+            self.progressStartLabel = "Inviting"
+            self.progressFinishLabel = "Invites sent!"
             
-            /* Navigation bar buttons */
-            var deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
-            var doneButton   = UIBarButtonItem(title: "Save", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
-            self.navigationItem.rightBarButtonItems = [doneButton, spacer, deleteButton]
-            
-            /* Box the description to make edit mode more obvious */
-            self.descriptionField!.borderWidth = 0.5
-            self.descriptionField!.borderColor = Colors.windowColor
-            self.descriptionField!.cornerRadius = 4
-            self.descriptionField!.textContainer.lineFragmentPadding = 0
-            self.descriptionField!.textContainerInset = UIEdgeInsetsMake(8, 8, 8, 8)
-            
-            /* Pull state from patch we are editing */
-            bind()
-        }
-        else {
-            
-            self.progressStartLabel = "Posting"
-            self.progressFinishLabel = "Posted!"
-            self.descriptionField!.placeholderColor = UIColor.clearColor()
-            
-            if let toString = toString {
-                toName.text = toString
+            if self.shareSchema == Schema.ENTITY_PATCH {
+                navigationItem.title = Utils.LocalizedString("Invite to patch")
             }
+            else if self.shareSchema == Schema.ENTITY_MESSAGE {
+                navigationItem.title = Utils.LocalizedString("Share message")
+            }
+            
+            self.descriptionField!.placeholderColor = UIColor.clearColor()
             
             if let user = UserController.instance.currentUser {
                 self.userPhotoImage.setImageWithPhoto(user.getPhotoManaged())
@@ -71,8 +67,53 @@ class MessageEditViewController: EntityEditViewController {
             }
             
             /* Navigation bar buttons */
-            var doneButton   = UIBarButtonItem(title: "Post", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
+            var doneButton   = UIBarButtonItem(title: "Send", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
             self.navigationItem.rightBarButtonItems = [doneButton]
+            
+            /* Pull state from patch we are editing */
+            bind()
+        }
+        else {
+            if editMode {
+                
+                self.progressStartLabel = "Updating"
+                self.progressFinishLabel = "Updated!"
+                navigationItem.title = Utils.LocalizedString("Edit message")
+                
+                /* Navigation bar buttons */
+                var deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
+                var doneButton   = UIBarButtonItem(title: "Save", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
+                self.navigationItem.rightBarButtonItems = [doneButton, spacer, deleteButton]
+                
+                /* Box the description to make edit mode more obvious */
+                self.descriptionField!.borderWidth = 0.5
+                self.descriptionField!.borderColor = Colors.windowColor
+                self.descriptionField!.cornerRadius = 4
+                self.descriptionField!.textContainer.lineFragmentPadding = 0
+                self.descriptionField!.textContainerInset = UIEdgeInsetsMake(8, 8, 8, 8)
+                
+                /* Pull state from patch we are editing */
+                bind()
+            }
+            else {
+                
+                self.progressStartLabel = "Posting"
+                self.progressFinishLabel = "Posted!"
+                self.descriptionField!.placeholderColor = UIColor.clearColor()
+                
+                if let toString = toString {
+                    toName.text = toString
+                }
+                
+                if let user = UserController.instance.currentUser {
+                    self.userPhotoImage.setImageWithPhoto(user.getPhotoManaged())
+                    self.userNameLabel.text = user.name
+                }
+                
+                /* Navigation bar buttons */
+                var doneButton   = UIBarButtonItem(title: "Post", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
+                self.navigationItem.rightBarButtonItems = [doneButton]
+            }
         }
     }
     
@@ -125,10 +166,35 @@ class MessageEditViewController: EntityEditViewController {
     override func bind() {
         super.bind()
         
-        if let message = entity as? Message {
+        if let message = self.entity as? Message {
             /* User */
             self.userPhotoImage.setImageWithPhoto(message.creator.getPhotoManaged())
             self.userNameLabel.text = message.creator.name
+        }
+        
+        /* Share */
+        if self.messageType == .Share {
+            
+            var view: BaseView!
+            if self.shareSchema == Schema.ENTITY_PATCH {
+                view = NSBundle.mainBundle().loadNibNamed("PatchNormalView", owner: self, options: nil)[0] as! BaseView
+                view.frame.size.width = self.shareHolder.bounds.size.width
+                Patch.bindView(view, object: self.shareEntity!, tableView: self.tableView)
+                self.shareHolder?.addSubview(view)
+            }
+            else if self.shareSchema == Schema.ENTITY_MESSAGE {
+                view = NSBundle.mainBundle().loadNibNamed("MessageView", owner: self, options: nil)[0] as! BaseView
+                view.frame.size.width = self.shareHolder.bounds.size.width
+                Message.bindView(view, object: self.shareEntity!, tableView: self.tableView)
+                view.frame.size.height = view.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
+                self.shareHolder?.addSubview(view)
+            }
+            
+            let views = Dictionary(dictionaryLiteral: ("view", view))
+            let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|[view]|", options: nil, metrics: nil, views: views)
+            let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|[view]|", options: nil, metrics: nil, views: views)
+            self.shareHolder?.addConstraints(horizontalConstraints)
+            self.shareHolder?.addConstraints(verticalConstraints)
         }
     }
     
@@ -171,12 +237,35 @@ extension MessageEditViewController: UITableViewDelegate{
                 return height < 96 ? 96 : height
             }
             else if indexPath.row == 2 { // Photo
-                /* Size so photo aspect ratio is 4:3 */
-                var height: CGFloat = ((UIScreen.mainScreen().bounds.size.width - 32) * 0.75) + 16
-                if !self.photoActive {
-                    height = 64 // Leave enough room for set photo button
+                if self.messageType == .Content {
+                    /* Size so photo aspect ratio is 4:3 */
+                    var height: CGFloat = ((UIScreen.mainScreen().bounds.size.width - 32) * 0.75) + 16
+                    if !self.photoActive {
+                        height = 64 // Leave enough room for set photo button
+                    }
+                    return height
                 }
-                return height
+                else {
+                    return 0
+                }
+            }
+            else if indexPath.row == 3 {
+                if self.messageType == .Share {
+                    var height: CGFloat = 0
+                    if self.shareSchema == Schema.ENTITY_PATCH {
+                        height = 127
+                    }
+                    else if self.shareSchema == Schema.ENTITY_MESSAGE {
+                        height = 400
+                    }
+                    else if self.shareSchema == Schema.PHOTO {
+                        height = ((UIScreen.mainScreen().bounds.size.width - 32) * 0.75) + 16
+                    }
+                    return height
+                }
+                else {
+                    return 0
+                }
             }
         }
         return super.tableView(tableView, heightForRowAtIndexPath: indexPath)

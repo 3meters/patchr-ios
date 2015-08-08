@@ -11,7 +11,7 @@ import UIKit
 class AirImageView: UIImageView {
 
     var activity: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
-    //var photo: Photo?
+    var gradient: CAGradientLayer!
     var linkedPhotoUrl: NSURL?
     
     required init(coder aDecoder: NSCoder) {
@@ -26,17 +26,29 @@ class AirImageView: UIImageView {
     
     func initialize(){
         
-        activity.setTranslatesAutoresizingMaskIntoConstraints(false)
-        self.addSubview(activity)
+        self.activity.setTranslatesAutoresizingMaskIntoConstraints(false)
+        addSubview(self.activity)
         
-        let xCenterConstraint = NSLayoutConstraint(item: activity, attribute: .CenterX, relatedBy: .Equal, toItem: self, attribute: .CenterX, multiplier: 1, constant: 0)
-        let yCenterConstraint = NSLayoutConstraint(item: activity, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1, constant: 0)
-        let widthConstraint = NSLayoutConstraint(item: activity, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 20)
-        let heightConstraint = NSLayoutConstraint(item: activity, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 20)
+        var centerConstraintX = NSLayoutConstraint(item: self.activity, attribute: .CenterX, relatedBy: .Equal, toItem: self, attribute: .CenterX, multiplier: 1, constant: 0)
+        var centerConstraintY = NSLayoutConstraint(item: self.activity, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1, constant: 0)
+        var widthConstraint = NSLayoutConstraint(item: self.activity, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 20)
+        var heightConstraint = NSLayoutConstraint(item: self.activity, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 20)
         
-        self.addConstraints([xCenterConstraint, yCenterConstraint, widthConstraint, heightConstraint])
+        addConstraints([centerConstraintX, centerConstraintY, widthConstraint, heightConstraint])
         
-        activity.hidesWhenStopped = true
+        self.activity.hidesWhenStopped = true
+        
+        /* Gradient */
+        gradient = CAGradientLayer()
+        gradient.frame = CGRectMake(0, 0, self.bounds.size.width + 10, self.bounds.size.height + 10)
+        var startColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.2))  // Bottom
+        var endColor:   UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0))    // Top
+        gradient.colors = [endColor.CGColor, startColor.CGColor]
+        gradient.startPoint = CGPoint(x: 0.5, y: 0.5)
+        gradient.endPoint = CGPoint(x: 0.5, y: 1)
+        gradient.hidden = true
+        
+        self.layer.insertSublayer(self.gradient, atIndex: 0)
     }
     
     func startActivity(){

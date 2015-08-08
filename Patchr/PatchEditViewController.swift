@@ -20,7 +20,6 @@ class PatchEditViewController: EntityEditViewController {
     
 	@IBOutlet weak var publicCell:       UITableViewCell!
 	@IBOutlet weak var locationCell:     UITableViewCell!
-    @IBOutlet weak var linkedPlaceCell:  UITableViewCell!
     @IBOutlet weak var eventTypeCell:    UITableViewCell!
     @IBOutlet weak var groupTypeCell:    UITableViewCell!
     @IBOutlet weak var placeTypeCell:    UITableViewCell!
@@ -44,6 +43,7 @@ class PatchEditViewController: EntityEditViewController {
 		self.patchSwitchView = UISwitch()
 		self.publicCell.accessoryView = patchSwitchView
         self.descriptionField.placeholder = "Tell people about your patch"
+        self.photoView!.frame = CGRectMake(0, 0, self.photoHolder!.bounds.size.width, self.photoHolder!.bounds.size.height)
         
         if editMode {
             
@@ -55,8 +55,7 @@ class PatchEditViewController: EntityEditViewController {
             /* Navigation bar buttons */
             var deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
             var saveButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
-            self.navigationItem.rightBarButtonItems = [saveButton, spacer, deleteButton]
-            
+            self.navigationItem.rightBarButtonItems = [saveButton, spacer, deleteButton]            
         }
         else {
             

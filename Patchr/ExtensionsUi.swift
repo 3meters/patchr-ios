@@ -239,13 +239,12 @@ extension UIViewController {
     }
 
     func setScreenName(name: String) {
-        self.title = name
-        self.sendScreenView()
+        self.sendScreenView(name)
     }
     
-    func sendScreenView() {
+    func sendScreenView(name: String) {
         let tracker = GAI.sharedInstance().defaultTracker
-        tracker.set(kGAIScreenName, value: self.title)
+        tracker.set(kGAIScreenName, value: name)
         tracker.send(GAIDictionaryBuilder.createScreenView().build() as [NSObject: AnyObject])
     }
     
@@ -256,7 +255,18 @@ extension UIViewController {
     }
 }
 
-
+extension UITableViewCell {
+    
+    func injectView(view: BaseView) -> BaseView {
+        
+        view.tag = 1
+        view.cell = self
+        view.setTranslatesAutoresizingMaskIntoConstraints(false)
+        
+        self.contentView.addSubview(view)
+        return view
+    }
+}
 
 extension UINavigationController {
     

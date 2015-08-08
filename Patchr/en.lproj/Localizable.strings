@@ -37,6 +37,7 @@
 "[]Are you sure you want to delete this?" = "Are you sure you want to delete this?";
 "[]Make patch" = "Make patch";
 "[]Edit patch" = "Edit patch";
+"[]Edit message" = "Edit message";
 "[]Edit profile" = "Edit profile";
 "[]Error" = "Error";
 "[]Register" = "Register";
@@ -46,3 +47,5 @@
 "[]Watch" = "Watch";
 "[]Unwatch" = "Unwatch";
 
+"[]Invite to patch" = "Invite to patch";
+"[]Share message" = "Share message";

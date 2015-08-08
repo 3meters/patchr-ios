@@ -39,18 +39,13 @@ class EntityEditViewController: UITableViewController {
 
     lazy var photoChooser: PhotoChooserUI = PhotoChooserUI(hostViewController: self)
     
+    var photoView: PhotoView?
+    
 	// UI outlets and views
 
 	@IBOutlet weak var nameField:        UITextField!
 	@IBOutlet weak var descriptionField: GCPlaceholderTextView!
-    
-    @IBOutlet weak var photoGroup:   	 UIView?
-    @IBOutlet weak var buttonScrim:      UIView?
-	@IBOutlet weak var photoImage:   	 AirImageButton!
-	@IBOutlet weak var setPhotoButton:   UIButton!
-    @IBOutlet weak var editPhotoButton:  UIButton!
-    @IBOutlet weak var clearPhotoButton: UIButton!
-    
+    @IBOutlet weak var photoHolder:      UIView?
 	@IBOutlet weak var doneButton:       UIBarButtonItem!
     @IBOutlet weak var cancelButton:     UIBarButtonItem!
 
@@ -66,26 +61,25 @@ class EntityEditViewController: UITableViewController {
         tap.cancelsTouchesInView = false
         self.view.addGestureRecognizer(tap)
         
-        photoImage.contentVerticalAlignment = UIControlContentVerticalAlignment.Fill
-        photoImage.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Fill
-        photoImage.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
-
-        self.setPhotoButton.alpha = 0
-        self.editPhotoButton.alpha = 0
-        self.clearPhotoButton.alpha = 0
-        self.photoGroup?.alpha = 0
+        let array = NSBundle.mainBundle().loadNibNamed("PhotoView", owner: self, options: nil)
+        self.photoView = array[0] as? PhotoView
+        self.photoHolder?.addSubview(self.photoView!)
         
         if entity?.photo != nil {
-            self.editPhotoButton.fadeIn()
-            self.clearPhotoButton.fadeIn()
-            self.photoGroup?.fadeIn()
+            self.photoView?.configureTo(.Photo)
         }
         else {
             if self.collection == "patches" || self.collection == "users" {
-                self.photoGroup?.fadeIn()
+                self.photoView?.configureTo(.Placeholder)
             }
-            self.setPhotoButton.fadeIn()
+            else {
+                self.photoView?.configureTo(.Empty)
+            }
         }
+        
+        self.photoView?.editPhotoButton?.addTarget(self, action: Selector("editPhotoAction:"), forControlEvents: .TouchUpInside)
+        self.photoView?.clearPhotoButton?.addTarget(self, action: Selector("clearPhotoAction:"), forControlEvents: .TouchUpInside)
+        self.photoView?.setPhotoButton?.addTarget(self, action: Selector("setPhotoAction:"), forControlEvents: .TouchUpInside)
     
         if self.descriptionField != nil {
             self.descriptionField!.placeholderColor = Colors.hintColor
@@ -147,12 +141,12 @@ class EntityEditViewController: UITableViewController {
 			self.photoDirty = (entity!.photo != photo)
 		}
         
-        self.editPhotoButton.fadeOut()
-        self.clearPhotoButton.fadeOut()
         if self.collection == "messages" {
-            self.photoGroup?.fadeOut()
+            self.photoView?.configureTo(.Empty)
         }
-        self.setPhotoButton.fadeIn()
+        else {
+            self.photoView?.configureTo(.Placeholder)
+        }
         
         photoActive = false
     }
@@ -242,7 +236,7 @@ class EntityEditViewController: UITableViewController {
         
         /* Photo */
         if entity?.photo != nil {
-            photoImage.setImageWithPhoto(entity!.photo!)
+            self.photoView?.imageView?.setImageWithPhoto(entity!.photo!)
             usingPhotoDefault = false
             photoActive = true
         }
@@ -261,7 +255,7 @@ class EntityEditViewController: UITableViewController {
             self.photo = image // Image ready so pushes into photoImage
         }
         else {
-            self.photoImage.setImageWithImageResult(imageResult!)  // Downloads and pushes into photoImage
+            self.photoView?.imageView?.setImageWithImageResult(imageResult!)  // Downloads and pushes into photoImage
         }
         
         if !self.editMode {
@@ -277,10 +271,7 @@ class EntityEditViewController: UITableViewController {
         self.photoActive = true
         self.photoChosen = true
         
-        self.editPhotoButton.fadeIn()
-        self.clearPhotoButton.fadeIn()
-        self.setPhotoButton.fadeOut()
-        self.photoGroup?.fadeIn()
+        self.photoView?.configureTo(.Photo)
     }
 
 	func save() {
@@ -624,13 +615,15 @@ class EntityEditViewController: UITableViewController {
     
     var photo: UIImage? {
         get {
-            return (self.photoImage.imageForState(.Normal) == nil || usingPhotoDefault) ? nil : photoImage.imageForState(.Normal)
+            return (self.photoView?.imageView?.imageForState(.Normal) == nil || usingPhotoDefault) ? nil : self.photoView?.imageView?.imageForState(.Normal)
         }
         set {
-            UIView.transitionWithView(self.photoImage, duration: 1.0, options: UIViewAnimationOptions.TransitionCrossDissolve,
-                animations: { () -> Void in
-                    self.photoImage.setImage(newValue, forState: .Normal)
-                }, completion: nil)
+            if let imageView = self.photoView?.imageView {
+                UIView.transitionWithView(imageView, duration: 1.0, options: UIViewAnimationOptions.TransitionCrossDissolve,
+                    animations: { () -> Void in
+                        imageView.setImage(newValue, forState: .Normal)
+                    }, completion: nil)
+            }
         }
     }
 }

@@ -21,8 +21,6 @@ func createChirpSound() -> SystemSoundID {
 
 class NotificationsTableViewController: QueryTableViewController {
 
-	private let cellNibName = "NotificationTableViewCell"
-
 	private var offscreenCells:       NSMutableDictionary = NSMutableDictionary()
 	private var messageDateFormatter: NSDateFormatter!
 	private var selectedPatch:        Patch?
@@ -57,17 +55,10 @@ class NotificationsTableViewController: QueryTableViewController {
 
 	override func viewDidLoad() {
         
+        self.contentViewName = "NotificationView"
         self.emptyMessage = "No notifications yet"
         
 		super.viewDidLoad()
-
-		tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: CELL_IDENTIFIER)
-
-		let dateFormatter = NSDateFormatter()
-		dateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
-		dateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
-		dateFormatter.doesRelativeDateFormatting = true
-		self.messageDateFormatter = dateFormatter
         
         self.activityDate = NotificationController.instance.activityDate
 	}
@@ -211,85 +202,12 @@ class NotificationsTableViewController: QueryTableViewController {
     * Methods
     *--------------------------------------------------------------------------------------------*/
     
-	override func configureCell(cell: UITableViewCell, object: AnyObject, sizingOnly: Bool = false) {
-
-		// The cell width seems to incorrect occassionally
-		if CGRectGetWidth(cell.bounds) != CGRectGetWidth(self.tableView.bounds) {
-			cell.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: CGRectGetHeight(cell.frame))
-			cell.setNeedsLayout()
-			cell.layoutIfNeeded()
-		}
-
-		let queryResult  = object as! QueryItem
-		let notification = queryResult.object as! Notification
-		let cell         = cell as! NotificationTableViewCell
-
-		cell.delegate = self
-
-		cell.description_.text = nil
+    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) {
         
-        let linkColor = Colors.brandColorDark
-        let linkActiveColor = Colors.brandColorLight
-        
-        cell.description_.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
-        cell.description_.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
-        cell.description_.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
-        cell.description_.delegate = self
-        
-		cell.description_.text = notification.summary
-        
-        if let photo = notification.photoBig {
-            if !sizingOnly {
-                cell.photo.setImageWithPhoto(photo, animate: cell.photo.image == nil)
-            }
-            cell.photoTopSpace.constant = 8
-            cell.photoHeight.constant = cell.photo.bounds.size.width * 0.5625
-        }
-        else {
-            cell.photoTopSpace.constant = 0
-            cell.photoHeight.constant = 0
-        }
-
-        cell.userPhoto.setImageWithPhoto(notification.getPhotoManaged(), animate: cell.userPhoto.image == nil)
-		cell.createdDate.text = self.messageDateFormatter.stringFromDate(notification.createdDate)
-        
-        /* Age indicator */
-        cell.ageDot.layer.backgroundColor = Colors.accentColor.CGColor
-        let now = NSDate()
-        
-        /* Age of notification in hours */
-        let interval = Int(now.timeIntervalSinceDate(NSDate(timeIntervalSince1970: notification.createdDate.timeIntervalSince1970)) / 3600)
-        if interval > 12 {
-            cell.ageDot.alpha = 0.0
-        }
-        else if interval > 1 {
-            cell.ageDot.alpha = 0.25
-        }
-        else {
-            cell.ageDot.alpha = 1.0
-        }
-
-		if notification.type == "media" {
-			cell.iconImageView.image = UIImage(named: "imgMediaLight")
-		}
-		else if notification.type == "message" {
-			cell.iconImageView.image = UIImage(named: "imgMessageLight")
-		}
-		else if notification.type == "watch" {
-			cell.iconImageView.image = UIImage(named: "imgWatchLight")
-		}
-        else if notification.type == "like" {
-            if notification.targetId.hasPrefix("pa.") {
-                cell.iconImageView.image = UIImage(named: "imgStarFilledLight")
-            }
-            else {
-                cell.iconImageView.image = UIImage(named: "imgLikeLight")
-            }
-        }
-		else if notification.type == "share" {
-			cell.iconImageView.image = UIImage(named: "imgShareLight")
-		}
-        cell.iconImageView.tintColor(Colors.brandColor)
+        let view = cell.contentView.viewWithTag(1) as! NotificationView
+        Notification.bindView(view, object: object, tableView: tableView, sizingOnly: sizingOnly)
+        view.description_.delegate = self
+        view.delegate = self
 	}
 
     func segueWith(targetId: String?, parentId: String?, refreshEntities: Bool = false) {
@@ -438,37 +356,31 @@ extension NotificationsTableViewController: UITableViewDelegate {
         var cell = self.offscreenCells.objectForKey(CELL_IDENTIFIER) as? UITableViewCell
         
         if cell == nil {
-            let nibObjects = NSBundle.mainBundle().loadNibNamed(cellNibName, owner: self, options: nil)
-            cell = nibObjects[0] as? UITableViewCell
+            cell = buildCell(self.contentViewName!)
+            configureCell(cell!)
             self.offscreenCells.setObject(cell!, forKey: CELL_IDENTIFIER)
         }
         
-        let object: AnyObject = self.fetchedResultsController.objectAtIndexPath(indexPath)
+        /* Bind view to data for this row */
+        let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as! QueryItem
+        let boundView = Notification.bindView(cell!.contentView.viewWithTag(1)!, object: queryResult.object, tableView: tableView) as! NotificationView
         
-        self.configureCell(cell!, object: object, sizingOnly: true)
-        
-        cell?.setNeedsUpdateConstraints()
-        cell?.updateConstraintsIfNeeded()
-        
-        cell?.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: CGRectGetHeight(cell!.frame))
-        
-        cell?.setNeedsLayout()
-        cell?.layoutIfNeeded()
-        
+        /* Get the actual height required for the cell */
         var height = cell!.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
         
         return height
     }
 }
 
-extension NotificationsTableViewController: TableViewCellDelegate {
+extension NotificationsTableViewController: ViewDelegate {
     
-	func tableViewCell(cell: UITableViewCell, didTapOnView view: UIView) {
-		let notificationCell = cell as! NotificationTableViewCell
-		if view == notificationCell.photo && notificationCell.photo.image != nil {
-            Shared.showPhotoBrowser(notificationCell.photo.image, view: view, viewController: self, entity: nil)
-		}
-	}
+    func view(container: UIView, didTapOnView view: UIView) {
+        if let view = view as? AirImageView, container = container as? NotificationView {
+            if view.image != nil {
+                Shared.showPhotoBrowser(view.image, view: view, viewController: self, entity: container.entity)
+            }
+        }
+    }
 }
 
 extension NotificationsTableViewController: TTTAttributedLabelDelegate {

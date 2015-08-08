@@ -69,9 +69,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         gai.trackerWithTrackingId("UA-33660954-6")
         gai.trackUncaughtExceptions = true  // report uncaught exceptions
         gai.defaultTracker.allowIDFACollection = true
+        gai.dispatchInterval = 30    // Seconds
+        gai.logger.logLevel = GAILogLevel.None
+        
         #if DEBUG
-            gai.logger.logLevel = GAILogLevel.Verbose
-            gai.dispatchInterval = 5    // Seconds
+        gai.logger.logLevel = GAILogLevel.Warning
+        gai.dispatchInterval = 5    // Seconds
         #endif
         
         /* Initialize Creative sdk */
