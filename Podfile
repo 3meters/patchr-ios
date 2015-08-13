@@ -31,6 +31,7 @@ pod 'Lockbox'                       # Used to protect install info
 pod 'UIScrollView-InfiniteScroll'
 pod 'libPhoneNumber-iOS', '~> 0.7'
 pod 'Branch'
+pod 'pop', :git => 'https://github.com/facebook/pop.git'
 pod 'AirPhotoBrowser', :path => '~/code/AirPhotoBrowser'
 pod 'AirContactPicker', :path => '~/code/AirContactPicker'
 pod 'TWMessageBarManager'

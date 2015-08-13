@@ -73,6 +73,7 @@ DEPENDENCIES:
   - Lockbox
   - MBProgressHUD (~> 0.9.1)
   - PBWebViewController (~> 0.3)
+  - pop (from `https://github.com/facebook/pop.git`)
   - RMCoreDataStack
   - SDWebImage (~> 3.7.2)
   - TWMessageBarManager
@@ -86,6 +87,13 @@ EXTERNAL SOURCES:
     :path: ~/code/AirPhotoBrowser
   Keys:
     :path: Pods/CocoaPodsKeys
+  pop:
+    :git: https://github.com/facebook/pop.git
+
+CHECKOUT OPTIONS:
+  pop:
+    :commit: 4d1a49d0f31274aeae23104ad7be6b62e2abac2d
+    :git: https://github.com/facebook/pop.git
 
 SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
