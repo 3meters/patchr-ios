@@ -31,7 +31,6 @@ class MessageView: BaseView {
     override func awakeFromNib() {
         super.awakeFromNib()
         let tap = UITapGestureRecognizer(target: self, action: "tapGestureRecognizerAction:")
-        tap.cancelsTouchesInView = false
         self.photo.addGestureRecognizer(tap)
     }
     

@@ -90,7 +90,7 @@
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="32" id="0dg-Yl-vyD"/>
+                        <constraint firstAttribute="height" priority="999" constant="32" id="0dg-Yl-vyD"/>
                         <constraint firstItem="woJ-Y6-bOV" firstAttribute="top" secondItem="CKk-NR-FiB" secondAttribute="top" id="MGO-i3-YwV"/>
                         <constraint firstItem="Jtz-MW-UwR" firstAttribute="leading" secondItem="woJ-Y6-bOV" secondAttribute="trailing" constant="6" id="SaB-Bh-gnB"/>
                         <constraint firstItem="Jtz-MW-UwR" firstAttribute="centerY" secondItem="woJ-Y6-bOV" secondAttribute="centerY" id="yWf-MO-JrK"/>
@@ -102,7 +102,7 @@
                 <constraint firstItem="CKk-NR-FiB" firstAttribute="top" secondItem="eQH-ua-j18" secondAttribute="bottom" constant="8" id="9LC-XX-o45"/>
                 <constraint firstItem="0TT-YB-aeS" firstAttribute="leading" secondItem="m6L-Nb-Bin" secondAttribute="leading" id="Ciw-PQ-dhL"/>
                 <constraint firstAttribute="bottom" secondItem="CKk-NR-FiB" secondAttribute="bottom" constant="8" id="E47-Q8-dFC"/>
-                <constraint firstItem="0TT-YB-aeS" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="GpA-kc-Ty0"/>
+                <constraint firstItem="0TT-YB-aeS" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="GpA-kc-Ty0"/>
                 <constraint firstItem="TaR-dt-0cq" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="H1p-Ay-XWU"/>
                 <constraint firstItem="dwP-9n-4tK" firstAttribute="leading" secondItem="m6L-Nb-Bin" secondAttribute="trailing" constant="8" id="IsW-Rf-rV3"/>
                 <constraint firstItem="eQH-ua-j18" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailing" constant="-8" id="J9G-Mq-zrT"/>

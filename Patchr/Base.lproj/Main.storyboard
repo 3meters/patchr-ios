@@ -505,11 +505,11 @@
                                     </constraints>
                                 </view>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="To:" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qR3-xa-wgL" userLabel="to_label">
-                                    <rect key="frame" x="16" y="22" width="48" height="21"/>
+                                    <rect key="frame" x="16" y="21" width="48" height="22"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="48" id="VcD-WH-J5b"/>
                                     </constraints>
-                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="18"/>
                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                     <nil key="highlightedColor"/>
                                 </label>
@@ -522,7 +522,7 @@
                             <constraints>
                                 <constraint firstItem="zF9-gZ-VVl" firstAttribute="top" secondItem="igc-hW-AWI" secondAttribute="top" constant="16" id="2LE-he-ckE"/>
                                 <constraint firstAttribute="bottom" secondItem="Jmc-5k-n5U" secondAttribute="bottom" id="Le8-S0-0na"/>
-                                <constraint firstItem="qR3-xa-wgL" firstAttribute="top" secondItem="zF9-gZ-VVl" secondAttribute="top" constant="6" id="Pej-wf-bOn"/>
+                                <constraint firstItem="qR3-xa-wgL" firstAttribute="top" secondItem="zF9-gZ-VVl" secondAttribute="top" constant="5" id="Pej-wf-bOn"/>
                                 <constraint firstAttribute="trailing" secondItem="zF9-gZ-VVl" secondAttribute="trailing" constant="16" id="TZK-Oa-R9i"/>
                                 <constraint firstAttribute="bottom" secondItem="zF9-gZ-VVl" secondAttribute="bottom" constant="16" id="Ub0-Yl-dyJ"/>
                                 <constraint firstItem="qR3-xa-wgL" firstAttribute="leading" secondItem="igc-hW-AWI" secondAttribute="leading" constant="16" id="UdL-m6-X8y"/>
@@ -551,7 +551,7 @@
                                                             </constraints>
                                                         </imageView>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="250" text="Jay Massena" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lmf-QT-eCQ" userLabel="user_name">
-                                                            <rect key="frame" x="72" y="21" width="110" height="22"/>
+                                                            <rect key="frame" x="80" y="21" width="110" height="22"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="22" id="9u8-x1-7dV"/>
                                                             </constraints>
@@ -565,7 +565,7 @@
                                                         <constraint firstItem="EJq-oj-0k5" firstAttribute="top" secondItem="MbG-e2-YIA" secondAttribute="top" constant="8" id="6z6-wJ-2z1"/>
                                                         <constraint firstItem="Lmf-QT-eCQ" firstAttribute="centerY" secondItem="EJq-oj-0k5" secondAttribute="centerY" id="JCC-LZ-e4I"/>
                                                         <constraint firstItem="EJq-oj-0k5" firstAttribute="leading" secondItem="MbG-e2-YIA" secondAttribute="leading" constant="16" id="VkN-RZ-H5K"/>
-                                                        <constraint firstItem="Lmf-QT-eCQ" firstAttribute="leading" secondItem="EJq-oj-0k5" secondAttribute="trailing" constant="8" id="mW1-FD-5mi"/>
+                                                        <constraint firstItem="Lmf-QT-eCQ" firstAttribute="leading" secondItem="EJq-oj-0k5" secondAttribute="trailing" constant="16" id="mW1-FD-5mi"/>
                                                         <constraint firstAttribute="height" constant="64" id="qC3-fb-IBB"/>
                                                     </constraints>
                                                 </view>
@@ -613,10 +613,10 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="116" id="sia-oV-MQe">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="116" id="sia-oV-MQe">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="sia-oV-MQe" id="GHQ-7C-kSr">
+                                        <tableViewCellContentView key="contentView" opaque="NO" multipleTouchEnabled="YES" contentMode="center" tableViewCell="sia-oV-MQe" id="GHQ-7C-kSr">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <view clipsSubviews="YES" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Bf8-l9-CJt" userLabel="share_holder">

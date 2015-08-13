@@ -18,7 +18,7 @@
                             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                             <color key="backgroundColor" red="0.95686274510000002" green="0.95686274510000002" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                             <constraints>
-                                <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="216" id="Ih3-lD-tgn"/>
+                                <constraint firstAttribute="height" relation="greaterThanOrEqual" priority="999" constant="216" id="Ih3-lD-tgn"/>
                             </constraints>
                             <state key="normal">
                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>

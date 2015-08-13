@@ -59,15 +59,20 @@ class MessageEditViewController: EntityEditViewController {
         self.descriptionField!.placeholder = "Message"
         self.photoView!.frame = CGRectMake(16, 0, self.photoHolder!.bounds.size.width - 32, self.photoHolder!.bounds.size.height)
         
+        self.toPicker.prompt = nil
+        self.toPicker.showPrompt = false
+        self.toPicker.cellHeight = 32
+        MBContactPicker.appearance().font = UIFont(name:"HelveticaNeue-Light", size: 18)
+        MBContactCollectionViewEntryCell.appearance().font = UIFont(name:"HelveticaNeue-Light", size: 18)
+        MBContactCollectionViewContactCell.appearance().font = UIFont(name:"HelveticaNeue-Light", size: 18)
+
+        self.toPicker.dynamicBinding = true
+        
+        self.toPicker.delegate = self
+        self.toPicker.datasource = self
+        
         if self.messageType == .Share {
             
-            self.toPicker.prompt = nil
-            self.toPicker.showPrompt = false
-            self.toPicker.cellHeight = 32
-            self.toPicker.dynamicBinding = true
-            
-            self.toPicker.delegate = self
-            self.toPicker.datasource = self
             self.toPicker.borderWidth = 1
             self.toPicker.borderColor = Colors.windowColor
             self.toPicker.cornerRadius = 4
@@ -106,6 +111,11 @@ class MessageEditViewController: EntityEditViewController {
             bind()
         }
         else {
+            
+            self.toPicker.enabled = false
+            self.toPicker.collectionView.allowsSelection = false
+            self.shareCell.hidden = true
+
             if editMode {
                 
                 self.progressStartLabel = "Updating"
@@ -429,6 +439,20 @@ extension MessageEditViewController: MBContactPickerDataSource {
     }
     
     func selectedContactModelsForContactPicker(contactPickerView: MBContactPicker!) -> [AnyObject]! {
+        if self.messageType != .Share {
+            if self.toString != nil {
+                var model = SuggestionModel()
+                model.contactTitle = self.toString! + " Patch"
+                model.entityId = self.patchId
+                return [model]
+            }
+            else if let message = self.entity as? Message where message.patch != nil {
+                var model = SuggestionModel()
+                model.contactTitle = message.patch.name + " Patch"
+                model.entityId = message.patch.id_
+                return [model]
+            }
+        }
         return []
     }
 }
