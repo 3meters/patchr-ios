@@ -12,7 +12,7 @@ class PlaceDetailViewController: UITableViewController {
     
     var place:      Place!
     var placeId:    String?
-    var progress: MBProgressHUD?
+    var progress:   MBProgressHUD?
 
     /* Outlets are initialized before viewDidLoad is called */
     

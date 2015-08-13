@@ -23,6 +23,7 @@ PODS:
   - AFNetworking/UIKit (2.5.4):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
+  - AirContactPicker (0.2.0)
   - AirPhotoBrowser (1.7):
     - AFNetworking (~> 2.0)
     - DACircularProgress
@@ -62,6 +63,7 @@ PODS:
 DEPENDENCIES:
   - AFNetworkActivityLogger (~> 2.0)
   - AFNetworking (~> 2.5)
+  - AirContactPicker (from `~/code/AirContactPicker`)
   - AirPhotoBrowser (from `~/code/AirPhotoBrowser`)
   - AWSS3 (~> 2.2.0)
   - Branch
@@ -78,6 +80,8 @@ DEPENDENCIES:
   - UIScrollView-InfiniteScroll
 
 EXTERNAL SOURCES:
+  AirContactPicker:
+    :path: ~/code/AirContactPicker
   AirPhotoBrowser:
     :path: ~/code/AirPhotoBrowser
   Keys:
@@ -86,6 +90,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
   AFNetworking: 05edc0ac4c4c8cf57bcf4b84be5b0744b6d8e71e
+  AirContactPicker: 2f6b10dea55af4017c73daafae952b7dc0481cac
   AirPhotoBrowser: eb7af71a7269d8cf214b428d09f85333ef28ea7f
   AWSCore: 3e969334460cc7ba16504fb2e074f59f95880800
   AWSS3: 4f89fcc0ef11303f94f561310979a0d2ec816fff

@@ -10,6 +10,7 @@ import UIKit
 
 class MessageDetailViewController: UITableViewController {
 
+    var progress:  MBProgressHUD?
 	var message:   Message!
 	var messageId: String?
     var deleted = false
@@ -35,16 +36,22 @@ class MessageDetailViewController: UITableViewController {
 
 	/* Outlets are initialized before viewDidLoad is called */
 
-	@IBOutlet weak var patchName:    UIButton!
-	@IBOutlet weak var patchPhoto:   AirImageButton!
-	@IBOutlet weak var userPhoto:    AirImageButton!
-	@IBOutlet weak var userName:     UIButton!
-	@IBOutlet weak var createdDate:  UILabel!
-	@IBOutlet weak var messagePhoto: AirImageButton!
-	@IBOutlet weak var likeButton:   AirLikeButton!
-	@IBOutlet weak var likesButton:  UIButton!
-    @IBOutlet weak var description_: TTTAttributedLabel!
+	@IBOutlet weak var patchName:       UIButton!
+	@IBOutlet weak var patchPhoto:      AirImageButton!
+	@IBOutlet weak var userPhoto:       AirImageButton!
+	@IBOutlet weak var userName:        UIButton!
+	@IBOutlet weak var createdDate:     UILabel!
+	@IBOutlet weak var messagePhoto:    AirImageButton!
+	@IBOutlet weak var likeButton:      AirLikeButton!
+	@IBOutlet weak var likesButton:     UIButton!
+    @IBOutlet weak var description_:    TTTAttributedLabel!
+    @IBOutlet weak var shareHolder:     UIView!
+    @IBOutlet weak var recipients:      UILabel!
     
+    @IBOutlet weak var patchCell:       UITableViewCell!
+    @IBOutlet weak var toolbarCell:     UITableViewCell!
+    @IBOutlet weak var recipientsCell:  UITableViewCell!
+    @IBOutlet weak var shareHolderCell: UITableViewCell!
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
 	 *--------------------------------------------------------------------------------------------*/
@@ -100,6 +107,15 @@ class MessageDetailViewController: UITableViewController {
 		self.userName.setTitle(nil, forState: .Normal)
 		self.userPhoto.imageView?.image = nil
         self.likesButton.setTitle(nil, forState: .Normal)
+        
+        /* Wacky activity control for body */
+        progress = MBProgressHUD(view: self.view)
+        progress!.mode = MBProgressHUDMode.Indeterminate
+        progress!.square = true
+        progress!.opacity = 0.0
+        progress!.userInteractionEnabled = false
+        progress!.activityIndicatorColor = Colors.brandColorDark
+        self.view.addSubview(progress!)
 	}
 
 	override func viewWillAppear(animated: Bool) {
@@ -113,6 +129,8 @@ class MessageDetailViewController: UITableViewController {
                 return
             }
         }
+        
+        self.view.window?.backgroundColor = Colors.windowColor
         
 		super.viewWillAppear(animated)
 
@@ -141,12 +159,28 @@ class MessageDetailViewController: UITableViewController {
     }
 
 	private func refresh(force: Bool = false) {
+        if (self.message == nil) {
+            self.progress!.minShowTime = 1
+            self.progress!.removeFromSuperViewOnHide = true
+            self.progress!.show(true)
+        }
+        
 		DataController.instance.withMessageId(messageId!, refresh: force) {
 			message in
+            
+            self.progress!.hide(true)
 			self.refreshControl?.endRefreshing()
 			if message != nil {
+                
+                /* Remove share button if this is a share message */
+                if message!.type != nil && message!.type == "share" {
+                    self.navigationItem.rightBarButtonItems = []
+                }
+                
 				self.message = message
+                self.tableView.beginUpdates()
 				self.draw()
+                self.tableView.endUpdates()
 			}
 		}
 	}
@@ -212,6 +246,23 @@ class MessageDetailViewController: UITableViewController {
 		}
 	}
 
+    func shareBrowseAction(sender: AnyObject){
+        if message.message != nil {
+            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+            if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
+                controller.messageId = message.message.entityId
+                self.navigationController?.pushViewController(controller, animated: true)
+            }
+        }
+        else if message.patch != nil {
+            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+            if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
+                controller.patchId = message.patch.entityId
+                self.navigationController?.pushViewController(controller, animated: true)
+            }
+        }
+    }
+    
 	func shareAction() {
         
         if self.message != nil {
@@ -243,13 +294,58 @@ class MessageDetailViewController: UITableViewController {
 	*--------------------------------------------------------------------------------------------*/
 
 	func draw() {
-
-		/* Patch */
-
-		if message!.patch != nil {
-			self.patchPhoto.setImageWithPhoto(message!.patch.getPhotoManaged())
-			self.patchName.setTitle(message!.patch.name, forState: .Normal)
-		}
+        
+        if message!.type != nil && message!.type == "share" {
+            self.recipientsCell.hidden = true
+            self.shareHolderCell.hidden = false
+            
+            /* Share entity */
+            
+            var view: BaseView!
+            if message.message != nil {
+                view = NSBundle.mainBundle().loadNibNamed("MessageView", owner: self, options: nil)[0] as! BaseView
+                view.frame.size.width = self.shareHolder.bounds.size.width
+                Message.bindView(view, object: message.message!, tableView: self.tableView)
+                
+                /* Tweak the message view to suit display as static */
+                if let messageView = view as? MessageView {
+                    messageView.toolbarHeight.constant = 0
+                    if let recognizers = messageView.photo.gestureRecognizers {
+                        for recognizer in recognizers {
+                            messageView.photo.removeGestureRecognizer(recognizer as! UIGestureRecognizer)
+                        }
+                    }
+                }
+                
+                view.frame.size.height = view.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
+                self.shareHolder?.addSubview(view)
+            }
+            else if message.patch != nil {
+                view = NSBundle.mainBundle().loadNibNamed("PatchNormalView", owner: self, options: nil)[0] as! BaseView
+                view.frame.size.width = self.shareHolder.bounds.size.width
+                Patch.bindView(view, object: message.patch!, tableView: self.tableView)
+                self.shareHolder?.addSubview(view)
+            }
+            
+            let views = Dictionary(dictionaryLiteral: ("view", view))
+            let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|[view]|", options: nil, metrics: nil, views: views)
+            let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|[view]|", options: nil, metrics: nil, views: views)
+            self.shareHolder?.addConstraints(horizontalConstraints)
+            self.shareHolder?.addConstraints(verticalConstraints)
+            
+            var tap = UITapGestureRecognizer(target: self, action: "shareBrowseAction:");
+            self.shareHolder?.addGestureRecognizer(tap)
+        }
+        else {
+            self.toolbarCell.hidden = false
+            
+            /* Patch */
+            if message!.patch != nil {
+                self.patchCell.hidden = false
+                self.patchPhoto.setImageWithPhoto(message!.patch.getPhotoManaged())
+                self.patchName.setTitle(message!.patch.name, forState: .Normal)
+            }
+        }
 
 		/* Message */
 
@@ -430,6 +526,24 @@ extension MessageDetailViewController: UITableViewDelegate {
                     height = ((UIScreen.mainScreen().bounds.size.width - 24) * 0.75)
                 }
                 return height
+            }
+            
+            if message.type != nil && message.type == "share" {
+                if indexPath.row == 0 {
+                    return 0
+                }
+                else if indexPath.row == 5 {
+                    return 0
+                }
+                else if indexPath.row == 6 {
+                    if message.message != nil {
+                        return self.shareHolder.bounds.size.height + 16
+                    }
+                    return 143
+                }
+                else if indexPath.row == 7 {
+                    return 48
+                }
             }
         }
         

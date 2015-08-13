@@ -68,7 +68,7 @@ extension Patch {
     
     static func bindView(view: UIView, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) -> UIView {
         
-        let patch = object as! Patch
+        let patch = object as! Entity
         let view = view as! PatchView
         
         view.name.text = patch.name
@@ -79,9 +79,11 @@ extension Patch {
         if view.placeName != nil {
             view.placeName.hidden = true
             view.placeName.text = nil
-            if patch.place != nil {
-                view.placeName.text = patch.place.name.uppercaseString
-                view.placeName.hidden = false
+            if let patchTemp = object as? Patch {
+                if patchTemp.place != nil {
+                    view.placeName.text = patchTemp.place.name.uppercaseString
+                    view.placeName.hidden = false
+                }
             }
         }
         
@@ -201,7 +203,8 @@ extension Message {
     
     static func bindView(view: UIView, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) -> UIView {
         
-        let message = object as! Message
+        let message = object as! Entity
+        
         let view = view as! MessageView
         
         view.entity = message
@@ -260,9 +263,6 @@ extension Message {
         }
         
         view.createdDate.text = Utils.messageDateFormatter.stringFromDate(message.createdDate)
-        if let patch = message.patch {
-            view.patchName.text = (message.type != nil && message.type == "share") ? "Shared by" : patch.name
-        }
         
         return view
     }
@@ -299,12 +299,21 @@ extension Message {
     
     static func linked() -> [[String:AnyObject]]? {
         
+        /* Used to get the creator for the a shared message */
+        var linked = [
+            LinkSpec(from: .Users, type: .Create, fields: "_id,name,photo,schema,type" )
+        ]
+        
+        var linkCount = [
+            LinkSpec(from: .Users, type: .Watch, enabled: true)        // Count of users that are watching the patch
+        ]
+        
         var links = [
             LinkSpec(to: .Patches, type: .Content, fields: "_id,name,photo,schema,type", limit: 1), // Patch the message is linked to
-            LinkSpec(from: .Users, type: .Create, fields: "_id,name,photo,schema,type" ), // User who created the message
-            LinkSpec(to: .Messages, type: .Share, limit: 1), // Message this message is sharing
-            LinkSpec(to: .Patches, type: .Share, limit: 1), // Patch this message is sharing
-            LinkSpec(to: .Users, type: .Share, limit: 5)   // Users this message is shared with
+            LinkSpec(from: .Users, type: .Create, fields: "_id,name,photo,schema,type" ),           // User who created the message
+            LinkSpec(to: .Messages, type: .Share, limit: 1, linked: linked),                    // Message this message is sharing
+            LinkSpec(to: .Patches, type: .Share, limit: 1, linkCount: linkCount),                                         // Patch this message is sharing
+            LinkSpec(to: .Users, type: .Share, limit: 5)                                            // Users this message is shared with
         ]
         
         let array = links.map {

@@ -86,7 +86,7 @@
     if (dictionary[@"linked"]) {
         for (id linkMap in dictionary[@"linked"]) {
             if ([linkMap isKindOfClass:[NSDictionary class]]) {
-                if ([linkMap[@"schema"] isEqual: @"user"]) {
+                if ([linkMap[@"schema"] isEqual: @"user"] && [linkMap[@"_id"] isEqual: base.creatorId]) {
                     NSString *entityId = [[NSString alloc] initWithString:linkMap[@"_id"]];
                     NSString *decoratedId = [Shortcut decorateId:entityId];
                     id shortcut = [Shortcut fetchOrInsertOneById:decoratedId inManagedObjectContext:base.managedObjectContext];

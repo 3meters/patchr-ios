@@ -27,6 +27,12 @@
                     id shortcut = [Shortcut fetchOrInsertOneById:decoratedId inManagedObjectContext:message.managedObjectContext];
                     message.patch = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut mappingNames:mapNames];
                 }
+                else if ([linkMap[@"schema"] isEqualToString: @"message"]) {
+                    NSString *entityId = [[NSString alloc] initWithString:linkMap[@"_id"]];
+                    NSString *decoratedId = [Shortcut decorateId:entityId];
+                    id shortcut = [Shortcut fetchOrInsertOneById:decoratedId inManagedObjectContext:message.managedObjectContext];
+                    message.message = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut mappingNames:mapNames];
+                }
             }
         }
     }

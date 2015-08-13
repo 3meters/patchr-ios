@@ -164,11 +164,11 @@ class EntityEditViewController: UITableViewController {
 
     @IBAction func cancelAction(sender: AnyObject){
         
-        if (keyboardVisible) {
-            backClicked = true
-            dismissKeyboard()
-        }
-        else {
+//        if (keyboardVisible) {
+//            backClicked = true
+//            dismissKeyboard()
+//        }
+//        else {
             if !isDirty() {
                 self.performBack(animated: true)
                 return
@@ -182,7 +182,7 @@ class EntityEditViewController: UITableViewController {
                         self.performBack(animated: true)
                     }
                 }
-        }
+//        }
     }
     
     @IBAction func deleteAction(sender: AnyObject) {
@@ -680,4 +680,8 @@ extension EntityEditViewController: UITextViewDelegate {
         tableView.endUpdates()
         self.scrollToCursorForTextView(textView)
     }
+    
+    func textViewDidEndEditing(textView: UITextView) {
+        self.descriptionField.placeholderColor = UIColor.lightGrayColor()
+    }    
 }

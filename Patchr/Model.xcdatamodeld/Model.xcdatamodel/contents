@@ -52,6 +52,7 @@
         <attribute name="speed" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
     </entity>
     <entity name="Message" representedClassName="Message" parentEntity="Entity" syncable="YES">
+        <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Shortcut" syncable="YES"/>
         <relationship name="patch" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Shortcut" syncable="YES"/>
     </entity>
     <entity name="Notification" representedClassName="Notification" parentEntity="Entity" syncable="YES">
@@ -165,7 +166,7 @@
         <element name="Entity" positionX="-99" positionY="-154" width="128" height="345"/>
         <element name="Link" positionX="-288" positionY="-243" width="128" height="150"/>
         <element name="Location" positionX="-452" positionY="278" width="128" height="150"/>
-        <element name="Message" positionX="279" positionY="-36" width="128" height="60"/>
+        <element name="Message" positionX="279" positionY="-36" width="128" height="75"/>
         <element name="Notification" positionX="279" positionY="95" width="128" height="195"/>
         <element name="Patch" positionX="81" positionY="-243" width="128" height="90"/>
         <element name="Photo" positionX="-693" positionY="90" width="128" height="150"/>

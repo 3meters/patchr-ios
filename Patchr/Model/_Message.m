@@ -4,6 +4,7 @@
 #import "_Message.h"
 
 const struct MessageRelationships MessageRelationships = {
+	.message = @"message",
 	.patch = @"patch",
 };
 
@@ -35,6 +36,8 @@ const struct MessageRelationships MessageRelationships = {
 
 	return keyPaths;
 }
+
+@dynamic message;
 
 @dynamic patch;
 

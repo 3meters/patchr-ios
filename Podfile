@@ -32,6 +32,7 @@ pod 'UIScrollView-InfiniteScroll'
 pod 'libPhoneNumber-iOS', '~> 0.7'
 pod 'Branch'
 pod 'AirPhotoBrowser', :path => '~/code/AirPhotoBrowser'
+pod 'AirContactPicker', :path => '~/code/AirContactPicker'
 pod 'TWMessageBarManager'
 pod 'Google/Analytics', '~> 1.0.0'
 

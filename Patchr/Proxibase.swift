@@ -1012,11 +1012,14 @@ public class LinkSpec {
 	public var fields:       AnyObject?
 	public var linkFields:   AnyObject?
 	public var linkedFilter: [NSObject:AnyObject]?
-	public var subLinks:     [LinkSpec]?
+	public var linked:       [LinkSpec]?
+    public var links:        [LinkSpec]?
+    public var linkCount:    [LinkSpec]?
 
 	init(to: LinkDestination, type: LinkType, enabled: Bool? = nil, limit: UInt? = nil, count: Bool? = nil,
 		 fields: AnyObject? = nil, filter: [NSObject:AnyObject]? = nil,
-		 linkFields: AnyObject? = nil, linkedFilter: [NSObject:AnyObject]? = nil, subLinks: [LinkSpec]? = nil) {
+		 linkFields: AnyObject? = nil, linkedFilter: [NSObject:AnyObject]? = nil,
+         linked: [LinkSpec]? = nil, links: [LinkSpec]? = nil, linkCount: [LinkSpec]? = nil) {
 		self.to = to
 		self.type = type
 		self.enabled = enabled
@@ -1026,12 +1029,15 @@ public class LinkSpec {
 		self.filter = filter
 		self.linkFields = linkFields
 		self.linkedFilter = linkedFilter
-		self.subLinks = subLinks
+		self.linked = linked
+        self.links = links
+        self.linkCount = linkCount
 	}
 
 	init(from: LinkDestination, type: LinkType, enabled: Bool? = nil, limit: UInt? = nil, count: Bool? = nil,
 		 fields: AnyObject? = nil, filter: [NSObject:AnyObject]? = nil,
-		 linkFields: AnyObject? = nil, linkedFilter: [NSObject:AnyObject]? = nil, subLinks: [LinkSpec]? = nil) {
+		 linkFields: AnyObject? = nil, linkedFilter: [NSObject:AnyObject]? = nil,
+         linked: [LinkSpec]? = nil, links: [LinkSpec]? = nil, linkCount: [LinkSpec]? = nil) {
 		self.from = from
 		self.type = type
 		self.enabled = enabled
@@ -1041,7 +1047,9 @@ public class LinkSpec {
 		self.filter = filter
 		self.linkFields = linkFields
 		self.linkedFilter = linkedFilter
-		self.subLinks = subLinks
+        self.linked = linked
+        self.links = links
+        self.linkCount = linkCount
 	}
 
 	func toDictionary() -> Dictionary<String, AnyObject> {
@@ -1073,17 +1081,24 @@ public class LinkSpec {
 		if linkFields != nil {
 			dictionary["linkFields"] = linkFields
 		}
-
 		if linkedFilter != nil {
 			dictionary["linkedFilter"] = linkedFilter
 		}
-
-		if subLinks != nil {
-			dictionary["linked"] = subLinks!.map {
+		if linked != nil {
+			dictionary["linked"] = linked!.map {
 				$0.toDictionary()
 			}
 		}
-
+        if links != nil {
+            dictionary["links"] = links!.map {
+                $0.toDictionary()
+            }
+        }        
+        if linkCount != nil {
+            dictionary["linkCount"] = linkCount!.map {
+                $0.toDictionary()
+            }
+        }
 		return dictionary
 	}
 }

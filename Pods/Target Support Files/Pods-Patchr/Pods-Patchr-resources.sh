@@ -58,6 +58,7 @@ install_resource()
   esac
 }
 if [[ "$CONFIGURATION" == "Debug" ]]; then
+  install_resource "../../../../code/AirContactPicker/MBContactPicker/UserTableViewCell.xib"
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPBLocalizations.bundle"
   install_resource "TWMessageBarManager/Classes/Icons/icon-error.png"
@@ -69,6 +70,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_resource "libPhoneNumber-iOS/libPhoneNumber/NBPhoneNumberMetadata.plist"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
+  install_resource "../../../../code/AirContactPicker/MBContactPicker/UserTableViewCell.xib"
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPBLocalizations.bundle"
   install_resource "TWMessageBarManager/Classes/Icons/icon-error.png"
@@ -80,6 +82,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_resource "libPhoneNumber-iOS/libPhoneNumber/NBPhoneNumberMetadata.plist"
 fi
 if [[ "$CONFIGURATION" == "AdHoc" ]]; then
+  install_resource "../../../../code/AirContactPicker/MBContactPicker/UserTableViewCell.xib"
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPBLocalizations.bundle"
   install_resource "TWMessageBarManager/Classes/Icons/icon-error.png"

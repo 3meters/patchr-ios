@@ -40,6 +40,8 @@
 #import <TWMessageBarManager.h>
 #import <Keys/PatchrKeys.h>
 #import <Google/Analytics.h>
+#import <MBContactPicker.h>
+#import <MBContactModel.h>
 
 #import "Patch.h"
 #import "Place.h"

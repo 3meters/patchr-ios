@@ -128,6 +128,7 @@
 		E281777A1B5C3C3200D65AC1 /* Proxibase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28177791B5C3C3200D65AC1 /* Proxibase.swift */; };
 		E281777C1B5D58CB00D65AC1 /* PatchSuggestCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E238BAFC1B5712B40094AF41 /* PatchSuggestCell.xib */; };
 		E281777F1B5D591400D65AC1 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E238BAE21B51D3290094AF41 /* ShareViewController.swift */; };
+		E298FFFC1B7A4003002EFC62 /* ballard.gpx in Resources */ = {isa = PBXBuildFile; fileRef = E298FFFB1B7A4003002EFC62 /* ballard.gpx */; };
 		E29F654F1B61A0780000BEF4 /* OneShotLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E281776B1B5AB2D400D65AC1 /* OneShotLocationManager.swift */; };
 		E29F65511B61A9280000BEF4 /* PatchSearchCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E29F65501B61A9280000BEF4 /* PatchSearchCell.xib */; };
 		E29F65531B61A9450000BEF4 /* PatchSearchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29F65521B61A9450000BEF4 /* PatchSearchCell.swift */; };
@@ -374,6 +375,7 @@
 		E28177711B5C18BF00D65AC1 /* ExtensionsUi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ExtensionsUi.swift; path = PatchrShare/ExtensionsUi.swift; sourceTree = SOURCE_ROOT; };
 		E28177751B5C39E200D65AC1 /* AwsS3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AwsS3.swift; path = PatchrShare/AwsS3.swift; sourceTree = SOURCE_ROOT; };
 		E28177791B5C3C3200D65AC1 /* Proxibase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Proxibase.swift; path = PatchrShare/Proxibase.swift; sourceTree = SOURCE_ROOT; };
+		E298FFFB1B7A4003002EFC62 /* ballard.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ballard.gpx; sourceTree = "<group>"; };
 		E29F65501B61A9280000BEF4 /* PatchSearchCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PatchSearchCell.xib; sourceTree = "<group>"; };
 		E29F65521B61A9450000BEF4 /* PatchSearchCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchSearchCell.swift; sourceTree = "<group>"; };
 		E2A099FB1B06B20D00257B8B /* PatchNormalView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PatchNormalView.xib; sourceTree = "<group>"; };
@@ -609,6 +611,7 @@
 				8468F8211A9D09D1007D6EE6 /* Localizable.strings */,
 				7D3D39D51A6F086F00A44CB2 /* Images.xcassets */,
 				E2C7C5C31B2A19720045038A /* DefaultSettings.plist */,
+				E298FFFB1B7A4003002EFC62 /* ballard.gpx */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -769,8 +772,8 @@
 		E2D25DC61B22164300E51461 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				E2F618DE1B02667A0055D09C /* Edit */,
 				E2F618DF1B0267F50055D09C /* Base */,
+				E2F618DE1B02667A0055D09C /* Edit */,
 				E26B0C8F1B45C07D00706F4A /* AirPhotoBrowser.swift */,
 				E273B5351B488F2000888E73 /* AirPhotoPreview.swift */,
 				844D6E341AA4D01200EE71ED /* DevelopmentViewController.swift */,
@@ -982,6 +985,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E238BAD41B508FE90094AF41 /* AdobeCreativeSDKImageResources.bundle in Resources */,
+				E298FFFC1B7A4003002EFC62 /* ballard.gpx in Resources */,
 				E238BAD21B508FCF0094AF41 /* AdobeCreativeSDKFoundationResources.bundle in Resources */,
 				E238BAC61B507E510094AF41 /* Main.storyboard in Resources */,
 				E2EFD2661AF44214003937D4 /* Lobby.storyboard in Resources */,
