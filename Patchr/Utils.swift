@@ -109,4 +109,36 @@ struct Utils {
             }
         }
     }
+    
+    static func updateNearbys(nearby: [NSObject: AnyObject]) -> [[NSObject:AnyObject]] {
+        
+        var nearbys: [[NSObject:AnyObject]] = [nearby]
+        
+        if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
+            if var storedNearbys = groupDefaults.arrayForKey(PatchrUserDefaultKey("nearby.patches")) as? [[NSObject:AnyObject]] {
+                
+                storedNearbys.append(nearby)
+                
+                /* Sort descending */
+                storedNearbys.sort {
+                    item1, item2 in
+                    let date1: Int64 = (item1["sentDate"] as! NSNumber).longLongValue
+                    let date2: Int64 = (item2["sentDate"] as! NSNumber).longLongValue
+                    return date1 > date2 // > descending, < for ascending
+                }
+                
+                /* Trim to 10 most recent */
+                if storedNearbys.count > 10 {
+                    storedNearbys = Array(storedNearbys[0..<10])
+                }
+                
+                groupDefaults.setObject(storedNearbys, forKey:PatchrUserDefaultKey("nearby.patches"))
+                return storedNearbys
+            }
+            else {
+                groupDefaults.setObject(nearbys, forKey:PatchrUserDefaultKey("nearby.patches"))
+            }
+        }
+        return nearbys
+    }
 }

@@ -63,9 +63,9 @@ class PatchEditViewController: EntityEditViewController {
             self.progressFinishLabel = "Activated!"
             navigationItem.title = Utils.LocalizedString("Make patch")
             
-            /* Use current location */
-            if let loc = LocationController.instance.getLocation() {
-                updateLocation(loc)
+            /* Use location managers last location fix */
+            if let lastLocation = LocationController.instance.lastLocationFromManager() {
+                updateLocation(lastLocation)
             }
             
             /* Big do it button */

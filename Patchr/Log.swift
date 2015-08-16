@@ -12,25 +12,25 @@ struct Log {
     static func v(message: AnyObject?) {
         #if DEBUG
             if message != nil {
-                println(message!)
+				NSLog(message! as! String)
             }
         #endif
     }
     static func d(message: AnyObject?) {
         #if DEBUG
             if message != nil {
-                println(message!)
+                NSLog(message! as! String)
             }
         #endif
     }
     static func i(message: AnyObject?) {
         if message != nil {
-            println(message!)
+			NSLog(message! as! String)
         }
     }
     static func w(message: AnyObject?) {
         if message != nil {
-            println(message!)
+			NSLog(String(message as! NSString))
         }
     }
 }

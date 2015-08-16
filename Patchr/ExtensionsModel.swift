@@ -30,9 +30,9 @@ extension ServiceBase {
 extension Entity {
     
     func distance() -> Float? {
-        if let currentLocation = LocationController.instance.getLocation(), location = self.location {
+        if let lastLocation = LocationController.instance.lastLocationFromManager(), location = self.location {
             let entityLocation = CLLocation(latitude: location.latValue, longitude: location.lngValue)
-            return Float(currentLocation.distanceFromLocation(entityLocation))
+            return Float(lastLocation.distanceFromLocation(entityLocation))
         }
         return nil
     }
@@ -119,10 +119,10 @@ extension Patch {
         /* Distance */
         if view.distance != nil {
             view.distance.text = "--"
-            if let currentLocation = LocationController.instance.getLocation() {
+            if let lastLocation = LocationController.instance.lastLocationFromManager() {
                 if let loc = patch.location {
                     var patchLocation = CLLocation(latitude: loc.latValue, longitude: loc.lngValue)
-                    let dist = Float(currentLocation.distanceFromLocation(patchLocation))  // in meters
+                    let dist = Float(lastLocation.distanceFromLocation(patchLocation))  // in meters
                     view.distance.text = LocationController.instance.distancePretty(dist)
                 }
             }
@@ -482,6 +482,9 @@ extension Notification {
         }
         else if notification.type == "share" {
             view.iconImageView.image = UIImage(named: "imgShareLight")
+        }
+        else if notification.type == "nearby" {
+            view.iconImageView.image = UIImage(named: "imgLocationLight")
         }
         
         view.iconImageView.tintColor(Colors.brandColor)

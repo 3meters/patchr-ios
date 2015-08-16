@@ -455,11 +455,13 @@ public class Proxibase {
     }
     
 	public func insertObject(path: String, parameters: NSDictionary, completion: ProxibaseCompletionBlock) {
-		postObject(path, parameters: parameters, completion: completion)
+        /* Only called from entity edit */
+        postObject(path, parameters: parameters, addLocation: true, completion: completion)
 	}
 
 	public func updateObject(path: String, parameters: NSDictionary, completion: ProxibaseCompletionBlock) {
-		postObject(path, parameters: parameters, completion: completion)
+        /* Only called from entity edit */
+        postObject(path, parameters: parameters, addLocation: false, completion: completion)
 	}
 
     public func deleteObject(path: String, completion: ProxibaseCompletionBlock) {
@@ -610,7 +612,7 @@ public class Proxibase {
 
     public func updateProximity(location: CLLocation, completion: (response:AnyObject?, error:NSError?) -> Void) {
         let parameters = [
-            "installId": installationIdentifier,
+            "installId": self.installationIdentifier,
             "location": [
                 "accuracy": location.horizontalAccuracy,
                 "geometry": [
@@ -641,7 +643,7 @@ public class Proxibase {
 	 * Rest
 	 *--------------------------------------------------------------------------------------------*/
 
-	private func postObject(path: String, parameters: NSDictionary, completion: ProxibaseCompletionBlock) {
+	private func postObject(path: String, parameters: NSDictionary, addLocation: Bool, completion: ProxibaseCompletionBlock) {
 		/*
 		* path can be a collection name (i.e. "data/patches", "data/messages") to create a new object.
 		* path can also be an object path (i.e. "data/patches/pa.xyz" to update an existing object.
@@ -663,12 +665,30 @@ public class Proxibase {
 				return
 			}
 			let postParameters = ["data": properties]
-			self.performPOSTRequestFor(path, parameters: postParameters, completion: completion)
+            self.performPOSTRequestFor(path, parameters: postParameters, addLocation: addLocation, completion: completion)
 		}
 	}
 
-	private func performPOSTRequestFor(path: NSString, var parameters: NSDictionary, completion: ProxibaseCompletionBlock) {
-		sessionManager.POST(path as String, parameters: authenticatedParameters(parameters),
+	private func performPOSTRequestFor(path: NSString, var parameters: NSDictionary, addLocation: Bool = false, completion: ProxibaseCompletionBlock) {
+        
+        parameters = authenticatedParameters(parameters)
+        
+        if addLocation {
+            if let location = LocationController.instance.lastLocationAccepted() {
+                let locDict = [
+                    "accuracy": location.horizontalAccuracy,
+                    "geometry": [
+                        location.coordinate.longitude,
+                        location.coordinate.latitude],
+                    "lat": location.coordinate.latitude,
+                    "lng": location.coordinate.longitude
+                ]
+                parameters.setValue(self.installationIdentifier, forKey: "installId")
+                parameters.setValue(locDict, forKey: "location")
+            }
+        }
+        
+		sessionManager.POST(path as String, parameters: parameters,
 							success: {
 								dataTask, response in
 								completion(response: response, error: nil)

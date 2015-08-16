@@ -438,7 +438,7 @@ class EntityEditViewController: UITableViewController {
                         }
                         
                         /* Return to the lobby */
-                        LocationController.instance.locationLocked = nil
+                        LocationController.instance.clearLastLocationAccepted()
                         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
                         let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
                         if let controller = storyboard.instantiateViewControllerWithIdentifier("SplashNavigationController") as? UIViewController {

@@ -17,7 +17,7 @@ class NearbyTableViewController: PatchTableViewController {
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -29,6 +29,7 @@ class NearbyTableViewController: PatchTableViewController {
         super.viewWillAppear(animated)
         
         registerForLocationNotifications()
+        LocationController.instance.stopSignificantChangeUpdates()
         LocationController.instance.startUpdates()
     }
     
@@ -44,6 +45,7 @@ class NearbyTableViewController: PatchTableViewController {
         
         unregisterForLocationNotifications()
         LocationController.instance.stopUpdates()
+        LocationController.instance.startSignificantChangeUpdates()
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -60,7 +62,7 @@ class NearbyTableViewController: PatchTableViewController {
     
     override func refreshQueryItems(force: Bool = false, paging: Bool = false) {
         if force {
-            LocationController.instance.locationLocked = nil
+            LocationController.instance.clearLastLocationAccepted()
             LocationController.instance.stopUpdates()
             LocationController.instance.startUpdates()
         }
@@ -106,6 +108,10 @@ class NearbyTableViewController: PatchTableViewController {
             self.progress!.show(true)
         }
         
+        if self.showEmptyLabel && self.emptyLabel.alpha > 0 {
+            self.emptyLabel.fadeOut()
+        }
+        
         Reporting.updateCrashKeys()
         
         DataController.instance.refreshItemsFor(query(), force: false, paging: false, completion: {
@@ -114,7 +120,7 @@ class NearbyTableViewController: PatchTableViewController {
             if let error = ServerError(error) {
                 
                 /* Always reset location after a network error */
-                LocationController.instance.locationLocked = nil
+                LocationController.instance.clearLastLocationAccepted()
                 
                 /* User credentials probably need to be refreshed */
                 if error.code == ServerStatusCode.UNAUTHORIZED {
@@ -131,12 +137,6 @@ class NearbyTableViewController: PatchTableViewController {
                 return
             }
             
-            if self.userDefaults.boolForKey(PatchrUserDefaultKey("SoundEffects")) {
-                if !query.executedValue {
-                    AudioController.instance.play(Sound.greeting.rawValue)
-                }
-            }
-            
             self.activityDate = DataController.instance.activityDate
             
             // Delay seems to be necessary to avoid visual glitch with UIRefreshControl
@@ -145,7 +145,19 @@ class NearbyTableViewController: PatchTableViewController {
                 /* Flag query as having been executed at least once */
                 self.progress!.hide(true)
                 self.refreshControl!.endRefreshing()
+                if let fetchedObjects = self.fetchedResultsController.fetchedObjects as [AnyObject]? {
+                    if fetchedObjects.count == 0 {
+                        self.emptyLabel.fadeIn()
+                    }
+                    else if self.userDefaults.boolForKey(PatchrUserDefaultKey("SoundEffects")) {
+                        if !query.executedValue {
+                            AudioController.instance.play(Sound.greeting.rawValue)
+                        }
+                    }
+                }
+                
                 self.query().executedValue = true
+                
                 return
             })
         })

@@ -65,7 +65,7 @@ class OneShotLocationManager: NSObject, CLLocationManagerDelegate {
     
     /* 
      * We assume that if we are called then needed location permissions are in place.
-     * Fetch one location and return.
+     * Fetch one location and return. We accept it regardless of accuracy.
      */
     func fetchWithCompletion(completion: LocationClosure) {
         

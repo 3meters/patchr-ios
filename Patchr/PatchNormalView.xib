@@ -19,7 +19,7 @@
                             <rect key="frame" x="0.0" y="0.0" width="127" height="127"/>
                             <color key="backgroundColor" red="0.95686274510000002" green="0.95686274510000002" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                             <constraints>
-                                <constraint firstAttribute="height" constant="127" id="Evc-Gz-JnX"/>
+                                <constraint firstAttribute="height" priority="999" constant="127" id="Evc-Gz-JnX"/>
                                 <constraint firstAttribute="width" secondItem="YCP-ap-PEz" secondAttribute="height" multiplier="1:1" id="rYE-pR-TIR"/>
                             </constraints>
                         </imageView>

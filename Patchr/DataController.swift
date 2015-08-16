@@ -252,7 +252,7 @@ class DataController: NSObject {
             completion(queryItems: queryItems, query: query, error: error)
 		}
         
-        let coordinate = LocationController.instance.currentLocation()?.coordinate
+        let coordinate = LocationController.instance.lastLocationAccepted()?.coordinate
         let defaultRadius: Int32 = 10000
 
         var entity: ServiceBase!
@@ -348,7 +348,12 @@ class DataController: NSObject {
                 return (dataWrapper, [])
             }
             
-			if let entityDictionaries = dataWrapper.data as? [[String:NSObject]] {
+			if var entityDictionaries = dataWrapper.data as? [[NSObject: AnyObject]] {
+                
+                /* Append the sidecar maps if any */
+                if let sidecar = query.sidecar as? [[NSObject: AnyObject]] {
+                    entityDictionaries.extend(sidecar)
+                }
 
 				var itemPosition = 0 + query.offsetValue
 				for entityDictionary in entityDictionaries {
@@ -399,6 +404,8 @@ class DataController: NSObject {
 						assert(false, "No schema for object \(entityDictionary)")
 					}
 				}
+                
+                
 			}
 		}
 		return (dataWrapper, items)

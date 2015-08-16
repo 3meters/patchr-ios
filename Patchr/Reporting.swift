@@ -34,7 +34,7 @@ struct Reporting {
         Crashlytics.sharedInstance().setObjectValue(DataController.proxibase.installationIdentifier, forKey: "install_id")
         
         /* Location info */
-        let location: CLLocation? = LocationController.instance.currentLocation()
+        let location: CLLocation? = LocationController.instance.lastLocationAccepted()
         if location != nil {
             var eventDate = location!.timestamp
             var howRecent = abs(trunc(eventDate.timeIntervalSinceNow * 100) / 100)

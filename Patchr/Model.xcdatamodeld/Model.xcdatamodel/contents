@@ -111,6 +111,11 @@
                 <entry key="attributeValueClassName" value="NSDictionary"/>
             </userInfo>
         </attribute>
+        <attribute name="sidecar" optional="YES" attributeType="Transformable" syncable="YES">
+            <userInfo>
+                <entry key="attributeValueClassName" value="NSArray"/>
+            </userInfo>
+        </attribute>
         <attribute name="valid" optional="YES" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
         <relationship name="queryItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="QueryItem" inverseName="query" inverseEntity="QueryItem" syncable="YES"/>
     </entity>
@@ -172,7 +177,7 @@
         <element name="Photo" positionX="-693" positionY="90" width="128" height="150"/>
         <element name="Place" positionX="279" positionY="-243" width="128" height="165"/>
         <element name="ProviderMap" positionX="-452" positionY="450" width="128" height="135"/>
-        <element name="Query" positionX="-216" positionY="117" width="128" height="180"/>
+        <element name="Query" positionX="-216" positionY="117" width="128" height="195"/>
         <element name="QueryItem" positionX="-495" positionY="-99" width="128" height="135"/>
         <element name="RichType" positionX="-450" positionY="98" width="128" height="75"/>
         <element name="ServiceBase" positionX="-450" positionY="-243" width="128" height="315"/>

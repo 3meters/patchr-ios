@@ -11,6 +11,7 @@ extern const struct QueryAttributes {
 	__unsafe_unretained NSString *offset;
 	__unsafe_unretained NSString *pageSize;
 	__unsafe_unretained NSString *parameters;
+	__unsafe_unretained NSString *sidecar;
 	__unsafe_unretained NSString *valid;
 } QueryAttributes;
 
@@ -21,6 +22,8 @@ extern const struct QueryRelationships {
 @class QueryItem;
 
 @class NSDictionary;
+
+@class NSArray;
 
 @interface QueryID : NSManagedObjectID {}
 @end
@@ -78,6 +81,10 @@ extern const struct QueryRelationships {
 @property (nonatomic, strong) NSDictionary* parameters;
 
 //- (BOOL)validateParameters:(id*)value_ error:(NSError**)error_;
+
+@property (nonatomic, strong) NSArray* sidecar;
+
+//- (BOOL)validateSidecar:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSNumber* valid;
 
@@ -138,6 +145,9 @@ extern const struct QueryRelationships {
 
 - (NSDictionary*)primitiveParameters;
 - (void)setPrimitiveParameters:(NSDictionary*)value;
+
+- (NSArray*)primitiveSidecar;
+- (void)setPrimitiveSidecar:(NSArray*)value;
 
 - (NSNumber*)primitiveValid;
 - (void)setPrimitiveValid:(NSNumber*)value;

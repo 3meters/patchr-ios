@@ -40,6 +40,9 @@
                 </label>
                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QRR-b5-bAU" userLabel="approved_switch">
                     <rect key="frame" x="203" y="70" width="51" height="31"/>
+                    <connections>
+                        <action selector="approvedSwitchValueChangedAction:" destination="H2p-sc-9uM" eventType="valueChanged" id="tnZ-eA-9K7"/>
+                    </connections>
                 </switch>
                 <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zwb-KI-ZOz" userLabel="delete_button">
                     <rect key="frame" x="267" y="0.0" width="48" height="48"/>
@@ -50,6 +53,9 @@
                     <state key="normal" image="imgCancelLight">
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
+                    <connections>
+                        <action selector="removeButtonTouchUpInsideAction:" destination="H2p-sc-9uM" eventType="touchUpInside" id="vue-Bn-NHO"/>
+                    </connections>
                 </button>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="NEW YORK, NY" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uDQ-4X-b5r" userLabel="area">
                     <rect key="frame" x="111" y="36" width="102" height="17"/>

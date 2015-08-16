@@ -171,7 +171,7 @@ extension UIViewController {
                 }
                 
                 /* Make sure state is cleared */
-                LocationController.instance.locationLocked = nil
+                LocationController.instance.clearLastLocationAccepted()
                 
                 let appDelegate               = UIApplication.sharedApplication().delegate as! AppDelegate
                 let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as! UIViewController
@@ -182,7 +182,7 @@ extension UIViewController {
             /* 
              * Mostly because a more current client version is required. 
              */
-            LocationController.instance.locationLocked = nil
+            LocationController.instance.clearLastLocationAccepted()
             
             let appDelegate               = UIApplication.sharedApplication().delegate as! AppDelegate
             let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as! UIViewController
@@ -305,6 +305,20 @@ extension UITabBarController {
 extension String {
     var length: Int {
         return count(self)
+    }
+}
+
+extension Dictionary {
+    mutating func update(other:Dictionary) {
+        for (key,value) in other {
+            self.updateValue(value, forKey:key)
+        }
+    }
+}
+
+func += <KeyType, ValueType> (inout left: Dictionary<KeyType, ValueType>, right: Dictionary<KeyType, ValueType>) {
+    for (k, v) in right {
+        left.updateValue(v, forKey: k)
     }
 }
 

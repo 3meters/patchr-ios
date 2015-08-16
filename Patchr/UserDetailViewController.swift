@@ -175,7 +175,7 @@ class UserDetailViewController: QueryTableViewController {
 			}
             
             /* Make sure state is cleared */
-            LocationController.instance.locationLocked = nil
+            LocationController.instance.clearLastLocationAccepted()
 
 			let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
 			let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as! UIViewController
@@ -185,7 +185,7 @@ class UserDetailViewController: QueryTableViewController {
     
     func actionSignin() {
         
-        LocationController.instance.locationLocked = nil
+        LocationController.instance.clearLastLocationAccepted()
         let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
         if let controller = storyboard.instantiateViewControllerWithIdentifier("SignInEditViewController") as? UIViewController {
             self.navigationController?.pushViewController(controller, animated: true)

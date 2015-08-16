@@ -14,6 +14,8 @@ class MainTabBarController: UITabBarController {
         super.awakeFromNib()
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationWillEnterForeground",
             name: Event.ApplicationWillEnterForeground.rawValue, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground",
+            name: Event.ApplicationDidEnterBackground.rawValue, object: nil)
     }
     
     override func viewDidLoad() {
@@ -24,7 +26,15 @@ class MainTabBarController: UITabBarController {
     func applicationWillEnterForeground() {
         /* User either switched to patchr or turned their screen back on. */
         Log.d("Application will enter foreground")
-        LocationController.instance.locationLocked = nil
+//        LocationController.instance.clearLastLocationAccepted()
+//        LocationController.instance.stopSignificantChangeUpdates()
+    }
+    
+    func applicationDidEnterBackground() {
+        /* User either switched to patchr or turned their screen back on. */
+        Log.d("Application did enter background")
+        LocationController.instance.startSignificantChangeUpdates()
+//        LocationController.instance.clearLastLocationAccepted()
     }
     
     deinit {

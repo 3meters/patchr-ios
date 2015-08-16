@@ -27,6 +27,7 @@ class NotificationsTableViewController: QueryTableViewController {
 	private var selectedMessage:      Message?
     private var selectedEntityId:     String?
     private var activityDate:         Int64!
+    private var nearbys:              [[NSObject: AnyObject]] = [[:]]
     
 	private var _query:               Query!
     
@@ -60,6 +61,12 @@ class NotificationsTableViewController: QueryTableViewController {
         
 		super.viewDidLoad()
         
+        if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
+            if let storedNearbys = groupDefaults.arrayForKey(PatchrUserDefaultKey("nearby.patches")) as? [[NSObject:AnyObject]] {
+                self.nearbys = storedNearbys
+            }
+        }
+        
         self.activityDate = NotificationController.instance.activityDate
 	}
 
@@ -92,6 +99,21 @@ class NotificationsTableViewController: QueryTableViewController {
     func handleRemoteNotification(notification: NSNotification) {
         
         if let userInfo = notification.userInfo {
+            
+            /* Capture nearbys for local integration */
+            if let trigger = userInfo["trigger"] as? String where trigger == "nearby" {
+                var nearby = userInfo
+                let aps = nearby["aps"] as! NSDictionary
+                nearby["summary"] = aps["alert"]
+                nearby["sentDate"] = NSNumber(longLong: Int64(NSDate().timeIntervalSince1970 * 1000)) // Only way to store Int64 as AnyObject
+                nearby["createdDate"] = nearby["sentDate"]
+                nearby["sortDate"] = nearby["sentDate"]
+                nearby["type"] = "nearby"
+                nearby["schema"] = "notification"
+                nearby.removeValueForKey("aps")
+                self.nearbys = Utils.updateNearbys(nearby)
+            }
+            
             if let stateRaw = userInfo["receivedInApplicationState"] as? Int {
                 if let applicationState = UIApplicationState(rawValue: stateRaw) {
                     
@@ -314,6 +336,10 @@ class NotificationsTableViewController: QueryTableViewController {
         PFInstallation.currentInstallation().saveEventually(nil)
     }
 
+    override func populateSidedar(query: Query) {
+        query.sidecar = self.nearbys    // Should make a copy
+    }
+    
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }

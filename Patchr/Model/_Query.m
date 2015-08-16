@@ -11,6 +11,7 @@ const struct QueryAttributes QueryAttributes = {
 	.offset = @"offset",
 	.pageSize = @"pageSize",
 	.parameters = @"parameters",
+	.sidecar = @"sidecar",
 	.valid = @"valid",
 };
 
@@ -181,6 +182,8 @@ const struct QueryRelationships QueryRelationships = {
 }
 
 @dynamic parameters;
+
+@dynamic sidecar;
 
 @dynamic valid;
 

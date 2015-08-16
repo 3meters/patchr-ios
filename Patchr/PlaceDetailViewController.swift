@@ -113,10 +113,10 @@ class PlaceDetailViewController: UITableViewController {
         
         /* Distance */
         distance.text = "--"
-        if let currentLocation = LocationController.instance.getLocation() {
+        if let lastLocation = LocationController.instance.lastLocationFromManager() {
             if let loc = place!.location {
                 var placeLocation = CLLocation(latitude: loc.latValue, longitude: loc.lngValue)
-                let dist = Float(currentLocation.distanceFromLocation(placeLocation))  // in meters
+                let dist = Float(lastLocation.distanceFromLocation(placeLocation))  // in meters
                 distance.text = LocationController.instance.distancePretty(dist)
             }
         }

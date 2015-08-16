@@ -35,6 +35,11 @@ class QueryTableViewController: FetchedResultsTableViewController {
                 NSSortDescriptor(key: "distance", ascending: true)
             ]
         }
+        else if query.name == DataStoreQueryName.NotificationsForCurrentUser.rawValue {
+            fetchRequest.sortDescriptors = [
+                NSSortDescriptor(key: "sortDate", ascending: false)
+            ]
+        }
         else {
             fetchRequest.sortDescriptors = [
                 NSSortDescriptor(key: "position", ascending: true),
@@ -156,6 +161,9 @@ class QueryTableViewController: FetchedResultsTableViewController {
             self.emptyLabel.fadeOut()
         }
         
+        /* Check to see of any subclass wants to inject using the sidecar */
+        populateSidedar(query())
+        
         DataController.instance.refreshItemsFor(query(), force: force, paging: paging, completion: {
             [weak self] results, query, error in
             
@@ -192,6 +200,8 @@ class QueryTableViewController: FetchedResultsTableViewController {
             })
         })
     }
+    
+    func populateSidedar(query: Query) { }
     
 	@IBAction func unwindFromCreatePatch(segue: UIStoryboardSegue) {
         self.refreshQueryItems(force: false)
