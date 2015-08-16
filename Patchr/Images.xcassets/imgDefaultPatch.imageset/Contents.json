@@ -3,17 +3,17 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "img_default_patch-1.png"
+      "filename" : "img_default_patch.png"
     },
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "img_default_patch-1-1.png"
+      "filename" : "img_default_patch.png"
     },
     {
       "idiom" : "universal",
       "scale" : "3x",
-      "filename" : "img_default_patch-1-2.png"
+      "filename" : "img_default_patch.png"
     }
   ],
   "info" : {
