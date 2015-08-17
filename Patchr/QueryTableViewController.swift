@@ -82,7 +82,7 @@ class QueryTableViewController: FetchedResultsTableViewController {
 		self.refreshControl = refreshControl
         
         /* Wacky activity control for body */
-        progress = MBProgressHUD.showHUDAddedTo(window, animated: true)
+        progress = MBProgressHUD.showHUDAddedTo(self.navigationController!.view, animated: true)
         progress!.mode = MBProgressHUDMode.Indeterminate
         progress!.square = true
         progress!.opacity = 0.0
@@ -130,11 +130,12 @@ class QueryTableViewController: FetchedResultsTableViewController {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        self.progress!.hide(false)
+        self.progress?.hide(false)
     }
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
+        self.progress?.hide(false)
         self.refreshControl?.endRefreshing()
         self.tableView.finishInfiniteScroll()
     }

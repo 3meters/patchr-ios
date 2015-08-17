@@ -160,15 +160,15 @@ class MessageDetailViewController: UITableViewController {
 
 	private func refresh(force: Bool = false) {
         if (self.message == nil) {
-            self.progress!.minShowTime = 1
-            self.progress!.removeFromSuperViewOnHide = true
-            self.progress!.show(true)
+            self.progress?.minShowTime = 1
+            self.progress?.removeFromSuperViewOnHide = true
+            self.progress?.show(true)
         }
         
 		DataController.instance.withMessageId(messageId!, refresh: force) {
 			message in
             
-            self.progress!.hide(true)
+            self.progress?.hide(true)
 			self.refreshControl?.endRefreshing()
 			if message != nil {
                 

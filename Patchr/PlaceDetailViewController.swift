@@ -73,7 +73,7 @@ class PlaceDetailViewController: UITableViewController {
 		DataController.instance.withPlaceId(placeId!, refresh: force) {
 			place in
 			self.refreshControl?.endRefreshing()
-            self.progress!.hide(true)
+            self.progress?.hide(true)
 			if place != nil {
 				self.place = place
 				self.draw()

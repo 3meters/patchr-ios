@@ -12,6 +12,11 @@ class LobbyViewController: UIViewController {
     
     @IBOutlet weak var logo: UIButton!
     
+    override func viewDidLoad() {
+        //self.navigationController?.setNavigationBarHidden(true, animated: false)
+        //        self.navigationController?.navigationBar.barStyle = UIBarStyle.Black
+    }
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         setScreenName("Lobby")
@@ -19,15 +24,17 @@ class LobbyViewController: UIViewController {
         self.view.endEditing(true)
         self.logo.imageView!.tintColor(Colors.brandColor)
         self.navigationController?.setNavigationBarHidden(true, animated: animated)
+        self.setNeedsStatusBarAppearanceUpdate()
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.setNavigationBarHidden(false, animated: animated)
+        self.setNeedsStatusBarAppearanceUpdate()
     }
     
-    override func prefersStatusBarHidden() -> Bool {
-        return true
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
     }
 
     @IBAction func guestButtonAction(sender: UIButton) {

@@ -441,7 +441,7 @@ class EntityEditViewController: UITableViewController {
                         LocationController.instance.clearLastLocationAccepted()
                         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
                         let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
-                        if let controller = storyboard.instantiateViewControllerWithIdentifier("SplashNavigationController") as? UIViewController {
+                        if let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController") as? UIViewController {
                             appDelegate.window?.setRootViewController(controller, animated: true)
                             Shared.Toast("User \(userName) erased", controller: controller)
                         }

@@ -15,11 +15,11 @@
                         <viewControllerLayoutGuide type="bottom" id="cqz-mf-L6a"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="h1X-d4-7iS">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="imgCityScape" translatesAutoresizingMaskIntoConstraints="NO" id="1XS-M2-Vio" userLabel="background">
-                                <rect key="frame" x="-24" y="-4" width="368" height="508"/>
+                                <rect key="frame" x="-24" y="-36" width="368" height="640"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="parallaxIntensity">
                                         <integer key="value" value="-40"/>
@@ -27,7 +27,7 @@
                                 </userDefinedRuntimeAttributes>
                             </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3D3-AL-q2n" userLabel="control_group">
-                                <rect key="frame" x="30" y="85" width="260" height="275"/>
+                                <rect key="frame" x="30" y="147" width="260" height="275"/>
                                 <subviews>
                                     <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="r7N-CJ-6QL" userLabel="brand_group">
                                         <rect key="frame" x="36" y="29" width="184" height="50"/>
@@ -137,10 +137,10 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="1XS-M2-Vio" firstAttribute="top" secondItem="a7N-wg-UkN" secondAttribute="bottom" constant="-24" id="4Ct-zu-g0q"/>
-                            <constraint firstItem="cqz-mf-L6a" firstAttribute="top" secondItem="1XS-M2-Vio" secondAttribute="bottom" constant="-24" id="Kse-Vo-sPB"/>
+                            <constraint firstItem="1XS-M2-Vio" firstAttribute="top" secondItem="a7N-wg-UkN" secondAttribute="bottom" constant="-56" id="Dl5-RD-fAv"/>
                             <constraint firstItem="1XS-M2-Vio" firstAttribute="leading" secondItem="h1X-d4-7iS" secondAttribute="leading" constant="-24" id="SB1-gv-SlH"/>
-                            <constraint firstAttribute="centerY" secondItem="3D3-AL-q2n" secondAttribute="centerY" constant="18" id="WVk-IC-yH2"/>
+                            <constraint firstAttribute="centerY" secondItem="3D3-AL-q2n" secondAttribute="centerY" id="WVk-IC-yH2"/>
+                            <constraint firstItem="cqz-mf-L6a" firstAttribute="top" secondItem="1XS-M2-Vio" secondAttribute="bottom" constant="-36" id="b6P-t3-28s"/>
                             <constraint firstAttribute="trailing" secondItem="1XS-M2-Vio" secondAttribute="trailing" constant="-24" id="n9T-N6-GHB"/>
                             <constraint firstAttribute="centerX" secondItem="3D3-AL-q2n" secondAttribute="centerX" id="uOW-uw-ZhF"/>
                             <constraint firstAttribute="centerX" secondItem="1XS-M2-Vio" secondAttribute="centerX" id="wbb-G5-6tw"/>
@@ -148,15 +148,14 @@
                     </view>
                     <navigationItem key="navigationItem" id="toX-Ib-TVi" userLabel="nav_bar"/>
                     <nil key="simulatedTopBarMetrics"/>
-                    <nil key="simulatedBottomBarMetrics"/>
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
                         <outlet property="logo" destination="wSX-4a-KNV" id="DFO-pZ-8uq"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FQs-Hb-zDc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-5689" y="-2430"/>
+            <point key="canvasLocation" x="-5466" y="-2423"/>
         </scene>
         <!--Register-->
         <scene sceneID="vgC-hF-YLE">
@@ -174,98 +173,12 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="45H-0y-Tsm" id="mME-tQ-Qbs">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DBD-mT-3rn" userLabel="photo_group">
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DBD-mT-3rn" userLabel="photo_holder">
                                                     <rect key="frame" x="16" y="9" width="200" height="200"/>
-                                                    <subviews>
-                                                        <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" reversesTitleShadowWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fpe-E1-azZ" userLabel="photo">
-                                                            <rect key="frame" x="0.0" y="0.0" width="200" height="200"/>
-                                                            <color key="backgroundColor" red="0.90196079015731812" green="0.90196079015731812" blue="0.90196079015731812" alpha="1" colorSpace="calibratedRGB"/>
-                                                            <constraints>
-                                                                <constraint firstAttribute="width" constant="200" id="73u-1E-VsI"/>
-                                                                <constraint firstAttribute="height" constant="200" id="lCA-Gk-neW"/>
-                                                            </constraints>
-                                                            <state key="normal" backgroundImage="imgDefaultUser">
-                                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                            </state>
-                                                            <connections>
-                                                                <action selector="setPhotoAction:" destination="tMe-pp-m8T" eventType="touchUpInside" id="88J-pp-S6s"/>
-                                                            </connections>
-                                                        </button>
-                                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zrR-Fq-eKZ" userLabel="scrim">
-                                                            <rect key="frame" x="0.0" y="0.0" width="200" height="48"/>
-                                                            <subviews>
-                                                                <button hidden="YES" opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Fa-KN-1Hn" userLabel="edit_button">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="48" height="48"/>
-                                                                    <constraints>
-                                                                        <constraint firstAttribute="width" constant="48" id="5H4-Q9-y64"/>
-                                                                        <constraint firstAttribute="height" constant="48" id="VI1-fQ-IW5"/>
-                                                                    </constraints>
-                                                                    <inset key="imageEdgeInsets" minX="14" minY="14" maxX="14" maxY="14"/>
-                                                                    <state key="normal" image="imgEditDark">
-                                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                                    </state>
-                                                                    <connections>
-                                                                        <action selector="editPhotoAction:" destination="tMe-pp-m8T" eventType="touchUpInside" id="ozH-Qb-8Qw"/>
-                                                                    </connections>
-                                                                </button>
-                                                                <button hidden="YES" opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fVO-JW-l4u" userLabel="clear_button">
-                                                                    <rect key="frame" x="152" y="0.0" width="48" height="48"/>
-                                                                    <constraints>
-                                                                        <constraint firstAttribute="height" constant="48" id="8Vy-4p-xCU"/>
-                                                                        <constraint firstAttribute="width" constant="48" id="Wkz-sk-XL7"/>
-                                                                    </constraints>
-                                                                    <inset key="imageEdgeInsets" minX="8" minY="8" maxX="8" maxY="8"/>
-                                                                    <state key="normal" image="imgCancelDark">
-                                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                                    </state>
-                                                                    <connections>
-                                                                        <action selector="clearPhotoAction:" destination="tMe-pp-m8T" eventType="touchUpInside" id="tx3-4P-QT6"/>
-                                                                    </connections>
-                                                                </button>
-                                                                <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" reversesTitleShadowWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="L4x-gJ-GZU" userLabel="set_button">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="200" height="48"/>
-                                                                    <constraints>
-                                                                        <constraint firstAttribute="height" constant="48" id="ROZ-t3-B2M"/>
-                                                                    </constraints>
-                                                                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="18"/>
-                                                                    <inset key="imageEdgeInsets" minX="14" minY="14" maxX="14" maxY="14"/>
-                                                                    <state key="normal" title="Set photo">
-                                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                                    </state>
-                                                                    <state key="highlighted">
-                                                                        <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                                                    </state>
-                                                                    <connections>
-                                                                        <action selector="setPhotoAction:" destination="tMe-pp-m8T" eventType="touchUpInside" id="pJd-8i-9VG"/>
-                                                                    </connections>
-                                                                </button>
-                                                            </subviews>
-                                                            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
-                                                            <constraints>
-                                                                <constraint firstAttribute="trailing" secondItem="fVO-JW-l4u" secondAttribute="trailing" id="5Dp-BW-rMb"/>
-                                                                <constraint firstItem="2Fa-KN-1Hn" firstAttribute="leading" secondItem="zrR-Fq-eKZ" secondAttribute="leading" id="7Aw-0b-Q5m"/>
-                                                                <constraint firstItem="fVO-JW-l4u" firstAttribute="top" secondItem="zrR-Fq-eKZ" secondAttribute="top" id="7Fa-ud-ufb"/>
-                                                                <constraint firstItem="L4x-gJ-GZU" firstAttribute="top" secondItem="zrR-Fq-eKZ" secondAttribute="top" id="Qn5-62-TBk"/>
-                                                                <constraint firstItem="2Fa-KN-1Hn" firstAttribute="top" secondItem="zrR-Fq-eKZ" secondAttribute="top" id="RYB-mh-cXS"/>
-                                                                <constraint firstAttribute="bottom" secondItem="2Fa-KN-1Hn" secondAttribute="bottom" id="UDK-SK-ide"/>
-                                                                <constraint firstAttribute="bottom" secondItem="fVO-JW-l4u" secondAttribute="bottom" id="Zo4-vg-Ne5"/>
-                                                                <constraint firstAttribute="height" constant="48" id="cq8-ov-CJi"/>
-                                                                <constraint firstAttribute="trailing" secondItem="L4x-gJ-GZU" secondAttribute="trailing" id="pXv-ME-kSO"/>
-                                                                <constraint firstItem="L4x-gJ-GZU" firstAttribute="leading" secondItem="zrR-Fq-eKZ" secondAttribute="leading" id="tKM-7F-MmR"/>
-                                                            </constraints>
-                                                        </view>
-                                                    </subviews>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="bottom" secondItem="Fpe-E1-azZ" secondAttribute="bottom" id="6FR-Nt-KEz"/>
-                                                        <constraint firstItem="zrR-Fq-eKZ" firstAttribute="leading" secondItem="DBD-mT-3rn" secondAttribute="leading" id="7Cd-ZQ-40h"/>
-                                                        <constraint firstItem="Fpe-E1-azZ" firstAttribute="leading" secondItem="DBD-mT-3rn" secondAttribute="leading" id="PdI-DD-6G5"/>
-                                                        <constraint firstItem="Fpe-E1-azZ" firstAttribute="top" secondItem="DBD-mT-3rn" secondAttribute="top" id="QRb-YD-jMh"/>
                                                         <constraint firstAttribute="width" constant="200" id="QpZ-ha-gsH"/>
-                                                        <constraint firstAttribute="trailing" secondItem="zrR-Fq-eKZ" secondAttribute="trailing" id="ce5-VG-C70"/>
-                                                        <constraint firstItem="zrR-Fq-eKZ" firstAttribute="top" secondItem="DBD-mT-3rn" secondAttribute="top" id="iVQ-kp-Emi"/>
                                                         <constraint firstAttribute="height" constant="200" id="vJU-AT-WPo"/>
-                                                        <constraint firstAttribute="trailing" secondItem="Fpe-E1-azZ" secondAttribute="trailing" id="wek-Qn-ba6"/>
                                                     </constraints>
                                                 </view>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Full name" adjustsFontSizeToFit="NO" minimumFontSize="18" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="9zH-uc-r32" userLabel="name">
@@ -399,16 +312,12 @@
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
                         <outlet property="cancelButton" destination="ae2-17-Agq" id="fcV-Lg-sL3"/>
-                        <outlet property="clearPhotoButton" destination="fVO-JW-l4u" id="jwZ-CW-GdN"/>
                         <outlet property="doneButton" destination="0ka-oS-NhH" id="u4G-qc-8Rv"/>
-                        <outlet property="editPhotoButton" destination="2Fa-KN-1Hn" id="Q2g-1T-FNR"/>
                         <outlet property="emailField" destination="BcB-tp-dBT" id="xRk-EC-BTf"/>
                         <outlet property="joinButton" destination="Rdg-NM-PUW" id="7DL-YU-ReE"/>
                         <outlet property="nameField" destination="9zH-uc-r32" id="wOJ-V4-kXG"/>
                         <outlet property="passwordField" destination="jyc-yN-J6T" id="NFL-Mo-iSg"/>
-                        <outlet property="photoGroup" destination="DBD-mT-3rn" id="OUh-jI-biM"/>
-                        <outlet property="photoImage" destination="Fpe-E1-azZ" id="laO-so-EXq"/>
-                        <outlet property="setPhotoButton" destination="L4x-gJ-GZU" id="hmi-5Y-afP"/>
+                        <outlet property="photoHolder" destination="DBD-mT-3rn" id="clC-wS-ltn"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="taJ-ff-glV" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -724,7 +633,7 @@
         <!--Lobby Nav Controller-->
         <scene sceneID="0Ft-zb-7Hg">
             <objects>
-                <navigationController storyboardIdentifier="SplashNavigationController" title="Splash Nav Controller" automaticallyAdjustsScrollViewInsets="NO" id="UQc-9V-vQT" userLabel="Lobby Nav Controller" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="LobbyNavigationController" title="Splash Nav Controller" automaticallyAdjustsScrollViewInsets="NO" id="UQc-9V-vQT" userLabel="Lobby Nav Controller" sceneMemberID="viewController">
                     <toolbarItems/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="Loo-gs-4uF">
@@ -742,14 +651,11 @@
         </scene>
     </scenes>
     <resources>
-        <image name="imgCancelDark" width="48" height="48"/>
         <image name="imgCityScape" width="1000" height="625"/>
-        <image name="imgDefaultUser" width="250" height="250"/>
-        <image name="imgEditDark" width="60" height="60"/>
         <image name="imgPatchDark" width="60" height="60"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="HwG-zD-VAa"/>
+        <segue reference="gEB-lU-Hsn"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="1" green="0.50196078430000002" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

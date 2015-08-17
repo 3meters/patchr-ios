@@ -10,7 +10,7 @@
 		1AB4C23C766AEEECAE42F579 /* libPods-Patchr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CABF391F6D74EFAA64D37F /* libPods-Patchr.a */; };
 		7D01FA361A7024E200DD6DFA /* JSONResponseSerializerWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */; };
 		7D021ABE1A9409450047DAAE /* SignInEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D021ABD1A9409450047DAAE /* SignInEditViewController.swift */; };
-		7D021AC21A9423080047DAAE /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D021AC11A9423080047DAAE /* SplashViewController.swift */; };
+		7D021AC21A9423080047DAAE /* LobbyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D021AC11A9423080047DAAE /* LobbyViewController.swift */; };
 		7D0BAD4C1A96CEB0002E602D /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */; };
 		7D39D3C51ABA21B200275759 /* CALayer+XibConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D39D3C41ABA21B200275759 /* CALayer+XibConfiguration.m */; };
 		7D3D39CF1A6F086F00A44CB2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */; };
@@ -210,7 +210,7 @@
 		7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONResponseSerializerWithData.m; sourceTree = "<group>"; };
 		7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyJSON.swift; sourceTree = "<group>"; };
 		7D021ABD1A9409450047DAAE /* SignInEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInEditViewController.swift; sourceTree = "<group>"; };
-		7D021AC11A9423080047DAAE /* SplashViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
+		7D021AC11A9423080047DAAE /* LobbyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LobbyViewController.swift; sourceTree = "<group>"; };
 		7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		7D39D3C31ABA21B200275759 /* CALayer+XibConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CALayer+XibConfiguration.h"; sourceTree = "<group>"; };
 		7D39D3C41ABA21B200275759 /* CALayer+XibConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CALayer+XibConfiguration.m"; sourceTree = "<group>"; };
@@ -773,6 +773,7 @@
 				E26B0C8F1B45C07D00706F4A /* AirPhotoBrowser.swift */,
 				E273B5351B488F2000888E73 /* AirPhotoPreview.swift */,
 				844D6E341AA4D01200EE71ED /* DevelopmentViewController.swift */,
+				7D021AC11A9423080047DAAE /* LobbyViewController.swift */,
 				7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */,
 				9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */,
 				E25327BB1B10FBE700990A81 /* NearbyTableViewController.swift */,
@@ -787,7 +788,6 @@
 				E2C7C5C51B2B491A0045038A /* PhotoPickerViewController.swift */,
 				E25327DC1B1795E000990A81 /* PlaceDetailViewController.swift */,
 				7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */,
-				7D021AC11A9423080047DAAE /* SplashViewController.swift */,
 				7D6E26461A7AB93F000128A7 /* UserDetailViewController.swift */,
 				7DD89F401AC62B90005CD004 /* UserTableViewController.swift */,
 			);
@@ -1192,7 +1192,7 @@
 				7DA730941A71ACC9008C25FA /* ServiceObject.m in Sources */,
 				7DA730901A71ACC9008C25FA /* Patch.m in Sources */,
 				7DA7308A1A71ACC9008C25FA /* _Patch.m in Sources */,
-				7D021AC21A9423080047DAAE /* SplashViewController.swift in Sources */,
+				7D021AC21A9423080047DAAE /* LobbyViewController.swift in Sources */,
 				7DA7308D1A71ACC9008C25FA /* _ServiceBase.m in Sources */,
 				E25327BC1B10FBE700990A81 /* NearbyTableViewController.swift in Sources */,
 				E2D25DCF1B2391A700E51461 /* EntityEditViewController.swift in Sources */,
@@ -1420,6 +1420,7 @@
 				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1440,6 +1441,7 @@
 					"$(inherited)",
 					"-ObjC",
 					"-all_load",
+					"-O3",
 					"-l\"AFNetworking\"",
 					"-l\"AWSCore\"",
 					"-l\"AWSS3\"",
@@ -1499,6 +1501,7 @@
 				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1518,6 +1521,7 @@
 					"$(inherited)",
 					"-ObjC",
 					"-all_load",
+					"-O3",
 					"-l\"AFNetworking\"",
 					"-l\"AWSCore\"",
 					"-l\"AWSS3\"",
@@ -1617,6 +1621,7 @@
 				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1636,6 +1641,7 @@
 					"$(inherited)",
 					"-ObjC",
 					"-all_load",
+					"-O3",
 					"-l\"AFNetworking\"",
 					"-l\"AWSCore\"",
 					"-l\"AWSS3\"",

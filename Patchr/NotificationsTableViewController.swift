@@ -61,12 +61,6 @@ class NotificationsTableViewController: QueryTableViewController {
         
 		super.viewDidLoad()
         
-        if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
-            if let storedNearbys = groupDefaults.arrayForKey(PatchrUserDefaultKey("nearby.patches")) as? [[NSObject:AnyObject]] {
-                self.nearbys = storedNearbys
-            }
-        }
-        
         self.activityDate = NotificationController.instance.activityDate
 	}
 
@@ -99,20 +93,6 @@ class NotificationsTableViewController: QueryTableViewController {
     func handleRemoteNotification(notification: NSNotification) {
         
         if let userInfo = notification.userInfo {
-            
-            /* Capture nearbys for local integration */
-            if let trigger = userInfo["trigger"] as? String where trigger == "nearby" {
-                var nearby = userInfo
-                let aps = nearby["aps"] as! NSDictionary
-                nearby["summary"] = aps["alert"]
-                nearby["sentDate"] = NSNumber(longLong: Int64(NSDate().timeIntervalSince1970 * 1000)) // Only way to store Int64 as AnyObject
-                nearby["createdDate"] = nearby["sentDate"]
-                nearby["sortDate"] = nearby["sentDate"]
-                nearby["type"] = "nearby"
-                nearby["schema"] = "notification"
-                nearby.removeValueForKey("aps")
-                self.nearbys = Utils.updateNearbys(nearby)
-            }
             
             if let stateRaw = userInfo["receivedInApplicationState"] as? Int {
                 if let applicationState = UIApplicationState(rawValue: stateRaw) {
@@ -183,7 +163,7 @@ class NotificationsTableViewController: QueryTableViewController {
                                 incrementBadges()
                             }
                             
-                        case .Inactive: // App was resumed or launched via remote notification
+                        case .Inactive: // User tapped on remove notification
                             
                             /* Select the notifications tab and then segue as if the user had selected the notification */
                             self.tabBarController?.selectedViewController = self.navigationController
@@ -197,9 +177,9 @@ class NotificationsTableViewController: QueryTableViewController {
                             decrementBadges()
                             
                             self.segueWith(targetId, parentId: parentId, refreshEntities: true)
-                            
-                        case .Background:
-                            ()
+                        
+                        case .Background:   // Shouldn't ever fire
+                            assert(false, "Notification controller should never get called when app state == background")
                     }
                 }
             }
@@ -223,6 +203,16 @@ class NotificationsTableViewController: QueryTableViewController {
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
+    
+    override func refreshQueryItems(force: Bool = false, paging: Bool = false) {
+        /* Always make sure we have the freshest sidecar data before a query */
+        if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
+            if let storedNearbys = groupDefaults.arrayForKey(PatchrUserDefaultKey("nearby.patches")) as? [[NSObject:AnyObject]] {
+                self.nearbys = storedNearbys
+            }
+        }
+        super.refreshQueryItems(force: force, paging: paging)
+    }
     
     override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) {
         

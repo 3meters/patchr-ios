@@ -178,7 +178,7 @@ class UserDetailViewController: QueryTableViewController {
             LocationController.instance.clearLastLocationAccepted()
 
 			let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-			let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as! UIViewController
+			let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("LobbyNavigationController") as! UIViewController
 			appDelegate.window!.setRootViewController(destinationViewController, animated: true)
 		}
 	}
@@ -211,7 +211,6 @@ class UserDetailViewController: QueryTableViewController {
             userEmail.text = "discover@3meters.com"
             userPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
             userPhoto.setImage(UIImage(named: "imgDefaultUser"), forState: .Normal)
-            //            userPhoto.imageView?.image = UIImage(named: "imgDefaultUser")
             watchingButton.setTitle("Watching: --", forState: .Normal)
             ownsButton.setTitle("Owner: --", forState: .Normal)
             likesButton.setTitle("Favorites: --", forState: .Normal)
@@ -223,13 +222,16 @@ class UserDetailViewController: QueryTableViewController {
             userPhoto.setImageWithPhoto(user!.getPhotoManaged(), animate: userPhoto.imageView?.image == nil)
             
             if user!.patchesWatching != nil {
-                watchingButton.setTitle("Watching: " + String(user!.patchesWatchingValue), forState: .Normal)
+                let count = user!.patchesWatchingValue == 0 ? "--" : String(user!.patchesWatchingValue)
+                watchingButton.setTitle("Watching: \(count)", forState: .Normal)
             }
             if user!.patchesOwned != nil {
-                ownsButton.setTitle("Owner: " + String(user!.patchesOwnedValue), forState: .Normal)
+                let count = user!.patchesOwnedValue == 0 ? "--" : String(user!.patchesOwnedValue)
+                ownsButton.setTitle("Owner: \(count)", forState: .Normal)
             }
             if user!.patchesLikes != nil {
-                likesButton.setTitle("Favorites: " + String(user!.patchesLikesValue), forState: .Normal)
+                let count = user!.patchesLikesValue == 0 ? "--" : String(user!.patchesLikesValue)
+                likesButton.setTitle("Favorites: \(count)", forState: .Normal)
             }
         }
 	}

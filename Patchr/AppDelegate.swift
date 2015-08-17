@@ -38,6 +38,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         /* Light gray is better than black */
         window?.backgroundColor = Colors.windowColor
         UITabBar.appearance().selectedImageTintColor = Colors.brandColor
+        
+        /* Turn on status bar */
+        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.Slide)
+        
         /* 
          * Initialize Branch: The deepLinkHandler gets called every time the app opens.
          * That means it should be a good place to handle all initial routing.
@@ -148,7 +152,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         else {
             let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
-            if let controller = storyboard.instantiateViewControllerWithIdentifier("SplashNavigationController") as? UIViewController {
+            if let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController") as? UIViewController {
                 self.window?.setRootViewController(controller, animated: true)
             }
         }

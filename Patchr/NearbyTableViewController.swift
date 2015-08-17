@@ -105,7 +105,7 @@ class NearbyTableViewController: PatchTableViewController {
     private func refresh() {
         
         if !self.refreshControl!.refreshing {
-            self.progress!.show(true)
+            self.progress?.show(true)
         }
         
         if self.showEmptyLabel && self.emptyLabel.alpha > 0 {
@@ -125,14 +125,14 @@ class NearbyTableViewController: PatchTableViewController {
                 /* User credentials probably need to be refreshed */
                 if error.code == ServerStatusCode.UNAUTHORIZED {
                     let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
-                    if let controller = storyboard.instantiateViewControllerWithIdentifier("SplashNavigationController") as? UIViewController {
+                    if let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController") as? UIViewController {
                         self.view.window?.setRootViewController(controller, animated: true)
                     }
                 }
                 else {
                     self.handleError(error)
                 }
-                self.progress!.hide(true)
+                self.progress?.hide(true)
                 self.refreshControl!.endRefreshing()
                 return
             }
@@ -143,7 +143,7 @@ class NearbyTableViewController: PatchTableViewController {
             delay(0.5, {
                 
                 /* Flag query as having been executed at least once */
-                self.progress!.hide(true)
+                self.progress?.hide(true)
                 self.refreshControl!.endRefreshing()
                 if let fetchedObjects = self.fetchedResultsController.fetchedObjects as [AnyObject]? {
                     if fetchedObjects.count == 0 {

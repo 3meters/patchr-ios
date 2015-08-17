@@ -68,26 +68,42 @@ class NotificationController {
     func didReceiveRemoteNotification(application: UIApplication, userInfo: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
         
         Log.d("Notification received...")
-        let state: String = application.applicationState == .Background ? "background" : "foreground"
-        Log.d("App state: \(state)")
+        let state = application.applicationState
+        if let stateString: String = state == .Background ? "background" : state == .Active ? "active" : "inactive" {
+            Log.d("App state: \(state)")
+        }
         Log.d(String(format: "%@", userInfo))
         
         /* Tickle the activityDate so consumers know that something has happened */
         self.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
         
-        if application.applicationState == .Background {
+        /* Special capture for nearby notifications */
+        if let trigger = userInfo["trigger"] as? String where trigger == "nearby" {
+            var nearby = userInfo
+            let aps = nearby["aps"] as! NSDictionary
+            nearby["summary"] = aps["alert"]
+            nearby["sentDate"] = NSNumber(longLong: Int64(NSDate().timeIntervalSince1970 * 1000)) // Only way to store Int64 as AnyObject
+            nearby["createdDate"] = nearby["sentDate"]
+            nearby["sortDate"] = nearby["sentDate"]
+            nearby["type"] = "nearby"
+            nearby["schema"] = "notification"
+            nearby.removeValueForKey("aps")
+            Utils.updateNearbys(nearby)
+        }
+        /*
+         * Inactive always means that the user tapped on remote notification.
+         * Active = notification received while app is active (foreground)
+         * Background = notification received while app is not active (background or dead)
+         */
+        if state == .Inactive || state == .Active {
+            var augmentedUserInfo = NSMutableDictionary(dictionary: userInfo)
+            augmentedUserInfo["receivedInApplicationState"] = application.applicationState.rawValue // active, inactive, background
+            NSNotificationCenter.defaultCenter().postNotificationName(PAApplicationDidReceiveRemoteNotification, object: self, userInfo: augmentedUserInfo as [NSObject : AnyObject])
             completionHandler(.NoData)
         }
-        else {
-            handleNotification(application, userInfo: userInfo)
+        else if state == .Background {
             completionHandler(.NoData)
         }
-    }
-    
-    func handleNotification(application: UIApplication, userInfo: [NSObject : AnyObject]) {
-        var augmentedUserInfo = NSMutableDictionary(dictionary: userInfo)
-        augmentedUserInfo["receivedInApplicationState"] = application.applicationState.rawValue // active, inactive, background        
-        NSNotificationCenter.defaultCenter().postNotificationName(PAApplicationDidReceiveRemoteNotification, object: self, userInfo: augmentedUserInfo as [NSObject : AnyObject])
     }
     
     func didRegisterForRemoteNotificationsWithDeviceToken(application: UIApplication, deviceToken: NSData) {

@@ -123,7 +123,7 @@ class PhotoPickerViewController: UICollectionViewController {
         DataController.proxibase.loadSearchImages(self.searchBar!.text, limit: Int64(self.pageSize), offset: Int64(offset)) {
             response, error in
             
-            self.progress!.hide(true)
+            self.progress?.hide(true)
             if let error = ServerError(error) {
                 self.handleError(error)
             }

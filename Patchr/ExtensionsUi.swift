@@ -174,7 +174,7 @@ extension UIViewController {
                 LocationController.instance.clearLastLocationAccepted()
                 
                 let appDelegate               = UIApplication.sharedApplication().delegate as! AppDelegate
-                let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as! UIViewController
+                let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("LobbyNavigationController") as! UIViewController
                 appDelegate.window!.setRootViewController(destinationViewController, animated: true)
             }
         }
@@ -185,13 +185,13 @@ extension UIViewController {
             LocationController.instance.clearLastLocationAccepted()
             
             let appDelegate               = UIApplication.sharedApplication().delegate as! AppDelegate
-            let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as! UIViewController
+            let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("LobbyNavigationController") as! UIViewController
             appDelegate.window!.setRootViewController(destinationViewController, animated: true)
         }
         
         Log.w("Network Error Summary")
         Log.w(error.message)
-        Log.w(error.code.rawValue)
+        Log.w(error.code.rawValue.description)
         Log.w(error.description)
     }
     
