@@ -134,7 +134,7 @@ class AirImageButton: UIButton {
          * Request image via resizer so size is capped.
          */
         let dimension = imageResult.width >= imageResult.height ? ResizeDimension.width : ResizeDimension.height
-        var url = NSURL(string: GooglePlusProxy.convert(imageResult.mediaUrl!, size: 1280, dimension: dimension))
+        var url = NSURL(string: GooglePlusProxy.convert(imageResult.mediaUrl!, size: Int(IMAGE_DIMENSION_MAX), dimension: dimension))
         
         self.linkedPhotoUrl = url
         

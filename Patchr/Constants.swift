@@ -23,6 +23,8 @@ let SPACER_WIDTH: CGFloat   = 12
 
 let TIMEOUT_REQUEST: Int    = 10   // Seconds
 
+let IMAGE_DIMENSION_MAX: CGFloat = 1280
+
 let URI_PROXIBASE_SEARCH_IMAGES: String     = "https://api.datamarket.azure.com/Bing/Search/v1"
 let NAMESPACE: String                       = "com.3meters.patchr.ios."
 let CELL_IDENTIFIER                         = "cell"

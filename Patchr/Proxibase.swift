@@ -559,7 +559,7 @@ public class Proxibase {
 	* PUBLIC: Bing
 	*--------------------------------------------------------------------------------------------*/
 
-	public func loadSearchImages(query: String, limit: Int64 = 50, offset: Int64 = 0, maxImageSize: Int = 500000, maxDimen: Int = 1280, completion: (response:AnyObject?, error:NSError?) -> Void) {
+	public func loadSearchImages(query: String, limit: Int64 = 50, offset: Int64 = 0, maxImageSize: Int = 500000, maxDimen: Int = Int(IMAGE_DIMENSION_MAX), completion: (response:AnyObject?, error:NSError?) -> Void) {
 
 		if let bingSessionManager: AFHTTPSessionManager = AFHTTPSessionManager(baseURL: NSURL(string: URI_PROXIBASE_SEARCH_IMAGES)) {
             let keys = PatchrKeys()

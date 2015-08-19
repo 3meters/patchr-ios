@@ -57,9 +57,9 @@ struct Utils {
     }
     
     static func prepareImage(var image: UIImage) -> UIImage {
-        var scalingNeeded: Bool = (image.size.width > 1280 || image.size.height > 1280)
+        var scalingNeeded: Bool = (image.size.width > IMAGE_DIMENSION_MAX || image.size.height > IMAGE_DIMENSION_MAX)
         if (scalingNeeded) {
-            let rect: CGRect = AVMakeRectWithAspectRatioInsideRect(image.size, CGRectMake(0, 0, 1280, 1280))
+            let rect: CGRect = AVMakeRectWithAspectRatioInsideRect(image.size, CGRectMake(0, 0, IMAGE_DIMENSION_MAX, IMAGE_DIMENSION_MAX))
             image = image.resizeTo(rect.size)
         }
         else {

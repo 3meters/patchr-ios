@@ -10,7 +10,7 @@ import Foundation
 
 class PhotoUtils {
     
-    static func url(prefix: String, source: String) -> NSURL {
+    static func url(prefix: String, source: String, frameWidth: Int = Int(IMAGE_DIMENSION_MAX)) -> NSURL {
         var path: String = ""
         
         if source == PhotoSource.aircandi_images || source == PhotoSource.aircandi {
@@ -18,6 +18,14 @@ class PhotoUtils {
         }
         else if source == PhotoSource.aircandi_users {
             path = "http://aircandi-users.s3.amazonaws.com/\(prefix)"
+        }
+        else if source == PhotoSource.google {
+            if (prefix.rangeOfString("?") != nil) {
+                path = "\(prefix)&maxwidth=\(frameWidth)"
+            }
+            else {
+                path = "\(prefix)?maxwidth=\(frameWidth)"
+            }
         }
         
         return NSURL(string: path)!

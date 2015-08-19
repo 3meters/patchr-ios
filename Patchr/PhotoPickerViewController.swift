@@ -49,7 +49,7 @@ class PhotoPickerViewController: UICollectionViewController {
     private let pageSize = 49
     private let maxSize = 500
     private let maxImageSize: Int = 500000
-    private let maxDimen: Int = 1280
+    private let maxDimen: Int = Int(IMAGE_DIMENSION_MAX)
     
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
