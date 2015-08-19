@@ -182,6 +182,13 @@ class MessageDetailViewController: UITableViewController {
 				self.draw()
                 self.tableView.endUpdates()
 			}
+            else {
+                Shared.Toast("Message has been deleted")
+                delay(2.0, {
+                    () -> () in
+                    self.navigationController?.popViewControllerAnimated(true)
+                })
+            }
 		}
 	}
     

@@ -27,7 +27,7 @@ class NotificationsTableViewController: QueryTableViewController {
 	private var selectedMessage:      Message?
     private var selectedEntityId:     String?
     private var activityDate:         Int64!
-    private var nearbys:              [[NSObject: AnyObject]] = [[:]]
+    private var nearbys:              [[NSObject: AnyObject]] = []
     
 	private var _query:               Query!
     
@@ -214,11 +214,13 @@ class NotificationsTableViewController: QueryTableViewController {
         super.refreshQueryItems(force: force, paging: paging)
     }
     
-    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) {
+    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?) {
         
         let view = cell.contentView.viewWithTag(1) as! NotificationView
-        Notification.bindView(view, object: object, tableView: tableView, sizingOnly: sizingOnly)
-        view.description_.delegate = self
+        Notification.bindView(view, object: object, tableView: tableView, sizingOnly: false)
+        if let label = view.description_ as? TTTAttributedLabel {
+            label.delegate = self
+        }
         view.delegate = self
 	}
 
@@ -379,7 +381,7 @@ extension NotificationsTableViewController: UITableViewDelegate {
         
         /* Bind view to data for this row */
         let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as! QueryItem
-        let boundView = Notification.bindView(cell!.contentView.viewWithTag(1)!, object: queryResult.object, tableView: tableView) as! NotificationView
+        let view = Notification.bindView(cell!.contentView.viewWithTag(1)!, object: queryResult.object, tableView: tableView, sizingOnly: true) as! NotificationView
         
         /* Get the actual height required for the cell */
         var height = cell!.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1

@@ -130,9 +130,9 @@ class PatchDetailViewController: QueryTableViewController {
         tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
         lockImage.tintColor(Colors.brandColor)
         infoLockImage.tintColor(Colors.brandColor)
-        mapButton.imageView?.tintColor = UIColor.whiteColor()
-        watchersButton.alpha = 0.0
-        originalTop = patchPhotoTop.constant
+        self.mapButton.imageView!.tintColor(UIColor.whiteColor())
+        self.watchersButton.alpha = 0.0
+        self.originalTop = patchPhotoTop.constant
         self.contextButton?.setTitle("", forState: .Normal)
         self.tableView.estimatedRowHeight = UITableViewAutomaticDimension
         
@@ -511,6 +511,13 @@ class PatchDetailViewController: QueryTableViewController {
                 self.drawButtons()
                 self.draw()
             }
+            else {
+                Shared.Toast("Patch has been deleted")
+                delay(2.0, {
+                    () -> () in
+                    self.navigationController?.popViewControllerAnimated(true)
+                })
+            }
         }
     }
     
@@ -522,11 +529,14 @@ class PatchDetailViewController: QueryTableViewController {
         return UIStatusBarAnimation.Fade
     }
     
-    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) {
+    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?) {
+        
         let view = cell.contentView.viewWithTag(1) as! MessageView
-        Message.bindView(view, object: object, tableView: tableView, sizingOnly: sizingOnly)
+        Message.bindView(view, object: object, tableView: tableView, sizingOnly: false)
+        if let label = view.description_ as? TTTAttributedLabel {
+            label.delegate = self
+        }
         view.delegate = self
-        view.description_.delegate = self
         view.patchNameHeight.constant = 0
     }
     
@@ -695,8 +705,8 @@ extension PatchDetailViewController: UITableViewDelegate {
         
         /* view view to data for this row */
         let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as! QueryItem
-        let boundView = Message.bindView(cell!.contentView.viewWithTag(1)!, object: queryResult.object, tableView: tableView) as! MessageView
-        boundView.patchNameHeight.constant = 0
+        let view = Message.bindView(cell!.contentView.viewWithTag(1)!, object: queryResult.object, tableView: tableView, sizingOnly: true) as! MessageView
+        view.patchNameHeight.constant = 0
         
         /* Get the actual height required for the cell */
         var height = cell!.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1

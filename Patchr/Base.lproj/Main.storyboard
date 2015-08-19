@@ -474,10 +474,10 @@
                         <outlet property="toolbarCell" destination="wVI-Au-eyn" id="kYD-u6-LeO"/>
                         <outlet property="userName" destination="BQM-Ga-cka" id="T8V-Kh-2e7"/>
                         <outlet property="userPhoto" destination="9nD-sr-mMf" id="VxE-30-v5d"/>
-                        <segue destination="dFa-9F-rNC" kind="show" identifier="PatchDetailSegue" id="xAO-Qh-0VB"/>
-                        <segue destination="Yps-DA-nZY" kind="show" identifier="UserDetailSegue" id="W2H-Y3-qfq"/>
+                        <segue destination="dFa-9F-rNC" kind="push" identifier="PatchDetailSegue" id="xAO-Qh-0VB"/>
+                        <segue destination="Yps-DA-nZY" kind="push" identifier="UserDetailSegue" id="W2H-Y3-qfq"/>
                         <segue destination="11d-az-MmN" kind="presentation" identifier="MessageEditSegue" id="IOJ-HZ-5D3"/>
-                        <segue destination="z5c-9W-9Sy" kind="show" identifier="LikeListSegue" id="5gi-H6-rYN"/>
+                        <segue destination="z5c-9W-9Sy" kind="push" identifier="LikeListSegue" id="5gi-H6-rYN"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JOg-lF-HPc" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -712,8 +712,8 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Notifications" id="9Oo-tG-hhM"/>
                     <connections>
-                        <segue destination="dFa-9F-rNC" kind="show" identifier="PatchDetailSegue" id="lsa-hP-PPZ"/>
-                        <segue destination="NVd-x8-lxi" kind="show" identifier="MessageDetailSegue" id="yeS-kC-pXZ"/>
+                        <segue destination="dFa-9F-rNC" kind="push" identifier="PatchDetailSegue" id="lsa-hP-PPZ"/>
+                        <segue destination="NVd-x8-lxi" kind="push" identifier="MessageDetailSegue" id="yeS-kC-pXZ"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="O5p-tj-uEe" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -725,7 +725,7 @@
             <objects>
                 <tableViewController hidesBottomBarWhenPushed="YES" id="CiR-XU-M8e" userLabel="Notification Settings" customClass="NotificationSettingsViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="G4y-ya-7MJ">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="calibratedRGB"/>
                         <sections>
@@ -1233,7 +1233,7 @@
                                                                 <constraint firstAttribute="height" constant="48" id="esg-9a-ZT0"/>
                                                             </constraints>
                                                             <inset key="imageEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
-                                                            <state key="normal" image="imgMapLight">
+                                                            <state key="normal" image="imgMapDark">
                                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                             </state>
                                                             <connections>
@@ -1325,13 +1325,13 @@
                             </constraints>
                         </view>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="EBG-gs-MsQ">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="Cell" id="EBG-gs-MsQ">
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="EBG-gs-MsQ" id="luT-p6-KuW">
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <segue destination="NVd-x8-lxi" kind="show" identifier="MessageDetailSegue" id="5MF-E5-yBl"/>
+                                    <segue destination="NVd-x8-lxi" kind="push" identifier="MessageDetailSegue" id="5MF-E5-yBl"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -1369,11 +1369,11 @@
                         <outlet property="watchButton" destination="TWm-Ce-UN2" id="0cS-S2-nb0"/>
                         <outlet property="watchersButton" destination="7J4-1W-AIu" id="iRm-pT-u6z"/>
                         <segue destination="11d-az-MmN" kind="presentation" identifier="MessageEditSegue" id="sNP-m8-m5g"/>
-                        <segue destination="z5c-9W-9Sy" kind="show" identifier="WatchingListSegue" id="ZkF-VU-9mQ"/>
-                        <segue destination="z5c-9W-9Sy" kind="show" identifier="LikeListSegue" id="ZOc-oS-e3t"/>
-                        <segue destination="eY6-0Y-Mmp" kind="show" identifier="PlaceDetailSegue" id="WPT-MI-TjZ"/>
+                        <segue destination="z5c-9W-9Sy" kind="push" identifier="WatchingListSegue" id="ZkF-VU-9mQ"/>
+                        <segue destination="z5c-9W-9Sy" kind="push" identifier="LikeListSegue" id="ZOc-oS-e3t"/>
+                        <segue destination="eY6-0Y-Mmp" kind="push" identifier="PlaceDetailSegue" id="WPT-MI-TjZ"/>
                         <segue destination="fom-HZ-yYr" kind="presentation" identifier="PatchEditSegue" id="mR4-Hl-YsE"/>
-                        <segue destination="KFr-KQ-5B9" kind="show" identifier="PatchMapSegue" id="HbO-hl-kVs"/>
+                        <segue destination="KFr-KQ-5B9" kind="push" identifier="PatchMapSegue" id="HbO-hl-kVs"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oIA-ch-XmS" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1621,7 +1621,7 @@
                         <outlet property="projectTypeCell" destination="1By-kV-JJk" id="yWI-KA-r3L"/>
                         <outlet property="publicCell" destination="j3D-Fb-pck" id="ypv-TD-HR4"/>
                         <segue destination="oyv-MQ-wjW" kind="unwind" identifier="UnwindFromDeletePatchSegue" unwindAction="unwindFromDeletePatch:" id="6Pq-E8-Uxy"/>
-                        <segue destination="KFr-KQ-5B9" kind="show" identifier="LocationEditSegue" id="Eso-o1-Ie8"/>
+                        <segue destination="KFr-KQ-5B9" kind="push" identifier="LocationEditSegue" id="Eso-o1-Ie8"/>
                         <segue destination="oyv-MQ-wjW" kind="unwind" identifier="UnwindFromPatchEditSegue" unwindAction="unwindFromPatchEdit:" id="807-9D-FkR"/>
                     </connections>
                 </tableViewController>
@@ -1656,7 +1656,7 @@
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina55"/>
                     <connections>
-                        <segue destination="dFa-9F-rNC" kind="show" identifier="PatchDetailSegue" id="NrW-fa-h2q"/>
+                        <segue destination="dFa-9F-rNC" kind="push" identifier="PatchDetailSegue" id="NrW-fa-h2q"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="B9J-KN-m3r" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1672,11 +1672,11 @@
                         <viewControllerLayoutGuide type="bottom" id="PPO-dW-56A"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="W3s-jZ-ueJ">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="QAb-bg-jV3">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="603"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="739"/>
                                 <gestureRecognizers/>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="t6W-7B-TM0" appends="YES" id="sXY-Zb-KLe"/>
@@ -1734,7 +1734,7 @@
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
                         <outlet property="mapView" destination="EP3-6S-3xM" id="AzY-E6-wni"/>
-                        <segue destination="dFa-9F-rNC" kind="show" identifier="PatchDetailSegue" id="ode-oE-WBF"/>
+                        <segue destination="dFa-9F-rNC" kind="push" identifier="PatchDetailSegue" id="ode-oE-WBF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZtI-z3-h4S" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1951,15 +1951,15 @@
             <objects>
                 <tableViewController hidesBottomBarWhenPushed="YES" id="D0x-w5-h7x" customClass="SettingsTableViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="A67-MQ-X8l">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                         <view key="tableFooterView" contentMode="scaleToFill" id="LLO-at-3mw">
-                            <rect key="frame" x="0.0" y="368" width="600" height="44"/>
+                            <rect key="frame" x="0.0" y="432" width="414" height="44"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="v1.0 build 29" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T7X-7P-C1Q" userLabel="version_info_label">
-                                    <rect key="frame" x="249" y="11" width="104" height="21"/>
+                                    <rect key="frame" x="155" y="11" width="104" height="21"/>
                                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="18"/>
                                     <color key="textColor" red="0.0" green="0.75294117650000003" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <nil key="highlightedColor"/>
@@ -1967,8 +1967,8 @@
                             </subviews>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <constraints>
-                                <constraint firstAttribute="centerX" secondItem="T7X-7P-C1Q" secondAttribute="centerX" constant="-0.5" id="EgB-Pf-8hK"/>
-                                <constraint firstAttribute="centerY" secondItem="T7X-7P-C1Q" secondAttribute="centerY" constant="0.5" id="d87-Rd-Wy6"/>
+                                <constraint firstAttribute="centerX" secondItem="T7X-7P-C1Q" secondAttribute="centerX" id="EgB-Pf-8hK"/>
+                                <constraint firstAttribute="centerY" secondItem="T7X-7P-C1Q" secondAttribute="centerY" id="d87-Rd-Wy6"/>
                             </constraints>
                         </view>
                         <sections>
@@ -2090,8 +2090,8 @@
                         <outlet property="sendFeedbackCell" destination="Tn8-XG-3SO" id="YwY-Rh-Bbq"/>
                         <outlet property="softwareLicensesCell" destination="AF7-S2-RXD" id="gUN-PW-QNG"/>
                         <outlet property="termsOfServiceCell" destination="hV4-Aj-qvn" id="SVQ-9V-ebb"/>
-                        <segue destination="CiR-XU-M8e" kind="show" identifier="NotificationSettingsSegue" id="hZj-PL-u4q"/>
-                        <segue destination="IgM-Ma-VkV" kind="show" identifier="DevelopmentSettingsSegue" id="gVD-99-GUe"/>
+                        <segue destination="CiR-XU-M8e" kind="push" identifier="NotificationSettingsSegue" id="hZj-PL-u4q"/>
+                        <segue destination="IgM-Ma-VkV" kind="push" identifier="DevelopmentSettingsSegue" id="gVD-99-GUe"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jov-L0-v5D" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2370,9 +2370,9 @@
                         <outlet property="userName" destination="95Y-fw-S1K" id="zbC-Tq-XeK"/>
                         <outlet property="userPhoto" destination="jdb-gE-9LS" id="wg5-MB-adc"/>
                         <outlet property="watchingButton" destination="IVb-qV-lKx" id="0pq-dI-gIe"/>
-                        <segue destination="NVd-x8-lxi" kind="show" identifier="MessageDetailSegue" id="nFc-O9-AY5"/>
-                        <segue destination="D0x-w5-h7x" kind="show" identifier="SettingsSegue" id="6O4-pI-gDw"/>
-                        <segue destination="OVJ-NK-hnP" kind="show" identifier="PatchListSegue" id="uaT-gt-yhT"/>
+                        <segue destination="NVd-x8-lxi" kind="push" identifier="MessageDetailSegue" id="nFc-O9-AY5"/>
+                        <segue destination="D0x-w5-h7x" kind="push" identifier="SettingsSegue" id="6O4-pI-gDw"/>
+                        <segue destination="OVJ-NK-hnP" kind="push" identifier="PatchListSegue" id="uaT-gt-yhT"/>
                         <segue destination="m26-l1-ymj" kind="presentation" identifier="UserEditSegue" id="FrM-Kw-UsE"/>
                     </connections>
                 </tableViewController>
@@ -2404,7 +2404,7 @@
                                                         <constraint firstAttribute="width" constant="200" id="tHC-ss-B2x"/>
                                                     </constraints>
                                                 </view>
-                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Full name" adjustsFontSizeToFit="NO" minimumFontSize="18" translatesAutoresizingMaskIntoConstraints="NO" id="5gx-TB-DRe" userLabel="name">
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Full name" adjustsFontSizeToFit="NO" minimumFontSize="18" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="5gx-TB-DRe" userLabel="name">
                                                     <rect key="frame" x="16" y="217" width="288" height="44"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="44" id="2wz-8R-Phe"/>
@@ -2419,7 +2419,7 @@
                                                         <constraint firstAttribute="height" constant="1" id="ZZJ-Oe-8Lb"/>
                                                     </constraints>
                                                 </view>
-                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Area" adjustsFontSizeToFit="NO" minimumFontSize="18" translatesAutoresizingMaskIntoConstraints="NO" id="UA6-XS-xNd" userLabel="area">
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Area" adjustsFontSizeToFit="NO" minimumFontSize="18" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="UA6-XS-xNd" userLabel="area">
                                                     <rect key="frame" x="16" y="269" width="288" height="44"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="44" id="n0o-5z-zwK"/>
@@ -2434,7 +2434,7 @@
                                                         <constraint firstAttribute="height" constant="1" id="46Y-4i-7Z8"/>
                                                     </constraints>
                                                 </view>
-                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email" adjustsFontSizeToFit="NO" minimumFontSize="18" translatesAutoresizingMaskIntoConstraints="NO" id="EIR-Ug-3pK" userLabel="email">
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email" adjustsFontSizeToFit="NO" minimumFontSize="18" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="EIR-Ug-3pK" userLabel="email">
                                                     <rect key="frame" x="16" y="321" width="288" height="44"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="44" id="3ia-F2-ifD"/>
@@ -2545,7 +2545,7 @@
             <objects>
                 <tableViewController id="z5c-9W-9Sy" userLabel="User List" customClass="UserTableViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="110" sectionHeaderHeight="22" sectionFooterHeight="22" id="vt0-0K-tFn">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -2743,7 +2743,7 @@
         <image name="imgHeartLight" width="40" height="40"/>
         <image name="imgLockDark" width="22" height="22"/>
         <image name="imgLockLight" width="22" height="22"/>
-        <image name="imgMapLight" width="40" height="40"/>
+        <image name="imgMapDark" width="60" height="60"/>
         <image name="imgStarFilledLight" width="32" height="32"/>
         <image name="imgStarLight" width="40" height="40"/>
         <image name="imgWatch2Light" width="40" height="40"/>
@@ -2754,12 +2754,12 @@
         <image name="tabBarUser24" width="24" height="24"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="nFc-O9-AY5"/>
         <segue reference="W2H-Y3-qfq"/>
-        <segue reference="IOJ-HZ-5D3"/>
-        <segue reference="xAO-Qh-0VB"/>
-        <segue reference="5gi-H6-rYN"/>
-        <segue reference="Eso-o1-Ie8"/>
+        <segue reference="5MF-E5-yBl"/>
+        <segue reference="ode-oE-WBF"/>
+        <segue reference="sNP-m8-m5g"/>
+        <segue reference="HbO-hl-kVs"/>
+        <segue reference="ZkF-VU-9mQ"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="1" green="0.50196078430000002" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

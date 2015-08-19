@@ -14,7 +14,7 @@ class NotificationView: BaseView {
     
     @IBOutlet weak var createdDate: UILabel!
     @IBOutlet weak var userPhoto: AirImageView!
-    @IBOutlet weak var description_: TTTAttributedLabel!
+    @IBOutlet weak var description_: UILabel!
     @IBOutlet weak var photo: AirImageView!
     @IBOutlet weak var photoHeight: NSLayoutConstraint!
     @IBOutlet weak var photoTopSpace: NSLayoutConstraint!    
@@ -31,9 +31,6 @@ class NotificationView: BaseView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        
-        updatePreferredMaxLayoutWidth(self.createdDate)
-        updatePreferredMaxLayoutWidth(self.description_)
     }
     
     // MARK: Private Internal
@@ -42,9 +39,5 @@ class NotificationView: BaseView {
         if sender.view != nil && self.delegate != nil {
             self.delegate!.view(self, didTapOnView: sender.view!!)
         }
-    }
-    
-    func updatePreferredMaxLayoutWidth(label: UILabel) -> Void {
-        label.preferredMaxLayoutWidth = CGRectGetWidth(label.frame)
     }
 }

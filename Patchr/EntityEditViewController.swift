@@ -164,25 +164,19 @@ class EntityEditViewController: UITableViewController {
 
     @IBAction func cancelAction(sender: AnyObject){
         
-//        if (keyboardVisible) {
-//            backClicked = true
-//            dismissKeyboard()
-//        }
-//        else {
-            if !isDirty() {
-                self.performBack(animated: true)
-                return
-            }
-            
-            ActionConfirmationAlert(
-                title: "Do you want to discard your editing changes?",
-                actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
-                    doIt in
-                    if doIt {
-                        self.performBack(animated: true)
-                    }
+        if !isDirty() {
+            self.performBack(animated: true)
+            return
+        }
+        
+        ActionConfirmationAlert(
+            title: "Do you want to discard your editing changes?",
+            actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
+                doIt in
+                if doIt {
+                    self.performBack(animated: true)
                 }
-//        }
+            }
     }
     
     @IBAction func deleteAction(sender: AnyObject) {
@@ -419,7 +413,7 @@ class EntityEditViewController: UITableViewController {
         
         if let user = self.entity as? User {
             
-            let entityPath = "data/user\((self.entity?.id_)!)?erase=true"
+            let entityPath = "user/\((self.entity?.id_)!)?erase=true"
             let userName: String = user.name
             
             DataController.proxibase.deleteObject(entityPath) {
@@ -428,27 +422,21 @@ class EntityEditViewController: UITableViewController {
                 if let error = ServerError(error) {
                     self.handleError(error)
                 }
-                else {
-                    /* Sign them out */
-                    DataController.proxibase.signOut {
-                        response, error in
-                        
-                        if error != nil {
-                            Log.w("Error during logout \(error)")
-                        }
-                        
-                        /* Return to the lobby */
-                        LocationController.instance.clearLastLocationAccepted()
-                        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-                        let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
-                        if let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController") as? UIViewController {
-                            appDelegate.window?.setRootViewController(controller, animated: true)
-                            Shared.Toast("User \(userName) erased", controller: controller)
-                        }
-                    }
+                
+                /* Return to the lobby even if there was an error since we signed out */
+                UserController.instance.discardCredentials()
+                NSUserDefaults.standardUserDefaults().setObject(nil, forKey: PatchrUserDefaultKey("userEmail"))
+                NSUserDefaults.standardUserDefaults().synchronize()
+                
+                LocationController.instance.clearLastLocationAccepted()
+                
+                let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+                let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
+                if let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController") as? UIViewController {
+                    appDelegate.window?.setRootViewController(controller, animated: true)
+                    Shared.Toast("User \(userName) erased", controller: controller)
                 }
             }
-
         }
         else  {
             

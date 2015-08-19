@@ -424,6 +424,26 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     }
 }
 
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    self.preferredMaxLayoutWidth = CGRectGetWidth(self.bounds);
+    [super layoutSubviews];
+}
+
+- (void)setBounds:(CGRect)bounds {
+    if (bounds.size.width != self.bounds.size.width) {
+        [self setNeedsUpdateConstraints];
+    }
+    [super setBounds:bounds];
+}
+
+- (void)updateConstraints {
+    if (self.preferredMaxLayoutWidth != self.bounds.size.width) {
+        self.preferredMaxLayoutWidth = self.bounds.size.width;
+    }
+    [super updateConstraints];
+}
+
 #pragma mark -
 
 + (CGSize)sizeThatFitsAttributedString:(NSAttributedString *)attributedString

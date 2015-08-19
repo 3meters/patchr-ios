@@ -236,12 +236,14 @@ class UserDetailViewController: QueryTableViewController {
         }
 	}
     
-    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) {
+    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?) {
         
-        let messageView = cell.contentView.viewWithTag(1) as! MessageView
-        Message.bindView(messageView, object: object, tableView: tableView, sizingOnly: sizingOnly)
-        messageView.delegate = self
-        messageView.description_.delegate = self
+        let view = cell.contentView.viewWithTag(1) as! MessageView
+        Message.bindView(view, object: object, tableView: tableView, sizingOnly: false)
+        if let label = view.description_ as? TTTAttributedLabel {
+            label.delegate = self
+        }
+        view.delegate = self
     }
     
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -308,7 +310,7 @@ extension  UserDetailViewController: UITableViewDelegate {
 
         /* Bind view to data for this row */
         let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as! QueryItem
-        let boundView = Message.bindView(cell!.contentView.viewWithTag(1)!, object: queryResult.object, tableView: tableView) as! MessageView
+        let view = Message.bindView(cell!.contentView.viewWithTag(1)!, object: queryResult.object, tableView: tableView, sizingOnly: true) as! MessageView
 
         /* Get the actual height required for the cell */
 		var height = cell!.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1

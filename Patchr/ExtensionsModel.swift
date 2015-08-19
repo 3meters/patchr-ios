@@ -203,8 +203,7 @@ extension Message {
     
     static func bindView(view: UIView, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) -> UIView {
         
-        let message = object as! Entity
-        
+        let message = object as! Message
         let view = view as! MessageView
         
         view.entity = message
@@ -217,28 +216,35 @@ extension Message {
         let linkColor = Colors.brandColorDark
         let linkActiveColor = Colors.brandColorLight
         
-        view.description_.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
-        view.description_.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
-        view.description_.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
+        if let label = view.description_ as? TTTAttributedLabel {
+            label.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
+            label.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
+            label.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
+        }
+        
         view.description_.text = message.description_
-        view.description_.preferredMaxLayoutWidth = CGRectGetWidth(view.description_.frame)
+        
+        view.photo.image = nil
+        view.photo.hidden = true
+        view.photoTopSpace.constant = 0
+        view.photoHeight.constant = 0
         
         if let photo = message.photo {
             if !sizingOnly {
                 view.photo.setImageWithPhoto(photo, animate: view.photo.image == nil)
             }
+            view.photo.hidden = false
             view.photoTopSpace.constant = 8
             view.photoHeight.constant = view.photo.bounds.size.width * 0.5625
-        }
-        else {
-            view.photoTopSpace.constant = 0
-            view.photoHeight.constant = 0
         }
         
         if let creator = message.creator {
             view.userName.text = creator.name
             if !sizingOnly {
                 view.userPhoto.setImageWithPhoto(creator.getPhotoManaged(), animate: view.userPhoto.image == nil)
+            }
+            else {
+                view.userPhoto.image = nil
             }
         }
         else {
@@ -250,6 +256,7 @@ extension Message {
         
         /* Likes button */
         view.likeButton.bindEntity(message)
+        view.likeButton.imageView!.tintColor(Colors.brandColor)
         
         view.likes.hidden = true
         if message.countLikes != nil {
@@ -263,6 +270,9 @@ extension Message {
         }
         
         view.createdDate.text = Utils.messageDateFormatter.stringFromDate(message.createdDate)
+        
+        view.setNeedsUpdateConstraints()
+        view.updateConstraintsIfNeeded()
         
         return view
     }
@@ -425,9 +435,12 @@ extension Notification {
         let linkColor = Colors.brandColorDark
         let linkActiveColor = Colors.brandColorLight
         
-        view.description_.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
-        view.description_.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
-        view.description_.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
+        if let label = view.description_ as? TTTAttributedLabel {
+            label.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
+            label.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
+            label.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
+        }
+        
         view.description_.text = notification.summary
         
         if let photo = notification.photoBig {
@@ -445,6 +458,7 @@ extension Notification {
         if !sizingOnly {
             view.userPhoto.setImageWithPhoto(notification.getPhotoManaged(), animate: view.userPhoto.image == nil)
         }
+        
         view.createdDate.text = Utils.messageDateFormatter.stringFromDate(notification.createdDate)
         
         /* Age indicator */
@@ -488,6 +502,9 @@ extension Notification {
         }
         
         view.iconImageView.tintColor(Colors.brandColor)
+        
+        view.setNeedsUpdateConstraints()
+        view.updateConstraintsIfNeeded()
         
         return view
     }

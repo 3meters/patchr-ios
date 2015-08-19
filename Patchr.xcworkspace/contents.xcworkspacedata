@@ -4,6 +4,9 @@
    <FileRef
       location = "group:Patchr.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:Pods/Pods.xcodeproj">
+   </FileRef>
    <Group
       location = "container:"
       name = "Locations">
@@ -35,7 +38,4 @@
          location = "group:Patchr/Locations/sunset_qfc.gpx">
       </FileRef>
    </Group>
-   <FileRef
-      location = "group:Pods/Pods.xcodeproj">
-   </FileRef>
 </Workspace>

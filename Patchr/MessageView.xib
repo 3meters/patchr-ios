@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <deployment identifier="iOS"/>
+        <deployment version="2048" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -9,7 +9,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MessageView" customModule="Patchr" customModuleProvider="target"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" verticalHuggingPriority="1000" id="H2p-sc-9uM" userLabel="MessageView" customClass="MessageView" customModule="Patchr" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="400" height="309"/>
+            <rect key="frame" x="0.0" y="0.0" width="408" height="357"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Patch name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0TT-YB-aeS" userLabel="patch_name">
@@ -31,7 +31,7 @@
                     </constraints>
                 </imageView>
                 <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" text="Rob" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m6L-Nb-Bin" userLabel="user_name">
-                    <rect key="frame" x="65" y="30" width="269" height="21"/>
+                    <rect key="frame" x="65" y="30" width="277" height="21"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="21" id="oSP-4X-GJ7"/>
@@ -41,30 +41,34 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" text="02 Mar" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dwP-9n-4tK" userLabel="created_date">
-                    <rect key="frame" x="342" y="32" width="46" height="18"/>
+                    <rect key="frame" x="350" y="32" width="46" height="18"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
                     <color key="textColor" red="0.60000002379999995" green="0.60000002379999995" blue="0.60000002379999995" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="This is a multiline message comment that will say something that people will like" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="236" translatesAutoresizingMaskIntoConstraints="NO" id="h8L-WQ-6XO" userLabel="description" customClass="TTTAttributedLabel">
-                    <rect key="frame" x="65" y="55" width="323" height="54"/>
+                <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h8L-WQ-6XO" userLabel="description" customClass="TTTAttributedLabel">
+                    <rect key="frame" x="65" y="55" width="335" height="101"/>
                     <constraints>
-                        <constraint firstAttribute="height" relation="greaterThanOrEqual" priority="999" id="wLB-3H-rKb"/>
+                        <constraint firstAttribute="height" priority="250" id="nAK-38-QsO"/>
                     </constraints>
-                    <fontDescription key="fontDescription" type="system" weight="light" pointSize="17"/>
-                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <string key="text">This is a multiline 
+message comment that
+is super interesting 
+and people can't wait...
+Neither can I!</string>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <imageView autoresizesSubviews="NO" clipsSubviews="YES" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="eQH-ua-j18" userLabel="photo" customClass="AirImageView" customModule="Patchr" customModuleProvider="target">
-                    <rect key="frame" x="65" y="117" width="327" height="144"/>
-                    <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
+                    <rect key="frame" x="65" y="164" width="335" height="145"/>
+                    <color key="backgroundColor" red="0.95686274510000002" green="0.95686274510000002" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
-                        <constraint firstAttribute="height" priority="999" constant="144" id="j66-v2-IdI"/>
+                        <constraint firstAttribute="height" priority="250" constant="188" id="YGg-kq-jDb"/>
                     </constraints>
                 </imageView>
                 <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CKk-NR-FiB" userLabel="toolbar">
-                    <rect key="frame" x="0.0" y="269" width="400" height="32"/>
+                    <rect key="frame" x="0.0" y="317" width="408" height="32"/>
                     <subviews>
                         <button clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="woJ-Y6-bOV" userLabel="like_button" customClass="AirLikeButton" customModule="Patchr" customModuleProvider="target">
                             <rect key="frame" x="63" y="0.0" width="24" height="24"/>
@@ -101,7 +105,7 @@
             <constraints>
                 <constraint firstItem="CKk-NR-FiB" firstAttribute="top" secondItem="eQH-ua-j18" secondAttribute="bottom" constant="8" id="9LC-XX-o45"/>
                 <constraint firstItem="0TT-YB-aeS" firstAttribute="leading" secondItem="m6L-Nb-Bin" secondAttribute="leading" id="Ciw-PQ-dhL"/>
-                <constraint firstAttribute="bottom" secondItem="CKk-NR-FiB" secondAttribute="bottom" constant="8" id="E47-Q8-dFC"/>
+                <constraint firstAttribute="trailing" secondItem="h8L-WQ-6XO" secondAttribute="trailing" constant="8" id="Czn-1O-bcj"/>
                 <constraint firstItem="0TT-YB-aeS" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="GpA-kc-Ty0"/>
                 <constraint firstItem="TaR-dt-0cq" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="H1p-Ay-XWU"/>
                 <constraint firstItem="dwP-9n-4tK" firstAttribute="leading" secondItem="m6L-Nb-Bin" secondAttribute="trailing" constant="8" id="IsW-Rf-rV3"/>
@@ -112,14 +116,15 @@
                 <constraint firstItem="m6L-Nb-Bin" firstAttribute="leading" secondItem="woJ-Y6-bOV" secondAttribute="leading" constant="2" id="SJD-ba-GHl"/>
                 <constraint firstItem="dwP-9n-4tK" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" constant="-4" id="Xef-Wa-aN3"/>
                 <constraint firstItem="CKk-NR-FiB" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailing" id="YIe-qw-CAX"/>
-                <constraint firstItem="eQH-ua-j18" firstAttribute="top" secondItem="h8L-WQ-6XO" secondAttribute="bottom" constant="8" id="ero-8j-R01"/>
                 <constraint firstItem="m6L-Nb-Bin" firstAttribute="leading" secondItem="TaR-dt-0cq" secondAttribute="trailing" constant="9" id="fVv-9a-iCu"/>
-                <constraint firstItem="h8L-WQ-6XO" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" constant="-4" id="fux-7Z-wC8"/>
+                <constraint firstItem="eQH-ua-j18" firstAttribute="top" secondItem="h8L-WQ-6XO" secondAttribute="bottom" constant="8" id="fWS-3L-aDf"/>
+                <constraint firstAttribute="bottom" secondItem="CKk-NR-FiB" secondAttribute="bottom" constant="8" id="hgH-5D-Ydl"/>
                 <constraint firstItem="CKk-NR-FiB" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="iD9-CL-LEN"/>
                 <constraint firstItem="TaR-dt-0cq" firstAttribute="top" secondItem="m6L-Nb-Bin" secondAttribute="top" id="oB9-HR-jwj"/>
                 <constraint firstItem="dwP-9n-4tK" firstAttribute="baseline" secondItem="m6L-Nb-Bin" secondAttribute="baseline" id="tYi-h6-iz4"/>
                 <constraint firstItem="h8L-WQ-6XO" firstAttribute="top" secondItem="m6L-Nb-Bin" secondAttribute="bottom" constant="4" id="wyT-ce-zKL"/>
             </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
                 <outlet property="createdDate" destination="dwP-9n-4tK" id="RON-Gy-QRf"/>
@@ -129,14 +134,14 @@
                 <outlet property="patchName" destination="0TT-YB-aeS" id="haK-ae-XuB"/>
                 <outlet property="patchNameHeight" destination="jfD-W3-ZcH" id="1V5-K7-BSY"/>
                 <outlet property="photo" destination="eQH-ua-j18" id="9iG-Mm-BXI"/>
-                <outlet property="photoHeight" destination="j66-v2-IdI" id="jWq-v2-ghn"/>
-                <outlet property="photoTopSpace" destination="ero-8j-R01" id="vwE-4i-8d7"/>
+                <outlet property="photoHeight" destination="YGg-kq-jDb" id="u4T-dI-HNp"/>
+                <outlet property="photoTopSpace" destination="fWS-3L-aDf" id="kMg-kA-2yo"/>
                 <outlet property="toolbar" destination="CKk-NR-FiB" id="Jce-50-SUH"/>
                 <outlet property="toolbarHeight" destination="0dg-Yl-vyD" id="ozF-j6-E5f"/>
                 <outlet property="userName" destination="m6L-Nb-Bin" id="9Rb-qj-2Ym"/>
                 <outlet property="userPhoto" destination="TaR-dt-0cq" id="ut3-ZY-DE1"/>
             </connections>
-            <point key="canvasLocation" x="495" y="339.5"/>
+            <point key="canvasLocation" x="499" y="363.5"/>
         </view>
     </objects>
     <resources>

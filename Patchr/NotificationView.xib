@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <deployment identifier="iOS"/>
+        <deployment version="2048" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -20,7 +20,7 @@
                         <constraint firstAttribute="height" constant="48" id="zka-fN-QSA"/>
                     </constraints>
                 </imageView>
-                <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" text="This is a multiline message comment that will say something that people will like" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="238" translatesAutoresizingMaskIntoConstraints="NO" id="BTv-Gi-ogT" userLabel="description" customClass="TTTAttributedLabel">
+                <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" text="This is a multiline message comment that will say something that people will like" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BTv-Gi-ogT" userLabel="description" customClass="TTTAttributedLabel">
                     <rect key="frame" x="65" y="8" width="238" height="71"/>
                     <constraints>
                         <constraint firstAttribute="height" relation="greaterThanOrEqual" priority="999" constant="24" id="hmX-Ta-Cbg"/>
@@ -78,13 +78,14 @@
                 <constraint firstItem="BTv-Gi-ogT" firstAttribute="top" secondItem="OrX-vM-sQY" secondAttribute="topMargin" id="TRJ-uD-Xc3"/>
                 <constraint firstItem="uOK-9G-kgV" firstAttribute="leading" secondItem="BTv-Gi-ogT" secondAttribute="leading" id="a1E-n1-dK7"/>
                 <constraint firstItem="uOK-9G-kgV" firstAttribute="centerY" secondItem="k4O-Bb-7oC" secondAttribute="centerY" id="bAZ-d8-uAe"/>
-                <constraint firstAttribute="trailingMargin" secondItem="BTv-Gi-ogT" secondAttribute="trailing" constant="4" id="cQk-G6-Ist"/>
+                <constraint firstItem="BTv-Gi-ogT" firstAttribute="trailing" secondItem="OrX-vM-sQY" secondAttribute="trailingMargin" constant="-4" id="cQk-G6-Ist"/>
                 <constraint firstItem="uOK-9G-kgV" firstAttribute="top" secondItem="mEK-Mo-Kp8" secondAttribute="bottom" constant="8" id="fC3-If-bhX"/>
                 <constraint firstItem="cff-EQ-LXe" firstAttribute="centerY" secondItem="k4O-Bb-7oC" secondAttribute="centerY" id="hiH-AD-6gm"/>
                 <constraint firstItem="mEK-Mo-Kp8" firstAttribute="top" secondItem="BTv-Gi-ogT" secondAttribute="bottom" constant="8" id="vWv-k1-JnQ"/>
                 <constraint firstItem="c93-v8-v2J" firstAttribute="top" secondItem="BTv-Gi-ogT" secondAttribute="top" id="wn1-Mj-7ul"/>
                 <constraint firstItem="c93-v8-v2J" firstAttribute="leading" secondItem="OrX-vM-sQY" secondAttribute="leadingMargin" id="z2h-4s-d1r"/>
             </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
                 <outlet property="ageDot" destination="cff-EQ-LXe" id="PLP-8v-hML"/>

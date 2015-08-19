@@ -19,7 +19,7 @@ class MessageView: BaseView {
     @IBOutlet weak var likes:           UILabel!
     @IBOutlet weak var likeButton:      AirLikeButton!
     @IBOutlet weak var createdDate:     UILabel!
-    @IBOutlet weak var description_:    TTTAttributedLabel!
+    @IBOutlet weak var description_:    UILabel!
     @IBOutlet weak var photo:           AirImageView!
     @IBOutlet weak var photoHeight:     NSLayoutConstraint!
     @IBOutlet weak var photoTopSpace:   NSLayoutConstraint!
@@ -36,12 +36,6 @@ class MessageView: BaseView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        
-        updatePreferredMaxLayoutWidth(self.patchName)
-        updatePreferredMaxLayoutWidth(self.userName)
-        updatePreferredMaxLayoutWidth(self.likes)
-        updatePreferredMaxLayoutWidth(self.createdDate)
-        updatePreferredMaxLayoutWidth(self.description_)
     }
     
     // MARK: Private Internal
@@ -50,9 +44,5 @@ class MessageView: BaseView {
         if sender.view != nil && self.delegate != nil {
             self.delegate!.view(self, didTapOnView: sender.view!!)
         }
-    }
-    
-    func updatePreferredMaxLayoutWidth(label: UILabel) -> Void {
-        label.preferredMaxLayoutWidth = CGRectGetWidth(label.frame)
     }
 }

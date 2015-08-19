@@ -89,10 +89,10 @@ class UserTableViewController: QueryTableViewController {
         }
     }
     
-    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) {
+    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?) {
         
         let view = cell.contentView.viewWithTag(1) as! UserView
-        User.bindView(view, object: object, tableView: tableView, sizingOnly: sizingOnly)
+        User.bindView(view, object: object, tableView: tableView, sizingOnly: false)
         let user = object as! User
         if self.patch != nil {
             view.owner.text = (user.id_ == self.patch.ownerId) ? "OWNER" : nil

@@ -7,16 +7,17 @@
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "ic_map_dark-1.png"
+      "filename" : "imgMapDark@3x.png"
     },
     {
       "idiom" : "universal",
       "scale" : "3x",
-      "filename" : "ic_map_dark.png"
+      "filename" : "imgMapDark@3x.png"
     }
   ],
   "info" : {
     "version" : 1,
-    "author" : "xcode"
+    "author" : "xcode",
+    "template-rendering-intent" : "template"
   }
 }

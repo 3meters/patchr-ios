@@ -69,7 +69,7 @@ class PhotoView: UIView {
             }
         }
         else if photoMode == .Placeholder {
-            self.setPhotoButton?.imageView?.tintColor = UIColor.whiteColor()
+            self.setPhotoButton?.imageView?.tintColor(UIColor.whiteColor())
             if self.photoMode == .Photo {
                 self.editPhotoButton?.fadeOut()
                 self.clearPhotoButton?.fadeOut()

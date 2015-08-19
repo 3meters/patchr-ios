@@ -154,9 +154,9 @@ class PatchTableViewController: QueryTableViewController {
         cell.contentView.setNeedsLayout()
     }
     
-    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) {
+    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?) {
         let view = cell.contentView.viewWithTag(1) as! BaseView
-        Patch.bindView(view, object: object, tableView: tableView, sizingOnly: sizingOnly)
+        Patch.bindView(view, object: object, tableView: tableView, sizingOnly: false)
     }
 
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {

@@ -51,7 +51,7 @@ class FetchedResultsTableViewController: UITableViewController {
         let queryResult = self.fetchedResultsControllerForViewController(self).sections![indexPath.section].objects[indexPath.row] as! QueryItem
         
         /* Bind the cell */
-        bindCell(cell!, object: queryResult.object, tableView: tableView, sizingOnly: false)
+        bindCell(cell!, object: queryResult.object, tableView: tableView)
         
         return cell!
     }
@@ -101,7 +101,7 @@ class FetchedResultsTableViewController: UITableViewController {
     }
     
     // Override this in subclasses to bind cells to data
-    func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) {
+    func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?) {
         cell.textLabel?.text = object.description
     }
     
