@@ -5,27 +5,13 @@
 
 const struct UserAttributes UserAttributes = {
 	.area = @"area",
-	.authSource = @"authSource",
-	.bio = @"bio",
 	.developer = @"developer",
 	.email = @"email",
-	.facebookId = @"facebookId",
-	.googleId = @"googleId",
-	.lastSignedInDate = @"lastSignedInDate",
-	.oauthData = @"oauthData",
-	.oauthId = @"oauthId",
-	.oauthSecret = @"oauthSecret",
-	.oauthToken = @"oauthToken",
 	.password = @"password",
+	.patchesLikes = @"patchesLikes",
+	.patchesOwned = @"patchesOwned",
+	.patchesWatching = @"patchesWatching",
 	.role = @"role",
-	.twitterId = @"twitterId",
-	.validationDate = @"validationDate",
-	.validationNotifyDate = @"validationNotifyDate",
-	.webUri = @"webUri",
-};
-
-const struct UserRelationships UserRelationships = {
-	.replies = @"replies",
 };
 
 @implementation UserID
@@ -59,15 +45,26 @@ const struct UserRelationships UserRelationships = {
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
+	if ([key isEqualToString:@"patchesLikesValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"patchesLikes"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"patchesOwnedValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"patchesOwned"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"patchesWatchingValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"patchesWatching"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
 
 	return keyPaths;
 }
 
 @dynamic area;
-
-@dynamic authSource;
-
-@dynamic bio;
 
 @dynamic developer;
 
@@ -91,42 +88,69 @@ const struct UserRelationships UserRelationships = {
 
 @dynamic email;
 
-@dynamic facebookId;
-
-@dynamic googleId;
-
-@dynamic lastSignedInDate;
-
-@dynamic oauthData;
-
-@dynamic oauthId;
-
-@dynamic oauthSecret;
-
-@dynamic oauthToken;
-
 @dynamic password;
 
-@dynamic role;
+@dynamic patchesLikes;
 
-@dynamic twitterId;
-
-@dynamic validationDate;
-
-@dynamic validationNotifyDate;
-
-@dynamic webUri;
-
-@dynamic replies;
-
-- (NSMutableSet*)repliesSet {
-	[self willAccessValueForKey:@"replies"];
-
-	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"replies"];
-
-	[self didAccessValueForKey:@"replies"];
-	return result;
+- (int64_t)patchesLikesValue {
+	NSNumber *result = [self patchesLikes];
+	return [result longLongValue];
 }
+
+- (void)setPatchesLikesValue:(int64_t)value_ {
+	[self setPatchesLikes:@(value_)];
+}
+
+- (int64_t)primitivePatchesLikesValue {
+	NSNumber *result = [self primitivePatchesLikes];
+	return [result longLongValue];
+}
+
+- (void)setPrimitivePatchesLikesValue:(int64_t)value_ {
+	[self setPrimitivePatchesLikes:@(value_)];
+}
+
+@dynamic patchesOwned;
+
+- (int64_t)patchesOwnedValue {
+	NSNumber *result = [self patchesOwned];
+	return [result longLongValue];
+}
+
+- (void)setPatchesOwnedValue:(int64_t)value_ {
+	[self setPatchesOwned:@(value_)];
+}
+
+- (int64_t)primitivePatchesOwnedValue {
+	NSNumber *result = [self primitivePatchesOwned];
+	return [result longLongValue];
+}
+
+- (void)setPrimitivePatchesOwnedValue:(int64_t)value_ {
+	[self setPrimitivePatchesOwned:@(value_)];
+}
+
+@dynamic patchesWatching;
+
+- (int64_t)patchesWatchingValue {
+	NSNumber *result = [self patchesWatching];
+	return [result longLongValue];
+}
+
+- (void)setPatchesWatchingValue:(int64_t)value_ {
+	[self setPatchesWatching:@(value_)];
+}
+
+- (int64_t)primitivePatchesWatchingValue {
+	NSNumber *result = [self primitivePatchesWatching];
+	return [result longLongValue];
+}
+
+- (void)setPrimitivePatchesWatchingValue:(int64_t)value_ {
+	[self setPrimitivePatchesWatching:@(value_)];
+}
+
+@dynamic role;
 
 @end
 

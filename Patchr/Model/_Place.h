@@ -2,11 +2,10 @@
 // Make changes to Place.h instead.
 
 @import CoreData;
-#import "Patch.h"
+#import "Entity.h"
 
 extern const struct PlaceAttributes {
 	__unsafe_unretained NSString *address;
-	__unsafe_unretained NSString *applinkDate;
 	__unsafe_unretained NSString *city;
 	__unsafe_unretained NSString *country;
 	__unsafe_unretained NSString *phone;
@@ -15,17 +14,17 @@ extern const struct PlaceAttributes {
 } PlaceAttributes;
 
 extern const struct PlaceRelationships {
-	__unsafe_unretained NSString *patch;
+	__unsafe_unretained NSString *category;
 	__unsafe_unretained NSString *provider;
 } PlaceRelationships;
 
-@class Patch;
+@class RichType;
 @class ProviderMap;
 
-@interface PlaceID : PatchID {}
+@interface PlaceID : EntityID {}
 @end
 
-@interface _Place : Patch {}
+@interface _Place : Entity {}
 + (id)insertInManagedObjectContext:(NSManagedObjectContext*)moc_;
 + (NSString*)entityName;
 + (NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_;
@@ -34,10 +33,6 @@ extern const struct PlaceRelationships {
 @property (nonatomic, strong) NSString* address;
 
 //- (BOOL)validateAddress:(id*)value_ error:(NSError**)error_;
-
-@property (nonatomic, strong) NSDate* applinkDate;
-
-//- (BOOL)validateApplinkDate:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSString* city;
 
@@ -59,9 +54,9 @@ extern const struct PlaceRelationships {
 
 //- (BOOL)validateRegion:(id*)value_ error:(NSError**)error_;
 
-@property (nonatomic, strong) Patch *patch;
+@property (nonatomic, strong) RichType *category;
 
-//- (BOOL)validatePatch:(id*)value_ error:(NSError**)error_;
+//- (BOOL)validateCategory:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) ProviderMap *provider;
 
@@ -73,9 +68,6 @@ extern const struct PlaceRelationships {
 
 - (NSString*)primitiveAddress;
 - (void)setPrimitiveAddress:(NSString*)value;
-
-- (NSDate*)primitiveApplinkDate;
-- (void)setPrimitiveApplinkDate:(NSDate*)value;
 
 - (NSString*)primitiveCity;
 - (void)setPrimitiveCity:(NSString*)value;
@@ -92,8 +84,8 @@ extern const struct PlaceRelationships {
 - (NSString*)primitiveRegion;
 - (void)setPrimitiveRegion:(NSString*)value;
 
-- (Patch*)primitivePatch;
-- (void)setPrimitivePatch:(Patch*)value;
+- (RichType*)primitiveCategory;
+- (void)setPrimitiveCategory:(RichType*)value;
 
 - (ProviderMap*)primitiveProvider;
 - (void)setPrimitiveProvider:(ProviderMap*)value;

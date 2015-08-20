@@ -26,9 +26,10 @@ class PatchrTests: XCTestCase {
     
     func testUserAuthentication() {
         var expectation = self.expectationWithDescription("Login response")
-        let client = ProxibaseClient()
+        let client = Proxibase()
+        let user = UserController.instance
         client.signIn("rob@robmaceachern.com", password: "test9090") { (response, error) -> Void in
-            if (error == nil && client.authenticated) {
+            if (error == nil && user.authenticated) {
                 expectation.fulfill()
             } else {
                 println(error)
@@ -41,9 +42,10 @@ class PatchrTests: XCTestCase {
     
     func testUserSignout() {
         var expectation = self.expectationWithDescription("Signout success")
-        let client = ProxibaseClient()
+        let client = Proxibase()
+        let user = UserController.instance
         client.signOut { (response, error) -> Void in
-            if error == nil && !client.authenticated {
+            if error == nil && !user.authenticated {
                 expectation.fulfill()
             } else {
                 println(error)
@@ -56,7 +58,8 @@ class PatchrTests: XCTestCase {
     
     func testFetchNearbyPatches() {
         var expectation = self.expectationWithDescription("Fetch nearby patches")
-        let client = ProxibaseClient()
+        let client = Proxibase()
+        let user = UserController.instance
         client.signIn("rob@robmaceachern.com", password: "test9090") { (response, error) -> Void in
             let location = CLLocationCoordinate2D(latitude: 49.2845280, longitude: -123.1092720)
             client.fetchNearbyPatches(location, radius: 10000, completion: { (response, error) -> Void in
@@ -76,7 +79,8 @@ class PatchrTests: XCTestCase {
     
     func testFetchNotifications() {
         var expectation = self.expectationWithDescription("Fetch notifications")
-        let client = ProxibaseClient()
+        let client = Proxibase()
+        let user = UserController.instance
         client.signIn("rob@robmaceachern.com", password: "test9090") { (response, error) -> Void in
             client.fetchNotifications(completion: { (response, error) -> Void in
                 if error == nil && response != nil {
@@ -94,7 +98,8 @@ class PatchrTests: XCTestCase {
     
     func testFetchMessagesForPatch() {
         var expectation = self.expectationWithDescription("Fetch messages for patch")
-        let client = ProxibaseClient()
+        let client = Proxibase()
+        let user = UserController.instance
         client.signIn("rob@robmaceachern.com", password: "test9090") { (response, error) -> Void in
             client.fetchMessagesForPatch("pa.150120.02229.596.036120", completion: { (response, error) -> Void in
                 if error == nil && response != nil {
@@ -112,7 +117,8 @@ class PatchrTests: XCTestCase {
     
     func testFetchMostMessagedPatches() {
         var expectation = self.expectationWithDescription("Fetch patches with the most messages")
-        let client = ProxibaseClient()
+        let client = Proxibase()
+        let user = UserController.instance
         client.signIn("rob@robmaceachern.com", password: "test9090") { (response, error) -> Void in
             let location = CLLocationCoordinate2D(latitude: 49.2845280, longitude: -123.1092720)
             client.fetchInterestingPatches(location, completion: { (response, error) -> Void in
@@ -132,9 +138,10 @@ class PatchrTests: XCTestCase {
     
     func testFetchMessagesOwnedByCurrentUser() {
         var expectation = self.expectationWithDescription("Fetch messages for current user")
-        let client = ProxibaseClient()
+        let client = Proxibase()
+        let user = UserController.instance
         client.signIn("rob@robmaceachern.com", password: "test9090") { (response, error) -> Void in
-            client.fetchMessagesOwnedByCurrentUser(completion: { (response, error) -> Void in
+            client.fetchMessagesOwnedByUser(user.userId!, completion: { (response, error) -> Void in
                 if error == nil && response != nil {
                     //NSLog("\(response)")
                     expectation.fulfill()

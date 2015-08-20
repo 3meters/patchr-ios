@@ -8,497 +8,791 @@
 
 import UIKit
 
-class PatchDetailViewController: FetchedResultsTableViewController, TableViewCellDelegate, UIActionSheetDelegate {
-    
-    private let cellNibName = "MessageTableViewCell"
-    
-    @IBOutlet weak var patchImageView: UIImageView!
-    @IBOutlet weak var patchNameLabel: UILabel!
-    @IBOutlet weak var patchCategoryLabel: UILabel!
-    @IBOutlet weak var watchButton: UIButton!
-    @IBOutlet weak var likeButton: UIButton!
-    @IBOutlet weak var numberOfLikesButton: UIButton!
-    @IBOutlet weak var numberOfWatchersButton: UIButton!
-    @IBOutlet weak var editPatchButton: UIButton!
-    @IBOutlet weak var contextButton: UIButton!
-    
-    var managedObjectContext: NSManagedObjectContext!
-    var query : Query!
-    var dataStore: DataStore!
-    var patch: Patch!
+class PatchDetailViewController: QueryTableViewController {
 
-    var likeLinkId: String? = nil
-    var watchLinkId: String? = nil
-    var watchLinkEnabled: Bool? = nil
-    var watchLinkHasBeenQueried: Bool = false
+	var patch: Patch! = nil
+    var patchId: String?
+    var deleted = false
+
+	private var selectedMessage:      Message?
+	private var messageDateFormatter: NSDateFormatter!
+	private var offscreenCells:       NSMutableDictionary = NSMutableDictionary()
+    private var _query: Query!
+    private var contextAction: ContextAction = .SharePatch
+    private var shareButtonFunctionMap = [Int: ShareButtonFunction]()
     
-    // Note: This result is only valid after refreshing the link status
-    var patchMembershipStatus : PatchMembershipStatus {
-        
-        if !watchLinkHasBeenQueried { return .Unknown }
-        
-        if self.watchLinkId == nil { return .NonMember }
-        
-        if let enabled = self.watchLinkEnabled {
-            
-            if enabled {
-                return .Member
-            } else {
-                return .Pending
+    private var isOwner: Bool {
+        if let currentUser = UserController.instance.currentUser {
+            if patch != nil && patch.creator != nil {
+                return currentUser.id_ == patch.creator.entityId
             }
-            
-        } else {
-            return .Pending
         }
+        return false
     }
     
-    private var selectedDetailImage: UIImage?
-    private var messageDateFormatter: NSDateFormatter!
-    private var offscreenCells: NSMutableDictionary = NSMutableDictionary()
+    private var originalTop: CGFloat = 0.0
+    private var originalScrollTop: CGFloat = -64.0
+
+	/* Outlets are initialized before viewDidLoad is called */
+
+    @IBOutlet weak var patchPhoto:     AirImageView!
+    @IBOutlet weak var patchName:      UILabel!
+    @IBOutlet weak var patchType:      UILabel!
+    @IBOutlet weak var visibility:     UILabel!
+    @IBOutlet weak var likeButton:     AirLikeButton!
+    @IBOutlet weak var watchButton:    AirWatchButton!
+    @IBOutlet weak var mapButton:      AirImageButton!
+    @IBOutlet weak var watchersButton: UIButton!
+    @IBOutlet weak var contextButton:  UIButton!
+    @IBOutlet weak var lockImage:      UIImageView!
     
-    private lazy var fetchControllerDelegate: FetchControllerDelegate = {
-        return FetchControllerDelegate(tableView: self.tableView, onUpdate: { [weak self] (cell, object) -> Void in
-            return self?.configureCell(cell, object: object) ?? ()
-        })
-    }()
+    @IBOutlet weak var headerSection:  UIView!
+    @IBOutlet weak var bannerGroup:    UIView!
+    @IBOutlet weak var titlingGroup:   UIView!
+    @IBOutlet weak var buttonGroup:    UIView!
     
-    internal lazy var fetchedResultsController: NSFetchedResultsController = {
-        
-        let fetchRequest = NSFetchRequest(entityName: Message.entityName())
-        
-        /*
-        George: swift 1.2 cannot find symbol ServiceBaseAttributes
-        fetchRequest.sortDescriptors = [
-            NSSortDescriptor(key: ServiceBaseAttributes.createdDate, ascending: false)
-        ]
-        */
-        
-        fetchRequest.sortDescriptors = [
-            NSSortDescriptor(key: "createdDate", ascending: false)
-        ]
-        
-        fetchRequest.predicate = NSPredicate(format: "\(MessageRelationships.patch) == %@", self.patch)
-        
-        let controller = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
-        
-        controller.performFetch(nil)
-        controller.delegate = self.fetchControllerDelegate
-        
-        return controller
-    }()
+    @IBOutlet weak var infoGroup:      UIView!
+    @IBOutlet weak var infoName:       UILabel!
+    @IBOutlet weak var infoType:       UILabel!
+    @IBOutlet weak var infoLockImage:  UIImageView!
+    @IBOutlet weak var infoVisibility: UILabel!
+    @IBOutlet weak var infoDistance:   UILabel!
+    @IBOutlet weak var infoDescription:UILabel!
+    @IBOutlet weak var infoOwner:      UILabel!
     
-    // Note: I tried to use 'inout linkID: String', but that didn't seem to work. The 'setter' closure
-    // serves the purpose of setting the ID variable to the correct value after the query completes.
-    
-    private func refreshLinkValue(linkType: LinkType, linkButton: UIButton, linkID: String?, setter: (NSDictionary?) -> Void)
-    {
-        let proxibase = ProxibaseClient.sharedInstance
-        
-        proxibase.findLink(proxibase.userId! as String, toID: patch.id_, linkType: linkType) { response, error in
-            if let serverError = ServerError(error)
-            {
-                // ServerError initializer logs the error. Not much else to do here.
-            }
-            else
-            {
-                let serverResponse = ServerResponse(response)
-                self.watchLinkHasBeenQueried = true
-                
-                if serverResponse.resultCount == 1
-                {
-                    setter(serverResponse.resultObject)
-                    linkButton.selected = true
+    @IBOutlet weak var patchPhotoTop:  NSLayoutConstraint!
+    @IBOutlet weak var placeButton:    UIButton!
+
+	override func query() -> Query {
+		if self._query == nil {
+			let query = Query.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Query
+			query.name = DataStoreQueryName.MessagesForPatch.rawValue
+            query.pageSize = DataController.proxibase.pageSizeDefault
+            query.validValue = (patch != nil || patchId != nil)
+            if query.validValue {
+                query.parameters = [:]
+                if patch != nil {
+                    query.parameters["entity"] = patch
                 }
-                else
-                {
-                    setter(nil)
-                    linkButton.selected = false
+                if patchId != nil {
+                    query.parameters["entityId"] = patchId
                 }
             }
-        }
-    }
-    
-    private func refreshLikeAndWatch()
-    {
-        refreshLinkValue(.Like, linkButton: self.likeButton, linkID: self.likeLinkId) {  (linkDictionary) -> Void in
-            self.likeLinkId = linkDictionary?["_id"] as? String
-            self.updatePatchDetailUI()
-        }
-        refreshLinkValue(.Watch, linkButton: self.watchButton, linkID: self.watchLinkId) { (linkDictionary) -> Void in
-            self.watchLinkId = linkDictionary?["_id"] as? String
-            self.watchLinkEnabled = linkDictionary?["enabled"] as? Bool
-            self.updatePatchDetailUI()
-        }
-    }
-    
-    func updatePatchDetailUI() {
-        
-        self.navigationItem.title = patch.name
-        self.patchNameLabel.text = patch.name
-        self.patchCategoryLabel.text = patch.category?.name
-        self.patchImageView.pa_setImageWithURL(patch.photo?.photoURL(), placeholder: UIImage(named: "PatchDefault"))
-        
-        let likesTitle = self.patch.numberOfLikes?.integerValue == 1 ? "\(self.patch.numberOfLikes) like" : "\(self.patch.numberOfLikes ?? 0) likes"
-        self.numberOfLikesButton.setTitle(likesTitle, forState: UIControlState.Normal)
-        
-        let watchersTitle = "\(self.patch.numberOfWatchers ?? 0) watching"
-        self.numberOfWatchersButton.setTitle(watchersTitle, forState: UIControlState.Normal)
-        
-        self.dataStore.withCurrentUser(refresh: false) { (user) -> Void in
-            if self.patch.ownerId == user.id_ {
-                self.editPatchButton.alpha = 1
-            }
-        }
-        
-        switch self.patchMembershipStatus {
-        case .Member:
-            self.contextButton.setTitle("Add Message", forState: .Normal)
-        case .Pending:
-            self.contextButton.setTitle("Cancel Join Request", forState: .Normal)
-        case .NonMember:
-            if self.patch.visibilityValue == .Private {
-                self.contextButton.setTitle("Request to Join", forState: .Normal)
-            } else {
-                self.contextButton.setTitle("Add Message", forState: .Normal)
-            }
-        case .Unknown:
-            self.contextButton.setTitle("", forState: .Normal)
-        }
-        
-        self.contextButton.enabled = self.patchMembershipStatus != .Unknown
-        
-        if self.patchMembershipStatus != .Unknown {
-            self.watchButton.alpha = 1
-            self.likeButton.alpha = self.patch.visibilityValue == PAVisibilityLevel.Public || self.patchMembershipStatus == .Member ? 1 : 0
-        }
-    }
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:", name: PAApplicationDidReceiveRemoteNotification, object: nil)
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.tableView.registerNib(UINib(nibName: cellNibName, bundle: nil), forCellReuseIdentifier: "Cell")
-        self.tableView.delaysContentTouches = false
-        
-        let query = Query.insertInManagedObjectContext(self.managedObjectContext) as! Query
-        query.name = "Messages for patch"
-        query.parameters = ["patchId" : patch.id_]
-        self.managedObjectContext.save(nil)
-        self.query = query
-        
-        let refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: "pullToRefreshAction:", forControlEvents: UIControlEvents.ValueChanged)
-        self.refreshControl = refreshControl
-        self.refreshControl?.beginRefreshing()
-        self.pullToRefreshAction(self.refreshControl!)
+			DataController.instance.managedObjectContext.save(nil)
+			self._query = query
+		}
+		return self._query
+	}
 
-        let dateFormatter = NSDateFormatter()
-        dateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
-        dateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
-        dateFormatter.doesRelativeDateFormatting = true
-        self.messageDateFormatter = dateFormatter
+	/*--------------------------------------------------------------------------------------------
+	 * Lifecycle
+	 *--------------------------------------------------------------------------------------------*/
+
+	override func awakeFromNib() {
+		super.awakeFromNib()
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:",
+            name: PAApplicationDidReceiveRemoteNotification, object: nil)
+	}
+
+	override func viewDidLoad() {
+
+		if patch != nil {
+			patchId = patch.id_
+		}
         
-        self.contextButton.enabled = false
-        self.contextButton.setTitle("", forState: .Normal)
+        self.contentViewName = "MessageView"
+        super.showEmptyLabel = false
+
+		super.viewDidLoad()
+
+        let bannerTapGestureRecognizer = UITapGestureRecognizer(target: self, action: "flipToInfo:")
+        self.bannerGroup.addGestureRecognizer(bannerTapGestureRecognizer)
+        let infoTapGestureRecognizer = UITapGestureRecognizer(target: self, action: "flipToBanner:")
+        self.infoGroup.addGestureRecognizer(infoTapGestureRecognizer)
         
-        self.likeButton.alpha = 0
-        self.watchButton.alpha = 0
-        self.editPatchButton.alpha = 0
+		/* Apply gradient to banner */
+		var gradient: CAGradientLayer = CAGradientLayer()
+		gradient.frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width + 100, ((UIScreen.mainScreen().bounds.size.width - 24) * 0.75) + 50)
+		var startColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.5))  // Bottom
+		var endColor:   UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0))    // Top
+		gradient.colors = [endColor.CGColor, startColor.CGColor]
+		gradient.startPoint = CGPoint(x: 0.5, y: 0.5)
+		gradient.endPoint = CGPoint(x: 0.5, y: 1)
+		patchPhoto.layer.insertSublayer(gradient, atIndex: 0)
         
-        refreshLikeAndWatch()
-        updatePatchDetailUI()
-    }
+        var more: UITableViewCell = UITableViewCell()
+        placeButton.addSubview(more)
+        more.frame = placeButton.bounds
+        more.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
+        more.userInteractionEnabled = false
+        
+        /* UI prep */
+        tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
+        lockImage.tintColor(Colors.brandColor)
+        infoLockImage.tintColor(Colors.brandColor)
+        self.mapButton.imageView!.tintColor(UIColor.whiteColor())
+        self.watchersButton.alpha = 0.0
+        self.originalTop = patchPhotoTop.constant
+        self.contextButton?.setTitle("", forState: .Normal)
+        self.tableView.estimatedRowHeight = UITableViewAutomaticDimension
+        
+        watchButton.tintOff = UIColor.whiteColor()
+        watchButton.tintPending = Colors.brandColor
+        watchButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
+        
+        likeButton.tintOff = UIColor.whiteColor()
+        likeButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
+        likeButton.imageOn = UIImage(named: "imgStarFilledLight")
+        likeButton.imageOff = UIImage(named: "imgStarLight")
+        likeButton.messageOn = "Added to favorites"
+        likeButton.messageOff = "Removed from favorites"
+        likeButton.alpha = 0.0
+        
+        /* Navigation bar buttons */
+        
+        drawButtons()
+	}
     
     override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        self.dataStore.withPatch(patch.id_, refresh: true) { (_) -> Void in
-            self.updatePatchDetailUI()
+        /*
+         * Entity could have been deleted while we were away to check it.
+         */
+        if self.patch != nil {
+            let item = ServiceBase.fetchOneById(patchId, inManagedObjectContext: DataController.instance.managedObjectContext)
+            if item == nil {
+                self.navigationController?.popViewControllerAnimated(false)
+                return
+            }
         }
+        
+        /* Triggers query processing by results controller */
+        super.viewWillAppear(animated)
+        
+        if self.patch != nil {
+            draw()
+        }
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "likeDidChange:", name: Events.LikeDidChange, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "watchDidChange:", name: Events.WatchDidChange, object: nil)
+        setScreenName("PatchDetail")
+    }
+
+    override func viewDidAppear(animated: Bool){
+        super.viewDidAppear(animated)
+        
+        /* Super hack to resize the table header to fit the contents */
+        var headerView: UIView = self.tableView.tableHeaderView!
+        var height = contextButton.frame.height + bannerGroup.frame.height
+        var newFrame: CGRect = self.tableView.tableHeaderView!.frame;
+        
+        newFrame.size.height = height
+        headerView.frame = newFrame
+        self.tableView.tableHeaderView = headerView
+        
+        /* Load the entity */
+        refresh(force: true)
+    }
+
+    override func viewDidDisappear(animated: Bool) {
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.LikeDidChange, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.WatchDidChange, object: nil)
     }
     
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
-    
-    override func configureCell(cell: UITableViewCell, object: AnyObject) {
-        // The cell width seems to incorrect occassionally
-        if CGRectGetWidth(cell.bounds) != CGRectGetWidth(self.tableView.bounds) {
-            cell.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: CGRectGetHeight(cell.frame))
-            cell.setNeedsLayout()
-            cell.layoutIfNeeded()
-        }
-        
-        let message = object as! Message
-        let messageCell = cell as! MessageTableViewCell
-        messageCell.delegate = self
-        
-        messageCell.messageBodyLabel.text = message.description_
-        
-        messageCell.messageImageView.image = nil
-        if let photo = message.photo {
-            messageCell.messageImageView.pa_setImageWithURL(photo.photoURL())
-            let imageMarginTop : CGFloat = 10.0;
-            messageCell.messageImageContainerHeight.constant = messageCell.messageImageView.frame.height + imageMarginTop
-        } else {
-            messageCell.messageImageContainerHeight.constant = 0;
-        }
-        
-        if let creator = message.creator as? User {
-            messageCell.userNameLabel.text = creator.name
-            messageCell.userAvatarImageView.pa_setImageWithURL(creator.photo?.photoURL(), placeholder: UIImage(named: "UserAvatarDefault"))
-        } else {
-            messageCell.userNameLabel.text = nil
-            messageCell.userAvatarImageView.image = nil
-            NSLog("No creator for message!")
-        }
-        
-        messageCell.likesLabel.text = "\(message.numberOfLikes?.integerValue ?? 0) Likes"
-        messageCell.createdDateLabel.text = self.messageDateFormatter.stringFromDate(message.createdDate)
-        messageCell.patchNameLabel.text = self.patch.name
-    }
-    
-    private func toggleLinkState(linkValue: String?, ofType linkType: LinkType)
-    {
-        let proxibase = ProxibaseClient.sharedInstance
-        if let linkID = linkValue
-        {
-            proxibase.deleteLink(linkID) { _, _ in
-                self.refreshPatchAndMessages({ (error) -> Void in })
-            }
-        }
-        else
-        {
-            proxibase.createLink(proxibase.userId! as String, toID: patch.id_, linkType: linkType) { _, _ in
-                self.refreshPatchAndMessages({ (error) -> Void in })
-            }
-        }
-    }
-    
-    @IBAction func watchAction(sender: AnyObject)
-    {
-        self.watchButton.selected = !self.watchButton.selected
-        toggleLinkState(watchLinkId, ofType: .Watch)
-    }
-    
-    @IBAction func likeAction(sender: AnyObject)
-    {
-        self.likeButton.selected = !self.likeButton.selected
-        toggleLinkState(likeLinkId, ofType: .Like)
-    }
-    
-    @IBAction func shareButtonAction(sender: UIBarButtonItem) {
-        
-        let patchURL = NSURL(string: "http://patchr.com/patch/\(self.patch.id_)") ?? NSURL(string: "http://patchr.com")!
-        let shareText = "You've been invited to the \(self.patch.name) patch! \n\n\(patchURL.absoluteString!) \n\nGet the Patchr app at http://patchr.com"
-        var activityItems : [AnyObject] = [shareText]
-        
-        let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
-        self.presentViewController(activityViewController, animated: true, completion: nil)
-    }
-    
-    @IBAction func numberOfLikesButtonAction(sender: UIButton) {
-        self.performSegueWithIdentifier("LikeListSegue", sender: self)
-    }
-    
-    @IBAction func numberOfWatchersButtonAction(sender: UIButton) {
-        self.performSegueWithIdentifier("WatchingListSegue", sender: self)
-    }
-    
-    override func fetchedResultsControllerForViewController(viewController: UIViewController) -> NSFetchedResultsController {
-        return self.fetchedResultsController
-    }
-    
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == nil {
-            return
-        }
-        
-        switch segue.identifier! {
-        case "ImageDetailSegue":
-            if let imageDetailViewController = segue.destinationViewController as? ImageDetailViewController {
-                imageDetailViewController.image = self.selectedDetailImage
-                self.selectedDetailImage = nil
-            }
 
-        case "CreateMessageSegue" :
-            if let navigationController = segue.destinationViewController as? UINavigationController {
-                if let postMessageViewController = navigationController.topViewController as? PostMessageViewController {
-                    // pass along the data store
-                    postMessageViewController.dataStore = self.dataStore
-                    postMessageViewController.receiverString = patch.name
-                    postMessageViewController.patchID = patch.id_
-                }
-            }
-        case "EditPatchSegue" :
-            if let navigationController = segue.destinationViewController as? UINavigationController {
-                if let editPatchViewController = navigationController.topViewController as? CreateEditPatchViewController {
-                    // pass along the patch to edit.
-                    editPatchViewController.patch = patch
-                }
-            }
-        case "LikeListSegue", "WatchingListSegue" :
-            if let userListViewController = segue.destinationViewController as? UserTableViewController {
-                userListViewController.managedObjectContext = self.managedObjectContext
-                userListViewController.dataStore = self.dataStore
-                userListViewController.patch = self.patch
-                userListViewController.filter = segue.identifier == "LikeListSegue" ? .Likers : .Watchers
-            }
-        default: ()
-        }
-    }
+	/*--------------------------------------------------------------------------------------------
+	 * Events
+	 *--------------------------------------------------------------------------------------------*/
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        
-        let canDelete = true; // TODO: determine if current user has delete permission for message
-        let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: "Cancel", destructiveButtonTitle: canDelete ? "Delete" : nil)
-        sheet.addButtonWithTitle("Like")
-        sheet.addButtonWithTitle("Share")
-        sheet.addButtonWithTitle("Report Abuse")
-        sheet.showFromTabBar(self.tabBarController?.tabBar)
-        sheet.willDismissBlock = { (actionSheet, index) -> Void in
-            tableView.deselectRowAtIndexPath(indexPath, animated: true)
-        }
-        sheet.tapBlock = { (actionSheet, index) -> Void in
-            if index == actionSheet.cancelButtonIndex {
-                
-            } else if index == actionSheet.destructiveButtonIndex {
-                NSLog("Destructive button")
-                UIAlertView(title: "Not implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
-            } else {
-                // Switching on the button title is less than ideal, but there seems to be issues with 
-                // using the firstOtherButtonIndex property. Once iOS 7 support is dropped, move to UIAlertController
-                let buttonTitle = actionSheet.buttonTitleAtIndex(index)
-                switch buttonTitle {
-                case "Report Abuse":
-                    UIAlertView(title: "Not implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
-                case "Like":
-                    UIAlertView(title: "Not implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
-                case "Share":
-                    UIAlertView(title: "Not implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
-                default:
-                    UIAlertView(title: "Not implemented", message: nil, delegate: nil, cancelButtonTitle: "OK").show()
-                    NSLog("No action configured for button with title: \(buttonTitle)")
-                }
-            }
-            
-        }
-    }
-    
-    // TODO: This is duplicated in NotificationTableViewController
-    // https://github.com/smileyborg/TableViewCellWithAutoLayout
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        let reuseIdentifier = "Cell"
-        var cell = self.offscreenCells.objectForKey(reuseIdentifier) as? UITableViewCell
-        if cell == nil {
-            let nibObjects = NSBundle.mainBundle().loadNibNamed(cellNibName, owner: self, options: nil)
-            cell = nibObjects[0] as? UITableViewCell
-            self.offscreenCells.setObject(cell!, forKey: reuseIdentifier)
-        }
-        
-        let object: AnyObject = self.fetchedResultsController.objectAtIndexPath(indexPath)
-        self.configureCell(cell!, object: object)
-        cell?.setNeedsUpdateConstraints()
-        cell?.updateConstraintsIfNeeded()
-        cell?.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: CGRectGetHeight(cell!.frame))
-        cell?.setNeedsLayout()
-        cell?.layoutIfNeeded()
-        var height = cell!.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height
-        height += 1
-        return height
-    }
-    
-    // MARK: TableViewCellDelegate
-    
-    func tableViewCell(cell: UITableViewCell, didTapOnView view: UIView) {
-        let messageCell = cell as! MessageTableViewCell
-        if view == messageCell.messageImageView && messageCell.messageImageView.image != nil {
-            self.selectedDetailImage = messageCell.messageImageView.image
-            self.performSegueWithIdentifier("ImageDetailSegue", sender: view)
-        }
-    }
+	@IBAction func numberOfWatchersButtonAction(sender: UIButton) {
+		self.performSegueWithIdentifier("WatchingListSegue", sender: self)
+	}
 
-    @IBAction func unwindFromCreateMessage(segue: UIStoryboardSegue) {
-        // Refresh results when unwinding from Message screen to pickup any changes.
-        self.refreshPatchAndMessages { (error) -> Void in }
-    }
-    
-    @IBAction func unwindFromCreatePatch(segue: UIStoryboardSegue) {
-        // Refresh results when unwinding from Patch edit/create screen to pickup any changes.
-        self.refreshPatchAndMessages { (error) -> Void in }
-    }
-    
-    func pullToRefreshAction(sender: AnyObject?) -> Void {
-        self.refreshPatchAndMessages { (error) -> Void in
-            // Delay seems to be necessary to avoid visual glitch with UIRefreshControl
-            delay(0.1, { () -> () in
-                self.refreshControl?.endRefreshing()
+	@IBAction func contextButtonAction(sender: UIButton) {
+        
+        if contextAction == .CreateMessage {
+            if !UserController.instance.authenticated {
+                Shared.Toast("Sign in to post messages")
                 return
-            })
+            }
+            self.performSegueWithIdentifier("MessageEditSegue", sender: self)
+        }
+        else if contextAction == .SharePatch {
+            shareAction()
+        }
+        else if contextAction == .CancelJoinRequest {
+            self.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+        }
+        else if contextAction == .SubmitJoinRequest {
+            if !UserController.instance.authenticated {
+                Shared.Toast("Sign in to join patches")
+                return
+            }
+            self.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+        }
+        else if contextAction == .BrowseUsersWatching {
+            self.performSegueWithIdentifier("WatchingListSegue", sender: self)
+        }
+	}
+
+	@IBAction func unwindFromMessageEdit(segue: UIStoryboardSegue) {
+		// Refresh results when unwinding from Message screen to pickup any changes.
+        self.refreshQueryItems(force: true)
+	}
+
+	@IBAction override func unwindFromPatchEdit(segue: UIStoryboardSegue) {
+		// Refresh results when unwinding from Patch edit/create screen to pickup any changes.
+		self.refresh()
+	}
+    
+    @IBAction func placeAction(sender: AnyObject) {
+        if self.patch != nil {
+            self.performSegueWithIdentifier("PlaceDetailSegue", sender: self)
         }
     }
     
-    // Refreshes the query and likes/watches, and calls updatePatchDetailUI before completion
-    func refreshPatchAndMessages(completion:(error: NSError?) -> Void) {
-        self.refreshLikeAndWatch()
-        self.dataStore.refreshResultsFor(self.query, completion: { (_, error) -> Void in
-            self.updatePatchDetailUI()
-            completion(error: error)
-        })
-    }
-    
-    @IBAction func contextButtonAction(sender: UIButton) {
-        switch self.patchMembershipStatus {
-        case .Member:
-            self.performSegueWithIdentifier("CreateMessageSegue", sender: self)
-        case .Pending:
-            let proxibase = ProxibaseClient.sharedInstance
-            if self.watchLinkId != nil {
-                proxibase.deleteLink(self.watchLinkId!) { _, _ in
-                    self.refreshLikeAndWatch()
-                }
-            }
-        case .NonMember:
-            if self.patch.visibilityValue == .Public {
-                self.performSegueWithIdentifier("CreateMessageSegue", sender: self)
-            } else {
-                let proxibase = ProxibaseClient.sharedInstance
-                proxibase.createLink(proxibase.userId! as String, toID: patch.id_, linkType: .Watch) { _, _ in
-                    self.refreshLikeAndWatch()
-                }
-            }
-        case .Unknown: () // No-op
+    @IBAction func mapAction(sender: AnyObject) {
+        if self.patch != nil {
+            self.performSegueWithIdentifier("PatchMapSegue", sender: self)
         }
     }
-    
-    
-    // MARK: Private Internal
     
     func handleRemoteNotification(notification: NSNotification) {
         
         if let userInfo = notification.userInfo {
-            
             let parentId = userInfo["parentId"] as? String
             let targetId = userInfo["targetId"] as? String
             
-            let impactedByNotification = self.patch?.id_ == parentId || self.patch?.id_ == targetId
+            let impactedByNotification = self.patchId == parentId || self.patchId == targetId
             
             // Only refresh notifications if view has already been loaded
             // and the notification is related to this Patch
             if self.isViewLoaded() && impactedByNotification {
                 self.refreshControl?.beginRefreshing()
                 self.pullToRefreshAction(self.refreshControl)
-                self.refreshLikeAndWatch()
+            }
+        }
+    }
+    
+    func dismissAction(sender: AnyObject) {
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func flipToInfo(sender: AnyObject) {
+        let options = UIViewAnimationOptions.TransitionFlipFromBottom
+            | UIViewAnimationOptions.ShowHideTransitionViews
+            | UIViewAnimationOptions.CurveEaseOut
+        UIView.transitionFromView(bannerGroup!, toView: infoGroup, duration: 0.4, options: options, completion: nil);
+    }
+    
+    func flipToBanner(sender: AnyObject) {
+        let options = UIViewAnimationOptions.TransitionFlipFromTop
+            | UIViewAnimationOptions.ShowHideTransitionViews
+            | UIViewAnimationOptions.CurveEaseOut
+        UIView.transitionFromView(infoGroup!, toView: bannerGroup, duration: 0.4, options: options, completion: nil);
+    }
+    
+    func addAction() {
+        if !UserController.instance.authenticated {
+            Shared.Toast("Sign in to post messages")
+            return
+        }
+        self.performSegueWithIdentifier("MessageEditSegue", sender: self)
+    }
+    
+    func editAction() {
+        self.performSegueWithIdentifier("PatchEditSegue", sender: self)
+    }
+    
+    func shareAction() {
+        
+        if self.patch != nil {
+            
+            let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: nil, destructiveButtonTitle: nil)
+            
+            shareButtonFunctionMap[sheet.addButtonWithTitle("Invite")] = .Share
+            shareButtonFunctionMap[sheet.addButtonWithTitle("Invite via")] = .ShareVia
+            sheet.addButtonWithTitle("Cancel")
+            sheet.cancelButtonIndex = sheet.numberOfButtons - 1
+            
+            sheet.showInView(self.view)
+        }
+    }
+    
+    func likeDidChange(sender: NSNotification) {
+        self.draw()
+        self.tableView.reloadData()
+    }
+    
+    func watchDidChange(sender: NSNotification) {
+        self.draw()
+    }
+    
+	/*--------------------------------------------------------------------------------------------
+	 * Methods
+	 *--------------------------------------------------------------------------------------------*/
+    
+	func draw() {
+        
+        if self.patch == nil {
+            return
+        }
+        
+        /* Name, type and photo */
+        
+		self.patchName.text = patch!.name
+        self.patchType.text = patch.type == nil ? "PATCH" : patch!.type.uppercaseString + " PATCH"
+        self.patchPhoto.setImageWithPhoto(patch!.getPhotoManaged(), animate: patchPhoto.image == nil)
+        
+        /* Place */
+        
+        if patch!.place != nil {
+            placeButton.setTitle(patch!.place.name, forState: .Normal)
+            placeButton.fadeIn()
+        }
+
+        /* Privacy */
+        
+        if lockImage != nil {
+            lockImage.hidden = (patch!.visibility == "public")
+            infoLockImage.hidden = (patch!.visibility == "public")
+        }
+        if visibility != nil {
+            visibility.hidden = (patch!.visibility == "public")
+            infoVisibility.hidden = (patch!.visibility == "public")
+        }
+        
+        /* Map button */
+        mapButton.hidden = (patch.location == nil)
+        
+        /* Watching button */
+        
+        if patch?.countWatchingValue == 0 {
+            if watchersButton.alpha != 0 {
+                watchersButton.fadeOut()
+            }
+        }
+        else {
+            let watchersTitle = "\(self.patch!.countWatching ?? 0) watching"
+            self.watchersButton.setTitle(watchersTitle, forState: UIControlState.Normal)
+            if watchersButton.alpha == 0 {
+                watchersButton.fadeIn()
+            }
+        }
+
+		/* Like button */
+        
+        likeButton.bindEntity(self.patch)
+        if (patch!.visibility == "public" || patch!.userWatchStatusValue == .Member || isOwner) {
+            likeButton.fadeIn(alpha: 1.0)
+        }
+        else {
+            likeButton.fadeOut(alpha: 0.0)
+        }
+        
+        /* Watch button */
+        
+        watchButton.bindEntity(self.patch)
+        
+        /* Info view */
+        infoName.text = patch!.name
+        if patch!.type != nil {
+            infoType.text = patch!.type.uppercaseString + " PATCH"
+        }
+        infoDescription.text = patch!.description_
+        if let distance = patch.distance() {
+            infoDistance.text = LocationController.instance.distancePretty(distance)
+        }
+        infoOwner.text = patch!.creator?.name ?? "Deleted"
+        
+        if isOwner {
+            if patch!.countPendingValue > 0 {
+                if patch!.countPendingValue == 1 {
+                    self.contextButton.setTitle("One member request".uppercaseString, forState: .Normal)
+                }
+                else {
+                    self.contextButton.setTitle("\(patch!.countPendingValue) member requests".uppercaseString, forState: .Normal)
+                }
+                contextAction = .BrowseUsersWatching
+            }
+            else {
+                self.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
+                contextAction = .SharePatch
+            }
+        }
+        else {
+            if !UserController.instance.authenticated {
+                if patch!.visibility == "public" {
+                    self.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
+                    contextAction = .SharePatch
+                }
+                else {
+                    self.contextButton.setTitle("Request to join".uppercaseString, forState: .Normal)
+                    contextAction = .SubmitJoinRequest
+                }
+            }
+            else {
+                if patch!.visibility == "public" {
+                    if patch!.userHasMessagedValue {
+                        self.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
+                        contextAction = .SharePatch
+                    }
+                    else {
+                        self.contextButton.setTitle("Post your first message".uppercaseString, forState: .Normal)
+                        contextAction = .CreateMessage
+                    }
+                }
+                else {
+                    if patch!.userWatchStatusValue == .Member {
+                        if patch!.userHasMessagedValue {
+                            self.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
+                            contextAction = .SharePatch
+                        }
+                        else {
+                            self.contextButton.setTitle("Post your first message".uppercaseString, forState: .Normal)
+                            contextAction = .CreateMessage
+                        }
+                    }
+                    else if patch!.userWatchStatusValue == .Pending {
+                        self.contextButton.setTitle("Cancel join request".uppercaseString, forState: .Normal)
+                        contextAction = .CancelJoinRequest
+                    }
+                    else if patch!.userWatchStatusValue == .NonMember {
+                        self.contextButton.setTitle("Request to join".uppercaseString, forState: .Normal)
+                        contextAction = .SubmitJoinRequest
+                    }
+                    
+                    if patch!.userWatchJustApprovedValue {
+                        if patch!.userHasMessagedValue {
+                            self.contextButton.setTitle("Approved! Invite your friends".uppercaseString, forState: .Normal)
+                            contextAction = .SharePatch
+                        }
+                        else {
+                            self.contextButton.setTitle("Approved! Post your first message".uppercaseString, forState: .Normal)
+                            contextAction = .CreateMessage
+                        }
+                    }
+                }
+            }
+        }
+	}
+
+    func drawButtons() {
+        
+        var shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
+        var addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: Selector("addAction"))
+        var spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
+        spacer.width = SPACER_WIDTH
+        if isOwner {
+            let editImage = UIImage(named: "imgEditLight")
+            var editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
+            self.navigationItem.rightBarButtonItems = [addButton, spacer, shareButton, spacer, editButton]
+        }
+        else {
+            self.navigationItem.rightBarButtonItems = [addButton, spacer, shareButton]
+        }
+    }
+
+    private func refresh(force: Bool = false) {
+        /* Refreshes the top object but not the message list */
+        DataController.instance.withPatchId(patchId!, refresh: force) {
+            patch in
+            
+            self.refreshControl?.endRefreshing()
+            if patch != nil {
+                if self.patch == nil {
+                    self.refreshQueryItems(force: true)
+                }
+                self.patch = patch
+                self.patchId = patch!.id_
+                DataController.instance.currentPatch = patch    // Used for context for messages
+                self.drawButtons()
+                self.draw()
+            }
+            else {
+                Shared.Toast("Patch has been deleted")
+                delay(2.0, {
+                    () -> () in
+                    self.navigationController?.popViewControllerAnimated(true)
+                })
+            }
+        }
+    }
+    
+    override func prefersStatusBarHidden() -> Bool {
+        return false
+    }
+    
+    override func preferredStatusBarUpdateAnimation() -> UIStatusBarAnimation {
+        return UIStatusBarAnimation.Fade
+    }
+    
+    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?) {
+        
+        let view = cell.contentView.viewWithTag(1) as! MessageView
+        Message.bindView(view, object: object, tableView: tableView, sizingOnly: false)
+        if let label = view.description_ as? TTTAttributedLabel {
+            label.delegate = self
+        }
+        view.delegate = self
+        view.patchNameHeight.constant = 0
+    }
+    
+	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+		if segue.identifier == nil {
+			return
+		}
+
+		switch segue.identifier! {
+			case "MessageDetailSegue":
+				if let controller = segue.destinationViewController as? MessageDetailViewController {
+					controller.message = self.selectedMessage
+				}
+            case "PlaceDetailSegue":
+                if let controller = segue.destinationViewController as? PlaceDetailViewController {
+                    controller.placeId = self.patch!.place.entityId
+                }
+			case "MessageEditSegue":
+                /* Has its own nav because we segue modally and it needs its own stack */
+				if let navigationController = segue.destinationViewController as? UINavigationController {
+					if let controller = navigationController.topViewController as? MessageEditViewController {
+						controller.toString = patch!.name
+						controller.patchId = patchId
+					}
+				}
+			case "PatchEditSegue":
+				if let navigationController = segue.destinationViewController as? UINavigationController {
+					if let controller = navigationController.topViewController as? PatchEditViewController {
+						controller.entity = patch
+					}
+				}
+			case "LikeListSegue", "WatchingListSegue":
+				if let controller = segue.destinationViewController as? UserTableViewController {
+					controller.patch = self.patch
+					controller.filter = segue.identifier == "LikeListSegue" ? .PatchLikers : .PatchWatchers
+				}
+            case "PatchMapSegue":
+                if let controller = segue.destinationViewController as? PatchMapViewController {
+                    controller.locationDelegate = self
+                }
+            
+			default: ()
+		}
+	}
+
+	override func pullToRefreshAction(sender: AnyObject?) -> Void {
+        self.refresh(force: true)
+        self.refreshQueryItems(force: true)
+	}
+
+    func shareUsing(patchr: Bool = true) {
+        
+        if patchr {
+            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+            let controller = storyboard.instantiateViewControllerWithIdentifier("MessageEditViewController") as? MessageEditViewController
+            /* viewDidLoad hasn't fired yet but awakeFromNib has */
+            controller?.shareEntity = self.patch
+            controller?.shareSchema = Schema.ENTITY_PATCH
+            controller?.shareId = self.patchId!
+            controller?.messageType = .Share
+            self.presentViewController(UINavigationController(rootViewController: controller!), animated: true, completion: nil)
+        }
+        else {
+            Branch.getInstance().getShortURLWithParams(["entityId":self.patchId!, "entitySchema":"patch"], andChannel: "patchr-ios", andFeature: BRANCH_FEATURE_TAG_INVITE, andCallback: {
+                (url: String?, error: NSError?) -> Void in
+                
+                if let error = ServerError(error) {
+                    UIViewController.topMostViewController()!.handleError(error)
+                }
+                else {
+                    Log.d("Branch link created: \(url!)")
+                    var patch: PatchItem = PatchItem(entity: self.patch!, shareUrl: url!)
+                    
+                    let activityViewController = UIActivityViewController(
+                        activityItems: [patch],
+                        applicationActivities: nil)
+                    
+                    if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+                        self.presentViewController(activityViewController, animated: true, completion: nil)
+                    }
+                    else {
+                        let popup: UIPopoverController = UIPopoverController(contentViewController: activityViewController)
+                        popup.presentPopoverFromRect(CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/4, 0, 0), inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
+                    }
+                }
+            })
+        }
+    }
+}
+
+extension PatchDetailViewController: MapViewDelegate {
+    
+    func locationForMap() -> CLLocation? {
+        if let location = self.patch?.location {
+            return CLLocation(latitude: self.patch.location.latValue, longitude: self.patch.location.lngValue)
+        }
+        return nil
+    }
+    
+    func locationChangedTo(location: CLLocation) {  }
+    
+    func locationEditable() -> Bool {
+        return false
+    }
+    
+    var locationTitle: String? {
+        get {
+            return self.patch?.name
+        }
+    }
+    
+    var locationSubtitle: String? {
+        get {
+            if let type = self.patch?.type {
+                return type.uppercaseString + " PATCH"
+            }
+            return nil
+        }
+    }
+    
+    var locationPhoto: AnyObject? {
+        get {
+            return self.patch?.photo
+        }
+    }
+}
+
+extension PatchDetailViewController: UITableViewDelegate {
+    
+    override func scrollViewDidScroll(scrollView: UIScrollView) {
+        if patchPhotoTop != nil {
+            /* Parallax effect when user scrolls down */
+            let offset = scrollView.contentOffset.y
+            if offset >= originalScrollTop && offset <= 300 {
+                let movement = originalScrollTop - scrollView.contentOffset.y
+                let ratio: CGFloat = (movement <= 0) ? 0.50 : 1.0
+                patchPhotoTop.constant = originalTop + (-(movement) * ratio)
+            }
+            else {
+                patchPhotoTop.constant = originalTop
+            }
+        }
+    }
+
+	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
+            if let message = queryResult.object as? Message {
+                self.selectedMessage = message
+                self.performSegueWithIdentifier("MessageDetailSegue", sender: self)
+                return
+            }
+        }
+		assert(false, "Couldn't set selectedMessage")
+	}
+
+	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        
+        var cell = self.offscreenCells.objectForKey(CELL_IDENTIFIER) as? UITableViewCell
+        
+        if cell == nil {
+            cell = buildCell(self.contentViewName!)
+            configureCell(cell!)
+            self.offscreenCells.setObject(cell!, forKey: CELL_IDENTIFIER)
+        }
+        
+        /* view view to data for this row */
+        let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as! QueryItem
+        let view = Message.bindView(cell!.contentView.viewWithTag(1)!, object: queryResult.object, tableView: tableView, sizingOnly: true) as! MessageView
+        view.patchNameHeight.constant = 0
+        
+        /* Get the actual height required for the cell */
+        var height = cell!.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
+        
+        return height
+	}
+}
+
+extension PatchDetailViewController: ViewDelegate {
+    func view(container: UIView, didTapOnView view: UIView) {
+        if let view = view as? AirImageView, container = container as? MessageView {
+            if view.image != nil {
+                Shared.showPhotoBrowser(view.image, view: view, viewController: self, entity: container.entity)
             }
         }
     }
 }
 
-enum PatchMembershipStatus : String {
-    case Member = "Member"
-    case Pending = "Pending"
-    case NonMember = "NonMember"
-    case Unknown = "Unknown"
+extension PatchDetailViewController: UIActionSheetDelegate {
+    
+    func actionSheet(actionSheet: UIActionSheet, clickedButtonAtIndex buttonIndex: Int) {
+        if buttonIndex != actionSheet.cancelButtonIndex {
+            // There are some strange visual artifacts with the share sheet and the presented
+            // view controllers. Adding a small delay seems to prevent them.
+            delay(0.4, {
+                () -> () in
+                switch self.shareButtonFunctionMap[buttonIndex]! {
+                case .Share:
+                    self.shareUsing(patchr: true)
+                    
+                case .ShareVia:
+                    self.shareUsing(patchr: false)
+                }
+            })
+        }
+    }
+}
+
+extension PatchDetailViewController: TTTAttributedLabelDelegate {
+    
+    func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
+        UIApplication.sharedApplication().openURL(url)
+    }
+}
+
+class PatchItem: NSObject, UIActivityItemSource {
+    
+    var entity: Patch
+    var shareUrl: String
+    
+    init(entity: Patch, shareUrl: String) {
+        self.entity = entity
+        self.shareUrl = shareUrl
+    }
+    
+    func activityViewControllerPlaceholderItem(activityViewController: UIActivityViewController) -> AnyObject {
+        return ""
+    }
+    
+    func activityViewController(activityViewController: UIActivityViewController, itemForActivityType activityType: String) -> AnyObject? {
+        var text = "\(UserController.instance.currentUser.name) has invited you to the \(self.entity.name) patch! \(self.shareUrl) \n"
+        if activityType == UIActivityTypeMail {
+            return text
+        }
+        else {
+            return text
+        }
+    }
+    
+    func activityViewController(activityViewController: UIActivityViewController, subjectForActivityType activityType: String?) -> String {
+        if activityType == UIActivityTypeMail || activityType == "com.google.Gmail.ShareExtension" {
+            return "Invitation to the \(self.entity.name) patch"
+        }
+        return ""
+    }
+}
+
+private enum ShareButtonFunction {
+    case Share
+    case ShareVia
+}
+
+enum ContextAction: UInt {
+	case BrowseUsersWatching
+	case SharePatch
+	case CreateMessage
+	case SubmitJoinRequest
+	case CancelJoinRequest
 }

@@ -4,12 +4,11 @@
 #import "_Patch.h"
 
 const struct PatchAttributes PatchAttributes = {
-	.signalFence = @"signalFence",
+	.countMessages = @"countMessages",
+	.userHasMessaged = @"userHasMessaged",
 };
 
 const struct PatchRelationships PatchRelationships = {
-	.category = @"category",
-	.messages = @"messages",
 	.place = @"place",
 };
 
@@ -39,8 +38,13 @@ const struct PatchRelationships PatchRelationships = {
 + (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key {
 	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
 
-	if ([key isEqualToString:@"signalFenceValue"]) {
-		NSSet *affectingKey = [NSSet setWithObject:@"signalFence"];
+	if ([key isEqualToString:@"countMessagesValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"countMessages"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"userHasMessagedValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"userHasMessaged"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
@@ -48,37 +52,44 @@ const struct PatchRelationships PatchRelationships = {
 	return keyPaths;
 }
 
-@dynamic signalFence;
+@dynamic countMessages;
 
-- (double)signalFenceValue {
-	NSNumber *result = [self signalFence];
-	return [result doubleValue];
+- (int64_t)countMessagesValue {
+	NSNumber *result = [self countMessages];
+	return [result longLongValue];
 }
 
-- (void)setSignalFenceValue:(double)value_ {
-	[self setSignalFence:@(value_)];
+- (void)setCountMessagesValue:(int64_t)value_ {
+	[self setCountMessages:@(value_)];
 }
 
-- (double)primitiveSignalFenceValue {
-	NSNumber *result = [self primitiveSignalFence];
-	return [result doubleValue];
+- (int64_t)primitiveCountMessagesValue {
+	NSNumber *result = [self primitiveCountMessages];
+	return [result longLongValue];
 }
 
-- (void)setPrimitiveSignalFenceValue:(double)value_ {
-	[self setPrimitiveSignalFence:@(value_)];
+- (void)setPrimitiveCountMessagesValue:(int64_t)value_ {
+	[self setPrimitiveCountMessages:@(value_)];
 }
 
-@dynamic category;
+@dynamic userHasMessaged;
 
-@dynamic messages;
+- (BOOL)userHasMessagedValue {
+	NSNumber *result = [self userHasMessaged];
+	return [result boolValue];
+}
 
-- (NSMutableSet*)messagesSet {
-	[self willAccessValueForKey:@"messages"];
+- (void)setUserHasMessagedValue:(BOOL)value_ {
+	[self setUserHasMessaged:@(value_)];
+}
 
-	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"messages"];
+- (BOOL)primitiveUserHasMessagedValue {
+	NSNumber *result = [self primitiveUserHasMessaged];
+	return [result boolValue];
+}
 
-	[self didAccessValueForKey:@"messages"];
-	return result;
+- (void)setPrimitiveUserHasMessagedValue:(BOOL)value_ {
+	[self setPrimitiveUserHasMessaged:@(value_)];
 }
 
 @dynamic place;

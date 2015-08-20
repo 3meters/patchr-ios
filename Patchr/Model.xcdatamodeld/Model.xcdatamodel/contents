@@ -1,31 +1,46 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6751" systemVersion="14C109" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7701" systemVersion="14D136" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Entity" representedClassName="Entity" isAbstract="YES" parentEntity="ServiceBase" syncable="YES">
         <attribute name="count" optional="YES" attributeType="Integer 64" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="countLikes" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="countPending" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="countWatching" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="description_" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="linkedCounts" optional="YES" attributeType="Transformable" syncable="YES">
+        <attribute name="linkCounts" optional="YES" attributeType="Transformable" syncable="YES">
             <userInfo>
                 <entry key="attributeValueClassName" value="NSDictionary"/>
             </userInfo>
         </attribute>
-        <attribute name="numberOfLikes" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
-        <attribute name="numberOfWatchers" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="patchId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="privacy" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="rank" optional="YES" attributeType="Integer 64" defaultValueString="0.0" syncable="YES"/>
         <attribute name="reason" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="score" optional="YES" attributeType="Integer 64" defaultValueString="0.0" syncable="YES"/>
         <attribute name="subtitle" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="visibility" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES">
+        <attribute name="userLikes" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="userLikesId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userWatchId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userWatchJustApproved" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="userWatchStatus" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES">
             <userInfo>
-                <entry key="attributeValueScalarType" value="PAVisibilityLevel"/>
+                <entry key="attributeValueScalarType" value="PAWatchStatus"/>
             </userInfo>
         </attribute>
-        <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Location" inverseName="entity_" inverseEntity="Location" syncable="YES"/>
-        <relationship name="photo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Photo" inverseName="entity_" inverseEntity="Photo" syncable="YES"/>
+        <attribute name="visibility" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="link" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Link" syncable="YES"/>
+        <relationship name="location" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Location" syncable="YES"/>
+        <relationship name="photo" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Photo" syncable="YES"/>
         <userInfo>
             <entry key="additionalHeaderFileName" value="PAEnums.h"/>
         </userInfo>
+    </entity>
+    <entity name="Link" representedClassName="Link" parentEntity="ServiceObject" syncable="YES">
+        <attribute name="enabled" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="fromId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="fromSchema" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="id_" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="toId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="toSchema" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="Location" representedClassName="Location" parentEntity="ServiceObject" syncable="YES">
         <attribute name="accuracy" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
@@ -35,13 +50,10 @@
         <attribute name="lng" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <attribute name="provider" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="speed" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
-        <relationship name="entity_" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Entity" inverseName="location" inverseEntity="Entity" syncable="YES"/>
     </entity>
     <entity name="Message" representedClassName="Message" parentEntity="Entity" syncable="YES">
-        <attribute name="replyToId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="rootId" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="patch" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Patch" inverseName="messages" inverseEntity="Patch" syncable="YES"/>
-        <relationship name="replyTo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="replies" inverseEntity="User" syncable="YES"/>
+        <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Shortcut" syncable="YES"/>
+        <relationship name="patch" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Shortcut" syncable="YES"/>
     </entity>
     <entity name="Notification" representedClassName="Notification" parentEntity="Entity" syncable="YES">
         <attribute name="event" optional="YES" attributeType="String" syncable="YES"/>
@@ -53,27 +65,12 @@
         <attribute name="ticker" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="trigger" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userId" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="photoBig" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Photo" inverseName="notification" inverseEntity="Photo" syncable="YES"/>
-    </entity>
-    <entity name="PACategory" representedClassName="PACategory" parentEntity="ServiceObject" syncable="YES">
-        <attribute name="id_" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="categories" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PACategory" inverseName="categories" inverseEntity="PACategory" syncable="YES"/>
-        <relationship name="patches" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Patch" inverseName="category" inverseEntity="Patch" syncable="YES"/>
-        <relationship name="photo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Photo" inverseName="category" inverseEntity="Photo" syncable="YES"/>
-    </entity>
-    <entity name="PALink" representedClassName="PALink" parentEntity="ServiceBase" syncable="YES">
-        <attribute name="enabled" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <attribute name="fromId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="fromSchema" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="toId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="toSchema" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="photoBig" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Photo" syncable="YES"/>
     </entity>
     <entity name="Patch" representedClassName="Patch" parentEntity="Entity" syncable="YES">
-        <attribute name="signalFence" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
-        <relationship name="category" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PACategory" inverseName="patches" inverseEntity="PACategory" syncable="YES"/>
-        <relationship name="messages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Message" inverseName="patch" inverseEntity="Message" syncable="YES"/>
-        <relationship name="place" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Place" inverseName="patch" inverseEntity="Place" syncable="YES"/>
+        <attribute name="countMessages" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="userHasMessaged" optional="YES" attributeType="Boolean" defaultValueString="0" syncable="YES"/>
+        <relationship name="place" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Shortcut" syncable="YES"/>
     </entity>
     <entity name="Photo" representedClassName="Photo" parentEntity="ServiceObject" syncable="YES">
         <attribute name="createdDate" optional="YES" attributeType="Date" syncable="YES"/>
@@ -81,21 +78,18 @@
         <attribute name="prefix" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="source" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="suffix" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="usingDefault" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="width" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
-        <relationship name="category" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PACategory" inverseName="photo" inverseEntity="PACategory" syncable="YES"/>
-        <relationship name="entity_" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Entity" inverseName="photo" inverseEntity="Entity" syncable="YES"/>
-        <relationship name="notification" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Notification" inverseName="photoBig" inverseEntity="Notification" syncable="YES"/>
     </entity>
-    <entity name="Place" representedClassName="Place" parentEntity="Patch" syncable="YES">
+    <entity name="Place" representedClassName="Place" parentEntity="Entity" syncable="YES">
         <attribute name="address" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="applinkDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="city" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="country" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="postalCode" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="region" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="patch" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Patch" inverseName="place" inverseEntity="Patch" syncable="YES"/>
-        <relationship name="provider" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ProviderMap" inverseName="place" inverseEntity="ProviderMap" syncable="YES"/>
+        <relationship name="category" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="RichType" syncable="YES"/>
+        <relationship name="provider" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ProviderMap" syncable="YES"/>
     </entity>
     <entity name="ProviderMap" representedClassName="ProviderMap" parentEntity="ServiceObject" syncable="YES">
         <attribute name="aircandi" optional="YES" attributeType="String" syncable="YES"/>
@@ -104,23 +98,38 @@
         <attribute name="google" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="googleReference" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="yelp" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="place" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Place" inverseName="provider" inverseEntity="Place" syncable="YES"/>
     </entity>
     <entity name="Query" representedClassName="Query" syncable="YES">
+        <attribute name="criteria" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="executed" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="more" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="offset" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="pageSize" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="parameters" optional="YES" attributeType="Transformable" syncable="YES">
             <userInfo>
                 <entry key="attributeValueClassName" value="NSDictionary"/>
             </userInfo>
         </attribute>
-        <relationship name="queryResults" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="QueryResult" inverseName="query" inverseEntity="QueryResult" syncable="YES"/>
+        <attribute name="sidecar" optional="YES" attributeType="Transformable" syncable="YES">
+            <userInfo>
+                <entry key="attributeValueClassName" value="NSArray"/>
+            </userInfo>
+        </attribute>
+        <attribute name="valid" optional="YES" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
+        <relationship name="queryItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="QueryItem" inverseName="query" inverseEntity="QueryItem" syncable="YES"/>
     </entity>
-    <entity name="QueryResult" representedClassName="QueryResult" syncable="YES">
-        <attribute name="modificationDate" optional="YES" attributeType="Date" syncable="YES"/>
+    <entity name="QueryItem" representedClassName="QueryItem" syncable="YES">
+        <attribute name="distance" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="modifiedDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="position" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="sortDate" optional="YES" attributeType="Date" syncable="YES"/>
-        <relationship name="query" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Query" inverseName="queryResults" inverseEntity="Query" syncable="YES"/>
-        <relationship name="result" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ServiceBase" inverseName="queryResults" inverseEntity="ServiceBase" syncable="YES"/>
+        <relationship name="object" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ServiceBase" inverseName="queryItems" inverseEntity="ServiceBase" syncable="YES"/>
+        <relationship name="query" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Query" inverseName="queryItems" inverseEntity="Query" syncable="YES"/>
+    </entity>
+    <entity name="RichType" representedClassName="RichType" parentEntity="ServiceObject" syncable="YES">
+        <attribute name="id_" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="ServiceBase" representedClassName="ServiceBase" isAbstract="YES" parentEntity="ServiceObject" syncable="YES">
         <attribute name="activityDate" optional="YES" attributeType="Date" syncable="YES"/>
@@ -137,51 +146,43 @@
         <attribute name="schema" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="sortDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="created" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ServiceBase" inverseName="creator" inverseEntity="ServiceBase" syncable="YES"/>
-        <relationship name="creator" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ServiceBase" inverseName="created" inverseEntity="ServiceBase" syncable="YES"/>
-        <relationship name="owned" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ServiceBase" inverseName="owner" inverseEntity="ServiceBase" syncable="YES"/>
-        <relationship name="owner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ServiceBase" inverseName="owned" inverseEntity="ServiceBase" syncable="YES"/>
-        <relationship name="queryResults" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="QueryResult" inverseName="result" inverseEntity="QueryResult" syncable="YES"/>
+        <relationship name="creator" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Shortcut" syncable="YES"/>
+        <relationship name="modifier" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Shortcut" syncable="YES"/>
+        <relationship name="owner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Shortcut" syncable="YES"/>
+        <relationship name="queryItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="QueryItem" inverseName="object" inverseEntity="QueryItem" syncable="YES"/>
     </entity>
     <entity name="ServiceObject" representedClassName="ServiceObject" isAbstract="YES" syncable="YES">
         <attribute name="updateScope" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="Shortcut" representedClassName="Shortcut" parentEntity="Entity" syncable="YES">
+        <attribute name="entityId" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="User" representedClassName="User" parentEntity="Entity" syncable="YES">
         <attribute name="area" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="authSource" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="bio" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="developer" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="facebookId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="googleId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="lastSignedInDate" optional="YES" attributeType="Date" syncable="YES"/>
-        <attribute name="oauthData" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="oauthId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="oauthSecret" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="oauthToken" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="password" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="patchesLikes" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="patchesOwned" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="patchesWatching" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="role" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="twitterId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="validationDate" optional="YES" attributeType="Date" syncable="YES"/>
-        <attribute name="validationNotifyDate" optional="YES" attributeType="Date" syncable="YES"/>
-        <attribute name="webUri" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="replies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Message" inverseName="replyTo" inverseEntity="Message" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Entity" positionX="-99" positionY="-154" width="128" height="253"/>
-        <element name="Location" positionX="-452" positionY="278" width="128" height="163"/>
-        <element name="Message" positionX="279" positionY="-36" width="128" height="103"/>
-        <element name="Notification" positionX="279" positionY="95" width="128" height="193"/>
-        <element name="PACategory" positionX="-450" positionY="98" width="128" height="118"/>
-        <element name="PALink" positionX="-288" positionY="-243" width="128" height="118"/>
-        <element name="Patch" positionX="81" positionY="-243" width="128" height="103"/>
-        <element name="Photo" positionX="-693" positionY="90" width="128" height="180"/>
-        <element name="Place" positionX="279" positionY="-243" width="128" height="178"/>
-        <element name="ProviderMap" positionX="-452" positionY="450" width="128" height="148"/>
-        <element name="Query" positionX="-216" positionY="117" width="128" height="88"/>
-        <element name="QueryResult" positionX="-218" positionY="267" width="128" height="120"/>
-        <element name="ServiceBase" positionX="-450" positionY="-243" width="128" height="330"/>
+        <element name="Entity" positionX="-99" positionY="-154" width="128" height="345"/>
+        <element name="Link" positionX="-288" positionY="-243" width="128" height="150"/>
+        <element name="Location" positionX="-452" positionY="278" width="128" height="150"/>
+        <element name="Message" positionX="279" positionY="-36" width="128" height="75"/>
+        <element name="Notification" positionX="279" positionY="95" width="128" height="195"/>
+        <element name="Patch" positionX="81" positionY="-243" width="128" height="90"/>
+        <element name="Photo" positionX="-693" positionY="90" width="128" height="150"/>
+        <element name="Place" positionX="279" positionY="-243" width="128" height="165"/>
+        <element name="ProviderMap" positionX="-452" positionY="450" width="128" height="135"/>
+        <element name="Query" positionX="-216" positionY="117" width="128" height="195"/>
+        <element name="QueryItem" positionX="-495" positionY="-99" width="128" height="135"/>
+        <element name="RichType" positionX="-450" positionY="98" width="128" height="75"/>
+        <element name="ServiceBase" positionX="-450" positionY="-243" width="128" height="315"/>
         <element name="ServiceObject" positionX="-695" positionY="-45" width="128" height="60"/>
-        <element name="User" positionX="81" positionY="-108" width="128" height="328"/>
+        <element name="Shortcut" positionX="-486" positionY="-90" width="128" height="60"/>
+        <element name="User" positionX="81" positionY="-108" width="128" height="165"/>
     </elements>
 </model>

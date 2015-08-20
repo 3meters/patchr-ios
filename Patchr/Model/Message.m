@@ -1,5 +1,7 @@
 #import "Message.h"
-#import "User.h"
+#import "Link.h"
+#import "Shortcut.h"
+#import "Patchr-Swift.h"
 
 @interface Message ()
 
@@ -14,11 +16,40 @@
                             mappingNames:(BOOL)mapNames {
 
     message = (Message *)[Entity setPropertiesFromDictionary:dictionary onObject:message mappingNames:mapNames];
-    message.rootId = mapNames ? dictionary[@"_root"] : dictionary[@"rootId"];
-    message.replyToId = mapNames ? dictionary[@"_replyTo"] : dictionary[@"replyToId"];
     
-    if ([dictionary[@"_replyTo"] isKindOfClass:[NSString class]]) {
-        message.replyTo = [User fetchOrInsertOneById:dictionary[@"_replyTo"] inManagedObjectContext:message.managedObjectContext];
+    message.patch = nil;
+    if (dictionary[@"linked"]) {
+        for (id linkMap in dictionary[@"linked"]) {
+            if ([linkMap isKindOfClass:[NSDictionary class]]) {
+                if ([linkMap[@"schema"] isEqualToString: @"patch"]) {
+                    NSString *entityId = [[NSString alloc] initWithString:linkMap[@"_id"]];
+                    NSString *decoratedId = [Shortcut decorateId:entityId];
+                    id shortcut = [Shortcut fetchOrInsertOneById:decoratedId inManagedObjectContext:message.managedObjectContext];
+                    message.patch = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut mappingNames:mapNames];
+                }
+                else if ([linkMap[@"schema"] isEqualToString: @"message"]) {
+                    NSString *entityId = [[NSString alloc] initWithString:linkMap[@"_id"]];
+                    NSString *decoratedId = [Shortcut decorateId:entityId];
+                    id shortcut = [Shortcut fetchOrInsertOneById:decoratedId inManagedObjectContext:message.managedObjectContext];
+                    message.message = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut mappingNames:mapNames];
+                }
+            }
+        }
+    }
+    
+    message.userLikesValue = NO;
+    message.userLikesId = nil;
+    
+    if ([dictionary[@"links"] isKindOfClass:[NSArray class]]) {
+        for (id linkMap in dictionary[@"links"]) {
+            if ([linkMap isKindOfClass:[NSDictionary class]]) {
+                
+                if ([linkMap[@"fromSchema"] isEqualToString:@"user"] && [linkMap[@"type"] isEqualToString:@"like"]) {
+                    message.userLikesId = linkMap[@"_id"];
+                    message.userLikesValue = YES;
+                }
+            }
+        }
     }
 
     return message;

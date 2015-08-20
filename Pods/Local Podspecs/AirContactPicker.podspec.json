@@ -1,0 +1,25 @@
+{
+  "name": "AirContactPicker",
+  "version": "0.2.0",
+  "summary": "A contact picker that looks like the one in Apple mail for iOS7. This implementation uses a UICollectionView.",
+  "description": "MBContactPicker is a library that uses the latest styling and technologies\navailable on iOS.\n\nI wrote this library to provide an update to the awesome THContactPicker that\nour company used in the past. My main goal when I created this library was to build\nsomething that behaved and felt like the native mail app's contact selector.\n\nMy secondary goal was to make using it extremely simple while still providing\na high level of flexibility for projects that need it.",
+  "homepage": "http://github.com/3meters/AirContactPicker",
+  "license": "MIT",
+  "authors": {
+    "Matt Bowman": "mbowman@citrrus.com",
+    "Matt Hupman": "mhupman@citrrus.com"
+  },
+  "platforms": {
+    "ios": "7.0"
+  },
+  "source": {
+    "git": "https://github.com/3meters/AirContactPicker.git",
+    "tag": "0.2.0"
+  },
+  "source_files": "MBContactPicker",
+  "requires_arc": true,
+  "frameworks": "UIKit",
+  "resources": [
+    "MBContactPicker/UserTableViewCell.xib"
+  ]
+}

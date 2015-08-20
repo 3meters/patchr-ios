@@ -10,179 +10,214 @@ import AssetsLibrary
 import Foundation
 import UIKit
 
-
 // PhotoChooserUI
 //
 // This class manages the sequence of events that take place when a user needs to select an image for use
 // within the app.
 //
 
-class PhotoChooserUI: NSObject,
-                      UIActionSheetDelegate,
-                      UIImagePickerControllerDelegate, UINavigationControllerDelegate // both needed for UIImagePicker
-{
+class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
+	/*
+	 * Map from button indices to functions because some buttons aren't there all the
+	 * time (for example, the camera is not available on the simulator).
+	 */
+    typealias CompletionHandler = (success:Bool) -> Void
+    
     private weak var hostViewController: UIViewController?
-    private var finishedChoosing: ((UIImage) -> Void)? = nil
-    
-    init(hostViewController: UIViewController)
-    {
-        self.hostViewController = hostViewController
+	private var photoButtonFunctionMap = [Int: PhotoButtonFunction]()
+	private var finishedChoosing: ((UIImage?, ImageResult?) -> Void)? = nil
+    private var library: ALAssetsLibrary?
+    private var chosenPhotoFunction: PhotoButtonFunction?
 
-        super.init()
-    }
-    
-    // MARK: Photo UI
-    
-    private lazy var imagePickerController: UIImagePickerController = {
-        return UIImagePickerController(rootViewController: self.hostViewController!)
-    }()
-    
-    private enum PhotoButtonFunction {
-        case UseLatestPhoto
-        case TakePhoto
-        case ChoosePhoto
-        case SearchPhoto
-    }
-    
-    // Map from button indices to functions because some buttons aren't there all the time (for example, the camera
-    // is not available on the simulator).
-    //
-    private var photoButtonFunctionMap = [Int:PhotoButtonFunction]()
-    
-    // choosePhoto
-    //
-    // Calling choosePhoto starts the process of choosing an image, and calls the finishedChoosing block
-    // when an image has been selected.
-    //
-    func choosePhoto(finishedChoosing: (UIImage) -> Void) {
-    
-        self.finishedChoosing = finishedChoosing
-        
-        let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: "Cancel", destructiveButtonTitle: nil)
-        
-        let cameraRollAvailable = UIImagePickerController.isSourceTypeAvailable(.SavedPhotosAlbum)
-        let cameraAvailable = UIImagePickerController.isSourceTypeAvailable(.Camera)
-        let photoLibraryAvailable = UIImagePickerController.isSourceTypeAvailable(.PhotoLibrary)
-        let photoSearchAvailable = false // because not implemented yet
-        
-        if cameraRollAvailable
-        {
-            photoButtonFunctionMap[sheet.addButtonWithTitle(LocalizedString("Use Latest Photo"))] = .UseLatestPhoto
-        }
-        if cameraAvailable
-        {
-            photoButtonFunctionMap[sheet.addButtonWithTitle(LocalizedString("Take Photo"))] = .TakePhoto
-        }
-        if cameraRollAvailable
-        {
-            photoButtonFunctionMap[sheet.addButtonWithTitle(LocalizedString("Choose From Library"))] = .ChoosePhoto
-        }
-//        if photoSearchAvailable
-//        {
-//            photoButtonFunctionMap[sheet.addButtonWithTitle(LocalizedString("Photo Search"))] = .SearchPhoto
-//        }
-        
-        sheet.showInView(hostViewController?.view)
-    }
-    
-    private func choosePhotoFromLibrary()
-    {
-        let pickerController = UIImagePickerController()
-        pickerController.delegate = self
-        self.hostViewController?.presentViewController(pickerController, animated: true, completion: nil)
-    }
+	private lazy var imagePickerController: UIImagePickerController = {
+		return UIImagePickerController(rootViewController: self.hostViewController!)
+	}()
 
-    private func takePhotoWithCamera()
-    {
-        let pickerController = UIImagePickerController()
-        pickerController.sourceType = .Camera
-        pickerController.delegate = self
-        self.hostViewController?.presentViewController(pickerController, animated: true, completion: nil)
-    }
+	init(hostViewController: UIViewController) {
+		self.hostViewController = hostViewController
+        library = ALAssetsLibrary()
+		super.init()
+	}
 
-    private func searchForPhoto()
-    {
-        // Deferred https://github.com/steamclock/patchr/issues/41
-    }
-    
-    private func useLatestPhoto()
-    {
-        let assetsLibrary = ALAssetsLibrary()
-        var assetsGroup: ALAssetsGroup?
-        var latestAsset: ALAsset?
+	func choosePhoto(finishedChoosing: (UIImage?, ImageResult?) -> Void) {
+
+		self.finishedChoosing = finishedChoosing
+
+		let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: nil, destructiveButtonTitle: nil)
+
+		let cameraRollAvailable   = UIImagePickerController.isSourceTypeAvailable(.SavedPhotosAlbum)
+		let cameraAvailable       = UIImagePickerController.isSourceTypeAvailable(.Camera)
+		let photoLibraryAvailable = UIImagePickerController.isSourceTypeAvailable(.PhotoLibrary)
+		let photoSearchAvailable  = true
+
+		if photoSearchAvailable {
+			photoButtonFunctionMap[sheet.addButtonWithTitle("Search for photos")] = .SearchPhoto
+		}
+		if cameraRollAvailable {
+			photoButtonFunctionMap[sheet.addButtonWithTitle("Select a library photo")] = .ChoosePhoto
+		}
+		if cameraAvailable {
+			photoButtonFunctionMap[sheet.addButtonWithTitle("Take a new photo")] = .TakePhoto
+		}
         
-        // This enumeration runs asynchronously, so this is a little weird.
-        // At this point we assume that there's only one "Saved Photos" group, and that the photo we want is the last one
-        // in the group. 
+        sheet.addButtonWithTitle("Cancel")
+        sheet.cancelButtonIndex = sheet.numberOfButtons - 1
+
+		sheet.showInView(hostViewController?.view)
+	}
+
+	private func choosePhotoFromLibrary() {
+        chosenPhotoFunction = .ChoosePhoto
+		let pickerController = UIImagePickerController()
+		pickerController.delegate = self
+		self.hostViewController?.presentViewController(pickerController, animated: true, completion: nil)
+	}
+
+	private func takePhotoWithCamera() {
+        chosenPhotoFunction = .TakePhoto
+		let pickerController = UIImagePickerController()
+		pickerController.sourceType = .Camera
+		pickerController.delegate = self
+		self.hostViewController?.presentViewController(pickerController, animated: true, completion: nil)
+	}
+
+	private func searchForPhoto() {
+        chosenPhotoFunction = .SearchPhoto
+        let pickerNavController = UIStoryboard(
+            name: "Main",
+            bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("PhotoPickerNavController") as? UINavigationController
+        if let pickerController = pickerNavController?.topViewController as? PhotoPickerViewController {
+            pickerController.pickerDelegate = self
+            self.hostViewController?.presentViewController(pickerNavController!, animated: true, completion: nil)
+        }
+	}
+
+	private func addPhotoToAlbum(image: UIImage, toAlbum albumName: String, handler: CompletionHandler) {
+
+        var orientation : ALAssetOrientation = ALAssetOrientation(rawValue:image.imageOrientation.rawValue)!
         
-        assetsLibrary.enumerateGroupsWithTypes(ALAssetsGroupSavedPhotos, usingBlock: { (group, stop) -> Void in
-        
-            if assetsGroup == nil {
-                assetsGroup = group
-                assetsGroup?.setAssetsFilter(ALAssetsFilter.allPhotos())
-                assetsGroup?.enumerateAssetsUsingBlock({ (asset, index, stop) -> Void in
-                    if asset != nil {
-                        latestAsset = asset
-                    } else {
-                        // TODO: What if there are no photos at all?
-                        
-                        // asset is nil, so we're at the end of the group, which we assume means we've got the last photo.
-                        let assetCGImage = latestAsset?.defaultRepresentation().fullScreenImage()
-                        if let uiImage = UIImage(CGImage: assetCGImage?.takeUnretainedValue()) {
-    /*!!!*/                 self.finishedChoosing!(uiImage)
-                        }
-                        // TODO: Taking an unretained value so I'm not sure it's safe. Need to think about this.
-                    }
-                })
-                stop.memory = true // Is this working? We get a nil callback anyway.
-            }
+		self.library?.addAssetsGroupAlbumWithName(albumName, resultBlock: {
+			(group: ALAssetsGroup!) -> Void in
             
-        }) { (error) -> Void in
-            println("error: \(error)");
-        }
-        
-    }
-    
-    // MARK: UIActionSheetDelegate
-    
-    func actionSheet(actionSheet: UIActionSheet, clickedButtonAtIndex buttonIndex: Int)
-    {
-        if buttonIndex != actionSheet.cancelButtonIndex
-        {
-            // There are some strange visual artifacts with the share sheet and the presented 
-            // view controllers. Adding a small delay seems to prevent them.
-            delay(0.4, { () -> () in
-                switch self.photoButtonFunctionMap[buttonIndex]! {
+			/*-- Find Group --*/
+			var groupToAddTo: ALAssetsGroup?;
+            
+            self.library?.enumerateGroupsWithTypes(ALAssetsGroupType(ALAssetsGroupAlbum),
+                usingBlock: {
+                    (group: ALAssetsGroup?, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
                     
-                case .UseLatestPhoto:
-                    self.useLatestPhoto()
-                    
-                case .TakePhoto:
-                    self.takePhotoWithCamera()
-                    
-                case .ChoosePhoto:
-                    self.choosePhotoFromLibrary()
-                    
-                case .SearchPhoto:
-                    self.searchForPhoto()
-                }
-            })
-        }
-    }
+                    if (group != nil) {
+                        if group!.valueForProperty(ALAssetsGroupPropertyName) as! String == albumName {
+                            groupToAddTo = group;
+                            
+                            self.library?.writeImageToSavedPhotosAlbum(image.CGImage,
+                                orientation: orientation,
+                                completionBlock: { (assetURL: NSURL!, error: NSError!) -> Void in
+                                
+                                if (error == nil) {
+                                    self.library?.assetForURL(assetURL,
+                                        resultBlock: {
+                                            (asset: ALAsset!) -> Void in
+                                            var yes: Bool? = groupToAddTo?.addAsset(asset);
+                                            if (yes == true) {
+                                                handler(success: true);
+                                            }
+                                        },
+                                        failureBlock: {
+                                            (error2: NSError!) -> Void in
+                                            print("Failed to add asset");
+                                            handler(success: false);
+                                    });
+                                }
+                            });
+                        }
+                    } /*Group Is Not nil*/
+                },
+                failureBlock: {
+                    (error: NSError!) -> Void in
+                    print("Failed to find group");
+                    handler(success: false);
+            });
+            
+            }, failureBlock: {
+                (error: NSError!) -> Void in
+                print("Failed to create \(error)");
+                handler(success: false);
+        });
+	}
 
-    // MARK: UIImagePickerControllerDelegate
+	private enum PhotoButtonFunction {
+		case TakePhoto
+		case ChoosePhoto
+		case SearchPhoto
+	}
+}
+
+@objc protocol PhotoBrowseControllerDelegate {
+    optional func photoBrowseController(didFinishPickingPhoto imageResult: ImageResult) -> Void
+    optional func photoBrowseController(didLikePhoto liked: Bool) -> Void
+    optional func photoBrowseControllerDidCancel() -> Void
+}
+
+extension PhotoChooserUI: PhotoBrowseControllerDelegate {
     
-    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject])
-    {
+    func photoBrowseController(didFinishPickingPhoto imageResult: ImageResult) -> Void {
         hostViewController?.dismissViewControllerAnimated(true, completion: nil)
-        if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            self.finishedChoosing!(image)
-        }
+        self.finishedChoosing!(nil, imageResult)
     }
     
-    func imagePickerControllerDidCancel(picker: UIImagePickerController)
-    {
+    func photoBrowseController(didLikePhoto liked: Bool) { }
+    
+    func photoBrowseControllerDidCancel() {
         hostViewController?.dismissViewControllerAnimated(true, completion: nil)
     }
- 
+}
+
+extension PhotoChooserUI: UIImagePickerControllerDelegate {
+    
+	func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject:AnyObject]) {
+        
+		hostViewController?.dismissViewControllerAnimated(true, completion: nil)
+		if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            
+			/* If the user took a photo then add it to the patchr photo album */
+            if self.chosenPhotoFunction == .TakePhoto {
+                self.addPhotoToAlbum(image, toAlbum: "Patchr") {
+                    (success) -> Void in
+                    print("Image added to Patchr album: \(success)");
+                    self.finishedChoosing!(image, nil)
+                }
+            }
+            else {
+                self.finishedChoosing!(image, nil)
+            }
+		}
+	}
+
+	func imagePickerControllerDidCancel(picker: UIImagePickerController) {
+		hostViewController?.dismissViewControllerAnimated(true, completion: nil)
+	}
+}
+
+extension PhotoChooserUI: UIActionSheetDelegate {
+    
+	func actionSheet(actionSheet: UIActionSheet, clickedButtonAtIndex buttonIndex: Int) {
+		if buttonIndex != actionSheet.cancelButtonIndex {
+			// There are some strange visual artifacts with the share sheet and the presented
+			// view controllers. Adding a small delay seems to prevent them.
+			delay(0.4, {
+				() -> () in
+				switch self.photoButtonFunctionMap[buttonIndex]! {
+					case .TakePhoto:
+						self.takePhotoWithCamera()
+
+					case .ChoosePhoto:
+						self.choosePhotoFromLibrary()
+
+					case .SearchPhoto:
+						self.searchForPhoto()
+				}
+			})
+		}
+	}
 }

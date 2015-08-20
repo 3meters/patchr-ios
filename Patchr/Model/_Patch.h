@@ -5,18 +5,15 @@
 #import "Entity.h"
 
 extern const struct PatchAttributes {
-	__unsafe_unretained NSString *signalFence;
+	__unsafe_unretained NSString *countMessages;
+	__unsafe_unretained NSString *userHasMessaged;
 } PatchAttributes;
 
 extern const struct PatchRelationships {
-	__unsafe_unretained NSString *category;
-	__unsafe_unretained NSString *messages;
 	__unsafe_unretained NSString *place;
 } PatchRelationships;
 
-@class PACategory;
-@class Message;
-@class Place;
+@class Shortcut;
 
 @interface PatchID : EntityID {}
 @end
@@ -27,51 +24,43 @@ extern const struct PatchRelationships {
 + (NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_;
 @property (nonatomic, readonly, strong) PatchID* objectID;
 
-@property (nonatomic, strong) NSNumber* signalFence;
+@property (nonatomic, strong) NSNumber* countMessages;
 
-@property (atomic) double signalFenceValue;
-- (double)signalFenceValue;
-- (void)setSignalFenceValue:(double)value_;
+@property (atomic) int64_t countMessagesValue;
+- (int64_t)countMessagesValue;
+- (void)setCountMessagesValue:(int64_t)value_;
 
-//- (BOOL)validateSignalFence:(id*)value_ error:(NSError**)error_;
+//- (BOOL)validateCountMessages:(id*)value_ error:(NSError**)error_;
 
-@property (nonatomic, strong) PACategory *category;
+@property (nonatomic, strong) NSNumber* userHasMessaged;
 
-//- (BOOL)validateCategory:(id*)value_ error:(NSError**)error_;
+@property (atomic) BOOL userHasMessagedValue;
+- (BOOL)userHasMessagedValue;
+- (void)setUserHasMessagedValue:(BOOL)value_;
 
-@property (nonatomic, strong) NSSet *messages;
+//- (BOOL)validateUserHasMessaged:(id*)value_ error:(NSError**)error_;
 
-- (NSMutableSet*)messagesSet;
-
-@property (nonatomic, strong) Place *place;
+@property (nonatomic, strong) Shortcut *place;
 
 //- (BOOL)validatePlace:(id*)value_ error:(NSError**)error_;
 
 @end
 
-@interface _Patch (MessagesCoreDataGeneratedAccessors)
-- (void)addMessages:(NSSet*)value_;
-- (void)removeMessages:(NSSet*)value_;
-- (void)addMessagesObject:(Message*)value_;
-- (void)removeMessagesObject:(Message*)value_;
-
-@end
-
 @interface _Patch (CoreDataGeneratedPrimitiveAccessors)
 
-- (NSNumber*)primitiveSignalFence;
-- (void)setPrimitiveSignalFence:(NSNumber*)value;
+- (NSNumber*)primitiveCountMessages;
+- (void)setPrimitiveCountMessages:(NSNumber*)value;
 
-- (double)primitiveSignalFenceValue;
-- (void)setPrimitiveSignalFenceValue:(double)value_;
+- (int64_t)primitiveCountMessagesValue;
+- (void)setPrimitiveCountMessagesValue:(int64_t)value_;
 
-- (PACategory*)primitiveCategory;
-- (void)setPrimitiveCategory:(PACategory*)value;
+- (NSNumber*)primitiveUserHasMessaged;
+- (void)setPrimitiveUserHasMessaged:(NSNumber*)value;
 
-- (NSMutableSet*)primitiveMessages;
-- (void)setPrimitiveMessages:(NSMutableSet*)value;
+- (BOOL)primitiveUserHasMessagedValue;
+- (void)setPrimitiveUserHasMessagedValue:(BOOL)value_;
 
-- (Place*)primitivePlace;
-- (void)setPrimitivePlace:(Place*)value;
+- (Shortcut*)primitivePlace;
+- (void)setPrimitivePlace:(Shortcut*)value;
 
 @end

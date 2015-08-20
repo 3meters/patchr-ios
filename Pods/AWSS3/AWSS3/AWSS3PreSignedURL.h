@@ -1,4 +1,4 @@
-/**
+/*
  Copyright 2010-2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
  Licensed under the Apache License, Version 2.0 (the "License").
@@ -189,7 +189,7 @@ typedef NS_ENUM(NSInteger, AWSS3PresignedURLErrorType) {
  @return A pre-signed NSURL for the resource. return nil if any errors occured.
  @see AWSS3GetPreSignedURLRequest
  */
-- (BFTask *)getPreSignedURL:(AWSS3GetPreSignedURLRequest *)getPreSignedURLRequest;
+- (AWSTask *)getPreSignedURL:(AWSS3GetPreSignedURLRequest *)getPreSignedURLRequest;
 
 @end
 

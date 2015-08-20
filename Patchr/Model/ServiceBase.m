@@ -1,5 +1,8 @@
 #import "ServiceBase.h"
 #import "ModelUtilities.h"
+#import "User.h"
+#import "Shortcut.h"
+#import "Patchr-Swift.h"
 
 @interface ServiceBase ()
 
@@ -9,8 +12,29 @@
 
 @implementation ServiceBase
 
+/*
+ * The routines to fetch an object from the data model are handled here for 
+ * all subclasses of ServiceBase.
+ */
+
++ (id)fetchOrInsertOneById:(NSString *)id_
+    inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext {
+    /*
+     * Fetch this object from the data model. If this object is not in the data model yet then add it.
+     */
+    ServiceBase *item = [[self class] fetchOneById:id_ inManagedObjectContext:managedObjectContext];
+    if (!item) {
+        item = [[self class] insertInManagedObjectContext:managedObjectContext];
+        item.id_ = id_;
+    }
+    return item;
+}
+
 + (id)fetchOneById:(NSString *)id_ inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext {
-    
+    /*
+     * Fetch this object instance from the data model using id_ as the predicate key. Sort descriptor is required
+     * but we only expect to get back and return one.
+     */
     NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:[[self class] entityName]];
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:ServiceBaseAttributes.id_ ascending:NO];
     fetchRequest.sortDescriptors = @[sortDescriptor];
@@ -23,18 +47,10 @@
     return item;
 }
 
-+ (id)fetchOrInsertOneById:(NSString *)id_ inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext {
-    ServiceBase *item = [[self class] fetchOneById:id_ inManagedObjectContext:managedObjectContext];
-    if (!item) {
-        item = [[self class] insertInManagedObjectContext:managedObjectContext];
-        item.id_ = id_;
-    }
-    return item;
-}
-
 + (ServiceBase *)setPropertiesFromDictionary:(NSDictionary *)dictionary
                                     onObject:(ServiceBase *)base
                                 mappingNames:(BOOL)mapNames {
+    
     base.id_ = (mapNames && dictionary[@"_id"]) ? dictionary[@"_id"] : dictionary[@"id"];
     base.name = dictionary[@"name"];
     base.schema = dictionary[@"schema"];
@@ -44,6 +60,11 @@
     base.ownerId = (mapNames && dictionary[@"_owner"]) ? dictionary[@"_owner"] : dictionary[@"owner"];
     base.creatorId = (mapNames && dictionary[@"_creator"]) ? dictionary[@"_creator"] : dictionary[@"creator"];
     base.modifierId = (mapNames && dictionary[@"_modifier"]) ? dictionary[@"_modifier"] : dictionary[@"modifier"];
+    
+    base.createdDate = nil;
+    base.modifiedDate = nil;
+    base.activityDate = nil;
+    base.sortDate = nil;
     
     if ([dictionary[@"createdDate"] isKindOfClass:[NSNumber class]]) {
         base.createdDate = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"createdDate"] doubleValue]/1000];
@@ -61,40 +82,48 @@
         base.sortDate = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"sortDate"] doubleValue]/1000];
     }
     
-    if ([dictionary[@"creator"] isKindOfClass:[NSDictionary class]]) {
-        if ([ModelUtilities modelClassForSchema:dictionary[@"creator"][@"schema"]]) {
-            Class modelClass = [ModelUtilities modelClassForSchema:dictionary[@"creator"][@"schema"]];
-            id creator = [modelClass fetchOrInsertOneById:dictionary[@"creator"][@"_id"] inManagedObjectContext:base.managedObjectContext];
-            base.creator = [modelClass setPropertiesFromDictionary:dictionary[@"creator"] onObject:creator mappingNames:mapNames];
-        }
-    }
-    
-    if ([dictionary[@"linked"] isKindOfClass:[NSArray class]]) {
-        // Configure ServiceBase-specific relationships
-        
-        for (id link in dictionary[@"linked"]) {
-            
-            if ([link isKindOfClass:[NSDictionary class]]) {
-                
-                NSDictionary *linkDictionary = link;
-                
-                if ([ModelUtilities modelClassForSchema:linkDictionary[@"schema"]]) {
-                    
-                    Class modelClass = [ModelUtilities modelClassForSchema:linkDictionary[@"schema"]];
-                    ServiceBase *modelObject = [modelClass fetchOrInsertOneById:linkDictionary[@"_id"] inManagedObjectContext:base.managedObjectContext];
-                    [modelClass setPropertiesFromDictionary:linkDictionary onObject:modelObject mappingNames:mapNames];
-
-                    if (base.creatorId == modelObject.id_) {
-                        base.creator = modelObject;
-                    }
-                    
-                    if (base.ownerId == modelObject.id_) {
-                        base.owner = modelObject;
-                    }
+    base.creator = nil;
+    if (dictionary[@"linked"]) {
+        for (id linkMap in dictionary[@"linked"]) {
+            if ([linkMap isKindOfClass:[NSDictionary class]]) {
+                if ([linkMap[@"schema"] isEqual: @"user"] && [linkMap[@"_id"] isEqual: base.creatorId]) {
+                    NSString *entityId = [[NSString alloc] initWithString:linkMap[@"_id"]];
+                    NSString *decoratedId = [Shortcut decorateId:entityId];
+                    id shortcut = [Shortcut fetchOrInsertOneById:decoratedId inManagedObjectContext:base.managedObjectContext];
+                    base.creator = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut mappingNames:mapNames];
                 }
             }
         }
     }
+    
+    /*
+     * If an embedded user is already in the store, the embedded properties will overwrite
+     * the store properties. If the embedded user is added to the store then it will be flagged
+     * as compact so any downstream logic can detect that it may not be fully formed.
+     */
+//    if ([dictionary[@"owner"] isKindOfClass:[NSDictionary class]]) {
+//        if ([ModelUtilities modelClassForSchema:dictionary[@"owner"][@"schema"]]) {
+//            dictionary[@"owner"][@"_id"] = [Shortcut decorateId:dictionary[@"owner"][@"_id"]];
+//            id shortcut = [Shortcut fetchOrInsertOneById:dictionary[@"owner"][@"_id"] inManagedObjectContext:base.managedObjectContext];
+//            base.owner = [Shortcut setPropertiesFromDictionary:dictionary[@"owner"] onObject:shortcut mappingNames:mapNames];
+//        }
+//    }
+//    
+//    if ([dictionary[@"creator"] isKindOfClass:[NSDictionary class]]) {
+//        if ([ModelUtilities modelClassForSchema:dictionary[@"creator"][@"schema"]]) {
+//            dictionary[@"creator"][@"_id"] = [Shortcut decorateId:dictionary[@"creator"][@"_id"]];
+//            id shortcut = [Shortcut fetchOrInsertOneById:dictionary[@"creator"][@"_id"] inManagedObjectContext:base.managedObjectContext];
+//            base.creator = [Shortcut setPropertiesFromDictionary:dictionary[@"creator"] onObject:shortcut mappingNames:mapNames];
+//        }
+//    }
+//    
+//    if ([dictionary[@"modifier"] isKindOfClass:[NSDictionary class]]) {
+//        if ([ModelUtilities modelClassForSchema:dictionary[@"modifier"][@"schema"]]) {
+//            dictionary[@"modifier"][@"_id"] = [Shortcut decorateId:dictionary[@"modifier"][@"_id"]];
+//            id shortcut = [Shortcut fetchOrInsertOneById:dictionary[@"modifier"][@"_id"] inManagedObjectContext:base.managedObjectContext];
+//            base.modifier = [Shortcut setPropertiesFromDictionary:dictionary[@"modifier"] onObject:shortcut mappingNames:mapNames];
+//        }
+//    }
     
     return base;
 }

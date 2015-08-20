@@ -2,5 +2,4 @@
 
 @interface ServiceObject : _ServiceObject {}
 
-
 @end

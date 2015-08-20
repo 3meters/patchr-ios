@@ -4,12 +4,19 @@
 #import "_Query.h"
 
 const struct QueryAttributes QueryAttributes = {
+	.criteria = @"criteria",
+	.executed = @"executed",
+	.more = @"more",
 	.name = @"name",
+	.offset = @"offset",
+	.pageSize = @"pageSize",
 	.parameters = @"parameters",
+	.sidecar = @"sidecar",
+	.valid = @"valid",
 };
 
 const struct QueryRelationships QueryRelationships = {
-	.queryResults = @"queryResults",
+	.queryItems = @"queryItems",
 };
 
 @implementation QueryID
@@ -38,21 +45,174 @@ const struct QueryRelationships QueryRelationships = {
 + (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key {
 	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
 
+	if ([key isEqualToString:@"criteriaValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"criteria"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"executedValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"executed"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"moreValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"more"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"offsetValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"offset"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"pageSizeValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"pageSize"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"validValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"valid"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+
 	return keyPaths;
+}
+
+@dynamic criteria;
+
+- (BOOL)criteriaValue {
+	NSNumber *result = [self criteria];
+	return [result boolValue];
+}
+
+- (void)setCriteriaValue:(BOOL)value_ {
+	[self setCriteria:@(value_)];
+}
+
+- (BOOL)primitiveCriteriaValue {
+	NSNumber *result = [self primitiveCriteria];
+	return [result boolValue];
+}
+
+- (void)setPrimitiveCriteriaValue:(BOOL)value_ {
+	[self setPrimitiveCriteria:@(value_)];
+}
+
+@dynamic executed;
+
+- (BOOL)executedValue {
+	NSNumber *result = [self executed];
+	return [result boolValue];
+}
+
+- (void)setExecutedValue:(BOOL)value_ {
+	[self setExecuted:@(value_)];
+}
+
+- (BOOL)primitiveExecutedValue {
+	NSNumber *result = [self primitiveExecuted];
+	return [result boolValue];
+}
+
+- (void)setPrimitiveExecutedValue:(BOOL)value_ {
+	[self setPrimitiveExecuted:@(value_)];
+}
+
+@dynamic more;
+
+- (BOOL)moreValue {
+	NSNumber *result = [self more];
+	return [result boolValue];
+}
+
+- (void)setMoreValue:(BOOL)value_ {
+	[self setMore:@(value_)];
+}
+
+- (BOOL)primitiveMoreValue {
+	NSNumber *result = [self primitiveMore];
+	return [result boolValue];
+}
+
+- (void)setPrimitiveMoreValue:(BOOL)value_ {
+	[self setPrimitiveMore:@(value_)];
 }
 
 @dynamic name;
 
+@dynamic offset;
+
+- (int32_t)offsetValue {
+	NSNumber *result = [self offset];
+	return [result intValue];
+}
+
+- (void)setOffsetValue:(int32_t)value_ {
+	[self setOffset:@(value_)];
+}
+
+- (int32_t)primitiveOffsetValue {
+	NSNumber *result = [self primitiveOffset];
+	return [result intValue];
+}
+
+- (void)setPrimitiveOffsetValue:(int32_t)value_ {
+	[self setPrimitiveOffset:@(value_)];
+}
+
+@dynamic pageSize;
+
+- (int32_t)pageSizeValue {
+	NSNumber *result = [self pageSize];
+	return [result intValue];
+}
+
+- (void)setPageSizeValue:(int32_t)value_ {
+	[self setPageSize:@(value_)];
+}
+
+- (int32_t)primitivePageSizeValue {
+	NSNumber *result = [self primitivePageSize];
+	return [result intValue];
+}
+
+- (void)setPrimitivePageSizeValue:(int32_t)value_ {
+	[self setPrimitivePageSize:@(value_)];
+}
+
 @dynamic parameters;
 
-@dynamic queryResults;
+@dynamic sidecar;
 
-- (NSMutableSet*)queryResultsSet {
-	[self willAccessValueForKey:@"queryResults"];
+@dynamic valid;
 
-	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"queryResults"];
+- (BOOL)validValue {
+	NSNumber *result = [self valid];
+	return [result boolValue];
+}
 
-	[self didAccessValueForKey:@"queryResults"];
+- (void)setValidValue:(BOOL)value_ {
+	[self setValid:@(value_)];
+}
+
+- (BOOL)primitiveValidValue {
+	NSNumber *result = [self primitiveValid];
+	return [result boolValue];
+}
+
+- (void)setPrimitiveValidValue:(BOOL)value_ {
+	[self setPrimitiveValid:@(value_)];
+}
+
+@dynamic queryItems;
+
+- (NSMutableSet*)queryItemsSet {
+	[self willAccessValueForKey:@"queryItems"];
+
+	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"queryItems"];
+
+	[self didAccessValueForKey:@"queryItems"];
 	return result;
 }
 

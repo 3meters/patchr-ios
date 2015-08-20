@@ -3,14 +3,9 @@
 
 #import "_Message.h"
 
-const struct MessageAttributes MessageAttributes = {
-	.replyToId = @"replyToId",
-	.rootId = @"rootId",
-};
-
 const struct MessageRelationships MessageRelationships = {
+	.message = @"message",
 	.patch = @"patch",
-	.replyTo = @"replyTo",
 };
 
 @implementation MessageID
@@ -42,13 +37,9 @@ const struct MessageRelationships MessageRelationships = {
 	return keyPaths;
 }
 
-@dynamic replyToId;
-
-@dynamic rootId;
+@dynamic message;
 
 @dynamic patch;
-
-@dynamic replyTo;
 
 @end
 

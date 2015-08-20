@@ -9,10 +9,10 @@
 #ifndef Patchr_PAEnums_h
 #define Patchr_PAEnums_h
 
-typedef NS_ENUM(NSInteger, PAVisibilityLevel) {
-    PAVisibilityLevelPublic,
-    PAVisibilityLevelPrivate,
-    PAVisibilityLevelUnknown
+typedef NS_ENUM(NSInteger, PAWatchStatus) {
+    PAWatchStatusNonMember,
+    PAWatchStatusMember,
+    PAWatchStatusPending
 };
 
 #endif

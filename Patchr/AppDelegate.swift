@@ -7,127 +7,269 @@
 //
 
 import UIKit
-
-let PAApplicationDidReceiveRemoteNotification = "PAApplicationDidReceiveRemoteNotification"
-let PAapplicationDidBecomeActiveWithNonZeroBadge = "PAapplicationDidBecomeActiveWithNonZeroBadge"
+import Fabric
+import Crashlytics
+import Parse
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate {
-
-    var window: UIWindow?
-    var locationManager = CLLocationManager()
+class AppDelegate: UIResponder, UIApplicationDelegate {
     
-    class func appDelegate() -> AppDelegate
-    {
+    var window: UIWindow?
+    var backgroundSessionCompletionHandler: (() -> Void)?
+    
+    class func appDelegate() -> AppDelegate {
         return UIApplication.sharedApplication().delegate as! AppDelegate
     }
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
+        Log.d("Patchr launching...")
+        if launchOptions != nil {
+            Log.d(String(format: "%@", launchOptions!))
+        }
+        
+        let keys = PatchrKeys()
+        
         #if DEBUG
         AFNetworkActivityLogger.sharedLogger().startLogging()
+        AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelWarn
         #endif
         
-        Parse.setApplicationId("EonZJ4FXEADijslgqXCkg37sOGpB7AB9lDYxoHtz", clientKey: "5QRFlRQ3j7gkxyJ2cBYbHTK98WRQhoHCnHdpEKSD")
+        /* Light gray is better than black */
+        window?.backgroundColor = Colors.windowColor
+        UITabBar.appearance().selectedImageTintColor = Colors.brandColor
         
-        ProxibaseClient.sharedInstance.registerInstallStandard { (response, error) -> Void in
-            if error != nil {
-                NSLog("Error during registerInstall: \(error)")
+        /* Turn on status bar */
+        UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.Slide)
+        
+        /* 
+         * Initialize Branch: The deepLinkHandler gets called every time the app opens.
+         * That means it should be a good place to handle all initial routing.
+         */
+        Branch.getInstance().initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
+            if error == nil {
+                if let clickedBranchLink = params["+clicked_branch_link"] as? Bool where clickedBranchLink {
+                    self.routeDeepLink(params, error: error)
+                    return
+                }                
+            }
+        })
+        
+        /* Load setting defaults */
+        let defaultSettingsFile: NSString = NSBundle.mainBundle().pathForResource("DefaultSettings", ofType: "plist")!
+        let settingsDictionary: NSDictionary = NSDictionary(contentsOfFile: defaultSettingsFile as String)!
+        NSUserDefaults.standardUserDefaults().registerDefaults(settingsDictionary as [NSObject : AnyObject])
+        
+        /* Initialize Crashlytics */
+        Fabric.with([Crashlytics()])
+        
+        /* Initialize Google analytics */
+        var configureError:NSError?
+        GGLContext.sharedInstance().configureWithError(&configureError)
+        assert(configureError == nil, "Error configuring Google services: \(configureError)")
+        
+        // Optional: configure GAI options.
+        var gai = GAI.sharedInstance()
+        gai.trackerWithTrackingId("UA-33660954-6")
+        gai.trackUncaughtExceptions = true  // report uncaught exceptions
+        gai.defaultTracker.allowIDFACollection = true
+        gai.dispatchInterval = 30    // Seconds
+        gai.logger.logLevel = GAILogLevel.None
+        
+        #if DEBUG
+        gai.logger.logLevel = GAILogLevel.Warning
+        gai.dispatchInterval = 5    // Seconds
+        #endif
+        
+        /* Initialize Creative sdk */
+        AdobeUXAuthManager.sharedManager().setAuthenticationParametersWithClientID(keys.creativeSdkClientId(), clientSecret: keys.creativeSdkClientSecret(), enableSignUp: false)
+        
+        /* Change default font for button bar items */
+        let customFont = UIFont(name:"HelveticaNeue", size: 18)
+        UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: customFont!], forState: UIControlState.Normal)
+
+        /* Setup parse for push notifications */
+        Parse.setApplicationId(keys.parseApplicationId(), clientKey: keys.parseApplicationKey())
+        
+        /* Get the latest on the authenticated user if we have one */
+        if UserController.instance.authenticated {
+            UserController.instance.signinAuto()
+            /*
+            * Register this install with the service. If install registration fails the
+            * device will not accurately track notifications.
+            */
+            DataController.proxibase.registerInstallStandard {
+                response, error in
+                if let error = ServerError(error) {
+                    Log.w("Error during registerInstall: \(error)")
+                }
             }
         }
-        
-        self.locationManager.delegate = self
-        
-        if CLLocationManager.authorizationStatus() == .NotDetermined {
-            if self.locationManager.respondsToSelector(Selector("requestWhenInUseAuthorization")) {
-                // iOS 8
-                self.locationManager.requestWhenInUseAuthorization()
-            } else {
-                // iOS 7
-                self.locationManager.startUpdatingLocation() // Prompts automatically
+        else {
+            DataController.proxibase.registerInstallStandard {
+                response, error in
+                if let error = ServerError(error) {
+                    Log.w("Error during registerInstall: \(error)")
+                }
             }
-        } else if CLLocationManager.authorizationStatus() == .AuthorizedAlways || CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
-            self.locationManager.startUpdatingLocation()
         }
 
-        
-        // If the connection to the database is considered valid, then start at the usual spot, otherwise start at the splash scene.
-        
-        if ProxibaseClient.sharedInstance.authenticated {
-            self.window?.rootViewController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateInitialViewController() as? UIViewController;
-        } else {
-            let rootController = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("SplashNavigationController") as? UIViewController
-            self.window?.rootViewController = rootController
-        }
-        
-        self.window?.tintColor = UIColor(hue: 33/360, saturation: 1.0, brightness: 0.9, alpha: 1.0)
+        self.window?.tintColor = Colors.brandColor
         UISwitch.appearance().onTintColor = self.window?.tintColor
         
-        self.registerForRemoteNotifications()
+        NotificationController.instance.registerForRemoteNotifications()
+        
+        /* Show initial controller */
+        route()
         
         return true
     }
     
-    func applicationDidBecomeActive(application: UIApplication) {
-        
-        if application.applicationIconBadgeNumber > 0 {
-            NSNotificationCenter.defaultCenter().postNotificationName(PAapplicationDidBecomeActiveWithNonZeroBadge, object: self, userInfo: nil)
+    /*--------------------------------------------------------------------------------------------
+    * Routing
+    *--------------------------------------------------------------------------------------------*/
+    
+    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
+        if Branch.getInstance().handleDeepLink(url) {
+            Log.d("Branch handled deep link: \(url.absoluteString!)")
+            return true
         }
-        
-        application.applicationIconBadgeNumber = 0
-        
-        if PFInstallation.currentInstallation().badge != 0 {
-            PFInstallation.currentInstallation().badge = 0
-            PFInstallation.currentInstallation().saveEventually()
-        }
+        return false
     }
     
-    func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
+    func route() {
+        
+        /* Show initial controller */
+        self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
+        
+        /* If we have an authenticated user then start at the usual spot, otherwise start at the lobby scene. */
+        
+        if UserController.instance.authenticated {
+            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+            if let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController") as? UIViewController {
+                self.window?.setRootViewController(controller, animated: true)
+            }
+        }
+        else {
+            let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
+            if let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController") as? UIViewController {
+                self.window?.setRootViewController(controller, animated: true)
+            }
+        }
+        
+        self.window?.makeKeyAndVisible()
+    }
+    
+    func routeDeepLink(params: NSDictionary?, error: NSError?) {
+        
+        if let entityId = params!["entityId"] as? String, entitySchema = params!["entitySchema"] as? String {
+            let storyBoard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+            
+            if entitySchema == "patch" {
+                if let controller = storyBoard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
+                    controller.patchId = entityId
+                    /* Navigation bar buttons */
+                    var doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
+                    controller.navigationItem.leftBarButtonItems = [doneButton]
+                    var navController = UINavigationController()
+                    navController.viewControllers = [controller]
+                    UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
+                }
+            }
+            else if entitySchema == "message" {
+                if let controller = storyBoard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
+                    controller.messageId = entityId
+                    /* Navigation bar buttons */
+                    var doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
+                    controller.navigationItem.leftBarButtonItems = [doneButton]
+                    var navController = UINavigationController()
+                    navController.viewControllers = [controller]
+                    UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
+                }
+            }
+        }
+    }
 
-        let parseInstallation = PFInstallation.currentInstallation()
-        parseInstallation.setDeviceTokenFromData(deviceToken)
-        parseInstallation.saveInBackground()
+    /*--------------------------------------------------------------------------------------------
+    * Lifecycle
+    *--------------------------------------------------------------------------------------------*/
+    
+    func applicationDidEnterBackground(application: UIApplication) {
+        NSNotificationCenter.defaultCenter().postNotificationName(Event.ApplicationDidEnterBackground.rawValue, object: nil)
+    }
+
+    func applicationWillEnterForeground(application: UIApplication){
+        NSNotificationCenter.defaultCenter().postNotificationName(Event.ApplicationWillEnterForeground.rawValue, object: nil)
+    }
+    
+    func applicationWillResignActive(application: UIApplication){
+        NSNotificationCenter.defaultCenter().postNotificationName(Event.ApplicationWillResignActive.rawValue, object: nil)
+    }
+    
+    func applicationDidBecomeActive(application: UIApplication) {
+        NSNotificationCenter.defaultCenter().postNotificationName(Event.ApplicationDidBecomeActive.rawValue, object: nil)
+    }
+    
+    func application(application: UIApplication, supportedInterfaceOrientationsForWindow window: UIWindow?) -> Int {
+        if let controller = UIViewController.topMostViewController() {
+            if controller is AirPhotoBrowser || controller is AirPhotoPreview {
+                return Int(UIInterfaceOrientationMask.All.rawValue);
+            }
+            else {
+                return Int(UIInterfaceOrientationMask.Portrait.rawValue);
+            }
+        }
+        return Int(UIInterfaceOrientationMask.Portrait.rawValue);
+    }
+    
+    /*--------------------------------------------------------------------------------------------
+    * Notifications
+    *--------------------------------------------------------------------------------------------*/
+    
+    func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
+        NotificationController.instance.didRegisterForRemoteNotificationsWithDeviceToken(application, deviceToken: deviceToken)
+    }
+    
+    func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
+        NotificationController.instance.didFailToRegisterForRemoteNotificationsWithError(application, error: error)
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
-        
-        var augmentedUserInfo = NSMutableDictionary(dictionary: userInfo)
-        augmentedUserInfo["receivedInApplicationState"] = application.applicationState.rawValue
-        NSNotificationCenter.defaultCenter().postNotificationName(PAApplicationDidReceiveRemoteNotification, object: self, userInfo: augmentedUserInfo as [NSObject : AnyObject])
-        completionHandler(.NewData)
+        /*
+         * This delegate method offers an opportunity for applications with the "remote-notification" 
+         * background mode to fetch appropriate new data in response to an incoming remote notification. 
+         * You should call the fetchCompletionHandler as soon as you're finished performing that operation, 
+         * so the system can accurately estimate its power and data cost.
+         * 
+         * This method will be invoked even if the application was launched or resumed because of the 
+         * remote notification. The respective delegate methods will be invoked first. Note that this 
+         * behavior is in contrast to application:didReceiveRemoteNotification:, which is not called in 
+         * those cases, and which will not be invoked if this method is implemented. 
+         *
+         * If app is in the background, this is called if the user taps on the notification in the
+         * pulldown tray.
+         */
+        NotificationController.instance.didReceiveRemoteNotification(application, userInfo: userInfo, fetchCompletionHandler: completionHandler)
     }
 
-    // MARK: CLLocationManagerDelegate
+    /*--------------------------------------------------------------------------------------------
+    * Background Sessions
+    *--------------------------------------------------------------------------------------------*/
     
-    func locationManager(manager: CLLocationManager!, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-        if status == .AuthorizedAlways || status == .AuthorizedWhenInUse {
-            manager.startUpdatingLocation()
-        } else if status == CLAuthorizationStatus.Denied {
-            let windowList = UIApplication.sharedApplication().windows
-            let topWindow = windowList[windowList.count - 1] as! UIWindow
-            SCLAlertView().showWarning(topWindow.rootViewController, title:"Location Disabled", subTitle: "You can enable location access in Settings → Patchr → Location", closeButtonTitle: "OK", duration: 0.0)
-        }
-    }
-
-    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {}
-    
-    func registerForRemoteNotifications() {
-        
-        let application = UIApplication.sharedApplication()
-        
-        // http://stackoverflow.com/a/28742391/2247399
-        if application.respondsToSelector("registerUserNotificationSettings:") {
-            
-            let types: UIUserNotificationType = (.Alert | .Badge | .Sound)
-            let settings: UIUserNotificationSettings = UIUserNotificationSettings(forTypes: types, categories: nil)
-            
-            application.registerUserNotificationSettings(settings)
-            application.registerForRemoteNotifications()
-            
-        } else {
-            // Register for Push Notifications before iOS 8
-            application.registerForRemoteNotificationTypes(.Alert | .Badge | .Sound)
-        }
+    func application(application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: () -> Void) {
+        /* 
+         * Applications using an NSURLSession with a background configuration may be launched or resumed in the background in order to handle the
+         * completion of tasks in that session, or to handle authentication. This method will be called with the identifier of the session needing
+         * attention. Once a session has been created from a configuration object with that identifier, the session's delegate will begin receiving
+         * callbacks. If such a session has already been created (if the app is being resumed, for instance), then the delegate will start receiving
+         * callbacks without any action by the application. You should call the completionHandler as soon as you're finished handling the callbacks.
+         *
+         * This gets called if the share extension isn't running when the background data task 
+         * completes. Use the identifier to reconstitute the URLSession.
+         */
+        self.backgroundSessionCompletionHandler = completionHandler
+        Log.d("handleEventsForBackgroundURLSession called")
+        Shared.Toast("Message Posted!")
     }
 }
 

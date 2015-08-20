@@ -9,13 +9,8 @@ const struct PhotoAttributes PhotoAttributes = {
 	.prefix = @"prefix",
 	.source = @"source",
 	.suffix = @"suffix",
+	.usingDefault = @"usingDefault",
 	.width = @"width",
-};
-
-const struct PhotoRelationships PhotoRelationships = {
-	.category = @"category",
-	.entity_ = @"entity_",
-	.notification = @"notification",
 };
 
 @implementation PhotoID
@@ -46,6 +41,11 @@ const struct PhotoRelationships PhotoRelationships = {
 
 	if ([key isEqualToString:@"heightValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"height"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"usingDefaultValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"usingDefault"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
@@ -86,6 +86,26 @@ const struct PhotoRelationships PhotoRelationships = {
 
 @dynamic suffix;
 
+@dynamic usingDefault;
+
+- (BOOL)usingDefaultValue {
+	NSNumber *result = [self usingDefault];
+	return [result boolValue];
+}
+
+- (void)setUsingDefaultValue:(BOOL)value_ {
+	[self setUsingDefault:@(value_)];
+}
+
+- (BOOL)primitiveUsingDefaultValue {
+	NSNumber *result = [self primitiveUsingDefault];
+	return [result boolValue];
+}
+
+- (void)setPrimitiveUsingDefaultValue:(BOOL)value_ {
+	[self setPrimitiveUsingDefault:@(value_)];
+}
+
 @dynamic width;
 
 - (int32_t)widthValue {
@@ -105,12 +125,6 @@ const struct PhotoRelationships PhotoRelationships = {
 - (void)setPrimitiveWidthValue:(int32_t)value_ {
 	[self setPrimitiveWidth:@(value_)];
 }
-
-@dynamic category;
-
-@dynamic entity_;
-
-@dynamic notification;
 
 @end
 

@@ -8,21 +8,9 @@
 
 import UIKit
 
-protocol FetchedResultsViewControllerDataSource {
-    func fetchedResultsControllerForViewController(viewController: UIViewController) -> NSFetchedResultsController
-}
-
-class FetchedResultsTableViewController: UITableViewController, FetchedResultsViewControllerDataSource {
+class FetchedResultsTableViewController: UITableViewController {
     
-    // Override this in subclasses
-    func fetchedResultsControllerForViewController(viewController: UIViewController) -> NSFetchedResultsController {
-        return NSFetchedResultsController()
-    }
-    
-    // Override this in subclasses to configure cells
-    func configureCell(cell: UITableViewCell, object: AnyObject) {
-        cell.textLabel?.text = object.description
-    }
+    var contentViewName: String?
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
@@ -34,8 +22,6 @@ class FetchedResultsTableViewController: UITableViewController, FetchedResultsVi
         
         self.tableView.separatorInset = UIEdgeInsetsZero
     }
-    
-    // MARK: Table view data source
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return self.fetchedResultsControllerForViewController(self).sections!.count
@@ -53,21 +39,82 @@ class FetchedResultsTableViewController: UITableViewController, FetchedResultsVi
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        // The reason for the self.tableView here is because of UISearchDisplayController.
-        // There doesn't seem to be a nice way to register cells when using UISearchDisplayController,
-        // so we just grab them from the original table.
-        let cell = self.tableView.dequeueReusableCellWithIdentifier("Cell") as! UITableViewCell
+        
+        var cell = tableView.dequeueReusableCellWithIdentifier(CELL_IDENTIFIER) as? UITableViewCell
+        
+        if cell == nil {
+            cell = buildCell(self.contentViewName!)
+            configureCell(cell!)    // Handles contraint and layout updates
+        }
+
+        /* Get the data object to bind the cell to */
+        let queryResult = self.fetchedResultsControllerForViewController(self).sections![indexPath.section].objects[indexPath.row] as! QueryItem
+        
+        /* Bind the cell */
+        bindCell(cell!, object: queryResult.object, tableView: tableView)
+        
+        return cell!
+    }
+    
+    func buildCell(contentViewName: String) -> UITableViewCell {
+        
+        let cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: CELL_IDENTIFIER)
         cell.separatorInset = UIEdgeInsetsZero
+        cell.layer.shouldRasterize = true
+        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
         
         if cell.respondsToSelector("layoutMargins") {
             cell.layoutMargins = UIEdgeInsetsZero
         }
-
+        
         if cell.respondsToSelector("preservesSuperviewLayoutMargins") {
             cell.preservesSuperviewLayoutMargins = false
         }
-        var object : AnyObject = self.fetchedResultsControllerForViewController(self).sections![indexPath.section].objects[indexPath.row]
-        configureCell(cell, object: object)
+        
+        var view = NSBundle.mainBundle().loadNibNamed(contentViewName, owner: self, options: nil)[0] as! BaseView
+        cell.injectView(view)
+        
+        /* We need to set the initial width so later sizing logic has it to work with */
+        cell.frame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.bounds), 100)
+        cell.contentView.frame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.bounds), 100)
+        view.frame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.bounds), 100)
+        
         return cell
     }
+
+    func configureCell(cell: UITableViewCell) {
+        /*
+         * Default is to constrain to a tight fit. Override this in subclasses to do
+         * do something else. Without this the view size explodes.
+         */
+        let view = cell.contentView.viewWithTag(1) as! BaseView
+        let views = Dictionary(dictionaryLiteral: ("view", view))
+        let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|[view]|", options: nil, metrics: nil, views: views)
+        let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|[view]|", options: nil, metrics: nil, views: views)
+        cell.contentView.addConstraints(horizontalConstraints)
+        cell.contentView.addConstraints(verticalConstraints)
+        
+        cell.setNeedsUpdateConstraints()
+        cell.updateConstraintsIfNeeded()
+        cell.contentView.setNeedsLayout()
+        cell.contentView.layoutIfNeeded()
+    }
+    
+    // Override this in subclasses to bind cells to data
+    func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?) {
+        cell.textLabel?.text = object.description
+    }
+    
 }
+
+extension FetchedResultsTableViewController: FetchedResultsViewControllerDataSource {
+    /* Override this in subclasses so they have control of the fetch configuration */
+    func fetchedResultsControllerForViewController(viewController: UIViewController) -> NSFetchedResultsController {
+        return NSFetchedResultsController()
+    }
+}
+
+protocol FetchedResultsViewControllerDataSource {
+    func fetchedResultsControllerForViewController(viewController: UIViewController) -> NSFetchedResultsController
+}
+

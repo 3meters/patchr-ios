@@ -21,11 +21,10 @@ const struct ServiceBaseAttributes ServiceBaseAttributes = {
 };
 
 const struct ServiceBaseRelationships ServiceBaseRelationships = {
-	.created = @"created",
 	.creator = @"creator",
-	.owned = @"owned",
+	.modifier = @"modifier",
 	.owner = @"owner",
-	.queryResults = @"queryResults",
+	.queryItems = @"queryItems",
 };
 
 @implementation ServiceBaseID
@@ -132,40 +131,20 @@ const struct ServiceBaseRelationships ServiceBaseRelationships = {
 
 @dynamic type;
 
-@dynamic created;
-
-- (NSMutableSet*)createdSet {
-	[self willAccessValueForKey:@"created"];
-
-	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"created"];
-
-	[self didAccessValueForKey:@"created"];
-	return result;
-}
-
 @dynamic creator;
 
-@dynamic owned;
-
-- (NSMutableSet*)ownedSet {
-	[self willAccessValueForKey:@"owned"];
-
-	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"owned"];
-
-	[self didAccessValueForKey:@"owned"];
-	return result;
-}
+@dynamic modifier;
 
 @dynamic owner;
 
-@dynamic queryResults;
+@dynamic queryItems;
 
-- (NSMutableSet*)queryResultsSet {
-	[self willAccessValueForKey:@"queryResults"];
+- (NSMutableSet*)queryItemsSet {
+	[self willAccessValueForKey:@"queryItems"];
 
-	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"queryResults"];
+	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"queryItems"];
 
-	[self didAccessValueForKey:@"queryResults"];
+	[self didAccessValueForKey:@"queryItems"];
 	return result;
 }
 

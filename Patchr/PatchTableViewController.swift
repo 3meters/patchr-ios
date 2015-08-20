@@ -8,109 +8,202 @@
 
 import UIKit
 
-class PatchTableViewController: QueryResultTableViewController {
-
-    var selectedPatch: Patch?
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.tableView.registerNib(UINib(nibName: "PatchTableViewCell", bundle: nil), forCellReuseIdentifier: "Cell")
-    }
-    
-    // TODO: consolidate the duplicated segue logic
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        
-        if segue.identifier == nil {
-            return
-        }
-        
-        switch segue.identifier! {
-        case "PatchDetailSegue":
-            if let patchDetailViewController = segue.destinationViewController as? PatchDetailViewController {
-                patchDetailViewController.managedObjectContext = self.managedObjectContext
-                patchDetailViewController.dataStore = self.dataStore
-                patchDetailViewController.patch = self.selectedPatch
-                self.selectedPatch = nil
-            }
-        case "MapViewSegue":
-            if let mapViewController = segue.destinationViewController as? FetchedResultsMapViewController {
-                mapViewController.managedObjectContext = self.managedObjectContext
-                mapViewController.fetchRequest = self.fetchedResultsController.fetchRequest
-                mapViewController.dataStore = self.dataStore
-            }
-        default: ()
-        }
-    }
-    
-    override func configureCell(cell: UITableViewCell, object: AnyObject) {
-        
-        // The cell width seems to incorrect occassionally
-        if CGRectGetWidth(cell.bounds) != CGRectGetWidth(self.tableView.bounds) {
-            cell.bounds = CGRect(x: 0, y: 0, width: CGRectGetWidth(self.tableView.bounds), height: CGRectGetHeight(cell.frame))
-            cell.setNeedsLayout()
-            cell.layoutIfNeeded()
-        }
-        
-        let queryResult = object as! QueryResult
-        let patch = queryResult.result as! Patch
-        let patchCell = cell as! PatchTableViewCell
-        patchCell.nameLabel.text = patch.name
-        patchCell.categoryLabel.text = patch.category.name
-        
-        if let numberOfMessages = patch.numberOfMessages {
-            patchCell.detailsLabel.text = "\(numberOfMessages) Messages"
-        }
-        
-        if let numberOfWatchers = patch.numberOfWatchers {
-            patchCell.detailsLabel.text = (patchCell.detailsLabel.text ?? "") + " \(numberOfWatchers) Watching"
-        }
-        
-        patchCell.imageViewThumb.pa_setImageWithURL(patch.photo?.photoURL(), placeholder: UIImage(named: "PatchDefault"))
-        patchCell.visibilityImageView.image = (patch.visibilityValue == PAVisibilityLevel.Private) ? UIImage(named: "TableViewCellLock") : nil
-    }
-    
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryResult {
-            if let patch = queryResult.result as? Patch {
-                self.selectedPatch = patch
-                self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
-                return
-            }
-        }
-        assert(false, "Couldn't set selectedPatch")
-    }
-    
-    @IBAction func unwindFromCreatePatch(segue: UIStoryboardSegue) {}
+enum PatchListFilter {
+	case Nearby
+	case Explore
+	case Watching
+    case Favorite
+	case Owns
 }
 
-extension UIImageView {
+class PatchTableViewController: QueryTableViewController {
+
+    var user: User!
+	var selectedPatch: Patch?
+	var filter: PatchListFilter = .Nearby
+    var activityDate: Int64?
     
-    func pa_setImageWithURL(url: NSURL?, placeholder: UIImage?) {
+	private var _query: Query!
+
+    @IBOutlet weak var contentHolder: UIView!
+    
+	override func query() -> Query {
+		if self._query == nil {
+			let query = Query.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Query
+            
+            switch self.filter {
+                case .Nearby:
+                    query.name = DataStoreQueryName.NearbyPatches.rawValue
+                    query.pageSize = DataController.proxibase.pageSizeNearby
+                case .Explore:
+                    query.name = DataStoreQueryName.ExplorePatches.rawValue
+                    query.pageSize = DataController.proxibase.pageSizeExplore
+                case .Watching:
+                    query.name = DataStoreQueryName.PatchesUserIsWatching.rawValue
+                    query.pageSize = DataController.proxibase.pageSizeDefault
+                    query.parameters = ["entity": user]
+                case .Favorite:
+                    query.name = DataStoreQueryName.FavoritePatches.rawValue
+                    query.pageSize = DataController.proxibase.pageSizeDefault
+                    query.parameters = ["entity": user]
+                case .Owns:
+                    query.name = DataStoreQueryName.PatchesByUser.rawValue
+                    query.pageSize = DataController.proxibase.pageSizeDefault
+                    query.parameters = ["entity": user]
+            }
+
+			DataController.instance.managedObjectContext.save(nil)
+			self._query = query
+		}
+		return self._query
+	}
+    
+    /*--------------------------------------------------------------------------------------------
+    * Lifecycle
+    *--------------------------------------------------------------------------------------------*/
+    
+    override func viewDidLoad() {
         
-        if url == nil {
-            self.image = placeholder
-            return
+        switch self.filter {
+            case .Nearby:
+                self.emptyMessage = "No patches nearby"
+            case .Explore:
+                self.emptyMessage = "Discover popular patches here"
+            case .Watching:
+                self.emptyMessage = "Watch patches and browse them here"
+            case .Favorite:
+                self.emptyMessage = "Browse your favorite patches here"
+            case .Owns:
+                self.emptyMessage = "Make patches and browse them here"
         }
         
-        self.sd_setImageWithURL(url, placeholderImage: placeholder, completed: { (image, error, cacheType, url) -> Void in
-            
-            if error != nil {
-                return
-            }
-            
-            if cacheType == SDImageCacheType.None || cacheType == SDImageCacheType.Disk {
-                // Animate if image wasn't cached
-                UIView.transitionWithView(self, duration: 0.3, options: UIViewAnimationOptions.TransitionCrossDissolve, animations: { () -> Void in
-                    self.image = image;
-                    }, completion: nil)
-            } else {
-                self.image = image
-            }
-            
-        })
+        super.viewDidLoad()
+        
+        /* Content view */
+        self.contentViewName = (SCREEN_NARROW || self.filter != .Nearby) ? "PatchNormalView" : "PatchLargeView"
+        
+        /* A bit of UI tweaking */
+        self.tableView.backgroundColor = Colors.windowColor
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
+        
+        /* Add a little bit of room at the bottom of the table */
+        var footer: UIView = UIView(frame:CGRectMake(0, 0, 1, 8))
+        footer.backgroundColor = UIColor.clearColor()
+        self.tableView.tableFooterView = footer;
+
+		switch self.filter {
+			case .Nearby:
+				self.navigationItem.title = "Nearby"
+			case .Explore:
+				self.navigationItem.title = "Explore"
+				self.searchDisplayController?.searchResultsTableView.rowHeight = self.tableView.rowHeight
+				self.searchDisplayController?.searchResultsTableView.estimatedRowHeight = self.tableView.estimatedRowHeight
+				self.tableView.contentOffset = CGPointMake(0, self.searchDisplayController?.searchBar.frame.size.height ?? 0) // Sets search bar under nav bar initially
+			case .Watching:
+				self.navigationItem.title = "Patches I'm watching"
+            case .Favorite:
+                self.navigationItem.title = "Favorites"
+			case .Owns:
+				self.navigationItem.title = "Patches I own"
+		}
     }
     
-    func pa_setImageWithURL(url: NSURL?) {
-        self.pa_setImageWithURL(url, placeholder: nil)
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        switch self.filter {
+        case .Nearby:
+            setScreenName("NearbyList")
+        case .Explore:
+            setScreenName("ExploreList")
+        case .Watching:
+            setScreenName("WatchingList")
+        case .Favorite:
+            setScreenName("FavoriteList")
+        case .Owns:
+            setScreenName("OwnsList")
+        }
+    }
+    
+    /*--------------------------------------------------------------------------------------------
+    * Events
+    *--------------------------------------------------------------------------------------------*/
+    
+    func mapAction(sender: AnyObject?) {
+        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableMapViewController") as? PatchTableMapViewController
+        controller!.fetchRequest = self.fetchedResultsController.fetchRequest
+        self.navigationController?.pushViewController(controller!, animated: true)
+    }
+    
+    /*--------------------------------------------------------------------------------------------
+    * Methods
+    *--------------------------------------------------------------------------------------------*/
+    
+    override func configureCell(cell: UITableViewCell) {
+        
+        cell.contentView.backgroundColor = Colors.windowColor
+        
+        let view = cell.contentView.viewWithTag(1) as! BaseView
+        let views = Dictionary(dictionaryLiteral: ("view", view))
+        let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-8-[view]-8-|", options: nil, metrics: nil, views: views)
+        let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|-8-[view]|", options: nil, metrics: nil, views: views)
+        
+        cell.contentView.addConstraints(horizontalConstraints)
+        cell.contentView.addConstraints(verticalConstraints)
+        cell.contentView.setNeedsLayout()
+    }
+    
+    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?) {
+        let view = cell.contentView.viewWithTag(1) as! BaseView
+        Patch.bindView(view, object: object, tableView: tableView, sizingOnly: false)
+    }
+
+	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+
+		if segue.identifier == nil {
+			return
+		}
+
+		switch segue.identifier! {
+			case "PatchDetailSegue":
+				if let controller = segue.destinationViewController as? PatchDetailViewController {
+					controller.patch = self.selectedPatch
+					self.selectedPatch = nil
+				}
+			case "MapViewSegue":
+				if let controller = segue.destinationViewController as? PatchTableMapViewController {
+					controller.fetchRequest = self.fetchedResultsController.fetchRequest
+				}
+			default: ()
+		}
+	}    
+}
+
+/*--------------------------------------------------------------------------------------------
+ * Extensions
+ *--------------------------------------------------------------------------------------------*/
+
+extension PatchTableViewController: UITableViewDelegate {
+
+	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
+			if let patch = queryResult.object as? Patch {
+                let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+                let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController
+                controller!.patch = patch
+                self.navigationController?.pushViewController(controller!, animated: true)
+				return
+			}
+		}
+		assert(false, "Couldn't set selectedPatch")
+	}
+    
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        var height: CGFloat = 136
+        if self.filter == .Nearby && !SCREEN_NARROW {
+            height = 159
+        }
+        return height
     }
 }
