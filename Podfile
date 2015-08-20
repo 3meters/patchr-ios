@@ -36,6 +36,8 @@ pod 'AirPhotoBrowser', :path => '~/code/AirPhotoBrowser'
 pod 'AirContactPicker', :path => '~/code/AirContactPicker'
 pod 'TWMessageBarManager'
 pod 'Google/Analytics', '~> 1.0.0'
+pod 'Fabric'
+pod 'Crashlytics'
 
 end
 

@@ -77,11 +77,9 @@
 		E20004E11B099CBD00425694 /* PasswordResetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004E01B099CBD00425694 /* PasswordResetViewController.swift */; };
 		E224C3501B6ED27F00879775 /* PatchrShare.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E238BAE41B51D3290094AF41 /* PatchrShare.storyboard */; };
 		E224C3551B6EDBBE00879775 /* PatchTargetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */; };
-		E238BAC61B507E510094AF41 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D3D39D21A6F086F00A44CB2 /* Main.storyboard */; };
 		E238BACC1B50888C0094AF41 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BACB1B50888C0094AF41 /* SystemConfiguration.framework */; };
 		E238BACE1B50889A0094AF41 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BACD1B50889A0094AF41 /* libc++.dylib */; };
 		E238BAD01B5088A40094AF41 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BACF1B5088A40094AF41 /* MobileCoreServices.framework */; };
-		E238BAD21B508FCF0094AF41 /* AdobeCreativeSDKFoundationResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E238BAD11B508FCF0094AF41 /* AdobeCreativeSDKFoundationResources.bundle */; };
 		E238BAD41B508FE90094AF41 /* AdobeCreativeSDKImageResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E238BAD31B508FE90094AF41 /* AdobeCreativeSDKImageResources.bundle */; };
 		E238BAD61B50907F0094AF41 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BAD51B50907F0094AF41 /* Accounts.framework */; };
 		E238BAD81B5090870094AF41 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BAD71B5090870094AF41 /* Social.framework */; };
@@ -161,10 +159,7 @@
 		E2EFD2661AF44214003937D4 /* Lobby.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E2EFD2651AF44214003937D4 /* Lobby.storyboard */; };
 		E2F182D01B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */; };
 		E2F182E31B4B4AFD0020F6BB /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E273B5191B48349900888E73 /* Parse.framework */; };
-		E2F182E61B4B4CEA0020F6BB /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E24A872A1B323F2500E6F96B /* Fabric.framework */; };
-		E2F182E71B4B4CF40020F6BB /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E24A872B1B323F2500E6F96B /* Crashlytics.framework */; };
 		E2F182E81B4B4CFF0020F6BB /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E273B5181B48349900888E73 /* Bolts.framework */; };
-		E2F182EC1B4B4D250020F6BB /* AdobeCreativeSDKFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2F182CD1B4B37A80020F6BB /* AdobeCreativeSDKFoundation.framework */; };
 		E2F182F11B4B56DD0020F6BB /* Photo.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F182F01B4B56DD0020F6BB /* Photo.m */; };
 		E2F618D61AFFACF00055D09C /* LocationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F618D51AFFACF00055D09C /* LocationController.swift */; };
 		E2F618E41B0523840055D09C /* MessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2F618E31B0523840055D09C /* MessageView.xib */; };
@@ -175,6 +170,8 @@
 		E2F6C9341B1E546F0067D959 /* _Link.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F6C92F1B1E546F0067D959 /* _Link.m */; };
 		E2F6C9351B1E546F0067D959 /* _RichType.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F6C9311B1E546F0067D959 /* _RichType.m */; };
 		E2F6C9361B1E546F0067D959 /* RichType.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F6C9331B1E546F0067D959 /* RichType.m */; };
+		E2FB81431B864111006B6690 /* AdobeCreativeSDKCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */; };
+		E2FB814A1B8647B2006B6690 /* AdobeCreativeSDKCoreResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E2FB81491B8647B2006B6690 /* AdobeCreativeSDKCoreResources.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -316,7 +313,6 @@
 		E238BACB1B50888C0094AF41 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		E238BACD1B50889A0094AF41 /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
 		E238BACF1B5088A40094AF41 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
-		E238BAD11B508FCF0094AF41 /* AdobeCreativeSDKFoundationResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKFoundationResources.bundle; path = ../Frameworks/AdobeCreativeSDKFoundation.framework/Versions/A/Resources/AdobeCreativeSDKFoundationResources.bundle; sourceTree = "<group>"; };
 		E238BAD31B508FE90094AF41 /* AdobeCreativeSDKImageResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKImageResources.bundle; path = ../Frameworks/AdobeCreativeSDKImage.framework/Versions/A/Resources/AdobeCreativeSDKImageResources.bundle; sourceTree = "<group>"; };
 		E238BAD51B50907F0094AF41 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		E238BAD71B5090870094AF41 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
@@ -334,8 +330,6 @@
 		E246E3141B741D75007327F5 /* UserApprovalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserApprovalView.swift; sourceTree = "<group>"; };
 		E246E3161B742970007327F5 /* BaseView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseView.swift; sourceTree = "<group>"; };
 		E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThumbnailCollectionViewCell.swift; sourceTree = "<group>"; };
-		E24A872A1B323F2500E6F96B /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = Frameworks/Fabric.framework; sourceTree = SOURCE_ROOT; };
-		E24A872B1B323F2500E6F96B /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Frameworks/Crashlytics.framework; sourceTree = SOURCE_ROOT; };
 		E25327B11B0FCE9C00990A81 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		E25327B51B1000C000990A81 /* AirImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirImageView.swift; sourceTree = "<group>"; };
 		E25327B71B103ECA00990A81 /* AirImageButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirImageButton.swift; sourceTree = "<group>"; };
@@ -404,7 +398,6 @@
 		E2D6BE301B0BADA000273538 /* NotificationView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NotificationView.xib; sourceTree = "<group>"; };
 		E2DBD4EF1B0F65580006575C /* ExtensionsModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionsModel.swift; sourceTree = "<group>"; };
 		E2EFD2651AF44214003937D4 /* Lobby.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Lobby.storyboard; sourceTree = "<group>"; };
-		E2F182CD1B4B37A80020F6BB /* AdobeCreativeSDKFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKFoundation.framework; path = Frameworks/AdobeCreativeSDKFoundation.framework; sourceTree = "<group>"; };
 		E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKImage.framework; path = Frameworks/AdobeCreativeSDKImage.framework; sourceTree = "<group>"; };
 		E2F182F01B4B56DD0020F6BB /* Photo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Photo.m; sourceTree = "<group>"; };
 		E2F618D51AFFACF00055D09C /* LocationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationController.swift; path = Patchr/LocationController.swift; sourceTree = "<group>"; };
@@ -423,6 +416,9 @@
 		E2F6C9321B1E546F0067D959 /* RichType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RichType.h; path = Model/RichType.h; sourceTree = "<group>"; };
 		E2F6C9331B1E546F0067D959 /* RichType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RichType.m; path = Model/RichType.m; sourceTree = "<group>"; };
 		E2F6C9381B1E924B0067D959 /* PAEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PAEnums.h; path = Model/PAEnums.h; sourceTree = "<group>"; };
+		E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKCore.framework; path = Frameworks/AdobeCreativeSDKCore.framework; sourceTree = "<group>"; };
+		E2FB81451B864326006B6690 /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Resources; path = Frameworks/AdobeCreativeSDKCore.framework/Versions/A/Resources; sourceTree = "<group>"; };
+		E2FB81491B8647B2006B6690 /* AdobeCreativeSDKCoreResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKCoreResources.bundle; path = ../Frameworks/AdobeCreativeSDKCore.framework/Versions/A/Resources/AdobeCreativeSDKCoreResources.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -430,16 +426,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E2FB81431B864111006B6690 /* AdobeCreativeSDKCore.framework in Frameworks */,
+				E2F182D01B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework in Frameworks */,
 				E238BAD81B5090870094AF41 /* Social.framework in Frameworks */,
 				E238BAD61B50907F0094AF41 /* Accounts.framework in Frameworks */,
 				E238BAD01B5088A40094AF41 /* MobileCoreServices.framework in Frameworks */,
 				E238BACC1B50888C0094AF41 /* SystemConfiguration.framework in Frameworks */,
-				E2F182E71B4B4CF40020F6BB /* Crashlytics.framework in Frameworks */,
 				E2F182E31B4B4AFD0020F6BB /* Parse.framework in Frameworks */,
 				E2F182E81B4B4CFF0020F6BB /* Bolts.framework in Frameworks */,
-				E2F182E61B4B4CEA0020F6BB /* Fabric.framework in Frameworks */,
-				E2F182EC1B4B4D250020F6BB /* AdobeCreativeSDKFoundation.framework in Frameworks */,
-				E2F182D01B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework in Frameworks */,
 				E238BACE1B50889A0094AF41 /* libc++.dylib in Frameworks */,
 				1AB4C23C766AEEECAE42F579 /* libPods-Patchr.a in Frameworks */,
 				C1112B52B84F042CB51F7E65 /* libPods.a in Frameworks */,
@@ -473,6 +467,7 @@
 		7D3D39C01A6F086F00A44CB2 = {
 			isa = PBXGroup;
 			children = (
+				E2FB81451B864326006B6690 /* Resources */,
 				7D3D39CB1A6F086F00A44CB2 /* Patchr */,
 				7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */,
 				E25327D11B13DEF800990A81 /* AudioController.swift */,
@@ -585,12 +580,10 @@
 				E238BAD51B50907F0094AF41 /* Accounts.framework */,
 				E238BACF1B5088A40094AF41 /* MobileCoreServices.framework */,
 				E238BACB1B50888C0094AF41 /* SystemConfiguration.framework */,
+				E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */,
 				E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */,
-				E2F182CD1B4B37A80020F6BB /* AdobeCreativeSDKFoundation.framework */,
 				E273B5181B48349900888E73 /* Bolts.framework */,
 				E273B5191B48349900888E73 /* Parse.framework */,
-				E24A872B1B323F2500E6F96B /* Crashlytics.framework */,
-				E24A872A1B323F2500E6F96B /* Fabric.framework */,
 				E238BACD1B50889A0094AF41 /* libc++.dylib */,
 				6BA6097617A5336D7C15520A /* libPods-PatchrShare.a */,
 				B3CABF391F6D74EFAA64D37F /* libPods-Patchr.a */,
@@ -603,8 +596,8 @@
 			isa = PBXGroup;
 			children = (
 				E25327CA1B13D34B00990A81 /* Sounds */,
+				E2FB81491B8647B2006B6690 /* AdobeCreativeSDKCoreResources.bundle */,
 				E238BAD31B508FE90094AF41 /* AdobeCreativeSDKImageResources.bundle */,
-				E238BAD11B508FCF0094AF41 /* AdobeCreativeSDKFoundationResources.bundle */,
 				8468F8211A9D09D1007D6EE6 /* Localizable.strings */,
 				7D3D39D51A6F086F00A44CB2 /* Images.xcassets */,
 				E2C7C5C31B2A19720045038A /* DefaultSettings.plist */,
@@ -980,9 +973,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E2FB814A1B8647B2006B6690 /* AdobeCreativeSDKCoreResources.bundle in Resources */,
 				E238BAD41B508FE90094AF41 /* AdobeCreativeSDKImageResources.bundle in Resources */,
-				E238BAD21B508FCF0094AF41 /* AdobeCreativeSDKFoundationResources.bundle in Resources */,
-				E238BAC61B507E510094AF41 /* Main.storyboard in Resources */,
 				E2EFD2661AF44214003937D4 /* Lobby.storyboard in Resources */,
 				E246E3131B741D62007327F5 /* UserApprovalView.xib in Resources */,
 				7D3D39D61A6F086F00A44CB2 /* Images.xcassets in Resources */,
@@ -1118,7 +1110,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./Frameworks/Fabric.framework/run 3f03e3891f0d0c56c4bc1c393db5efe2aa0f90c7 98cfca9f6ecedc65a98564ec3e3af57052f396d78d3bce7483d33c035a2a6c66";
+			shellScript = "${PODS_ROOT}/Fabric/Fabric.framework/run 3f03e3891f0d0c56c4bc1c393db5efe2aa0f90c7 98cfca9f6ecedc65a98564ec3e3af57052f396d78d3bce7483d33c035a2a6c66";
 		};
 		E2C0D92A1B6BC1FA00E28CE9 /* Increment Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1420,14 +1412,14 @@
 				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					/Users/jaymassena/Downloads/AdobeCreativeSDKFrameworks,
 					"$(PROJECT_DIR)/Frameworks",
 				);
+				GCC_OPTIMIZATION_LEVEL = 3;
 				INFOPLIST_FILE = Patchr/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1506,7 +1498,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					/Users/jaymassena/Downloads/AdobeCreativeSDKFrameworks,
 					"$(PROJECT_DIR)/Frameworks",
 				);
 				INFOPLIST_FILE = Patchr/Info.plist;
@@ -1626,7 +1617,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					/Users/jaymassena/Downloads/AdobeCreativeSDKFrameworks,
 					"$(PROJECT_DIR)/Frameworks",
 				);
 				INFOPLIST_FILE = Patchr/Info.plist;

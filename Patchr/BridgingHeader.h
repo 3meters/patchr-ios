@@ -34,7 +34,7 @@
 #import <UIScrollView+InfiniteScroll.h>
 #import <NBPhoneNumberUtil.h>
 #import <NBPhoneNumber.h>
-#import <AdobeCreativeSDKFoundation/AdobeCreativeSDKFoundation.h>
+#import <AdobeCreativeSDKCore/AdobeCreativeSDKCore.h>
 #import <AdobeCreativeSDKImage/AdobeCreativeSDKImage.h>
 #import <Branch.h>
 #import <TWMessageBarManager.h>
