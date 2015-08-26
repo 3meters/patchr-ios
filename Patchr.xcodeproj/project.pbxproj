@@ -114,6 +114,7 @@
 		E26B0C921B46D01E00706F4A /* ThumbnailCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E26B0C911B46D01E00706F4A /* ThumbnailCollectionViewCell.xib */; };
 		E2711C4C1AFD17E800CE71A1 /* AirTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2711C4B1AFD17E800CE71A1 /* AirTableViewCell.m */; };
 		E2711C4F1AFD182F00CE71A1 /* AirTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = E2711C4E1AFD182F00CE71A1 /* AirTableView.m */; };
+		E2737DC21B8E2EAE00C176B1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D3D39D21A6F086F00A44CB2 /* Main.storyboard */; };
 		E273B5361B488F2000888E73 /* AirPhotoPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = E273B5351B488F2000888E73 /* AirPhotoPreview.swift */; };
 		E27DB4051B06477A0090D023 /* QueryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = E27DB4041B06477A0090D023 /* QueryItem.m */; };
 		E27DB4081B0647960090D023 /* _QueryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = E27DB4071B0647960090D023 /* _QueryItem.m */; };
@@ -417,7 +418,6 @@
 		E2F6C9331B1E546F0067D959 /* RichType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RichType.m; path = Model/RichType.m; sourceTree = "<group>"; };
 		E2F6C9381B1E924B0067D959 /* PAEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PAEnums.h; path = Model/PAEnums.h; sourceTree = "<group>"; };
 		E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKCore.framework; path = Frameworks/AdobeCreativeSDKCore.framework; sourceTree = "<group>"; };
-		E2FB81451B864326006B6690 /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Resources; path = Frameworks/AdobeCreativeSDKCore.framework/Versions/A/Resources; sourceTree = "<group>"; };
 		E2FB81491B8647B2006B6690 /* AdobeCreativeSDKCoreResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKCoreResources.bundle; path = ../Frameworks/AdobeCreativeSDKCore.framework/Versions/A/Resources/AdobeCreativeSDKCoreResources.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -467,7 +467,6 @@
 		7D3D39C01A6F086F00A44CB2 = {
 			isa = PBXGroup;
 			children = (
-				E2FB81451B864326006B6690 /* Resources */,
 				7D3D39CB1A6F086F00A44CB2 /* Patchr */,
 				7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */,
 				E25327D11B13DEF800990A81 /* AudioController.swift */,
@@ -976,6 +975,7 @@
 				E2FB814A1B8647B2006B6690 /* AdobeCreativeSDKCoreResources.bundle in Resources */,
 				E238BAD41B508FE90094AF41 /* AdobeCreativeSDKImageResources.bundle in Resources */,
 				E2EFD2661AF44214003937D4 /* Lobby.storyboard in Resources */,
+				E2737DC21B8E2EAE00C176B1 /* Main.storyboard in Resources */,
 				E246E3131B741D62007327F5 /* UserApprovalView.xib in Resources */,
 				7D3D39D61A6F086F00A44CB2 /* Images.xcassets in Resources */,
 				7D5545871AD33B1D007150E5 /* UserView.xib in Resources */,

@@ -103,10 +103,6 @@ class NotificationsTableViewController: QueryTableViewController {
                     switch applicationState {
                         case .Active: // App was active when remote notification was received
                             
-                            if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundForNotifications")) {
-                                AudioServicesPlaySystemSound(chirpSound)
-                            }
-                            
                             if self.tabBarController?.selectedViewController == self.navigationController
                                 && self.navigationController?.topViewController == self {
                                     
@@ -117,13 +113,21 @@ class NotificationsTableViewController: QueryTableViewController {
                             }
                             else {
                                 
-                                /* Show banner */
                                 let json:JSON = JSON(userInfo)
                                 let alert = json["aps"]["alert"].string
+                                let trigger = json["trigger"].string
+                                
                                 var description: String = alert!
                                 if json["description"] != nil {
                                     description = json["description"].string!
                                 }
+                                
+                                /* Bail if user has disabled this in-app notification */
+                                if !notificationEnabledFor(trigger!, description: description) {
+                                    return
+                                }
+                                
+                                /* Show banner */
                                 var subtitle: String?
                                 if json["subtitle"] != nil && json["subtitle"].string != "subtitle" {
                                     subtitle = json["subtitle"].string?.stringByReplacingOccurrencesOfString("<b>", withString: "", options: .LiteralSearch, range: nil)
@@ -157,6 +161,11 @@ class NotificationsTableViewController: QueryTableViewController {
                                 }
                                 else {
                                     self.showNotificationBar("Notification", description: description, image: nil, targetId: json["targetId"].string!)
+                                }
+                                
+                                /* Chirp */
+                                if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundForNotifications")) {
+                                    AudioServicesPlaySystemSound(chirpSound)
                                 }
                                 
                                 /* Add one because user isn't viewing nofications right now */
@@ -296,6 +305,31 @@ class NotificationsTableViewController: QueryTableViewController {
                 UIViewController.topMostViewController()?.presentViewController(UINavigationController(rootViewController: controller), animated: true, completion: nil)
             }
         }
+    }
+    
+    func notificationEnabledFor(trigger: String, description: String) -> Bool {
+        if trigger == "nearby" {
+            return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("PatchesCreatedNearby"))
+        }
+        else if trigger == "watch_to" {
+            return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("MessagesForPatchesWatching"))
+        }
+        else if trigger == "own_to" {
+            /* Super hack to differentiate likes */
+            if (description.rangeOfString("like") != nil) {
+                return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("LikeMessage"))
+            }
+            else if (description.rangeOfString("favorite") != nil) {
+                return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("LikePatch"))
+            }
+            else {
+                return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("MessagesForPatchesOwns"))
+            }
+        }
+        else if trigger == "share" {
+            return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("MessagesSharing"))
+        }
+        return true
     }
     
     func clearBadges() {

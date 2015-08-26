@@ -37,7 +37,7 @@ class NotificationSettingsViewController: UITableViewController {
         self.soundEffectsCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
         self.soundNotificationsCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)        
         
-        self.patchesNearbyCell.accessoryView = makeSwitch(.MessagesForPatchesNearby, state: userDefaults.boolForKey(PatchrUserDefaultKey("MessagesForPatchesNearby")))
+        self.patchesNearbyCell.accessoryView = makeSwitch(.PatchesCreatedNearby, state: userDefaults.boolForKey(PatchrUserDefaultKey("PatchesCreatedNearby")))
         self.patchesWatchingCell.accessoryView = makeSwitch(.MessagesForPatchesWatching, state: userDefaults.boolForKey(PatchrUserDefaultKey("MessagesForPatchesWatching")))
         self.patchesOwnsCell.accessoryView = makeSwitch(.MessagesForPatchesOwns, state: userDefaults.boolForKey(PatchrUserDefaultKey("MessagesForPatchesOwns")))
         self.sharingMessagesCell.accessoryView = makeSwitch(.MessagesSharing, state: userDefaults.boolForKey(PatchrUserDefaultKey("MessagesSharing")))
@@ -58,8 +58,8 @@ class NotificationSettingsViewController: UITableViewController {
     
     func toggle(sender: AnyObject?) {
         if let switcher = sender as? UISwitch {
-            if switcher.tag == NotificationType.MessagesForPatchesNearby.rawValue {
-                userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("MessagesForPatchesNearby"))
+            if switcher.tag == NotificationType.PatchesCreatedNearby.rawValue {
+                userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("PatchesCreatedNearby"))
             }
             else if switcher.tag == NotificationType.MessagesForPatchesWatching.rawValue {
                 userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("MessagesForPatchesWatching"))
@@ -95,7 +95,7 @@ class NotificationSettingsViewController: UITableViewController {
 }
 
 enum NotificationType: Int {
-    case MessagesForPatchesNearby
+    case PatchesCreatedNearby
     case MessagesForPatchesWatching
     case MessagesForPatchesOwns
     case MessagesSharing
