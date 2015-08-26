@@ -45,7 +45,7 @@ class MessageEditViewController: EntityEditViewController {
     @IBOutlet weak var shareCell:           UITableViewCell!
 
     /*--------------------------------------------------------------------------------------------
-    * Lifecycle
+    * Lifecycle¬
     *--------------------------------------------------------------------------------------------*/
     
     override func awakeFromNib() {
@@ -473,9 +473,12 @@ extension MessageEditViewController: MBContactPickerDelegate {
     }
     
     func didShowFilteredContactsForContactPicker(contactPicker: MBContactPicker!) {
-        let pickerRectInWindow = self.view.convertRect(self.toPicker.frame, fromView: nil)
-        let newHeight = self.view.window!.bounds.size.height - pickerRectInWindow.origin.y - self.toPicker.keyboardHeight
-        resizeHeader(newHeight + self.toPickerPadding)
+        /* Can be called after the view controller has been stopped */
+        if (self.isViewLoaded() && self.view.window != nil) {
+            let pickerRectInWindow = self.view.convertRect(self.toPicker.frame, fromView: nil)
+            let newHeight = self.view.window!.bounds.size.height - pickerRectInWindow.origin.y - self.toPicker.keyboardHeight
+            resizeHeader(newHeight + self.toPickerPadding)
+        }
     }
     
     func didHideFilteredContactsForContactPicker(contactPicker: MBContactPicker!) {

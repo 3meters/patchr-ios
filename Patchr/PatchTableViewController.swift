@@ -23,7 +23,7 @@ class PatchTableViewController: QueryTableViewController {
 	var filter: PatchListFilter = .Nearby
     var activityDate: Int64?
     
-	private var _query: Query!
+	private var _query: Query?
 
     @IBOutlet weak var contentHolder: UIView!
     
@@ -55,7 +55,7 @@ class PatchTableViewController: QueryTableViewController {
 			DataController.instance.managedObjectContext.save(nil)
 			self._query = query
 		}
-		return self._query
+		return self._query!
 	}
     
     /*--------------------------------------------------------------------------------------------
@@ -86,11 +86,6 @@ class PatchTableViewController: QueryTableViewController {
         self.tableView.backgroundColor = Colors.windowColor
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
         
-        /* Add a little bit of room at the bottom of the table */
-        var footer: UIView = UIView(frame:CGRectMake(0, 0, 1, 8))
-        footer.backgroundColor = UIColor.clearColor()
-        self.tableView.tableFooterView = footer;
-
 		switch self.filter {
 			case .Nearby:
 				self.navigationItem.title = "Nearby"
@@ -106,6 +101,11 @@ class PatchTableViewController: QueryTableViewController {
 			case .Owns:
 				self.navigationItem.title = "Patches I own"
 		}
+        
+        /* Add a little bit of room at the bottom of the table */
+        var footer: UIView = UIView(frame:CGRectMake(0, 0, 200, 8))
+        footer.backgroundColor = UIColor.clearColor()
+        self.tableView.tableFooterView = footer;
     }
     
     override func viewWillAppear(animated: Bool) {
