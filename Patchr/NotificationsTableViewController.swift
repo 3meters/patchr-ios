@@ -113,6 +113,9 @@ class NotificationsTableViewController: QueryTableViewController {
                             }
                             else {
                                 
+                                /* Add one because user isn't viewing nofications right now */
+                                incrementBadges()
+                                
                                 let json:JSON = JSON(userInfo)
                                 let alert = json["aps"]["alert"].string
                                 let trigger = json["trigger"].string
@@ -168,8 +171,6 @@ class NotificationsTableViewController: QueryTableViewController {
                                     AudioServicesPlaySystemSound(chirpSound)
                                 }
                                 
-                                /* Add one because user isn't viewing nofications right now */
-                                incrementBadges()
                             }
                             
                         case .Inactive: // User tapped on remove notification
@@ -376,7 +377,10 @@ class AirStylesheet: NSObject, TWMessageBarStyleSheet {
     var image: UIImage?
     
     init(image: UIImage?) {
-        self.image = image
+        if image != nil {
+            var imageSquared = image!.cropToSquare()
+            self.image = imageSquared
+        }
     }
     
     @objc func backgroundColorForMessageType(type: TWMessageBarMessageType) -> UIColor! {

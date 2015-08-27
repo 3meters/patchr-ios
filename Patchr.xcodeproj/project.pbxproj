@@ -115,6 +115,9 @@
 		E2711C4C1AFD17E800CE71A1 /* AirTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2711C4B1AFD17E800CE71A1 /* AirTableViewCell.m */; };
 		E2711C4F1AFD182F00CE71A1 /* AirTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = E2711C4E1AFD182F00CE71A1 /* AirTableView.m */; };
 		E2737DC21B8E2EAE00C176B1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D3D39D21A6F086F00A44CB2 /* Main.storyboard */; };
+		E2737DC71B8F7E3B00C176B1 /* UIImage+Resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2737DC61B8F7E3B00C176B1 /* UIImage+Resize.swift */; };
+		E2737DCA1B8F7EA100C176B1 /* UIImage+Alpha.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2737DC81B8F7EA100C176B1 /* UIImage+Alpha.swift */; };
+		E2737DCB1B8F7EA100C176B1 /* UIImage+RoundedCorner.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2737DC91B8F7EA100C176B1 /* UIImage+RoundedCorner.swift */; };
 		E273B5361B488F2000888E73 /* AirPhotoPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = E273B5351B488F2000888E73 /* AirPhotoPreview.swift */; };
 		E27DB4051B06477A0090D023 /* QueryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = E27DB4041B06477A0090D023 /* QueryItem.m */; };
 		E27DB4081B0647960090D023 /* _QueryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = E27DB4071B0647960090D023 /* _QueryItem.m */; };
@@ -356,6 +359,9 @@
 		E2711C4B1AFD17E800CE71A1 /* AirTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AirTableViewCell.m; sourceTree = "<group>"; };
 		E2711C4D1AFD182F00CE71A1 /* AirTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirTableView.h; sourceTree = "<group>"; };
 		E2711C4E1AFD182F00CE71A1 /* AirTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AirTableView.m; sourceTree = "<group>"; };
+		E2737DC61B8F7E3B00C176B1 /* UIImage+Resize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Resize.swift"; sourceTree = "<group>"; };
+		E2737DC81B8F7EA100C176B1 /* UIImage+Alpha.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Alpha.swift"; sourceTree = "<group>"; };
+		E2737DC91B8F7EA100C176B1 /* UIImage+RoundedCorner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+RoundedCorner.swift"; sourceTree = "<group>"; };
 		E273B5181B48349900888E73 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Bolts.framework; path = Frameworks/Bolts.framework; sourceTree = "<group>"; };
 		E273B5191B48349900888E73 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = Frameworks/Parse.framework; sourceTree = "<group>"; };
 		E273B5351B488F2000888E73 /* AirPhotoPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirPhotoPreview.swift; sourceTree = "<group>"; };
@@ -672,6 +678,9 @@
 				E26B0C881B456F8A00706F4A /* ExtensionsUi.swift */,
 				7D39D3C31ABA21B200275759 /* CALayer+XibConfiguration.h */,
 				7D39D3C41ABA21B200275759 /* CALayer+XibConfiguration.m */,
+				E2737DC81B8F7EA100C176B1 /* UIImage+Alpha.swift */,
+				E2737DC91B8F7EA100C176B1 /* UIImage+RoundedCorner.swift */,
+				E2737DC61B8F7E3B00C176B1 /* UIImage+Resize.swift */,
 				E241D1581B1B3FCE00702E01 /* UIView+BorderLayer.h */,
 				E241D1591B1B3FCE00702E01 /* UIView+BorderLayer.m */,
 			);
@@ -1157,6 +1166,7 @@
 				7DA730911A71ACC9008C25FA /* Place.m in Sources */,
 				E29F65531B61A9450000BEF4 /* PatchSearchCell.swift in Sources */,
 				E26B0C8C1B4577D000706F4A /* TextViewChangeObserver.swift in Sources */,
+				E2737DCB1B8F7EA100C176B1 /* UIImage+RoundedCorner.swift in Sources */,
 				7D01FA361A7024E200DD6DFA /* JSONResponseSerializerWithData.m in Sources */,
 				843523C51AAE70B800739447 /* MessageEditViewController.swift in Sources */,
 				E25327E01B1A282D00990A81 /* FXBlurView.m in Sources */,
@@ -1184,6 +1194,7 @@
 				7DA730941A71ACC9008C25FA /* ServiceObject.m in Sources */,
 				7DA730901A71ACC9008C25FA /* Patch.m in Sources */,
 				7DA7308A1A71ACC9008C25FA /* _Patch.m in Sources */,
+				E2737DCA1B8F7EA100C176B1 /* UIImage+Alpha.swift in Sources */,
 				7D021AC21A9423080047DAAE /* LobbyViewController.swift in Sources */,
 				7DA7308D1A71ACC9008C25FA /* _ServiceBase.m in Sources */,
 				E25327BC1B10FBE700990A81 /* NearbyTableViewController.swift in Sources */,
@@ -1191,6 +1202,7 @@
 				7D6E26471A7AB93F000128A7 /* UserDetailViewController.swift in Sources */,
 				7DA730921A71ACC9008C25FA /* Query.m in Sources */,
 				E246E3171B742970007327F5 /* BaseView.swift in Sources */,
+				E2737DC71B8F7E3B00C176B1 /* UIImage+Resize.swift in Sources */,
 				7DB6E0F81A8174E90017A42F /* _Message.m in Sources */,
 				E2CCAAE01B67CC0E0071170C /* NotificationController.swift in Sources */,
 				E2F6C9361B1E546F0067D959 /* RichType.m in Sources */,
