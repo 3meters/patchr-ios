@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -320,16 +321,14 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" tableViewCell="wVI-Au-eyn" id="smd-MS-Sud">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5KQ-kg-as3" userLabel="like_button" customClass="AirLikeButton" customModule="Patchr" customModuleProvider="target">
+                                                <button clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5KQ-kg-as3" userLabel="like_button" customClass="AirLikeButton" customModule="Patchr" customModuleProvider="target">
                                                     <rect key="frame" x="0.0" y="0.0" width="48" height="48"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="48" id="FYU-rS-vVx"/>
                                                         <constraint firstAttribute="width" constant="48" id="KSG-e6-4i7"/>
                                                     </constraints>
                                                     <inset key="imageEdgeInsets" minX="10" minY="12" maxX="10" maxY="12"/>
-                                                    <state key="normal" image="imgHeartLight">
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
+                                                    <state key="normal" image="imgHeartLight"/>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" reversesTitleShadowWhenHighlighted="YES" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xyp-ei-5Dw" userLabel="likes_button">
                                                     <rect key="frame" x="48" y="0.0" width="56" height="48"/>
@@ -2762,12 +2761,12 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="ode-oE-WBF"/>
-        <segue reference="5MF-E5-yBl"/>
-        <segue reference="HbO-hl-kVs"/>
-        <segue reference="ZkF-VU-9mQ"/>
-        <segue reference="sNP-m8-m5g"/>
         <segue reference="W2H-Y3-qfq"/>
+        <segue reference="5MF-E5-yBl"/>
+        <segue reference="xAO-Qh-0VB"/>
+        <segue reference="HbO-hl-kVs"/>
+        <segue reference="IOJ-HZ-5D3"/>
+        <segue reference="5gi-H6-rYN"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="1" green="0.50196078430000002" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

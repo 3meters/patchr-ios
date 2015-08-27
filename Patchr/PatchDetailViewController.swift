@@ -142,8 +142,8 @@ class PatchDetailViewController: QueryTableViewController {
         
         likeButton.tintOff = UIColor.whiteColor()
         likeButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
-        likeButton.imageOn = UIImage(named: "imgStarFilledLight")
-        likeButton.imageOff = UIImage(named: "imgStarLight")
+        likeButton.imageOn = UIImage(named: "imgStarFilledLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+        likeButton.imageOff = UIImage(named: "imgStarLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
         likeButton.messageOn = "Added to favorites"
         likeButton.messageOff = "Removed from favorites"
         likeButton.alpha = 0.0

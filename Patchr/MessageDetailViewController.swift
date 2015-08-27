@@ -76,7 +76,7 @@ class MessageDetailViewController: UITableViewController {
         self.description_.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
         self.description_.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
         self.description_.delegate = self
-
+        
 		/* Navigation bar buttons */
         var shareButton  = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
         if isOwner {
