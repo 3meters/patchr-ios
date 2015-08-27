@@ -104,6 +104,9 @@ extension Patch {
             }
         }
         
+        view.messageCount.text = "--"
+        view.watchingCount.text = "--"
+        
         if let numberOfMessages = patch.numberOfMessages {
             if view.messageCount != nil {
                 view.messageCount.text = numberOfMessages.stringValue
@@ -203,7 +206,7 @@ extension Message {
     
     static func bindView(view: UIView, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) -> UIView {
         
-        let message = object as! Message
+        let message = object as! Entity
         let view = view as! MessageView
         
         view.entity = message
@@ -314,15 +317,17 @@ extension Message {
             LinkSpec(from: .Users, type: .Create, fields: "_id,name,photo,schema,type" )
         ]
         
+        /* Used to get count of messages and users watching a shared patch */
         var linkCount = [
-            LinkSpec(from: .Users, type: .Watch, enabled: true)        // Count of users that are watching the patch
+            LinkSpec(from: .Users, type: .Watch, enabled: true),        // Count of users that are watching the patch
+            LinkSpec(from: .Messages, type: .Content)    // Count of message to the patch
         ]
         
         var links = [
             LinkSpec(to: .Patches, type: .Content, fields: "_id,name,photo,schema,type", limit: 1), // Patch the message is linked to
             LinkSpec(from: .Users, type: .Create, fields: "_id,name,photo,schema,type" ),           // User who created the message
-            LinkSpec(to: .Messages, type: .Share, limit: 1, linked: linked),                    // Message this message is sharing
-            LinkSpec(to: .Patches, type: .Share, limit: 1, linkCount: linkCount),                                         // Patch this message is sharing
+            LinkSpec(to: .Messages, type: .Share, limit: 1, linked: linked),                        // Message this message is sharing
+            LinkSpec(to: .Patches, type: .Share, limit: 1, linkCount: linkCount),                   // Patch this message is sharing
             LinkSpec(to: .Users, type: .Share, limit: 5)                                            // Users this message is shared with
         ]
         

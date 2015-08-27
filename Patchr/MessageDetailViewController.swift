@@ -302,17 +302,17 @@ class MessageDetailViewController: UITableViewController {
 
 	func draw() {
         
-        if message!.type != nil && message!.type == "share" {
+        if self.message!.type != nil && self.message!.type == "share" {
             self.recipientsCell.hidden = true
             self.shareHolderCell.hidden = false
             
             /* Share entity */
             
             var view: BaseView!
-            if message.message != nil {
+            if self.message.message != nil {
                 view = NSBundle.mainBundle().loadNibNamed("MessageView", owner: self, options: nil)[0] as! BaseView
                 view.frame.size.width = self.shareHolder.bounds.size.width
-                Message.bindView(view, object: message.message!, tableView: self.tableView)
+                Message.bindView(view, object: self.message.message!, tableView: self.tableView)
                 
                 /* Tweak the message view to suit display as static */
                 if let messageView = view as? MessageView {
@@ -327,10 +327,10 @@ class MessageDetailViewController: UITableViewController {
                 view.frame.size.height = view.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
                 self.shareHolder?.addSubview(view)
             }
-            else if message.patch != nil {
+            else if self.message.patch != nil {
                 view = NSBundle.mainBundle().loadNibNamed("PatchNormalView", owner: self, options: nil)[0] as! BaseView
                 view.frame.size.width = self.shareHolder.bounds.size.width
-                Patch.bindView(view, object: message.patch!, tableView: self.tableView)
+                Patch.bindView(view, object: self.message.patch!, tableView: self.tableView)
                 self.shareHolder?.addSubview(view)
             }
             
@@ -347,18 +347,18 @@ class MessageDetailViewController: UITableViewController {
             self.toolbarCell.hidden = false
             
             /* Patch */
-            if message!.patch != nil {
+            if self.message!.patch != nil {
                 self.patchCell.hidden = false
-                self.patchPhoto.setImageWithPhoto(message!.patch.getPhotoManaged())
-                self.patchName.setTitle(message!.patch.name, forState: .Normal)
+                self.patchPhoto.setImageWithPhoto(self.message!.patch.getPhotoManaged())
+                self.patchName.setTitle(self.message!.patch.name, forState: .Normal)
             }
         }
 
 		/* Message */
 
-		self.createdDate.text = Utils.messageDateFormatter.stringFromDate(message!.createdDate)
-		if message!.description_ != nil {
-			self.description_.text = message!.description_
+		self.createdDate.text = Utils.messageDateFormatter.stringFromDate(self.message!.createdDate)
+		if self.message!.description_ != nil {
+			self.description_.text = self.message!.description_
 			self.description_.sizeToFit()
 			self.description_.hidden = false
 		}
@@ -368,7 +368,7 @@ class MessageDetailViewController: UITableViewController {
 		if message!.photo != nil {
 			self.messagePhoto.hidden = false
             if !self.messagePhoto.linkedToPhoto(self.message!.photo) {
-                self.messagePhoto.setImageWithPhoto(message!.photo)
+                self.messagePhoto.setImageWithPhoto(self.message!.photo)
             }
 		}
 		else {
@@ -400,7 +400,7 @@ class MessageDetailViewController: UITableViewController {
 
 		/* User */
 
-		if let creator = message!.creator {
+		if let creator = self.message!.creator {
 			self.userName.setTitle(creator.name, forState: .Normal)
 			self.userPhoto.setImageWithPhoto(creator.getPhotoManaged())
 		}

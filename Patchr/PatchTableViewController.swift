@@ -24,8 +24,6 @@ class PatchTableViewController: QueryTableViewController {
     var activityDate: Int64?
     
 	private var _query: Query?
-
-    @IBOutlet weak var contentHolder: UIView!
     
 	override func query() -> Query {
 		if self._query == nil {
