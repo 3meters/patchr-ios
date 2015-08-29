@@ -512,7 +512,7 @@ class PatchDetailViewController: QueryTableViewController {
         var spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
         spacer.width = SPACER_WIDTH
         if isOwner {
-            let editImage = UIImage(named: "imgEditLight")
+            let editImage = UIImage(named: "imgEdit2Light")
             var editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
             self.navigationItem.rightBarButtonItems = [addButton, spacer, shareButton, spacer, editButton]
         }

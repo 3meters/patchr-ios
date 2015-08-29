@@ -80,7 +80,7 @@ class MessageDetailViewController: UITableViewController {
 		/* Navigation bar buttons */
         var shareButton  = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
         if isOwner {
-            let editImage    = UIImage(named: "imgEditLight")
+            let editImage    = UIImage(named: "imgEdit2Light")
             var editButton   = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
             var spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
             var deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: Selector("deleteAction"))
@@ -88,7 +88,7 @@ class MessageDetailViewController: UITableViewController {
             self.navigationItem.rightBarButtonItems = [shareButton, spacer, deleteButton, spacer, editButton]
         }
         else if isPatchOwner {
-            let removeImage    = UIImage(named: "imgCancelLight")
+            let removeImage    = UIImage(named: "imgRemoveLight")
             var removeButton   = UIBarButtonItem(image: removeImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("removeAction"))
             var spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
             spacer.width = SPACER_WIDTH

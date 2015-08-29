@@ -87,7 +87,7 @@ class UserDetailViewController: QueryTableViewController {
             self.navigationItem.title = "Guest"
         }
         else if isCurrentUser {
-            let editImage = UIImage(named: "imgEditLight")
+            let editImage = UIImage(named: "imgEdit2Light")
             var editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionEdit"))
             var signoutButton = UIBarButtonItem(title: "Sign out", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSignout"))
             var settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSettings"))
