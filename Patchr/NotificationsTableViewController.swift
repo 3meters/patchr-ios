@@ -23,9 +23,9 @@ class NotificationsTableViewController: QueryTableViewController {
 
 	private var offscreenCells:       NSMutableDictionary = NSMutableDictionary()
 	private var messageDateFormatter: NSDateFormatter!
-	private var selectedPatch:        Patch?
-	private var selectedMessage:      Message?
-    private var selectedEntityId:     String?
+//	private var selectedPatch:        Patch?
+//	private var selectedMessage:      Message?
+//    private var selectedEntityId:     String?
     private var activityDate:         Int64!
     private var nearbys:              [[NSObject: AnyObject]] = []
     
@@ -173,7 +173,7 @@ class NotificationsTableViewController: QueryTableViewController {
                                 
                             }
                             
-                        case .Inactive: // User tapped on remove notification
+                        case .Inactive: // User tapped on remote notification
                             
                             /* Select the notifications tab and then segue as if the user had selected the notification */
                             self.tabBarController?.selectedViewController = self.navigationController
@@ -186,7 +186,19 @@ class NotificationsTableViewController: QueryTableViewController {
                             /* Knock off one because the user will be view one */
                             decrementBadges()
                             
-                            self.segueWith(targetId, parentId: parentId, refreshEntities: true)
+                            let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+                            if targetId!.hasPrefix("pa.") {
+                                if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
+                                    controller.patchId = targetId
+                                    self.navigationController?.pushViewController(controller, animated: true)
+                                }
+                            }
+                            else if targetId!.hasPrefix("me.") {
+                                if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
+                                    controller.messageId = targetId
+                                    self.navigationController?.pushViewController(controller, animated: true)
+                                }
+                            }
                         
                         case .Background:   // Shouldn't ever fire
                             assert(false, "Notification controller should never get called when app state == background")
@@ -233,39 +245,6 @@ class NotificationsTableViewController: QueryTableViewController {
         }
         view.delegate = self
 	}
-
-    func segueWith(targetId: String?, parentId: String?, refreshEntities: Bool = false) {
-        if targetId == nil { return }
-        
-        self.selectedEntityId = targetId
-        if targetId!.hasPrefix("pa.") {
-            self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
-        }
-        else if targetId!.hasPrefix("me.") {
-            self.performSegueWithIdentifier("MessageDetailSegue", sender: self)
-        }
-    }
-    
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        
-        if segue.identifier == nil {
-            return
-        }
-        
-        switch segue.identifier! {
-        case "PatchDetailSegue":
-            if let controller = segue.destinationViewController as? PatchDetailViewController {
-                controller.patchId = self.selectedEntityId
-                self.selectedEntityId = nil
-            }
-        case "MessageDetailSegue":
-            if let controller = segue.destinationViewController as? MessageDetailViewController {
-                controller.messageId = self.selectedEntityId
-                self.selectedEntityId = nil
-            }
-        default: ()
-        }
-    }
 
     func showNotificationBar(title: String, description: String, image: UIImage?, targetId: String) {
         
@@ -400,10 +379,22 @@ class AirStylesheet: NSObject, TWMessageBarStyleSheet {
 extension NotificationsTableViewController: UITableViewDelegate {
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if let queryResult  = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
-            if let notification = queryResult.object as? Notification {
-                self.segueWith(notification.targetId, parentId: notification.parentId)
-            }
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
+            let entity = queryResult.object as? Notification {
+                if entity.targetId!.hasPrefix("pa.") {
+                    if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
+                        controller.patchId = entity.targetId
+                        self.navigationController?.pushViewController(controller, animated: true)
+                    }
+                }
+                else if entity.targetId!.hasPrefix("me.") {
+                    if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
+                        controller.messageId = entity.targetId
+                        self.navigationController?.pushViewController(controller, animated: true)
+                    }
+                }
         }
     }
     

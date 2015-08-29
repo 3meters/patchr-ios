@@ -26,15 +26,11 @@ class MainTabBarController: UITabBarController {
     func applicationWillEnterForeground() {
         /* User either switched to patchr or turned their screen back on. */
         Log.d("Application will enter foreground")
-//        LocationController.instance.clearLastLocationAccepted()
-//        LocationController.instance.stopSignificantChangeUpdates()
     }
     
     func applicationDidEnterBackground() {
-        /* User either switched to patchr or turned their screen back on. */
         Log.d("Application did enter background")
         LocationController.instance.startSignificantChangeUpdates()
-//        LocationController.instance.clearLastLocationAccepted()
     }
     
     deinit {
@@ -43,7 +39,7 @@ class MainTabBarController: UITabBarController {
 }
 
 extension MainTabBarController: UITabBarControllerDelegate {
-    
+        
 	func tabBarController(tabBarController: UITabBarController, shouldSelectViewController viewController: UIViewController) -> Bool {
         
         if let navigationController = viewController as? UINavigationController {

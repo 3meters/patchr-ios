@@ -18,7 +18,6 @@ class UserTableViewController: QueryTableViewController {
 
 	var patch:          Patch!
     var message:        Message!
-	var selectedUser:   User?
 	var filter:         UserTableFilter = .PatchWatchers
     
     var watchListForOwner: Bool {
@@ -110,14 +109,14 @@ class UserTableViewController: QueryTableViewController {
 extension UserTableViewController: UITableViewDelegate {
     
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
-			if let user = queryResult.object as? User {
-				self.selectedUser = user
-				self.performSegueWithIdentifier("UserDetailSegue", sender: self)
-				return
-			}
-		}
-		assert(false, "Couldn't set selectedUser")
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
+            let entity = queryResult.object as? User,
+            let controller = storyboard.instantiateViewControllerWithIdentifier("UserDetailViewController") as? UserDetailViewController {
+                controller.user = entity
+                self.navigationController?.pushViewController(controller, animated: true)
+        }
 	}
 }
 

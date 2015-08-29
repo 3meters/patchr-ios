@@ -14,7 +14,6 @@ class PatchDetailViewController: QueryTableViewController {
     var patchId: String?
     var deleted = false
 
-	private var selectedMessage:      Message?
 	private var messageDateFormatter: NSDateFormatter!
 	private var offscreenCells:       NSMutableDictionary = NSMutableDictionary()
     private var _query: Query!
@@ -130,6 +129,7 @@ class PatchDetailViewController: QueryTableViewController {
         tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
         lockImage.tintColor(Colors.brandColor)
         infoLockImage.tintColor(Colors.brandColor)
+        self.mapButton.setImage(UIImage(named: "imgMapLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
         self.mapButton.imageView!.tintColor(UIColor.whiteColor())
         self.watchersButton.alpha = 0.0
         self.originalTop = patchPhotoTop.constant
@@ -206,8 +206,13 @@ class PatchDetailViewController: QueryTableViewController {
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
     
-	@IBAction func numberOfWatchersButtonAction(sender: UIButton) {
-		self.performSegueWithIdentifier("WatchingListSegue", sender: self)
+	@IBAction func watchersAction(sender: AnyObject) {
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        if let controller = storyboard.instantiateViewControllerWithIdentifier("UserTableViewController") as? UserTableViewController {
+            controller.patch = self.patch
+            controller.filter = .PatchWatchers
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
 	}
 
 	@IBAction func contextButtonAction(sender: UIButton) {
@@ -217,7 +222,7 @@ class PatchDetailViewController: QueryTableViewController {
                 Shared.Toast("Sign in to post messages")
                 return
             }
-            self.performSegueWithIdentifier("MessageEditSegue", sender: self)
+            addAction()
         }
         else if contextAction == .SharePatch {
             shareAction()
@@ -233,30 +238,34 @@ class PatchDetailViewController: QueryTableViewController {
             self.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
         }
         else if contextAction == .BrowseUsersWatching {
-            self.performSegueWithIdentifier("WatchingListSegue", sender: self)
+            watchersAction(self)
         }
 	}
 
-	@IBAction func unwindFromMessageEdit(segue: UIStoryboardSegue) {
-		// Refresh results when unwinding from Message screen to pickup any changes.
-        self.refreshQueryItems(force: true)
-	}
-
-	@IBAction override func unwindFromPatchEdit(segue: UIStoryboardSegue) {
-		// Refresh results when unwinding from Patch edit/create screen to pickup any changes.
-		self.refresh()
-	}
-    
     @IBAction func placeAction(sender: AnyObject) {
-        if self.patch != nil {
-            self.performSegueWithIdentifier("PlaceDetailSegue", sender: self)
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        if let controller = storyboard.instantiateViewControllerWithIdentifier("PlaceDetailViewController") as? PlaceDetailViewController {
+            controller.placeId = self.patch!.place.entityId
+            self.navigationController?.pushViewController(controller, animated: true)
         }
     }
     
     @IBAction func mapAction(sender: AnyObject) {
-        if self.patch != nil {
-            self.performSegueWithIdentifier("PatchMapSegue", sender: self)
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchMapViewController") as? PatchMapViewController {
+            controller.locationDelegate = self
+            self.navigationController?.pushViewController(controller, animated: true)
         }
+    }
+    
+    @IBAction func unwindFromMessageEdit(segue: UIStoryboardSegue) {
+        // Refresh results when unwinding from Message screen to pickup any changes.
+        self.refreshQueryItems(force: true)
+    }
+    
+    @IBAction override func unwindFromPatchEdit(segue: UIStoryboardSegue) {
+        // Refresh results when unwinding from Patch edit/create screen to pickup any changes.
+        self.refresh()
     }
     
     func handleRemoteNotification(notification: NSNotification) {
@@ -299,11 +308,28 @@ class PatchDetailViewController: QueryTableViewController {
             Shared.Toast("Sign in to post messages")
             return
         }
-        self.performSegueWithIdentifier("MessageEditSegue", sender: self)
+        /* Has its own nav because we segue modally and it needs its own stack */
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageEditViewController") as? MessageEditViewController {
+            controller.toString = self.patch!.name
+            controller.patchId = self.patchId
+            var navController = UINavigationController()
+            navController.navigationBar.tintColor = Colors.brandColorDark
+            navController.viewControllers = [controller]
+            self.navigationController?.presentViewController(navController, animated: true, completion: nil)
+        }
     }
     
     func editAction() {
-        self.performSegueWithIdentifier("PatchEditSegue", sender: self)
+        /* Has its own nav because we segue modally and it needs its own stack */
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchEditViewController") as? PatchEditViewController {
+            controller.entity = patch
+            var navController = UINavigationController()
+            navController.navigationBar.tintColor = Colors.brandColorDark
+            navController.viewControllers = [controller]
+            self.navigationController?.presentViewController(navController, animated: true, completion: nil)
+        }
     }
     
     func shareAction() {
@@ -540,48 +566,6 @@ class PatchDetailViewController: QueryTableViewController {
         view.patchNameHeight.constant = 0
     }
     
-	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-		if segue.identifier == nil {
-			return
-		}
-
-		switch segue.identifier! {
-			case "MessageDetailSegue":
-				if let controller = segue.destinationViewController as? MessageDetailViewController {
-					controller.message = self.selectedMessage
-				}
-            case "PlaceDetailSegue":
-                if let controller = segue.destinationViewController as? PlaceDetailViewController {
-                    controller.placeId = self.patch!.place.entityId
-                }
-			case "MessageEditSegue":
-                /* Has its own nav because we segue modally and it needs its own stack */
-				if let navigationController = segue.destinationViewController as? UINavigationController {
-					if let controller = navigationController.topViewController as? MessageEditViewController {
-						controller.toString = patch!.name
-						controller.patchId = patchId
-					}
-				}
-			case "PatchEditSegue":
-				if let navigationController = segue.destinationViewController as? UINavigationController {
-					if let controller = navigationController.topViewController as? PatchEditViewController {
-						controller.entity = patch
-					}
-				}
-			case "LikeListSegue", "WatchingListSegue":
-				if let controller = segue.destinationViewController as? UserTableViewController {
-					controller.patch = self.patch
-					controller.filter = segue.identifier == "LikeListSegue" ? .PatchLikers : .PatchWatchers
-				}
-            case "PatchMapSegue":
-                if let controller = segue.destinationViewController as? PatchMapViewController {
-                    controller.locationDelegate = self
-                }
-            
-			default: ()
-		}
-	}
-
 	override func pullToRefreshAction(sender: AnyObject?) -> Void {
         self.refresh(force: true)
         self.refreshQueryItems(force: true)
@@ -683,14 +667,13 @@ extension PatchDetailViewController: UITableViewDelegate {
 
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
-        if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
-            if let message = queryResult.object as? Message {
-                self.selectedMessage = message
-                self.performSegueWithIdentifier("MessageDetailSegue", sender: self)
-                return
-            }
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
+            let entity = queryResult.object as? Message,
+            let controller = storyboard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
+                controller.message = entity
+                self.navigationController?.pushViewController(controller, animated: true)
         }
-		assert(false, "Couldn't set selectedMessage")
 	}
 
 	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {

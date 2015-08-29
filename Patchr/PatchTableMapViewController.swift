@@ -24,7 +24,6 @@ class PatchTableMapViewController: UIViewController, NSFetchedResultsControllerD
     //    3. Invoke performFetch:.
     
     var fetchRequest: NSFetchRequest!
-    var selectedPatch: Patch?
     var token: dispatch_once_t = 0
     var nearestAnnotation: MKAnnotation?
     
@@ -54,24 +53,7 @@ class PatchTableMapViewController: UIViewController, NSFetchedResultsControllerD
             self.mapView.showAnnotations(self.mapView.annotations, animated: true)
         })
     }
-    
-    // TODO: consolidate the duplicated segue logic
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
-        if segue.identifier == nil {
-            return
-        }
-        
-        switch segue.identifier! {
-        case "PatchDetailSegue":
-            if let patchDetailViewController = segue.destinationViewController as? PatchDetailViewController {
-                patchDetailViewController.patch = self.selectedPatch
-                self.selectedPatch = nil
-            }
-        default: ()
-        }
-    }
-    
     private func reloadAnnotations() -> Void {
         self.mapView.removeAnnotations(self.mapView.annotations)
         if let fetchedObjects = self.fetchedResultsController.fetchedObjects {
@@ -177,8 +159,11 @@ extension PatchTableMapViewController: MKMapViewDelegate {
     func mapView(mapView: MKMapView!, annotationView view: MKAnnotationView!, calloutAccessoryControlTapped control: UIControl!) {
         if let entityAnnotation = view.annotation as? EntityAnnotation {
             if let patch = entityAnnotation.entity as? Patch {
-                self.selectedPatch = patch
-                self.performSegueWithIdentifier("PatchDetailSegue", sender: view)
+                let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+                if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
+                    controller.patch = patch
+                    self.navigationController?.pushViewController(controller, animated: true)
+                }
             }
         }
     }

@@ -82,14 +82,16 @@ class QueryTableViewController: FetchedResultsTableViewController {
 		self.refreshControl = refreshControl
         
         /* Wacky activity control for body */
-        progress = MBProgressHUD.showHUDAddedTo(self.navigationController!.view, animated: true)
-        progress!.mode = MBProgressHUDMode.Indeterminate
-        progress!.square = true
-        progress!.opacity = 0.0
-        progress!.removeFromSuperViewOnHide = true
-        progress!.userInteractionEnabled = false
-        progress!.activityIndicatorColor = Colors.brandColorDark
-        progress!.show(true)
+        if let controller = UIViewController.topMostViewController() {
+            progress = MBProgressHUD.showHUDAddedTo(controller.view, animated: true)
+            progress!.mode = MBProgressHUDMode.Indeterminate
+            progress!.square = true
+            progress!.opacity = 0.0
+            progress!.removeFromSuperViewOnHide = true
+            progress!.userInteractionEnabled = false
+            progress!.activityIndicatorColor = Colors.brandColorDark
+            progress!.show(true)
+        }
         
         /* Empty label */
         if self.showEmptyLabel {
@@ -173,7 +175,7 @@ class QueryTableViewController: FetchedResultsTableViewController {
                 () -> () in
                 
                 self?.refreshControl?.endRefreshing()
-                self?.progress!.hide(true)
+                self?.progress?.hide(true)
                 self?.tableView.finishInfiniteScroll()
                 
                 if query.moreValue {

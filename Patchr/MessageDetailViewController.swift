@@ -83,13 +83,13 @@ class MessageDetailViewController: UITableViewController {
             let editImage    = UIImage(named: "imgEditLight")
             var editButton   = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
             var spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
-            var deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: Selector("deleteAction:"))
+            var deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: Selector("deleteAction"))
             spacer.width = SPACER_WIDTH
             self.navigationItem.rightBarButtonItems = [shareButton, spacer, deleteButton, spacer, editButton]
         }
         else if isPatchOwner {
             let removeImage    = UIImage(named: "imgCancelLight")
-            var removeButton   = UIBarButtonItem(image: removeImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("removeAction:"))
+            var removeButton   = UIBarButtonItem(image: removeImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("removeAction"))
             var spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
             spacer.width = SPACER_WIDTH
             self.navigationItem.rightBarButtonItems = [shareButton, spacer, removeButton]
@@ -201,11 +201,21 @@ class MessageDetailViewController: UITableViewController {
 	 *--------------------------------------------------------------------------------------------*/
 
 	@IBAction func patchAction(sender: AnyObject) {
-		self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
+            controller.patchId = self.message!.patch.entityId
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
 	}
 
 	@IBAction func userAction(sender: AnyObject) {
-		self.performSegueWithIdentifier("UserDetailSegue", sender: self)
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        if let controller = storyboard.instantiateViewControllerWithIdentifier("UserDetailViewController") as? UserDetailViewController {
+            if let creator = message!.creator {
+                controller.userId = creator.entityId
+                self.navigationController?.pushViewController(controller, animated: true)
+            }
+        }
 	}
 
 	@IBAction func photoAction(sender: AnyObject) {
@@ -217,32 +227,13 @@ class MessageDetailViewController: UITableViewController {
 		Alert("Not implemented")
 	}
     
-    @IBAction func deleteAction(sender: AnyObject) {
-        self.ActionConfirmationAlert(
-            title: "Confirm Delete",
-            message: "Are you sure you want to delete this?",
-            actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
-                doIt in
-                if doIt {
-                    self.delete()
-                }
-        }
-    }
-    
-    @IBAction func removeAction(sender: AnyObject) {
-        self.ActionConfirmationAlert(
-            title: "Confirm Remove",
-            message: "Are you sure you want to remove this message from the patch?",
-            actionTitle: "Remove", cancelTitle: "Cancel", delegate: self) {
-                doIt in
-                if doIt {
-                    self.remove()
-                }
-        }
-    }
-    
 	@IBAction func likesAction(sender: AnyObject) {
-		self.performSegueWithIdentifier("LikeListSegue", sender: self)
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        if let controller = storyboard.instantiateViewControllerWithIdentifier("UserTableViewController") as? UserTableViewController {
+            controller.message = self.message
+            controller.filter = .MessageLikers
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
 	}
 
 	@IBAction func unwindFromMessageEdit(segue: UIStoryboardSegue) {
@@ -284,13 +275,45 @@ class MessageDetailViewController: UITableViewController {
         }
 	}
     
+	func editAction() {
+        /* Has its own nav because we segue modally and it needs its own stack */
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageEditViewController") as? MessageEditViewController {
+            controller.entity = self.message
+            var navController = UINavigationController()
+            navController.navigationBar.tintColor = Colors.brandColorDark
+            navController.viewControllers = [controller]
+            self.navigationController?.presentViewController(navController, animated: true, completion: nil)
+        }
+	}
+    
+    func deleteAction() {
+        self.ActionConfirmationAlert(
+            title: "Confirm Delete",
+            message: "Are you sure you want to delete this?",
+            actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
+                doIt in
+                if doIt {
+                    self.delete()
+                }
+        }
+    }
+    
+    func removeAction() {
+        self.ActionConfirmationAlert(
+            title: "Confirm Remove",
+            message: "Are you sure you want to remove this message from the patch?",
+            actionTitle: "Remove", cancelTitle: "Cancel", delegate: self) {
+                doIt in
+                if doIt {
+                    self.remove()
+                }
+        }
+    }
+    
     func dismissAction(sender: AnyObject) {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
-
-	func editAction() {
-		self.performSegueWithIdentifier("MessageEditSegue", sender: self)
-	}
     
     func likeDidChange(sender: NSNotification) {
         self.draw()
@@ -448,38 +471,6 @@ class MessageDetailViewController: UITableViewController {
             }
         }
     }
-
-	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-
-		if segue.identifier == nil {
-			return
-		}
-
-		switch segue.identifier! {
-			case "PatchDetailSegue":
-				if let patchDetailViewController = segue.destinationViewController as? PatchDetailViewController {
-					patchDetailViewController.patchId = self.message!.patch.entityId
-				}
-			case "UserDetailSegue":
-				if let controller = segue.destinationViewController as? UserDetailViewController {
-					if let creator = message!.creator {
-						controller.userId = creator.entityId
-					}
-				}
-			case "MessageEditSegue":
-				if let navigationController = segue.destinationViewController as? UINavigationController {
-					if let controller = navigationController.topViewController as? MessageEditViewController {
-						controller.entity = message
-					}
-				}
-			case "LikeListSegue":
-				if let controller = segue.destinationViewController as? UserTableViewController {
-					controller.message = self.message
-					controller.filter = .MessageLikers
-				}
-			default: ()
-		}
-	}
 
     func shareUsing(patchr: Bool = true) {
         

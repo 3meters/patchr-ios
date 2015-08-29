@@ -13,12 +13,10 @@ class UserDetailViewController: QueryTableViewController {
 	var user:  User! = nil
     var userId: String?
 
-	private var selectedMessage:      Message?
 	private var messageDateFormatter: NSDateFormatter!
 	private var offscreenCells:       NSMutableDictionary = NSMutableDictionary()
 	private var isCurrentUser                             = false
     private var isGuest                                   = false
-    private var patchListFilter:      PatchListFilter?    = nil
 
 	/* Outlets are initialized before viewDidLoad is called */
 
@@ -137,22 +135,34 @@ class UserDetailViewController: QueryTableViewController {
 
     @IBAction func actionBrowseFavorites(sender: UIButton) {
         if !isGuest {
-            patchListFilter = PatchListFilter.Favorite
-            self.performSegueWithIdentifier("PatchListSegue", sender: self)
+            let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+            if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableViewController") as? PatchTableViewController {
+                controller.filter = .Favorite
+                controller.user = self.user
+                self.navigationController?.pushViewController(controller, animated: true)
+            }
         }
     }
     
 	@IBAction func actionBrowseWatching(sender: UIButton) {
         if !isGuest {
-            patchListFilter = PatchListFilter.Watching
-            self.performSegueWithIdentifier("PatchListSegue", sender: self)
+            let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+            if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableViewController") as? PatchTableViewController {
+                controller.filter = .Watching
+                controller.user = self.user
+                self.navigationController?.pushViewController(controller, animated: true)
+            }
         }
 	}
 
 	@IBAction func actionBrowseOwned(sender: UIButton) {
         if !isGuest {
-            patchListFilter = PatchListFilter.Owns
-            self.performSegueWithIdentifier("PatchListSegue", sender: self)
+            let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+            if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableViewController") as? PatchTableViewController {
+                controller.filter = .Owns
+                controller.user = self.user
+                self.navigationController?.pushViewController(controller, animated: true)
+            }
         }
 	}
 
@@ -164,7 +174,7 @@ class UserDetailViewController: QueryTableViewController {
         // Refresh results when unwinding from User edit/create screen to pickup any changes.
         self.refresh()
     }
-
+    
 	func actionSignout() {
 
 		DataController.proxibase.signOut {
@@ -193,11 +203,22 @@ class UserDetailViewController: QueryTableViewController {
     }
     
 	func actionEdit() {
-		self.performSegueWithIdentifier("UserEditSegue", sender: nil)
+        /* Has its own nav because we segue modally and it needs its own stack */
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        if let controller = storyboard.instantiateViewControllerWithIdentifier("UserEditViewController") as? UserEditViewController {
+            controller.entity = self.user
+            var navController = UINavigationController()
+            navController.navigationBar.tintColor = Colors.brandColorDark
+            navController.viewControllers = [controller]
+            self.navigationController?.presentViewController(navController, animated: true, completion: nil)
+        }
 	}
 
 	func actionSettings() {
-		self.performSegueWithIdentifier("SettingsSegue", sender: nil)
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        if let controller = storyboard.instantiateViewControllerWithIdentifier("SettingsTableViewController") as? SettingsTableViewController {
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
 	}
 
 	/*--------------------------------------------------------------------------------------------
@@ -246,32 +267,6 @@ class UserDetailViewController: QueryTableViewController {
         view.delegate = self
     }
     
-	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-		if segue.identifier == nil {
-			return
-		}
-
-		switch segue.identifier! {
-			case "PatchListSegue":
-				if let controller = segue.destinationViewController as? PatchTableViewController {
-					controller.filter = patchListFilter!
-					controller.user = self.user
-					patchListFilter = nil
-				}
-			case "UserEditSegue":
-                if let navigationController = segue.destinationViewController as? UINavigationController {
-                    if let controller = navigationController.topViewController as? UserEditViewController {
-                        controller.entity = self.user
-                    }
-                }
-			case "MessageDetailSegue":
-				if let controller = segue.destinationViewController as? MessageDetailViewController {
-					controller.message = selectedMessage
-				}
-			default: ()
-		}
-	}
-
 	override func pullToRefreshAction(sender: AnyObject?) -> Void {
         if !isGuest {
             self.refresh(force: true)
@@ -286,14 +281,14 @@ class UserDetailViewController: QueryTableViewController {
 extension  UserDetailViewController: UITableViewDelegate {
 
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
-			if let message = queryResult.object as? Message {
-				self.selectedMessage = message
-				self.performSegueWithIdentifier("MessageDetailSegue", sender: self)
-				return
-			}
-		}
-		assert(false, "Couldn't set selectedMessage")
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
+            let entity = queryResult.object as? Message,
+            let controller = storyboard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
+                controller.message = entity
+                self.navigationController?.pushViewController(controller, animated: true)
+        }
 	}
 
 	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
