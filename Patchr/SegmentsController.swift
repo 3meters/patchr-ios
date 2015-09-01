@@ -24,11 +24,18 @@ class SegmentsController: NSObject {
         let incomingViewController = self.viewControllers[index]
         let viewControllers = [incomingViewController]
         self.navigationController.setViewControllers(viewControllers, animated: false)
+        
         incomingViewController.navigationItem.titleView = segmentedControl
         
         var addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self.navigationController, action: Selector("addAction:"))
         var mapButton = UIBarButtonItem(title: "Map", style: UIBarButtonItemStyle.Plain, target: incomingViewController, action: Selector("mapAction:"))
         incomingViewController.navigationItem.leftBarButtonItem = mapButton
         incomingViewController.navigationItem.rightBarButtonItem = addButton
+    }
+}
+
+extension SegmentsController: UIToolbarDelegate {
+    func positionForBar(bar: UIBarPositioning) -> UIBarPosition {
+        return UIBarPosition.TopAttached
     }
 }

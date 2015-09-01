@@ -2631,6 +2631,9 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="MHE-YS-0Wd">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <textAttributes key="titleTextAttributes">
+                            <offsetWrapper key="textShadowOffset" horizontal="0.0" vertical="0.0"/>
+                        </textAttributes>
                     </navigationBar>
                     <connections>
                         <segue destination="OVJ-NK-hnP" kind="relationship" relationship="rootViewController" id="oog-1U-KVG"/>
