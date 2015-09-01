@@ -27,6 +27,9 @@ class PhotoUtils {
                 path = "\(prefix)?maxwidth=\(frameWidth)"
             }
         }
+        else if source == PhotoSource.gravatar {
+            path = "\(prefix)"
+        }
         
         return NSURL(string: path)!
     }

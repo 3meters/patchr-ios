@@ -42,6 +42,7 @@
 #import <Google/Analytics.h>
 #import <MBContactPicker.h>
 #import <MBContactModel.h>
+#import <CommonCrypto/CommonCrypto.h>
 
 #import "Patch.h"
 #import "Place.h"

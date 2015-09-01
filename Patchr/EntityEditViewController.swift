@@ -129,8 +129,9 @@ class EntityEditViewController: UITableViewController {
         if self.collection == "messages" {
             photo = nil
         }
-        else {
-            photo = UIImage(named: self.defaultPhotoName!)!
+        else {            
+            var photo: Photo = Entity.getDefaultPhoto(entity!.schema, id: entity!.id_);
+            self.photoView?.imageView?.setImageWithPhoto(photo)
             usingPhotoDefault = true
         }
         
@@ -222,24 +223,28 @@ class EntityEditViewController: UITableViewController {
     
     func bind() {
         
-        /* Name and description */
-        name = entity?.name
-        if descriptionField != nil {
-            description_ = entity?.description_
-        }
-        
-        /* Photo */
-        if entity?.photo != nil {
-            self.photoView?.imageView?.setImageWithPhoto(entity!.photo!)
-            usingPhotoDefault = false
-            photoActive = true
-        }
-        else {
-            if self.collection == "patches" || self.collection == "users" {
-                photo = UIImage(named: self.defaultPhotoName!)! // Sets photoImage
+        if let entity = self.entity {
+            
+            /* Name and description */
+            name = entity.name
+            if descriptionField != nil {
+                description_ = entity.description_
             }
-            usingPhotoDefault = true
-            photoActive = false
+            
+            /* Photo */
+            if entity.photo != nil {
+                self.photoView?.imageView?.setImageWithPhoto(entity.photo!)
+                usingPhotoDefault = false
+                photoActive = true
+            }
+            else {
+                if self.collection == "patches" || self.collection == "users" {
+                    var photo: Photo = Entity.getDefaultPhoto(entity.schema, id: entity.id_);
+                    self.photoView?.imageView?.setImageWithPhoto(photo)
+                }
+                usingPhotoDefault = true
+                photoActive = false
+            }
         }
     }
     

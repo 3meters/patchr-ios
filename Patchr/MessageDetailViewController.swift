@@ -425,11 +425,11 @@ class MessageDetailViewController: UITableViewController {
 
 		if let creator = self.message!.creator {
 			self.userName.setTitle(creator.name, forState: .Normal)
-			self.userPhoto.setImageWithPhoto(creator.getPhotoManaged())
+            self.userPhoto.setImageWithPhoto(creator.getPhotoManaged())
 		}
 		else {
 			self.userName.setTitle("Deleted", forState: .Normal)
-			self.userPhoto.setImageWithPhoto(Entity.getDefaultPhoto("user"))
+            self.userPhoto.setImageWithPhoto(Entity.getDefaultPhoto("user", id: nil))
 		}
 
 		self.tableView.reloadData()

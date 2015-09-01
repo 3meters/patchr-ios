@@ -40,25 +40,46 @@ extension Entity {
     func getPhotoManaged() -> Photo {
         var photo = self.photo
         if photo == nil {
-            photo = Entity.getDefaultPhoto(self.schema)
+            var id: String?
+            
+            /* For notification and shortcuts, we cherry pick the user id. */
+            if let notification = self as? Notification {
+                id = notification.userId
+            }
+            else if let shortcut = self as? Shortcut {
+                id = shortcut.ownerId
+            }
+            else if let user = self as? User {
+                id = user.id_
+            }
+            
+            photo = Entity.getDefaultPhoto(self.schema, id: id)
             photo.usingDefaultValue = true
         }
         return photo
     }
     
-    static func getDefaultPhoto(schema: String) -> Photo {
+    static func getDefaultPhoto(schema: String, id: String?) -> Photo {
         
         var prefix: String = "imgDefaultPatch"
+        var source: String = PhotoSource.resource
+        
         if schema == "place" {
             prefix = "imgDefaultPlace";
         }
         else if schema == "user" || schema == "notification" {
-            prefix = "imgDefaultUser"
+            if id != nil {
+                prefix = "http://www.gravatar.com/avatar/\(id!.md5)?d=identicon&r=pg&s=200"
+                source = PhotoSource.gravatar
+            }
+            else {
+                prefix = "imgDefaultUser"
+            }
         }
         
         var photo = Photo.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Photo
         photo.prefix = prefix
-        photo.source = PhotoSource.resource
+        photo.source = source
         
         return photo;
     }
@@ -253,7 +274,7 @@ extension Message {
         else {
             view.userName.text = "Deleted"
             if !sizingOnly {
-                view.userPhoto.setImageWithPhoto(Entity.getDefaultPhoto("user"))
+                view.userPhoto.setImageWithPhoto(Entity.getDefaultPhoto("user", id: nil))
             }
         }
         
