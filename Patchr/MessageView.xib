@@ -29,6 +29,11 @@
                         <constraint firstAttribute="width" constant="48" id="Iut-66-DOf"/>
                         <constraint firstAttribute="height" constant="48" id="Ygv-4X-iXd"/>
                     </constraints>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                            <integer key="value" value="24"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
                 </imageView>
                 <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" text="Rob" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m6L-Nb-Bin" userLabel="user_name">
                     <rect key="frame" x="65" y="30" width="277" height="21"/>
@@ -92,7 +97,7 @@ Neither can I!</string>
                             <nil key="highlightedColor"/>
                         </label>
                     </subviews>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstAttribute="height" priority="999" constant="32" id="0dg-Yl-vyD"/>
                         <constraint firstItem="woJ-Y6-bOV" firstAttribute="top" secondItem="CKk-NR-FiB" secondAttribute="top" id="MGO-i3-YwV"/>
