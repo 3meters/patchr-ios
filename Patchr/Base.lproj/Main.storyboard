@@ -239,6 +239,11 @@
                                                         <constraint firstAttribute="height" constant="48" id="9do-0c-tWN"/>
                                                         <constraint firstAttribute="width" constant="48" id="LCq-jo-LV5"/>
                                                     </constraints>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                            <integer key="value" value="24"/>
+                                                        </userDefinedRuntimeAttribute>
+                                                    </userDefinedRuntimeAttributes>
                                                     <connections>
                                                         <action selector="userAction:" destination="NVd-x8-lxi" eventType="touchUpInside" id="oTa-sa-RM5"/>
                                                     </connections>

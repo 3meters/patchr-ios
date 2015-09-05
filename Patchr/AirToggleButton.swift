@@ -32,6 +32,7 @@ class AirToggleButton: AirImageButton {
     
     override func initialize(){
         super.initialize()
+        self.spot?.removeFromSuperlayer()
         toggleOn(false)
         self.progressAuto = false
         self.imageView?.contentMode = UIViewContentMode.ScaleToFill

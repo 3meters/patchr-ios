@@ -152,7 +152,7 @@ class NotificationsTableViewController: QueryTableViewController {
                                     var frameHeightPixels = Int(36 * PIXEL_SCALE)
                                     var frameWidthPixels = Int(36 * PIXEL_SCALE)
                                     
-                                    let photoUrl = PhotoUtils.url(prefix!, source: source!)
+                                    let photoUrl = PhotoUtils.url(prefix!, source: source!, size: nil)
                                     let photoUrlSized = PhotoUtils.urlSized(photoUrl, frameWidth: frameWidthPixels, frameHeight: frameHeightPixels, photoWidth: width, photoHeight: height)
 
                                     SDWebImageManager.sharedManager().downloadImageWithURL(photoUrlSized, options: SDWebImageOptions.HighPriority, progress: nil, completed: {
