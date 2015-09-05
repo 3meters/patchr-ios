@@ -69,6 +69,7 @@
 		8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8468F8211A9D09D1007D6EE6 /* Localizable.strings */; };
 		84A6BB641AAF970A00B7440B /* PatchEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A6BB631AAF970A00B7440B /* PatchEditViewController.swift */; };
 		84EF12AC1AA904700043EBBA /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EF12AB1AA904700043EBBA /* Utils.swift */; };
+		9FDCC869B589AA11FBDB67F2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9FDCC978FCB0A253FA6E74F9 /* Main.storyboard */; };
 		9FDCCCC0113B14385C08DA41 /* MessageDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */; };
 		A8E20B58D29959C0889B8847 /* libPods-PatchrShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BA6097617A5336D7C15520A /* libPods-PatchrShare.a */; };
 		C1112B52B84F042CB51F7E65 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F90A7A6DF253248AE7C300A /* libPods.a */; };
@@ -114,6 +115,9 @@
 		E26B0C921B46D01E00706F4A /* ThumbnailCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E26B0C911B46D01E00706F4A /* ThumbnailCollectionViewCell.xib */; };
 		E2711C4C1AFD17E800CE71A1 /* AirTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2711C4B1AFD17E800CE71A1 /* AirTableViewCell.m */; };
 		E2711C4F1AFD182F00CE71A1 /* AirTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = E2711C4E1AFD182F00CE71A1 /* AirTableView.m */; };
+		E2737DC71B8F7E3B00C176B1 /* UIImage+Resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2737DC61B8F7E3B00C176B1 /* UIImage+Resize.swift */; };
+		E2737DCA1B8F7EA100C176B1 /* UIImage+Alpha.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2737DC81B8F7EA100C176B1 /* UIImage+Alpha.swift */; };
+		E2737DCB1B8F7EA100C176B1 /* UIImage+RoundedCorner.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2737DC91B8F7EA100C176B1 /* UIImage+RoundedCorner.swift */; };
 		E273B5361B488F2000888E73 /* AirPhotoPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = E273B5351B488F2000888E73 /* AirPhotoPreview.swift */; };
 		E27DB4051B06477A0090D023 /* QueryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = E27DB4041B06477A0090D023 /* QueryItem.m */; };
 		E27DB4081B0647960090D023 /* _QueryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = E27DB4071B0647960090D023 /* _QueryItem.m */; };
@@ -300,6 +304,7 @@
 		880FE917F305BDE29B1AA196 /* Pods-PatchrShare.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrShare.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrShare/Pods-PatchrShare.debug.xcconfig"; sourceTree = "<group>"; };
 		963D1BBA8F941C4BA95675EA /* Pods-Patchr.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.adhoc.xcconfig"; sourceTree = "<group>"; };
 		9FDCC67342555A8E88594481 /* PatchrShare-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PatchrShare-Bridging-Header.h"; sourceTree = "<group>"; };
+		9FDCC90B29F27E6941869A9F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageDetailViewController.swift; sourceTree = "<group>"; };
 		9FDCCD65EB714D83C5A818FE /* PatchrShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = file.entitlements; path = PatchrShare.entitlements; sourceTree = "<group>"; };
 		A80DE63116DE3050C0FEC4EE /* Pods-Patchr.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.debug.xcconfig"; sourceTree = "<group>"; };
@@ -355,6 +360,9 @@
 		E2711C4B1AFD17E800CE71A1 /* AirTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AirTableViewCell.m; sourceTree = "<group>"; };
 		E2711C4D1AFD182F00CE71A1 /* AirTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirTableView.h; sourceTree = "<group>"; };
 		E2711C4E1AFD182F00CE71A1 /* AirTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AirTableView.m; sourceTree = "<group>"; };
+		E2737DC61B8F7E3B00C176B1 /* UIImage+Resize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Resize.swift"; sourceTree = "<group>"; };
+		E2737DC81B8F7EA100C176B1 /* UIImage+Alpha.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Alpha.swift"; sourceTree = "<group>"; };
+		E2737DC91B8F7EA100C176B1 /* UIImage+RoundedCorner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+RoundedCorner.swift"; sourceTree = "<group>"; };
 		E273B5181B48349900888E73 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Bolts.framework; path = Frameworks/Bolts.framework; sourceTree = "<group>"; };
 		E273B5191B48349900888E73 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = Frameworks/Parse.framework; sourceTree = "<group>"; };
 		E273B5351B488F2000888E73 /* AirPhotoPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirPhotoPreview.swift; sourceTree = "<group>"; };
@@ -384,7 +392,6 @@
 		E2C0D93F1B6D77D200E28CE9 /* PatchSearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PatchSearchViewController.swift; path = PatchrShare/PatchSearchViewController.swift; sourceTree = SOURCE_ROOT; };
 		E2C720BB1B4C25C900714B53 /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		E2C720BC1B4C260200714B53 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
-		E2C720C51B4D92F000714B53 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E2C720C61B4EDAFE00714B53 /* AirLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirLabel.swift; sourceTree = "<group>"; };
 		E2C720CC1B50169400714B53 /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
 		E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationSettingsViewController.swift; sourceTree = "<group>"; };
@@ -417,7 +424,6 @@
 		E2F6C9331B1E546F0067D959 /* RichType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RichType.m; path = Model/RichType.m; sourceTree = "<group>"; };
 		E2F6C9381B1E924B0067D959 /* PAEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PAEnums.h; path = Model/PAEnums.h; sourceTree = "<group>"; };
 		E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKCore.framework; path = Frameworks/AdobeCreativeSDKCore.framework; sourceTree = "<group>"; };
-		E2FB81451B864326006B6690 /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Resources; path = Frameworks/AdobeCreativeSDKCore.framework/Versions/A/Resources; sourceTree = "<group>"; };
 		E2FB81491B8647B2006B6690 /* AdobeCreativeSDKCoreResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKCoreResources.bundle; path = ../Frameworks/AdobeCreativeSDKCore.framework/Versions/A/Resources/AdobeCreativeSDKCoreResources.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -467,7 +473,6 @@
 		7D3D39C01A6F086F00A44CB2 = {
 			isa = PBXGroup;
 			children = (
-				E2FB81451B864326006B6690 /* Resources */,
 				7D3D39CB1A6F086F00A44CB2 /* Patchr */,
 				7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */,
 				E25327D11B13DEF800990A81 /* AudioController.swift */,
@@ -673,6 +678,9 @@
 				E26B0C881B456F8A00706F4A /* ExtensionsUi.swift */,
 				7D39D3C31ABA21B200275759 /* CALayer+XibConfiguration.h */,
 				7D39D3C41ABA21B200275759 /* CALayer+XibConfiguration.m */,
+				E2737DC81B8F7EA100C176B1 /* UIImage+Alpha.swift */,
+				E2737DC91B8F7EA100C176B1 /* UIImage+RoundedCorner.swift */,
+				E2737DC61B8F7E3B00C176B1 /* UIImage+Resize.swift */,
 				E241D1581B1B3FCE00702E01 /* UIView+BorderLayer.h */,
 				E241D1591B1B3FCE00702E01 /* UIView+BorderLayer.m */,
 			);
@@ -751,9 +759,9 @@
 		E2CE38A01AEFC14C00710227 /* Storyboards */ = {
 			isa = PBXGroup;
 			children = (
-				7D3D39D21A6F086F00A44CB2 /* Main.storyboard */,
 				E2EFD2651AF44214003937D4 /* Lobby.storyboard */,
 				E2C720CC1B50169400714B53 /* LaunchScreen.xib */,
+				9FDCC978FCB0A253FA6E74F9 /* Main.storyboard */,
 			);
 			name = Storyboards;
 			sourceTree = "<group>";
@@ -996,6 +1004,7 @@
 				E25327D01B13DB3000990A81 /* notification_pop.aac in Resources */,
 				E25327CD1B13DB2900990A81 /* notification_activity.aac in Resources */,
 				E2F6C9291B1DF5500067D959 /* Notes.md in Resources */,
+				9FDCC869B589AA11FBDB67F2 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1157,6 +1166,7 @@
 				7DA730911A71ACC9008C25FA /* Place.m in Sources */,
 				E29F65531B61A9450000BEF4 /* PatchSearchCell.swift in Sources */,
 				E26B0C8C1B4577D000706F4A /* TextViewChangeObserver.swift in Sources */,
+				E2737DCB1B8F7EA100C176B1 /* UIImage+RoundedCorner.swift in Sources */,
 				7D01FA361A7024E200DD6DFA /* JSONResponseSerializerWithData.m in Sources */,
 				843523C51AAE70B800739447 /* MessageEditViewController.swift in Sources */,
 				E25327E01B1A282D00990A81 /* FXBlurView.m in Sources */,
@@ -1184,6 +1194,7 @@
 				7DA730941A71ACC9008C25FA /* ServiceObject.m in Sources */,
 				7DA730901A71ACC9008C25FA /* Patch.m in Sources */,
 				7DA7308A1A71ACC9008C25FA /* _Patch.m in Sources */,
+				E2737DCA1B8F7EA100C176B1 /* UIImage+Alpha.swift in Sources */,
 				7D021AC21A9423080047DAAE /* LobbyViewController.swift in Sources */,
 				7DA7308D1A71ACC9008C25FA /* _ServiceBase.m in Sources */,
 				E25327BC1B10FBE700990A81 /* NearbyTableViewController.swift in Sources */,
@@ -1191,6 +1202,7 @@
 				7D6E26471A7AB93F000128A7 /* UserDetailViewController.swift in Sources */,
 				7DA730921A71ACC9008C25FA /* Query.m in Sources */,
 				E246E3171B742970007327F5 /* BaseView.swift in Sources */,
+				E2737DC71B8F7E3B00C176B1 /* UIImage+Resize.swift in Sources */,
 				7DB6E0F81A8174E90017A42F /* _Message.m in Sources */,
 				E2CCAAE01B67CC0E0071170C /* NotificationController.swift in Sources */,
 				E2F6C9361B1E546F0067D959 /* RichType.m in Sources */,
@@ -1295,20 +1307,20 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		7D3D39D21A6F086F00A44CB2 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				E2C720C51B4D92F000714B53 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		8468F8211A9D09D1007D6EE6 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
 				8468F8201A9D09D1007D6EE6 /* en */,
 			);
 			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		9FDCC978FCB0A253FA6E74F9 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9FDCC90B29F27E6941869A9F /* Base */,
+			);
+			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

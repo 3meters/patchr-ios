@@ -23,8 +23,8 @@ class AirLikeButton: AirToggleButton {
     }
     
     override func initialize(){
-        self.imageOff = UIImage(named: "imgHeartLight")!
-        self.imageOn = UIImage(named: "imgHeartFilledLight")!
+        self.imageOff = UIImage(named: "imgHeartLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+        self.imageOn = UIImage(named: "imgHeartFilledLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
         
         super.initialize()
     }

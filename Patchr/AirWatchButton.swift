@@ -23,8 +23,8 @@ class AirWatchButton: AirToggleButton {
     }
     
     override func initialize(){
-        self.imageOff = UIImage(named: "imgWatch2Light")!
-        self.imageOn = UIImage(named: "imgWatch2FilledLight")!
+        self.imageOff = UIImage(named: "imgWatch2Light")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+        self.imageOn = UIImage(named: "imgWatch2FilledLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
         
         super.initialize()
     }

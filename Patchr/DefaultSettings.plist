@@ -6,7 +6,7 @@
 	<true/>
 	<key>com.3meters.patchr.ios.SoundEffects</key>
 	<true/>
-	<key>com.3meters.patchr.ios.MessagesForPatchesNearby</key>
+	<key>com.3meters.patchr.ios.PatchesCreatedNearby</key>
 	<true/>
 	<key>com.3meters.patchr.ios.MessagesForPatchesOwns</key>
 	<true/>

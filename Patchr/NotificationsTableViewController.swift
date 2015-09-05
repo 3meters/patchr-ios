@@ -23,9 +23,9 @@ class NotificationsTableViewController: QueryTableViewController {
 
 	private var offscreenCells:       NSMutableDictionary = NSMutableDictionary()
 	private var messageDateFormatter: NSDateFormatter!
-	private var selectedPatch:        Patch?
-	private var selectedMessage:      Message?
-    private var selectedEntityId:     String?
+//	private var selectedPatch:        Patch?
+//	private var selectedMessage:      Message?
+//    private var selectedEntityId:     String?
     private var activityDate:         Int64!
     private var nearbys:              [[NSObject: AnyObject]] = []
     
@@ -103,10 +103,6 @@ class NotificationsTableViewController: QueryTableViewController {
                     switch applicationState {
                         case .Active: // App was active when remote notification was received
                             
-                            if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundForNotifications")) {
-                                AudioServicesPlaySystemSound(chirpSound)
-                            }
-                            
                             if self.tabBarController?.selectedViewController == self.navigationController
                                 && self.navigationController?.topViewController == self {
                                     
@@ -117,13 +113,24 @@ class NotificationsTableViewController: QueryTableViewController {
                             }
                             else {
                                 
-                                /* Show banner */
+                                /* Add one because user isn't viewing nofications right now */
+                                incrementBadges()
+                                
                                 let json:JSON = JSON(userInfo)
                                 let alert = json["aps"]["alert"].string
+                                let trigger = json["trigger"].string
+                                
                                 var description: String = alert!
                                 if json["description"] != nil {
                                     description = json["description"].string!
                                 }
+                                
+                                /* Bail if user has disabled this in-app notification */
+                                if !notificationEnabledFor(trigger!, description: description) {
+                                    return
+                                }
+                                
+                                /* Show banner */
                                 var subtitle: String?
                                 if json["subtitle"] != nil && json["subtitle"].string != "subtitle" {
                                     subtitle = json["subtitle"].string?.stringByReplacingOccurrencesOfString("<b>", withString: "", options: .LiteralSearch, range: nil)
@@ -145,7 +152,7 @@ class NotificationsTableViewController: QueryTableViewController {
                                     var frameHeightPixels = Int(36 * PIXEL_SCALE)
                                     var frameWidthPixels = Int(36 * PIXEL_SCALE)
                                     
-                                    let photoUrl = PhotoUtils.url(prefix!, source: source!)
+                                    let photoUrl = PhotoUtils.url(prefix!, source: source!, size: nil)
                                     let photoUrlSized = PhotoUtils.urlSized(photoUrl, frameWidth: frameWidthPixels, frameHeight: frameHeightPixels, photoWidth: width, photoHeight: height)
 
                                     SDWebImageManager.sharedManager().downloadImageWithURL(photoUrlSized, options: SDWebImageOptions.HighPriority, progress: nil, completed: {
@@ -159,11 +166,14 @@ class NotificationsTableViewController: QueryTableViewController {
                                     self.showNotificationBar("Notification", description: description, image: nil, targetId: json["targetId"].string!)
                                 }
                                 
-                                /* Add one because user isn't viewing nofications right now */
-                                incrementBadges()
+                                /* Chirp */
+                                if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundForNotifications")) {
+                                    AudioServicesPlaySystemSound(chirpSound)
+                                }
+                                
                             }
                             
-                        case .Inactive: // User tapped on remove notification
+                        case .Inactive: // User tapped on remote notification
                             
                             /* Select the notifications tab and then segue as if the user had selected the notification */
                             self.tabBarController?.selectedViewController = self.navigationController
@@ -176,7 +186,19 @@ class NotificationsTableViewController: QueryTableViewController {
                             /* Knock off one because the user will be view one */
                             decrementBadges()
                             
-                            self.segueWith(targetId, parentId: parentId, refreshEntities: true)
+                            let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+                            if targetId!.hasPrefix("pa.") {
+                                if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
+                                    controller.patchId = targetId
+                                    self.navigationController?.pushViewController(controller, animated: true)
+                                }
+                            }
+                            else if targetId!.hasPrefix("me.") {
+                                if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
+                                    controller.messageId = targetId
+                                    self.navigationController?.pushViewController(controller, animated: true)
+                                }
+                            }
                         
                         case .Background:   // Shouldn't ever fire
                             assert(false, "Notification controller should never get called when app state == background")
@@ -224,39 +246,6 @@ class NotificationsTableViewController: QueryTableViewController {
         view.delegate = self
 	}
 
-    func segueWith(targetId: String?, parentId: String?, refreshEntities: Bool = false) {
-        if targetId == nil { return }
-        
-        self.selectedEntityId = targetId
-        if targetId!.hasPrefix("pa.") {
-            self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
-        }
-        else if targetId!.hasPrefix("me.") {
-            self.performSegueWithIdentifier("MessageDetailSegue", sender: self)
-        }
-    }
-    
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        
-        if segue.identifier == nil {
-            return
-        }
-        
-        switch segue.identifier! {
-        case "PatchDetailSegue":
-            if let controller = segue.destinationViewController as? PatchDetailViewController {
-                controller.patchId = self.selectedEntityId
-                self.selectedEntityId = nil
-            }
-        case "MessageDetailSegue":
-            if let controller = segue.destinationViewController as? MessageDetailViewController {
-                controller.messageId = self.selectedEntityId
-                self.selectedEntityId = nil
-            }
-        default: ()
-        }
-    }
-
     func showNotificationBar(title: String, description: String, image: UIImage?, targetId: String) {
         
         TWMessageBarManager.sharedInstance().styleSheet = AirStylesheet(image: image)
@@ -296,6 +285,31 @@ class NotificationsTableViewController: QueryTableViewController {
                 UIViewController.topMostViewController()?.presentViewController(UINavigationController(rootViewController: controller), animated: true, completion: nil)
             }
         }
+    }
+    
+    func notificationEnabledFor(trigger: String, description: String) -> Bool {
+        if trigger == "nearby" {
+            return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("PatchesCreatedNearby"))
+        }
+        else if trigger == "watch_to" {
+            return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("MessagesForPatchesWatching"))
+        }
+        else if trigger == "own_to" {
+            /* Super hack to differentiate likes */
+            if (description.rangeOfString("like") != nil) {
+                return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("LikeMessage"))
+            }
+            else if (description.rangeOfString("favorite") != nil) {
+                return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("LikePatch"))
+            }
+            else {
+                return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("MessagesForPatchesOwns"))
+            }
+        }
+        else if trigger == "share" {
+            return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("MessagesSharing"))
+        }
+        return true
     }
     
     func clearBadges() {
@@ -342,7 +356,10 @@ class AirStylesheet: NSObject, TWMessageBarStyleSheet {
     var image: UIImage?
     
     init(image: UIImage?) {
-        self.image = image
+        if image != nil {
+            var imageSquared = image!.cropToSquare()
+            self.image = imageSquared
+        }
     }
     
     @objc func backgroundColorForMessageType(type: TWMessageBarMessageType) -> UIColor! {
@@ -362,10 +379,22 @@ class AirStylesheet: NSObject, TWMessageBarStyleSheet {
 extension NotificationsTableViewController: UITableViewDelegate {
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if let queryResult  = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
-            if let notification = queryResult.object as? Notification {
-                self.segueWith(notification.targetId, parentId: notification.parentId)
-            }
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
+            let entity = queryResult.object as? Notification {
+                if entity.targetId!.hasPrefix("pa.") {
+                    if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
+                        controller.patchId = entity.targetId
+                        self.navigationController?.pushViewController(controller, animated: true)
+                    }
+                }
+                else if entity.targetId!.hasPrefix("me.") {
+                    if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
+                        controller.messageId = entity.targetId
+                        self.navigationController?.pushViewController(controller, animated: true)
+                    }
+                }
         }
     }
     

@@ -24,7 +24,7 @@ class FetchedResultsTableViewController: UITableViewController {
     }
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return self.fetchedResultsControllerForViewController(self).sections!.count
+        return 1
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

@@ -15,8 +15,12 @@ class PatchNavigationController: UINavigationController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let segItems = ["Nearby","Faves","Watch","Explore"]
+        
         self.segmentsController = SegmentsController(navigationController: self, viewControllers: segmentViewControllers())
-        self.segmentedControl = UISegmentedControl(items: ["Nearby","Favorites","Explore"])
+        
+        self.segmentedControl = UISegmentedControl(items: segItems)
         self.segmentedControl.sizeToFit()
         self.segmentedControl.addTarget(self.segmentsController, action: Selector("indexDidChangeForSegmentedControl:"), forControlEvents: .ValueChanged)
         self.segmentedControl.selectedSegmentIndex = 0
@@ -31,13 +35,16 @@ class PatchNavigationController: UINavigationController {
     func segmentViewControllers() -> [UIViewController] {
         let nearby = NearbyTableViewController()
         let favorites = PatchTableViewController()
+        let watching = PatchTableViewController()
         let explore = PatchTableViewController()
         
         favorites.filter = PatchListFilter.Favorite
         favorites.user = UserController.instance.currentUser
+        watching.filter = PatchListFilter.Watching
+        watching.user = UserController.instance.currentUser
         explore.filter = PatchListFilter.Explore
         
-        let controllers = [nearby, favorites, explore]
+        let controllers = [nearby, favorites, watching, explore]
         return controllers
     }
     

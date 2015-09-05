@@ -45,7 +45,7 @@ class MessageEditViewController: EntityEditViewController {
     @IBOutlet weak var shareCell:           UITableViewCell!
 
     /*--------------------------------------------------------------------------------------------
-    * Lifecycle
+    * Lifecycle¬
     *--------------------------------------------------------------------------------------------*/
     
     override func awakeFromNib() {
@@ -297,7 +297,7 @@ class MessageEditViewController: EntityEditViewController {
                         let width = subJson["photo"]["width"].int
                         let height = subJson["photo"]["height"].int
                         
-                        let photoUrl = PhotoUtils.url(prefix!, source: source!)
+                        let photoUrl = PhotoUtils.url(prefix!, source: source!, size: nil)
                         let photoUrlSized = PhotoUtils.urlSized(photoUrl, frameWidth: Int(60 * PIXEL_SCALE), frameHeight: Int(60 * PIXEL_SCALE), photoWidth: width, photoHeight: height)
                         model.contactImageUrl = photoUrlSized
                         model.contactImage = UIImage(named: "imgDefaultUser")
@@ -473,9 +473,12 @@ extension MessageEditViewController: MBContactPickerDelegate {
     }
     
     func didShowFilteredContactsForContactPicker(contactPicker: MBContactPicker!) {
-        let pickerRectInWindow = self.view.convertRect(self.toPicker.frame, fromView: nil)
-        let newHeight = self.view.window!.bounds.size.height - pickerRectInWindow.origin.y - self.toPicker.keyboardHeight
-        resizeHeader(newHeight + self.toPickerPadding)
+        /* Can be called after the view controller has been stopped */
+        if (self.isViewLoaded() && self.view.window != nil) {
+            let pickerRectInWindow = self.view.convertRect(self.toPicker.frame, fromView: nil)
+            let newHeight = self.view.window!.bounds.size.height - pickerRectInWindow.origin.y - self.toPicker.keyboardHeight
+            resizeHeader(newHeight + self.toPickerPadding)
+        }
     }
     
     func didHideFilteredContactsForContactPicker(contactPicker: MBContactPicker!) {

@@ -146,8 +146,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         if UserController.instance.authenticated {
             let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-            if let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController") as? UIViewController {
+            if let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController") as? MainTabBarController {
                 self.window?.setRootViewController(controller, animated: true)
+                controller.selectedIndex = 0
             }
         }
         else {

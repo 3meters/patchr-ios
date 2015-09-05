@@ -10,14 +10,16 @@ import Foundation
 
 class PhotoUtils {
     
-    static func url(prefix: String, source: String, frameWidth: Int = Int(IMAGE_DIMENSION_MAX)) -> NSURL {
+    static func url(prefix: String, source: String, size: Int?, frameWidth: Int = Int(IMAGE_DIMENSION_MAX)) -> NSURL {
         var path: String = ""
         
         if source == PhotoSource.aircandi_images || source == PhotoSource.aircandi {
-            path = "http://aircandi-images.s3.amazonaws.com/\(prefix)"
+            var width = size != nil ? size : 800
+            path = "https://3meters-images.imgix.net/\(prefix)?w=\(width!)"
         }
         else if source == PhotoSource.aircandi_users {
-            path = "http://aircandi-users.s3.amazonaws.com/\(prefix)"
+            var width = size != nil ? size : 400
+            path = "https://3meters-users.imgix.net/\(prefix)?w=\(width!)&h=\(width!)&fit=crop"
         }
         else if source == PhotoSource.google {
             if (prefix.rangeOfString("?") != nil) {
@@ -26,6 +28,9 @@ class PhotoUtils {
             else {
                 path = "\(prefix)?maxwidth=\(frameWidth)"
             }
+        }
+        else if source == PhotoSource.gravatar {
+            path = "\(prefix)"
         }
         
         return NSURL(string: path)!
@@ -36,6 +41,9 @@ class PhotoUtils {
         * If photo comes with native height/width then use it otherwise
         * resize based on width.
         */
+        return url
+        
+        /*
         if photoWidth != nil && photoHeight != nil {
             
             var photoAspectRatio: Float = Float(photoWidth!) / Float(photoHeight!)
@@ -49,7 +57,7 @@ class PhotoUtils {
         else {
             var uriString = GooglePlusProxy.convert(url.absoluteString!, size: frameWidth, dimension: ResizeDimension.width)
             return NSURL(string: uriString)!
-        }
+        }*/
     }
 }
 

@@ -67,12 +67,13 @@ public struct Schema {
 * Any patch photo from foursquare stays there and photo.source = foursquare.
 */
 public struct PhotoSource {
-    static let aircandi_images = "aircandi.images"
-    static let aircandi_users  = "aircandi.users"
-    static let aircandi        = "aircandi"
-    static let foursquare     = "foursquare"
-    static let google         = "google"
-    static let resource       = "resource"
-    static let bing           = "bing"
-    static let generic        = "generic"
+    static let aircandi_images  = "aircandi.images"
+    static let aircandi_users   = "aircandi.users"
+    static let aircandi         = "aircandi"
+    static let foursquare       = "foursquare"
+    static let gravatar         = "gravatar"
+    static let google           = "google"
+    static let resource         = "resource"
+    static let bing             = "bing"
+    static let generic          = "generic"
 }

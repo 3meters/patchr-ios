@@ -76,20 +76,20 @@ class MessageDetailViewController: UITableViewController {
         self.description_.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
         self.description_.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
         self.description_.delegate = self
-
+        
 		/* Navigation bar buttons */
         var shareButton  = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
         if isOwner {
-            let editImage    = UIImage(named: "imgEditLight")
+            let editImage    = UIImage(named: "imgEdit2Light")
             var editButton   = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
             var spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
-            var deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: Selector("deleteAction:"))
+            var deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: Selector("deleteAction"))
             spacer.width = SPACER_WIDTH
             self.navigationItem.rightBarButtonItems = [shareButton, spacer, deleteButton, spacer, editButton]
         }
         else if isPatchOwner {
-            let removeImage    = UIImage(named: "imgCancelLight")
-            var removeButton   = UIBarButtonItem(image: removeImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("removeAction:"))
+            let removeImage    = UIImage(named: "imgRemoveLight")
+            var removeButton   = UIBarButtonItem(image: removeImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("removeAction"))
             var spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
             spacer.width = SPACER_WIDTH
             self.navigationItem.rightBarButtonItems = [shareButton, spacer, removeButton]
@@ -201,11 +201,21 @@ class MessageDetailViewController: UITableViewController {
 	 *--------------------------------------------------------------------------------------------*/
 
 	@IBAction func patchAction(sender: AnyObject) {
-		self.performSegueWithIdentifier("PatchDetailSegue", sender: self)
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
+            controller.patchId = self.message!.patch.entityId
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
 	}
 
 	@IBAction func userAction(sender: AnyObject) {
-		self.performSegueWithIdentifier("UserDetailSegue", sender: self)
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        if let controller = storyboard.instantiateViewControllerWithIdentifier("UserDetailViewController") as? UserDetailViewController {
+            if let creator = message!.creator {
+                controller.userId = creator.entityId
+                self.navigationController?.pushViewController(controller, animated: true)
+            }
+        }
 	}
 
 	@IBAction func photoAction(sender: AnyObject) {
@@ -217,32 +227,13 @@ class MessageDetailViewController: UITableViewController {
 		Alert("Not implemented")
 	}
     
-    @IBAction func deleteAction(sender: AnyObject) {
-        self.ActionConfirmationAlert(
-            title: "Confirm Delete",
-            message: "Are you sure you want to delete this?",
-            actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
-                doIt in
-                if doIt {
-                    self.delete()
-                }
-        }
-    }
-    
-    @IBAction func removeAction(sender: AnyObject) {
-        self.ActionConfirmationAlert(
-            title: "Confirm Remove",
-            message: "Are you sure you want to remove this message from the patch?",
-            actionTitle: "Remove", cancelTitle: "Cancel", delegate: self) {
-                doIt in
-                if doIt {
-                    self.remove()
-                }
-        }
-    }
-    
 	@IBAction func likesAction(sender: AnyObject) {
-		self.performSegueWithIdentifier("LikeListSegue", sender: self)
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        if let controller = storyboard.instantiateViewControllerWithIdentifier("UserTableViewController") as? UserTableViewController {
+            controller.message = self.message
+            controller.filter = .MessageLikers
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
 	}
 
 	@IBAction func unwindFromMessageEdit(segue: UIStoryboardSegue) {
@@ -284,13 +275,45 @@ class MessageDetailViewController: UITableViewController {
         }
 	}
     
+	func editAction() {
+        /* Has its own nav because we segue modally and it needs its own stack */
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageEditViewController") as? MessageEditViewController {
+            controller.entity = self.message
+            var navController = UINavigationController()
+            navController.navigationBar.tintColor = Colors.brandColorDark
+            navController.viewControllers = [controller]
+            self.navigationController?.presentViewController(navController, animated: true, completion: nil)
+        }
+	}
+    
+    func deleteAction() {
+        self.ActionConfirmationAlert(
+            title: "Confirm Delete",
+            message: "Are you sure you want to delete this?",
+            actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
+                doIt in
+                if doIt {
+                    self.delete()
+                }
+        }
+    }
+    
+    func removeAction() {
+        self.ActionConfirmationAlert(
+            title: "Confirm Remove",
+            message: "Are you sure you want to remove this message from the patch?",
+            actionTitle: "Remove", cancelTitle: "Cancel", delegate: self) {
+                doIt in
+                if doIt {
+                    self.remove()
+                }
+        }
+    }
+    
     func dismissAction(sender: AnyObject) {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
-
-	func editAction() {
-		self.performSegueWithIdentifier("MessageEditSegue", sender: self)
-	}
     
     func likeDidChange(sender: NSNotification) {
         self.draw()
@@ -302,17 +325,17 @@ class MessageDetailViewController: UITableViewController {
 
 	func draw() {
         
-        if message!.type != nil && message!.type == "share" {
+        if self.message!.type != nil && self.message!.type == "share" {
             self.recipientsCell.hidden = true
             self.shareHolderCell.hidden = false
             
             /* Share entity */
             
             var view: BaseView!
-            if message.message != nil {
+            if self.message.message != nil {
                 view = NSBundle.mainBundle().loadNibNamed("MessageView", owner: self, options: nil)[0] as! BaseView
                 view.frame.size.width = self.shareHolder.bounds.size.width
-                Message.bindView(view, object: message.message!, tableView: self.tableView)
+                Message.bindView(view, object: self.message.message!, tableView: self.tableView)
                 
                 /* Tweak the message view to suit display as static */
                 if let messageView = view as? MessageView {
@@ -327,10 +350,10 @@ class MessageDetailViewController: UITableViewController {
                 view.frame.size.height = view.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
                 self.shareHolder?.addSubview(view)
             }
-            else if message.patch != nil {
+            else if self.message.patch != nil {
                 view = NSBundle.mainBundle().loadNibNamed("PatchNormalView", owner: self, options: nil)[0] as! BaseView
                 view.frame.size.width = self.shareHolder.bounds.size.width
-                Patch.bindView(view, object: message.patch!, tableView: self.tableView)
+                Patch.bindView(view, object: self.message.patch!, tableView: self.tableView)
                 self.shareHolder?.addSubview(view)
             }
             
@@ -347,18 +370,18 @@ class MessageDetailViewController: UITableViewController {
             self.toolbarCell.hidden = false
             
             /* Patch */
-            if message!.patch != nil {
+            if self.message!.patch != nil {
                 self.patchCell.hidden = false
-                self.patchPhoto.setImageWithPhoto(message!.patch.getPhotoManaged())
-                self.patchName.setTitle(message!.patch.name, forState: .Normal)
+                self.patchPhoto.setImageWithPhoto(self.message!.patch.getPhotoManaged())
+                self.patchName.setTitle(self.message!.patch.name, forState: .Normal)
             }
         }
 
 		/* Message */
 
-		self.createdDate.text = Utils.messageDateFormatter.stringFromDate(message!.createdDate)
-		if message!.description_ != nil {
-			self.description_.text = message!.description_
+		self.createdDate.text = Utils.messageDateFormatter.stringFromDate(self.message!.createdDate)
+		if self.message!.description_ != nil {
+			self.description_.text = self.message!.description_
 			self.description_.sizeToFit()
 			self.description_.hidden = false
 		}
@@ -368,7 +391,7 @@ class MessageDetailViewController: UITableViewController {
 		if message!.photo != nil {
 			self.messagePhoto.hidden = false
             if !self.messagePhoto.linkedToPhoto(self.message!.photo) {
-                self.messagePhoto.setImageWithPhoto(message!.photo)
+                self.messagePhoto.setImageWithPhoto(self.message!.photo)
             }
 		}
 		else {
@@ -400,13 +423,13 @@ class MessageDetailViewController: UITableViewController {
 
 		/* User */
 
-		if let creator = message!.creator {
+		if let creator = self.message!.creator {
 			self.userName.setTitle(creator.name, forState: .Normal)
-			self.userPhoto.setImageWithPhoto(creator.getPhotoManaged())
+            self.userPhoto.setImageWithPhoto(creator.getPhotoManaged())
 		}
 		else {
 			self.userName.setTitle("Deleted", forState: .Normal)
-			self.userPhoto.setImageWithPhoto(Entity.getDefaultPhoto("user"))
+            self.userPhoto.setImageWithPhoto(Entity.getDefaultPhoto("user", id: nil))
 		}
 
 		self.tableView.reloadData()
@@ -448,38 +471,6 @@ class MessageDetailViewController: UITableViewController {
             }
         }
     }
-
-	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-
-		if segue.identifier == nil {
-			return
-		}
-
-		switch segue.identifier! {
-			case "PatchDetailSegue":
-				if let patchDetailViewController = segue.destinationViewController as? PatchDetailViewController {
-					patchDetailViewController.patchId = self.message!.patch.entityId
-				}
-			case "UserDetailSegue":
-				if let controller = segue.destinationViewController as? UserDetailViewController {
-					if let creator = message!.creator {
-						controller.userId = creator.entityId
-					}
-				}
-			case "MessageEditSegue":
-				if let navigationController = segue.destinationViewController as? UINavigationController {
-					if let controller = navigationController.topViewController as? MessageEditViewController {
-						controller.entity = message
-					}
-				}
-			case "LikeListSegue":
-				if let controller = segue.destinationViewController as? UserTableViewController {
-					controller.message = self.message
-					controller.filter = .MessageLikers
-				}
-			default: ()
-		}
-	}
 
     func shareUsing(patchr: Bool = true) {
         

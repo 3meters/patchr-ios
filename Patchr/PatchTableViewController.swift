@@ -19,13 +19,10 @@ enum PatchListFilter {
 class PatchTableViewController: QueryTableViewController {
 
     var user: User!
-	var selectedPatch: Patch?
 	var filter: PatchListFilter = .Nearby
     var activityDate: Int64?
     
-	private var _query: Query!
-
-    @IBOutlet weak var contentHolder: UIView!
+	private var _query: Query?
     
 	override func query() -> Query {
 		if self._query == nil {
@@ -55,7 +52,7 @@ class PatchTableViewController: QueryTableViewController {
 			DataController.instance.managedObjectContext.save(nil)
 			self._query = query
 		}
-		return self._query
+		return self._query!
 	}
     
     /*--------------------------------------------------------------------------------------------
@@ -86,11 +83,6 @@ class PatchTableViewController: QueryTableViewController {
         self.tableView.backgroundColor = Colors.windowColor
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
         
-        /* Add a little bit of room at the bottom of the table */
-        var footer: UIView = UIView(frame:CGRectMake(0, 0, 1, 8))
-        footer.backgroundColor = UIColor.clearColor()
-        self.tableView.tableFooterView = footer;
-
 		switch self.filter {
 			case .Nearby:
 				self.navigationItem.title = "Nearby"
@@ -106,6 +98,11 @@ class PatchTableViewController: QueryTableViewController {
 			case .Owns:
 				self.navigationItem.title = "Patches I own"
 		}
+        
+        /* Add a little bit of room at the bottom of the table */
+        var footer: UIView = UIView(frame:CGRectMake(0, 0, 200, 8))
+        footer.backgroundColor = UIColor.clearColor()
+        self.tableView.tableFooterView = footer;
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -130,10 +127,12 @@ class PatchTableViewController: QueryTableViewController {
     *--------------------------------------------------------------------------------------------*/
     
     func mapAction(sender: AnyObject?) {
-        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-        let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableMapViewController") as? PatchTableMapViewController
-        controller!.fetchRequest = self.fetchedResultsController.fetchRequest
-        self.navigationController?.pushViewController(controller!, animated: true)
+        /* Called from dynamically generated segment controller */
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+        if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableMapViewController") as? PatchTableMapViewController {
+            controller.fetchRequest = self.fetchedResultsController.fetchRequest
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -158,26 +157,6 @@ class PatchTableViewController: QueryTableViewController {
         let view = cell.contentView.viewWithTag(1) as! BaseView
         Patch.bindView(view, object: object, tableView: tableView, sizingOnly: false)
     }
-
-	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-
-		if segue.identifier == nil {
-			return
-		}
-
-		switch segue.identifier! {
-			case "PatchDetailSegue":
-				if let controller = segue.destinationViewController as? PatchDetailViewController {
-					controller.patch = self.selectedPatch
-					self.selectedPatch = nil
-				}
-			case "MapViewSegue":
-				if let controller = segue.destinationViewController as? PatchTableMapViewController {
-					controller.fetchRequest = self.fetchedResultsController.fetchRequest
-				}
-			default: ()
-		}
-	}    
 }
 
 /*--------------------------------------------------------------------------------------------
@@ -187,16 +166,13 @@ class PatchTableViewController: QueryTableViewController {
 extension PatchTableViewController: UITableViewDelegate {
 
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
-			if let patch = queryResult.object as? Patch {
-                let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-                let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController
-                controller!.patch = patch
-                self.navigationController?.pushViewController(controller!, animated: true)
-				return
-			}
+        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
+            let patch = queryResult.object as? Patch,
+            let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
+                controller.patch = patch
+                self.navigationController?.pushViewController(controller, animated: true)
 		}
-		assert(false, "Couldn't set selectedPatch")
 	}
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {

@@ -79,7 +79,10 @@ extension SettingsTableViewController: UITableViewDelegate {
         let selectedCell = tableView.cellForRowAtIndexPath(indexPath)
         
         if selectedCell == self.notificationsCell {
-            self.performSegueWithIdentifier("NotificationSettingsSegue", sender: selectedCell)
+            let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+            if let controller = storyboard.instantiateViewControllerWithIdentifier("NotificationSettingsViewController") as? NotificationSettingsViewController {
+                self.navigationController?.pushViewController(controller, animated: true)
+            }
         }
         else if selectedCell == self.sendFeedbackCell {
             let email = "feedback@3meters.com"
@@ -120,7 +123,10 @@ extension SettingsTableViewController: UITableViewDelegate {
             self.pushWebViewController(NSURL(string: softwareLicensesURLString))
         }
         else if selectedCell == self.developmentCell {
-            self.performSegueWithIdentifier("DevelopmentSettingsSegue", sender: selectedCell)
+            let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+            if let controller = storyboard.instantiateViewControllerWithIdentifier("DevelopmentViewController") as? DevelopmentViewController {
+                self.navigationController?.pushViewController(controller, animated: true)
+            }
         }
         else {
             assert(false, "Unknown cell selection")

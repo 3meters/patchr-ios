@@ -32,6 +32,7 @@ class AirToggleButton: AirImageButton {
     
     override func initialize(){
         super.initialize()
+        self.spot?.removeFromSuperlayer()
         toggleOn(false)
         self.progressAuto = false
         self.imageView?.contentMode = UIViewContentMode.ScaleToFill
@@ -41,10 +42,12 @@ class AirToggleButton: AirImageButton {
     func toggleOn(on: Bool, pending: Bool = false) {
         if on {
             self.setImage(imageOn, forState: .Normal)
+            self.tintColor = self.tintOn
             self.imageView?.tintColor(self.tintOn)
         }
         else {
             self.setImage(imageOff, forState: .Normal)
+            self.tintColor = self.tintOff
             self.imageView?.tintColor(pending ? self.tintPending : self.tintOff)
         }
         self.toggledOn = on

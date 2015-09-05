@@ -195,20 +195,6 @@ class PatchEditViewController: EntityEditViewController {
         return true
     }
 
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == nil {
-            return
-        }
-        
-        switch segue.identifier! {
-            case "LocationEditSegue":
-                if let destinationViewController = segue.destinationViewController as? PatchMapViewController {
-                    destinationViewController.locationDelegate = self
-                }
-            default: ()
-        }
-    }
-
     func updateLocation(loc: CLLocation) {
         /* Gets calls externally from map view */
         location = loc
@@ -360,8 +346,12 @@ extension PatchEditViewController: UITableViewDelegate{
         switch index {
             case (0, 4):
                 tableView.deselectRowAtIndexPath(indexPath, animated: true)
-                performSegueWithIdentifier("LocationEditSegue", sender: self)
-            
+                let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+                if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchMapViewController") as? PatchMapViewController {
+                    controller.locationDelegate = self
+                    self.navigationController?.pushViewController(controller, animated: true)
+                }
+
             case (0, 5):
                 tableView.deselectRowAtIndexPath(indexPath, animated: true)
                 Alert("Will launch place picker when implemented")
