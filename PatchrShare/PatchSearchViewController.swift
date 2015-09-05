@@ -237,7 +237,7 @@ extension PatchSearchViewController: UITableViewDelegate {
             var frameHeightPixels = Int(cell!.photo.frame.size.height * PIXEL_SCALE)
             var frameWidthPixels = Int(cell!.photo.frame.size.width * PIXEL_SCALE)
             
-            let photoUrl = PhotoUtils.url(prefix!, source: source!)
+            let photoUrl = PhotoUtils.url(prefix!, source: source!, size: 200)  // Special thumbnail sizing case
             let photoUrlSized = PhotoUtils.urlSized(photoUrl, frameWidth: frameWidthPixels, frameHeight: frameHeightPixels, photoWidth: width, photoHeight: height)
             
             cell!.photo.sd_setImageWithURL(photoUrlSized)
@@ -310,8 +310,8 @@ extension PatchSearchViewController: UITableViewDelegate {
     override func scrollViewDidScroll(scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
         let color = UIColor(red: CGFloat(1.0), green: CGFloat(1.0), blue: CGFloat(1.0), alpha: CGFloat(0))
-        if offsetY > 50 {
-            let alpha = min(1, 1 - ((50 + 64 - offsetY) / 64))
+        if offsetY > 0 {
+            let alpha = min(1, 1 - ((40 - offsetY) / 40))
             self.headerView?.backgroundColor = UIColor(red: CGFloat(0.9), green: CGFloat(0.9), blue: CGFloat(0.9), alpha: CGFloat(alpha))
         }
         else {
