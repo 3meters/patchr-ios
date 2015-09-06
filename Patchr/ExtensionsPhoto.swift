@@ -12,52 +12,37 @@ class PhotoUtils {
     
     static func url(prefix: String, source: String, size: Int?, frameWidth: Int = Int(IMAGE_DIMENSION_MAX)) -> NSURL {
         var path: String = ""
+        var quality: Int = 75
+        if PIXEL_SCALE >= 3 {
+            quality = 25
+        }
+        else if PIXEL_SCALE >= 2 {
+            quality = 50
+        }
         
         if source == PhotoSource.aircandi_images || source == PhotoSource.aircandi {
-            var width = size != nil ? size : 800
-            path = "https://3meters-images.imgix.net/\(prefix)?w=\(width!)"
+            var width = size != nil ? size : 400
+            path = "https://3meters-images.imgix.net/\(prefix)?w=\(width!)&dpr=\(PIXEL_SCALE)&q=\(quality)&auto=enhance"
         }
         else if source == PhotoSource.aircandi_users {
-            var width = size != nil ? size : 400
-            path = "https://3meters-users.imgix.net/\(prefix)?w=\(width!)&h=\(width!)&fit=crop"
+            var width = size != nil ? size : 100
+            path = "https://3meters-users.imgix.net/\(prefix)?w=\(width!)&h=\(width!)&fit=min&dpr=\(PIXEL_SCALE)&q=\(quality)&auto=enhance"
         }
         else if source == PhotoSource.google {
+            var width: CGFloat = CGFloat(frameWidth) * PIXEL_SCALE
             if (prefix.rangeOfString("?") != nil) {
-                path = "\(prefix)&maxwidth=\(frameWidth)"
+                path = "\(prefix)&maxwidth=\(width)"
             }
             else {
-                path = "\(prefix)?maxwidth=\(frameWidth)"
+                path = "\(prefix)?maxwidth=\(width)"
             }
         }
         else if source == PhotoSource.gravatar {
-            path = "\(prefix)"
+            var width: CGFloat = CGFloat(100) * PIXEL_SCALE
+            path = "\(prefix)&s=\(width)"
         }
         
         return NSURL(string: path)!
-    }
-    
-    static func urlSized(url: NSURL, frameWidth: Int, frameHeight: Int, photoWidth: Int?, photoHeight: Int?) -> NSURL {
-        /*
-        * If photo comes with native height/width then use it otherwise
-        * resize based on width.
-        */
-        return url
-        
-        /*
-        if photoWidth != nil && photoHeight != nil {
-            
-            var photoAspectRatio: Float = Float(photoWidth!) / Float(photoHeight!)
-            var frameAspectRatio: Float = Float(frameWidth) / Float(frameHeight)
-            var dimension: ResizeDimension = (frameAspectRatio >= photoAspectRatio) ? ResizeDimension.width : ResizeDimension.height;
-            var size: Int = (dimension == ResizeDimension.width) ? frameWidth : frameHeight
-            var uriString = GooglePlusProxy.convert(url.absoluteString!, size: size, dimension: dimension)
-            
-            return NSURL(string: uriString)!
-        }
-        else {
-            var uriString = GooglePlusProxy.convert(url.absoluteString!, size: frameWidth, dimension: ResizeDimension.width)
-            return NSURL(string: uriString)!
-        }*/
     }
 }
 

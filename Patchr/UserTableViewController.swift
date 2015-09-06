@@ -73,6 +73,10 @@ class UserTableViewController: QueryTableViewController {
 			case .PatchLikers, .MessageLikers:
 				self.navigationItem.title = "Likers"
 		}
+        
+        /* Table formatting */
+        self.tableView.backgroundColor = Colors.gray95pcntColor
+        self.tableView.tableFooterView = UIView();        
 	}
     
     override func viewWillAppear(animated: Bool) {

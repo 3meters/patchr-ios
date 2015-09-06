@@ -87,6 +87,7 @@ class QueryTableViewController: FetchedResultsTableViewController {
             progress!.mode = MBProgressHUDMode.Indeterminate
             progress!.square = true
             progress!.opacity = 0.0
+            progress!.yOffset = 36.0
             progress!.removeFromSuperViewOnHide = true
             progress!.userInteractionEnabled = false
             progress!.activityIndicatorColor = Colors.brandColorDark

@@ -298,8 +298,7 @@ class MessageEditViewController: EntityEditViewController {
                         let height = subJson["photo"]["height"].int
                         
                         let photoUrl = PhotoUtils.url(prefix!, source: source!, size: nil)
-                        let photoUrlSized = PhotoUtils.urlSized(photoUrl, frameWidth: Int(60 * PIXEL_SCALE), frameHeight: Int(60 * PIXEL_SCALE), photoWidth: width, photoHeight: height)
-                        model.contactImageUrl = photoUrlSized
+                        model.contactImageUrl = photoUrl
                         model.contactImage = UIImage(named: "imgDefaultUser")
                     }
                     self.suggestions.addObject(model)

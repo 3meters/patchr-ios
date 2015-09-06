@@ -149,13 +149,9 @@ class NotificationsTableViewController: QueryTableViewController {
                                     let width = json["photo"]["width"].int
                                     let height = json["photo"]["height"].int
                                     
-                                    var frameHeightPixels = Int(36 * PIXEL_SCALE)
-                                    var frameWidthPixels = Int(36 * PIXEL_SCALE)
-                                    
                                     let photoUrl = PhotoUtils.url(prefix!, source: source!, size: nil)
-                                    let photoUrlSized = PhotoUtils.urlSized(photoUrl, frameWidth: frameWidthPixels, frameHeight: frameHeightPixels, photoWidth: width, photoHeight: height)
 
-                                    SDWebImageManager.sharedManager().downloadImageWithURL(photoUrlSized, options: SDWebImageOptions.HighPriority, progress: nil, completed: {
+                                    SDWebImageManager.sharedManager().downloadImageWithURL(photoUrl, options: SDWebImageOptions.HighPriority, progress: nil, completed: {
                                         (image:UIImage!, error:NSError!, cacheType:SDImageCacheType, finished:Bool, url:NSURL!) -> Void in
                                         if image != nil && finished {
                                             self.showNotificationBar(json["name"].string!, description: description, image: image, targetId: json["targetId"].string!)

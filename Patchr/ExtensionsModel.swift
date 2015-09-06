@@ -69,7 +69,7 @@ extension Entity {
         }
         else if schema == "user" || schema == "notification" {
             if id != nil {
-                prefix = "http://www.gravatar.com/avatar/\(id!.md5)?d=identicon&r=pg&s=200"
+                prefix = "http://www.gravatar.com/avatar/\(id!.md5)?d=identicon&r=pg"
                 source = PhotoSource.gravatar
             }
             else {

@@ -148,6 +148,10 @@ class PatchDetailViewController: QueryTableViewController {
         likeButton.messageOff = "Removed from favorites"
         likeButton.alpha = 0.0
         
+        /* Table formatting */
+        self.tableView.backgroundColor = Colors.gray95pcntColor
+        self.tableView.tableFooterView = UIView();
+        
         /* Navigation bar buttons */
         
         drawButtons()
