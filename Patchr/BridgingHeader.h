@@ -25,7 +25,6 @@
 #import <RMCoreDataStack/RMCoreDataStack.h>
 #import <PBWebViewController.h>
 #import <MBProgressHUD.h>
-#import <MRProgress/MRProgress.h>
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <SDWebImage/UIButton+WebCache.h>
 #import <SDWebImage/SDImageCache.h>
