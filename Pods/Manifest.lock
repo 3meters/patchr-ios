@@ -32,11 +32,11 @@ PODS:
   - AWSS3 (2.2.2):
     - AWSCore (= 2.2.2)
   - Branch (0.10.3)
-  - Crashlytics (3.3.3)
+  - Crashlytics (3.3.4)
   - DACircularProgress (2.3.1)
-  - Fabric (1.5.3):
-    - Fabric/Base (= 1.5.3)
-  - Fabric/Base (1.5.3)
+  - Fabric (1.5.5):
+    - Fabric/Base (= 1.5.5)
+  - Fabric/Base (1.5.5)
   - Google/Analytics (1.0.7):
     - Google/Core
     - GoogleAnalytics (~> 3.12)
@@ -109,9 +109,9 @@ SPEC CHECKSUMS:
   AWSCore: 3e969334460cc7ba16504fb2e074f59f95880800
   AWSS3: 4f89fcc0ef11303f94f561310979a0d2ec816fff
   Branch: d4df6da2a3533d5c950286a3753eb18d485bd8d0
-  Crashlytics: 9120a5c1515655e57a65e565e2eae8dd326be2e9
+  Crashlytics: 41c082440d2e14da444186fff65e79c0b4b35d4c
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
-  Fabric: 4cd90f112cddd3700ad1b2f6a7f8c025045f0b79
+  Fabric: 190bf1a6eb65f7500de1347d027d2e59a7e53db1
   Google: 875f5a8ade86dd02e36586e4a54814843938c7f6
   GoogleAnalytics: fcf1f1cad57ae1a9a53520018f0f680ceeeb8b49
   GoogleNetworkingUtilities: 292992ab31b7b4ba32809a0e8b40e324cdfb2c0c
