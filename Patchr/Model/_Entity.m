@@ -9,6 +9,7 @@ const struct EntityAttributes EntityAttributes = {
 	.countPending = @"countPending",
 	.countWatching = @"countWatching",
 	.description_ = @"description_",
+	.image = @"image",
 	.linkCounts = @"linkCounts",
 	.patchId = @"patchId",
 	.rank = @"rank",
@@ -19,6 +20,7 @@ const struct EntityAttributes EntityAttributes = {
 	.userLikesId = @"userLikesId",
 	.userWatchId = @"userWatchId",
 	.userWatchJustApproved = @"userWatchJustApproved",
+	.userWatchMuted = @"userWatchMuted",
 	.userWatchStatus = @"userWatchStatus",
 	.visibility = @"visibility",
 };
@@ -96,6 +98,11 @@ const struct EntityUserInfo EntityUserInfo = {
 	}
 	if ([key isEqualToString:@"userWatchJustApprovedValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"userWatchJustApproved"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"userWatchMutedValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"userWatchMuted"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
@@ -190,6 +197,8 @@ const struct EntityUserInfo EntityUserInfo = {
 
 @dynamic description_;
 
+@dynamic image;
+
 @dynamic linkCounts;
 
 @dynamic patchId;
@@ -280,6 +289,26 @@ const struct EntityUserInfo EntityUserInfo = {
 
 - (void)setPrimitiveUserWatchJustApprovedValue:(BOOL)value_ {
 	[self setPrimitiveUserWatchJustApproved:@(value_)];
+}
+
+@dynamic userWatchMuted;
+
+- (BOOL)userWatchMutedValue {
+	NSNumber *result = [self userWatchMuted];
+	return [result boolValue];
+}
+
+- (void)setUserWatchMutedValue:(BOOL)value_ {
+	[self setUserWatchMuted:@(value_)];
+}
+
+- (BOOL)primitiveUserWatchMutedValue {
+	NSNumber *result = [self primitiveUserWatchMuted];
+	return [result boolValue];
+}
+
+- (void)setPrimitiveUserWatchMutedValue:(BOOL)value_ {
+	[self setPrimitiveUserWatchMuted:@(value_)];
 }
 
 @dynamic userWatchStatus;

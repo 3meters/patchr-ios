@@ -36,16 +36,18 @@ class UserEditViewController: EntityEditViewController {
             navigationItem.title = Utils.LocalizedString("Edit profile")
             self.progressStartLabel = "Updating"
             self.progressFinishLabel = "Updated!"
+            self.cancelledLabel = "Update cancelled"
             
             /* Navigation bar buttons */
             var deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
-            var doneButton   = UIBarButtonItem(title: "Save", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
+            var doneButton   = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
             self.navigationItem.rightBarButtonItems = [doneButton, spacer, deleteButton]
         }
         else {
             navigationItem.title = Utils.LocalizedString("Register")
             self.progressStartLabel = "Registering"
             self.progressFinishLabel = "Registered!"
+            self.cancelledLabel = "Registration cancelled"
             
             /* Use tab order when inserting users */
             nameField.delegate = self
@@ -53,6 +55,10 @@ class UserEditViewController: EntityEditViewController {
             if passwordField != nil {
                 passwordField.delegate = self
             }
+            
+            /* Navigation bar buttons */
+            var doneButton   = UIBarButtonItem(title: "Join", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
+            self.navigationItem.rightBarButtonItems = [doneButton]
         }
         
         bind()
@@ -80,54 +86,10 @@ class UserEditViewController: EntityEditViewController {
 	 *--------------------------------------------------------------------------------------------*/
 
 	@IBAction func joinAction(sender: AnyObject) {
-        
-        if processing { return }
-        
-        if !isValid() { return }
-    
-        processing = true
-        
-        let progress = MBProgressHUD.showHUDAddedTo(self.view.window, animated: true)
-        progress.mode = MBProgressHUDMode.Indeterminate
-        progress.labelText = "Registering..."
-        progress.show(true)
-        
-        var parameters = self.gather(NSMutableDictionary())
-        
-        DataController.proxibase.insertUser(nameField.text, email: emailField.text, password: passwordField.text, parameters: parameters) {
-            response, error in
-            
-            self.processing = false
-            
-            /* Make sure ui updates happen on the main thread */
-            dispatch_async(dispatch_get_main_queue()) {
-                
-                progress.hide(true, afterDelay: 1.0)
-                if var error = ServerError(error) {
-                    if error.code == .FORBIDDEN_DUPLICATE {
-                        error.message = Utils.LocalizedString("Email address already in use.")
-                        self.handleError(error, errorActionType: .ALERT)
-                    }
-                    else {
-                        self.handleError(error)
-                    }
-                }
-                else {
-                    let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-                    let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-                    if let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController") as? UIViewController {
-                        appDelegate.window?.setRootViewController(controller, animated: true)
-                        Shared.Toast("Signed in as \(UserController.instance.userName!)", controller: controller)
-                    }
-                }
-            }   
-        }
-    }
-    
-    @IBAction override func cancelAction(sender: AnyObject){
-        self.navigationController?.popViewControllerAnimated(true)
-    }
-    
+		if !isValid() { return }
+		join()
+	}
+
     @IBAction func termsAction(sender: AnyObject) {
         let webViewController = PBWebViewController()
         webViewController.URL = NSURL(string: "http://patchr.com/terms")!
@@ -164,14 +126,15 @@ class UserEditViewController: EntityEditViewController {
             }
         }
         else {
-            parameters["email"] = nilToNull(email)
+            parameters["email"] = nilToNull(self.email)
+            parameters["password"] = nilToNull(self.password)
             if areaField != nil {
-                parameters["area"] = nilToNull(area)
+                parameters["area"] = nilToNull(self.area)
             }
         }
         return parameters
     }
-    
+
     override func isDirty() -> Bool {
         
         if editMode {
@@ -215,17 +178,142 @@ class UserEditViewController: EntityEditViewController {
         return true
     }
 
-    /*--------------------------------------------------------------------------------------------
-    * Helpers
-    *--------------------------------------------------------------------------------------------*/
+    override func endFieldEditing() {
+        for field in [nameField, emailField, areaField, passwordField] {
+            if (field?.isFirstResponder() != nil) {
+                field.endEditing(false)
+            }
+        }
+    }
     
-	override func endFieldEditing() {
-		for field in [nameField, emailField, areaField, passwordField] {
-			if (field?.isFirstResponder() != nil) {
-				field.endEditing(false)
-			}
-		}
-	}
+    func join() {
+        
+        if self.processing { return }
+        
+        processing = true
+        
+        var progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+        progress.mode = MBProgressHUDMode.Indeterminate
+        progress.styleAs(.ActivityLight)
+        progress.labelText = "Registering..."
+        progress!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("progressWasCancelled:")))
+        progress.show(true)
+        
+        var parameters = self.gather(NSMutableDictionary())
+        var cancelled = false
+        
+        let queue = TaskQueue()
+        
+        Utils.delay(5.0, closure: {
+            () -> () in
+            progress?.detailsLabelText = "Tap to cancel"
+        })
+        
+        /* Process image if any */
+        
+        if var image = parameters["photo"] as? UIImage {
+            queue.tasks +=~ { _, next in
+                
+                /* Ensure image is resized/rotated before upload */
+                image = Utils.prepareImage(image)
+                
+                /* Generate image key */
+                let imageKey = "\(Utils.genImageKey()).jpg"
+                
+                /* Upload */
+                self.imageUploadRequest = S3.sharedService.uploadImageToS3(image, imageKey: imageKey) {
+                    task in
+                    
+                    if let error = task.error {
+                        if error.domain == AWSS3TransferManagerErrorDomain as String {
+                            if let errorCode = AWSS3TransferManagerErrorType(rawValue: error.code) {
+                                if errorCode == .Cancelled {
+                                    cancelled = true
+                                }
+                            }
+                        }
+                        queue.skip()
+                        next(Result(response: nil, error: error))
+                    }
+                    else {
+                        let photo = [
+                            "width": Int(image.size.width), // width/height are in points...should be pixels?
+                            "height": Int(image.size.height),
+                            "source": S3.sharedService.imageSource,
+                            "prefix": imageKey
+                        ]
+                        parameters["photo"] = photo
+                        next(nil)
+                    }
+                }
+            }
+        }
+        
+        /* Upload user */
+        
+        queue.tasks +=~ { _, next in
+            let createParameters: NSDictionary = [
+                "data": parameters,
+                "secret": "larissa",
+                "installId": DataController.proxibase.installationIdentifier
+            ]
+            
+            self.entityPostRequest = DataController.proxibase.postEntity("user/create", parameters: createParameters) {
+                response, error in
+                if error != nil && error!.code == NSURLErrorCancelled {
+                    cancelled = true
+                }
+                next(Result(response: response, error: error))
+            }
+        }
+        
+        /* Update Ui */
+        
+        queue.tasks +=! {
+            self.processing = false
+            
+            if cancelled {
+                Shared.Toast(self.cancelledLabel)
+                return
+            }
+            
+            progress!.hide(true)
+            progress = nil
+            
+            if let result: Result = queue.lastResult as? Result {
+                if var error = ServerError(result.error) {
+                    if error.code == .FORBIDDEN_DUPLICATE {
+                        error.message = Utils.LocalizedString("Email address already in use.")
+                        self.handleError(error, errorActionType: .ALERT)
+                    }
+                    else {
+                        self.handleError(error)
+                    }
+                    return
+                }
+                /*
+                * After creating a user, the user is left in a logged-in state, so process the response
+                * to extract the credentials.
+                */
+                if let response: AnyObject = result.response as AnyObject? {
+                    UserController.instance.handleSuccessfulSignInResponse(response)
+                    
+                    /* Navigate to main interface */
+                    let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+                    let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+                    if let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController") as? UIViewController {
+                        appDelegate.window?.setRootViewController(controller, animated: true)
+                        Shared.Toast("Signed in as \(UserController.instance.userName!)", controller: controller)
+                    }
+                    
+                }
+            }
+        }
+        
+        /* Start tasks */
+        
+        queue.run()
+    }
     
     /*--------------------------------------------------------------------------------------------
     * Field wrappers
@@ -233,28 +321,28 @@ class UserEditViewController: EntityEditViewController {
     
     var email: String {
         get {
-            return emailField.text
+            return self.emailField.text
         }
         set {
-            emailField.text = newValue
+            self.emailField.text = newValue
         }
     }
     
     var area: String {
         get {
-            return areaField.text
+            return self.areaField.text
         }
         set {
-            areaField.text = newValue
+            self.areaField.text = newValue
         }
     }
     
     var password: String {
         get {
-            return passwordField.text
+            return self.passwordField.text
         }
         set {
-            passwordField.text = newValue
+            self.passwordField.text = newValue
         }
     }
 }
@@ -267,16 +355,14 @@ extension UserEditViewController: UITextFieldDelegate {
             if textField == self.nameField {
                 self.emailField.becomeFirstResponder()
                 return false
-            } else if textField == self.emailField {
+            }
+            else if textField == self.emailField {
                 self.passwordField.becomeFirstResponder()
                 return false
-            } else if textField == self.passwordField {
-                
-                // Kind of lame. Rely on bar button as the signal
-                if self.doneButton.enabled {
-                    self.joinAction(textField)
-                    textField.resignFirstResponder()
-                }
+            }
+            else if textField == self.passwordField {                
+                self.joinAction(textField)
+                textField.resignFirstResponder()
                 return false
             }
         }

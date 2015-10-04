@@ -35,9 +35,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelWarn
         #endif
         
-        /* Light gray is better than black */
-        window?.backgroundColor = Colors.windowColor
-        UITabBar.appearance().selectedImageTintColor = Colors.brandColor
+        /* Turn on network activity indicator */
+        AFNetworkActivityIndicatorManager.sharedManager().enabled = true
+        
+        /* Default config for AWS */
+        //        let credProvider = AWSCognitoCredentialsProvider(regionType: CognitoRegionType, identityPoolId: COGNITO_POOLID)
+        let credProvider  = AWSStaticCredentialsProvider(accessKey: keys.awsS3Key(), secretKey: keys.awsS3Secret())
+        let serviceConfig = AWSServiceConfiguration(region: AWSRegionType(rawValue: 3/*'us-west-2'*/)!, credentialsProvider: credProvider)
+        AWSServiceManager.defaultServiceManager().defaultServiceConfiguration = serviceConfig
         
         /* Turn on status bar */
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.Slide)
@@ -60,9 +65,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let settingsDictionary: NSDictionary = NSDictionary(contentsOfFile: defaultSettingsFile as String)!
         NSUserDefaults.standardUserDefaults().registerDefaults(settingsDictionary as [NSObject : AnyObject])
         
-        /* Initialize Crashlytics */
-        Fabric.with([Crashlytics()])
-        
         /* Initialize Google analytics */
         var configureError:NSError?
         GGLContext.sharedInstance().configureWithError(&configureError)
@@ -80,6 +82,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         gai.logger.logLevel = GAILogLevel.Warning
         gai.dispatchInterval = 5    // Seconds
         #endif
+        
+        /* Initialize Crashlytics */
+        Fabric.with([Crashlytics()])
         
         /* Initialize Creative sdk */
         AdobeUXAuthManager.sharedManager().setAuthenticationParametersWithClientID(keys.creativeSdkClientId(), clientSecret: keys.creativeSdkClientSecret(), enableSignUp: false)
@@ -113,14 +118,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
-
+        
+        /* Instance the reachability manager */
+        ReachabilityManager.instance
+        
+        /* Global UI tweaks */
+        self.window?.backgroundColor = Colors.windowColor /* Light gray is better than black */
         self.window?.tintColor = Colors.brandColor
+        UITabBar.appearance().selectedImageTintColor = Colors.brandColorDark
         UISwitch.appearance().onTintColor = self.window?.tintColor
         
+        /* We handle remote notifications */
         NotificationController.instance.registerForRemoteNotifications()
         
-        /* Show initial controller */
-        route()
+        if let options = launchOptions, let notification = options[UIApplicationLaunchOptionsLocalNotificationKey] as? UILocalNotification {
+            UIAlertView(title: "Hah!", message: "Enter an email address.", delegate: nil, cancelButtonTitle: "OK").show()
+            NotificationController.instance.didReceiveLocalNotification(application, notification: notification)
+        }
+        else {
+            /* Show initial controller */
+            route()
+        }
         
         return true
     }
@@ -168,7 +186,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             if entitySchema == "patch" {
                 if let controller = storyBoard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
-                    controller.patchId = entityId
+                    controller.entityId = entityId
                     /* Navigation bar buttons */
                     var doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
                     controller.navigationItem.leftBarButtonItems = [doneButton]
@@ -253,6 +271,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         NotificationController.instance.didReceiveRemoteNotification(application, userInfo: userInfo, fetchCompletionHandler: completionHandler)
     }
 
+    func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
+        NotificationController.instance.didReceiveLocalNotification(application, notification: notification)
+    }
+    
     /*--------------------------------------------------------------------------------------------
     * Background Sessions
     *--------------------------------------------------------------------------------------------*/

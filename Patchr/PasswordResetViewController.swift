@@ -52,8 +52,9 @@ class PasswordResetViewController: UITableViewController, UITextFieldDelegate {
     
     func requestReset() {
         
-        let progress = MBProgressHUD.showHUDAddedTo(self.view.window, animated: true)
+        let progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
         progress.mode = MBProgressHUDMode.Indeterminate
+        progress.styleAs(.ActivityLight)
         progress.labelText = "Verifying..."
         progress.show(true)
         
@@ -99,8 +100,9 @@ class PasswordResetViewController: UITableViewController, UITextFieldDelegate {
     
     func reset() {
         
-        let progress = MBProgressHUD.showHUDAddedTo(self.view.window, animated: true)
+        let progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
         progress.mode = MBProgressHUDMode.Indeterminate
+        progress.styleAs(.ActivityLight)
         progress.labelText = "Resetting password for: \(self.emailField.text)"
         progress.show(true)
         

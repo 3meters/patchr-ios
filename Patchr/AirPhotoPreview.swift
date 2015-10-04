@@ -10,14 +10,30 @@ import UIKit
 
 class AirPhotoPreview: AirPhotoBrowser {
     
+    /* Wraps photo browser with ui specialized for previewing photos from the photo picker. */
+    
+    /*--------------------------------------------------------------------------------------------
+    * Events
+    *--------------------------------------------------------------------------------------------*/
+    
+    func selectAction() {
+        browseDelegate?.photoBrowseController!(didFinishPickingPhoto: self.imageResult!)
+    }
+    
+    /*--------------------------------------------------------------------------------------------
+    * Methods
+    *--------------------------------------------------------------------------------------------*/
+    
     override func configure() {
+        
+        /* Configure toolbar */
         
         var toolbar: UIToolbar = super.toolbar
         
-        /* Toolbar buttons */
         var selectButton = UIBarButtonItem(title: "Use photo", style: UIBarButtonItemStyle.Plain, target: target, action: Selector("selectAction"))
         var flexSpacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)
         var fixedSpacer = UIBarButtonItem(barButtonSystemItem: .FixedSpace, target: self, action: nil)
+        
         fixedSpacer.width = 16
         
         var items = [AnyObject]()
@@ -27,8 +43,4 @@ class AirPhotoPreview: AirPhotoBrowser {
         
         toolbar.items = items
     }
-    
-    func selectAction() {
-        browseDelegate?.photoBrowseController!(didFinishPickingPhoto: self.imageResult!)
-    }    
 }

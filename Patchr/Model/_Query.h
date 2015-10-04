@@ -6,13 +6,13 @@
 extern const struct QueryAttributes {
 	__unsafe_unretained NSString *criteria;
 	__unsafe_unretained NSString *executed;
+	__unsafe_unretained NSString *id_;
 	__unsafe_unretained NSString *more;
 	__unsafe_unretained NSString *name;
 	__unsafe_unretained NSString *offset;
 	__unsafe_unretained NSString *pageSize;
 	__unsafe_unretained NSString *parameters;
 	__unsafe_unretained NSString *sidecar;
-	__unsafe_unretained NSString *valid;
 } QueryAttributes;
 
 extern const struct QueryRelationships {
@@ -50,6 +50,10 @@ extern const struct QueryRelationships {
 
 //- (BOOL)validateExecuted:(id*)value_ error:(NSError**)error_;
 
+@property (nonatomic, strong) NSString* id_;
+
+//- (BOOL)validateId_:(id*)value_ error:(NSError**)error_;
+
 @property (nonatomic, strong) NSNumber* more;
 
 @property (atomic) BOOL moreValue;
@@ -86,14 +90,6 @@ extern const struct QueryRelationships {
 
 //- (BOOL)validateSidecar:(id*)value_ error:(NSError**)error_;
 
-@property (nonatomic, strong) NSNumber* valid;
-
-@property (atomic) BOOL validValue;
-- (BOOL)validValue;
-- (void)setValidValue:(BOOL)value_;
-
-//- (BOOL)validateValid:(id*)value_ error:(NSError**)error_;
-
 @property (nonatomic, strong) NSSet *queryItems;
 
 - (NSMutableSet*)queryItemsSet;
@@ -122,6 +118,9 @@ extern const struct QueryRelationships {
 - (BOOL)primitiveExecutedValue;
 - (void)setPrimitiveExecutedValue:(BOOL)value_;
 
+- (NSString*)primitiveId_;
+- (void)setPrimitiveId_:(NSString*)value;
+
 - (NSNumber*)primitiveMore;
 - (void)setPrimitiveMore:(NSNumber*)value;
 
@@ -148,12 +147,6 @@ extern const struct QueryRelationships {
 
 - (NSArray*)primitiveSidecar;
 - (void)setPrimitiveSidecar:(NSArray*)value;
-
-- (NSNumber*)primitiveValid;
-- (void)setPrimitiveValid:(NSNumber*)value;
-
-- (BOOL)primitiveValidValue;
-- (void)setPrimitiveValidValue:(BOOL)value_;
 
 - (NSMutableSet*)primitiveQueryItems;
 - (void)setPrimitiveQueryItems:(NSMutableSet*)value;

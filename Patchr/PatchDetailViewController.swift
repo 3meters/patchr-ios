@@ -8,27 +8,10 @@
 
 import UIKit
 
-class PatchDetailViewController: QueryTableViewController {
+class PatchDetailViewController: BaseDetailViewController {
 
-	var patch: Patch! = nil
-    var patchId: String?
-    var deleted = false
-
-	private var messageDateFormatter: NSDateFormatter!
-	private var offscreenCells:       NSMutableDictionary = NSMutableDictionary()
-    private var _query: Query!
     private var contextAction: ContextAction = .SharePatch
     private var shareButtonFunctionMap = [Int: ShareButtonFunction]()
-    
-    private var isOwner: Bool {
-        if let currentUser = UserController.instance.currentUser {
-            if patch != nil && patch.creator != nil {
-                return currentUser.id_ == patch.creator.entityId
-            }
-        }
-        return false
-    }
-    
     private var originalTop: CGFloat = 0.0
     private var originalScrollTop: CGFloat = -64.0
 
@@ -39,6 +22,7 @@ class PatchDetailViewController: QueryTableViewController {
     @IBOutlet weak var patchType:      UILabel!
     @IBOutlet weak var visibility:     UILabel!
     @IBOutlet weak var likeButton:     AirLikeButton!
+    @IBOutlet weak var muteButton:     AirMuteButton!
     @IBOutlet weak var watchButton:    AirWatchButton!
     @IBOutlet weak var mapButton:      AirImageButton!
     @IBOutlet weak var watchersButton: UIButton!
@@ -62,27 +46,6 @@ class PatchDetailViewController: QueryTableViewController {
     @IBOutlet weak var patchPhotoTop:  NSLayoutConstraint!
     @IBOutlet weak var placeButton:    UIButton!
 
-	override func query() -> Query {
-		if self._query == nil {
-			let query = Query.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Query
-			query.name = DataStoreQueryName.MessagesForPatch.rawValue
-            query.pageSize = DataController.proxibase.pageSizeDefault
-            query.validValue = (patch != nil || patchId != nil)
-            if query.validValue {
-                query.parameters = [:]
-                if patch != nil {
-                    query.parameters["entity"] = patch
-                }
-                if patchId != nil {
-                    query.parameters["entityId"] = patchId
-                }
-            }
-			DataController.instance.managedObjectContext.save(nil)
-			self._query = query
-		}
-		return self._query
-	}
-
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
 	 *--------------------------------------------------------------------------------------------*/
@@ -94,14 +57,8 @@ class PatchDetailViewController: QueryTableViewController {
 	}
 
 	override func viewDidLoad() {
-
-		if patch != nil {
-			patchId = patch.id_
-		}
+        self.queryName = DataStoreQueryName.MessagesForPatch.rawValue
         
-        self.contentViewName = "MessageView"
-        super.showEmptyLabel = false
-
 		super.viewDidLoad()
 
         let bannerTapGestureRecognizer = UITapGestureRecognizer(target: self, action: "flipToInfo:")
@@ -126,7 +83,7 @@ class PatchDetailViewController: QueryTableViewController {
         more.userInteractionEnabled = false
         
         /* UI prep */
-        tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
+        self.patchNameVisible = false
         lockImage.tintColor(Colors.brandColor)
         infoLockImage.tintColor(Colors.brandColor)
         self.mapButton.setImage(UIImage(named: "imgMapLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
@@ -134,7 +91,6 @@ class PatchDetailViewController: QueryTableViewController {
         self.watchersButton.alpha = 0.0
         self.originalTop = patchPhotoTop.constant
         self.contextButton?.setTitle("", forState: .Normal)
-        self.tableView.estimatedRowHeight = UITableViewAutomaticDimension
         
         watchButton.tintOff = UIColor.whiteColor()
         watchButton.tintPending = Colors.brandColor
@@ -148,17 +104,24 @@ class PatchDetailViewController: QueryTableViewController {
         likeButton.messageOff = "Removed from favorites"
         likeButton.alpha = 0.0
         
-        /* Navigation bar buttons */
+        muteButton.tintOff = UIColor.whiteColor()
+        muteButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
+        muteButton.imageOn = UIImage(named: "imgSoundOn2Light")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+        muteButton.imageOff = UIImage(named: "imgSoundOff2Light")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+        muteButton.messageOn = "Notifications unmuted"
+        muteButton.messageOff = "Notifications muted"
+        muteButton.alpha = 0.0
         
+        /* Navigation bar buttons */
         drawButtons()
 	}
     
     override func viewWillAppear(animated: Bool) {
         /*
-         * Entity could have been deleted while we were away to check it.
+         * Entity could have been deleted while we were away so check it.
          */
-        if self.patch != nil {
-            let item = ServiceBase.fetchOneById(patchId, inManagedObjectContext: DataController.instance.managedObjectContext)
+        if self.entity != nil {
+            let item = ServiceBase.fetchOneById(self.entityId!, inManagedObjectContext: DataController.instance.managedObjectContext)
             if item == nil {
                 self.navigationController?.popViewControllerAnimated(false)
                 return
@@ -168,7 +131,7 @@ class PatchDetailViewController: QueryTableViewController {
         /* Triggers query processing by results controller */
         super.viewWillAppear(animated)
         
-        if self.patch != nil {
+        if self.entity != nil {
             draw()
         }
         
@@ -188,9 +151,9 @@ class PatchDetailViewController: QueryTableViewController {
         newFrame.size.height = height
         headerView.frame = newFrame
         self.tableView.tableHeaderView = headerView
-        
+
         /* Load the entity */
-        refresh(force: true)
+        bind(force: true)
     }
 
     override func viewDidDisappear(animated: Bool) {
@@ -209,7 +172,7 @@ class PatchDetailViewController: QueryTableViewController {
 	@IBAction func watchersAction(sender: AnyObject) {
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
         if let controller = storyboard.instantiateViewControllerWithIdentifier("UserTableViewController") as? UserTableViewController {
-            controller.patch = self.patch
+            controller.patch = self.entity as! Patch
             controller.filter = .PatchWatchers
             self.navigationController?.pushViewController(controller, animated: true)
         }
@@ -245,7 +208,7 @@ class PatchDetailViewController: QueryTableViewController {
     @IBAction func placeAction(sender: AnyObject) {
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
         if let controller = storyboard.instantiateViewControllerWithIdentifier("PlaceDetailViewController") as? PlaceDetailViewController {
-            controller.placeId = self.patch!.place.entityId
+            controller.placeId = (self.entity as! Patch).place.entityId
             self.navigationController?.pushViewController(controller, animated: true)
         }
     }
@@ -260,12 +223,12 @@ class PatchDetailViewController: QueryTableViewController {
     
     @IBAction func unwindFromMessageEdit(segue: UIStoryboardSegue) {
         // Refresh results when unwinding from Message screen to pickup any changes.
-        self.refreshQueryItems(force: true)
+        self.bindQueryItems(force: true, paging: false)
     }
     
     @IBAction override func unwindFromPatchEdit(segue: UIStoryboardSegue) {
         // Refresh results when unwinding from Patch edit/create screen to pickup any changes.
-        self.refresh()
+        self.bind()
     }
     
     func handleRemoteNotification(notification: NSNotification) {
@@ -274,7 +237,7 @@ class PatchDetailViewController: QueryTableViewController {
             let parentId = userInfo["parentId"] as? String
             let targetId = userInfo["targetId"] as? String
             
-            let impactedByNotification = self.patchId == parentId || self.patchId == targetId
+            let impactedByNotification = self.entityId == parentId || self.entityId == targetId
             
             // Only refresh notifications if view has already been loaded
             // and the notification is related to this Patch
@@ -311,8 +274,8 @@ class PatchDetailViewController: QueryTableViewController {
         /* Has its own nav because we segue modally and it needs its own stack */
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
         if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageEditViewController") as? MessageEditViewController {
-            controller.toString = self.patch!.name
-            controller.patchId = self.patchId
+            controller.toString = self.entity!.name
+            controller.patchId = self.entityId
             var navController = UINavigationController()
             navController.navigationBar.tintColor = Colors.brandColorDark
             navController.viewControllers = [controller]
@@ -324,7 +287,7 @@ class PatchDetailViewController: QueryTableViewController {
         /* Has its own nav because we segue modally and it needs its own stack */
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
         if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchEditViewController") as? PatchEditViewController {
-            controller.entity = patch
+            controller.entity = entity
             var navController = UINavigationController()
             navController.navigationBar.tintColor = Colors.brandColorDark
             navController.viewControllers = [controller]
@@ -334,7 +297,7 @@ class PatchDetailViewController: QueryTableViewController {
     
     func shareAction() {
         
-        if self.patch != nil {
+        if self.entity != nil {
             
             let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: nil, destructiveButtonTitle: nil)
             
@@ -360,119 +323,120 @@ class PatchDetailViewController: QueryTableViewController {
 	 * Methods
 	 *--------------------------------------------------------------------------------------------*/
     
-	func draw() {
+	override func draw() {
         
-        if self.patch == nil {
-            return
-        }
-        
-        /* Name, type and photo */
-        
-		self.patchName.text = patch!.name
-        self.patchType.text = patch.type == nil ? "PATCH" : patch!.type.uppercaseString + " PATCH"
-        self.patchPhoto.setImageWithPhoto(patch!.getPhotoManaged(), animate: patchPhoto.image == nil)
-        
-        /* Place */
-        
-        if patch!.place != nil {
-            placeButton.setTitle(patch!.place.name, forState: .Normal)
-            placeButton.fadeIn()
-        }
-
-        /* Privacy */
-        
-        if lockImage != nil {
-            lockImage.hidden = (patch!.visibility == "public")
-            infoLockImage.hidden = (patch!.visibility == "public")
-        }
-        if visibility != nil {
-            visibility.hidden = (patch!.visibility == "public")
-            infoVisibility.hidden = (patch!.visibility == "public")
-        }
-        
-        /* Map button */
-        mapButton.hidden = (patch.location == nil)
-        
-        /* Watching button */
-        
-        if patch?.countWatchingValue == 0 {
-            if watchersButton.alpha != 0 {
-                watchersButton.fadeOut()
+        if let entity = self.entity as? Patch {
+            
+            if self.entity == nil {
+                return
             }
-        }
-        else {
-            let watchersTitle = "\(self.patch!.countWatching ?? 0) watching"
-            self.watchersButton.setTitle(watchersTitle, forState: UIControlState.Normal)
-            if watchersButton.alpha == 0 {
-                watchersButton.fadeIn()
+            
+            /* Name, type and photo */
+            
+            self.patchName.text = entity.name
+            self.patchType.text = entity.type == nil ? "PATCH" : entity.type.uppercaseString + " PATCH"
+            self.patchPhoto.setImageWithPhoto(entity.getPhotoManaged(), animate: patchPhoto.image == nil)
+            
+            /* Place */
+            
+            if entity.place != nil {
+                placeButton.setTitle(entity.place.name, forState: .Normal)
+                placeButton.fadeIn()
             }
-        }
-
-		/* Like button */
-        
-        likeButton.bindEntity(self.patch)
-        if (patch!.visibility == "public" || patch!.userWatchStatusValue == .Member || isOwner) {
-            likeButton.fadeIn(alpha: 1.0)
-        }
-        else {
-            likeButton.fadeOut(alpha: 0.0)
-        }
-        
-        /* Watch button */
-        
-        watchButton.bindEntity(self.patch)
-        
-        /* Info view */
-        infoName.text = patch!.name
-        if patch!.type != nil {
-            infoType.text = patch!.type.uppercaseString + " PATCH"
-        }
-        infoDescription.text = patch!.description_
-        if let distance = patch.distance() {
-            infoDistance.text = LocationController.instance.distancePretty(distance)
-        }
-        infoOwner.text = patch!.creator?.name ?? "Deleted"
-        
-        if isOwner {
-            if patch!.countPendingValue > 0 {
-                if patch!.countPendingValue == 1 {
-                    self.contextButton.setTitle("One member request".uppercaseString, forState: .Normal)
+            
+            /* Privacy */
+            
+            if lockImage != nil {
+                lockImage.hidden = (entity.visibility == "public")
+                infoLockImage.hidden = (entity.visibility == "public")
+            }
+            if visibility != nil {
+                visibility.hidden = (entity.visibility == "public")
+                infoVisibility.hidden = (entity.visibility == "public")
+            }
+            
+            /* Map button */
+            mapButton.hidden = (entity.location == nil)
+            
+            /* Watching button */
+            
+            if entity.countWatchingValue == 0 {
+                if watchersButton.alpha != 0 {
+                    watchersButton.fadeOut()
                 }
-                else {
-                    self.contextButton.setTitle("\(patch!.countPendingValue) member requests".uppercaseString, forState: .Normal)
-                }
-                contextAction = .BrowseUsersWatching
             }
             else {
-                self.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
-                contextAction = .SharePatch
+                let watchersTitle = "\(self.entity!.countWatching ?? 0) watching"
+                self.watchersButton.setTitle(watchersTitle, forState: UIControlState.Normal)
+                if watchersButton.alpha == 0 {
+                    watchersButton.fadeIn()
+                }
             }
-        }
-        else {
-            if !UserController.instance.authenticated {
-                if patch!.visibility == "public" {
+            
+            /* Like button */
+            
+            likeButton.bindEntity(self.entity)
+            if (entity.visibility == "public" || entity.userWatchStatusValue == .Member || isOwner()) {
+                likeButton.fadeIn(alpha: 1.0)
+            }
+            else {
+                likeButton.fadeOut(alpha: 0.0)
+            }
+            
+            /* Watch button */
+            
+            watchButton.bindEntity(self.entity)
+            
+            /* Mute button */
+            
+            muteButton.bindEntity(self.entity)
+            if (entity.userWatchStatusValue == .Member) {
+                muteButton.fadeIn(alpha: 1.0)
+            }
+            else {
+                muteButton.fadeOut(alpha: 0.0)
+            }
+            
+            /* Info view */
+            infoName.text = entity.name
+            if entity.type != nil {
+                infoType.text = entity.type.uppercaseString + " PATCH"
+            }
+            infoDescription.text = entity.description_
+            if let distance = entity.distance() {
+                infoDistance.text = LocationController.instance.distancePretty(distance)
+            }
+            infoOwner.text = entity.creator?.name ?? "Deleted"
+            
+            if isOwner() {
+                if entity.countPendingValue > 0 {
+                    if entity.countPendingValue == 1 {
+                        self.contextButton.setTitle("One member request".uppercaseString, forState: .Normal)
+                    }
+                    else {
+                        self.contextButton.setTitle("\(entity.countPendingValue) member requests".uppercaseString, forState: .Normal)
+                    }
+                    contextAction = .BrowseUsersWatching
+                }
+                else {
                     self.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
                     contextAction = .SharePatch
                 }
-                else {
-                    self.contextButton.setTitle("Request to join".uppercaseString, forState: .Normal)
-                    contextAction = .SubmitJoinRequest
-                }
             }
             else {
-                if patch!.visibility == "public" {
-                    if patch!.userHasMessagedValue {
+                if !UserController.instance.authenticated {
+                    if entity.visibility == "public" {
                         self.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
                         contextAction = .SharePatch
                     }
                     else {
-                        self.contextButton.setTitle("Post your first message".uppercaseString, forState: .Normal)
-                        contextAction = .CreateMessage
+                        self.contextButton.setTitle("Request to join".uppercaseString, forState: .Normal)
+                        contextAction = .SubmitJoinRequest
                     }
                 }
                 else {
-                    if patch!.userWatchStatusValue == .Member {
-                        if patch!.userHasMessagedValue {
+                    if entity.visibility == "public" {
+                        if entity.userHasMessagedValue {
                             self.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
                             contextAction = .SharePatch
                         }
@@ -481,23 +445,35 @@ class PatchDetailViewController: QueryTableViewController {
                             contextAction = .CreateMessage
                         }
                     }
-                    else if patch!.userWatchStatusValue == .Pending {
-                        self.contextButton.setTitle("Cancel join request".uppercaseString, forState: .Normal)
-                        contextAction = .CancelJoinRequest
-                    }
-                    else if patch!.userWatchStatusValue == .NonMember {
-                        self.contextButton.setTitle("Request to join".uppercaseString, forState: .Normal)
-                        contextAction = .SubmitJoinRequest
-                    }
-                    
-                    if patch!.userWatchJustApprovedValue {
-                        if patch!.userHasMessagedValue {
-                            self.contextButton.setTitle("Approved! Invite your friends".uppercaseString, forState: .Normal)
-                            contextAction = .SharePatch
+                    else {
+                        if entity.userWatchStatusValue == .Member {
+                            if entity.userHasMessagedValue {
+                                self.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
+                                contextAction = .SharePatch
+                            }
+                            else {
+                                self.contextButton.setTitle("Post your first message".uppercaseString, forState: .Normal)
+                                contextAction = .CreateMessage
+                            }
                         }
-                        else {
-                            self.contextButton.setTitle("Approved! Post your first message".uppercaseString, forState: .Normal)
-                            contextAction = .CreateMessage
+                        else if entity.userWatchStatusValue == .Pending {
+                            self.contextButton.setTitle("Cancel join request".uppercaseString, forState: .Normal)
+                            contextAction = .CancelJoinRequest
+                        }
+                        else if entity.userWatchStatusValue == .NonMember {
+                            self.contextButton.setTitle("Request to join".uppercaseString, forState: .Normal)
+                            contextAction = .SubmitJoinRequest
+                        }
+                        
+                        if entity.userWatchJustApprovedValue {
+                            if entity.userHasMessagedValue {
+                                self.contextButton.setTitle("Approved! Invite your friends".uppercaseString, forState: .Normal)
+                                contextAction = .SharePatch
+                            }
+                            else {
+                                self.contextButton.setTitle("Approved! Post your first message".uppercaseString, forState: .Normal)
+                                contextAction = .CreateMessage
+                            }
                         }
                     }
                 }
@@ -505,13 +481,13 @@ class PatchDetailViewController: QueryTableViewController {
         }
 	}
 
-    func drawButtons() {
+    override func drawButtons() {
         
         var shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
         var addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: Selector("addAction"))
         var spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
         spacer.width = SPACER_WIDTH
-        if isOwner {
+        if isOwner() {
             let editImage = UIImage(named: "imgEdit2Light")
             var editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
             self.navigationItem.rightBarButtonItems = [addButton, spacer, shareButton, spacer, editButton]
@@ -520,71 +496,21 @@ class PatchDetailViewController: QueryTableViewController {
             self.navigationItem.rightBarButtonItems = [addButton, spacer, shareButton]
         }
     }
-
-    private func refresh(force: Bool = false) {
-        /* Refreshes the top object but not the message list */
-        DataController.instance.withPatchId(patchId!, refresh: force) {
-            patch in
-            
-            self.refreshControl?.endRefreshing()
-            if patch != nil {
-                if self.patch == nil {
-                    self.refreshQueryItems(force: true)
-                }
-                self.patch = patch
-                self.patchId = patch!.id_
-                DataController.instance.currentPatch = patch    // Used for context for messages
-                self.drawButtons()
-                self.draw()
-            }
-            else {
-                Shared.Toast("Patch has been deleted")
-                delay(2.0, {
-                    () -> () in
-                    self.navigationController?.popViewControllerAnimated(true)
-                })
-            }
-        }
-    }
     
-    override func prefersStatusBarHidden() -> Bool {
-        return false
-    }
-    
-    override func preferredStatusBarUpdateAnimation() -> UIStatusBarAnimation {
-        return UIStatusBarAnimation.Fade
-    }
-    
-    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?) {
-        
-        let view = cell.contentView.viewWithTag(1) as! MessageView
-        Message.bindView(view, object: object, tableView: tableView, sizingOnly: false)
-        if let label = view.description_ as? TTTAttributedLabel {
-            label.delegate = self
-        }
-        view.delegate = self
-        view.patchNameHeight.constant = 0
-    }
-    
-	override func pullToRefreshAction(sender: AnyObject?) -> Void {
-        self.refresh(force: true)
-        self.refreshQueryItems(force: true)
-	}
-
     func shareUsing(patchr: Bool = true) {
         
         if patchr {
             let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
             let controller = storyboard.instantiateViewControllerWithIdentifier("MessageEditViewController") as? MessageEditViewController
             /* viewDidLoad hasn't fired yet but awakeFromNib has */
-            controller?.shareEntity = self.patch
+            controller?.shareEntity = self.entity
             controller?.shareSchema = Schema.ENTITY_PATCH
-            controller?.shareId = self.patchId!
+            controller?.shareId = self.entityId!
             controller?.messageType = .Share
             self.presentViewController(UINavigationController(rootViewController: controller!), animated: true, completion: nil)
         }
         else {
-            Branch.getInstance().getShortURLWithParams(["entityId":self.patchId!, "entitySchema":"patch"], andChannel: "patchr-ios", andFeature: BRANCH_FEATURE_TAG_INVITE, andCallback: {
+            Branch.getInstance().getShortURLWithParams(["entityId":self.entityId!, "entitySchema":"patch"], andChannel: "patchr-ios", andFeature: BRANCH_FEATURE_TAG_INVITE, andCallback: {
                 (url: String?, error: NSError?) -> Void in
                 
                 if let error = ServerError(error) {
@@ -592,7 +518,7 @@ class PatchDetailViewController: QueryTableViewController {
                 }
                 else {
                     Log.d("Branch link created: \(url!)")
-                    var patch: PatchItem = PatchItem(entity: self.patch!, shareUrl: url!)
+                    var patch: PatchItem = PatchItem(entity: self.entity as! Patch, shareUrl: url!)
                     
                     let activityViewController = UIActivityViewController(
                         activityItems: [patch],
@@ -609,13 +535,20 @@ class PatchDetailViewController: QueryTableViewController {
             })
         }
     }
+
+    func isOwner() -> Bool {
+        if let currentUser = UserController.instance.currentUser, let entity = self.entity {
+            return currentUser.id_ == entity.creator?.entityId
+        }
+        return false
+    }
 }
 
 extension PatchDetailViewController: MapViewDelegate {
     
     func locationForMap() -> CLLocation? {
-        if let location = self.patch?.location {
-            return CLLocation(latitude: self.patch.location.latValue, longitude: self.patch.location.lngValue)
+        if let location = self.entity?.location, let entity = self.entity {
+            return CLLocation(latitude: entity.location.latValue, longitude: entity.location.lngValue)
         }
         return nil
     }
@@ -628,13 +561,13 @@ extension PatchDetailViewController: MapViewDelegate {
     
     var locationTitle: String? {
         get {
-            return self.patch?.name
+            return self.entity?.name
         }
     }
     
     var locationSubtitle: String? {
         get {
-            if let type = self.patch?.type {
+            if let type = self.entity?.type {
                 return type.uppercaseString + " PATCH"
             }
             return nil
@@ -643,7 +576,7 @@ extension PatchDetailViewController: MapViewDelegate {
     
     var locationPhoto: AnyObject? {
         get {
-            return self.patch?.photo
+            return self.entity?.photo
         }
     }
 }
@@ -664,48 +597,6 @@ extension PatchDetailViewController: UITableViewDelegate {
             }
         }
     }
-
-	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        
-        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-        if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
-            let entity = queryResult.object as? Message,
-            let controller = storyboard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
-                controller.message = entity
-                self.navigationController?.pushViewController(controller, animated: true)
-        }
-	}
-
-	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        
-        var cell = self.offscreenCells.objectForKey(CELL_IDENTIFIER) as? UITableViewCell
-        
-        if cell == nil {
-            cell = buildCell(self.contentViewName!)
-            configureCell(cell!)
-            self.offscreenCells.setObject(cell!, forKey: CELL_IDENTIFIER)
-        }
-        
-        /* view view to data for this row */
-        let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as! QueryItem
-        let view = Message.bindView(cell!.contentView.viewWithTag(1)!, object: queryResult.object, tableView: tableView, sizingOnly: true) as! MessageView
-        view.patchNameHeight.constant = 0
-        
-        /* Get the actual height required for the cell */
-        var height = cell!.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
-        
-        return height
-	}
-}
-
-extension PatchDetailViewController: ViewDelegate {
-    func view(container: UIView, didTapOnView view: UIView) {
-        if let view = view as? AirImageView, container = container as? MessageView {
-            if view.image != nil {
-                Shared.showPhotoBrowser(view.image, view: view, viewController: self, entity: container.entity)
-            }
-        }
-    }
 }
 
 extension PatchDetailViewController: UIActionSheetDelegate {
@@ -714,7 +605,7 @@ extension PatchDetailViewController: UIActionSheetDelegate {
         if buttonIndex != actionSheet.cancelButtonIndex {
             // There are some strange visual artifacts with the share sheet and the presented
             // view controllers. Adding a small delay seems to prevent them.
-            delay(0.4, {
+            Utils.delay(0.4, closure: {
                 () -> () in
                 switch self.shareButtonFunctionMap[buttonIndex]! {
                 case .Share:
@@ -725,13 +616,6 @@ extension PatchDetailViewController: UIActionSheetDelegate {
                 }
             })
         }
-    }
-}
-
-extension PatchDetailViewController: TTTAttributedLabelDelegate {
-    
-    func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
-        UIApplication.sharedApplication().openURL(url)
     }
 }
 

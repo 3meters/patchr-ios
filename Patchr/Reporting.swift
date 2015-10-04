@@ -16,7 +16,7 @@ struct Reporting {
     static func updateCrashKeys() {
         
         let reachability: Reachability = Reachability.reachabilityForInternetConnection()
-        let networkStatus: Int = reachability.currentReachabilityStatus().value
+        let networkStatus: Int = reachability.currentReachabilityStatus().rawValue
         if networkStatus == 0 {
             Crashlytics.sharedInstance().setBoolValue(false, forKey: "connected")
         }

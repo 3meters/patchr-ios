@@ -309,6 +309,9 @@
                                                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="296" id="dYp-WF-GVP"/>
                                                         <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="222" id="vab-qX-vtR"/>
                                                     </constraints>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="string" keyPath="sizeCategory" value="standard"/>
+                                                    </userDefinedRuntimeAttributes>
                                                     <connections>
                                                         <action selector="photoAction:" destination="NVd-x8-lxi" eventType="touchUpInside" id="3Vf-jL-4OE"/>
                                                     </connections>
@@ -548,6 +551,11 @@
                                                                 <constraint firstAttribute="width" constant="48" id="hGh-gJ-0dx"/>
                                                                 <constraint firstAttribute="height" constant="48" id="wwX-Ni-3DD"/>
                                                             </constraints>
+                                                            <userDefinedRuntimeAttributes>
+                                                                <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                                    <integer key="value" value="24"/>
+                                                                </userDefinedRuntimeAttribute>
+                                                            </userDefinedRuntimeAttributes>
                                                         </imageView>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="250" text="Jay Massena" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lmf-QT-eCQ" userLabel="user_name">
                                                             <rect key="frame" x="80" y="21" width="110" height="22"/>
@@ -653,25 +661,12 @@
                             <outlet property="delegate" destination="g1j-Qk-IIc" id="8L0-O2-e4x"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Compose" id="TYz-k3-1SI" userLabel="nav_bar">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="5ui-g6-eRS" userLabel="cancel_button">
-                            <connections>
-                                <action selector="cancelAction:" destination="g1j-Qk-IIc" id="Ks1-Ct-YpL"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Post" id="Mnb-mF-BR1" userLabel="done_button">
-                            <connections>
-                                <action selector="doneAction:" destination="g1j-Qk-IIc" id="NT5-Cy-Ego"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Compose" id="TYz-k3-1SI" userLabel="nav_bar"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina55"/>
                     <connections>
-                        <outlet property="cancelButton" destination="5ui-g6-eRS" id="G99-KC-K8P"/>
                         <outlet property="descriptionCell" destination="cEi-DU-g28" id="LTe-U7-MiG"/>
                         <outlet property="descriptionField" destination="G4p-ov-xA8" id="MSy-Rl-NaW"/>
-                        <outlet property="doneButton" destination="Mnb-mF-BR1" id="Yg6-qi-9MP"/>
                         <outlet property="photoCell" destination="nRu-lU-ZN6" id="F8W-Dl-9qO"/>
                         <outlet property="photoHolder" destination="b8v-OU-Mhn" id="ox7-uV-6nu"/>
                         <outlet property="shareCell" destination="sia-oV-MQe" id="QMo-QG-2Aa"/>
@@ -979,7 +974,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <view key="tableHeaderView" clipsSubviews="YES" contentMode="scaleToFill" verticalHuggingPriority="1000" verticalCompressionResistancePriority="250" id="3Vt-wC-ZaE" userLabel="DetailView">
+                        <view key="tableHeaderView" clipsSubviews="YES" contentMode="scaleToFill" verticalHuggingPriority="1000" verticalCompressionResistancePriority="250" id="3Vt-wC-ZaE" userLabel="header">
                             <rect key="frame" x="0.0" y="64" width="414" height="307"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
@@ -1109,6 +1104,7 @@
                                                         <userDefinedRuntimeAttribute type="number" keyPath="parallaxIntensity">
                                                             <integer key="value" value="-40"/>
                                                         </userDefinedRuntimeAttribute>
+                                                        <userDefinedRuntimeAttribute type="string" keyPath="sizeCategory" value="standard"/>
                                                     </userDefinedRuntimeAttributes>
                                                 </imageView>
                                                 <button opaque="NO" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ym3-k1-Ty5" userLabel="place_button">
@@ -1204,6 +1200,20 @@
                                                                 <action selector="watchersAction:" destination="dFa-9F-rNC" eventType="touchUpInside" id="Gnx-xU-If5"/>
                                                             </connections>
                                                         </button>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xOP-uW-TRX" userLabel="sound_button" customClass="AirMuteButton" customModule="Patchr" customModuleProvider="target">
+                                                            <rect key="frame" x="264" y="0.0" width="48" height="48"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" constant="48" id="8qI-GB-xLE"/>
+                                                                <constraint firstAttribute="width" constant="48" id="9kG-Qn-bHo"/>
+                                                            </constraints>
+                                                            <inset key="imageEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
+                                                            <state key="normal" image="imgSoundOff2Light"/>
+                                                            <userDefinedRuntimeAttributes>
+                                                                <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                                    <integer key="value" value="24"/>
+                                                                </userDefinedRuntimeAttribute>
+                                                            </userDefinedRuntimeAttributes>
+                                                        </button>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vYh-eO-CMR" userLabel="like_button" customClass="AirLikeButton" customModule="Patchr" customModuleProvider="target">
                                                             <rect key="frame" x="315" y="0.0" width="48" height="48"/>
                                                             <constraints>
@@ -1211,9 +1221,12 @@
                                                                 <constraint firstAttribute="height" constant="48" id="hTB-sz-QFg"/>
                                                             </constraints>
                                                             <inset key="imageEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
-                                                            <state key="normal" image="imgStarLight">
-                                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                            </state>
+                                                            <state key="normal" image="imgStarLight"/>
+                                                            <userDefinedRuntimeAttributes>
+                                                                <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                                    <integer key="value" value="24"/>
+                                                                </userDefinedRuntimeAttribute>
+                                                            </userDefinedRuntimeAttributes>
                                                         </button>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TWm-Ce-UN2" userLabel="watch_button" customClass="AirWatchButton" customModule="Patchr" customModuleProvider="target">
                                                             <rect key="frame" x="366" y="0.0" width="48" height="48"/>
@@ -1225,6 +1238,11 @@
                                                             <state key="normal" image="imgWatch2Light">
                                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                             </state>
+                                                            <userDefinedRuntimeAttributes>
+                                                                <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                                    <integer key="value" value="24"/>
+                                                                </userDefinedRuntimeAttribute>
+                                                            </userDefinedRuntimeAttributes>
                                                         </button>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cXS-bO-Vkq" userLabel="map_button" customClass="AirImageButton" customModule="Patchr" customModuleProvider="target">
                                                             <rect key="frame" x="0.0" y="0.0" width="48" height="48"/>
@@ -1235,13 +1253,20 @@
                                                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                             <inset key="imageEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
                                                             <state key="normal" image="imgMapDark"/>
+                                                            <userDefinedRuntimeAttributes>
+                                                                <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                                    <integer key="value" value="24"/>
+                                                                </userDefinedRuntimeAttribute>
+                                                            </userDefinedRuntimeAttributes>
                                                             <connections>
                                                                 <action selector="mapAction:" destination="dFa-9F-rNC" eventType="touchUpInside" id="erv-XH-8dh"/>
                                                             </connections>
                                                         </button>
                                                     </subviews>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.29999999999999999" colorSpace="calibratedWhite"/>
                                                     <constraints>
                                                         <constraint firstItem="cXS-bO-Vkq" firstAttribute="leading" secondItem="t8t-DZ-4Sr" secondAttribute="leading" id="09F-nC-YpN"/>
+                                                        <constraint firstAttribute="bottom" secondItem="xOP-uW-TRX" secondAttribute="bottom" id="6Nu-BJ-NfT"/>
                                                         <constraint firstAttribute="height" constant="48" id="8xt-1a-TlR"/>
                                                         <constraint firstAttribute="bottom" secondItem="cXS-bO-Vkq" secondAttribute="bottom" id="BYo-DN-aVQ"/>
                                                         <constraint firstAttribute="bottom" secondItem="vYh-eO-CMR" secondAttribute="bottom" id="BiR-fl-fea"/>
@@ -1249,6 +1274,7 @@
                                                         <constraint firstItem="7J4-1W-AIu" firstAttribute="leading" secondItem="t8t-DZ-4Sr" secondAttribute="leading" constant="64" id="OT9-3S-LUi"/>
                                                         <constraint firstItem="TWm-Ce-UN2" firstAttribute="leading" secondItem="vYh-eO-CMR" secondAttribute="trailing" constant="3" id="bQE-Ep-YOZ"/>
                                                         <constraint firstAttribute="bottom" secondItem="TWm-Ce-UN2" secondAttribute="bottom" id="gm7-nR-blg"/>
+                                                        <constraint firstItem="vYh-eO-CMR" firstAttribute="leading" secondItem="xOP-uW-TRX" secondAttribute="trailing" constant="3" id="mQJ-Is-WuR"/>
                                                         <constraint firstAttribute="trailing" secondItem="TWm-Ce-UN2" secondAttribute="trailing" id="qgo-qa-RpV"/>
                                                     </constraints>
                                                     <userDefinedRuntimeAttributes>
@@ -1355,6 +1381,7 @@
                         <outlet property="likeButton" destination="vYh-eO-CMR" id="BNB-8g-ly5"/>
                         <outlet property="lockImage" destination="mtE-0h-abN" id="h7G-Ne-YmC"/>
                         <outlet property="mapButton" destination="cXS-bO-Vkq" id="Miz-3v-Z2S"/>
+                        <outlet property="muteButton" destination="xOP-uW-TRX" id="Zwr-up-ijb"/>
                         <outlet property="patchName" destination="bHj-ol-mkD" id="Ywp-Tp-Y8G"/>
                         <outlet property="patchPhoto" destination="351-k9-dO8" id="xOn-Z1-W9m"/>
                         <outlet property="patchPhotoTop" destination="B4e-y5-ec8" id="yb3-Nj-hye"/>
@@ -1563,9 +1590,6 @@
                                                         </userDefinedRuntimeAttribute>
                                                         <userDefinedRuntimeAttribute type="string" keyPath="layer.cornerRadius" value="4"/>
                                                     </userDefinedRuntimeAttributes>
-                                                    <connections>
-                                                        <action selector="doneAction:" destination="6cK-9t-35c" eventType="touchUpInside" id="Cc0-EV-uu5"/>
-                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <constraints>
@@ -1583,25 +1607,12 @@
                             <outlet property="delegate" destination="6cK-9t-35c" id="dhX-mY-CON"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="NkS-Ib-cyM">
-                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="KaE-XA-l2z">
-                            <connections>
-                                <action selector="cancelAction:" destination="6cK-9t-35c" id="AZb-eP-DHg"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Save" id="BMu-zz-AmC">
-                            <connections>
-                                <action selector="doneAction:" destination="6cK-9t-35c" id="8Gx-P7-yh1"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="NkS-Ib-cyM"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina55"/>
                     <connections>
-                        <outlet property="cancelButton" destination="KaE-XA-l2z" id="TCX-LJ-eno"/>
                         <outlet property="createButton" destination="tRd-7S-S1z" id="97E-Kk-rbr"/>
                         <outlet property="descriptionField" destination="Ktr-FG-E5k" id="Mtg-QX-fIK"/>
-                        <outlet property="doneButton" destination="BMu-zz-AmC" id="cL4-d9-DtX"/>
                         <outlet property="eventTypeCell" destination="PQq-IB-gKl" id="r1y-TQ-Ply"/>
                         <outlet property="groupTypeCell" destination="1jQ-hs-fP7" id="mI3-Fk-Jt8"/>
                         <outlet property="locationCell" destination="yZY-Ug-lw9" id="mXS-rm-3Yt"/>
@@ -1841,6 +1852,9 @@
                                                         <constraint firstAttribute="width" secondItem="Pcm-Q7-2Xn" secondAttribute="height" multiplier="16:10" id="aJu-Oa-FDp"/>
                                                         <constraint firstAttribute="height" relation="greaterThanOrEqual" priority="999" constant="240" id="rN4-lV-qGw"/>
                                                     </constraints>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="string" keyPath="sizeCategory" value="standard"/>
+                                                    </userDefinedRuntimeAttributes>
                                                 </imageView>
                                             </subviews>
                                             <constraints>
@@ -1855,17 +1869,8 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2QW-sI-4P7" id="oNL-pC-1lN">
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Lil' Jon Restaurant &amp; Lounge" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="N0n-GS-rUu" userLabel="name">
-                                                    <rect key="frame" x="16" y="9" width="380" height="48"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="48" id="Egn-G7-Ukr"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="24"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DINER" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gfE-wW-gaN" userLabel="category">
-                                                    <rect key="frame" x="16" y="57" width="380" height="24"/>
+                                                    <rect key="frame" x="16" y="8" width="382" height="24"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="24" id="rt9-8g-fC3"/>
                                                     </constraints>
@@ -1873,8 +1878,17 @@
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Lil' Jon Restaurant &amp; Lounge" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="N0n-GS-rUu" userLabel="name">
+                                                    <rect key="frame" x="16" y="32" width="382" height="36"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="36" id="Egn-G7-Ukr"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="24"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3080 148th Ave SE" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="380" translatesAutoresizingMaskIntoConstraints="NO" id="2Vq-md-Ja0" userLabel="address" customClass="AutoSizingLabel">
-                                                    <rect key="frame" x="16" y="89" width="380" height="48"/>
+                                                    <rect key="frame" x="16" y="68" width="382" height="48"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="48" id="UPj-rk-clr"/>
                                                     </constraints>
@@ -1883,7 +1897,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1.3 mi" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="x7p-FM-cFj" userLabel="distance">
-                                                    <rect key="frame" x="16" y="145" width="380" height="24"/>
+                                                    <rect key="frame" x="16" y="124" width="382" height="24"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="24" id="ERW-wS-6aO"/>
                                                     </constraints>
@@ -1893,18 +1907,18 @@
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="x7p-FM-cFj" firstAttribute="top" secondItem="2Vq-md-Ja0" secondAttribute="bottom" constant="8" id="2OH-YG-z59"/>
-                                                <constraint firstItem="gfE-wW-gaN" firstAttribute="leading" secondItem="2Vq-md-Ja0" secondAttribute="leading" id="4Lf-cv-3fW"/>
                                                 <constraint firstItem="N0n-GS-rUu" firstAttribute="leading" secondItem="oNL-pC-1lN" secondAttribute="leading" constant="16" id="60I-ZS-q3I"/>
-                                                <constraint firstItem="2Vq-md-Ja0" firstAttribute="trailing" secondItem="x7p-FM-cFj" secondAttribute="trailing" id="Hij-SX-7VH"/>
-                                                <constraint firstItem="gfE-wW-gaN" firstAttribute="leading" secondItem="N0n-GS-rUu" secondAttribute="leading" id="Q8Q-HN-nnH"/>
-                                                <constraint firstItem="N0n-GS-rUu" firstAttribute="top" secondItem="oNL-pC-1lN" secondAttribute="top" constant="9" id="ZdZ-jL-3Lb"/>
-                                                <constraint firstItem="2Vq-md-Ja0" firstAttribute="top" secondItem="gfE-wW-gaN" secondAttribute="bottom" constant="8" id="bB4-Cs-nyJ"/>
-                                                <constraint firstItem="gfE-wW-gaN" firstAttribute="trailing" secondItem="N0n-GS-rUu" secondAttribute="trailing" id="bs9-Z8-hAj"/>
-                                                <constraint firstItem="gfE-wW-gaN" firstAttribute="top" secondItem="N0n-GS-rUu" secondAttribute="bottom" id="fCw-c6-kOH"/>
-                                                <constraint firstItem="2Vq-md-Ja0" firstAttribute="leading" secondItem="x7p-FM-cFj" secondAttribute="leading" id="kdR-uJ-Y1O"/>
-                                                <constraint firstAttribute="trailing" secondItem="N0n-GS-rUu" secondAttribute="trailing" constant="18" id="l8F-vD-Npl"/>
-                                                <constraint firstItem="gfE-wW-gaN" firstAttribute="trailing" secondItem="2Vq-md-Ja0" secondAttribute="trailing" id="m8F-Je-VmJ"/>
+                                                <constraint firstAttribute="trailing" secondItem="x7p-FM-cFj" secondAttribute="trailing" constant="16" id="8XA-qn-7tX"/>
+                                                <constraint firstItem="2Vq-md-Ja0" firstAttribute="top" secondItem="N0n-GS-rUu" secondAttribute="bottom" id="C36-hK-Qgq"/>
+                                                <constraint firstItem="x7p-FM-cFj" firstAttribute="leading" secondItem="oNL-pC-1lN" secondAttribute="leading" constant="16" id="E0l-Rm-S4b"/>
+                                                <constraint firstItem="N0n-GS-rUu" firstAttribute="top" secondItem="gfE-wW-gaN" secondAttribute="bottom" id="Goa-h8-5L7"/>
+                                                <constraint firstItem="x7p-FM-cFj" firstAttribute="top" secondItem="2Vq-md-Ja0" secondAttribute="bottom" constant="8" id="UEr-2X-CmM"/>
+                                                <constraint firstItem="2Vq-md-Ja0" firstAttribute="leading" secondItem="oNL-pC-1lN" secondAttribute="leading" constant="16" id="YR0-a2-RWS"/>
+                                                <constraint firstAttribute="trailing" secondItem="gfE-wW-gaN" secondAttribute="trailing" constant="16" id="fHt-Q6-d7n"/>
+                                                <constraint firstItem="gfE-wW-gaN" firstAttribute="leading" secondItem="oNL-pC-1lN" secondAttribute="leading" constant="16" id="gBR-uu-ph8"/>
+                                                <constraint firstAttribute="trailing" secondItem="N0n-GS-rUu" secondAttribute="trailing" constant="16" id="l8F-vD-Npl"/>
+                                                <constraint firstItem="gfE-wW-gaN" firstAttribute="top" secondItem="oNL-pC-1lN" secondAttribute="top" constant="8" id="rst-Ds-IaP"/>
+                                                <constraint firstAttribute="trailing" secondItem="2Vq-md-Ja0" secondAttribute="trailing" constant="16" id="w2y-bO-mzd"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -2092,26 +2106,29 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <view key="tableHeaderView" contentMode="scaleToFill" id="9Ve-0P-NdC">
-                            <rect key="frame" x="0.0" y="64" width="414" height="260"/>
+                            <rect key="frame" x="0.0" y="64" width="414" height="256"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2k0-90-6sQ" userLabel="user_group">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="112"/>
                                     <subviews>
-                                        <button clipsSubviews="YES" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" reversesTitleShadowWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jdb-gE-9LS" userLabel="user_photo" customClass="AirImageButton" customModule="Patchr" customModuleProvider="target">
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="jdb-gE-9LS" userLabel="user_photo" customClass="AirImageView" customModule="Patchr" customModuleProvider="target">
                                             <rect key="frame" x="8" y="8" width="96" height="96"/>
                                             <color key="backgroundColor" red="0.90196079015731812" green="0.90196079015731812" blue="0.90196079015731812" alpha="1" colorSpace="calibratedRGB"/>
+                                            <accessibility key="accessibilityConfiguration">
+                                                <accessibilityTraits key="traits" none="YES" image="YES"/>
+                                            </accessibility>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="96" id="RqZ-IQ-fPJ"/>
                                                 <constraint firstAttribute="width" constant="96" id="sLY-RL-vUc"/>
                                             </constraints>
-                                            <state key="normal">
-                                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                            </state>
-                                            <connections>
-                                                <action selector="actionUserPhoto:" destination="Yps-DA-nZY" eventType="touchUpInside" id="4H0-ao-iA3"/>
-                                            </connections>
-                                        </button>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="sizeCategory" value="profile"/>
+                                                <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                    <integer key="value" value="48"/>
+                                                </userDefinedRuntimeAttribute>
+                                            </userDefinedRuntimeAttributes>
+                                        </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Jay Massena" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="95Y-fw-S1K" userLabel="user_name">
                                             <rect key="frame" x="112" y="16" width="294" height="22"/>
                                             <constraints>
@@ -2490,34 +2507,19 @@
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="Edit profile" id="akj-ca-Vub" userLabel="nav_bar">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="kSY-f9-OO0" userLabel="nav_cancel_button">
-                            <connections>
-                                <action selector="cancelAction:" destination="ZKk-ox-3O9" id="TNn-eK-QiN"/>
-                                <segue destination="zCP-i9-mRw" kind="unwind" unwindAction="unwindFromUserEdit:" id="SKV-QS-prk"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="GLZ-Ha-k0T" userLabel="nav_done_button">
-                            <connections>
-                                <action selector="doneAction:" destination="ZKk-ox-3O9" id="bO2-Pv-fpP"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Edit profile" id="akj-ca-Vub" userLabel="nav_bar"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
                         <outlet property="areaField" destination="UA6-XS-xNd" id="v4T-wE-i7S"/>
-                        <outlet property="cancelButton" destination="kSY-f9-OO0" id="zt2-MN-KaK"/>
                         <outlet property="changePasswordButton" destination="WmM-ox-YeC" id="sF3-n8-Ewx"/>
-                        <outlet property="doneButton" destination="GLZ-Ha-k0T" id="yFO-t4-abg"/>
                         <outlet property="emailField" destination="EIR-Ug-3pK" id="1YO-qk-NqY"/>
                         <outlet property="nameField" destination="5gx-TB-DRe" id="URs-g7-oyf"/>
                         <outlet property="photoHolder" destination="Kft-U5-Lwa" id="Cpz-t9-cQW"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3k4-VH-3qu" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="zCP-i9-mRw" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="3536" y="-2461.9999999999995"/>
         </scene>
@@ -2728,6 +2730,7 @@
         <image name="imgLockDark" width="22" height="22"/>
         <image name="imgLockLight" width="22" height="22"/>
         <image name="imgMapDark" width="60" height="60"/>
+        <image name="imgSoundOff2Light" width="40" height="40"/>
         <image name="imgStarFilledLight" width="32" height="32"/>
         <image name="imgStarLight" width="40" height="40"/>
         <image name="imgWatch2Light" width="40" height="40"/>

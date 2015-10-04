@@ -8,6 +8,7 @@ const struct LinkAttributes LinkAttributes = {
 	.fromId = @"fromId",
 	.fromSchema = @"fromSchema",
 	.id_ = @"id_",
+	.mute = @"mute",
 	.toId = @"toId",
 	.toSchema = @"toSchema",
 	.type = @"type",
@@ -44,6 +45,11 @@ const struct LinkAttributes LinkAttributes = {
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
+	if ([key isEqualToString:@"muteValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"mute"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
 
 	return keyPaths;
 }
@@ -73,6 +79,26 @@ const struct LinkAttributes LinkAttributes = {
 @dynamic fromSchema;
 
 @dynamic id_;
+
+@dynamic mute;
+
+- (BOOL)muteValue {
+	NSNumber *result = [self mute];
+	return [result boolValue];
+}
+
+- (void)setMuteValue:(BOOL)value_ {
+	[self setMute:@(value_)];
+}
+
+- (BOOL)primitiveMuteValue {
+	NSNumber *result = [self primitiveMute];
+	return [result boolValue];
+}
+
+- (void)setPrimitiveMuteValue:(BOOL)value_ {
+	[self setPrimitiveMute:@(value_)];
+}
 
 @dynamic toId;
 

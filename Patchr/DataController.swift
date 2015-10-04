@@ -45,65 +45,66 @@ class DataController: NSObject {
 	}()
 
 	private override init() {
-        activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
+        self.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
 		super.init()
 
 		let coreDataConfiguration = RMCoreDataConfiguration()
 		coreDataConfiguration.persistentStoreType = NSInMemoryStoreType
-		coreDataStack = RMCoreDataStack()
-		coreDataStack.delegate = self
-		coreDataStack.constructWithConfiguration(coreDataConfiguration)
+        
+		self.coreDataStack = RMCoreDataStack()
+		self.coreDataStack.delegate = self
+		self.coreDataStack.constructWithConfiguration(coreDataConfiguration)
 
-		managedObjectContext = coreDataStack.managedObjectContext
+		self.managedObjectContext = self.coreDataStack.managedObjectContext
 	}
 
 	/*--------------------------------------------------------------------------------------------
 	 * Singles
 	 *--------------------------------------------------------------------------------------------*/
 
-	func withPatchId(patchId: String, refresh: Bool = false, completion: (Patch?) -> Void) {
+	func withPatchId(patchId: String, refresh: Bool = false, completion: (Patch?, error: NSError?) -> Void) {
         /*
         * - Load a patch for the patch form
         * - Show a patch by id for a notification.
         */
 		withEntityType(Patch.self, id: patchId, refresh: refresh) {
-			(model) -> Void in
-			completion(model as? Patch)
+			(model, error) -> Void in
+			completion(model as? Patch, error: error)
 		}
 	}
 
-	func withMessageId(messageId: String, refresh: Bool = false, completion: (Message?) -> Void) {
+	func withMessageId(messageId: String, refresh: Bool = false, completion: (Message?, error: NSError?) -> Void) {
         /*
         * Load a message for the message form.
         */
 		withEntityType(Message.self, id: messageId, refresh: refresh) {
-			(model) -> Void in
-			completion(model as? Message)
+			(model, error) -> Void in
+			completion(model as? Message, error: error)
 		}
 	}
 
-	func withUserId(userId: String, refresh: Bool = false, completion: (User?) -> Void) {
+	func withUserId(userId: String, refresh: Bool = false, completion: (User?, error: NSError?) -> Void) {
         /*
         * - Load users for items in user lists
         * - Load user by id for a notification.
         */
 		withEntityType(User.self, id: userId, refresh: refresh) {
-			(model) -> Void in
-			completion(model as? User)
+			(model, error) -> Void in
+			completion(model as? User, error: error)
 		}
 	}
 
-    func withPlaceId(placeId: String, refresh: Bool = false, completion: (Place?) -> Void) {
+    func withPlaceId(placeId: String, refresh: Bool = false, completion: (Place?, error: NSError?) -> Void) {
         /*
         * - Load a place for the place form
         */
         withEntityType(Place.self, id: placeId, refresh: refresh) {
-            (model) -> Void in
-            completion(model as? Place)
+            (model, error) -> Void in
+            completion(model as? Place, error: error)
         }
     }
     
-	func withEntityId(entityId: String, refresh: Bool = false, completion: (Entity?) -> Void) {
+    func withEntityId(entityId: String, refresh: Bool = false, completion: (Entity?, error: NSError?) -> Void) {
         /*
         * Used by notifications which only have an entity id to work with.
         */
@@ -122,11 +123,11 @@ class DataController: NSObject {
             
 			default:
 				Log.w("WARNING: withEntity not currently implemented for id of form \(entityId)")
-				completion(nil)
+				completion(nil, error: nil)
 		}
 	}
 
-    private func withEntityType(entityType: ServiceBase.Type, id: String, refresh: Bool = false, completion: (ServiceBase?) -> Void) {
+    private func withEntityType(entityType: ServiceBase.Type, id: String, refresh: Bool = false, completion: (ServiceBase?, error: NSError?) -> Void) {
             
             /* Pull from data model if available */
             var entity = entityType.fetchOneById(id, inManagedObjectContext: managedObjectContext) as ServiceBase!
@@ -142,11 +143,8 @@ class DataController: NSObject {
                 fetchByEntityType(entityType, withId: id, criteria: criteria, completion: {
                     response, error in
                     
-                    if let error = ServerError(error) {
-                        if let controller = UIViewController.topMostViewController() {
-                            controller.handleError(error)
-                        }
-                        completion(nil)
+                    if let err = ServerError(error) {
+                        completion(nil, error: error)
                     }
                     else {
                         /* Turn maps and arrays into objects */
@@ -170,19 +168,20 @@ class DataController: NSObject {
                                     }
                                 }
                                 
-                                self.managedObjectContext!.save(nil)	// Makes changes visible
+                                /* Persist the changes and triggers notifications to observers */
+                                self.managedObjectContext!.save(nil)
                             }
                         }
-                        completion(entity)
+                        completion(entity, error: nil)
                     }
                 })
             }
             else {
-                completion(entity)
+                completion(entity, error: nil)
             }
     }
     
-    private func fetchByEntityType(type: ServiceBase.Type, withId id: String, criteria: Dictionary<String,AnyObject> = [:], completion: (response:AnyObject?, error:NSError?) -> Void) {
+    private func fetchByEntityType(type: ServiceBase.Type, withId id: String, criteria: Dictionary<String,AnyObject> = [:], completion: (response: AnyObject?, error: NSError?) -> Void) {
         if let patchType = type as? Patch.Type {
             DataController.proxibase.fetchPatchById(id, criteria:criteria, completion: completion)
         }
@@ -203,11 +202,6 @@ class DataController: NSObject {
     
     func refreshItemsFor(query: Query, force: Bool = false, paging: Bool = false, completion: (queryItems: [QueryItem], query: Query, error: NSError?) -> Void) {
         
-        if !query.validValue {
-            completion(queryItems: [], query: query, error: nil)
-            return
-        }
-        
         if query.name == DataStoreQueryName.NotificationsForCurrentUser.rawValue && !UserController.instance.authenticated {
             completion(queryItems: [], query: query, error: nil)
             return
@@ -221,33 +215,42 @@ class DataController: NSObject {
 				return
 			}
             
-            /* If service query completed as a noop then bail */
+            /* Turn response entities into managed entities */
             let returnValue = handleServiceDataResponseForQuery(query, response: response!)
             
+            /* If service query completed as a noop then bail */
             if (returnValue.serviceData.noopValue) {
                 completion(queryItems: [], query: query, error: error)
                 return
             }
             
+            /* So we can provide a hint that paging is available */
             query.moreValue = returnValue.serviceData.moreValue
 
-			let queryItems = returnValue.queryItems
-			/* 
-             * Previous query exection might have put objects in the store that are no
-             * longer part of the query so delete them.
+            let queryItems = returnValue.queryItems
+            
+            /*
+             * Clearing entities that have been deleted is tricky. When paging, we don't
+             * have a good way to know that an entity for a previous page set has been deleted
+             * unless we are on page one and working forward in a fresh pass.
+             * 
+             * Starting at zero will cause all entities outside of the first 'page' to be
+             * deleted as well as any first page entities no longer part of the refreshed
+             * first page.
              */
-            let queryItemSet = Set(queryItems)  // If for some reason there are any duplicates, this will remove them
             if query.offsetValue == 0 {
-                for obj in query.queryItems {
-                    if let item = obj as? QueryItem {
-                        if !queryItemSet.contains(item) {
-                            managedObjectContext!.deleteObject(item)
+                let queryItemSet = Set(queryItems)  // If for some reason there are any duplicates, this will remove them
+                for item in query.queryItems {
+                    if let existingQueryItem = item as? QueryItem {
+                        if !queryItemSet.contains(existingQueryItem) {
+                            self.managedObjectContext!.deleteObject(existingQueryItem)
                         }
                     }
                 }
             }
             
-			managedObjectContext!.save(nil)
+            /* Persist the changes and triggers notifications to observers */
+            self.managedObjectContext!.save(nil)
 
             completion(queryItems: queryItems, query: query, error: error)
 		}
@@ -339,8 +342,8 @@ class DataController: NSObject {
 
 	private func handleServiceDataResponseForQuery(query: Query, response: AnyObject) -> (serviceData:ServiceData, queryItems:[QueryItem]) {
 
-		var items: [QueryItem] = []
-		let dataWrapper            = ServiceData()
+		var queryItems: [QueryItem] = []
+		let dataWrapper = ServiceData()
 		if let dictionary = response as? [NSObject:AnyObject] {
 
 			ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper, mappingNames: false)
@@ -352,63 +355,86 @@ class DataController: NSObject {
                 
                 /* Append the sidecar maps if any */
                 if let sidecar = query.sidecar as? [[NSObject: AnyObject]] {
-                    entityDictionaries.extend(sidecar)
+                    
+                    /* Find date brackets in current set */
+                    var startDate: Int = 0
+                    var endDate: Int = Int(NSDate().timeIntervalSince1970 * 1000)
+                    for entityDictionary in entityDictionaries {
+                        if let itemDate = entityDictionary["sortDate"] as? Int {
+                            if itemDate < endDate {
+                                endDate = itemDate
+                            }
+                            if itemDate > startDate {
+                                startDate = itemDate
+                            }
+                        }
+                    }
+                    
+                    /* Fold in sidecar items that fall inside bracketed date range */
+                    for sidecarDictionary in sidecar {
+                        if let itemDate = sidecarDictionary["sortDate"] as? Int {
+                            if itemDate <= startDate && itemDate >= endDate {
+                                entityDictionaries.append(sidecarDictionary)
+                            }
+                        }
+                    }
                 }
 
 				var itemPosition = 0 + query.offsetValue
 				for entityDictionary in entityDictionaries {
 
-					if let schema = entityDictionary["schema"] as? String {
-						if let modelType = schemaDictionary[schema] {
-
-							var entity: Entity
-							if let entityId = entityDictionary["_id"] as? String {
-								entity = modelType.fetchOrInsertOneById(entityId, inManagedObjectContext: managedObjectContext) as! Entity
-							}
-							else {
-								entity = modelType.insertInManagedObjectContext(managedObjectContext) as! Entity
-							}
-
-							modelType.setPropertiesFromDictionary(entityDictionary, onObject: entity, mappingNames: true)
-
-							var queryItem: QueryItem!;
-							for obj in entity.queryItems {
-								let existingQueryItem = obj as! QueryItem
-								if existingQueryItem.query == query {
-									queryItem = existingQueryItem
-								}
-							}
-
-							if queryItem == nil {
-								queryItem = QueryItem.insertInManagedObjectContext(managedObjectContext) as! QueryItem
-							}
-
-                            queryItem.query = query     // Sets both query and query.queryItems
-							queryItem.object = entity	// The only place that associates an entity with a query item
-							queryItem.positionValue = Int64(itemPosition++)
-							queryItem.sortDate = entity.sortDate
-                            
-                            if let patch = entity as? Patch {
-                                if let distance = patch.distance() {
-                                    queryItem.distanceValue = distance
-                                }
+					if let schema = entityDictionary["schema"] as? String, let modelType = schemaDictionary[schema] {
+                        /*
+                         * We either create a new entity or update an existing entity. If existing then
+                         * we keep the same instance and overwrite the properties included in the downloaded
+                         * entity retaining any other properties including local ones.
+                         */
+                        var entity: Entity
+                        if let entityId = entityDictionary["_id"] as? String {
+                            entity = modelType.fetchOrInsertOneById(entityId, inManagedObjectContext: managedObjectContext) as! Entity
+                        }
+                        else {
+                            entity = modelType.insertInManagedObjectContext(managedObjectContext) as! Entity
+                        }
+                        
+                        /* Transfer the properties */
+                        modelType.setPropertiesFromDictionary(entityDictionary, onObject: entity, mappingNames: true)
+                        
+                        /* Check to see if this entity is already part of the query */
+                        var queryItem: QueryItem!
+                        for item in entity.queryItems {
+                            let existingQueryItem = item as! QueryItem
+                            if existingQueryItem.query == query {
+                                queryItem = existingQueryItem
                             }
+                        }
+                        
+                        /* Add if new */
+                        if queryItem == nil {
+                            queryItem = QueryItem.insertInManagedObjectContext(managedObjectContext) as! QueryItem
+                        }
 
-							items.append(queryItem)
-						}
-						else {
-							assert(false, "Unknown schema: \(schema)")
-						}
+                        /* Set properties */
+                        queryItem.query = query     // Sets both query and query.queryItems
+                        queryItem.object = entity	// The only place that associates an entity with a query item
+                        queryItem.positionValue = Int64(itemPosition++)
+                        queryItem.sortDate = entity.sortDate
+                        
+                        if let patch = entity as? Patch {
+                            if let distance = patch.distance() {
+                                queryItem.distanceValue = distance
+                            }
+                        }
+
+                        queryItems.append(queryItem)
 					}
 					else {
-						assert(false, "No schema for object \(entityDictionary)")
+						assert(false, "Missing or unknown schema for object \(entityDictionary)")
 					}
 				}
-                
-                
 			}
 		}
-		return (dataWrapper, items)
+        return (dataWrapper, queryItems)    // Includes existing and new, could still have orphans
 	}
     
     func dataWrapperForResponse(response: AnyObject) -> ServiceData? {

@@ -19,6 +19,10 @@ class DevelopmentViewController: UIViewController {
 	@IBOutlet weak var serverTargetOption: UISegmentedControl!
     @IBOutlet weak var devModeSwitch: UISwitch!
 
+    /*--------------------------------------------------------------------------------------------
+    * Lifecycle
+    *--------------------------------------------------------------------------------------------*/
+    
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
         
@@ -54,6 +58,10 @@ class DevelopmentViewController: UIViewController {
 		}
 	}
     
+    /*--------------------------------------------------------------------------------------------
+    * Events
+    *--------------------------------------------------------------------------------------------*/
+    
     @IBAction func devModeAction(sender: AnyObject) {
         userDefaults.setBool(devModeSwitch.on, forKey: PatchrUserDefaultKey("devModeEnabled"))
         if devModeSwitch.on {
@@ -77,6 +85,10 @@ class DevelopmentViewController: UIViewController {
         Shared.Toast("Image cache cleared")
         AudioController.instance.play(Sound.pop.rawValue)        
     }
+    
+    /*--------------------------------------------------------------------------------------------
+    * Methods
+    *--------------------------------------------------------------------------------------------*/
     
     private func updateSegmentControl() {
         if serverUriField.text == DataController.proxibase.ProductionURI {

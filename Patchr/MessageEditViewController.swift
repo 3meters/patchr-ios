@@ -79,6 +79,7 @@ class MessageEditViewController: EntityEditViewController {
             
             self.progressStartLabel = "Inviting"
             self.progressFinishLabel = "Invites sent!"
+            self.cancelledLabel = "Invites cancelled"
             
             if self.shareSchema == Schema.ENTITY_PATCH {
                 self.navigationItem.title = Utils.LocalizedString("Invite to patch")
@@ -114,17 +115,19 @@ class MessageEditViewController: EntityEditViewController {
             
             self.toPicker.enabled = false
             self.toPicker.collectionView.allowsSelection = false
+            self.toPicker.maxVisibleRows = 1
             self.shareCell.hidden = true
 
-            if editMode {
+            if self.editMode {
                 
                 self.progressStartLabel = "Updating"
                 self.progressFinishLabel = "Updated!"
+                self.cancelledLabel = "Update cancelled"
                 navigationItem.title = Utils.LocalizedString("Edit message")
                 
                 /* Navigation bar buttons */
                 var deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
-                var doneButton   = UIBarButtonItem(title: "Save", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
+                var doneButton   = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
                 self.navigationItem.rightBarButtonItems = [doneButton, spacer, deleteButton]
                 
                 /* Box the description to make edit mode more obvious */
@@ -139,8 +142,9 @@ class MessageEditViewController: EntityEditViewController {
             }
             else {
                 
-                self.progressStartLabel = "Posting"
-                self.progressFinishLabel = "Posted!"
+                self.progressStartLabel = "Sending"
+                self.progressFinishLabel = "Sent!"
+                self.cancelledLabel = "Send cancelled"
                 self.descriptionField!.placeholderColor = UIColor.clearColor()
                 
                 if let user = UserController.instance.currentUser {
@@ -149,7 +153,7 @@ class MessageEditViewController: EntityEditViewController {
                 }
                 
                 /* Navigation bar buttons */
-                var doneButton   = UIBarButtonItem(title: "Post", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
+                var doneButton = UIBarButtonItem(title: "Send", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
                 self.navigationItem.rightBarButtonItems = [doneButton]
             }
         }
@@ -297,9 +301,8 @@ class MessageEditViewController: EntityEditViewController {
                         let width = subJson["photo"]["width"].int
                         let height = subJson["photo"]["height"].int
                         
-                        let photoUrl = PhotoUtils.url(prefix!, source: source!, size: nil)
-                        let photoUrlSized = PhotoUtils.urlSized(photoUrl, frameWidth: Int(60 * PIXEL_SCALE), frameHeight: Int(60 * PIXEL_SCALE), photoWidth: width, photoHeight: height)
-                        model.contactImageUrl = photoUrlSized
+                        let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.profile, size: nil)
+                        model.contactImageUrl = photoUrl
                         model.contactImage = UIImage(named: "imgDefaultUser")
                     }
                     self.suggestions.addObject(model)

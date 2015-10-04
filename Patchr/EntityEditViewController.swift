@@ -16,6 +16,7 @@ class EntityEditViewController: UITableViewController {
     var defaultPhotoName: String?
     var progressStartLabel: String?
     var progressFinishLabel: String?
+    var cancelledLabel: String?
     
 	var processing: Bool = false
     var firstAppearance: Bool = true
@@ -26,7 +27,10 @@ class EntityEditViewController: UITableViewController {
 	var photoDirty: Bool = false
     var photoActive: Bool = false
     var photoChosen: Bool = false
-
+    
+    var imageUploadRequest: AWSS3TransferManagerUploadRequest?
+    var entityPostRequest: NSURLSessionTask?
+    
 	var editMode: Bool {
 		return entity != nil
 	}
@@ -46,8 +50,6 @@ class EntityEditViewController: UITableViewController {
 	@IBOutlet weak var nameField:        UITextField!
 	@IBOutlet weak var descriptionField: GCPlaceholderTextView!
     @IBOutlet weak var photoHolder:      UIView?
-	@IBOutlet weak var doneButton:       UIBarButtonItem!
-    @IBOutlet weak var cancelButton:     UIBarButtonItem!
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -88,6 +90,9 @@ class EntityEditViewController: UITableViewController {
             self.descriptionField!.textContainer.lineFragmentPadding = 0
             self.descriptionField!.textContainerInset = UIEdgeInsetsZero
         }
+        
+        var cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancelAction:")
+        self.navigationItem.leftBarButtonItems = [cancelButton]
 	}
 
 	override func viewWillAppear(animated: Bool) {
@@ -159,27 +164,6 @@ class EntityEditViewController: UITableViewController {
         }
     }
     
-	@IBAction func doneAction(sender: AnyObject){
-		save()
-	}
-
-    @IBAction func cancelAction(sender: AnyObject){
-        
-        if !isDirty() {
-            self.performBack(animated: true)
-            return
-        }
-        
-        ActionConfirmationAlert(
-            title: "Do you want to discard your editing changes?",
-            actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
-                doIt in
-                if doIt {
-                    self.performBack(animated: true)
-                }
-            }
-    }
-    
     @IBAction func deleteAction(sender: AnyObject) {
         
         if self.entity is User {
@@ -209,6 +193,27 @@ class EntityEditViewController: UITableViewController {
         }
     }
     
+    func doneAction(sender: AnyObject){
+        save()
+    }
+    
+    func cancelAction(sender: AnyObject){
+        
+        if !isDirty() {
+            self.performBack(animated: true)
+            return
+        }
+        
+        ActionConfirmationAlert(
+            title: "Do you want to discard your editing changes?",
+            actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
+                doIt in
+                if doIt {
+                    self.performBack(animated: true)
+                }
+        }
+    }
+    
     func alertTextFieldDidChange(sender: AnyObject) {
         if let alertController: UIAlertController = self.presentedViewController as? UIAlertController {
             let confirm = alertController.textFields![0] as! UITextField
@@ -226,24 +231,24 @@ class EntityEditViewController: UITableViewController {
         if let entity = self.entity {
             
             /* Name and description */
-            name = entity.name
-            if descriptionField != nil {
-                description_ = entity.description_
+            self.name = entity.name
+            if self.descriptionField != nil {
+                self.description_ = entity.description_
             }
             
             /* Photo */
             if entity.photo != nil {
                 self.photoView?.imageView?.setImageWithPhoto(entity.photo!)
-                usingPhotoDefault = false
-                photoActive = true
+                self.usingPhotoDefault = false
+                self.photoActive = true
             }
             else {
                 if self.collection == "patches" || self.collection == "users" {
                     var photo: Photo = Entity.getDefaultPhoto(entity.schema, id: entity.id_);
                     self.photoView?.imageView?.setImageWithPhoto(photo)
                 }
-                usingPhotoDefault = true
-                photoActive = false
+                self.usingPhotoDefault = true
+                self.photoActive = false
             }
         }
     }
@@ -274,147 +279,175 @@ class EntityEditViewController: UITableViewController {
     }
 
 	func save() {
-
 		if !isValid() { return }
-
-		if editMode {
-			update()
-		}
-		else {
-			insert()
-		}
+		post(self.editMode)
 	}
     
     func gather(parameters: NSMutableDictionary) -> NSMutableDictionary {
         
-        if editMode {
-            if name != entity!.name {
-                parameters["name"] = nilToNull(name)
+        if self.editMode {
+            if self.name != entity!.name {
+                parameters["name"] = nilToNull(self.name)
             }
-            if descriptionField != nil && description_ != entity!.description_ {
-                parameters["description"] = nilToNull(description_)
+            if self.descriptionField != nil && self.description_ != self.entity!.description_ {
+                parameters["description"] = nilToNull(self.description_)
             }
-            if photoDirty {
-                parameters["photo"] = nilToNull(photo)
+            if self.photoDirty {
+                parameters["photo"] = nilToNull(self.photo)
             }
         }
         else {
-            parameters["name"] = nilToNull(name)
-            parameters["photo"] = nilToNull(photo)
-            parameters["description"] = nilToNull(description_)
+            parameters["name"] = nilToNull(self.name)
+            parameters["photo"] = nilToNull(self.photo)
+            parameters["description"] = nilToNull(self.description_)
         }
+        
         return parameters
     }
     
-    func insert() {
+    func post(editing: Bool) {
         
-        if processing {
-            return
-        }
+        if self.processing { return }
         
-        processing = true
+        self.processing = true
         
-        let progress = MBProgressHUD.showHUDAddedTo(self.view.window, animated: true)
+        var progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
         progress.mode = MBProgressHUDMode.Indeterminate
-        progress.labelText = progressStartLabel
-        progress.square = true
+        progress.styleAs(.ActivityLight)
+        progress.labelText = self.progressStartLabel
+        progress.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("progressWasCancelled:")))
         progress.show(true)
         
-        var parameters = NSMutableDictionary()
-        parameters = self.gather(parameters)
-        
-        DataController.proxibase.insertObject("data/\(collection!)", parameters: parameters) {
-            response, error in
-            
-            self.processing = false
+        var parameters: NSMutableDictionary = self.gather(NSMutableDictionary())
+        var cancelled = false
+        var postSize = 2000
 
-            dispatch_async(dispatch_get_main_queue()) {
+        let queue = TaskQueue()
+        
+        Utils.delay(5.0, closure: {
+            () -> () in
+            progress?.detailsLabelText = "Tap to cancel"
+        })
+        
+        /* Process image if any */
+        
+        if var image = parameters["photo"] as? UIImage {
+            queue.tasks +=~ { _, next in
                 
-                progress.hide(true, afterDelay: 1.0)
-                if let error = ServerError(error) {
+                /* Ensure image is resized/rotated before upload */
+                image = Utils.prepareImage(image)
+                
+                /* Generate image key */
+                let imageKey = "\(Utils.genImageKey()).jpg"
+                
+                /* Upload */
+                self.imageUploadRequest = S3.sharedService.uploadImageToS3(image, imageKey: imageKey) {
+                    task in
+                    
+                    if let error = task.error {
+                        if error.domain == AWSS3TransferManagerErrorDomain as String {
+                            if let errorCode = AWSS3TransferManagerErrorType(rawValue: error.code) {
+                                if errorCode == .Cancelled {
+                                    cancelled = true
+                                }
+                            }
+                        }
+                        queue.skip()
+                        next(Result(response: nil, error: error))
+                    }
+                    else {
+                        let photo = [
+                            "width": Int(image.size.width), // width/height are in points...should be pixels?
+                            "height": Int(image.size.height),
+                            "source": S3.sharedService.imageSource,
+                            "prefix": imageKey
+                        ]
+                        parameters["photo"] = photo
+                        next(nil)
+                    }
+                }
+            }
+        }
+        
+        /* Upload entity */
+        
+        queue.tasks +=~ { _, next in
+            let endpoint = editing ? "data/\(self.collection!)/\(self.entity!.id_)" : "data/\(self.collection!)"
+            self.entityPostRequest = DataController.proxibase.postEntity(endpoint, parameters: parameters) {
+                response, error in
+                if error == nil {
+                    progress!.progress = 1.0
+                }
+                else if error!.code == NSURLErrorCancelled {
+                    cancelled = true
+                }
+                next(Result(response: response, error: error))
+            }
+        }
+        
+        /* Update Ui */
+        
+        queue.tasks +=! {
+            self.processing = false
+            
+            if cancelled {
+                Shared.Toast(self.cancelledLabel)
+                return
+            }
+            
+            progress!.hide(true)
+            progress = nil
+            
+            if let result: Result = queue.lastResult as? Result {
+                if let error = ServerError(result.error) {
                     self.handleError(error)
+                    return
                 }
                 else {
-                    
-                    /* Update recent patch list when a user sends a message */
-                    if self.collection! == "messages" {
-                        if let patch = DataController.instance.currentPatch {
-                            
-                            var recent: [String:AnyObject] = ["id_":patch.id_, "name":patch.name]
-                            recent["recentDate"] = NSNumber(longLong: Int64(NSDate().timeIntervalSince1970 * 1000)) // Only way to store Int64 as AnyObject
-                            if patch.photo != nil {
-                                var photo: [String:AnyObject] = [
-                                    "prefix":patch.photo.prefix,
-                                    "source":patch.photo.source,
-                                    "width":Int(patch.photo.widthValue),
-                                    "height":Int(patch.photo.heightValue)]
-                                recent["photo"] = photo
+                    if !editing {
+                        
+                        /* Update recent patch list when a user sends a message */
+                        if self.collection! == "messages" {
+                            if let patch = DataController.instance.currentPatch {
+                                var recent: [String:AnyObject] = [
+                                    "id_":patch.id_,
+                                    "name":patch.name,
+                                    "recentDate": NSNumber(longLong: Int64(NSDate().timeIntervalSince1970 * 1000)) // Only way to store Int64 as AnyObject
+                                ]
+                                if patch.photo != nil {
+                                    recent["photo"] = patch.photo.asMap()
+                                }
+                                Utils.updateRecents(recent)
                             }
-                            
-                            Utils.updateRecents(recent)
+                        }
+                        
+                        let serverResponse = ServerResponse(result.response)
+                        if serverResponse.resultCount == 1 {
+                            Log.d("Inserted entity \(serverResponse.resultID)")
+                            DataController.instance.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
                         }
                     }
-                    
-                    let serverResponse = ServerResponse(response)
-                    if serverResponse.resultCount == 1 {
-                        Log.d("Created entity \(serverResponse.resultID)")
-                        DataController.instance.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
+                    else {
+                        Log.d("Updated entity \(self.entity!.id_)")
                     }
-                    
-                    self.performBack(animated: true)
-                    progress.mode = MBProgressHUDMode.Text
-                    progress.labelText = self.progressFinishLabel
                 }
             }
-        }
-    }
-    
-    func update() {
-        
-        if processing {
-            return
-        }
-        processing = true
-        
-        let progress = MBProgressHUD.showHUDAddedTo(self.view.window, animated: true)
-        progress.mode = MBProgressHUDMode.Indeterminate
-        progress.labelText = self.progressStartLabel
-        progress.square = true
-        progress.show(true)
-        
-        var parameters = NSMutableDictionary()
-        parameters = self.gather(parameters)
-        
-        let path = "data/\(self.collection!)/\(entity!.id_)"
-        
-        DataController.proxibase.updateObject(path, parameters: parameters) {
-            response, error in
             
-            self.processing = false
-
-            dispatch_async(dispatch_get_main_queue()) {
-                
-                progress.hide(true, afterDelay: 1.0)
-                if let error = ServerError(error) {
-                    self.handleError(error)
-                }
-                else {
-                    Log.d("Update entity successful")
-                    DataController.instance.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
-                    self.performBack(animated: true)
-                    progress.mode = MBProgressHUDMode.Text
-                    progress.labelText = self.progressFinishLabel
-                }
-            }
+            self.performBack(animated: true)
+            Shared.Toast(self.progressFinishLabel)
         }
+        
+        /* Start tasks */
+        
+        queue.run()
     }
     
     func delete() {
         
-        if processing {
+        if self.processing {
             return
         }
-        processing = true
+        self.processing = true
         
         if let user = self.entity as? User {
             
@@ -465,33 +498,46 @@ class EntityEditViewController: UITableViewController {
         }
     }
     
+    func progressWasCancelled(sender: AnyObject) {
+        if let gesture = sender as? UIGestureRecognizer, let hud = gesture.view as? MBProgressHUD {
+            hud.hide(true)
+            self.imageUploadRequest?.cancel() // Should do nothing if upload already complete or isn't any
+            self.entityPostRequest?.cancel()
+        }
+    }
+    
     func performBack(animated: Bool = true) {
         /* Override in subclasses for control of dismiss/pop process */
-        self.dismissViewControllerAnimated(animated, completion: nil)
+        if isModal {
+            self.dismissViewControllerAnimated(animated, completion: nil)
+        }
+        else {
+            self.navigationController?.popViewControllerAnimated(true)
+        }
     }
     
 	func isDirty() -> Bool {
         
-		if editMode {
-            if entity!.name != name {
+		if self.editMode {
+            if self.entity!.name != self.name {
                 return true
             }
-            if photoDirty {
+            if self.photoDirty {
                 return true
             }
-            if (descriptionField != nil && entity!.description_ != description_) {
+            if (self.descriptionField != nil && self.entity!.description_ != self.description_) {
                 return true
             }
             return false
 		}
 		else {
-            if nameField != nil && name != nil {
+            if self.nameField != nil && self.name != nil {
                 return true
             }
-            if descriptionField != nil && description_ != nil {
+            if self.descriptionField != nil && self.description_ != nil {
                 return true
             }
-            if photoDirty {
+            if self.photoDirty {
                 return true
             }
             return false
@@ -500,6 +546,12 @@ class EntityEditViewController: UITableViewController {
 
 	func isValid() -> Bool {
         preconditionFailure("This method must be overridden")
+    }
+    
+    var isModal: Bool {
+        return self.presentingViewController?.presentedViewController == self
+            || (self.navigationController != nil && self.navigationController?.presentingViewController?.presentedViewController == self.navigationController)
+            || self.tabBarController?.presentingViewController is UITabBarController
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -532,11 +584,11 @@ class EntityEditViewController: UITableViewController {
     }
     
     func keyboardDidHide(sender: NSNotification){
-        keyboardVisible = false
+        self.keyboardVisible = false
         
-        if backClicked {
+        if self.backClicked {
             
-            if !isDirty() {
+            if !self.isDirty() {
                 self.performBack(animated: true)
                 return
             }
@@ -548,16 +600,16 @@ class EntityEditViewController: UITableViewController {
                     self.performBack(animated: true)
                 }
             }
-            backClicked = false
+            self.backClicked = false
         }
     }
     
     func keyboardWillHide(sender: NSNotification){
-        keyboardVisible = false
+        self.keyboardVisible = false
     }
     
     func keyboardDidShow(sender: NSNotification){
-        keyboardVisible = true
+        self.keyboardVisible = true
     }
     
     func dismissKeyboard() {
@@ -586,29 +638,29 @@ class EntityEditViewController: UITableViewController {
     
     var name: String? {
         get {
-            return (nameField == nil || nameField.text == "") ? nil : nameField.text
+            return (self.nameField == nil || self.nameField.text == "") ? nil : self.nameField.text
         }
         set {
-            if nameField != nil {
-                nameField.text = newValue
+            if self.nameField != nil {
+                self.nameField.text = newValue
             }
         }
     }
     
     var description_: String? {
         get {
-            return (descriptionField == nil || descriptionField.text == "") ? nil : descriptionField.text
+            return (self.descriptionField == nil || self.descriptionField.text == "") ? nil : self.descriptionField.text
         }
         set {
-            if descriptionField != nil {
-                descriptionField.text = newValue
+            if self.descriptionField != nil {
+                self.descriptionField.text = newValue
             }
         }
     }
     
     var photo: UIImage? {
         get {
-            return (self.photoView?.imageView?.imageForState(.Normal) == nil || usingPhotoDefault) ? nil : self.photoView?.imageView?.imageForState(.Normal)
+            return (self.photoView?.imageView?.imageForState(.Normal) == nil || self.usingPhotoDefault) ? nil : self.photoView?.imageView?.imageForState(.Normal)
         }
         set {
             if let imageView = self.photoView?.imageView {
@@ -630,6 +682,15 @@ extension EntityEditViewController: AdobeUXImageEditorViewControllerDelegate {
     
     func photoEditorCanceled(editor: AdobeUXImageEditorViewController!) {
         self.dismissViewControllerAnimated(true, completion: nil)
+    }
+}
+
+class Result {
+    var response: AnyObject?
+    var error: NSError?
+    init(response: AnyObject?, error: NSError?) {
+        self.response = response
+        self.error = error
     }
 }
 
@@ -669,8 +730,8 @@ extension EntityEditViewController: UITextViewDelegate {
     }
     
     func textViewDidChange(textView: UITextView) {
-        tableView.beginUpdates()
-        tableView.endUpdates()
+        self.tableView.beginUpdates()
+        self.tableView.endUpdates()
         self.scrollToCursorForTextView(textView)
     }
     

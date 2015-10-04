@@ -171,9 +171,11 @@ class ShareViewController: SLComposeServiceViewController, PatchTargetViewContro
     *--------------------------------------------------------------------------------------------*/
 
     override func didSelectPost() {
-        Proxibase.sharedService.postMessage(buildMessage(), patch: self.patch!)
+        let imageKey = "\(Utils.genImageKey()).jpg"
+        var message = buildMessage(imageKey)
+        Proxibase.sharedService.postMessage(message, patch: self.patch!)
         if self.image != nil {
-            S3.sharedService.uploadImage(self.image!, key: "\(self.userId!)_\(Utils.DateTimeTag()).jpg")
+            S3.sharedService.uploadImage(self.image!, key: imageKey, bucket: S3.sharedService.imageBucket, shared: true)
         }
         self.extensionContext?.completeRequestReturningItems([], completionHandler: nil)
     }
@@ -200,7 +202,7 @@ class ShareViewController: SLComposeServiceViewController, PatchTargetViewContro
         }
     }
     
-    func buildMessage() -> [String:AnyObject] {
+    func buildMessage(imageKey: String) -> [String:AnyObject] {
         
         let links = Array(arrayLiteral: [
             "type": "content",
@@ -215,12 +217,11 @@ class ShareViewController: SLComposeServiceViewController, PatchTargetViewContro
             ] as [String:AnyObject]
         
         if self.image != nil {
-            let photoUrl = "\(self.userId!)_\(Utils.DateTimeTag()).jpg"
             let photo = [
                 "width": Int(self.image!.size.width), // width/height are in points...should be pixels?
                 "height": Int(self.image!.size.height),
                 "source": "aircandi.images",
-                "prefix": photoUrl]
+                "prefix": imageKey]
             message["photo"] = photo
         }
         

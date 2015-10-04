@@ -6,13 +6,13 @@
 const struct QueryAttributes QueryAttributes = {
 	.criteria = @"criteria",
 	.executed = @"executed",
+	.id_ = @"id_",
 	.more = @"more",
 	.name = @"name",
 	.offset = @"offset",
 	.pageSize = @"pageSize",
 	.parameters = @"parameters",
 	.sidecar = @"sidecar",
-	.valid = @"valid",
 };
 
 const struct QueryRelationships QueryRelationships = {
@@ -70,11 +70,6 @@ const struct QueryRelationships QueryRelationships = {
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
-	if ([key isEqualToString:@"validValue"]) {
-		NSSet *affectingKey = [NSSet setWithObject:@"valid"];
-		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
-		return keyPaths;
-	}
 
 	return keyPaths;
 }
@@ -118,6 +113,8 @@ const struct QueryRelationships QueryRelationships = {
 - (void)setPrimitiveExecutedValue:(BOOL)value_ {
 	[self setPrimitiveExecuted:@(value_)];
 }
+
+@dynamic id_;
 
 @dynamic more;
 
@@ -184,26 +181,6 @@ const struct QueryRelationships QueryRelationships = {
 @dynamic parameters;
 
 @dynamic sidecar;
-
-@dynamic valid;
-
-- (BOOL)validValue {
-	NSNumber *result = [self valid];
-	return [result boolValue];
-}
-
-- (void)setValidValue:(BOOL)value_ {
-	[self setValid:@(value_)];
-}
-
-- (BOOL)primitiveValidValue {
-	NSNumber *result = [self primitiveValid];
-	return [result boolValue];
-}
-
-- (void)setPrimitiveValidValue:(BOOL)value_ {
-	[self setPrimitiveValid:@(value_)];
-}
 
 @dynamic queryItems;
 

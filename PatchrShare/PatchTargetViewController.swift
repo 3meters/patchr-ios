@@ -227,13 +227,8 @@ extension PatchTargetViewController: UITableViewDelegate {
             let width = patch["photo"]["width"].int
             let height = patch["photo"]["height"].int
             
-            var frameHeightPixels = Int(cell!.photo.frame.size.height * PIXEL_SCALE)
-            var frameWidthPixels = Int(cell!.photo.frame.size.width * PIXEL_SCALE)
-            
-            let photoUrl = PhotoUtils.url(prefix!, source: source!, size: 200)
-            let photoUrlSized = PhotoUtils.urlSized(photoUrl, frameWidth: frameWidthPixels, frameHeight: frameHeightPixels, photoWidth: width, photoHeight: height)
-            
-            cell!.photo.sd_setImageWithURL(photoUrlSized)
+            let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.thumbnail, size: nil)
+            cell!.photo.sd_setImageWithURL(photoUrl)
         }
         else {
             cell!.photo.image = UIImage(named: "imgDefaultPatch")

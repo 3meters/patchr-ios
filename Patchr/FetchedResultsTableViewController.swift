@@ -11,30 +11,23 @@ import UIKit
 class FetchedResultsTableViewController: UITableViewController {
     
     var contentViewName: String?
+
+    /*--------------------------------------------------------------------------------------------
+    * Lifecycle
+    *--------------------------------------------------------------------------------------------*/
     
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        // While the tableView is off-screen, the visibile cells may have missed some calls to configureCell()
-        if let visibleRowIndexPaths = self.tableView.indexPathsForVisibleRows() {
-            self.tableView.reloadRowsAtIndexPaths(visibleRowIndexPaths, withRowAnimation: .None)
-        }
-        
-        self.tableView.separatorInset = UIEdgeInsetsZero
-    }
+    /*--------------------------------------------------------------------------------------------
+    * Methods
+    *--------------------------------------------------------------------------------------------*/
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
         let numberOfObjects = self.fetchedResultsControllerForViewController(self).sections![section].numberOfObjects
-        if numberOfObjects == 0 {
-            // Don't show cell lines when there are no objects
-            tableView.separatorStyle = UITableViewCellSeparatorStyle.None
-        } else {
-            tableView.separatorStyle = UITableViewCellSeparatorStyle.SingleLine
-        }
+        self.tableView.separatorStyle = numberOfObjects == 0 ? .None : .SingleLine
         return numberOfObjects
     }
     
@@ -102,10 +95,13 @@ class FetchedResultsTableViewController: UITableViewController {
     
     // Override this in subclasses to bind cells to data
     func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?) {
-        cell.textLabel?.text = object.description
+        assert(false, "bindCell must be overridden by subclasses")
     }
-    
 }
+
+/*--------------------------------------------------------------------------------------------
+* Extensions
+*--------------------------------------------------------------------------------------------*/
 
 extension FetchedResultsTableViewController: FetchedResultsViewControllerDataSource {
     /* Override this in subclasses so they have control of the fetch configuration */

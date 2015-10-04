@@ -28,6 +28,10 @@ class AirPhotoBrowser: IDMPhotoBrowser {
         }
     }
     
+    /*--------------------------------------------------------------------------------------------
+    * Lifecycle
+    *--------------------------------------------------------------------------------------------*/
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -35,11 +39,17 @@ class AirPhotoBrowser: IDMPhotoBrowser {
         configure()
     }
     
+    /*--------------------------------------------------------------------------------------------
+    * Events
+    *--------------------------------------------------------------------------------------------*/
+    
     func configure() {
         
         if self.entity?.creator != nil {
             super.shareMessage = "Photo by \(self.entity!.creator.name) on Patchr"
         }
+        
+        /* Configure toolbar */
         
         var toolbar: UIToolbar = super.toolbar
         

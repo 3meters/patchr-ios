@@ -12,6 +12,7 @@ extern const struct EntityAttributes {
 	__unsafe_unretained NSString *countPending;
 	__unsafe_unretained NSString *countWatching;
 	__unsafe_unretained NSString *description_;
+	__unsafe_unretained NSString *image;
 	__unsafe_unretained NSString *linkCounts;
 	__unsafe_unretained NSString *patchId;
 	__unsafe_unretained NSString *rank;
@@ -22,6 +23,7 @@ extern const struct EntityAttributes {
 	__unsafe_unretained NSString *userLikesId;
 	__unsafe_unretained NSString *userWatchId;
 	__unsafe_unretained NSString *userWatchJustApproved;
+	__unsafe_unretained NSString *userWatchMuted;
 	__unsafe_unretained NSString *userWatchStatus;
 	__unsafe_unretained NSString *visibility;
 } EntityAttributes;
@@ -87,6 +89,10 @@ extern const struct EntityUserInfo {
 
 //- (BOOL)validateDescription_:(id*)value_ error:(NSError**)error_;
 
+@property (nonatomic, strong) NSData* image;
+
+//- (BOOL)validateImage:(id*)value_ error:(NSError**)error_;
+
 @property (nonatomic, strong) NSDictionary* linkCounts;
 
 //- (BOOL)validateLinkCounts:(id*)value_ error:(NSError**)error_;
@@ -143,6 +149,14 @@ extern const struct EntityUserInfo {
 
 //- (BOOL)validateUserWatchJustApproved:(id*)value_ error:(NSError**)error_;
 
+@property (nonatomic, strong) NSNumber* userWatchMuted;
+
+@property (atomic) BOOL userWatchMutedValue;
+- (BOOL)userWatchMutedValue;
+- (void)setUserWatchMutedValue:(BOOL)value_;
+
+//- (BOOL)validateUserWatchMuted:(id*)value_ error:(NSError**)error_;
+
 @property (nonatomic, strong) NSNumber* userWatchStatus;
 
 @property (atomic) PAWatchStatus userWatchStatusValue;
@@ -198,6 +212,9 @@ extern const struct EntityUserInfo {
 - (NSString*)primitiveDescription_;
 - (void)setPrimitiveDescription_:(NSString*)value;
 
+- (NSData*)primitiveImage;
+- (void)setPrimitiveImage:(NSData*)value;
+
 - (NSDictionary*)primitiveLinkCounts;
 - (void)setPrimitiveLinkCounts:(NSDictionary*)value;
 
@@ -239,6 +256,12 @@ extern const struct EntityUserInfo {
 
 - (BOOL)primitiveUserWatchJustApprovedValue;
 - (void)setPrimitiveUserWatchJustApprovedValue:(BOOL)value_;
+
+- (NSNumber*)primitiveUserWatchMuted;
+- (void)setPrimitiveUserWatchMuted:(NSNumber*)value;
+
+- (BOOL)primitiveUserWatchMutedValue;
+- (void)setPrimitiveUserWatchMutedValue:(BOOL)value_;
 
 - (NSNumber*)primitiveUserWatchStatus;
 - (void)setPrimitiveUserWatchStatus:(NSNumber*)value;

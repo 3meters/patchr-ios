@@ -49,6 +49,8 @@ class PatchEditViewController: EntityEditViewController {
             
             self.progressStartLabel = "Updating"
             self.progressFinishLabel = "Updated!"
+            self.cancelledLabel = "Update cancelled"
+            
             navigationItem.title = Utils.LocalizedString("Edit patch")
             createButton.hidden = true
             
@@ -61,6 +63,7 @@ class PatchEditViewController: EntityEditViewController {
             
             self.progressStartLabel = "Patching"
             self.progressFinishLabel = "Activated!"
+            self.cancelledLabel = "Activation cancelled"
             navigationItem.title = Utils.LocalizedString("Make patch")
             
             /* Use location managers last location fix */
@@ -75,8 +78,8 @@ class PatchEditViewController: EntityEditViewController {
             patchSwitchView.on = true
             
             /* Navigation bar buttons */
-            var saveButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
-            self.navigationItem.rightBarButtonItems = [saveButton]
+            var doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
+            self.navigationItem.rightBarButtonItems = [doneButton]
 		}
         
         bind()

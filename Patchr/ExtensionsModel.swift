@@ -69,7 +69,7 @@ extension Entity {
         }
         else if schema == "user" || schema == "notification" {
             if id != nil {
-                prefix = "http://www.gravatar.com/avatar/\(id!.md5)?d=identicon&r=pg&s=200"
+                prefix = "http://www.gravatar.com/avatar/\(id!.md5)?d=identicon&r=pg"
                 source = PhotoSource.gravatar
             }
             else {
@@ -179,7 +179,7 @@ extension Patch {
         if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
             var links = [
                 LinkSpec(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId]),
-                LinkSpec(from: .Users, type: .Watch, fields: "_id,type,enabled,schema", filter: ["_from": userId]),
+                LinkSpec(from: .Users, type: .Watch, fields: "_id,type,enabled,mute,schema", filter: ["_from": userId]),
                 LinkSpec(from: .Messages, type: .Content, limit: 1, fields: "_id,type,schema", filter: ["_creator": userId]),
             ]
             
@@ -259,7 +259,7 @@ extension Message {
             }
             view.photo.hidden = false
             view.photoTopSpace.constant = 8
-            view.photoHeight.constant = view.photo.bounds.size.width * 0.5625
+            view.photoHeight.constant = view.photo.bounds.size.width * 0.5625   // 16:9 aspect ratio
         }
         
         if let creator = message.creator {
@@ -593,5 +593,17 @@ extension Shortcut {
             return "sh." + entityId
         }
         return entityId
+    }
+}
+
+extension Photo {
+    
+    func asMap() -> [String:AnyObject] {
+        var photo: [String:AnyObject] = [
+            "prefix":self.prefix,
+            "source":self.source,
+            "width":Int(self.widthValue),
+            "height":Int(self.heightValue)]
+        return photo
     }
 }

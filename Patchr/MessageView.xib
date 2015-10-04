@@ -33,6 +33,7 @@
                         <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
                             <integer key="value" value="24"/>
                         </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="string" keyPath="sizeCategory" value="profile"/>
                     </userDefinedRuntimeAttributes>
                 </imageView>
                 <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" text="Rob" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m6L-Nb-Bin" userLabel="user_name">
@@ -71,6 +72,9 @@ Neither can I!</string>
                     <constraints>
                         <constraint firstAttribute="height" priority="250" constant="188" id="YGg-kq-jDb"/>
                     </constraints>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="string" keyPath="sizeCategory" value="standard"/>
+                    </userDefinedRuntimeAttributes>
                 </imageView>
                 <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CKk-NR-FiB" userLabel="toolbar">
                     <rect key="frame" x="0.0" y="317" width="408" height="32"/>

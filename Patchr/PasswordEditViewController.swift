@@ -39,8 +39,9 @@ class PasswordEditViewController: UITableViewController, UITextFieldDelegate {
         
         processing = true
 
-		let progress = MBProgressHUD.showHUDAddedTo(self.view.window, animated: true)
+		let progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
 		progress.mode = MBProgressHUDMode.Indeterminate
+        progress.styleAs(.ActivityLight)
 		progress.labelText = "Updating..."
 		progress.show(true)
         

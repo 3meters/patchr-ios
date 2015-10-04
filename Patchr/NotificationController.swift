@@ -65,12 +65,16 @@ class NotificationController {
         self.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
     }
     
-    func didReceiveRemoteNotification(application: UIApplication, userInfo: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
+    func didReceiveLocalNotification(application: UIApplication, notification: UILocalNotification) {
+        didReceiveRemoteNotification(application, userInfo: notification.userInfo!, fetchCompletionHandler: nil)
+    }
+    
+    func didReceiveRemoteNotification(application: UIApplication, userInfo: [NSObject : AnyObject], fetchCompletionHandler completionHandler: ((UIBackgroundFetchResult) -> Void)? ) {
         
         Log.d("Notification received...")
         let state = application.applicationState
         if let stateString: String = state == .Background ? "background" : state == .Active ? "active" : "inactive" {
-            Log.d("App state: \(state)")
+            Log.d("App state: \(stateString)")
         }
         Log.d(String(format: "%@", userInfo))
         
@@ -93,16 +97,40 @@ class NotificationController {
         /*
          * Inactive always means that the user tapped on remote notification.
          * Active = notification received while app is active (foreground)
-         * Background = notification received while app is not active (background or dead)
          */
         if state == .Inactive || state == .Active {
             var augmentedUserInfo = NSMutableDictionary(dictionary: userInfo)
             augmentedUserInfo["receivedInApplicationState"] = application.applicationState.rawValue // active, inactive, background
             NSNotificationCenter.defaultCenter().postNotificationName(PAApplicationDidReceiveRemoteNotification, object: self, userInfo: augmentedUserInfo as [NSObject : AnyObject])
-            completionHandler(.NoData)
+            if (completionHandler != nil) {
+                completionHandler!(.NoData)
+            }
         }
+        /*
+        * Background = notification received while app is not active (background or dead)
+        */
         else if state == .Background {
-            completionHandler(.NoData)
+            /*
+             * If alert property is set then it will get handled as a remote notification otherwise
+             * we re-route it as a local notification.
+             */
+            if let aps = userInfo["aps"] as? NSDictionary {
+                if aps["alert"] == nil {
+                    var notification = UILocalNotification()
+                    notification.alertBody = (userInfo["alert-x"] as! String) // Text that will be displayed in the notification
+                    notification.alertTitle = (userInfo["title-x"] as! String)
+                    notification.alertAction = "open" // Text that is displayed after "slide to..." on the lock screen - defaults to "slide to view"
+                    notification.fireDate = NSDate() // Date when notification will be fired (now)
+                    if let sound = userInfo["sound-x"] as? String {
+                        notification.soundName = sound
+                    }
+                    notification.userInfo = userInfo
+                    UIApplication.sharedApplication().scheduleLocalNotification(notification)
+                }
+            }
+            if (completionHandler != nil) {
+                completionHandler!(.NoData)
+            }
         }
     }
     

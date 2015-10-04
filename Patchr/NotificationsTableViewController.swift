@@ -10,37 +10,10 @@ import UIKit
 import Parse
 import AudioToolbox
 
-let chirpSound: SystemSoundID = createChirpSound()
+class NotificationsTableViewController: BaseTableViewController {
 
-func createChirpSound() -> SystemSoundID {
-    var soundID: SystemSoundID = 0
-    let soundURL = CFBundleCopyResourceURL(CFBundleGetMainBundle(), "chirp", "caf", nil)
-    AudioServicesCreateSystemSoundID(soundURL, &soundID)
-    return soundID
-}
-
-class NotificationsTableViewController: QueryTableViewController {
-
-	private var offscreenCells:       NSMutableDictionary = NSMutableDictionary()
-	private var messageDateFormatter: NSDateFormatter!
-//	private var selectedPatch:        Patch?
-//	private var selectedMessage:      Message?
-//    private var selectedEntityId:     String?
     private var activityDate:         Int64!
     private var nearbys:              [[NSObject: AnyObject]] = []
-    
-	private var _query:               Query!
-    
-	override func query() -> Query {
-		if self._query == nil {
-			let query = Query.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Query
-			query.name = DataStoreQueryName.NotificationsForCurrentUser.rawValue
-            query.pageSize = DataController.proxibase.pageSizeNotifications
-			DataController.instance.managedObjectContext.save(nil)
-			self._query = query
-		}
-		return self._query
-	}
     
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -72,7 +45,7 @@ class NotificationsTableViewController: QueryTableViewController {
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
         if NotificationController.instance.activityDate > self.activityDate {
-            self.refreshQueryItems(force: true)
+            self.bindQueryItems(force: true)
             self.activityDate = NotificationController.instance.activityDate
         }
         clearBadges()
@@ -108,7 +81,7 @@ class NotificationsTableViewController: QueryTableViewController {
                                     
                                 /* Only refresh notifications if view has already been loaded */
                                 if self.isViewLoaded() {
-                                    self.refreshQueryItems(force: true)
+                                    self.bindQueryItems(force: true)
                                 }
                             }
                             else {
@@ -117,7 +90,11 @@ class NotificationsTableViewController: QueryTableViewController {
                                 incrementBadges()
                                 
                                 let json:JSON = JSON(userInfo)
-                                let alert = json["aps"]["alert"].string
+                                var alert = json["aps"]["alert"].string
+                                if alert == nil {
+                                    alert = json["alert-x"].string
+                                }
+                                
                                 let trigger = json["trigger"].string
                                 
                                 var description: String = alert!
@@ -129,6 +106,13 @@ class NotificationsTableViewController: QueryTableViewController {
                                 if !notificationEnabledFor(trigger!, description: description) {
                                     return
                                 }
+                                
+                                /* Bail if low priority */
+                                if let priority = json["priority"].int {
+                                    if priority == 2 {
+                                        return
+                                    }
+                                }                                
                                 
                                 /* Show banner */
                                 var subtitle: String?
@@ -149,13 +133,9 @@ class NotificationsTableViewController: QueryTableViewController {
                                     let width = json["photo"]["width"].int
                                     let height = json["photo"]["height"].int
                                     
-                                    var frameHeightPixels = Int(36 * PIXEL_SCALE)
-                                    var frameWidthPixels = Int(36 * PIXEL_SCALE)
-                                    
-                                    let photoUrl = PhotoUtils.url(prefix!, source: source!, size: nil)
-                                    let photoUrlSized = PhotoUtils.urlSized(photoUrl, frameWidth: frameWidthPixels, frameHeight: frameHeightPixels, photoWidth: width, photoHeight: height)
+                                    let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.profile, size: nil)
 
-                                    SDWebImageManager.sharedManager().downloadImageWithURL(photoUrlSized, options: SDWebImageOptions.HighPriority, progress: nil, completed: {
+                                    SDWebImageManager.sharedManager().downloadImageWithURL(photoUrl, options: SDWebImageOptions.HighPriority, progress: nil, completed: {
                                         (image:UIImage!, error:NSError!, cacheType:SDImageCacheType, finished:Bool, url:NSURL!) -> Void in
                                         if image != nil && finished {
                                             self.showNotificationBar(json["name"].string!, description: description, image: image, targetId: json["targetId"].string!)
@@ -167,10 +147,10 @@ class NotificationsTableViewController: QueryTableViewController {
                                 }
                                 
                                 /* Chirp */
-                                if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundForNotifications")) {
+                                if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundForNotifications"))
+                                    && json["sound-x"] != nil {
                                     AudioServicesPlaySystemSound(chirpSound)
-                                }
-                                
+                                }                                
                             }
                             
                         case .Inactive: // User tapped on remote notification
@@ -189,7 +169,7 @@ class NotificationsTableViewController: QueryTableViewController {
                             let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
                             if targetId!.hasPrefix("pa.") {
                                 if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
-                                    controller.patchId = targetId
+                                    controller.entityId = targetId
                                     self.navigationController?.pushViewController(controller, animated: true)
                                 }
                             }
@@ -226,14 +206,25 @@ class NotificationsTableViewController: QueryTableViewController {
     * Methods
     *--------------------------------------------------------------------------------------------*/
     
-    override func refreshQueryItems(force: Bool = false, paging: Bool = false) {
+    override func query() -> Query {
+        if self._query == nil {
+            let query = Query.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Query
+            query.name = DataStoreQueryName.NotificationsForCurrentUser.rawValue
+            query.pageSize = DataController.proxibase.pageSizeNotifications
+            DataController.instance.managedObjectContext.save(nil)
+            self._query = query
+        }
+        return self._query
+    }
+    
+    override func bindQueryItems(force: Bool = false, paging: Bool = false) {
         /* Always make sure we have the freshest sidecar data before a query */
         if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
             if let storedNearbys = groupDefaults.arrayForKey(PatchrUserDefaultKey("nearby.patches")) as? [[NSObject:AnyObject]] {
                 self.nearbys = storedNearbys
             }
         }
-        super.refreshQueryItems(force: force, paging: paging)
+        super.bindQueryItems(force: force, paging: paging)
     }
     
     override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?) {
@@ -276,7 +267,7 @@ class NotificationsTableViewController: QueryTableViewController {
             let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
             if let controller = storyboard.instantiateViewControllerWithIdentifier(controllerId!) as? UIViewController {
                 if let patchController = controller as? PatchDetailViewController {
-                    patchController.patchId = targetId
+                    patchController.entityId = targetId
                 }
                 else if let messageController = controller as? MessageDetailViewController {
                     messageController.messageId = targetId
@@ -342,7 +333,7 @@ class NotificationsTableViewController: QueryTableViewController {
         PFInstallation.currentInstallation().saveEventually(nil)
     }
 
-    override func populateSidedar(query: Query) {
+    override func populateSidecar(query: Query) {
         query.sidecar = self.nearbys    // Should make a copy
     }
     
@@ -385,7 +376,7 @@ extension NotificationsTableViewController: UITableViewDelegate {
             let entity = queryResult.object as? Notification {
                 if entity.targetId!.hasPrefix("pa.") {
                     if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
-                        controller.patchId = entity.targetId
+                        controller.entityId = entity.targetId
                         self.navigationController?.pushViewController(controller, animated: true)
                     }
                 }
@@ -435,4 +426,13 @@ extension NotificationsTableViewController: TTTAttributedLabelDelegate {
     func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
         UIApplication.sharedApplication().openURL(url)
     }
+}
+
+let chirpSound: SystemSoundID = createChirpSound()
+
+func createChirpSound() -> SystemSoundID {
+    var soundID: SystemSoundID = 0
+    let soundURL = CFBundleCopyResourceURL(CFBundleGetMainBundle(), "chirp", "caf", nil)
+    AudioServicesCreateSystemSoundID(soundURL, &soundID)
+    return soundID
 }

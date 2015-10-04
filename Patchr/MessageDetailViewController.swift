@@ -10,16 +10,16 @@ import UIKit
 
 class MessageDetailViewController: UITableViewController {
 
-    var progress:  MBProgressHUD?
-	var message:   Message!
+    var progress:  AirProgress?
+	var message:   Message?
 	var messageId: String?
     var deleted = false
     private var shareButtonFunctionMap = [Int: ShareButtonFunction]()
 
     private var isOwner: Bool {
         if let currentUser = UserController.instance.currentUser {
-            if message != nil && message.creator != nil {
-                return currentUser.id_ == message.creator.entityId
+            if self.message != nil && self.message!.creator != nil {
+                return currentUser.id_ == self.message!.creator.entityId
             }
         }
         return false
@@ -27,8 +27,8 @@ class MessageDetailViewController: UITableViewController {
     
     private var isPatchOwner: Bool {
         if let currentUser = UserController.instance.currentUser {
-            if message != nil && message.patch != nil && message.patch.ownerId != nil {
-                return currentUser.id_ == message.patch.ownerId
+            if self.message != nil && self.message!.patch != nil && self.message!.patch!.ownerId != nil {
+                return currentUser.id_ == self.message!.patch!.ownerId
             }
         }
         return false
@@ -52,14 +52,15 @@ class MessageDetailViewController: UITableViewController {
     @IBOutlet weak var toolbarCell:     UITableViewCell!
     @IBOutlet weak var recipientsCell:  UITableViewCell!
     @IBOutlet weak var shareHolderCell: UITableViewCell!
+    
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
 	 *--------------------------------------------------------------------------------------------*/
 
 	override func viewDidLoad() {
 
-		if message != nil {
-			messageId = message.id_
+		if self.message != nil {
+			self.messageId = self.message!.id_
 		}
 
 		super.viewDidLoad()
@@ -79,7 +80,7 @@ class MessageDetailViewController: UITableViewController {
         
 		/* Navigation bar buttons */
         var shareButton  = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
-        if isOwner {
+        if self.isOwner {
             let editImage    = UIImage(named: "imgEdit2Light")
             var editButton   = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
             var spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
@@ -87,7 +88,7 @@ class MessageDetailViewController: UITableViewController {
             spacer.width = SPACER_WIDTH
             self.navigationItem.rightBarButtonItems = [shareButton, spacer, deleteButton, spacer, editButton]
         }
-        else if isPatchOwner {
+        else if self.isPatchOwner {
             let removeImage    = UIImage(named: "imgRemoveLight")
             var removeButton   = UIBarButtonItem(image: removeImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("removeAction"))
             var spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
@@ -109,13 +110,18 @@ class MessageDetailViewController: UITableViewController {
         self.likesButton.setTitle(nil, forState: .Normal)
         
         /* Wacky activity control for body */
-        progress = MBProgressHUD(view: self.view)
-        progress!.mode = MBProgressHUDMode.Indeterminate
-        progress!.square = true
-        progress!.opacity = 0.0
-        progress!.userInteractionEnabled = false
-        progress!.activityIndicatorColor = Colors.brandColorDark
-        self.view.addSubview(progress!)
+        self.progress = AirProgress(view: self.view)
+        self.progress!.mode = MBProgressHUDMode.Indeterminate
+        self.progress!.styleAs(.ActivityOnly)
+        self.progress!.userInteractionEnabled = false
+        self.view.addSubview(self.progress!)
+        
+        /* Use cached entity if available in the data model */
+        if self.messageId != nil {
+            if let message: Message? = Message.fetchOneById(self.messageId!, inManagedObjectContext: DataController.instance.managedObjectContext) {
+                self.message = message
+            }
+        }
 	}
 
 	override func viewWillAppear(animated: Bool) {
@@ -123,7 +129,7 @@ class MessageDetailViewController: UITableViewController {
         * Entity could have been delete while we were away to check it.
         */
         if self.message != nil {
-            let item = ServiceBase.fetchOneById(messageId, inManagedObjectContext: DataController.instance.managedObjectContext)
+            let item = ServiceBase.fetchOneById(self.messageId!, inManagedObjectContext: DataController.instance.managedObjectContext)
             if item == nil {
                 self.navigationController?.popViewControllerAnimated(false)
                 return
@@ -159,6 +165,7 @@ class MessageDetailViewController: UITableViewController {
     }
 
 	private func refresh(force: Bool = false) {
+        
         if (self.message == nil) {
             self.progress?.minShowTime = 1
             self.progress?.removeFromSuperViewOnHide = true
@@ -166,28 +173,32 @@ class MessageDetailViewController: UITableViewController {
         }
         
 		DataController.instance.withMessageId(messageId!, refresh: force) {
-			message in
+			message, error in
             
             self.progress?.hide(true)
 			self.refreshControl?.endRefreshing()
-			if message != nil {
-                
-                /* Remove share button if this is a share message */
-                if message!.type != nil && message!.type == "share" {
-                    self.navigationItem.rightBarButtonItems = []
+            if error == nil {
+                if message != nil {
+                    
+                    /* Remove share button if this is a share message */
+                    if message!.type != nil && message!.type == "share" {
+                        self.navigationItem.rightBarButtonItems = []
+                    }
+                    
+                    self.message = message
+                    self.tableView.beginUpdates()
+                    self.draw()
+                    self.tableView.endUpdates()
                 }
-                
-				self.message = message
-                self.tableView.beginUpdates()
-				self.draw()
-                self.tableView.endUpdates()
-			}
+                else {
+                    Shared.Toast("Message has been deleted")
+                    Utils.delay(2.0, closure: {
+                        () -> () in
+                        self.navigationController?.popViewControllerAnimated(true)
+                    })
+                }
+            }
             else {
-                Shared.Toast("Message has been deleted")
-                delay(2.0, {
-                    () -> () in
-                    self.navigationController?.popViewControllerAnimated(true)
-                })
             }
 		}
 	}
@@ -203,7 +214,7 @@ class MessageDetailViewController: UITableViewController {
 	@IBAction func patchAction(sender: AnyObject) {
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
         if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
-            controller.patchId = self.message!.patch.entityId
+            controller.entityId = self.message!.patch.entityId
             self.navigationController?.pushViewController(controller, animated: true)
         }
 	}
@@ -212,7 +223,7 @@ class MessageDetailViewController: UITableViewController {
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
         if let controller = storyboard.instantiateViewControllerWithIdentifier("UserDetailViewController") as? UserDetailViewController {
             if let creator = message!.creator {
-                controller.userId = creator.entityId
+                controller.entityId = creator.entityId
                 self.navigationController?.pushViewController(controller, animated: true)
             }
         }
@@ -239,23 +250,23 @@ class MessageDetailViewController: UITableViewController {
 	@IBAction func unwindFromMessageEdit(segue: UIStoryboardSegue) {
 		// Refresh results when unwinding from message edit to pickup any changes.
 		DataController.instance.withMessageId(message!.id_, refresh: true) {
-			(_) -> Void in
+			message, error in
 			self.draw()
 		}
 	}
 
     func shareBrowseAction(sender: AnyObject){
-        if message.message != nil {
+        if self.message?.message != nil {
             let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
             if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
-                controller.messageId = message.message.entityId
+                controller.messageId = self.message!.message!.entityId
                 self.navigationController?.pushViewController(controller, animated: true)
             }
         }
-        else if message.patch != nil {
+        else if self.message?.patch != nil {
             let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
             if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
-                controller.patchId = message.patch.entityId
+                controller.entityId = self.message!.patch!.entityId
                 self.navigationController?.pushViewController(controller, animated: true)
             }
         }
@@ -332,10 +343,10 @@ class MessageDetailViewController: UITableViewController {
             /* Share entity */
             
             var view: BaseView!
-            if self.message.message != nil {
+            if self.message?.message != nil {
                 view = NSBundle.mainBundle().loadNibNamed("MessageView", owner: self, options: nil)[0] as! BaseView
                 view.frame.size.width = self.shareHolder.bounds.size.width
-                Message.bindView(view, object: self.message.message!, tableView: self.tableView)
+                Message.bindView(view, object: self.message!.message!, tableView: self.tableView)
                 
                 /* Tweak the message view to suit display as static */
                 if let messageView = view as? MessageView {
@@ -350,10 +361,10 @@ class MessageDetailViewController: UITableViewController {
                 view.frame.size.height = view.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
                 self.shareHolder?.addSubview(view)
             }
-            else if self.message.patch != nil {
+            else if self.message?.patch != nil {
                 view = NSBundle.mainBundle().loadNibNamed("PatchNormalView", owner: self, options: nil)[0] as! BaseView
                 view.frame.size.width = self.shareHolder.bounds.size.width
-                Patch.bindView(view, object: self.message.patch!, tableView: self.tableView)
+                Patch.bindView(view, object: self.message!.patch!, tableView: self.tableView)
                 self.shareHolder?.addSubview(view)
             }
             
@@ -545,8 +556,7 @@ extension MessageDetailViewController: UITableViewDelegate {
             }
         }
         
-        var height = super.tableView(tableView, heightForRowAtIndexPath: indexPath) as CGFloat!
-        return height
+        return super.tableView(tableView, heightForRowAtIndexPath: indexPath)
 	}
 }
 
@@ -556,7 +566,7 @@ extension MessageDetailViewController: UIActionSheetDelegate {
         if buttonIndex != actionSheet.cancelButtonIndex {
             // There are some strange visual artifacts with the share sheet and the presented
             // view controllers. Adding a small delay seems to prevent them.
-            delay(0.4, {
+            Utils.delay(0.4, closure: {
                 () -> () in
                 switch self.shareButtonFunctionMap[buttonIndex]! {
                 case .Share:

@@ -127,7 +127,9 @@ class LocationController: NSObject {
     }
     
     func sendBackgroundLocation(locations: [String:CLLocation]) {
-        
+        /*
+         * Should only be called if user is authenticated.
+         */
         if let loc = locations["location"] {
             
             self.bgTask = UIApplication.sharedApplication().beginBackgroundTaskWithExpirationHandler() {
