@@ -17,8 +17,7 @@
  * all subclasses of ServiceBase.
  */
 
-+ (id)fetchOrInsertOneById:(NSString *)id_
-    inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext {
++ (id)fetchOrInsertOneById:(NSString *)id_ inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext {
     /*
      * Fetch this object from the data model. If this object is not in the data model yet then add it.
      */

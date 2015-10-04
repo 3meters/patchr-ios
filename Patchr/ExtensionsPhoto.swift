@@ -10,7 +10,7 @@ import Foundation
 
 class PhotoUtils {
     
-    static func url(prefix: String, source: String, size: Int?, frameWidth: Int = Int(IMAGE_DIMENSION_MAX)) -> NSURL {
+    static func url(prefix: String, source: String, category: String, size: Int?, frameWidth: Int = Int(IMAGE_DIMENSION_MAX)) -> NSURL {
         var path: String = ""
         var quality: Int = 75
         if PIXEL_SCALE >= 3 {
@@ -20,13 +20,14 @@ class PhotoUtils {
             quality = 50
         }
         
-        if source == PhotoSource.aircandi_images || source == PhotoSource.aircandi {
-            var width = size != nil ? size : 400
-            path = "https://3meters-images.imgix.net/\(prefix)?w=\(width!)&dpr=\(PIXEL_SCALE)&q=\(quality)&auto=enhance"
-        }
-        else if source == PhotoSource.aircandi_users {
-            var width = size != nil ? size : 100
-            path = "https://3meters-users.imgix.net/\(prefix)?w=\(width!)&h=\(width!)&fit=min&dpr=\(PIXEL_SCALE)&q=\(quality)&auto=enhance"
+        if source == PhotoSource.aircandi_images {
+            var width = size != nil ? size : category == SizeCategory.standard ? 400 : 100
+            if category == SizeCategory.profile {
+                path = "https://3meters-images.imgix.net/\(prefix)?w=\(width!)&dpr=\(PIXEL_SCALE)&q=\(quality)&h=\(width!)&fit=min&trim=auto"
+            }
+            else {
+                path = "https://3meters-images.imgix.net/\(prefix)?w=\(width!)&dpr=\(PIXEL_SCALE)&q=\(quality)"
+            }
         }
         else if source == PhotoSource.google {
             var width: CGFloat = CGFloat(frameWidth) * PIXEL_SCALE

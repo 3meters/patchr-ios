@@ -15,7 +15,7 @@ class PhotoPickerViewController: UICollectionViewController {
     var searchBarBoundsY: CGFloat?
     
     var searchBar: UISearchBar?
-    var progress: MBProgressHUD?
+    var progress: AirProgress?
     var pickerDelegate: PhotoBrowseControllerDelegate?
     
     var largePhotoIndexPath : NSIndexPath? {
@@ -82,14 +82,12 @@ class PhotoPickerViewController: UICollectionViewController {
         self.sectionInsets = UIEdgeInsets(top: self.searchBar!.frame.size.height + 4, left: 4, bottom: 4, right: 4)
         
         /* Wacky activity control for body */
-        progress = MBProgressHUD.showHUDAddedTo(UIApplication.sharedApplication().delegate?.window!, animated: true)
-        progress!.mode = MBProgressHUDMode.Indeterminate
-        progress!.square = true
-        progress!.opacity = 0.0
-        progress!.removeFromSuperViewOnHide = false
-        progress!.userInteractionEnabled = false
-        progress!.activityIndicatorColor = Colors.brandColorDark
-        progress!.hide(false)
+        self.progress = AirProgress.showHUDAddedTo(UIApplication.sharedApplication().delegate?.window!, animated: true)
+        self.progress!.mode = MBProgressHUDMode.Indeterminate
+        self.progress!.styleAs(.ActivityOnly)
+        self.progress!.removeFromSuperViewOnHide = false
+        self.progress!.userInteractionEnabled = false
+        self.progress!.hide(false)
         
         /* Calculate thumbnail width */
         availableWidth = UIScreen.mainScreen().bounds.size.width - (sectionInsets!.left + sectionInsets!.right)
@@ -107,6 +105,19 @@ class PhotoPickerViewController: UICollectionViewController {
 		super.viewDidAppear(animated)
         self.searchBar?.becomeFirstResponder()
 	}
+
+	/*--------------------------------------------------------------------------------------------
+	 * Events
+	 *--------------------------------------------------------------------------------------------*/
+    
+    @IBAction func cancelAction(sender: AnyObject){
+        self.pickerDelegate!.photoBrowseControllerDidCancel!()
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+	/*--------------------------------------------------------------------------------------------
+	* Methods
+	*--------------------------------------------------------------------------------------------*/
 
     private func loadData(paging: Bool = false) {
         
@@ -173,22 +184,9 @@ class PhotoPickerViewController: UICollectionViewController {
                 self.collectionView?.reloadData()
             }
         }
-    
-    }
-
-	/*--------------------------------------------------------------------------------------------
-	 * Events
-	 *--------------------------------------------------------------------------------------------*/
-    
-    @IBAction func cancelAction(sender: AnyObject){
-        self.pickerDelegate!.photoBrowseControllerDidCancel!()
-        self.dismissViewControllerAnimated(true, completion: nil)
+        
     }
     
-	/*--------------------------------------------------------------------------------------------
-	* Methods
-	*--------------------------------------------------------------------------------------------*/
-
     func configureCell(cell: UICollectionViewCell, object: AnyObject) {
         
         if let thumbCell = cell as? ThumbnailCollectionViewCell, imageResult = object as? ImageResult {

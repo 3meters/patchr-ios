@@ -89,6 +89,32 @@ extension UIImageView {
     }
 }
 
+extension UIWindow {
+    
+    func setRootViewController(rootViewController: UIViewController, animated: Bool) {
+        
+        if !animated {
+            self.rootViewController = rootViewController
+            return
+        }
+        
+        UIView.transitionWithView(self,
+            duration: 0.65,
+            options: UIViewAnimationOptions.TransitionCrossDissolve,
+            animations: {
+                () -> Void in
+                
+                // The animation enabling/disabling are to address a status bar
+                // issue on the destination view controller. http://stackoverflow.com/a/8505364/2247399
+                let oldState = UIView.areAnimationsEnabled()
+                UIView.setAnimationsEnabled(false)
+                self.rootViewController = rootViewController
+                UIView.setAnimationsEnabled(oldState)
+            })
+            { (_) -> Void in } // Trailing closure
+    }
+}
+
 extension UIViewController {
     
     // Returns the most recently presented UIViewController (visible)
@@ -145,13 +171,12 @@ extension UIViewController {
         
         /* Show any required ui */
         var alertMessage: String = (error.message != nil ? error.message : error.description != nil ? error.description : "Unknown error")!
+        
         if errorActionType == .AUTO || errorActionType == .TOAST {
-            
             Shared.Toast(alertMessage)
             if error.code == .UNAUTHORIZED_SESSION_EXPIRED || error.code == .UNAUTHORIZED_CREDENTIALS {
                 errorAction = .SIGNOUT
             }
-            
         }
         else if errorActionType == .ALERT {
             self.Alert(alertMessage)

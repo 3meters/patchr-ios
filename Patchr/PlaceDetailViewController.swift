@@ -10,9 +10,9 @@ import UIKit
 
 class PlaceDetailViewController: UITableViewController {
     
-    var place:      Place!
+    var place:      Place?
     var placeId:    String?
-    var progress:   MBProgressHUD?
+    var progress:   AirProgress?
 
     /* Outlets are initialized before viewDidLoad is called */
     
@@ -27,25 +27,30 @@ class PlaceDetailViewController: UITableViewController {
 	 *--------------------------------------------------------------------------------------------*/
 
 	override func viewDidLoad() {
-		if place != nil {
-			placeId = place.id_
+		if self.place != nil {
+			self.placeId = self.place!.id_
 		}
+        
 		super.viewDidLoad()
         
-        name.text = nil
-        category.text = nil
-        address.text = nil
-        distance.text = nil
+        self.name.text = nil
+        self.category.text = nil
+        self.address.text = nil
+        self.distance.text = nil
         
         /* Wacky activity control for body */
-        progress = MBProgressHUD.showHUDAddedTo(UIApplication.sharedApplication().delegate?.window!, animated: true)
-        progress!.mode = MBProgressHUDMode.Indeterminate
-        progress!.square = true
-        progress!.opacity = 0.0
-        progress!.removeFromSuperViewOnHide = true
-        progress!.userInteractionEnabled = false
-        progress!.activityIndicatorColor = Colors.brandColorDark
-        progress!.show(true)
+        self.progress = AirProgress(view: self.view)
+        self.progress!.mode = MBProgressHUDMode.Indeterminate
+        self.progress!.styleAs(.ActivityOnly)
+        self.progress!.userInteractionEnabled = false
+        self.view.addSubview(self.progress!)
+        
+        /* Use cached entity if available in the data model */
+        if self.placeId != nil {
+            if let place: Place? = Place.fetchOneById(self.placeId!, inManagedObjectContext: DataController.instance.managedObjectContext) {
+                self.place = place
+            }
+        }
 	}
 
 	override func viewWillAppear(animated: Bool) {
@@ -60,7 +65,7 @@ class PlaceDetailViewController: UITableViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        address.preferredMaxLayoutWidth = address.frame.size.width
+        self.address.preferredMaxLayoutWidth = self.address.frame.size.width
         self.view.layoutIfNeeded()
     }
 
@@ -70,14 +75,31 @@ class PlaceDetailViewController: UITableViewController {
 	}
 
 	private func refresh(force: Bool = false) {
+        
+        if (self.place == nil) {
+            self.progress?.minShowTime = 1
+            self.progress?.removeFromSuperViewOnHide = true
+            self.progress?.show(true)
+        }
+
 		DataController.instance.withPlaceId(placeId!, refresh: force) {
-			place in
+			place, error in
 			self.refreshControl?.endRefreshing()
             self.progress?.hide(true)
-			if place != nil {
-				self.place = place
-				self.draw()
-			}
+            
+            if error == nil {
+                if place != nil {
+                    self.place = place
+                    self.draw()
+                }
+                else {
+                    Shared.Toast("Place has been deleted")
+                    Utils.delay(2.0, closure: {
+                        () -> () in
+                        self.navigationController?.popViewControllerAnimated(true)
+                    })
+                }
+            }
 		}
 	}
 
@@ -89,35 +111,35 @@ class PlaceDetailViewController: UITableViewController {
         
         self.photo.setImageWithPhoto(place!.getPhotoManaged(), animate: photo.image == nil)
         
-        if place!.name != nil {
-            name.text = place!.name
+        if self.place!.name != nil {
+            self.name.text = self.place!.name
         }
         
-        if place!.type != nil {
-            category.text = place!.type.uppercaseString
+        if self.place!.type != nil {
+            self.category.text = self.place!.type.uppercaseString
         }
         
         var addressString: String = ""
-        if place!.address != nil {
-            addressString = place!.addressBlock()
+        if self.place!.address != nil {
+            addressString = self.place!.addressBlock()
         }
         
-        if place!.phone != nil {
+        if self.place!.phone != nil {
             var phoneUtil = NBPhoneNumberUtil.sharedInstance()
             var errorPointer: NSError?
-            var number: NBPhoneNumber = phoneUtil.parse(place!.phone, defaultRegion:"US", error:&errorPointer)
+            var number: NBPhoneNumber = phoneUtil.parse(self.place!.phone, defaultRegion:"US", error:&errorPointer)
             addressString = addressString + "\n" + phoneUtil.format(number, numberFormat: NBEPhoneNumberFormatNATIONAL, error: &errorPointer)
         }
         
-        address.text = addressString
+        self.address.text = addressString
         
         /* Distance */
-        distance.text = "--"
+        self.distance.text = "--"
         if let lastLocation = LocationController.instance.lastLocationFromManager() {
-            if let loc = place!.location {
+            if let loc = self.place!.location {
                 var placeLocation = CLLocation(latitude: loc.latValue, longitude: loc.lngValue)
                 let dist = Float(lastLocation.distanceFromLocation(placeLocation))  // in meters
-                distance.text = LocationController.instance.distancePretty(dist)
+                self.distance.text = LocationController.instance.distancePretty(dist)
             }
         }
         

@@ -6,6 +6,7 @@
         <attribute name="countPending" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="countWatching" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="description_" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="image" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES" syncable="YES"/>
         <attribute name="linkCounts" optional="YES" attributeType="Transformable" syncable="YES">
             <userInfo>
                 <entry key="attributeValueClassName" value="NSDictionary"/>
@@ -20,6 +21,7 @@
         <attribute name="userLikesId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userWatchId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userWatchJustApproved" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="userWatchMuted" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="userWatchStatus" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES">
             <userInfo>
                 <entry key="attributeValueScalarType" value="PAWatchStatus"/>
@@ -38,6 +40,7 @@
         <attribute name="fromId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="fromSchema" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="id_" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="mute" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="toId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="toSchema" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
@@ -102,6 +105,7 @@
     <entity name="Query" representedClassName="Query" syncable="YES">
         <attribute name="criteria" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="executed" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="id_" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="more" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="offset" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
@@ -116,7 +120,6 @@
                 <entry key="attributeValueClassName" value="NSArray"/>
             </userInfo>
         </attribute>
-        <attribute name="valid" optional="YES" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
         <relationship name="queryItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="QueryItem" inverseName="query" inverseEntity="QueryItem" syncable="YES"/>
     </entity>
     <entity name="QueryItem" representedClassName="QueryItem" syncable="YES">
@@ -168,8 +171,8 @@
         <attribute name="role" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Entity" positionX="-99" positionY="-154" width="128" height="345"/>
-        <element name="Link" positionX="-288" positionY="-243" width="128" height="150"/>
+        <element name="Entity" positionX="-99" positionY="-154" width="128" height="375"/>
+        <element name="Link" positionX="-288" positionY="-243" width="128" height="165"/>
         <element name="Location" positionX="-452" positionY="278" width="128" height="150"/>
         <element name="Message" positionX="279" positionY="-36" width="128" height="75"/>
         <element name="Notification" positionX="279" positionY="95" width="128" height="195"/>
@@ -177,7 +180,7 @@
         <element name="Photo" positionX="-693" positionY="90" width="128" height="150"/>
         <element name="Place" positionX="279" positionY="-243" width="128" height="165"/>
         <element name="ProviderMap" positionX="-452" positionY="450" width="128" height="135"/>
-        <element name="Query" positionX="-216" positionY="117" width="128" height="195"/>
+        <element name="Query" positionX="-216" positionY="117" width="128" height="193"/>
         <element name="QueryItem" positionX="-495" positionY="-99" width="128" height="135"/>
         <element name="RichType" positionX="-450" positionY="98" width="128" height="75"/>
         <element name="ServiceBase" positionX="-450" positionY="-243" width="128" height="315"/>

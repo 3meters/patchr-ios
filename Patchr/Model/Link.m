@@ -19,6 +19,7 @@
     link.fromSchema = dictionary[@"fromSchema"];
     link.fromId = dictionary[@"_from"];
     link.enabled = [dictionary[@"enabled"] isKindOfClass:[NSNumber class]] ? dictionary[@"enabled"] : link.enabled;
+    link.mute = [dictionary[@"mute"] isKindOfClass:[NSNumber class]] ? dictionary[@"mute"] : link.mute;
     
     return link;
 }

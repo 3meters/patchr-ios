@@ -31,27 +31,31 @@ struct Shared {
         return browser
     }
     
-    static func Toast(message: String?, duration: NSTimeInterval = 3.0, var controller: UIViewController? = nil) {
+    static func Toast(message: String?, duration: NSTimeInterval = 3.0, var controller: UIViewController? = nil, addToWindow: Bool = true) -> AirProgress {
         
-        if controller == nil {
-            controller = UIViewController.topMostViewController()
+        var targetView: UIView = UIApplication.sharedApplication().windows.last as! UIView
+        
+        if !addToWindow {
+            if controller == nil  {
+                targetView = UIViewController.topMostViewController()!.view
+            }
+            else {
+                targetView = controller!.view
+            }
         }
         
-        if controller != nil {
-            var progress: MBProgressHUD
-            progress = MBProgressHUD.showHUDAddedTo(controller!.view, animated: true)
-            progress.mode = MBProgressHUDMode.Text
-            progress.detailsLabelText = message
-            progress.margin = 20.0
-            progress.yOffset = Float((UIScreen.mainScreen().bounds.size.height / 2) - 200)
-            progress.opacity = 0.7
-            progress.cornerRadius = 24.0
-            progress.detailsLabelColor = Colors.gray95pcntColor
-            progress.detailsLabelFont = UIFont(name:"HelveticaNeue", size: 16)
-            progress.removeFromSuperViewOnHide = true
-            progress.userInteractionEnabled = false
-            progress.hide(true, afterDelay: duration)
-        }
+        var progress: AirProgress
+        progress = AirProgress.showHUDAddedTo(targetView, animated: true)
+        progress.mode = MBProgressHUDMode.Text
+        progress.styleAs(.ToastLight)
+        progress.labelText = message
+        progress.yOffset = Float((UIScreen.mainScreen().bounds.size.height / 2) - 200)
+        progress.shadow = true
+        progress.removeFromSuperViewOnHide = true
+        progress.userInteractionEnabled = false
+        progress.hide(true, afterDelay: duration)
+        
+        return progress
     }
     
     static func setTabBarVisible(visible:Bool, animated:Bool, viewController: UIViewController!) {
@@ -84,7 +88,7 @@ struct Shared {
     
     static func hasConnectivity() -> Bool {
         let reachability: Reachability = Reachability.reachabilityForInternetConnection()
-        let networkStatus: Int = reachability.currentReachabilityStatus().value
+        let networkStatus: Int = reachability.currentReachabilityStatus().rawValue
         return networkStatus != 0
     }
 }

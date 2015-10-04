@@ -161,7 +161,7 @@ extension PatchTableMapViewController: MKMapViewDelegate {
             if let patch = entityAnnotation.entity as? Patch {
                 let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
                 if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
-                    controller.patch = patch
+                    controller.entity = patch
                     self.navigationController?.pushViewController(controller, animated: true)
                 }
             }

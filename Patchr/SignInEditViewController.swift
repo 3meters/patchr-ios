@@ -51,8 +51,9 @@ class SignInEditViewController: UITableViewController, UITextFieldDelegate {
         
         self.passwordField.resignFirstResponder()
 
-		let progress = MBProgressHUD.showHUDAddedTo(self.view.window, animated: true)
+		let progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
 		progress.mode = MBProgressHUDMode.Indeterminate
+        progress.styleAs(.ActivityLight)
         progress.minShowTime = 0.5
 		progress.labelText = "Signing in..."
 		progress.show(true)
@@ -63,8 +64,14 @@ class SignInEditViewController: UITableViewController, UITextFieldDelegate {
             self.processing = false
             
             progress.hide(true)
-            if let error = ServerError(error) {
-                self.handleError(error)
+            if var error = ServerError(error) {
+                if error.code == .UNAUTHORIZED_CREDENTIALS {
+                    error.message = "Wrong email and password combination."
+                    self.handleError(error, errorActionType: .ALERT)
+                }
+                else {
+                    self.handleError(error)
+                }
             }
             else {
                 

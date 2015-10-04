@@ -37,6 +37,7 @@
     }
     
     patch.userWatchStatusValue = PAWatchStatusNonMember;  // Default for convenience property
+    patch.userWatchMutedValue = NO;
     patch.userWatchId = nil;
     patch.userLikesValue = NO;
     patch.userLikesId = nil;
@@ -58,6 +59,9 @@
                     patch.userWatchStatusValue = PAWatchStatusPending;
                     if ([[linkMap objectForKey:@"enabled"]boolValue] == YES) {
                         patch.userWatchStatusValue = PAWatchStatusMember;
+                    }
+                    if ([[linkMap objectForKey:@"mute"]boolValue] == YES) {
+                        patch.userWatchMutedValue = YES;
                     }
                 }
             }

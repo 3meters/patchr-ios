@@ -31,28 +31,54 @@ struct Utils {
     }
     
     static func DateTimeTag() -> String! {
-        
-        let date = NSDate()     // Initialized to current date
+        let date = NSDate()     			// Initialized to current date
         let calendar = NSCalendar.currentCalendar()
         let components = calendar.components(.CalendarUnitYear | .CalendarUnitMonth | .CalendarUnitDay |
-            .CalendarUnitHour | .CalendarUnitMinute | .CalendarUnitSecond, fromDate: date)
-        let dateTimeTag = String(format: "%04d%02d%02d_%02d%02d%02d", components.year, components.month, components.day, components.hour, components.minute, components.second)
+            .CalendarUnitHour | .CalendarUnitMinute | .CalendarUnitSecond | .CalendarUnitNanosecond, fromDate: date)
+        let milliSeconds = components.nanosecond / 1_000_000
+        let dateTimeTag = String(format: "%04d%02d%02d_%02d%02d%02d_%04d", components.year, components.month, components.day, components.hour, components.minute, components.second, milliSeconds)
         return dateTimeTag
     }
-    
-    static func TemporaryFileURLForImage(image: UIImage) -> NSURL? {
+
+	static func genSalt() -> Int {
+		// random number (change the modulus to the length you'd like)
+		return Int(arc4random() % 1000000)
+	}
+
+	static func genImageKey() -> String {
+        /* 20150126_095004_670196.jpg */
+        let imageKey = "\(Utils.DateTimeTag())_\(Utils.genSalt())"
+        return imageKey
+    }
+
+    static func TemporaryFileURLForImage(image: UIImage, name: String, shared: Bool = false) -> NSURL? {
         
-        if let imageData = UIImageJPEGRepresentation(image, /*compressionQuality*/0.70) {
-            /* 
-             * Note: This method of getting a temporary file path is not the recommended method. See the docs for NSTemporaryDirectory. 
-             */
-            let temporaryFilePath = NSTemporaryDirectory() + "patchr_temp_file_\(temporaryFileCount).jpg"
-            Log.d(temporaryFilePath)
-            
-            if imageData.writeToFile(temporaryFilePath, atomically: false) {
-                return NSURL(fileURLWithPath: temporaryFilePath)
+        var imageDirectoryURL: NSURL!
+        
+        if shared {
+            if let containerURL = NSFileManager.defaultManager().containerURLForSecurityApplicationGroupIdentifier("group.com.3meters.patchr.ios") {
+                
+                var containerURLWithName = containerURL.URLByAppendingPathComponent(name)
+                if !NSFileManager.defaultManager().fileExistsAtPath(containerURLWithName.path!) {
+                    NSFileManager.defaultManager().createDirectoryAtPath(containerURL.path!, withIntermediateDirectories: false, attributes: nil, error: nil)
+                }
+                
+                imageDirectoryURL = containerURL
+                imageDirectoryURL = imageDirectoryURL.URLByAppendingPathComponent(name)
+                imageDirectoryURL = imageDirectoryURL.URLByAppendingPathExtension("jpg")
             }
         }
+        else {
+            let temporaryFilePath = NSTemporaryDirectory() + "patchr_temp_file_\(name).jpg"
+            imageDirectoryURL = NSURL(fileURLWithPath: temporaryFilePath)
+        }
+        
+        if let imageData: NSData = UIImageJPEGRepresentation(image, /*compressionQuality*/0.70) {
+            if imageData.writeToFile(imageDirectoryURL.path!, atomically: true) {
+                return imageDirectoryURL
+            }
+        }
+        
         return nil
     }
     
@@ -140,5 +166,12 @@ struct Utils {
             }
         }
         return nearbys
+    }
+    
+    static func delay(delay: Double, closure: () -> ()) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW
+            , Int64(delay * Double(NSEC_PER_SEC)))
+            , dispatch_get_main_queue()
+            , closure)
     }
 }

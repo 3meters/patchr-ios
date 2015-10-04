@@ -79,7 +79,7 @@ class UserController: NSObject {
 
 	func fetchCurrentUser(){
 		DataController.instance.withUserId(self.userId!, refresh: true, completion: {
-			user in
+			user, error in
             self.currentUser = user
             Branch.getInstance().setIdentity(user!.id_)
             Reporting.updateCrashUser(user)

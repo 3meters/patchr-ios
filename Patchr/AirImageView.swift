@@ -14,6 +14,7 @@ class AirImageView: UIImageView {
     var gradient: CAGradientLayer!
     var spot: CAShapeLayer?
     var linkedPhotoUrl: NSURL?
+    var sizeCategory: String = SizeCategory.thumbnail
     var imageOptions = SDWebImageOptions.RetryFailed | SDWebImageOptions.LowPriority | SDWebImageOptions.AvoidAutoSetImage | SDWebImageOptions.ProgressiveDownload
     
     required init(coder aDecoder: NSCoder) {
@@ -77,7 +78,7 @@ class AirImageView: UIImageView {
             return false
         }
         
-        let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, size: nil)
+        let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory, size: nil)
         return (linkedPhotoUrl!.absoluteString! == photoUrl.absoluteString!)
     }
     
@@ -99,7 +100,7 @@ class AirImageView: UIImageView {
             return
         }
         
-        let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, size: nil)
+        let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory, size: nil)
         
         if photoUrl.absoluteString == nil || photoUrl.absoluteString!.isEmpty {
             var error = NSError(domain: "Photo error", code: 0, userInfo: [NSLocalizedDescriptionKey:"Photo has invalid source: \(photo.source!)"])
@@ -191,17 +192,6 @@ class AirImageView: UIImageView {
             self.spot?.hidden = true
         }
         
-        if animate /*|| cacheType == SDImageCacheType.None || cacheType == SDImageCacheType.Disk*/ {
-            UIView.transitionWithView(self,
-                duration: 0.5,
-                options: UIViewAnimationOptions.TransitionCrossDissolve,
-                animations: {
-                    self.image = image
-                },
-                completion: nil)
-        }
-        else {
-            self.image = image
-        }
+        self.image = image
     }
 }

@@ -22,6 +22,7 @@ import CoreLocation
 import Darwin
 import AVFoundation
 import Parse
+import UIKit
 
 /*
  * Access control is set to public because that is the only way that
@@ -30,7 +31,6 @@ import Parse
 public class Proxibase {
     
 	public typealias ProxibaseCompletionBlock = (response:AnyObject?, error:NSError?) -> Void
-	public typealias S3UploadCompletionBlock = (/*result*/AnyObject?, NSError?) -> Void
 
 	public let StagingURI    = "https://api.aircandi.com:8443/v1/"
 	public let ProductionURI = "https://api.aircandi.com/v1/"
@@ -38,11 +38,7 @@ public class Proxibase {
 	let pageSizeDefault:       Int = 20
 	let pageSizeNearby:        Int = 50
 	let pageSizeExplore:       Int = 20
-	let pageSizeNotifications: Int = 20
-
-	let bucketInfo: [S3Bucket:(name:String, source:String)] = [
-			.Users: ("aircandi-users", "aircandi.users"),
-			.Images: ("aircandi-images", "aircandi.images")]
+	let pageSizeNotifications: Int = 50
 
 	private let sessionManager: AFHTTPSessionManager
 
@@ -347,7 +343,7 @@ public class Proxibase {
 	public func updatePassword(userId: NSString, password: NSString, passwordNew: NSString, completion: ProxibaseCompletionBlock) {
 		let parameters
 		= ["userId": userId, "oldPassword": password, "newPassword": passwordNew, "installId": installationIdentifier]
-		sessionManager.POST("user/changepw", parameters: authenticatedParameters(parameters),
+		sessionManager.POST("user/changepw", parameters: addSessionParameters(parameters),
 							success: {
 								dataTask, response in
 								completion(response: response, error: nil)
@@ -385,85 +381,21 @@ public class Proxibase {
 							})
 	}
 
-	public func insertUser(name: String, email: String, password: String, parameters: NSDictionary? = nil, completion: ProxibaseCompletionBlock) {
-		/*
-		 * Create a new user with the provided name, email and password.
-		 * • Additional information (like profile photo) may optionally be sent in the parameters dictionary
-		 */
-		let createParameters = [
-				"data": ["name": name,
-						 "email": email,
-						 "password": password
-				],
-				"secret": "larissa",
-				"installId": installationIdentifier
-		]
-
-		performPOSTRequestFor("user/create", parameters: createParameters) {
-			response, error in
-
-			let queue = dispatch_queue_create("user-create-queue", DISPATCH_QUEUE_SERIAL)
-			if error == nil {
-				/*
-				 * After creating a user, the user is left in a logged-in state, so process the response
-				 * to extract the credentials.
-				 */
-				UserController.instance.handleSuccessfulSignInResponse(response!)
-
-				/*
-				 * If there were other parameters sent in the create request, then perform an update to get
-				 * them onto the server
-				 */
-				if parameters != nil && parameters!.count > 0 {
-					let semaphore = dispatch_semaphore_create(0)
-					dispatch_async(queue)
-					{
-						self.updateUser(parameters!) {
-							updateResponse, updateError in
-
-							if let error = updateError {
-								/* 
-                                 * If the update fails, then the user-creation still succeeded.
-								 * Log the second error, but don't take any action.
-                                 */
-								Log.w("** Error during update after user creation")
-								Log.w(updateError)
-							}
-							dispatch_semaphore_signal(semaphore)
-						}
-					}
-
-					dispatch_async(queue)
-					{
-						let s = semaphore // bogus
-						dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
-					}
-				}
-			}
-			/*
-			 * Invoke the caller's completion routine _after_ the update (if any) finishes. Pass the result of
-			 * the create operation.
-			 */
-			dispatch_async(queue) {
-				completion(response: response, error: error)
-			}
-		}
-	}
-
-    public func getObject(path: String, completion: ProxibaseCompletionBlock) {
+    public func getEntity(path: String, completion: ProxibaseCompletionBlock) {
         performGETRequestFor(path, parameters: NSDictionary(), completion: completion)
     }
     
-	public func insertObject(path: String, parameters: NSDictionary, completion: ProxibaseCompletionBlock) {
-        /* Only called from entity edit */
-        postObject(path, parameters: parameters, addLocation: true, completion: completion)
-	}
-
-	public func updateObject(path: String, parameters: NSDictionary, completion: ProxibaseCompletionBlock) {
-        /* Only called from entity edit */
-        postObject(path, parameters: parameters, addLocation: false, completion: completion)
-	}
-
+    public func postEntity(path: String, parameters: NSDictionary, addLocation: Bool = true, completion: ProxibaseCompletionBlock) -> NSURLSessionTask {
+        
+        var parametersCopy = parameters.mutableCopy() as! NSMutableDictionary
+        convertLocationProperties(parametersCopy)
+        if parametersCopy["data"] == nil {
+            parametersCopy = ["data": parametersCopy]
+        }
+        let request: NSURLSessionTask = self.performPOSTRequestFor(path, parameters: parametersCopy, addLocation: addLocation, completion: completion)
+        return request
+    }
+    
     public func deleteObject(path: String, completion: ProxibaseCompletionBlock) {
 		performDELETERequestFor(path, parameters: NSDictionary(), completion: completion)
 	}
@@ -488,6 +420,11 @@ public class Proxibase {
 		performPOSTRequestFor("data/links/\(linkId)", parameters: parameters, completion: completion)
 	}
 
+    public func muteLinkById(linkId: String, muted: Bool, completion: ProxibaseCompletionBlock) {
+        let parameters = ["data": ["mute": muted]]
+        performPOSTRequestFor("data/links/\(linkId)", parameters: parameters, completion: completion)
+    }
+    
 	public func deleteLinkById(linkID: String, completion: ProxibaseCompletionBlock? = nil) {
 		let linkPath = "data/links/\(linkID)"
 		performDELETERequestFor(linkPath, parameters: NSDictionary()) {
@@ -523,36 +460,6 @@ public class Proxibase {
 		let deviceVersionName = UIDevice.currentDevice().systemVersion
 
 		registerInstall(installId, parseInstallId: parseInstallId, clientVersionName: clientVersionName, clientVersionCode: clientVersionCode, clientPackageName: clientPackageName, deviceName: deviceName, deviceType: deviceType, deviceVersionName: deviceVersionName, completion: completion)
-	}
-
-	private func updateUser(userInfo: NSDictionary, completion: ProxibaseCompletionBlock) {
-		/*
-		* Update the currently signed-in user's information. Only provide fields that you want to change.
-		*
-		* There is special processing performed for the "photo" key, which may contain a UIImage on input.
-		* If this is the case, then the image is uploaded to the users bucket on S3 and then, when that upload
-		* is completed, the user record is updated with the photo field.
-		*/
-		assert(UserController.instance.authenticated, "Editing requites an authenticated user")
-		if let userId = UserController.instance.userId {
-			/*
-			* The queue and semaphore are used to synchronize the (optional) upload to S3 with the
-			* update of the record on the server. The S3 upload, if present, must complete first before
-			* the database update.
-			*/
-			if let mutableUserInfo = userInfo.mutableCopy() as? NSMutableDictionary {
-				let queue = dispatch_queue_create("update-user-queue", DISPATCH_QUEUE_SERIAL)
-				queuePhotoUploadInParameters(mutableUserInfo, queue: queue, bucket: .Users)
-
-				dispatch_async(queue) {
-					let parameters = ["data": mutableUserInfo]
-					self.performPOSTRequestFor("data/users/\(userId)", parameters: parameters) {
-						response, error in
-						completion(response: response, error: error)
-					}
-				}
-			}
-		}
 	}
 
 	/*--------------------------------------------------------------------------------------------
@@ -625,7 +532,7 @@ public class Proxibase {
         performPOSTRequestFor("do/updateProximity", parameters: parameters, completion: completion)
     }
 
-	private func authenticatedParameters(var parameters: NSDictionary) -> NSDictionary {
+	private func addSessionParameters(var parameters: NSDictionary) -> NSDictionary {
 		/* Skip if already includes a sessionKey */
 		if parameters["session"] == nil {
 			if UserController.instance.authenticated {
@@ -642,36 +549,10 @@ public class Proxibase {
 	/*--------------------------------------------------------------------------------------------
 	 * Rest
 	 *--------------------------------------------------------------------------------------------*/
-
-	private func postObject(path: String, parameters: NSDictionary, addLocation: Bool, completion: ProxibaseCompletionBlock) {
-		/*
-		* path can be a collection name (i.e. "data/patches", "data/messages") to create a new object.
-		* path can also be an object path (i.e. "data/patches/pa.xyz" to update an existing object.
-		*/
-		let properties = parameters.mutableCopy() as! NSMutableDictionary
-		let queue      = dispatch_queue_create("post-object-queue", DISPATCH_QUEUE_SERIAL)
-
-		convertLocationProperties(properties)
-
-		/* I believe this blocks until completed */
-		queuePhotoUploadInParameters(properties, queue: queue, bucket: .Images)
-
-		dispatch_async(queue) {
-			/*
-			 * If photo parameter is still set to UIImage then s3 upload failed
-			 */
-			if let photo = properties["photo"] as? UIImage {
-				completion(response: nil, error: NSError(domain: "Aws", code: 100, userInfo: ["message": "Image save failed"]))
-				return
-			}
-			let postParameters = ["data": properties]
-            self.performPOSTRequestFor(path, parameters: postParameters, addLocation: addLocation, completion: completion)
-		}
-	}
-
-	private func performPOSTRequestFor(path: NSString, var parameters: NSDictionary, addLocation: Bool = false, completion: ProxibaseCompletionBlock) {
+    
+	private func performPOSTRequestFor(path: NSString, var parameters: NSDictionary, addLocation: Bool = false, completion: ProxibaseCompletionBlock) -> NSURLSessionTask {
         
-        parameters = authenticatedParameters(parameters)
+        parameters = addSessionParameters(parameters)
         
         if addLocation {
             if let location = LocationController.instance.lastLocationAccepted() {
@@ -687,8 +568,8 @@ public class Proxibase {
                 parameters.setValue(locDict, forKey: "location")
             }
         }
-        
-		sessionManager.POST(path as String, parameters: parameters,
+
+        let request: NSURLSessionTask = sessionManager.POST(path as String, parameters: parameters,
 							success: {
 								dataTask, response in
 								completion(response: response, error: nil)
@@ -698,10 +579,11 @@ public class Proxibase {
 								let response = dataTask.response as? NSHTTPURLResponse
 								completion(response: ServerError(error)?.response, error: error)
 							})
+        return request
 	}
 
 	private func performGETRequestFor(path: NSString, var parameters: NSDictionary, completion: ProxibaseCompletionBlock) {
-		sessionManager.GET(path as String, parameters: authenticatedParameters(parameters),
+		sessionManager.GET(path as String, parameters: addSessionParameters(parameters),
 						   success: {
 							   dataTask, response in
 							   completion(response: response, error: nil)
@@ -714,7 +596,7 @@ public class Proxibase {
 	}
 
 	private func performDELETERequestFor(path: NSString, var parameters: NSDictionary, completion: ProxibaseCompletionBlock) {
-		sessionManager.DELETE(path as String, parameters: authenticatedParameters(parameters),
+		sessionManager.DELETE(path as String, parameters: addSessionParameters(parameters),
 							  success: {
 								  dataTask, response in
 								  completion(response: response, error: nil)
@@ -776,110 +658,7 @@ public class Proxibase {
 				LinkSpec(to: .Patches, type: .Watch, count: true), // Count of patches the user is watching
 		]
 	}
-
-	/*--------------------------------------------------------------------------------------------
-	 * S3
-	 *--------------------------------------------------------------------------------------------*/
-
-	private func queuePhotoUploadInParameters(parameters: NSMutableDictionary, queue: dispatch_queue_t, bucket: S3Bucket) {
-
-		assert(UserController.instance.authenticated, "ProxibaseClient must be authenticated prior to editing the user")
-
-		if let userId = UserController.instance.userId {
-			if let photo = parameters["photo"] as? UIImage {
-				let semaphore = dispatch_semaphore_create(0)
-
-				var image = photo
-                
-                /* Ensure image is resized before upload */
-                image = Utils.prepareImage(image)
-
-				let profilePhotoKey = "\(userId)_\(Utils.DateTimeTag()).jpg"
-
-				let photoDict = [
-						"width": Int(image.size.width), // width/height are in points...should be pixels?
-						"height": Int(image.size.height),
-						"source": bucketInfo[bucket]!.source,
-						"prefix": profilePhotoKey]
-
-				dispatch_async(queue) {
-					self.uploadImageToS3(image, bucket: self.bucketInfo[bucket]!.name, key: profilePhotoKey) {
-						result, error in
-
-						if error == nil {
-							parameters["photo"] = photoDict
-						}
-						dispatch_semaphore_signal(semaphore)
-					}
-				}
-
-				dispatch_async(queue) {
-					let sem = semaphore // bogus! Avoids an invalid compiler error in Swift 1.1
-					dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER)
-				}
-			}
-		}
-	}
-
-	private func uploadImageToS3(image: UIImage, bucket: String, key: String, completion: S3UploadCompletionBlock) {
-		if let imageURL = Utils.TemporaryFileURLForImage(image) {
-			uploadFileToS3(imageURL, contentType: "image/jpeg", bucket: bucket, key: key) {
-				result, error in
-				completion(result, error)
-
-				NSFileManager.defaultManager().removeItemAtURL(imageURL, error: nil)
-			}
-		}
-	}
-
-	private func uploadFileToS3(fileURL: NSURL, contentType: String, bucket: String, key: String, completion: S3UploadCompletionBlock) {
-		/*
-		* Uploads a file from the local file URL to the specified bucket in the 3meters S3 storage space. The file is stored with
-		* the provided key.
-		*
-		* The upload occurs asynchronously and when completed, the completion block will be called with a result and error arguments.
-		* A successful result includes information like the following in the result argument of the S3UploadCompletionBlock
-		*
-		* Optional(<AWSS3TransferManagerUploadOutput: 0x7fc580c79b90> {
-		*     ETag = "\"6f2a09d19a6ae845d5916de4543984e5\"";
-		*     serverSideEncryption = 0;
-		*     versionId = 8JYaCWNaozIQIhF2pR1xYFy6W8hhbFPP;
-		* })
-		*      {
-		*          key: 'AKIAIYU2FPHC2AOUG3CA',
-		*          secret: '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',
-		*          region: 'us-west-2',
-		*          bucket: 'aircandi-images',
-		*      }
-		* TODO: switch to iam credentials
-		*
-		* TODO: store in aws cognito or some remote storage that is loaded on app launch
-		* NOTE: I can't get Swift to recognize the enum values for AWSRegionTypes and AWSS3ObjectCannedACLs, so I have used
-		* rawValue: initializers here.
-		*/
-        let keys = PatchrKeys()
-		let credProvider  = AWSStaticCredentialsProvider(accessKey: keys.awsS3Key(), secretKey: keys.awsS3Secret())
-		let serviceConfig = AWSServiceConfiguration(region: AWSRegionType(rawValue: 3/*'us-west-2'*/)!, credentialsProvider: credProvider)
-		let uploadRequest = AWSS3TransferManagerUploadRequest()
-
-		uploadRequest.bucket = bucket
-		uploadRequest.key = key
-		uploadRequest.body = fileURL
-		uploadRequest.ACL = AWSS3ObjectCannedACL(rawValue: 2/*AWSS3ObjectCannedACLPublicRead*/)!
-		uploadRequest.contentType = contentType
-
-		AWSS3TransferManager.registerS3TransferManagerWithConfiguration(serviceConfig, forKey: "AWS-Patchr")
-
-		let transferManager = AWSS3TransferManager.S3TransferManagerForKey("AWS-Patchr")
-		let task            = transferManager.upload(uploadRequest)
-
-		task.continueWithExecutor(AWSExecutor.mainThreadExecutor(), withBlock: {
-			(task) -> AnyObject! in
-			completion(task.result, task.error)
-			return nil // return nil to indicate the task is complete
-		})
-	}
-
+    
 	/*--------------------------------------------------------------------------------------------
 	 * Helpers
 	 *--------------------------------------------------------------------------------------------*/
@@ -1123,11 +902,6 @@ public class LinkSpec {
 	}
 }
 
-enum S3Bucket {
-	case Users
-	case Images
-}
-
 public enum LinkDestination: String {
 	case Beacons  = "beacons"
 	case Places   = "places"
@@ -1160,8 +934,8 @@ enum ServerStatusCode: Float {
 	case BAD_APPLINK          = 400.5
 
 	case UNAUTHORIZED                 = 401.0
-	case UNAUTHORIZED_CREDENTIALS     = 401.1
-	case UNAUTHORIZED_SESSION_EXPIRED = 401.2
+    case UNAUTHORIZED_CREDENTIALS     = 401.1   // Either email or password are incorrect
+    case UNAUTHORIZED_SESSION_EXPIRED = 401.2   // Provided session id is not longer good
 	case UNAUTHORIZED_NOT_HUMAN       = 401.3
 	case UNAUTHORIZED_EMAIL_NOT_FOUND = 401.4
 

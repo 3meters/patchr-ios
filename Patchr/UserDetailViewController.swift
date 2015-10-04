@@ -8,13 +8,8 @@
 
 import UIKit
 
-class UserDetailViewController: QueryTableViewController {
+class UserDetailViewController: BaseDetailViewController {
 
-	var user:  User! = nil
-    var userId: String?
-
-	private var messageDateFormatter: NSDateFormatter!
-	private var offscreenCells:       NSMutableDictionary = NSMutableDictionary()
 	private var isCurrentUser                             = false
     private var isGuest                                   = false
 
@@ -22,33 +17,10 @@ class UserDetailViewController: QueryTableViewController {
 
 	@IBOutlet weak var userName:       UILabel!
 	@IBOutlet weak var userEmail:      UILabel!
-	@IBOutlet weak var userPhoto:      AirImageButton!
+	@IBOutlet weak var userPhoto:      AirImageView!
 	@IBOutlet weak var watchingButton: UIButton!
 	@IBOutlet weak var ownsButton:     UIButton!
     @IBOutlet weak var likesButton:    UIButton!
-
-	private var _query: Query!
-
-	override func query() -> Query {
-		if self._query == nil {
-			let query = Query.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Query
-			query.name = DataStoreQueryName.MessagesByUser.rawValue
-            query.pageSize = DataController.proxibase.pageSizeDefault            
-            query.validValue = (user != nil || userId != nil)
-            if query.validValue {
-                query.parameters = [:]
-                if user != nil {
-                    query.parameters["entity"] = user
-                }
-                if userId != nil {
-                    query.parameters["entityId"] = userId
-                }
-            }
-			DataController.instance.managedObjectContext.save(nil)
-			self._query = query
-		}
-		return self._query
-	}
 
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
@@ -56,28 +28,20 @@ class UserDetailViewController: QueryTableViewController {
 
 	override func viewDidLoad() {
         
-        isCurrentUser = (self.user == nil && self.userId == nil)
-        isGuest = !UserController.instance.authenticated
+        self.isCurrentUser = (self.entity == nil && self.entityId == nil)
+        self.isGuest = !UserController.instance.authenticated
         
-        if !isGuest && isCurrentUser {
-            self.user = UserController.instance.currentUser
+        if !self.isGuest && self.isCurrentUser {
+            self.entity = UserController.instance.currentUser
         }
         
-        if user != nil {
-            userId = user.id_
-        }
-        
-        self.contentViewName = "MessageView"
-        super.showEmptyLabel = false
+        self.queryName = DataStoreQueryName.MessagesByUser.rawValue
         
 		super.viewDidLoad()
 
-        /* UI prep */
-        tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
         /* Clear any old content */
-        userName.text?.removeAll(keepCapacity: false)
-        userEmail.text?.removeAll(keepCapacity: false)
-        userPhoto.imageView?.image = nil        
+        self.userName.text?.removeAll(keepCapacity: false)
+        self.userEmail.text?.removeAll(keepCapacity: false)
         
         if isCurrentUser && isGuest {
             var signinButton = UIBarButtonItem(title: "Sign in", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSignin"))
@@ -103,76 +67,56 @@ class UserDetailViewController: QueryTableViewController {
         /* Triggers query processing by results controller */
 		super.viewWillAppear(animated)
         setScreenName("UserDetail")
-        
-        if user != nil || isGuest {
+        if self.entity != nil || self.isGuest {
             draw()
         }
 	}
     
     override func viewDidAppear(animated: Bool){
         super.viewDidAppear(animated)
-        refresh(force: true)
+        bind(force: true)
     }
-
-	private func refresh(force: Bool = false) {
-
-		/* Refreshes the top object but not the message list */
-        if !isGuest {
-            DataController.instance.withUserId(userId!, refresh: force) {
-                user in
-                self.refreshControl?.endRefreshing()
-                if user != nil {
-                    self.user = user
-                    self.draw()
-                }
-            }
-        }
-	}
 
 	/*--------------------------------------------------------------------------------------------
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
 
     @IBAction func actionBrowseFavorites(sender: UIButton) {
-        if !isGuest {
+        if !self.isGuest {
             let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
             if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableViewController") as? PatchTableViewController {
                 controller.filter = .Favorite
-                controller.user = self.user
+                controller.user = self.entity as! User
                 self.navigationController?.pushViewController(controller, animated: true)
             }
         }
     }
     
 	@IBAction func actionBrowseWatching(sender: UIButton) {
-        if !isGuest {
+        if !self.isGuest {
             let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
             if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableViewController") as? PatchTableViewController {
                 controller.filter = .Watching
-                controller.user = self.user
+                controller.user = self.entity as! User
                 self.navigationController?.pushViewController(controller, animated: true)
             }
         }
 	}
 
 	@IBAction func actionBrowseOwned(sender: UIButton) {
-        if !isGuest {
+        if !self.isGuest {
             let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
             if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableViewController") as? PatchTableViewController {
                 controller.filter = .Owns
-                controller.user = self.user
+                controller.user = self.entity as! User
                 self.navigationController?.pushViewController(controller, animated: true)
             }
         }
 	}
 
-	@IBAction func actionUserPhoto(sender: AnyObject) {
-        Shared.showPhotoBrowser(userPhoto.imageForState(.Normal), view: sender as! UIView, viewController: self, entity: nil)
-	}
-
     @IBAction func unwindFromUserEdit(segue: UIStoryboardSegue) {
         // Refresh results when unwinding from User edit/create screen to pickup any changes.
-        self.refresh()
+        self.bind(force: false)
     }
     
 	func actionSignout() {
@@ -206,7 +150,7 @@ class UserDetailViewController: QueryTableViewController {
         /* Has its own nav because we segue modally and it needs its own stack */
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
         if let controller = storyboard.instantiateViewControllerWithIdentifier("UserEditViewController") as? UserEditViewController {
-            controller.entity = self.user
+            controller.entity = self.entity
             var navController = UINavigationController()
             navController.navigationBar.tintColor = Colors.brandColorDark
             navController.viewControllers = [controller]
@@ -225,110 +169,50 @@ class UserDetailViewController: QueryTableViewController {
 	 * Methods
 	 *--------------------------------------------------------------------------------------------*/
 
-	private func draw() {
+    override func bind(force: Bool = false) {
+        if !self.isGuest {
+            super.bind(force: force)
+        }
+    }
+    
+	override func draw() {
         
-        if isGuest {
-            userName.text = "Guest"
-            userEmail.text = "discover@3meters.com"
-            userPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
-            userPhoto.setImage(UIImage(named: "imgDefaultUser"), forState: .Normal)
-            watchingButton.setTitle("Watching: --", forState: .Normal)
-            ownsButton.setTitle("Owner: --", forState: .Normal)
-            likesButton.setTitle("Favorites: --", forState: .Normal)
+        if self.isGuest {
+            self.userName.text = "Guest"
+            self.userEmail.text = "discover@3meters.com"
+            self.userPhoto.image = UIImage(named: "imgDefaultUser")
+            self.watchingButton.setTitle("Watching: --", forState: .Normal)
+            self.ownsButton.setTitle("Owner: --", forState: .Normal)
+            self.likesButton.setTitle("Favorites: --", forState: .Normal)
         }
         else {
-            userName.text = user!.name
-            userEmail.text = user!.email
-            userPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
-            userPhoto.setImageWithPhoto(user!.getPhotoManaged(), animate: userPhoto.imageView?.image == nil)
-            
-            if user!.patchesWatching != nil {
-                let count = user!.patchesWatchingValue == 0 ? "--" : String(user!.patchesWatchingValue)
-                watchingButton.setTitle("Watching: \(count)", forState: .Normal)
-            }
-            if user!.patchesOwned != nil {
-                let count = user!.patchesOwnedValue == 0 ? "--" : String(user!.patchesOwnedValue)
-                ownsButton.setTitle("Owner: \(count)", forState: .Normal)
-            }
-            if user!.patchesLikes != nil {
-                let count = user!.patchesLikesValue == 0 ? "--" : String(user!.patchesLikesValue)
-                likesButton.setTitle("Favorites: \(count)", forState: .Normal)
+            if let entity = self.entity as? User {
+                self.userName.text = entity.name
+                self.userEmail.text = entity.email
+                self.userPhoto.setImageWithPhoto(entity.getPhotoManaged(), animate: false)
+                
+                if entity.patchesWatching != nil {
+                    let count = entity.patchesWatchingValue == 0 ? "--" : String(entity.patchesWatchingValue)
+                    self.watchingButton.setTitle("Watching: \(count)", forState: .Normal)
+                }
+                if entity.patchesOwned != nil {
+                    let count = entity.patchesOwnedValue == 0 ? "--" : String(entity.patchesOwnedValue)
+                    self.ownsButton.setTitle("Owner: \(count)", forState: .Normal)
+                }
+                if entity.patchesLikes != nil {
+                    let count = entity.patchesLikesValue == 0 ? "--" : String(entity.patchesLikesValue)
+                    self.likesButton.setTitle("Favorites: \(count)", forState: .Normal)
+                }
             }
         }
 	}
     
-    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?) {
-        
-        let view = cell.contentView.viewWithTag(1) as! MessageView
-        Message.bindView(view, object: object, tableView: tableView, sizingOnly: false)
-        if let label = view.description_ as? TTTAttributedLabel {
-            label.delegate = self
-        }
-        view.delegate = self
-    }
-    
 	override func pullToRefreshAction(sender: AnyObject?) -> Void {
-        if !isGuest {
-            self.refresh(force: true)
-            self.refreshQueryItems(force: true)
+        if !self.isGuest {
+            super.pullToRefreshAction(sender)
         }
         else {
             self.refreshControl?.endRefreshing()
         }
 	}
 }
-
-extension  UserDetailViewController: UITableViewDelegate {
-
-	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        
-        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-        if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
-            let entity = queryResult.object as? Message,
-            let controller = storyboard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
-                controller.message = entity
-                self.navigationController?.pushViewController(controller, animated: true)
-        }
-	}
-
-	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-
-		// https://github.com/smileyborg/TableViewCellWithAutoLayout
-
-		var cell = self.offscreenCells.objectForKey(CELL_IDENTIFIER) as? UITableViewCell
-
-        if cell == nil {
-            cell = buildCell(self.contentViewName!)
-            configureCell(cell!)
-            self.offscreenCells.setObject(cell!, forKey: CELL_IDENTIFIER)
-        }
-
-        /* Bind view to data for this row */
-        let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as! QueryItem
-        let view = Message.bindView(cell!.contentView.viewWithTag(1)!, object: queryResult.object, tableView: tableView, sizingOnly: true) as! MessageView
-
-        /* Get the actual height required for the cell */
-		var height = cell!.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
-
-		return height
-	}
-}
-
-extension UserDetailViewController: ViewDelegate {
-    
-    func view(container: UIView, didTapOnView view: UIView) {
-        if let view = view as? AirImageView, container = container as? MessageView {
-            if view.image != nil {
-                Shared.showPhotoBrowser(view.image, view: view, viewController: self, entity: container.entity)
-            }
-        }
-    }
-}
-
-extension UserDetailViewController: TTTAttributedLabelDelegate {
-    
-    func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
-        UIApplication.sharedApplication().openURL(url)
-    }
-}
-

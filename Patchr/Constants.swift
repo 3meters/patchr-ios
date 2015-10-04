@@ -25,9 +25,10 @@ let TIMEOUT_REQUEST: Int    = 10   // Seconds
 
 let IMAGE_DIMENSION_MAX: CGFloat = 1280
 
-let URI_PROXIBASE_SEARCH_IMAGES: String     = "https://api.datamarket.azure.com/Bing/Search/v1"
-let NAMESPACE: String                       = "com.3meters.patchr.ios."
-let CELL_IDENTIFIER                         = "cell"
+let URI_PROXIBASE_SEARCH_IMAGES: String = "https://api.datamarket.azure.com/Bing/Search/v1"
+let NAMESPACE: String                   = "com.3meters.patchr.ios."
+let CELL_IDENTIFIER                     = "cell"
+let COGNITO_POOLID                      = "us-east-1:ff1976dc-9c27-4046-a59f-7dd43355869b"
 
 func PatchrUserDefaultKey(subKey: String) -> String {
     return NAMESPACE + subKey
@@ -68,8 +69,6 @@ public struct Schema {
 */
 public struct PhotoSource {
     static let aircandi_images  = "aircandi.images"
-    static let aircandi_users   = "aircandi.users"
-    static let aircandi         = "aircandi"
     static let foursquare       = "foursquare"
     static let gravatar         = "gravatar"
     static let google           = "google"
@@ -77,3 +76,10 @@ public struct PhotoSource {
     static let bing             = "bing"
     static let generic          = "generic"
 }
+
+public struct SizeCategory {
+    static let profile          = "profile"
+    static let thumbnail        = "thumbnail"
+    static let standard         = "standard"
+}
+

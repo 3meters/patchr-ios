@@ -205,7 +205,7 @@ extension PhotoChooserUI: UIActionSheetDelegate {
 		if buttonIndex != actionSheet.cancelButtonIndex {
 			// There are some strange visual artifacts with the share sheet and the presented
 			// view controllers. Adding a small delay seems to prevent them.
-			delay(0.4, {
+            Utils.delay(0.4, closure: {
 				() -> () in
 				switch self.photoButtonFunctionMap[buttonIndex]! {
 					case .TakePhoto:

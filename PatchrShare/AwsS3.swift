@@ -10,7 +10,12 @@ import Foundation
 
 public class S3: NSObject {
     
-    private let bucket = "aircandi-images"
+    public typealias S3UploadCompletionBlock = (AWSTask) -> Void
+    
+    let poolId = "us-east-1:ff1976dc-9c27-4046-a59f-7dd43355869b"
+    let imageBucket = "aircandi-images"
+    let imageSource = "aircandi.images"
+    
     private var uploads: [NSURLSessionTask: UploadInfo] = [:]
     
     // Swift doesn't support static properties yet, so have to use structs to achieve the same thing.
@@ -31,6 +36,7 @@ public class S3: NSObject {
         
         // Note: There are probably safer ways to store the AWS credentials.
         let keys = PatchrKeys()
+        
         let credentialsProvider = AWSStaticCredentialsProvider(accessKey: keys.awsS3Key(), secretKey: keys.awsS3Secret())
         let configuration = AWSServiceConfiguration(region: AWSRegionType(rawValue: 3/*'us-west-2'*/)!, credentialsProvider: credentialsProvider)
         AWSServiceManager.defaultServiceManager().defaultServiceConfiguration = configuration
@@ -51,15 +57,47 @@ public class S3: NSObject {
         }
     }
     
-    func uploadImage(var image: UIImage, key: String) {
+    func uploadImageToS3(image: UIImage, imageKey: String, completion: S3UploadCompletionBlock) -> AWSS3TransferManagerUploadRequest? {
+        /*
+        * It is expected that this will be called on a background thread.
+        */
+        
+        /* Store imagae to file as NSData */
+        if let imageURL = Utils.TemporaryFileURLForImage(image, name: NSUUID().UUIDString) {
+            
+            /* Construct request */
+            let uploadRequest = S3.sharedService.buildUploadRequest(imageURL, contentType: "image/jpeg", bucket: self.imageBucket, key: imageKey)
+            
+            /* Upload */
+            AWSS3TransferManager.defaultS3TransferManager().upload(uploadRequest).continueWithBlock {
+                task -> AnyObject! in
+                
+                if let error = task.error {
+                    Log.w("S3 image upload failed: [\(error)]")
+                }
+                if let exception = task.exception {
+                    Log.w("S3 image upload failed: [\(exception)]")
+                }
+                
+                NSFileManager.defaultManager().removeItemAtURL(imageURL, error: nil)
+                completion(task)
+                return nil
+            }
+            
+            return uploadRequest
+        }
+        return nil
+    }
+    
+    func uploadImage(var image: UIImage, key: String, bucket: String, shared: Bool = false) {
         Log.d("Posting image to s3...")
         image = Utils.prepareImage(image)   // resizing
         /*
-         * We need to stash the image as a file in the shared container.
+         * We need to stash the image as a file in the shared container in NSData format.
          */
         let uuid = NSUUID().UUIDString
-        if let imageURL = tempContainerUrl(image, name:uuid) {
-            uploadTaskToS3(imageURL, contentType: "image/jpeg", bucket: self.bucket, key: key)
+        if let imageURL = Utils.TemporaryFileURLForImage(image, name: uuid, shared: shared) {
+            uploadTaskToS3(imageURL, contentType: "image/jpeg", bucket: imageBucket, key: key)
         }
     }
     
@@ -99,7 +137,7 @@ public class S3: NSObject {
             let uploadTask = Static.session?.uploadTaskWithRequest(request, fromFile: fileUrl)
             
             /* Tracking */
-            var uploadInfo = UploadInfo(key: key, fileUrl: fileUrl)
+            var uploadInfo = UploadInfo(key: key, bucket: bucket, fileUrl: fileUrl)
             self.uploads[uploadTask!] = uploadInfo
             
             // Start the upload task:
@@ -109,36 +147,28 @@ public class S3: NSObject {
         }
     }
     
-    func tempContainerUrl(image: UIImage, name: String) -> NSURL? {
+    func buildUploadRequest(fileURL: NSURL, contentType: String, bucket: String, key: String) -> AWSS3TransferManagerUploadRequest {
+        let uploadRequest = AWSS3TransferManagerUploadRequest()
         
-        if let containerURL = NSFileManager.defaultManager().containerURLForSecurityApplicationGroupIdentifier("group.com.3meters.patchr.ios") {
-            
-            var contairURLWithName = containerURL.URLByAppendingPathComponent(name)
-            if !NSFileManager.defaultManager().fileExistsAtPath(contairURLWithName.path!) {
-                NSFileManager.defaultManager().createDirectoryAtPath(containerURL.path!, withIntermediateDirectories: false, attributes: nil, error: nil)
-            }
-            
-            var imageDirectoryURL = containerURL
-            imageDirectoryURL = imageDirectoryURL.URLByAppendingPathComponent(name)
-            imageDirectoryURL = imageDirectoryURL.URLByAppendingPathExtension("jpg")
-            
-            if let imageData = UIImageJPEGRepresentation(image, /*compressionQuality*/0.70) {
-                if imageData.writeToFile(imageDirectoryURL.path!, atomically: true) {
-                    return imageDirectoryURL
-                }
-            }
-        }
-        return nil
+        uploadRequest.bucket = bucket
+        uploadRequest.key = key
+        uploadRequest.body = fileURL
+        uploadRequest.ACL = AWSS3ObjectCannedACL(rawValue: 2/*AWSS3ObjectCannedACLPublicRead*/)!
+        uploadRequest.contentType = contentType
+        
+        return uploadRequest
     }
+}
+
+class UploadInfo {
+    var key: String
+    var fileUrl: NSURL
+    var bucket: String
     
-    class UploadInfo {
-        var key: String
-        var fileUrl: NSURL
-        
-        init(key: String, fileUrl: NSURL) {
-            self.key = key
-            self.fileUrl = fileUrl
-        }
+    init(key: String, bucket: String, fileUrl: NSURL) {
+        self.key = key
+        self.fileUrl = fileUrl
+        self.bucket = bucket
     }
 }
 
@@ -170,7 +200,7 @@ extension S3 : NSURLSessionDelegate {
                 
                 /* AWS signed requests do not support ACL yet so it has to be set in a separate call. */
                 let aclRequest = AWSS3PutObjectAclRequest()
-                aclRequest.bucket = self.bucket
+                aclRequest.bucket = uploadInfo.bucket
                 aclRequest.key = uploadInfo.key
                 aclRequest.ACL = AWSS3ObjectCannedACL.PublicRead
                 

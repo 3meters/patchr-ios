@@ -10,18 +10,46 @@ import UIKit
 
 class MainTabBarController: UITabBarController {
     
+    var messageBar: UILabel!
+    
+    /*--------------------------------------------------------------------------------------------
+    * Lifecycle
+    *--------------------------------------------------------------------------------------------*/
+        
     override func awakeFromNib() {
         super.awakeFromNib()
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationWillEnterForeground",
             name: Event.ApplicationWillEnterForeground.rawValue, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground",
             name: Event.ApplicationDidEnterBackground.rawValue, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "reachabilityChanged:",
+            name: kReachabilityChangedNotification, object: nil)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-		delegate = self        
+		delegate = self
+        
+        /* Message bar */
+        self.messageBar = UILabel(frame: CGRectMake(0, UIScreen.mainScreen().bounds.size.height - 48, UIScreen.mainScreen().bounds.size.width, 0))
+        self.messageBar.font = UIFont(name: "HelveticaNeue-Light", size: 18)
+        self.messageBar.text = "Connection is offline"
+//        self.messageBar.layer.borderWidth = 0.5
+//        self.messageBar.layer.borderColor = Colors.hintColor.CGColor
+        self.messageBar.numberOfLines = 0
+        self.messageBar.textAlignment = NSTextAlignment.Center
+        self.messageBar.textColor = UIColor.whiteColor()
+        self.messageBar.layer.backgroundColor = Colors.brandColorDark.CGColor
+        self.view.addSubview(self.messageBar)
     }
+    
+    deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
+    /*--------------------------------------------------------------------------------------------
+    * Events
+    *--------------------------------------------------------------------------------------------*/
     
     func applicationWillEnterForeground() {
         /* User either switched to patchr or turned their screen back on. */
@@ -33,8 +61,29 @@ class MainTabBarController: UITabBarController {
         LocationController.instance.startSignificantChangeUpdates()
     }
     
-    deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+    func reachabilityChanged(notification: NSNotification) {
+        if ReachabilityManager.instance.isReachable() {
+            hideMessageBar()
+        }
+        else {
+            showMessageBar()
+        }
+    }
+    
+    /*--------------------------------------------------------------------------------------------
+    * Methods
+    *--------------------------------------------------------------------------------------------*/
+    
+    func showMessageBar() {
+        UIView.animateWithDuration(0.10, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
+            self.messageBar.frame = CGRectMake(0, UIScreen.mainScreen().bounds.size.height - 88, UIScreen.mainScreen().bounds.size.width, 40)
+            }, completion: nil)
+    }
+    
+    func hideMessageBar() {
+        UIView.animateWithDuration(0.10, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
+            self.messageBar.frame = CGRectMake(0, UIScreen.mainScreen().bounds.size.height - 48, UIScreen.mainScreen().bounds.size.width, 0)
+            }, completion: nil)
     }
 }
 

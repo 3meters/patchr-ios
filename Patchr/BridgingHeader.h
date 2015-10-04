@@ -19,11 +19,13 @@
 
 #import <AFNetworking/AFNetworking.h>
 #import <AFNetworkActivityLogger/AFNetworkActivityLogger.h>
+#import <AFNetworking/AFNetworkActivityIndicatorManager.h>
 #import <UIImageView+AFNetworking.h>
 #import <AWSS3/AWSS3.h>
 #import <RMCoreDataStack/RMCoreDataStack.h>
 #import <PBWebViewController.h>
 #import <MBProgressHUD.h>
+#import <MRProgress/MRProgress.h>
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <SDWebImage/UIButton+WebCache.h>
 #import <SDWebImage/SDImageCache.h>
@@ -43,6 +45,7 @@
 #import <MBContactPicker.h>
 #import <MBContactModel.h>
 #import <CommonCrypto/CommonCrypto.h>
+#import <pop/POP.h>
 
 #import "Patch.h"
 #import "Place.h"

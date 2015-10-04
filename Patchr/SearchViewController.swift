@@ -240,7 +240,7 @@ class SearchViewController: UITableViewController {
         switch segue.identifier! {
             case "PatchDetailSegue":
                 if let controller = segue.destinationViewController as? PatchDetailViewController {
-                    controller.patchId = self.selectedPatchId
+                    controller.entityId = self.selectedPatchId
                 }
             default: ()
         }

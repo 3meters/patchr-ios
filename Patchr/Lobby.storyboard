@@ -241,7 +241,7 @@
                                                         <userDefinedRuntimeAttribute type="string" keyPath="layer.cornerRadius" value="4"/>
                                                     </userDefinedRuntimeAttributes>
                                                     <connections>
-                                                        <action selector="joinAction:" destination="tMe-pp-m8T" eventType="touchUpInside" id="hBp-z9-GkU"/>
+                                                        <action selector="joinAction:" destination="tMe-pp-m8T" eventType="touchUpInside" id="mOG-AB-J5b"/>
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="749" contentHorizontalAlignment="left" contentVerticalAlignment="top" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="KF9-6G-1Zh" userLabel="terms_link">
@@ -254,7 +254,7 @@
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
-                                                        <action selector="termsAction:" destination="tMe-pp-m8T" eventType="touchUpInside" id="Hn5-n3-OxN"/>
+                                                        <action selector="termsAction:" destination="tMe-pp-m8T" eventType="touchUpInside" id="eec-Jm-5Lb"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
@@ -297,23 +297,10 @@
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="Register" id="AHc-Hu-MMy" userLabel="nav_bar">
-                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="ae2-17-Agq" userLabel="nav_cancel_button">
-                            <connections>
-                                <action selector="cancelAction:" destination="tMe-pp-m8T" id="RcY-0p-Pgk"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Join" id="0ka-oS-NhH" userLabel="nav_done_button">
-                            <connections>
-                                <action selector="doneAction:" destination="tMe-pp-m8T" id="oaX-96-sCp"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Register" id="AHc-Hu-MMy" userLabel="nav_bar"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
-                        <outlet property="cancelButton" destination="ae2-17-Agq" id="fcV-Lg-sL3"/>
-                        <outlet property="doneButton" destination="0ka-oS-NhH" id="u4G-qc-8Rv"/>
                         <outlet property="emailField" destination="BcB-tp-dBT" id="xRk-EC-BTf"/>
                         <outlet property="joinButton" destination="Rdg-NM-PUW" id="7DL-YU-ReE"/>
                         <outlet property="nameField" destination="9zH-uc-r32" id="wOJ-V4-kXG"/>
@@ -656,7 +643,7 @@
         <image name="imgPatchDark" width="60" height="60"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="HwG-zD-VAa"/>
+        <segue reference="gEB-lU-Hsn"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="1" green="0.50196078430000002" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

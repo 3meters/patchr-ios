@@ -9,6 +9,7 @@ extern const struct LinkAttributes {
 	__unsafe_unretained NSString *fromId;
 	__unsafe_unretained NSString *fromSchema;
 	__unsafe_unretained NSString *id_;
+	__unsafe_unretained NSString *mute;
 	__unsafe_unretained NSString *toId;
 	__unsafe_unretained NSString *toSchema;
 	__unsafe_unretained NSString *type;
@@ -43,6 +44,14 @@ extern const struct LinkAttributes {
 
 //- (BOOL)validateId_:(id*)value_ error:(NSError**)error_;
 
+@property (nonatomic, strong) NSNumber* mute;
+
+@property (atomic) BOOL muteValue;
+- (BOOL)muteValue;
+- (void)setMuteValue:(BOOL)value_;
+
+//- (BOOL)validateMute:(id*)value_ error:(NSError**)error_;
+
 @property (nonatomic, strong) NSString* toId;
 
 //- (BOOL)validateToId:(id*)value_ error:(NSError**)error_;
@@ -73,6 +82,12 @@ extern const struct LinkAttributes {
 
 - (NSString*)primitiveId_;
 - (void)setPrimitiveId_:(NSString*)value;
+
+- (NSNumber*)primitiveMute;
+- (void)setPrimitiveMute:(NSNumber*)value;
+
+- (BOOL)primitiveMuteValue;
+- (void)setPrimitiveMuteValue:(BOOL)value_;
 
 - (NSString*)primitiveToId;
 - (void)setPrimitiveToId:(NSString*)value;

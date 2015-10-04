@@ -25,9 +25,9 @@ class PatchMapViewController: UIViewController {
     
     @IBOutlet weak var mapView: MKMapView!
     
-    deinit {
-        Log.d("-- deinit PatchMapVC")
-    }
+    /*--------------------------------------------------------------------------------------------
+    * Lifecycle
+    *--------------------------------------------------------------------------------------------*/
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
@@ -51,6 +51,14 @@ class PatchMapViewController: UIViewController {
         super.viewWillDisappear(animated)
         mapView.removeAnnotation(self.annotation)
     }
+    
+    deinit {
+        Log.d("-- deinit PatchMapVC")
+    }
+    
+    /*--------------------------------------------------------------------------------------------
+    * Events
+    *--------------------------------------------------------------------------------------------*/
     
     @IBAction func longPress(gr: UILongPressGestureRecognizer) {
         if self.locationDelegate.locationEditable() {

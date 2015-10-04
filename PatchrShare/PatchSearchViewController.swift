@@ -32,6 +32,7 @@ class PatchSearchViewController: UITableViewController {
     class func defaultPatch() -> String{
         return "None"
     }
+    
     @IBOutlet weak var searchEdit: UITextField!
     
     /*--------------------------------------------------------------------------------------------
@@ -90,7 +91,7 @@ class PatchSearchViewController: UITableViewController {
         }
         
         self.tableView.backgroundColor = UIColor.whiteColor()
-        self.tableView.tableFooterView = UIView()
+        self.tableView.tableFooterView = UIView()   // Triggers data binding
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: Selector("dismissKeyboard"))
         gestureRecognizer.cancelsTouchesInView = false
         self.tableView.addGestureRecognizer(gestureRecognizer)
@@ -234,7 +235,7 @@ extension PatchSearchViewController: UITableViewDelegate {
             let width = patch["photo"]["width"].int
             let height = patch["photo"]["height"].int
             
-            let photoUrl = PhotoUtils.url(prefix!, source: source!, size: 100)  // Special thumbnail sizing case
+            let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.thumbnail, size: nil)
             cell!.photo.sd_setImageWithURL(photoUrl)
         }
         else {
@@ -251,12 +252,12 @@ extension PatchSearchViewController: UITableViewDelegate {
             let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
             let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController
             if let patchId = patch["id_"] as? String {
-                controller!.patchId = patchId
+                controller!.entityId = patchId
             }
             else if let patchId = patch["_id"] as? String {
-                controller!.patchId = patchId
+                controller!.entityId = patchId
             }
-            if controller!.patchId != nil {
+            if controller!.entityId != nil {
                 self.navigationController?.pushViewController(controller!, animated: true)
             }
         }

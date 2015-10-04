@@ -8,55 +8,15 @@
 
 import UIKit
 
-enum UserTableFilter {
-	case PatchLikers
-	case PatchWatchers
-    case MessageLikers
-}
-
-class UserTableViewController: QueryTableViewController {
+class UserTableViewController: BaseTableViewController {
 
 	var patch:          Patch!
     var message:        Message!
 	var filter:         UserTableFilter = .PatchWatchers
     
-    var watchListForOwner: Bool {
-        if self.filter == .PatchWatchers && self.patch.visibility == "private" {
-            if let currentUser = UserController.instance.currentUser {
-                if currentUser.id_ == self.patch.ownerId {
-                    return true
-                }
-            }
-        }
-        return false
-    }
-    
-	private var _query: Query!
-
-	override func query() -> Query {
-		if self._query == nil {
-			let query = Query.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Query
-
-			switch self.filter {
-				case .PatchLikers:
-					query.name = DataStoreQueryName.LikersForPatch.rawValue
-                    query.pageSize = DataController.proxibase.pageSizeDefault
-                    query.parameters = ["entity": patch]
-				case .PatchWatchers:
-					query.name = DataStoreQueryName.WatchersForPatch.rawValue
-                    query.pageSize = DataController.proxibase.pageSizeDefault
-                    query.parameters = ["entity": patch]
-                case .MessageLikers:
-                    query.name = DataStoreQueryName.LikersForMessage.rawValue
-                    query.pageSize = DataController.proxibase.pageSizeDefault
-                    query.parameters = ["entity": message]
-			}
-
-			DataController.instance.managedObjectContext.save(nil)
-			self._query = query
-		}
-		return self._query
-	}
+    /*--------------------------------------------------------------------------------------------
+    * Lifecycle
+    *--------------------------------------------------------------------------------------------*/
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -67,29 +27,65 @@ class UserTableViewController: QueryTableViewController {
 		switch self.filter {
 			case .PatchWatchers:
 				self.navigationItem.title = "Watchers"
-                if watchListForOwner {
+                if watchListForOwner() {
                     self.contentViewName = "UserApprovalView"
                 }
 			case .PatchLikers, .MessageLikers:
 				self.navigationItem.title = "Likers"
-		}
-        
-        /* Table formatting */
-        self.tableView.backgroundColor = Colors.gray95pcntColor
-        self.tableView.tableFooterView = UIView();        
+		}        
 	}
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
         switch self.filter {
-        case .PatchLikers:
-            setScreenName("UserListPatchLikers")
-        case .PatchWatchers:
-            setScreenName("UserListPatchWatchers")
-        case .MessageLikers:
-            setScreenName("UserListMessageLikers")
+            case .PatchLikers:
+                setScreenName("UserListPatchLikers")
+            case .PatchWatchers:
+                setScreenName("UserListPatchWatchers")
+            case .MessageLikers:
+                setScreenName("UserListMessageLikers")
         }
+    }
+    
+    /*--------------------------------------------------------------------------------------------
+    * Methods
+    *--------------------------------------------------------------------------------------------*/
+
+    override func query() -> Query {
+        if self._query == nil {
+            let query = Query.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Query
+            
+            switch self.filter {
+                case .PatchLikers:
+                    query.name = DataStoreQueryName.LikersForPatch.rawValue
+                    query.pageSize = DataController.proxibase.pageSizeDefault
+                    query.parameters = ["entity": patch]
+                case .PatchWatchers:
+                    query.name = DataStoreQueryName.WatchersForPatch.rawValue
+                    query.pageSize = DataController.proxibase.pageSizeDefault
+                    query.parameters = ["entity": patch]
+                case .MessageLikers:
+                    query.name = DataStoreQueryName.LikersForMessage.rawValue
+                    query.pageSize = DataController.proxibase.pageSizeDefault
+                    query.parameters = ["entity": message]
+            }
+            
+            DataController.instance.managedObjectContext.save(nil)
+            self._query = query
+        }
+        return self._query
+    }
+    
+    func watchListForOwner() -> Bool {
+        if self.filter == .PatchWatchers && self.patch.visibility == "private" {
+            if let currentUser = UserController.instance.currentUser {
+                if currentUser.id_ == self.patch.ownerId {
+                    return true
+                }
+            }
+        }
+        return false
     }
     
     override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?) {
@@ -118,7 +114,7 @@ extension UserTableViewController: UITableViewDelegate {
         if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
             let entity = queryResult.object as? User,
             let controller = storyboard.instantiateViewControllerWithIdentifier("UserDetailViewController") as? UserDetailViewController {
-                controller.user = entity
+                controller.entity = entity
                 self.navigationController?.pushViewController(controller, animated: true)
         }
 	}
@@ -172,4 +168,10 @@ extension UserTableViewController: UserApprovalViewDelegate {
 			}
 		}
 	}
+}
+
+enum UserTableFilter {
+    case PatchLikers
+    case PatchWatchers
+    case MessageLikers
 }

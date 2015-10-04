@@ -14,7 +14,8 @@ class AirImageButton: UIButton {
     var linkedPhotoUrl: NSURL?
     var imageOptions = SDWebImageOptions.RetryFailed | SDWebImageOptions.LowPriority | SDWebImageOptions.AvoidAutoSetImage | SDWebImageOptions.ProgressiveDownload
     var spot: CAShapeLayer?
-    
+    var sizeCategory: String = SizeCategory.thumbnail
+
     var widthConstraint: NSLayoutConstraint?
     var heightConstraint: NSLayoutConstraint?
     
@@ -68,23 +69,23 @@ class AirImageButton: UIButton {
     }
     
     func setProgressStyle(style: UIActivityIndicatorViewStyle) {
-        progress.activityIndicatorViewStyle = style
+        self.progress.activityIndicatorViewStyle = style
     }
     
     func startProgress(){
-        progress.startAnimating()
+        self.progress.startAnimating()
     }
     
     func stopProgress(){
-        progress.stopAnimating()
+        self.progress.stopAnimating()
     }
     
     func linkedToPhoto(photo: Photo) -> Bool {
-        if linkedPhotoUrl == nil {
+        if self.linkedPhotoUrl == nil {
             return false
         }
         
-        let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, size: nil)
+        let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory, size: nil)
         return (linkedPhotoUrl!.absoluteString! == photoUrl.absoluteString!)
     }
     
@@ -106,7 +107,7 @@ class AirImageButton: UIButton {
             return
         }
         
-        let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, size: nil)
+        let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory, size: nil)
         
         if photoUrl.absoluteString == nil || photoUrl.absoluteString!.isEmpty {
             var error = NSError(domain: "Photo error", code: 0, userInfo: [NSLocalizedDescriptionKey:"Photo has invalid source: \(photo.source!)"])
@@ -133,7 +134,7 @@ class AirImageButton: UIButton {
     
     func setImageWithImageResult(imageResult: ImageResult, animate: Bool = true) {
         
-        if progressAuto {
+        if self.progressAuto {
             startProgress()
         }
         /*
@@ -148,7 +149,7 @@ class AirImageButton: UIButton {
         self.sd_setImageWithURL(url,
             forState:UIControlState.Normal,
             placeholderImage: nil,
-            options: imageOptions,
+            options: self.imageOptions,
             completed: { image, error, cacheType, url in
                 self.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
             }
@@ -157,7 +158,7 @@ class AirImageButton: UIButton {
     
     func imageCompletion(image: UIImage?, error: NSError?, cacheType: SDImageCacheType?, url: NSURL?, animate: Bool = true) -> Void {
         
-        if progressAuto {
+        if self.progressAuto {
             stopProgress()
         }
         
@@ -194,17 +195,6 @@ class AirImageButton: UIButton {
             self.spot?.hidden = true
         }
 
-        if animate || cacheType == SDImageCacheType.None || cacheType == SDImageCacheType.Disk {
-            UIView.transitionWithView(self,
-                duration: 0.5,
-                options: UIViewAnimationOptions.TransitionCrossDissolve,
-                animations: {
-                    self.setImage(image, forState:UIControlState.Normal)
-                },
-                completion: nil)
-        }
-        else {
-            self.setImage(image, forState:UIControlState.Normal)
-        }
+        self.setImage(image, forState:UIControlState.Normal)
     }
 }
