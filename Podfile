@@ -19,7 +19,7 @@ plugin 'cocoapods-keys', {
 
 target 'Patchr' do
 
-pod 'AFNetworking', '~> 2.5'
+pod 'AFNetworking', '~> 2.6'
 pod 'AFNetworkActivityLogger', '~> 2.0'
 pod 'AWSS3', '~> 2.2.0'
 pod 'RMCoreDataStack'
@@ -31,7 +31,7 @@ pod 'Lockbox'                           # Used to protect install info
 pod 'UIScrollView-InfiniteScroll'
 pod 'libPhoneNumber-iOS', '~> 0.7'      # Used to parse and format phone# for places
 pod 'Branch'
-pod 'pop', :git => 'https://github.com/facebook/pop.git'
+pod 'pop', '~> 1.0'
 pod 'AirPhotoBrowser', :path => '~/code/AirPhotoBrowser'
 pod 'AirContactPicker', :path => '~/code/AirContactPicker'
 pod 'TWMessageBarManager'
