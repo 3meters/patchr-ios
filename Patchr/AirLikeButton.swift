@@ -69,7 +69,7 @@ class AirLikeButton: AirToggleButton {
                     UIViewController.topMostViewController()!.handleError(error)
                 }
                 else {
-                    if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
+                    if DataController.instance.dataWrapperForResponse(response!) != nil {
                         self.entity!.userLikesId = nil
                         self.entity!.userLikesValue = false
                         self.entity!.countLikesValue--

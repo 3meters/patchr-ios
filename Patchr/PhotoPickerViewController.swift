@@ -131,7 +131,7 @@ class PhotoPickerViewController: UICollectionViewController {
             offset = Int(ceil(Float(self.imageResults.count) / Float(self.pageSize)) * Float(self.pageSize))
         }
         
-        DataController.proxibase.loadSearchImages(self.searchBar!.text, limit: Int64(self.pageSize), offset: Int64(offset)) {
+        DataController.proxibase.loadSearchImages(self.searchBar!.text!, limit: Int64(self.pageSize), offset: Int64(offset)) {
             response, error in
             
             self.progress?.hide(true)
@@ -144,8 +144,8 @@ class PhotoPickerViewController: UICollectionViewController {
                     data = dictionary["d"] as? NSDictionary,
                     results = data["results"] as? NSMutableArray {
                         
-                        var resultsCopy = results.mutableCopy() as! NSMutableArray
-                        var more: Bool = (resultsCopy.count > self.pageSize)
+                        let resultsCopy = results.mutableCopy() as! NSMutableArray
+                        let more: Bool = (resultsCopy.count > self.pageSize)
                         if more {
                             resultsCopy.removeLastObject()
                         }
@@ -173,7 +173,7 @@ class PhotoPickerViewController: UICollectionViewController {
                         self.collectionView!.finishInfiniteScroll()
                         if more && self.imageResults.count < self.maxSize {
                             self.collectionView!.addInfiniteScrollWithHandler({(scrollView) -> Void in
-                                self.loadData(paging: true)
+                                self.loadData(true)
                             })
                         }
                         else {
@@ -218,20 +218,22 @@ extension PhotoPickerViewController: UISearchBarDelegate {
     }
     
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
-        self.loadData(paging: false)
+        self.loadData(false)
         searchBar.resignFirstResponder()
     }
 }
 
-extension PhotoPickerViewController : UICollectionViewDelegate {
-    
+extension PhotoPickerViewController {
+    /*
+     * UICollectionViewDelegate
+     */
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) -> Void {
         
         if let cell = collectionView.cellForItemAtIndexPath(indexPath) as? ThumbnailCollectionViewCell {
             
-            var photo = IDMPhoto(image:cell.thumbnail.image)
-            var photos = Array([photo])
-            var browser = AirPhotoPreview(photos:photos as [AnyObject], animatedFromView: cell.thumbnail)
+            let photo = IDMPhoto(image:cell.thumbnail.image)
+            let photos = Array([photo])
+            let browser = AirPhotoPreview(photos:photos as [AnyObject], animatedFromView: cell.thumbnail)
             
             browser.usePopAnimation = true
             browser.scaleImage = cell.thumbnail.image  // Used because final image might have different aspect ratio than initially
@@ -247,14 +249,16 @@ extension PhotoPickerViewController : UICollectionViewDelegate {
     }
 }
 
-extension PhotoPickerViewController : UICollectionViewDataSource {
-    
+extension PhotoPickerViewController {
+    /*
+     * UICollectionViewDataSource
+     */
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return imageResults.count
     }
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(self.reuseIdentifier, forIndexPath: indexPath) as! UICollectionViewCell
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(self.reuseIdentifier, forIndexPath: indexPath) 
         cell.backgroundColor = Colors.windowColor
         cell.layer.shouldRasterize = true
         cell.layer.rasterizationScale = UIScreen.mainScreen().scale
@@ -269,7 +273,6 @@ extension PhotoPickerViewController : UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
             
-            let image = imageForIndexPath(indexPath)
             if indexPath == self.largePhotoIndexPath {
                 return CGSize(width: self.availableWidth! - 100, height: self.availableWidth! - 100)
             }

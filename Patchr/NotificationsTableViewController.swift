@@ -45,7 +45,7 @@ class NotificationsTableViewController: BaseTableViewController {
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
         if NotificationController.instance.activityDate > self.activityDate {
-            self.bindQueryItems(force: true)
+            self.bindQueryItems(true)
             self.activityDate = NotificationController.instance.activityDate
         }
         clearBadges()
@@ -70,7 +70,6 @@ class NotificationsTableViewController: BaseTableViewController {
             if let stateRaw = userInfo["receivedInApplicationState"] as? Int {
                 if let applicationState = UIApplicationState(rawValue: stateRaw) {
                     
-                    let parentId = userInfo["parentId"] as? String
                     let targetId = userInfo["targetId"] as? String
                     
                     switch applicationState {
@@ -81,7 +80,7 @@ class NotificationsTableViewController: BaseTableViewController {
                                     
                                 /* Only refresh notifications if view has already been loaded */
                                 if self.isViewLoaded() {
-                                    self.bindQueryItems(force: true)
+                                    self.bindQueryItems(true)
                                 }
                             }
                             else {
@@ -130,9 +129,6 @@ class NotificationsTableViewController: BaseTableViewController {
                                 if json["photo"] != nil {
                                     let prefix = json["photo"]["prefix"].string
                                     let source = json["photo"]["source"].string
-                                    let width = json["photo"]["width"].int
-                                    let height = json["photo"]["height"].int
-                                    
                                     let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.profile, size: nil)
 
                                     SDWebImageManager.sharedManager().downloadImageWithURL(photoUrl, options: SDWebImageOptions.HighPriority, progress: nil, completed: {
@@ -211,7 +207,12 @@ class NotificationsTableViewController: BaseTableViewController {
             let query = Query.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Query
             query.name = DataStoreQueryName.NotificationsForCurrentUser.rawValue
             query.pageSize = DataController.proxibase.pageSizeNotifications
-            DataController.instance.managedObjectContext.save(nil)
+            do {
+                try DataController.instance.managedObjectContext.save()
+            }
+            catch {
+                print("Model save error: \(error)")
+            }
             self._query = query
         }
         return self._query
@@ -224,7 +225,7 @@ class NotificationsTableViewController: BaseTableViewController {
                 self.nearbys = storedNearbys
             }
         }
-        super.bindQueryItems(force: force, paging: paging)
+        super.bindQueryItems(force, paging: paging)
     }
     
     override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?) {
@@ -265,16 +266,15 @@ class NotificationsTableViewController: BaseTableViewController {
         
         if controllerId != nil {
             let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-            if let controller = storyboard.instantiateViewControllerWithIdentifier(controllerId!) as? UIViewController {
-                if let patchController = controller as? PatchDetailViewController {
-                    patchController.entityId = targetId
-                }
-                else if let messageController = controller as? MessageDetailViewController {
-                    messageController.messageId = targetId
-                }
-                controller.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: Selector("dismissAction:"))
-                UIViewController.topMostViewController()?.presentViewController(UINavigationController(rootViewController: controller), animated: true, completion: nil)
+            let controller = storyboard.instantiateViewControllerWithIdentifier(controllerId!)
+            if let patchController = controller as? PatchDetailViewController {
+                patchController.entityId = targetId
             }
+            else if let messageController = controller as? MessageDetailViewController {
+                messageController.messageId = targetId
+            }
+            controller.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: Selector("dismissAction:"))
+            UIViewController.topMostViewController()?.presentViewController(UINavigationController(rootViewController: controller), animated: true, completion: nil)
         }
     }
     
@@ -348,8 +348,7 @@ class AirStylesheet: NSObject, TWMessageBarStyleSheet {
     
     init(image: UIImage?) {
         if image != nil {
-            var imageSquared = image!.cropToSquare()
-            self.image = imageSquared
+            self.image = image
         }
     }
     
@@ -367,8 +366,10 @@ class AirStylesheet: NSObject, TWMessageBarStyleSheet {
     }
 }
 
-extension NotificationsTableViewController: UITableViewDelegate {
-    
+extension NotificationsTableViewController {
+    /*
+    * UITableViewDelegate
+    */
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
@@ -401,10 +402,10 @@ extension NotificationsTableViewController: UITableViewDelegate {
         
         /* Bind view to data for this row */
         let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as! QueryItem
-        let view = Notification.bindView(cell!.contentView.viewWithTag(1)!, object: queryResult.object, tableView: tableView, sizingOnly: true) as! NotificationView
+        Notification.bindView(cell!.contentView.viewWithTag(1)!, object: queryResult.object, tableView: tableView, sizingOnly: true) as! NotificationView
         
         /* Get the actual height required for the cell */
-        var height = cell!.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
+        let height = cell!.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
         
         return height
     }

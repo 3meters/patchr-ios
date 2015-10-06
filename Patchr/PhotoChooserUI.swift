@@ -45,7 +45,6 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 
 		let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: nil, destructiveButtonTitle: nil)
 
-		let cameraRollAvailable   = UIImagePickerController.isSourceTypeAvailable(.SavedPhotosAlbum)
 		let cameraAvailable       = UIImagePickerController.isSourceTypeAvailable(.Camera)
 		let photoLibraryAvailable = UIImagePickerController.isSourceTypeAvailable(.PhotoLibrary)
 		let photoSearchAvailable  = true
@@ -53,9 +52,9 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 		if photoSearchAvailable {
 			photoButtonFunctionMap[sheet.addButtonWithTitle("Search for photos")] = .SearchPhoto
 		}
-		if cameraRollAvailable {
-			photoButtonFunctionMap[sheet.addButtonWithTitle("Select a library photo")] = .ChoosePhoto
-		}
+        if photoLibraryAvailable {
+            photoButtonFunctionMap[sheet.addButtonWithTitle("Select a library photo")] = .ChooseLibraryPhoto
+        }
 		if cameraAvailable {
 			photoButtonFunctionMap[sheet.addButtonWithTitle("Take a new photo")] = .TakePhoto
 		}
@@ -63,12 +62,13 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
         sheet.addButtonWithTitle("Cancel")
         sheet.cancelButtonIndex = sheet.numberOfButtons - 1
 
-		sheet.showInView(hostViewController?.view)
+		sheet.showInView((hostViewController?.view)!)
 	}
 
 	private func choosePhotoFromLibrary() {
-        chosenPhotoFunction = .ChoosePhoto
+        chosenPhotoFunction = .ChooseLibraryPhoto
 		let pickerController = UIImagePickerController()
+        pickerController.sourceType = .PhotoLibrary
 		pickerController.delegate = self
 		self.hostViewController?.presentViewController(pickerController, animated: true, completion: nil)
 	}
@@ -94,7 +94,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 
 	private func addPhotoToAlbum(image: UIImage, toAlbum albumName: String, handler: CompletionHandler) {
 
-        var orientation : ALAssetOrientation = ALAssetOrientation(rawValue:image.imageOrientation.rawValue)!
+        let orientation : ALAssetOrientation = ALAssetOrientation(rawValue:image.imageOrientation.rawValue)!
         
 		self.library?.addAssetsGroupAlbumWithName(albumName, resultBlock: {
 			(group: ALAssetsGroup!) -> Void in
@@ -118,7 +118,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
                                     self.library?.assetForURL(assetURL,
                                         resultBlock: {
                                             (asset: ALAsset!) -> Void in
-                                            var yes: Bool? = groupToAddTo?.addAsset(asset);
+                                            let yes: Bool? = groupToAddTo?.addAsset(asset);
                                             if (yes == true) {
                                                 handler(success: true);
                                             }
@@ -148,7 +148,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 
 	private enum PhotoButtonFunction {
 		case TakePhoto
-		case ChoosePhoto
+		case ChooseLibraryPhoto
 		case SearchPhoto
 	}
 }
@@ -175,7 +175,7 @@ extension PhotoChooserUI: PhotoBrowseControllerDelegate {
 
 extension PhotoChooserUI: UIImagePickerControllerDelegate {
     
-	func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject:AnyObject]) {
+	func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String:AnyObject]) {
         
 		hostViewController?.dismissViewControllerAnimated(true, completion: nil)
 		if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
@@ -211,7 +211,7 @@ extension PhotoChooserUI: UIActionSheetDelegate {
 					case .TakePhoto:
 						self.takePhotoWithCamera()
 
-					case .ChoosePhoto:
+					case .ChooseLibraryPhoto:
 						self.choosePhotoFromLibrary()
 
 					case .SearchPhoto:

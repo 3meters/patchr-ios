@@ -109,16 +109,16 @@ class DataController: NSObject {
         * Used by notifications which only have an entity id to work with.
         */
 		switch entityId {
-			case let isPatch where entityId.hasPrefix("pa."):
+			case _ where entityId.hasPrefix("pa."):
 				withPatchId(entityId, refresh: refresh, completion: completion)
             
-            case let isPlace where entityId.hasPrefix("pl."):
+            case _ where entityId.hasPrefix("pl."):
                 withPlaceId(entityId, refresh: refresh, completion: completion)
             
-			case let isUser where entityId.hasPrefix("us."):
+			case _ where entityId.hasPrefix("us."):
 				withUserId(entityId, refresh: refresh, completion: completion)
             
-			case let isMessage where entityId.hasPrefix("me."):
+			case _ where entityId.hasPrefix("me."):
 				withMessageId(entityId, refresh: refresh, completion: completion)
             
 			default:
@@ -143,7 +143,7 @@ class DataController: NSObject {
                 fetchByEntityType(entityType, withId: id, criteria: criteria, completion: {
                     response, error in
                     
-                    if let err = ServerError(error) {
+                    if let _ = ServerError(error) {
                         completion(nil, error: error)
                     }
                     else {
@@ -169,7 +169,12 @@ class DataController: NSObject {
                                 }
                                 
                                 /* Persist the changes and triggers notifications to observers */
-                                self.managedObjectContext!.save(nil)
+                                do {
+                                    try self.managedObjectContext!.save()
+                                }
+                                catch {
+                                    print("Model save error: \(error)")
+                                }
                             }
                         }
                         completion(entity, error: nil)
@@ -182,16 +187,16 @@ class DataController: NSObject {
     }
     
     private func fetchByEntityType(type: ServiceBase.Type, withId id: String, criteria: Dictionary<String,AnyObject> = [:], completion: (response: AnyObject?, error: NSError?) -> Void) {
-        if let patchType = type as? Patch.Type {
+        if let _ = type as? Patch.Type {
             DataController.proxibase.fetchPatchById(id, criteria:criteria, completion: completion)
         }
-        else if let messageType = type as? Message.Type {
+        else if let _ = type as? Message.Type {
             DataController.proxibase.fetchMessageById(id, criteria:criteria, completion: completion)
         }
-        else if let placeType = type as? Place.Type {
+        else if let _ = type as? Place.Type {
             DataController.proxibase.fetchPlaceById(id, criteria:criteria, completion: completion)
         }
-        else if let userType = type as? User.Type {
+        else if let _ = type as? User.Type {
             DataController.proxibase.fetchUserById(id, criteria:criteria, completion: completion)
         }
     }
@@ -250,13 +255,17 @@ class DataController: NSObject {
             }
             
             /* Persist the changes and triggers notifications to observers */
-            self.managedObjectContext!.save(nil)
+            do {
+                try self.managedObjectContext!.save()
+            }
+            catch {
+                print("Model save error: \(error)")
+            }
 
             completion(queryItems: queryItems, query: query, error: error)
 		}
         
         let coordinate = LocationController.instance.lastLocationAccepted()?.coordinate
-        let defaultRadius: Int32 = 10000
 
         var entity: ServiceBase!
         var entityId: String!
@@ -290,7 +299,7 @@ class DataController: NSObject {
         query.criteriaValue = false
         var criteria: [String: AnyObject] = [:]
 		if !force && query.executedValue && entity != nil && !paging {
-			criteria = entity!.criteria(activityOnly: true)
+			criteria = entity!.criteria(true)
             query.criteriaValue = true
 		}
         
@@ -301,7 +310,7 @@ class DataController: NSObject {
 
 			case DataStoreQueryName.NotificationsForCurrentUser.rawValue:
                 query.criteriaValue = false
-                DataController.proxibase.fetchNotifications(skip: skip, completion: refreshCompletion)
+                DataController.proxibase.fetchNotifications(skip, completion: refreshCompletion)
             
 			case DataStoreQueryName.ExplorePatches.rawValue:
                 query.criteriaValue = false
@@ -472,11 +481,13 @@ enum DataStoreQueryName: String {
 extension DataController: RMCoreDataStackDelegate {
     
 	func coreDataStack(stack: RMCoreDataStack!, didFinishInitializingWithInfo info: [NSObject:AnyObject]!) {
-        Log.d(String(format: "[%@ %@]", reflect(self).summary, __FUNCTION__))
+        let mirror = Mirror(reflecting: self)
+        Log.d(String(format: "[%@ %@]", mirror.description, __FUNCTION__))
 	}
 
 	func coreDataStack(stack: RMCoreDataStack!, failedInitializingWithInfo info: [NSObject:AnyObject]!) {
-        Log.d(String(format: "[%@ %@]", reflect(self).summary, __FUNCTION__))
+        let mirror = Mirror(reflecting: self)
+        Log.d(String(format: "[%@ %@]", mirror.description, __FUNCTION__))
 	}
 }
 

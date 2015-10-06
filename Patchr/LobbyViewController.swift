@@ -39,9 +39,8 @@ class LobbyViewController: UIViewController {
     @IBAction func guestButtonAction(sender: UIButton) {
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-        if let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController") as? UIViewController {
-            appDelegate.window!.setRootViewController(controller, animated: true)
-        }
+        let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController")
+        appDelegate.window!.setRootViewController(controller, animated: true)
     }
     
     /*--------------------------------------------------------------------------------------------

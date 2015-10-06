@@ -58,7 +58,7 @@ class PasswordResetViewController: UITableViewController, UITextFieldDelegate {
         progress.labelText = "Verifying..."
         progress.show(true)
         
-        DataController.proxibase.requestPasswordReset(emailField.text) {
+        DataController.proxibase.requestPasswordReset(emailField.text!) {
             response, error in
             
             self.processing = false
@@ -106,7 +106,7 @@ class PasswordResetViewController: UITableViewController, UITextFieldDelegate {
         progress.labelText = "Resetting password for: \(self.emailField.text)"
         progress.show(true)
         
-        DataController.proxibase.resetPassword(passwordField!.text, userId: self.userId!, sessionKey: self.sessionKey!) {
+        DataController.proxibase.resetPassword(passwordField!.text!, userId: self.userId!, sessionKey: self.sessionKey!) {
             response, error in
             
             self.processing = false
@@ -130,7 +130,7 @@ class PasswordResetViewController: UITableViewController, UITextFieldDelegate {
             }
         }
         else {
-            if (count(passwordField.text.utf16) < 6) {
+            if (passwordField.text!.utf16.count < 6) {
                 Alert("Enter a new password with six characters or more.")
                 return false
             }

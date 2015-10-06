@@ -12,7 +12,6 @@ class AirImageButton: UIButton {
 
     var progress: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
     var linkedPhotoUrl: NSURL?
-    var imageOptions = SDWebImageOptions.RetryFailed | SDWebImageOptions.LowPriority | SDWebImageOptions.AvoidAutoSetImage | SDWebImageOptions.ProgressiveDownload
     var spot: CAShapeLayer?
     var sizeCategory: String = SizeCategory.thumbnail
 
@@ -25,7 +24,7 @@ class AirImageButton: UIButton {
     private var progressSize: CGFloat = 12
     
     required init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+        super.init(coder: aDecoder)!
         initialize()
     }
     
@@ -36,7 +35,7 @@ class AirImageButton: UIButton {
     
     func initialize(){
         
-        self.progress.setTranslatesAutoresizingMaskIntoConstraints(false)
+        self.progress.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(progress)
         
         let xCenterConstraint = NSLayoutConstraint(item: progress, attribute: .CenterX, relatedBy: .Equal, toItem: self, attribute: .CenterX, multiplier: 1, constant: 0)
@@ -56,7 +55,7 @@ class AirImageButton: UIButton {
             self.spot!.path = UIBezierPath(ovalInRect: CGRectMake(4, 4, 12, 12)).CGPath
             self.spot!.fillColor = UIColor.lightGrayColor().CGColor
             self.spot!.zPosition = 0
-            self.layer.addSublayer(self.spot)
+            self.layer.addSublayer(self.spot!)
         }
     }
     
@@ -86,7 +85,7 @@ class AirImageButton: UIButton {
         }
         
         let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory, size: nil)
-        return (linkedPhotoUrl!.absoluteString! == photoUrl.absoluteString!)
+        return (linkedPhotoUrl!.absoluteString == photoUrl.absoluteString)
     }
     
     func setImageWithPhoto(photo: Photo, animate: Bool = true) {
@@ -109,8 +108,8 @@ class AirImageButton: UIButton {
         
         let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory, size: nil)
         
-        if photoUrl.absoluteString == nil || photoUrl.absoluteString!.isEmpty {
-            var error = NSError(domain: "Photo error", code: 0, userInfo: [NSLocalizedDescriptionKey:"Photo has invalid source: \(photo.source!)"])
+        if photoUrl.absoluteString.isEmpty {
+            let error = NSError(domain: "Photo error", code: 0, userInfo: [NSLocalizedDescriptionKey:"Photo has invalid source: \(photo.source!)"])
             self.imageCompletion(nil, error: error, cacheType: nil, url: nil, animate: animate)
             return
         }
@@ -125,7 +124,7 @@ class AirImageButton: UIButton {
         self.sd_setImageWithURL(photoUrl,
             forState:UIControlState.Normal,
             placeholderImage: nil,
-            options: imageOptions,
+            options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload],
             completed: { image, error, cacheType, url in
                 self.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
             }
@@ -141,7 +140,7 @@ class AirImageButton: UIButton {
          * Request image via resizer so size is capped.
          */
         let dimension = imageResult.width >= imageResult.height ? ResizeDimension.width : ResizeDimension.height
-        var url = NSURL(string: GooglePlusProxy.convert(imageResult.mediaUrl!, size: Int(IMAGE_DIMENSION_MAX), dimension: dimension))
+        let url = NSURL(string: GooglePlusProxy.convert(imageResult.mediaUrl!, size: Int(IMAGE_DIMENSION_MAX), dimension: dimension))
         
         self.linkedPhotoUrl = url
         
@@ -149,7 +148,7 @@ class AirImageButton: UIButton {
         self.sd_setImageWithURL(url,
             forState:UIControlState.Normal,
             placeholderImage: nil,
-            options: self.imageOptions,
+            options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload],
             completed: { image, error, cacheType, url in
                 self.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
             }
@@ -165,7 +164,7 @@ class AirImageButton: UIButton {
         if error != nil {
             Log.w("Image fetch failed: " + error!.localizedDescription)
             if url != nil {
-                Log.w("Failed url: \(url!.absoluteString!)")
+                Log.w("Failed url: \(url!.absoluteString)")
             }
             self.contentMode = UIViewContentMode.Center
             self.setImage(UIImage(named: "imgBroken250Light"), forState:UIControlState.Normal)

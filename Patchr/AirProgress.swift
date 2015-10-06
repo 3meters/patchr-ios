@@ -51,7 +51,7 @@ class AirProgress: MBProgressHUD {
             self.margin = 16.0
             self.cornerRadius = 24.0
             self.opacity = 0.7
-            self.color = UIColor.whiteColor()
+            self.color = Colors.brandColorLight
             self.labelColor = UIColor.blackColor()
             self.detailsLabelColor = Colors.gray95pcntColor
             self.activityIndicatorColor = Colors.brandColorDark

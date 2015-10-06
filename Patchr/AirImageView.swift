@@ -15,10 +15,9 @@ class AirImageView: UIImageView {
     var spot: CAShapeLayer?
     var linkedPhotoUrl: NSURL?
     var sizeCategory: String = SizeCategory.thumbnail
-    var imageOptions = SDWebImageOptions.RetryFailed | SDWebImageOptions.LowPriority | SDWebImageOptions.AvoidAutoSetImage | SDWebImageOptions.ProgressiveDownload
     
     required init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+        super.init(coder: aDecoder)!
         initialize()
     }
     
@@ -29,13 +28,13 @@ class AirImageView: UIImageView {
     
     func initialize(){
         
-        self.activity.setTranslatesAutoresizingMaskIntoConstraints(false)
+        self.activity.translatesAutoresizingMaskIntoConstraints = false
         addSubview(self.activity)
         
-        var centerConstraintX = NSLayoutConstraint(item: self.activity, attribute: .CenterX, relatedBy: .Equal, toItem: self, attribute: .CenterX, multiplier: 1, constant: 0)
-        var centerConstraintY = NSLayoutConstraint(item: self.activity, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1, constant: 0)
-        var widthConstraint = NSLayoutConstraint(item: self.activity, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 20)
-        var heightConstraint = NSLayoutConstraint(item: self.activity, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 20)
+        let centerConstraintX = NSLayoutConstraint(item: self.activity, attribute: .CenterX, relatedBy: .Equal, toItem: self, attribute: .CenterX, multiplier: 1, constant: 0)
+        let centerConstraintY = NSLayoutConstraint(item: self.activity, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1, constant: 0)
+        let widthConstraint = NSLayoutConstraint(item: self.activity, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 20)
+        let heightConstraint = NSLayoutConstraint(item: self.activity, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 20)
         
         addConstraints([centerConstraintX, centerConstraintY, widthConstraint, heightConstraint])
         
@@ -44,8 +43,8 @@ class AirImageView: UIImageView {
         /* Gradient */
         self.gradient = CAGradientLayer()
         self.gradient.frame = CGRectMake(0, 0, self.bounds.size.width + 10, self.bounds.size.height + 10)
-        var startColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.2))  // Bottom
-        var endColor:   UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0))    // Top
+        let startColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.2))  // Bottom
+        let endColor:   UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0))    // Top
         self.gradient.colors = [endColor.CGColor, startColor.CGColor]
         self.gradient.startPoint = CGPoint(x: 0.5, y: 0.5)
         self.gradient.endPoint = CGPoint(x: 0.5, y: 1)
@@ -79,7 +78,7 @@ class AirImageView: UIImageView {
         }
         
         let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory, size: nil)
-        return (linkedPhotoUrl!.absoluteString! == photoUrl.absoluteString!)
+        return (linkedPhotoUrl!.absoluteString == photoUrl.absoluteString)
     }
     
     func setImageWithPhoto(photo: Photo, animate: Bool = true) {
@@ -102,8 +101,8 @@ class AirImageView: UIImageView {
         
         let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory, size: nil)
         
-        if photoUrl.absoluteString == nil || photoUrl.absoluteString!.isEmpty {
-            var error = NSError(domain: "Photo error", code: 0, userInfo: [NSLocalizedDescriptionKey:"Photo has invalid source: \(photo.source!)"])
+        if photoUrl.absoluteString.isEmpty {
+            let error = NSError(domain: "Photo error", code: 0, userInfo: [NSLocalizedDescriptionKey:"Photo has invalid source: \(photo.source!)"])
             self.imageCompletion(nil, error: error, cacheType: nil, url: nil, animate: animate)
             return
         }
@@ -115,7 +114,7 @@ class AirImageView: UIImageView {
         self.spot?.fillColor = UIColor.lightGrayColor().CGColor
         self.sd_setImageWithURL(photoUrl,
             placeholderImage: nil,
-            options: imageOptions,
+            options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload],
             completed: { image, error, cacheType, url in
                 self.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
             }
@@ -124,14 +123,14 @@ class AirImageView: UIImageView {
     
     func setImageWithThumbnail(thumbnail: Thumbnail, animate: Bool = true) {
         
-        var url = NSURL(string: thumbnail.mediaUrl!)
+        let url = NSURL(string: thumbnail.mediaUrl!)
         
         self.linkedPhotoUrl = url
         
         self.spot?.fillColor = UIColor.lightGrayColor().CGColor
         self.sd_setImageWithURL(url,
             placeholderImage: nil,
-            options: imageOptions,
+            options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload],
             completed: { image, error, cacheType, url in
                 self.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
             }
@@ -142,14 +141,14 @@ class AirImageView: UIImageView {
         
         startActivity()
         
-        var url = NSURL(string: imageResult.mediaUrl!)
+        let url = NSURL(string: imageResult.mediaUrl!)
         
         self.linkedPhotoUrl = url
         
         self.spot?.fillColor = UIColor.lightGrayColor().CGColor
         self.sd_setImageWithURL(url,
             placeholderImage: nil,
-            options: imageOptions,
+            options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload],
             completed: { image, error, cacheType, url in
                 self.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
             }
@@ -163,7 +162,7 @@ class AirImageView: UIImageView {
         if error != nil {
             Log.w("Image fetch failed: " + error!.localizedDescription)
             if url != nil {
-                Log.w("Failed url: \(url!.absoluteString!)")
+                Log.w("Failed url: \(url!.absoluteString)")
             }
             self.contentMode = UIViewContentMode.Center
             self.image = UIImage(named: "imgBroken250Light")

@@ -27,17 +27,20 @@ class Proxibase: NSObject {
         let config = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier("com.3meters.patchr.ios.message")
         config.sharedContainerIdentifier = "group.com.3meters.patchr.ios"
         let session = NSURLSession(configuration: config, delegate: self, delegateQueue: NSOperationQueue.mainQueue())
-        var request = NSMutableURLRequest(URL: NSURL(string: "https://api.aircandi.com/v1/data/messages")!)
+        let request = NSMutableURLRequest(URL: NSURL(string: "https://api.aircandi.com/v1/data/messages")!)
         request.HTTPMethod = "POST"
         
-        var err: NSError?
-        request.HTTPBody = NSJSONSerialization.dataWithJSONObject(message, options: nil, error: &err)
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-        
-        let task = session.dataTaskWithRequest(request)
-        task.resume()
-        
+        do {
+            request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(message, options: [])
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.addValue("application/json", forHTTPHeaderField: "Accept")
+            
+            let task = session.dataTaskWithRequest(request)
+            task.resume()
+        }
+        catch let error as NSError {
+            print("json error: \(error.localizedDescription)")
+        }
     }
 }
 
@@ -55,17 +58,14 @@ extension Proxibase: NSURLSessionTaskDelegate {
         }
         else {
             Log.d("Message posted!")
-            if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
-                
-                let patchId: String = ((patch["_id"] != nil) ? patch["_id"] : patch["id_"]) as! String
-                var recent: [String:AnyObject] = ["id_": patchId, "name":self.patch["name"]!]
-                recent["recentDate"] = NSNumber(longLong: Int64(NSDate().timeIntervalSince1970 * 1000)) // Only way to store Int64 as AnyObject
-                if self.patch["photo"] != nil {
-                    recent["photo"] = self.patch["photo"]
-                }
-                
-                Utils.updateRecents(recent)                
+            let patchId: String = ((patch["_id"] != nil) ? patch["_id"] : patch["id_"]) as! String
+            var recent: [String:AnyObject] = ["id_": patchId, "name":self.patch["name"]!]
+            recent["recentDate"] = NSNumber(longLong: Int64(NSDate().timeIntervalSince1970 * 1000)) // Only way to store Int64 as AnyObject
+            if self.patch["photo"] != nil {
+                recent["photo"] = self.patch["photo"]
             }
+            
+            Utils.updateRecents(recent)                
         }
     }
 }

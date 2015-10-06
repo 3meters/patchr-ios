@@ -55,8 +55,8 @@ class PatchEditViewController: EntityEditViewController {
             createButton.hidden = true
             
             /* Navigation bar buttons */
-            var deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
-            var saveButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
+            let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
+            let saveButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
             self.navigationItem.rightBarButtonItems = [saveButton, spacer, deleteButton]            
         }
         else {
@@ -78,7 +78,7 @@ class PatchEditViewController: EntityEditViewController {
             patchSwitchView.on = true
             
             /* Navigation bar buttons */
-            var doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
+            let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
             self.navigationItem.rightBarButtonItems = [doneButton]
 		}
         
@@ -139,7 +139,7 @@ class PatchEditViewController: EntityEditViewController {
     
     override func gather(parameters: NSMutableDictionary) -> NSMutableDictionary {
         
-        var parameters = super.gather(parameters)
+        let parameters = super.gather(parameters)
         
         if editMode {
             if visibility != entity!.visibility {
@@ -207,12 +207,9 @@ class PatchEditViewController: EntityEditViewController {
             if let error = ServerError(error) {
                 self.handleError(error)
             }
-            else {
-                if placemarks.count > 0 {
-                    let pm = placemarks[0] as! CLPlacemark
-                    self.locationCell.detailTextLabel?.text = pm.name
-                    return
-                }
+            else if placemarks != nil && placemarks!.count > 0 {
+                let placemark = placemarks!.first
+                self.locationCell.detailTextLabel?.text = placemark!.name
             }
         }
     }
@@ -307,17 +304,19 @@ extension PatchEditViewController: MapViewDelegate {
     }    
 }
 
-extension PatchEditViewController: UITableViewDelegate{
-    
+extension PatchEditViewController {
+    /*
+    * UITableViewDelegate
+    */
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         if indexPath.section == 0 {
             if indexPath.row == 1 {
-                var height: CGFloat = textViewHeightForRowAtIndexPath(indexPath)
+                let height: CGFloat = textViewHeightForRowAtIndexPath(indexPath)
                 return height < 48 ? 48 : height
             }
             else if indexPath.row == 2 {
                 /* Size so photo aspect ratio is 16:10 */
-                var height: CGFloat = ((UIScreen.mainScreen().bounds.size.width - 36) * 0.625) + 24
+                let height: CGFloat = ((UIScreen.mainScreen().bounds.size.width - 36) * 0.625) + 24
                 return height
             }
         }
@@ -335,7 +334,7 @@ extension PatchEditViewController: UITableViewDelegate{
                 return indexPath
             case (0, 5):
                 return indexPath
-            case (1, let row):
+            case (1, _):
                 return indexPath
             default:
                 super.endFieldEditing()
@@ -375,15 +374,14 @@ extension PatchEditViewController: UITableViewDelegate{
             let style = NSMutableParagraphStyle()
             style.firstLineHeadIndent = 16.0
             
-            let attributes = NSMutableDictionary()
-            attributes.setValue(style, forKey: NSParagraphStyleAttributeName)
-            attributes.setValue(UIColor(white: 0.50, alpha: 1.0), forKey: NSForegroundColorAttributeName)
-            attributes.setValue(-4.0, forKey: NSBaselineOffsetAttributeName)
+            let attributes = [
+                NSFontAttributeName : UIFont.preferredFontForTextStyle(UIFontTextStyleSubheadline),
+                NSUnderlineStyleAttributeName : 1,
+                NSParagraphStyleAttributeName : style,
+                NSForegroundColorAttributeName : UIColor(white: 0.50, alpha: 1.0),
+                NSBaselineOffsetAttributeName : -4.0]
             
-            let font = UIFont.preferredFontForTextStyle(UIFontTextStyleSubheadline)
-            attributes.setValue(font, forKey: NSFontAttributeName)
-            
-            view.attributedText = NSMutableAttributedString(string: "PATCH TYPE", attributes: attributes as [NSObject:AnyObject])
+            view.attributedText = NSMutableAttributedString(string: "PATCH TYPE", attributes: attributes)
         }
         
         view.backgroundColor = UIColor(white: 0.92, alpha: 1.0)

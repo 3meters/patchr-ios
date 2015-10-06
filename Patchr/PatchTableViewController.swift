@@ -83,7 +83,7 @@ class PatchTableViewController: BaseTableViewController {
         if self.filter == .Nearby {
             /* We do this here so user can see the changes */
             if DataController.instance.activityDate > self.activityDate || !self.query().executedValue {
-                self.bindQueryItems(force: true)
+                self.bindQueryItems(true)
             }
         }
         else {
@@ -144,7 +144,12 @@ class PatchTableViewController: BaseTableViewController {
                 query.parameters = ["entity": user]
             }
             
-            DataController.instance.managedObjectContext.save(nil)
+            do {
+                try DataController.instance.managedObjectContext.save()
+            }
+            catch {
+                print("Model save error: \(error)")
+            }
             self._query = query
         }
         return self._query!
@@ -168,7 +173,7 @@ class PatchTableViewController: BaseTableViewController {
             }
         }
         else {
-            super.bindQueryItems(force: force, paging: paging)
+            super.bindQueryItems(force, paging: paging)
         }
     }
     
@@ -178,8 +183,8 @@ class PatchTableViewController: BaseTableViewController {
         
         let view = cell.contentView.viewWithTag(1) as! BaseView
         let views = Dictionary(dictionaryLiteral: ("view", view))
-        let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-8-[view]-8-|", options: nil, metrics: nil, views: views)
-        let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|-8-[view]|", options: nil, metrics: nil, views: views)
+        let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-8-[view]-8-|", options: [], metrics: nil, views: views)
+        let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|-8-[view]|", options: [], metrics: nil, views: views)
         
         cell.contentView.addConstraints(horizontalConstraints)
         cell.contentView.addConstraints(verticalConstraints)
@@ -195,10 +200,10 @@ class PatchTableViewController: BaseTableViewController {
         
         let loc = notification.userInfo!["location"] as! CLLocation
         
-        var eventDate = loc.timestamp
-        var howRecent = abs(trunc(eventDate.timeIntervalSinceNow * 100) / 100)
-        var lat = trunc(loc.coordinate.latitude * 100) / 100
-        var lng = trunc(loc.coordinate.longitude * 100) / 100
+        let eventDate = loc.timestamp
+        let howRecent = abs(trunc(eventDate.timeIntervalSinceNow * 100) / 100)
+        let lat = trunc(loc.coordinate.latitude * 100) / 100
+        let lng = trunc(loc.coordinate.longitude * 100) / 100
         
         var message = "Location accepted ***: lat: \(lat), lng: \(lng), acc: \(loc.horizontalAccuracy)m, age: \(howRecent)s"
         
@@ -246,9 +251,8 @@ class PatchTableViewController: BaseTableViewController {
                 /* User credentials probably need to be refreshed */
                 if error.code == ServerStatusCode.UNAUTHORIZED {
                     let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
-                    if let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController") as? UIViewController {
-                        self?.view.window?.setRootViewController(controller, animated: true)
-                    }
+                    let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController")
+                    self?.view.window?.setRootViewController(controller, animated: true)
                 }
                 
                 self?.progress?.hide(true)
@@ -299,8 +303,10 @@ class PatchTableViewController: BaseTableViewController {
  * Extensions
  *--------------------------------------------------------------------------------------------*/
 
-extension PatchTableViewController: UITableViewDelegate {
-
+extension PatchTableViewController {
+    /*
+    * UITableViewDelegate
+    */
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
 		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,

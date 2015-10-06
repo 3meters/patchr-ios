@@ -44,18 +44,18 @@ class UserDetailViewController: BaseDetailViewController {
         self.userEmail.text?.removeAll(keepCapacity: false)
         
         if isCurrentUser && isGuest {
-            var signinButton = UIBarButtonItem(title: "Sign in", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSignin"))
-            var settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSettings"))
+            let signinButton = UIBarButtonItem(title: "Sign in", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSignin"))
+            let settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSettings"))
             self.navigationItem.rightBarButtonItems = [settingsButton]
             self.navigationItem.leftBarButtonItems = [signinButton]
             self.navigationItem.title = "Guest"
         }
         else if isCurrentUser {
             let editImage = UIImage(named: "imgEdit2Light")
-            var editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionEdit"))
-            var signoutButton = UIBarButtonItem(title: "Sign out", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSignout"))
-            var settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSettings"))
-            var spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
+            let editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionEdit"))
+            let signoutButton = UIBarButtonItem(title: "Sign out", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSignout"))
+            let settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSettings"))
+            let spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
             spacer.width = SPACER_WIDTH
             self.navigationItem.rightBarButtonItems = [settingsButton, spacer, editButton]
             self.navigationItem.leftBarButtonItems = [signoutButton]
@@ -74,7 +74,7 @@ class UserDetailViewController: BaseDetailViewController {
     
     override func viewDidAppear(animated: Bool){
         super.viewDidAppear(animated)
-        bind(force: true)
+        bind(true)
     }
 
 	/*--------------------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ class UserDetailViewController: BaseDetailViewController {
 
     @IBAction func unwindFromUserEdit(segue: UIStoryboardSegue) {
         // Refresh results when unwinding from User edit/create screen to pickup any changes.
-        self.bind(force: false)
+        self.bind(false)
     }
     
 	func actionSignout() {
@@ -132,7 +132,7 @@ class UserDetailViewController: BaseDetailViewController {
             LocationController.instance.clearLastLocationAccepted()
 
 			let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-			let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("LobbyNavigationController") as! UIViewController
+			let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("LobbyNavigationController") 
 			appDelegate.window!.setRootViewController(destinationViewController, animated: true)
 		}
 	}
@@ -141,21 +141,19 @@ class UserDetailViewController: BaseDetailViewController {
         
         LocationController.instance.clearLastLocationAccepted()
         let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
-        if let controller = storyboard.instantiateViewControllerWithIdentifier("SignInEditViewController") as? UIViewController {
-            self.navigationController?.pushViewController(controller, animated: true)
-        }
+        let controller = storyboard.instantiateViewControllerWithIdentifier("SignInEditViewController")
+        self.navigationController?.pushViewController(controller, animated: true)
     }
     
 	func actionEdit() {
         /* Has its own nav because we segue modally and it needs its own stack */
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-        if let controller = storyboard.instantiateViewControllerWithIdentifier("UserEditViewController") as? UserEditViewController {
-            controller.entity = self.entity
-            var navController = UINavigationController()
-            navController.navigationBar.tintColor = Colors.brandColorDark
-            navController.viewControllers = [controller]
-            self.navigationController?.presentViewController(navController, animated: true, completion: nil)
-        }
+        let controller = storyboard.instantiateViewControllerWithIdentifier("UserEditViewController") as? UserEditViewController
+        controller!.entity = self.entity
+        let navController = UINavigationController()
+        navController.navigationBar.tintColor = Colors.brandColorDark
+        navController.viewControllers = [controller!]
+        self.navigationController?.presentViewController(navController, animated: true, completion: nil)
 	}
 
 	func actionSettings() {
@@ -171,7 +169,7 @@ class UserDetailViewController: BaseDetailViewController {
 
     override func bind(force: Bool = false) {
         if !self.isGuest {
-            super.bind(force: force)
+            super.bind(force)
         }
     }
     

@@ -54,22 +54,26 @@ class LocationController: NSObject {
     func startUpdates(){
         Log.d("***** Location updates started *****")
         
-        if CLLocationManager.authorizationStatus() == .NotDetermined {
-            if self.locationManager.respondsToSelector(Selector("requestWhenInUseAuthorization")) {
-                // iOS 8
+        // iOS 8
+        if #available(iOS 8.0, *) {
+            if CLLocationManager.authorizationStatus() == .NotDetermined {
                 self.locationManager.requestWhenInUseAuthorization()
             }
-            else {
-                // iOS 7
-                self.locationManager.startUpdatingLocation() // Prompts automatically
+            else if CLLocationManager.authorizationStatus() == .AuthorizedAlways
+                || CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+                    self.locationManager.startUpdatingLocation()
             }
         }
-        else if CLLocationManager.authorizationStatus() == .AuthorizedAlways
-            || CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
-            self.locationManager.startUpdatingLocation()
+        else {
+            if CLLocationManager.authorizationStatus() == .NotDetermined {
+                self.locationManager.startUpdatingLocation() // Prompts automatically
+            }
+            else if CLLocationManager.authorizationStatus() == .Authorized {
+                self.locationManager.startUpdatingLocation()
+            }
         }
     }
-    
+
     func stopUpdates(){
         Log.d("***** Location updates stopped *****")
         if self.locationManager != nil {
@@ -81,11 +85,18 @@ class LocationController: NSObject {
         Log.d("***** Location significant change updates started *****")
         
         /* Ignores desired distance and accuracy */
-        
-        if CLLocationManager.authorizationStatus() == .AuthorizedAlways
-            || CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
-            if self.locationManager != nil {
-                self.locationManager.startMonitoringSignificantLocationChanges()
+        if self.locationManager != nil {
+            // iOS 8
+            if #available(iOS 8.0, *) {
+                if CLLocationManager.authorizationStatus() == .AuthorizedAlways
+                    || CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+                        self.locationManager.startMonitoringSignificantLocationChanges()
+                }
+            }
+            else {
+                if CLLocationManager.authorizationStatus() == .Authorized {
+                    self.locationManager.startMonitoringSignificantLocationChanges()
+                }
             }
         }
     }
@@ -136,10 +147,10 @@ class LocationController: NSObject {
                 UIApplication.sharedApplication().endBackgroundTask(self.bgTask!)
             }
             
-            var eventDate = loc.timestamp
-            var howRecent = abs(trunc(eventDate.timeIntervalSinceNow * 100) / 100)
-            var lat = trunc(loc.coordinate.latitude * 100) / 100
-            var lng = trunc(loc.coordinate.longitude * 100) / 100
+            let eventDate = loc.timestamp
+            let howRecent = abs(trunc(eventDate.timeIntervalSinceNow * 100) / 100)
+            let lat = trunc(loc.coordinate.latitude * 100) / 100
+            let lng = trunc(loc.coordinate.longitude * 100) / 100
             
             var message = "Background location accepted ***: lat: \(lat), lng: \(lng), acc: \(loc.horizontalAccuracy)m, age: \(howRecent)s"
             
@@ -171,31 +182,42 @@ class LocationController: NSObject {
 
 extension LocationController: CLLocationManagerDelegate {
 
-	func locationManager(manager: CLLocationManager!, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+	func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
         
-		if status == .AuthorizedAlways || status == .AuthorizedWhenInUse {
-			manager.startUpdatingLocation()
-		}
-        else if status == CLAuthorizationStatus.Denied {
+        if #available(iOS 8.0, *) {
+            if CLLocationManager.authorizationStatus() == .AuthorizedAlways
+                || CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+                    manager.startUpdatingLocation()
+                    return
+            }
+        }
+        else {
+            if CLLocationManager.authorizationStatus() == .Authorized {
+                manager.startUpdatingLocation()
+                return
+            }
+        }
+        
+        if status == CLAuthorizationStatus.Denied {
             let windowList = UIApplication.sharedApplication().windows
-            let topWindow = windowList[windowList.count - 1] as! UIWindow
+            let topWindow = windowList[windowList.count - 1] 
             topWindow.rootViewController?.Alert("Location Disabled",
                 message: "You can enable location access in Settings → Patchr → Location")
 		}
 	}
     
-    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
+    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         Log.d("Location update received")
         
-        if let location = locations.last as? CLLocation {
+        if let location = locations.last {
             
             let isInBackground = (UIApplication.sharedApplication().applicationState == UIApplicationState.Background)
             let locationLast: CLLocation? = self._lastLocationAccepted
             let age = abs(trunc(location.timestamp.timeIntervalSinceNow * 100) / 100)
             
             if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("devModeEnabled")) {
-                var lat = trunc(location.coordinate.latitude * 100) / 100
-                var lng = trunc(location.coordinate.longitude * 100) / 100
+                let lat = trunc(location.coordinate.latitude * 100) / 100
+                let lng = trunc(location.coordinate.longitude * 100) / 100
                 
                 var message = "Location received: lat: \(lat), lng: \(lng), acc: \(location.horizontalAccuracy)m, age: \(age)s"
                 

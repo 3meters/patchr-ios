@@ -8,7 +8,7 @@
 
 extension UITextField {
     var isEmpty: Bool {
-        return self.text == nil || self.text.isEmpty
+        return self.text == nil || self.text!.isEmpty
     }
 }
 
@@ -71,12 +71,6 @@ extension UIImageView {
             self.image = templateImage
         }
         self.tintColor = color
-    }
-}
-
-extension String {
-    var length: Int {
-        return count(self)
     }
 }
 

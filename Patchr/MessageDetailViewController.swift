@@ -79,19 +79,19 @@ class MessageDetailViewController: UITableViewController {
         self.description_.delegate = self
         
 		/* Navigation bar buttons */
-        var shareButton  = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
+        let shareButton  = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
         if self.isOwner {
             let editImage    = UIImage(named: "imgEdit2Light")
-            var editButton   = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
-            var spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
-            var deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: Selector("deleteAction"))
+            let editButton   = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
+            let spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
+            let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: Selector("deleteAction"))
             spacer.width = SPACER_WIDTH
             self.navigationItem.rightBarButtonItems = [shareButton, spacer, deleteButton, spacer, editButton]
         }
         else if self.isPatchOwner {
             let removeImage    = UIImage(named: "imgRemoveLight")
-            var removeButton   = UIBarButtonItem(image: removeImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("removeAction"))
-            var spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
+            let removeButton   = UIBarButtonItem(image: removeImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("removeAction"))
+            let spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
             spacer.width = SPACER_WIDTH
             self.navigationItem.rightBarButtonItems = [shareButton, spacer, removeButton]
         }
@@ -157,7 +157,7 @@ class MessageDetailViewController: UITableViewController {
 
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
-		refresh(force: true)
+		refresh(true)
 	}
     
     override func viewDidDisappear(animated: Bool) {
@@ -230,7 +230,7 @@ class MessageDetailViewController: UITableViewController {
 	}
 
 	@IBAction func photoAction(sender: AnyObject) {
-        var browser = Shared.showPhotoBrowser(self.messagePhoto.imageForState(.Normal), view: sender as! UIView, viewController: self, entity: self.message)
+        let browser = Shared.showPhotoBrowser(self.messagePhoto.imageForState(.Normal), view: sender as! UIView, viewController: self, entity: self.message)
         browser.target = self
 	}
 
@@ -291,7 +291,7 @@ class MessageDetailViewController: UITableViewController {
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
         if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageEditViewController") as? MessageEditViewController {
             controller.entity = self.message
-            var navController = UINavigationController()
+            let navController = UINavigationController()
             navController.navigationBar.tintColor = Colors.brandColorDark
             navController.viewControllers = [controller]
             self.navigationController?.presentViewController(navController, animated: true, completion: nil)
@@ -300,7 +300,7 @@ class MessageDetailViewController: UITableViewController {
     
     func deleteAction() {
         self.ActionConfirmationAlert(
-            title: "Confirm Delete",
+            "Confirm Delete",
             message: "Are you sure you want to delete this?",
             actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
                 doIt in
@@ -312,7 +312,7 @@ class MessageDetailViewController: UITableViewController {
     
     func removeAction() {
         self.ActionConfirmationAlert(
-            title: "Confirm Remove",
+            "Confirm Remove",
             message: "Are you sure you want to remove this message from the patch?",
             actionTitle: "Remove", cancelTitle: "Cancel", delegate: self) {
                 doIt in
@@ -353,7 +353,7 @@ class MessageDetailViewController: UITableViewController {
                     messageView.toolbarHeight.constant = 0
                     if let recognizers = messageView.photo.gestureRecognizers {
                         for recognizer in recognizers {
-                            messageView.photo.removeGestureRecognizer(recognizer as! UIGestureRecognizer)
+                            messageView.photo.removeGestureRecognizer(recognizer )
                         }
                     }
                 }
@@ -369,12 +369,12 @@ class MessageDetailViewController: UITableViewController {
             }
             
             let views = Dictionary(dictionaryLiteral: ("view", view))
-            let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|[view]|", options: nil, metrics: nil, views: views)
-            let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|[view]|", options: nil, metrics: nil, views: views)
+            let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|[view]|", options: [], metrics: nil, views: views)
+            let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|[view]|", options: [], metrics: nil, views: views)
             self.shareHolder?.addConstraints(horizontalConstraints)
             self.shareHolder?.addConstraints(verticalConstraints)
             
-            var tap = UITapGestureRecognizer(target: self, action: "shareBrowseAction:");
+            let tap = UITapGestureRecognizer(target: self, action: "shareBrowseAction:");
             self.shareHolder?.addGestureRecognizer(tap)
         }
         else {
@@ -456,9 +456,13 @@ class MessageDetailViewController: UITableViewController {
                 self.handleError(error)
             }
             else {
-                DataController.instance.managedObjectContext.deleteObject(self.message!)
-                if DataController.instance.managedObjectContext.save(nil) {
+                do {
+                    DataController.instance.managedObjectContext.deleteObject(self.message!)
+                    try DataController.instance.managedObjectContext.save()
                     self.navigationController?.popViewControllerAnimated(true)
+                }
+                catch {
+                    print("Model save error: \(error)")
                 }
             }
         }
@@ -474,9 +478,13 @@ class MessageDetailViewController: UITableViewController {
                     UIViewController.topMostViewController()!.handleError(error)
                 }
                 else {
-                    DataController.instance.managedObjectContext.deleteObject(self.message!)
-                    if DataController.instance.managedObjectContext.save(nil) {
+                    do {
+                        DataController.instance.managedObjectContext.deleteObject(self.message!)
+                        try DataController.instance.managedObjectContext.save()
                         self.navigationController?.popViewControllerAnimated(true)
+                    }
+                    catch {
+                        print("Model save error: \(error)")
                     }
                 }
             }
@@ -504,7 +512,7 @@ class MessageDetailViewController: UITableViewController {
                 }
                 else {
                     Log.d("Branch link created: \(url!)")
-                    var message: MessageItem = MessageItem(entity: self.message!, shareUrl: url!)
+                    let message: MessageItem = MessageItem(entity: self.message!, shareUrl: url!)
                     
                     let activityViewController = UIActivityViewController(
                         activityItems: [message],
@@ -517,8 +525,10 @@ class MessageDetailViewController: UITableViewController {
     }
 }
 
-extension MessageDetailViewController: UITableViewDelegate {
-
+extension MessageDetailViewController {
+    /*
+    * UITableViewDelegate
+    */
 	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         
         if let message = self.message {
@@ -570,10 +580,10 @@ extension MessageDetailViewController: UIActionSheetDelegate {
                 () -> () in
                 switch self.shareButtonFunctionMap[buttonIndex]! {
                 case .Share:
-                    self.shareUsing(patchr: true)
+                    self.shareUsing(true)
                     
                 case .ShareVia:
-                    self.shareUsing(patchr: false)
+                    self.shareUsing(false)
                 }
             })
         }
@@ -603,7 +613,7 @@ class MessageItem: NSObject, UIActivityItemSource {
     
     func activityViewController(activityViewController: UIActivityViewController, itemForActivityType activityType: String) -> AnyObject? {
         
-        var text = "Check out \(UserController.instance.currentUser.name)'s message to the \(self.entity.patch.name) patch! \(self.shareUrl) \n"
+        let text = "Check out \(UserController.instance.currentUser.name)'s message to the \(self.entity.patch.name) patch! \(self.shareUrl) \n"
         if activityType == UIActivityTypeMail {
             return text
         }

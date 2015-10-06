@@ -15,20 +15,25 @@ class AudioController: NSObject {
     var player: AVAudioPlayer! = nil
     
     func play(sound: String) {
-        player = AVAudioPlayer(contentsOfURL: self.uriForFile(sound), error: nil)
-        player.prepareToPlay()
-        player.play()
+        do {
+            player = try AVAudioPlayer(contentsOfURL: self.uriForFile(sound), fileTypeHint: nil)
+            player.prepareToPlay()
+            player.play()
+        }
+        catch {
+            print("Error creating AVAudioPlayer: \(error)")
+        }
     }
     
     private func uriForFile(fileName: String) -> NSURL {
         let path = NSBundle.mainBundle().pathForResource(fileName, ofType:"aac")
-        let fileUri: NSURL = NSURL(fileURLWithPath: path!)!
+        let fileUri: NSURL = NSURL(fileURLWithPath: path!)
         return fileUri
     }
 }
 
 extension AudioController: AVAudioPlayerDelegate {
-    func audioPlayerDidFinishPlaying(player: AVAudioPlayer!, successfully flag: Bool) {
+    func audioPlayerDidFinishPlaying(player: AVAudioPlayer, successfully flag: Bool) {
         self.player = nil
     }
 }

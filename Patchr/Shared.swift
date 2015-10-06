@@ -13,9 +13,9 @@ struct Shared {
         * Create browser (must be done each time photo browser is displayed. Photo
         * browser objects cannot be re-used)
         */
-        var photo = IDMPhoto(image:image)
-        var photos = Array([photo])
-        var browser = AirPhotoBrowser(photos:photos as [AnyObject], animatedFromView: view)
+        let photo = IDMPhoto(image:image)
+        let photos = Array([photo])
+        let browser = AirPhotoBrowser(photos:photos as [AnyObject], animatedFromView: view)
         
         browser.usePopAnimation = true
         browser.scaleImage = image  // Used because final image might have different aspect ratio than initially
@@ -31,9 +31,9 @@ struct Shared {
         return browser
     }
     
-    static func Toast(message: String?, duration: NSTimeInterval = 3.0, var controller: UIViewController? = nil, addToWindow: Bool = true) -> AirProgress {
+    static func Toast(message: String?, duration: NSTimeInterval = 3.0, controller: UIViewController? = nil, addToWindow: Bool = true) -> AirProgress {
         
-        var targetView: UIView = UIApplication.sharedApplication().windows.last as! UIView
+        var targetView: UIView = UIApplication.sharedApplication().windows.last!
         
         if !addToWindow {
             if controller == nil  {

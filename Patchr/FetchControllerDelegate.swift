@@ -70,8 +70,9 @@ public class FetchControllerDelegate: NSObject, NSFetchedResultsControllerDelega
 		if !self.ignoreNextUpdates {
             switch type {
                 case .Insert:
-                    self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: self.rowAnimation)
-                    
+					if indexPath != newIndexPath {
+						self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: self.rowAnimation)
+					}
                 case .Delete:
                     self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: self.rowAnimation)
                     
@@ -82,7 +83,7 @@ public class FetchControllerDelegate: NSObject, NSFetchedResultsControllerDelega
                     
                 case .Move:
                     // Stupid and ugly, rdar://17684030
-                    if !contains(sectionsBeingAdded, newIndexPath!.section) && !contains(sectionsBeingRemoved, indexPath!.section) {
+                    if !sectionsBeingAdded.contains(newIndexPath!.section) && !sectionsBeingRemoved.contains(indexPath!.section) {
                         self.tableView.moveRowAtIndexPath(indexPath!, toIndexPath: newIndexPath!)
                         if let cell = tableView.cellForRowAtIndexPath(indexPath!) {
                             self.onUpdate?(cell: cell, object: anObject)
@@ -92,9 +93,6 @@ public class FetchControllerDelegate: NSObject, NSFetchedResultsControllerDelega
                         self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
                         self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
                     }
-                    
-                default:
-                    return
             }
 		}
 	}

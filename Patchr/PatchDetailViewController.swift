@@ -67,16 +67,16 @@ class PatchDetailViewController: BaseDetailViewController {
         self.infoGroup.addGestureRecognizer(infoTapGestureRecognizer)
         
 		/* Apply gradient to banner */
-		var gradient: CAGradientLayer = CAGradientLayer()
+		let gradient: CAGradientLayer = CAGradientLayer()
 		gradient.frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width + 100, ((UIScreen.mainScreen().bounds.size.width - 24) * 0.75) + 50)
-		var startColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.5))  // Bottom
-		var endColor:   UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0))    // Top
+		let startColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.5))  // Bottom
+		let endColor:   UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0))    // Top
 		gradient.colors = [endColor.CGColor, startColor.CGColor]
 		gradient.startPoint = CGPoint(x: 0.5, y: 0.5)
 		gradient.endPoint = CGPoint(x: 0.5, y: 1)
 		patchPhoto.layer.insertSublayer(gradient, atIndex: 0)
         
-        var more: UITableViewCell = UITableViewCell()
+        let more: UITableViewCell = UITableViewCell()
         placeButton.addSubview(more)
         more.frame = placeButton.bounds
         more.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
@@ -144,8 +144,8 @@ class PatchDetailViewController: BaseDetailViewController {
         super.viewDidAppear(animated)
         
         /* Super hack to resize the table header to fit the contents */
-        var headerView: UIView = self.tableView.tableHeaderView!
-        var height = contextButton.frame.height + bannerGroup.frame.height
+        let headerView: UIView = self.tableView.tableHeaderView!
+        let height = contextButton.frame.height + bannerGroup.frame.height
         var newFrame: CGRect = self.tableView.tableHeaderView!.frame;
         
         newFrame.size.height = height
@@ -153,7 +153,7 @@ class PatchDetailViewController: BaseDetailViewController {
         self.tableView.tableHeaderView = headerView
 
         /* Load the entity */
-        bind(force: true)
+        bind(true)
     }
 
     override func viewDidDisappear(animated: Bool) {
@@ -223,7 +223,7 @@ class PatchDetailViewController: BaseDetailViewController {
     
     @IBAction func unwindFromMessageEdit(segue: UIStoryboardSegue) {
         // Refresh results when unwinding from Message screen to pickup any changes.
-        self.bindQueryItems(force: true, paging: false)
+        self.bindQueryItems(true, paging: false)
     }
     
     @IBAction override func unwindFromPatchEdit(segue: UIStoryboardSegue) {
@@ -253,17 +253,11 @@ class PatchDetailViewController: BaseDetailViewController {
     }
     
     func flipToInfo(sender: AnyObject) {
-        let options = UIViewAnimationOptions.TransitionFlipFromBottom
-            | UIViewAnimationOptions.ShowHideTransitionViews
-            | UIViewAnimationOptions.CurveEaseOut
-        UIView.transitionFromView(bannerGroup!, toView: infoGroup, duration: 0.4, options: options, completion: nil);
+        UIView.transitionFromView(bannerGroup!, toView: infoGroup, duration: 0.4, options: [.TransitionFlipFromBottom, .ShowHideTransitionViews, .CurveEaseOut], completion: nil);
     }
     
     func flipToBanner(sender: AnyObject) {
-        let options = UIViewAnimationOptions.TransitionFlipFromTop
-            | UIViewAnimationOptions.ShowHideTransitionViews
-            | UIViewAnimationOptions.CurveEaseOut
-        UIView.transitionFromView(infoGroup!, toView: bannerGroup, duration: 0.4, options: options, completion: nil);
+        UIView.transitionFromView(infoGroup!, toView: bannerGroup, duration: 0.4, options: [.TransitionFlipFromTop, .ShowHideTransitionViews, .CurveEaseOut], completion: nil);
     }
     
     func addAction() {
@@ -276,7 +270,7 @@ class PatchDetailViewController: BaseDetailViewController {
         if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageEditViewController") as? MessageEditViewController {
             controller.toString = self.entity!.name
             controller.patchId = self.entityId
-            var navController = UINavigationController()
+            let navController = UINavigationController()
             navController.navigationBar.tintColor = Colors.brandColorDark
             navController.viewControllers = [controller]
             self.navigationController?.presentViewController(navController, animated: true, completion: nil)
@@ -288,7 +282,7 @@ class PatchDetailViewController: BaseDetailViewController {
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
         if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchEditViewController") as? PatchEditViewController {
             controller.entity = entity
-            var navController = UINavigationController()
+            let navController = UINavigationController()
             navController.navigationBar.tintColor = Colors.brandColorDark
             navController.viewControllers = [controller]
             self.navigationController?.presentViewController(navController, animated: true, completion: nil)
@@ -483,13 +477,13 @@ class PatchDetailViewController: BaseDetailViewController {
 
     override func drawButtons() {
         
-        var shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
-        var addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: Selector("addAction"))
-        var spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
+        let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
+        let addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: Selector("addAction"))
+        let spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
         spacer.width = SPACER_WIDTH
         if isOwner() {
             let editImage = UIImage(named: "imgEdit2Light")
-            var editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
+            let editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
             self.navigationItem.rightBarButtonItems = [addButton, spacer, shareButton, spacer, editButton]
         }
         else {
@@ -507,7 +501,9 @@ class PatchDetailViewController: BaseDetailViewController {
             controller?.shareSchema = Schema.ENTITY_PATCH
             controller?.shareId = self.entityId!
             controller?.messageType = .Share
-            self.presentViewController(UINavigationController(rootViewController: controller!), animated: true, completion: nil)
+			let navController = UINavigationController(rootViewController: controller!)
+			navController.navigationBar.tintColor = Colors.brandColorDark
+            self.presentViewController(navController, animated: true, completion: nil)
         }
         else {
             Branch.getInstance().getShortURLWithParams(["entityId":self.entityId!, "entitySchema":"patch"], andChannel: "patchr-ios", andFeature: BRANCH_FEATURE_TAG_INVITE, andCallback: {
@@ -518,7 +514,7 @@ class PatchDetailViewController: BaseDetailViewController {
                 }
                 else {
                     Log.d("Branch link created: \(url!)")
-                    var patch: PatchItem = PatchItem(entity: self.entity as! Patch, shareUrl: url!)
+                    let patch: PatchItem = PatchItem(entity: self.entity as! Patch, shareUrl: url!)
                     
                     let activityViewController = UIActivityViewController(
                         activityItems: [patch],
@@ -547,8 +543,8 @@ class PatchDetailViewController: BaseDetailViewController {
 extension PatchDetailViewController: MapViewDelegate {
     
     func locationForMap() -> CLLocation? {
-        if let location = self.entity?.location, let entity = self.entity {
-            return CLLocation(latitude: entity.location.latValue, longitude: entity.location.lngValue)
+        if let location = self.entity?.location {
+            return CLLocation(latitude: location.latValue, longitude: location.lngValue)
         }
         return nil
     }
@@ -581,8 +577,10 @@ extension PatchDetailViewController: MapViewDelegate {
     }
 }
 
-extension PatchDetailViewController: UITableViewDelegate {
-    
+extension PatchDetailViewController {
+    /*
+     * UITableViewDelegate
+     */
     override func scrollViewDidScroll(scrollView: UIScrollView) {
         if patchPhotoTop != nil {
             /* Parallax effect when user scrolls down */
@@ -609,10 +607,10 @@ extension PatchDetailViewController: UIActionSheetDelegate {
                 () -> () in
                 switch self.shareButtonFunctionMap[buttonIndex]! {
                 case .Share:
-                    self.shareUsing(patchr: true)
+                    self.shareUsing(true)
                     
                 case .ShareVia:
-                    self.shareUsing(patchr: false)
+                    self.shareUsing(false)
                 }
             })
         }
@@ -634,7 +632,7 @@ class PatchItem: NSObject, UIActivityItemSource {
     }
     
     func activityViewController(activityViewController: UIActivityViewController, itemForActivityType activityType: String) -> AnyObject? {
-        var text = "\(UserController.instance.currentUser.name) has invited you to the \(self.entity.name) patch! \(self.shareUrl) \n"
+        let text = "\(UserController.instance.currentUser.name) has invited you to the \(self.entity.name) patch! \(self.shareUrl) \n"
         if activityType == UIActivityTypeMail {
             return text
         }

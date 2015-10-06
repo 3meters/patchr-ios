@@ -65,7 +65,7 @@ class AirWatchButton: AirToggleButton {
                     UIViewController.topMostViewController()!.handleError(error)
                 }
                 else {
-                    if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
+                    if DataController.instance.dataWrapperForResponse(response!) != nil {
                         patch!.userWatchId = nil
                         patch!.userWatchStatusValue = .NonMember
                         patch!.countWatchingValue--
@@ -85,7 +85,7 @@ class AirWatchButton: AirToggleButton {
                     UIViewController.topMostViewController()!.handleError(error)
                 }
                 else {
-                    if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
+                    if DataController.instance.dataWrapperForResponse(response!) != nil {
                         patch!.userWatchId = nil
                         patch!.userWatchStatusValue = .NonMember
                     }

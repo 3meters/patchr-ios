@@ -33,7 +33,7 @@ class FetchedResultsTableViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        var cell = tableView.dequeueReusableCellWithIdentifier(CELL_IDENTIFIER) as? UITableViewCell
+        var cell = tableView.dequeueReusableCellWithIdentifier(CELL_IDENTIFIER)
         
         if cell == nil {
             cell = buildCell(self.contentViewName!)
@@ -41,7 +41,7 @@ class FetchedResultsTableViewController: UITableViewController {
         }
 
         /* Get the data object to bind the cell to */
-        let queryResult = self.fetchedResultsControllerForViewController(self).sections![indexPath.section].objects[indexPath.row] as! QueryItem
+        let queryResult = self.fetchedResultsControllerForViewController(self).sections![indexPath.section].objects![indexPath.row] as! QueryItem
         
         /* Bind the cell */
         bindCell(cell!, object: queryResult.object, tableView: tableView)
@@ -56,15 +56,12 @@ class FetchedResultsTableViewController: UITableViewController {
         cell.layer.shouldRasterize = true
         cell.layer.rasterizationScale = UIScreen.mainScreen().scale
         
-        if cell.respondsToSelector("layoutMargins") {
+        if #available(iOS 8.0, *) {
             cell.layoutMargins = UIEdgeInsetsZero
-        }
-        
-        if cell.respondsToSelector("preservesSuperviewLayoutMargins") {
             cell.preservesSuperviewLayoutMargins = false
         }
         
-        var view = NSBundle.mainBundle().loadNibNamed(contentViewName, owner: self, options: nil)[0] as! BaseView
+        let view = NSBundle.mainBundle().loadNibNamed(contentViewName, owner: self, options: nil)[0] as! BaseView
         cell.injectView(view)
         
         /* We need to set the initial width so later sizing logic has it to work with */
@@ -82,8 +79,8 @@ class FetchedResultsTableViewController: UITableViewController {
          */
         let view = cell.contentView.viewWithTag(1) as! BaseView
         let views = Dictionary(dictionaryLiteral: ("view", view))
-        let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|[view]|", options: nil, metrics: nil, views: views)
-        let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|[view]|", options: nil, metrics: nil, views: views)
+        let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|[view]|", options: [], metrics: nil, views: views)
+        let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|[view]|", options: [], metrics: nil, views: views)
         cell.contentView.addConstraints(horizontalConstraints)
         cell.contentView.addConstraints(verticalConstraints)
         

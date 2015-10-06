@@ -45,9 +45,20 @@ public class S3: NSObject {
             let configIdentifier = "group.com.3meters.patchr.ios.image"
             
             /* PatchrShare only runs on >= iOS8 */
-            var config = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(configIdentifier)   // iOS8 only
-            config.sharedContainerIdentifier = "group.com.3meters.patchr.ios"
-            
+            var config: NSURLSessionConfiguration!
+			#if IOS8TARGET	// FIXME: Hideous hack until compiler can deal with classes included in targets with different iOS version specs.
+				config = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(configIdentifier)
+				config.sharedContainerIdentifier = "group.com.3meters.patchr.ios"
+			#else
+				if #available(iOS 8.0, *) {
+					config = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(configIdentifier)
+					config.sharedContainerIdentifier = "group.com.3meters.patchr.ios"
+				}
+				else {
+					config = NSURLSessionConfiguration.backgroundSessionConfiguration(configIdentifier)
+				}
+			#endif			
+			
             // NSURLSession background sessions *need* to have a delegate.
             Static.session = NSURLSession(configuration: config, delegate: self, delegateQueue: NSOperationQueue.mainQueue())
         }
@@ -79,7 +90,13 @@ public class S3: NSObject {
                     Log.w("S3 image upload failed: [\(exception)]")
                 }
                 
-                NSFileManager.defaultManager().removeItemAtURL(imageURL, error: nil)
+                do {
+                    try NSFileManager.defaultManager().removeItemAtURL(imageURL)
+                }
+                catch let error as NSError {
+                    print("Error removing image file: \(error.localizedDescription)")
+                }
+                
                 completion(task)
                 return nil
             }
@@ -123,10 +140,10 @@ public class S3: NSObject {
                 return nil
             }
             
-            var preSignedUrl = task.result as! NSURL
+            let preSignedUrl = task.result as! NSURL
             Log.d(String(format: "S3 upload pre-signedUrl: %@", preSignedUrl))
             
-            var request = NSMutableURLRequest(URL: preSignedUrl)
+            let request = NSMutableURLRequest(URL: preSignedUrl)
             request.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringLocalCacheData
             
             /* Make sure the content-type and http method are the same as in preSignedReq */
@@ -137,7 +154,7 @@ public class S3: NSObject {
             let uploadTask = Static.session?.uploadTaskWithRequest(request, fromFile: fileUrl)
             
             /* Tracking */
-            var uploadInfo = UploadInfo(key: key, bucket: bucket, fileUrl: fileUrl)
+            let uploadInfo = UploadInfo(key: key, bucket: bucket, fileUrl: fileUrl)
             self.uploads[uploadTask!] = uploadInfo
             
             // Start the upload task:
@@ -184,11 +201,12 @@ extension S3 : NSURLSessionDelegate {
             
             self.uploads.removeValueForKey(uploadTask)
             
-            var delError: NSError?
             if NSFileManager.defaultManager().isDeletableFileAtPath(uploadInfo.fileUrl.path!) {
-                let success = NSFileManager.defaultManager().removeItemAtPath(uploadInfo.fileUrl.path!, error: &delError)
-                if !success {
-                    Log.w("Error removing file at path: \(error?.description)")
+                do {
+                    try NSFileManager.defaultManager().removeItemAtPath(uploadInfo.fileUrl.path!)
+                }
+                catch let error as NSError {
+                    print("Error removing image file: \(error.localizedDescription)")
                 }
             }
 

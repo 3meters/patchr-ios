@@ -9,7 +9,7 @@
 import UIKit
 import MessageUI
 
-class SettingsTableViewController: UITableViewController, MFMailComposeViewControllerDelegate {
+class SettingsTableViewController: UITableViewController {
     
     
     @IBOutlet weak var notificationsCell: UITableViewCell!
@@ -29,7 +29,7 @@ class SettingsTableViewController: UITableViewController, MFMailComposeViewContr
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let components = NSCalendar.currentCalendar().components(.YearCalendarUnit | .MonthCalendarUnit | .DayCalendarUnit, fromDate: NSDate())
+        let components = NSCalendar.currentCalendar().components([.Year, .Month, .Day], fromDate: NSDate())
         self.buildInformationLabel.text = "©\(components.year) 3meters LLC - Version \(appVersion()) (\(build()))"
         
         if let user = UserController.instance.currentUser {
@@ -72,8 +72,10 @@ class SettingsTableViewController: UITableViewController, MFMailComposeViewContr
     }
 }
 
-extension SettingsTableViewController: UITableViewDelegate {
-    
+extension SettingsTableViewController {
+    /*
+    * UITableViewDelegate
+    */
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
         let selectedCell = tableView.cellForRowAtIndexPath(indexPath)
@@ -95,7 +97,7 @@ extension SettingsTableViewController: UITableViewDelegate {
                 self.presentViewController(composeViewController, animated: true, completion: nil)
             } else {
                 var emailURL = "mailto:\(email)"
-                emailURL = emailURL.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding) ?? emailURL
+                emailURL = emailURL.stringByAddingPercentEncodingWithAllowedCharacters(NSMutableCharacterSet.URLQueryAllowedCharacterSet()) ?? emailURL
                 if let url = NSURL(string: emailURL) {
                     self.tableView.deselectRowAtIndexPath(indexPath, animated: true)
                     UIApplication.sharedApplication().openURL(url)
@@ -136,7 +138,7 @@ extension SettingsTableViewController: UITableViewDelegate {
 
 extension SettingsTableViewController: MFMailComposeViewControllerDelegate {
     
-    func mailComposeController(controller: MFMailComposeViewController!, didFinishWithResult result: MFMailComposeResult, error: NSError!) {
+    func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
 }

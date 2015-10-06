@@ -39,8 +39,8 @@ class UserEditViewController: EntityEditViewController {
             self.cancelledLabel = "Update cancelled"
             
             /* Navigation bar buttons */
-            var deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
-            var doneButton   = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
+            let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
+            let doneButton   = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
             self.navigationItem.rightBarButtonItems = [doneButton, spacer, deleteButton]
         }
         else {
@@ -57,7 +57,7 @@ class UserEditViewController: EntityEditViewController {
             }
             
             /* Navigation bar buttons */
-            var doneButton   = UIBarButtonItem(title: "Join", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
+            let doneButton   = UIBarButtonItem(title: "Join", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
             self.navigationItem.rightBarButtonItems = [doneButton]
         }
         
@@ -114,7 +114,7 @@ class UserEditViewController: EntityEditViewController {
     
     override func gather(parameters: NSMutableDictionary) -> NSMutableDictionary {
         
-        var parameters = super.gather(parameters)
+        let parameters = super.gather(parameters)
         
         if editMode {
             let user = entity as! User
@@ -169,7 +169,7 @@ class UserEditViewController: EntityEditViewController {
         }
 
 		if !editMode {
-            if (count(passwordField.text.utf16) < 6) {
+            if passwordField.text!.utf16.count < 6 {
                 Alert("Enter a password with six characters or more.", message: nil, cancelButtonTitle: "OK")
                 return false
             }
@@ -199,7 +199,7 @@ class UserEditViewController: EntityEditViewController {
         progress!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("progressWasCancelled:")))
         progress.show(true)
         
-        var parameters = self.gather(NSMutableDictionary())
+        let parameters = self.gather(NSMutableDictionary())
         var cancelled = false
         
         let queue = TaskQueue()
@@ -301,11 +301,9 @@ class UserEditViewController: EntityEditViewController {
                     /* Navigate to main interface */
                     let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
                     let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-                    if let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController") as? UIViewController {
-                        appDelegate.window?.setRootViewController(controller, animated: true)
-                        Shared.Toast("Signed in as \(UserController.instance.userName!)", controller: controller)
-                    }
-                    
+                    let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController")
+                    appDelegate.window?.setRootViewController(controller, animated: true)
+                    Shared.Toast("Signed in as \(UserController.instance.userName!)", controller: controller)                    
                 }
             }
         }
@@ -321,7 +319,7 @@ class UserEditViewController: EntityEditViewController {
     
     var email: String {
         get {
-            return self.emailField.text
+            return self.emailField.text!
         }
         set {
             self.emailField.text = newValue
@@ -330,7 +328,7 @@ class UserEditViewController: EntityEditViewController {
     
     var area: String {
         get {
-            return self.areaField.text
+            return self.areaField.text!
         }
         set {
             self.areaField.text = newValue
@@ -339,7 +337,7 @@ class UserEditViewController: EntityEditViewController {
     
     var password: String {
         get {
-            return self.passwordField.text
+            return self.passwordField.text!
         }
         set {
             self.passwordField.text = newValue

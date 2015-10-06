@@ -61,9 +61,9 @@ class ImageResult: NSObject {
         imageResult.mediaUrl = dictionary["MediaUrl"] as? String
         imageResult.sourceUrl = dictionary["SourceUrl"] as? String
         imageResult.displayUrl = dictionary["DisplayUrl"] as? String
-        imageResult.width = (dictionary["Width"] as! String).toInt()
-        imageResult.height = (dictionary["Height"] as! String).toInt()
-        imageResult.fileSize = (dictionary["FileSize"] as! String).toInt()
+        imageResult.width = Int(dictionary["Width"] as! String)
+        imageResult.height = Int(dictionary["Height"] as! String)
+        imageResult.fileSize = Int(dictionary["FileSize"] as! String)
         imageResult.contentType = dictionary["ContentType"] as? String
         
         if let thumbnailDict = dictionary["Thumbnail"] as? NSDictionary {
@@ -85,9 +85,9 @@ class Thumbnail {
     static func setPropertiesFromDictionary(dictionary: NSDictionary, onObject thumbnail: Thumbnail) -> Thumbnail {
         
         thumbnail.mediaUrl = dictionary["MediaUrl"] as? String
-        thumbnail.width = (dictionary["Width"] as! String).toInt()
-        thumbnail.height = (dictionary["Height"] as! String).toInt()
-        thumbnail.fileSize = (dictionary["FileSize"] as! String).toInt()
+        thumbnail.width = Int(dictionary["Width"] as! String)
+        thumbnail.height = Int(dictionary["Height"] as! String)
+        thumbnail.fileSize = Int(dictionary["FileSize"] as! String)
         thumbnail.contentType = dictionary["ContentType"] as? String
         
         return thumbnail

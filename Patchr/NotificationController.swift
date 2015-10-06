@@ -99,7 +99,7 @@ class NotificationController {
          * Active = notification received while app is active (foreground)
          */
         if state == .Inactive || state == .Active {
-            var augmentedUserInfo = NSMutableDictionary(dictionary: userInfo)
+            let augmentedUserInfo = NSMutableDictionary(dictionary: userInfo)
             augmentedUserInfo["receivedInApplicationState"] = application.applicationState.rawValue // active, inactive, background
             NSNotificationCenter.defaultCenter().postNotificationName(PAApplicationDidReceiveRemoteNotification, object: self, userInfo: augmentedUserInfo as [NSObject : AnyObject])
             if (completionHandler != nil) {
@@ -116,9 +116,8 @@ class NotificationController {
              */
             if let aps = userInfo["aps"] as? NSDictionary {
                 if aps["alert"] == nil {
-                    var notification = UILocalNotification()
+                    let notification = UILocalNotification()
                     notification.alertBody = (userInfo["alert-x"] as! String) // Text that will be displayed in the notification
-                    notification.alertTitle = (userInfo["title-x"] as! String)
                     notification.alertAction = "open" // Text that is displayed after "slide to..." on the lock screen - defaults to "slide to view"
                     notification.fireDate = NSDate() // Date when notification will be fired (now)
                     if let sound = userInfo["sound-x"] as? String {
@@ -148,18 +147,14 @@ class NotificationController {
         
         let application = UIApplication.sharedApplication()
         
-        // http://stackoverflow.com/a/28742391/2247399
-        if application.respondsToSelector("registerUserNotificationSettings:") {
-            
-            let types: UIUserNotificationType = (.Alert | .Badge | .Sound)
-            let settings: UIUserNotificationSettings = UIUserNotificationSettings(forTypes: types, categories: nil)
-            
+        if #available(iOS 8.0, *) {
+            let settings: UIUserNotificationSettings = UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil)
             application.registerUserNotificationSettings(settings)
             application.registerForRemoteNotifications()
-            
-        } else {
+        }
+        else {
             // Register for Push Notifications before iOS 8
-            application.registerForRemoteNotificationTypes(.Alert | .Badge | .Sound)
+            application.registerForRemoteNotificationTypes([.Alert, .Badge, .Sound])
         }
     }
 }

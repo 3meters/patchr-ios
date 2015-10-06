@@ -71,7 +71,7 @@ class PlaceDetailViewController: UITableViewController {
 
     override func viewDidAppear(animated: Bool){
 		super.viewDidAppear(animated)
-		refresh(force: true)
+		refresh(true)
 	}
 
 	private func refresh(force: Bool = false) {
@@ -125,10 +125,15 @@ class PlaceDetailViewController: UITableViewController {
         }
         
         if self.place!.phone != nil {
-            var phoneUtil = NBPhoneNumberUtil.sharedInstance()
-            var errorPointer: NSError?
-            var number: NBPhoneNumber = phoneUtil.parse(self.place!.phone, defaultRegion:"US", error:&errorPointer)
-            addressString = addressString + "\n" + phoneUtil.format(number, numberFormat: NBEPhoneNumberFormatNATIONAL, error: &errorPointer)
+            do {
+                let phoneUtil = NBPhoneNumberUtil.sharedInstance()
+                let number: NBPhoneNumber = try phoneUtil.parse(self.place!.phone, defaultRegion:"US")
+                let numberFormatted = try phoneUtil.format(number, numberFormat: NBEPhoneNumberFormatNATIONAL)
+                addressString = addressString + "\n" + numberFormatted
+            }
+            catch {
+                print("Parse error: \(error)")
+            }
         }
         
         self.address.text = addressString
@@ -137,7 +142,7 @@ class PlaceDetailViewController: UITableViewController {
         self.distance.text = "--"
         if let lastLocation = LocationController.instance.lastLocationFromManager() {
             if let loc = self.place!.location {
-                var placeLocation = CLLocation(latitude: loc.latValue, longitude: loc.lngValue)
+                let placeLocation = CLLocation(latitude: loc.latValue, longitude: loc.lngValue)
                 let dist = Float(lastLocation.distanceFromLocation(placeLocation))  // in meters
                 self.distance.text = LocationController.instance.distancePretty(dist)
             }
@@ -147,8 +152,10 @@ class PlaceDetailViewController: UITableViewController {
 	}    
 }
 
-extension PlaceDetailViewController: UITableViewDelegate {
-    
+extension PlaceDetailViewController {
+    /*
+     * UITableViewDelegate
+     */
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         
         var height = super.tableView(tableView, heightForRowAtIndexPath: indexPath) as CGFloat!

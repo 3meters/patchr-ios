@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SignInEditViewController: UITableViewController, UITextFieldDelegate {
+class SignInEditViewController: UITableViewController {
 
     var processing: Bool = false
 
@@ -58,7 +58,7 @@ class SignInEditViewController: UITableViewController, UITextFieldDelegate {
 		progress.labelText = "Signing in..."
 		progress.show(true)
         
-        DataController.proxibase.signIn(self.emailField.text, password: self.passwordField.text) {
+        DataController.proxibase.signIn(self.emailField.text!, password: self.passwordField.text!) {
             response, error in
             
             self.processing = false
@@ -93,10 +93,9 @@ class SignInEditViewController: UITableViewController, UITextFieldDelegate {
                     
                     let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
                     let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-                    if let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController") as? UIViewController {
-                        appDelegate.window?.setRootViewController(controller, animated: true)
-                        Shared.Toast("Signed in as \(UserController.instance.userName!)", controller: controller)
-                    }
+                    let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController")
+                    appDelegate.window?.setRootViewController(controller, animated: true)
+                    Shared.Toast("Signed in as \(UserController.instance.userName!)", controller: controller)
                 }
             }
         }
@@ -113,7 +112,7 @@ class SignInEditViewController: UITableViewController, UITextFieldDelegate {
             return false
         }
         
-        if (count(passwordField.text.utf16) < 6) {
+        if (passwordField.text!.utf16.count < 6) {
             Alert("Enter a password with six characters or more.")
             return false
         }

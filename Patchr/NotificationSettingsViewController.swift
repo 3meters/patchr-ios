@@ -86,7 +86,7 @@ class NotificationSettingsViewController: UITableViewController {
     }
     
     func makeSwitch(notificationType: NotificationType, state: Bool = false) -> UISwitch {
-        var switchView = UISwitch()
+        let switchView = UISwitch()
         switchView.tag = notificationType.rawValue
         switchView.addTarget(self, action: "toggle:", forControlEvents: UIControlEvents.ValueChanged)
         switchView.on = state

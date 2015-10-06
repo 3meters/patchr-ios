@@ -28,15 +28,15 @@ class AirPhotoPreview: AirPhotoBrowser {
         
         /* Configure toolbar */
         
-        var toolbar: UIToolbar = super.toolbar
+        let toolbar: UIToolbar = super.toolbar
         
-        var selectButton = UIBarButtonItem(title: "Use photo", style: UIBarButtonItemStyle.Plain, target: target, action: Selector("selectAction"))
-        var flexSpacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)
-        var fixedSpacer = UIBarButtonItem(barButtonSystemItem: .FixedSpace, target: self, action: nil)
+        let selectButton = UIBarButtonItem(title: "Use photo", style: UIBarButtonItemStyle.Plain, target: target, action: Selector("selectAction"))
+        let flexSpacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)
+        let fixedSpacer = UIBarButtonItem(barButtonSystemItem: .FixedSpace, target: self, action: nil)
         
         fixedSpacer.width = 16
         
-        var items = [AnyObject]()
+        var items = [UIBarButtonItem]()
         items.append(flexSpacer)
         items.append(selectButton)
         items.append(flexSpacer)

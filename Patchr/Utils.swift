@@ -33,8 +33,7 @@ struct Utils {
     static func DateTimeTag() -> String! {
         let date = NSDate()     			// Initialized to current date
         let calendar = NSCalendar.currentCalendar()
-        let components = calendar.components(.CalendarUnitYear | .CalendarUnitMonth | .CalendarUnitDay |
-            .CalendarUnitHour | .CalendarUnitMinute | .CalendarUnitSecond | .CalendarUnitNanosecond, fromDate: date)
+        let components = calendar.components([.Year, .Month, .Day, .Hour, .Minute, .Second, .Nanosecond], fromDate: date)
         let milliSeconds = components.nanosecond / 1_000_000
         let dateTimeTag = String(format: "%04d%02d%02d_%02d%02d%02d_%04d", components.year, components.month, components.day, components.hour, components.minute, components.second, milliSeconds)
         return dateTimeTag
@@ -58,9 +57,15 @@ struct Utils {
         if shared {
             if let containerURL = NSFileManager.defaultManager().containerURLForSecurityApplicationGroupIdentifier("group.com.3meters.patchr.ios") {
                 
-                var containerURLWithName = containerURL.URLByAppendingPathComponent(name)
-                if !NSFileManager.defaultManager().fileExistsAtPath(containerURLWithName.path!) {
-                    NSFileManager.defaultManager().createDirectoryAtPath(containerURL.path!, withIntermediateDirectories: false, attributes: nil, error: nil)
+                do {
+                    let containerURLWithName = containerURL.URLByAppendingPathComponent(name)
+                    if !NSFileManager.defaultManager().fileExistsAtPath(containerURLWithName.path!) {
+                        let pathString = containerURL.path!
+                        try NSFileManager.defaultManager().createDirectoryAtPath(pathString, withIntermediateDirectories: false, attributes: nil)
+                    }
+                }
+                catch let error as NSError {
+                    Log.d("\(error.localizedDescription)")
                 }
                 
                 imageDirectoryURL = containerURL
@@ -83,7 +88,7 @@ struct Utils {
     }
     
     static func prepareImage(var image: UIImage) -> UIImage {
-        var scalingNeeded: Bool = (image.size.width > IMAGE_DIMENSION_MAX || image.size.height > IMAGE_DIMENSION_MAX)
+        let scalingNeeded: Bool = (image.size.width > IMAGE_DIMENSION_MAX || image.size.height > IMAGE_DIMENSION_MAX)
         if (scalingNeeded) {
             let rect: CGRect = AVMakeRectWithAspectRatioInsideRect(image.size, CGRectMake(0, 0, IMAGE_DIMENSION_MAX, IMAGE_DIMENSION_MAX))
             image = image.resizeTo(rect.size)
@@ -116,7 +121,7 @@ struct Utils {
                 }
                 
                 /* Sort descending */
-                recentPatches.sort {
+                recentPatches.sortInPlace {
                     item1, item2 in
                     let date1: Int64 = (item1["recentDate"] as! NSNumber).longLongValue
                     let date2: Int64 = (item2["recentDate"] as! NSNumber).longLongValue
@@ -138,7 +143,7 @@ struct Utils {
     
     static func updateNearbys(nearby: [NSObject: AnyObject]) -> [[NSObject:AnyObject]] {
         
-        var nearbys: [[NSObject:AnyObject]] = [nearby]
+        let nearbys: [[NSObject:AnyObject]] = [nearby]
         
         if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
             if var storedNearbys = groupDefaults.arrayForKey(PatchrUserDefaultKey("nearby.patches")) as? [[NSObject:AnyObject]] {
@@ -146,7 +151,7 @@ struct Utils {
                 storedNearbys.append(nearby)
                 
                 /* Sort descending */
-                storedNearbys.sort {
+                storedNearbys.sortInPlace {
                     item1, item2 in
                     let date1: Int64 = (item1["sentDate"] as! NSNumber).longLongValue
                     let date2: Int64 = (item2["sentDate"] as! NSNumber).longLongValue

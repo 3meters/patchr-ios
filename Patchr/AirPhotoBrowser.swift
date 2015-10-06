@@ -51,11 +51,11 @@ class AirPhotoBrowser: IDMPhotoBrowser {
         
         /* Configure toolbar */
         
-        var toolbar: UIToolbar = super.toolbar
+        let toolbar: UIToolbar = super.toolbar
         
-        var flexSpacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)
-        var fixedSpacer = UIBarButtonItem(barButtonSystemItem: .FixedSpace, target: self, action: nil)
-        var actionButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("actionButtonPressed:"))
+        let flexSpacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)
+        let fixedSpacer = UIBarButtonItem(barButtonSystemItem: .FixedSpace, target: self, action: nil)
+        let actionButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("actionButtonPressed:"))
         
         likeButton.frame = CGRectMake(0, 0, 44, 44)
         likeButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: 8, bottom: 10, right:8)
@@ -63,11 +63,11 @@ class AirPhotoBrowser: IDMPhotoBrowser {
         
         fixedSpacer.width = 16
         
-        var barLikeButton = UIBarButtonItem(customView: likeButton)
+        let barLikeButton = UIBarButtonItem(customView: likeButton)
         barLikeButton.target = self
         barLikeButton.action = Selector("likeAction:")
         
-        var items = [AnyObject]()
+        var items = [UIBarButtonItem]()
         items.append(flexSpacer)
         items.append(barLikeButton)
         items.append(flexSpacer)

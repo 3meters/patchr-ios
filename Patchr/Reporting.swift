@@ -36,8 +36,8 @@ struct Reporting {
         /* Location info */
         let location: CLLocation? = LocationController.instance.lastLocationAccepted()
         if location != nil {
-            var eventDate = location!.timestamp
-            var howRecent = abs(trunc(eventDate.timeIntervalSinceNow * 100) / 100)
+            let eventDate = location!.timestamp
+            let howRecent = abs(trunc(eventDate.timeIntervalSinceNow * 100) / 100)
             Crashlytics.sharedInstance().setFloatValue(Float(location!.horizontalAccuracy), forKey: "location_accuracy")
             Crashlytics.sharedInstance().setIntValue(Int32(howRecent), forKey: "location_age")
         }

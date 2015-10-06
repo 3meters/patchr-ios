@@ -47,7 +47,7 @@ class BaseDetailViewController: BaseTableViewController {
             if query!.moreValue {
                 self.tableView.addInfiniteScrollWithHandler({
                     [weak self] (scrollView) -> Void in
-                    self?.bindQueryItems(force: false, paging: true)
+                    self?.bindQueryItems(false, paging: true)
                     })
             }
         }
@@ -80,7 +80,12 @@ class BaseDetailViewController: BaseTableViewController {
                 if entityId != nil {
                     query!.parameters["entityId"] = self.entityId
                 }
-                DataController.instance.managedObjectContext.save(nil)
+                do {
+                    try DataController.instance.managedObjectContext.save()
+                }
+                catch {
+                    print("Model save error: \(error)")
+                }
             }
             
             self._query = query
@@ -120,7 +125,7 @@ class BaseDetailViewController: BaseTableViewController {
     
     override func bindQueryItems(force: Bool = false, paging: Bool = false) {        
         if force || !self._query.executedValue || paging {
-            super.bindQueryItems(force: force, paging: paging)
+            super.bindQueryItems(force, paging: paging)
         }
     }
     
@@ -144,8 +149,8 @@ class BaseDetailViewController: BaseTableViewController {
     }
     
     override func pullToRefreshAction(sender: AnyObject?) -> Void {
-        self.bind(force: true)
-        self.bindQueryItems(force: true, paging: false)
+        self.bind(true)
+        self.bindQueryItems(true, paging: false)
     }
 }
 
@@ -167,8 +172,10 @@ extension BaseDetailViewController: ViewDelegate {
     }
 }
 
-extension  BaseDetailViewController: UITableViewDelegate {
+extension BaseDetailViewController {
     /*
+     * UITableViewDelegate 
+     *
      * These are shared by patch and user detail views.
      */
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
@@ -227,7 +234,7 @@ extension  BaseDetailViewController: UITableViewDelegate {
         }
         
         /* Get the actual height required for the cell */
-        var height = cell!.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
+        let height = cell!.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
         
         return height
     }

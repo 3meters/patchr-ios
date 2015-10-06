@@ -8,7 +8,7 @@
 
 extension UITextField {
     var isEmpty: Bool {
-        return self.text == nil || self.text.isEmpty
+        return self.text == nil || self.text!.isEmpty
     }
 }
 
@@ -59,16 +59,16 @@ extension UIView {
 
     func showSubviews(level: Int = 0) {
         /* 
-         * Utility to show some information about subview frames. 
+         * Utility to show some information about subview frames.
          */
         var indent = ""
-        for i in 0 ..< level {
+        for _ in 0 ..< level {
             indent += "  "
         }
         var count = 0
         for subview in self.subviews {
             Log.d("\(indent)\(count++). \(subview.frame)")
-            subview.showSubviews(level: level + 1)
+            subview.showSubviews(level + 1)
         }
     }
 }
@@ -170,7 +170,7 @@ extension UIViewController {
     func handleError(error: ServerError, errorActionType: ErrorActionType = .AUTO, var errorAction: ErrorAction = .NONE ) {
         
         /* Show any required ui */
-        var alertMessage: String = (error.message != nil ? error.message : error.description != nil ? error.description : "Unknown error")!
+        let alertMessage: String = (error.message != nil ? error.message : error.description != nil ? error.description : "Unknown error")!
         
         if errorActionType == .AUTO || errorActionType == .TOAST {
             Shared.Toast(alertMessage)
@@ -199,7 +199,7 @@ extension UIViewController {
                 LocationController.instance.clearLastLocationAccepted()
                 
                 let appDelegate               = UIApplication.sharedApplication().delegate as! AppDelegate
-                let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("LobbyNavigationController") as! UIViewController
+                let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("LobbyNavigationController") 
                 appDelegate.window!.setRootViewController(destinationViewController, animated: true)
             }
         }
@@ -210,7 +210,7 @@ extension UIViewController {
             LocationController.instance.clearLastLocationAccepted()
             
             let appDelegate               = UIApplication.sharedApplication().delegate as! AppDelegate
-            let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("LobbyNavigationController") as! UIViewController
+            let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("LobbyNavigationController") 
             appDelegate.window!.setRootViewController(destinationViewController, animated: true)
         }
         
@@ -221,8 +221,7 @@ extension UIViewController {
     }
     
     func Alert(title: String?, message: String? = nil, cancelButtonTitle: String = "OK") {
-        
-        if objc_getClass("UIAlertController") != nil {
+        if #available(iOS 8.0, *) {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: cancelButtonTitle, style: .Cancel, handler: nil))
             self.presentViewController(alert, animated: true) {}
@@ -236,31 +235,31 @@ extension UIViewController {
         actionTitle: String, cancelTitle: String, destructConfirmation: Bool = false,
         delegate: AnyObject? = nil, onDismiss: (Bool) -> Void) {
             
-            if objc_getClass("UIAlertController") != nil {
-                let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-                let okAction = UIAlertAction(title: actionTitle, style: .Destructive, handler: { _ in onDismiss(true) })
-                let cancelAction = UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) })
-                alert.addAction(okAction)
-                alert.addAction(cancelAction)
-                if destructConfirmation {
-                    alert.addTextFieldWithConfigurationHandler() {
-                        textField in
-                        textField.addTarget(delegate, action: Selector("alertTextFieldDidChange:"), forControlEvents: .EditingChanged)
-                    }
-                    okAction.enabled = false
+        if #available(iOS 8.0, *) {
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+            let okAction = UIAlertAction(title: actionTitle, style: .Destructive, handler: { _ in onDismiss(true) })
+            let cancelAction = UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) })
+            alert.addAction(okAction)
+            alert.addAction(cancelAction)
+            if destructConfirmation {
+                alert.addTextFieldWithConfigurationHandler() {
+                    textField in
+                    textField.addTarget(delegate, action: Selector("alertTextFieldDidChange:"), forControlEvents: .EditingChanged)
                 }
-                self.presentViewController(alert, animated: true, completion: nil)
+                okAction.enabled = false
             }
-            else {
-                var alert = UIAlertView(title: title, message: message, delegate: delegate, cancelButtonTitle: nil)
-                if destructConfirmation {
-                    alert.alertViewStyle = UIAlertViewStyle.PlainTextInput
-                    alert.delegate = delegate
-                }
-                alert.addButtonWithTitle(actionTitle)
-                alert.addButtonWithTitle(cancelTitle)
-                alert.show()
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
+        else {
+            let alert = UIAlertView(title: title, message: message, delegate: delegate, cancelButtonTitle: nil)
+            if destructConfirmation {
+                alert.alertViewStyle = UIAlertViewStyle.PlainTextInput
+                alert.delegate = delegate
             }
+            alert.addButtonWithTitle(actionTitle)
+            alert.addButtonWithTitle(cancelTitle)
+            alert.show()
+        }
     }
 
     func setScreenName(name: String) {
@@ -286,8 +285,7 @@ extension UITableViewCell {
         
         view.tag = 1
         view.cell = self
-        view.setTranslatesAutoresizingMaskIntoConstraints(false)
-        
+        view.translatesAutoresizingMaskIntoConstraints = false
         self.contentView.addSubview(view)
         return view
     }
@@ -295,16 +293,16 @@ extension UITableViewCell {
 
 extension UINavigationController {
     
-    public override func supportedInterfaceOrientations() -> Int {
+    override public func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
         if visibleViewController != nil {
-            return visibleViewController.supportedInterfaceOrientations()
+            return visibleViewController!.supportedInterfaceOrientations()
         }
         return super.supportedInterfaceOrientations()
     }
     
     public override func shouldAutorotate() -> Bool {
         if visibleViewController != nil {
-            return visibleViewController.shouldAutorotate()
+            return visibleViewController!.shouldAutorotate()
         }
         return super.shouldAutorotate()
     }
@@ -312,7 +310,7 @@ extension UINavigationController {
 
 extension UITabBarController {
     
-    public override func supportedInterfaceOrientations() -> Int {
+    public override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
         if let selected = selectedViewController {
             return selected.supportedInterfaceOrientations()
         }
@@ -328,8 +326,9 @@ extension UITabBarController {
 }
 
 extension String {
+    
     var length: Int {
-        return count(self)
+        return characters.count
     }
     
     var md5: String! {
@@ -341,7 +340,7 @@ extension String {
         
         CC_MD5(str!, strLen, result)
         
-        var hash = NSMutableString()
+        let hash = NSMutableString()
         for i in 0..<digestLen {
             hash.appendFormat("%02x", result[i])
         }

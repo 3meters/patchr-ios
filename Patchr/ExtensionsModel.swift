@@ -77,7 +77,7 @@ extension Entity {
             }
         }
         
-        var photo = Photo.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Photo
+        let photo = Photo.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Photo
         photo.prefix = prefix
         photo.source = source
         
@@ -145,7 +145,7 @@ extension Patch {
             view.distance.text = "--"
             if let lastLocation = LocationController.instance.lastLocationFromManager() {
                 if let loc = patch.location {
-                    var patchLocation = CLLocation(latitude: loc.latValue, longitude: loc.lngValue)
+                    let patchLocation = CLLocation(latitude: loc.latValue, longitude: loc.lngValue)
                     let dist = Float(lastLocation.distanceFromLocation(patchLocation))  // in meters
                     view.distance.text = LocationController.instance.distancePretty(dist)
                 }
@@ -160,7 +160,7 @@ extension Patch {
     }
     
     static func extras(inout parameters: [String:AnyObject]) -> [String:AnyObject] {
-        if var links = Patch.links() {
+        if let links = Patch.links() {
             parameters["links"] = links
         }
         if let linked = Patch.linked() {
@@ -177,7 +177,7 @@ extension Patch {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         
         if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
-            var links = [
+            let links = [
                 LinkSpec(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId]),
                 LinkSpec(from: .Users, type: .Watch, fields: "_id,type,enabled,mute,schema", filter: ["_from": userId]),
                 LinkSpec(from: .Messages, type: .Content, limit: 1, fields: "_id,type,schema", filter: ["_creator": userId]),
@@ -195,7 +195,7 @@ extension Patch {
     
     static func linked() -> [[String:AnyObject]]? {
         
-        var links = [
+        let links = [
             LinkSpec(to: .Places, type: .Proximity, fields: "_id,name,photo,schema,type" ), // Place the patch is linked to
             LinkSpec(from: .Users, type: .Create, fields: "_id,name,photo,schema,type" ), // User who created the patch
         ]
@@ -209,7 +209,7 @@ extension Patch {
     
     static func linkCount() -> [[String:AnyObject]]? {
         
-        var links = [
+        let links = [
             LinkSpec(from: .Messages, type: .Content),  // Count of messages linked to the patch
             LinkSpec(from: .Users, type: .Like),        // Count of users that like the patch
             LinkSpec(from: .Users, type: .Watch, enabled: true)        // Count of users that are watching the patch
@@ -302,7 +302,7 @@ extension Message {
     }
     
     static func extras(inout parameters: [String:AnyObject]) -> [String:AnyObject] {
-        if var links = Message.links() {
+        if let links = Message.links() {
             parameters["links"] = links
         }
         if let linked = Message.linked() {
@@ -319,7 +319,7 @@ extension Message {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         
         if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
-            var links = [
+            let links = [
                 LinkSpec(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId])
             ]
             let array = links.map {
@@ -334,17 +334,17 @@ extension Message {
     static func linked() -> [[String:AnyObject]]? {
         
         /* Used to get the creator for the a shared message */
-        var linked = [
+        let linked = [
             LinkSpec(from: .Users, type: .Create, fields: "_id,name,photo,schema,type" )
         ]
         
         /* Used to get count of messages and users watching a shared patch */
-        var linkCount = [
+        let linkCount = [
             LinkSpec(from: .Users, type: .Watch, enabled: true),        // Count of users that are watching the patch
             LinkSpec(from: .Messages, type: .Content)    // Count of message to the patch
         ]
         
-        var links = [
+        let links = [
             LinkSpec(to: .Patches, type: .Content, fields: "_id,name,photo,schema,type", limit: 1), // Patch the message is linked to
             LinkSpec(from: .Users, type: .Create, fields: "_id,name,photo,schema,type" ),           // User who created the message
             LinkSpec(to: .Messages, type: .Share, limit: 1, linked: linked),                        // Message this message is sharing
@@ -361,7 +361,7 @@ extension Message {
     
     static func linkCount() -> [[String:AnyObject]]? {
         
-        var links = [
+        let links = [
             LinkSpec(from: .Users, type: .Like)
         ]
         
@@ -413,7 +413,7 @@ extension User {
     }
     
     static func extras(inout parameters: [String:AnyObject]) -> [String:AnyObject] {
-        if var links = User.links() {
+        if let links = User.links() {
             parameters["links"] = links
         }
         if let linked = User.linked() {
@@ -435,7 +435,7 @@ extension User {
     
     static func linkCount() -> [[String:AnyObject]]? {
         
-        var links = [
+        let links = [
             LinkSpec(to: .Patches, type: .Like), // Count of patches the user has liked
             LinkSpec(to: .Patches, type: .Create), // Count of patches the user created
             LinkSpec(to: .Patches, type: .Watch, enabled: true), // Count of patches the user is watching
@@ -539,7 +539,7 @@ extension Notification {
 extension Place {
     
     static func extras(inout parameters: [String:AnyObject]) -> [String:AnyObject] {
-        if var links = Place.links() {
+        if let links = Place.links() {
             parameters["links"] = links
         }
         if let linked = Place.linked() {
@@ -599,7 +599,7 @@ extension Shortcut {
 extension Photo {
     
     func asMap() -> [String:AnyObject] {
-        var photo: [String:AnyObject] = [
+        let photo: [String:AnyObject] = [
             "prefix":self.prefix,
             "source":self.source,
             "width":Int(self.widthValue),

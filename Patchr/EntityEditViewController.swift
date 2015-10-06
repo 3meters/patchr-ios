@@ -36,7 +36,7 @@ class EntityEditViewController: UITableViewController {
 	}
     
     var spacer: UIBarButtonItem {
-        var space = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
+        let space = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
         space.width = SPACER_WIDTH
         return space
     }
@@ -58,7 +58,7 @@ class EntityEditViewController: UITableViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
         
-        var tap = UITapGestureRecognizer(target: self, action: "dismissKeyboard");
+        let tap = UITapGestureRecognizer(target: self, action: "dismissKeyboard");
         tap.delegate = self
         tap.cancelsTouchesInView = false
         self.view.addGestureRecognizer(tap)
@@ -91,7 +91,7 @@ class EntityEditViewController: UITableViewController {
             self.descriptionField!.textContainerInset = UIEdgeInsetsZero
         }
         
-        var cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancelAction:")
+        let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancelAction:")
         self.navigationItem.leftBarButtonItems = [cancelButton]
 	}
 
@@ -135,7 +135,7 @@ class EntityEditViewController: UITableViewController {
             photo = nil
         }
         else {            
-            var photo: Photo = Entity.getDefaultPhoto(entity!.schema, id: entity!.id_);
+            let photo: Photo = Entity.getDefaultPhoto(entity!.schema, id: entity!.id_);
             self.photoView?.imageView?.setImageWithPhoto(photo)
             usingPhotoDefault = true
         }
@@ -167,8 +167,8 @@ class EntityEditViewController: UITableViewController {
     @IBAction func deleteAction(sender: AnyObject) {
         
         if self.entity is User {
-            self.ActionConfirmationAlert(
-                title: "Confirm account delete",
+            ActionConfirmationAlert(
+                "Confirm account delete",
                 message: "Deleting your user account will erase all patches and messages you have created and cannot be undone. Enter YES to confirm.",
                 actionTitle: "Delete",
                 cancelTitle: "Cancel",
@@ -181,8 +181,8 @@ class EntityEditViewController: UITableViewController {
             }
         }
         else {
-            self.ActionConfirmationAlert(
-                title: "Confirm Delete",
+            ActionConfirmationAlert(
+                "Confirm Delete",
                 message: "Are you sure you want to delete this?",
                 actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
                     doIt in
@@ -200,25 +200,30 @@ class EntityEditViewController: UITableViewController {
     func cancelAction(sender: AnyObject){
         
         if !isDirty() {
-            self.performBack(animated: true)
+            self.performBack(true)
             return
         }
         
         ActionConfirmationAlert(
-            title: "Do you want to discard your editing changes?",
+            "Do you want to discard your editing changes?",
             actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
                 doIt in
                 if doIt {
-                    self.performBack(animated: true)
+                    self.performBack(true)
                 }
         }
     }
     
     func alertTextFieldDidChange(sender: AnyObject) {
-        if let alertController: UIAlertController = self.presentedViewController as? UIAlertController {
-            let confirm = alertController.textFields![0] as! UITextField
-            let okAction = alertController.actions[0] as! UIAlertAction
-            okAction.enabled = confirm.text == "YES"
+        if #available(iOS 8.0, *) {
+            if let alertController: UIAlertController = self.presentedViewController as? UIAlertController {
+                let confirm = alertController.textFields![0] 
+                let okAction = alertController.actions[0] 
+                okAction.enabled = confirm.text == "YES"
+            }
+        }
+        else {
+            // Fallback to UIAlertViewDelegate below
         }
     }
 
@@ -244,7 +249,7 @@ class EntityEditViewController: UITableViewController {
             }
             else {
                 if self.collection == "patches" || self.collection == "users" {
-                    var photo: Photo = Entity.getDefaultPhoto(entity.schema, id: entity.id_);
+                    let photo: Photo = Entity.getDefaultPhoto(entity.schema, id: entity.id_);
                     self.photoView?.imageView?.setImageWithPhoto(photo)
                 }
                 self.usingPhotoDefault = true
@@ -318,9 +323,8 @@ class EntityEditViewController: UITableViewController {
         progress.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("progressWasCancelled:")))
         progress.show(true)
         
-        var parameters: NSMutableDictionary = self.gather(NSMutableDictionary())
+        let parameters: NSMutableDictionary = self.gather(NSMutableDictionary())
         var cancelled = false
-        var postSize = 2000
 
         let queue = TaskQueue()
         
@@ -433,7 +437,7 @@ class EntityEditViewController: UITableViewController {
                 }
             }
             
-            self.performBack(animated: true)
+            self.performBack(true)
             Shared.Toast(self.progressFinishLabel)
         }
         
@@ -470,10 +474,9 @@ class EntityEditViewController: UITableViewController {
                 
                 let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
                 let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
-                if let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController") as? UIViewController {
-                    appDelegate.window?.setRootViewController(controller, animated: true)
-                    Shared.Toast("User \(userName) erased", controller: controller)
-                }
+                let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController")
+                appDelegate.window?.setRootViewController(controller, animated: true)
+                Shared.Toast("User \(userName) erased", controller: controller)
             }
         }
         else  {
@@ -489,10 +492,14 @@ class EntityEditViewController: UITableViewController {
                     self.handleError(error)
                 }
                 else {
-                    DataController.instance.managedObjectContext.deleteObject(self.entity!)
-                    if DataController.instance.managedObjectContext.save(nil) {
+                    do {
+                        DataController.instance.managedObjectContext.deleteObject(self.entity!)
+                        try DataController.instance.managedObjectContext.save()
                         self.performBack()
                     }
+                    catch {
+                        print("Model save error: \(error)")
+                    }                    
                 }
             }
         }
@@ -562,7 +569,7 @@ class EntityEditViewController: UITableViewController {
     
     func scrollToCursorForTextView(textView: UITextView) -> Void {
         /* Supports fancy dynamic editing for the description */
-        var cursorRect: CGRect = descriptionField.caretRectForPosition(descriptionField.selectedTextRange?.start)
+        var cursorRect: CGRect = descriptionField.caretRectForPosition((descriptionField.selectedTextRange?.start)!)
         cursorRect = self.tableView.convertRect(cursorRect, fromView:descriptionField)
         if !self.rectVisible(cursorRect) {
             cursorRect.size.height += 8; // To add some space underneath the cursor
@@ -589,15 +596,15 @@ class EntityEditViewController: UITableViewController {
         if self.backClicked {
             
             if !self.isDirty() {
-                self.performBack(animated: true)
+                self.performBack(true)
                 return
             }
             
-            ActionConfirmationAlert(title: "Do you want to discard your editing changes?",
+            ActionConfirmationAlert("Do you want to discard your editing changes?",
                 actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
                 action in
                 if action {
-                    self.performBack(animated: true)
+                    self.performBack(true)
                 }
             }
             self.backClicked = false
@@ -714,11 +721,11 @@ extension EntityEditViewController: UIAlertViewDelegate {
     
     /* Just here to support ios7 */
     func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
-        if alertView.buttonTitleAtIndex(buttonIndex).lowercaseString == "delete" {
+        if alertView.buttonTitleAtIndex(buttonIndex)!.lowercaseString == "delete" {
             self.delete()
         }
-        else if alertView.buttonTitleAtIndex(buttonIndex).lowercaseString == "discard" {
-            self.performBack(animated: true)
+        else if alertView.buttonTitleAtIndex(buttonIndex)!.lowercaseString == "discard" {
+            self.performBack(true)
         }
     }
 }

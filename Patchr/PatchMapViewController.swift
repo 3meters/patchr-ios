@@ -35,7 +35,7 @@ class PatchMapViewController: UIViewController {
         mapView.delegate = self
         mapView.showsUserLocation = true
         
-        var currentRegion = MKCoordinateRegionMakeWithDistance(self.locationDelegate.locationForMap()!.coordinate, 2000, 2000)
+        let currentRegion = MKCoordinateRegionMakeWithDistance(self.locationDelegate.locationForMap()!.coordinate, 2000, 2000)
         mapView.setRegion(currentRegion, animated: false)
         
         self.annotation = EntityAnnotation(
@@ -75,9 +75,9 @@ class PatchMapViewController: UIViewController {
 
 extension PatchMapViewController: MKMapViewDelegate {
     
-    func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
+    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
         
-        if let currentUserLocationAnnotation = annotation as? MKUserLocation {
+        if let _ = annotation as? MKUserLocation {
             return nil; // Keep default "blue dot" view for current location
         }
         
@@ -85,7 +85,7 @@ extension PatchMapViewController: MKMapViewDelegate {
         annotationView.animatesDrop = true
         annotationView.canShowCallout = true
         if self.locationDelegate.locationPhoto != nil {
-            var imageView = AirImageView(frame: CGRectMake(0, 0, 40, 40))
+            let imageView = AirImageView(frame: CGRectMake(0, 0, 40, 40))
             annotationView.leftCalloutAccessoryView = imageView
             imageView.contentMode = UIViewContentMode.ScaleAspectFill
         }
@@ -93,11 +93,11 @@ extension PatchMapViewController: MKMapViewDelegate {
         return annotationView
     }
     
-    func mapView(mapView: MKMapView!, didAddAnnotationViews views: [AnyObject]!) {
+    func mapView(mapView: MKMapView, didAddAnnotationViews views: [MKAnnotationView]) {
         mapView.selectAnnotation(self.annotation, animated: true)
     }
     
-    func mapView(mapView: MKMapView!, didSelectAnnotationView view: MKAnnotationView!) {
+    func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
         if let imageView = view.leftCalloutAccessoryView as? AirImageView {
             if let locationPhoto = self.locationDelegate.locationPhoto as? Photo {
                 imageView.setImageWithPhoto(locationPhoto, animate: true)

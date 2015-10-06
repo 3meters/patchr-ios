@@ -71,7 +71,12 @@ class UserTableViewController: BaseTableViewController {
                     query.parameters = ["entity": message]
             }
             
-            DataController.instance.managedObjectContext.save(nil)
+            do {
+                try DataController.instance.managedObjectContext.save()
+            }
+            catch {
+                print("Model save error: \(error)")
+            }
             self._query = query
         }
         return self._query
@@ -106,8 +111,10 @@ class UserTableViewController: BaseTableViewController {
  * Extensions
  *--------------------------------------------------------------------------------------------*/
 
-extension UserTableViewController: UITableViewDelegate {
-    
+extension UserTableViewController {
+    /*
+    * UITableViewDelegate
+    */
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
@@ -138,7 +145,12 @@ extension UserTableViewController: UserApprovalViewDelegate {
                         }
                         else {
 							user.link.enabledValue = linkEnabled
-							DataController.instance.managedObjectContext.save(nil)
+                            do {
+                                try DataController.instance.managedObjectContext.save()
+                            }
+                            catch {
+                                print("Model save error: \(error)")
+                            }
 						}
 						approvalSwitch.enabled = true
 					})
@@ -159,9 +171,14 @@ extension UserTableViewController: UserApprovalViewDelegate {
                             self.handleError(error, errorActionType: .ALERT)
                         }
                         else {
-							DataController.instance.managedObjectContext.deleteObject(user.link)
-							DataController.instance.managedObjectContext.deleteObject(queryResult)
-							DataController.instance.managedObjectContext.save(nil)
+                            do {
+                                DataController.instance.managedObjectContext.deleteObject(user.link)
+                                DataController.instance.managedObjectContext.deleteObject(queryResult)
+                                try DataController.instance.managedObjectContext.save()
+                            }
+                            catch {
+                                print("Model save error: \(error)")
+                            }
 						}
 					})
 				}

@@ -15,11 +15,11 @@ public extension UIImage {
     // This method ignores the image's imageOrientation setting.
     public func croppedImage(bounds: CGRect) -> UIImage {
         let imageRef: CGImageRef = CGImageCreateWithImageInRect(self.CGImage, bounds)
-        return UIImage(CGImage: imageRef)!
+        return UIImage(CGImage: imageRef)
     }
     
     public func thumbnailImage(thumbnailSize: Int, transparentBorder borderSize:Int, cornerRadius:Int, interpolationQuality quality:CGInterpolationQuality) -> UIImage {
-        var resizedImage = self.resizedImageWithContentMode(.ScaleAspectFill, bounds: CGSizeMake(CGFloat(thumbnailSize), CGFloat(thumbnailSize)), interpolationQuality: quality)
+        let resizedImage = self.resizedImageWithContentMode(.ScaleAspectFill, bounds: CGSizeMake(CGFloat(thumbnailSize), CGFloat(thumbnailSize)), interpolationQuality: quality)
  
         // Crop out any part of the image that's larger than the thumbnail size
         // The cropped rect must be centered on the resized image
@@ -88,7 +88,7 @@ public extension UIImage {
         let imageRef: CGImageRef = CGImageCreateWithImageInRect(contextImage.CGImage, rect)
         
         // Create a new image based on the imageRef and rotate back to the original orientation
-        let image: UIImage = UIImage(CGImage: imageRef, scale: self.scale, orientation: self.imageOrientation)!
+        let image: UIImage = UIImage(CGImage: imageRef, scale: self.scale, orientation: self.imageOrientation)
         
         return image
     }
@@ -114,12 +114,12 @@ public extension UIImage {
     private func normalizeBitmapInfo(bI: CGBitmapInfo) -> CGBitmapInfo {
         var alphaInfo: CGBitmapInfo = bI & CGBitmapInfo.AlphaInfoMask
         
-        if alphaInfo == CGBitmapInfo(CGImageAlphaInfo.Last.rawValue) {
-            alphaInfo = CGBitmapInfo(CGImageAlphaInfo.PremultipliedLast.rawValue)
+        if alphaInfo == CGBitmapInfo(rawValue: CGImageAlphaInfo.Last.rawValue) {
+            alphaInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.PremultipliedLast.rawValue)
         }
 
-        if alphaInfo == CGBitmapInfo(CGImageAlphaInfo.First.rawValue) {
-            alphaInfo = CGBitmapInfo(CGImageAlphaInfo.PremultipliedFirst.rawValue)
+        if alphaInfo == CGBitmapInfo(rawValue: CGImageAlphaInfo.First.rawValue) {
+            alphaInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.PremultipliedFirst.rawValue)
         }
 
         var newBI: CGBitmapInfo = bI & ~CGBitmapInfo.AlphaInfoMask;
@@ -156,7 +156,7 @@ public extension UIImage {
 
         // Get the resized image from the context and a UIImage
         let newImageRef: CGImageRef = CGBitmapContextCreateImage(bitmap)
-        return UIImage(CGImage: newImageRef)!
+        return UIImage(CGImage: newImageRef)
     }
     
     private func transformForOrientation(newSize: CGSize) -> CGAffineTransform {

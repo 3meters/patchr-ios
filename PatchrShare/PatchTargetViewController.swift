@@ -98,7 +98,7 @@ class PatchTargetViewController: UITableViewController {
         if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
             self.userId = groupDefaults.stringForKey(PatchrUserDefaultKey("userId"))
             self.sessionKey = groupDefaults.stringForKey(PatchrUserDefaultKey("sessionKey"))
-            if var recentPatches = groupDefaults.arrayForKey(PatchrUserDefaultKey("recent.patches")) as? [[String:AnyObject]] {
+            if let recentPatches = groupDefaults.arrayForKey(PatchrUserDefaultKey("recent.patches")) as? [[String:AnyObject]] {
                 for recent in recentPatches {
                     self.recentItems.addObject(recent)
                 }
@@ -119,14 +119,14 @@ class PatchTargetViewController: UITableViewController {
     
     func textFieldDidChange(textField: UITextField) {
         
-        self.searchEditing = (textField.text.length > 0)
-        if textField.text.length == 0 {
+        self.searchEditing = (textField.text?.characters.count > 0)
+        if textField.text!.characters.count == 0 {
             self.currentItems = self.recentItems
             self.tableView.reloadData()             // To reshow recents
         }
-        else if textField.text.length >= 2 {
+        else if textField.text!.characters.count >= 2 {
             /* To limit network activity, reload half a second after last key press. */
-            if let timer = self.searchTimer {
+            if let _ = self.searchTimer {
                 self.searchTimer?.invalidate()
             }
             self.searchTimer = NSTimer(timeInterval:0.5, target:self, selector:Selector("suggest"), userInfo:nil, repeats:false)
@@ -149,24 +149,25 @@ class PatchTargetViewController: UITableViewController {
         
         Log.d("Suggest call: \(searchString)")
         
-        var endpoint: String = "https://api.aircandi.com/v1/suggest"
-        var request = NSMutableURLRequest(URL: NSURL(string: endpoint)!)
+        let endpoint: String = "https://api.aircandi.com/v1/suggest"
+        let request = NSMutableURLRequest(URL: NSURL(string: endpoint)!)
         let session = NSURLSession.sharedSession()
         request.HTTPMethod = "POST"
         
         var body = [
-            "patches":true,
-            "input":searchString.lowercaseString,
-            "provider":"google",
-            "limit":10 ] as [String:AnyObject]
+            "patches": true,
+            "input": searchString!.lowercaseString,
+            "provider": "google",
+            "limit": 10
+        ] as [String: AnyObject]
         
         if self.userId != nil {
             body["_user"] = self.userId!
         }
         
         if self.locationCurrent != nil {
-            var coordinate = self.locationCurrent!.coordinate
-            var location = [
+            let coordinate = self.locationCurrent!.coordinate
+            let location = [
                 "lat":coordinate.latitude,
                 "lng":coordinate.longitude
                 ] as [String:AnyObject]
@@ -175,36 +176,40 @@ class PatchTargetViewController: UITableViewController {
             body["timeout"] = 2000  // two seconds
         }
         
-        var err: NSError?
-        request.HTTPBody = NSJSONSerialization.dataWithJSONObject(body, options: nil, error: &err)
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-        
-        let task = session.dataTaskWithRequest(request, completionHandler: {
-            data, response, error -> Void in
+        do {
+            request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(body, options: [])
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.addValue("application/json", forHTTPHeaderField: "Accept")
             
-            self.searchInProgress = false
-            self.searchItems.removeAllObjects()
-            
-            if error == nil {
-                let json:JSON = JSON(data: data)
-                let results = json["data"]
-                for (index: String, subJson: JSON) in results {
-                    let patch: AnyObject = subJson.object
-                    self.searchItems.addObject(patch)
+            let task = session.dataTaskWithRequest(request, completionHandler: {
+                data, response, error -> Void in
+                
+                self.searchInProgress = false
+                self.searchItems.removeAllObjects()
+                
+                if error == nil {
+                    let json = JSON(data: data!)
+                    let results = json["data"]
+                    for (index: _, subJson) in results {
+                        let patch: AnyObject = subJson.object
+                        self.searchItems.addObject(patch)
+                    }
+                    self.currentItems = self.searchItems
+                    dispatch_async(dispatch_get_main_queue(),{
+                        tableView?.reloadData()
+                    })
                 }
-                self.currentItems = self.searchItems
-                dispatch_async(dispatch_get_main_queue(),{
-                    tableView?.reloadData()
-                })
-            }
-        })
-        
-        task.resume()
+            })
+            
+            task.resume()
+        }
+        catch let error as NSError {
+            print("json error: \(error.localizedDescription)")
+        }
     }
 }
 
-extension PatchTargetViewController: UITableViewDelegate {
+extension PatchTargetViewController {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
@@ -223,10 +228,6 @@ extension PatchTargetViewController: UITableViewDelegate {
             
             let prefix = patch["photo"]["prefix"].string
             let source = patch["photo"]["source"].string
-            
-            let width = patch["photo"]["width"].int
-            let height = patch["photo"]["height"].int
-            
             let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.thumbnail, size: nil)
             cell!.photo.sd_setImageWithURL(photoUrl)
         }
@@ -238,7 +239,6 @@ extension PatchTargetViewController: UITableViewDelegate {
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let selectedCell = tableView.cellForRowAtIndexPath(indexPath) as! PatchSuggestCell
         var patchJson: JSON = JSON(self.currentItems[indexPath.row])
         if let patch = patchJson.dictionaryObject {
             self.delegate?.patchPickerViewController(self, selectedValue: patch)
@@ -260,17 +260,16 @@ extension PatchTargetViewController: UITableViewDelegate {
             let style = NSMutableParagraphStyle()
             style.firstLineHeadIndent = 16.0
             
-            let attributes = NSMutableDictionary()
-            attributes.setValue(style, forKey: NSParagraphStyleAttributeName)
-            attributes.setValue(UIColor(white: 0.50, alpha: 1.0), forKey: NSForegroundColorAttributeName)
-            attributes.setValue(-4.0, forKey: NSBaselineOffsetAttributeName)
-            
-            let font = UIFont.preferredFontForTextStyle(UIFontTextStyleSubheadline)
-            attributes.setValue(font, forKey: NSFontAttributeName)
+            let attributes = [
+                NSFontAttributeName : UIFont.preferredFontForTextStyle(UIFontTextStyleSubheadline),
+                NSUnderlineStyleAttributeName : 1,
+                NSParagraphStyleAttributeName : style,
+                NSForegroundColorAttributeName : UIColor(white: 0.50, alpha: 1.0),
+                NSBaselineOffsetAttributeName : -4.0]
             
             let label = self.searchEditing ? "SUGGESTIONS" : "RECENTS"
             
-            view.attributedText = NSMutableAttributedString(string: label, attributes: attributes as [NSObject:AnyObject])
+            view.attributedText = NSMutableAttributedString(string: label, attributes: attributes)
         }
         
         //        view.backgroundColor = UIColor(red: CGFloat(1.0), green: CGFloat(1.0), blue: CGFloat(1.0), alpha: CGFloat(0.2))
@@ -288,7 +287,6 @@ extension PatchTargetViewController: UITableViewDelegate {
     
     override func scrollViewDidScroll(scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
-        let color = UIColor(red: CGFloat(1.0), green: CGFloat(1.0), blue: CGFloat(1.0), alpha: CGFloat(0))
         if offsetY > 50 {
             let alpha = min(1, 1 - ((50 + 64 - offsetY) / 64))
             self.headerView?.backgroundColor = UIColor(red: CGFloat(0.9), green: CGFloat(0.9), blue: CGFloat(0.9), alpha: CGFloat(alpha))

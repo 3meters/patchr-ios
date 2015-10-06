@@ -33,7 +33,7 @@ class DevelopmentViewController: UIViewController {
 			[unowned self] in
 			self.updateSegmentControl()
 		}
-		uriAtStart = serverUriField.text
+		uriAtStart = serverUriField.text!
         setScreenName("DevelopmentSettings")
 	}
 

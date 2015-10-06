@@ -95,35 +95,6 @@
         }
     }
     
-    /*
-     * If an embedded user is already in the store, the embedded properties will overwrite
-     * the store properties. If the embedded user is added to the store then it will be flagged
-     * as compact so any downstream logic can detect that it may not be fully formed.
-     */
-//    if ([dictionary[@"owner"] isKindOfClass:[NSDictionary class]]) {
-//        if ([ModelUtilities modelClassForSchema:dictionary[@"owner"][@"schema"]]) {
-//            dictionary[@"owner"][@"_id"] = [Shortcut decorateId:dictionary[@"owner"][@"_id"]];
-//            id shortcut = [Shortcut fetchOrInsertOneById:dictionary[@"owner"][@"_id"] inManagedObjectContext:base.managedObjectContext];
-//            base.owner = [Shortcut setPropertiesFromDictionary:dictionary[@"owner"] onObject:shortcut mappingNames:mapNames];
-//        }
-//    }
-//    
-//    if ([dictionary[@"creator"] isKindOfClass:[NSDictionary class]]) {
-//        if ([ModelUtilities modelClassForSchema:dictionary[@"creator"][@"schema"]]) {
-//            dictionary[@"creator"][@"_id"] = [Shortcut decorateId:dictionary[@"creator"][@"_id"]];
-//            id shortcut = [Shortcut fetchOrInsertOneById:dictionary[@"creator"][@"_id"] inManagedObjectContext:base.managedObjectContext];
-//            base.creator = [Shortcut setPropertiesFromDictionary:dictionary[@"creator"] onObject:shortcut mappingNames:mapNames];
-//        }
-//    }
-//    
-//    if ([dictionary[@"modifier"] isKindOfClass:[NSDictionary class]]) {
-//        if ([ModelUtilities modelClassForSchema:dictionary[@"modifier"][@"schema"]]) {
-//            dictionary[@"modifier"][@"_id"] = [Shortcut decorateId:dictionary[@"modifier"][@"_id"]];
-//            id shortcut = [Shortcut fetchOrInsertOneById:dictionary[@"modifier"][@"_id"] inManagedObjectContext:base.managedObjectContext];
-//            base.modifier = [Shortcut setPropertiesFromDictionary:dictionary[@"modifier"] onObject:shortcut mappingNames:mapNames];
-//        }
-//    }
-    
     return base;
 }
 

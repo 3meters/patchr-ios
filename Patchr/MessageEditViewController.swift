@@ -105,7 +105,7 @@ class MessageEditViewController: EntityEditViewController {
             }
             
             /* Navigation bar buttons */
-            var doneButton   = UIBarButtonItem(title: "Send", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
+            let doneButton   = UIBarButtonItem(title: "Send", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
             self.navigationItem.rightBarButtonItems = [doneButton]
             
             /* Pull state from patch we are editing */
@@ -126,8 +126,8 @@ class MessageEditViewController: EntityEditViewController {
                 navigationItem.title = Utils.LocalizedString("Edit message")
                 
                 /* Navigation bar buttons */
-                var deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
-                var doneButton   = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
+                let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
+                let doneButton   = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
                 self.navigationItem.rightBarButtonItems = [doneButton, spacer, deleteButton]
                 
                 /* Box the description to make edit mode more obvious */
@@ -153,7 +153,7 @@ class MessageEditViewController: EntityEditViewController {
                 }
                 
                 /* Navigation bar buttons */
-                var doneButton = UIBarButtonItem(title: "Send", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
+                let doneButton = UIBarButtonItem(title: "Send", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
                 self.navigationItem.rightBarButtonItems = [doneButton]
             }
         }
@@ -167,10 +167,10 @@ class MessageEditViewController: EntityEditViewController {
     override func viewDidAppear(animated: Bool) {
         if photoChosen {
             photoChosen = false
-            var rowFrame = self.tableView.rectForRowAtIndexPath(NSIndexPath(forRow: 2, inSection: 0))
-            var currentOffsetBottom = self.tableView.contentOffset.y + self.tableView.frame.size.height
-            var currentRowBottom = rowFrame.origin.y + rowFrame.size.height
-            var newOffset = self.tableView.contentOffset.y + (currentRowBottom - currentOffsetBottom)
+            let rowFrame = self.tableView.rectForRowAtIndexPath(NSIndexPath(forRow: 2, inSection: 0))
+            let currentOffsetBottom = self.tableView.contentOffset.y + self.tableView.frame.size.height
+            let currentRowBottom = rowFrame.origin.y + rowFrame.size.height
+            let newOffset = self.tableView.contentOffset.y + (currentRowBottom - currentOffsetBottom)
             if newOffset > 0 {
                 self.tableView.setContentOffset(CGPoint(x: 0, y: newOffset), animated: true)
             }
@@ -242,8 +242,8 @@ class MessageEditViewController: EntityEditViewController {
             }
             
             let views = Dictionary(dictionaryLiteral: ("view", view))
-            let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|[view]|", options: nil, metrics: nil, views: views)
-            let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|[view]|", options: nil, metrics: nil, views: views)
+            let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|[view]|", options: [], metrics: nil, views: views)
+            let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|[view]|", options: [], metrics: nil, views: views)
             self.shareHolder?.addConstraints(horizontalConstraints)
             self.shareHolder?.addConstraints(verticalConstraints)
         }
@@ -260,69 +260,70 @@ class MessageEditViewController: EntityEditViewController {
         
         Log.d("Suggest call: \(searchString)")
         
-        var endpoint: String = "https://api.aircandi.com/v1/suggest"
-        var request = NSMutableURLRequest(URL: NSURL(string: endpoint)!)
+        let endpoint: String = "https://api.aircandi.com/v1/suggest"
+        let request = NSMutableURLRequest(URL: NSURL(string: endpoint)!)
         let session = NSURLSession.sharedSession()
         request.HTTPMethod = "POST"
         
-        var body = [
+        let body = [
             "users": true,
             "input": searchString.lowercaseString,
             "limit":10 ] as [String:AnyObject]
         
-        var err: NSError?
-        request.HTTPBody = NSJSONSerialization.dataWithJSONObject(body, options: nil, error: &err)
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-        
-        let task = session.dataTaskWithRequest(request, completionHandler: {
-            data, response, error -> Void in
+        do {
+            request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(body, options: [])
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.addValue("application/json", forHTTPHeaderField: "Accept")
             
-            self.searchInProgress = false
-            self.searchItems.removeAllObjects()
-            self.suggestions.removeAllObjects()
-            
-            if error == nil {
-                let json:JSON = JSON(data: data)
-                let results = json["data"]
-                for (index: String, subJson: JSON) in results {
-                    let patch: AnyObject = subJson.object
-                    self.searchItems.addObject(patch)
-                    
-                    let model = SuggestionModel()
-                    model.contactTitle = subJson["name"].string
-                    model.contactImage = UIImage(named: "imgDefaultUser")
-                    model.entityId = (subJson["_id"] != nil) ? subJson["_id"].string : subJson["id_"].string
-                    
-                    if subJson["photo"] != nil {
-                        
-                        let prefix = subJson["photo"]["prefix"].string
-                        let source = subJson["photo"]["source"].string
-                        let width = subJson["photo"]["width"].int
-                        let height = subJson["photo"]["height"].int
-                        
-                        let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.profile, size: nil)
-                        model.contactImageUrl = photoUrl
-                        model.contactImage = UIImage(named: "imgDefaultUser")
-                    }
-                    self.suggestions.addObject(model)
-                }
+            let task = session.dataTaskWithRequest(request, completionHandler: {
+                data, response, error -> Void in
                 
-                dispatch_async(dispatch_get_main_queue(), {
-                    self.toPicker.showSuggestions(self.suggestions as [AnyObject])
-                })
-            }
-        })
-        
-        task.resume()
+                self.searchInProgress = false
+                self.searchItems.removeAllObjects()
+                self.suggestions.removeAllObjects()
+                
+                if error == nil {
+                    let json:JSON = JSON(data: data!)
+                    let results = json["data"]
+                    for (index: _, subJson) in results {
+                        let patch: AnyObject = subJson.object
+                        self.searchItems.addObject(patch)
+                        
+                        let model = SuggestionModel()
+                        model.contactTitle = subJson["name"].string
+                        model.contactImage = UIImage(named: "imgDefaultUser")
+                        model.entityId = (subJson["_id"] != nil) ? subJson["_id"].string : subJson["id_"].string
+                        
+                        if subJson["photo"] != nil {
+                            
+                            let prefix = subJson["photo"]["prefix"].string
+                            let source = subJson["photo"]["source"].string
+                            let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.profile, size: nil)
+                            model.contactImageUrl = photoUrl
+                            model.contactImage = UIImage(named: "imgDefaultUser")
+                        }
+                        self.suggestions.addObject(model)
+                    }
+                    
+                    dispatch_async(dispatch_get_main_queue(), {
+                        self.toPicker.showSuggestions(self.suggestions as [AnyObject])
+                    })
+                }
+            })
+            
+            task.resume()
+        }
+        catch let error as NSError {
+            print("json error: \(error.localizedDescription)")
+        }
     }
     
     override func gather(parameters: NSMutableDictionary) -> NSMutableDictionary {
         
-        var parameters = super.gather(parameters)
+        let parameters = super.gather(parameters)
         
         if self.messageType == .Share {
-            var links = NSMutableArray()
+            let links = NSMutableArray()
             links.addObject(["type": "share", "_to": self.shareEntity!.id_])
             for contact in self.toPicker.contactsSelected {
                 links.addObject(["type": "share", "_to": contact.entityId])
@@ -380,8 +381,10 @@ class MessageEditViewController: EntityEditViewController {
     }
 }
 
-extension MessageEditViewController: UITableViewDelegate{
-    
+extension MessageEditViewController {
+    /*
+     * UITableViewDelegate
+     */
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         if indexPath.section == 0 {
             
@@ -389,7 +392,7 @@ extension MessageEditViewController: UITableViewDelegate{
                 return 64
             }
             else if indexPath.row == 1 {    // Description
-                var height: CGFloat = textViewHeightForRowAtIndexPath(indexPath)
+                let height: CGFloat = textViewHeightForRowAtIndexPath(indexPath)
                 return height < 96 ? 96 : height
             }
             else if indexPath.row == 2 {    // Photo
@@ -444,13 +447,13 @@ extension MessageEditViewController: MBContactPickerDataSource {
     func selectedContactModelsForContactPicker(contactPickerView: MBContactPicker!) -> [AnyObject]! {
         if self.messageType != .Share {
             if self.toString != nil {
-                var model = SuggestionModel()
+                let model = SuggestionModel()
                 model.contactTitle = self.toString! + " Patch"
                 model.entityId = self.patchId
                 return [model]
             }
             else if let message = self.entity as? Message where message.patch != nil {
-                var model = SuggestionModel()
+                let model = SuggestionModel()
                 model.contactTitle = message.patch.name + " Patch"
                 model.entityId = message.patch.id_
                 return [model]
@@ -501,7 +504,7 @@ extension MessageEditViewController: MBContactPickerDelegate {
             self.searchText = text
             /* To limit network activity, reload half a second after last key press. */
             if let timer = self.searchTimer {
-                self.searchTimer?.invalidate()
+                timer.invalidate()
             }
             self.searchTimer = NSTimer(timeInterval:0.2, target:self, selector:Selector("suggest"), userInfo:nil, repeats:false)
             NSRunLoop.currentRunLoop().addTimer(self.searchTimer!, forMode: "NSDefaultRunLoopMode")

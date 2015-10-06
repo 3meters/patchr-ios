@@ -71,7 +71,7 @@ public class Proxibase {
 		}
 
 		sessionManager = AFHTTPSessionManager(baseURL: NSURL(string: serverURI!))
-		sessionManager.requestSerializer = AFJSONRequestSerializer(writingOptions: nil)
+		sessionManager.requestSerializer = AFJSONRequestSerializer()
         sessionManager.requestSerializer.timeoutInterval = NSTimeInterval(TIMEOUT_REQUEST)
 		sessionManager.responseSerializer = JSONResponseSerializerWithData()
 	}
@@ -453,7 +453,7 @@ public class Proxibase {
 		let installId         = installationIdentifier
         let parseInstallId    = PFInstallation.currentInstallation().installationId
 		let clientVersionName = NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleShortVersionString") as! String
-		let clientVersionCode = (NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleVersion") as! String).toInt()!
+		let clientVersionCode = Int(NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleVersion") as! String)!
 		let clientPackageName = NSBundle.mainBundle().bundleIdentifier!
 		let deviceName        = UIDevice.currentDevice().modelIdentifier()
 		let deviceType        = "ios"
@@ -470,14 +470,14 @@ public class Proxibase {
 
 		if let bingSessionManager: AFHTTPSessionManager = AFHTTPSessionManager(baseURL: NSURL(string: URI_PROXIBASE_SEARCH_IMAGES)) {
             let keys = PatchrKeys()
-			let requestSerializer: AFJSONRequestSerializer = AFJSONRequestSerializer(writingOptions: nil)
-			requestSerializer.setAuthorizationHeaderFieldWithUsername(nil, password: keys.bingAccessKey())
+			let requestSerializer: AFJSONRequestSerializer = AFJSONRequestSerializer()
+			requestSerializer.setAuthorizationHeaderFieldWithUsername("", password: keys.bingAccessKey())
 			bingSessionManager.requestSerializer = requestSerializer
 			bingSessionManager.responseSerializer = JSONResponseSerializerWithData()
 
-			var queryEncoded: String
+			let queryEncoded: String
 						= query.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
-			var bingUrl = "Image?Query=%27" + queryEncoded + "%27"
+			let bingUrl = "Image?Query=%27" + queryEncoded + "%27"
 					+ "&Market=%27en-US%27&Adult=%27Strict%27&ImageFilters=%27size%3alarge%27"
 					+ "&$top=\(limit + 1)"
 					+ "&$skip=\(offset)"
@@ -538,7 +538,7 @@ public class Proxibase {
 			if UserController.instance.authenticated {
 				let userId         = UserController.instance.userId as NSString?
 				let sessionKey     = UserController.instance.sessionKey as NSString?
-				var authParameters = NSMutableDictionary(dictionary: ["user": userId! as NSString, "session": sessionKey! as NSString])
+				let authParameters = NSMutableDictionary(dictionary: ["user": userId! as NSString, "session": sessionKey! as NSString])
 				authParameters.addEntriesFromDictionary(parameters as [NSObject:AnyObject])
 				parameters = authParameters
 			}
@@ -576,13 +576,12 @@ public class Proxibase {
 							},
 							failure: {
 								dataTask, error in
-								let response = dataTask.response as? NSHTTPURLResponse
 								completion(response: ServerError(error)?.response, error: error)
-							})
+							})!
         return request
 	}
 
-	private func performGETRequestFor(path: NSString, var parameters: NSDictionary, completion: ProxibaseCompletionBlock) {
+	private func performGETRequestFor(path: NSString, parameters: NSDictionary, completion: ProxibaseCompletionBlock) {
 		sessionManager.GET(path as String, parameters: addSessionParameters(parameters),
 						   success: {
 							   dataTask, response in
@@ -590,12 +589,11 @@ public class Proxibase {
 						   },
 						   failure: {
 							   dataTask, error in
-							   let response = dataTask.response as? NSHTTPURLResponse
 							   completion(response: ServerError(error)?.response, error: error)
 						   })
 	}
 
-	private func performDELETERequestFor(path: NSString, var parameters: NSDictionary, completion: ProxibaseCompletionBlock) {
+	private func performDELETERequestFor(path: NSString, parameters: NSDictionary, completion: ProxibaseCompletionBlock) {
 		sessionManager.DELETE(path as String, parameters: addSessionParameters(parameters),
 							  success: {
 								  dataTask, response in
@@ -603,7 +601,6 @@ public class Proxibase {
 							  },
 							  failure: {
 								  dataTask, error in
-								  let response = dataTask.response as? NSHTTPURLResponse
 								  completion(response: ServerError(error)?.response, error: error)
 							  })
 	}
@@ -1062,7 +1059,7 @@ extension HTTPStatusCode {
 
 	/// :returns: true if the status code is in the provided range, false otherwise.
 	private func inRange(range: Range<Int>) -> Bool {
-		return contains(range, rawValue)
+		return range.contains(rawValue)
 	}
 }
 
@@ -1074,7 +1071,7 @@ extension HTTPStatusCode {
 
 // MARK: - Printing
 
-extension HTTPStatusCode: DebugPrintable, Printable {
+extension HTTPStatusCode: CustomDebugStringConvertible, CustomStringConvertible {
 	var description: String {
 		return "\(rawValue) - \(localizedReasonPhrase)"
 	}
@@ -1102,8 +1099,8 @@ extension NSHTTPURLResponse {
 		return HTTPStatusCode(HTTPResponse: self)
 	}
 
-	@availability(iOS, introduced = 7.0)
-	convenience init?(URL url: NSURL, statusCode: HTTPStatusCode, HTTPVersion: String?, headerFields: [NSObject:AnyObject]?) {
+	@available(iOS, introduced = 7.0)
+	convenience init?(URL url: NSURL, statusCode: HTTPStatusCode, HTTPVersion: String?, headerFields: [String: String]?) {
 		self.init(URL: url, statusCode: statusCode.rawValue, HTTPVersion: HTTPVersion, headerFields: headerFields)
 	}
 }

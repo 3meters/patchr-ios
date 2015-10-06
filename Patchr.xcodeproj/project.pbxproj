@@ -27,7 +27,6 @@
 		7D40B9511A79A6FD00F9954C /* ProviderMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D40B94F1A79A6FD00F9954C /* ProviderMap.m */; };
 		7D5545861AD33B1D007150E5 /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5545841AD33B1D007150E5 /* UserView.swift */; };
 		7D5545871AD33B1D007150E5 /* UserView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7D5545851AD33B1D007150E5 /* UserView.xib */; };
-		7D56EE8B1A70616500BFCC32 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */; };
 		7D668A991A9C08DC005EDAF8 /* PatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D668A971A9C08DC005EDAF8 /* PatchView.swift */; };
 		7D6E26471A7AB93F000128A7 /* UserDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D6E26461A7AB93F000128A7 /* UserDetailViewController.swift */; };
 		7D7095D71A71BE3200F835C4 /* FetchControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7095D61A71BE3200F835C4 /* FetchControllerDelegate.swift */; };
@@ -122,9 +121,6 @@
 		E26B0C921B46D01E00706F4A /* ThumbnailCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E26B0C911B46D01E00706F4A /* ThumbnailCollectionViewCell.xib */; };
 		E2711C4C1AFD17E800CE71A1 /* AirTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E2711C4B1AFD17E800CE71A1 /* AirTableViewCell.m */; };
 		E2711C4F1AFD182F00CE71A1 /* AirTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = E2711C4E1AFD182F00CE71A1 /* AirTableView.m */; };
-		E2737DC71B8F7E3B00C176B1 /* UIImage+Resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2737DC61B8F7E3B00C176B1 /* UIImage+Resize.swift */; };
-		E2737DCA1B8F7EA100C176B1 /* UIImage+Alpha.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2737DC81B8F7EA100C176B1 /* UIImage+Alpha.swift */; };
-		E2737DCB1B8F7EA100C176B1 /* UIImage+RoundedCorner.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2737DC91B8F7EA100C176B1 /* UIImage+RoundedCorner.swift */; };
 		E273B5361B488F2000888E73 /* AirPhotoPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = E273B5351B488F2000888E73 /* AirPhotoPreview.swift */; };
 		E27DB4051B06477A0090D023 /* QueryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = E27DB4041B06477A0090D023 /* QueryItem.m */; };
 		E27DB4081B0647960090D023 /* _QueryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = E27DB4071B0647960090D023 /* _QueryItem.m */; };
@@ -149,6 +145,7 @@
 		E2A5A8811B6FDF5C006D6E81 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */; };
 		E2A5A8831B703B3F006D6E81 /* PhotoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2A5A8821B703B3F006D6E81 /* PhotoView.xib */; };
 		E2A5A8851B703B9B006D6E81 /* PhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A5A8841B703B9B006D6E81 /* PhotoView.swift */; };
+		E2B4590E1BC1E76C00155659 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */; settings = {ASSET_TAGS = (); }; };
 		E2C0D92F1B6BD55200E28CE9 /* TTTAttributedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D92E1B6BD55200E28CE9 /* TTTAttributedLabel.m */; };
 		E2C0D9311B6C415100E28CE9 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D9301B6C415100E28CE9 /* Log.swift */; };
 		E2C0D9321B6C46A100E28CE9 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D9301B6C415100E28CE9 /* Log.swift */; };
@@ -971,7 +968,9 @@
 		7D3D39C11A6F086F00A44CB2 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0640;
+				LastSwiftMigration = 0700;
+				LastSwiftUpdateCheck = 0700;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = 3meters;
 				TargetAttributes = {
 					7D3D39C81A6F086F00A44CB2 = {
@@ -1118,7 +1117,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# add --swift to generate swift files instead of objective-c\ncommand -v mogenerator >/dev/null 2>&1 || {\n    echo >&2 \"warning: Falling back to /usr/local/bin/mogenerator\";\n    /usr/local/bin/mogenerator --v2 --model Patchr/Model.xcdatamodeld --human-dir Patchr/Model/ --output-dir Patchr/Model; exit 0;\n}\nmogenerator --v2 --model Patchr/Model.xcdatamodeld --human-dir Patchr/Model/ --output-dir Patchr/Model";
+			shellScript = "# add --swift to generate swift files instead of objective-c\ncommand -v mogenerator >/dev/null 2>&1 || {\n    #echo >&2 \"warning: Falling back to /usr/local/bin/mogenerator\";\n    /usr/local/bin/mogenerator --v2 --model Patchr/Model.xcdatamodeld --output-dir Patchr/Model/;\n    exit 0;\n}\nmogenerator --v2 --model Patchr/Model.xcdatamodeld --output-dir Patchr/Model/";
 		};
 		7DFA37DB1AB7B87B00CFCEE1 /* Warn about TODO: and FIXME: */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1207,7 +1206,6 @@
 				7DA730911A71ACC9008C25FA /* Place.m in Sources */,
 				E29F65531B61A9450000BEF4 /* PatchSearchCell.swift in Sources */,
 				E26B0C8C1B4577D000706F4A /* TextViewChangeObserver.swift in Sources */,
-				E2737DCB1B8F7EA100C176B1 /* UIImage+RoundedCorner.swift in Sources */,
 				7D01FA361A7024E200DD6DFA /* JSONResponseSerializerWithData.m in Sources */,
 				843523C51AAE70B800739447 /* MessageEditViewController.swift in Sources */,
 				E25327E01B1A282D00990A81 /* FXBlurView.m in Sources */,
@@ -1236,14 +1234,12 @@
 				7DA730941A71ACC9008C25FA /* ServiceObject.m in Sources */,
 				7DA730901A71ACC9008C25FA /* Patch.m in Sources */,
 				7DA7308A1A71ACC9008C25FA /* _Patch.m in Sources */,
-				E2737DCA1B8F7EA100C176B1 /* UIImage+Alpha.swift in Sources */,
 				7D021AC21A9423080047DAAE /* LobbyViewController.swift in Sources */,
 				7DA7308D1A71ACC9008C25FA /* _ServiceBase.m in Sources */,
 				E2D25DCF1B2391A700E51461 /* EntityEditViewController.swift in Sources */,
 				7D6E26471A7AB93F000128A7 /* UserDetailViewController.swift in Sources */,
 				7DA730921A71ACC9008C25FA /* Query.m in Sources */,
 				E246E3171B742970007327F5 /* BaseView.swift in Sources */,
-				E2737DC71B8F7E3B00C176B1 /* UIImage+Resize.swift in Sources */,
 				7DB6E0F81A8174E90017A42F /* _Message.m in Sources */,
 				E2CCAAE01B67CC0E0071170C /* NotificationController.swift in Sources */,
 				E2F6C9361B1E546F0067D959 /* RichType.m in Sources */,
@@ -1259,13 +1255,13 @@
 				7D3F26D41A76F77E0015F8E8 /* _Photo.m in Sources */,
 				7D970C841AB26021008A4FC7 /* MessageView.swift in Sources */,
 				7D40B9511A79A6FD00F9954C /* ProviderMap.m in Sources */,
+				E2B4590E1BC1E76C00155659 /* SwiftyJSON.swift in Sources */,
 				E20004DF1B094ACA00425694 /* PasswordEditViewController.swift in Sources */,
 				7DE975EE1AA7F72400C1ECE9 /* ModelUtilities.m in Sources */,
 				7DA7308E1A71ACC9008C25FA /* _ServiceObject.m in Sources */,
 				E2C0D92F1B6BD55200E28CE9 /* TTTAttributedLabel.m in Sources */,
 				7DE393E71AAE43AD00D1B80E /* SettingsTableViewController.swift in Sources */,
 				E2C7C5CB1B2CF2F80045038A /* ImageResult.swift in Sources */,
-				7D56EE8B1A70616500BFCC32 /* SwiftyJSON.swift in Sources */,
 				844D6E351AA4D01200EE71ED /* DevelopmentViewController.swift in Sources */,
 				7DA7308B1A71ACC9008C25FA /* _Place.m in Sources */,
 				E25327DB1B1625D900990A81 /* GCPlaceholderTextView.m in Sources */,
@@ -1392,7 +1388,9 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1439,6 +1437,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = YES;
+				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -1533,6 +1532,7 @@
 					"\"UIKit\"",
 				);
 				OTHER_SWIFT_FLAGS = "-D DEBUG";
+				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
@@ -1612,6 +1612,7 @@
 					"\"UIKit\"",
 				);
 				OTHER_SWIFT_FLAGS = "-D DEBUG";
+				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
@@ -1639,6 +1640,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = YES;
+				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -1731,6 +1733,7 @@
 					"\"UIKit\"",
 				);
 				OTHER_SWIFT_FLAGS = "-D DEBUG";
+				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
@@ -1775,6 +1778,8 @@
 					"-framework",
 					"\"UIKit\"",
 				);
+				OTHER_SWIFT_FLAGS = "-D IOS8TARGET";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.3meters.patchr.ios.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
@@ -1816,6 +1821,8 @@
 					"-framework",
 					"\"UIKit\"",
 				);
+				OTHER_SWIFT_FLAGS = "-D IOS8TARGET";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.3meters.patchr.ios.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
@@ -1857,6 +1864,8 @@
 					"-framework",
 					"\"UIKit\"",
 				);
+				OTHER_SWIFT_FLAGS = "-D IOS8TARGET";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.3meters.patchr.ios.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;

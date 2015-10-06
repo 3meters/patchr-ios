@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PasswordEditViewController: UITableViewController, UITextFieldDelegate {
+class PasswordEditViewController: UITableViewController {
 
     var processing: Bool = false
 
@@ -46,8 +46,8 @@ class PasswordEditViewController: UITableViewController, UITextFieldDelegate {
 		progress.show(true)
         
         DataController.proxibase.updatePassword(UserController.instance.currentUser.id_,
-            password: passwordField.text,
-            passwordNew: passwordNewField.text) {
+            password: passwordField.text!,
+            passwordNew: passwordNewField.text!) {
             response, error in
                 
             self.processing = false
@@ -69,7 +69,7 @@ class PasswordEditViewController: UITableViewController, UITextFieldDelegate {
     }
     
     func isValid() -> Bool {
-        if (count(passwordNewField.text.utf16) < 6) {
+        if (passwordNewField.text!.utf16.count < 6) {
             Alert("Enter a new password with six characters or more.")
             return false
         }

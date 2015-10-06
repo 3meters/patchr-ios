@@ -10,7 +10,7 @@ import UIKit
 import Social
 import MobileCoreServices
 
-class ShareViewController: SLComposeServiceViewController, PatchTargetViewControllerDelegate {
+class ShareViewController: SLComposeServiceViewController {
 
     var userId: String?
     var sessionKey: String?
@@ -141,7 +141,7 @@ class ShareViewController: SLComposeServiceViewController, PatchTargetViewContro
                                 
                                 if error == nil {
                                     if let url = content as? NSURL {
-                                        Log.d("Found url!: \(url.absoluteString!)")
+                                        Log.d("Found url!: \(url.absoluteString)")
                                         /*
                                          * When sharing url from chrome, the textView is set to the page
                                          * title so is not empty.
@@ -150,10 +150,10 @@ class ShareViewController: SLComposeServiceViewController, PatchTargetViewContro
                                             strongSelf.placeholder = nil
                                             strongSelf.url = url
                                             if strongSelf.textView.text.isEmpty {
-                                                strongSelf.textView.text = "Shared link:\n\(url.absoluteString!)"
+                                                strongSelf.textView.text = "Shared link:\n\(url.absoluteString)"
                                             }
                                             else {
-                                                strongSelf.textView.text = "\(strongSelf.textView.text)\nShared link:\n\(url.absoluteString!)"
+                                                strongSelf.textView.text = "\(strongSelf.textView.text)\nShared link:\n\(url.absoluteString)"
                                             }
                                         }
                                     }
@@ -172,7 +172,7 @@ class ShareViewController: SLComposeServiceViewController, PatchTargetViewContro
 
     override func didSelectPost() {
         let imageKey = "\(Utils.genImageKey()).jpg"
-        var message = buildMessage(imageKey)
+        let message = buildMessage(imageKey)
         Proxibase.sharedService.postMessage(message, patch: self.patch!)
         if self.image != nil {
             S3.sharedService.uploadImage(self.image!, key: imageKey, bucket: S3.sharedService.imageBucket, shared: true)
@@ -209,7 +209,7 @@ class ShareViewController: SLComposeServiceViewController, PatchTargetViewContro
             "_to": self.patchId
             ]) as [[String:AnyObject]]
         
-        var description = self.contentText
+        let description = self.contentText
         
         var message = [
             "description": description,

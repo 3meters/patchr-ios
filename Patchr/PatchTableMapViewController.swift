@@ -9,7 +9,7 @@
 import UIKit
 import MapKit
 
-class PatchTableMapViewController: UIViewController, NSFetchedResultsControllerDelegate {
+class PatchTableMapViewController: UIViewController {
 
     @IBOutlet weak var mapView: MKMapView!
     
@@ -35,7 +35,14 @@ class PatchTableMapViewController: UIViewController, NSFetchedResultsControllerD
         super.viewDidLoad()
         self.mapView.delegate = self
         self.fetchedResultsController.delegate = self;
-        self.fetchedResultsController.performFetch(nil)
+        
+        do {
+            try self.fetchedResultsController.performFetch() // Ensure that the controller can be accessed without blowing up
+        }
+        catch {
+            print("Fetch error: \(error)")
+        }
+        
         self.reloadAnnotations()
     }
     
@@ -67,7 +74,7 @@ class PatchTableMapViewController: UIViewController, NSFetchedResultsControllerD
                             
                             if let lastLocation = LocationController.instance.lastLocationFromManager() {
                                 if let entityLocation = entity.location {
-                                    var patchLocation = CLLocation(latitude: entityLocation.latValue, longitude: entityLocation.lngValue)
+                                    let patchLocation = CLLocation(latitude: entityLocation.latValue, longitude: entityLocation.lngValue)
                                     let dist = Float(lastLocation.distanceFromLocation(patchLocation))  // in meters
                                     if dist < nearestDistance {
                                         nearestDistance = dist
@@ -102,17 +109,15 @@ extension PatchTableMapViewController: NSFetchedResultsControllerDelegate {
             self.reloadAnnotations()
         case .Move:
             self.reloadAnnotations()
-        default:
-            return
         }
     }
 }
 
 extension PatchTableMapViewController: MKMapViewDelegate {
     
-    func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
+    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
         
-        if let currentUserLocationAnnotation = annotation as? MKUserLocation {
+        if let _ = annotation as? MKUserLocation {
             return nil; // Keep default "blue dot" view for current location
         }
         
@@ -120,12 +125,12 @@ extension PatchTableMapViewController: MKMapViewDelegate {
         var annotationView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseIdentifier)
         if annotationView == nil {
             annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseIdentifier)
-            annotationView.canShowCallout = true
-            annotationView.rightCalloutAccessoryView = UIButton.buttonWithType(UIButtonType.DetailDisclosure) as! UIButton
+            annotationView!.canShowCallout = true
+            annotationView!.rightCalloutAccessoryView = UIButton(type: UIButtonType.DetailDisclosure)
             if let annotation = annotation as? EntityAnnotation {
                 if annotation.entity?.photo != nil {
-                    var imageView = AirImageView(frame: CGRectMake(0, 0, 40, 40))
-                    annotationView.leftCalloutAccessoryView = imageView
+                    let imageView = AirImageView(frame: CGRectMake(0, 0, 40, 40))
+                    annotationView!.leftCalloutAccessoryView = imageView
                     imageView.contentMode = UIViewContentMode.ScaleAspectFill
                 }
             }
@@ -133,20 +138,20 @@ extension PatchTableMapViewController: MKMapViewDelegate {
         return annotationView
     }
     
-    func mapView(mapView: MKMapView!, didAddAnnotationViews views: [AnyObject]!) {
+    func mapView(mapView: MKMapView, didAddAnnotationViews views: [MKAnnotationView]) {
         if self.nearestAnnotation == nil {
-            mapView.selectAnnotation(mapView.annotations.last as! MKAnnotation, animated: true)
+            mapView.selectAnnotation(mapView.annotations.last!, animated: true)
         }
         else {
             for annotation in mapView.annotations {
                 if annotation.isEqual(self.nearestAnnotation) {
-                    mapView.selectAnnotation(annotation as! MKAnnotation, animated: true)
+                    mapView.selectAnnotation(annotation , animated: true)
                 }
             }
         }
     }
     
-    func mapView(mapView: MKMapView!, didSelectAnnotationView view: MKAnnotationView!) {
+    func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
         if let imageView = view.leftCalloutAccessoryView as? AirImageView {
             if let annotation = view.annotation as? EntityAnnotation {
                 if let photo = annotation.entity?.photo {
@@ -156,7 +161,7 @@ extension PatchTableMapViewController: MKMapViewDelegate {
         }
     }
     
-    func mapView(mapView: MKMapView!, annotationView view: MKAnnotationView!, calloutAccessoryControlTapped control: UIControl!) {
+    func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         if let entityAnnotation = view.annotation as? EntityAnnotation {
             if let patch = entityAnnotation.entity as? Patch {
                 let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
@@ -172,7 +177,7 @@ extension PatchTableMapViewController: MKMapViewDelegate {
 class EntityAnnotation: NSObject, MKAnnotation {
     
     var coordinate: CLLocationCoordinate2D
-    var title: String
+    var title: String?
     var subtitle: String?
     var entity: Entity?
     

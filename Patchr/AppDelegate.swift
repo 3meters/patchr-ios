@@ -63,7 +63,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         /* Load setting defaults */
         let defaultSettingsFile: NSString = NSBundle.mainBundle().pathForResource("DefaultSettings", ofType: "plist")!
         let settingsDictionary: NSDictionary = NSDictionary(contentsOfFile: defaultSettingsFile as String)!
-        NSUserDefaults.standardUserDefaults().registerDefaults(settingsDictionary as [NSObject : AnyObject])
+        NSUserDefaults.standardUserDefaults().registerDefaults(settingsDictionary as! [String : AnyObject])
         
         /* Initialize Google analytics */
         var configureError:NSError?
@@ -71,7 +71,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         assert(configureError == nil, "Error configuring Google services: \(configureError)")
         
         // Optional: configure GAI options.
-        var gai = GAI.sharedInstance()
+        let gai = GAI.sharedInstance()
         gai.trackerWithTrackingId("UA-33660954-6")
         gai.trackUncaughtExceptions = true  // report uncaught exceptions
         gai.defaultTracker.allowIDFACollection = true
@@ -147,9 +147,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     * Routing
     *--------------------------------------------------------------------------------------------*/
     
-    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
+    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
         if Branch.getInstance().handleDeepLink(url) {
-            Log.d("Branch handled deep link: \(url.absoluteString!)")
+            Log.d("Branch handled deep link: \(url.absoluteString)")
             return true
         }
         return false
@@ -171,9 +171,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         else {
             let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
-            if let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController") as? UIViewController {
-                self.window?.setRootViewController(controller, animated: true)
-            }
+            let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController")
+            self.window?.setRootViewController(controller, animated: true)
         }
         
         self.window?.makeKeyAndVisible()
@@ -188,9 +187,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 if let controller = storyBoard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
                     controller.entityId = entityId
                     /* Navigation bar buttons */
-                    var doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
+                    let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
                     controller.navigationItem.leftBarButtonItems = [doneButton]
-                    var navController = UINavigationController()
+                    let navController = UINavigationController()
                     navController.viewControllers = [controller]
                     UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
                 }
@@ -199,9 +198,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 if let controller = storyBoard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
                     controller.messageId = entityId
                     /* Navigation bar buttons */
-                    var doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
+                    let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
                     controller.navigationItem.leftBarButtonItems = [doneButton]
-                    var navController = UINavigationController()
+                    let navController = UINavigationController()
                     navController.viewControllers = [controller]
                     UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
                 }
@@ -229,16 +228,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         NSNotificationCenter.defaultCenter().postNotificationName(Event.ApplicationDidBecomeActive.rawValue, object: nil)
     }
     
-    func application(application: UIApplication, supportedInterfaceOrientationsForWindow window: UIWindow?) -> Int {
+    func application(application: UIApplication, supportedInterfaceOrientationsForWindow window: UIWindow?) -> UIInterfaceOrientationMask {
         if let controller = UIViewController.topMostViewController() {
             if controller is AirPhotoBrowser || controller is AirPhotoPreview {
-                return Int(UIInterfaceOrientationMask.All.rawValue);
+                return UIInterfaceOrientationMask.All;
             }
             else {
-                return Int(UIInterfaceOrientationMask.Portrait.rawValue);
+                return UIInterfaceOrientationMask.Portrait;
             }
         }
-        return Int(UIInterfaceOrientationMask.Portrait.rawValue);
+        return UIInterfaceOrientationMask.Portrait;
     }
     
     /*--------------------------------------------------------------------------------------------

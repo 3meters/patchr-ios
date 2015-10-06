@@ -75,7 +75,7 @@ class BaseTableViewController: FetchedResultsTableViewController {
 
 	override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)  // Triggers data fetch
-		if let indexPath = tableView.indexPathForSelectedRow() {
+		if let indexPath = tableView.indexPathForSelectedRow {
 			tableView.deselectRowAtIndexPath(indexPath, animated: animated)
 		}
 	}
@@ -84,7 +84,7 @@ class BaseTableViewController: FetchedResultsTableViewController {
         super.viewDidAppear(animated)
         
         if !self.query().executedValue {
-            self.bindQueryItems(force: false)
+            self.bindQueryItems(false)
         }
     }
     
@@ -106,15 +106,15 @@ class BaseTableViewController: FetchedResultsTableViewController {
     *--------------------------------------------------------------------------------------------*/
     
     @IBAction func unwindFromCreatePatch(segue: UIStoryboardSegue) {
-        self.bindQueryItems(force: false, paging: false)
+        self.bindQueryItems(false, paging: false)
     }
     
     @IBAction func unwindFromPatchEdit(segue: UIStoryboardSegue) {
-        self.bindQueryItems(force: false, paging: false)
+        self.bindQueryItems(false, paging: false)
     }
     
     func pullToRefreshAction(sender: AnyObject?) -> Void {
-        self.bindQueryItems(force: true, paging: false)
+        self.bindQueryItems(true, paging: false)
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -167,7 +167,7 @@ class BaseTableViewController: FetchedResultsTableViewController {
                 
                 if query.moreValue {
                     self?.tableView.addInfiniteScrollWithHandler({(scrollView) -> Void in
-                        self?.bindQueryItems(force: false, paging: true)
+                        self?.bindQueryItems(false, paging: true)
                     })
                 }
                 else {
@@ -232,7 +232,13 @@ class BaseTableViewController: FetchedResultsTableViewController {
             sectionNameKeyPath: nil,
             cacheName: nil)
         
-        controller.performFetch(nil) // Ensure that the controller can be accessed without blowing up
+        do {
+            try controller.performFetch() // Ensure that the controller can be accessed without blowing up
+        }
+        catch {
+            print("Fetch error: \(error)")
+        }
+        
         controller.delegate = self.fetchControllerDelegate
         
         return controller

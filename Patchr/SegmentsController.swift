@@ -27,8 +27,8 @@ class SegmentsController: NSObject {
         
         incomingViewController.navigationItem.titleView = segmentedControl
         
-        var addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self.navigationController, action: Selector("addAction:"))
-        var mapButton = UIBarButtonItem(title: "Map", style: UIBarButtonItemStyle.Plain, target: incomingViewController, action: Selector("mapAction:"))
+        let addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self.navigationController, action: Selector("addAction:"))
+        let mapButton = UIBarButtonItem(title: "Map", style: UIBarButtonItemStyle.Plain, target: incomingViewController, action: Selector("mapAction:"))
         incomingViewController.navigationItem.leftBarButtonItem = mapButton
         incomingViewController.navigationItem.rightBarButtonItem = addButton
     }

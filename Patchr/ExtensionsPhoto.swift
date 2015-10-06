@@ -21,7 +21,7 @@ class PhotoUtils {
         }
         
         if source == PhotoSource.aircandi_images {
-            var width = size != nil ? size : category == SizeCategory.standard ? 400 : 100
+            let width = size != nil ? size : category == SizeCategory.standard ? 400 : 100
             if category == SizeCategory.profile {
                 path = "https://3meters-images.imgix.net/\(prefix)?w=\(width!)&dpr=\(PIXEL_SCALE)&q=\(quality)&h=\(width!)&fit=min&trim=auto"
             }
@@ -30,7 +30,7 @@ class PhotoUtils {
             }
         }
         else if source == PhotoSource.google {
-            var width: CGFloat = CGFloat(frameWidth) * PIXEL_SCALE
+            let width: CGFloat = CGFloat(frameWidth) * PIXEL_SCALE
             if (prefix.rangeOfString("?") != nil) {
                 path = "\(prefix)&maxwidth=\(width)"
             }
@@ -39,7 +39,7 @@ class PhotoUtils {
             }
         }
         else if source == PhotoSource.gravatar {
-            var width: CGFloat = CGFloat(100) * PIXEL_SCALE
+            let width: CGFloat = CGFloat(100) * PIXEL_SCALE
             path = "\(prefix)&s=\(width)"
         }
         
@@ -60,11 +60,11 @@ class GooglePlusProxy {
         
         let queryString = (CFURLCreateStringByAddingPercentEscapes(nil, uri as NSString, nil, ":/?@!$&'()*+,;=" as NSString, CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)) as NSString) as String
         if dimension == ResizeDimension.width {
-            var converted = "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url=\(queryString)&container=focus&resize_w=\(size)&no_expand=1&refresh=3600"
+            let converted = "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url=\(queryString)&container=focus&resize_w=\(size)&no_expand=1&refresh=3600"
             return converted
         }
         else {
-            var converted = "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url=\(queryString)&container=focus&resize_h=\(size)&no_expand=1&refresh=3600"
+            let converted = "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url=\(queryString)&container=focus&resize_h=\(size)&no_expand=1&refresh=3600"
             return converted
         }
     }

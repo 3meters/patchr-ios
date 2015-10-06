@@ -24,22 +24,26 @@ public extension UIImage {
             return self
         }
         
-        let imageRef:CGImageRef = self.CGImage
+        let imageRef:CGImageRef = self.CGImage!
         let width  = CGImageGetWidth(imageRef)
         let height = CGImageGetHeight(imageRef)
 
         // The bitsPerComponent and bitmapInfo values are hard-coded to prevent an "unsupported parameter combination" error
         let offscreenContext: CGContextRef = CGBitmapContextCreate(
-            nil, width, height, 8, 0,
+            nil,
+            width,
+            height,
+            8,
+            0,
             CGImageGetColorSpace(imageRef),
-            CGBitmapInfo.ByteOrderDefault | CGBitmapInfo(CGImageAlphaInfo.PremultipliedFirst.rawValue)
+            CGBitmapInfo.ByteOrderDefault | CGBitmapInfo(rawValue: CGImageAlphaInfo.PremultipliedFirst.rawValue)
         )
         
         // Draw the image into the context and retrieve the new image, which will now have an alpha layer
         CGContextDrawImage(offscreenContext, CGRectMake(0, 0, CGFloat(width), CGFloat(height)), imageRef)
         let imageRefWithAlpha:CGImageRef = CGBitmapContextCreateImage(offscreenContext)
         
-        return UIImage(CGImage: imageRefWithAlpha)!
+        return UIImage(CGImage: imageRefWithAlpha)
     }
     
     public func transparentBorderImage(borderSize: Int) -> UIImage {
@@ -69,7 +73,7 @@ public extension UIImage {
         // Create a mask to make the border transparent, and combine it with the image
         let maskImageRef: CGImageRef = self.newBorderMask(borderSize, size: newRect.size)
         let transparentBorderImageRef: CGImageRef = CGImageCreateWithMask(borderImageRef, maskImageRef)
-        return UIImage(CGImage:transparentBorderImageRef)!
+        return UIImage(CGImage:transparentBorderImageRef)
     }
     
     private func newBorderMask(borderSize: Int, size: CGSize) -> CGImageRef {
@@ -82,7 +86,7 @@ public extension UIImage {
             8, // 8-bit grayscale
             0,
             colorSpace,
-            CGBitmapInfo.ByteOrderDefault | CGBitmapInfo(CGImageAlphaInfo.None.rawValue)
+            CGBitmapInfo.ByteOrderDefault | CGBitmapInfo(rawValue: CGImageAlphaInfo.None.rawValue)
         )
         
         // Start with a mask that's entirely transparent
