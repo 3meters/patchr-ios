@@ -14,7 +14,6 @@ class NotificationSettingsViewController: UITableViewController {
     
     @IBOutlet weak var patchesNearbyCell: UITableViewCell!
     @IBOutlet weak var patchesWatchingCell: UITableViewCell!
-    @IBOutlet weak var patchesOwnsCell: UITableViewCell!
     @IBOutlet weak var sharingMessagesCell: UITableViewCell!
     @IBOutlet weak var likePatchesCell: UITableViewCell!
     @IBOutlet weak var likeMessagesCell: UITableViewCell!
@@ -30,7 +29,6 @@ class NotificationSettingsViewController: UITableViewController {
         
         self.patchesNearbyCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
         self.patchesWatchingCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
-        self.patchesOwnsCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
         self.sharingMessagesCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
         self.likePatchesCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
         self.likeMessagesCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
@@ -39,7 +37,6 @@ class NotificationSettingsViewController: UITableViewController {
         
         self.patchesNearbyCell.accessoryView = makeSwitch(.PatchesCreatedNearby, state: userDefaults.boolForKey(PatchrUserDefaultKey("PatchesCreatedNearby")))
         self.patchesWatchingCell.accessoryView = makeSwitch(.MessagesForPatchesWatching, state: userDefaults.boolForKey(PatchrUserDefaultKey("MessagesForPatchesWatching")))
-        self.patchesOwnsCell.accessoryView = makeSwitch(.MessagesForPatchesOwns, state: userDefaults.boolForKey(PatchrUserDefaultKey("MessagesForPatchesOwns")))
         self.sharingMessagesCell.accessoryView = makeSwitch(.MessagesSharing, state: userDefaults.boolForKey(PatchrUserDefaultKey("MessagesSharing")))
         self.likePatchesCell.accessoryView = makeSwitch(.LikePatch, state: userDefaults.boolForKey(PatchrUserDefaultKey("LikePatch")))
         self.likeMessagesCell.accessoryView = makeSwitch(.LikeMessage, state: userDefaults.boolForKey(PatchrUserDefaultKey("LikeMessage")))
@@ -63,9 +60,6 @@ class NotificationSettingsViewController: UITableViewController {
             }
             else if switcher.tag == NotificationType.MessagesForPatchesWatching.rawValue {
                 userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("MessagesForPatchesWatching"))
-            }
-            else if switcher.tag == NotificationType.MessagesForPatchesOwns.rawValue {
-                userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("MessagesForPatchesOwns"))
             }
             else if switcher.tag == NotificationType.MessagesSharing.rawValue {
                 userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("MessagesSharing"))
@@ -97,7 +91,6 @@ class NotificationSettingsViewController: UITableViewController {
 enum NotificationType: Int {
     case PatchesCreatedNearby
     case MessagesForPatchesWatching
-    case MessagesForPatchesOwns
     case MessagesSharing
     case LikePatch
     case LikeMessage

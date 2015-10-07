@@ -158,6 +158,7 @@ class DataController: NSObject {
                                     if entityDictionaries.count == 1 {
                                         entity = entityType.fetchOrInsertOneById(id, inManagedObjectContext: self.managedObjectContext)
                                         entityType.setPropertiesFromDictionary(entityDictionaries[0], onObject: entity, mappingNames: true)
+										entity.refreshedValue = true
                                     }
                                 }
                                 
@@ -169,12 +170,7 @@ class DataController: NSObject {
                                 }
                                 
                                 /* Persist the changes and triggers notifications to observers */
-                                do {
-                                    try self.managedObjectContext!.save()
-                                }
-                                catch {
-                                    print("Model save error: \(error)")
-                                }
+								DataController.instance.saveContext()
                             }
                         }
                         completion(entity, error: nil)
@@ -248,19 +244,14 @@ class DataController: NSObject {
                 for item in query.queryItems {
                     if let existingQueryItem = item as? QueryItem {
                         if !queryItemSet.contains(existingQueryItem) {
-                            self.managedObjectContext!.deleteObject(existingQueryItem)
+							self.managedObjectContext.deleteObject(existingQueryItem) // Does not throw
                         }
                     }
                 }
             }
-            
+			
             /* Persist the changes and triggers notifications to observers */
-            do {
-                try self.managedObjectContext!.save()
-            }
-            catch {
-                print("Model save error: \(error)")
-            }
+			DataController.instance.saveContext()
 
             completion(queryItems: queryItems, query: query, error: error)
 		}
@@ -348,6 +339,17 @@ class DataController: NSObject {
 	/*--------------------------------------------------------------------------------------------
 	 * Methods
 	 *--------------------------------------------------------------------------------------------*/
+	
+	func saveContext () {
+		if self.managedObjectContext.hasChanges {
+			do {
+				try self.managedObjectContext.save()
+			}
+			catch {
+				fatalError("Failure to save context: \(error)")
+			}
+		}
+	}
 
 	private func handleServiceDataResponseForQuery(query: Query, response: AnyObject) -> (serviceData:ServiceData, queryItems:[QueryItem]) {
 
@@ -406,7 +408,7 @@ class DataController: NSObject {
                             entity = modelType.insertInManagedObjectContext(managedObjectContext) as! Entity
                         }
                         
-                        /* Transfer the properties */
+                        /* Transfer the properties: Updates the object if it was already in the model */
                         modelType.setPropertiesFromDictionary(entityDictionary, onObject: entity, mappingNames: true)
                         
                         /* Check to see if this entity is already part of the query */

@@ -187,16 +187,6 @@ class PhotoPickerViewController: UICollectionViewController {
         
     }
     
-    func configureCell(cell: UICollectionViewCell, object: AnyObject) {
-        
-        if let thumbCell = cell as? ThumbnailCollectionViewCell, imageResult = object as? ImageResult {
-            if let imageView = thumbCell.thumbnail {
-                thumbCell.imageResult = imageResult
-                imageView.setImageWithThumbnail(imageResult.thumbnail!, animate: false)
-            }
-        }
-    }
-    
     func imageForIndexPath(indexPath: NSIndexPath) -> ImageResult {
         return imageResults[indexPath.row]
     }
@@ -258,11 +248,20 @@ extension PhotoPickerViewController {
     }
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+		
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(self.reuseIdentifier, forIndexPath: indexPath) 
         cell.backgroundColor = Colors.windowColor
         cell.layer.shouldRasterize = true
         cell.layer.rasterizationScale = UIScreen.mainScreen().scale
-        self.configureCell(cell, object: self.imageForIndexPath(indexPath))
+		
+		let imageResult = self.imageForIndexPath(indexPath)
+		if let thumbCell = cell as? ThumbnailCollectionViewCell {
+			if let imageView = thumbCell.thumbnail {
+				thumbCell.imageResult = imageResult
+				imageView.setImageWithThumbnail(imageResult.thumbnail!, animate: false)
+			}
+		}
+		
         return cell
     }
 }

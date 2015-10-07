@@ -45,7 +45,7 @@ class PatchEditViewController: EntityEditViewController {
         self.descriptionField.placeholder = "Tell people about your patch"
         self.photoView!.frame = CGRectMake(0, 0, self.photoHolder!.bounds.size.width, self.photoHolder!.bounds.size.height)
         
-        if editMode {
+        if self.editMode {
             
             self.progressStartLabel = "Updating"
             self.progressFinishLabel = "Updated!"
@@ -99,14 +99,6 @@ class PatchEditViewController: EntityEditViewController {
     * Events
     *--------------------------------------------------------------------------------------------*/
     
-	@IBAction func unwindFromLocationEdit(segue: UIStoryboardSegue) {
-		// Refresh location info when unwinding from location edit.
-	}
-
-	@IBAction func unwindFromPlacePicker(segue: UIStoryboardSegue) {
-		// Refresh place link info when unwinding from place picker.
-	}
-
     /*--------------------------------------------------------------------------------------------
      * Methods
      *--------------------------------------------------------------------------------------------*/

@@ -8,8 +8,6 @@
 	<true/>
 	<key>com.3meters.patchr.ios.PatchesCreatedNearby</key>
 	<true/>
-	<key>com.3meters.patchr.ios.MessagesForPatchesOwns</key>
-	<true/>
 	<key>com.3meters.patchr.ios.MessagesForPatchesWatching</key>
 	<true/>
 	<key>com.3meters.patchr.ios.MessagesSharing</key>

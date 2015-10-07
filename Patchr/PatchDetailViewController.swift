@@ -108,7 +108,7 @@ class PatchDetailViewController: BaseDetailViewController {
         muteButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
         muteButton.imageOn = UIImage(named: "imgSoundOn2Light")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
         muteButton.imageOff = UIImage(named: "imgSoundOff2Light")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
-        muteButton.messageOn = "Notifications unmuted"
+        muteButton.messageOn = "Notifications active"
         muteButton.messageOff = "Notifications muted"
         muteButton.alpha = 0.0
         
@@ -220,17 +220,7 @@ class PatchDetailViewController: BaseDetailViewController {
             self.navigationController?.pushViewController(controller, animated: true)
         }
     }
-    
-    @IBAction func unwindFromMessageEdit(segue: UIStoryboardSegue) {
-        // Refresh results when unwinding from Message screen to pickup any changes.
-        self.bindQueryItems(true, paging: false)
-    }
-    
-    @IBAction override func unwindFromPatchEdit(segue: UIStoryboardSegue) {
-        // Refresh results when unwinding from Patch edit/create screen to pickup any changes.
-        self.bind()
-    }
-    
+	
     func handleRemoteNotification(notification: NSNotification) {
         
         if let userInfo = notification.userInfo {

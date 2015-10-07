@@ -492,14 +492,9 @@ class EntityEditViewController: UITableViewController {
                     self.handleError(error)
                 }
                 else {
-                    do {
-                        DataController.instance.managedObjectContext.deleteObject(self.entity!)
-                        try DataController.instance.managedObjectContext.save()
-                        self.performBack()
-                    }
-                    catch {
-                        print("Model save error: \(error)")
-                    }                    
+					DataController.instance.managedObjectContext.deleteObject(self.entity!)
+					DataController.instance.saveContext()
+					self.performBack()
                 }
             }
         }
@@ -737,9 +732,10 @@ extension EntityEditViewController: UITextViewDelegate {
     }
     
     func textViewDidChange(textView: UITextView) {
+		/* Begin/end triggers the tableview to pickup UI changes */
         self.tableView.beginUpdates()
         self.tableView.endUpdates()
-        self.scrollToCursorForTextView(textView)
+		self.scrollToCursorForTextView(textView)	// Make sure we keep the cursor visible as lines wrap
     }
     
     func textViewDidEndEditing(textView: UITextView) {

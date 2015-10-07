@@ -144,12 +144,7 @@ class PatchTableViewController: BaseTableViewController {
                 query.parameters = ["entity": user]
             }
             
-            do {
-                try DataController.instance.managedObjectContext.save()
-            }
-            catch {
-                print("Model save error: \(error)")
-            }
+			DataController.instance.saveContext()
             self._query = query
         }
         return self._query!
@@ -191,9 +186,9 @@ class PatchTableViewController: BaseTableViewController {
         cell.contentView.setNeedsLayout()
     }
     
-    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?) {
+    override func bindCell(cell: UITableViewCell, object: AnyObject) {
         let view = cell.contentView.viewWithTag(1) as! BaseView
-        Patch.bindView(view, object: object, tableView: tableView, sizingOnly: false)
+        Patch.bindView(view, object: object, sizingOnly: false)
     }
     
     func didUpdateLocation(notification: NSNotification) {

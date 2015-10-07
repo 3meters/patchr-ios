@@ -753,11 +753,9 @@
                         <outlet property="toPicker" destination="zF9-gZ-VVl" id="V4W-N4-M9m"/>
                         <outlet property="userNameLabel" destination="Lmf-QT-eCQ" id="EdW-xx-zrv"/>
                         <outlet property="userPhotoImage" destination="EJq-oj-0k5" id="RO7-eT-1it"/>
-                        <segue destination="nu8-nZ-Mhy" kind="unwind" identifier="UnwindFromMessageEdit" unwindAction="unwindFromMessageEdit:" id="jsL-jg-QS0"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DbU-Aq-omt" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="nu8-nZ-Mhy" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="744" y="44"/>
         </scene>
@@ -849,28 +847,8 @@
                                         </tableViewCellContentView>
                                         <animations/>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="JaL-9t-mKW" style="IBUITableViewCellStyleDefault" id="ZxE-Yi-Nl0">
-                                        <rect key="frame" x="0.0" y="245" width="600" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ZxE-Yi-Nl0" id="rOf-Hm-1YB">
-                                            <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="To Patches I Own" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="JaL-9t-mKW">
-                                                    <rect key="frame" x="15" y="0.0" width="570" height="43"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <animations/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <animations/>
-                                        </tableViewCellContentView>
-                                        <animations/>
-                                    </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="Vsx-9p-KeE" style="IBUITableViewCellStyleDefault" id="aXo-OR-NGu">
-                                        <rect key="frame" x="0.0" y="289" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="245" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="aXo-OR-NGu" id="qjS-wO-zBs">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
@@ -894,13 +872,13 @@
                             <tableViewSection headerTitle="LIKES AND FAVORITES" id="TKF-yn-p4f">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="zjd-Pf-2w2" style="IBUITableViewCellStyleDefault" id="hAB-Ms-09u">
-                                        <rect key="frame" x="0.0" y="376" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="332" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="hAB-Ms-09u" id="pxp-j6-FFg">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Favorite Patches I Own" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="zjd-Pf-2w2">
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Favorite My Patches" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="zjd-Pf-2w2">
                                                     <rect key="frame" x="15" y="0.0" width="570" height="43"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <animations/>
@@ -914,7 +892,7 @@
                                         <animations/>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="yIm-Cj-gQ5" style="IBUITableViewCellStyleDefault" id="0PW-0O-7dj">
-                                        <rect key="frame" x="0.0" y="420" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="376" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="0PW-0O-7dj" id="6my-X2-UC5">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
@@ -938,7 +916,7 @@
                             <tableViewSection headerTitle="SOUNDS" id="3JK-a3-BuO">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="V7l-v1-SjD" style="IBUITableViewCellStyleDefault" id="KGB-dc-u4m">
-                                        <rect key="frame" x="0.0" y="507" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="463" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGB-dc-u4m" id="J3M-RZ-cyI">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
@@ -958,7 +936,7 @@
                                         <animations/>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="f4r-UP-dd8" style="IBUITableViewCellStyleDefault" id="eEH-oK-KA9">
-                                        <rect key="frame" x="0.0" y="551" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="507" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="eEH-oK-KA9" id="V1J-Zy-hIl">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
@@ -991,7 +969,6 @@
                         <outlet property="likeMessagesCell" destination="0PW-0O-7dj" id="4sH-0o-QSR"/>
                         <outlet property="likePatchesCell" destination="hAB-Ms-09u" id="hCj-Yv-jQg"/>
                         <outlet property="patchesNearbyCell" destination="Zw2-Ag-Y62" id="adB-NX-Gat"/>
-                        <outlet property="patchesOwnsCell" destination="ZxE-Yi-Nl0" id="8MG-Ih-JTS"/>
                         <outlet property="patchesWatchingCell" destination="Ob1-ae-aaH" id="V01-rE-h6W"/>
                         <outlet property="sharingMessagesCell" destination="aXo-OR-NGu" id="FlW-5f-btO"/>
                         <outlet property="soundEffectsCell" destination="eEH-oK-KA9" id="rpC-m9-Eaq"/>
@@ -1854,12 +1831,9 @@
                         <outlet property="placeTypeCell" destination="R77-OS-E5l" id="Rox-Q2-Rai"/>
                         <outlet property="projectTypeCell" destination="1By-kV-JJk" id="yWI-KA-r3L"/>
                         <outlet property="publicCell" destination="j3D-Fb-pck" id="ypv-TD-HR4"/>
-                        <segue destination="oyv-MQ-wjW" kind="unwind" identifier="UnwindFromDeletePatchSegue" unwindAction="unwindFromDeletePatch:" id="6Pq-E8-Uxy"/>
-                        <segue destination="oyv-MQ-wjW" kind="unwind" identifier="UnwindFromPatchEditSegue" unwindAction="unwindFromPatchEdit:" id="807-9D-FkR"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dVP-ZA-h1g" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="oyv-MQ-wjW" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1130" y="-795"/>
         </scene>

@@ -87,7 +87,7 @@ extension Entity {
 
 extension Patch {
     
-    static func bindView(view: UIView, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) -> UIView {
+    static func bindView(view: UIView, object: AnyObject, sizingOnly: Bool = false) -> UIView {
         
         let patch = object as! Entity
         let view = view as! PatchView
@@ -225,7 +225,7 @@ extension Patch {
 
 extension Message {
     
-    static func bindView(view: UIView, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) -> UIView {
+    static func bindView(view: UIView, object: AnyObject, sizingOnly: Bool = false) -> UIView {
         
         let message = object as! Entity
         let view = view as! MessageView
@@ -375,7 +375,7 @@ extension Message {
 
 extension User {
     
-    static func bindView(view: UIView, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) {
+    static func bindView(view: UIView, object: AnyObject, sizingOnly: Bool = false) {
         
         let user = object as! User
         let view = view as! UserView
@@ -451,7 +451,7 @@ extension User {
 
 extension Notification {
     
-    static func bindView(view: UIView, object: AnyObject, tableView: UITableView?, sizingOnly: Bool = false) -> UIView {
+    static func bindView(view: UIView, object: AnyObject, sizingOnly: Bool = false) -> UIView {
         
         let notification = object as! Notification
         let view = view as! NotificationView

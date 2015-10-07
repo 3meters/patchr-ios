@@ -230,13 +230,13 @@ class MessageEditViewController: EntityEditViewController {
             if self.shareSchema == Schema.ENTITY_PATCH {
                 view = NSBundle.mainBundle().loadNibNamed("PatchNormalView", owner: self, options: nil)[0] as! BaseView
                 view.frame.size.width = self.shareHolder.bounds.size.width
-                Patch.bindView(view, object: self.shareEntity!, tableView: self.tableView)
+                Patch.bindView(view, object: self.shareEntity!)
                 self.shareHolder?.addSubview(view)
             }
             else if self.shareSchema == Schema.ENTITY_MESSAGE {
                 view = NSBundle.mainBundle().loadNibNamed("MessageView", owner: self, options: nil)[0] as! BaseView
                 view.frame.size.width = self.shareHolder.bounds.size.width
-                Message.bindView(view, object: self.shareEntity!, tableView: self.tableView)
+                Message.bindView(view, object: self.shareEntity!)
                 view.frame.size.height = view.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
                 self.shareHolder?.addSubview(view)
             }
@@ -370,10 +370,6 @@ class MessageEditViewController: EntityEditViewController {
         }
         
         return true
-    }
-    
-    override func performBack(animated: Bool = true) {
-        self.performSegueWithIdentifier("UnwindFromMessageEdit", sender: self)
     }
     
     func showSearchTableView(visible: Bool) {

@@ -15,6 +15,7 @@ const struct ServiceBaseAttributes ServiceBaseAttributes = {
 	.namelc = @"namelc",
 	.ownerId = @"ownerId",
 	.position = @"position",
+	.refreshed = @"refreshed",
 	.schema = @"schema",
 	.sortDate = @"sortDate",
 	.type = @"type",
@@ -60,6 +61,11 @@ const struct ServiceBaseRelationships ServiceBaseRelationships = {
 	}
 	if ([key isEqualToString:@"positionValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"position"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"refreshedValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"refreshed"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
@@ -123,6 +129,26 @@ const struct ServiceBaseRelationships ServiceBaseRelationships = {
 
 - (void)setPrimitivePositionValue:(int32_t)value_ {
 	[self setPrimitivePosition:@(value_)];
+}
+
+@dynamic refreshed;
+
+- (BOOL)refreshedValue {
+	NSNumber *result = [self refreshed];
+	return [result boolValue];
+}
+
+- (void)setRefreshedValue:(BOOL)value_ {
+	[self setRefreshed:@(value_)];
+}
+
+- (BOOL)primitiveRefreshedValue {
+	NSNumber *result = [self primitiveRefreshed];
+	return [result boolValue];
+}
+
+- (void)setPrimitiveRefreshedValue:(BOOL)value_ {
+	[self setPrimitiveRefreshed:@(value_)];
 }
 
 @dynamic schema;

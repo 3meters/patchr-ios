@@ -8,7 +8,7 @@
 
 import UIKit
 
-class BaseTableViewController: FetchedResultsTableViewController {
+class BaseTableViewController: UITableViewController, NSFetchedResultsControllerDelegate {
     
     var _query: Query!
     var progress: AirProgress?
@@ -19,14 +19,18 @@ class BaseTableViewController: FetchedResultsTableViewController {
     var emptyLabel: AirLabel = AirLabel(frame: CGRectMake(100, 100, 100, 100))
     var emptyMessage: String?
     var offscreenCells:       NSMutableDictionary = NSMutableDictionary()
-    
+	
+	var contentViewName: String?
+	var ignoreNextUpdates: Bool = false
+	var rowAnimation: UITableViewRowAnimation = .Fade
+	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
     
 	override func viewDidLoad() {
 		super.viewDidLoad()
-        
+		
         /* Hookup refresh control */
 		let refreshControl = UIRefreshControl()
         refreshControl.tintColor = Colors.brandColor
@@ -105,14 +109,6 @@ class BaseTableViewController: FetchedResultsTableViewController {
     * Events
     *--------------------------------------------------------------------------------------------*/
     
-    @IBAction func unwindFromCreatePatch(segue: UIStoryboardSegue) {
-        self.bindQueryItems(false, paging: false)
-    }
-    
-    @IBAction func unwindFromPatchEdit(segue: UIStoryboardSegue) {
-        self.bindQueryItems(false, paging: false)
-    }
-    
     func pullToRefreshAction(sender: AnyObject?) -> Void {
         self.bindQueryItems(true, paging: false)
     }
@@ -121,15 +117,6 @@ class BaseTableViewController: FetchedResultsTableViewController {
     * Methods
     *--------------------------------------------------------------------------------------------*/
 
-    internal func query() -> Query {
-        assert(false, "This method must be overridden in subclass")
-        return Query()
-    }
-    
-    override func fetchedResultsControllerForViewController(viewController: UIViewController) -> NSFetchedResultsController {
-        return fetchedResultsController
-    }
-    
     func bindQueryItems(force: Bool = false, paging: Bool = false) {
         
         if self.processingQuery {
@@ -189,24 +176,76 @@ class BaseTableViewController: FetchedResultsTableViewController {
     }
     
     func populateSidecar(query: Query) { }
-    
-    private lazy var fetchControllerDelegate: FetchControllerDelegate = {
-        return FetchControllerDelegate(tableView: self.tableView, onUpdate: {
-            [weak self] (cell, object) -> Void in
-            let queryResult = object as! QueryItem
-            return self?.bindCell(cell, object: queryResult.object, tableView: nil) ?? ()
-        })
-    }()
-    
-    /* 
-     * Creates controller instance first time the field is accessed.
-     */
+
+	func query() -> Query {
+		preconditionFailure("This method must be overridden in subclass")
+	}
+	
+	/*--------------------------------------------------------------------------------------------
+	* Cells
+	*--------------------------------------------------------------------------------------------*/
+	
+	func buildCell(contentViewName: String) -> UITableViewCell {
+		/*
+		 * Only implementation. Called externally to measure variable row heights.
+		 */
+		let cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: CELL_IDENTIFIER)
+		cell.separatorInset = UIEdgeInsetsZero
+		cell.layer.shouldRasterize = true
+		cell.layer.rasterizationScale = UIScreen.mainScreen().scale
+		
+		if #available(iOS 8.0, *) {
+			cell.layoutMargins = UIEdgeInsetsZero
+			cell.preservesSuperviewLayoutMargins = false
+		}
+		
+		let view = NSBundle.mainBundle().loadNibNamed(contentViewName, owner: self, options: nil)[0] as! BaseView
+		cell.injectView(view)
+		
+		/* We need to set the initial width so later sizing logic has it to work with */
+		cell.frame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.bounds), 100)
+		cell.contentView.frame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.bounds), 100)
+		view.frame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.bounds), 100)
+		
+		configureCell(cell) // Handles contraint and layout updates
+		
+		return cell
+	}
+	
+	func configureCell(cell: UITableViewCell) {
+		/*
+		* Default is to constrain to a tight fit. Override this in subclasses to do
+		* do something else. Without this the view size explodes.
+		*/
+		let view = cell.contentView.viewWithTag(1) as! BaseView
+		let views = Dictionary(dictionaryLiteral: ("view", view))
+		let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|[view]|", options: [], metrics: nil, views: views)
+		let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|[view]|", options: [], metrics: nil, views: views)
+		cell.contentView.addConstraints(horizontalConstraints)
+		cell.contentView.addConstraints(verticalConstraints)
+		
+		cell.setNeedsUpdateConstraints()
+		cell.updateConstraintsIfNeeded()
+		cell.contentView.setNeedsLayout()
+		cell.contentView.layoutIfNeeded()
+	}
+	
+	func bindCell(cell: UITableViewCell, object: AnyObject) {
+		preconditionFailure("bindCell must be overridden by subclasses")
+	}
+	
+	/*--------------------------------------------------------------------------------------------
+	* Properties
+	*--------------------------------------------------------------------------------------------*/
+	
     internal lazy var fetchedResultsController: NSFetchedResultsController = {
-        
+		/*
+		* Creates controller instance first time the field is accessed.
+		*/
         let fetchRequest = NSFetchRequest(entityName: QueryItem.entityName())
-        
+		
         let query: Query = self.query()
-        
+		
         if query.name == DataStoreQueryName.NearbyPatches.rawValue {
             fetchRequest.sortDescriptors = [
                 NSSortDescriptor(key: "distance", ascending: true)
@@ -236,11 +275,105 @@ class BaseTableViewController: FetchedResultsTableViewController {
             try controller.performFetch() // Ensure that the controller can be accessed without blowing up
         }
         catch {
-            print("Fetch error: \(error)")
+            fatalError("Fetch error: \(error)")
         }
         
-        controller.delegate = self.fetchControllerDelegate
+        controller.delegate = self
         
         return controller
     }()
+}
+
+extension BaseTableViewController {
+	/*
+	 * UITableViewDataSource
+	 */
+	override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+		return 1
+	}
+	
+	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		let numberOfObjects = self.fetchedResultsController.sections![section].numberOfObjects
+		self.tableView.separatorStyle = numberOfObjects == 0 ? .None : .SingleLine
+		return numberOfObjects
+	}
+	
+	override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+		
+		var cell = tableView.dequeueReusableCellWithIdentifier(CELL_IDENTIFIER)
+		
+		if cell == nil {
+			cell = buildCell(self.contentViewName!)
+		}
+		
+		/* Get the data object to bind the cell to */
+		let queryResult = self.fetchedResultsController.sections![indexPath.section].objects![indexPath.row] as! QueryItem
+		
+		/* Bind the cell */
+		bindCell(cell!, object: queryResult.object)
+		
+		return cell!
+	}
+}
+
+extension BaseTableViewController {
+	/*
+	 * NSFetchedResultsControllerDelegate
+	 */
+	func controllerWillChangeContent(controller: NSFetchedResultsController) {
+		self.tableView.beginUpdates()
+	}
+	
+	func controllerDidChangeContent(controller: NSFetchedResultsController) {
+		self.tableView.endUpdates()
+	}
+	
+	/*
+	* DidChangeSection
+	*/
+	func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType) {
+		switch type {
+		case .Insert:
+			self.tableView.insertSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Fade)
+			
+		case .Delete:
+			self.tableView.deleteSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Fade)
+			
+		default:
+			return
+		}
+	}
+	
+	/*
+	* DidChangeObject
+	*/
+	func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+		/*
+		 * http://stackoverflow.com/a/32978387
+		 * iOS 9 introduced a bug where didChangeObject can be called with an
+		 * invalid change type.
+		 */
+		guard type.rawValue != 0 else {
+			return
+		}
+		
+		switch type {
+			
+		case .Insert:	// 1
+			self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: self.rowAnimation)
+			
+		case .Delete:	// 2
+			self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: self.rowAnimation)
+			
+		case .Move:		// 3
+			self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: self.rowAnimation)
+			self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: self.rowAnimation)
+			
+		case .Update:	// 4
+			if let cell = self.tableView.cellForRowAtIndexPath(indexPath!) {
+				let queryResult = anObject as! QueryItem
+				bindCell(cell, object: queryResult.object)
+			}
+		}
+	}
 }

@@ -66,24 +66,24 @@ class NotificationController {
     }
     
     func didReceiveLocalNotification(application: UIApplication, notification: UILocalNotification) {
-        didReceiveRemoteNotification(application, userInfo: notification.userInfo!, fetchCompletionHandler: nil)
+        didReceiveRemoteNotification(application, notification: notification.userInfo!, fetchCompletionHandler: nil)
     }
     
-    func didReceiveRemoteNotification(application: UIApplication, userInfo: [NSObject : AnyObject], fetchCompletionHandler completionHandler: ((UIBackgroundFetchResult) -> Void)? ) {
+    func didReceiveRemoteNotification(application: UIApplication, notification: [NSObject : AnyObject], fetchCompletionHandler completionHandler: ((UIBackgroundFetchResult) -> Void)? ) {
         
         Log.d("Notification received...")
         let state = application.applicationState
         if let stateString: String = state == .Background ? "background" : state == .Active ? "active" : "inactive" {
             Log.d("App state: \(stateString)")
         }
-        Log.d(String(format: "%@", userInfo))
+        Log.d(String(format: "%@", notification))
         
         /* Tickle the activityDate so consumers know that something has happened */
         self.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
         
         /* Special capture for nearby notifications */
-        if let trigger = userInfo["trigger"] as? String where trigger == "nearby" {
-            var nearby = userInfo
+        if let trigger = notification["trigger"] as? String where trigger == "nearby" {
+            var nearby = notification
             let aps = nearby["aps"] as! NSDictionary
             nearby["summary"] = aps["alert"]
             nearby["sentDate"] = NSNumber(longLong: Int64(NSDate().timeIntervalSince1970 * 1000)) // Only way to store Int64 as AnyObject
@@ -99,40 +99,26 @@ class NotificationController {
          * Active = notification received while app is active (foreground)
          */
         if state == .Inactive || state == .Active {
-            let augmentedUserInfo = NSMutableDictionary(dictionary: userInfo)
+            let augmentedUserInfo = NSMutableDictionary(dictionary: notification)
             augmentedUserInfo["receivedInApplicationState"] = application.applicationState.rawValue // active, inactive, background
             NSNotificationCenter.defaultCenter().postNotificationName(PAApplicationDidReceiveRemoteNotification, object: self, userInfo: augmentedUserInfo as [NSObject : AnyObject])
-            if (completionHandler != nil) {
-                completionHandler!(.NoData)
-            }
         }
         /*
-        * Background = notification received while app is not active (background or dead)
-        */
+         * Background = notification received while app is not active (background or dead)
+         */
         else if state == .Background {
             /*
-             * If alert property is set then it will get handled as a remote notification otherwise
-             * we re-route it as a local notification.
+             * If alert/sound/badge properties are set then they will get handled 
+			 * by the os as a remote notification. Muted (low priority) notifications will badge
+			 * but to not include alert or sound settings that would be handled by the os.
              */
-            if let aps = userInfo["aps"] as? NSDictionary {
-                if aps["alert"] == nil {
-                    let notification = UILocalNotification()
-                    notification.alertBody = (userInfo["alert-x"] as! String) // Text that will be displayed in the notification
-                    notification.alertAction = "open" // Text that is displayed after "slide to..." on the lock screen - defaults to "slide to view"
-                    notification.fireDate = NSDate() // Date when notification will be fired (now)
-                    if let sound = userInfo["sound-x"] as? String {
-                        notification.soundName = sound
-                    }
-                    notification.userInfo = userInfo
-                    UIApplication.sharedApplication().scheduleLocalNotification(notification)
-                }
-            }
-            if (completionHandler != nil) {
-                completionHandler!(.NoData)
-            }
         }
+		
+		if (completionHandler != nil) {
+			completionHandler!(.NoData)
+		}
     }
-    
+	
     func didRegisterForRemoteNotificationsWithDeviceToken(application: UIApplication, deviceToken: NSData) {
         let parseInstallation = PFInstallation.currentInstallation()
         parseInstallation.setDeviceTokenFromData(deviceToken)

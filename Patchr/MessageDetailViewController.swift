@@ -186,9 +186,7 @@ class MessageDetailViewController: UITableViewController {
                     }
                     
                     self.message = message
-                    self.tableView.beginUpdates()
                     self.draw()
-                    self.tableView.endUpdates()
                 }
                 else {
                     Shared.Toast("Message has been deleted")
@@ -245,14 +243,6 @@ class MessageDetailViewController: UITableViewController {
             controller.filter = .MessageLikers
             self.navigationController?.pushViewController(controller, animated: true)
         }
-	}
-
-	@IBAction func unwindFromMessageEdit(segue: UIStoryboardSegue) {
-		// Refresh results when unwinding from message edit to pickup any changes.
-		DataController.instance.withMessageId(message!.id_, refresh: true) {
-			message, error in
-			self.draw()
-		}
 	}
 
     func shareBrowseAction(sender: AnyObject){
@@ -346,7 +336,7 @@ class MessageDetailViewController: UITableViewController {
             if self.message?.message != nil {
                 view = NSBundle.mainBundle().loadNibNamed("MessageView", owner: self, options: nil)[0] as! BaseView
                 view.frame.size.width = self.shareHolder.bounds.size.width
-                Message.bindView(view, object: self.message!.message!, tableView: self.tableView)
+                Message.bindView(view, object: self.message!.message!)
                 
                 /* Tweak the message view to suit display as static */
                 if let messageView = view as? MessageView {
@@ -364,7 +354,7 @@ class MessageDetailViewController: UITableViewController {
             else if self.message?.patch != nil {
                 view = NSBundle.mainBundle().loadNibNamed("PatchNormalView", owner: self, options: nil)[0] as! BaseView
                 view.frame.size.width = self.shareHolder.bounds.size.width
-                Patch.bindView(view, object: self.message!.patch!, tableView: self.tableView)
+                Patch.bindView(view, object: self.message!.patch!)
                 self.shareHolder?.addSubview(view)
             }
             
@@ -456,14 +446,9 @@ class MessageDetailViewController: UITableViewController {
                 self.handleError(error)
             }
             else {
-                do {
-                    DataController.instance.managedObjectContext.deleteObject(self.message!)
-                    try DataController.instance.managedObjectContext.save()
-                    self.navigationController?.popViewControllerAnimated(true)
-                }
-                catch {
-                    print("Model save error: \(error)")
-                }
+				DataController.instance.managedObjectContext.deleteObject(self.message!)
+				DataController.instance.saveContext()
+				self.navigationController?.popViewControllerAnimated(true)
             }
         }
     }
@@ -478,14 +463,9 @@ class MessageDetailViewController: UITableViewController {
                     UIViewController.topMostViewController()!.handleError(error)
                 }
                 else {
-                    do {
-                        DataController.instance.managedObjectContext.deleteObject(self.message!)
-                        try DataController.instance.managedObjectContext.save()
-                        self.navigationController?.popViewControllerAnimated(true)
-                    }
-                    catch {
-                        print("Model save error: \(error)")
-                    }
+					DataController.instance.managedObjectContext.deleteObject(self.message!)
+					DataController.instance.saveContext()
+					self.navigationController?.popViewControllerAnimated(true)
                 }
             }
         }

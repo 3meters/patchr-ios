@@ -80,12 +80,7 @@ class BaseDetailViewController: BaseTableViewController {
                 if entityId != nil {
                     query!.parameters["entityId"] = self.entityId
                 }
-                do {
-                    try DataController.instance.managedObjectContext.save()
-                }
-                catch {
-                    print("Model save error: \(error)")
-                }
+                DataController.instance.saveContext()
             }
             
             self._query = query
@@ -101,9 +96,16 @@ class BaseDetailViewController: BaseTableViewController {
             entity, error in
             
             self.refreshControl?.endRefreshing()
-            
+			
             if error == nil {
                 if entity != nil {
+					
+					/* Refresh list too */
+					if entity!.refreshedValue {
+						entity!.refreshedValue = false
+						self.bindQueryItems(true)
+					}
+					
                     self.entity = entity
                     self.entityId = entity!.id_
                     if let patch = entity as? Patch {
@@ -135,10 +137,11 @@ class BaseDetailViewController: BaseTableViewController {
     
     internal func drawButtons() { /* Optional */ }
     
-    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?) {
+    override func bindCell(cell: UITableViewCell, object: AnyObject) {
         
         let view = cell.contentView.viewWithTag(1) as! MessageView
-        Message.bindView(view, object: object, tableView: tableView, sizingOnly: false)
+        Message.bindView(view, object: object, sizingOnly: false)
+		
         if let label = view.description_ as? TTTAttributedLabel {
             label.delegate = self
         }
@@ -222,13 +225,12 @@ extension BaseDetailViewController {
         
         if cell == nil {
             cell = buildCell(self.contentViewName!)
-            configureCell(cell!)
             self.offscreenCells.setObject(cell!, forKey: CELL_IDENTIFIER)
         }
         
         /* Bind view to data for this row */
         let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as! QueryItem
-        let view = Message.bindView(cell!.contentView.viewWithTag(1)!, object: queryResult.object, tableView: tableView, sizingOnly: true) as! MessageView
+        let view = Message.bindView(cell!.contentView.viewWithTag(1)!, object: queryResult.object, sizingOnly: true) as! MessageView
         if !self.patchNameVisible {
             view.patchNameHeight.constant = 0
         }

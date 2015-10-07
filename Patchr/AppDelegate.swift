@@ -39,7 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AFNetworkActivityIndicatorManager.sharedManager().enabled = true
         
         /* Default config for AWS */
-        //        let credProvider = AWSCognitoCredentialsProvider(regionType: CognitoRegionType, identityPoolId: COGNITO_POOLID)
+        // let credProvider = AWSCognitoCredentialsProvider(regionType: CognitoRegionType, identityPoolId: COGNITO_POOLID)
         let credProvider  = AWSStaticCredentialsProvider(accessKey: keys.awsS3Key(), secretKey: keys.awsS3Secret())
         let serviceConfig = AWSServiceConfiguration(region: AWSRegionType(rawValue: 3/*'us-west-2'*/)!, credentialsProvider: credProvider)
         AWSServiceManager.defaultServiceManager().defaultServiceConfiguration = serviceConfig
@@ -267,7 +267,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          * If app is in the background, this is called if the user taps on the notification in the
          * pulldown tray.
          */
-        NotificationController.instance.didReceiveRemoteNotification(application, userInfo: userInfo, fetchCompletionHandler: completionHandler)
+        NotificationController.instance.didReceiveRemoteNotification(application, notification: userInfo, fetchCompletionHandler: completionHandler)
     }
 
     func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {

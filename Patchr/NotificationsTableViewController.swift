@@ -64,9 +64,9 @@ class NotificationsTableViewController: BaseTableViewController {
     }
     
     func handleRemoteNotification(notification: NSNotification) {
-        
+		
         if let userInfo = notification.userInfo {
-            
+			
             if let stateRaw = userInfo["receivedInApplicationState"] as? Int {
                 if let applicationState = UIApplicationState(rawValue: stateRaw) {
                     
@@ -74,6 +74,8 @@ class NotificationsTableViewController: BaseTableViewController {
                     
                     switch applicationState {
                         case .Active: // App was active when remote notification was received
+							
+							/* Viewing notification list */
                             
                             if self.tabBarController?.selectedViewController == self.navigationController
                                 && self.navigationController?.topViewController == self {
@@ -83,18 +85,29 @@ class NotificationsTableViewController: BaseTableViewController {
                                     self.bindQueryItems(true)
                                 }
                             }
+								
+							/* Viewing anything other than the nofication list */
+								
                             else {
                                 
                                 /* Add one because user isn't viewing nofications right now */
                                 incrementBadges()
                                 
                                 let json:JSON = JSON(userInfo)
+								
+								/* Bail if low priority */
+								if let priority = json["priority"].int {
+									if priority == 2 {
+										return
+									}
+								}
+								
+								let trigger = json["trigger"].string
+								
                                 var alert = json["aps"]["alert"].string
                                 if alert == nil {
                                     alert = json["alert-x"].string
                                 }
-                                
-                                let trigger = json["trigger"].string
                                 
                                 var description: String = alert!
                                 if json["description"] != nil {
@@ -105,14 +118,7 @@ class NotificationsTableViewController: BaseTableViewController {
                                 if !notificationEnabledFor(trigger!, description: description) {
                                     return
                                 }
-                                
-                                /* Bail if low priority */
-                                if let priority = json["priority"].int {
-                                    if priority == 2 {
-                                        return
-                                    }
-                                }                                
-                                
+								
                                 /* Show banner */
                                 var subtitle: String?
                                 if json["subtitle"] != nil && json["subtitle"].string != "subtitle" {
@@ -143,10 +149,11 @@ class NotificationsTableViewController: BaseTableViewController {
                                 }
                                 
                                 /* Chirp */
-                                if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundForNotifications"))
-                                    && json["sound-x"] != nil {
-                                    AudioServicesPlaySystemSound(chirpSound)
-                                }                                
+                                if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundForNotifications")) {
+									if json["aps"]["sound"].string != nil || json["alert-x"].string != nil {
+										AudioServicesPlaySystemSound(chirpSound)
+									}
+                                }
                             }
                             
                         case .Inactive: // User tapped on remote notification
@@ -207,12 +214,7 @@ class NotificationsTableViewController: BaseTableViewController {
             let query = Query.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Query
             query.name = DataStoreQueryName.NotificationsForCurrentUser.rawValue
             query.pageSize = DataController.proxibase.pageSizeNotifications
-            do {
-                try DataController.instance.managedObjectContext.save()
-            }
-            catch {
-                print("Model save error: \(error)")
-            }
+			DataController.instance.saveContext()
             self._query = query
         }
         return self._query
@@ -228,10 +230,11 @@ class NotificationsTableViewController: BaseTableViewController {
         super.bindQueryItems(force, paging: paging)
     }
     
-    override func bindCell(cell: UITableViewCell, object: AnyObject, tableView: UITableView?) {
+    override func bindCell(cell: UITableViewCell, object: AnyObject) {
         
         let view = cell.contentView.viewWithTag(1) as! NotificationView
-        Notification.bindView(view, object: object, tableView: tableView, sizingOnly: false)
+        Notification.bindView(view, object: object, sizingOnly: false)
+		
         if let label = view.description_ as? TTTAttributedLabel {
             label.delegate = self
         }
@@ -286,15 +289,12 @@ class NotificationsTableViewController: BaseTableViewController {
             return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("MessagesForPatchesWatching"))
         }
         else if trigger == "own_to" {
-            /* Super hack to differentiate likes */
+            /* Super hack to differentiate likes from favorites */
             if (description.rangeOfString("like") != nil) {
                 return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("LikeMessage"))
             }
             else if (description.rangeOfString("favorite") != nil) {
                 return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("LikePatch"))
-            }
-            else {
-                return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("MessagesForPatchesOwns"))
             }
         }
         else if trigger == "share" {
@@ -396,13 +396,12 @@ extension NotificationsTableViewController {
         
         if cell == nil {
             cell = buildCell(self.contentViewName!)
-            configureCell(cell!)
             self.offscreenCells.setObject(cell!, forKey: CELL_IDENTIFIER)
         }
         
         /* Bind view to data for this row */
         let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as! QueryItem
-        Notification.bindView(cell!.contentView.viewWithTag(1)!, object: queryResult.object, tableView: tableView, sizingOnly: true) as! NotificationView
+        Notification.bindView(cell!.contentView.viewWithTag(1)!, object: queryResult.object, sizingOnly: true) as! NotificationView
         
         /* Get the actual height required for the cell */
         let height = cell!.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1

@@ -16,6 +16,7 @@ extern const struct ServiceBaseAttributes {
 	__unsafe_unretained NSString *namelc;
 	__unsafe_unretained NSString *ownerId;
 	__unsafe_unretained NSString *position;
+	__unsafe_unretained NSString *refreshed;
 	__unsafe_unretained NSString *schema;
 	__unsafe_unretained NSString *sortDate;
 	__unsafe_unretained NSString *type;
@@ -93,6 +94,14 @@ extern const struct ServiceBaseRelationships {
 - (void)setPositionValue:(int32_t)value_;
 
 //- (BOOL)validatePosition:(id*)value_ error:(NSError**)error_;
+
+@property (nonatomic, strong) NSNumber* refreshed;
+
+@property (atomic) BOOL refreshedValue;
+- (BOOL)refreshedValue;
+- (void)setRefreshedValue:(BOOL)value_;
+
+//- (BOOL)validateRefreshed:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSString* schema;
 
@@ -172,6 +181,12 @@ extern const struct ServiceBaseRelationships {
 
 - (int32_t)primitivePositionValue;
 - (void)setPrimitivePositionValue:(int32_t)value_;
+
+- (NSNumber*)primitiveRefreshed;
+- (void)setPrimitiveRefreshed:(NSNumber*)value;
+
+- (BOOL)primitiveRefreshedValue;
+- (void)setPrimitiveRefreshedValue:(BOOL)value_;
 
 - (NSString*)primitiveSchema;
 - (void)setPrimitiveSchema:(NSString*)value;

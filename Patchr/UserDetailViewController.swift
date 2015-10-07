@@ -114,11 +114,6 @@ class UserDetailViewController: BaseDetailViewController {
         }
 	}
 
-    @IBAction func unwindFromUserEdit(segue: UIStoryboardSegue) {
-        // Refresh results when unwinding from User edit/create screen to pickup any changes.
-        self.bind(false)
-    }
-    
 	func actionSignout() {
 
 		DataController.proxibase.signOut {
