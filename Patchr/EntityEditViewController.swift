@@ -232,7 +232,7 @@ class EntityEditViewController: UITableViewController {
      *--------------------------------------------------------------------------------------------*/
     
     func bind() {
-        
+		
         if let entity = self.entity {
             
             /* Name and description */
@@ -502,6 +502,7 @@ class EntityEditViewController: UITableViewController {
     
     func progressWasCancelled(sender: AnyObject) {
         if let gesture = sender as? UIGestureRecognizer, let hud = gesture.view as? MBProgressHUD {
+			hud.animationType = MBProgressHUDAnimation.ZoomIn
             hud.hide(true)
             self.imageUploadRequest?.cancel() // Should do nothing if upload already complete or isn't any
             self.entityPostRequest?.cancel()
