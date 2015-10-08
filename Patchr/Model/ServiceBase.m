@@ -23,7 +23,6 @@
      */
     ServiceBase *item = [[self class] fetchOneById:id_ inManagedObjectContext:managedObjectContext];
     if (!item) {
-		NSLog(@"Inserting managed object for id_ = %@", id_);
         item = [[self class] insertInManagedObjectContext:managedObjectContext];
         item.id_ = id_;
     }
