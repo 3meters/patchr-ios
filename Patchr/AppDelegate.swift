@@ -97,7 +97,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Parse.setApplicationId(keys.parseApplicationId(), clientKey: keys.parseApplicationKey())
         
         /* Get the latest on the authenticated user if we have one */
-        if UserController.instance.authenticated {
+		if UserController.instance.authenticated {	// Checks for current userId and sessionKey
             UserController.instance.signinAuto()
             /*
             * Register this install with the service. If install registration fails the
@@ -106,11 +106,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             DataController.proxibase.registerInstallStandard {
                 response, error in
                 if let error = ServerError(error) {
-                    Log.w("Error during registerInstall: \(error)")
+					if error.code == .UNAUTHORIZED_SESSION_EXPIRED {
+						UIViewController.topMostViewController()!.handleError(error, errorActionType: .TOAST)
+					}
+					else {
+						Log.w("Error during registerInstall: \(error)")
+					}
                 }
             }
         }
         else {
+			/* Register as anonymous guest user. registerInstall service call is done without user/session params */
             DataController.proxibase.registerInstallStandard {
                 response, error in
                 if let error = ServerError(error) {
@@ -131,15 +137,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         /* We handle remote notifications */
         NotificationController.instance.registerForRemoteNotifications()
         
-        if let options = launchOptions, let notification = options[UIApplicationLaunchOptionsLocalNotificationKey] as? UILocalNotification {
-            UIAlertView(title: "Hah!", message: "Enter an email address.", delegate: nil, cancelButtonTitle: "OK").show()
-            NotificationController.instance.didReceiveLocalNotification(application, notification: notification)
-        }
-        else {
-            /* Show initial controller */
-            route()
-        }
-        
+		/* Show initial controller */
+		route()
+		
         return true
     }
     
