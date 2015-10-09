@@ -25,7 +25,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
     
     private weak var hostViewController: UIViewController?
 	private var photoButtonFunctionMap = [Int: PhotoButtonFunction]()
-	private var finishedChoosing: ((UIImage?, ImageResult?) -> Void)? = nil
+	private var finishedChoosing: ((UIImage?, ImageResult?, Bool) -> Void)? = nil
     private var library: ALAssetsLibrary?
     private var chosenPhotoFunction: PhotoButtonFunction?
 
@@ -39,7 +39,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 		super.init()
 	}
 
-	func choosePhoto(finishedChoosing: (UIImage?, ImageResult?) -> Void) {
+	func choosePhoto(finishedChoosing: (UIImage?, ImageResult?, Bool) -> Void) {
 
 		self.finishedChoosing = finishedChoosing
 
@@ -61,7 +61,6 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
         
         sheet.addButtonWithTitle("Cancel")
         sheet.cancelButtonIndex = sheet.numberOfButtons - 1
-
 		sheet.showInView((hostViewController?.view)!)
 	}
 
@@ -163,13 +162,14 @@ extension PhotoChooserUI: PhotoBrowseControllerDelegate {
     
     func photoBrowseController(didFinishPickingPhoto imageResult: ImageResult) -> Void {
         hostViewController?.dismissViewControllerAnimated(true, completion: nil)
-        self.finishedChoosing!(nil, imageResult)
+        self.finishedChoosing!(nil, imageResult, false)
     }
     
     func photoBrowseController(didLikePhoto liked: Bool) { }
     
     func photoBrowseControllerDidCancel() {
         hostViewController?.dismissViewControllerAnimated(true, completion: nil)
+		self.finishedChoosing!(nil, nil, true)
     }
 }
 
@@ -185,11 +185,11 @@ extension PhotoChooserUI: UIImagePickerControllerDelegate {
                 self.addPhotoToAlbum(image, toAlbum: "Patchr") {
                     (success) -> Void in
                     print("Image added to Patchr album: \(success)");
-                    self.finishedChoosing!(image, nil)
+                    self.finishedChoosing!(image, nil, false)
                 }
             }
             else {
-                self.finishedChoosing!(image, nil)
+                self.finishedChoosing!(image, nil, false)
             }
 		}
 	}
@@ -218,6 +218,9 @@ extension PhotoChooserUI: UIActionSheetDelegate {
 						self.searchForPhoto()
 				}
 			})
+		}
+		else {
+			self.finishedChoosing!(nil, nil, true)
 		}
 	}
 }
