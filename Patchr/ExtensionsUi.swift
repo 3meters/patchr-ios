@@ -222,7 +222,7 @@ extension UIViewController {
     
     func Alert(title: String?, message: String? = nil, cancelButtonTitle: String = "OK") {
         if #available(iOS 8.0, *) {
-            let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+            let alert = AirAlertController(title: title, message: message, preferredStyle: .Alert)
             alert.addAction(UIAlertAction(title: cancelButtonTitle, style: .Cancel, handler: nil))
             self.presentViewController(alert, animated: true) {}
         }
@@ -236,7 +236,7 @@ extension UIViewController {
         delegate: AnyObject? = nil, onDismiss: (Bool) -> Void) {
             
         if #available(iOS 8.0, *) {
-            let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+            let alert = AirAlertController(title: title, message: message, preferredStyle: .Alert)
             let okAction = UIAlertAction(title: actionTitle, style: .Destructive, handler: { _ in onDismiss(true) })
             let cancelAction = UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) })
             alert.addAction(okAction)

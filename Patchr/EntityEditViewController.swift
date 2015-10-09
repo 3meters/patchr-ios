@@ -22,6 +22,7 @@ class EntityEditViewController: UITableViewController {
     var firstAppearance: Bool = true
 	var backClicked = false
 	var keyboardVisible = false
+	var lastResponder: UIResponder?
     
     var usingPhotoDefault: Bool = true
 	var photoDirty: Bool = false
@@ -159,11 +160,23 @@ class EntityEditViewController: UITableViewController {
     
     @IBAction func setPhotoAction(sender: AnyObject) {
         photoChooser.choosePhoto() {
-            [weak self] image, imageResult in
+            [weak self] image, imageResult, cancelled in
+			
+			if cancelled {
+				if self?.lastResponder != nil {
+					self?.lastResponder?.becomeFirstResponder()
+				}
+				return
+			}
             self?.photoChosen(image, imageResult: imageResult)
         }
+		
+		if let responder = gimmeFirstResponder(inView: self.view) {
+			self.lastResponder = responder
+			responder.resignFirstResponder()
+		}
     }
-    
+	
     @IBAction func deleteAction(sender: AnyObject) {
         
         if self.entity is User {
@@ -216,7 +229,7 @@ class EntityEditViewController: UITableViewController {
     
     func alertTextFieldDidChange(sender: AnyObject) {
         if #available(iOS 8.0, *) {
-            if let alertController: UIAlertController = self.presentedViewController as? UIAlertController {
+            if let alertController: AirAlertController = self.presentedViewController as? AirAlertController {
                 let confirm = alertController.textFields![0] 
                 let okAction = alertController.actions[0] 
                 okAction.enabled = confirm.text == "YES"
@@ -232,7 +245,7 @@ class EntityEditViewController: UITableViewController {
      *--------------------------------------------------------------------------------------------*/
     
     func bind() {
-        
+		
         if let entity = self.entity {
             
             /* Name and description */
@@ -502,6 +515,7 @@ class EntityEditViewController: UITableViewController {
     
     func progressWasCancelled(sender: AnyObject) {
         if let gesture = sender as? UIGestureRecognizer, let hud = gesture.view as? MBProgressHUD {
+			hud.animationType = MBProgressHUDAnimation.ZoomIn
             hud.hide(true)
             self.imageUploadRequest?.cancel() // Should do nothing if upload already complete or isn't any
             self.entityPostRequest?.cancel()
@@ -561,7 +575,19 @@ class EntityEditViewController: UITableViewController {
     *--------------------------------------------------------------------------------------------*/
     
     func endFieldEditing(){ }
-    
+
+	func gimmeFirstResponder(inView view: UIView) -> UIResponder? {
+		for subView in view.subviews {
+			if subView.isFirstResponder() {
+				return subView
+			}
+			if let recursiveSubView = self.gimmeFirstResponder(inView: subView) {
+				return recursiveSubView
+			}
+		}
+		return nil
+	}
+	
     func scrollToCursorForTextView(textView: UITextView) -> Void {
         /* Supports fancy dynamic editing for the description */
         var cursorRect: CGRect = descriptionField.caretRectForPosition((descriptionField.selectedTextRange?.start)!)

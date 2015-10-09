@@ -36,7 +36,7 @@ class AirProgress: MBProgressHUD {
         self.detailsLabelFont = UIFont(name:"HelveticaNeue-Light", size: 14)
         
         if progressStyle == .ActivityLight {
-            self.animationType = MBProgressHUDAnimation.ZoomIn
+            self.animationType = MBProgressHUDAnimation.Zoom
             self.margin = 16
             self.cornerRadius = 8
             self.color = UIColor.whiteColor()
