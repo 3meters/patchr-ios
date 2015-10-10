@@ -193,7 +193,18 @@ class AirImageView: UIImageView {
         else {
             self.spot?.hidden = true
         }
-        
-        self.image = image
+		
+		if animate /*|| cacheType == SDImageCacheType.None || cacheType == SDImageCacheType.Disk*/ {
+			UIView.transitionWithView(self,
+				duration: 0.5,
+				options: UIViewAnimationOptions.TransitionCrossDissolve,
+				animations: {
+					self.image = image
+				},
+				completion: nil)
+		}
+		else {
+			self.image = image
+		}
     }
 }
