@@ -172,7 +172,9 @@ class PatchTableViewController: BaseTableViewController {
             }
         }
         else {
-			self.location = LocationController.instance.lastLocationFromManager()
+			if !paging {
+				self.location = LocationController.instance.lastLocationFromManager()
+			}
             super.bindQueryItems(force, paging: paging)
         }
     }
