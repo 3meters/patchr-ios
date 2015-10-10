@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment version="2048" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <objects>
@@ -13,7 +13,8 @@
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Patch name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0TT-YB-aeS" userLabel="patch_name">
-                    <rect key="frame" x="65" y="8" width="79" height="18"/>
+                    <rect key="frame" x="65" y="8" width="80" height="18"/>
+                    <animations/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="18" id="jfD-W3-ZcH"/>
@@ -24,6 +25,7 @@
                 </label>
                 <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="TaR-dt-0cq" userLabel="user_photo" customClass="AirImageView" customModule="Patchr" customModuleProvider="target">
                     <rect key="frame" x="8" y="30" width="48" height="48"/>
+                    <animations/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="48" id="Iut-66-DOf"/>
@@ -37,7 +39,8 @@
                     </userDefinedRuntimeAttributes>
                 </imageView>
                 <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" text="Rob" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m6L-Nb-Bin" userLabel="user_name">
-                    <rect key="frame" x="65" y="30" width="277" height="21"/>
+                    <rect key="frame" x="65" y="30" width="275" height="21"/>
+                    <animations/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="21" id="oSP-4X-GJ7"/>
@@ -47,14 +50,17 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" text="02 Mar" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dwP-9n-4tK" userLabel="created_date">
-                    <rect key="frame" x="350" y="32" width="46" height="18"/>
+                    <rect key="frame" x="348" y="32" width="48" height="18"/>
+                    <animations/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
                     <color key="textColor" red="0.60000002379999995" green="0.60000002379999995" blue="0.60000002379999995" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h8L-WQ-6XO" userLabel="description" customClass="TTTAttributedLabel">
+                <label autoresizesSubviews="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h8L-WQ-6XO" userLabel="description" customClass="TTTAttributedLabel">
                     <rect key="frame" x="65" y="55" width="335" height="101"/>
+                    <animations/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstAttribute="height" priority="250" id="nAK-38-QsO"/>
                     </constraints>
@@ -68,6 +74,7 @@ Neither can I!</string>
                 </label>
                 <imageView autoresizesSubviews="NO" clipsSubviews="YES" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="eQH-ua-j18" userLabel="photo" customClass="AirImageView" customModule="Patchr" customModuleProvider="target">
                     <rect key="frame" x="65" y="164" width="335" height="145"/>
+                    <animations/>
                     <color key="backgroundColor" red="0.95686274510000002" green="0.95686274510000002" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" priority="250" constant="188" id="YGg-kq-jDb"/>
@@ -81,6 +88,7 @@ Neither can I!</string>
                     <subviews>
                         <button clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="woJ-Y6-bOV" userLabel="like_button" customClass="AirLikeButton" customModule="Patchr" customModuleProvider="target">
                             <rect key="frame" x="63" y="0.0" width="24" height="24"/>
+                            <animations/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="24" id="MdS-kD-cIy"/>
                                 <constraint firstAttribute="width" constant="24" id="xtN-eB-0c3"/>
@@ -92,6 +100,7 @@ Neither can I!</string>
                         </button>
                         <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" text="1 Like" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jtz-MW-UwR" userLabel="likes">
                             <rect key="frame" x="93" y="3" width="39" height="18"/>
+                            <animations/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="18" id="GNc-ud-yCh"/>
@@ -101,6 +110,7 @@ Neither can I!</string>
                             <nil key="highlightedColor"/>
                         </label>
                     </subviews>
+                    <animations/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstAttribute="height" priority="999" constant="32" id="0dg-Yl-vyD"/>
@@ -110,6 +120,7 @@ Neither can I!</string>
                     </constraints>
                 </view>
             </subviews>
+            <animations/>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <constraints>
                 <constraint firstItem="CKk-NR-FiB" firstAttribute="top" secondItem="eQH-ua-j18" secondAttribute="bottom" constant="8" id="9LC-XX-o45"/>

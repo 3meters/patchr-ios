@@ -2414,9 +2414,10 @@
                                                 </userDefinedRuntimeAttribute>
                                             </userDefinedRuntimeAttributes>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Jay Massena" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="95Y-fw-S1K" userLabel="user_name">
+                                        <label userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Jay Massena" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="95Y-fw-S1K" userLabel="user_name">
                                             <rect key="frame" x="112" y="16" width="294" height="22"/>
                                             <animations/>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="22" id="SEE-4J-qWp"/>
                                             </constraints>
@@ -2424,9 +2425,10 @@
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="jay@3meters.com" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gDA-KL-QRU" userLabel="user_email">
+                                        <label userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="jay@3meters.com" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gDA-KL-QRU" userLabel="user_email">
                                             <rect key="frame" x="112" y="42" width="294" height="19"/>
                                             <animations/>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="19" id="o4R-XT-fXV"/>
                                             </constraints>
@@ -2463,9 +2465,10 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QJr-yA-SS3" userLabel="favorites_group">
                                     <rect key="frame" x="0.0" y="112" width="414" height="48"/>
                                     <subviews>
-                                        <button opaque="NO" alpha="0.5" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ofS-Yi-hli" userLabel="fav_image">
+                                        <button alpha="0.5" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ofS-Yi-hli" userLabel="fav_image">
                                             <rect key="frame" x="0.0" y="0.0" width="48" height="48"/>
                                             <animations/>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="48" id="aOu-Wb-aF1"/>
                                                 <constraint firstAttribute="height" constant="48" id="rDZ-lp-zld"/>
@@ -2480,9 +2483,10 @@
                                                 <action selector="actionBrowseFavorites:" destination="Yps-DA-nZY" eventType="touchUpInside" id="3Ro-PR-2nv"/>
                                             </connections>
                                         </button>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lCL-jY-QOQ" userLabel="fav_button">
+                                        <button contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lCL-jY-QOQ" userLabel="fav_button">
                                             <rect key="frame" x="48" y="8" width="358" height="32"/>
                                             <animations/>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="32" id="mWZ-oE-6Gt"/>
                                             </constraints>
@@ -2521,9 +2525,10 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ApL-A0-AcR" userLabel="watching_group">
                                     <rect key="frame" x="0.0" y="160" width="414" height="48"/>
                                     <subviews>
-                                        <button opaque="NO" alpha="0.5" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HAD-Ge-1vn" userLabel="watching_image">
+                                        <button alpha="0.5" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HAD-Ge-1vn" userLabel="watching_image">
                                             <rect key="frame" x="0.0" y="0.0" width="48" height="48"/>
                                             <animations/>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="48" id="Fhf-n8-hfV"/>
                                                 <constraint firstAttribute="width" constant="48" id="WYg-Ge-U6d"/>
@@ -2537,9 +2542,10 @@
                                                 <action selector="actionBrowseWatching:" destination="Yps-DA-nZY" eventType="touchUpInside" id="lX8-P8-8DJ"/>
                                             </connections>
                                         </button>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IVb-qV-lKx" userLabel="watching_button">
+                                        <button contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IVb-qV-lKx" userLabel="watching_button">
                                             <rect key="frame" x="48" y="8" width="358" height="32"/>
                                             <animations/>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="32" id="BcY-Jq-qpL"/>
                                             </constraints>
@@ -2579,9 +2585,10 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="APO-1d-fZp" userLabel="owns_group">
                                     <rect key="frame" x="0.0" y="208" width="414" height="48"/>
                                     <subviews>
-                                        <button opaque="NO" alpha="0.5" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SSn-WF-dAS" userLabel="owns_image">
+                                        <button alpha="0.5" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SSn-WF-dAS" userLabel="owns_image">
                                             <rect key="frame" x="0.0" y="0.0" width="48" height="48"/>
                                             <animations/>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="48" id="2nA-9J-xwm"/>
                                                 <constraint firstAttribute="height" constant="48" id="5tQ-DK-SlA"/>
@@ -2596,9 +2603,10 @@
                                                 <action selector="actionBrowseOwned:" destination="Yps-DA-nZY" eventType="touchUpInside" id="9qG-Ka-Oe4"/>
                                             </connections>
                                         </button>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SWV-hm-z33" userLabel="owns_button">
+                                        <button contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SWV-hm-z33" userLabel="owns_button">
                                             <rect key="frame" x="48" y="8" width="358" height="32"/>
                                             <animations/>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="32" id="bVo-XH-jZG"/>
                                             </constraints>

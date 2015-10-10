@@ -27,9 +27,10 @@
                         <userDefinedRuntimeAttribute type="string" keyPath="sizeCategory" value="profile"/>
                     </userDefinedRuntimeAttributes>
                 </imageView>
-                <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" text="This is a multiline message comment that will say something that people will like" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BTv-Gi-ogT" userLabel="description" customClass="TTTAttributedLabel">
+                <label autoresizesSubviews="NO" userInteractionEnabled="NO" contentMode="left" text="This is a multiline message comment that will say something that people will like" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BTv-Gi-ogT" userLabel="description" customClass="TTTAttributedLabel">
                     <rect key="frame" x="65" y="8" width="238" height="71"/>
                     <animations/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstAttribute="height" relation="greaterThanOrEqual" priority="999" constant="24" id="hmX-Ta-Cbg"/>
                     </constraints>
