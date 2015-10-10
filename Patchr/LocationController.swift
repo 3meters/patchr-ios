@@ -54,24 +54,13 @@ class LocationController: NSObject {
     func startUpdates(){
         Log.d("***** Location updates started *****")
         
-        // iOS 8
-        if #available(iOS 8.0, *) {
-            if CLLocationManager.authorizationStatus() == .NotDetermined {
-                self.locationManager.requestWhenInUseAuthorization()
-            }
-            else if CLLocationManager.authorizationStatus() == .AuthorizedAlways
-                || CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
-                    self.locationManager.startUpdatingLocation()
-            }
-        }
-        else {
-            if CLLocationManager.authorizationStatus() == .NotDetermined {
-                self.locationManager.startUpdatingLocation() // Prompts automatically
-            }
-            else if CLLocationManager.authorizationStatus() == .Authorized {
-                self.locationManager.startUpdatingLocation()
-            }
-        }
+		if CLLocationManager.authorizationStatus() == .NotDetermined {
+			self.locationManager.requestWhenInUseAuthorization()
+		}
+		else if CLLocationManager.authorizationStatus() == .AuthorizedAlways
+			|| CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+				self.locationManager.startUpdatingLocation()
+		}
     }
 
     func stopUpdates(){
@@ -86,18 +75,10 @@ class LocationController: NSObject {
         
         /* Ignores desired distance and accuracy */
         if self.locationManager != nil {
-            // iOS 8
-            if #available(iOS 8.0, *) {
-                if CLLocationManager.authorizationStatus() == .AuthorizedAlways
-                    || CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
-                        self.locationManager.startMonitoringSignificantLocationChanges()
-                }
-            }
-            else {
-                if CLLocationManager.authorizationStatus() == .Authorized {
-                    self.locationManager.startMonitoringSignificantLocationChanges()
-                }
-            }
+			if CLLocationManager.authorizationStatus() == .AuthorizedAlways
+				|| CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+					self.locationManager.startMonitoringSignificantLocationChanges()
+			}
         }
     }
     
@@ -184,20 +165,12 @@ extension LocationController: CLLocationManagerDelegate {
 
 	func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
         
-        if #available(iOS 8.0, *) {
-            if CLLocationManager.authorizationStatus() == .AuthorizedAlways
-                || CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
-                    manager.startUpdatingLocation()
-                    return
-            }
-        }
-        else {
-            if CLLocationManager.authorizationStatus() == .Authorized {
-                manager.startUpdatingLocation()
-                return
-            }
-        }
-        
+		if CLLocationManager.authorizationStatus() == .AuthorizedAlways
+			|| CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+				manager.startUpdatingLocation()
+				return
+		}
+		
         if status == CLAuthorizationStatus.Denied {
             let windowList = UIApplication.sharedApplication().windows
             let topWindow = windowList[windowList.count - 1] 

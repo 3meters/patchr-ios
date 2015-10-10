@@ -228,16 +228,11 @@ class EntityEditViewController: UITableViewController {
     }
     
     func alertTextFieldDidChange(sender: AnyObject) {
-        if #available(iOS 8.0, *) {
-            if let alertController: AirAlertController = self.presentedViewController as? AirAlertController {
-                let confirm = alertController.textFields![0] 
-                let okAction = alertController.actions[0] 
-                okAction.enabled = confirm.text == "YES"
-            }
-        }
-        else {
-            // Fallback to UIAlertViewDelegate below
-        }
+		if let alertController: AirAlertController = self.presentedViewController as? AirAlertController {
+			let confirm = alertController.textFields![0] 
+			let okAction = alertController.actions[0] 
+			okAction.enabled = confirm.text == "YES"
+		}
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -730,25 +725,6 @@ extension EntityEditViewController: UIGestureRecognizerDelegate {
             return false
         }
         return true
-    }
-}
-
-extension EntityEditViewController: UIAlertViewDelegate {
-    /* Used by ActionConfirmationAlert for ios7 */
-    
-    func alertViewShouldEnableFirstOtherButton(alertView: UIAlertView) -> Bool {
-        let inputView: UITextField = alertView.textFieldAtIndex(0)!
-        return inputView.text == "YES"
-    }
-    
-    /* Just here to support ios7 */
-    func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
-        if alertView.buttonTitleAtIndex(buttonIndex)!.lowercaseString == "delete" {
-            self.delete()
-        }
-        else if alertView.buttonTitleAtIndex(buttonIndex)!.lowercaseString == "discard" {
-            self.performBack(true)
-        }
     }
 }
 

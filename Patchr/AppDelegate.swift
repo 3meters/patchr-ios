@@ -131,7 +131,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         /* Global UI tweaks */
         self.window?.backgroundColor = Colors.windowColor /* Light gray is better than black */
         self.window?.tintColor = Colors.brandColor
-        UITabBar.appearance().selectedImageTintColor = Colors.brandColorDark
+        UITabBar.appearance().tintColor = Colors.brandColorDark
         UISwitch.appearance().onTintColor = self.window?.tintColor
         
         /* We handle remote notifications */

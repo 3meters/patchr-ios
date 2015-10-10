@@ -221,45 +221,28 @@ extension UIViewController {
     }
     
     func Alert(title: String?, message: String? = nil, cancelButtonTitle: String = "OK") {
-        if #available(iOS 8.0, *) {
-            let alert = AirAlertController(title: title, message: message, preferredStyle: .Alert)
-            alert.addAction(UIAlertAction(title: cancelButtonTitle, style: .Cancel, handler: nil))
-            self.presentViewController(alert, animated: true) {}
-        }
-        else {
-            UIAlertView(title: title, message: message, delegate: nil, cancelButtonTitle: cancelButtonTitle).show()
-        }
+		let alert = AirAlertController(title: title, message: message, preferredStyle: .Alert)
+		alert.addAction(UIAlertAction(title: cancelButtonTitle, style: .Cancel, handler: nil))
+		self.presentViewController(alert, animated: true) {}
     }
     
     func ActionConfirmationAlert(title: String? = nil, message: String? = nil,
         actionTitle: String, cancelTitle: String, destructConfirmation: Bool = false,
         delegate: AnyObject? = nil, onDismiss: (Bool) -> Void) {
             
-        if #available(iOS 8.0, *) {
-            let alert = AirAlertController(title: title, message: message, preferredStyle: .Alert)
-            let okAction = UIAlertAction(title: actionTitle, style: .Destructive, handler: { _ in onDismiss(true) })
-            let cancelAction = UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) })
-            alert.addAction(okAction)
-            alert.addAction(cancelAction)
-            if destructConfirmation {
-                alert.addTextFieldWithConfigurationHandler() {
-                    textField in
-                    textField.addTarget(delegate, action: Selector("alertTextFieldDidChange:"), forControlEvents: .EditingChanged)
-                }
-                okAction.enabled = false
-            }
-            self.presentViewController(alert, animated: true, completion: nil)
-        }
-        else {
-            let alert = UIAlertView(title: title, message: message, delegate: delegate, cancelButtonTitle: nil)
-            if destructConfirmation {
-                alert.alertViewStyle = UIAlertViewStyle.PlainTextInput
-                alert.delegate = delegate
-            }
-            alert.addButtonWithTitle(actionTitle)
-            alert.addButtonWithTitle(cancelTitle)
-            alert.show()
-        }
+		let alert = AirAlertController(title: title, message: message, preferredStyle: .Alert)
+		let okAction = UIAlertAction(title: actionTitle, style: .Destructive, handler: { _ in onDismiss(true) })
+		let cancelAction = UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) })
+		alert.addAction(okAction)
+		alert.addAction(cancelAction)
+		if destructConfirmation {
+			alert.addTextFieldWithConfigurationHandler() {
+				textField in
+				textField.addTarget(delegate, action: Selector("alertTextFieldDidChange:"), forControlEvents: .EditingChanged)
+			}
+			okAction.enabled = false
+		}
+		self.presentViewController(alert, animated: true, completion: nil)
     }
 
 	func addActivityIndicatorTo(view: UIView, offsetY: Float = 0) -> UIActivityIndicatorView {

@@ -43,15 +43,9 @@ class PatchSearchViewController: UITableViewController {
         super.viewDidLoad()
         
         /* If already authorized then grab the location */
-        var authorized = false
-        if #available(iOS 8.0, *) {
-            authorized = (CLLocationManager.authorizationStatus() == .AuthorizedAlways
+        let authorized = (CLLocationManager.authorizationStatus() == .AuthorizedAlways
                 || CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse)
-        }
-        else {
-            authorized = (CLLocationManager.authorizationStatus() == .Authorized)
-        }
-        
+		
         if authorized {
             self.manager = OneShotLocationManager()
             self.manager!.fetchWithCompletion {

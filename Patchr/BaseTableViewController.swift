@@ -192,10 +192,8 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		cell.layer.shouldRasterize = true
 		cell.layer.rasterizationScale = UIScreen.mainScreen().scale
 		
-		if #available(iOS 8.0, *) {
-			cell.layoutMargins = UIEdgeInsetsZero
-			cell.preservesSuperviewLayoutMargins = false
-		}
+		cell.layoutMargins = UIEdgeInsetsZero
+		cell.preservesSuperviewLayoutMargins = false
 		
 		let view = NSBundle.mainBundle().loadNibNamed(contentViewName, owner: self, options: nil)[0] as! BaseView
 		cell.injectView(view)
