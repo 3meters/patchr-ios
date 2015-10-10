@@ -74,6 +74,8 @@ class PatchDetailViewController: BaseDetailViewController {
 		gradient.colors = [endColor.CGColor, startColor.CGColor]
 		gradient.startPoint = CGPoint(x: 0.5, y: 0.5)
 		gradient.endPoint = CGPoint(x: 0.5, y: 1)
+		gradient.shouldRasterize = true
+		gradient.rasterizationScale = UIScreen.mainScreen().scale
 		patchPhoto.layer.insertSublayer(gradient, atIndex: 0)
         
         let more: UITableViewCell = UITableViewCell()

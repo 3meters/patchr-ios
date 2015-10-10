@@ -50,6 +50,9 @@ class AirImageView: UIImageView {
         self.gradient!.endPoint = CGPoint(x: 0.5, y: 1)
         self.gradient!.hidden = true
         self.gradient!.zPosition = 1
+		self.gradient!.shouldRasterize = true
+		self.gradient!.rasterizationScale = UIScreen.mainScreen().scale
+		
         self.layer.addSublayer(self.gradient!)
 		
         /* Dot for debug */
