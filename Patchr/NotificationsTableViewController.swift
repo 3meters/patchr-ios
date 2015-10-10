@@ -97,7 +97,7 @@ class NotificationsTableViewController: BaseTableViewController {
 								
 								/* Bail if low priority */
 								if let priority = json["priority"].int {
-									if priority == 2 {
+									if priority == 3 {
 										return
 									}
 								}
@@ -150,9 +150,12 @@ class NotificationsTableViewController: BaseTableViewController {
                                 
                                 /* Chirp */
                                 if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundForNotifications")) {
-									if json["aps"]["sound"].string != nil || json["alert-x"].string != nil {
-										AudioServicesPlaySystemSound(chirpSound)
+									if let priority = json["priority"].int {
+										if priority == 2 {
+											return
+										}
 									}
+									AudioServicesPlaySystemSound(chirpSound)
                                 }
                             }
                             
