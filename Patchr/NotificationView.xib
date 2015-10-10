@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment version="2048" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <objects>
@@ -14,6 +14,7 @@
             <subviews>
                 <imageView autoresizesSubviews="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="c93-v8-v2J" userLabel="user_photo" customClass="AirImageView" customModule="Patchr" customModuleProvider="target">
                     <rect key="frame" x="8" y="8" width="48" height="48"/>
+                    <animations/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="48" id="PJd-M4-AXX"/>
@@ -28,6 +29,7 @@
                 </imageView>
                 <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" text="This is a multiline message comment that will say something that people will like" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BTv-Gi-ogT" userLabel="description" customClass="TTTAttributedLabel">
                     <rect key="frame" x="65" y="8" width="238" height="71"/>
+                    <animations/>
                     <constraints>
                         <constraint firstAttribute="height" relation="greaterThanOrEqual" priority="999" constant="24" id="hmX-Ta-Cbg"/>
                     </constraints>
@@ -37,6 +39,7 @@
                 </label>
                 <imageView autoresizesSubviews="NO" clipsSubviews="YES" contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="mEK-Mo-Kp8" userLabel="photo" customClass="AirImageView" customModule="Patchr" customModuleProvider="target">
                     <rect key="frame" x="65" y="87" width="242" height="144"/>
+                    <animations/>
                     <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" priority="999" constant="144" id="UVa-d7-ufe"/>
@@ -47,13 +50,15 @@
                 </imageView>
                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uOK-9G-kgV" userLabel="type_image">
                     <rect key="frame" x="65" y="239" width="20" height="20"/>
+                    <animations/>
                     <constraints>
                         <constraint firstAttribute="width" constant="20" id="P63-PQ-Pl2"/>
                         <constraint firstAttribute="height" constant="20" id="ujd-dc-52M"/>
                     </constraints>
                 </imageView>
                 <label autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="left" text="02 Mar" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="k4O-Bb-7oC" userLabel="created_date">
-                    <rect key="frame" x="93" y="240" width="46" height="18"/>
+                    <rect key="frame" x="93" y="240" width="48" height="18"/>
+                    <animations/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="18" id="tXn-UR-889"/>
@@ -63,7 +68,8 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cff-EQ-LXe" userLabel="age_dot">
-                    <rect key="frame" x="147" y="243" width="12" height="12"/>
+                    <rect key="frame" x="149" y="243" width="12" height="12"/>
+                    <animations/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="12" id="JNg-CM-zGd"/>
@@ -76,6 +82,7 @@
                     </userDefinedRuntimeAttributes>
                 </view>
             </subviews>
+            <animations/>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <constraints>
                 <constraint firstItem="uOK-9G-kgV" firstAttribute="bottom" secondItem="OrX-vM-sQY" secondAttribute="bottom" constant="-8" id="1Al-Wd-H8X"/>

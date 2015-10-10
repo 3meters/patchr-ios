@@ -11,10 +11,10 @@ import UIKit
 class BaseTableViewController: UITableViewController, NSFetchedResultsControllerDelegate {
     
     var _query: Query!
-    var progress: AirProgress?
+	var activity: UIActivityIndicatorView?
     var showEmptyLabel: Bool = true
     var showProgress: Bool = true
-    var progressOffset = Float(0)
+    var progressOffset = Float(-40)
     var processingQuery: Bool = false
     var emptyLabel: AirLabel = AirLabel(frame: CGRectMake(100, 100, 100, 100))
     var emptyMessage: String?
@@ -36,20 +36,10 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         refreshControl.tintColor = Colors.brandColor
 		refreshControl.addTarget(self, action: "pullToRefreshAction:", forControlEvents: UIControlEvents.ValueChanged)
 		self.refreshControl = refreshControl
-        
-        /* Wacky activity control for body */
-        if self.showProgress {
-            if let controller = UIViewController.topMostViewController() {
-                self.progress = AirProgress.showHUDAddedTo(controller.view, animated: true)
-                self.progress!.mode = MBProgressHUDMode.Indeterminate
-                self.progress!.styleAs(.ActivityOnly)
-                self.progress!.yOffset = self.progressOffset
-                self.progress!.minShowTime = 1.0
-                self.progress!.removeFromSuperViewOnHide = false
-                self.progress!.userInteractionEnabled = false
-            }
-        }
-        
+		
+		/* Simple activity indicator */
+		self.activity = addActivityIndicatorTo(self.view, offsetY: self.progressOffset)
+		
         /* Empty label */
         if self.showEmptyLabel {
             self.emptyLabel.alpha = 0
@@ -93,16 +83,21 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
     }
     
     override func viewWillDisappear(animated: Bool) {
+		/*
+		* Called when switching between patch view controllers.
+		*/
         super.viewWillDisappear(animated)
-        self.progress?.hide(false)
+		self.activity?.stopAnimating()
     }
     
     override func viewDidDisappear(animated: Bool) {
+		/*
+		 * Called when switching between patch view controllers.
+		 */
         super.viewDidDisappear(animated)
-        
-        self.progress?.hide(false)
+		self.activity?.stopAnimating()
         self.refreshControl?.endRefreshing()
-        self.tableView.finishInfiniteScroll()
+		self.tableView.finishInfiniteScroll()
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -124,9 +119,12 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         }
         
         if !self.refreshControl!.refreshing && !self.query().executedValue {
-            self.progress?.show(true)
+			/* Wacky activity control for body */
+			if self.showProgress {
+				self.activity?.startAnimating()
+			}
         }
-        
+		
         if self.showEmptyLabel && self.emptyLabel.alpha > 0 {
             self.emptyLabel.fadeOut()
         }
@@ -148,9 +146,9 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
             Utils.delay(0.5, closure: {
                 
                 self?.processingQuery = false
-                self?.progress?.hide(true)
+				self?.activity?.stopAnimating()
                 self?.refreshControl?.endRefreshing()
-                self?.tableView.finishInfiniteScroll()
+				self?.tableView.finishInfiniteScroll()
                 
                 if query.moreValue {
                     self?.tableView.addInfiniteScrollWithHandler({(scrollView) -> Void in
@@ -174,7 +172,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
             })
         })
     }
-    
+	
     func populateSidecar(query: Query) { }
 
 	func query() -> Query {

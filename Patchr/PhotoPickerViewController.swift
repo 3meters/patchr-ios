@@ -15,9 +15,9 @@ class PhotoPickerViewController: UICollectionViewController {
     var searchBarBoundsY: CGFloat?
     
     var searchBar: UISearchBar?
-    var progress: AirProgress?
     var pickerDelegate: PhotoBrowseControllerDelegate?
-    
+	var activity: UIActivityIndicatorView?
+	
     var largePhotoIndexPath : NSIndexPath? {
         didSet {
             var indexPaths = [NSIndexPath]()
@@ -59,6 +59,9 @@ class PhotoPickerViewController: UICollectionViewController {
 		super.viewDidLoad()
         
         collectionView!.registerNib(UINib(nibName: "ThumbnailCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: reuseIdentifier)
+		
+		/* Simple activity indicator */
+		self.activity = addActivityIndicatorTo(self.view)
 	}
 
 	override func viewWillAppear(animated: Bool) {
@@ -80,14 +83,6 @@ class PhotoPickerViewController: UICollectionViewController {
         
         /* Scroll inset */
         self.sectionInsets = UIEdgeInsets(top: self.searchBar!.frame.size.height + 4, left: 4, bottom: 4, right: 4)
-        
-        /* Wacky activity control for body */
-        self.progress = AirProgress.showHUDAddedTo(UIApplication.sharedApplication().delegate?.window!, animated: true)
-        self.progress!.mode = MBProgressHUDMode.Indeterminate
-        self.progress!.styleAs(.ActivityOnly)
-        self.progress!.removeFromSuperViewOnHide = false
-        self.progress!.userInteractionEnabled = false
-        self.progress!.hide(false)
         
         /* Calculate thumbnail width */
         availableWidth = UIScreen.mainScreen().bounds.size.width - (sectionInsets!.left + sectionInsets!.right)
@@ -122,8 +117,9 @@ class PhotoPickerViewController: UICollectionViewController {
     private func loadData(paging: Bool = false) {
         
         var offset = 0
-        progress!.show(true)
-        
+		
+		self.activity?.startAnimating()
+		
         if !paging {
             self.imageResults.removeAll()
         }
@@ -134,7 +130,7 @@ class PhotoPickerViewController: UICollectionViewController {
         DataController.proxibase.loadSearchImages(self.searchBar!.text!, limit: Int64(self.pageSize), offset: Int64(offset)) {
             response, error in
             
-            self.progress?.hide(true)
+            self.activity?.stopAnimating()
             if let error = ServerError(error) {
                 self.handleError(error)
             }
@@ -183,8 +179,7 @@ class PhotoPickerViewController: UICollectionViewController {
                 
                 self.collectionView?.reloadData()
             }
-        }
-        
+        }        
     }
     
     func imageForIndexPath(indexPath: NSIndexPath) -> ImageResult {

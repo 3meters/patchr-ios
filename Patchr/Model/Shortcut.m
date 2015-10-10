@@ -1,6 +1,5 @@
 #import "Shortcut.h"
 #import "Photo.h"
-#import "Patchr-Swift.h"
 
 @interface Shortcut ()
 
@@ -17,8 +16,10 @@
     shortcut = (Shortcut *)[Entity setPropertiesFromDictionary:dictionary onObject:shortcut mappingNames:mapNames];    
     
     shortcut.entityId = (mapNames && dictionary[@"_id"]) ? dictionary[@"_id"] : dictionary[@"id"];
-    shortcut.id_ = [Shortcut decorateId:shortcut.id_];
-    
+	if ([shortcut.id_ rangeOfString:@"sh."].location == NSNotFound) {
+		shortcut.id_ = [@"sh." stringByAppendingString:shortcut.id_];
+	}
+	
     return shortcut;
 }
 

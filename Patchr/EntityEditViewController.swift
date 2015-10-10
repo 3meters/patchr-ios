@@ -334,6 +334,7 @@ class EntityEditViewController: UITableViewController {
         progress.styleAs(.ActivityLight)
         progress.labelText = self.progressStartLabel
         progress.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("progressWasCancelled:")))
+		progress.removeFromSuperViewOnHide = true
         progress.show(true)
         
         let parameters: NSMutableDictionary = self.gather(NSMutableDictionary())

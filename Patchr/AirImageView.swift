@@ -11,7 +11,7 @@ import UIKit
 class AirImageView: UIImageView {
 
     var activity: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
-    var gradient: CAGradientLayer!
+    var gradient: CAGradientLayer?
     var spot: CAShapeLayer?
     var linkedPhotoUrl: NSURL?
     var sizeCategory: String = SizeCategory.thumbnail
@@ -42,16 +42,16 @@ class AirImageView: UIImageView {
         
         /* Gradient */
         self.gradient = CAGradientLayer()
-        self.gradient.frame = CGRectMake(0, 0, self.bounds.size.width + 10, self.bounds.size.height + 10)
+        self.gradient!.frame = CGRectMake(0, 0, self.bounds.size.width + 10, self.bounds.size.height + 10)
         let startColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.2))  // Bottom
         let endColor:   UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0))    // Top
-        self.gradient.colors = [endColor.CGColor, startColor.CGColor]
-        self.gradient.startPoint = CGPoint(x: 0.5, y: 0.5)
-        self.gradient.endPoint = CGPoint(x: 0.5, y: 1)
-        self.gradient.hidden = true
-        self.gradient.zPosition = 1
-        self.layer.addSublayer(self.gradient)
-        
+        self.gradient!.colors = [endColor.CGColor, startColor.CGColor]
+        self.gradient!.startPoint = CGPoint(x: 0.5, y: 0.5)
+        self.gradient!.endPoint = CGPoint(x: 0.5, y: 1)
+        self.gradient!.hidden = true
+        self.gradient!.zPosition = 1
+        self.layer.addSublayer(self.gradient!)
+		
         /* Dot for debug */
         if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("devModeEnabled")) {
             self.spot = CAShapeLayer()
@@ -106,7 +106,8 @@ class AirImageView: UIImageView {
             self.imageCompletion(nil, error: error, cacheType: nil, url: nil, animate: animate)
             return
         }
-        
+		
+		/* Stash the url we are loading so we can check for a match later when download is completed. */
         self.linkedPhotoUrl = photoUrl
         
         startActivity()
@@ -125,6 +126,7 @@ class AirImageView: UIImageView {
         
         let url = NSURL(string: thumbnail.mediaUrl!)
         
+		/* Stash the url we are loading so we can check for a match later when download is completed. */
         self.linkedPhotoUrl = url
         
         self.spot?.fillColor = UIColor.lightGrayColor().CGColor
@@ -143,6 +145,7 @@ class AirImageView: UIImageView {
         
         let url = NSURL(string: imageResult.mediaUrl!)
         
+		/* Stash the url we are loading so we can check for a match later when download is completed. */
         self.linkedPhotoUrl = url
         
         self.spot?.fillColor = UIColor.lightGrayColor().CGColor

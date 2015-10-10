@@ -56,6 +56,7 @@ class SignInEditViewController: UITableViewController {
         progress.styleAs(.ActivityLight)
         progress.minShowTime = 0.5
 		progress.labelText = "Signing in..."
+		progress.removeFromSuperViewOnHide = true
 		progress.show(true)
         
         DataController.proxibase.signIn(self.emailField.text!, password: self.passwordField.text!) {
@@ -63,7 +64,7 @@ class SignInEditViewController: UITableViewController {
             
             self.processing = false
             
-            progress.hide(true)
+            progress?.hide(true)
             if var error = ServerError(error) {
                 if error.code == .UNAUTHORIZED_CREDENTIALS {
                     error.message = "Wrong email and password combination."

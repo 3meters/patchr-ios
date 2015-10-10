@@ -33,7 +33,7 @@ class PatchView: BaseView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.photo.gradient.frame = CGRectMake(0, 0, self.photo.bounds.size.width + 10, self.photo.bounds.size.height + 10)
-        self.photo.gradient.hidden = false
+        self.photo.gradient?.frame = CGRectMake(0, 0, self.photo.bounds.size.width + 10, self.photo.bounds.size.height + 10)
+        self.photo.gradient?.hidden = false
     }
 }

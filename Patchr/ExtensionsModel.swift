@@ -87,11 +87,11 @@ extension Entity {
 
 extension Patch {
     
-    static func bindView(view: UIView, object: AnyObject, sizingOnly: Bool = false) -> UIView {
+	static func bindView(view: UIView, object: AnyObject, location: CLLocation?, sizingOnly: Bool = false) -> UIView {
         
         let patch = object as! Entity
         let view = view as! PatchView
-        
+
         view.name.text = patch.name
         if patch.type != nil {
             view.type.text = patch.type.uppercaseString + " PATCH"
@@ -107,7 +107,7 @@ extension Patch {
                 }
             }
         }
-        
+
         if view.visibility != nil {
             view.visibility?.tintColor(Colors.brandColor)
             view.visibility.hidden = (patch.visibility == "public")
@@ -124,7 +124,7 @@ extension Patch {
                 
             }
         }
-        
+		
         view.messageCount.text = "--"
         view.watchingCount.text = "--"
         
@@ -139,21 +139,25 @@ extension Patch {
                 view.watchingCount.text = numberOfWatching.stringValue
             }
         }
-        
+		
         /* Distance */
         if view.distance != nil {
-            view.distance.text = "--"
-            if let lastLocation = LocationController.instance.lastLocationFromManager() {
-                if let loc = patch.location {
-                    let patchLocation = CLLocation(latitude: loc.latValue, longitude: loc.lngValue)
-                    let dist = Float(lastLocation.distanceFromLocation(patchLocation))  // in meters
-                    view.distance.text = LocationController.instance.distancePretty(dist)
-                }
-            }
+			if location == nil {
+				view.distance.hidden = true
+			}
+			else {
+				view.distance.hidden = false
+				view.distance.text = "--"
+				if let loc = patch.location {
+					let patchLocation = CLLocation(latitude: loc.latValue, longitude: loc.lngValue)
+					let dist = Float(location!.distanceFromLocation(patchLocation))  // in meters
+					view.distance.text = LocationController.instance.distancePretty(dist)
+				}
+			}
         }
-        
+
         if !sizingOnly {
-            view.photo.setImageWithPhoto(patch.getPhotoManaged(), animate: view.photo.image == nil)
+			view.photo.setImageWithPhoto(patch.getPhotoManaged(), animate: view.photo.image == nil)
         }
         
         return view

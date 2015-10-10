@@ -72,7 +72,6 @@
 		9FDCCD0504D3A06C69B4F2A5 /* PatchSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC3759A624CE254394BB5 /* PatchSearchViewController.swift */; };
 		A8E20B58D29959C0889B8847 /* libPods-PatchrShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BA6097617A5336D7C15520A /* libPods-PatchrShare.a */; };
 		C1112B52B84F042CB51F7E65 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F90A7A6DF253248AE7C300A /* libPods.a */; };
-		E20004DA1B07A78C00425694 /* PatchLargeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E20004D91B07A78C00425694 /* PatchLargeView.xib */; };
 		E20004DF1B094ACA00425694 /* PasswordEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */; };
 		E20004E11B099CBD00425694 /* PasswordResetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004E01B099CBD00425694 /* PasswordResetViewController.swift */; };
 		E2064BF11BBF3C26009C7B6A /* AirMuteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2064BF01BBF3C26009C7B6A /* AirMuteButton.swift */; };
@@ -313,7 +312,6 @@
 		A80DE63116DE3050C0FEC4EE /* Pods-Patchr.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.debug.xcconfig"; sourceTree = "<group>"; };
 		A9B11FC184124D485DAA2948 /* Pods-Patchr.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.release.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.release.xcconfig"; sourceTree = "<group>"; };
 		B3CABF391F6D74EFAA64D37F /* libPods-Patchr.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Patchr.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E20004D91B07A78C00425694 /* PatchLargeView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PatchLargeView.xib; sourceTree = "<group>"; };
 		E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordEditViewController.swift; sourceTree = "<group>"; };
 		E20004E01B099CBD00425694 /* PasswordResetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordResetViewController.swift; sourceTree = "<group>"; };
 		E2064BF01BBF3C26009C7B6A /* AirMuteButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirMuteButton.swift; sourceTree = "<group>"; };
@@ -643,7 +641,6 @@
 				E2F618E31B0523840055D09C /* MessageView.xib */,
 				E2D6BE301B0BADA000273538 /* NotificationView.xib */,
 				E2A099FB1B06B20D00257B8B /* PatchNormalView.xib */,
-				E20004D91B07A78C00425694 /* PatchLargeView.xib */,
 				E2A5A8821B703B3F006D6E81 /* PhotoView.xib */,
 				E246E3121B741D62007327F5 /* UserApprovalView.xib */,
 				7D5545851AD33B1D007150E5 /* UserView.xib */,
@@ -1021,7 +1018,6 @@
 				E2064BF31BC0212B009C7B6A /* silence.caf in Resources */,
 				E2C720CD1B50169400714B53 /* LaunchScreen.xib in Resources */,
 				E2CCAAE21B67EE2C0071170C /* chirp.caf in Resources */,
-				E20004DA1B07A78C00425694 /* PatchLargeView.xib in Resources */,
 				E2A5A8831B703B3F006D6E81 /* PhotoView.xib in Resources */,
 				E2A099FC1B06B20D00257B8B /* PatchNormalView.xib in Resources */,
 				E2F618E41B0523840055D09C /* MessageView.xib in Resources */,

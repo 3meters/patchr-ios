@@ -192,11 +192,12 @@ class UserEditViewController: EntityEditViewController {
         
         processing = true
         
-        var progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+        let progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
         progress.mode = MBProgressHUDMode.Indeterminate
         progress.styleAs(.ActivityLight)
         progress.labelText = "Registering..."
-        progress!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("progressWasCancelled:")))
+        progress.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("progressWasCancelled:")))
+		progress.removeFromSuperViewOnHide = true
         progress.show(true)
         
         let parameters = self.gather(NSMutableDictionary())
@@ -277,8 +278,7 @@ class UserEditViewController: EntityEditViewController {
                 return
             }
             
-            progress!.hide(true)
-            progress = nil
+            progress?.hide(true)
             
             if let result: Result = queue.lastResult as? Result {
                 if var error = ServerError(result.error) {

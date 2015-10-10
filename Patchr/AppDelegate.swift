@@ -32,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         #if DEBUG
         AFNetworkActivityLogger.sharedLogger().startLogging()
-        AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelWarn
+        AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelInfo
         #endif
         
         /* Turn on network activity indicator */

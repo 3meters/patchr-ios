@@ -14,6 +14,7 @@ class PatchTableViewController: BaseTableViewController {
     var user: User!
 	var filter: PatchListFilter = .Nearby
     var activityDate: Int64?
+	var location: CLLocation?
     
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -42,7 +43,7 @@ class PatchTableViewController: BaseTableViewController {
         super.viewDidLoad()
         
         /* Content view */
-        self.contentViewName = (SCREEN_NARROW || self.filter != .Nearby) ? "PatchNormalView" : "PatchLargeView"
+        self.contentViewName = "PatchNormalView"
         
 		switch self.filter {
 			case .Nearby:
@@ -160,7 +161,10 @@ class PatchTableViewController: BaseTableViewController {
             }
             
             if !self.refreshControl!.refreshing {
-                self.progress?.show(true)
+				/* Wacky activity control for body */
+				if self.showProgress {
+					self.activity?.startAnimating()
+				}
             }
             
             if self.showEmptyLabel && self.emptyLabel.alpha > 0 {
@@ -168,6 +172,7 @@ class PatchTableViewController: BaseTableViewController {
             }
         }
         else {
+			self.location = LocationController.instance.lastLocationFromManager()
             super.bindQueryItems(force, paging: paging)
         }
     }
@@ -188,7 +193,11 @@ class PatchTableViewController: BaseTableViewController {
     
     override func bindCell(cell: UITableViewCell, object: AnyObject) {
         let view = cell.contentView.viewWithTag(1) as! BaseView
-        Patch.bindView(view, object: object, sizingOnly: false)
+		var location = self.location
+		if self.filter == .Nearby || location == nil {
+			location = LocationController.instance.lastLocationFromManager()
+		}
+		Patch.bindView(view, object: object, location: location, sizingOnly: false)
     }
     
     func didUpdateLocation(notification: NSNotification) {
@@ -249,8 +258,8 @@ class PatchTableViewController: BaseTableViewController {
                     let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController")
                     self?.view.window?.setRootViewController(controller, animated: true)
                 }
-                
-                self?.progress?.hide(true)
+				
+				self?.activity?.stopAnimating()
                 self?.refreshControl!.endRefreshing()
                 
                 return
@@ -262,7 +271,7 @@ class PatchTableViewController: BaseTableViewController {
             Utils.delay(0.5, closure: {
                 
                 /* Flag query as having been executed at least once */
-                self?.progress?.hide(true)
+				self?.activity?.stopAnimating()
                 self?.refreshControl!.endRefreshing()
                 
                 if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
@@ -319,19 +328,11 @@ extension PatchTableViewController {
 	}
     
     override func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        var height: CGFloat = 136
-        if self.filter == .Nearby && !SCREEN_NARROW {
-            height = 159
-        }
-        return height
+        return CGFloat(136)
     }
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        var height: CGFloat = 136
-        if self.filter == .Nearby && !SCREEN_NARROW {
-            height = 159
-        }
-        return height
+		return CGFloat(136)
     }
 }
 

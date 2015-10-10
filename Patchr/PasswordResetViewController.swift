@@ -55,6 +55,7 @@ class PasswordResetViewController: UITableViewController, UITextFieldDelegate {
         let progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
         progress.mode = MBProgressHUDMode.Indeterminate
         progress.styleAs(.ActivityLight)
+		progress.removeFromSuperViewOnHide = true
         progress.labelText = "Verifying..."
         progress.show(true)
         
@@ -63,7 +64,7 @@ class PasswordResetViewController: UITableViewController, UITextFieldDelegate {
             
             self.processing = false
             
-            progress.hide(true, afterDelay: 1.0)
+            progress?.hide(true, afterDelay: 1.0)
             if var error = ServerError(error) {
                 self.emailConfirmed = false
                 if error.code == .UNAUTHORIZED {
@@ -104,6 +105,7 @@ class PasswordResetViewController: UITableViewController, UITextFieldDelegate {
         progress.mode = MBProgressHUDMode.Indeterminate
         progress.styleAs(.ActivityLight)
         progress.labelText = "Resetting password for: \(self.emailField.text)"
+		progress.removeFromSuperViewOnHide = true
         progress.show(true)
         
         DataController.proxibase.resetPassword(passwordField!.text!, userId: self.userId!, sessionKey: self.sessionKey!) {
@@ -111,7 +113,7 @@ class PasswordResetViewController: UITableViewController, UITextFieldDelegate {
             
             self.processing = false
             
-            progress.hide(true, afterDelay: 1.0)
+            progress?.hide(true, afterDelay: 1.0)
             if let error = ServerError(error) {
                 self.handleError(error)
             }

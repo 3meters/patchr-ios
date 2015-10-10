@@ -1,7 +1,6 @@
 #import "Message.h"
 #import "Link.h"
 #import "Shortcut.h"
-#import "Patchr-Swift.h"
 
 @interface Message ()
 
@@ -23,14 +22,18 @@
             if ([linkMap isKindOfClass:[NSDictionary class]]) {
                 if ([linkMap[@"schema"] isEqualToString: @"patch"]) {
                     NSString *entityId = [[NSString alloc] initWithString:linkMap[@"_id"]];
-                    NSString *decoratedId = [Shortcut decorateId:entityId];
-                    id shortcut = [Shortcut fetchOrInsertOneById:decoratedId inManagedObjectContext:message.managedObjectContext];
+					if ([entityId rangeOfString:@"sh."].location == NSNotFound) {
+						entityId = [@"sh." stringByAppendingString:entityId];
+					}
+                    id shortcut = [Shortcut fetchOrInsertOneById:entityId inManagedObjectContext:message.managedObjectContext];
                     message.patch = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut mappingNames:mapNames];
                 }
                 else if ([linkMap[@"schema"] isEqualToString: @"message"]) {
                     NSString *entityId = [[NSString alloc] initWithString:linkMap[@"_id"]];
-                    NSString *decoratedId = [Shortcut decorateId:entityId];
-                    id shortcut = [Shortcut fetchOrInsertOneById:decoratedId inManagedObjectContext:message.managedObjectContext];
+					if ([entityId rangeOfString:@"sh."].location == NSNotFound) {
+						entityId = [@"sh." stringByAppendingString:entityId];
+					}
+                    id shortcut = [Shortcut fetchOrInsertOneById:entityId inManagedObjectContext:message.managedObjectContext];
                     message.message = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut mappingNames:mapNames];
                 }
             }

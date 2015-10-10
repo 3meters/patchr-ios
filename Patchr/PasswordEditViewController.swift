@@ -43,6 +43,7 @@ class PasswordEditViewController: UITableViewController {
 		progress.mode = MBProgressHUDMode.Indeterminate
         progress.styleAs(.ActivityLight)
 		progress.labelText = "Updating..."
+		progress.removeFromSuperViewOnHide = true
 		progress.show(true)
         
         DataController.proxibase.updatePassword(UserController.instance.currentUser.id_,
@@ -52,14 +53,14 @@ class PasswordEditViewController: UITableViewController {
                 
             self.processing = false
                 
-            progress.hide(true, afterDelay: 1.0)
+            progress?.hide(true, afterDelay: 1.0)
             if let error = ServerError(error) {
                 self.handleError(error)
             }
             else {
                 self.dismissViewControllerAnimated(true, completion: nil)
-                progress.mode = MBProgressHUDMode.Text
-                progress.labelText = "Password changed"
+                progress?.mode = MBProgressHUDMode.Text
+                progress?.labelText = "Password changed"
             }
         }
     }

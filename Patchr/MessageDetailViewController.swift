@@ -354,7 +354,7 @@ class MessageDetailViewController: UITableViewController {
             else if self.message?.patch != nil {
                 view = NSBundle.mainBundle().loadNibNamed("PatchNormalView", owner: self, options: nil)[0] as! BaseView
                 view.frame.size.width = self.shareHolder.bounds.size.width
-                Patch.bindView(view, object: self.message!.patch!)
+				Patch.bindView(view, object: self.message!.patch!, location: nil)
                 self.shareHolder?.addSubview(view)
             }
             
