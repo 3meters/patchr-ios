@@ -39,6 +39,7 @@
 #import <AdobeCreativeSDKImage/AdobeCreativeSDKImage.h>
 #import <Branch.h>
 #import <TWMessageBarManager.h>
+#import <Harpy.h>
 #import <Keys/PatchrKeys.h>
 #import <Google/Analytics.h>
 #import <MBContactPicker.h>
