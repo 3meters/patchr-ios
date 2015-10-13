@@ -245,9 +245,9 @@ extension UIViewController {
 		self.presentViewController(alert, animated: true, completion: nil)
     }
 
-	func addActivityIndicatorTo(view: UIView, offsetY: Float = 0) -> UIActivityIndicatorView {
+	func addActivityIndicatorTo(view: UIView, offsetY: Float = 0, style: UIActivityIndicatorViewStyle = .WhiteLarge) -> UIActivityIndicatorView {
 		
-		let activity: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.WhiteLarge)
+		let activity: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: style)
 		activity.translatesAutoresizingMaskIntoConstraints = false
 		activity.color = Colors.brandColorDark
 		activity.hidesWhenStopped = true
@@ -258,7 +258,7 @@ extension UIViewController {
 		let widthConstraint = NSLayoutConstraint(item: activity, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 20)
 		let heightConstraint = NSLayoutConstraint(item: activity, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 20)
 		
-		self.view.addConstraints([centerConstraintX, centerConstraintY, widthConstraint, heightConstraint])
+		view.addConstraints([centerConstraintX, centerConstraintY, widthConstraint, heightConstraint])
 		return activity
 	}
 	

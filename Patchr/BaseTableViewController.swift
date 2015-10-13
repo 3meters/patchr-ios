@@ -12,13 +12,15 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
     
     var _query: Query!
 	var activity: UIActivityIndicatorView?
+	var footerView: UIView!
     var showEmptyLabel: Bool = true
     var showProgress: Bool = true
     var progressOffset = Float(-40)
     var processingQuery: Bool = false
     var emptyLabel: AirLabel = AirLabel(frame: CGRectMake(100, 100, 100, 100))
     var emptyMessage: String?
-    var offscreenCells:       NSMutableDictionary = NSMutableDictionary()
+	var loadMoreMessage: String = "LOAD MORE"
+    var offscreenCells: NSMutableDictionary = NSMutableDictionary()
 	
 	var contentViewName: String?
 	var ignoreNextUpdates: Bool = false
@@ -39,6 +41,24 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		
 		/* Simple activity indicator */
 		self.activity = addActivityIndicatorTo(self.view, offsetY: self.progressOffset)
+		
+		/* Footer spinner */
+		self.footerView = UIView(frame: CGRectMake(0, 0, 320, 48))
+		
+		let button = UIButton(type: UIButtonType.RoundedRect)
+		button.tag = 1
+		button.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 48)
+		button.addTarget(self, action: Selector("loadMore:"), forControlEvents: UIControlEvents.TouchUpInside)
+		button.setTitle(self.loadMoreMessage, forState: .Normal)
+		footerView.addSubview(button)
+		
+		let spinner: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .White)
+		spinner.tag = 2
+		spinner.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 48)
+		spinner.translatesAutoresizingMaskIntoConstraints = true
+		spinner.color = Colors.brandColorDark
+		spinner.hidden = true
+		footerView.addSubview(spinner)
 		
         /* Empty label */
         if self.showEmptyLabel {
@@ -109,7 +129,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         super.viewDidDisappear(animated)
 		self.activity?.stopAnimating()
         self.refreshControl?.endRefreshing()
-//		self.tableView.finishInfiniteScroll()
+		self.tableView.tableFooterView = nil
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -123,6 +143,18 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
+	
+	func loadMore(sender: AnyObject?) {
+		
+		if let button = self.footerView.viewWithTag(1) as? UIButton,
+			spinner = self.footerView.viewWithTag(2) as? UIActivityIndicatorView {
+				button.hidden = true
+				spinner.hidden = false
+				spinner.startAnimating()
+		}
+		
+		self.bindQueryItems(false, paging: true)
+	}
 
     func bindQueryItems(force: Bool = false, paging: Bool = false) {
         
@@ -160,16 +192,20 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
                 self?.processingQuery = false
 				self?.activity?.stopAnimating()
                 self?.refreshControl?.endRefreshing()
-//				self?.tableView.finishInfiniteScroll()
-				
-//                if query.moreValue {
-//                    self?.tableView.addInfiniteScrollWithHandler({(scrollView) -> Void in
-//                        self?.bindQueryItems(false, paging: true)
-//                    })
-//                }
-//                else {
-//                    self?.tableView.removeInfiniteScroll()
-//                }
+				if query.moreValue {
+					if self?.tableView.tableFooterView == nil {
+						self?.tableView.tableFooterView = self?.footerView
+					}
+					if let button = self?.footerView.viewWithTag(1) as? UIButton,
+						spinner = self?.footerView.viewWithTag(2) as? UIActivityIndicatorView {
+						button.hidden = false
+						spinner.hidden = true
+						spinner.stopAnimating()
+					}
+				}
+				else {
+					self?.tableView.tableFooterView = nil
+				}
 				
                 if error == nil {
                     self?.query().executedValue = true

@@ -30,6 +30,7 @@ class BaseDetailViewController: BaseTableViewController {
         self.showEmptyLabel = false
         self.showProgress = true
         self.progressOffset = 80
+		self.loadMoreMessage = "LOAD MORE MESSAGES"		
         
         /* Use cached entity if available in the data model */
         if self.entityId != nil {
@@ -44,15 +45,23 @@ class BaseDetailViewController: BaseTableViewController {
         if query != nil {
             self._query = query
             self.showProgress = false
-            if query!.moreValue {
-//                self.tableView.addInfiniteScrollWithHandler({
-//                    [weak self] (scrollView) -> Void in
-//                    self?.bindQueryItems(false, paging: true)
-//                    })
-            }
         }
         
         super.viewDidLoad()
+		
+		if query != nil {
+			if query!.moreValue {
+				if self.tableView.tableFooterView == nil {
+					self.tableView.tableFooterView = self.footerView
+				}
+				if let button = self.footerView.viewWithTag(1) as? UIButton,
+					spinner = self.footerView.viewWithTag(2) as? UIActivityIndicatorView {
+						button.hidden = false
+						spinner.hidden = true
+						spinner.stopAnimating()
+				}
+			}
+		}		
     }
 
     /*--------------------------------------------------------------------------------------------

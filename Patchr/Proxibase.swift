@@ -38,7 +38,7 @@ public class Proxibase {
 	let pageSizeDefault:       Int = 50
 	let pageSizeNearby:        Int = 50
 	let pageSizeExplore:       Int = 50
-	let pageSizeNotifications: Int = 100
+	let pageSizeNotifications: Int = 50
 
 	private let sessionManager: AFHTTPSessionManager
 

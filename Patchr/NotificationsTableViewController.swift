@@ -31,7 +31,8 @@ class NotificationsTableViewController: BaseTableViewController {
         
         self.contentViewName = "NotificationView"
         self.emptyMessage = "No notifications yet"
-        
+		self.loadMoreMessage = "LOAD MORE MESSAGES"
+		
 		super.viewDidLoad()
 		
 		/* Used to monitor for changes */		

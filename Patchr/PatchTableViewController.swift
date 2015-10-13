@@ -26,6 +26,9 @@ class PatchTableViewController: BaseTableViewController {
             user = UserController.instance.currentUser
         }
         
+		/* Strings */
+		self.loadMoreMessage = "LOAD MORE PATCHES"
+		
         switch self.filter {
             case .Nearby:
                 self.emptyMessage = "No patches nearby"
@@ -56,7 +59,7 @@ class PatchTableViewController: BaseTableViewController {
                 self.navigationItem.title = "Favorites"
 			case .Owns:
 				self.navigationItem.title = "Patches I own"
-		}
+		}		
     }
     
     override func viewWillAppear(animated: Bool) {
