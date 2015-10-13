@@ -63,7 +63,6 @@ PODS:
   - SDWebImage/Core (3.7.3)
   - TWMessageBarManager (1.7.2)
   - UIDevice-Hardware (0.1.5)
-  - UIScrollView-InfiniteScroll (0.7.2)
 
 DEPENDENCIES:
   - AFNetworkActivityLogger (~> 2.0)
@@ -86,7 +85,6 @@ DEPENDENCIES:
   - SDWebImage (~> 3.7.2)
   - TWMessageBarManager
   - UIDevice-Hardware
-  - UIScrollView-InfiniteScroll
 
 EXTERNAL SOURCES:
   AirContactPicker:
@@ -123,6 +121,5 @@ SPEC CHECKSUMS:
   SDWebImage: 1d2b1a1efda1ade1b00b6f8498865f8ddedc8a84
   TWMessageBarManager: e7adc066ee425174f5dee79473fce913b1cd1662
   UIDevice-Hardware: b3695e58e0385155932e7889c32ed12e844e14a3
-  UIScrollView-InfiniteScroll: cfa860f96f5a2e3b4575d59fe6d08d337093ac2a
 
 COCOAPODS: 0.38.2

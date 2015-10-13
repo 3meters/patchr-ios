@@ -32,7 +32,7 @@
 #import <Lockbox.h>
 #import <IDMPhoto.h>
 #import <IDMPhotoBrowser.h>
-#import <UIScrollView+InfiniteScroll.h>
+//#import <UIScrollView+InfiniteScroll.h>
 #import <NBPhoneNumberUtil.h>
 #import <NBPhoneNumber.h>
 #import <AdobeCreativeSDKCore/AdobeCreativeSDKCore.h>

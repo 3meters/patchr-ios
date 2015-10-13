@@ -88,18 +88,22 @@ class UserTableViewController: BaseTableViewController {
         return false
     }
     
-    override func bindCell(cell: UITableViewCell, object: AnyObject) {
-        
-        let view = cell.contentView.viewWithTag(1) as! UserView
-        User.bindView(view, object: object, sizingOnly: false)
+	/*--------------------------------------------------------------------------------------------
+	* Cells
+	*--------------------------------------------------------------------------------------------*/
+	
+	override func bindCell(cell: UITableViewCell, object: AnyObject, location: CLLocation?) -> UIView? {
 		
-        let user = object as! User
-        if self.patch != nil {
-            view.owner.text = (user.id_ == self.patch.ownerId) ? "OWNER" : nil
-        }
-        if let view = view as? UserApprovalView {
-            view.delegate = self
-        }
+		if let view = super.bindCell(cell, object: object, location: location) as? UserView {
+			let user = object as! User
+			if self.patch != nil {
+				view.owner.text = (user.id_ == self.patch.ownerId) ? "OWNER" : nil
+			}
+			if let view = view as? UserApprovalView {
+				view.delegate = self
+			}
+		}
+		return nil
 	}
 }
 

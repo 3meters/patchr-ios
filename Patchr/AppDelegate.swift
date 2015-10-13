@@ -179,19 +179,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
         self.window?.makeKeyAndVisible()
 		
 		/* Configure Harpy */
-		if let harpy = Harpy.sharedInstance() {
-			harpy.appID = "com.3meters.patchr.ios"
-			harpy.appName = "Patchr"
-			harpy.presentingViewController = self.window?.rootViewController
-			harpy.alertControllerTintColor = Colors.brandColorDark
-			harpy.majorUpdateAlertType = HarpyAlertType.Force
-			harpy.minorUpdateAlertType = HarpyAlertType.Option
-			harpy.patchUpdateAlertType = HarpyAlertType.Skip
-			harpy.revisionUpdateAlertType = HarpyAlertType.None
-			harpy.checkVersion()
-			#if DEBUG
-				harpy.debugEnabled = true
-			#endif
+		if UIApplication.sharedApplication().isInstalledViaAppStore() {
+			if let harpy = Harpy.sharedInstance() {
+				harpy.appID = "com.3meters.patchr.ios"
+				harpy.appName = "Patchr"
+				harpy.presentingViewController = self.window?.rootViewController
+				harpy.alertControllerTintColor = Colors.brandColorDark
+				harpy.majorUpdateAlertType = HarpyAlertType.Force
+				harpy.minorUpdateAlertType = HarpyAlertType.Option
+				harpy.patchUpdateAlertType = HarpyAlertType.Skip
+				harpy.revisionUpdateAlertType = HarpyAlertType.None
+				harpy.checkVersion()
+				#if DEBUG
+					harpy.debugEnabled = true
+				#endif
+			}
 		}
     }
     

@@ -32,7 +32,7 @@
                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <label userInteractionEnabled="NO" contentMode="left" text="Dillon's Fabulous Birthday Dinner" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hHX-Wu-vRN" userLabel="name" customClass="AutoSizingLabel">
+                        <label userInteractionEnabled="NO" contentMode="left" text="Dillon's Fabulous Birthday Dinner" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hHX-Wu-vRN" userLabel="name">
                             <rect key="frame" x="139" y="23" width="267" height="26"/>
                             <animations/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>

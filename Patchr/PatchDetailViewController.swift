@@ -77,7 +77,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		gradient.shouldRasterize = true
 		gradient.rasterizationScale = UIScreen.mainScreen().scale
 		patchPhoto.layer.insertSublayer(gradient, atIndex: 0)
-        
+		
         let more: UITableViewCell = UITableViewCell()
         placeButton.addSubview(more)
         more.frame = placeButton.bounds
@@ -321,7 +321,7 @@ class PatchDetailViewController: BaseDetailViewController {
             
             self.patchName.text = entity.name
             self.patchType.text = entity.type == nil ? "PATCH" : entity.type.uppercaseString + " PATCH"
-            self.patchPhoto.setImageWithPhoto(entity.getPhotoManaged(), animate: patchPhoto.image == nil)
+            self.patchPhoto.setImageWithPhoto(entity.getPhotoManaged(), animate: false)
             
             /* Place */
             

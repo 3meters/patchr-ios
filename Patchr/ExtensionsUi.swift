@@ -279,18 +279,6 @@ extension UIViewController {
     }
 }
 
-extension UITableViewCell {
-    
-    func injectView(view: BaseView) -> BaseView {
-        
-        view.tag = 1
-        view.cell = self
-        view.translatesAutoresizingMaskIntoConstraints = false
-        self.contentView.addSubview(view)
-        return view
-    }
-}
-
 extension UINavigationController {
     
     override public func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {

@@ -13,9 +13,5 @@ protocol ViewDelegate: NSObjectProtocol {
 }
 
 class BaseView: UIView {
-    var cell: UITableViewCell?    
-    
-    func updatePreferredMaxLayoutWidth(label: UILabel) -> Void {
-        label.preferredMaxLayoutWidth = CGRectGetWidth(label.frame)
-    }
+    var cell: UITableViewCell?        
 }

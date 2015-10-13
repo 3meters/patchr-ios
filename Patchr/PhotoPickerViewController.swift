@@ -166,15 +166,15 @@ class PhotoPickerViewController: UICollectionViewController {
                             }
                         }
                         
-                        self.collectionView!.finishInfiniteScroll()
-                        if more && self.imageResults.count < self.maxSize {
-                            self.collectionView!.addInfiniteScrollWithHandler({(scrollView) -> Void in
-                                self.loadData(true)
-                            })
-                        }
-                        else {
-                            self.collectionView!.removeInfiniteScroll()
-                        }
+//						self.collectionView!.finishInfiniteScroll()
+//                        if more && self.imageResults.count < self.maxSize {
+//                            self.collectionView!.addInfiniteScrollWithHandler({(scrollView) -> Void in
+//                                self.loadData(true)
+//                            })
+//                        }
+//                        else {
+//                            self.collectionView!.removeInfiniteScroll()
+//                        }
                 }
                 
                 self.collectionView?.reloadData()

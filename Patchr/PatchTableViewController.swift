@@ -151,57 +151,34 @@ class PatchTableViewController: BaseTableViewController {
         return self._query!
     }
     
-    override func bindQueryItems(force: Bool = false, paging: Bool = false) {
-        
-        if self.filter == .Nearby {
-            if force {
-                LocationController.instance.clearLastLocationAccepted()
-                LocationController.instance.stopUpdates()
-                LocationController.instance.startUpdates()
-            }
-            
-            if !self.refreshControl!.refreshing {
+	override func bindQueryItems(force: Bool = false, paging: Bool = false) {
+		
+		if self.filter == .Nearby {
+			if force {
+				LocationController.instance.clearLastLocationAccepted()
+				LocationController.instance.stopUpdates()
+				LocationController.instance.startUpdates()
+			}
+			
+			if !self.refreshControl!.refreshing {
 				/* Wacky activity control for body */
 				if self.showProgress {
 					self.activity?.startAnimating()
 				}
-            }
-            
-            if self.showEmptyLabel && self.emptyLabel.alpha > 0 {
-                self.emptyLabel.fadeOut()
-            }
-        }
-        else {
+			}
+			
+			if self.showEmptyLabel && self.emptyLabel.alpha > 0 {
+				self.emptyLabel.fadeOut()
+			}
+		}
+		else {
 			if !paging {
 				self.location = LocationController.instance.lastLocationFromManager()
 			}
-            super.bindQueryItems(force, paging: paging)
-        }
-    }
-    
-    override func configureCell(cell: UITableViewCell) {
-        
-        cell.contentView.backgroundColor = Colors.windowColor
-        
-        let view = cell.contentView.viewWithTag(1) as! BaseView
-        let views = Dictionary(dictionaryLiteral: ("view", view))
-        let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-8-[view]-8-|", options: [], metrics: nil, views: views)
-        let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|-8-[view]|", options: [], metrics: nil, views: views)
-        
-        cell.contentView.addConstraints(horizontalConstraints)
-        cell.contentView.addConstraints(verticalConstraints)
-        cell.contentView.setNeedsLayout()
-    }
-    
-    override func bindCell(cell: UITableViewCell, object: AnyObject) {
-        let view = cell.contentView.viewWithTag(1) as! BaseView
-		var location = self.location
-		if self.filter == .Nearby || location == nil {
-			location = LocationController.instance.lastLocationFromManager()
+			super.bindQueryItems(force, paging: paging)
 		}
-		Patch.bindView(view, object: object, location: location, sizingOnly: false)
-    }
-    
+	}
+	
     func didUpdateLocation(notification: NSNotification) {
         
         let loc = notification.userInfo!["location"] as! CLLocation
@@ -303,6 +280,22 @@ class PatchTableViewController: BaseTableViewController {
         NSNotificationCenter.defaultCenter().removeObserver(self,
             name: Event.LocationUpdate.rawValue, object: nil)
     }
+
+	/*--------------------------------------------------------------------------------------------
+	* Cells
+	*--------------------------------------------------------------------------------------------*/
+	
+	override func bindCell(cell: UITableViewCell, object: AnyObject, location: CLLocation?) -> UIView? {
+		
+		var location = self.location
+		if self.filter == .Nearby || location == nil {
+			location = LocationController.instance.lastLocationFromManager()
+		}
+		
+		super.bindCell(cell, object: object, location: location)
+		
+		return nil
+	}
 }
 
 /*--------------------------------------------------------------------------------------------
@@ -328,14 +321,6 @@ extension PatchTableViewController {
             cell.setSelected(false, animated: false)
         }
 	}
-    
-    override func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return CGFloat(136)
-    }
-    
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-		return CGFloat(136)
-    }
 }
 
 enum PatchListFilter {

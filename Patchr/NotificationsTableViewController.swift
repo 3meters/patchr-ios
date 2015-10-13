@@ -14,7 +14,7 @@ class NotificationsTableViewController: BaseTableViewController {
 
     private var activityDate:         Int64!
     private var nearbys:              [[NSObject: AnyObject]] = []
-    
+
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
@@ -33,7 +33,8 @@ class NotificationsTableViewController: BaseTableViewController {
         self.emptyMessage = "No notifications yet"
         
 		super.viewDidLoad()
-        
+		
+		/* Used to monitor for changes */		
         self.activityDate = NotificationController.instance.activityDate
 	}
 
@@ -233,17 +234,6 @@ class NotificationsTableViewController: BaseTableViewController {
         super.bindQueryItems(force, paging: paging)
     }
     
-    override func bindCell(cell: UITableViewCell, object: AnyObject) {
-        
-        let view = cell.contentView.viewWithTag(1) as! NotificationView
-        Notification.bindView(view, object: object, sizingOnly: false)
-		
-        if let label = view.description_ as? TTTAttributedLabel {
-            label.delegate = self
-        }
-        view.delegate = self
-	}
-
     func showNotificationBar(title: String, description: String, image: UIImage?, targetId: String) {
         
         TWMessageBarManager.sharedInstance().styleSheet = AirStylesheet(image: image)
@@ -343,6 +333,22 @@ class NotificationsTableViewController: BaseTableViewController {
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
+
+	/*--------------------------------------------------------------------------------------------
+	* Cells
+	*--------------------------------------------------------------------------------------------*/
+	
+	override func bindCell(cell: UITableViewCell, object: AnyObject, location: CLLocation?) -> UIView? {
+		
+		if let view = super.bindCell(cell, object: object, location: location) as? NotificationView {
+			/* Hookup up delegates */
+			if let label = view.description_ as? TTTAttributedLabel {
+				label.delegate = self
+			}
+			view.delegate = self
+		}
+		return nil
+	}
 }
 
 class AirStylesheet: NSObject, TWMessageBarStyleSheet {
@@ -393,28 +399,50 @@ extension NotificationsTableViewController {
         }
     }
     
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        
-        var cell = self.offscreenCells.objectForKey(CELL_IDENTIFIER) as? UITableViewCell
-        
-        if cell == nil {
-            cell = buildCell(self.contentViewName!)
-            self.offscreenCells.setObject(cell!, forKey: CELL_IDENTIFIER)
-        }
-        
-        /* Bind view to data for this row */
-        let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as! QueryItem
-        Notification.bindView(cell!.contentView.viewWithTag(1)!, object: queryResult.object, sizingOnly: true) as! NotificationView
-        
-        /* Get the actual height required for the cell */
-        let height = cell!.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
-        
-        return height
-    }
+	override func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+		/*
+		* Using an estimate significantly improves table view load time but we can get
+		* small scrolling glitches if actual height ends up different than estimated height.
+		* So we try to provide the best estimate we can and still deliver it quickly.
+		*
+		* Note: Called once only for each row in fetchResultController when FRC is making a data pass in 
+		* response to managedContext.save.
+		*/
+		let minHeight: CGFloat = 69
+		var height: CGFloat = 44    // Base size if no description or photo
+		
+		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
+			let entity = queryResult.object as? Notification {
+				
+				let columnWidth: CGFloat = UIScreen.mainScreen().bounds.size.width - (24 /* spacing */ + 48 /* user photo */)
+				if entity.summary != nil {
+					let description = entity.summary as NSString
+					let attributes = [NSFontAttributeName: UIFont(name:"HelveticaNeue-Light", size: 17)!]
+					/* Most time is spent here */
+					let rect: CGRect = description.boundingRectWithSize(CGSizeMake(columnWidth, CGFloat.max), options: .UsesLineFragmentOrigin, attributes: attributes, context: nil)
+					height += rect.height
+				}
+				
+				if entity.photoBig != nil {
+					/* This relies on sizing and spacing of the message view */
+					height += CGFloat(Int(columnWidth * 0.5625))  // 16:9 aspect ratio
+				}
+				
+				if entity.summary != nil && entity.photoBig != nil {
+					height += 8
+				}
+		}
+		
+		if minHeight > height {
+			height = minHeight
+		}
+		
+		return CGFloat(height)
+	}	
 }
 
 extension NotificationsTableViewController: ViewDelegate {
-    
+	
     func view(container: UIView, didTapOnView view: UIView) {
         if let view = view as? AirImageView, container = container as? NotificationView {
             if view.image != nil {

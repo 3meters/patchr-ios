@@ -87,7 +87,7 @@ extension Entity {
 
 extension Patch {
     
-	static func bindView(view: UIView, object: AnyObject, location: CLLocation?, sizingOnly: Bool = false) -> UIView {
+	static func bindView(view: UIView, object: AnyObject, location: CLLocation?) -> UIView {
         
         let patch = object as! Entity
         let view = view as! PatchView
@@ -156,10 +156,9 @@ extension Patch {
 			}
         }
 
-        if !sizingOnly {
-			view.photo.setImageWithPhoto(patch.getPhotoManaged(), animate: view.photo.image == nil)
-        }
-        
+		view.photo.showGradient = true
+		view.photo.setImageWithPhoto(patch.getPhotoManaged(), animate: view.photo.image == nil)
+		
         return view
     }
     
@@ -229,9 +228,9 @@ extension Patch {
 
 extension Message {
     
-    static func bindView(view: UIView, object: AnyObject, sizingOnly: Bool = false) -> UIView {
+    static func bindView(view: UIView, object: AnyObject) -> UIView {
         
-        let message = object as! Entity
+        let message = object as! Message
         let view = view as! MessageView
         
         view.entity = message
@@ -249,37 +248,39 @@ extension Message {
             label.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
             label.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
         }
-        
-        view.description_.text = message.description_
-        
-        view.photo.image = nil
-        view.photo.hidden = true
-        view.photoTopSpace.constant = 0
-        view.photoHeight.constant = 0
-        
+		
+		/* Patch */
+		if message.patch != nil {
+			view.patchName.text = message.patch.name
+			view.patchNameHeight.constant = 18
+		}
+		
+		if let description = message.description_ {
+			view.description_.text = description
+			view.descriptionHeight.constant = 24
+		}
+		else {
+			view.descriptionHeight.constant = 0
+			view.photoTopSpace.constant = 0
+		}
+		
         if let photo = message.photo {
-            if !sizingOnly {
-                view.photo.setImageWithPhoto(photo, animate: view.photo.image == nil)
-            }
-            view.photo.hidden = false
+            view.photo.setImageWithPhoto(photo, animate: view.photo.image == nil)
             view.photoTopSpace.constant = 8
-            view.photoHeight.constant = view.photo.bounds.size.width * 0.5625   // 16:9 aspect ratio
+			view.photoHeight.constant = CGFloat(Int(view.photo.bounds.size.width * 0.5625))	// 16:9 aspect ratio
         }
-        
+		else {
+			view.photoTopSpace.constant = 0
+			view.photoHeight.constant = 0
+		}
+		
         if let creator = message.creator {
             view.userName.text = creator.name
-            if !sizingOnly {
-                view.userPhoto.setImageWithPhoto(creator.getPhotoManaged(), animate: view.userPhoto.image == nil)
-            }
-            else {
-                view.userPhoto.image = nil
-            }
+            view.userPhoto.setImageWithPhoto(creator.getPhotoManaged(), animate: view.userPhoto.image == nil)
         }
         else {
             view.userName.text = "Deleted"
-            if !sizingOnly {
-                view.userPhoto.setImageWithPhoto(Entity.getDefaultPhoto("user", id: nil))
-            }
+            view.userPhoto.setImageWithPhoto(Entity.getDefaultPhoto("user", id: nil))
         }
         
         /* Likes button */
@@ -298,10 +299,7 @@ extension Message {
         }
         
         view.createdDate.text = Utils.messageDateFormatter.stringFromDate(message.createdDate)
-        
-        view.setNeedsUpdateConstraints()
-        view.updateConstraintsIfNeeded()
-        
+		
         return view
     }
     
@@ -379,22 +377,20 @@ extension Message {
 
 extension User {
     
-    static func bindView(view: UIView, object: AnyObject, sizingOnly: Bool = false) {
+    static func bindView(view: UIView, object: AnyObject) {
         
         let user = object as! User
         let view = view as! UserView
         
         view.userName.text = user.name
-        if !sizingOnly {
-            view.userPhoto.setImageWithPhoto(user.getPhotoManaged(), animate: view.userPhoto.image == nil)
-        }
+        view.userPhoto.setImageWithPhoto(user.getPhotoManaged(), animate: view.userPhoto.image == nil)
         view.area.text = user.area?.uppercaseString
         
-        view.userName.hidden = view.userName.text == nil
-        view.area.hidden = view.area.text == nil
-        view.owner.hidden = view.owner.text == nil
+        view.userName.hidden = (view.userName.text == nil)
+        view.area.hidden = (view.area.text == nil)
+        view.owner.hidden = (view.owner.text == nil)
         
-        // Private patch owner controls controls
+        /* Private patch owner controls */
         if let view = view as? UserApprovalView {
             
             view.entity = object as? Entity
@@ -455,7 +451,7 @@ extension User {
 
 extension Notification {
     
-    static func bindView(view: UIView, object: AnyObject, sizingOnly: Bool = false) -> UIView {
+    static func bindView(view: UIView, object: AnyObject) -> UIView {
         
         let notification = object as! Notification
         let view = view as! NotificationView
@@ -470,25 +466,28 @@ extension Notification {
             label.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
             label.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
         }
-        
-        view.description_.text = notification.summary
-        
+		
+		if let description = notification.summary {
+			view.description_.text = description
+			view.descriptionHeight.constant = 24
+		}
+		else {
+			view.descriptionHeight.constant = 0
+			view.photoTopSpace.constant = 0
+		}
+		
         if let photo = notification.photoBig {
-            if !sizingOnly {
-                view.photo.setImageWithPhoto(photo, animate: view.photo.image == nil)
-            }
+            view.photo.setImageWithPhoto(photo, animate: view.photo.image == nil)
             view.photoTopSpace.constant = 8
-            view.photoHeight.constant = view.photo.bounds.size.width * 0.5625
+			view.photoHeight.constant = CGFloat(Int(view.photo.bounds.size.width * 0.5625))	// 16:9 aspect ratio
         }
         else {
             view.photoTopSpace.constant = 0
             view.photoHeight.constant = 0
         }
         
-        if !sizingOnly {
-            view.userPhoto.setImageWithPhoto(notification.getPhotoManaged(), animate: view.userPhoto.image == nil)
-        }
-        
+        view.userPhoto.setImageWithPhoto(notification.getPhotoManaged(), animate: view.userPhoto.image == nil)
+		
         view.createdDate.text = Utils.messageDateFormatter.stringFromDate(notification.createdDate)
         
         /* Age indicator */
@@ -506,36 +505,33 @@ extension Notification {
         else {
             view.ageDot.alpha = 1.0
         }
-        
+		
+		/* Type indicator image */
         if notification.type == "media" {
-            view.iconImageView.image = UIImage(named: "imgMediaLight")
+            view.iconImageView.image = Utils.imageMedia
         }
         else if notification.type == "message" {
-            view.iconImageView.image = UIImage(named: "imgMessageLight")
+            view.iconImageView.image = Utils.imageMessage
         }
         else if notification.type == "watch" {
-            view.iconImageView.image = UIImage(named: "imgWatchLight")
+            view.iconImageView.image = Utils.imageWatch
         }
         else if notification.type == "like" {
             if notification.targetId.hasPrefix("pa.") {
-                view.iconImageView.image = UIImage(named: "imgStarFilledLight")
+                view.iconImageView.image = Utils.imageStar
             }
             else {
-                view.iconImageView.image = UIImage(named: "imgLikeLight")
+                view.iconImageView.image = Utils.imageLike
             }
         }
         else if notification.type == "share" {
-            view.iconImageView.image = UIImage(named: "imgShareLight")
+            view.iconImageView.image = Utils.imageShare
         }
         else if notification.type == "nearby" {
-            view.iconImageView.image = UIImage(named: "imgLocationLight")
-        }
-        
-        view.iconImageView.tintColor(Colors.brandColor)
-        
-        view.setNeedsUpdateConstraints()
-        view.updateConstraintsIfNeeded()
-        
+            view.iconImageView.image = Utils.imageLocation
+        }        
+		view.iconImageView.tintColor(Colors.brandColor)
+		
         return view
     }
 }

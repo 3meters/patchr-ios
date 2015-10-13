@@ -54,7 +54,6 @@
 		7DC1763F1ACDFF010051BA6C /* Link.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DC1763D1ACDFF010051BA6C /* Link.m */; };
 		7DC9D4911A9D46D100234E3C /* UserEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC9D4901A9D46D100234E3C /* UserEditViewController.swift */; };
 		7DC9D4941A9D4FAD00234E3C /* NotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC9D4921A9D4FAD00234E3C /* NotificationView.swift */; };
-		7DC9D49A1A9D597400234E3C /* AutoSizingLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DC9D4991A9D597400234E3C /* AutoSizingLabel.m */; };
 		7DD89F411AC62B90005CD004 /* UserTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD89F401AC62B90005CD004 /* UserTableViewController.swift */; };
 		7DE393E71AAE43AD00D1B80E /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */; };
 		7DE975EE1AA7F72400C1ECE9 /* ModelUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE975ED1AA7F72400C1ECE9 /* ModelUtilities.m */; };
@@ -287,8 +286,6 @@
 		7DC1763D1ACDFF010051BA6C /* Link.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Link.m; path = Model/Link.m; sourceTree = "<group>"; };
 		7DC9D4901A9D46D100234E3C /* UserEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserEditViewController.swift; sourceTree = "<group>"; };
 		7DC9D4921A9D4FAD00234E3C /* NotificationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationView.swift; sourceTree = "<group>"; };
-		7DC9D4981A9D597400234E3C /* AutoSizingLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoSizingLabel.h; sourceTree = "<group>"; };
-		7DC9D4991A9D597400234E3C /* AutoSizingLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutoSizingLabel.m; sourceTree = "<group>"; };
 		7DD89F401AC62B90005CD004 /* UserTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTableViewController.swift; sourceTree = "<group>"; };
 		7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
 		7DE975EC1AA7F72400C1ECE9 /* ModelUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelUtilities.h; sourceTree = "<group>"; };
@@ -803,8 +800,6 @@
 				E2064BF01BBF3C26009C7B6A /* AirMuteButton.swift */,
 				E2A28E701B4A624300B3A2FE /* AirWatchButton.swift */,
 				E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */,
-				7DC9D4981A9D597400234E3C /* AutoSizingLabel.h */,
-				7DC9D4991A9D597400234E3C /* AutoSizingLabel.m */,
 				E25327DE1B1A282D00990A81 /* FXBlurView.h */,
 				E25327DF1B1A282D00990A81 /* FXBlurView.m */,
 				E25327D91B1625D900990A81 /* GCPlaceholderTextView.h */,
@@ -1195,7 +1190,6 @@
 				7DA730961A71B962008C25FA /* BaseTableViewController.swift in Sources */,
 				7DA7308F1A71ACC9008C25FA /* Entity.m in Sources */,
 				E25327D21B13DEF800990A81 /* AudioController.swift in Sources */,
-				7DC9D49A1A9D597400234E3C /* AutoSizingLabel.m in Sources */,
 				E27DB4081B0647960090D023 /* _QueryItem.m in Sources */,
 				841082CB1AB1013300803ECE /* PatchMapViewController.swift in Sources */,
 				E24D74511BB349BD0061F339 /* BaseDetailViewController.swift in Sources */,
@@ -1472,7 +1466,6 @@
 					"-l\"RMCoreDataStack\"",
 					"-l\"SDWebImage\"",
 					"-l\"UIDevice-Hardware\"",
-					"-l\"UIScrollView-InfiniteScroll\"",
 					"-l\"c++\"",
 					"-l\"libPhoneNumber-iOS\"",
 					"-l\"pop\"",
@@ -1552,7 +1545,6 @@
 					"-l\"RMCoreDataStack\"",
 					"-l\"SDWebImage\"",
 					"-l\"UIDevice-Hardware\"",
-					"-l\"UIScrollView-InfiniteScroll\"",
 					"-l\"c++\"",
 					"-l\"libPhoneNumber-iOS\"",
 					"-l\"pop\"",
@@ -1673,7 +1665,6 @@
 					"-l\"RMCoreDataStack\"",
 					"-l\"SDWebImage\"",
 					"-l\"UIDevice-Hardware\"",
-					"-l\"UIScrollView-InfiniteScroll\"",
 					"-l\"c++\"",
 					"-l\"libPhoneNumber-iOS\"",
 					"-l\"pop\"",
