@@ -28,7 +28,8 @@ class PatchDetailViewController: BaseDetailViewController {
     @IBOutlet weak var watchersButton: UIButton!
     @IBOutlet weak var contextButton:  UIButton!
     @IBOutlet weak var lockImage:      UIImageView!
-    
+	@IBOutlet weak var toolbar:		   UIVisualEffectView!
+	
     @IBOutlet weak var headerSection:  UIView!
     @IBOutlet weak var bannerGroup:    UIView!
     @IBOutlet weak var titlingGroup:   UIView!
@@ -131,8 +132,10 @@ class PatchDetailViewController: BaseDetailViewController {
         }
         
         /* Triggers query processing by results controller */
-        super.viewWillAppear(animated)
-        
+		if !self.query().executedValue && self._query != nil {
+			self.bindQueryItems(false)
+		}
+		
         if self.entity != nil {
             draw()
         }
@@ -143,8 +146,8 @@ class PatchDetailViewController: BaseDetailViewController {
     }
 
     override func viewDidAppear(animated: Bool){
-        super.viewDidAppear(animated)
-        
+		super.viewDidAppear(animated)	// Triggers loading of list items
+		
         /* Super hack to resize the table header to fit the contents */
         let headerView: UIView = self.tableView.tableHeaderView!
         let height = contextButton.frame.height + bannerGroup.frame.height
@@ -154,7 +157,7 @@ class PatchDetailViewController: BaseDetailViewController {
         headerView.frame = newFrame
         self.tableView.tableHeaderView = headerView
 
-        /* Load the entity */
+        /* Load the freshest version of the entity */
         bind(true)
     }
 

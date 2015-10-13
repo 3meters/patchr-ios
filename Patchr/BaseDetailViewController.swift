@@ -160,7 +160,7 @@ class BaseDetailViewController: BaseTableViewController {
 				label.delegate = self
 			}
 			if !self.patchNameVisible {
-				view.patchNameHeight.constant = 0
+				view.patchNameHeight?.constant = 0
 			}
 			view.delegate = self
 		}

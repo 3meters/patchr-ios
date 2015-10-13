@@ -238,7 +238,7 @@ extension Message {
         view.description_.text = nil
         view.userName.text = nil
         view.patchName.text = nil
-        view.patchNameHeight.constant = 0
+        view.patchNameHeight?.constant = 0
         
         let linkColor = Colors.brandColorDark
         let linkActiveColor = Colors.brandColorLight
@@ -252,26 +252,26 @@ extension Message {
 		/* Patch */
 		if message.patch != nil {
 			view.patchName.text = message.patch.name
-			view.patchNameHeight.constant = 18
+			view.patchNameHeight?.constant = 18
 		}
 		
 		if let description = message.description_ {
 			view.description_.text = description
-			view.descriptionHeight.constant = 24
+			view.descriptionHeight?.constant = 24
 		}
 		else {
-			view.descriptionHeight.constant = 0
-			view.photoTopSpace.constant = 0
+			view.descriptionHeight?.constant = 0
+			view.photoTopSpace?.constant = 0
 		}
 		
         if let photo = message.photo {
             view.photo.setImageWithPhoto(photo, animate: view.photo.image == nil)
-            view.photoTopSpace.constant = 8
-			view.photoHeight.constant = CGFloat(Int(view.photo.bounds.size.width * 0.5625))	// 16:9 aspect ratio
+            view.photoTopSpace?.constant = 8
+			view.photoHeight?.constant = CGFloat(Int(view.photo.bounds.size.width * 0.5625))	// 16:9 aspect ratio
         }
 		else {
-			view.photoTopSpace.constant = 0
-			view.photoHeight.constant = 0
+			view.photoTopSpace?.constant = 0
+			view.photoHeight?.constant = 0
 		}
 		
         if let creator = message.creator {

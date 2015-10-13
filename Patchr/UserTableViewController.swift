@@ -32,7 +32,7 @@ class UserTableViewController: BaseTableViewController {
                 }
 			case .PatchLikers, .MessageLikers:
 				self.navigationItem.title = "Likers"
-		}        
+		}
 	}
     
     override func viewWillAppear(animated: Bool) {

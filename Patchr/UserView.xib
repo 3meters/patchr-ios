@@ -4,7 +4,6 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
@@ -18,7 +17,9 @@
                     <animations/>
                     <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
+                        <constraint firstAttribute="width" constant="92" id="6WO-QN-bBg"/>
                         <constraint firstAttribute="width" secondItem="wly-KM-5FE" secondAttribute="height" multiplier="1:1" id="Itn-2B-0YF"/>
+                        <constraint firstAttribute="height" constant="92" id="SJt-We-3xN"/>
                     </constraints>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -57,11 +58,11 @@
                 <constraint firstItem="rvg-qe-k4g" firstAttribute="leading" secondItem="wly-KM-5FE" secondAttribute="trailing" constant="10" id="1o3-X0-jfE"/>
                 <constraint firstItem="uDQ-4X-b5r" firstAttribute="top" secondItem="rvg-qe-k4g" secondAttribute="bottom" constant="2" id="79x-Ce-g4Q"/>
                 <constraint firstItem="rvg-qe-k4g" firstAttribute="top" secondItem="wly-KM-5FE" secondAttribute="top" constant="4" id="E27-KU-SGH"/>
-                <constraint firstItem="wly-KM-5FE" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="ECQ-GO-Ymg"/>
-                <constraint firstItem="wly-KM-5FE" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="RH3-CT-yXX"/>
+                <constraint firstItem="wly-KM-5FE" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="ECQ-GO-Ymg"/>
+                <constraint firstItem="wly-KM-5FE" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="8" id="RH3-CT-yXX"/>
                 <constraint firstItem="rvg-qe-k4g" firstAttribute="leading" secondItem="uDQ-4X-b5r" secondAttribute="leading" id="S0Q-as-cw9"/>
                 <constraint firstItem="Ec8-4u-hPG" firstAttribute="top" secondItem="uDQ-4X-b5r" secondAttribute="bottom" constant="2" id="bFJ-6f-Rbf"/>
-                <constraint firstAttribute="bottomMargin" secondItem="wly-KM-5FE" secondAttribute="bottom" id="d4Y-CN-yLS"/>
+                <constraint firstAttribute="bottom" secondItem="wly-KM-5FE" secondAttribute="bottom" constant="8" id="d4Y-CN-yLS"/>
                 <constraint firstItem="Ec8-4u-hPG" firstAttribute="leading" secondItem="uDQ-4X-b5r" secondAttribute="leading" id="hOj-Uc-fba"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>

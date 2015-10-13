@@ -87,7 +87,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		* first load; it will only be called as cells are about to scroll onscreen. This is a major
 		* performance optimization.
 		*/
-		self.tableView.estimatedRowHeight = 300
+		self.tableView.estimatedRowHeight = 200
 		
 		/* Self sizing table view cells require this setting */
 		self.tableView.rowHeight = UITableViewAutomaticDimension
@@ -105,13 +105,12 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 			tableView.deselectRowAtIndexPath(indexPath, animated: animated)
 		}
 	}
-    
+	
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        
-        if !self.query().executedValue {
-            self.bindQueryItems(false)
-        }
+		if !self.query().executedValue {
+			self.bindQueryItems(false)
+		}
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -304,17 +303,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 			else if self.isKindOfClass(UserTableViewController) {
 				User.bindView(view, object: object)
 			}
-			
-//			view.setNeedsUpdateConstraints()
-//			view.updateConstraintsIfNeeded()
-//			cell.contentView.setNeedsUpdateConstraints()
-//			cell.contentView.updateConstraints()
-//			
-//			cell.setNeedsUpdateConstraints()
-//			cell.updateConstraintsIfNeeded()
-//			cell.contentView.setNeedsLayout()
-//			cell.contentView.layoutIfNeeded()
-			
 			return view
 		}
 		return nil
@@ -407,11 +395,15 @@ extension BaseTableViewController {
 	 * NSFetchedResultsControllerDelegate
 	 */
 	func controllerWillChangeContent(controller: NSFetchedResultsController) {
-		self.tableView.beginUpdates()
+		if self.tableView.window != nil {
+			self.tableView.beginUpdates()
+		}
 	}
 	
 	func controllerDidChangeContent(controller: NSFetchedResultsController) {
-		self.tableView.endUpdates()
+		if self.tableView.window != nil {
+			self.tableView.endUpdates()
+		}
 	}
 	
 	/*

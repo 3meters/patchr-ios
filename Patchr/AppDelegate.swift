@@ -181,7 +181,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
 		/* Configure Harpy */
 		if UIApplication.sharedApplication().isInstalledViaAppStore() {
 			if let harpy = Harpy.sharedInstance() {
-				harpy.appID = "com.3meters.patchr.ios"
+				harpy.appID = APP_ID
 				harpy.appName = "Patchr"
 				harpy.presentingViewController = self.window?.rootViewController
 				harpy.alertControllerTintColor = Colors.brandColorDark
