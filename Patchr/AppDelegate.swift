@@ -163,6 +163,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
 		
         /* If we have an authenticated user then start at the usual spot, otherwise start at the lobby scene. */
         
+		self.window?.makeKeyAndVisible()
         if UserController.instance.authenticated {
             let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
             if let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController") as? MainTabBarController {
@@ -175,8 +176,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
             let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController")
             self.window?.setRootViewController(controller, animated: true)
         }
-        
-        self.window?.makeKeyAndVisible()
 		
 		/* Configure Harpy */
 		if UIApplication.sharedApplication().isInstalledViaAppStore() {

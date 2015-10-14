@@ -406,9 +406,6 @@ extension BaseTableViewController {
 		}
 	}
 	
-	/*
-	* DidChangeSection
-	*/
 	func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType) {
 		switch type {
 		case .Insert:
@@ -422,9 +419,6 @@ extension BaseTableViewController {
 		}
 	}
 	
-	/*
-	* DidChangeObject
-	*/
 	func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
 		/*
 		 * http://stackoverflow.com/a/32978387

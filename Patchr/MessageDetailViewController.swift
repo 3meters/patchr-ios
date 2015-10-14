@@ -341,6 +341,7 @@ class MessageDetailViewController: UITableViewController {
                 /* Tweak the message view to suit display as static */
                 if let messageView = view as? MessageView {
                     messageView.toolbarHeight.constant = 0
+					messageView.toolbar.hidden = true
                     if let recognizers = messageView.photo.gestureRecognizers {
                         for recognizer in recognizers {
                             messageView.photo.removeGestureRecognizer(recognizer )
@@ -348,7 +349,7 @@ class MessageDetailViewController: UITableViewController {
                     }
                 }
                 
-                view.frame.size.height = view.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
+                view.frame.size.height = view.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 8
                 self.shareHolder?.addSubview(view)
             }
             else if self.message?.patch != nil {

@@ -77,43 +77,43 @@ class PatchDetailViewController: BaseDetailViewController {
 		gradient.endPoint = CGPoint(x: 0.5, y: 1)
 		gradient.shouldRasterize = true
 		gradient.rasterizationScale = UIScreen.mainScreen().scale
-		patchPhoto.layer.insertSublayer(gradient, atIndex: 0)
+		self.patchPhoto.layer.insertSublayer(gradient, atIndex: 0)
 		
-        let more: UITableViewCell = UITableViewCell()
-        placeButton.addSubview(more)
-        more.frame = placeButton.bounds
-        more.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
-        more.userInteractionEnabled = false
-        
+		let more: UITableViewCell = UITableViewCell()
+		more.frame = placeButton.bounds
+		more.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
+		more.userInteractionEnabled = false
+		self.placeButton.addSubview(more)
+		
         /* UI prep */
         self.patchNameVisible = false
-        lockImage.tintColor(Colors.brandColor)
-        infoLockImage.tintColor(Colors.brandColor)
+        self.lockImage.tintColor(Colors.brandColor)
+        self.infoLockImage.tintColor(Colors.brandColor)
         self.mapButton.setImage(UIImage(named: "imgMapLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
         self.mapButton.imageView!.tintColor(UIColor.whiteColor())
-        self.watchersButton.alpha = 0.0
         self.originalTop = patchPhotoTop.constant
         self.contextButton?.setTitle("", forState: .Normal)
         
-        watchButton.tintOff = UIColor.whiteColor()
-        watchButton.tintPending = Colors.brandColor
-        watchButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
+		self.watchersButton.alpha = 0.0
+        self.watchButton.tintOff = UIColor.whiteColor()
+        self.watchButton.tintPending = Colors.brandColor
+        self.watchButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
         
-        likeButton.tintOff = UIColor.whiteColor()
-        likeButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
-        likeButton.imageOn = UIImage(named: "imgStarFilledLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
-        likeButton.imageOff = UIImage(named: "imgStarLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
-        likeButton.messageOn = "Added to favorites"
-        likeButton.messageOff = "Removed from favorites"
-        likeButton.alpha = 0.0
+        self.likeButton.tintOff = UIColor.whiteColor()
+        self.likeButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
+        self.likeButton.imageOn = UIImage(named: "imgStarFilledLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+        self.likeButton.imageOff = UIImage(named: "imgStarLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+        self.likeButton.messageOn = "Added to favorites"
+        self.likeButton.messageOff = "Removed from favorites"
+        self.likeButton.alpha = 0.0
         
-        muteButton.tintOff = UIColor.whiteColor()
-        muteButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
-        muteButton.imageOn = UIImage(named: "imgSoundOn2Light")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
-        muteButton.imageOff = UIImage(named: "imgSoundOff2Light")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
-        muteButton.messageOn = "Notifications active"
-        muteButton.messageOff = "Notifications muted"
-        muteButton.alpha = 0.0
+        self.muteButton.tintOff = UIColor.whiteColor()
+        self.muteButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
+        self.muteButton.imageOn = UIImage(named: "imgSoundOn2Light")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+        self.muteButton.imageOff = UIImage(named: "imgSoundOff2Light")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+        self.muteButton.messageOn = "Notifications active"
+        self.muteButton.messageOff = "Notifications muted"
+        self.muteButton.alpha = 0.0
         
         /* Navigation bar buttons */
         drawButtons()
@@ -130,12 +130,17 @@ class PatchDetailViewController: BaseDetailViewController {
                 return
             }
         }
+		
+		if let indexPath = tableView.indexPathForSelectedRow {
+			tableView.deselectRowAtIndexPath(indexPath, animated: animated)
+		}
         
         /* Triggers query processing by results controller */
 		if !self.query().executedValue && self._query != nil {
 			self.bindQueryItems(false)
 		}
 		
+		/* Draw what we have, we look for something fresher when the view appears. */
         if self.entity != nil {
             draw()
         }

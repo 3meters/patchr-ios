@@ -230,10 +230,10 @@ extension Message {
     
     static func bindView(view: UIView, object: AnyObject) -> UIView {
         
-        let message = object as! Message
+        let entity = object as! Entity
         let view = view as! MessageView
         
-        view.entity = message
+        view.entity = entity
         
         view.description_.text = nil
         view.userName.text = nil
@@ -249,13 +249,7 @@ extension Message {
             label.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
         }
 		
-		/* Patch */
-		if message.patch != nil {
-			view.patchName.text = message.patch.name
-			view.patchNameHeight?.constant = 18
-		}
-		
-		if let description = message.description_ {
+		if let description = entity.description_ {
 			view.description_.text = description
 			view.descriptionHeight?.constant = 24
 		}
@@ -264,7 +258,7 @@ extension Message {
 			view.photoTopSpace?.constant = 0
 		}
 		
-        if let photo = message.photo {
+        if let photo = entity.photo {
             view.photo.setImageWithPhoto(photo, animate: view.photo.image == nil)
             view.photoTopSpace?.constant = 8
 			view.photoHeight?.constant = CGFloat(Int(view.photo.bounds.size.width * 0.5625))	// 16:9 aspect ratio
@@ -274,7 +268,7 @@ extension Message {
 			view.photoHeight?.constant = 0
 		}
 		
-        if let creator = message.creator {
+        if let creator = entity.creator {
             view.userName.text = creator.name
             view.userPhoto.setImageWithPhoto(creator.getPhotoManaged(), animate: view.userPhoto.image == nil)
         }
@@ -282,23 +276,32 @@ extension Message {
             view.userName.text = "Deleted"
             view.userPhoto.setImageWithPhoto(Entity.getDefaultPhoto("user", id: nil))
         }
-        
-        /* Likes button */
-        view.likeButton.bindEntity(message)
-        view.likeButton.imageView!.tintColor(Colors.brandColor)
-        
-        view.likes.hidden = true
-        if message.countLikes != nil {
-            if message.countLikes?.integerValue != 0 {
-                let likesTitle = message.countLikes?.integerValue == 1
-                    ? "\(message.countLikes) like"
-                    : "\(message.countLikes ?? 0) likes"
-                view.likes.text = likesTitle
-                view.likes.hidden = false
-            }
-        }
-        
-        view.createdDate.text = Utils.messageDateFormatter.stringFromDate(message.createdDate)
+		
+		if let message = entity as? Message {
+			
+			/* Patch */
+			if message.patch != nil {
+				view.patchName.text = message.patch.name
+				view.patchNameHeight?.constant = 18
+			}
+			/* Likes button */
+			
+			view.likeButton.bindEntity(message)
+			view.likeButton.imageView!.tintColor(Colors.brandColor)
+			
+			view.likes.hidden = true
+			if message.countLikes != nil {
+				if message.countLikes?.integerValue != 0 {
+					let likesTitle = message.countLikes?.integerValue == 1
+						? "\(message.countLikes) like"
+						: "\(message.countLikes ?? 0) likes"
+					view.likes.text = likesTitle
+					view.likes.hidden = false
+				}
+			}
+		}
+		
+        view.createdDate.text = Utils.messageDateFormatter.stringFromDate(entity.createdDate)
 		
         return view
     }
