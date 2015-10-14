@@ -30,7 +30,7 @@ struct Log {
     }
     static func w(message: AnyObject?) {
         if message != nil {
-			NSLog(String(message as! NSString))
+			NSLog(message! as! String)
         }
     }
 }
