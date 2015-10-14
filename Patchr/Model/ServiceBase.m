@@ -2,7 +2,6 @@
 #import "ModelUtilities.h"
 #import "User.h"
 #import "Shortcut.h"
-#import "Patchr-Swift.h"
 
 @interface ServiceBase ()
 
@@ -86,10 +85,12 @@
         for (id linkMap in dictionary[@"linked"]) {
             if ([linkMap isKindOfClass:[NSDictionary class]]) {
                 if ([linkMap[@"schema"] isEqual: @"user"] && [linkMap[@"_id"] isEqual: base.creatorId]) {
-                    NSString *entityId = [[NSString alloc] initWithString:linkMap[@"_id"]];
-                    NSString *decoratedId = [Shortcut decorateId:entityId];
-                    id shortcut = [Shortcut fetchOrInsertOneById:decoratedId inManagedObjectContext:base.managedObjectContext];
-                    base.creator = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut mappingNames:mapNames];
+					NSString *entityId = [[NSString alloc] initWithString:linkMap[@"_id"]];
+					if ([entityId rangeOfString:@"sh."].location == NSNotFound) {
+						entityId = [@"sh." stringByAppendingString:entityId];
+					}
+					id shortcut = [Shortcut fetchOrInsertOneById:entityId inManagedObjectContext:base.managedObjectContext];
+					base.creator = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut mappingNames:mapNames];
                 }
             }
         }

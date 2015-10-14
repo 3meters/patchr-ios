@@ -2,7 +2,6 @@
 #import "Photo.h"
 #import "Location.h"
 #import "Link.h"
-//#import "Patchr-Swift.h"
 #import <CoreLocation/CoreLocation.h>
 
 @interface Entity ()

@@ -12,7 +12,7 @@ import Crashlytics
 import Parse
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
     
     var window: UIWindow?
     var backgroundSessionCompletionHandler: (() -> Void)?
@@ -29,15 +29,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         let keys = PatchrKeys()
-        
+		
+		self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
+		
         #if DEBUG
         AFNetworkActivityLogger.sharedLogger().startLogging()
-        AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelWarn
+        AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelInfo
         #endif
         
         /* Turn on network activity indicator */
         AFNetworkActivityIndicatorManager.sharedManager().enabled = true
-        
+		
         /* Default config for AWS */
         // let credProvider = AWSCognitoCredentialsProvider(regionType: CognitoRegionType, identityPoolId: COGNITO_POOLID)
         let credProvider  = AWSStaticCredentialsProvider(accessKey: keys.awsS3Key(), secretKey: keys.awsS3Secret())
@@ -131,7 +133,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         /* Global UI tweaks */
         self.window?.backgroundColor = Colors.windowColor /* Light gray is better than black */
         self.window?.tintColor = Colors.brandColor
-        UITabBar.appearance().selectedImageTintColor = Colors.brandColorDark
+        UITabBar.appearance().tintColor = Colors.brandColorDark
         UISwitch.appearance().onTintColor = self.window?.tintColor
         
         /* We handle remote notifications */
@@ -158,10 +160,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func route() {
         
         /* Show initial controller */
-        self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
-        
+		
         /* If we have an authenticated user then start at the usual spot, otherwise start at the lobby scene. */
         
+		self.window?.makeKeyAndVisible()
         if UserController.instance.authenticated {
             let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
             if let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController") as? MainTabBarController {
@@ -174,8 +176,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController")
             self.window?.setRootViewController(controller, animated: true)
         }
-        
-        self.window?.makeKeyAndVisible()
+		
+		/* Configure Harpy */
+		if UIApplication.sharedApplication().isInstalledViaAppStore() {
+			if let harpy = Harpy.sharedInstance() {
+				harpy.appID = APP_ID
+				harpy.appName = "Patchr"
+				harpy.presentingViewController = self.window?.rootViewController
+				harpy.alertControllerTintColor = Colors.brandColorDark
+				harpy.majorUpdateAlertType = HarpyAlertType.Force
+				harpy.minorUpdateAlertType = HarpyAlertType.Option
+				harpy.patchUpdateAlertType = HarpyAlertType.Skip
+				harpy.revisionUpdateAlertType = HarpyAlertType.None
+				harpy.checkVersion()
+				#if DEBUG
+					harpy.debugEnabled = true
+				#endif
+			}
+		}
     }
     
     func routeDeepLink(params: NSDictionary?, error: NSError?) {
@@ -226,6 +244,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationDidBecomeActive(application: UIApplication) {
         NSNotificationCenter.defaultCenter().postNotificationName(Event.ApplicationDidBecomeActive.rawValue, object: nil)
+		Harpy.sharedInstance().checkVersionDaily()
     }
     
     func application(application: UIApplication, supportedInterfaceOrientationsForWindow window: UIWindow?) -> UIInterfaceOrientationMask {
@@ -293,6 +312,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Log.d("handleEventsForBackgroundURLSession called")
         Shared.Toast("Message Posted!")
     }
+}
+
+extension AppDelegate {
+	/*
+	* HarpyDelegate
+	*/
 }
 
 extension UIApplication {

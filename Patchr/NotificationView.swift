@@ -16,11 +16,13 @@ class NotificationView: BaseView {
     @IBOutlet weak var userPhoto: AirImageView!
     @IBOutlet weak var description_: UILabel!
     @IBOutlet weak var photo: AirImageView!
-    @IBOutlet weak var photoHeight: NSLayoutConstraint!
-    @IBOutlet weak var photoTopSpace: NSLayoutConstraint!    
     @IBOutlet weak var iconImageView: UIImageView!
     @IBOutlet weak var ageDot: UIView!
     
+	@IBOutlet weak var photoHeight: NSLayoutConstraint!
+	@IBOutlet weak var photoTopSpace: NSLayoutConstraint!
+	@IBOutlet weak var descriptionHeight:   NSLayoutConstraint!
+	
     weak var delegate: ViewDelegate?
     
     override func awakeFromNib() {
@@ -28,13 +30,7 @@ class NotificationView: BaseView {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: "tapGestureRecognizerAction:")
         self.photo.addGestureRecognizer(tapGestureRecognizer)
     }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-    }
-    
-    // MARK: Private Internal
-    
+	
     func tapGestureRecognizerAction(sender: AnyObject) {
         if sender.view != nil && self.delegate != nil {
             self.delegate!.view(self, didTapOnView: sender.view!!)

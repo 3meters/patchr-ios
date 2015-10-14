@@ -193,7 +193,18 @@ class AirImageButton: UIButton {
         else {
             self.spot?.hidden = true
         }
-
-        self.setImage(image, forState:UIControlState.Normal)
+		
+		if animate /*|| cacheType == SDImageCacheType.None || cacheType == SDImageCacheType.Disk*/ {
+			UIView.transitionWithView(self,
+				duration: 0.5,
+				options: UIViewAnimationOptions.TransitionCrossDissolve,
+				animations: {
+					self.setImage(image, forState:UIControlState.Normal)
+				},
+				completion: nil)
+		}
+		else {
+			self.setImage(image, forState:UIControlState.Normal)
+		}
     }
 }

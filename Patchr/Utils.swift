@@ -13,14 +13,22 @@ import AVFoundation
 var temporaryFileCount = 0
 
 struct Utils {
+	
+	static var imageMedia: UIImage = { return UIImage(named: "imgMediaLight") }()!
+	static var imageMessage: UIImage = { return UIImage(named: "imgMessageLight") }()!
+	static var imageWatch: UIImage = { return UIImage(named: "imgWatchLight") }()!
+	static var imageStar: UIImage = { return UIImage(named: "imgStarFilledLight") }()!
+	static var imageLike: UIImage = { return UIImage(named: "imgLikeLight") }()!
+	static var imageShare: UIImage = { return UIImage(named: "imgShareLight") }()!
+	static var imageLocation: UIImage = { return UIImage(named: "imgLocationLight") }()!
     
-    static var messageDateFormatter: NSDateFormatter {
+    static var messageDateFormatter: NSDateFormatter = {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
         dateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
         dateFormatter.doesRelativeDateFormatting = true
         return dateFormatter
-    }
+    }()
     
     static func LocalizedString(str: String, comment: String) -> String {
         return NSLocalizedString(str, comment: comment)
@@ -32,7 +40,7 @@ struct Utils {
     
     static func DateTimeTag() -> String! {
         let date = NSDate()     			// Initialized to current date
-        let calendar = NSCalendar.currentCalendar()
+		let calendar = NSCalendar.currentCalendar() // System caches currentCalendar as of iOS 7
         let components = calendar.components([.Year, .Month, .Day, .Hour, .Minute, .Second, .Nanosecond], fromDate: date)
         let milliSeconds = components.nanosecond / 1_000_000
         let dateTimeTag = String(format: "%04d%02d%02d_%02d%02d%02d_%04d", components.year, components.month, components.day, components.hour, components.minute, components.second, milliSeconds)

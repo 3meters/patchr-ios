@@ -45,20 +45,9 @@ public class S3: NSObject {
             let configIdentifier = "group.com.3meters.patchr.ios.image"
             
             /* PatchrShare only runs on >= iOS8 */
-            var config: NSURLSessionConfiguration!
-			#if IOS8TARGET	// FIXME: Hideous hack until compiler can deal with classes included in targets with different iOS version specs.
-				config = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(configIdentifier)
-				config.sharedContainerIdentifier = "group.com.3meters.patchr.ios"
-			#else
-				if #available(iOS 8.0, *) {
-					config = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(configIdentifier)
-					config.sharedContainerIdentifier = "group.com.3meters.patchr.ios"
-				}
-				else {
-					config = NSURLSessionConfiguration.backgroundSessionConfiguration(configIdentifier)
-				}
-			#endif			
-			
+            let config = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(configIdentifier)
+			config.sharedContainerIdentifier = "group.com.3meters.patchr.ios"
+		
             // NSURLSession background sessions *need* to have a delegate.
             Static.session = NSURLSession(configuration: config, delegate: self, delegateQueue: NSOperationQueue.mainQueue())
         }

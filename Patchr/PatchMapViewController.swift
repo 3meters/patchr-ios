@@ -32,27 +32,31 @@ class PatchMapViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        mapView.delegate = self
-        mapView.showsUserLocation = true
+        self.mapView.delegate = self
+        self.mapView.showsUserLocation = true
         
         let currentRegion = MKCoordinateRegionMakeWithDistance(self.locationDelegate.locationForMap()!.coordinate, 2000, 2000)
-        mapView.setRegion(currentRegion, animated: false)
+        self.mapView.setRegion(currentRegion, animated: false)
         
         self.annotation = EntityAnnotation(
             coordinate: self.locationDelegate.locationForMap()!.coordinate,
             title: self.locationDelegate.locationTitle!,
             subtitle: self.locationDelegate.locationSubtitle ?? "PATCH")
         
-        mapView.addAnnotation(self.annotation)
+        self.mapView.addAnnotation(self.annotation)
         setScreenName("PatchMap")        
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        mapView.removeAnnotation(self.annotation)
+        self.mapView.removeAnnotation(self.annotation)
     }
     
     deinit {
+		self.mapView.showsUserLocation = false
+		self.mapView.delegate = nil
+		self.mapView.removeFromSuperview()
+		self.mapView = nil
         Log.d("-- deinit PatchMapVC")
     }
     
@@ -77,10 +81,10 @@ extension PatchMapViewController: MKMapViewDelegate {
     
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
         
-        if let _ = annotation as? MKUserLocation {
-            return nil; // Keep default "blue dot" view for current location
-        }
-        
+		if annotation.isKindOfClass(MKUserLocation) {
+			return nil; // Keep default "blue dot" view for current location
+		}
+		
         let annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "pin")
         annotationView.animatesDrop = true
         annotationView.canShowCallout = true

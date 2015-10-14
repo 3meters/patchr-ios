@@ -131,16 +131,9 @@ class NotificationController {
     
     func registerForRemoteNotifications() {
         
-        let application = UIApplication.sharedApplication()
-        
-        if #available(iOS 8.0, *) {
-            let settings: UIUserNotificationSettings = UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil)
-            application.registerUserNotificationSettings(settings)
-            application.registerForRemoteNotifications()
-        }
-        else {
-            // Register for Push Notifications before iOS 8
-            application.registerForRemoteNotificationTypes([.Alert, .Badge, .Sound])
-        }
+        let application = UIApplication.sharedApplication()        
+		let settings: UIUserNotificationSettings = UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil)
+		application.registerUserNotificationSettings(settings)
+		application.registerForRemoteNotifications()
     }
 }

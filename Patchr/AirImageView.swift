@@ -11,7 +11,8 @@ import UIKit
 class AirImageView: UIImageView {
 
     var activity: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
-    var gradient: CAGradientLayer!
+	var showGradient: Bool = false
+    var gradient: CAGradientLayer?
     var spot: CAShapeLayer?
     var linkedPhotoUrl: NSURL?
     var sizeCategory: String = SizeCategory.thumbnail
@@ -40,18 +41,6 @@ class AirImageView: UIImageView {
         
         self.activity.hidesWhenStopped = true
         
-        /* Gradient */
-        self.gradient = CAGradientLayer()
-        self.gradient.frame = CGRectMake(0, 0, self.bounds.size.width + 10, self.bounds.size.height + 10)
-        let startColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.2))  // Bottom
-        let endColor:   UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0))    // Top
-        self.gradient.colors = [endColor.CGColor, startColor.CGColor]
-        self.gradient.startPoint = CGPoint(x: 0.5, y: 0.5)
-        self.gradient.endPoint = CGPoint(x: 0.5, y: 1)
-        self.gradient.hidden = true
-        self.gradient.zPosition = 1
-        self.layer.addSublayer(self.gradient)
-        
         /* Dot for debug */
         if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("devModeEnabled")) {
             self.spot = CAShapeLayer()
@@ -63,15 +52,37 @@ class AirImageView: UIImageView {
             self.layer.addSublayer(self.spot!)
         }
     }
-    
+	
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		
+		/* Gradient */
+		if self.showGradient {
+			if self.gradient == nil {
+				self.gradient = CAGradientLayer()
+				self.layer.addSublayer(self.gradient!)
+				let startColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.2))  // Bottom
+				let endColor:   UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0))    // Top
+				self.gradient!.colors = [endColor.CGColor, startColor.CGColor]
+				self.gradient!.startPoint = CGPoint(x: 0.5, y: 0.5)
+				self.gradient!.endPoint = CGPoint(x: 0.5, y: 1)
+				self.gradient!.zPosition = 1
+				self.gradient!.shouldRasterize = true
+				self.gradient!.rasterizationScale = UIScreen.mainScreen().scale
+			}
+			
+			self.gradient!.frame = CGRectMake(0, 0, self.bounds.size.width + 10, self.bounds.size.height + 10)
+		}
+	}
+
     func startActivity(){
-        activity.startAnimating()
+        self.activity.startAnimating()
     }
-    
+	
     func stopActivity(){
-        activity.stopAnimating()
+        self.activity.stopAnimating()
     }
-    
+	
     func linkedToPhoto(photo: Photo) -> Bool {
         if linkedPhotoUrl == nil {
             return false
@@ -98,33 +109,43 @@ class AirImageView: UIImageView {
             }
             return
         }
-        
-        let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory, size: nil)
-        
-        if photoUrl.absoluteString.isEmpty {
-            let error = NSError(domain: "Photo error", code: 0, userInfo: [NSLocalizedDescriptionKey:"Photo has invalid source: \(photo.source!)"])
-            self.imageCompletion(nil, error: error, cacheType: nil, url: nil, animate: animate)
-            return
-        }
-        
-        self.linkedPhotoUrl = photoUrl
-        
-        startActivity()
-        
-        self.spot?.fillColor = UIColor.lightGrayColor().CGColor
-        self.sd_setImageWithURL(photoUrl,
-            placeholderImage: nil,
-            options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload],
-            completed: { image, error, cacheType, url in
-                self.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
-            }
-        )
+		
+		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory, size: nil)
+			
+			if photoUrl.absoluteString.isEmpty {
+				let error = NSError(domain: "Photo error", code: 0, userInfo: [NSLocalizedDescriptionKey:"Photo has invalid source: \(photo.source!)"])
+				dispatch_async(dispatch_get_main_queue()) {
+					self.imageCompletion(nil, error: error, cacheType: nil, url: nil, animate: animate)
+				}
+				return
+			}
+			
+			/* Stash the url we are loading so we can check for a match later when download is completed. */
+			self.linkedPhotoUrl = photoUrl
+			
+			self.spot?.fillColor = UIColor.lightGrayColor().CGColor
+			self.sd_setImageWithURL(photoUrl,
+				placeholderImage: nil,
+				options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload],
+				completed: { image, error, cacheType, url in
+					dispatch_async(dispatch_get_main_queue()) {
+						self.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
+					}
+				}
+			)
+		}
+		
+		dispatch_async(dispatch_get_main_queue()) {
+			self.startActivity()
+		}
     }
-    
+	
     func setImageWithThumbnail(thumbnail: Thumbnail, animate: Bool = true) {
         
         let url = NSURL(string: thumbnail.mediaUrl!)
         
+		/* Stash the url we are loading so we can check for a match later when download is completed. */
         self.linkedPhotoUrl = url
         
         self.spot?.fillColor = UIColor.lightGrayColor().CGColor
@@ -143,6 +164,7 @@ class AirImageView: UIImageView {
         
         let url = NSURL(string: imageResult.mediaUrl!)
         
+		/* Stash the url we are loading so we can check for a match later when download is completed. */
         self.linkedPhotoUrl = url
         
         self.spot?.fillColor = UIColor.lightGrayColor().CGColor
@@ -190,7 +212,18 @@ class AirImageView: UIImageView {
         else {
             self.spot?.hidden = true
         }
-        
-        self.image = image
+		
+		if animate /*|| cacheType == SDImageCacheType.None || cacheType == SDImageCacheType.Disk*/ {
+			UIView.transitionWithView(self,
+				duration: 0.5,
+				options: UIViewAnimationOptions.TransitionCrossDissolve,
+				animations: {
+					self.image = image
+				},
+				completion: nil)
+		}
+		else {
+			self.image = image
+		}
     }
 }

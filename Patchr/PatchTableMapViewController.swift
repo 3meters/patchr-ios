@@ -13,102 +13,141 @@ class PatchTableMapViewController: UIViewController {
 
     @IBOutlet weak var mapView: MKMapView!
     
-    // If you modify the properties of the fetchRequest, you need to follow these instructions from the Apple docs:
-    //
-    //    Modifying the Fetch Request
-    //
-    //    You cannot simply change the fetch request to modify the results. If you want to change the fetch request, you must:
-    //
-    //    1. If you are using a cache, delete it (using deleteCacheWithName:). Typically you should not use a cache if you are changing the fetch request.
-    //    2. Change the fetch request.
-    //    3. Invoke performFetch:.
-    
+    /* If you modify the properties of the fetchRequest, you need to follow these instructions from 
+	 * the Apple docs:
+     *
+     *   Modifying the Fetch Request
+     *
+     *   You cannot simply change the fetch request to modify the results. If you want to change 
+	 *   the fetch request, you must:
+     *
+     *   1. If you are using a cache, delete it (using deleteCacheWithName:). Typically you should 
+	 *      not use a cache if you are changing the fetch request.
+     *   2. Change the fetch request.
+     *   3. Invoke performFetch:.
+	 */
     var fetchRequest: NSFetchRequest!
     var token: dispatch_once_t = 0
     var nearestAnnotation: MKAnnotation?
+	var location: CLLocation?
     
-    internal lazy var fetchedResultsController: NSFetchedResultsController = {
-        return NSFetchedResultsController(fetchRequest: self.fetchRequest, managedObjectContext: DataController.instance.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
-    }()
-    
+	/*--------------------------------------------------------------------------------------------
+	* Lifecycle
+	*--------------------------------------------------------------------------------------------*/
+	
     override func viewDidLoad() {
         super.viewDidLoad()
+		
         self.mapView.delegate = self
-        self.fetchedResultsController.delegate = self;
-        
-        do {
-            try self.fetchedResultsController.performFetch() // Ensure that the controller can be accessed without blowing up
-        }
-        catch {
-            print("Fetch error: \(error)")
-        }
-        
-        self.reloadAnnotations()
+		
+		do {
+			try self.fetchedResultsController.performFetch()
+		}
+		catch {
+			print("Fetch error: \(error)")
+		}
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+		
         setScreenName("PatchMapList")
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        dispatch_once(&token, { () -> Void in
-            // Does some fancy map math to fit the annotations into the view.
-            // Only do it on the initial view appearance
-            self.mapView.showAnnotations(self.mapView.annotations, animated: true)
-        })
+		self.loadAnnotations()
+		/*
+		 * Does some fancy map math to fit the annotations into the view.
+		 * Only does it on the initial view appearance.
+		 */
+		self.mapView.showAnnotations(self.mapView.annotations, animated: true)
     }
-        
-    private func reloadAnnotations() -> Void {
+	
+	deinit {
+		self.mapView.showsUserLocation = false
+		self.mapView.delegate = nil
+		self.mapView.removeFromSuperview()
+		self.mapView = nil
+		Log.d("-- deinit PatchMapVC")
+	}
+
+	/*--------------------------------------------------------------------------------------------
+	* Methods
+	*--------------------------------------------------------------------------------------------*/
+	
+    func loadAnnotations() -> Void {
+		
         self.mapView.removeAnnotations(self.mapView.annotations)
+		self.location = LocationController.instance.lastLocationFromManager()
+		
         if let fetchedObjects = self.fetchedResultsController.fetchedObjects {
             var nearestDistance: Float = 1000000
+			var annotations: [MKAnnotation] = []
+			
             for object in fetchedObjects {
-                if let queryResult = object as? QueryItem {
-                    if let entity = queryResult.object as? Entity {
-                        if entity.location != nil {
-                            let annotation = EntityAnnotation(entity: entity)
-                            self.mapView.addAnnotation(annotation)
-                            
-                            if let lastLocation = LocationController.instance.lastLocationFromManager() {
-                                if let entityLocation = entity.location {
-                                    let patchLocation = CLLocation(latitude: entityLocation.latValue, longitude: entityLocation.lngValue)
-                                    let dist = Float(lastLocation.distanceFromLocation(patchLocation))  // in meters
-                                    if dist < nearestDistance {
-                                        nearestDistance = dist
-                                        self.nearestAnnotation = annotation
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                if let queryResult = object as? QueryItem, let entity = queryResult.object as? Entity where entity.location != nil {
+					
+					let annotation = EntityAnnotation(entity: entity)
+					annotations.append(annotation)
+					
+					if let lastLocation = self.location {
+						if let entityLocation = entity.location {
+							let patchLocation = CLLocation(latitude: entityLocation.latValue, longitude: entityLocation.lngValue)
+							let dist = Float(lastLocation.distanceFromLocation(patchLocation))  // in meters
+							if dist < nearestDistance {
+								nearestDistance = dist
+								self.nearestAnnotation = annotation
+							}
+						}
+					}
+				}
             }
+			self.mapView.addAnnotations(annotations)
         }
     }
+	
+	/*--------------------------------------------------------------------------------------------
+	* Properties
+	*--------------------------------------------------------------------------------------------*/
+	
+	internal lazy var fetchedResultsController: NSFetchedResultsController = {
+		
+		let controller = NSFetchedResultsController(
+			fetchRequest: self.fetchRequest,
+			managedObjectContext: DataController.instance.managedObjectContext,
+			sectionNameKeyPath: nil,
+			cacheName: nil)
+		
+		controller.delegate = self
+		
+		return controller
+	}()
 }
 
 extension PatchTableMapViewController: NSFetchedResultsControllerDelegate {
     
     func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
-        
+		/*
+		 * Only called if the entity is changed in the model and the map
+		 * is active.
+		 */
         let queryResult = anObject as? QueryItem
         if queryResult == nil { return }
         
-        // TODO: we can do better than a full reload
+        /* TODO: we can do better than a full reload */
         switch type {
-        case .Insert:
-            if let entity = queryResult!.object as? Entity {
-                self.mapView.addAnnotation(EntityAnnotation(entity: entity))
-            }
-        case .Delete:
-            self.reloadAnnotations()
-        case .Update:
-            self.reloadAnnotations()
-        case .Move:
-            self.reloadAnnotations()
+			case .Insert:
+				if let entity = queryResult!.object as? Entity {
+					self.mapView.addAnnotation(EntityAnnotation(entity: entity))
+				}
+			case .Delete:
+				self.loadAnnotations()
+			case .Update:
+				self.loadAnnotations()
+			case .Move:
+				self.loadAnnotations()
         }
     }
 }
@@ -117,7 +156,7 @@ extension PatchTableMapViewController: MKMapViewDelegate {
     
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
         
-        if let _ = annotation as? MKUserLocation {
+        if annotation.isKindOfClass(MKUserLocation) {
             return nil; // Keep default "blue dot" view for current location
         }
         

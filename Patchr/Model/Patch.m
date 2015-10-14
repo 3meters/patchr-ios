@@ -1,7 +1,6 @@
 #import "Patch.h"
 #import "Link.h"
 #import "Shortcut.h"
-#import "Patchr-Swift.h"
 
 @interface Patch ()
 
@@ -28,8 +27,10 @@
             if ([linkMap isKindOfClass:[NSDictionary class]]) {
                 if ([linkMap[@"schema"] isEqualToString: @"place"]) {
                     NSString *entityId = [[NSString alloc] initWithString:linkMap[@"_id"]];
-                    NSString *decoratedId = [Shortcut decorateId:entityId];
-                    id shortcut = [Shortcut fetchOrInsertOneById:decoratedId inManagedObjectContext:patch.managedObjectContext];
+					if ([entityId rangeOfString:@"sh."].location == NSNotFound) {
+						entityId = [@"sh." stringByAppendingString:entityId];
+					}
+                    id shortcut = [Shortcut fetchOrInsertOneById:entityId inManagedObjectContext:patch.managedObjectContext];
                     patch.place = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut mappingNames:mapNames];
                 }
             }

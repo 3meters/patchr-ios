@@ -11,14 +11,16 @@ import UIKit
 class BaseTableViewController: UITableViewController, NSFetchedResultsControllerDelegate {
     
     var _query: Query!
-    var progress: AirProgress?
+	var activity: UIActivityIndicatorView?
+	var footerView: UIView!
     var showEmptyLabel: Bool = true
     var showProgress: Bool = true
-    var progressOffset = Float(0)
+    var progressOffset = Float(-40)
     var processingQuery: Bool = false
     var emptyLabel: AirLabel = AirLabel(frame: CGRectMake(100, 100, 100, 100))
     var emptyMessage: String?
-    var offscreenCells:       NSMutableDictionary = NSMutableDictionary()
+	var loadMoreMessage: String = "LOAD MORE"
+    var offscreenCells: NSMutableDictionary = NSMutableDictionary()
 	
 	var contentViewName: String?
 	var ignoreNextUpdates: Bool = false
@@ -36,20 +38,28 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         refreshControl.tintColor = Colors.brandColor
 		refreshControl.addTarget(self, action: "pullToRefreshAction:", forControlEvents: UIControlEvents.ValueChanged)
 		self.refreshControl = refreshControl
-        
-        /* Wacky activity control for body */
-        if self.showProgress {
-            if let controller = UIViewController.topMostViewController() {
-                self.progress = AirProgress.showHUDAddedTo(controller.view, animated: true)
-                self.progress!.mode = MBProgressHUDMode.Indeterminate
-                self.progress!.styleAs(.ActivityOnly)
-                self.progress!.yOffset = self.progressOffset
-                self.progress!.minShowTime = 1.0
-                self.progress!.removeFromSuperViewOnHide = false
-                self.progress!.userInteractionEnabled = false
-            }
-        }
-        
+		
+		/* Simple activity indicator */
+		self.activity = addActivityIndicatorTo(self.view, offsetY: self.progressOffset)
+		
+		/* Footer spinner */
+		self.footerView = UIView(frame: CGRectMake(0, 0, 320, 48))
+		
+		let button = UIButton(type: UIButtonType.RoundedRect)
+		button.tag = 1
+		button.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 48)
+		button.addTarget(self, action: Selector("loadMore:"), forControlEvents: UIControlEvents.TouchUpInside)
+		button.setTitle(self.loadMoreMessage, forState: .Normal)
+		footerView.addSubview(button)
+		
+		let spinner: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .White)
+		spinner.tag = 2
+		spinner.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 48)
+		spinner.translatesAutoresizingMaskIntoConstraints = true
+		spinner.color = Colors.brandColorDark
+		spinner.hidden = true
+		footerView.addSubview(spinner)
+		
         /* Empty label */
         if self.showEmptyLabel {
             self.emptyLabel.alpha = 0
@@ -69,7 +79,19 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
             self.emptyLabel.layer.backgroundColor = UIColor.whiteColor().CGColor
             self.emptyLabel.layer.cornerRadius = self.emptyLabel.bounds.size.width / 2
         }
-        
+		
+		/*
+		* Self-sizing table view cells in iOS 8 are enabled when the estimatedRowHeight property of
+		* the table view is set to a non-zero value. Setting the estimated row height prevents the
+		* table view from calling tableView:heightForRowAtIndexPath: for every row in the table on
+		* first load; it will only be called as cells are about to scroll onscreen. This is a major
+		* performance optimization.
+		*/
+		self.tableView.estimatedRowHeight = 200
+		
+		/* Self sizing table view cells require this setting */
+		self.tableView.rowHeight = UITableViewAutomaticDimension
+		
         /* A bit of UI tweaking */
         self.tableView.backgroundColor = Colors.windowColor
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
@@ -83,26 +105,30 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 			tableView.deselectRowAtIndexPath(indexPath, animated: animated)
 		}
 	}
-    
+	
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        
-        if !self.query().executedValue {
-            self.bindQueryItems(false)
-        }
+		if !self.query().executedValue {
+			self.bindQueryItems(false)
+		}
     }
     
     override func viewWillDisappear(animated: Bool) {
+		/*
+		* Called when switching between patch view controllers.
+		*/
         super.viewWillDisappear(animated)
-        self.progress?.hide(false)
+		self.activity?.stopAnimating()
     }
     
     override func viewDidDisappear(animated: Bool) {
+		/*
+		 * Called when switching between patch view controllers.
+		 */
         super.viewDidDisappear(animated)
-        
-        self.progress?.hide(false)
+		self.activity?.stopAnimating()
         self.refreshControl?.endRefreshing()
-        self.tableView.finishInfiniteScroll()
+		self.tableView.tableFooterView = nil
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -116,6 +142,18 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
+	
+	func loadMore(sender: AnyObject?) {
+		
+		if let button = self.footerView.viewWithTag(1) as? UIButton,
+			spinner = self.footerView.viewWithTag(2) as? UIActivityIndicatorView {
+				button.hidden = true
+				spinner.hidden = false
+				spinner.startAnimating()
+		}
+		
+		self.bindQueryItems(false, paging: true)
+	}
 
     func bindQueryItems(force: Bool = false, paging: Bool = false) {
         
@@ -124,9 +162,12 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         }
         
         if !self.refreshControl!.refreshing && !self.query().executedValue {
-            self.progress?.show(true)
+			/* Wacky activity control for body */
+			if self.showProgress {
+				self.activity?.startAnimating()
+			}
         }
-        
+		
         if self.showEmptyLabel && self.emptyLabel.alpha > 0 {
             self.emptyLabel.fadeOut()
         }
@@ -148,19 +189,23 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
             Utils.delay(0.5, closure: {
                 
                 self?.processingQuery = false
-                self?.progress?.hide(true)
+				self?.activity?.stopAnimating()
                 self?.refreshControl?.endRefreshing()
-                self?.tableView.finishInfiniteScroll()
-                
-                if query.moreValue {
-                    self?.tableView.addInfiniteScrollWithHandler({(scrollView) -> Void in
-                        self?.bindQueryItems(false, paging: true)
-                    })
-                }
-                else {
-                    self?.tableView.removeInfiniteScroll()
-                }
-                
+				if query.moreValue {
+					if self?.tableView.tableFooterView == nil {
+						self?.tableView.tableFooterView = self?.footerView
+					}
+					if let button = self?.footerView.viewWithTag(1) as? UIButton,
+						spinner = self?.footerView.viewWithTag(2) as? UIActivityIndicatorView {
+						button.hidden = false
+						spinner.hidden = true
+						spinner.stopAnimating()
+					}
+				}
+				else {
+					self?.tableView.tableFooterView = nil
+				}
+				
                 if error == nil {
                     self?.query().executedValue = true
                     if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
@@ -174,7 +219,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
             })
         })
     }
-    
+	
     func populateSidecar(query: Query) { }
 
 	func query() -> Query {
@@ -191,16 +236,18 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		 */
 		let cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: CELL_IDENTIFIER)
 		cell.separatorInset = UIEdgeInsetsZero
-		cell.layer.shouldRasterize = true
+		cell.layer.shouldRasterize = true		// Faster layout animations
 		cell.layer.rasterizationScale = UIScreen.mainScreen().scale
 		
-		if #available(iOS 8.0, *) {
-			cell.layoutMargins = UIEdgeInsetsZero
-			cell.preservesSuperviewLayoutMargins = false
-		}
+		cell.layoutMargins = UIEdgeInsetsZero
+		cell.preservesSuperviewLayoutMargins = false
 		
+		/* Inject view into contentView */
 		let view = NSBundle.mainBundle().loadNibNamed(contentViewName, owner: self, options: nil)[0] as! BaseView
-		cell.injectView(view)
+		view.tag = 1
+		view.cell = cell
+		view.translatesAutoresizingMaskIntoConstraints = false
+		cell.contentView.addSubview(view)
 		
 		/* We need to set the initial width so later sizing logic has it to work with */
 		cell.frame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.bounds), 100)
@@ -219,10 +266,21 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		*/
 		let view = cell.contentView.viewWithTag(1) as! BaseView
 		let views = Dictionary(dictionaryLiteral: ("view", view))
-		let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|[view]|", options: [], metrics: nil, views: views)
-		let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|[view]|", options: [], metrics: nil, views: views)
-		cell.contentView.addConstraints(horizontalConstraints)
-		cell.contentView.addConstraints(verticalConstraints)
+		
+		
+		if self.isKindOfClass(PatchTableViewController) {
+			cell.contentView.backgroundColor = Colors.windowColor
+			let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-8-[view]-8-|", options: [], metrics: nil, views: views)
+			let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|-8-[view]|", options: [], metrics: nil, views: views)
+			cell.contentView.addConstraints(horizontalConstraints)
+			cell.contentView.addConstraints(verticalConstraints)
+		}
+		else {
+			let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|[view]|", options: [], metrics: nil, views: views)
+			let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|[view]|", options: [], metrics: nil, views: views)
+			cell.contentView.addConstraints(horizontalConstraints)
+			cell.contentView.addConstraints(verticalConstraints)
+		}
 		
 		cell.setNeedsUpdateConstraints()
 		cell.updateConstraintsIfNeeded()
@@ -230,8 +288,24 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		cell.contentView.layoutIfNeeded()
 	}
 	
-	func bindCell(cell: UITableViewCell, object: AnyObject) {
-		preconditionFailure("bindCell must be overridden by subclasses")
+	func bindCell(cell: UITableViewCell, object: AnyObject, location: CLLocation?) -> UIView? {
+		
+		if let view = cell.contentView.viewWithTag(1) {
+			if self.isKindOfClass(NotificationsTableViewController) {
+				Notification.bindView(view, object: object)
+			}
+			else if self.isKindOfClass(BaseDetailViewController) {
+				Message.bindView(view, object: object)
+			}
+			else if self.isKindOfClass(PatchTableViewController) {
+				Patch.bindView(view, object: object, location: location)
+			}
+			else if self.isKindOfClass(UserTableViewController) {
+				User.bindView(view, object: object)
+			}
+			return view
+		}
+		return nil
 	}
 	
 	/*--------------------------------------------------------------------------------------------
@@ -310,7 +384,7 @@ extension BaseTableViewController {
 		let queryResult = self.fetchedResultsController.sections![indexPath.section].objects![indexPath.row] as! QueryItem
 		
 		/* Bind the cell */
-		bindCell(cell!, object: queryResult.object)
+		bindCell(cell!, object: queryResult.object, location: nil)
 		
 		return cell!
 	}
@@ -321,16 +395,17 @@ extension BaseTableViewController {
 	 * NSFetchedResultsControllerDelegate
 	 */
 	func controllerWillChangeContent(controller: NSFetchedResultsController) {
-		self.tableView.beginUpdates()
+		if self.tableView.window != nil {
+			self.tableView.beginUpdates()
+		}
 	}
 	
 	func controllerDidChangeContent(controller: NSFetchedResultsController) {
-		self.tableView.endUpdates()
+		if self.tableView.window != nil {
+			self.tableView.endUpdates()
+		}
 	}
 	
-	/*
-	* DidChangeSection
-	*/
 	func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType) {
 		switch type {
 		case .Insert:
@@ -344,9 +419,6 @@ extension BaseTableViewController {
 		}
 	}
 	
-	/*
-	* DidChangeObject
-	*/
 	func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
 		/*
 		 * http://stackoverflow.com/a/32978387
@@ -372,7 +444,7 @@ extension BaseTableViewController {
 		case .Update:	// 4
 			if let cell = self.tableView.cellForRowAtIndexPath(indexPath!) {
 				let queryResult = anObject as! QueryItem
-				bindCell(cell, object: queryResult.object)
+				bindCell(cell, object: queryResult.object, location: nil)
 			}
 		}
 	}

@@ -50,6 +50,7 @@ PODS:
   - GoogleSymbolUtilities (1.0.0)
   - GoogleUtilities (1.0.1):
     - GoogleSymbolUtilities (~> 1.0)
+  - Harpy (3.4.2)
   - Keys (1.0.0)
   - libPhoneNumber-iOS (0.8.5)
   - Lockbox (2.1.0)
@@ -62,7 +63,6 @@ PODS:
   - SDWebImage/Core (3.7.3)
   - TWMessageBarManager (1.7.2)
   - UIDevice-Hardware (0.1.5)
-  - UIScrollView-InfiniteScroll (0.7.2)
 
 DEPENDENCIES:
   - AFNetworkActivityLogger (~> 2.0)
@@ -74,6 +74,7 @@ DEPENDENCIES:
   - Crashlytics
   - Fabric
   - Google/Analytics (~> 1.0.0)
+  - Harpy
   - Keys (from `Pods/CocoaPodsKeys`)
   - libPhoneNumber-iOS (~> 0.7)
   - Lockbox
@@ -84,7 +85,6 @@ DEPENDENCIES:
   - SDWebImage (~> 3.7.2)
   - TWMessageBarManager
   - UIDevice-Hardware
-  - UIScrollView-InfiniteScroll
 
 EXTERNAL SOURCES:
   AirContactPicker:
@@ -110,6 +110,7 @@ SPEC CHECKSUMS:
   GoogleNetworkingUtilities: 292992ab31b7b4ba32809a0e8b40e324cdfb2c0c
   GoogleSymbolUtilities: a7b0feed1fe667c8d5e647177938d0ecd62d6948
   GoogleUtilities: e3475cd4d45134221d2f3f3626095a1c49b62041
+  Harpy: 711483405fcc73afc36d86e9493bdc34ac294c9a
   Keys: 7d2ff6ff42f6903358267ce56e9392f83c31acfe
   libPhoneNumber-iOS: b8ccd23576379caca37c7cbdd554addf384459ed
   Lockbox: 16442da35d9d4286966936763be728a931d589c3
@@ -120,6 +121,5 @@ SPEC CHECKSUMS:
   SDWebImage: 1d2b1a1efda1ade1b00b6f8498865f8ddedc8a84
   TWMessageBarManager: e7adc066ee425174f5dee79473fce913b1cd1662
   UIDevice-Hardware: b3695e58e0385155932e7889c32ed12e844e14a3
-  UIScrollView-InfiniteScroll: cfa860f96f5a2e3b4575d59fe6d08d337093ac2a
 
 COCOAPODS: 0.38.2

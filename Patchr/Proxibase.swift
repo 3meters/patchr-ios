@@ -35,9 +35,9 @@ public class Proxibase {
 	public let StagingURI    = "https://api.aircandi.com:8443/v1/"
 	public let ProductionURI = "https://api.aircandi.com/v1/"
 
-	let pageSizeDefault:       Int = 20
+	let pageSizeDefault:       Int = 50
 	let pageSizeNearby:        Int = 50
-	let pageSizeExplore:       Int = 20
+	let pageSizeExplore:       Int = 50
 	let pageSizeNotifications: Int = 50
 
 	private let sessionManager: AFHTTPSessionManager

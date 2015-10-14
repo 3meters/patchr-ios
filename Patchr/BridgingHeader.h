@@ -32,13 +32,14 @@
 #import <Lockbox.h>
 #import <IDMPhoto.h>
 #import <IDMPhotoBrowser.h>
-#import <UIScrollView+InfiniteScroll.h>
+//#import <UIScrollView+InfiniteScroll.h>
 #import <NBPhoneNumberUtil.h>
 #import <NBPhoneNumber.h>
 #import <AdobeCreativeSDKCore/AdobeCreativeSDKCore.h>
 #import <AdobeCreativeSDKImage/AdobeCreativeSDKImage.h>
 #import <Branch.h>
 #import <TWMessageBarManager.h>
+#import <Harpy.h>
 #import <Keys/PatchrKeys.h>
 #import <Google/Analytics.h>
 #import <MBContactPicker.h>
