@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "10CF86382729432C88C53F12"
+               BlueprintIdentifier = "15A35F89F514E6F3B0C2040642DB88AA"
                BuildableName = "libAirPhotoBrowser.a"
                BlueprintName = "AirPhotoBrowser"
                ReferencedContainer = "container:Pods.xcodeproj">

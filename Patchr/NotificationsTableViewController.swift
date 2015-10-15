@@ -474,7 +474,7 @@ extension NotificationsTableViewController {
 				}
 				
 				/* Create and bind a cell */
-				let cell = buildCell()
+				let cell = buildCell(.TextAndPhoto)
 				bindCell(cell, entity: queryResult.object, location: nil)
 				
 				cell.setNeedsUpdateConstraints()

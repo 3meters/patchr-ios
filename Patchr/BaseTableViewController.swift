@@ -231,16 +231,16 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	* Cells
 	*--------------------------------------------------------------------------------------------*/
 	
-	func buildCell() -> UITableViewCell {
+	func buildCell(cellType: CellType = .TextAndPhoto) -> UITableViewCell {
 		/*
 		 * Only implementation. Called externally to measure variable row heights.
 		 */
 		if self.listType == .Notifications {
-			let cell = NotificationCell(style: UITableViewCellStyle.Value1, reuseIdentifier: CELL_IDENTIFIER)
+			let cell = NotificationCell(style: UITableViewCellStyle.Value1, cellType: cellType, reuseIdentifier: cellType.rawValue)
 			return cell
 		}
 		else {
-			let cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: CELL_IDENTIFIER)
+			let cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: cellType.rawValue)
 			cell.separatorInset = UIEdgeInsetsZero
 			cell.layer.shouldRasterize = true		// Faster layout animations
 			cell.layer.rasterizationScale = UIScreen.mainScreen().scale
@@ -385,17 +385,29 @@ extension BaseTableViewController {
 	
 	override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		
-		var cell = tableView.dequeueReusableCellWithIdentifier(CELL_IDENTIFIER)
-		
-		if cell == nil {
-			cell = buildCell()
-		}
 		
 		/* Bind the cell to the entity */
-		if let queryResult = self.fetchedResultsController.sections![indexPath.section].objects![indexPath.row] as? QueryItem,
-			let entity = queryResult.object as? Entity {
-			bindCell(cell!, entity: entity, location: nil)
+		let queryResult = self.fetchedResultsController.sections![indexPath.section].objects![indexPath.row] as? QueryItem
+		let entity = queryResult!.object as? Entity
+				
+		var cellType: CellType = .TextAndPhoto
+		if self.listType == .Notifications {
+			let notification = entity as! Notification
+			if notification.photoBig == nil {
+				cellType = .Text
+			}
+			else if notification.summary == nil {
+				cellType = .Photo
+			}
 		}
+		
+		var cell = tableView.dequeueReusableCellWithIdentifier(cellType.rawValue)
+		
+		if cell == nil {
+			cell = buildCell(cellType)
+		}
+			
+		bindCell(cell!, entity: entity!, location: nil)
 		
 		return cell!
 	}

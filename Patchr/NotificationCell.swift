@@ -12,6 +12,8 @@ class NotificationCell: UITableViewCell {
 	
 	var didSetupConstraints = false
 	var entity: Entity?
+	var cellType: CellType = .TextAndPhoto
+	
 	var description_ = UILabel()
 	var userPhoto = AirImageView(frame: CGRectZero)
 	var photo = AirImageView(frame: CGRectZero)
@@ -28,6 +30,14 @@ class NotificationCell: UITableViewCell {
 		configure()
 	}
 	
+	init(style: UITableViewCellStyle, cellType: CellType?, reuseIdentifier: String?) {
+		super.init(style: style, reuseIdentifier: reuseIdentifier)
+		if cellType != nil {
+			self.cellType = cellType!
+		}
+		configure()
+	}
+	
 	required init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 		configure()
@@ -36,7 +46,14 @@ class NotificationCell: UITableViewCell {
 	func configure() {
 		
 		self.footer = OAStackView(arrangedSubviews: [self.iconImageView, self.createdDate, self.ageDot])
-		self.body = OAStackView(arrangedSubviews: [self.description_, self.photo, footer])
+		
+		let components = (self.cellType == .TextAndPhoto)
+			? [self.description_, self.photo, footer]
+			: (self.cellType == .Text)
+			? [self.description_, footer]
+			: [self.photo, footer]
+		
+		self.body = OAStackView(arrangedSubviews: components)
 		
 		self.footer.translatesAutoresizingMaskIntoConstraints = false
 		self.footer.axis = UILayoutConstraintAxis.Horizontal
@@ -49,16 +66,20 @@ class NotificationCell: UITableViewCell {
 		self.body.spacing = CGFloat(8)
 		
 		/* Description */
-		self.description_.numberOfLines = 5
-		self.description_.lineBreakMode = .ByTruncatingTail
-		self.description_.font = UIFont(name: "HelveticaNeue-Light", size: 17)
+		if self.cellType != .Photo {
+			self.description_.numberOfLines = 5
+			self.description_.lineBreakMode = .ByTruncatingTail
+			self.description_.font = UIFont(name: "HelveticaNeue-Light", size: 17)
+		}
 		
 		/* Photo */
-		self.photo.contentMode = UIViewContentMode.ScaleAspectFill
-		self.photo.clipsToBounds = true
-		self.photo.userInteractionEnabled = true
-		let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: "tapGestureRecognizerAction:")
-		self.photo.addGestureRecognizer(tapGestureRecognizer)
+		if self.cellType != .Text {
+			self.photo.contentMode = UIViewContentMode.ScaleAspectFill
+			self.photo.clipsToBounds = true
+			self.photo.userInteractionEnabled = true
+			let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: "tapGestureRecognizerAction:")
+			self.photo.addGestureRecognizer(tapGestureRecognizer)
+		}
 		
 		/* User photo */
 		self.userPhoto.contentMode = UIViewContentMode.ScaleAspectFill
@@ -79,15 +100,24 @@ class NotificationCell: UITableViewCell {
 		if !self.didSetupConstraints {
 			
 			/* Prevent the body from being compressed below its intrinsic content height */
-			NSLayoutConstraint.autoSetPriority(1000) {
-				self.description_.autoSetContentCompressionResistancePriorityForAxis(.Vertical)
-				self.photo.autoSetContentCompressionResistancePriorityForAxis(.Vertical)
-				self.body.autoSetContentCompressionResistancePriorityForAxis(.Vertical)
+			if self.cellType != .Photo {
+				NSLayoutConstraint.autoSetPriority(1000) {
+					self.description_.autoSetContentCompressionResistancePriorityForAxis(.Vertical)
+				}
+			}
+			
+			if self.cellType != .Text {
+				NSLayoutConstraint.autoSetPriority(1000) {
+					self.photo.autoSetContentCompressionResistancePriorityForAxis(.Vertical)
+					self.photo.autoMatchDimension(.Height, toDimension: .Width, ofView: self.photo, withMultiplier: 0.5625)
+				}
 			}
 			
 			/* Body */
+			NSLayoutConstraint.autoSetPriority(1000) {
+				self.body.autoSetContentCompressionResistancePriorityForAxis(.Vertical)
+			}
 			self.body.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsets(top: 8, left: 64, bottom: 8, right: 8), excludingEdge: .Bottom)
-			self.photo.autoMatchDimension(.Height, toDimension: .Width, ofView: self.photo, withMultiplier: 0.5625)
 			
 			/* User photo */
 			NSLayoutConstraint.autoSetPriority(999) {
@@ -118,4 +148,10 @@ class NotificationCell: UITableViewCell {
 			self.delegate!.view(self, didTapOnView: sender.view!!)
 		}
 	}
+}
+
+enum CellType: String {
+	case Text = "text"
+	case Photo = "photo"
+	case TextAndPhoto = "text_and_photo"
 }
