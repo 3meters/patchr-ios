@@ -23,6 +23,7 @@ class UserTableViewController: BaseTableViewController {
         
         /* Content view */
         self.contentViewName = "UserView"
+		self.listType = .Users
 
 		switch self.filter {
 			case .PatchWatchers:
@@ -92,9 +93,9 @@ class UserTableViewController: BaseTableViewController {
 	* Cells
 	*--------------------------------------------------------------------------------------------*/
 	
-	override func bindCell(cell: UITableViewCell, object: AnyObject, location: CLLocation?) -> UIView? {
+	override func bindCell(cell: UITableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
 		
-		if let view = super.bindCell(cell, object: object, location: location) as? UserView {
+		if let view = super.bindCell(cell, entity: object, location: location) as? UserView {
 			let user = object as! User
 			if self.patch != nil {
 				view.owner.text = (user.id_ == self.patch.ownerId) ? "OWNER" : nil

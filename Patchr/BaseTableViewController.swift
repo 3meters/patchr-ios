@@ -21,6 +21,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
     var emptyMessage: String?
 	var loadMoreMessage: String = "LOAD MORE"
     var offscreenCells: NSMutableDictionary = NSMutableDictionary()
+	var listType: ListType = .Patches
 	
 	var contentViewName: String?
 	var ignoreNextUpdates: Bool = false
@@ -87,7 +88,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		* first load; it will only be called as cells are about to scroll onscreen. This is a major
 		* performance optimization.
 		*/
-		self.tableView.estimatedRowHeight = 200
+		self.tableView.estimatedRowHeight = 65
 		
 		/* Self sizing table view cells require this setting */
 		self.tableView.rowHeight = UITableViewAutomaticDimension
@@ -230,33 +231,38 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	* Cells
 	*--------------------------------------------------------------------------------------------*/
 	
-	func buildCell(contentViewName: String) -> UITableViewCell {
+	func buildCell() -> UITableViewCell {
 		/*
 		 * Only implementation. Called externally to measure variable row heights.
 		 */
-		let cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: CELL_IDENTIFIER)
-		cell.separatorInset = UIEdgeInsetsZero
-		cell.layer.shouldRasterize = true		// Faster layout animations
-		cell.layer.rasterizationScale = UIScreen.mainScreen().scale
-		
-		cell.layoutMargins = UIEdgeInsetsZero
-		cell.preservesSuperviewLayoutMargins = false
-		
-		/* Inject view into contentView */
-		let view = NSBundle.mainBundle().loadNibNamed(contentViewName, owner: self, options: nil)[0] as! BaseView
-		view.tag = 1
-		view.cell = cell
-		view.translatesAutoresizingMaskIntoConstraints = false
-		cell.contentView.addSubview(view)
-		
-		/* We need to set the initial width so later sizing logic has it to work with */
-		cell.frame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.bounds), 100)
-		cell.contentView.frame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.bounds), 100)
-		view.frame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.bounds), 100)
-		
-		configureCell(cell) // Handles contraint and layout updates
-		
-		return cell
+		if self.listType == .Notifications {
+			let cell = NotificationCell(style: UITableViewCellStyle.Value1, reuseIdentifier: CELL_IDENTIFIER)
+			return cell
+		}
+		else {
+			let cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: CELL_IDENTIFIER)
+			cell.separatorInset = UIEdgeInsetsZero
+			cell.layer.shouldRasterize = true		// Faster layout animations
+			cell.layer.rasterizationScale = UIScreen.mainScreen().scale
+			
+			cell.layoutMargins = UIEdgeInsetsZero
+			cell.preservesSuperviewLayoutMargins = false
+			
+			/* Inject view into contentView */
+			let view = NSBundle.mainBundle().loadNibNamed(self.contentViewName, owner: self, options: nil)[0] as! BaseView
+			view.tag = 1
+			view.cell = cell
+			view.translatesAutoresizingMaskIntoConstraints = false
+			cell.contentView.addSubview(view)
+			
+			/* We need to set the initial width so later sizing logic has it to work with */
+			cell.frame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.bounds), 100)
+			cell.contentView.frame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.bounds), 100)
+			view.frame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.bounds), 100)
+			
+			configureCell(cell) // Handles contraint and layout updates
+			return cell
+		}
 	}
 	
 	func configureCell(cell: UITableViewCell) {
@@ -288,20 +294,25 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		cell.contentView.layoutIfNeeded()
 	}
 	
-	func bindCell(cell: UITableViewCell, object: AnyObject, location: CLLocation?) -> UIView? {
+	func bindCell(cell: UITableViewCell, entity: AnyObject, location: CLLocation?) -> UIView? {
+		
+		if self.listType == .Notifications {
+			Notification.bindView(cell, entity: entity)
+			return cell
+		}
 		
 		if let view = cell.contentView.viewWithTag(1) {
 			if self.isKindOfClass(NotificationsTableViewController) {
-				Notification.bindView(view, object: object)
+				Notification.bindView(view, entity: entity)
 			}
 			else if self.isKindOfClass(BaseDetailViewController) {
-				Message.bindView(view, object: object)
+				Message.bindView(view, object: entity)
 			}
 			else if self.isKindOfClass(PatchTableViewController) {
-				Patch.bindView(view, object: object, location: location)
+				Patch.bindView(view, object: entity, location: location)
 			}
 			else if self.isKindOfClass(UserTableViewController) {
-				User.bindView(view, object: object)
+				User.bindView(view, object: entity)
 			}
 			return view
 		}
@@ -377,14 +388,14 @@ extension BaseTableViewController {
 		var cell = tableView.dequeueReusableCellWithIdentifier(CELL_IDENTIFIER)
 		
 		if cell == nil {
-			cell = buildCell(self.contentViewName!)
+			cell = buildCell()
 		}
 		
-		/* Get the data object to bind the cell to */
-		let queryResult = self.fetchedResultsController.sections![indexPath.section].objects![indexPath.row] as! QueryItem
-		
-		/* Bind the cell */
-		bindCell(cell!, object: queryResult.object, location: nil)
+		/* Bind the cell to the entity */
+		if let queryResult = self.fetchedResultsController.sections![indexPath.section].objects![indexPath.row] as? QueryItem,
+			let entity = queryResult.object as? Entity {
+			bindCell(cell!, entity: entity, location: nil)
+		}
 		
 		return cell!
 	}
@@ -444,8 +455,15 @@ extension BaseTableViewController {
 		case .Update:	// 4
 			if let cell = self.tableView.cellForRowAtIndexPath(indexPath!) {
 				let queryResult = anObject as! QueryItem
-				bindCell(cell, object: queryResult.object, location: nil)
+				bindCell(cell, entity: queryResult.object, location: nil)
 			}
 		}
 	}
+}
+
+enum ListType {
+	case Messages
+	case Notifications
+	case Users
+	case Patches
 }

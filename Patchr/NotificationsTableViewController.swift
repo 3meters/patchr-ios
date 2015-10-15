@@ -12,8 +12,9 @@ import AudioToolbox
 
 class NotificationsTableViewController: BaseTableViewController {
 
-    private var activityDate:         Int64!
-    private var nearbys:              [[NSObject: AnyObject]] = []
+    private var activityDate:   Int64!
+    private var nearbys:        [[NSObject: AnyObject]] = []
+	private var rowHeights:		NSMutableDictionary = [:]
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -32,10 +33,11 @@ class NotificationsTableViewController: BaseTableViewController {
         self.contentViewName = "NotificationView"
         self.emptyMessage = "No notifications yet"
 		self.loadMoreMessage = "LOAD MORE MESSAGES"
+		self.listType = .Notifications
 		
 		super.viewDidLoad()
 		
-		/* Used to monitor for changes */		
+		/* Used to monitor for changes */
         self.activityDate = NotificationController.instance.activityDate
 	}
 
@@ -339,9 +341,9 @@ class NotificationsTableViewController: BaseTableViewController {
 	* Cells
 	*--------------------------------------------------------------------------------------------*/
 	
-	override func bindCell(cell: UITableViewCell, object: AnyObject, location: CLLocation?) -> UIView? {
+	override func bindCell(cell: UITableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
 		
-		if let view = super.bindCell(cell, object: object, location: location) as? NotificationView {
+		if let view = super.bindCell(cell, entity: object, location: location) as? NotificationCell {
 			/* Hookup up delegates */
 			if let label = view.description_ as? TTTAttributedLabel {
 				label.delegate = self
@@ -380,40 +382,55 @@ extension NotificationsTableViewController {
     /*
     * UITableViewDelegate
     */
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        
-        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-        if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
-            let entity = queryResult.object as? Notification {
-                if entity.targetId!.hasPrefix("pa.") {
-                    if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
-                        controller.entityId = entity.targetId
-                        self.navigationController?.pushViewController(controller, animated: true)
-                    }
-                }
-                else if entity.targetId!.hasPrefix("me.") {
-                    if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
-                        controller.messageId = entity.targetId
-                        self.navigationController?.pushViewController(controller, animated: true)
-                    }
-                }
-        }
-    }
-    
-	override func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+		
+		let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
+			let entity = queryResult.object as? Notification {
+				if entity.targetId!.hasPrefix("pa.") {
+					if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
+						controller.entityId = entity.targetId
+						self.navigationController?.pushViewController(controller, animated: true)
+					}
+				}
+				else if entity.targetId!.hasPrefix("me.") {
+					if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
+						controller.messageId = entity.targetId
+						self.navigationController?.pushViewController(controller, animated: true)
+					}
+				}
+		}
+	}
+	
+	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+		if let height = quickHeight(indexPath) {
+			return height
+		}
+		else {
+			return UITableViewAutomaticDimension
+		}
+	}
+	
+	func quickHeight(indexPath: NSIndexPath) -> CGFloat? {
 		/*
 		* Using an estimate significantly improves table view load time but we can get
 		* small scrolling glitches if actual height ends up different than estimated height.
 		* So we try to provide the best estimate we can and still deliver it quickly.
 		*
-		* Note: Called once only for each row in fetchResultController when FRC is making a data pass in 
+		* Note: Called once only for each row in fetchResultController when FRC is making a data pass in
 		* response to managedContext.save.
 		*/
-		let minHeight: CGFloat = 69
-		var height: CGFloat = 44    // Base size if no description or photo
-		
 		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
 			let entity = queryResult.object as? Notification {
+				
+				if entity.id_ != nil {
+					if let cachedHeight = self.rowHeights.objectForKey(entity.id_) as? CGFloat {
+						return cachedHeight
+					}
+				}
+				
+				let minHeight: CGFloat = 64
+				var height: CGFloat = 36    // Base size if no description or photo
 				
 				let columnWidth: CGFloat = UIScreen.mainScreen().bounds.size.width - (24 /* spacing */ + 48 /* user photo */)
 				if entity.summary != nil {
@@ -421,31 +438,68 @@ extension NotificationsTableViewController {
 					let attributes = [NSFontAttributeName: UIFont(name:"HelveticaNeue-Light", size: 17)!]
 					/* Most time is spent here */
 					let rect: CGRect = description.boundingRectWithSize(CGSizeMake(columnWidth, CGFloat.max), options: .UsesLineFragmentOrigin, attributes: attributes, context: nil)
-					height += rect.height
+					let descHeight = min(rect.height, 94)
+					height += (descHeight + 8)
 				}
 				
 				if entity.photoBig != nil {
 					/* This relies on sizing and spacing of the message view */
-					height += CGFloat(Int(columnWidth * 0.5625))  // 16:9 aspect ratio
+					height += (CGFloat(Int(columnWidth * 0.5625)) + 8)  // 16:9 aspect ratio
 				}
 				
-				if entity.summary != nil && entity.photoBig != nil {
-					height += 8
+				if minHeight > height {
+					height = minHeight
 				}
+				
+				if entity.id_ != nil {
+					self.rowHeights[entity.id_] = CGFloat(height)
+				}
+				
+				return CGFloat(height + 1)
 		}
-		
-		if minHeight > height {
-			height = minHeight
+		else {
+			return nil
 		}
+	}
+	
+	func layoutHeight(indexPath: NSIndexPath) -> CGFloat? {
 		
-		return CGFloat(height)
-	}	
+		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
+			let entity = queryResult.object as? Notification {
+				
+				if entity.id_ != nil {
+					if let cachedHeight = self.rowHeights.objectForKey(entity.id_) as? CGFloat {
+						return cachedHeight
+					}
+				}
+				
+				/* Create and bind a cell */
+				let cell = buildCell()
+				bindCell(cell, entity: queryResult.object, location: nil)
+				
+				cell.setNeedsUpdateConstraints()
+				cell.updateConstraintsIfNeeded()
+				cell.setNeedsLayout()
+				cell.layoutIfNeeded()
+
+				/* Get the actual height required for the cell */
+				let height = cell.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
+				if entity.id_ != nil {
+					self.rowHeights[entity.id_] = CGFloat(height)
+				}
+				
+				return CGFloat(height)
+		}
+		else {
+			return nil
+		}
+	}
 }
 
 extension NotificationsTableViewController: ViewDelegate {
 	
     func view(container: UIView, didTapOnView view: UIView) {
-        if let view = view as? AirImageView, container = container as? NotificationView {
+        if let view = view as? AirImageView, container = container as? NotificationCell {
             if view.image != nil {
                 Shared.showPhotoBrowser(view.image, view: view, viewController: self, entity: container.entity)
             }

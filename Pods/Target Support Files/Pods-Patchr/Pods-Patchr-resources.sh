@@ -69,6 +69,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_resource "TWMessageBarManager/Classes/Icons/icon-success.png"
   install_resource "TWMessageBarManager/Classes/Icons/icon-success@2x.png"
   install_resource "libPhoneNumber-iOS/libPhoneNumber/NBPhoneNumberMetadata.plist"
+  install_resource "${BUILT_PRODUCTS_DIR}/OAStackView.bundle"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_resource "../../../../code/AirContactPicker/MBContactPicker/UserTableViewCell.xib"
@@ -82,6 +83,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_resource "TWMessageBarManager/Classes/Icons/icon-success.png"
   install_resource "TWMessageBarManager/Classes/Icons/icon-success@2x.png"
   install_resource "libPhoneNumber-iOS/libPhoneNumber/NBPhoneNumberMetadata.plist"
+  install_resource "${BUILT_PRODUCTS_DIR}/OAStackView.bundle"
 fi
 if [[ "$CONFIGURATION" == "AdHoc" ]]; then
   install_resource "../../../../code/AirContactPicker/MBContactPicker/UserTableViewCell.xib"
@@ -95,6 +97,7 @@ if [[ "$CONFIGURATION" == "AdHoc" ]]; then
   install_resource "TWMessageBarManager/Classes/Icons/icon-success.png"
   install_resource "TWMessageBarManager/Classes/Icons/icon-success@2x.png"
   install_resource "libPhoneNumber-iOS/libPhoneNumber/NBPhoneNumberMetadata.plist"
+  install_resource "${BUILT_PRODUCTS_DIR}/OAStackView.bundle"
 fi
 
 mkdir -p "${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"

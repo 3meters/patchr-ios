@@ -454,86 +454,160 @@ extension User {
 
 extension Notification {
     
-    static func bindView(view: UIView, object: AnyObject) -> UIView {
-        
-        let notification = object as! Notification
-        let view = view as! NotificationView
-        
-        view.description_.text = nil
-        
-        let linkColor = Colors.brandColorDark
-        let linkActiveColor = Colors.brandColorLight
-        
-        if let label = view.description_ as? TTTAttributedLabel {
-            label.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
-            label.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
-            label.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
-        }
+    static func bindView(view: UIView, entity: AnyObject) -> UIView {
 		
+		let notification = entity as! Notification
+		let view = view as! NotificationCell
+		
+		view.entity = notification
+		
+		view.description_.text = nil
 		if let description = notification.summary {
 			view.description_.text = description
-			view.descriptionHeight.constant = 24
+		}
+		
+		let linkColor = Colors.brandColorDark
+		let linkActiveColor = Colors.brandColorLight
+
+		if let label = view.description_ as? TTTAttributedLabel {
+			label.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
+			label.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
+			label.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
+		}
+		
+		view.userPhoto.setImageWithPhoto(notification.getPhotoManaged(), animate: view.userPhoto.image == nil)
+
+		if let photo = notification.photoBig {
+			view.photo.hidden = false
+			view.photo.setImageWithPhoto(photo, animate: view.photo.image == nil)
 		}
 		else {
-			view.descriptionHeight.constant = 0
-			view.photoTopSpace.constant = 0
+			view.photo.hidden = true
 		}
 		
-        if let photo = notification.photoBig {
-            view.photo.setImageWithPhoto(photo, animate: view.photo.image == nil)
-            view.photoTopSpace.constant = 8
-			view.photoHeight.constant = CGFloat(Int(view.photo.bounds.size.width * 0.5625))	// 16:9 aspect ratio
-        }
-        else {
-            view.photoTopSpace.constant = 0
-            view.photoHeight.constant = 0
-        }
-        
-        view.userPhoto.setImageWithPhoto(notification.getPhotoManaged(), animate: view.userPhoto.image == nil)
-		
-        view.createdDate.text = Utils.messageDateFormatter.stringFromDate(notification.createdDate)
-        
-        /* Age indicator */
-        view.ageDot.layer.backgroundColor = Colors.accentColor.CGColor
-        let now = NSDate()
-        
-        /* Age of notification in hours */
-        let interval = Int(now.timeIntervalSinceDate(NSDate(timeIntervalSince1970: notification.createdDate.timeIntervalSince1970)) / 3600)
-        if interval > 12 {
-            view.ageDot.alpha = 0.0
-        }
-        else if interval > 1 {
-            view.ageDot.alpha = 0.25
-        }
-        else {
-            view.ageDot.alpha = 1.0
-        }
-		
+		view.createdDate.text = Utils.messageDateFormatter.stringFromDate(notification.createdDate)
+
+		/* Age indicator */
+		view.ageDot.layer.backgroundColor = Colors.accentColor.CGColor
+		let now = NSDate()
+
+		/* Age of notification in hours */
+		let interval = Int(now.timeIntervalSinceDate(NSDate(timeIntervalSince1970: notification.createdDate.timeIntervalSince1970)) / 3600)
+		if interval > 12 {
+			view.ageDot.alpha = 0.0
+		}
+		else if interval > 1 {
+			view.ageDot.alpha = 0.25
+		}
+		else {
+			view.ageDot.alpha = 1.0
+		}
+
 		/* Type indicator image */
-        if notification.type == "media" {
-            view.iconImageView.image = Utils.imageMedia
-        }
-        else if notification.type == "message" {
-            view.iconImageView.image = Utils.imageMessage
-        }
-        else if notification.type == "watch" {
-            view.iconImageView.image = Utils.imageWatch
-        }
-        else if notification.type == "like" {
-            if notification.targetId.hasPrefix("pa.") {
-                view.iconImageView.image = Utils.imageStar
-            }
-            else {
-                view.iconImageView.image = Utils.imageLike
-            }
-        }
-        else if notification.type == "share" {
-            view.iconImageView.image = Utils.imageShare
-        }
-        else if notification.type == "nearby" {
-            view.iconImageView.image = Utils.imageLocation
-        }        
+		if notification.type == "media" {
+			view.iconImageView.image = Utils.imageMedia
+		}
+		else if notification.type == "message" {
+			view.iconImageView.image = Utils.imageMessage
+		}
+		else if notification.type == "watch" {
+			view.iconImageView.image = Utils.imageWatch
+		}
+		else if notification.type == "like" {
+			if notification.targetId.hasPrefix("pa.") {
+				view.iconImageView.image = Utils.imageStar
+			}
+			else {
+				view.iconImageView.image = Utils.imageLike
+			}
+		}
+		else if notification.type == "share" {
+			view.iconImageView.image = Utils.imageShare
+		}
+		else if notification.type == "nearby" {
+			view.iconImageView.image = Utils.imageLocation
+		}        
 		view.iconImageView.tintColor(Colors.brandColor)
+		
+
+//        let notification = object as! Notification
+//        let view = view as! NotificationView
+//        
+//        view.description_.text = nil
+//        
+//        let linkColor = Colors.brandColorDark
+//        let linkActiveColor = Colors.brandColorLight
+//        
+//        if let label = view.description_ as? TTTAttributedLabel {
+//            label.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
+//            label.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
+//            label.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
+//        }
+//		
+//		if let description = notification.summary {
+//			view.description_.text = description
+//			view.descriptionHeight.constant = 24
+//		}
+//		else {
+//			view.descriptionHeight.constant = 0
+//			view.photoTopSpace.constant = 0
+//		}
+//		
+//        if let photo = notification.photoBig {
+//            view.photo.setImageWithPhoto(photo, animate: view.photo.image == nil)
+//            view.photoTopSpace.constant = 8
+//			view.photoHeight.constant = CGFloat(Int(view.photo.bounds.size.width * 0.5625))	// 16:9 aspect ratio
+//        }
+//        else {
+//            view.photoTopSpace.constant = 0
+//            view.photoHeight.constant = 0
+//        }
+//        
+//        view.userPhoto.setImageWithPhoto(notification.getPhotoManaged(), animate: view.userPhoto.image == nil)
+//		
+//        view.createdDate.text = Utils.messageDateFormatter.stringFromDate(notification.createdDate)
+//        
+//        /* Age indicator */
+//        view.ageDot.layer.backgroundColor = Colors.accentColor.CGColor
+//        let now = NSDate()
+//        
+//        /* Age of notification in hours */
+//        let interval = Int(now.timeIntervalSinceDate(NSDate(timeIntervalSince1970: notification.createdDate.timeIntervalSince1970)) / 3600)
+//        if interval > 12 {
+//            view.ageDot.alpha = 0.0
+//        }
+//        else if interval > 1 {
+//            view.ageDot.alpha = 0.25
+//        }
+//        else {
+//            view.ageDot.alpha = 1.0
+//        }
+//		
+//		/* Type indicator image */
+//        if notification.type == "media" {
+//            view.iconImageView.image = Utils.imageMedia
+//        }
+//        else if notification.type == "message" {
+//            view.iconImageView.image = Utils.imageMessage
+//        }
+//        else if notification.type == "watch" {
+//            view.iconImageView.image = Utils.imageWatch
+//        }
+//        else if notification.type == "like" {
+//            if notification.targetId.hasPrefix("pa.") {
+//                view.iconImageView.image = Utils.imageStar
+//            }
+//            else {
+//                view.iconImageView.image = Utils.imageLike
+//            }
+//        }
+//        else if notification.type == "share" {
+//            view.iconImageView.image = Utils.imageShare
+//        }
+//        else if notification.type == "nearby" {
+//            view.iconImageView.image = Utils.imageLocation
+//        }        
+//		view.iconImageView.tintColor(Colors.brandColor)
 		
         return view
     }

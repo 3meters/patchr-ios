@@ -28,6 +28,7 @@ class PatchTableViewController: BaseTableViewController {
         
 		/* Strings */
 		self.loadMoreMessage = "LOAD MORE PATCHES"
+		self.listType = .Patches
 		
         switch self.filter {
             case .Nearby:
@@ -288,14 +289,14 @@ class PatchTableViewController: BaseTableViewController {
 	* Cells
 	*--------------------------------------------------------------------------------------------*/
 	
-	override func bindCell(cell: UITableViewCell, object: AnyObject, location: CLLocation?) -> UIView? {
+	override func bindCell(cell: UITableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
 		
 		var location = self.location
 		if self.filter == .Nearby || location == nil {
 			location = LocationController.instance.lastLocationFromManager()
 		}
 		
-		super.bindCell(cell, object: object, location: location)
+		super.bindCell(cell, entity: object, location: location)
 		
 		return nil
 	}

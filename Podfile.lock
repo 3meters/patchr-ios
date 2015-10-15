@@ -55,8 +55,10 @@ PODS:
   - libPhoneNumber-iOS (0.8.5)
   - Lockbox (2.1.0)
   - MBProgressHUD (0.9.1)
+  - OAStackView (0.2.0)
   - PBWebViewController (0.3)
   - pop (1.0.8)
+  - PureLayout (3.0.1)
   - RMCoreDataStack (0.1.6)
   - SDWebImage (3.7.3):
     - SDWebImage/Core (= 3.7.3)
@@ -79,8 +81,10 @@ DEPENDENCIES:
   - libPhoneNumber-iOS (~> 0.7)
   - Lockbox
   - MBProgressHUD (~> 0.9.1)
+  - OAStackView
   - PBWebViewController (~> 0.3)
   - pop (~> 1.0)
+  - PureLayout
   - RMCoreDataStack
   - SDWebImage (~> 3.7.2)
   - TWMessageBarManager
@@ -115,8 +119,10 @@ SPEC CHECKSUMS:
   libPhoneNumber-iOS: b8ccd23576379caca37c7cbdd554addf384459ed
   Lockbox: 16442da35d9d4286966936763be728a931d589c3
   MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
+  OAStackView: a05adfec3669a5187b968a8c0a2690ae517271b6
   PBWebViewController: 909b1505da6ba7c5c82519a6457246027926061e
   pop: bb773ae2c791ca2629de13b347e7a8b450fa6a57
+  PureLayout: f35f5384c9c4e4479df041dbe33ad7577b71ddfb
   RMCoreDataStack: 58d81989a529a357dd1c5eda12a86ff5f13684b4
   SDWebImage: 1d2b1a1efda1ade1b00b6f8498865f8ddedc8a84
   TWMessageBarManager: e7adc066ee425174f5dee79473fce913b1cd1662

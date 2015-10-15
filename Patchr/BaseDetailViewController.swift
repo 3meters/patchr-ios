@@ -30,7 +30,8 @@ class BaseDetailViewController: BaseTableViewController {
         self.showEmptyLabel = false
         self.showProgress = true
         self.progressOffset = 80
-		self.loadMoreMessage = "LOAD MORE MESSAGES"		
+		self.loadMoreMessage = "LOAD MORE MESSAGES"
+		self.listType = .Messages
         
         /* Use cached entity if available in the data model */
         if self.entityId != nil {
@@ -152,9 +153,9 @@ class BaseDetailViewController: BaseTableViewController {
 	* Cells
 	*--------------------------------------------------------------------------------------------*/
 	
-	override func bindCell(cell: UITableViewCell, object: AnyObject, location: CLLocation?) -> UIView? {
+	override func bindCell(cell: UITableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
 		
-		if let view = super.bindCell(cell, object: object, location: location) as? MessageView {
+		if let view = super.bindCell(cell, entity: object, location: location) as? MessageView {
 			/* Hookup up delegates */
 			if let label = view.description_ as? TTTAttributedLabel {
 				label.delegate = self
