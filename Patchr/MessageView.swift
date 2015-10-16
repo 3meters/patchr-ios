@@ -12,14 +12,14 @@ class MessageView: BaseView {
     
     var entity: Entity?
     
+	@IBOutlet weak var createdDate:			UILabel!
+	@IBOutlet weak var description_:		UILabel!
+	@IBOutlet weak var likes:				UILabel!
     @IBOutlet weak var patchName:			UILabel!
-    @IBOutlet weak var userPhoto:			AirImageView!
     @IBOutlet weak var userName:			UILabel!
-    @IBOutlet weak var likes:				UILabel!
-    @IBOutlet weak var likeButton:			AirLikeButton!
-    @IBOutlet weak var createdDate:			UILabel!
-    @IBOutlet weak var description_:		UILabel!
-    @IBOutlet weak var photo:				AirImageView!
+	@IBOutlet weak var photo:				AirImageView!
+	@IBOutlet weak var userPhoto:			AirImageView!
+	@IBOutlet weak var likeButton:			AirLikeButton!
     @IBOutlet weak var toolbar:				UIView!
 	
 	@IBOutlet weak var descriptionHeight:   NSLayoutConstraint!

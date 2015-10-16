@@ -155,13 +155,13 @@ class BaseDetailViewController: BaseTableViewController {
 	
 	override func bindCell(cell: UITableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
 		
-		if let view = super.bindCell(cell, entity: object, location: location) as? MessageView {
+		if let view = super.bindCell(cell, entity: object, location: location) as? MessageCell {
 			/* Hookup up delegates */
 			if let label = view.description_ as? TTTAttributedLabel {
 				label.delegate = self
 			}
 			if !self.patchNameVisible {
-				view.patchNameHeight?.constant = 0
+				view.patchName.hidden = true
 			}
 			view.delegate = self
 		}
@@ -204,7 +204,33 @@ extension BaseDetailViewController {
         }
     }
 	
+	override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+		Log.d("Will display cell: height: \(cell.bounds.size.height), index: \(indexPath.row)")
+	}
+	
+//	override func tableView(tableView: UITableView, didEndDisplayingCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+//		Log.d("Did display cell: height: \(cell.bounds.size.height), index: \(indexPath.row)")
+//	}
+	
 	override func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+		if let height = quickHeight(indexPath) {
+			return height
+		}
+		else {
+			return UITableViewAutomaticDimension
+		}
+	}
+	
+//	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+//		if let height = quickHeight(indexPath) {
+//			return height
+//		}
+//		else {
+//			return UITableViewAutomaticDimension
+//		}
+//	}
+	
+	func quickHeight(indexPath: NSIndexPath) -> CGFloat? {
 		/*
 		* Using an estimate significantly improves table view load time but we can get
 		* small scrolling glitches if actual height ends up different than estimated height.
@@ -213,36 +239,55 @@ extension BaseDetailViewController {
 		* Note: Called once only for each row in fetchResultController when FRC is making a data pass in
 		* response to managedContext.save.
 		*/
-		let minHeight: CGFloat = 76
-		var height: CGFloat = 76    // Base size if no description or photo
-		
 		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
-			let entity = queryResult.object as? Entity {
+			let entity = queryResult.object as? Message {
 				
-				let columnWidth: CGFloat = UIScreen.mainScreen().bounds.size.width - (24 /* spacing */ + 48 /* user photo */)
+				if entity.id_ != nil {
+					if let cachedHeight = self.rowHeights.objectForKey(entity.id_) as? CGFloat {
+						return cachedHeight
+					}
+				}
+				
+				let minHeight: CGFloat = 64
+				var height: CGFloat = (self.patchNameVisible && entity.patch?.name != nil) ? 94 : 70    // Base size if no description or photo
+				
+				let columnWidth: CGFloat = self.tableView.bounds.size.width - (24 /* spacing */ + 48 /* user photo */)
 				if entity.description_ != nil {
+					
 					let description = entity.description_ as NSString
 					let attributes = [NSFontAttributeName: UIFont(name:"HelveticaNeue-Light", size: 17)!]
+					let options: NSStringDrawingOptions = [NSStringDrawingOptions.UsesLineFragmentOrigin, NSStringDrawingOptions.UsesFontLeading]
+					
 					/* Most time is spent here */
-					let rect: CGRect = description.boundingRectWithSize(CGSizeMake(columnWidth, CGFloat.max), options: [.UsesLineFragmentOrigin, .TruncatesLastVisibleLine], attributes: attributes, context: nil)
-					height += rect.height
+					let rect: CGRect = description.boundingRectWithSize(CGSizeMake(columnWidth, CGFloat.max),
+						options: options,
+						attributes: attributes,
+						context: nil)
+					
+					let descHeight = min(rect.height, 102.272)	// Cap height to ~5 lines
+					height += (descHeight + 8)
 				}
 				
 				if entity.photo != nil {
 					/* This relies on sizing and spacing of the message view */
-					height += CGFloat(Int(columnWidth * 0.5625))  // 16:9 aspect ratio
+					height += (CGFloat(Int(columnWidth * 0.5625)) + 8)  // 16:9 aspect ratio
 				}
 				
-				if entity.description_ != nil && entity.photo != nil {
-					height += 8
+				if minHeight > height {
+					height = minHeight
 				}
+				
+				if entity.id_ != nil {
+					self.rowHeights[entity.id_] = CGFloat(height)
+				}
+				
+				Log.d("Quick measure cell: height: \(height + 1), index: \(indexPath.row)")
+				
+				return CGFloat(height + 1)  // Add one for row separator
 		}
-		
-		if minHeight > height {
-			height = minHeight
+		else {
+			return nil
 		}
-		
-		return CGFloat(height)
 	}
 }
 

@@ -336,7 +336,7 @@ class MessageDetailViewController: UITableViewController {
             if self.message?.message != nil {
                 view = NSBundle.mainBundle().loadNibNamed("MessageView", owner: self, options: nil)[0] as! BaseView
                 view.frame.size.width = self.shareHolder.bounds.size.width
-                Message.bindView(view, object: self.message!.message!)
+                Message.bindView(view, entity: self.message!.message!)
                 
                 /* Tweak the message view to suit display as static */
                 if let messageView = view as? MessageView {

@@ -14,7 +14,6 @@ class NotificationsTableViewController: BaseTableViewController {
 
     private var activityDate:   Int64!
     private var nearbys:        [[NSObject: AnyObject]] = []
-	private var rowHeights:		NSMutableDictionary = [:]
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -432,14 +431,21 @@ extension NotificationsTableViewController {
 				let minHeight: CGFloat = 64
 				var height: CGFloat = 36    // Base size if no description or photo
 				
-				let columnWidth: CGFloat = UIScreen.mainScreen().bounds.size.width - (24 /* spacing */ + 48 /* user photo */)
+				let columnWidth: CGFloat = self.tableView.bounds.size.width - (24 /* spacing */ + 48 /* user photo */)
 				if entity.summary != nil {
+					
 					let description = entity.summary as NSString
 					let attributes = [NSFontAttributeName: UIFont(name:"HelveticaNeue-Light", size: 17)!]
+					let options: NSStringDrawingOptions = [NSStringDrawingOptions.UsesLineFragmentOrigin, NSStringDrawingOptions.UsesFontLeading]
+					
 					/* Most time is spent here */
-					let rect: CGRect = description.boundingRectWithSize(CGSizeMake(columnWidth, CGFloat.max), options: .UsesLineFragmentOrigin, attributes: attributes, context: nil)
-					let descHeight = min(rect.height, 94)
-					height += (descHeight + 8)
+					let rect: CGRect = description.boundingRectWithSize(CGSizeMake(columnWidth, CGFloat.max),
+						options: options,
+						attributes: attributes,
+						context: nil)
+					
+					let descHeight = min(rect.height, 102.272)	// Cap at ~5 lines
+					height += (descHeight + 8 + 0.5)
 				}
 				
 				if entity.photoBig != nil {
@@ -455,7 +461,7 @@ extension NotificationsTableViewController {
 					self.rowHeights[entity.id_] = CGFloat(height)
 				}
 				
-				return CGFloat(height + 1)
+				return CGFloat(height + 1)	// Add one for row separator
 		}
 		else {
 			return nil

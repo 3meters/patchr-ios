@@ -22,6 +22,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	var loadMoreMessage: String = "LOAD MORE"
     var offscreenCells: NSMutableDictionary = NSMutableDictionary()
 	var listType: ListType = .Patches
+	var rowHeights: NSMutableDictionary = [:]
 	
 	var contentViewName: String?
 	var ignoreNextUpdates: Bool = false
@@ -88,7 +89,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		* first load; it will only be called as cells are about to scroll onscreen. This is a major
 		* performance optimization.
 		*/
-		self.tableView.estimatedRowHeight = 65
+		self.tableView.estimatedRowHeight = 2
 		
 		/* Self sizing table view cells require this setting */
 		self.tableView.rowHeight = UITableViewAutomaticDimension
@@ -239,6 +240,10 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 			let cell = NotificationCell(style: UITableViewCellStyle.Value1, cellType: cellType, reuseIdentifier: cellType.rawValue)
 			return cell
 		}
+		else if self.listType == .Messages {
+			let cell = MessageCell(style: UITableViewCellStyle.Value1, cellType: cellType, reuseIdentifier: cellType.rawValue)
+			return cell
+		}
 		else {
 			let cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: cellType.rawValue)
 			cell.separatorInset = UIEdgeInsetsZero
@@ -301,14 +306,13 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 			return cell
 		}
 		
+		if self.listType == .Messages {
+			Message.bindView(cell, entity: entity)
+			return cell
+		}
+		
 		if let view = cell.contentView.viewWithTag(1) {
-			if self.isKindOfClass(NotificationsTableViewController) {
-				Notification.bindView(view, entity: entity)
-			}
-			else if self.isKindOfClass(BaseDetailViewController) {
-				Message.bindView(view, object: entity)
-			}
-			else if self.isKindOfClass(PatchTableViewController) {
+			if self.isKindOfClass(PatchTableViewController) {
 				Patch.bindView(view, object: entity, location: location)
 			}
 			else if self.isKindOfClass(UserTableViewController) {
@@ -391,12 +395,22 @@ extension BaseTableViewController {
 		let entity = queryResult!.object as? Entity
 				
 		var cellType: CellType = .TextAndPhoto
+		
 		if self.listType == .Notifications {
 			let notification = entity as! Notification
 			if notification.photoBig == nil {
 				cellType = .Text
 			}
 			else if notification.summary == nil {
+				cellType = .Photo
+			}
+		}
+		else if self.listType == .Messages {
+			let message = entity as! Message
+			if message.photo == nil {
+				cellType = .Text
+			}
+			else if message.description_ == nil {
 				cellType = .Photo
 			}
 		}

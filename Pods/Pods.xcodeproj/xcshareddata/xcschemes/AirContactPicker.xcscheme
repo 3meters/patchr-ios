@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CA12CFB0E57F3C8CCC27F8258FFE3D7B"
+               BlueprintIdentifier = "F007799834EB58B2CC6C7D57DD31FE84"
                BuildableName = "libAirContactPicker.a"
                BlueprintName = "AirContactPicker"
                ReferencedContainer = "container:Pods.xcodeproj">

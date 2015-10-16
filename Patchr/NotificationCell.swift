@@ -20,8 +20,6 @@ class NotificationCell: UITableViewCell {
 	var iconImageView = UIImageView(frame: CGRectZero)
 	var ageDot = UIView()
 	var createdDate = UILabel()
-	var footer: OAStackView!
-	var body: OAStackView!	
 	
 	weak var delegate: ViewDelegate?
 	
@@ -45,91 +43,113 @@ class NotificationCell: UITableViewCell {
 	
 	func configure() {
 		
-		self.footer = OAStackView(arrangedSubviews: [self.iconImageView, self.createdDate, self.ageDot])
-		
-		let components = (self.cellType == .TextAndPhoto)
-			? [self.description_, self.photo, footer]
-			: (self.cellType == .Text)
-			? [self.description_, footer]
-			: [self.photo, footer]
-		
-		self.body = OAStackView(arrangedSubviews: components)
-		
-		self.footer.translatesAutoresizingMaskIntoConstraints = false
-		self.footer.axis = UILayoutConstraintAxis.Horizontal
-		self.footer.alignment = OAStackViewAlignment.Leading
-		self.footer.spacing = CGFloat(8)
-		
-		self.body.translatesAutoresizingMaskIntoConstraints = false
-		self.body.axis = UILayoutConstraintAxis.Vertical
-		self.body.alignment = OAStackViewAlignment.Fill
-		self.body.spacing = CGFloat(8)
-		
 		/* Description */
 		if self.cellType != .Photo {
+			self.description_.translatesAutoresizingMaskIntoConstraints = false
 			self.description_.numberOfLines = 5
 			self.description_.lineBreakMode = .ByTruncatingTail
 			self.description_.font = UIFont(name: "HelveticaNeue-Light", size: 17)
+			self.contentView.addSubview(self.description_)
 		}
 		
 		/* Photo */
 		if self.cellType != .Text {
+			self.photo.translatesAutoresizingMaskIntoConstraints = false
 			self.photo.contentMode = UIViewContentMode.ScaleAspectFill
 			self.photo.clipsToBounds = true
 			self.photo.userInteractionEnabled = true
+			self.contentView.addSubview(self.photo)
+			
 			let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: "tapGestureRecognizerAction:")
 			self.photo.addGestureRecognizer(tapGestureRecognizer)
 		}
 		
 		/* User photo */
+		self.userPhoto.translatesAutoresizingMaskIntoConstraints = false
 		self.userPhoto.contentMode = UIViewContentMode.ScaleAspectFill
 		self.userPhoto.clipsToBounds = true
 		self.userPhoto.layer.cornerRadius = 24
+		self.contentView.addSubview(self.userPhoto)
 		
 		/* Footer */
-		self.ageDot.layer.cornerRadius = 6
+		self.createdDate.translatesAutoresizingMaskIntoConstraints = false
 		self.createdDate.font = UIFont(name: "HelveticaNeue-Light", size: 15)
-		self.createdDate.textColor = UIColor.darkGrayColor()
+		self.createdDate.textColor = Colors.secondaryText
+		self.iconImageView.translatesAutoresizingMaskIntoConstraints = false
+		self.ageDot.translatesAutoresizingMaskIntoConstraints = false
+		self.ageDot.layer.cornerRadius = 6
 		
-		/* Assemble */
-		self.contentView.addSubview(self.userPhoto)
-		self.contentView.addSubview(self.body)
+		self.contentView.addSubview(self.iconImageView)
+		self.contentView.addSubview(self.createdDate)
+		self.contentView.addSubview(self.ageDot)
 	}
 	
 	override func updateConstraints() {
 		if !self.didSetupConstraints {
 			
+			let bottomView = (self.cellType == .Text) ? self.description_ : self.photo
+			
 			/* Prevent the body from being compressed below its intrinsic content height */
-			if self.cellType != .Photo {
+			if self.cellType == .TextAndPhoto {
+				self.description_.autoPinEdge(.Leading, toEdge: .Leading, ofView: self.contentView, withOffset: 64)
+				self.description_.autoPinEdge(.Trailing, toEdge: .Trailing, ofView: self.contentView, withOffset: -8)
+				self.description_.autoPinEdge(.Top, toEdge: .Top, ofView: self.contentView, withOffset: 8)
+				self.description_.autoPinEdge(.Bottom, toEdge: .Top, ofView: self.photo, withOffset: -8)
+				NSLayoutConstraint.autoSetPriority(1000) {
+					self.description_.autoSetContentCompressionResistancePriorityForAxis(.Vertical)
+				}
+				
+				self.photo.autoMatchDimension(.Height, toDimension: .Width, ofView: self.photo, withMultiplier: 0.5625)
+				
+				self.photo.autoPinEdge(.Leading, toEdge: .Leading, ofView: self.contentView, withOffset: 64)
+				self.photo.autoPinEdge(.Trailing, toEdge: .Trailing, ofView: self.contentView, withOffset: -8)
+				self.photo.autoPinEdge(.Top, toEdge: .Bottom, ofView: self.description_, withOffset: 8)
+				self.photo.autoPinEdge(.Bottom, toEdge: .Top, ofView: self.iconImageView, withOffset: -8)
+				NSLayoutConstraint.autoSetPriority(1000) {
+					self.photo.autoSetContentCompressionResistancePriorityForAxis(.Vertical)
+				}
+			}
+				
+			if self.cellType == .Photo {
+				self.photo.autoMatchDimension(.Height, toDimension: .Width, ofView: self.photo, withMultiplier: 0.5625)
+				self.photo.autoPinEdge(.Leading, toEdge: .Leading, ofView: self.contentView, withOffset: 64)
+				self.photo.autoPinEdge(.Trailing, toEdge: .Trailing, ofView: self.contentView, withOffset: -8)
+				self.photo.autoPinEdge(.Top, toEdge: .Bottom, ofView: self.contentView, withOffset: 8)
+				self.photo.autoPinEdge(.Bottom, toEdge: .Top, ofView: self.iconImageView, withOffset: -8)
+				NSLayoutConstraint.autoSetPriority(1000) {
+					self.photo.autoSetContentCompressionResistancePriorityForAxis(.Vertical)
+				}
+			}
+			
+			if self.cellType == .Text {
+				self.description_.autoPinEdge(.Leading, toEdge: .Leading, ofView: self.contentView, withOffset: 64)
+				self.description_.autoPinEdge(.Trailing, toEdge: .Trailing, ofView: self.contentView, withOffset: -8)
+				self.description_.autoPinEdge(.Top, toEdge: .Top, ofView: self.contentView, withOffset: 8)
+				self.description_.autoPinEdge(.Bottom, toEdge: .Top, ofView: self.iconImageView, withOffset: -8)
 				NSLayoutConstraint.autoSetPriority(1000) {
 					self.description_.autoSetContentCompressionResistancePriorityForAxis(.Vertical)
 				}
 			}
 			
-			if self.cellType != .Text {
-				NSLayoutConstraint.autoSetPriority(1000) {
-					self.photo.autoSetContentCompressionResistancePriorityForAxis(.Vertical)
-					self.photo.autoMatchDimension(.Height, toDimension: .Width, ofView: self.photo, withMultiplier: 0.5625)
-				}
-			}
-			
-			/* Body */
-			NSLayoutConstraint.autoSetPriority(1000) {
-				self.body.autoSetContentCompressionResistancePriorityForAxis(.Vertical)
-			}
-			self.body.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsets(top: 8, left: 64, bottom: 8, right: 8), excludingEdge: .Bottom)
-			
 			/* User photo */
-			NSLayoutConstraint.autoSetPriority(999) {
-				self.userPhoto.autoSetDimensionsToSize(CGSizeMake(48, 48))
-			}
+			self.userPhoto.autoSetDimensionsToSize(CGSizeMake(48, 48))
 			self.userPhoto.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: self.contentView, withOffset: -8, relation: .LessThanOrEqual)
 			self.userPhoto.autoPinEdge(.Leading, toEdge: .Leading, ofView: self.contentView, withOffset: 8)
 			self.userPhoto.autoPinEdge(.Top, toEdge: .Top, ofView: self.contentView, withOffset: 8)
 			
 			/* Footer */
 			self.iconImageView.autoSetDimensionsToSize(CGSizeMake(20, 20))
+			self.iconImageView.autoPinEdge(.Leading, toEdge: .Leading, ofView: self.contentView, withOffset: 64)
+			self.iconImageView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: self.contentView, withOffset: -8)
+			self.iconImageView.autoPinEdge(.Top, toEdge: .Bottom, ofView: bottomView, withOffset: 8)
+			
+			self.createdDate.autoSetDimension(.Height, toSize: 18)
+			self.createdDate.autoPinEdge(.Leading, toEdge: .Trailing, ofView: self.iconImageView, withOffset: 8)
+			self.createdDate.autoAlignAxis(.Horizontal, toSameAxisOfView: self.iconImageView)
+			
 			self.ageDot.autoSetDimensionsToSize(CGSizeMake(12, 12))
+			self.ageDot.autoPinEdge(.Leading, toEdge: .Trailing, ofView: self.createdDate, withOffset: 8)
+			self.ageDot.autoAlignAxis(.Horizontal, toSameAxisOfView: self.iconImageView)
 			
 			self.didSetupConstraints = true
 		}

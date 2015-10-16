@@ -228,17 +228,12 @@ extension Patch {
 
 extension Message {
     
-    static func bindView(view: UIView, object: AnyObject) -> UIView {
+    static func bindView(view: UIView, entity: AnyObject) -> UIView {
         
-        let entity = object as! Entity
-        let view = view as! MessageView
+        let entity = entity as! Entity
+        let view = view as! MessageCell
         
         view.entity = entity
-        
-        view.description_.text = nil
-        view.userName.text = nil
-        view.patchName.text = nil
-        view.patchNameHeight?.constant = 0
         
         let linkColor = Colors.brandColorDark
         let linkActiveColor = Colors.brandColorLight
@@ -251,30 +246,19 @@ extension Message {
 		
 		if let description = entity.description_ {
 			view.description_.text = description
-			view.descriptionHeight?.constant = 24
-		}
-		else {
-			view.descriptionHeight?.constant = 0
-			view.photoTopSpace?.constant = 0
 		}
 		
         if let photo = entity.photo {
             view.photo.setImageWithPhoto(photo, animate: view.photo.image == nil)
-            view.photoTopSpace?.constant = 8
-			view.photoHeight?.constant = CGFloat(Int(view.photo.bounds.size.width * 0.5625))	// 16:9 aspect ratio
         }
-		else {
-			view.photoTopSpace?.constant = 0
-			view.photoHeight?.constant = 0
-		}
 		
         if let creator = entity.creator {
             view.userName.text = creator.name
-            view.userPhoto.setImageWithPhoto(creator.getPhotoManaged(), animate: view.userPhoto.image == nil)
+            view.userPhoto.setImageWithPhoto(creator.getPhotoManaged(), animate: false)
         }
         else {
             view.userName.text = "Deleted"
-            view.userPhoto.setImageWithPhoto(Entity.getDefaultPhoto("user", id: nil))
+			view.userPhoto.setImageWithPhoto(Entity.getDefaultPhoto("user", id: nil), animate: false)
         }
 		
 		if let message = entity as? Message {
@@ -282,21 +266,16 @@ extension Message {
 			/* Patch */
 			if message.patch != nil {
 				view.patchName.text = message.patch.name
-				view.patchNameHeight?.constant = 18
 			}
 			/* Likes button */
-			
 			view.likeButton.bindEntity(message)
-			view.likeButton.imageView!.tintColor(Colors.brandColor)
 			
-			view.likes.hidden = true
 			if message.countLikes != nil {
 				if message.countLikes?.integerValue != 0 {
 					let likesTitle = message.countLikes?.integerValue == 1
 						? "\(message.countLikes) like"
 						: "\(message.countLikes ?? 0) likes"
 					view.likes.text = likesTitle
-					view.likes.hidden = false
 				}
 			}
 		}
@@ -461,7 +440,6 @@ extension Notification {
 		
 		view.entity = notification
 		
-		view.description_.text = nil
 		if let description = notification.summary {
 			view.description_.text = description
 		}
@@ -475,7 +453,7 @@ extension Notification {
 			label.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
 		}
 		
-		view.userPhoto.setImageWithPhoto(notification.getPhotoManaged(), animate: view.userPhoto.image == nil)
+		view.userPhoto.setImageWithPhoto(notification.getPhotoManaged(), animate: false)
 
 		if let photo = notification.photoBig {
 			view.photo.setImageWithPhoto(photo, animate: view.photo.image == nil)

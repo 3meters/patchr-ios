@@ -236,7 +236,7 @@ class MessageEditViewController: EntityEditViewController {
             else if self.shareSchema == Schema.ENTITY_MESSAGE {
                 view = NSBundle.mainBundle().loadNibNamed("MessageView", owner: self, options: nil)[0] as! BaseView
                 view.frame.size.width = self.shareHolder.bounds.size.width
-                Message.bindView(view, object: self.shareEntity!)
+                Message.bindView(view, entity: self.shareEntity!)
                 view.frame.size.height = view.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
                 self.shareHolder?.addSubview(view)
             }

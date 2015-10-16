@@ -37,6 +37,7 @@ PODS:
   - Fabric (1.5.5):
     - Fabric/Base (= 1.5.5)
   - Fabric/Base (1.5.5)
+  - Facade (1.1.0)
   - Google/Analytics (1.0.7):
     - Google/Core
     - GoogleAnalytics (~> 3.12)
@@ -55,10 +56,8 @@ PODS:
   - libPhoneNumber-iOS (0.8.5)
   - Lockbox (2.1.0)
   - MBProgressHUD (0.9.1)
-  - OAStackView (0.2.0)
   - PBWebViewController (0.3)
   - pop (1.0.8)
-  - PureLayout (3.0.1)
   - RMCoreDataStack (0.1.6)
   - SDWebImage (3.7.3):
     - SDWebImage/Core (= 3.7.3)
@@ -75,16 +74,15 @@ DEPENDENCIES:
   - Branch
   - Crashlytics
   - Fabric
+  - Facade
   - Google/Analytics (~> 1.0.0)
   - Harpy
   - Keys (from `Pods/CocoaPodsKeys`)
   - libPhoneNumber-iOS (~> 0.7)
   - Lockbox
   - MBProgressHUD (~> 0.9.1)
-  - OAStackView
   - PBWebViewController (~> 0.3)
   - pop (~> 1.0)
-  - PureLayout
   - RMCoreDataStack
   - SDWebImage (~> 3.7.2)
   - TWMessageBarManager
@@ -109,6 +107,7 @@ SPEC CHECKSUMS:
   Crashlytics: 41c082440d2e14da444186fff65e79c0b4b35d4c
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   Fabric: 190bf1a6eb65f7500de1347d027d2e59a7e53db1
+  Facade: 509c4a0e5fa8517d5e0e1e47251b520775904a9a
   Google: 875f5a8ade86dd02e36586e4a54814843938c7f6
   GoogleAnalytics: fcf1f1cad57ae1a9a53520018f0f680ceeeb8b49
   GoogleNetworkingUtilities: 292992ab31b7b4ba32809a0e8b40e324cdfb2c0c
@@ -119,10 +118,8 @@ SPEC CHECKSUMS:
   libPhoneNumber-iOS: b8ccd23576379caca37c7cbdd554addf384459ed
   Lockbox: 16442da35d9d4286966936763be728a931d589c3
   MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
-  OAStackView: a05adfec3669a5187b968a8c0a2690ae517271b6
   PBWebViewController: 909b1505da6ba7c5c82519a6457246027926061e
   pop: bb773ae2c791ca2629de13b347e7a8b450fa6a57
-  PureLayout: f35f5384c9c4e4479df041dbe33ad7577b71ddfb
   RMCoreDataStack: 58d81989a529a357dd1c5eda12a86ff5f13684b4
   SDWebImage: 1d2b1a1efda1ade1b00b6f8498865f8ddedc8a84
   TWMessageBarManager: e7adc066ee425174f5dee79473fce913b1cd1662
