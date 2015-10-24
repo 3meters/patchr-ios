@@ -33,6 +33,9 @@ class DataController: NSObject {
 	var managedObjectContext: NSManagedObjectContext!
     var activityDate: Int64
     var currentPatch: Patch?    // Currently used for message context
+	
+	var backgroundQueue = NSOperationQueue()
+	var imageQueue = NSOperationQueue()
 
 	private lazy var schemaDictionary: [String:ServiceBase.Type] = {
 		return [
@@ -46,6 +49,8 @@ class DataController: NSObject {
 
 	private override init() {
         self.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
+		self.backgroundQueue.name = "Background queue"
+		self.imageQueue.name = "Image processing queue"
 		super.init()
 
 		let coreDataConfiguration = RMCoreDataConfiguration()
@@ -152,6 +157,7 @@ class DataController: NSObject {
 
                             let dataWrapper = ServiceData()
                             ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper, mappingNames: false)
+							Log.d("RESPONSE Service time: \(dataWrapper.time) for \(entityType)")
                             
                             if !dataWrapper.noopValue {
                                 if let entityDictionaries = dataWrapper.data as? [[NSObject:AnyObject]] {
@@ -202,7 +208,8 @@ class DataController: NSObject {
      *--------------------------------------------------------------------------------------------*/
     
     func refreshItemsFor(query: Query, force: Bool = false, paging: Bool = false, completion: (queryItems: [QueryItem], query: Query, error: NSError?) -> Void) {
-        
+		/* Called on main thread */
+		
         if query.name == DataStoreQueryName.NotificationsForCurrentUser.rawValue && !UserController.instance.authenticated {
             completion(queryItems: [], query: query, error: nil)
             return
@@ -210,59 +217,58 @@ class DataController: NSObject {
 
 		/* Callback when service call is complete */
 		func refreshCompletion(response: AnyObject?, error: NSError?) -> Void {
-
+			
 			if error != nil {
-                completion(queryItems: [], query: query, error: error)
+				completion(queryItems: [], query: query, error: error)
 				return
 			}
-            
-            /* Turn response entities into managed entities */
-            let returnValue = handleServiceDataResponseForQuery(query, response: response!)
-            
-            /* If service query completed as a noop then bail */
-            if (returnValue.serviceData.noopValue) {
-                completion(queryItems: [], query: query, error: error)
-                return
-            }
-            
-            /* So we can provide a hint that paging is available */
-            query.moreValue = returnValue.serviceData.moreValue
-
-            let queryItems = returnValue.queryItems
-            
-            /*
-             * Clearing entities that have been deleted is tricky. When paging, we don't
-             * have a good way to know that an entity for a previous page set has been deleted
-             * unless we are on page one and working forward in a fresh pass.
-             * 
-             * Starting at zero will cause all entities outside of the first 'page' to be
-             * deleted as well as any first page entities no longer part of the refreshed
-             * first page.
-             */
-            if query.offsetValue == 0 {
-                let queryItemSet = Set(queryItems)  // If for some reason there are any duplicates, this will remove them
-                for item in query.queryItems {
-                    if let existingQueryItem = item as? QueryItem {
-                        if !queryItemSet.contains(existingQueryItem) {
-							self.managedObjectContext.deleteObject(existingQueryItem) // Does not throw
-                        }
-                    }
-                }
-            }
 			
-            /* Persist the changes and triggers notifications to observers */
+			/* Turn response entities into managed entities */
+			let returnValue = self.handleServiceDataResponseForQuery(query, response: response!)
+			
+			/* If service query completed as a noop then bail */
+			if (returnValue.serviceData.noopValue) {
+				completion(queryItems: [], query: query, error: error)
+				return
+			}
+			
+			/* So we can provide a hint that paging is available */
+			query.moreValue = returnValue.serviceData.moreValue
+			let queryItems = returnValue.queryItems
+			
+			/*
+			* Clearing entities that have been deleted is tricky. When paging, we don't
+			* have a good way to know that an entity for a previous page set has been deleted
+			* unless we are on page one and working forward in a fresh pass.
+			*
+			* Starting at zero will cause all entities outside of the first 'page' to be
+			* deleted as well as any first page entities no longer part of the refreshed
+			* first page.
+			*/
+			if query.offsetValue == 0 {
+				let queryItemSet = Set(queryItems)  // If for some reason there are any duplicates, this will remove them
+				for item in query.queryItems {
+					if let existingQueryItem = item as? QueryItem {
+						if !queryItemSet.contains(existingQueryItem) {
+							self.managedObjectContext.deleteObject(existingQueryItem) // Does not throw
+						}
+					}
+				}
+			}
+			
+			/* Persist the changes and triggers notifications to observers */
+			Log.d("Save context: \(query.name)")
 			DataController.instance.saveContext()
-
-            completion(queryItems: queryItems, query: query, error: error)
+			completion(queryItems: queryItems, query: query, error: error)
 		}
-        
+		
         let coordinate = LocationController.instance.lastLocationAccepted()?.coordinate
 
         var entity: ServiceBase!
         var entityId: String!
-        
+		
         /* We only get here if either entity or entityId are available */
-        
+		
         if query.parameters != nil {
             entity = query.parameters["entity"] as? ServiceBase
             entityId = query.parameters["entityId"] as? String
@@ -313,9 +319,6 @@ class DataController: NSObject {
 			case DataStoreQueryName.MessagesForPatch.rawValue:
 				DataController.proxibase.fetchMessagesForPatch(entityId, criteria: criteria, skip: skip, completion: refreshCompletion)
 
-			case DataStoreQueryName.LikersForPatch.rawValue:
-				DataController.proxibase.fetchUsersThatLikePatch(entityId, criteria: criteria, skip: skip, completion: refreshCompletion)
-
 			case DataStoreQueryName.WatchersForPatch.rawValue:
                 DataController.proxibase.fetchUsersThatWatchPatch(entityId, isOwner: isOwner, criteria: criteria, skip: skip, completion: refreshCompletion)
 
@@ -358,6 +361,8 @@ class DataController: NSObject {
 		if let dictionary = response as? [NSObject:AnyObject] {
 
 			ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper, mappingNames: false)
+			Log.d("RESPONSE service time: \(dataWrapper.time) for \(query.name)")
+
             if (dataWrapper.noopValue) {
                 return (dataWrapper, [])
             }
@@ -452,6 +457,8 @@ class DataController: NSObject {
         if let dictionary = response as? [NSObject:AnyObject] {
             let dataWrapper = ServiceData()
             ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper, mappingNames: false)
+			Log.d("Service response time: \(dataWrapper.time)")
+
             return dataWrapper
         }
         return nil
@@ -467,7 +474,6 @@ enum Event: String {
 }
 
 enum DataStoreQueryName: String {
-	case LikersForPatch              = "LikersForPatch"
 	case WatchersForPatch            = "WatchersForPatch"
     case LikersForMessage            = "LikersForMessage"
 	case NearbyPatches               = "NearbyPatches"

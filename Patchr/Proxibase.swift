@@ -246,20 +246,6 @@ public class Proxibase {
         performPOSTRequestFor("find/users/\(userId)", parameters: parameters, completion: completion)
     }
     
-	public func fetchUsersThatLikePatch(patchId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
-
-		/* Used to show a list of users that currently like a patch. */
-		var linked:     [String:AnyObject] = ["from": "users", "type": "like", "limit": pageSizeDefault, "skip": skip, "more": true]
-		var parameters: [String:AnyObject] = [
-				"linked": User.extras(&linked),
-				"promote": "linked",
-		]
-		if !criteria.isEmpty {
-			parameters["query"] = criteria
-		}
-		performPOSTRequestFor("find/patches/\(patchId)", parameters: parameters, completion: completion)
-	}
-
 	public func fetchUsersThatWatchPatch(patchId: String, isOwner: Bool = false, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
 
 		/* Used to show a list of users that are watching a patch or have a pending watch request for the patch. */

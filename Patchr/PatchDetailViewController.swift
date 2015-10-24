@@ -79,7 +79,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		gradient.rasterizationScale = UIScreen.mainScreen().scale
 		self.patchPhoto.layer.insertSublayer(gradient, atIndex: 0)
 		
-		let more: UITableViewCell = UITableViewCell()
+		let more = UITableViewCell()
 		more.frame = placeButton.bounds
 		more.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
 		more.userInteractionEnabled = false
@@ -89,17 +89,21 @@ class PatchDetailViewController: BaseDetailViewController {
         self.patchNameVisible = false
         self.lockImage.tintColor(Colors.brandColor)
         self.infoLockImage.tintColor(Colors.brandColor)
-        self.mapButton.setImage(UIImage(named: "imgMapLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
-        self.mapButton.imageView!.tintColor(UIColor.whiteColor())
         self.originalTop = patchPhotoTop.constant
         self.contextButton?.setTitle("", forState: .Normal)
-        
+		
+		self.mapButton.imageView!.tintColor(Colors.actionOnColor)
+		self.mapButton.tintColor = Colors.actionOnColor
+		self.mapButton.setImage(UIImage(named: "imgMapLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
+		
 		self.watchersButton.alpha = 0.0
-        self.watchButton.tintOff = UIColor.whiteColor()
+        self.watchButton.tintOff = Colors.actionOffColor
+		self.watchButton.tintOn = Colors.actionOnColor
         self.watchButton.tintPending = Colors.brandColor
         self.watchButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
         
-        self.likeButton.tintOff = UIColor.whiteColor()
+        self.likeButton.tintOff = Colors.actionOffColor
+		self.likeButton.tintOn = Colors.actionOnColor
         self.likeButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
         self.likeButton.imageOn = UIImage(named: "imgStarFilledLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
         self.likeButton.imageOff = UIImage(named: "imgStarLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
@@ -107,7 +111,8 @@ class PatchDetailViewController: BaseDetailViewController {
         self.likeButton.messageOff = "Removed from favorites"
         self.likeButton.alpha = 0.0
         
-        self.muteButton.tintOff = UIColor.whiteColor()
+        self.muteButton.tintOff = Colors.actionOffColor
+		self.muteButton.tintOn = Colors.actionOnColor
         self.muteButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
         self.muteButton.imageOn = UIImage(named: "imgSoundOn2Light")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
         self.muteButton.imageOff = UIImage(named: "imgSoundOff2Light")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)

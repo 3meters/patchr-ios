@@ -178,7 +178,7 @@
                         <sections>
                             <tableViewSection id="OKy-0l-MVj">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="568" id="45H-0y-Tsm" customClass="AirTableViewCell">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="568" id="45H-0y-Tsm">
                                         <rect key="frame" x="0.0" y="64" width="320" height="568"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" horizontalHuggingPriority="249" tableViewCell="45H-0y-Tsm" id="mME-tQ-Qbs">
@@ -347,7 +347,7 @@
                         <sections>
                             <tableViewSection id="gNV-xg-0Gp">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="292" id="kUi-2B-sm7" customClass="AirTableViewCell">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="292" id="kUi-2B-sm7">
                                         <rect key="frame" x="0.0" y="64" width="320" height="292"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="kUi-2B-sm7" id="af4-dX-Be7" userLabel="content_group">
@@ -494,7 +494,7 @@
                         <sections>
                             <tableViewSection id="K7T-EE-NDM">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="350" id="SWb-zp-LZp" customClass="AirTableViewCell">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="350" id="SWb-zp-LZp">
                                         <rect key="frame" x="0.0" y="64" width="320" height="350"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="SWb-zp-LZp" id="dW2-jv-QWR" userLabel="content_group">

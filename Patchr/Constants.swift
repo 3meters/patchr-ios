@@ -11,6 +11,17 @@ let pageSizeNearby          = 50
 let pageSizeExplore         = 20
 let pageSizeNotifications   = 20
 
+let CELL_PADDING_HORIZONTAL = CGFloat(12)
+let CELL_PADDING_VERTICAL	= CGFloat(12)
+let CELL_VIEW_SPACING		= CGFloat(8)
+
+let CELL_CONTEXT_HEIGHT		= CGFloat(20)
+let CELL_HEADER_HEIGHT		= CGFloat(20)
+let CELL_FOOTER_HEIGHT		= CGFloat(20)
+
+let CELL_USER_PHOTO_SIZE	= CGFloat(48)
+let CELL_PHOTO_RATIO		= CGFloat(0.56)	// 16:9 aspect ratio
+
 let Device      = UIDevice.currentDevice()
 let iosVersion  = NSString(string: Device.systemVersion).doubleValue
 let IOS9        = iosVersion >= 9
@@ -41,8 +52,14 @@ public struct Colors {
 	static let gray90pcntColor: UIColor = UIColor(red: CGFloat(0.9), green: CGFloat(0.9), blue: CGFloat(0.9), alpha: CGFloat(1))
 	static let gray80pcntColor: UIColor = UIColor(red: CGFloat(0.8), green: CGFloat(0.8), blue: CGFloat(0.8), alpha: CGFloat(1))
 	static let gray66pcntColor: UIColor = UIColor(red: CGFloat(0.667), green: CGFloat(0.667), blue: CGFloat(0.667), alpha: CGFloat(1)) // Light gray
+	static let gray50pcntColor: UIColor = UIColor(red: CGFloat(0.5), green: CGFloat(0.5), blue: CGFloat(0.5), alpha: CGFloat(1)) // Light gray
 	static let gray33pcntColor: UIColor = UIColor(red: CGFloat(0.33), green: CGFloat(0.33), blue: CGFloat(0.33), alpha: CGFloat(1)) // Dark gray
-	static let lightGray: UIColor = gray66pcntColor
+	
+	static let opacity50pcntWhite: UIColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.5))
+	static let opacity75pcntWhite: UIColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.75))
+	static let opacity90pcntWhite: UIColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.90))
+
+	static let lightGray: UIColor = gray50pcntColor
 	static let darkGray: UIColor = gray33pcntColor
 
     static let accentColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0.75), blue: CGFloat(1), alpha: CGFloat(1))
@@ -52,7 +69,11 @@ public struct Colors {
 	
     static let windowColor: UIColor = gray90pcntColor
     static let hintColor: UIColor = gray80pcntColor
-	static let secondaryText: UIColor = darkGray
+	static let secondaryText: UIColor = lightGray
+	static let separatorColor: UIColor = gray90pcntColor
+	
+	static let actionOnColor = opacity90pcntWhite
+	static let actionOffColor = opacity90pcntWhite
 }
 
 public struct Events {

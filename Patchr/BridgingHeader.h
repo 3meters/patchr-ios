@@ -14,7 +14,6 @@
 #import "GCPlaceholderTextView.h"
 #import "UIView+BorderLayer.h"
 #import "Reachability.h"
-#import "AirTableView.h"
 #import "TTTAttributedLabel.h"
 
 #import <AFNetworking/AFNetworking.h>

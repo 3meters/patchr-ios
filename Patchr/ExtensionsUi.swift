@@ -71,6 +71,18 @@ extension UIView {
             subview.showSubviews(level + 1)
         }
     }
+
+	func snapshot() -> UIImage {
+		UIGraphicsBeginImageContextWithOptions(bounds.size, false, UIScreen.mainScreen().scale)
+		drawViewHierarchyInRect(self.bounds, afterScreenUpdates: true)
+		let image = UIGraphicsGetImageFromCurrentImageContext()
+		UIGraphicsEndImageContext()
+		return image
+	}
+	
+	func prepareForRecycle() {
+		
+	}
 }
 
 extension UIImageView {
@@ -248,17 +260,11 @@ extension UIViewController {
 	func addActivityIndicatorTo(view: UIView, offsetY: Float = 0, style: UIActivityIndicatorViewStyle = .WhiteLarge) -> UIActivityIndicatorView {
 		
 		let activity: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: style)
-		activity.translatesAutoresizingMaskIntoConstraints = false
 		activity.color = Colors.brandColorDark
 		activity.hidesWhenStopped = true
 		view.addSubview(activity)
+		activity.anchorInCenterWithWidth(20, height: 20)
 		
-		let centerConstraintX = NSLayoutConstraint(item: activity, attribute: .CenterX, relatedBy: .Equal, toItem: self.view, attribute: .CenterX, multiplier: 1, constant: 0)
-		let centerConstraintY = NSLayoutConstraint(item: activity, attribute: .CenterY, relatedBy: .Equal, toItem: self.view, attribute: .CenterY, multiplier: 1, constant: CGFloat(offsetY))
-		let widthConstraint = NSLayoutConstraint(item: activity, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 20)
-		let heightConstraint = NSLayoutConstraint(item: activity, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 20)
-		
-		view.addConstraints([centerConstraintX, centerConstraintY, widthConstraint, heightConstraint])
 		return activity
 	}
 	

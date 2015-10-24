@@ -26,7 +26,6 @@ class BaseDetailViewController: BaseTableViewController {
         if self.entity != nil {
             self.entityId = self.entity!.id_
         }
-        self.contentViewName = "MessageView"
         self.showEmptyLabel = false
         self.showProgress = true
         self.progressOffset = 80
@@ -50,6 +49,9 @@ class BaseDetailViewController: BaseTableViewController {
         
         super.viewDidLoad()
 		
+		/* Turn off estimate so rows are measured up front */
+		self.tableView.estimatedRowHeight = 150
+		
 		if query != nil {
 			if query!.moreValue {
 				if self.tableView.tableFooterView == nil {
@@ -62,7 +64,7 @@ class BaseDetailViewController: BaseTableViewController {
 						spinner.stopAnimating()
 				}
 			}
-		}		
+		}
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -99,45 +101,49 @@ class BaseDetailViewController: BaseTableViewController {
     internal func bind(force: Bool = false) {
         
         /* Refreshes the top object but not the message list */
-        DataController.instance.withEntityId(self.entityId!, refresh: force) {
-            entity, error in
-            
-            self.refreshControl?.endRefreshing()
-			
-            if error == nil {
-                if entity != nil {
+		self.queue.addOperationWithBlock {
+			DataController.instance.withEntityId(self.entityId!, refresh: force) {
+				entity, error in
+				
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					self.refreshControl?.endRefreshing()
 					
-					/* Refresh list too */
-					if entity!.refreshedValue {
-						entity!.refreshedValue = false
-						self.bindQueryItems(true)
+					if error == nil {
+						if entity != nil {
+							
+							/* Refresh list too */
+							if entity!.refreshedValue {
+								entity!.refreshedValue = false
+								self.bindQueryItems(true)
+							}
+							
+							self.entity = entity
+							self.entityId = entity!.id_
+							if let patch = entity as? Patch {
+								DataController.instance.currentPatch = patch    // Used for context for messages
+							}
+							self.drawButtons()
+							self.draw()
+						}
+						else {
+							Shared.Toast("Item has been deleted")
+							Utils.delay(2.0, closure: {
+								() -> () in
+								self.navigationController?.popViewControllerAnimated(true)
+							})
+						}
 					}
-					
-                    self.entity = entity
-                    self.entityId = entity!.id_
-                    if let patch = entity as? Patch {
-                        DataController.instance.currentPatch = patch    // Used for context for messages
-                    }
-                    self.drawButtons()
-                    self.draw()
-                }
-                else {
-                    Shared.Toast("Item has been deleted")
-                    Utils.delay(2.0, closure: {
-                        () -> () in
-                        self.navigationController?.popViewControllerAnimated(true)
-                    })
-                }
-            }
-        }
+				}
+			}
+		}
     }
-    
-    override func bindQueryItems(force: Bool = false, paging: Bool = false) {        
+	
+    override func bindQueryItems(force: Bool = false, paging: Bool = false) {
         if force || !self._query.executedValue || paging {
             super.bindQueryItems(force, paging: paging)
         }
     }
-    
+	
     internal func draw() {
         assert(false, "This method must be overridden in subclass")
     }
@@ -148,25 +154,6 @@ class BaseDetailViewController: BaseTableViewController {
         self.bind(true)
         self.bindQueryItems(true, paging: false)
     }
-	
-	/*--------------------------------------------------------------------------------------------
-	* Cells
-	*--------------------------------------------------------------------------------------------*/
-	
-	override func bindCell(cell: UITableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
-		
-		if let view = super.bindCell(cell, entity: object, location: location) as? MessageCell {
-			/* Hookup up delegates */
-			if let label = view.description_ as? TTTAttributedLabel {
-				label.delegate = self
-			}
-			if !self.patchNameVisible {
-				view.patchName.hidden = true
-			}
-			view.delegate = self
-		}
-		return nil
-	}
 }
 
 extension BaseDetailViewController: TTTAttributedLabelDelegate {
@@ -176,21 +163,23 @@ extension BaseDetailViewController: TTTAttributedLabelDelegate {
     }
 }
 
-extension BaseDetailViewController: ViewDelegate {
-    
-    func view(container: UIView, didTapOnView view: UIView) {
-        if let view = view as? AirImageView, container = container as? MessageView {
-            if view.image != nil {
-                Shared.showPhotoBrowser(view.image, view: view, viewController: self, entity: container.entity)
-            }
-        }
-    }
-}
-
 extension BaseDetailViewController {
+	/*
+	 * Cells
+	 */
+	override func bindCell(cell: AirTableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
+		
+		if let view = super.bindCell(cell, entity: object, location: location) as? MessageView {
+			/* Hookup up delegates */
+			view.description_?.delegate = self
+			view.showPatchName = self.patchNameVisible
+			view.patchName.hidden = !self.patchNameVisible
+			view.photo?.addTarget(self, action: Selector("photoAction:"), forControlEvents: .TouchUpInside)
+		}
+		return nil
+	}
     /*
      * UITableViewDelegate 
-     *
      * These are shared by patch and user detail views.
      */
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
@@ -204,31 +193,14 @@ extension BaseDetailViewController {
         }
     }
 	
-	override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-		Log.d("Will display cell: height: \(cell.bounds.size.height), index: \(indexPath.row)")
-	}
-	
-//	override func tableView(tableView: UITableView, didEndDisplayingCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-//		Log.d("Did display cell: height: \(cell.bounds.size.height), index: \(indexPath.row)")
-//	}
-	
-	override func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
 		if let height = quickHeight(indexPath) {
 			return height
 		}
 		else {
-			return UITableViewAutomaticDimension
+			return 0
 		}
 	}
-	
-//	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-//		if let height = quickHeight(indexPath) {
-//			return height
-//		}
-//		else {
-//			return UITableViewAutomaticDimension
-//		}
-//	}
 	
 	func quickHeight(indexPath: NSIndexPath) -> CGFloat? {
 		/*
@@ -248,42 +220,13 @@ extension BaseDetailViewController {
 					}
 				}
 				
-				let minHeight: CGFloat = 64
-				var height: CGFloat = (self.patchNameVisible && entity.patch?.name != nil) ? 94 : 70    // Base size if no description or photo
-				
-				let columnWidth: CGFloat = self.tableView.bounds.size.width - (24 /* spacing */ + 48 /* user photo */)
-				if entity.description_ != nil {
-					
-					let description = entity.description_ as NSString
-					let attributes = [NSFontAttributeName: UIFont(name:"HelveticaNeue-Light", size: 17)!]
-					let options: NSStringDrawingOptions = [NSStringDrawingOptions.UsesLineFragmentOrigin, NSStringDrawingOptions.UsesFontLeading]
-					
-					/* Most time is spent here */
-					let rect: CGRect = description.boundingRectWithSize(CGSizeMake(columnWidth, CGFloat.max),
-						options: options,
-						attributes: attributes,
-						context: nil)
-					
-					let descHeight = min(rect.height, 102.272)	// Cap height to ~5 lines
-					height += (descHeight + 8)
-				}
-				
-				if entity.photo != nil {
-					/* This relies on sizing and spacing of the message view */
-					height += (CGFloat(Int(columnWidth * 0.5625)) + 8)  // 16:9 aspect ratio
-				}
-				
-				if minHeight > height {
-					height = minHeight
-				}
+				let height = MessageView.quickHeight(self.tableView.width(), showPatchName:self.patchNameVisible, entity:entity )
 				
 				if entity.id_ != nil {
 					self.rowHeights[entity.id_] = CGFloat(height)
 				}
 				
-				Log.d("Quick measure cell: height: \(height + 1), index: \(indexPath.row)")
-				
-				return CGFloat(height + 1)  // Add one for row separator
+				return CGFloat(height + 1)	// Add one for row separator
 		}
 		else {
 			return nil

@@ -9,31 +9,37 @@
 import UIKit
 
 class BaseTableViewController: UITableViewController, NSFetchedResultsControllerDelegate {
-    
-    var _query: Query!
-	var activity: UIActivityIndicatorView?
-	var footerView: UIView!
-    var showEmptyLabel: Bool = true
-    var showProgress: Bool = true
-    var progressOffset = Float(-40)
-    var processingQuery: Bool = false
-    var emptyLabel: AirLabel = AirLabel(frame: CGRectMake(100, 100, 100, 100))
-    var emptyMessage: String?
-	var loadMoreMessage: String = "LOAD MORE"
-    var offscreenCells: NSMutableDictionary = NSMutableDictionary()
-	var listType: ListType = .Patches
-	var rowHeights: NSMutableDictionary = [:]
 	
-	var contentViewName: String?
-	var ignoreNextUpdates: Bool = false
-	var rowAnimation: UITableViewRowAnimation = .Fade
+    var _query:				Query!
+	
+	var activity			= UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
+	var footerView			= UIView()
+	var loadMoreButton		= UIButton(type: UIButtonType.RoundedRect)
+	var loadMoreActivity	= UIActivityIndicatorView(activityIndicatorStyle: .White)
+	var emptyLabel			= AirLabel(frame: CGRectMake(100, 100, 100, 100))
+	
+    var showEmptyLabel		= true
+    var showProgress		= true
+    var progressOffset      = Float(-40)
+    var processingQuery		= false
+    var emptyMessage:		String?
+	var loadMoreMessage		= "LOAD MORE"
+    var offscreenCells		= NSMutableDictionary()
+	var listType:			ItemClass           = .Patches
+	var rowHeights:			NSMutableDictionary = [:]
+	var queue				= NSOperationQueue()
+	
+	var ignoreNextUpdates	= false
+	var rowAnimation:		UITableViewRowAnimation = .Fade
 	
     /*--------------------------------------------------------------------------------------------
-    * Lifecycle
+    * MARK:- Lifecycle
     *--------------------------------------------------------------------------------------------*/
     
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		
+		self.queue.name = "Network request queue"
 		
         /* Hookup refresh control */
 		let refreshControl = UIRefreshControl()
@@ -41,45 +47,37 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		refreshControl.addTarget(self, action: "pullToRefreshAction:", forControlEvents: UIControlEvents.ValueChanged)
 		self.refreshControl = refreshControl
 		
-		/* Simple activity indicator */
-		self.activity = addActivityIndicatorTo(self.view, offsetY: self.progressOffset)
+		/* Simple activity indicator (frame sizing) */
+		self.activity.color = Colors.brandColorDark
+		self.activity.hidesWhenStopped = true
+		self.view.addSubview(activity)
 		
-		/* Footer spinner */
-		self.footerView = UIView(frame: CGRectMake(0, 0, 320, 48))
+		/* Footer */
+		self.loadMoreButton.tag = 1
+		self.loadMoreButton.backgroundColor = UIColor.whiteColor()
+		self.loadMoreButton.addTarget(self, action: Selector("loadMore:"), forControlEvents: UIControlEvents.TouchUpInside)
+		self.loadMoreButton.setTitle(self.loadMoreMessage, forState: .Normal)
+		self.footerView.addSubview(self.loadMoreButton)
 		
-		let button = UIButton(type: UIButtonType.RoundedRect)
-		button.tag = 1
-		button.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 48)
-		button.addTarget(self, action: Selector("loadMore:"), forControlEvents: UIControlEvents.TouchUpInside)
-		button.setTitle(self.loadMoreMessage, forState: .Normal)
-		footerView.addSubview(button)
-		
-		let spinner: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .White)
-		spinner.tag = 2
-		spinner.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 48)
-		spinner.translatesAutoresizingMaskIntoConstraints = true
-		spinner.color = Colors.brandColorDark
-		spinner.hidden = true
-		footerView.addSubview(spinner)
+		self.loadMoreActivity.tag = 2
+		self.loadMoreActivity.color = Colors.brandColorDark
+		self.loadMoreActivity.hidden = true
+		self.footerView.addSubview(self.loadMoreActivity)
 		
         /* Empty label */
         if self.showEmptyLabel {
             self.emptyLabel.alpha = 0
             self.emptyLabel.layer.borderWidth = 1
             self.emptyLabel.layer.borderColor = Colors.hintColor.CGColor
+			self.emptyLabel.layer.backgroundColor = UIColor.whiteColor().CGColor
+			self.emptyLabel.layer.cornerRadius = 80
             self.emptyLabel.font = UIFont(name: "HelveticaNeue-Light", size: 19)
             self.emptyLabel.text = self.emptyMessage
-            self.emptyLabel.bounds.size.width = 160
-            self.emptyLabel.bounds.size.height = 160
             self.emptyLabel.numberOfLines = 0
-            
+			self.emptyLabel.textAlignment = NSTextAlignment.Center
+			self.emptyLabel.textColor = UIColor(red: CGFloat(0.6), green: CGFloat(0.6), blue: CGFloat(0.6), alpha: CGFloat(1))
+			
             self.view.addSubview(self.emptyLabel)
-            
-            self.emptyLabel.center = CGPointMake(UIScreen.mainScreen().bounds.size.width / 2, (UIScreen.mainScreen().bounds.size.height / 2) - 44);
-            self.emptyLabel.textAlignment = NSTextAlignment.Center
-            self.emptyLabel.textColor = UIColor(red: CGFloat(0.6), green: CGFloat(0.6), blue: CGFloat(0.6), alpha: CGFloat(1))
-            self.emptyLabel.layer.backgroundColor = UIColor.whiteColor().CGColor
-            self.emptyLabel.layer.cornerRadius = self.emptyLabel.bounds.size.width / 2
         }
 		
 		/*
@@ -89,20 +87,35 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		* first load; it will only be called as cells are about to scroll onscreen. This is a major
 		* performance optimization.
 		*/
-		self.tableView.estimatedRowHeight = 2
+		self.tableView.estimatedRowHeight = 128
 		
 		/* Self sizing table view cells require this setting */
-		self.tableView.rowHeight = UITableViewAutomaticDimension
+		self.tableView.rowHeight = 128
 		
         /* A bit of UI tweaking */
         self.tableView.backgroundColor = Colors.windowColor
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
         self.tableView.separatorInset = UIEdgeInsetsZero
+		
         self.clearsSelectionOnViewWillAppear = false;
 	}
-
+	
 	override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)  // Triggers data fetch
+		super.viewWillAppear(animated) // Base implementation does nothing
+		/*
+		 * First time this causes FRC to be instantiated, subsequent times
+		 * we need to reset delegate to start monitoring the data model.
+		 */
+		self.fetchedResultsController.delegate = self
+		
+		if self.query().executedValue {
+			do {
+				try self.fetchedResultsController.performFetch()
+				self.tableView.reloadData()
+			}
+			catch { fatalError("Fetch error: \(error)") }
+		}
+		
 		if let indexPath = tableView.indexPathForSelectedRow {
 			tableView.deselectRowAtIndexPath(indexPath, animated: animated)
 		}
@@ -115,34 +128,50 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		}
     }
     
-    override func viewWillDisappear(animated: Bool) {
-		/*
-		* Called when switching between patch view controllers.
-		*/
-        super.viewWillDisappear(animated)
-		self.activity?.stopAnimating()
-    }
-    
+	override func viewWillLayoutSubviews() {
+		self.footerView.frame.size.height = CGFloat(48)
+		self.loadMoreButton.fillSuperview()
+		self.loadMoreActivity.fillSuperview()
+		self.activity.anchorInCenterWithWidth(20, height: 20)
+		self.emptyLabel.anchorInCenterWithWidth(160, height: 160)
+	}
+	
     override func viewDidDisappear(animated: Bool) {
 		/*
 		 * Called when switching between patch view controllers.
 		 */
-        super.viewDidDisappear(animated)
-		self.activity?.stopAnimating()
+		super.viewDidDisappear(animated)
+		self.fetchedResultsController.delegate = nil
+		self.activity.stopAnimating()
         self.refreshControl?.endRefreshing()
 		self.tableView.tableFooterView = nil
     }
     
     /*--------------------------------------------------------------------------------------------
-    * Events
+    * MARK:- Events
     *--------------------------------------------------------------------------------------------*/
     
     func pullToRefreshAction(sender: AnyObject?) -> Void {
         self.bindQueryItems(true, paging: false)
     }
-    
+	
+	func photoAction(sender: AnyObject?) {
+		
+		if let control = sender as? AirImageView, let container = sender?.superview as? BaseView {
+			if control.image != nil {
+				Shared.showPhotoBrowser(control.image, animateFromView: control, viewController: self, entity: container.entity)
+			}
+		}
+		
+		if let control = sender as? UIButton, let container = sender?.superview as? BaseView {
+			if control.imageView!.image != nil {
+				Shared.showPhotoBrowser(control.imageView!.image, animateFromView: control, viewController: self, entity: container.entity)
+			}
+		}
+	}
+	
     /*--------------------------------------------------------------------------------------------
-    * Methods
+    * MARK:- Methods
     *--------------------------------------------------------------------------------------------*/
 	
 	func loadMore(sender: AnyObject?) {
@@ -166,7 +195,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         if !self.refreshControl!.refreshing && !self.query().executedValue {
 			/* Wacky activity control for body */
 			if self.showProgress {
-				self.activity?.startAnimating()
+				self.activity.startAnimating()
 			}
         }
 		
@@ -183,43 +212,50 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         }
         
         self.processingQuery = true
-        
-        DataController.instance.refreshItemsFor(query(), force: force, paging: paging, completion: {
-            [weak self] results, query, error in
-            
-            // Delay seems to be necessary to avoid visual glitch with UIRefreshControl
-            Utils.delay(0.5, closure: {
-                
-                self?.processingQuery = false
-				self?.activity?.stopAnimating()
-                self?.refreshControl?.endRefreshing()
-				if query.moreValue {
-					if self?.tableView.tableFooterView == nil {
-						self?.tableView.tableFooterView = self?.footerView
-					}
-					if let button = self?.footerView.viewWithTag(1) as? UIButton,
-						spinner = self?.footerView.viewWithTag(2) as? UIActivityIndicatorView {
-						button.hidden = false
-						spinner.hidden = true
-						spinner.stopAnimating()
-					}
-				}
-				else {
-					self?.tableView.tableFooterView = nil
-				}
+		
+		self.queue.addOperationWithBlock {
+			
+			DataController.instance.refreshItemsFor(self.query(), force: force, paging: paging, completion: {
+				[weak self] results, query, error in
 				
-                if error == nil {
-                    self?.query().executedValue = true
-                    if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
-                        self?.query().offsetValue = Int32(fetchedObjects.count)
-                        if self?.emptyLabel != nil && fetchedObjects.count == 0 {
-                            self?.emptyLabel.fadeIn()
-                        }
-                    }
-                }
-                return
-            })
-        })
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					// Delay seems to be necessary to avoid visual glitch with UIRefreshControl
+					Utils.delay(0.5, closure: {
+						
+						self?.processingQuery = false
+						self?.activity.stopAnimating()
+						self?.refreshControl?.endRefreshing()
+						if query.moreValue {
+							if self?.tableView.tableFooterView == nil {
+								self?.tableView.tableFooterView = self?.footerView
+							}
+							if let button = self?.footerView.viewWithTag(1) as? UIButton,
+								spinner = self?.footerView.viewWithTag(2) as? UIActivityIndicatorView {
+									button.hidden = false
+									spinner.hidden = true
+									spinner.stopAnimating()
+							}
+						}
+						else {
+							self?.tableView.tableFooterView = nil
+						}
+						
+						if error == nil {
+							self?.query().executedValue = true
+							if self?.fetchedResultsController.delegate != nil {	// Delegate is unset when view controller disappears
+								if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
+									self?.query().offsetValue = Int32(fetchedObjects.count)
+									if self?.emptyLabel != nil && fetchedObjects.count == 0 {
+										self?.emptyLabel.fadeIn()
+									}
+								}
+							}
+						}
+						return
+					})
+				}
+			})
+		}
     }
 	
     func populateSidecar(query: Query) { }
@@ -229,102 +265,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	}
 	
 	/*--------------------------------------------------------------------------------------------
-	* Cells
-	*--------------------------------------------------------------------------------------------*/
-	
-	func buildCell(cellType: CellType = .TextAndPhoto) -> UITableViewCell {
-		/*
-		 * Only implementation. Called externally to measure variable row heights.
-		 */
-		if self.listType == .Notifications {
-			let cell = NotificationCell(style: UITableViewCellStyle.Value1, cellType: cellType, reuseIdentifier: cellType.rawValue)
-			return cell
-		}
-		else if self.listType == .Messages {
-			let cell = MessageCell(style: UITableViewCellStyle.Value1, cellType: cellType, reuseIdentifier: cellType.rawValue)
-			return cell
-		}
-		else {
-			let cell = UITableViewCell(style: UITableViewCellStyle.Value1, reuseIdentifier: cellType.rawValue)
-			cell.separatorInset = UIEdgeInsetsZero
-			cell.layer.shouldRasterize = true		// Faster layout animations
-			cell.layer.rasterizationScale = UIScreen.mainScreen().scale
-			
-			cell.layoutMargins = UIEdgeInsetsZero
-			cell.preservesSuperviewLayoutMargins = false
-			
-			/* Inject view into contentView */
-			let view = NSBundle.mainBundle().loadNibNamed(self.contentViewName, owner: self, options: nil)[0] as! BaseView
-			view.tag = 1
-			view.cell = cell
-			view.translatesAutoresizingMaskIntoConstraints = false
-			cell.contentView.addSubview(view)
-			
-			/* We need to set the initial width so later sizing logic has it to work with */
-			cell.frame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.bounds), 100)
-			cell.contentView.frame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.bounds), 100)
-			view.frame = CGRectMake(0, 0, CGRectGetWidth(self.tableView.bounds), 100)
-			
-			configureCell(cell) // Handles contraint and layout updates
-			return cell
-		}
-	}
-	
-	func configureCell(cell: UITableViewCell) {
-		/*
-		* Default is to constrain to a tight fit. Override this in subclasses to do
-		* do something else. Without this the view size explodes.
-		*/
-		let view = cell.contentView.viewWithTag(1) as! BaseView
-		let views = Dictionary(dictionaryLiteral: ("view", view))
-		
-		
-		if self.isKindOfClass(PatchTableViewController) {
-			cell.contentView.backgroundColor = Colors.windowColor
-			let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-8-[view]-8-|", options: [], metrics: nil, views: views)
-			let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|-8-[view]|", options: [], metrics: nil, views: views)
-			cell.contentView.addConstraints(horizontalConstraints)
-			cell.contentView.addConstraints(verticalConstraints)
-		}
-		else {
-			let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|[view]|", options: [], metrics: nil, views: views)
-			let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|[view]|", options: [], metrics: nil, views: views)
-			cell.contentView.addConstraints(horizontalConstraints)
-			cell.contentView.addConstraints(verticalConstraints)
-		}
-		
-		cell.setNeedsUpdateConstraints()
-		cell.updateConstraintsIfNeeded()
-		cell.contentView.setNeedsLayout()
-		cell.contentView.layoutIfNeeded()
-	}
-	
-	func bindCell(cell: UITableViewCell, entity: AnyObject, location: CLLocation?) -> UIView? {
-		
-		if self.listType == .Notifications {
-			Notification.bindView(cell, entity: entity)
-			return cell
-		}
-		
-		if self.listType == .Messages {
-			Message.bindView(cell, entity: entity)
-			return cell
-		}
-		
-		if let view = cell.contentView.viewWithTag(1) {
-			if self.isKindOfClass(PatchTableViewController) {
-				Patch.bindView(view, object: entity, location: location)
-			}
-			else if self.isKindOfClass(UserTableViewController) {
-				User.bindView(view, object: entity)
-			}
-			return view
-		}
-		return nil
-	}
-	
-	/*--------------------------------------------------------------------------------------------
-	* Properties
+	* MARK:- Properties
 	*--------------------------------------------------------------------------------------------*/
 	
     internal lazy var fetchedResultsController: NSFetchedResultsController = {
@@ -375,6 +316,65 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 
 extension BaseTableViewController {
 	/*
+	 * Cells
+	 */
+	func makeCell(cellType: CellType = .TextAndPhoto) -> AirTableViewCell {
+		/*
+		* Only implementation. Called externally to measure variable row heights.
+		*/
+		if self.listType == .Notifications {
+			let view = NotificationView(cellType: cellType)
+			let cell = AirTableViewCell(view: view, padding: UIEdgeInsetsZero, reuseIdentifier: cellType.rawValue)
+			return cell
+		}
+		else if self.listType == .Messages {
+			let view = MessageView(cellType: cellType)
+			let cell = AirTableViewCell(view: view, padding: UIEdgeInsetsMake(12, 12, 12, 12), reuseIdentifier: cellType.rawValue)
+			return cell
+		}
+		else if self.listType == .Patches {
+			let view = PatchView()
+			view.cornerRadius = 8
+			let cell = AirTableViewCell(view: view, padding: UIEdgeInsetsMake(8, 8, 0, 8), reuseIdentifier: cellType.rawValue)
+			cell.separator.backgroundColor = UIColor.clearColor()
+			cell.backgroundColor = Colors.windowColor
+			return cell
+		}
+		else if self.listType == .Users {
+			let view = UserView()
+			let cell = AirTableViewCell(view: view, padding: UIEdgeInsetsZero, reuseIdentifier: cellType.rawValue)
+			return cell
+		}
+		else {
+			return AirTableViewCell(view: UIView(), padding: UIEdgeInsetsZero, reuseIdentifier: cellType.rawValue)
+		}
+	}
+	
+	func bindCell(cell: AirTableViewCell, entity: AnyObject, location: CLLocation?) -> UIView? {
+		
+		if self.listType == .Notifications {
+			Notification.bindView(cell.view!, entity: entity)
+			return cell.view
+		}
+		
+		if self.listType == .Messages {
+			Message.bindView(cell.view!, entity: entity)
+			return cell.view
+		}
+		
+		if self.listType == .Patches {
+			Patch.bindView(cell.view!, entity: entity, location: location)
+			return cell.view
+		}
+		
+		if self.listType == .Users {
+			User.bindView(cell.view!, entity: entity)
+			return cell.view
+		}
+		return nil
+	}
+	
+	/*
 	 * UITableViewDataSource
 	 */
 	override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -383,12 +383,10 @@ extension BaseTableViewController {
 	
 	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		let numberOfObjects = self.fetchedResultsController.sections![section].numberOfObjects
-		self.tableView.separatorStyle = numberOfObjects == 0 ? .None : .SingleLine
 		return numberOfObjects
 	}
 	
 	override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		
 		
 		/* Bind the cell to the entity */
 		let queryResult = self.fetchedResultsController.sections![indexPath.section].objects![indexPath.row] as? QueryItem
@@ -415,10 +413,10 @@ extension BaseTableViewController {
 			}
 		}
 		
-		var cell = tableView.dequeueReusableCellWithIdentifier(cellType.rawValue)
+		var cell = self.tableView.dequeueReusableCellWithIdentifier(cellType.rawValue) as! AirTableViewCell?
 		
 		if cell == nil {
-			cell = buildCell(cellType)
+			cell = makeCell(cellType)
 		}
 			
 		bindCell(cell!, entity: entity!, location: nil)
@@ -432,15 +430,11 @@ extension BaseTableViewController {
 	 * NSFetchedResultsControllerDelegate
 	 */
 	func controllerWillChangeContent(controller: NSFetchedResultsController) {
-		if self.tableView.window != nil {
-			self.tableView.beginUpdates()
-		}
+		self.tableView.beginUpdates()
 	}
 	
 	func controllerDidChangeContent(controller: NSFetchedResultsController) {
-		if self.tableView.window != nil {
-			self.tableView.endUpdates()
-		}
+		self.tableView.endUpdates()
 	}
 	
 	func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType) {
@@ -467,29 +461,25 @@ extension BaseTableViewController {
 		}
 		
 		switch type {
+			case .Insert:	// 1
+				self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: self.rowAnimation)
 			
-		case .Insert:	// 1
-			self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: self.rowAnimation)
-			
-		case .Delete:	// 2
-			self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: self.rowAnimation)
-			
-		case .Move:		// 3
-			self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: self.rowAnimation)
-			self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: self.rowAnimation)
-			
-		case .Update:	// 4
-			if let cell = self.tableView.cellForRowAtIndexPath(indexPath!) {
-				let queryResult = anObject as! QueryItem
-				bindCell(cell, entity: queryResult.object, location: nil)
-			}
+			case .Delete:	// 2
+				self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: self.rowAnimation)
+				
+			case .Move:		// 3
+				self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: self.rowAnimation)
+				self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: self.rowAnimation)
+				
+			case .Update:	// 4
+				self.tableView.cellForRowAtIndexPath(indexPath!)	// Better than reloadRowsAtIndexPaths because no animation
 		}
 	}
 }
 
-enum ListType {
+enum ItemClass {
 	case Messages
 	case Notifications
-	case Users
 	case Patches
+	case Users
 }

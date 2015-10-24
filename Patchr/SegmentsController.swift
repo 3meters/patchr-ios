@@ -20,10 +20,10 @@ class SegmentsController: NSObject {
     }
     
     func indexDidChangeForSegmentedControl(segmentedControl: UISegmentedControl) {
+		
         let index = segmentedControl.selectedSegmentIndex
         let incomingViewController = self.viewControllers[index]
-        let viewControllers = [incomingViewController]
-        self.navigationController.setViewControllers(viewControllers, animated: false)
+        self.navigationController.setViewControllers([incomingViewController], animated: false)
         
         incomingViewController.navigationItem.titleView = segmentedControl
         

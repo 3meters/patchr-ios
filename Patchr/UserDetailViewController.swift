@@ -10,17 +10,9 @@ import UIKit
 
 class UserDetailViewController: BaseDetailViewController {
 
-	private var isCurrentUser                             = false
-    private var isGuest                                   = false
-
-	/* Outlets are initialized before viewDidLoad is called */
-
-	@IBOutlet weak var userName:       UILabel!
-	@IBOutlet weak var userEmail:      UILabel!
-	@IBOutlet weak var userPhoto:      AirImageView!
-	@IBOutlet weak var watchingButton: UIButton!
-	@IBOutlet weak var ownsButton:     UIButton!
-    @IBOutlet weak var likesButton:    UIButton!
+	private var isCurrentUser	= false
+    private var isGuest         = false
+	private var header:			UserDetailView!
 
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
@@ -38,11 +30,10 @@ class UserDetailViewController: BaseDetailViewController {
         self.queryName = DataStoreQueryName.MessagesByUser.rawValue
         
 		super.viewDidLoad()
+		
+		self.header = UserDetailView()
+		self.tableView.tableHeaderView = self.header
 
-        /* Clear any old content */
-        self.userName.text?.removeAll(keepCapacity: false)
-        self.userEmail.text?.removeAll(keepCapacity: false)
-        
         if isCurrentUser && isGuest {
             let signinButton = UIBarButtonItem(title: "Sign in", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSignin"))
             let settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSettings"))
@@ -61,6 +52,10 @@ class UserDetailViewController: BaseDetailViewController {
             self.navigationItem.leftBarButtonItems = [signoutButton]
             self.navigationItem.title = "Me"
         }
+	}
+	
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
 	}
 
 	override func viewWillAppear(animated: Bool) {
@@ -81,7 +76,7 @@ class UserDetailViewController: BaseDetailViewController {
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
 
-    @IBAction func actionBrowseFavorites(sender: UIButton) {
+    func browseFavoritesAction() {
         if !self.isGuest {
             let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
             if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableViewController") as? PatchTableViewController {
@@ -92,7 +87,7 @@ class UserDetailViewController: BaseDetailViewController {
         }
     }
     
-	@IBAction func actionBrowseWatching(sender: UIButton) {
+	func actionBrowseWatching(sender: AnyObject?) {
         if !self.isGuest {
             let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
             if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableViewController") as? PatchTableViewController {
@@ -103,7 +98,7 @@ class UserDetailViewController: BaseDetailViewController {
         }
 	}
 
-	@IBAction func actionBrowseOwned(sender: UIButton) {
+	func actionBrowseOwned(sender: AnyObject?) {
         if !self.isGuest {
             let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
             if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableViewController") as? PatchTableViewController {
@@ -169,37 +164,14 @@ class UserDetailViewController: BaseDetailViewController {
     }
     
 	override func draw() {
-        
-        if self.isGuest {
-            self.userName.text = "Guest"
-            self.userEmail.text = "discover@3meters.com"
-            self.userPhoto.image = UIImage(named: "imgDefaultUser")
-            self.watchingButton.setTitle("Watching: --", forState: .Normal)
-            self.ownsButton.setTitle("Owner: --", forState: .Normal)
-            self.likesButton.setTitle("Favorites: --", forState: .Normal)
-        }
-        else {
-            if let entity = self.entity as? User {
-                self.userName.text = entity.name
-                self.userEmail.text = entity.email
-                self.userPhoto.setImageWithPhoto(entity.getPhotoManaged(), animate: false)
-                
-                if entity.patchesWatching != nil {
-                    let count = entity.patchesWatchingValue == 0 ? "--" : String(entity.patchesWatchingValue)
-                    self.watchingButton.setTitle("Watching: \(count)", forState: .Normal)
-                }
-                if entity.patchesOwned != nil {
-                    let count = entity.patchesOwnedValue == 0 ? "--" : String(entity.patchesOwnedValue)
-                    self.ownsButton.setTitle("Owner: \(count)", forState: .Normal)
-                }
-                if entity.patchesLikes != nil {
-                    let count = entity.patchesLikesValue == 0 ? "--" : String(entity.patchesLikesValue)
-                    self.likesButton.setTitle("Favorites: \(count)", forState: .Normal)
-                }
-            }
-        }
+		if let entity = self.entity as? User {
+			self.header.bindToEntity(entity, isGuest: self.isGuest)
+			self.header.favoritesInfo.addTarget(self, action: Selector("browseFavoritesAction"), forControlEvents: UIControlEvents.TouchUpInside)
+			self.header.watchingInfo.addTarget(self, action: Selector("actionBrowseWatching:"), forControlEvents: UIControlEvents.TouchUpInside)
+			self.header.ownsInfo.addTarget(self, action: Selector("actionBrowseOwned:"), forControlEvents: UIControlEvents.TouchUpInside)
+		}
 	}
-    
+	
 	override func pullToRefreshAction(sender: AnyObject?) -> Void {
         if !self.isGuest {
             super.pullToRefreshAction(sender)

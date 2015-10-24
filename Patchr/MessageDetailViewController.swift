@@ -10,10 +10,11 @@ import UIKit
 
 class MessageDetailViewController: UITableViewController {
 
-    var progress:  AirProgress?
+	var activity:  UIActivityIndicatorView?
 	var message:   Message?
 	var messageId: String?
     var deleted = false
+
     private var shareButtonFunctionMap = [Int: ShareButtonFunction]()
 
     private var isOwner: Bool {
@@ -45,7 +46,6 @@ class MessageDetailViewController: UITableViewController {
 	@IBOutlet weak var likeButton:      AirLikeButton!
 	@IBOutlet weak var likesButton:     UIButton!
     @IBOutlet weak var description_:    TTTAttributedLabel!
-    @IBOutlet weak var shareHolder:     UIView!
     @IBOutlet weak var recipients:      UILabel!
     
     @IBOutlet weak var patchCell:       UITableViewCell!
@@ -64,12 +64,14 @@ class MessageDetailViewController: UITableViewController {
 		}
 
 		super.viewDidLoad()
+		
 
         /* Ui tweaks */
 		self.messagePhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
 		self.userPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
 		self.patchPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
-        
+		self.view.window?.backgroundColor = Colors.windowColor
+		
         let linkColor = Colors.brandColorDark
         let linkActiveColor = Colors.brandColorLight
         
@@ -110,12 +112,8 @@ class MessageDetailViewController: UITableViewController {
         self.likesButton.setTitle(nil, forState: .Normal)
         
         /* Wacky activity control for body */
-        self.progress = AirProgress(view: self.view)
-        self.progress!.mode = MBProgressHUDMode.Indeterminate
-        self.progress!.styleAs(.ActivityOnly)
-        self.progress!.userInteractionEnabled = false
-        self.view.addSubview(self.progress!)
-        
+		//self.activity = addActivityIndicatorTo(self.view)
+		
         /* Use cached entity if available in the data model */
         if self.messageId != nil {
             if let message: Message? = Message.fetchOneById(self.messageId!, inManagedObjectContext: DataController.instance.managedObjectContext) {
@@ -135,76 +133,76 @@ class MessageDetailViewController: UITableViewController {
                 return
             }
         }
-        
-        self.view.window?.backgroundColor = Colors.windowColor
-        
+		
 		super.viewWillAppear(animated)
-
+		
 		if self.message != nil {
 			draw()
 		}
-        
+		
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "likeDidChange:", name: Events.LikeDidChange, object: nil)
         setScreenName("MessageDetail")        
 	}
-
-	override func viewDidLayoutSubviews() {
-		super.viewDidLayoutSubviews()
-
-        description_.preferredMaxLayoutWidth = description_.frame.size.width
-		self.view.layoutIfNeeded()
+	
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
 	}
-
+	
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
 		refresh(true)
 	}
-    
+	
     override func viewDidDisappear(animated: Bool) {
+		super.viewDidDisappear(animated)
+		self.activity?.stopAnimating()
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
 
 	private func refresh(force: Bool = false) {
         
         if (self.message == nil) {
-            self.progress?.minShowTime = 1
-            self.progress?.removeFromSuperViewOnHide = true
-            self.progress?.show(true)
+			self.activity?.startAnimating()
         }
-        
-		DataController.instance.withMessageId(messageId!, refresh: force) {
-			message, error in
-            
-            self.progress?.hide(true)
-			self.refreshControl?.endRefreshing()
-            if error == nil {
-                if message != nil {
-                    
-                    /* Remove share button if this is a share message */
-                    if message!.type != nil && message!.type == "share" {
-                        self.navigationItem.rightBarButtonItems = []
-                    }
-                    
-                    self.message = message
-                    self.draw()
-                }
-                else {
-                    Shared.Toast("Message has been deleted")
-                    Utils.delay(2.0, closure: {
-                        () -> () in
-                        self.navigationController?.popViewControllerAnimated(true)
-                    })
-                }
-            }
-            else {
-            }
+		
+		DataController.instance.backgroundQueue.addOperationWithBlock {
+			
+			DataController.instance.withMessageId(self.messageId!, refresh: force) {
+				[weak self] message, error in
+				
+				if self != nil {
+					NSOperationQueue.mainQueue().addOperationWithBlock {
+						self?.activity?.stopAnimating()
+						self?.refreshControl?.endRefreshing()
+						if error == nil {
+							if message != nil {
+								
+								/* Remove share button if this is a share message */
+								if message!.type != nil && message!.type == "share" {
+									self?.navigationItem.rightBarButtonItems = []
+								}
+								
+								self?.message = message
+								self?.draw()		// TODO: Can skkip if no change in activityDate and modifiedDate
+							}
+							else {
+								Shared.Toast("Message has been deleted")
+								Utils.delay(2.0, closure: {
+									() -> () in
+									self?.navigationController?.popViewControllerAnimated(true)
+								})
+							}
+						}
+					}
+				}
+			}
 		}
 	}
-    
+	
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
-    
+	
 	/*--------------------------------------------------------------------------------------------
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
@@ -228,7 +226,7 @@ class MessageDetailViewController: UITableViewController {
 	}
 
 	@IBAction func photoAction(sender: AnyObject) {
-        let browser = Shared.showPhotoBrowser(self.messagePhoto.imageForState(.Normal), view: sender as! UIView, viewController: self, entity: self.message)
+        let browser = Shared.showPhotoBrowser(self.messagePhoto.imageForState(.Normal), animateFromView: sender as! UIView, viewController: self, entity: self.message)
         browser.target = self
 	}
 
@@ -246,6 +244,9 @@ class MessageDetailViewController: UITableViewController {
 	}
 
     func shareBrowseAction(sender: AnyObject){
+		if let view = sender as? UIView {
+			view.backgroundColor = Colors.windowColor
+		}
         if self.message?.message != nil {
             let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
             if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
@@ -325,48 +326,72 @@ class MessageDetailViewController: UITableViewController {
 	*--------------------------------------------------------------------------------------------*/
 
 	func draw() {
+		
+		Log.d("MessageDetail.draw called: \(self.message!.id_!)")
         
         if self.message!.type != nil && self.message!.type == "share" {
+			
             self.recipientsCell.hidden = true
             self.shareHolderCell.hidden = false
-            
+			
             /* Share entity */
-            
-            var view: BaseView!
-            if self.message?.message != nil {
-                view = NSBundle.mainBundle().loadNibNamed("MessageView", owner: self, options: nil)[0] as! BaseView
-                view.frame.size.width = self.shareHolder.bounds.size.width
-                Message.bindView(view, entity: self.message!.message!)
-                
-                /* Tweak the message view to suit display as static */
-                if let messageView = view as? MessageView {
-                    messageView.toolbarHeight.constant = 0
-					messageView.toolbar.hidden = true
-                    if let recognizers = messageView.photo.gestureRecognizers {
-                        for recognizer in recognizers {
-                            messageView.photo.removeGestureRecognizer(recognizer )
-                        }
-                    }
-                }
-                
-                view.frame.size.height = view.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 8
-                self.shareHolder?.addSubview(view)
-            }
-            else if self.message?.patch != nil {
-                view = NSBundle.mainBundle().loadNibNamed("PatchNormalView", owner: self, options: nil)[0] as! BaseView
-                view.frame.size.width = self.shareHolder.bounds.size.width
-				Patch.bindView(view, object: self.message!.patch!, location: nil)
-                self.shareHolder?.addSubview(view)
-            }
-            
-            let views = Dictionary(dictionaryLiteral: ("view", view))
-            let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|[view]|", options: [], metrics: nil, views: views)
-            let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|[view]|", options: [], metrics: nil, views: views)
-            self.shareHolder?.addConstraints(horizontalConstraints)
-            self.shareHolder?.addConstraints(verticalConstraints)
-            
-            let tap = UITapGestureRecognizer(target: self, action: "shareBrowseAction:");
-            self.shareHolder?.addGestureRecognizer(tap)
+			
+			let holderView = UIView()
+			holderView.clipsToBounds = true
+			holderView.borderColor = Colors.gray80pcntColor
+			holderView.borderWidth = 1
+			holderView.cornerRadius = 8
+			
+			var shareView: BaseView!
+			
+			if self.shareHolderCell.contentView.subviews.count == 0 {
+				if self.message?.message != nil {
+					
+					var cellType: CellType = .TextAndPhoto
+					if self.message!.message!.photo == nil {
+						cellType = .Text
+					}
+					else if self.message!.message!.description_ == nil {
+						cellType = .Photo
+					}
+					
+					shareView = MessageView(cellType: cellType)
+					
+					Message.bindView(shareView, entity: self.message!.message!)
+					
+					holderView.addSubview(shareView)
+					self.shareHolderCell.contentView.addSubview(holderView)
+					
+					/* Need correct width before layout and sizing */
+					holderView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
+					shareView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 12, bottomPadding: 12)
+					
+					shareView.setNeedsLayout()
+					shareView.layoutIfNeeded()
+					shareView.sizeToFit()
+					
+					/* Row height not set until reloadData called below */
+					self.shareHolderCell.contentView.frame.size.height = shareView.bounds.size.height + 24
+					holderView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
+				}
+				else if self.message?.patch != nil {
+					
+					shareView = PatchView()
+					let shareView = shareView as! PatchView
+					shareView.borderColor = Colors.gray80pcntColor
+					shareView.borderWidth = 1
+					shareView.cornerRadius = 8
+					shareView.shadow.backgroundColor = UIColor.clearColor()
+					
+					Patch.bindView(shareView, entity: self.message!.patch!, location: nil)
+					self.shareHolderCell.contentView.addSubview(shareView)
+					self.shareHolderCell.contentView.frame.size.height = 128
+					shareView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
+				}
+				
+				let tap = UITapGestureRecognizer(target: self, action: "shareBrowseAction:");
+				shareView.addGestureRecognizer(tap)
+			}
         }
         else {
             self.toolbarCell.hidden = false
@@ -537,7 +562,7 @@ extension MessageDetailViewController {
                 }
                 else if indexPath.row == 6 {
                     if message.message != nil {
-                        return self.shareHolder.bounds.size.height + 16
+						return self.shareHolderCell.contentView.bounds.size.height	// Sized in draw()
                     }
                     return 143
                 }

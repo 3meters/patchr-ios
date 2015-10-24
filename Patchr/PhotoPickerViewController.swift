@@ -17,6 +17,10 @@ class PhotoPickerViewController: UICollectionViewController {
     var searchBar: UISearchBar?
     var pickerDelegate: PhotoBrowseControllerDelegate?
 	var activity: UIActivityIndicatorView?
+	var footerView:      UIView!
+	var loadMoreMessage: String = "LOAD MORE"
+	
+	var queue = NSOperationQueue()
 	
     var largePhotoIndexPath : NSIndexPath? {
         didSet {
@@ -58,17 +62,46 @@ class PhotoPickerViewController: UICollectionViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
         
-        collectionView!.registerNib(UINib(nibName: "ThumbnailCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: reuseIdentifier)
+        self.collectionView!.registerNib(UINib(nibName: "ThumbnailCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: reuseIdentifier)
+		self.queue.name = "Image loading queue"
 		
 		/* Simple activity indicator */
 		self.activity = addActivityIndicatorTo(self.view)
+		
+		/* Scroll inset */
+		self.sectionInsets = UIEdgeInsets(top: self.searchBar!.frame.size.height + 4, left: 4, bottom: 4, right: 4)
+		
+		/* Calculate thumbnail width */
+		availableWidth = UIScreen.mainScreen().bounds.size.width - (sectionInsets!.left + sectionInsets!.right)
+		let requestedColumnWidth: CGFloat = 100
+		let numColumns: CGFloat = floor(CGFloat(availableWidth!) / CGFloat(requestedColumnWidth))
+		let spaceLeftOver = availableWidth! - (numColumns * requestedColumnWidth) - ((numColumns - 1) * 4)
+		self.thumbnailWidth = requestedColumnWidth + (spaceLeftOver / numColumns)
+		
+		/* Footer spinner */
+		self.footerView = UIView(frame: CGRectMake(0, 0, self.thumbnailWidth!, self.thumbnailWidth!))
+		
+		let button = UIButton(type: UIButtonType.RoundedRect)
+		button.tag = 1
+		button.frame = CGRectMake(0, 0, self.collectionView!.bounds.size.width, 48)
+		button.backgroundColor = UIColor.whiteColor()
+		button.addTarget(self, action: Selector("loadMore:"), forControlEvents: UIControlEvents.TouchUpInside)
+		button.setTitle(self.loadMoreMessage, forState: .Normal)
+		footerView.addSubview(button)
+		
+		let spinner: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .White)
+		spinner.tag = 2
+		spinner.frame = CGRectMake(0, 0, self.collectionView!.bounds.size.width, 48)
+		spinner.color = Colors.brandColorDark
+		spinner.hidden = true
+		footerView.addSubview(spinner)
 	}
 
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
         
         setScreenName("PhotoPicker")
-        
+		
         if self.searchBar == nil {
             self.searchBarBoundsY = self.navigationController!.navigationBar.frame.size.height + UIApplication.sharedApplication().statusBarFrame.size.height
             self.searchBar = UISearchBar(frame: CGRectMake(0, self.searchBarBoundsY!, UIScreen.mainScreen().bounds.size.width, 44))
@@ -80,16 +113,6 @@ class PhotoPickerViewController: UICollectionViewController {
         if !self.searchBar!.isDescendantOfView(self.view) {
             self.view.addSubview(self.searchBar!)
         }
-        
-        /* Scroll inset */
-        self.sectionInsets = UIEdgeInsets(top: self.searchBar!.frame.size.height + 4, left: 4, bottom: 4, right: 4)
-        
-        /* Calculate thumbnail width */
-        availableWidth = UIScreen.mainScreen().bounds.size.width - (sectionInsets!.left + sectionInsets!.right)
-        let requestedColumnWidth: CGFloat = 100
-        let numColumns: CGFloat = floor(CGFloat(availableWidth!) / CGFloat(requestedColumnWidth))
-        let spaceLeftOver = availableWidth! - (numColumns * requestedColumnWidth) - ((numColumns - 1) * 4)
-        self.thumbnailWidth = requestedColumnWidth + (spaceLeftOver / numColumns)
 	}
 
 	override func viewDidLayoutSubviews() {
@@ -126,62 +149,57 @@ class PhotoPickerViewController: UICollectionViewController {
         else {
             offset = Int(ceil(Float(self.imageResults.count) / Float(self.pageSize)) * Float(self.pageSize))
         }
-        
-        DataController.proxibase.loadSearchImages(self.searchBar!.text!, limit: Int64(self.pageSize), offset: Int64(offset)) {
-            response, error in
-            
-            self.activity?.stopAnimating()
-            if let error = ServerError(error) {
-                self.handleError(error)
-            }
-            else {
-                if let
-                    dictionary = response as? NSDictionary,
-                    data = dictionary["d"] as? NSDictionary,
-                    results = data["results"] as? NSMutableArray {
-                        
-                        let resultsCopy = results.mutableCopy() as! NSMutableArray
-                        let more: Bool = (resultsCopy.count > self.pageSize)
-                        if more {
-                            resultsCopy.removeLastObject()
-                        }
-                        
-                        for imageResultDict in resultsCopy {
-                            let imageResult = ImageResult.setPropertiesFromDictionary(imageResultDict as! NSDictionary, onObject: ImageResult())
-                            
-                            var usable = false;
-                            usable = (imageResult.thumbnail != nil && imageResult.thumbnail!.mediaUrl != nil);
-                            
-                            if (usable) {
-                                for tempImageResult in self.imageResults {
-                                    if tempImageResult.thumbnail!.mediaUrl == imageResult.thumbnail!.mediaUrl {
-                                        usable = false
-                                        break
-                                    }
-                                }
-                            }
-                            
-                            if (usable) {
-                                self.imageResults.append(imageResult)
-                            }
-                        }
-                        
-//						self.collectionView!.finishInfiniteScroll()
-//                        if more && self.imageResults.count < self.maxSize {
-//                            self.collectionView!.addInfiniteScrollWithHandler({(scrollView) -> Void in
-//                                self.loadData(true)
-//                            })
-//                        }
-//                        else {
-//                            self.collectionView!.removeInfiniteScroll()
-//                        }
-                }
-                
-                self.collectionView?.reloadData()
-            }
-        }        
+		
+		self.queue.addOperationWithBlock {
+			DataController.proxibase.loadSearchImages(self.searchBar!.text!, limit: Int64(self.pageSize), offset: Int64(offset)) {
+				response, error in
+				
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					self.activity?.stopAnimating()
+					if let error = ServerError(error) {
+						self.handleError(error)
+					}
+					else {
+						if let
+							dictionary = response as? NSDictionary,
+							data = dictionary["d"] as? NSDictionary,
+							results = data["results"] as? NSMutableArray {
+								
+								let resultsCopy = results.mutableCopy() as! NSMutableArray
+								let more: Bool = (resultsCopy.count > self.pageSize)
+								if more {
+									resultsCopy.removeLastObject()
+								}
+								
+								for imageResultDict in resultsCopy {
+									let imageResult = ImageResult.setPropertiesFromDictionary(imageResultDict as! NSDictionary, onObject: ImageResult())
+									
+									var usable = false;
+									usable = (imageResult.thumbnail != nil && imageResult.thumbnail!.mediaUrl != nil);
+									
+									if (usable) {
+										for tempImageResult in self.imageResults {
+											if tempImageResult.thumbnail!.mediaUrl == imageResult.thumbnail!.mediaUrl {
+												usable = false
+												break
+											}
+										}
+									}
+									
+									if (usable) {
+										self.imageResults.append(imageResult)
+									}
+								}
+							
+						}
+						
+						self.collectionView?.reloadData()
+					}
+				}
+			}
+		}
     }
-    
+	
     func imageForIndexPath(indexPath: NSIndexPath) -> ImageResult {
         return imageResults[indexPath.row]
     }

@@ -29,12 +29,15 @@ class NotificationsTableViewController: BaseTableViewController {
 
 	override func viewDidLoad() {
         
-        self.contentViewName = "NotificationView"
         self.emptyMessage = "No notifications yet"
 		self.loadMoreMessage = "LOAD MORE MESSAGES"
 		self.listType = .Notifications
 		
 		super.viewDidLoad()
+		
+		/* Turn off estimate so rows are measured up front */
+		self.tableView.estimatedRowHeight = 0
+		self.tableView.rowHeight = 0
 		
 		/* Used to monitor for changes */
         self.activityDate = NotificationController.instance.activityDate
@@ -53,7 +56,11 @@ class NotificationsTableViewController: BaseTableViewController {
         }
         clearBadges()
 	}
-
+	
+	deinit {
+		NSNotificationCenter.defaultCenter().removeObserver(self)
+	}
+	
     /*--------------------------------------------------------------------------------------------
     * Events
     *--------------------------------------------------------------------------------------------*/
@@ -235,7 +242,11 @@ class NotificationsTableViewController: BaseTableViewController {
         }
         super.bindQueryItems(force, paging: paging)
     }
-    
+	
+	override func populateSidecar(query: Query) {
+		//query.sidecar = self.nearbys    // Should make a copy
+	}
+	
     func showNotificationBar(title: String, description: String, image: UIImage?, targetId: String) {
         
         TWMessageBarManager.sharedInstance().styleSheet = AirStylesheet(image: image)
@@ -297,7 +308,7 @@ class NotificationsTableViewController: BaseTableViewController {
         }
         return true
     }
-    
+	
     func clearBadges() {
         self.navigationController?.tabBarItem.badgeValue = nil
         
@@ -327,30 +338,6 @@ class NotificationsTableViewController: BaseTableViewController {
         PFInstallation.currentInstallation().badge = badge
         PFInstallation.currentInstallation().saveEventually(nil)
     }
-
-    override func populateSidecar(query: Query) {
-        query.sidecar = self.nearbys    // Should make a copy
-    }
-    
-    deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
-    }
-
-	/*--------------------------------------------------------------------------------------------
-	* Cells
-	*--------------------------------------------------------------------------------------------*/
-	
-	override func bindCell(cell: UITableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
-		
-		if let view = super.bindCell(cell, entity: object, location: location) as? NotificationCell {
-			/* Hookup up delegates */
-			if let label = view.description_ as? TTTAttributedLabel {
-				label.delegate = self
-			}
-			view.delegate = self
-		}
-		return nil
-	}
 }
 
 class AirStylesheet: NSObject, TWMessageBarStyleSheet {
@@ -378,9 +365,20 @@ class AirStylesheet: NSObject, TWMessageBarStyleSheet {
 }
 
 extension NotificationsTableViewController {
+	/*
+	 * Cells
+	 */
+	override func bindCell(cell: AirTableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
+		
+		if let view = super.bindCell(cell, entity: object, location: location) as? NotificationView {
+			view.description_?.delegate = self
+			view.photo?.addTarget(self, action: Selector("photoAction:"), forControlEvents: .TouchUpInside)
+		}
+		return nil
+	}
     /*
-    * UITableViewDelegate
-    */
+     * UITableViewDelegate
+     */
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 		
 		let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
@@ -406,7 +404,7 @@ extension NotificationsTableViewController {
 			return height
 		}
 		else {
-			return UITableViewAutomaticDimension
+			return 0
 		}
 	}
 	
@@ -428,10 +426,13 @@ extension NotificationsTableViewController {
 					}
 				}
 				
-				let minHeight: CGFloat = 64
-				var height: CGFloat = 36    // Base size if no description or photo
+				let minHeight: CGFloat = CELL_USER_PHOTO_SIZE + (CELL_PADDING_VERTICAL * 2)
+				let columnLeft = CELL_USER_PHOTO_SIZE + CELL_VIEW_SPACING + (CELL_PADDING_HORIZONTAL * 2)
+				let columnWidth = self.tableView.width() - columnLeft
+				let photoHeight = columnWidth * CELL_PHOTO_RATIO
 				
-				let columnWidth: CGFloat = self.tableView.bounds.size.width - (24 /* spacing */ + 48 /* user photo */)
+				var height: CGFloat = CELL_FOOTER_HEIGHT + (CELL_PADDING_VERTICAL * 2)    // Base size if no description or photo
+				
 				if entity.summary != nil {
 					
 					let description = entity.summary as NSString
@@ -444,18 +445,16 @@ extension NotificationsTableViewController {
 						attributes: attributes,
 						context: nil)
 					
-					let descHeight = min(rect.height, 102.272)	// Cap at ~5 lines
-					height += (descHeight + 8 + 0.5)
+					let descHeight = min(rect.height, 102.272)	// Cap at ~5 lines based on HNeueLight 17pts
+					height += (descHeight + CELL_VIEW_SPACING + 0.5) // Add a bit because of rounding scruff
 				}
 				
 				if entity.photoBig != nil {
 					/* This relies on sizing and spacing of the message view */
-					height += (CGFloat(Int(columnWidth * 0.5625)) + 8)  // 16:9 aspect ratio
+					height += photoHeight + CELL_VIEW_SPACING  // 16:9 aspect ratio
 				}
 				
-				if minHeight > height {
-					height = minHeight
-				}
+				height = max(minHeight, height)
 				
 				if entity.id_ != nil {
 					self.rowHeights[entity.id_] = CGFloat(height)
@@ -480,16 +479,23 @@ extension NotificationsTableViewController {
 				}
 				
 				/* Create and bind a cell */
-				let cell = buildCell(.TextAndPhoto)
-				bindCell(cell, entity: queryResult.object, location: nil)
+				var cellType: CellType = .TextAndPhoto
 				
-				cell.setNeedsUpdateConstraints()
-				cell.updateConstraintsIfNeeded()
+				if entity.photoBig == nil {
+					cellType = .Text
+				}
+				else if entity.summary == nil {
+					cellType = .Photo
+				}
+				
+				let cell = makeCell(cellType)
+				bindCell(cell, entity: queryResult.object, location: nil)
 				cell.setNeedsLayout()
 				cell.layoutIfNeeded()
-
+				let cellSize = cell.contentView.sizeThatFits(CGSizeMake(self.tableView.frame.size.height, CGFloat.max))
+				
 				/* Get the actual height required for the cell */
-				let height = cell.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
+				let height = cellSize.height + 1
 				if entity.id_ != nil {
 					self.rowHeights[entity.id_] = CGFloat(height)
 				}
@@ -500,17 +506,6 @@ extension NotificationsTableViewController {
 			return nil
 		}
 	}
-}
-
-extension NotificationsTableViewController: ViewDelegate {
-	
-    func view(container: UIView, didTapOnView view: UIView) {
-        if let view = view as? AirImageView, container = container as? NotificationCell {
-            if view.image != nil {
-                Shared.showPhotoBrowser(view.image, view: view, viewController: self, entity: container.entity)
-            }
-        }
-    }
 }
 
 extension NotificationsTableViewController: TTTAttributedLabelDelegate {

@@ -45,10 +45,10 @@ class PatchTableViewController: BaseTableViewController {
         }
         
         super.viewDidLoad()
-        
-        /* Content view */
-        self.contentViewName = "PatchNormalView"
-        
+		
+		self.tableView.estimatedRowHeight = 136
+		self.tableView.rowHeight = 136
+		
 		switch self.filter {
 			case .Nearby:
 				self.navigationItem.title = "Nearby"
@@ -126,6 +126,7 @@ class PatchTableViewController: BaseTableViewController {
     
     override func query() -> Query {
         if self._query == nil {
+			
             let query = Query.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Query
             
             switch self.filter {
@@ -167,7 +168,7 @@ class PatchTableViewController: BaseTableViewController {
 			if !self.refreshControl!.refreshing {
 				/* Wacky activity control for body */
 				if self.showProgress {
-					self.activity?.startAnimating()
+					self.activity.startAnimating()
 				}
 			}
 			
@@ -224,72 +225,84 @@ class PatchTableViewController: BaseTableViewController {
         }
         
         self.processingQuery = true
-        Reporting.updateCrashKeys()
-        
-        DataController.instance.refreshItemsFor(query(), force: false, paging: false, completion: {
-            [weak self] results, query, error in
-            
-            self?.processingQuery = false
-            if let error = ServerError(error) {
-                
-                /* Always reset location after a network error */
-                LocationController.instance.clearLastLocationAccepted()
-                
-                /* User credentials probably need to be refreshed */
-                if error.code == ServerStatusCode.UNAUTHORIZED {
-                    let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
-                    let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController")
-                    self?.view.window?.setRootViewController(controller, animated: true)
-                }
-				
-				self?.activity?.stopAnimating()
-                self?.refreshControl!.endRefreshing()
-                
-                return
-            }
-            
-            self?.activityDate = DataController.instance.activityDate
-            
-            // Delay seems to be necessary to avoid visual glitch with UIRefreshControl
-            Utils.delay(0.5, closure: {
-                
-                /* Flag query as having been executed at least once */
-				self?.activity?.stopAnimating()
-                self?.refreshControl!.endRefreshing()
-                
-                if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
-                    if fetchedObjects.count == 0 {
-                        self?.emptyLabel.fadeIn()
-                    }
-                    else if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundEffects")) {
-                        if !query.executedValue {
-                            AudioController.instance.play(Sound.greeting.rawValue)
-                        }
-                    }
-                }
-                
-                self?.query().executedValue = true
-                
-                return
-            })
-        })
+		
+		self.queue.addOperationWithBlock {
+			Reporting.updateCrashKeys()
+			
+			DataController.instance.refreshItemsFor(self.query(), force: false, paging: false, completion: {
+				[weak self] results, query, error in
+				/*
+				 * Called on main thread
+				 */
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					self?.processingQuery = false
+					if let error = ServerError(error) {
+						
+						/* Always reset location after a network error */
+						LocationController.instance.clearLastLocationAccepted()
+						
+						/* User credentials probably need to be refreshed */
+						if error.code == ServerStatusCode.UNAUTHORIZED {
+							let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
+							let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController")
+							self?.view.window?.setRootViewController(controller, animated: true)
+						}
+						
+						self?.activity.stopAnimating()
+						self?.refreshControl!.endRefreshing()
+						
+						return
+					}
+					
+					self?.activityDate = DataController.instance.activityDate
+					
+					// Delay seems to be necessary to avoid visual glitch with UIRefreshControl
+					Utils.delay(0.5, closure: {
+						
+						/* Flag query as having been executed at least once */
+						self?.activity.stopAnimating()
+						self?.refreshControl!.endRefreshing()
+						
+						if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
+							if fetchedObjects.count == 0 {
+								self?.emptyLabel.fadeIn()
+							}
+							else if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundEffects")) {
+								if !query.executedValue {
+									AudioController.instance.play(Sound.greeting.rawValue)
+								}
+							}
+						}
+						
+						self?.query().executedValue = true
+						
+						return
+					})
+				}
+			})
+		}
     }
-    
+	
     func registerForLocationNotifications() {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "didUpdateLocation:",
             name: Event.LocationUpdate.rawValue, object: nil)
     }
-    
+	
     func unregisterForLocationNotifications(){
         NSNotificationCenter.defaultCenter().removeObserver(self,
             name: Event.LocationUpdate.rawValue, object: nil)
     }
+}
 
-	/*--------------------------------------------------------------------------------------------
-	* Cells
-	*--------------------------------------------------------------------------------------------*/
-	
-	override func bindCell(cell: UITableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
+/*--------------------------------------------------------------------------------------------
+ * Extensions
+ *--------------------------------------------------------------------------------------------*/
+
+extension PatchTableViewController {
+	/* 
+	 * Cells
+	 */
+	override func bindCell(cell: AirTableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
 		
 		var location = self.location
 		if self.filter == .Nearby || location == nil {
@@ -300,23 +313,18 @@ class PatchTableViewController: BaseTableViewController {
 		
 		return nil
 	}
-}
-
-/*--------------------------------------------------------------------------------------------
- * Extensions
- *--------------------------------------------------------------------------------------------*/
-
-extension PatchTableViewController {
     /*
-    * UITableViewDelegate
-    */
+     * UITableViewDelegate
+     */
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
 		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
             let patch = queryResult.object as? Patch,
             let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
-                controller.entityId = patch.id_
-                self.navigationController?.pushViewController(controller, animated: true)
+				controller.entityId = patch.id_
+				controller.modalPresentationStyle = UIModalPresentationStyle.FullScreen
+				controller.modalTransitionStyle = UIModalTransitionStyle.CoverVertical
+				showViewController(controller, sender: self)
 		}
         
         /* Cell won't show highlighting when navigating back to table view */

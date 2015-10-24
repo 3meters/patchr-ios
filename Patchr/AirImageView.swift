@@ -28,19 +28,10 @@ class AirImageView: UIImageView {
     }
     
     func initialize(){
-        
-        self.activity.translatesAutoresizingMaskIntoConstraints = false
+		
+		self.activity.hidesWhenStopped = true
         addSubview(self.activity)
-        
-        let centerConstraintX = NSLayoutConstraint(item: self.activity, attribute: .CenterX, relatedBy: .Equal, toItem: self, attribute: .CenterX, multiplier: 1, constant: 0)
-        let centerConstraintY = NSLayoutConstraint(item: self.activity, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1, constant: 0)
-        let widthConstraint = NSLayoutConstraint(item: self.activity, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 20)
-        let heightConstraint = NSLayoutConstraint(item: self.activity, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 20)
-        
-        addConstraints([centerConstraintX, centerConstraintY, widthConstraint, heightConstraint])
-        
-        self.activity.hidesWhenStopped = true
-        
+		
         /* Dot for debug */
         if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("devModeEnabled")) {
             self.spot = CAShapeLayer()
@@ -55,6 +46,8 @@ class AirImageView: UIImageView {
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
+		
+		self.activity.anchorInCenterWithWidth(20, height: 20)
 		
 		/* Gradient */
 		if self.showGradient {

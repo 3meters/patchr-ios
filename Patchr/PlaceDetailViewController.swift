@@ -13,6 +13,7 @@ class PlaceDetailViewController: UITableViewController {
     var place:      Place?
     var placeId:    String?
     var progress:   AirProgress?
+	var queue =		NSOperationQueue()
 
     /* Outlets are initialized before viewDidLoad is called */
     
@@ -37,6 +38,7 @@ class PlaceDetailViewController: UITableViewController {
         self.category.text = nil
         self.address.text = nil
         self.distance.text = nil
+		self.queue.name = "Entity request queue"
         
         /* Wacky activity control for body */
         self.progress = AirProgress(view: self.view)
@@ -81,25 +83,30 @@ class PlaceDetailViewController: UITableViewController {
             self.progress?.removeFromSuperViewOnHide = true
             self.progress?.show(true)
         }
-
-		DataController.instance.withPlaceId(placeId!, refresh: force) {
-			place, error in
-			self.refreshControl?.endRefreshing()
-            self.progress?.hide(true)
-            
-            if error == nil {
-                if place != nil {
-                    self.place = place
-                    self.draw()
-                }
-                else {
-                    Shared.Toast("Place has been deleted")
-                    Utils.delay(2.0, closure: {
-                        () -> () in
-                        self.navigationController?.popViewControllerAnimated(true)
-                    })
-                }
-            }
+		
+		self.queue.addOperationWithBlock {
+			DataController.instance.withPlaceId(self.placeId!, refresh: force) {
+				place, error in
+				
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					self.refreshControl?.endRefreshing()
+					self.progress?.hide(true)
+					
+					if error == nil {
+						if place != nil {
+							self.place = place
+							self.draw()
+						}
+						else {
+							Shared.Toast("Place has been deleted")
+							Utils.delay(2.0, closure: {
+								() -> () in
+								self.navigationController?.popViewControllerAnimated(true)
+							})
+						}
+					}
+				}
+			}
 		}
 	}
 

@@ -21,15 +21,24 @@ struct Utils {
 	static var imageLike: UIImage = { return UIImage(named: "imgLikeLight") }()!
 	static var imageShare: UIImage = { return UIImage(named: "imgShareLight") }()!
 	static var imageLocation: UIImage = { return UIImage(named: "imgLocationLight") }()!
-    
+	static var imageHeartOn: UIImage = { return UIImage(named: "imgHeartFilledLight") }()!
+	static var imageHeartOff: UIImage = { return UIImage(named: "imgHeartLight") }()!
+	static var imageBroken: UIImage = { return UIImage(named: "imgBroken250tLight") }()!
+	
     static var messageDateFormatter: NSDateFormatter = {
         let dateFormatter = NSDateFormatter()
-        dateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
+        dateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
         dateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
         dateFormatter.doesRelativeDateFormatting = true
         return dateFormatter
     }()
-    
+	
+	static func synced(lock: AnyObject, closure: () -> ()) {
+		objc_sync_enter(lock)
+		closure()
+		objc_sync_exit(lock)
+	}
+	
     static func LocalizedString(str: String, comment: String) -> String {
         return NSLocalizedString(str, comment: comment)
     }

@@ -15,9 +15,6 @@ class AirImageButton: UIButton {
     var spot: CAShapeLayer?
     var sizeCategory: String = SizeCategory.thumbnail
 
-    var widthConstraint: NSLayoutConstraint?
-    var heightConstraint: NSLayoutConstraint?
-    
     var progressAuto: Bool = true
     
     private var progressStyle: UIActivityIndicatorViewStyle = .Gray
@@ -34,18 +31,9 @@ class AirImageButton: UIButton {
     }
     
     func initialize(){
-        
-        self.progress.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(progress)
-        
-        let xCenterConstraint = NSLayoutConstraint(item: progress, attribute: .CenterX, relatedBy: .Equal, toItem: self, attribute: .CenterX, multiplier: 1, constant: 0)
-        let yCenterConstraint = NSLayoutConstraint(item: progress, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1, constant: 0)
-        self.widthConstraint = NSLayoutConstraint(item: progress, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: self.progressSize)
-        self.heightConstraint = NSLayoutConstraint(item: progress, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: self.progressSize)
-        
-        self.addConstraints([xCenterConstraint, yCenterConstraint, widthConstraint!, heightConstraint!])
-        
-        self.progress.hidesWhenStopped = true
+		
+		self.progress.hidesWhenStopped = true
+		addSubview(self.progress)
         
         /* Dot for debug */
         if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("devModeEnabled")) {
@@ -58,13 +46,9 @@ class AirImageButton: UIButton {
             self.layer.addSublayer(self.spot!)
         }
     }
-    
+	
     func setProgressSize(size: CGFloat) {
         self.progressSize = size
-        self.widthConstraint?.constant = size
-        self.heightConstraint?.constant = size
-        self.setNeedsUpdateConstraints()
-        self.updateConstraintsIfNeeded()
     }
     
     func setProgressStyle(style: UIActivityIndicatorViewStyle) {
@@ -78,7 +62,12 @@ class AirImageButton: UIButton {
     func stopProgress(){
         self.progress.stopAnimating()
     }
-    
+	
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		self.progress.anchorInCenterWithWidth(self.progressSize, height: self.progressSize)
+	}
+	
     func linkedToPhoto(photo: Photo) -> Bool {
         if self.linkedPhotoUrl == nil {
             return false
@@ -121,10 +110,13 @@ class AirImageButton: UIButton {
         }
     
         self.spot?.fillColor = UIColor.lightGrayColor().CGColor
+		
+		let options: SDWebImageOptions = [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload]
+		
         self.sd_setImageWithURL(photoUrl,
             forState:UIControlState.Normal,
             placeholderImage: nil,
-            options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload],
+            options: options,
             completed: { image, error, cacheType, url in
                 self.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
             }
@@ -145,6 +137,7 @@ class AirImageButton: UIButton {
         self.linkedPhotoUrl = url
         
         self.spot?.fillColor = UIColor.lightGrayColor().CGColor
+		
         self.sd_setImageWithURL(url,
             forState:UIControlState.Normal,
             placeholderImage: nil,

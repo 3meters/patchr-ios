@@ -1,17 +1,111 @@
 //
-//  UserTableViewCell.swift
+//  UserView.swift
 //  Patchr
 //
-//  Created by Rob MacEachern on 2015-04-06.
-//  Copyright (c) 2015 3meters. All rights reserved.
+//  Created by Jay Massena on 10/18/15.
+//  Copyright © 2015 3meters. All rights reserved.
 //
 
 import UIKit
 
 class UserView: BaseView {
-    
-    @IBOutlet weak var userPhoto: AirImageView!
-    @IBOutlet weak var userName: UILabel!
-    @IBOutlet weak var area: UILabel!
-    @IBOutlet weak var owner: UILabel!
+
+	var name			= UILabel()
+	var photo			= AirImageView(frame: CGRectZero)
+	var area			= UILabel()
+	var owner			= UILabel()
+	var approved		= UILabel()
+	var approvedSwitch	= UISwitch()
+	var removeButton	= UIButton()
+
+	weak var delegate:  UserApprovalViewDelegate?
+	
+	init() {
+		super.init(frame: CGRectZero)
+		initialize()
+	}
+	
+	override init(frame: CGRect) {
+		/* Called when instantiated from code */
+		super.init(frame: frame)
+		initialize()
+	}
+	
+	required init?(coder aDecoder: NSCoder) {
+		/* Called when instantiated from storyboard or nib */
+		super.init(coder: aDecoder)
+		initialize()
+	}
+	
+	func initialize() {
+		
+		self.clipsToBounds = true
+
+		/* User photo */
+		self.photo.contentMode = UIViewContentMode.ScaleAspectFill
+		self.photo.clipsToBounds = true
+		self.photo.layer.cornerRadius = 48
+		self.photo.sizeCategory = SizeCategory.profile
+		self.addSubview(self.photo)
+
+		/* User name */
+		self.name.lineBreakMode = .ByTruncatingMiddle
+		self.name.font = UIFont(name: "HelveticaNeue-Light", size: 18)
+		self.addSubview(self.name)
+		
+		/* User area */
+		self.area.font = UIFont(name: "HelveticaNeue-Light", size: 14)
+		self.area.textColor = Colors.secondaryText
+		self.addSubview(self.area)
+		
+		/* Owner flag */
+		self.owner.text = "OWNER"
+		self.owner.font = UIFont(name: "HelveticaNeue-Light", size: 14)
+		self.owner.textColor = Colors.brandColor
+		self.addSubview(self.owner)
+		
+		/* Remove button */
+		self.removeButton.setImage(UIImage(named:"imgRemoveLight") , forState: UIControlState.Normal)
+		self.removeButton.imageView?.contentMode = UIViewContentMode.Center
+		self.removeButton.addTarget(self, action: Selector("removeButtonTouchUpInsideAction:"), forControlEvents: .TouchUpInside)
+		self.addSubview(self.removeButton)
+		
+		/* Approved label */
+		self.approved.text = "Approved:"
+		self.approved.font = UIFont(name: "HelveticaNeue-Light", size: 16)
+		self.addSubview(self.approved)
+		
+		/* Approval switch */
+		self.approvedSwitch.addTarget(self, action: Selector("approvedSwitchValueChangedAction:"), forControlEvents: .TouchUpInside)
+		self.addSubview(self.approvedSwitch)
+	}
+	
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		
+		let columnLeft = CELL_PADDING_HORIZONTAL + 96 + CELL_VIEW_SPACING
+		let columnWidth = self.width() - (columnLeft + CELL_PADDING_HORIZONTAL)
+		
+		self.photo.anchorTopLeftWithLeftPadding(8, topPadding: 8, width: 96, height: 96)
+		self.name.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 8, width: columnWidth, height: 22)
+		self.area.alignUnder(self.name, matchingLeftWithTopPadding: 2, width: columnWidth, height: 17)
+		self.owner.alignUnder(self.area, matchingLeftWithTopPadding: 2, width: columnWidth, height: 17)
+		self.approved.alignUnder(self.owner, matchingLeftWithTopPadding: 8, width: 100, height: 19)
+		self.approvedSwitch.alignToTheRightOf(self.approved, matchingCenterWithLeftPadding: 20, width: 51, height: 31)
+		self.removeButton.anchorTopRightWithRightPadding(8, topPadding: 8, width: 48, height: 48)
+	}
+	
+	func approvedSwitchValueChangedAction(sender: UISwitch) {
+		self.delegate?.userView(self, approvalSwitchValueChanged: self.approvedSwitch)
+	}
+	
+	func removeButtonTouchUpInsideAction(sender: UIButton) {
+		self.delegate?.userView(self, removeButtonTapped: self.removeButton)
+	}
+}
+
+@objc
+protocol UserApprovalViewDelegate {
+	func userView(userView: UserView, approvalSwitchValueChanged approvalSwitch: UISwitch)
+	func userView(userView: UserView, removeButtonTapped removeButton: UIButton)
 }

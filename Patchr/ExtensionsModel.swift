@@ -87,77 +87,65 @@ extension Entity {
 
 extension Patch {
     
-	static func bindView(view: UIView, object: AnyObject, location: CLLocation?) -> UIView {
+	static func bindView(view: UIView, entity: AnyObject, location: CLLocation?) -> UIView {
         
-        let patch = object as! Entity
+        let entity = entity as! Entity
         let view = view as! PatchView
+		
+		view.entity = entity
 
-        view.name.text = patch.name
-        if patch.type != nil {
-            view.type.text = patch.type.uppercaseString + " PATCH"
-        }
-        
-        if view.placeName != nil {
-            view.placeName.hidden = true
-            view.placeName.text = nil
-            if let patchTemp = object as? Patch {
-                if patchTemp.place != nil {
-                    view.placeName.text = patchTemp.place.name.uppercaseString
-                    view.placeName.hidden = false
-                }
-            }
-        }
-
-        if view.visibility != nil {
-            view.visibility?.tintColor(Colors.brandColor)
-            view.visibility.hidden = (patch.visibility == "public")
-        }
-        
-        if (view.status != nil) {
-            view.status.hidden = true
-            view.statusWidth.constant = CGFloat(0)
-            if (patch.userWatchStatusValue == .Pending && !SCREEN_NARROW) {
-                view.status.hidden = false
-                view.statusWidth.constant = CGFloat(70)
-            }
-            else {
-                
-            }
+        view.name.text = entity.name
+        if entity.type != nil {
+            view.type.text = entity.type.uppercaseString + " PATCH"
         }
 		
-        view.messageCount.text = "--"
-        view.watchingCount.text = "--"
-        
-        if let numberOfMessages = patch.numberOfMessages {
-            if view.messageCount != nil {
-                view.messageCount.text = numberOfMessages.stringValue
-            }
-        }
-        
-        if let numberOfWatching = patch.countWatching {
-            if view.watchingCount != nil {
-                view.watchingCount.text = numberOfWatching.stringValue
-            }
-        }
+		if let patch = entity as? Patch {
+			
+			view.messagesGroup.hidden = false
+			view.watchingGroup.hidden = false
+			view.rule.hidden = false
+			
+			view.placeName.text = patch.place?.name.uppercaseString
+			view.visibility.hidden = (patch.visibility == "public")
+			view.status.hidden = true
+			if (patch.userWatchStatusValue == .Pending && !SCREEN_NARROW) {
+				view.status.hidden = false
+			}
+			
+			view.messageCount.text = "--"
+			view.watchingCount.text = "--"
+			
+			if let numberOfMessages = patch.numberOfMessages {
+				view.messageCount.text = numberOfMessages.stringValue
+			}
+			
+			if let numberOfWatching = patch.countWatching {
+				view.watchingCount.text = numberOfWatching.stringValue
+			}
+		}
+		else {
+			/* This is a shortcut with a subset of the info */
+			view.messagesGroup.hidden = true
+			view.watchingGroup.hidden = true
+			view.rule.hidden = true
+		}
 		
         /* Distance */
-        if view.distance != nil {
-			if location == nil {
-				view.distance.hidden = true
+		if location == nil {
+			view.distance.hidden = true
+		}
+		else {
+			view.distance.hidden = false
+			view.distance.text = "--"
+			if let loc = entity.location {
+				let patchLocation = CLLocation(latitude: loc.latValue, longitude: loc.lngValue)
+				let dist = Float(location!.distanceFromLocation(patchLocation))  // in meters
+				view.distance.text = LocationController.instance.distancePretty(dist)
 			}
-			else {
-				view.distance.hidden = false
-				view.distance.text = "--"
-				if let loc = patch.location {
-					let patchLocation = CLLocation(latitude: loc.latValue, longitude: loc.lngValue)
-					let dist = Float(location!.distanceFromLocation(patchLocation))  // in meters
-					view.distance.text = LocationController.instance.distancePretty(dist)
-				}
-			}
-        }
+		}
 
 		view.photo.showGradient = true
-		view.photo.setImageWithPhoto(patch.getPhotoManaged(), animate: view.photo.image == nil)
+		view.photo.setImageWithPhoto(entity.getPhotoManaged(), animate: view.photo.image == nil)
 		
         return view
     }
@@ -231,35 +219,39 @@ extension Message {
     static func bindView(view: UIView, entity: AnyObject) -> UIView {
         
         let entity = entity as! Entity
-        let view = view as! MessageCell
+        let view = view as! MessageView
         
         view.entity = entity
         
         let linkColor = Colors.brandColorDark
         let linkActiveColor = Colors.brandColorLight
-        
-        if let label = view.description_ as? TTTAttributedLabel {
-            label.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
-            label.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
-            label.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
-        }
+		
+		view.description_?.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
+		view.description_?.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
+		view.description_?.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
 		
 		if let description = entity.description_ {
-			view.description_.text = description
+			view.description_?.text = description
 		}
 		
+		let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
+		
         if let photo = entity.photo {
-            view.photo.setImageWithPhoto(photo, animate: view.photo.image == nil)
+			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.standard, size: nil)
+			view.photo?.sd_setImageWithURL(photoUrl, forState: UIControlState.Normal, placeholderImage: nil, options: options)
         }
 		
-        if let creator = entity.creator {
-            view.userName.text = creator.name
-            view.userPhoto.setImageWithPhoto(creator.getPhotoManaged(), animate: false)
-        }
-        else {
-            view.userName.text = "Deleted"
-			view.userPhoto.setImageWithPhoto(Entity.getDefaultPhoto("user", id: nil), animate: false)
-        }
+		view.userName.text = entity.creator?.name ?? "Deleted"
+		
+		if let photo = entity.creator?.getPhotoManaged() {
+			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile, size: nil)
+			view.userPhoto.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
+		}
+		else {
+			let photo = Entity.getDefaultPhoto("user", id: nil)
+			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile, size: nil)
+			view.userPhoto.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
+		}
 		
 		if let message = entity as? Message {
 			
@@ -359,41 +351,26 @@ extension Message {
 
 extension User {
     
-    static func bindView(view: UIView, object: AnyObject) {
+    static func bindView(view: UIView, entity: AnyObject) {
         
-        let user = object as! User
+        let entity = entity as! Entity
         let view = view as! UserView
-        
-        view.userName.text = user.name
-        view.userPhoto.setImageWithPhoto(user.getPhotoManaged(), animate: view.userPhoto.image == nil)
-        view.area.text = user.area?.uppercaseString
-        
-        view.userName.hidden = (view.userName.text == nil)
-        view.area.hidden = (view.area.text == nil)
-        view.owner.hidden = (view.owner.text == nil)
-        
-        /* Private patch owner controls */
-        if let view = view as? UserApprovalView {
-            
-            view.entity = object as? Entity
-            view.removeButton?.hidden = true
-            view.approved?.hidden = true
-            view.approvedSwitch?.hidden = true
-            
-            if let currentUser = UserController.instance.currentUser {
-                if user.id_ != currentUser.id_ {
-                    view.removeButton?.hidden = false
-                    view.approved?.hidden = false
-                    view.approvedSwitch?.hidden = false
-                    view.approvedSwitch?.on = false
-                    if (user.link != nil && user.link.type == "watch") {
-                        view.approvedSwitch?.on = user.link.enabledValue
-                    }
-                }
-            }
-        }
+		
+		view.entity = entity
+		
+        view.name.text = entity.name
+        view.photo.setImageWithPhoto(entity.getPhotoManaged(), animate: view.photo.image == nil)
+		
+		if let user = entity as? User {
+			view.area.text = user.area?.uppercaseString
+			view.area.hidden = (view.area.text == nil)
+			view.owner.hidden = true
+			view.removeButton.hidden = true
+			view.approved.hidden = true
+			view.approvedSwitch.hidden = true
+		}		
     }
-    
+	
     static func extras(inout parameters: [String:AnyObject]) -> [String:AnyObject] {
         if let links = User.links() {
             parameters["links"] = links
@@ -436,28 +413,31 @@ extension Notification {
     static func bindView(view: UIView, entity: AnyObject) -> UIView {
 		
 		let notification = entity as! Notification
-		let view = view as! NotificationCell
+		let view = view as! NotificationView
 		
 		view.entity = notification
 		
 		if let description = notification.summary {
-			view.description_.text = description
+			view.description_?.text = description
 		}
 		
 		let linkColor = Colors.brandColorDark
 		let linkActiveColor = Colors.brandColorLight
 
-		if let label = view.description_ as? TTTAttributedLabel {
-			label.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
-			label.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
-			label.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
+		view.description_?.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
+		view.description_?.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
+		view.description_?.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
+		
+		let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
+		
+		if let photo = notification.photoBig {
+			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.standard, size: nil)
+			view.photo?.sd_setImageWithURL(photoUrl, forState: UIControlState.Normal, placeholderImage: nil, options: options)
 		}
 		
-		view.userPhoto.setImageWithPhoto(notification.getPhotoManaged(), animate: false)
-
-		if let photo = notification.photoBig {
-			view.photo.setImageWithPhoto(photo, animate: view.photo.image == nil)
-		}
+		let photo = notification.getPhotoManaged()
+		let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile, size: nil)
+		view.userPhoto.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
 		
 		view.createdDate.text = Utils.messageDateFormatter.stringFromDate(notification.createdDate)
 
