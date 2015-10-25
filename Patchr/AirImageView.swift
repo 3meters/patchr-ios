@@ -144,7 +144,7 @@ class AirImageView: UIImageView {
         self.spot?.fillColor = UIColor.lightGrayColor().CGColor
         self.sd_setImageWithURL(url,
             placeholderImage: nil,
-            options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload],
+            options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage],
             completed: { image, error, cacheType, url in
                 self.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
             }
@@ -208,7 +208,7 @@ class AirImageView: UIImageView {
 		
 		if animate /*|| cacheType == SDImageCacheType.None || cacheType == SDImageCacheType.Disk*/ {
 			UIView.transitionWithView(self,
-				duration: 0.5,
+				duration: 0.25,
 				options: UIViewAnimationOptions.TransitionCrossDissolve,
 				animations: {
 					self.image = image

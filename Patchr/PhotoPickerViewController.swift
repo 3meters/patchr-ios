@@ -13,8 +13,10 @@ class PhotoPickerViewController: UICollectionViewController {
     var imageResults: [ImageResult] = [ImageResult]()
     var searchBarActive: Bool = false
     var searchBarBoundsY: CGFloat?
+	var threshold = 0
+	var processing = false
     
-    var searchBar: UISearchBar?
+    var searchBar: UISearchBar!
     var pickerDelegate: PhotoBrowseControllerDelegate?
 	var activity: UIActivityIndicatorView?
 	var footerView:      UIView!
@@ -51,7 +53,8 @@ class PhotoPickerViewController: UICollectionViewController {
     private var thumbnailWidth: CGFloat?
     private var availableWidth: CGFloat?
     private let pageSize = 49
-    private let maxSize = 500
+    private var maxSize = 500
+	private var virtualSize = 49
     private let maxImageSize: Int = 500000
     private let maxDimen: Int = Int(IMAGE_DIMENSION_MAX)
     
@@ -67,34 +70,6 @@ class PhotoPickerViewController: UICollectionViewController {
 		
 		/* Simple activity indicator */
 		self.activity = addActivityIndicatorTo(self.view)
-		
-		/* Scroll inset */
-		self.sectionInsets = UIEdgeInsets(top: self.searchBar!.frame.size.height + 4, left: 4, bottom: 4, right: 4)
-		
-		/* Calculate thumbnail width */
-		availableWidth = UIScreen.mainScreen().bounds.size.width - (sectionInsets!.left + sectionInsets!.right)
-		let requestedColumnWidth: CGFloat = 100
-		let numColumns: CGFloat = floor(CGFloat(availableWidth!) / CGFloat(requestedColumnWidth))
-		let spaceLeftOver = availableWidth! - (numColumns * requestedColumnWidth) - ((numColumns - 1) * 4)
-		self.thumbnailWidth = requestedColumnWidth + (spaceLeftOver / numColumns)
-		
-		/* Footer spinner */
-		self.footerView = UIView(frame: CGRectMake(0, 0, self.thumbnailWidth!, self.thumbnailWidth!))
-		
-		let button = UIButton(type: UIButtonType.RoundedRect)
-		button.tag = 1
-		button.frame = CGRectMake(0, 0, self.collectionView!.bounds.size.width, 48)
-		button.backgroundColor = UIColor.whiteColor()
-		button.addTarget(self, action: Selector("loadMore:"), forControlEvents: UIControlEvents.TouchUpInside)
-		button.setTitle(self.loadMoreMessage, forState: .Normal)
-		footerView.addSubview(button)
-		
-		let spinner: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .White)
-		spinner.tag = 2
-		spinner.frame = CGRectMake(0, 0, self.collectionView!.bounds.size.width, 48)
-		spinner.color = Colors.brandColorDark
-		spinner.hidden = true
-		footerView.addSubview(spinner)
 	}
 
 	override func viewWillAppear(animated: Bool) {
@@ -110,9 +85,20 @@ class PhotoPickerViewController: UICollectionViewController {
             self.searchBar!.placeholder = "Search for photos"
         }
         
+		/* Scroll inset */
+		self.sectionInsets = UIEdgeInsets(top: self.searchBar!.frame.size.height + 4, left: 4, bottom: 4, right: 4)
+		
         if !self.searchBar!.isDescendantOfView(self.view) {
             self.view.addSubview(self.searchBar!)
         }
+		
+		/* Calculate thumbnail width */
+		availableWidth = UIScreen.mainScreen().bounds.size.width - (sectionInsets!.left + sectionInsets!.right)
+		let requestedColumnWidth: CGFloat = 100
+		let numColumns: CGFloat = floor(CGFloat(availableWidth!) / CGFloat(requestedColumnWidth))
+		let spaceLeftOver = availableWidth! - (numColumns * requestedColumnWidth) - ((numColumns - 1) * 4)
+		self.thumbnailWidth = requestedColumnWidth + (spaceLeftOver / numColumns)
+
 	}
 
 	override func viewDidLayoutSubviews() {
@@ -138,23 +124,37 @@ class PhotoPickerViewController: UICollectionViewController {
 	*--------------------------------------------------------------------------------------------*/
 
     private func loadData(paging: Bool = false) {
+		
+		if self.processing {
+			return
+		}
+		
+		if self.searchBar!.text == nil || self.searchBar!.text == "" {
+			return
+		}
         
         var offset = 0
+		self.processing = true
 		
 		self.activity?.startAnimating()
 		
         if !paging {
             self.imageResults.removeAll()
+			self.virtualSize = self.pageSize
+			let topOffset = CGPointMake(0, -(self.collectionView?.contentInset.top ?? 0))
+			self.collectionView?.setContentOffset(topOffset, animated: true)
         }
         else {
             offset = Int(ceil(Float(self.imageResults.count) / Float(self.pageSize)) * Float(self.pageSize))
         }
 		
-		self.queue.addOperationWithBlock {
+		DataController.instance.backgroundQueue.addOperationWithBlock {
+			
 			DataController.proxibase.loadSearchImages(self.searchBar!.text!, limit: Int64(self.pageSize), offset: Int64(offset)) {
 				response, error in
 				
 				NSOperationQueue.mainQueue().addOperationWithBlock {
+					
 					self.activity?.stopAnimating()
 					if let error = ServerError(error) {
 						self.handleError(error)
@@ -171,13 +171,15 @@ class PhotoPickerViewController: UICollectionViewController {
 									resultsCopy.removeLastObject()
 								}
 								
+								let beginCount = self.imageResults.count
+								
 								for imageResultDict in resultsCopy {
-									let imageResult = ImageResult.setPropertiesFromDictionary(imageResultDict as! NSDictionary, onObject: ImageResult())
 									
-									var usable = false;
-									usable = (imageResult.thumbnail != nil && imageResult.thumbnail!.mediaUrl != nil);
+									let imageResult = ImageResult.setPropertiesFromDictionary(imageResultDict as! NSDictionary, onObject: ImageResult())
+									var usable = (imageResult.thumbnail != nil && imageResult.thumbnail!.mediaUrl != nil);
 									
 									if (usable) {
+										/* Make sure we don't already have it */
 										for tempImageResult in self.imageResults {
 											if tempImageResult.thumbnail!.mediaUrl == imageResult.thumbnail!.mediaUrl {
 												usable = false
@@ -190,17 +192,29 @@ class PhotoPickerViewController: UICollectionViewController {
 										self.imageResults.append(imageResult)
 									}
 								}
-							
+								
+								if self.imageResults.count == beginCount {
+									self.virtualSize = self.imageResults.count
+									self.threshold = 1000
+								}
+								else {
+									self.threshold = self.imageResults.count - 20
+									self.virtualSize = self.imageResults.count + 49
+								}
 						}
 						
 						self.collectionView?.reloadData()
 					}
+					self.processing = false
 				}
 			}
 		}
     }
 	
-    func imageForIndexPath(indexPath: NSIndexPath) -> ImageResult {
+    func imageForIndexPath(indexPath: NSIndexPath) -> ImageResult? {
+		if indexPath.row > self.imageResults.count - 1 {
+			return nil
+		}
         return imageResults[indexPath.row]
     }
 }
@@ -230,6 +244,34 @@ extension PhotoPickerViewController {
     /*
      * UICollectionViewDelegate
      */
+	override func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
+		
+		if !self.processing {
+			if let indexPaths = self.collectionView?.indexPathsForVisibleItems() {
+				for indexPath in indexPaths {
+					if indexPath.row > self.threshold {
+						loadData(true)
+						return
+					}
+				}
+			}
+		}
+	}
+	
+	override func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+		
+		if !self.processing {
+			if let indexPaths = self.collectionView?.indexPathsForVisibleItems() {
+				for indexPath in indexPaths {
+					if indexPath.row > self.threshold {
+						loadData(true)
+						return
+					}
+				}
+			}
+		}
+	}
+	
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) -> Void {
         
         if let cell = collectionView.cellForItemAtIndexPath(indexPath) as? ThumbnailCollectionViewCell {
@@ -257,22 +299,21 @@ extension PhotoPickerViewController {
      * UICollectionViewDataSource
      */
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return imageResults.count
+        return self.virtualSize
     }
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
 		
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(self.reuseIdentifier, forIndexPath: indexPath) 
         cell.backgroundColor = Colors.windowColor
-        cell.layer.shouldRasterize = true
-        cell.layer.rasterizationScale = UIScreen.mainScreen().scale
 		
-		let imageResult = self.imageForIndexPath(indexPath)
-		if let thumbCell = cell as? ThumbnailCollectionViewCell {
-			if let imageView = thumbCell.thumbnail {
-				thumbCell.imageResult = imageResult
-				imageView.setImageWithThumbnail(imageResult.thumbnail!, animate: false)
-			}
+		if let imageResult = self.imageForIndexPath(indexPath) {
+			if let thumbCell = cell as? ThumbnailCollectionViewCell {
+				if let imageView = thumbCell.thumbnail {
+					thumbCell.imageResult = imageResult
+					imageView.setImageWithThumbnail(imageResult.thumbnail!, animate: false)
+				}
+			}			
 		}
 		
         return cell
