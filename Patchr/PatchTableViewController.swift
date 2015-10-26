@@ -127,7 +127,7 @@ class PatchTableViewController: BaseTableViewController {
     override func query() -> Query {
         if self._query == nil {
 			
-            let query = Query.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Query
+            let query = Query.insertInManagedObjectContext(DataController.instance.mainContext) as! Query
             
             switch self.filter {
             case .Nearby:
@@ -229,7 +229,7 @@ class PatchTableViewController: BaseTableViewController {
 		DataController.instance.backgroundQueue.addOperationWithBlock {
 			Reporting.updateCrashKeys()
 			
-			DataController.instance.refreshItemsFor(self.query(), force: false, paging: false, completion: {
+			DataController.instance.refreshItemsFor(self.query().objectID, force: false, paging: false, completion: {
 				[weak self] results, query, error in
 				/*
 				 * Called on main thread

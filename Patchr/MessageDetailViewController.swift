@@ -83,7 +83,7 @@ class MessageDetailViewController: UITableViewController {
 		/* Navigation bar buttons */
         let shareButton  = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
         if self.isOwner {
-            let editImage    = UIImage(named: "imgEdit2Light")
+            let editImage    = Utils.imageEdit
             let editButton   = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
             let spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
             let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: Selector("deleteAction"))
@@ -116,7 +116,7 @@ class MessageDetailViewController: UITableViewController {
 		
         /* Use cached entity if available in the data model */
         if self.messageId != nil {
-            if let message: Message? = Message.fetchOneById(self.messageId!, inManagedObjectContext: DataController.instance.managedObjectContext) {
+            if let message: Message? = Message.fetchOneById(self.messageId!, inManagedObjectContext: DataController.instance.mainContext) {
                 self.message = message
             }
         }
@@ -127,7 +127,7 @@ class MessageDetailViewController: UITableViewController {
         * Entity could have been delete while we were away to check it.
         */
         if self.message != nil {
-            let item = ServiceBase.fetchOneById(self.messageId!, inManagedObjectContext: DataController.instance.managedObjectContext)
+            let item = ServiceBase.fetchOneById(self.messageId!, inManagedObjectContext: DataController.instance.mainContext)
             if item == nil {
                 self.navigationController?.popViewControllerAnimated(false)
                 return
@@ -471,7 +471,7 @@ class MessageDetailViewController: UITableViewController {
                 self.handleError(error)
             }
             else {
-				DataController.instance.managedObjectContext.deleteObject(self.message!)
+				DataController.instance.mainContext.deleteObject(self.message!)
 				DataController.instance.saveContext()
 				self.navigationController?.popViewControllerAnimated(true)
             }
@@ -488,7 +488,7 @@ class MessageDetailViewController: UITableViewController {
                     UIViewController.topMostViewController()!.handleError(error)
                 }
                 else {
-					DataController.instance.managedObjectContext.deleteObject(self.message!)
+					DataController.instance.mainContext.deleteObject(self.message!)
 					DataController.instance.saveContext()
 					self.navigationController?.popViewControllerAnimated(true)
                 }

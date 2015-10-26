@@ -40,7 +40,7 @@ class UserDetailViewController: BaseDetailViewController {
             self.navigationItem.title = "Guest"
         }
         else if isCurrentUser {
-            let editImage = UIImage(named: "imgEdit2Light")
+            let editImage = Utils.imageEdit
             let editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionEdit"))
             let signoutButton = UIBarButtonItem(title: "Sign out", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSignout"))
             let settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSettings"))

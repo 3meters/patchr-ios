@@ -129,7 +129,7 @@ class PatchDetailViewController: BaseDetailViewController {
          * Entity could have been deleted while we were away so check it.
          */
         if self.entity != nil {
-            let item = ServiceBase.fetchOneById(self.entityId!, inManagedObjectContext: DataController.instance.managedObjectContext)
+            let item = ServiceBase.fetchOneById(self.entityId!, inManagedObjectContext: DataController.instance.mainContext)
             if item == nil {
                 self.navigationController?.popViewControllerAnimated(false)
                 return
@@ -483,7 +483,7 @@ class PatchDetailViewController: BaseDetailViewController {
         let spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
         spacer.width = SPACER_WIDTH
         if isOwner() {
-            let editImage = UIImage(named: "imgEdit2Light")
+            let editImage = Utils.imageEdit
             let editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
             self.navigationItem.rightBarButtonItems = [addButton, spacer, shareButton, spacer, editButton]
         }

@@ -26,6 +26,7 @@ struct Utils {
 	static var imageBroken: UIImage = { return UIImage(named: "imgBroken250Light") }()!
 	static var imageDefaultPatch: UIImage = { return UIImage(named: "imgDefaultPatch") }()!
 	static var imageDefaultUser: UIImage = { return UIImage(named: "imgDefaultUser") }()!
+	static var imageEdit: UIImage = { return UIImage(named: "imgEdit2Light") }()!
 	
     static var messageDateFormatter: NSDateFormatter = {
         let dateFormatter = NSDateFormatter()

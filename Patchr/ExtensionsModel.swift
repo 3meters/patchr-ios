@@ -77,7 +77,7 @@ extension Entity {
             }
         }
         
-        let photo = Photo.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Photo
+        let photo = Photo.insertInManagedObjectContext(DataController.instance.mainContext) as! Photo
         photo.prefix = prefix
         photo.source = source
         

@@ -116,7 +116,7 @@ class PatchTableMapViewController: UIViewController {
 		
 		let controller = NSFetchedResultsController(
 			fetchRequest: self.fetchRequest,
-			managedObjectContext: DataController.instance.managedObjectContext,
+			managedObjectContext: DataController.instance.mainContext,
 			sectionNameKeyPath: nil,
 			cacheName: nil)
 		

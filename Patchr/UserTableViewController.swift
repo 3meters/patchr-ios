@@ -56,7 +56,7 @@ class UserTableViewController: BaseTableViewController {
 
     override func query() -> Query {
         if self._query == nil {
-            let query = Query.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Query
+            let query = Query.insertInManagedObjectContext(DataController.instance.mainContext) as! Query
             
             switch self.filter {
                 case .PatchWatchers:
@@ -179,8 +179,8 @@ extension UserTableViewController: UserApprovalViewDelegate {
                             self.handleError(error, errorActionType: .ALERT)
                         }
                         else {
-							DataController.instance.managedObjectContext.deleteObject(user.link)
-							DataController.instance.managedObjectContext.deleteObject(queryResult)
+							DataController.instance.mainContext.deleteObject(user.link)
+							DataController.instance.mainContext.deleteObject(queryResult)
 							DataController.instance.saveContext()
 						}
 					})

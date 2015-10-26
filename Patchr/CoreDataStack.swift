@@ -9,9 +9,10 @@
 import Foundation
 
 class CoreDataStack: NSObject {
-	
-	var managedObjectContext: NSManagedObjectContext!
-	var privateContext: NSManagedObjectContext!
+
+	var masterContext:              NSManagedObjectContext!		// On background thread
+	var mainContext:                NSManagedObjectContext!		// On main thread
+	var backgroundContext:          NSManagedObjectContext!		// On background thread
 	var persistentStoreCoordinator: NSPersistentStoreCoordinator!
 	
 	override init(){
@@ -31,17 +32,25 @@ class CoreDataStack: NSObject {
 		let psc = NSPersistentStoreCoordinator(managedObjectModel: mom!)
 		ZAssert(psc, message: "Failed to intitialize persistent store coordinator")
 		self.persistentStoreCoordinator = psc
-		
-		let pc: NSManagedObjectContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
-		pc.persistentStoreCoordinator = psc
-		pc.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-		self.privateContext = pc
-		
-		let mc: NSManagedObjectContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
-		mc.parentContext = pc
-		mc.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-		self.managedObjectContext = mc
-		
+
+		/* Master on background thread */
+		let master: NSManagedObjectContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
+		master.persistentStoreCoordinator = psc
+		master.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+		self.masterContext = master
+
+		/* Main on main thread parented by Master */
+		let main: NSManagedObjectContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
+		main.parentContext = master
+		main.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+		self.mainContext = main
+
+		/* Worker on background thread parented by Main */
+		let background: NSManagedObjectContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
+		background.parentContext = main
+		background.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+		self.backgroundContext = background
+
 		registerForNotifications()
 		
 		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
@@ -59,7 +68,7 @@ class CoreDataStack: NSObject {
 	*--------------------------------------------------------------------------------------------*/
 	
 	func saveContext(wait: Bool = false) {
-		saveContext(self.managedObjectContext, wait: wait)
+		saveContext(self.mainContext, wait: wait)
 	}
 	
 	func saveContext(context: NSManagedObjectContext, wait: Bool) {
@@ -86,9 +95,9 @@ class CoreDataStack: NSObject {
 	func registerForNotifications() {
 		
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "mainManagedObjectContextDidSave:",
-			name: NSManagedObjectContextDidSaveNotification, object: self.managedObjectContext)
+			name: NSManagedObjectContextDidSaveNotification, object: self.mainContext)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "appWillResignActive:",
-			name: UIApplicationWillResignActiveNotification, object: self.managedObjectContext)
+			name: UIApplicationWillResignActiveNotification, object: self.mainContext)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "persistentStoreCoordinatorStoresWillChange:",
 			name: NSPersistentStoreCoordinatorStoresWillChangeNotification, object: self.persistentStoreCoordinator)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "persistentStoreCoordinatorStoresDidChange:",
@@ -115,25 +124,26 @@ class CoreDataStack: NSObject {
 	*--------------------------------------------------------------------------------------------*/
 	
 	func mainManagedObjectContextDidSave(info: NSNotification) {
-		saveContext(self.privateContext, wait: false)
+		saveContext(self.masterContext, wait: false)
 	}
 	
 	func appWillResignActive(info: NSNotification) {
-		saveContext(self.managedObjectContext, wait: true)
-		saveContext(self.privateContext, wait: true)
+		saveContext(self.backgroundContext, wait: true)
+		saveContext(self.mainContext, wait: true)
+		saveContext(self.masterContext, wait: true)
 	}
 	
 	func persistentStoreCoordinatorStoresWillChange(info: NSNotification) {
-		saveContext(self.managedObjectContext, wait: true)
+		saveContext(self.mainContext, wait: true)
 	}
 	
 	func persistentStoreCoordinatorStoresDidChange(info: NSNotification) {
-		saveContext(self.privateContext, wait: false)
+		saveContext(self.masterContext, wait: false)
 	}
 	
 	func persistentStoreDidImportUbiquitousContentChanges(info: NSNotification) {
-		self.managedObjectContext.performBlock {
-			self.managedObjectContext.mergeChangesFromContextDidSaveNotification(info)
+		self.mainContext.performBlock {
+			self.mainContext.mergeChangesFromContextDidSaveNotification(info)
 		}
 	}
 }

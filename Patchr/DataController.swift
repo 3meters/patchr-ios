@@ -30,7 +30,8 @@ class DataController: NSObject {
 
 	private var coreDataStack: CoreDataStack!
 
-	var managedObjectContext: NSManagedObjectContext!
+	var mainContext: NSManagedObjectContext!
+    var backgroundContext: NSManagedObjectContext!
 	
     var activityDate: Int64
     var currentPatch: Patch?    // Currently used for message context
@@ -57,12 +58,17 @@ class DataController: NSObject {
 		super.init()
 		
 		self.coreDataStack = CoreDataStack()
-		self.managedObjectContext = self.coreDataStack.managedObjectContext
+		self.mainContext = self.coreDataStack.mainContext
+        self.backgroundContext = self.coreDataStack.backgroundContext
 	}
 	
 	func saveContext(wait: Bool = false) {
-		self.coreDataStack.saveContext(self.managedObjectContext, wait: wait)
+		self.coreDataStack.saveContext(self.mainContext, wait: wait)
 	}
+
+    func saveContext(context: NSManagedObjectContext, wait: Bool = false) {
+        self.coreDataStack.saveContext(context, wait: wait)
+    }
 
 	/*--------------------------------------------------------------------------------------------
 	 * Singles
@@ -136,7 +142,7 @@ class DataController: NSObject {
     private func withEntityType(entityType: ServiceBase.Type, id: String, refresh: Bool = false, completion: (ServiceBase?, error: NSError?) -> Void) {
             
             /* Pull from data model if available */
-            var entity = entityType.fetchOneById(id, inManagedObjectContext: managedObjectContext) as ServiceBase!
+            var entity = entityType.fetchOneById(id, inManagedObjectContext: mainContext) as ServiceBase!
             
             /* If not in data model or caller wants the freshest available then call service */
             if refresh || entity == nil {
@@ -148,6 +154,8 @@ class DataController: NSObject {
                 
                 fetchByEntityType(entityType, withId: id, criteria: criteria, completion: {
                     response, error in
+					
+					/* Returns on background thread */
                     
                     if let _ = ServerError(error) {
                         completion(nil, error: error)
@@ -163,7 +171,7 @@ class DataController: NSObject {
                             if !dataWrapper.noopValue {
                                 if let entityDictionaries = dataWrapper.data as? [[NSObject:AnyObject]] {
                                     if entityDictionaries.count == 1 {
-                                        entity = entityType.fetchOrInsertOneById(id, inManagedObjectContext: self.managedObjectContext)
+                                        entity = entityType.fetchOrInsertOneById(id, inManagedObjectContext: self.backgroundContext)
                                         entityType.setPropertiesFromDictionary(entityDictionaries[0], onObject: entity, mappingNames: true)
 										entity.refreshedValue = true
                                     }
@@ -177,7 +185,7 @@ class DataController: NSObject {
                                 }
                                 
                                 /* Persist the changes and triggers notifications to observers */
-								DataController.instance.saveContext()
+								DataController.instance.saveContext(self.backgroundContext, wait: false)
                             }
                         }
                         completion(entity, error: nil)
@@ -208,8 +216,11 @@ class DataController: NSObject {
      * Collections
      *--------------------------------------------------------------------------------------------*/
     
-    func refreshItemsFor(query: Query, force: Bool = false, paging: Bool = false, completion: (queryItems: [QueryItem], query: Query, error: NSError?) -> Void) {
-		/* Called on main thread */
+    func refreshItemsFor(queryId: NSManagedObjectID, force: Bool = false, paging: Bool = false, completion: (queryItems: [QueryItem], query: Query, error: NSError?) -> Void) {
+		/* 
+		 * Called on background thread 
+		 */
+		let query = self.backgroundContext.objectWithID(queryId) as! Query
 		
         if query.name == DataStoreQueryName.NotificationsForCurrentUser.rawValue && !UserController.instance.authenticated {
             completion(queryItems: [], query: query, error: nil)
@@ -218,7 +229,9 @@ class DataController: NSObject {
 
 		/* Callback when service call is complete */
 		func refreshCompletion(response: AnyObject?, error: NSError?) -> Void {
-			
+			/* 
+			 * Returns on background thread 
+			 */
 			if error != nil {
 				completion(queryItems: [], query: query, error: error)
 				return
@@ -251,7 +264,7 @@ class DataController: NSObject {
 				for item in query.queryItems {
 					if let existingQueryItem = item as? QueryItem {
 						if !queryItemSet.contains(existingQueryItem) {
-							self.managedObjectContext.deleteObject(existingQueryItem) // Does not throw
+							self.backgroundContext.deleteObject(existingQueryItem) // Does not throw
 						}
 					}
 				}
@@ -259,7 +272,7 @@ class DataController: NSObject {
 			
 			/* Persist the changes and triggers notifications to observers */
 			Log.d("Save context: \(query.name)")
-			DataController.instance.saveContext()
+			DataController.instance.saveContext(self.backgroundContext, wait: false)
 			completion(queryItems: queryItems, query: query, error: error)
 		}
 		
@@ -397,10 +410,10 @@ class DataController: NSObject {
                          */
                         var entity: Entity
                         if let entityId = entityDictionary["_id"] as? String {
-                            entity = modelType.fetchOrInsertOneById(entityId, inManagedObjectContext: managedObjectContext) as! Entity
+                            entity = modelType.fetchOrInsertOneById(entityId, inManagedObjectContext: self.backgroundContext) as! Entity
                         }
                         else {
-                            entity = modelType.insertInManagedObjectContext(managedObjectContext) as! Entity
+                            entity = modelType.insertInManagedObjectContext(self.backgroundContext) as! Entity
                         }
                         
                         /* Transfer the properties: Updates the object if it was already in the model */
@@ -417,7 +430,7 @@ class DataController: NSObject {
                         
                         /* Add if new */
                         if queryItem == nil {
-                            queryItem = QueryItem.insertInManagedObjectContext(managedObjectContext) as! QueryItem
+                            queryItem = QueryItem.insertInManagedObjectContext(self.backgroundContext) as! QueryItem
                         }
 
                         /* Set properties */
@@ -475,18 +488,4 @@ enum DataStoreQueryName: String {
     case PatchesUserIsWatching       = "PatchesUserIsWatching"
     case FavoritePatches             = "FavoritePatches"
 }
-
-extension DataController: RMCoreDataStackDelegate {
-    
-	func coreDataStack(stack: RMCoreDataStack!, didFinishInitializingWithInfo info: [NSObject:AnyObject]!) {
-        let mirror = Mirror(reflecting: self)
-        Log.d(String(format: "[%@ %@]", mirror.description, __FUNCTION__))
-	}
-
-	func coreDataStack(stack: RMCoreDataStack!, failedInitializingWithInfo info: [NSObject:AnyObject]!) {
-        let mirror = Mirror(reflecting: self)
-        Log.d(String(format: "[%@ %@]", mirror.description, __FUNCTION__))
-	}
-}
-
 

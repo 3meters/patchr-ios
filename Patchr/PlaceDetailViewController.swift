@@ -49,7 +49,7 @@ class PlaceDetailViewController: UITableViewController {
         
         /* Use cached entity if available in the data model */
         if self.placeId != nil {
-            if let place: Place? = Place.fetchOneById(self.placeId!, inManagedObjectContext: DataController.instance.managedObjectContext) {
+            if let place: Place? = Place.fetchOneById(self.placeId!, inManagedObjectContext: DataController.instance.mainContext) {
                 self.place = place
             }
         }

@@ -223,8 +223,9 @@ class NotificationsTableViewController: BaseTableViewController {
     *--------------------------------------------------------------------------------------------*/
     
     override func query() -> Query {
+		
         if self._query == nil {
-            let query = Query.insertInManagedObjectContext(DataController.instance.managedObjectContext) as! Query
+            let query = Query.insertInManagedObjectContext(DataController.instance.mainContext) as! Query
             query.name = DataStoreQueryName.NotificationsForCurrentUser.rawValue
             query.pageSize = DataController.proxibase.pageSizeNotifications
 			DataController.instance.saveContext()

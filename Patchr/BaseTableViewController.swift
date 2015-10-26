@@ -236,7 +236,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         
 		DataController.instance.backgroundQueue.addOperationWithBlock {
 			
-			DataController.instance.refreshItemsFor(self.query(), force: force, paging: paging, completion: {
+			DataController.instance.refreshItemsFor(self.query().objectID, force: force, paging: paging, completion: {
 				[weak self] results, query, error in
 				
 				NSOperationQueue.mainQueue().addOperationWithBlock {
@@ -319,7 +319,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         
         let controller = NSFetchedResultsController(
             fetchRequest: fetchRequest,
-            managedObjectContext: DataController.instance.managedObjectContext,
+            managedObjectContext: DataController.instance.mainContext,
             sectionNameKeyPath: nil,
             cacheName: nil)
         

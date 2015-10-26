@@ -35,7 +35,7 @@ class BaseDetailViewController: BaseTableViewController {
         
         /* Use cached entity if available in the data model */
         if self.entityId != nil {
-            if let entity: Entity? = Entity.fetchOneById(self.entityId!, inManagedObjectContext: DataController.instance.managedObjectContext) {
+            if let entity: Entity? = Entity.fetchOneById(self.entityId!, inManagedObjectContext: DataController.instance.mainContext) {
                 self.entity = entity
             }
         }
@@ -43,7 +43,7 @@ class BaseDetailViewController: BaseTableViewController {
         /* Use cached query if available in the data model */
 		if self.entityId != nil {
 			let id = "query.\(self.entityId!)"
-			let query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.managedObjectContext)
+			let query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
 			if query != nil {
 				self._query = query
 				self.showProgress = false
@@ -79,11 +79,11 @@ class BaseDetailViewController: BaseTableViewController {
         if self._query == nil {
 			
 			let id = self.entityId != nil ? "query.\(self.entityId)" : "query.guest"
-            var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.managedObjectContext)
+            var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
             
             if query == nil {
 				
-                query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.managedObjectContext) as Query
+                query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
                 query!.name = self.queryName
                 query!.pageSize = DataController.proxibase.pageSizeDefault
                 query!.parameters = [:]

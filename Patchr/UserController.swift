@@ -95,7 +95,7 @@ class UserController: NSObject {
             let userAsJson = JSON(data: userAsData)
             let userAsMap: NSDictionary = userAsJson.dictionaryObject!
             
-            let user: User = User.fetchOrInsertOneById(userAsJson["_id"].string, inManagedObjectContext: DataController.instance.managedObjectContext)
+            let user: User = User.fetchOrInsertOneById(userAsJson["_id"].string, inManagedObjectContext: DataController.instance.mainContext)
             User.setPropertiesFromDictionary(userAsMap as [NSObject : AnyObject], onObject: user, mappingNames: true)
             user.activityDate = NSDate(timeIntervalSince1970: 0) // Ensures that the user will be freshed from the service
             
