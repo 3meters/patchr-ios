@@ -104,6 +104,7 @@ class AirImageView: UIImageView {
         }
 		
 		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+			
 			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory, size: nil)
 			
 			if photoUrl.absoluteString.isEmpty {
@@ -180,7 +181,7 @@ class AirImageView: UIImageView {
                 Log.w("Failed url: \(url!.absoluteString)")
             }
             self.contentMode = UIViewContentMode.Center
-            self.image = UIImage(named: "imgBroken250Light")
+            self.image = Utils.imageBroken
             return
         }
         else {

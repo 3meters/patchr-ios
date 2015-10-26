@@ -160,7 +160,7 @@ class AirImageButton: UIButton {
                 Log.w("Failed url: \(url!.absoluteString)")
             }
             self.contentMode = UIViewContentMode.Center
-            self.setImage(UIImage(named: "imgBroken250Light"), forState:UIControlState.Normal)
+            self.setImage(Utils.imageBroken, forState:UIControlState.Normal)
             return
         }
         else {
