@@ -24,6 +24,8 @@ struct Utils {
 	static var imageHeartOn: UIImage = { return UIImage(named: "imgHeartFilledLight") }()!
 	static var imageHeartOff: UIImage = { return UIImage(named: "imgHeartLight") }()!
 	static var imageBroken: UIImage = { return UIImage(named: "imgBroken250Light") }()!
+	static var imageDefaultPatch: UIImage = { return UIImage(named: "imgDefaultPatch") }()!
+	static var imageDefaultUser: UIImage = { return UIImage(named: "imgDefaultUser") }()!
 	
     static var messageDateFormatter: NSDateFormatter = {
         let dateFormatter = NSDateFormatter()
