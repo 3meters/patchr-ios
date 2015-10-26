@@ -326,15 +326,11 @@ class PatchDetailViewController: BaseDetailViewController {
         
         if let entity = self.entity as? Patch {
             
-            if self.entity == nil {
-                return
-            }
-            
             /* Name, type and photo */
             
             self.patchName.text = entity.name
             self.patchType.text = entity.type == nil ? "PATCH" : entity.type.uppercaseString + " PATCH"
-            self.patchPhoto.setImageWithPhoto(entity.getPhotoManaged(), animate: false)
+			self.patchPhoto.setImageWithPhoto(entity.getPhotoManaged(), animate: false)
             
             /* Place */
             
