@@ -187,10 +187,9 @@ class MessageDetailViewController: UITableViewController {
 							}
 							else {
 								Shared.Toast("Message has been deleted")
-								Utils.delay(2.0, closure: {
-									() -> () in
+								Utils.delay(2.0) {
 									self?.navigationController?.popViewControllerAnimated(true)
-								})
+								}
 							}
 						}
 					}
@@ -582,8 +581,8 @@ extension MessageDetailViewController: UIActionSheetDelegate {
         if buttonIndex != actionSheet.cancelButtonIndex {
             // There are some strange visual artifacts with the share sheet and the presented
             // view controllers. Adding a small delay seems to prevent them.
-            Utils.delay(0.4, closure: {
-                () -> () in
+            Utils.delay(0.4) {
+				
                 switch self.shareButtonFunctionMap[buttonIndex]! {
                 case .Share:
                     self.shareUsing(true)
@@ -591,7 +590,7 @@ extension MessageDetailViewController: UIActionSheetDelegate {
                 case .ShareVia:
                     self.shareUsing(false)
                 }
-            })
+            }
         }
     }
 }

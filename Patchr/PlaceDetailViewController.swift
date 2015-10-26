@@ -99,10 +99,9 @@ class PlaceDetailViewController: UITableViewController {
 						}
 						else {
 							Shared.Toast("Place has been deleted")
-							Utils.delay(2.0, closure: {
-								() -> () in
+							Utils.delay(2.0) {
 								self.navigationController?.popViewControllerAnimated(true)
-							})
+							}
 						}
 					}
 				}

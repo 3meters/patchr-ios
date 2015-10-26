@@ -337,10 +337,9 @@ class EntityEditViewController: UITableViewController {
 
         let queue = TaskQueue()
         
-        Utils.delay(5.0, closure: {
-            () -> () in
+        Utils.delay(5.0) {
             progress?.detailsLabelText = "Tap to cancel"
-        })
+        }
         
         /* Process image if any */
         
