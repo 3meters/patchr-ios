@@ -1,1 +1,0 @@
-../../../RMCoreDataStack/Classes/RMCoreDataConfiguration.h

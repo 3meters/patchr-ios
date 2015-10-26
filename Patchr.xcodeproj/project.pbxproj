@@ -75,6 +75,7 @@
 		E20C3A7D1BD70DD2008CCED1 /* AirTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A7C1BD70DD2008CCED1 /* AirTableView.swift */; settings = {ASSET_TAGS = (); }; };
 		E20C3A7F1BDC0EB0008CCED1 /* UserDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A7E1BDC0EB0008CCED1 /* UserDetailView.swift */; settings = {ASSET_TAGS = (); }; };
 		E20C3A811BDC1D57008CCED1 /* BaseDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A801BDC1D57008CCED1 /* BaseDetailView.swift */; settings = {ASSET_TAGS = (); }; };
+		E20C3A831BDEBBB9008CCED1 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A821BDEBBB9008CCED1 /* CoreDataStack.swift */; settings = {ASSET_TAGS = (); }; };
 		E20D57051BC77FCB004D73E2 /* AirAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20D57041BC77FCB004D73E2 /* AirAlertController.swift */; settings = {ASSET_TAGS = (); }; };
 		E20D57061BC78160004D73E2 /* AirAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20D57041BC77FCB004D73E2 /* AirAlertController.swift */; settings = {ASSET_TAGS = (); }; };
 		E224C3501B6ED27F00879775 /* PatchrShare.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E238BAE41B51D3290094AF41 /* PatchrShare.storyboard */; };
@@ -310,6 +311,7 @@
 		E20C3A7C1BD70DD2008CCED1 /* AirTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirTableView.swift; sourceTree = "<group>"; };
 		E20C3A7E1BDC0EB0008CCED1 /* UserDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDetailView.swift; sourceTree = "<group>"; };
 		E20C3A801BDC1D57008CCED1 /* BaseDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseDetailView.swift; sourceTree = "<group>"; };
+		E20C3A821BDEBBB9008CCED1 /* CoreDataStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CoreDataStack.swift; path = Patchr/CoreDataStack.swift; sourceTree = "<group>"; };
 		E20D57041BC77FCB004D73E2 /* AirAlertController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirAlertController.swift; sourceTree = "<group>"; };
 		E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTargetViewController.swift; sourceTree = "<group>"; };
 		E238BACB1B50888C0094AF41 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -470,6 +472,7 @@
 				E25327D11B13DEF800990A81 /* AudioController.swift */,
 				E28177751B5C39E200D65AC1 /* AwsS3.swift */,
 				7D3D39EE1A6F09CC00A44CB2 /* BridgingHeader.h */,
+				E20C3A821BDEBBB9008CCED1 /* CoreDataStack.swift */,
 				7DA3D9111A72D5A60082D2AB /* DataController.swift */,
 				E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */,
 				E2F618D51AFFACF00055D09C /* LocationController.swift */,
@@ -1204,6 +1207,7 @@
 				E2C0D92F1B6BD55200E28CE9 /* TTTAttributedLabel.m in Sources */,
 				7DE393E71AAE43AD00D1B80E /* SettingsTableViewController.swift in Sources */,
 				E2C7C5CB1B2CF2F80045038A /* ImageResult.swift in Sources */,
+				E20C3A831BDEBBB9008CCED1 /* CoreDataStack.swift in Sources */,
 				844D6E351AA4D01200EE71ED /* DevelopmentViewController.swift in Sources */,
 				7DA7308B1A71ACC9008C25FA /* _Place.m in Sources */,
 				E25327DB1B1625D900990A81 /* GCPlaceholderTextView.m in Sources */,

@@ -58,7 +58,6 @@ PODS:
   - MBProgressHUD (0.9.1)
   - PBWebViewController (0.3)
   - pop (1.0.8)
-  - RMCoreDataStack (0.1.6)
   - SDWebImage (3.7.3):
     - SDWebImage/Core (= 3.7.3)
   - SDWebImage/Core (3.7.3)
@@ -83,7 +82,6 @@ DEPENDENCIES:
   - MBProgressHUD (~> 0.9.1)
   - PBWebViewController (~> 0.3)
   - pop (~> 1.0)
-  - RMCoreDataStack
   - SDWebImage (~> 3.7.2)
   - TWMessageBarManager
   - UIDevice-Hardware
@@ -120,7 +118,6 @@ SPEC CHECKSUMS:
   MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
   PBWebViewController: 909b1505da6ba7c5c82519a6457246027926061e
   pop: bb773ae2c791ca2629de13b347e7a8b450fa6a57
-  RMCoreDataStack: 58d81989a529a357dd1c5eda12a86ff5f13684b4
   SDWebImage: 1d2b1a1efda1ade1b00b6f8498865f8ddedc8a84
   TWMessageBarManager: e7adc066ee425174f5dee79473fce913b1cd1662
   UIDevice-Hardware: b3695e58e0385155932e7889c32ed12e844e14a3

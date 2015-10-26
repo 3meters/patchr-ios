@@ -28,9 +28,10 @@ class DataController: NSObject {
 	static let instance  = DataController()
 	static let proxibase = Proxibase()
 
-	private var coreDataStack: RMCoreDataStack!
+	private var coreDataStack: CoreDataStack!
 
 	var managedObjectContext: NSManagedObjectContext!
+	
     var activityDate: Int64
     var currentPatch: Patch?    // Currently used for message context
 	
@@ -48,19 +49,19 @@ class DataController: NSObject {
 	}()
 
 	private override init() {
+		
         self.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
 		self.backgroundQueue.name = "Background queue"
 		self.imageQueue.name = "Image processing queue"
+		
 		super.init()
-
-		let coreDataConfiguration = RMCoreDataConfiguration()
-		coreDataConfiguration.persistentStoreType = NSInMemoryStoreType
-        
-		self.coreDataStack = RMCoreDataStack()
-		self.coreDataStack.delegate = self
-		self.coreDataStack.constructWithConfiguration(coreDataConfiguration)
-
+		
+		self.coreDataStack = CoreDataStack()
 		self.managedObjectContext = self.coreDataStack.managedObjectContext
+	}
+	
+	func saveContext(wait: Bool = false) {
+		self.coreDataStack.saveContext(self.managedObjectContext, wait: wait)
 	}
 
 	/*--------------------------------------------------------------------------------------------
@@ -343,17 +344,6 @@ class DataController: NSObject {
 	 * Methods
 	 *--------------------------------------------------------------------------------------------*/
 	
-	func saveContext () {
-		if self.managedObjectContext.hasChanges {
-			do {
-				try self.managedObjectContext.save()
-			}
-			catch {
-				fatalError("Failure to save context: \(error)")
-			}
-		}
-	}
-
 	private func handleServiceDataResponseForQuery(query: Query, response: AnyObject) -> (serviceData:ServiceData, queryItems:[QueryItem]) {
 
 		var queryItems: [QueryItem] = []
