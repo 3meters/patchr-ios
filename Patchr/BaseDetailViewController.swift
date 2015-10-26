@@ -28,7 +28,7 @@ class BaseDetailViewController: BaseTableViewController {
         }
         self.showEmptyLabel = false
         self.showProgress = true
-        self.progressOffset = 80
+        self.progressOffsetY = 80
 		self.loadMoreMessage = "LOAD MORE MESSAGES"
 		self.listType = .Messages
         
@@ -101,36 +101,40 @@ class BaseDetailViewController: BaseTableViewController {
     internal func bind(force: Bool = false) {
         
         /* Refreshes the top object but not the message list */
-		self.queue.addOperationWithBlock {
+		DataController.instance.backgroundQueue.addOperationWithBlock {
+			
 			DataController.instance.withEntityId(self.entityId!, refresh: force) {
 				entity, error in
 				
 				NSOperationQueue.mainQueue().addOperationWithBlock {
-					self.refreshControl?.endRefreshing()
 					
-					if error == nil {
-						if entity != nil {
-							
-							/* Refresh list too */
-							if entity!.refreshedValue {
-								entity!.refreshedValue = false
-								self.bindQueryItems(true)
+					Utils.delay(0.0) {
+						self.refreshControl?.endRefreshing()
+						
+						if error == nil {
+							if entity != nil {
+								
+								/* Refresh list too */
+								if entity!.refreshedValue {
+									entity!.refreshedValue = false
+									self.bindQueryItems(true)
+								}
+								
+								self.entity = entity
+								self.entityId = entity!.id_
+								if let patch = entity as? Patch {
+									DataController.instance.currentPatch = patch    // Used for context for messages
+								}
+								self.drawButtons()
+								self.draw()
 							}
-							
-							self.entity = entity
-							self.entityId = entity!.id_
-							if let patch = entity as? Patch {
-								DataController.instance.currentPatch = patch    // Used for context for messages
+							else {
+								Shared.Toast("Item has been deleted")
+								Utils.delay(2.0) {
+									() -> () in
+									self.navigationController?.popViewControllerAnimated(true)
+								}
 							}
-							self.drawButtons()
-							self.draw()
-						}
-						else {
-							Shared.Toast("Item has been deleted")
-							Utils.delay(2.0, closure: {
-								() -> () in
-								self.navigationController?.popViewControllerAnimated(true)
-							})
 						}
 					}
 				}

@@ -20,14 +20,15 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	
     var showEmptyLabel		= true
     var showProgress		= true
-    var progressOffset      = Float(-40)
+    var progressOffsetY      = Float(-48)
+	var progressOffsetX      = Float(8)
     var processingQuery		= false
     var emptyMessage:		String?
 	var loadMoreMessage		= "LOAD MORE"
     var offscreenCells		= NSMutableDictionary()
 	var listType:			ItemClass           = .Patches
 	var rowHeights:			NSMutableDictionary = [:]
-	var queue				= NSOperationQueue()
+	var contentOffset:		CGPoint = CGPointZero
 	
 	var ignoreNextUpdates	= false
 	var rowAnimation:		UITableViewRowAnimation = .Fade
@@ -38,8 +39,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
     
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
-		self.queue.name = "Network request queue"
 		
         /* Hookup refresh control */
 		let refreshControl = UIRefreshControl()
@@ -53,8 +52,10 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.view.addSubview(activity)
 		
 		/* Footer */
+		self.footerView.backgroundColor = Colors.windowColor
 		self.loadMoreButton.tag = 1
 		self.loadMoreButton.backgroundColor = UIColor.whiteColor()
+		self.loadMoreButton.layer.cornerRadius = 8
 		self.loadMoreButton.addTarget(self, action: Selector("loadMore:"), forControlEvents: UIControlEvents.TouchUpInside)
 		self.loadMoreButton.setTitle(self.loadMoreMessage, forState: .Normal)
 		self.footerView.addSubview(self.loadMoreButton)
@@ -81,16 +82,15 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         }
 		
 		/*
-		* Self-sizing table view cells in iOS 8 are enabled when the estimatedRowHeight property of
-		* the table view is set to a non-zero value. Setting the estimated row height prevents the
-		* table view from calling tableView:heightForRowAtIndexPath: for every row in the table on
-		* first load; it will only be called as cells are about to scroll onscreen. This is a major
-		* performance optimization.
+		* Setting the estimated row height prevents the table view from calling 
+		* tableView:heightForRowAtIndexPath: for every row in the table on
+		* first load; it will only be called as cells are about to scroll onscreen. 
+		* This is a major performance optimization.
 		*/
-		self.tableView.estimatedRowHeight = 128
+		self.tableView.estimatedRowHeight = 136
 		
 		/* Self sizing table view cells require this setting */
-		self.tableView.rowHeight = 128
+		self.tableView.rowHeight = 136
 		
         /* A bit of UI tweaking */
         self.tableView.backgroundColor = Colors.windowColor
@@ -121,20 +121,27 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		}
 	}
 	
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		
+		self.footerView.frame.size.height = CGFloat(48 + 16)
+		
+		self.loadMoreButton.fillSuperviewWithLeftPadding(8, rightPadding: 8, topPadding: 8, bottomPadding: 8)
+		self.loadMoreActivity.fillSuperview()
+		
+		self.activity.anchorInCenterWithWidth(20, height: 20)
+		self.activity.frame.origin.y += CGFloat(self.progressOffsetY)
+		self.activity.frame.origin.x += CGFloat(self.progressOffsetX)
+		
+		self.emptyLabel.anchorInCenterWithWidth(160, height: 160)
+	}
+	
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
 		if !self.query().executedValue {
 			self.bindQueryItems(false)
 		}
     }
-    
-	override func viewWillLayoutSubviews() {
-		self.footerView.frame.size.height = CGFloat(48)
-		self.loadMoreButton.fillSuperview()
-		self.loadMoreActivity.fillSuperview()
-		self.activity.anchorInCenterWithWidth(20, height: 20)
-		self.emptyLabel.anchorInCenterWithWidth(160, height: 160)
-	}
 	
     override func viewDidDisappear(animated: Bool) {
 		/*
@@ -144,7 +151,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.fetchedResultsController.delegate = nil
 		self.activity.stopAnimating()
         self.refreshControl?.endRefreshing()
-		self.tableView.tableFooterView = nil
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -213,14 +219,15 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         
         self.processingQuery = true
 		
-		self.queue.addOperationWithBlock {
+		DataController.instance.backgroundQueue.addOperationWithBlock {
 			
 			DataController.instance.refreshItemsFor(self.query(), force: force, paging: paging, completion: {
 				[weak self] results, query, error in
 				
 				NSOperationQueue.mainQueue().addOperationWithBlock {
+					
 					// Delay seems to be necessary to avoid visual glitch with UIRefreshControl
-					Utils.delay(0.5, closure: {
+					Utils.delay(0.5) {
 						
 						self?.processingQuery = false
 						self?.activity.stopAnimating()
@@ -252,7 +259,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 							}
 						}
 						return
-					})
+					}
 				}
 			})
 		}

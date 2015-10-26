@@ -30,7 +30,7 @@ class NotificationsTableViewController: BaseTableViewController {
 	override func viewDidLoad() {
         
         self.emptyMessage = "No notifications yet"
-		self.loadMoreMessage = "LOAD MORE MESSAGES"
+		self.loadMoreMessage = "LOAD MORE NOTIFICATIONS"
 		self.listType = .Notifications
 		
 		super.viewDidLoad()

@@ -58,7 +58,7 @@ class UserDetailView: BaseDetailView {
 		
 		/* User name */
 		self.name.lineBreakMode = .ByTruncatingMiddle
-		self.name.font = UIFont(name: "HelveticaNeue-Light", size: 20)
+		self.name.font = UIFont(name: "HelveticaNeue-Light", size: 24)
 		
 		/* User email */
 		self.email.font = UIFont(name: "HelveticaNeue-Light", size: 16)
@@ -78,7 +78,7 @@ class UserDetailView: BaseDetailView {
 		self.favoritesIcon.alpha = 0.5
 		self.favoritesIcon.tintColor = UIColor.blackColor()
 		self.favoritesInfo.titleLabel!.font = UIFont(name: "HelveticaNeue-Light", size: 20)
-		self.favoritesInfo.setTitleColor(Colors.brandColor, forState: .Normal)
+		self.favoritesInfo.setTitleColor(Colors.brandColorDark, forState: .Normal)
 		self.favoritesInfo.contentHorizontalAlignment = .Left
 		self.favoritesRule.backgroundColor = Colors.separatorColor
 		
@@ -90,7 +90,7 @@ class UserDetailView: BaseDetailView {
 		self.watchingIcon.image = UIImage(named: "imgWatchLight")
 		self.watchingIcon.alpha = 0.5
 		self.watchingIcon.tintColor = UIColor.blackColor()
-		self.watchingInfo.setTitleColor(Colors.brandColor, forState: .Normal)
+		self.watchingInfo.setTitleColor(Colors.brandColorDark, forState: .Normal)
 		self.watchingInfo.titleLabel!.font = UIFont(name: "HelveticaNeue-Light", size: 20)
 		self.watchingInfo.contentHorizontalAlignment = .Left
 		self.watchingRule.backgroundColor = Colors.separatorColor
@@ -102,7 +102,8 @@ class UserDetailView: BaseDetailView {
 		/* Owns */
 		self.ownsIcon.image = UIImage(named: "imgEditLight")
 		self.ownsIcon.alpha = 0.5
-		self.ownsInfo.setTitleColor(Colors.brandColor, forState: .Normal)
+		self.ownsIcon.tintColor = UIColor.blackColor()
+		self.ownsInfo.setTitleColor(Colors.brandColorDark, forState: .Normal)
 		self.ownsInfo.titleLabel!.font = UIFont(name: "HelveticaNeue-Light", size: 20)
 		self.ownsInfo.contentHorizontalAlignment = .Left
 		self.ownsRule.backgroundColor = Colors.separatorColor
@@ -121,8 +122,8 @@ class UserDetailView: BaseDetailView {
 		
 		self.userGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 112)
 		self.photo.anchorTopLeftWithLeftPadding(8, topPadding: 8, width: 96, height: 96)
-		self.name.alignToTheRightOf(self.photo, fillingWidthWithLeftAndRightPadding: 12, topPadding: 12, height: 22)
-		self.email.alignUnder(self.name, matchingLeftAndFillingWidthWithRightPadding: 12, topPadding: 2, height: 19)
+		self.name.alignToTheRightOf(self.photo, fillingWidthWithLeftAndRightPadding: 12, topPadding: 12, height: 30)
+		self.email.alignUnder(self.name, matchingLeftAndFillingWidthWithRightPadding: 12, topPadding: 0, height: 24)
 		self.rule.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 1)
 		
 		self.favoritesGroup.alignUnder(self.userGroup, withLeftPadding: 0, topPadding: 0, width: self.bounds.size.width, height: 48)

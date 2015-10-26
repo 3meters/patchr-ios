@@ -40,8 +40,6 @@ public class Proxibase {
 	let pageSizeExplore:       Int = 50
 	let pageSizeNotifications: Int = 50
 
-	private let sessionManager: AFHTTPSessionManager
-
 	private var cachedInstallationIdentifier: String?
 
 	public var installationIdentifier: String {
@@ -54,26 +52,28 @@ public class Proxibase {
 				storedInstallationIdentifier = NSUUID().UUIDString
 				Lockbox.setString(storedInstallationIdentifier, forKey: installationIdentifierKey)
 			}
-
 			cachedInstallationIdentifier = storedInstallationIdentifier
 		}
+		
 		return cachedInstallationIdentifier!
 	}
 
+	private let sessionManager: AFHTTPSessionManager
+	
 	required public init() {
-		let userDefaults = NSUserDefaults.standardUserDefaults()
 
-		var serverURI = userDefaults.stringForKey(PatchrUserDefaultKey("serverURI"))
-
+		var serverURI = NSUserDefaults.standardUserDefaults().stringForKey(PatchrUserDefaultKey("serverURI"))
 		if serverURI == nil {
 			serverURI = ProductionURI
-			userDefaults.setObject(serverURI, forKey: PatchrUserDefaultKey("serverURI"))
+			NSUserDefaults.standardUserDefaults().setObject(serverURI, forKey: PatchrUserDefaultKey("serverURI"))
 		}
 
 		sessionManager = AFHTTPSessionManager(baseURL: NSURL(string: serverURI!))
 		sessionManager.requestSerializer = AFJSONRequestSerializer()
         sessionManager.requestSerializer.timeoutInterval = NSTimeInterval(TIMEOUT_REQUEST)
 		sessionManager.responseSerializer = JSONResponseSerializerWithData()
+		//sessionManager.completionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)
+		sessionManager.completionQueue = dispatch_get_main_queue()
 	}
 
 	/*--------------------------------------------------------------------------------------------

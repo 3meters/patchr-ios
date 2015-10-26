@@ -46,9 +46,6 @@ class PatchTableViewController: BaseTableViewController {
         
         super.viewDidLoad()
 		
-		self.tableView.estimatedRowHeight = 136
-		self.tableView.rowHeight = 136
-		
 		switch self.filter {
 			case .Nearby:
 				self.navigationItem.title = "Nearby"
@@ -60,7 +57,10 @@ class PatchTableViewController: BaseTableViewController {
                 self.navigationItem.title = "Favorites"
 			case .Owns:
 				self.navigationItem.title = "Patches I own"
-		}		
+		}
+		
+		self.tableView.estimatedRowHeight = 136
+		self.tableView.rowHeight = 136
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -226,7 +226,7 @@ class PatchTableViewController: BaseTableViewController {
         
         self.processingQuery = true
 		
-		self.queue.addOperationWithBlock {
+		DataController.instance.backgroundQueue.addOperationWithBlock {
 			Reporting.updateCrashKeys()
 			
 			DataController.instance.refreshItemsFor(self.query(), force: false, paging: false, completion: {
@@ -257,8 +257,8 @@ class PatchTableViewController: BaseTableViewController {
 					self?.activityDate = DataController.instance.activityDate
 					
 					// Delay seems to be necessary to avoid visual glitch with UIRefreshControl
-					Utils.delay(0.5, closure: {
-						
+					Utils.delay(0.5) {
+					
 						/* Flag query as having been executed at least once */
 						self?.activity.stopAnimating()
 						self?.refreshControl!.endRefreshing()
@@ -277,7 +277,7 @@ class PatchTableViewController: BaseTableViewController {
 						self?.query().executedValue = true
 						
 						return
-					})
+					}
 				}
 			})
 		}
@@ -316,6 +316,10 @@ extension PatchTableViewController {
     /*
      * UITableViewDelegate
      */
+	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+		return 136
+	}
+
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
 		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
