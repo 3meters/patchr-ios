@@ -21,12 +21,13 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	var loadMoreActivity	= UIActivityIndicatorView(activityIndicatorStyle: .White)
 	var loadMoreMessage		= "LOAD MORE"
 	
-	var emptyLabel			= AirLabel(frame: CGRectMake(100, 100, 100, 100))
+	var emptyLabel			= AirLabel(frame: CGRectZero)
 	var emptyMessage:		String?
     var showEmptyLabel		= true
     var showProgress		= true
-    var progressOffsetY      = Float(-48)
-	var progressOffsetX      = Float(8)
+    var progressOffsetY     = Float(-48)
+	var progressOffsetX     = Float(8)
+	var contentOffset		= CGPointMake(0, -64)
 	
 	var rowHeights:			NSMutableDictionary = [:]
 	var rowAnimation:		UITableViewRowAnimation = .Fade
@@ -96,6 +97,8 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         self.tableView.backgroundColor = Colors.windowColor
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
         self.tableView.separatorInset = UIEdgeInsetsZero
+		self.tableView.contentInset = UIEdgeInsetsMake(64, 0.0, 44, 0.0)
+		self.automaticallyAdjustsScrollViewInsets = false
 		
         self.clearsSelectionOnViewWillAppear = false;
 	}
@@ -107,6 +110,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		 * we need to reset delegate to start monitoring the data model.
 		 */
 		self.fetchedResultsController.delegate = self
+		
 		if self.query().executedValue {
 			do {
 				try self.fetchedResultsController.performFetch()
@@ -118,9 +122,15 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		if let indexPath = tableView.indexPathForSelectedRow {
 			tableView.deselectRowAtIndexPath(indexPath, animated: animated)
 		}
+		
+		self.tableView.setContentOffset(self.contentOffset, animated: true)
 	}
 	
 	override func viewWillLayoutSubviews() {
+		/*
+		 * Called right after viewWillAppear. Gets called
+		 * multiple times during appearance cycle.
+		 */
 		super.viewWillLayoutSubviews()
 		
 		self.footerView.frame.size.height = CGFloat(48 + 16)
@@ -147,6 +157,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		 * Called when switching between patch view controllers.
 		 */
 		super.viewDidDisappear(animated)
+		self.contentOffset = self.tableView.contentOffset
 		self.fetchedResultsController.delegate = nil
 		self.activity.stopAnimating()
         self.refreshControl?.endRefreshing()
