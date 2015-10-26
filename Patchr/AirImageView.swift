@@ -87,25 +87,47 @@ class AirImageView: UIImageView {
     
     func setImageWithPhoto(photo: Photo, animate: Bool = true) {
         
+		let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory, size: nil)
+		
+		guard photoUrl.absoluteString != self.linkedPhotoUrl?.absoluteString else {
+			return
+		}
+		
         if photo.source == PhotoSource.resource {
             if animate {
                 UIView.transitionWithView(self,
                     duration: 0.5,
                     options: UIViewAnimationOptions.TransitionCrossDissolve,
                     animations: {
-                        self.image = UIImage(named: photo.prefix)
+						/* Optimization to skip decoding from file */
+						if photo.prefix == "imgDefaultPatch" {
+							self.image = Utils.imageDefaultPatch
+						}
+						if photo.prefix == "imgDefaultUser" {
+							self.image = Utils.imageDefaultUser
+						}
+						else {
+							self.image = UIImage(named: photo.prefix)
+						}
                     },
                     completion: nil)
             }
             else {
-                self.image = UIImage(named: photo.prefix)
+				/* Optimization to skip decoding from file */
+				if photo.prefix == "imgDefaultPatch" {
+					self.image = Utils.imageDefaultPatch
+				}
+				if photo.prefix == "imgDefaultUser" {
+					self.image = Utils.imageDefaultUser
+				}
+				else {
+					self.image = UIImage(named: photo.prefix)
+				}
             }
             return
         }
 		
 		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-			
-			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory, size: nil)
 			
 			if photoUrl.absoluteString.isEmpty {
 				let error = NSError(domain: "Photo error", code: 0, userInfo: [NSLocalizedDescriptionKey:"Photo has invalid source: \(photo.source!)"])
@@ -119,10 +141,12 @@ class AirImageView: UIImageView {
 			self.linkedPhotoUrl = photoUrl
 			
 			self.spot?.fillColor = UIColor.lightGrayColor().CGColor
+			
 			self.sd_setImageWithURL(photoUrl,
 				placeholderImage: nil,
 				options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload],
 				completed: { image, error, cacheType, url in
+					
 					dispatch_async(dispatch_get_main_queue()) {
 						self.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
 					}
