@@ -11,26 +11,24 @@ import UIKit
 class BaseTableViewController: UITableViewController, NSFetchedResultsControllerDelegate {
 	
     var _query:				Query!
+	var processingQuery		= false
+	var listType:			ItemClass = .Patches
+	var isGuest				= false
 	
 	var activity			= UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
 	var footerView			= UIView()
 	var loadMoreButton		= UIButton(type: UIButtonType.RoundedRect)
 	var loadMoreActivity	= UIActivityIndicatorView(activityIndicatorStyle: .White)
-	var emptyLabel			= AirLabel(frame: CGRectMake(100, 100, 100, 100))
+	var loadMoreMessage		= "LOAD MORE"
 	
+	var emptyLabel			= AirLabel(frame: CGRectMake(100, 100, 100, 100))
+	var emptyMessage:		String?
     var showEmptyLabel		= true
     var showProgress		= true
     var progressOffsetY      = Float(-48)
 	var progressOffsetX      = Float(8)
-    var processingQuery		= false
-    var emptyMessage:		String?
-	var loadMoreMessage		= "LOAD MORE"
-    var offscreenCells		= NSMutableDictionary()
-	var listType:			ItemClass           = .Patches
-	var rowHeights:			NSMutableDictionary = [:]
-	var contentOffset:		CGPoint = CGPointZero
 	
-	var ignoreNextUpdates	= false
+	var rowHeights:			NSMutableDictionary = [:]
 	var rowAnimation:		UITableViewRowAnimation = .Fade
 	
     /*--------------------------------------------------------------------------------------------
@@ -39,6 +37,8 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
     
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		
+		self.isGuest = !UserController.instance.authenticated
 		
         /* Hookup refresh control */
 		let refreshControl = UIRefreshControl()
@@ -52,7 +52,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.view.addSubview(activity)
 		
 		/* Footer */
-		self.footerView.backgroundColor = Colors.windowColor
 		self.loadMoreButton.tag = 1
 		self.loadMoreButton.backgroundColor = UIColor.whiteColor()
 		self.loadMoreButton.layer.cornerRadius = 8
@@ -64,6 +63,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.loadMoreActivity.color = Colors.brandColorDark
 		self.loadMoreActivity.hidden = true
 		self.footerView.addSubview(self.loadMoreActivity)
+		self.footerView.backgroundColor = Colors.windowColor
 		
         /* Empty label */
         if self.showEmptyLabel {
@@ -107,7 +107,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		 * we need to reset delegate to start monitoring the data model.
 		 */
 		self.fetchedResultsController.delegate = self
-		
 		if self.query().executedValue {
 			do {
 				try self.fetchedResultsController.performFetch()
@@ -194,10 +193,17 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 
     func bindQueryItems(force: Bool = false, paging: Bool = false) {
         
-        if self.processingQuery {
+        guard !self.processingQuery else {
             return
         }
         
+		guard self.query().enabledValue else {
+			self.emptyLabel.fadeIn()
+			return
+		}
+		
+		self.processingQuery = true
+		
         if !self.refreshControl!.refreshing && !self.query().executedValue {
 			/* Wacky activity control for body */
 			if self.showProgress {
@@ -217,8 +223,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
             populateSidecar(query())
         }
         
-        self.processingQuery = true
-		
 		DataController.instance.backgroundQueue.addOperationWithBlock {
 			
 			DataController.instance.refreshItemsFor(self.query(), force: force, paging: paging, completion: {

@@ -26,6 +26,7 @@ class BaseDetailViewController: BaseTableViewController {
         if self.entity != nil {
             self.entityId = self.entity!.id_
         }
+		
         self.showEmptyLabel = false
         self.showProgress = true
         self.progressOffsetY = 80
@@ -40,20 +41,22 @@ class BaseDetailViewController: BaseTableViewController {
         }
         
         /* Use cached query if available in the data model */
-        let id = "query.\(self.entityId!)"
-        let query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.managedObjectContext)
-        if query != nil {
-            self._query = query
-            self.showProgress = false
-        }
-        
+		if self.entityId != nil {
+			let id = "query.\(self.entityId!)"
+			let query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.managedObjectContext)
+			if query != nil {
+				self._query = query
+				self.showProgress = false
+			}
+		}
+		
         super.viewDidLoad()
 		
 		/* Turn off estimate so rows are measured up front */
 		self.tableView.estimatedRowHeight = 150
 		
-		if query != nil {
-			if query!.moreValue {
+		if self._query != nil {
+			if self._query!.moreValue {
 				if self.tableView.tableFooterView == nil {
 					self.tableView.tableFooterView = self.footerView
 				}
@@ -74,21 +77,28 @@ class BaseDetailViewController: BaseTableViewController {
     override func query() -> Query {
         
         if self._query == nil {
-            
-            let id = "query.\(self.entityId!)"
+			
+			let id = self.entityId != nil ? "query.\(self.entityId)" : "query.guest"
             var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.managedObjectContext)
             
             if query == nil {
+				
                 query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.managedObjectContext) as Query
                 query!.name = self.queryName
                 query!.pageSize = DataController.proxibase.pageSizeDefault
                 query!.parameters = [:]
-                if entity != nil {
+				
+                if self.entity != nil {
                     query!.parameters["entity"] = self.entity
                 }
-                if entityId != nil {
+                if self.entityId != nil {
                     query!.parameters["entityId"] = self.entityId
                 }
+				
+				if self.entityId == nil && self.entity == nil {
+					query?.enabledValue = false	// Zombies it so it doesn't get executed
+				}
+				
                 DataController.instance.saveContext()
             }
             

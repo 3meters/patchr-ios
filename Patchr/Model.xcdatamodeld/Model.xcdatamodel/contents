@@ -104,6 +104,7 @@
     </entity>
     <entity name="Query" representedClassName="Query" syncable="YES">
         <attribute name="criteria" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="enabled" optional="YES" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
         <attribute name="executed" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="id_" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="more" optional="YES" attributeType="Boolean" syncable="YES"/>
@@ -181,7 +182,7 @@
         <element name="Photo" positionX="-693" positionY="90" width="128" height="150"/>
         <element name="Place" positionX="279" positionY="-243" width="128" height="165"/>
         <element name="ProviderMap" positionX="-452" positionY="450" width="128" height="135"/>
-        <element name="Query" positionX="-216" positionY="117" width="128" height="193"/>
+        <element name="Query" positionX="-216" positionY="117" width="128" height="210"/>
         <element name="QueryItem" positionX="-495" positionY="-99" width="128" height="135"/>
         <element name="RichType" positionX="-450" positionY="98" width="128" height="75"/>
         <element name="ServiceBase" positionX="-450" positionY="-243" width="128" height="330"/>

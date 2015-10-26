@@ -5,6 +5,7 @@
 
 const struct QueryAttributes QueryAttributes = {
 	.criteria = @"criteria",
+	.enabled = @"enabled",
 	.executed = @"executed",
 	.id_ = @"id_",
 	.more = @"more",
@@ -50,6 +51,11 @@ const struct QueryRelationships QueryRelationships = {
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
+	if ([key isEqualToString:@"enabledValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"enabled"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
 	if ([key isEqualToString:@"executedValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"executed"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
@@ -92,6 +98,26 @@ const struct QueryRelationships QueryRelationships = {
 
 - (void)setPrimitiveCriteriaValue:(BOOL)value_ {
 	[self setPrimitiveCriteria:@(value_)];
+}
+
+@dynamic enabled;
+
+- (BOOL)enabledValue {
+	NSNumber *result = [self enabled];
+	return [result boolValue];
+}
+
+- (void)setEnabledValue:(BOOL)value_ {
+	[self setEnabled:@(value_)];
+}
+
+- (BOOL)primitiveEnabledValue {
+	NSNumber *result = [self primitiveEnabled];
+	return [result boolValue];
+}
+
+- (void)setPrimitiveEnabledValue:(BOOL)value_ {
+	[self setPrimitiveEnabled:@(value_)];
 }
 
 @dynamic executed;

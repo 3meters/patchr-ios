@@ -23,7 +23,7 @@ struct Utils {
 	static var imageLocation: UIImage = { return UIImage(named: "imgLocationLight") }()!
 	static var imageHeartOn: UIImage = { return UIImage(named: "imgHeartFilledLight") }()!
 	static var imageHeartOff: UIImage = { return UIImage(named: "imgHeartLight") }()!
-	static var imageBroken: UIImage = { return UIImage(named: "imgBroken250tLight") }()!
+	static var imageBroken: UIImage = { return UIImage(named: "imgBroken250Light") }()!
 	
     static var messageDateFormatter: NSDateFormatter = {
         let dateFormatter = NSDateFormatter()

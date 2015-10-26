@@ -10,8 +10,7 @@ import UIKit
 
 class UserDetailViewController: BaseDetailViewController {
 
-	private var isCurrentUser	= false
-    private var isGuest         = false
+	private var isCurrentUser		= false
 	private var header:			UserDetailView!
 
 	/*--------------------------------------------------------------------------------------------
@@ -21,7 +20,6 @@ class UserDetailViewController: BaseDetailViewController {
 	override func viewDidLoad() {
         
         self.isCurrentUser = (self.entity == nil && self.entityId == nil)
-        self.isGuest = !UserController.instance.authenticated
         
         if !self.isGuest && self.isCurrentUser {
             self.entity = UserController.instance.currentUser
@@ -170,6 +168,9 @@ class UserDetailViewController: BaseDetailViewController {
 			self.header.watchingInfo.addTarget(self, action: Selector("actionBrowseWatching:"), forControlEvents: UIControlEvents.TouchUpInside)
 			self.header.ownsInfo.addTarget(self, action: Selector("actionBrowseOwned:"), forControlEvents: UIControlEvents.TouchUpInside)
 		}
+		else {
+			self.header.bindToEntity(nil, isGuest: self.isGuest)
+		}
 	}
 	
 	override func pullToRefreshAction(sender: AnyObject?) -> Void {
@@ -179,5 +180,18 @@ class UserDetailViewController: BaseDetailViewController {
         else {
             self.refreshControl?.endRefreshing()
         }
+	}
+}
+
+extension UserDetailViewController {
+	/*
+	* UITableViewDataSource
+	*/
+	override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+		return self.isGuest ? 0 : 1
+	}
+	
+	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		return self.isGuest ? 0 : self.fetchedResultsController.sections![section].numberOfObjects
 	}
 }

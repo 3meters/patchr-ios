@@ -5,6 +5,7 @@
 
 extern const struct QueryAttributes {
 	__unsafe_unretained NSString *criteria;
+	__unsafe_unretained NSString *enabled;
 	__unsafe_unretained NSString *executed;
 	__unsafe_unretained NSString *id_;
 	__unsafe_unretained NSString *more;
@@ -41,6 +42,14 @@ extern const struct QueryRelationships {
 - (void)setCriteriaValue:(BOOL)value_;
 
 //- (BOOL)validateCriteria:(id*)value_ error:(NSError**)error_;
+
+@property (nonatomic, strong) NSNumber* enabled;
+
+@property (atomic) BOOL enabledValue;
+- (BOOL)enabledValue;
+- (void)setEnabledValue:(BOOL)value_;
+
+//- (BOOL)validateEnabled:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSNumber* executed;
 
@@ -111,6 +120,12 @@ extern const struct QueryRelationships {
 
 - (BOOL)primitiveCriteriaValue;
 - (void)setPrimitiveCriteriaValue:(BOOL)value_;
+
+- (NSNumber*)primitiveEnabled;
+- (void)setPrimitiveEnabled:(NSNumber*)value;
+
+- (BOOL)primitiveEnabledValue;
+- (void)setPrimitiveEnabledValue:(BOOL)value_;
 
 - (NSNumber*)primitiveExecuted;
 - (void)setPrimitiveExecuted:(NSNumber*)value;

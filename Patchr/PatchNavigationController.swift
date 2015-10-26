@@ -20,8 +20,10 @@ class PatchNavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let segItems = ["Nearby","Faves","Watch","Explore"]
-        
+		let segItems = UserController.instance.authenticated
+			? ["Nearby","Faves","Watch","Explore"]
+			: ["Nearby","Explore"]
+			
         self.segmentsController = SegmentsController(navigationController: self, viewControllers: segmentViewControllers())
         
         self.segmentedControl = UISegmentedControl(items: segItems)
@@ -51,11 +53,24 @@ class PatchNavigationController: UINavigationController {
     *--------------------------------------------------------------------------------------------*/
     
     func segmentViewControllers() -> [UIViewController] {
+		
+		if !UserController.instance.authenticated {
+			
+			let nearby = PatchTableViewController()
+			let explore = PatchTableViewController()
+			
+			nearby.filter = PatchListFilter.Nearby
+			explore.filter = PatchListFilter.Explore
+			
+			let controllers = [nearby, explore]
+			return controllers
+		}
+		
         let nearby = PatchTableViewController()
+		let explore = PatchTableViewController()
         let favorites = PatchTableViewController()
         let watching = PatchTableViewController()
-        let explore = PatchTableViewController()
-        
+		
         nearby.filter = PatchListFilter.Nearby
         favorites.filter = PatchListFilter.Favorite
         favorites.user = UserController.instance.currentUser

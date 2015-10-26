@@ -516,21 +516,21 @@ extension Place {
     
     func addressBlock() -> String {
         var addressBlock = ""
-        if !address.isEmpty {
+        if address != nil && address.isEmpty {
             addressBlock = address + "\n"
         }
         
-        if !city.isEmpty && !region.isEmpty {
+        if city != nil && region != nil && !city.isEmpty && !region.isEmpty {
             addressBlock += city + ", " + region;
         }
-        else if !city.isEmpty {
+        else if city != nil && !city.isEmpty {
             addressBlock += city;
         }
-        else if !region.isEmpty {
+        else if region != nil && !region.isEmpty {
             addressBlock += region;
         }
         
-        if !postalCode.isEmpty {
+        if postalCode != nil && !postalCode.isEmpty {
             addressBlock += " " + postalCode;
         }
         return addressBlock;
