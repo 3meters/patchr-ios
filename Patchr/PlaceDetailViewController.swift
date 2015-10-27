@@ -13,7 +13,6 @@ class PlaceDetailViewController: UITableViewController {
     var place:      Place?
     var placeId:    String?
     var progress:   AirProgress?
-	var queue =		NSOperationQueue()
 
     /* Outlets are initialized before viewDidLoad is called */
     
@@ -38,8 +37,7 @@ class PlaceDetailViewController: UITableViewController {
         self.category.text = nil
         self.address.text = nil
         self.distance.text = nil
-		self.queue.name = "Entity request queue"
-        
+		
         /* Wacky activity control for body */
         self.progress = AirProgress(view: self.view)
         self.progress!.mode = MBProgressHUDMode.Indeterminate
@@ -84,23 +82,26 @@ class PlaceDetailViewController: UITableViewController {
             self.progress?.show(true)
         }
 		
-		self.queue.addOperationWithBlock {
+		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
+			
 			DataController.instance.withPlaceId(self.placeId!, refresh: force) {
-				place, error in
+				[weak self] objectId, error in
 				
-				NSOperationQueue.mainQueue().addOperationWithBlock {
-					self.refreshControl?.endRefreshing()
-					self.progress?.hide(true)
-					
-					if error == nil {
-						if place != nil {
-							self.place = place
-							self.draw()
-						}
-						else {
-							Shared.Toast("Place has been deleted")
-							Utils.delay(2.0) {
-								self.navigationController?.popViewControllerAnimated(true)
+				if self != nil {
+					NSOperationQueue.mainQueue().addOperationWithBlock {
+						self?.refreshControl?.endRefreshing()
+						self?.progress?.hide(true)
+						
+						if error == nil {
+							if objectId == nil {
+								Shared.Toast("Place has been deleted")
+								Utils.delay(2.0) {
+									self?.navigationController?.popViewControllerAnimated(true)
+								}
+							}
+							else {
+								self?.place = DataController.instance.mainContext.objectWithID(objectId!) as? Place
+								self?.draw()
 							}
 						}
 					}

@@ -146,6 +146,7 @@ extension Patch {
 
 		view.photo.showGradient = true
 		view.photo.setImageWithPhoto(entity.getPhotoManaged(), animate: view.photo.image == nil)
+		view.setNeedsLayout()
 		
         return view
     }

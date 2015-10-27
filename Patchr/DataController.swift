@@ -31,7 +31,6 @@ class DataController: NSObject {
 	private var coreDataStack: CoreDataStack!
 
 	var mainContext: NSManagedObjectContext!
-    var backgroundContext: NSManagedObjectContext!
 	
     var activityDate: Int64
     var currentPatch: Patch?    // Currently used for message context
@@ -60,8 +59,7 @@ class DataController: NSObject {
 		super.init()
 		
 		self.coreDataStack = CoreDataStack()
-		self.mainContext = self.coreDataStack.mainContext
-        self.backgroundContext = self.coreDataStack.backgroundContext
+		self.mainContext = self.coreDataStack.stackMainContext
 	}
 	
 	func saveContext(wait: Bool = false) {
@@ -76,49 +74,49 @@ class DataController: NSObject {
 	 * Singles
 	 *--------------------------------------------------------------------------------------------*/
 
-	func withPatchId(patchId: String, refresh: Bool = false, completion: (Patch?, error: NSError?) -> Void) {
+	func withPatchId(patchId: String, refresh: Bool = false, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
         /*
         * - Load a patch for the patch form
         * - Show a patch by id for a notification.
         */
-		withEntityType(Patch.self, id: patchId, refresh: refresh) {
-			(model, error) -> Void in
-			completion(model as? Patch, error: error)
+		withEntityType(Patch.self, entityId: patchId, refresh: refresh) {
+			objectId, error in
+			completion(objectId, error: error)
 		}
 	}
 
-	func withMessageId(messageId: String, refresh: Bool = false, completion: (Message?, error: NSError?) -> Void) {
+	func withMessageId(messageId: String, refresh: Bool = false, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
         /*
         * Load a message for the message form.
         */
-		withEntityType(Message.self, id: messageId, refresh: refresh) {
-			(model, error) -> Void in
-			completion(model as? Message, error: error)
+		withEntityType(Message.self, entityId: messageId, refresh: refresh) {
+			objectId, error in
+			completion(objectId, error: error)
 		}
 	}
 
-	func withUserId(userId: String, refresh: Bool = false, completion: (User?, error: NSError?) -> Void) {
+	func withUserId(userId: String, refresh: Bool = false, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
         /*
         * - Load users for items in user lists
         * - Load user by id for a notification.
         */
-		withEntityType(User.self, id: userId, refresh: refresh) {
-			(model, error) -> Void in
-			completion(model as? User, error: error)
+		withEntityType(User.self, entityId: userId, refresh: refresh) {
+			objectId, error in
+			completion(objectId, error: error)
 		}
 	}
 
-    func withPlaceId(placeId: String, refresh: Bool = false, completion: (Place?, error: NSError?) -> Void) {
+    func withPlaceId(placeId: String, refresh: Bool = false, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
         /*
         * - Load a place for the place form
         */
-        withEntityType(Place.self, id: placeId, refresh: refresh) {
-            (model, error) -> Void in
-            completion(model as? Place, error: error)
+        withEntityType(Place.self, entityId: placeId, refresh: refresh) {
+            objectId, error in
+            completion(objectId, error: error)
         }
     }
     
-    func withEntityId(entityId: String, refresh: Bool = false, completion: (Entity?, error: NSError?) -> Void) {
+    func withEntityId(entityId: String, refresh: Bool = false, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
         /*
         * Used by notifications which only have an entity id to work with.
         */
@@ -141,64 +139,78 @@ class DataController: NSObject {
 		}
 	}
 
-    private func withEntityType(entityType: ServiceBase.Type, id: String, refresh: Bool = false, completion: (ServiceBase?, error: NSError?) -> Void) {
-            
-            /* Pull from data model if available */
-            var entity = entityType.fetchOneById(id, inManagedObjectContext: mainContext) as ServiceBase!
-            
-            /* If not in data model or caller wants the freshest available then call service */
-            if refresh || entity == nil {
-                
-                var criteria: [String: AnyObject] = [:]
-                if entity != nil {
-                    criteria = entity.criteria()
-                }
-                
-                fetchByEntityType(entityType, withId: id, criteria: criteria, completion: {
-                    response, error in
+	private func withEntityType(entityType: ServiceBase.Type, entityId: String, refresh: Bool = false, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
+		
+		/* Pull from data model if available */
+		let modelEntity = entityType.fetchOneById(entityId, inManagedObjectContext: mainContext) as ServiceBase!
+		
+		/* If not in data model or caller wants the freshest available then call service */
+		if refresh || modelEntity == nil {
+			
+			var criteria: [String: AnyObject] = [:]
+			var objectId: NSManagedObjectID?
+			if modelEntity != nil {
+				criteria = modelEntity.criteria()
+				objectId = modelEntity.objectID
+			}
+			
+			fetchByEntityType(entityType, withId: entityId, criteria: criteria, completion: {
+				response, error in
+				
+				/* Returns on background thread */
+				
+				if let _ = ServerError(error) {
+					completion(nil, error: error)
+				}
+				else {
+					let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
+					privateContext.parentContext = DataController.instance.mainContext
 					
-					/* Returns on background thread */
-                    
-                    if let _ = ServerError(error) {
-                        completion(nil, error: error)
-                    }
-                    else {
-                        /* Turn maps and arrays into objects */
-                        if let dictionary = response as? [NSObject:AnyObject] {
-
-                            let dataWrapper = ServiceData()
-                            ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper, mappingNames: false)
+					privateContext.performBlock {
+						
+						/* Turn maps and arrays into objects */
+						if let dictionary = response as? [NSObject:AnyObject] {
+							
+							let dataWrapper = ServiceData()
+							ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper, mappingNames: false)
 							Log.d("RESPONSE Service time: \(dataWrapper.time) for \(entityType)")
-                            
-                            if !dataWrapper.noopValue {
-                                if let entityDictionaries = dataWrapper.data as? [[NSObject:AnyObject]] {
-                                    if entityDictionaries.count == 1 {
-                                        entity = entityType.fetchOrInsertOneById(id, inManagedObjectContext: self.backgroundContext)
-                                        entityType.setPropertiesFromDictionary(entityDictionaries[0], onObject: entity, mappingNames: true)
-										entity.refreshedValue = true
-                                    }
-                                }
-                                
-                                /* Poke each impacted queryItem to trigger NSFetchedResultsController callbacks */
-                                for queryItem in entity.queryItems {
-                                    if let result = queryItem as? QueryItem {
-                                        result.modifiedDate = NSDate()
-                                    }
-                                }
-                                
-                                /* Persist the changes and triggers notifications to observers */
-								DataController.instance.saveContext(self.backgroundContext, wait: false)
-                            }
-                        }
-                        completion(entity, error: nil)
-                    }
-                })
-            }
-            else {
-                completion(entity, error: nil)
-            }
+							
+							if !dataWrapper.noopValue {
+								if let entityDictionaries = dataWrapper.data as? [[NSObject:AnyObject]] {
+									if entityDictionaries.count == 1 {
+										let entity = entityType.fetchOrInsertOneById(entityId, inManagedObjectContext: privateContext)
+										entityType.setPropertiesFromDictionary(entityDictionaries[0], onObject: entity!, mappingNames: true)
+										entity!.refreshedValue = true
+										objectId = entity?.objectID
+										
+										/* Poke each impacted queryItem to trigger NSFetchedResultsController callbacks */
+										for queryItem in entity!.queryItems {
+											if let result = queryItem as? QueryItem {
+												result.modifiedDate = NSDate()
+											}
+										}
+									}
+								}
+								
+								/* Persist the changes and triggers notifications to observers */
+								do {
+									try privateContext.save()
+								}
+								catch {
+									fatalError("Failure to save context: \(error)")
+								}
+							}
+						}
+						completion(objectId, error: nil)
+					}
+				}
+			})
+		}
+		else {
+			completion(modelEntity.objectID, error: nil)
+		}
     }
-    
+	
     private func fetchByEntityType(type: ServiceBase.Type, withId id: String, criteria: Dictionary<String,AnyObject> = [:], completion: (response: AnyObject?, error: NSError?) -> Void) {
         if let _ = type as? Patch.Type {
             DataController.proxibase.fetchPatchById(id, criteria:criteria, completion: completion)
@@ -222,7 +234,7 @@ class DataController: NSObject {
 		/* 
 		 * Called on background thread 
 		 */
-		let query = self.backgroundContext.objectWithID(queryId) as! Query
+		let query = self.mainContext.objectWithID(queryId) as! Query
 		
         if query.name == DataStoreQueryName.NotificationsForCurrentUser.rawValue && !UserController.instance.authenticated {
             completion(queryItems: [], query: query, error: nil)
@@ -239,43 +251,57 @@ class DataController: NSObject {
 				return
 			}
 			
-			/* Turn response entities into managed entities */
-			let returnValue = self.handleServiceDataResponseForQuery(query, response: response!)
+			let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
+			privateContext.parentContext = DataController.instance.mainContext
 			
-			/* If service query completed as a noop then bail */
-			if (returnValue.serviceData.noopValue) {
-				completion(queryItems: [], query: query, error: error)
-				return
-			}
-			
-			/* So we can provide a hint that paging is available */
-			query.moreValue = returnValue.serviceData.moreValue
-			let queryItems = returnValue.queryItems
-			
-			/*
-			* Clearing entities that have been deleted is tricky. When paging, we don't
-			* have a good way to know that an entity for a previous page set has been deleted
-			* unless we are on page one and working forward in a fresh pass.
-			*
-			* Starting at zero will cause all entities outside of the first 'page' to be
-			* deleted as well as any first page entities no longer part of the refreshed
-			* first page.
-			*/
-			if query.offsetValue == 0 {
-				let queryItemSet = Set(queryItems)  // If for some reason there are any duplicates, this will remove them
-				for item in query.queryItems {
-					if let existingQueryItem = item as? QueryItem {
-						if !queryItemSet.contains(existingQueryItem) {
-							self.backgroundContext.deleteObject(existingQueryItem) // Does not throw
+			privateContext.performBlock {
+				
+				let query = privateContext.objectWithID(queryId) as! Query
+				
+				/* Turn response entities into managed entities */
+				let returnValue = self.handleServiceDataResponseForQuery(query, response: response!, context: privateContext)
+				
+				/* If service query completed as a noop then bail */
+				if (returnValue.serviceData.noopValue) {
+					completion(queryItems: [], query: query, error: error)
+					return
+				}
+				
+				/* So we can provide a hint that paging is available */
+				query.moreValue = returnValue.serviceData.moreValue
+				let queryItems = returnValue.queryItems
+				
+				/*
+				* Clearing entities that have been deleted is tricky. When paging, we don't
+				* have a good way to know that an entity for a previous page set has been deleted
+				* unless we are on page one and working forward in a fresh pass.
+				*
+				* Starting at zero will cause all entities outside of the first 'page' to be
+				* deleted as well as any first page entities no longer part of the refreshed
+				* first page.
+				*/
+				if query.offsetValue == 0 {
+					let queryItemSet = Set(queryItems)  // If for some reason there are any duplicates, this will remove them
+					for item in query.queryItems {
+						if let existingQueryItem = item as? QueryItem {
+							if !queryItemSet.contains(existingQueryItem) {
+								privateContext.deleteObject(existingQueryItem) // Does not throw
+							}
 						}
 					}
 				}
+				
+				/* Persist the changes and triggers notifications to observers */
+				Log.d("Save context: \(query.name)")
+				do {
+					try privateContext.save()
+				}
+				catch {
+					fatalError("Failure to save context: \(error)")
+				}
+				
+				completion(queryItems: queryItems, query: query, error: error)
 			}
-			
-			/* Persist the changes and triggers notifications to observers */
-			Log.d("Save context: \(query.name)")
-			DataController.instance.saveContext(self.backgroundContext, wait: false)
-			completion(queryItems: queryItems, query: query, error: error)
 		}
 		
         let coordinate = LocationController.instance.lastLocationAccepted()?.coordinate
@@ -359,7 +385,7 @@ class DataController: NSObject {
 	 * Methods
 	 *--------------------------------------------------------------------------------------------*/
 	
-	private func handleServiceDataResponseForQuery(query: Query, response: AnyObject) -> (serviceData:ServiceData, queryItems:[QueryItem]) {
+	private func handleServiceDataResponseForQuery(query: Query, response: AnyObject, context: NSManagedObjectContext) -> (serviceData:ServiceData, queryItems:[QueryItem]) {
 
 		var queryItems: [QueryItem] = []
 		let dataWrapper = ServiceData()
@@ -412,10 +438,10 @@ class DataController: NSObject {
                          */
                         var entity: Entity
                         if let entityId = entityDictionary["_id"] as? String {
-                            entity = modelType.fetchOrInsertOneById(entityId, inManagedObjectContext: self.backgroundContext) as! Entity
+                            entity = modelType.fetchOrInsertOneById(entityId, inManagedObjectContext: context) as! Entity
                         }
                         else {
-                            entity = modelType.insertInManagedObjectContext(self.backgroundContext) as! Entity
+                            entity = modelType.insertInManagedObjectContext(context) as! Entity
                         }
                         
                         /* Transfer the properties: Updates the object if it was already in the model */
@@ -432,7 +458,7 @@ class DataController: NSObject {
                         
                         /* Add if new */
                         if queryItem == nil {
-                            queryItem = QueryItem.insertInManagedObjectContext(self.backgroundContext) as! QueryItem
+                            queryItem = QueryItem.insertInManagedObjectContext(context) as! QueryItem
                         }
 
                         /* Set properties */

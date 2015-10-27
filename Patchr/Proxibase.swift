@@ -326,8 +326,7 @@ public class Proxibase {
 	}
 
 	public func updatePassword(userId: NSString, password: NSString, passwordNew: NSString, completion: ProxibaseCompletionBlock) {
-		let parameters
-		= ["userId": userId, "oldPassword": password, "newPassword": passwordNew, "installId": installationIdentifier]
+		let parameters = ["userId": userId, "oldPassword": password, "newPassword": passwordNew, "installId": installationIdentifier]
 		sessionManager.POST("user/changepw", parameters: addSessionParameters(parameters),
 							success: {
 								dataTask, response in

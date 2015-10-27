@@ -114,35 +114,37 @@ class BaseDetailViewController: BaseTableViewController {
 		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
 			
 			DataController.instance.withEntityId(self.entityId!, refresh: force) {
-				entity, error in
+				[weak self] objectId, error in
 				
-				NSOperationQueue.mainQueue().addOperationWithBlock {
-					
-					Utils.delay(0.0) {
-						self.refreshControl?.endRefreshing()
+				if self != nil {
+					NSOperationQueue.mainQueue().addOperationWithBlock {
 						
-						if error == nil {
-							if entity != nil {
-								
-								/* Refresh list too */
-								if entity!.refreshedValue {
-									entity!.refreshedValue = false
-									self.bindQueryItems(true)
+						Utils.delay(0.0) {
+							self?.refreshControl?.endRefreshing()
+							
+							if error == nil {
+								if objectId != nil {
+									let entity = DataController.instance.mainContext.objectWithID(objectId!) as! Entity
+									/* Refresh list too */
+									if entity.refreshedValue {
+										entity.refreshedValue = false
+										self?.bindQueryItems(true)
+									}
+									
+									self?.entity = entity
+									self?.entityId = entity.id_
+									if let patch = entity as? Patch {
+										DataController.instance.currentPatch = patch    // Used for context for messages
+									}
+									self?.drawButtons()
+									self?.draw()
 								}
-								
-								self.entity = entity
-								self.entityId = entity!.id_
-								if let patch = entity as? Patch {
-									DataController.instance.currentPatch = patch    // Used for context for messages
-								}
-								self.drawButtons()
-								self.draw()
-							}
-							else {
-								Shared.Toast("Item has been deleted")
-								Utils.delay(2.0) {
-									() -> () in
-									self.navigationController?.popViewControllerAnimated(true)
+								else {
+									Shared.Toast("Item has been deleted")
+									Utils.delay(2.0) {
+										() -> () in
+										self?.navigationController?.popViewControllerAnimated(true)
+									}
 								}
 							}
 						}

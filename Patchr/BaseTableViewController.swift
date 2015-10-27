@@ -97,7 +97,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         self.tableView.backgroundColor = Colors.windowColor
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
         self.tableView.separatorInset = UIEdgeInsetsZero
-		self.tableView.contentInset = UIEdgeInsetsMake(64, 0.0, 44, 0.0)
+		self.tableView.contentInset = UIEdgeInsetsMake(64, 0.0, self.tabBarController?.tabBar.frame.size.height ?? 0, 0.0)
 		self.automaticallyAdjustsScrollViewInsets = false
 		
         self.clearsSelectionOnViewWillAppear = false;
@@ -143,6 +143,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.activity.frame.origin.x += CGFloat(self.progressOffsetX)
 		
 		self.emptyLabel.anchorInCenterWithWidth(160, height: 160)
+		self.emptyLabel.frame.origin.y -= CGFloat(64 /* Status bar + navigation bar */)
 	}
 	
     override func viewDidAppear(animated: Bool) {
@@ -234,15 +235,19 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
             populateSidecar(query())
         }
 		
-		dispatch_async(DataController.instance.backgroundDispatch) {
+		let queryId = self.query().objectID
+		
+		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
 			
-			DataController.instance.refreshItemsFor(self.query().objectID, force: force, paging: paging, completion: {
+			DataController.instance.refreshItemsFor(queryId, force: force, paging: paging, completion: {
 				[weak self] results, query, error in
 				
 				NSOperationQueue.mainQueue().addOperationWithBlock {
 					
 					// Delay seems to be necessary to avoid visual glitch with UIRefreshControl
 					Utils.delay(0.5) {
+						
+						let query = DataController.instance.mainContext.objectWithID(queryId) as! Query
 						
 						self?.processingQuery = false
 						self?.activity.stopAnimating()

@@ -135,15 +135,15 @@ class PatchView: BaseView {
 		self.photo.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 128, height: 128)
 		
 		if self.placeName.text != nil {
-			self.placeName.anchorTopLeftWithLeftPadding(columnLeft, topPadding: CELL_PADDING_VERTICAL, width: columnWidth, height: 15)
+			self.placeName.anchorTopLeftWithLeftPadding(columnLeft, topPadding: CELL_PADDING_VERTICAL, width: columnWidth, height: 13)
 			self.name.alignUnder(self.placeName, matchingLeftAndFillingWidthWithRightPadding: CELL_PADDING_HORIZONTAL, topPadding: 0, height: 24)
 		}
 		else {
 			self.name.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 6, width: columnWidth, height: 24)
 		}
 		
-		let typeSize = self.type.sizeThatFits(CGSizeMake(columnWidth, CGFloat.max))
-		self.type.alignUnder(self.name, matchingLeftWithTopPadding: 4, width: typeSize.width, height: 16)
+		self.type.sizeToFit()
+		self.type.alignUnder(self.name, matchingLeftWithTopPadding: 4, width: self.type.frame.size.width, height: 16)
 		if !self.visibility.hidden {
 			self.visibility.alignToTheRightOf(self.type, matchingCenterWithLeftPadding: 8, width: 16, height: 16)
 			if !self.status.hidden {

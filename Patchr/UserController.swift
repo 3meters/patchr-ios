@@ -79,13 +79,15 @@ class UserController: NSObject {
 
 	func fetchCurrentUser(){
 		DataController.instance.withUserId(self.userId!, refresh: true, completion: {
-			user, error in
-            self.currentUser = user
-            Branch.getInstance().setIdentity(user!.id_)
-            Reporting.updateCrashUser(user)
+			objectId, error in
+			if objectId != nil {
+				self.currentUser = DataController.instance.mainContext.objectWithID(objectId!) as! User
+				Branch.getInstance().setIdentity(self.currentUser.id_)
+				Reporting.updateCrashUser(self.currentUser)
+			}
 		})
 	}
-    
+	
     func signinAuto() {
         /*
          * Gets called on app create.

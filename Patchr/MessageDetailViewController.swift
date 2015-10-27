@@ -168,28 +168,26 @@ class MessageDetailViewController: UITableViewController {
 		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
 			
 			DataController.instance.withMessageId(self.messageId!, refresh: force) {
-				[weak self] message, error in
+				[weak self] objectId, error in
 				
 				if self != nil {
 					NSOperationQueue.mainQueue().addOperationWithBlock {
 						self?.activity?.stopAnimating()
 						self?.refreshControl?.endRefreshing()
 						if error == nil {
-							if message != nil {
-								
-								/* Remove share button if this is a share message */
-								if message!.type != nil && message!.type == "share" {
-									self?.navigationItem.rightBarButtonItems = []
-								}
-								
-								self?.message = message
-								self?.draw()		// TODO: Can skkip if no change in activityDate and modifiedDate
-							}
-							else {
+							if objectId == nil {
 								Shared.Toast("Message has been deleted")
 								Utils.delay(2.0) {
 									self?.navigationController?.popViewControllerAnimated(true)
 								}
+							}
+							else {
+								self?.message = DataController.instance.mainContext.objectWithID(objectId!) as? Message
+								/* Remove share button if this is a share message */
+								if self?.message!.type != nil && self?.message!.type == "share" {
+									self?.navigationItem.rightBarButtonItems = []
+								}
+								self?.draw()	// TODO: Can skip if no change in activityDate and modifiedDate
 							}
 						}
 					}

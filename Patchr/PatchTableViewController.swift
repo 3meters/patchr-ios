@@ -228,15 +228,18 @@ class PatchTableViewController: BaseTableViewController {
         
         self.processingQuery = true
 		
-		dispatch_async(DataController.instance.backgroundDispatch) {
+		let queryId = self.query().objectID
+		
+		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
 			Reporting.updateCrashKeys()
 			
-			DataController.instance.refreshItemsFor(self.query().objectID, force: false, paging: false, completion: {
+			DataController.instance.refreshItemsFor(queryId, force: false, paging: false, completion: {
 				[weak self] results, query, error in
 				/*
 				 * Called on main thread
 				 */
 				NSOperationQueue.mainQueue().addOperationWithBlock {
+					
 					self?.processingQuery = false
 					if let error = ServerError(error) {
 						
@@ -260,6 +263,8 @@ class PatchTableViewController: BaseTableViewController {
 					
 					// Delay seems to be necessary to avoid visual glitch with UIRefreshControl
 					Utils.delay(0.5) {
+						
+						let query = DataController.instance.mainContext.objectWithID(queryId) as! Query						
 					
 						/* Flag query as having been executed at least once */
 						self?.activity.stopAnimating()

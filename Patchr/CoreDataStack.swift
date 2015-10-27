@@ -10,9 +10,8 @@ import Foundation
 
 class CoreDataStack: NSObject {
 
-	var masterContext:              NSManagedObjectContext!		// On background thread
-	var mainContext:                NSManagedObjectContext!		// On main thread
-	var backgroundContext:          NSManagedObjectContext!		// On background thread
+	var stackWriterContext:         NSManagedObjectContext!		// On background thread
+	var stackMainContext:           NSManagedObjectContext!		// On main thread
 	var persistentStoreCoordinator: NSPersistentStoreCoordinator!
 	
 	override init(){
@@ -37,19 +36,13 @@ class CoreDataStack: NSObject {
 		let master: NSManagedObjectContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
 		master.persistentStoreCoordinator = psc
 		master.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-		self.masterContext = master
+		self.stackWriterContext = master
 
 		/* Main on main thread parented by Master */
 		let main: NSManagedObjectContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
 		main.parentContext = master
 		main.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-		self.mainContext = main
-
-		/* Worker on background thread parented by Main */
-		let background: NSManagedObjectContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
-		background.parentContext = main
-		background.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-		self.backgroundContext = background
+		self.stackMainContext = main
 
 		registerForNotifications()
 		
@@ -68,7 +61,7 @@ class CoreDataStack: NSObject {
 	*--------------------------------------------------------------------------------------------*/
 	
 	func saveContext(wait: Bool = false) {
-		saveContext(self.mainContext, wait: wait)
+		saveContext(self.stackMainContext, wait: wait)
 	}
 	
 	func saveContext(context: NSManagedObjectContext, wait: Bool) {
@@ -95,9 +88,9 @@ class CoreDataStack: NSObject {
 	func registerForNotifications() {
 		
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "mainManagedObjectContextDidSave:",
-			name: NSManagedObjectContextDidSaveNotification, object: self.mainContext)
+			name: NSManagedObjectContextDidSaveNotification, object: self.stackMainContext)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "appWillResignActive:",
-			name: UIApplicationWillResignActiveNotification, object: self.mainContext)
+			name: UIApplicationWillResignActiveNotification, object: self.stackMainContext)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "persistentStoreCoordinatorStoresWillChange:",
 			name: NSPersistentStoreCoordinatorStoresWillChangeNotification, object: self.persistentStoreCoordinator)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "persistentStoreCoordinatorStoresDidChange:",
@@ -124,26 +117,25 @@ class CoreDataStack: NSObject {
 	*--------------------------------------------------------------------------------------------*/
 	
 	func mainManagedObjectContextDidSave(info: NSNotification) {
-		saveContext(self.masterContext, wait: false)
+		self.saveContext(self.stackWriterContext, wait: true)	// Commits changes to the store
 	}
 	
 	func appWillResignActive(info: NSNotification) {
-		saveContext(self.backgroundContext, wait: true)
-		saveContext(self.mainContext, wait: true)
-		saveContext(self.masterContext, wait: true)
+		saveContext(self.stackMainContext, wait: true)
+		saveContext(self.stackWriterContext, wait: true)
 	}
 	
 	func persistentStoreCoordinatorStoresWillChange(info: NSNotification) {
-		saveContext(self.mainContext, wait: true)
+		saveContext(self.stackMainContext, wait: true)
 	}
 	
 	func persistentStoreCoordinatorStoresDidChange(info: NSNotification) {
-		saveContext(self.masterContext, wait: false)
+		saveContext(self.stackWriterContext, wait: false)
 	}
 	
 	func persistentStoreDidImportUbiquitousContentChanges(info: NSNotification) {
-		self.mainContext.performBlock {
-			self.mainContext.mergeChangesFromContextDidSaveNotification(info)
+		self.stackMainContext.performBlock {
+			self.stackMainContext.mergeChangesFromContextDidSaveNotification(info)
 		}
 	}
 }
