@@ -21,7 +21,7 @@ class PatchNavigationController: UINavigationController {
         super.viewDidLoad()
         
 		let segItems = UserController.instance.authenticated
-			? ["Nearby","Faves","Watch","Explore"]
+			? ["Nearby","Watch","Own","Explore"]
 			: ["Nearby","Explore"]
 			
         self.segmentsController = SegmentsController(navigationController: self, viewControllers: segmentViewControllers())
@@ -68,17 +68,17 @@ class PatchNavigationController: UINavigationController {
 		
         let nearby = PatchTableViewController()
 		let explore = PatchTableViewController()
-        let favorites = PatchTableViewController()
+        let owns = PatchTableViewController()
         let watching = PatchTableViewController()
 		
         nearby.filter = PatchListFilter.Nearby
-        favorites.filter = PatchListFilter.Favorite
-        favorites.user = UserController.instance.currentUser
+        owns.filter = PatchListFilter.Owns
+        owns.user = UserController.instance.currentUser
         watching.filter = PatchListFilter.Watching
         watching.user = UserController.instance.currentUser
         explore.filter = PatchListFilter.Explore
         
-        let controllers = [nearby, favorites, watching, explore]
+        let controllers = [nearby, watching, owns, explore]
         return controllers
     }
 }

@@ -112,7 +112,7 @@ class UserDetailView: BaseDetailView {
 		self.ownsGroup.addSubview(self.ownsInfo)
 		self.ownsGroup.addSubview(self.ownsRule)
 		
-		self.addSubview(self.favoritesGroup)
+		//self.addSubview(self.favoritesGroup)
 		self.addSubview(self.watchingGroup)
 		self.addSubview(self.ownsGroup)
 	}
@@ -126,12 +126,12 @@ class UserDetailView: BaseDetailView {
 		self.email.alignUnder(self.name, matchingLeftAndFillingWidthWithRightPadding: 12, topPadding: 0, height: 24)
 		self.rule.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 1)
 		
-		self.favoritesGroup.alignUnder(self.userGroup, withLeftPadding: 0, topPadding: 0, width: self.bounds.size.width, height: 48)
-		self.favoritesIcon.anchorCenterLeftWithLeftPadding(24, width: 24, height: 24)
-		self.favoritesInfo.alignToTheRightOf(self.favoritesIcon, matchingCenterAndFillingWidthWithLeftAndRightPadding: 20, height: 24)
-		self.favoritesRule.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 1)
+//		self.favoritesGroup.alignUnder(self.userGroup, withLeftPadding: 0, topPadding: 0, width: self.bounds.size.width, height: 48)
+//		self.favoritesIcon.anchorCenterLeftWithLeftPadding(24, width: 24, height: 24)
+//		self.favoritesInfo.alignToTheRightOf(self.favoritesIcon, matchingCenterAndFillingWidthWithLeftAndRightPadding: 20, height: 24)
+//		self.favoritesRule.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 1)
 		
-		self.watchingGroup.alignUnder(self.favoritesGroup, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 0, height: 48)
+		self.watchingGroup.alignUnder(self.userGroup, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 0, height: 48)
 		self.watchingIcon.anchorCenterLeftWithLeftPadding(24, width: 24, height: 24)
 		self.watchingInfo.alignToTheRightOf(self.watchingIcon, matchingCenterAndFillingWidthWithLeftAndRightPadding: 20, height: 24)
 		self.watchingRule.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 1)

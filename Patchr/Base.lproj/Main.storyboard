@@ -1347,23 +1347,8 @@
                                                                 <action selector="watchersAction:" destination="dFa-9F-rNC" eventType="touchUpInside" id="Gnx-xU-If5"/>
                                                             </connections>
                                                         </button>
-                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xOP-uW-TRX" userLabel="sound_button" customClass="AirMuteButton" customModule="Patchr" customModuleProvider="target">
-                                                            <rect key="frame" x="264" y="0.0" width="48" height="48"/>
-                                                            <animations/>
-                                                            <constraints>
-                                                                <constraint firstAttribute="height" constant="48" id="8qI-GB-xLE"/>
-                                                                <constraint firstAttribute="width" constant="48" id="9kG-Qn-bHo"/>
-                                                            </constraints>
-                                                            <inset key="imageEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
-                                                            <state key="normal" image="imgSoundOff2Light"/>
-                                                            <userDefinedRuntimeAttributes>
-                                                                <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                                                    <integer key="value" value="24"/>
-                                                                </userDefinedRuntimeAttribute>
-                                                            </userDefinedRuntimeAttributes>
-                                                        </button>
-                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vYh-eO-CMR" userLabel="like_button" customClass="AirLikeButton" customModule="Patchr" customModuleProvider="target">
-                                                            <rect key="frame" x="315" y="0.0" width="48" height="48"/>
+                                                        <button hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vYh-eO-CMR" userLabel="like_button" customClass="AirLikeButton" customModule="Patchr" customModuleProvider="target">
+                                                            <rect key="frame" x="246" y="0.0" width="48" height="48"/>
                                                             <animations/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="48" id="4oN-Zt-5an"/>
@@ -1377,8 +1362,23 @@
                                                                 </userDefinedRuntimeAttribute>
                                                             </userDefinedRuntimeAttributes>
                                                         </button>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xOP-uW-TRX" userLabel="sound_button" customClass="AirMuteButton" customModule="Patchr" customModuleProvider="target">
+                                                            <rect key="frame" x="302" y="0.0" width="48" height="48"/>
+                                                            <animations/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" constant="48" id="8qI-GB-xLE"/>
+                                                                <constraint firstAttribute="width" constant="48" id="9kG-Qn-bHo"/>
+                                                            </constraints>
+                                                            <inset key="imageEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
+                                                            <state key="normal" image="imgSoundOff2Light"/>
+                                                            <userDefinedRuntimeAttributes>
+                                                                <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                                    <integer key="value" value="24"/>
+                                                                </userDefinedRuntimeAttribute>
+                                                            </userDefinedRuntimeAttributes>
+                                                        </button>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TWm-Ce-UN2" userLabel="watch_button" customClass="AirWatchButton" customModule="Patchr" customModuleProvider="target">
-                                                            <rect key="frame" x="366" y="0.0" width="48" height="48"/>
+                                                            <rect key="frame" x="358" y="0.0" width="48" height="48"/>
                                                             <animations/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="48" id="0bw-7L-O1Q"/>
@@ -1397,19 +1397,19 @@
                                                     </subviews>
                                                     <animations/>
                                                     <constraints>
+                                                        <constraint firstItem="xOP-uW-TRX" firstAttribute="leading" secondItem="vYh-eO-CMR" secondAttribute="trailing" constant="8" id="2F8-4u-eUd"/>
                                                         <constraint firstAttribute="bottom" secondItem="xOP-uW-TRX" secondAttribute="bottom" id="6Nu-BJ-NfT"/>
                                                         <constraint firstAttribute="height" constant="48" id="8xt-1a-TlR"/>
                                                         <constraint firstAttribute="bottom" secondItem="vYh-eO-CMR" secondAttribute="bottom" id="BiR-fl-fea"/>
                                                         <constraint firstItem="cRg-U0-V6R" firstAttribute="leading" secondItem="t8t-DZ-4Sr" secondAttribute="leading" id="Gy2-Gx-uLX"/>
+                                                        <constraint firstItem="7J4-1W-AIu" firstAttribute="leading" secondItem="t8t-DZ-4Sr" secondAttribute="leading" constant="64" id="LC1-ds-RNP"/>
                                                         <constraint firstAttribute="bottom" secondItem="7J4-1W-AIu" secondAttribute="bottom" id="LGa-qQ-mKS"/>
-                                                        <constraint firstItem="7J4-1W-AIu" firstAttribute="leading" secondItem="t8t-DZ-4Sr" secondAttribute="leading" constant="64" id="OT9-3S-LUi"/>
                                                         <constraint firstAttribute="bottom" secondItem="cRg-U0-V6R" secondAttribute="bottom" id="RZm-p8-9pv"/>
-                                                        <constraint firstItem="TWm-Ce-UN2" firstAttribute="leading" secondItem="vYh-eO-CMR" secondAttribute="trailing" constant="3" id="bQE-Ep-YOZ"/>
+                                                        <constraint firstItem="TWm-Ce-UN2" firstAttribute="leading" secondItem="xOP-uW-TRX" secondAttribute="trailing" constant="8" id="Zv8-ke-zZL"/>
                                                         <constraint firstAttribute="bottom" secondItem="TWm-Ce-UN2" secondAttribute="bottom" id="gm7-nR-blg"/>
-                                                        <constraint firstItem="vYh-eO-CMR" firstAttribute="leading" secondItem="xOP-uW-TRX" secondAttribute="trailing" constant="3" id="mQJ-Is-WuR"/>
-                                                        <constraint firstAttribute="trailing" secondItem="TWm-Ce-UN2" secondAttribute="trailing" id="qgo-qa-RpV"/>
                                                         <constraint firstAttribute="trailing" secondItem="cRg-U0-V6R" secondAttribute="trailing" id="wSg-TA-IP9"/>
                                                         <constraint firstItem="cRg-U0-V6R" firstAttribute="top" secondItem="t8t-DZ-4Sr" secondAttribute="top" id="yDN-Q9-JrU"/>
+                                                        <constraint firstAttribute="trailing" secondItem="TWm-Ce-UN2" secondAttribute="trailing" constant="8" id="z1Y-nr-y4s"/>
                                                     </constraints>
                                                     <userDefinedRuntimeAttributes>
                                                         <userDefinedRuntimeAttribute type="number" keyPath="parallaxIntensity">
