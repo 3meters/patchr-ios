@@ -203,16 +203,18 @@ extension UIViewController {
             DataController.proxibase.signOut {
                 response, error in
                 
-                if error != nil {
-                    Log.w("Error during logout \(error)")
-                }
-                
-                /* Make sure state is cleared */
-                LocationController.instance.clearLastLocationAccepted()
-                
-                let appDelegate               = UIApplication.sharedApplication().delegate as! AppDelegate
-                let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("LobbyNavigationController") 
-                appDelegate.window!.setRootViewController(destinationViewController, animated: true)
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					if error != nil {
+						Log.w("Error during logout \(error)")
+					}
+					
+					/* Make sure state is cleared */
+					LocationController.instance.clearLastLocationAccepted()
+					
+					let appDelegate               = UIApplication.sharedApplication().delegate as! AppDelegate
+					let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("LobbyNavigationController") 
+					appDelegate.window!.setRootViewController(destinationViewController, animated: true)
+				}
             }
         }
         else if errorAction == .LOBBY {

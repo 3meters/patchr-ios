@@ -165,7 +165,7 @@ class MessageDetailViewController: UITableViewController {
 			self.activity?.startAnimating()
         }
 		
-		DataController.instance.backgroundQueue.addOperationWithBlock {
+		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
 			
 			DataController.instance.withMessageId(self.messageId!, refresh: force) {
 				[weak self] message, error in
@@ -466,15 +466,17 @@ class MessageDetailViewController: UITableViewController {
         let entityPath = "data/messages/\((self.message?.id_)!)"
         DataController.proxibase.deleteObject(entityPath) {
             response, error in
-            
-            if let error = ServerError(error) {
-                self.handleError(error)
-            }
-            else {
-				DataController.instance.mainContext.deleteObject(self.message!)
-				DataController.instance.saveContext()
-				self.navigationController?.popViewControllerAnimated(true)
-            }
+			
+			NSOperationQueue.mainQueue().addOperationWithBlock {
+				if let error = ServerError(error) {
+					self.handleError(error)
+				}
+				else {
+					DataController.instance.mainContext.deleteObject(self.message!)
+					DataController.instance.saveContext()
+					self.navigationController?.popViewControllerAnimated(true)
+				}
+			}
         }
     }
     
@@ -484,14 +486,16 @@ class MessageDetailViewController: UITableViewController {
             DataController.proxibase.deleteLink(fromId, toId: toId, linkType: LinkType.Content) {
                 response, error in
                 
-                if let error = ServerError(error) {
-                    UIViewController.topMostViewController()!.handleError(error)
-                }
-                else {
-					DataController.instance.mainContext.deleteObject(self.message!)
-					DataController.instance.saveContext()
-					self.navigationController?.popViewControllerAnimated(true)
-                }
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					if let error = ServerError(error) {
+						UIViewController.topMostViewController()!.handleError(error)
+					}
+					else {
+						DataController.instance.mainContext.deleteObject(self.message!)
+						DataController.instance.saveContext()
+						self.navigationController?.popViewControllerAnimated(true)
+					}
+				}
             }
         }
     }

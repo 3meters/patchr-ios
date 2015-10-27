@@ -149,13 +149,15 @@ class LocationController: NSObject {
             DataController.proxibase.updateProximity(loc){
                 response, error in
                 
-                if let error = ServerError(error) {
-                    Log.w("Error during updateProximity: \(error)")
-                }
-                if self.bgTask != UIBackgroundTaskInvalid {
-                    UIApplication.sharedApplication().endBackgroundTask(self.bgTask!)
-                    self.bgTask = UIBackgroundTaskInvalid
-                }
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					if let error = ServerError(error) {
+						Log.w("Error during updateProximity: \(error)")
+					}
+					if self.bgTask != UIBackgroundTaskInvalid {
+						UIApplication.sharedApplication().endBackgroundTask(self.bgTask!)
+						self.bgTask = UIBackgroundTaskInvalid
+					}
+				}
             }
         }
     }

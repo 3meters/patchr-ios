@@ -36,8 +36,9 @@ class DataController: NSObject {
     var activityDate: Int64
     var currentPatch: Patch?    // Currently used for message context
 	
-	var backgroundQueue = NSOperationQueue()
-	var imageQueue = NSOperationQueue()
+	let backgroundOperationQueue = NSOperationQueue()
+	let imageOperationQueue = NSOperationQueue()
+	let backgroundDispatch: dispatch_queue_t
 
 	private lazy var schemaDictionary: [String:ServiceBase.Type] = {
 		return [
@@ -52,8 +53,9 @@ class DataController: NSObject {
 	private override init() {
 		
         self.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
-		self.backgroundQueue.name = "Background queue"
-		self.imageQueue.name = "Image processing queue"
+		self.backgroundOperationQueue.name = "Background queue"
+		self.imageOperationQueue.name = "Image processing queue"
+		self.backgroundDispatch = dispatch_queue_create("background_queue", nil)
 		
 		super.init()
 		

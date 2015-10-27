@@ -468,23 +468,25 @@ class EntityEditViewController: UITableViewController {
             
             DataController.proxibase.deleteObject(entityPath) {
                 response, error in
-                
-                if let error = ServerError(error) {
-                    self.handleError(error)
-                }
-                
-                /* Return to the lobby even if there was an error since we signed out */
-                UserController.instance.discardCredentials()
-                NSUserDefaults.standardUserDefaults().setObject(nil, forKey: PatchrUserDefaultKey("userEmail"))
-                NSUserDefaults.standardUserDefaults().synchronize()
-                
-                LocationController.instance.clearLastLocationAccepted()
-                
-                let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-                let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
-                let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController")
-                appDelegate.window?.setRootViewController(controller, animated: true)
-                Shared.Toast("User \(userName) erased", controller: controller)
+				
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					if let error = ServerError(error) {
+						self.handleError(error)
+					}
+					
+					/* Return to the lobby even if there was an error since we signed out */
+					UserController.instance.discardCredentials()
+					NSUserDefaults.standardUserDefaults().setObject(nil, forKey: PatchrUserDefaultKey("userEmail"))
+					NSUserDefaults.standardUserDefaults().synchronize()
+					
+					LocationController.instance.clearLastLocationAccepted()
+					
+					let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+					let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
+					let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController")
+					appDelegate.window?.setRootViewController(controller, animated: true)
+					Shared.Toast("User \(userName) erased", controller: controller)
+				}
             }
         }
         else  {
@@ -493,17 +495,19 @@ class EntityEditViewController: UITableViewController {
             
             DataController.proxibase.deleteObject(entityPath) {
                 response, error in
-                
-                self.processing = false
-                
-                if let error = ServerError(error) {
-                    self.handleError(error)
-                }
-                else {
-					DataController.instance.mainContext.deleteObject(self.entity!)
-					DataController.instance.saveContext()
-					self.performBack()
-                }
+				
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					self.processing = false
+					
+					if let error = ServerError(error) {
+						self.handleError(error)
+					}
+					else {
+						DataController.instance.mainContext.deleteObject(self.entity!)
+						DataController.instance.saveContext()
+						self.performBack()
+					}
+				}
             }
         }
     }

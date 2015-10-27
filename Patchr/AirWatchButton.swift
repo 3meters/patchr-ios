@@ -59,73 +59,79 @@ class AirWatchButton: AirToggleButton {
             /* TODO: If not owner then confirm leave */
             DataController.proxibase.deleteLinkById(patch!.userWatchId!) {
                 response, error in
-                
-                self.stopProgress()
-                if let error = ServerError(error) {
-                    UIViewController.topMostViewController()!.handleError(error)
-                }
-                else {
-                    if DataController.instance.dataWrapperForResponse(response!) != nil {
-                        patch!.userWatchId = nil
-                        patch!.userWatchStatusValue = .NonMember
-                        patch!.countWatchingValue--
-                    }
-                }
-                NSNotificationCenter.defaultCenter().postNotificationName(Events.WatchDidChange, object: nil)
-                self.toggleOn(patch!.userWatchStatusValue == .Member)
-                self.enabled = true
+				
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					self.stopProgress()
+					if let error = ServerError(error) {
+						UIViewController.topMostViewController()!.handleError(error)
+					}
+					else {
+						if DataController.instance.dataWrapperForResponse(response!) != nil {
+							patch!.userWatchId = nil
+							patch!.userWatchStatusValue = .NonMember
+							patch!.countWatchingValue--
+						}
+					}
+					NSNotificationCenter.defaultCenter().postNotificationName(Events.WatchDidChange, object: nil)
+					self.toggleOn(patch!.userWatchStatusValue == .Member)
+					self.enabled = true
+				}
             }
         }
         else if patch!.userWatchStatusValue == .Pending {
             DataController.proxibase.deleteLinkById(patch!.userWatchId!) {
                 response, error in
-                
-                self.stopProgress()
-                if let error = ServerError(error) {
-                    UIViewController.topMostViewController()!.handleError(error)
-                }
-                else {
-                    if DataController.instance.dataWrapperForResponse(response!) != nil {
-                        patch!.userWatchId = nil
-                        patch!.userWatchStatusValue = .NonMember
-                    }
-                }
-                NSNotificationCenter.defaultCenter().postNotificationName(Events.WatchDidChange, object: nil)
-                self.toggleOn(patch!.userWatchStatusValue == .Member)
-                self.enabled = true
+				
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					self.stopProgress()
+					if let error = ServerError(error) {
+						UIViewController.topMostViewController()!.handleError(error)
+					}
+					else {
+						if DataController.instance.dataWrapperForResponse(response!) != nil {
+							patch!.userWatchId = nil
+							patch!.userWatchStatusValue = .NonMember
+						}
+					}
+					NSNotificationCenter.defaultCenter().postNotificationName(Events.WatchDidChange, object: nil)
+					self.toggleOn(patch!.userWatchStatusValue == .Member)
+					self.enabled = true
+				}
             }
         }
         else if patch!.userWatchStatusValue == .NonMember {
             /* Service automatically sets enabled = false if user is not the patch owner */
             DataController.proxibase.insertLink(UserController.instance.userId! as String, toID: patch!.id_, linkType: .Watch) {
                 response, error in
-                
-                self.stopProgress()
-                if let error = ServerError(error) {
-                    UIViewController.topMostViewController()!.handleError(error)
-                }
-                else {
-                    if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
-                        if serviceData.countValue == 1 {
-                            if let entityDictionaries = serviceData.data as? [[String:NSObject]] {
-                                let map = entityDictionaries[0]
-                                patch!.userWatchId = map["_id"] as! String
-                                if let enabled = map["enabled"] as? Bool {
-                                    if enabled {
-                                        patch!.userWatchStatusValue = .Member
-                                        patch!.countWatchingValue++
-                                    }
-                                    else {
-                                        patch!.userWatchStatusValue = .Pending
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                NSNotificationCenter.defaultCenter().postNotificationName(Events.WatchDidChange, object: nil)
-                self.toggleOn(patch!.userWatchStatusValue == .Member, pending: patch!.userWatchStatusValue == .Pending)
-                self.enabled = true
+				
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					self.stopProgress()
+					if let error = ServerError(error) {
+						UIViewController.topMostViewController()!.handleError(error)
+					}
+					else {
+						if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
+							if serviceData.countValue == 1 {
+								if let entityDictionaries = serviceData.data as? [[String:NSObject]] {
+									let map = entityDictionaries[0]
+									patch!.userWatchId = map["_id"] as! String
+									if let enabled = map["enabled"] as? Bool {
+										if enabled {
+											patch!.userWatchStatusValue = .Member
+											patch!.countWatchingValue++
+										}
+										else {
+											patch!.userWatchStatusValue = .Pending
+										}
+									}
+								}
+							}
+						}
+					}
+					NSNotificationCenter.defaultCenter().postNotificationName(Events.WatchDidChange, object: nil)
+					self.toggleOn(patch!.userWatchStatusValue == .Member, pending: patch!.userWatchStatusValue == .Pending)
+					self.enabled = true
+				}
             }
         }
     }

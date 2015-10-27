@@ -72,8 +72,7 @@ public class Proxibase {
 		sessionManager.requestSerializer = AFJSONRequestSerializer()
         sessionManager.requestSerializer.timeoutInterval = NSTimeInterval(TIMEOUT_REQUEST)
 		sessionManager.responseSerializer = JSONResponseSerializerWithData()
-		sessionManager.completionQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0)
-		//sessionManager.completionQueue = dispatch_get_main_queue()
+		sessionManager.completionQueue = DataController.instance.backgroundDispatch
 	}
 
 	/*--------------------------------------------------------------------------------------------

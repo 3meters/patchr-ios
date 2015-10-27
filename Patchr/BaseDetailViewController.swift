@@ -111,7 +111,7 @@ class BaseDetailViewController: BaseTableViewController {
     internal func bind(force: Bool = false) {
         
         /* Refreshes the top object but not the message list */
-		DataController.instance.backgroundQueue.addOperationWithBlock {
+		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
 			
 			DataController.instance.withEntityId(self.entityId!, refresh: force) {
 				entity, error in

@@ -62,40 +62,42 @@ class PasswordResetViewController: UITableViewController, UITextFieldDelegate {
         DataController.proxibase.requestPasswordReset(emailField.text!) {
             response, error in
             
-            self.processing = false
-            
-            progress?.hide(true, afterDelay: 1.0)
-            if var error = ServerError(error) {
-                self.emailConfirmed = false
-                if error.code == .UNAUTHORIZED {
-                    error.message = "This email address has not been used with this installation. Please contact support to reset your password."
-                    self.handleError(error, errorActionType: .ALERT)
-                }
-                else if error.code == .NOT_FOUND {
-                    error.message = "The email address could not be found."
-                    self.handleError(error, errorActionType: .ALERT)
-                }
-                else {
-                    self.handleError(error)
-                }
-            }
-            else {
-                if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
-                    if let userMap = serviceData.user as? [NSObject:AnyObject] {
-                        self.userId = userMap["_id"] as? String
-                    }
-                    if let sessionMap = serviceData.session as? [NSObject:AnyObject] {
-                        self.sessionKey = sessionMap["key"] as? String
-                    }
-                }
-                
-                self.emailConfirmed = true
-                self.messageLabel.text = "Email address confirmed, enter a new password:"
-                self.emailField.fadeOut()
-                self.passwordField.hidden = false
-                self.passwordField.fadeIn()
-                self.passwordField.becomeFirstResponder()
-            }
+			NSOperationQueue.mainQueue().addOperationWithBlock {
+				self.processing = false
+				
+				progress?.hide(true, afterDelay: 1.0)
+				if var error = ServerError(error) {
+					self.emailConfirmed = false
+					if error.code == .UNAUTHORIZED {
+						error.message = "This email address has not been used with this installation. Please contact support to reset your password."
+						self.handleError(error, errorActionType: .ALERT)
+					}
+					else if error.code == .NOT_FOUND {
+						error.message = "The email address could not be found."
+						self.handleError(error, errorActionType: .ALERT)
+					}
+					else {
+						self.handleError(error)
+					}
+				}
+				else {
+					if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
+						if let userMap = serviceData.user as? [NSObject:AnyObject] {
+							self.userId = userMap["_id"] as? String
+						}
+						if let sessionMap = serviceData.session as? [NSObject:AnyObject] {
+							self.sessionKey = sessionMap["key"] as? String
+						}
+					}
+					
+					self.emailConfirmed = true
+					self.messageLabel.text = "Email address confirmed, enter a new password:"
+					self.emailField.fadeOut()
+					self.passwordField.hidden = false
+					self.passwordField.fadeIn()
+					self.passwordField.becomeFirstResponder()
+				}
+			}
         }
     }
     
@@ -111,15 +113,17 @@ class PasswordResetViewController: UITableViewController, UITextFieldDelegate {
         DataController.proxibase.resetPassword(passwordField!.text!, userId: self.userId!, sessionKey: self.sessionKey!) {
             response, error in
             
-            self.processing = false
-            
-            progress?.hide(true, afterDelay: 1.0)
-            if let error = ServerError(error) {
-                self.handleError(error)
-            }
-            else {
-                self.navigationController?.popViewControllerAnimated(true)
-            }
+			NSOperationQueue.mainQueue().addOperationWithBlock {
+				self.processing = false
+				
+				progress?.hide(true, afterDelay: 1.0)
+				if let error = ServerError(error) {
+					self.handleError(error)
+				}
+				else {
+					self.navigationController?.popViewControllerAnimated(true)
+				}
+			}
         }
     }
 

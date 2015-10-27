@@ -233,8 +233,8 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         if !paging {
             populateSidecar(query())
         }
-        
-		DataController.instance.backgroundQueue.addOperationWithBlock {
+		
+		dispatch_async(DataController.instance.backgroundDispatch) {
 			
 			DataController.instance.refreshItemsFor(self.query().objectID, force: force, paging: paging, completion: {
 				[weak self] results, query, error in

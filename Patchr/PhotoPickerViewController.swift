@@ -148,7 +148,7 @@ class PhotoPickerViewController: UICollectionViewController {
             offset = Int(ceil(Float(self.imageResults.count) / Float(self.pageSize)) * Float(self.pageSize))
         }
 		
-		DataController.instance.backgroundQueue.addOperationWithBlock {
+		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
 			
 			DataController.proxibase.loadSearchImages(self.searchBar!.text!, limit: Int64(self.pageSize), offset: Int64(offset)) {
 				response, error in

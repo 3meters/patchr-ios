@@ -208,9 +208,11 @@ class PatchTableViewController: BaseTableViewController {
         /*  Update location associated with this install */
         DataController.proxibase.updateProximity(loc){
             response, error in
-            if let error = ServerError(error) {
-                Log.w("Error during updateProximity: \(error)")
-            }
+			NSOperationQueue.mainQueue().addOperationWithBlock {
+				if let error = ServerError(error) {
+					Log.w("Error during updateProximity: \(error)")
+				}
+			}
         }
         
         Log.d(message)
@@ -226,7 +228,7 @@ class PatchTableViewController: BaseTableViewController {
         
         self.processingQuery = true
 		
-		DataController.instance.backgroundQueue.addOperationWithBlock {
+		dispatch_async(DataController.instance.backgroundDispatch) {
 			Reporting.updateCrashKeys()
 			
 			DataController.instance.refreshItemsFor(self.query().objectID, force: false, paging: false, completion: {

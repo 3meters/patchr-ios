@@ -55,25 +55,26 @@ class AirMuteButton: AirToggleButton {
         
         DataController.proxibase.muteLinkById(self.entity!.userWatchId!, muted: muted, completion: {
             response, error in
-            
-            self.stopProgress()
-            if let error = ServerError(error) {
-                UIViewController.topMostViewController()!.handleError(error)
-            }
-            else {
-                self.entity!.userWatchMutedValue = muted
-                self.toggleOn(!muted)
-                
-                if muted && self.messageOff != nil {
-                    Shared.Toast(self.messageOff)
-                }
-                
-                if !muted && self.messageOn != nil {
-                    Shared.Toast(self.messageOn)
-                }
-            }
-            
-            self.enabled = true
+			
+			NSOperationQueue.mainQueue().addOperationWithBlock {
+				self.stopProgress()
+				if let error = ServerError(error) {
+					UIViewController.topMostViewController()!.handleError(error)
+				}
+				else {
+					self.entity!.userWatchMutedValue = muted
+					self.toggleOn(!muted)
+					
+					if muted && self.messageOff != nil {
+						Shared.Toast(self.messageOff)
+					}
+					
+					if !muted && self.messageOn != nil {
+						Shared.Toast(self.messageOn)
+					}
+				}				
+				self.enabled = true
+			}
         })
     }
 }

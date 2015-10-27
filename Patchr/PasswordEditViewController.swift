@@ -51,17 +51,19 @@ class PasswordEditViewController: UITableViewController {
             passwordNew: passwordNewField.text!) {
             response, error in
                 
-            self.processing = false
-                
-            progress?.hide(true, afterDelay: 1.0)
-            if let error = ServerError(error) {
-                self.handleError(error)
-            }
-            else {
-                self.dismissViewControllerAnimated(true, completion: nil)
-                progress?.mode = MBProgressHUDMode.Text
-                progress?.labelText = "Password changed"
-            }
+			NSOperationQueue.mainQueue().addOperationWithBlock {
+				self.processing = false
+					
+				progress?.hide(true, afterDelay: 1.0)
+				if let error = ServerError(error) {
+					self.handleError(error)
+				}
+				else {
+					self.dismissViewControllerAnimated(true, completion: nil)
+					progress?.mode = MBProgressHUDMode.Text
+					progress?.labelText = "Password changed"
+				}
+			}
         }
     }
     

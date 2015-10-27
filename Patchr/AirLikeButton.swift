@@ -63,54 +63,58 @@ class AirLikeButton: AirToggleButton {
             
             DataController.proxibase.deleteLinkById(entity!.userLikesId!) {
                 response, error in
-                
-                self.stopProgress()
-                if let error = ServerError(error) {
-                    UIViewController.topMostViewController()!.handleError(error)
-                }
-                else {
-                    if DataController.instance.dataWrapperForResponse(response!) != nil {
-                        self.entity!.userLikesId = nil
-                        self.entity!.userLikesValue = false
-                        self.entity!.countLikesValue--
-                    }
-                }
-                
-                if self.messageOff != nil {
-                    Shared.Toast(self.messageOff)
-                }
-                NSNotificationCenter.defaultCenter().postNotificationName(Events.LikeDidChange, object: nil)
-                self.toggleOn(self.entity!.userLikesValue)
-                self.enabled = true
+				
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					self.stopProgress()
+					if let error = ServerError(error) {
+						UIViewController.topMostViewController()!.handleError(error)
+					}
+					else {
+						if DataController.instance.dataWrapperForResponse(response!) != nil {
+							self.entity!.userLikesId = nil
+							self.entity!.userLikesValue = false
+							self.entity!.countLikesValue--
+						}
+					}
+					
+					if self.messageOff != nil {
+						Shared.Toast(self.messageOff)
+					}
+					NSNotificationCenter.defaultCenter().postNotificationName(Events.LikeDidChange, object: nil)
+					self.toggleOn(self.entity!.userLikesValue)
+					self.enabled = true
+				}				
             }
         }
         else {
-            
+			
             DataController.proxibase.insertLink(UserController.instance.userId! as String, toID: entity!.id_, linkType: .Like) {
                 response, error in
-                
-                self.stopProgress()
-                if let error = ServerError(error) {
-                    UIViewController.topMostViewController()!.handleError(error)
-                }
-                else {
-                    if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
-                        if serviceData.countValue == 1 {
-                            if let entityDictionaries = serviceData.data as? [[String:NSObject]] {
-                                let map = entityDictionaries[0]
-                                self.entity!.userLikesId = map["_id"] as! String
-                            }
-                            self.entity!.userLikesValue = true
-                            self.entity!.countLikesValue++
-                        }
-                    }
-                }
-                if self.messageOn != nil {
-                    Shared.Toast(self.messageOn)
-                }
-                NSNotificationCenter.defaultCenter().postNotificationName(Events.LikeDidChange, object: nil)
-                self.toggleOn(self.entity!.userLikesValue)
-                self.enabled = true
+
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					self.stopProgress()
+					if let error = ServerError(error) {
+						UIViewController.topMostViewController()!.handleError(error)
+					}
+					else {
+						if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
+							if serviceData.countValue == 1 {
+								if let entityDictionaries = serviceData.data as? [[String:NSObject]] {
+									let map = entityDictionaries[0]
+									self.entity!.userLikesId = map["_id"] as! String
+								}
+								self.entity!.userLikesValue = true
+								self.entity!.countLikesValue++
+							}
+						}
+					}
+					if self.messageOn != nil {
+						Shared.Toast(self.messageOn)
+					}
+					NSNotificationCenter.defaultCenter().postNotificationName(Events.LikeDidChange, object: nil)
+					self.toggleOn(self.entity!.userLikesValue)
+					self.enabled = true
+				}
             }
         }
     }

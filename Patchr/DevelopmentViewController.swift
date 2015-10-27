@@ -50,9 +50,11 @@ class DevelopmentViewController: UIViewController {
 				DataController.proxibase.signOut() {
 					response, error in
                     
-                    if let error = ServerError(error) {
-                        self.handleError(error)
-                    }
+					NSOperationQueue.mainQueue().addOperationWithBlock {
+						if let error = ServerError(error) {
+							self.handleError(error)
+						}
+					}
                 }
 			}
 		}

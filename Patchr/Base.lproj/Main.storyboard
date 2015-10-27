@@ -1237,7 +1237,7 @@
                                                     <rect key="frame" x="0.0" y="115" width="414" height="96"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="79" placeholderIntrinsicHeight="21" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YwE-l7-mVO" userLabel="patch_type">
-                                                            <rect key="frame" x="64" y="42" width="79" height="21"/>
+                                                            <rect key="frame" x="64" y="37" width="79" height="21"/>
                                                             <animations/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="21" id="kNK-7I-GqN"/>
@@ -1247,7 +1247,7 @@
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="342" placeholderIntrinsicHeight="34" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.70000000000000018" translatesAutoresizingMaskIntoConstraints="NO" id="bHj-ol-mkD" userLabel="patch_name">
-                                                            <rect key="frame" x="64" y="63" width="342" height="34"/>
+                                                            <rect key="frame" x="64" y="58" width="342" height="34"/>
                                                             <animations/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="34" id="HEO-Qm-ZYD"/>
@@ -1257,7 +1257,7 @@
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="imgLockDark" translatesAutoresizingMaskIntoConstraints="NO" id="mtE-0h-abN" userLabel="lock_img">
-                                                            <rect key="frame" x="147" y="45" width="16" height="16"/>
+                                                            <rect key="frame" x="147" y="40" width="16" height="16"/>
                                                             <animations/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="16" id="FSf-kN-cdQ"/>
@@ -1265,7 +1265,7 @@
                                                             </constraints>
                                                         </imageView>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="65" placeholderIntrinsicHeight="21" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3rl-Xn-TEO" userLabel="visibility">
-                                                            <rect key="frame" x="167" y="42" width="65" height="21"/>
+                                                            <rect key="frame" x="167" y="37" width="65" height="21"/>
                                                             <animations/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="21" id="SZv-Xp-Sjc"/>
@@ -1282,7 +1282,7 @@
                                                         <constraint firstAttribute="trailing" secondItem="bHj-ol-mkD" secondAttribute="trailing" constant="8" id="8s8-4s-YQ6"/>
                                                         <constraint firstItem="bHj-ol-mkD" firstAttribute="top" secondItem="YwE-l7-mVO" secondAttribute="bottom" id="LKD-7U-9Sw"/>
                                                         <constraint firstItem="YwE-l7-mVO" firstAttribute="centerY" secondItem="mtE-0h-abN" secondAttribute="centerY" constant="-0.5" id="Z58-RN-IA4"/>
-                                                        <constraint firstAttribute="bottom" secondItem="bHj-ol-mkD" secondAttribute="bottom" constant="-1" id="fa7-Td-Tjz"/>
+                                                        <constraint firstAttribute="bottom" secondItem="bHj-ol-mkD" secondAttribute="bottom" constant="4" id="fa7-Td-Tjz"/>
                                                         <constraint firstAttribute="height" constant="96" id="mAK-Qk-Nlj"/>
                                                         <constraint firstItem="YwE-l7-mVO" firstAttribute="baseline" secondItem="3rl-Xn-TEO" secondAttribute="baseline" id="qQR-7A-Okv"/>
                                                         <constraint firstItem="YwE-l7-mVO" firstAttribute="leading" secondItem="bHj-ol-mkD" secondAttribute="leading" id="uJv-6Y-dIX"/>

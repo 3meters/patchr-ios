@@ -62,43 +62,47 @@ class SignInEditViewController: UITableViewController {
         DataController.proxibase.signIn(self.emailField.text!, password: self.passwordField.text!) {
             response, error in
             
-            self.processing = false
-            
-            progress?.hide(true)
-            if var error = ServerError(error) {
-                if error.code == .UNAUTHORIZED_CREDENTIALS {
-                    error.message = "Wrong email and password combination."
-                    self.handleError(error, errorActionType: .ALERT)
-                }
-                else {
-                    self.handleError(error)
-                }
-            }
-            else {
-                
-                // Store email address
-                NSUserDefaults.standardUserDefaults().setObject(self.emailField.text, forKey: PatchrUserDefaultKey("userEmail"))
-                NSUserDefaults.standardUserDefaults().synchronize()
-                self.passwordField.text = nil
-                /*
-                * Register this install with the service particularly to capture the
-                * current user so location updates work properly. If install registration 
-                * fails the device will not accurately track notifications.
-                */
-                DataController.proxibase.registerInstallStandard {
-                    response, error in
-                    
-                    if let error = ServerError(error) {
-                        Log.w("Error during registerInstall: \(error)")
-                    }
-                    
-                    let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-                    let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-                    let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController")
-                    appDelegate.window?.setRootViewController(controller, animated: true)
-                    Shared.Toast("Signed in as \(UserController.instance.userName!)", controller: controller)
-                }
-            }
+			NSOperationQueue.mainQueue().addOperationWithBlock {
+				self.processing = false
+				
+				progress?.hide(true)
+				if var error = ServerError(error) {
+					if error.code == .UNAUTHORIZED_CREDENTIALS {
+						error.message = "Wrong email and password combination."
+						self.handleError(error, errorActionType: .ALERT)
+					}
+					else {
+						self.handleError(error)
+					}
+				}
+				else {
+					
+					// Store email address
+					NSUserDefaults.standardUserDefaults().setObject(self.emailField.text, forKey: PatchrUserDefaultKey("userEmail"))
+					NSUserDefaults.standardUserDefaults().synchronize()
+					self.passwordField.text = nil
+					/*
+					* Register this install with the service particularly to capture the
+					* current user so location updates work properly. If install registration 
+					* fails the device will not accurately track notifications.
+					*/
+					DataController.proxibase.registerInstallStandard {
+						response, error in
+						
+						NSOperationQueue.mainQueue().addOperationWithBlock {						
+							if let error = ServerError(error) {
+								Log.w("Error during registerInstall: \(error)")
+							}
+							
+							let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+							let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+							let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController")
+							appDelegate.window?.setRootViewController(controller, animated: true)
+							Shared.Toast("Signed in as \(UserController.instance.userName!)", controller: controller)
+						}
+					}
+				}
+			}
         }
     }
     

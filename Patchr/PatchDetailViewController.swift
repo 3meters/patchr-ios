@@ -70,13 +70,14 @@ class PatchDetailViewController: BaseDetailViewController {
 		/* Apply gradient to banner */
 		let gradient: CAGradientLayer = CAGradientLayer()
 		gradient.frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width + 100, ((UIScreen.mainScreen().bounds.size.width - 24) * 0.75) + 50)
-		let startColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.5))  // Bottom
-		let endColor:   UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0))    // Top
-		gradient.colors = [endColor.CGColor, startColor.CGColor]
-		gradient.startPoint = CGPoint(x: 0.5, y: 0.5)
+		
+		let startColor:   UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.0))  // Top
+		let endColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.5))		// Bottom
+		gradient.colors = [startColor.CGColor, endColor.CGColor]
+		
+		/* Travels from top to bottom */
+		gradient.startPoint = CGPoint(x: 0.5, y: 0.25)	// (0,0) upper left corner, (1,1) lower right corner
 		gradient.endPoint = CGPoint(x: 0.5, y: 1)
-		gradient.shouldRasterize = true
-		gradient.rasterizationScale = UIScreen.mainScreen().scale
 		self.patchPhoto.layer.insertSublayer(gradient, atIndex: 0)
 		
 		let more = UITableViewCell()

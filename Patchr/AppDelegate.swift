@@ -107,23 +107,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
             */
             DataController.proxibase.registerInstallStandard {
                 response, error in
-                if let error = ServerError(error) {
-					if error.code == .UNAUTHORIZED_SESSION_EXPIRED {
-						UIViewController.topMostViewController()!.handleError(error, errorActionType: .TOAST)
+				
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					if let error = ServerError(error) {
+						if error.code == .UNAUTHORIZED_SESSION_EXPIRED {
+							UIViewController.topMostViewController()!.handleError(error, errorActionType: .TOAST)
+						}
+						else {
+							Log.w("Error during registerInstall: \(error)")
+						}
 					}
-					else {
-						Log.w("Error during registerInstall: \(error)")
-					}
-                }
+				}
             }
         }
         else {
 			/* Register as anonymous guest user. registerInstall service call is done without user/session params */
             DataController.proxibase.registerInstallStandard {
                 response, error in
-                if let error = ServerError(error) {
-                    Log.w("Error during registerInstall: \(error)")
-                }
+				
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					if let error = ServerError(error) {
+						Log.w("Error during registerInstall: \(error)")
+					}
+				}
             }
         }
         
