@@ -31,6 +31,7 @@ class UserDetailViewController: BaseDetailViewController {
 		
 		self.header = UserDetailView()
 		self.tableView.tableHeaderView = self.header
+		self.progressOffsetY = 40
 
         if isCurrentUser && isGuest {
             let signinButton = UIBarButtonItem(title: "Sign in", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSignin"))
