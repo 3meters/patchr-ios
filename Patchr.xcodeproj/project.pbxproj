@@ -76,6 +76,8 @@
 		E20C3A7F1BDC0EB0008CCED1 /* UserDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A7E1BDC0EB0008CCED1 /* UserDetailView.swift */; settings = {ASSET_TAGS = (); }; };
 		E20C3A811BDC1D57008CCED1 /* BaseDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A801BDC1D57008CCED1 /* BaseDetailView.swift */; settings = {ASSET_TAGS = (); }; };
 		E20C3A831BDEBBB9008CCED1 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A821BDEBBB9008CCED1 /* CoreDataStack.swift */; settings = {ASSET_TAGS = (); }; };
+		E20C3A851BE04BBC008CCED1 /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */; settings = {ASSET_TAGS = (); }; };
+		E20C3A861BE08887008CCED1 /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */; settings = {ASSET_TAGS = (); }; };
 		E20D57051BC77FCB004D73E2 /* AirAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20D57041BC77FCB004D73E2 /* AirAlertController.swift */; settings = {ASSET_TAGS = (); }; };
 		E20D57061BC78160004D73E2 /* AirAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20D57041BC77FCB004D73E2 /* AirAlertController.swift */; settings = {ASSET_TAGS = (); }; };
 		E224C3501B6ED27F00879775 /* PatchrShare.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E238BAE41B51D3290094AF41 /* PatchrShare.storyboard */; };
@@ -312,6 +314,7 @@
 		E20C3A7E1BDC0EB0008CCED1 /* UserDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDetailView.swift; sourceTree = "<group>"; };
 		E20C3A801BDC1D57008CCED1 /* BaseDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseDetailView.swift; sourceTree = "<group>"; };
 		E20C3A821BDEBBB9008CCED1 /* CoreDataStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CoreDataStack.swift; path = Patchr/CoreDataStack.swift; sourceTree = "<group>"; };
+		E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stopwatch.swift; sourceTree = "<group>"; };
 		E20D57041BC77FCB004D73E2 /* AirAlertController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirAlertController.swift; sourceTree = "<group>"; };
 		E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTargetViewController.swift; sourceTree = "<group>"; };
 		E238BACB1B50888C0094AF41 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -747,6 +750,7 @@
 				E24D74531BBAED5F0061F339 /* TaskQueue.swift */,
 				E26B0C8D1B45783700706F4A /* TextFieldChangeObserver.swift */,
 				E26B0C8B1B4577D000706F4A /* TextViewChangeObserver.swift */,
+				E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */,
 			);
 			name = Components;
 			sourceTree = "<group>";
@@ -1151,6 +1155,7 @@
 				E20C3A7F1BDC0EB0008CCED1 /* UserDetailView.swift in Sources */,
 				7DA730911A71ACC9008C25FA /* Place.m in Sources */,
 				E29F65531B61A9450000BEF4 /* PatchSearchCell.swift in Sources */,
+				E20C3A851BE04BBC008CCED1 /* Stopwatch.swift in Sources */,
 				E26B0C8C1B4577D000706F4A /* TextViewChangeObserver.swift in Sources */,
 				7D01FA361A7024E200DD6DFA /* JSONResponseSerializerWithData.m in Sources */,
 				843523C51AAE70B800739447 /* MessageEditViewController.swift in Sources */,
@@ -1275,6 +1280,7 @@
 				E2C0D9321B6C46A100E28CE9 /* Log.swift in Sources */,
 				E28177761B5C39E200D65AC1 /* AwsS3.swift in Sources */,
 				E23E02001B5873CB0035CCF0 /* SwiftyJSON.swift in Sources */,
+				E20C3A861BE08887008CCED1 /* Stopwatch.swift in Sources */,
 				E281777A1B5C3C3200D65AC1 /* Proxibase.swift in Sources */,
 				E281776C1B5AB2D400D65AC1 /* OneShotLocationManager.swift in Sources */,
 				E28177671B59668000D65AC1 /* ExtensionsPhoto.swift in Sources */,

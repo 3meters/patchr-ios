@@ -257,6 +257,7 @@ class DataController: NSObject {
 			privateContext.performBlock {
 				
 				let query = privateContext.objectWithID(queryId) as! Query
+				Utils.stopwatch1.segmentTime("\(query.name): network call finished")
 				
 				/* Turn response entities into managed entities */
 				let returnValue = self.handleServiceDataResponseForQuery(query, response: response!, context: privateContext)
@@ -301,6 +302,8 @@ class DataController: NSObject {
 				}
 				
 				completion(queryItems: queryItems, query: query, error: error)
+				Utils.stopwatch1.stop("\(query.name)")
+
 			}
 		}
 		
@@ -341,7 +344,9 @@ class DataController: NSObject {
 			criteria = entity!.criteria(true)
             query.criteriaValue = true
 		}
-        
+		
+		Utils.stopwatch1.start("List", message: "\(query.name)")
+		
 		switch query.name {
 			case DataStoreQueryName.NearbyPatches.rawValue:
                 query.criteriaValue = false
