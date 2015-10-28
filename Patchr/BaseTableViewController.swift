@@ -361,7 +361,7 @@ extension BaseTableViewController {
 		}
 		else if self.listType == .Patches {
 			let view = PatchView()
-			view.cornerRadius = 8
+			view.cornerRadius = 6
 			let cell = AirTableViewCell(view: view, padding: UIEdgeInsetsMake(8, 8, 0, 8), reuseIdentifier: cellType.rawValue)
 			cell.separator.backgroundColor = UIColor.clearColor()
 			cell.backgroundColor = Colors.windowColor

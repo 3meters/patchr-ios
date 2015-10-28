@@ -192,7 +192,7 @@ class PatchSearchViewController: UITableViewController {
                     }
                     self.currentItems = self.searchItems
                     dispatch_async(dispatch_get_main_queue(),{
-                        tableView?.reloadData()
+                        self.tableView?.reloadData()
                     })
                 }
             })

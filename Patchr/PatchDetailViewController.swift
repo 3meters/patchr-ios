@@ -399,7 +399,7 @@ class PatchDetailViewController: BaseDetailViewController {
                 infoType.text = entity.type.uppercaseString + " PATCH"
             }
             infoDescription.text = entity.description_
-            if let distance = entity.distance() {
+            if let distance = entity.distanceFrom(nil) {
                 infoDistance.text = LocationController.instance.distancePretty(distance)
             }
             infoOwner.text = entity.creator?.name ?? "Deleted"

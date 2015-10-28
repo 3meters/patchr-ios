@@ -29,10 +29,13 @@ extension ServiceBase {
 
 extension Entity {
     
-    func distance() -> Float? {
-        if let lastLocation = LocationController.instance.lastLocationFromManager(), location = self.location {
+    func distanceFrom(var fromLocation: CLLocation?) -> Float? {
+        if fromLocation == nil {
+            fromLocation = LocationController.instance.lastLocationFromManager()
+        }
+        if let location = self.location where fromLocation != nil {
             let entityLocation = CLLocation(latitude: location.latValue, longitude: location.lngValue)
-            return Float(lastLocation.distanceFromLocation(entityLocation))
+            return Float(fromLocation!.distanceFromLocation(entityLocation))
         }
         return nil
     }

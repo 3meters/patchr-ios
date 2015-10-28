@@ -337,7 +337,7 @@ class MessageDetailViewController: UITableViewController {
 			holderView.clipsToBounds = true
 			holderView.borderColor = Colors.gray80pcntColor
 			holderView.borderWidth = 1
-			holderView.cornerRadius = 8
+			holderView.cornerRadius = 6
 			
 			var shareView: BaseView!
 			
@@ -377,7 +377,7 @@ class MessageDetailViewController: UITableViewController {
 					let shareView = shareView as! PatchView
 					shareView.borderColor = Colors.gray80pcntColor
 					shareView.borderWidth = 1
-					shareView.cornerRadius = 8
+					shareView.cornerRadius = 6
 					shareView.shadow.backgroundColor = UIColor.clearColor()
 					
 					Patch.bindView(shareView, entity: self.message!.patch!, location: nil)

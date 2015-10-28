@@ -154,6 +154,8 @@ class DataController: NSObject {
 				objectId = modelEntity.objectID
 			}
 			
+			Utils.stopwatch2.start("Entity", message: "\(entityType)")
+			
 			fetchByEntityType(entityType, withId: entityId, criteria: criteria, completion: {
 				response, error in
 				
@@ -167,13 +169,14 @@ class DataController: NSObject {
 					privateContext.parentContext = DataController.instance.mainContext
 					
 					privateContext.performBlock {
+						Utils.stopwatch2.segmentTime("\(entityType): network call finished")
 						
 						/* Turn maps and arrays into objects */
 						if let dictionary = response as? [NSObject:AnyObject] {
 							
 							let dataWrapper = ServiceData()
 							ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper, mappingNames: false)
-							Log.d("RESPONSE Service time: \(dataWrapper.time) for \(entityType)")
+							Utils.stopwatch2.segmentNote("\(entityType): service time: \(dataWrapper.time)ms")
 							
 							if !dataWrapper.noopValue {
 								if let entityDictionaries = dataWrapper.data as? [[NSObject:AnyObject]] {
@@ -202,6 +205,7 @@ class DataController: NSObject {
 							}
 						}
 						completion(objectId, error: nil)
+						Utils.stopwatch2.stop("\(entityType)")
 					}
 				}
 			})
@@ -300,6 +304,7 @@ class DataController: NSObject {
 				catch {
 					fatalError("Failure to save context: \(error)")
 				}
+				Utils.stopwatch1.segmentTime("\(query.name): context saved")
 				
 				completion(queryItems: queryItems, query: query, error: error)
 				Utils.stopwatch1.stop("\(query.name)")
@@ -397,7 +402,7 @@ class DataController: NSObject {
 		if let dictionary = response as? [NSObject:AnyObject] {
 
 			ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper, mappingNames: false)
-			Log.d("RESPONSE service time: \(dataWrapper.time) for \(query.name)")
+			Utils.stopwatch1.segmentNote("\(query.name): service time: \(dataWrapper.time)ms")
 
             if (dataWrapper.noopValue) {
                 return (dataWrapper, [])
@@ -430,9 +435,12 @@ class DataController: NSObject {
                             }
                         }
                     }
+					Utils.stopwatch1.segmentTime("\(query.name): sidecar processed")
                 }
 
 				var itemPosition = 0 + query.offsetValue
+				let location = LocationController.instance.lastLocationFromManager()
+
 				for entityDictionary in entityDictionaries {
 
 					if let schema = entityDictionary["schema"] as? String, let modelType = schemaDictionary[schema] {
@@ -473,7 +481,7 @@ class DataController: NSObject {
                         queryItem.sortDate = entity.sortDate
                         
                         if let patch = entity as? Patch {
-                            if let distance = patch.distance() {
+                            if let distance = patch.distanceFrom(location) {
                                 queryItem.distanceValue = distance
                             }
                         }
@@ -484,6 +492,8 @@ class DataController: NSObject {
 						assert(false, "Missing or unknown schema for object \(entityDictionary)")
 					}
 				}
+				Utils.stopwatch1.segmentTime("\(query.name): list items processed")
+
 			}
 		}
         return (dataWrapper, queryItems)    // Includes existing and new, could still have orphans

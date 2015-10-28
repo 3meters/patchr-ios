@@ -27,7 +27,11 @@ class Stopwatch: NSObject {
 		return processSegmentTime(message)
 	}
 	
-	func processSegmentTime(message: String?) -> NSTimeInterval {
+	func segmentNote(message: String) {
+		log.addObject("\(self.name!): *** Note    ***: \(message)")
+	}
+	
+	func processSegmentTime(message: String?, prefixIncluded: Bool = false) -> NSTimeInterval {
 		if lastThreshold == 0 {
 			return 0
 		}
@@ -38,7 +42,12 @@ class Stopwatch: NSObject {
 		self.lastThreshold = now
 		let stats = "segment time: \(Int(lapTime * 1000))ms, total time: \(Int(self.totalTime * 1000))ms"
 		if message != nil {
-			log.addObject("\(self.name!): \(message!): \(stats)")
+			if prefixIncluded {
+				log.addObject("\(self.name!): \(message!): \(stats)")
+			}
+			else {
+				log.addObject("\(self.name!): *** Segment ***: \(message!): \(stats)")
+			}
 		}
 		return lapTime
 	}
@@ -57,7 +66,7 @@ class Stopwatch: NSObject {
 	 * Suspends time watching, returns last lap time.
 	 */
 	func stop(message: String) -> NSTimeInterval {
-		let lapTime = processSegmentTime("*** Stopped ***: \(message)")
+		let lapTime = processSegmentTime("*** Stopped ***: \(message)", prefixIncluded: true)
 		self.lastThreshold = 0
 		Log.v("*** Timer log ***")
 		for line in self.log {
