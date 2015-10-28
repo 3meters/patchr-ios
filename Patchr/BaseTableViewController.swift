@@ -98,6 +98,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
         self.tableView.separatorInset = UIEdgeInsetsZero
 		self.tableView.contentInset = UIEdgeInsetsMake(64, 0.0, self.tabBarController?.tabBar.frame.size.height ?? 0, 0.0)
+		self.tableView.scrollIndicatorInsets = UIEdgeInsetsMake(64, 0.0, self.tabBarController?.tabBar.frame.size.height ?? 0, 0.0)
 		self.automaticallyAdjustsScrollViewInsets = false
 		
         self.clearsSelectionOnViewWillAppear = false;
