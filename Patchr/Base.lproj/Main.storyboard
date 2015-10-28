@@ -667,42 +667,15 @@
                                         </tableViewCellContentView>
                                         <animations/>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="116" id="sia-oV-MQe">
-                                        <rect key="frame" x="0.0" y="604" width="414" height="116"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="48" id="sia-oV-MQe">
+                                        <rect key="frame" x="0.0" y="604" width="414" height="48"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" multipleTouchEnabled="YES" contentMode="center" tableViewCell="sia-oV-MQe" id="GHQ-7C-kSr">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="116"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="48"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <view clipsSubviews="YES" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Bf8-l9-CJt" userLabel="share_holder">
-                                                    <rect key="frame" x="16" y="8" width="382" height="100"/>
-                                                    <animations/>
-                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" priority="750" constant="100" id="I3A-kZ-nZW"/>
-                                                    </constraints>
-                                                    <userDefinedRuntimeAttributes>
-                                                        <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
-                                                            <color key="value" red="0.87450980392156863" green="0.87450980392156863" blue="0.87450980392156863" alpha="1" colorSpace="calibratedRGB"/>
-                                                        </userDefinedRuntimeAttribute>
-                                                        <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
-                                                            <real key="value" value="1"/>
-                                                        </userDefinedRuntimeAttribute>
-                                                        <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                                            <integer key="value" value="8"/>
-                                                        </userDefinedRuntimeAttribute>
-                                                    </userDefinedRuntimeAttributes>
-                                                </view>
-                                            </subviews>
                                             <animations/>
-                                            <constraints>
-                                                <constraint firstAttribute="trailing" secondItem="Bf8-l9-CJt" secondAttribute="trailing" constant="16" id="Fyu-V4-wIH"/>
-                                                <constraint firstItem="Bf8-l9-CJt" firstAttribute="top" secondItem="GHQ-7C-kSr" secondAttribute="top" constant="8" id="OfE-ZK-Fad"/>
-                                                <constraint firstItem="Bf8-l9-CJt" firstAttribute="leading" secondItem="GHQ-7C-kSr" secondAttribute="leading" constant="16" id="yvv-Uk-BWp"/>
-                                            </constraints>
                                         </tableViewCellContentView>
                                         <animations/>
-                                        <color key="backgroundColor" red="0.95686274510000002" green="0.95686274510000002" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -721,8 +694,6 @@
                         <outlet property="photoCell" destination="nRu-lU-ZN6" id="F8W-Dl-9qO"/>
                         <outlet property="photoHolder" destination="b8v-OU-Mhn" id="ox7-uV-6nu"/>
                         <outlet property="shareCell" destination="sia-oV-MQe" id="QMo-QG-2Aa"/>
-                        <outlet property="shareHolder" destination="Bf8-l9-CJt" id="5hu-Ld-mOX"/>
-                        <outlet property="shareHolderHeight" destination="I3A-kZ-nZW" id="pGh-V7-qbz"/>
                         <outlet property="toPicker" destination="zF9-gZ-VVl" id="V4W-N4-M9m"/>
                         <outlet property="userNameLabel" destination="Lmf-QT-eCQ" id="EdW-xx-zrv"/>
                         <outlet property="userPhotoImage" destination="EJq-oj-0k5" id="RO7-eT-1it"/>

@@ -37,9 +37,7 @@ class MessageEditViewController: EntityEditViewController {
 	@IBOutlet weak var userPhotoImage:   	AirImageView!
     @IBOutlet weak var userNameLabel:       UILabel!
     @IBOutlet weak var toPicker:            MBContactPicker!
-    @IBOutlet weak var shareHolder:         UIView!
-    @IBOutlet weak var shareHolderHeight:   NSLayoutConstraint!
-    
+	
     @IBOutlet weak var descriptionCell:     UITableViewCell!
     @IBOutlet weak var photoCell:           UITableViewCell!
     @IBOutlet weak var shareCell:           UITableViewCell!
@@ -52,7 +50,7 @@ class MessageEditViewController: EntityEditViewController {
         super.awakeFromNib()
         self.collection = "messages"
     }
-
+	
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -62,9 +60,18 @@ class MessageEditViewController: EntityEditViewController {
         self.toPicker.prompt = nil
         self.toPicker.showPrompt = false
         self.toPicker.cellHeight = 32
+		
+		let tap = UITapGestureRecognizer(target: self, action: "focusToPicker:");
+		tap.delegate = self
+		tap.cancelsTouchesInView = false
+		self.toPicker.addGestureRecognizer(tap)
+		
         MBContactPicker.appearance().font = UIFont(name:"HelveticaNeue-Light", size: 18)
         MBContactCollectionViewEntryCell.appearance().font = UIFont(name:"HelveticaNeue-Light", size: 18)
         MBContactCollectionViewContactCell.appearance().font = UIFont(name:"HelveticaNeue-Light", size: 18)
+		MBContactCollectionViewContactCell.appearance().tintColor = Colors.brandColorDark
+		MBContactCollectionViewEntryCell.appearance().tintColor = Colors.brandColorDark
+		MBContactCollectionViewPromptCell.appearance().tintColor = Colors.brandColorDark
 
         self.toPicker.dynamicBinding = true
         
@@ -192,6 +199,10 @@ class MessageEditViewController: EntityEditViewController {
         
         self.tableView.reloadData() // Triggers row resizing
     }
+	
+	func focusToPicker(sender: AnyObject?) {
+		self.toPicker.becomeFirstResponder()
+	}
     
     override func photoChosen(image: UIImage?, imageResult: ImageResult?) {
         super.photoChosen(image, imageResult: imageResult)
@@ -225,27 +236,71 @@ class MessageEditViewController: EntityEditViewController {
             
             /* Set the default description */
             self.description_ = self.shareDescription
-            
-            var view: BaseView!
+			
+			/* Share entity */
+			
+            var shareView: BaseView!
             if self.shareSchema == Schema.ENTITY_PATCH {
-                view = NSBundle.mainBundle().loadNibNamed("PatchNormalView", owner: self, options: nil)[0] as! BaseView
-                view.frame.size.width = self.shareHolder.bounds.size.width
-				Patch.bindView(view, entity: self.shareEntity!, location: nil)
-                self.shareHolder?.addSubview(view)
+				
+				shareView = PatchView()
+				let shareView = shareView as! PatchView
+				shareView.borderColor = Colors.gray80pcntColor
+				shareView.borderWidth = 1
+				shareView.cornerRadius = 6
+				shareView.shadow.backgroundColor = UIColor.clearColor()
+				
+				Patch.bindView(shareView, entity: self.shareEntity!, location: nil)
+				self.shareCell.contentView.addSubview(shareView)
+				self.shareCell.contentView.frame.size.height = 128
+				shareView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
             }
             else if self.shareSchema == Schema.ENTITY_MESSAGE {
-                view = NSBundle.mainBundle().loadNibNamed("MessageView", owner: self, options: nil)[0] as! BaseView
-                view.frame.size.width = self.shareHolder.bounds.size.width
-                Message.bindView(view, entity: self.shareEntity!)
-                view.frame.size.height = view.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
-                self.shareHolder?.addSubview(view)
+				
+				let holderView = UIView()
+				holderView.clipsToBounds = true
+				holderView.borderColor = Colors.gray80pcntColor
+				holderView.borderWidth = 1
+				holderView.cornerRadius = 6
+				
+				var cellType: CellType = .TextAndPhoto
+				if self.shareEntity!.photo == nil {
+					cellType = .Text
+				}
+				else if self.shareEntity!.description_ == nil {
+					cellType = .Photo
+				}
+				
+				shareView = MessageView(cellType: cellType)
+				
+				Message.bindView(shareView, entity: self.shareEntity!)
+				
+				holderView.addSubview(shareView)
+				self.shareCell.contentView.addSubview(holderView)
+				
+				/* Need correct width before layout and sizing */
+				holderView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
+				shareView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 12, bottomPadding: 12)
+				
+				shareView.setNeedsLayout()
+				shareView.layoutIfNeeded()
+				shareView.sizeToFit()
+				
+				/* Row height not set until reloadData called below */
+				self.shareCell.contentView.frame.size.height = shareView.bounds.size.height + 24
+				holderView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
+				
+//                view = NSBundle.mainBundle().loadNibNamed("MessageView", owner: self, options: nil)[0] as! BaseView
+//                view.frame.size.width = self.shareHolder.bounds.size.width
+//                Message.bindView(view, entity: self.shareEntity!)
+//                view.frame.size.height = view.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
+//                self.shareHolder?.addSubview(view)
             }
             
-            let views = Dictionary(dictionaryLiteral: ("view", view))
-            let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|[view]|", options: [], metrics: nil, views: views)
-            let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|[view]|", options: [], metrics: nil, views: views)
-            self.shareHolder?.addConstraints(horizontalConstraints)
-            self.shareHolder?.addConstraints(verticalConstraints)
+//            let views = Dictionary(dictionaryLiteral: ("view", view))
+//            let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|[view]|", options: [], metrics: nil, views: views)
+//            let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|[view]|", options: [], metrics: nil, views: views)
+//            self.shareHolder?.addConstraints(horizontalConstraints)
+//            self.shareHolder?.addConstraints(verticalConstraints)
         }
     }
     
