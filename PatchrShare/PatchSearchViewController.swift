@@ -18,9 +18,9 @@ class PatchSearchViewController: UITableViewController {
     
     var headerView: UIView!
     
-    let searchItems = NSMutableArray()
-    let recentItems = NSMutableArray()
-    var currentItems: NSMutableArray!
+    let searchItems: NSMutableArray = []
+    let recentItems: NSMutableArray = []
+	var currentItems: NSMutableArray = []
     
     var searchInProgress = false
     var searchTimer: NSTimer?
@@ -96,9 +96,6 @@ class PatchSearchViewController: UITableViewController {
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: Selector("dismissKeyboard"))
         gestureRecognizer.cancelsTouchesInView = false
         self.tableView.addGestureRecognizer(gestureRecognizer)
-        
-        // Reload the table
-        self.tableView.reloadData()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -108,6 +105,7 @@ class PatchSearchViewController: UITableViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+		self.tableView.reloadData()
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -226,6 +224,7 @@ extension PatchSearchViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         var cell = tableView.dequeueReusableCellWithIdentifier(CELL_IDENTIFIER) as? PatchSearchCell
+		
         if cell == nil {
             let nib:Array = NSBundle.mainBundle().loadNibNamed("PatchSearchCell", owner: self, options: nil)
             cell = nib[0] as? PatchSearchCell
@@ -248,7 +247,16 @@ extension PatchSearchViewController {
         return cell!
     }
     
+	override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+		return 1
+	}
+	
+	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		return self.currentItems.count
+	}
+	
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+		
         var patchJson: JSON = JSON(self.currentItems[indexPath.row])
         if let patch = patchJson.dictionaryObject {
             let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
@@ -266,10 +274,7 @@ extension PatchSearchViewController {
     }
     
     override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if self.currentItems == nil || self.currentItems.count == 0 {
-            return 0
-        }
-        return 40
+		return self.currentItems.count == 0 ? 0 : 40
     }
     
     override func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -294,14 +299,6 @@ extension PatchSearchViewController {
         
         self.headerView = view
         return view
-    }
-    
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 1
-    }
-    
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.currentItems != nil ? self.currentItems.count : 0
     }
     
     override func scrollViewDidScroll(scrollView: UIScrollView) {

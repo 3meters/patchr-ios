@@ -34,10 +34,10 @@ class PatchTargetViewController: UITableViewController {
     
     var headerView: UIView!
     
-    let searchItems = NSMutableArray()
-    let recentItems = NSMutableArray()
-    var currentItems: NSMutableArray!
-    
+	let searchItems: NSMutableArray = []
+	let recentItems: NSMutableArray = []
+	var currentItems: NSMutableArray = []
+	
     var searchInProgress = false
     var searchTimer: NSTimer?
     var searchEditing = false
@@ -104,15 +104,13 @@ class PatchTargetViewController: UITableViewController {
                 }
             }
         }
-        
-        // Reload the table
-        self.tableView.reloadData()
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+		self.tableView.reloadData()
     }
-    
+	
     /*--------------------------------------------------------------------------------------------
     * Events
     *--------------------------------------------------------------------------------------------*/
@@ -246,10 +244,7 @@ extension PatchTargetViewController {
     }
     
     override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if self.currentItems == nil || self.currentItems.count == 0 {
-            return 0
-        }
-        return 40
+		return self.currentItems.count == 0 ? 0 : 40
     }
     
     override func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -282,7 +277,7 @@ extension PatchTargetViewController {
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.currentItems != nil ? self.currentItems.count : 0
+        return self.currentItems.count
     }
     
     override func scrollViewDidScroll(scrollView: UIScrollView) {
