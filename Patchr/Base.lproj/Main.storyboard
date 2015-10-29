@@ -813,30 +813,10 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection headerTitle="LIKES AND FAVORITES" id="TKF-yn-p4f">
+                            <tableViewSection headerTitle="LIKES" id="TKF-yn-p4f" userLabel="LIKES">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="zjd-Pf-2w2" style="IBUITableViewCellStyleDefault" id="hAB-Ms-09u">
-                                        <rect key="frame" x="0.0" y="332" width="600" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="hAB-Ms-09u" id="pxp-j6-FFg">
-                                            <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Favorite My Patches" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="zjd-Pf-2w2">
-                                                    <rect key="frame" x="15" y="0.0" width="570" height="43"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <animations/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <animations/>
-                                        </tableViewCellContentView>
-                                        <animations/>
-                                    </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="yIm-Cj-gQ5" style="IBUITableViewCellStyleDefault" id="0PW-0O-7dj">
-                                        <rect key="frame" x="0.0" y="376" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="332" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="0PW-0O-7dj" id="6my-X2-UC5">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
@@ -860,7 +840,7 @@
                             <tableViewSection headerTitle="SOUNDS" id="3JK-a3-BuO">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="V7l-v1-SjD" style="IBUITableViewCellStyleDefault" id="KGB-dc-u4m">
-                                        <rect key="frame" x="0.0" y="463" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="419" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGB-dc-u4m" id="J3M-RZ-cyI">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
@@ -880,7 +860,7 @@
                                         <animations/>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="f4r-UP-dd8" style="IBUITableViewCellStyleDefault" id="eEH-oK-KA9">
-                                        <rect key="frame" x="0.0" y="507" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="463" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="eEH-oK-KA9" id="V1J-Zy-hIl">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
@@ -911,7 +891,6 @@
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
                         <outlet property="likeMessagesCell" destination="0PW-0O-7dj" id="4sH-0o-QSR"/>
-                        <outlet property="likePatchesCell" destination="hAB-Ms-09u" id="hCj-Yv-jQg"/>
                         <outlet property="patchesNearbyCell" destination="Zw2-Ag-Y62" id="adB-NX-Gat"/>
                         <outlet property="patchesWatchingCell" destination="Ob1-ae-aaH" id="V01-rE-h6W"/>
                         <outlet property="sharingMessagesCell" destination="aXo-OR-NGu" id="FlW-5f-btO"/>

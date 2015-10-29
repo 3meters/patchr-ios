@@ -19,10 +19,12 @@ class PatchNavigationController: UINavigationController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+		
+		
+		let watchLabel = SCREEN_NARROW ? "Watch" : "Watching"
 		let segItems = UserController.instance.authenticated
-			? ["Nearby","Watch","Own","Explore"]
-			: ["Nearby","Explore"]
+			? ["Nearby", watchLabel, "Own", "Explore"]
+			: ["Nearby", "Explore"]
 			
         self.segmentsController = SegmentsController(navigationController: self, viewControllers: segmentViewControllers())
         

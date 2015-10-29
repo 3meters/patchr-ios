@@ -15,7 +15,6 @@ class NotificationSettingsViewController: UITableViewController {
     @IBOutlet weak var patchesNearbyCell: UITableViewCell!
     @IBOutlet weak var patchesWatchingCell: UITableViewCell!
     @IBOutlet weak var sharingMessagesCell: UITableViewCell!
-    @IBOutlet weak var likePatchesCell: UITableViewCell!
     @IBOutlet weak var likeMessagesCell: UITableViewCell!
     @IBOutlet weak var soundEffectsCell: UITableViewCell!
     @IBOutlet weak var soundNotificationsCell: UITableViewCell!
@@ -30,7 +29,6 @@ class NotificationSettingsViewController: UITableViewController {
         self.patchesNearbyCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
         self.patchesWatchingCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
         self.sharingMessagesCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
-        self.likePatchesCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
         self.likeMessagesCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
         self.soundEffectsCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
         self.soundNotificationsCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)        
@@ -38,7 +36,6 @@ class NotificationSettingsViewController: UITableViewController {
         self.patchesNearbyCell.accessoryView = makeSwitch(.PatchesCreatedNearby, state: userDefaults.boolForKey(PatchrUserDefaultKey("PatchesCreatedNearby")))
         self.patchesWatchingCell.accessoryView = makeSwitch(.MessagesForPatchesWatching, state: userDefaults.boolForKey(PatchrUserDefaultKey("MessagesForPatchesWatching")))
         self.sharingMessagesCell.accessoryView = makeSwitch(.MessagesSharing, state: userDefaults.boolForKey(PatchrUserDefaultKey("MessagesSharing")))
-        self.likePatchesCell.accessoryView = makeSwitch(.LikePatch, state: userDefaults.boolForKey(PatchrUserDefaultKey("LikePatch")))
         self.likeMessagesCell.accessoryView = makeSwitch(.LikeMessage, state: userDefaults.boolForKey(PatchrUserDefaultKey("LikeMessage")))
         self.soundEffectsCell.accessoryView = makeSwitch(.SoundEffects, state: userDefaults.boolForKey(PatchrUserDefaultKey("SoundEffects")))
         self.soundNotificationsCell.accessoryView = makeSwitch(.SoundForNotifications, state: userDefaults.boolForKey(PatchrUserDefaultKey("SoundForNotifications")))
@@ -63,9 +60,6 @@ class NotificationSettingsViewController: UITableViewController {
             }
             else if switcher.tag == NotificationType.MessagesSharing.rawValue {
                 userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("MessagesSharing"))
-            }
-            else if switcher.tag == NotificationType.LikePatch.rawValue {
-                userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("LikePatch"))
             }
             else if switcher.tag == NotificationType.LikeMessage.rawValue {
                 userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("LikeMessage"))
@@ -92,7 +86,6 @@ enum NotificationType: Int {
     case PatchesCreatedNearby
     case MessagesForPatchesWatching
     case MessagesSharing
-    case LikePatch
     case LikeMessage
     case SoundEffects
     case SoundForNotifications
