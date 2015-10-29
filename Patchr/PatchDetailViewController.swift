@@ -565,10 +565,7 @@ extension PatchDetailViewController: MapViewDelegate {
     
     var locationSubtitle: String? {
         get {
-            if let type = self.entity?.type {
-                return type.uppercaseString + " PATCH"
-            }
-            return nil
+			return (self.entity?.type ?? "place")
         }
     }
     

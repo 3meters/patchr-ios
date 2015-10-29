@@ -20,7 +20,7 @@ import MapKit
 
 class PatchMapViewController: UIViewController {
     
-    weak var locationDelegate: MapViewDelegate!
+	weak var locationDelegate: MapViewDelegate!	// Set by calling controller
     var annotation: EntityAnnotation!
     
     @IBOutlet weak var mapView: MKMapView!
@@ -37,14 +37,17 @@ class PatchMapViewController: UIViewController {
         
         let currentRegion = MKCoordinateRegionMakeWithDistance(self.locationDelegate.locationForMap()!.coordinate, 2000, 2000)
         self.mapView.setRegion(currentRegion, animated: false)
-        
+		
+		var subtitle = self.locationDelegate.locationSubtitle!
+		subtitle = "\(subtitle!.uppercaseString) PATCH"
+		
         self.annotation = EntityAnnotation(
             coordinate: self.locationDelegate.locationForMap()!.coordinate,
             title: self.locationDelegate.locationTitle!,
-            subtitle: self.locationDelegate.locationSubtitle ?? "PATCH")
+            subtitle: subtitle!)
         
-        self.mapView.addAnnotation(self.annotation)
-        setScreenName("PatchMap")        
+		self.mapView.addAnnotation(self.annotation)
+        setScreenName("PatchMap")
     }
     
     override func viewWillDisappear(animated: Bool) {
