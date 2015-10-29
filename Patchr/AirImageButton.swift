@@ -117,8 +117,8 @@ class AirImageButton: UIButton {
             forState:UIControlState.Normal,
             placeholderImage: nil,
             options: options,
-            completed: { image, error, cacheType, url in
-                self.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
+            completed: { [weak self] image, error, cacheType, url in
+                self?.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
             }
         )
     }
@@ -142,8 +142,8 @@ class AirImageButton: UIButton {
             forState:UIControlState.Normal,
             placeholderImage: nil,
             options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload],
-            completed: { image, error, cacheType, url in
-                self.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
+            completed: { [weak self] image, error, cacheType, url in
+                self?.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
             }
         )
     }
@@ -156,9 +156,7 @@ class AirImageButton: UIButton {
         
         if error != nil {
             Log.w("Image fetch failed: " + error!.localizedDescription)
-            if url != nil {
-                Log.w("Failed url: \(url!.absoluteString)")
-            }
+            Log.w("Failed url: \(url?.absoluteString)")
             self.contentMode = UIViewContentMode.Center
             self.setImage(Utils.imageBroken, forState:UIControlState.Normal)
             return

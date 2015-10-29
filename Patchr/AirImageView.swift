@@ -145,10 +145,10 @@ class AirImageView: UIImageView {
 			self.sd_setImageWithURL(photoUrl,
 				placeholderImage: nil,
 				options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload],
-				completed: { image, error, cacheType, url in
+				completed: { [weak self] image, error, cacheType, url in
 					
 					dispatch_async(dispatch_get_main_queue()) {
-						self.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
+						self?.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
 					}
 				}
 			)
@@ -170,8 +170,8 @@ class AirImageView: UIImageView {
         self.sd_setImageWithURL(url,
             placeholderImage: nil,
             options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage],
-            completed: { image, error, cacheType, url in
-                self.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
+            completed: { [weak self] image, error, cacheType, url in
+                self?.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
             }
         )
     }
@@ -189,8 +189,9 @@ class AirImageView: UIImageView {
         self.sd_setImageWithURL(url,
             placeholderImage: nil,
             options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload],
-            completed: { image, error, cacheType, url in
-                self.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
+            completed: {
+				[weak self] image, error, cacheType, url in
+				self?.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
             }
         )
     }
@@ -201,9 +202,7 @@ class AirImageView: UIImageView {
         
         if error != nil {
             Log.w("Image fetch failed: " + error!.localizedDescription)
-            if url != nil {
-                Log.w("Failed url: \(url!.absoluteString)")
-            }
+            Log.w("Failed url: \(url?.absoluteString)")
             self.contentMode = UIViewContentMode.Center
             self.image = Utils.imageBroken
             return
