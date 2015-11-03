@@ -11,6 +11,7 @@ extern const struct QueryAttributes {
 	__unsafe_unretained NSString *more;
 	__unsafe_unretained NSString *name;
 	__unsafe_unretained NSString *offset;
+	__unsafe_unretained NSString *offsetDate;
 	__unsafe_unretained NSString *pageSize;
 	__unsafe_unretained NSString *parameters;
 	__unsafe_unretained NSString *sidecar;
@@ -83,6 +84,10 @@ extern const struct QueryRelationships {
 
 //- (BOOL)validateOffset:(id*)value_ error:(NSError**)error_;
 
+@property (nonatomic, strong) NSDate* offsetDate;
+
+//- (BOOL)validateOffsetDate:(id*)value_ error:(NSError**)error_;
+
 @property (nonatomic, strong) NSNumber* pageSize;
 
 @property (atomic) int32_t pageSizeValue;
@@ -150,6 +155,9 @@ extern const struct QueryRelationships {
 
 - (int32_t)primitiveOffsetValue;
 - (void)setPrimitiveOffsetValue:(int32_t)value_;
+
+- (NSDate*)primitiveOffsetDate;
+- (void)setPrimitiveOffsetDate:(NSDate*)value;
 
 - (NSNumber*)primitivePageSize;
 - (void)setPrimitivePageSize:(NSNumber*)value;

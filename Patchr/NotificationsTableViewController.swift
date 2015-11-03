@@ -145,7 +145,7 @@ class NotificationsTableViewController: BaseTableViewController {
                                 if json["photo"] != nil {
                                     let prefix = json["photo"]["prefix"].string
                                     let source = json["photo"]["source"].string
-                                    let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.profile, size: nil)
+                                    let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.profile)
 
                                     SDWebImageManager.sharedManager().downloadImageWithURL(photoUrl, options: SDWebImageOptions.HighPriority, progress: nil, completed: {
                                         (image:UIImage!, error:NSError!, cacheType:SDImageCacheType, finished:Bool, url:NSURL!) -> Void in
@@ -245,7 +245,7 @@ class NotificationsTableViewController: BaseTableViewController {
     }
 	
 	override func populateSidecar(query: Query) {
-		//query.sidecar = self.nearbys    // Should make a copy
+		query.sidecar = self.nearbys    // Should make a copy
 	}
 	
     func showNotificationBar(title: String, description: String, image: UIImage?, targetId: String) {

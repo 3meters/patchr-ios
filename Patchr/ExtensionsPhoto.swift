@@ -10,7 +10,7 @@ import Foundation
 
 class PhotoUtils {
     
-    static func url(prefix: String, source: String, category: String, size: Int?, frameWidth: Int = Int(IMAGE_DIMENSION_MAX)) -> NSURL {
+    static func url(prefix: String, source: String, category: String) -> NSURL {
         var path: String = ""
         var quality: Int = 75
         if PIXEL_SCALE >= 3 {
@@ -21,16 +21,16 @@ class PhotoUtils {
         }
         
         if source == PhotoSource.aircandi_images {
-            let width = size != nil ? size : category == SizeCategory.standard ? 400 : 100
+            let width = (category == SizeCategory.standard) ? 400 : 100
             if category == SizeCategory.profile {
-                path = "https://3meters-images.imgix.net/\(prefix)?w=\(width!)&dpr=\(PIXEL_SCALE)&q=\(quality)&h=\(width!)&fit=min&trim=auto"
+                path = "https://3meters-images.imgix.net/\(prefix)?w=\(width)&dpr=\(PIXEL_SCALE)&q=\(quality)&h=\(width)&fit=min&trim=auto"
             }
             else {
-                path = "https://3meters-images.imgix.net/\(prefix)?w=\(width!)&dpr=\(PIXEL_SCALE)&q=\(quality)"
+                path = "https://3meters-images.imgix.net/\(prefix)?w=\(width)&dpr=\(PIXEL_SCALE)&q=\(quality)"
             }
         }
         else if source == PhotoSource.google {
-            let width: CGFloat = CGFloat(frameWidth) * PIXEL_SCALE
+            let width: CGFloat = CGFloat(IMAGE_DIMENSION_MAX) * PIXEL_SCALE
             if (prefix.rangeOfString("?") != nil) {
                 path = "\(prefix)&maxwidth=\(width)"
             }
@@ -47,6 +47,7 @@ class PhotoUtils {
     }
 }
 
+/* Only used for GooglePlusProxy */
 enum ResizeDimension{
     case height
     case width
@@ -54,6 +55,8 @@ enum ResizeDimension{
 
 class GooglePlusProxy {
     /*
+	* Currently used for bing images only.
+	*
     * Setting refresh to 60 minutes.
     */
     static func convert(uri: String, size: Int, dimension: ResizeDimension!) -> String {

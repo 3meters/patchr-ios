@@ -353,7 +353,7 @@ class MessageEditViewController: EntityEditViewController {
                             
                             let prefix = subJson["photo"]["prefix"].string
                             let source = subJson["photo"]["source"].string
-                            let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.profile, size: nil)
+                            let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.profile)
                             model.contactImageUrl = photoUrl
                             model.contactImage = UIImage(named: "imgDefaultUser")
                         }

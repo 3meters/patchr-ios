@@ -241,19 +241,19 @@ extension Message {
 		let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
 		
         if let photo = entity.photo {
-			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.standard, size: nil)
+			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.standard)
 			view.photo?.sd_setImageWithURL(photoUrl, forState: UIControlState.Normal, placeholderImage: nil, options: options)
         }
 		
 		view.userName.text = entity.creator?.name ?? "Deleted"
 		
 		if let photo = entity.creator?.getPhotoManaged() {
-			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile, size: nil)
+			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile)
 			view.userPhoto.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
 		}
 		else {
 			let photo = Entity.getDefaultPhoto("user", id: nil)
-			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile, size: nil)
+			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile)
 			view.userPhoto.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
 		}
 		
@@ -435,12 +435,12 @@ extension Notification {
 		let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
 		
 		if let photo = notification.photoBig {
-			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.standard, size: nil)
+			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.standard)
 			view.photo?.sd_setImageWithURL(photoUrl, forState: UIControlState.Normal, placeholderImage: nil, options: options)
 		}
 		
 		let photo = notification.getPhotoManaged()
-		let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile, size: nil)
+		let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile)
 		view.userPhoto.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
 		
 		view.createdDate.text = Utils.messageDateFormatter.stringFromDate(notification.createdDate)

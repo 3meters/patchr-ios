@@ -11,6 +11,7 @@ const struct QueryAttributes QueryAttributes = {
 	.more = @"more",
 	.name = @"name",
 	.offset = @"offset",
+	.offsetDate = @"offsetDate",
 	.pageSize = @"pageSize",
 	.parameters = @"parameters",
 	.sidecar = @"sidecar",
@@ -183,6 +184,8 @@ const struct QueryRelationships QueryRelationships = {
 - (void)setPrimitiveOffsetValue:(int32_t)value_ {
 	[self setPrimitiveOffset:@(value_)];
 }
+
+@dynamic offsetDate;
 
 @dynamic pageSize;
 

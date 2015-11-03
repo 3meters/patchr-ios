@@ -226,7 +226,7 @@ extension PatchTargetViewController {
             
             let prefix = patch["photo"]["prefix"].string
             let source = patch["photo"]["source"].string
-            let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.thumbnail, size: nil)
+            let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.thumbnail)
             cell!.photo.sd_setImageWithURL(photoUrl)
         }
         else {

@@ -278,6 +278,18 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 									}
 								}
 							}
+							/* Find oldest (smallest) date in the set */
+							var oldestDate = NSDate()
+							for item in query.queryItems {
+								if let queryItem = item as? QueryItem,
+									let entity = queryItem.object as? Entity,
+									let sortDate = entity.sortDate {
+									if sortDate < oldestDate {
+										oldestDate = sortDate
+									}
+								}
+							}
+							query.offsetDate = oldestDate
 						}
 						return
 					}

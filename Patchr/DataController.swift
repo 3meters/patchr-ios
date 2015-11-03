@@ -414,10 +414,11 @@ class DataController: NSObject {
                 if let sidecar = query.sidecar as? [[NSObject: AnyObject]] {
                     
                     /* Find date brackets in current set */
-                    var startDate: Int = 0
-                    var endDate: Int = Int(NSDate().timeIntervalSince1970 * 1000)
+                    var startDate = NSDate(timeIntervalSince1970: 0)
+                    var endDate = NSDate()
                     for entityDictionary in entityDictionaries {
-                        if let itemDate = entityDictionary["sortDate"] as? Int {
+                        if let itemDateValue = entityDictionary["sortDate"] as? Int {
+							let itemDate = NSDate(timeIntervalSince1970: NSTimeInterval(itemDateValue / 1000))
                             if itemDate < endDate {
                                 endDate = itemDate
                             }
@@ -429,10 +430,18 @@ class DataController: NSObject {
                     
                     /* Fold in sidecar items that fall inside bracketed date range */
                     for sidecarDictionary in sidecar {
-                        if let itemDate = sidecarDictionary["sortDate"] as? Int {
-                            if itemDate <= startDate && itemDate >= endDate {
-                                entityDictionaries.append(sidecarDictionary)
-                            }
+                        if let itemDateValue = sidecarDictionary["sortDate"] as? Int {
+							let itemDate = NSDate(timeIntervalSince1970: NSTimeInterval(itemDateValue / 1000))
+							if query.offsetValue == 0 {
+								if itemDate >= endDate {
+									entityDictionaries.append(sidecarDictionary)
+								}
+							}
+							else {
+								if itemDate <= query.offsetDate && itemDate >= endDate {
+									entityDictionaries.append(sidecarDictionary)
+								}
+							}
                         }
                     }
 					Utils.stopwatch1.segmentTime("\(query.name): sidecar processed")

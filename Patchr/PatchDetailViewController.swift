@@ -94,7 +94,7 @@ class PatchDetailViewController: BaseDetailViewController {
         self.contextButton?.setTitle("", forState: .Normal)
 		
 		self.mapButton.imageView!.tintColor(Colors.actionOnColor)
-		self.mapButton.tintColor = Colors.actionOnColor
+		self.mapButton.tintColor = Colors.actionOffColor
 		self.mapButton.setImage(UIImage(named: "imgMapLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
 		
 		self.watchersButton.alpha = 0.0

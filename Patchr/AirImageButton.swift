@@ -73,7 +73,7 @@ class AirImageButton: UIButton {
             return false
         }
         
-        let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory, size: nil)
+        let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory)
         return (linkedPhotoUrl!.absoluteString == photoUrl.absoluteString)
     }
     
@@ -95,7 +95,7 @@ class AirImageButton: UIButton {
             return
         }
         
-        let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory, size: nil)
+        let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory)
         
         if photoUrl.absoluteString.isEmpty {
             let error = NSError(domain: "Photo error", code: 0, userInfo: [NSLocalizedDescriptionKey:"Photo has invalid source: \(photo.source!)"])

@@ -72,7 +72,7 @@ public struct Colors {
 	static let secondaryText: UIColor = lightGray
 	static let separatorColor: UIColor = gray90pcntColor
 	
-	static let actionOnColor = opacity90pcntWhite
+	static let actionOnColor = brandColor
 	static let actionOffColor = opacity90pcntWhite
 }
 
