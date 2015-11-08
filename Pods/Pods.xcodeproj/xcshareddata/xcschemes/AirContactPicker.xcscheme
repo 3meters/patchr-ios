@@ -13,11 +13,11 @@
             buildForProfiling = "YES"
             buildForArchiving = "YES">
             <BuildableReference
-               BuildableIdentifier = 'primary'
-               BlueprintIdentifier = 'CCFEA192235D044AF88659BA'
-               BlueprintName = 'AirContactPicker'
-               ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'libAirContactPicker.a'>
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "C0E2E0E6C15193966859CAA2D5ACB5D9"
+               BlueprintName = "AirContactPicker"
+               ReferencedContainer = "container:Pods.xcodeproj"
+               BuildableName = "libAirContactPicker.a">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

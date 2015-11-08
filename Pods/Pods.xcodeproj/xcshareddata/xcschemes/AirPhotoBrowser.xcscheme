@@ -13,11 +13,11 @@
             buildForProfiling = "YES"
             buildForArchiving = "YES">
             <BuildableReference
-               BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '27317E9FC80AE6E29D65B57D'
-               BlueprintName = 'AirPhotoBrowser'
-               ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'libAirPhotoBrowser.a'>
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "82C001D49302AEA89A7691DAB3F035B2"
+               BlueprintName = "AirPhotoBrowser"
+               ReferencedContainer = "container:Pods.xcodeproj"
+               BuildableName = "libAirPhotoBrowser.a">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
