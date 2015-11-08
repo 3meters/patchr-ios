@@ -32,7 +32,7 @@
   "requires_arc": true,
   "dependencies": {
     "AFNetworking": [
-      "~> 2.0"
+      "~> 2.6"
     ],
     "DACircularProgress": [
 
