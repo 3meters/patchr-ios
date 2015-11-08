@@ -119,15 +119,6 @@ public class Proxibase {
 		performPOSTRequestFor("find/places/\(id)", parameters: parameters, completion: completion)
 	}
 
-	public func fetchLinkFromId(fromID: String, toID: String, linkType: LinkType, completion: ProxibaseCompletionBlock) {
-		/*
-		* Currently only used to get the state of the current user watching or liking a patch.
-		* TODO: Can probably make this part of the patch fetch.
-		*/
-		let query: NSDictionary = ["query": ["_from": fromID, "_to": toID, "type": linkType.rawValue]]
-		performGETRequestFor("find/links", parameters: query, completion: completion)
-	}
-
 	/*--------------------------------------------------------------------------------------------
 	* PUBLIC: Fetch collection
 	*--------------------------------------------------------------------------------------------*/
@@ -281,94 +272,6 @@ public class Proxibase {
 	 * PUBLIC: Modify
 	 *--------------------------------------------------------------------------------------------*/
 
-	public func signIn(email: NSString, password: NSString, completion: ProxibaseCompletionBlock) {
-		/*
-		* Send an auth/signin message to the server with the user's email address and password.
-		* The completion block will be called asynchronously in either case.
-		* If signin is successful, then the credentials from the server will be written to user defaults
-		*/
-		let parameters = ["email": email, "password": password, "installId": installationIdentifier]
-		sessionManager.POST("auth/signin", parameters: parameters,
-							success: {
-								dataTask, response in
-								UserController.instance.handleSuccessfulSignInResponse(response)
-								completion(response: response, error: nil)
-							},
-							failure: {
-								dataTask, error in
-								completion(response: ServerError(error)?.response, error: error)
-							})
-	}
-
-	public func signOut(completion: (response:AnyObject?, error:NSError?) -> Void) {
-		/*
-		* Send an auth/signout message.
-		*
-		* Discard credentials whether or not the server thinks we are signed out.
-		* The completion closure is always performed asynchronously.
-		*/
-		if UserController.instance.authenticated {
-			performGETRequestFor("auth/signout", parameters: [:]) {
-				response, error in
-
-				UserController.instance.discardCredentials()
-				completion(response: response, error: error)
-			}
-		}
-		else {
-			UserController.instance.discardCredentials()
-
-			dispatch_async(dispatch_get_main_queue(), {
-				() -> Void in
-				completion(response: nil, error: nil)
-			})
-		}
-	}
-
-	public func updatePassword(userId: NSString, password: NSString, passwordNew: NSString, completion: ProxibaseCompletionBlock) {
-		let parameters = ["userId": userId, "oldPassword": password, "newPassword": passwordNew, "installId": installationIdentifier]
-		sessionManager.POST("user/changepw", parameters: addSessionParameters(parameters),
-							success: {
-								dataTask, response in
-								completion(response: response, error: nil)
-							},
-							failure: {
-								dataTask, error in
-								completion(response: ServerError(error)?.response, error: error)
-							})
-	}
-
-	public func requestPasswordReset(email: NSString, completion: ProxibaseCompletionBlock) {
-		let parameters = ["email": email, "installId": installationIdentifier]
-		sessionManager.POST("user/reqresetpw", parameters: parameters,
-							success: {
-								dataTask, response in
-								completion(response: response, error: nil)
-							},
-							failure: {
-								dataTask, error in
-								completion(response: ServerError(error)?.response, error: error)
-							})
-	}
-
-	public func resetPassword(password: NSString, userId: NSString, sessionKey: NSString, completion: ProxibaseCompletionBlock) {
-		let parameters
-		= ["password": password, "user": userId, "session": sessionKey, "installId": installationIdentifier]
-		sessionManager.POST("user/resetpw", parameters: parameters,
-							success: {
-								dataTask, response in
-								completion(response: response, error: nil)
-							},
-							failure: {
-								dataTask, error in
-								completion(response: ServerError(error)?.response, error: error)
-							})
-	}
-
-    public func getEntity(path: String, completion: ProxibaseCompletionBlock) {
-        performGETRequestFor(path, parameters: NSDictionary(), completion: completion)
-    }
-    
     public func postEntity(path: String, parameters: NSDictionary, addLocation: Bool = true, completion: ProxibaseCompletionBlock) -> NSURLSessionTask {
         
         var parametersCopy = parameters.mutableCopy() as! NSMutableDictionary
@@ -433,19 +336,6 @@ public class Proxibase {
         }
     }
     
-	public func registerInstallStandard(completion: (response:AnyObject?, error:NSError?) -> Void) {
-		let installId         = installationIdentifier
-        let parseInstallId    = PFInstallation.currentInstallation().installationId
-		let clientVersionName = NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleShortVersionString") as! String
-		let clientVersionCode = Int(NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleVersion") as! String)!
-		let clientPackageName = NSBundle.mainBundle().bundleIdentifier!
-		let deviceName        = UIDevice.currentDevice().modelIdentifier()
-		let deviceType        = "ios"
-		let deviceVersionName = UIDevice.currentDevice().systemVersion
-
-		registerInstall(installId, parseInstallId: parseInstallId, clientVersionName: clientVersionName, clientVersionCode: clientVersionCode, clientPackageName: clientPackageName, deviceName: deviceName, deviceType: deviceType, deviceVersionName: deviceVersionName, completion: completion)
-	}
-
 	/*--------------------------------------------------------------------------------------------
 	* PUBLIC: Bing
 	*--------------------------------------------------------------------------------------------*/
@@ -485,24 +375,116 @@ public class Proxibase {
 	 * User and install
 	 *--------------------------------------------------------------------------------------------*/
 
-	private func registerInstall(installId: String, parseInstallId: String, clientVersionName: String, clientVersionCode: Int, clientPackageName: String,
-								 deviceName: String, deviceType: String, deviceVersionName: String, completion: (response:AnyObject?, error:NSError?) -> Void) {
+	public func signIn(email: NSString, password: NSString, completion: ProxibaseCompletionBlock) {
+		/*
+		* Send an auth/signin message to the server with the user's email address and password.
+		* The completion block will be called asynchronously in either case.
+		* If signin is successful, then the credentials from the server will be written to user defaults
+		*/
+		let parameters = ["email": email, "password": password, "installId": installationIdentifier]
+		sessionManager.POST("auth/signin", parameters: parameters,
+			success: {
+				dataTask, response in
+				UserController.instance.handleSuccessfulSignInResponse(response)
+				completion(response: response, error: nil)
+			},
+			failure: {
+				dataTask, error in
+				completion(response: ServerError(error)?.response, error: error)
+		})
+	}
+	
+	public func signOut(completion: (response:AnyObject?, error:NSError?) -> Void) {
+		/*
+		* Send an auth/signout message.
+		*
+		* Discard credentials whether or not the server thinks we are signed out.
+		* The completion closure is always performed asynchronously.
+		*/
+		if UserController.instance.authenticated {
+			performGETRequestFor("auth/signout", parameters: [:]) {
+				response, error in
+				
+				UserController.instance.discardCredentials()
+				completion(response: response, error: error)
+			}
+		}
+		else {
+			UserController.instance.discardCredentials()
+			
+			dispatch_async(dispatch_get_main_queue(), {
+				() -> Void in
+				completion(response: nil, error: nil)
+			})
+		}
+	}
+	
+	public func updatePassword(userId: NSString, password: NSString, passwordNew: NSString, completion: ProxibaseCompletionBlock) {
+		let parameters = ["userId": userId, "oldPassword": password, "newPassword": passwordNew, "installId": installationIdentifier]
+		sessionManager.POST("user/changepw", parameters: addSessionParameters(parameters),
+			success: {
+				dataTask, response in
+				completion(response: response, error: nil)
+			},
+			failure: {
+				dataTask, error in
+				completion(response: ServerError(error)?.response, error: error)
+		})
+	}
+	
+	public func requestPasswordReset(email: NSString, completion: ProxibaseCompletionBlock) {
+		let parameters = ["email": email, "installId": installationIdentifier]
+		sessionManager.POST("user/reqresetpw", parameters: parameters,
+			success: {
+				dataTask, response in
+				completion(response: response, error: nil)
+			},
+			failure: {
+				dataTask, error in
+				completion(response: ServerError(error)?.response, error: error)
+		})
+	}
+	
+	public func resetPassword(password: NSString, userId: NSString, sessionKey: NSString, completion: ProxibaseCompletionBlock) {
+		let parameters
+		= ["password": password, "user": userId, "session": sessionKey, "installId": installationIdentifier]
+		sessionManager.POST("user/resetpw", parameters: parameters,
+			success: {
+				dataTask, response in
+				completion(response: response, error: nil)
+			},
+			failure: {
+				dataTask, error in
+				completion(response: ServerError(error)?.response, error: error)
+		})
+	}
+	
+	public func registerInstallStandard(completion: (response:AnyObject?, error:NSError?) -> Void) {
+		let installId         = installationIdentifier
+		let parseInstallId    = PFInstallation.currentInstallation().installationId
+		let clientVersionName = NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleShortVersionString") as! String
+		let clientVersionCode = Int(NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleVersion") as! String)!
+		let clientPackageName = NSBundle.mainBundle().bundleIdentifier!
+		let deviceName        = UIDevice.currentDevice().modelIdentifier()
+		let deviceType        = "ios"
+		let deviceVersionName = UIDevice.currentDevice().systemVersion
+		
 		let parameters = [
-				"install":
+			"install":
 				[
-						"installId": installId,
-						"parseInstallId": parseInstallId,
-						"clientVersionName": clientVersionName,
-						"clientVersionCode": clientVersionCode,
-						"clientPackageName": clientPackageName,
-						"deviceName": deviceName,
-						"deviceType": deviceType,
-						"deviceVersionName": deviceVersionName
-				]
+					"installId": installId,
+					"parseInstallId": parseInstallId,
+					"clientVersionName": clientVersionName,
+					"clientVersionCode": clientVersionCode,
+					"clientPackageName": clientPackageName,
+					"deviceName": deviceName,
+					"deviceType": deviceType,
+					"deviceVersionName": deviceVersionName
+			]
 		]
 		performPOSTRequestFor("do/registerInstall", parameters: parameters, completion: completion)
 	}
-
+	
     public func updateProximity(location: CLLocation, completion: (response:AnyObject?, error:NSError?) -> Void) {
         let parameters = [
             "installId": self.installationIdentifier,
