@@ -1247,41 +1247,25 @@
                                                 <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="t8t-DZ-4Sr" userLabel="button_group">
                                                     <rect key="frame" x="0.0" y="211" width="414" height="48"/>
                                                     <subviews>
-                                                        <visualEffectView hidden="YES" opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cRg-U0-V6R" userLabel="blur">
-                                                            <rect key="frame" x="0.0" y="0.0" width="414" height="48"/>
-                                                            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="Lab-yN-N8S">
-                                                                <rect key="frame" x="0.0" y="0.0" width="414" height="48"/>
-                                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                                <subviews>
-                                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cXS-bO-Vkq" userLabel="map_button" customClass="AirImageButton" customModule="Patchr" customModuleProvider="target">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="48" height="48"/>
-                                                                        <animations/>
-                                                                        <constraints>
-                                                                            <constraint firstAttribute="width" constant="48" id="40n-dM-Vz0"/>
-                                                                            <constraint firstAttribute="height" constant="48" id="esg-9a-ZT0"/>
-                                                                        </constraints>
-                                                                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                                        <inset key="imageEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
-                                                                        <state key="normal" image="imgMapDark"/>
-                                                                        <userDefinedRuntimeAttributes>
-                                                                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                                                                <integer key="value" value="24"/>
-                                                                            </userDefinedRuntimeAttribute>
-                                                                        </userDefinedRuntimeAttributes>
-                                                                        <connections>
-                                                                            <action selector="mapAction:" destination="dFa-9F-rNC" eventType="touchUpInside" id="erv-XH-8dh"/>
-                                                                        </connections>
-                                                                    </button>
-                                                                </subviews>
-                                                                <animations/>
-                                                                <constraints>
-                                                                    <constraint firstItem="cXS-bO-Vkq" firstAttribute="leading" secondItem="Lab-yN-N8S" secondAttribute="leading" id="8Py-20-BNa"/>
-                                                                    <constraint firstAttribute="bottom" secondItem="cXS-bO-Vkq" secondAttribute="bottom" id="vyv-Fs-Mg6"/>
-                                                                </constraints>
-                                                            </view>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cXS-bO-Vkq" userLabel="map_button" customClass="AirImageButton" customModule="Patchr" customModuleProvider="target">
+                                                            <rect key="frame" x="0.0" y="0.0" width="48" height="48"/>
                                                             <animations/>
-                                                            <blurEffect style="light"/>
-                                                        </visualEffectView>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="48" id="40n-dM-Vz0"/>
+                                                                <constraint firstAttribute="height" constant="48" id="esg-9a-ZT0"/>
+                                                            </constraints>
+                                                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <inset key="imageEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
+                                                            <state key="normal" image="imgMapDark"/>
+                                                            <userDefinedRuntimeAttributes>
+                                                                <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                                    <integer key="value" value="24"/>
+                                                                </userDefinedRuntimeAttribute>
+                                                            </userDefinedRuntimeAttributes>
+                                                            <connections>
+                                                                <action selector="mapAction:" destination="dFa-9F-rNC" eventType="touchUpInside" id="erv-XH-8dh"/>
+                                                            </connections>
+                                                        </button>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7J4-1W-AIu" userLabel="watching_button">
                                                             <rect key="frame" x="64" y="0.0" width="76" height="48"/>
                                                             <animations/>
@@ -1351,14 +1335,12 @@
                                                         <constraint firstAttribute="bottom" secondItem="xOP-uW-TRX" secondAttribute="bottom" id="6Nu-BJ-NfT"/>
                                                         <constraint firstAttribute="height" constant="48" id="8xt-1a-TlR"/>
                                                         <constraint firstAttribute="bottom" secondItem="vYh-eO-CMR" secondAttribute="bottom" id="BiR-fl-fea"/>
-                                                        <constraint firstItem="cRg-U0-V6R" firstAttribute="leading" secondItem="t8t-DZ-4Sr" secondAttribute="leading" id="Gy2-Gx-uLX"/>
+                                                        <constraint firstItem="cXS-bO-Vkq" firstAttribute="leading" secondItem="t8t-DZ-4Sr" secondAttribute="leading" id="Glc-xr-mEK"/>
                                                         <constraint firstItem="7J4-1W-AIu" firstAttribute="leading" secondItem="t8t-DZ-4Sr" secondAttribute="leading" constant="64" id="LC1-ds-RNP"/>
                                                         <constraint firstAttribute="bottom" secondItem="7J4-1W-AIu" secondAttribute="bottom" id="LGa-qQ-mKS"/>
-                                                        <constraint firstAttribute="bottom" secondItem="cRg-U0-V6R" secondAttribute="bottom" id="RZm-p8-9pv"/>
                                                         <constraint firstItem="TWm-Ce-UN2" firstAttribute="leading" secondItem="xOP-uW-TRX" secondAttribute="trailing" constant="8" id="Zv8-ke-zZL"/>
                                                         <constraint firstAttribute="bottom" secondItem="TWm-Ce-UN2" secondAttribute="bottom" id="gm7-nR-blg"/>
-                                                        <constraint firstAttribute="trailing" secondItem="cRg-U0-V6R" secondAttribute="trailing" id="wSg-TA-IP9"/>
-                                                        <constraint firstItem="cRg-U0-V6R" firstAttribute="top" secondItem="t8t-DZ-4Sr" secondAttribute="top" id="yDN-Q9-JrU"/>
+                                                        <constraint firstAttribute="bottom" secondItem="cXS-bO-Vkq" secondAttribute="bottom" id="oFa-94-mxq"/>
                                                         <constraint firstAttribute="trailing" secondItem="TWm-Ce-UN2" secondAttribute="trailing" constant="8" id="z1Y-nr-y4s"/>
                                                     </constraints>
                                                     <userDefinedRuntimeAttributes>
@@ -1481,7 +1463,6 @@
                         <outlet property="patchType" destination="YwE-l7-mVO" id="S3f-b2-WJi"/>
                         <outlet property="placeButton" destination="Ym3-k1-Ty5" id="2sz-4g-XGA"/>
                         <outlet property="titlingGroup" destination="7be-lw-0zQ" id="nEb-Tp-x4p"/>
-                        <outlet property="toolbar" destination="cRg-U0-V6R" id="rZG-Te-Ntj"/>
                         <outlet property="visibility" destination="3rl-Xn-TEO" id="tSF-lf-8oc"/>
                         <outlet property="watchButton" destination="TWm-Ce-UN2" id="0cS-S2-nb0"/>
                         <outlet property="watchersButton" destination="7J4-1W-AIu" id="iRm-pT-u6z"/>
@@ -1740,6 +1721,9 @@
                                                         </userDefinedRuntimeAttribute>
                                                         <userDefinedRuntimeAttribute type="string" keyPath="layer.cornerRadius" value="4"/>
                                                     </userDefinedRuntimeAttributes>
+                                                    <connections>
+                                                        <action selector="doneAction:" destination="6cK-9t-35c" eventType="touchUpInside" id="Hij-UF-WV9"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <animations/>

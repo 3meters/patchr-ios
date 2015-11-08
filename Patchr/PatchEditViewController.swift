@@ -52,7 +52,7 @@ class PatchEditViewController: EntityEditViewController {
             self.cancelledLabel = "Update cancelled"
             
             navigationItem.title = Utils.LocalizedString("Edit patch")
-            createButton.hidden = true
+            self.createButton.hidden = true
             
             /* Navigation bar buttons */
             let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
@@ -64,7 +64,7 @@ class PatchEditViewController: EntityEditViewController {
             self.progressStartLabel = "Patching"
             self.progressFinishLabel = "Activated!"
             self.cancelledLabel = "Activation cancelled"
-            navigationItem.title = Utils.LocalizedString("Make patch")
+            self.navigationItem.title = Utils.LocalizedString("Make patch")
             
             /* Use location managers last location fix */
             if let lastLocation = LocationController.instance.lastLocationFromManager() {
@@ -72,10 +72,10 @@ class PatchEditViewController: EntityEditViewController {
             }
             
             /* Big do it button */
-            createButton.targetForAction(Selector("doneAction:"), withSender: nil)
+            self.createButton.targetForAction(Selector("doneAction:"), withSender: self)
             
             /* Public by default */
-            patchSwitchView.on = true
+            self.patchSwitchView.on = true
             
             /* Navigation bar buttons */
             let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")

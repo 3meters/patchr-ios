@@ -31,7 +31,7 @@ class EntityEditViewController: UITableViewController {
     
     var imageUploadRequest: AWSS3TransferManagerUploadRequest?
     var entityPostRequest: NSURLSessionTask?
-    
+
 	var editMode: Bool {
 		return entity != nil
 	}
@@ -206,7 +206,7 @@ class EntityEditViewController: UITableViewController {
         }
     }
     
-    func doneAction(sender: AnyObject){
+    @IBAction func doneAction(sender: AnyObject){
         save()
     }
     
