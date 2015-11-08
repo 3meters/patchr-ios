@@ -105,7 +105,7 @@ extension SettingsTableViewController {
             }
         }
         else if selectedCell == self.rateCell {
-            let appId = "1234567890"
+            let appId = "983436323"
             let appStoreURL = "itms-apps://itunes.apple.com/app/id\(appId)"
             self.tableView.deselectRowAtIndexPath(indexPath, animated: true)
             if let url = NSURL(string: appStoreURL) {
@@ -121,7 +121,7 @@ extension SettingsTableViewController {
             self.pushWebViewController(NSURL(string: privacyPolicyURLString))
         }
         else if selectedCell == self.softwareLicensesCell {
-            let softwareLicensesURLString = "http://patchr.com/android" // TODO: need real URL
+            let softwareLicensesURLString = "http://patchr.com/ios" // TODO: need real URL
             self.pushWebViewController(NSURL(string: softwareLicensesURLString))
         }
         else if selectedCell == self.developmentCell {

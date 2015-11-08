@@ -1150,7 +1150,7 @@
                                         <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6IV-aV-u0s" userLabel="banner_group">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="259"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="351-k9-dO8" userLabel="patch_photo" customClass="AirImageView" customModule="Patchr" customModuleProvider="target">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="351-k9-dO8" userLabel="patch_photo" customClass="AirImageView" customModule="Patchr" customModuleProvider="target">
                                                     <rect key="frame" x="-24" y="-36" width="462" height="331"/>
                                                     <animations/>
                                                     <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
@@ -1247,7 +1247,7 @@
                                                 <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="t8t-DZ-4Sr" userLabel="button_group">
                                                     <rect key="frame" x="0.0" y="211" width="414" height="48"/>
                                                     <subviews>
-                                                        <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cRg-U0-V6R" userLabel="blur">
+                                                        <visualEffectView hidden="YES" opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cRg-U0-V6R" userLabel="blur">
                                                             <rect key="frame" x="0.0" y="0.0" width="414" height="48"/>
                                                             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="Lab-yN-N8S">
                                                                 <rect key="frame" x="0.0" y="0.0" width="414" height="48"/>

@@ -69,15 +69,21 @@ class PatchDetailViewController: BaseDetailViewController {
         
 		/* Apply gradient to banner */
 		let gradient: CAGradientLayer = CAGradientLayer()
-		gradient.frame = CGRectMake(0, 0, UIScreen.mainScreen().bounds.size.width + 100, ((UIScreen.mainScreen().bounds.size.width - 24) * 0.75) + 50)
+		let width = UIScreen.mainScreen().bounds.size.width + 72
+		let height = width * 0.35
+		let offsetY = height * 0.75
 		
-		let startColor:   UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.0))  // Top
-		let endColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.5))		// Bottom
-		gradient.colors = [startColor.CGColor, endColor.CGColor]
+		gradient.frame = CGRectMake(0, offsetY, width, height)
+		
+		let topColor:   UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.0))		// Top
+		let stop2Color:   UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.33))	// Middle
+		let bottomColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.66))		// Bottom
+		gradient.colors = [topColor.CGColor, stop2Color.CGColor, bottomColor.CGColor]
+		gradient.locations = [0.0, 0.5, 1.0]
 		
 		/* Travels from top to bottom */
-		gradient.startPoint = CGPoint(x: 0.5, y: 0.25)	// (0,0) upper left corner, (1,1) lower right corner
-		gradient.endPoint = CGPoint(x: 0.5, y: 1)
+		gradient.startPoint = CGPoint(x: 0.5, y: 0.0)	// (0,0) upper left corner, (1,1) lower right corner
+		gradient.endPoint = CGPoint(x: 0.5, y: 1.0)
 		self.patchPhoto.layer.insertSublayer(gradient, atIndex: 0)
 		
 		let more = UITableViewCell()
