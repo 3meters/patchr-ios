@@ -5,13 +5,15 @@
 #import "ServiceObject.h"
 
 extern const struct ProviderMapAttributes {
-	__unsafe_unretained NSString *aircandi;
-	__unsafe_unretained NSString *factual;
-	__unsafe_unretained NSString *foursquare;
 	__unsafe_unretained NSString *google;
 	__unsafe_unretained NSString *googleReference;
-	__unsafe_unretained NSString *yelp;
 } ProviderMapAttributes;
+
+extern const struct ProviderMapRelationships {
+	__unsafe_unretained NSString *providerMapFor;
+} ProviderMapRelationships;
+
+@class Place;
 
 @interface ProviderMapID : ServiceObjectID {}
 @end
@@ -22,18 +24,6 @@ extern const struct ProviderMapAttributes {
 + (NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_;
 @property (nonatomic, readonly, strong) ProviderMapID* objectID;
 
-@property (nonatomic, strong) NSString* aircandi;
-
-//- (BOOL)validateAircandi:(id*)value_ error:(NSError**)error_;
-
-@property (nonatomic, strong) NSString* factual;
-
-//- (BOOL)validateFactual:(id*)value_ error:(NSError**)error_;
-
-@property (nonatomic, strong) NSString* foursquare;
-
-//- (BOOL)validateFoursquare:(id*)value_ error:(NSError**)error_;
-
 @property (nonatomic, strong) NSString* google;
 
 //- (BOOL)validateGoogle:(id*)value_ error:(NSError**)error_;
@@ -42,22 +32,13 @@ extern const struct ProviderMapAttributes {
 
 //- (BOOL)validateGoogleReference:(id*)value_ error:(NSError**)error_;
 
-@property (nonatomic, strong) NSString* yelp;
+@property (nonatomic, strong) Place *providerMapFor;
 
-//- (BOOL)validateYelp:(id*)value_ error:(NSError**)error_;
+//- (BOOL)validateProviderMapFor:(id*)value_ error:(NSError**)error_;
 
 @end
 
 @interface _ProviderMap (CoreDataGeneratedPrimitiveAccessors)
-
-- (NSString*)primitiveAircandi;
-- (void)setPrimitiveAircandi:(NSString*)value;
-
-- (NSString*)primitiveFactual;
-- (void)setPrimitiveFactual:(NSString*)value;
-
-- (NSString*)primitiveFoursquare;
-- (void)setPrimitiveFoursquare:(NSString*)value;
 
 - (NSString*)primitiveGoogle;
 - (void)setPrimitiveGoogle:(NSString*)value;
@@ -65,7 +46,7 @@ extern const struct ProviderMapAttributes {
 - (NSString*)primitiveGoogleReference;
 - (void)setPrimitiveGoogleReference:(NSString*)value;
 
-- (NSString*)primitiveYelp;
-- (void)setPrimitiveYelp:(NSString*)value;
+- (Place*)primitiveProviderMapFor;
+- (void)setPrimitiveProviderMapFor:(Place*)value;
 
 @end

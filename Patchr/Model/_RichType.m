@@ -8,6 +8,10 @@ const struct RichTypeAttributes RichTypeAttributes = {
 	.name = @"name",
 };
 
+const struct RichTypeRelationships RichTypeRelationships = {
+	.categoryFor = @"categoryFor",
+};
+
 @implementation RichTypeID
 @end
 
@@ -40,6 +44,8 @@ const struct RichTypeAttributes RichTypeAttributes = {
 @dynamic id_;
 
 @dynamic name;
+
+@dynamic categoryFor;
 
 @end
 

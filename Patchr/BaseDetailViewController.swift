@@ -78,7 +78,7 @@ class BaseDetailViewController: BaseTableViewController {
         
         if self._query == nil {
 			
-			let id = self.entityId != nil ? "query.\(self.entityId)" : "query.guest"
+			let id = self.entityId != nil ? "query.\(self.entityId!)" : "query.guest"
             var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
             
             if query == nil {
@@ -86,20 +86,20 @@ class BaseDetailViewController: BaseTableViewController {
                 query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
                 query!.name = self.queryName
                 query!.pageSize = DataController.proxibase.pageSizeDefault
-                query!.parameters = [:]
+                query!.contextEntity = nil
 				
                 if self.entity != nil {
-                    query!.parameters["entity"] = self.entity
+                    query!.contextEntity = self.entity
                 }
                 if self.entityId != nil {
-                    query!.parameters["entityId"] = self.entityId
+                    query!.entityId = self.entityId
                 }
 				
 				if self.entityId == nil && self.entity == nil {
 					query?.enabledValue = false	// Zombies it so it doesn't get executed
 				}
 				
-                DataController.instance.saveContext()
+                DataController.instance.saveContext(false)
             }
             
             self._query = query
@@ -125,10 +125,12 @@ class BaseDetailViewController: BaseTableViewController {
 							if error == nil {
 								if objectId != nil {
 									let entity = DataController.instance.mainContext.objectWithID(objectId!) as! Entity
-									/* Refresh list too */
+									
+									/* Refresh list too if context entity was updated */
 									if entity.refreshedValue {
 										entity.refreshedValue = false
 										self?.bindQueryItems(true)
+										DataController.instance.saveContext(false)
 									}
 									
 									self?.entity = entity

@@ -264,6 +264,7 @@
                                                         <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
                                                             <integer key="value" value="24"/>
                                                         </userDefinedRuntimeAttribute>
+                                                        <userDefinedRuntimeAttribute type="string" keyPath="sizeCategory" value="profile"/>
                                                     </userDefinedRuntimeAttributes>
                                                     <connections>
                                                         <action selector="userAction:" destination="NVd-x8-lxi" eventType="touchUpInside" id="oTa-sa-RM5"/>

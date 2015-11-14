@@ -6,11 +6,17 @@
 const struct PhotoAttributes PhotoAttributes = {
 	.createdDate = @"createdDate",
 	.height = @"height",
+	.id_ = @"id_",
 	.prefix = @"prefix",
 	.source = @"source",
 	.suffix = @"suffix",
 	.usingDefault = @"usingDefault",
 	.width = @"width",
+};
+
+const struct PhotoRelationships PhotoRelationships = {
+	.photoBigFor = @"photoBigFor",
+	.photoFor = @"photoFor",
 };
 
 @implementation PhotoID
@@ -80,6 +86,8 @@ const struct PhotoAttributes PhotoAttributes = {
 	[self setPrimitiveHeight:@(value_)];
 }
 
+@dynamic id_;
+
 @dynamic prefix;
 
 @dynamic source;
@@ -125,6 +133,10 @@ const struct PhotoAttributes PhotoAttributes = {
 - (void)setPrimitiveWidthValue:(int32_t)value_ {
 	[self setPrimitiveWidth:@(value_)];
 }
+
+@dynamic photoBigFor;
+
+@dynamic photoFor;
 
 @end
 

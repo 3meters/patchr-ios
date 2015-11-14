@@ -113,7 +113,7 @@ class PatchEditViewController: EntityEditViewController {
             
             /* Location */
             if let loc = patch.location {
-                updateLocation(loc.locationValue)
+                updateLocation(loc.cllocation)
             }
             
             /* Type */
@@ -141,7 +141,7 @@ class PatchEditViewController: EntityEditViewController {
                 parameters["type"] = nilToNull(type)
             }
             if location != nil && entity!.location != nil {
-                if location!.coordinate != entity!.location.locationValue.coordinate {
+                if location!.coordinate != entity!.location.cllocation.coordinate {
                     parameters["location"] = nilToNull(location)
                 }
             }
@@ -165,7 +165,7 @@ class PatchEditViewController: EntityEditViewController {
             if patch.visibility != visibility {
                 return true
             }
-            if patch.location.locationValue.coordinate != location!.coordinate  {
+            if patch.location.cllocation.coordinate != location!.coordinate  {
                 return true
             }
             return super.isDirty()

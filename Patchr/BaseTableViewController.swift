@@ -114,6 +114,23 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		
 		if self.query().executedValue {
 			do {
+				if self.query().moreValue {
+					if self.tableView.tableFooterView == nil {
+						self.tableView.tableFooterView = self.footerView
+					}
+					if let button = self.footerView.viewWithTag(1) as? UIButton,
+						spinner = self.footerView.viewWithTag(2) as? UIActivityIndicatorView {
+							button.hidden = false
+							spinner.hidden = true
+							spinner.stopAnimating()
+					}
+					self.tableView.contentInset = UIEdgeInsetsMake(64, 0.0, (self.tabBarController?.tabBar.frame.size.height ?? 0) + 64, 0.0)
+				}
+				else {
+					self.tableView.tableFooterView = nil
+					self.tableView.contentInset = UIEdgeInsetsMake(64, 0.0, self.tabBarController?.tabBar.frame.size.height ?? 0, 0.0)
+				}
+				
 				try self.fetchedResultsController.performFetch()
 				self.tableView.reloadData()
 			}
@@ -154,6 +171,16 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		}
     }
 	
+	override func viewWillDisappear(animated: Bool) {
+		super.viewWillDisappear(animated)
+		/*
+		 * We re-fault the query items to free up memory.
+		 */
+		if self._query != nil {
+			DataController.instance.mainContext.refreshObject(self._query, mergeChanges: false)
+		}
+	}
+
     override func viewDidDisappear(animated: Bool) {
 		/*
 		 * Called when switching between patch view controllers.
@@ -253,6 +280,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 						self?.processingQuery = false
 						self?.activity.stopAnimating()
 						self?.refreshControl?.endRefreshing()
+						
 						if query.moreValue {
 							if self?.tableView.tableFooterView == nil {
 								self?.tableView.tableFooterView = self?.footerView
@@ -263,9 +291,11 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 									spinner.hidden = true
 									spinner.stopAnimating()
 							}
+							self?.tableView.contentInset = UIEdgeInsetsMake(64, 0.0, (self?.tabBarController?.tabBar.frame.size.height ?? 0) + 64, 0.0)
 						}
 						else {
 							self?.tableView.tableFooterView = nil
+							self?.tableView.contentInset = UIEdgeInsetsMake(64, 0.0, self?.tabBarController?.tabBar.frame.size.height ?? 0, 0.0)
 						}
 						
 						if error == nil {
@@ -290,6 +320,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 								}
 							}
 							query.offsetDate = oldestDate
+							DataController.instance.saveContext(false)
 						}
 						return
 					}
@@ -334,6 +365,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         }
         
         fetchRequest.predicate = NSPredicate(format: "query == %@", query)
+		fetchRequest.fetchBatchSize = 20
         
         let controller = NSFetchedResultsController(
             fetchRequest: fetchRequest,
@@ -403,8 +435,9 @@ extension BaseTableViewController {
 		}
 		
 		if self.listType == .Patches {
-			Patch.bindView(cell.view!, entity: entity, location: location)
-			return cell.view
+			let patchView = cell.view! as! PatchView
+			patchView.bindToEntity(entity, location: location)
+			return patchView
 		}
 		
 		if self.listType == .Users {

@@ -225,12 +225,20 @@ class NotificationsTableViewController: BaseTableViewController {
     override func query() -> Query {
 		
         if self._query == nil {
-            let query = Query.insertInManagedObjectContext(DataController.instance.mainContext) as! Query
-            query.name = DataStoreQueryName.NotificationsForCurrentUser.rawValue
-            query.pageSize = DataController.proxibase.pageSizeNotifications
-			DataController.instance.saveContext()
+			
+			let id = "query.\(DataStoreQueryName.NotificationsForCurrentUser.rawValue.lowercaseString)"
+			var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
+			
+			if query == nil {
+				query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
+				query!.name = DataStoreQueryName.NotificationsForCurrentUser.rawValue
+				query!.pageSize = DataController.proxibase.pageSizeNotifications
+				DataController.instance.saveContext(true)	// Blocks until finished
+			}
+			
             self._query = query
         }
+		
         return self._query
     }
     

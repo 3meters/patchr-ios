@@ -6,6 +6,7 @@
 const struct QueryAttributes QueryAttributes = {
 	.criteria = @"criteria",
 	.enabled = @"enabled",
+	.entityId = @"entityId",
 	.executed = @"executed",
 	.id_ = @"id_",
 	.more = @"more",
@@ -13,11 +14,11 @@ const struct QueryAttributes QueryAttributes = {
 	.offset = @"offset",
 	.offsetDate = @"offsetDate",
 	.pageSize = @"pageSize",
-	.parameters = @"parameters",
 	.sidecar = @"sidecar",
 };
 
 const struct QueryRelationships QueryRelationships = {
+	.contextEntity = @"contextEntity",
 	.queryItems = @"queryItems",
 };
 
@@ -121,6 +122,8 @@ const struct QueryRelationships QueryRelationships = {
 	[self setPrimitiveEnabled:@(value_)];
 }
 
+@dynamic entityId;
+
 @dynamic executed;
 
 - (BOOL)executedValue {
@@ -207,9 +210,9 @@ const struct QueryRelationships QueryRelationships = {
 	[self setPrimitivePageSize:@(value_)];
 }
 
-@dynamic parameters;
-
 @dynamic sidecar;
+
+@dynamic contextEntity;
 
 @dynamic queryItems;
 

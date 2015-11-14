@@ -4,12 +4,12 @@
 #import "_ProviderMap.h"
 
 const struct ProviderMapAttributes ProviderMapAttributes = {
-	.aircandi = @"aircandi",
-	.factual = @"factual",
-	.foursquare = @"foursquare",
 	.google = @"google",
 	.googleReference = @"googleReference",
-	.yelp = @"yelp",
+};
+
+const struct ProviderMapRelationships ProviderMapRelationships = {
+	.providerMapFor = @"providerMapFor",
 };
 
 @implementation ProviderMapID
@@ -41,17 +41,11 @@ const struct ProviderMapAttributes ProviderMapAttributes = {
 	return keyPaths;
 }
 
-@dynamic aircandi;
-
-@dynamic factual;
-
-@dynamic foursquare;
-
 @dynamic google;
 
 @dynamic googleReference;
 
-@dynamic yelp;
+@dynamic providerMapFor;
 
 @end
 

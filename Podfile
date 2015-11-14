@@ -38,6 +38,7 @@ pod 'Facade'							# Convenience methods for frame based layout
 pod 'Google/Analytics', '~> 1.0.0'
 pod 'Fabric'
 pod 'Crashlytics'
+pod 'PonyDebugger', :git => 'https://github.com/square/PonyDebugger.git'
 
 end
 

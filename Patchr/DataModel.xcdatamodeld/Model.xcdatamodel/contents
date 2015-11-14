@@ -105,6 +105,7 @@
     <entity name="Query" representedClassName="Query" syncable="YES">
         <attribute name="criteria" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="enabled" optional="YES" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
+        <attribute name="entityId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="executed" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="id_" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="more" optional="YES" attributeType="Boolean" syncable="YES"/>
@@ -112,16 +113,12 @@
         <attribute name="offset" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="offsetDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="pageSize" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
-        <attribute name="parameters" optional="YES" attributeType="Transformable" syncable="YES">
-            <userInfo>
-                <entry key="attributeValueClassName" value="NSDictionary"/>
-            </userInfo>
-        </attribute>
-        <attribute name="sidecar" optional="YES" attributeType="Transformable" syncable="YES">
+        <attribute name="sidecar" optional="YES" transient="YES" attributeType="Transformable" syncable="YES">
             <userInfo>
                 <entry key="attributeValueClassName" value="NSArray"/>
             </userInfo>
         </attribute>
+        <relationship name="entity_" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ServiceBase" syncable="YES"/>
         <relationship name="queryItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="QueryItem" inverseName="query" inverseEntity="QueryItem" syncable="YES"/>
     </entity>
     <entity name="QueryItem" representedClassName="QueryItem" syncable="YES">
@@ -183,7 +180,7 @@
         <element name="Photo" positionX="-693" positionY="90" width="128" height="150"/>
         <element name="Place" positionX="279" positionY="-243" width="128" height="165"/>
         <element name="ProviderMap" positionX="-452" positionY="450" width="128" height="135"/>
-        <element name="Query" positionX="-216" positionY="117" width="128" height="225"/>
+        <element name="Query" positionX="-216" positionY="117" width="128" height="240"/>
         <element name="QueryItem" positionX="-495" positionY="-99" width="128" height="135"/>
         <element name="RichType" positionX="-450" positionY="98" width="128" height="75"/>
         <element name="ServiceBase" positionX="-450" positionY="-243" width="128" height="330"/>

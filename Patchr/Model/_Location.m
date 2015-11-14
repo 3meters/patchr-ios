@@ -13,6 +13,10 @@ const struct LocationAttributes LocationAttributes = {
 	.speed = @"speed",
 };
 
+const struct LocationRelationships LocationRelationships = {
+	.locationFor = @"locationFor",
+};
+
 @implementation LocationID
 @end
 
@@ -194,6 +198,8 @@ const struct LocationAttributes LocationAttributes = {
 - (void)setPrimitiveSpeedValue:(double)value_ {
 	[self setPrimitiveSpeed:@(value_)];
 }
+
+@dynamic locationFor;
 
 @end
 

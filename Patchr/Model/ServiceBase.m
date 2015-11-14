@@ -79,23 +79,31 @@
     if ([dictionary[@"sortDate"] isKindOfClass:[NSNumber class]]) {
         base.sortDate = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"sortDate"] doubleValue]/1000];
     }
-    
-    base.creator = nil;
-    if (dictionary[@"linked"]) {
-        for (id linkMap in dictionary[@"linked"]) {
-            if ([linkMap isKindOfClass:[NSDictionary class]]) {
-                if ([linkMap[@"schema"] isEqual: @"user"] && [linkMap[@"_id"] isEqual: base.creatorId]) {
+	
+	/* Delete the related objects if they exist */
+	NSManagedObjectContext *context = [base managedObjectContext];
+	if (base.creator != nil) {
+		[context deleteObject:base.creator];
+	}
+	
+	if (dictionary[@"linked"]) {
+		for (id linkMap in dictionary[@"linked"]) {
+			if ([linkMap isKindOfClass:[NSDictionary class]]) {
+				if ([linkMap[@"schema"] isEqual: @"user"] && [linkMap[@"_id"] isEqual: base.creatorId]) {
+					NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"Shortcut" inManagedObjectContext:context];
+					Shortcut *shortcut = [[Shortcut alloc] initWithEntity:entityDescription insertIntoManagedObjectContext:context];
+					
 					NSString *entityId = [[NSString alloc] initWithString:linkMap[@"_id"]];
 					if ([entityId rangeOfString:@"sh."].location == NSNotFound) {
 						entityId = [@"sh." stringByAppendingString:entityId];
 					}
-					id shortcut = [Shortcut fetchOrInsertOneById:entityId inManagedObjectContext:base.managedObjectContext];
+					shortcut.id_ = entityId;
 					base.creator = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut mappingNames:mapNames];
-                }
-            }
-        }
-    }
-    
+				}
+			}
+		}
+	}
+	
     return base;
 }
 

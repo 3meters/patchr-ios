@@ -21,34 +21,71 @@ class CoreDataStack: NSObject {
 	
 	func initialize() {
 		
-		let modelURLs = NSBundle.mainBundle().URLsForResourcesWithExtension("momd", subdirectory: nil)
-		let modelURL = modelURLs?.last		
-		ZAssert(modelURL, message: "Failed to find model URL")
+		guard let modelURL = NSBundle.mainBundle().URLForResource("DataModel", withExtension:"momd") else {
+			fatalError("Error loading model from bundle")
+		}
 		
-		let mom = NSManagedObjectModel(contentsOfURL: modelURL!)
-		ZAssert(mom, message: "Error initializing mom from: \(modelURL!)")
+		guard let managedObjectModel = NSManagedObjectModel(contentsOfURL: modelURL) else {
+			fatalError("Error initializing mom from: \(modelURL)")
+		}
 		
-		let psc = NSPersistentStoreCoordinator(managedObjectModel: mom!)
-		ZAssert(psc, message: "Failed to intitialize persistent store coordinator")
-		self.persistentStoreCoordinator = psc
+		let coordinator = NSPersistentStoreCoordinator(managedObjectModel: managedObjectModel)
+		self.persistentStoreCoordinator = coordinator
 
 		/* Master on background thread */
-		let master: NSManagedObjectContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
-		master.persistentStoreCoordinator = psc
-		master.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-		self.stackWriterContext = master
+		let writer: NSManagedObjectContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
+		writer.persistentStoreCoordinator = coordinator
+		writer.name = "WriterContext"
+		writer.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+		writer.undoManager = nil
+		self.stackWriterContext = writer
 
 		/* Main on main thread parented by Master */
 		let main: NSManagedObjectContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
-		main.parentContext = master
+		main.parentContext = writer
+		main.name = "MainContext"
 		main.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+		main.undoManager = nil
 		self.stackMainContext = main
 
 		registerForNotifications()
 		
 		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-			let store = try! psc.addPersistentStoreWithType(NSInMemoryStoreType, configuration: nil, URL: nil, options: nil)
-			self.ZAssert(store, message: "Failed to initialize store")
+			
+			let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
+			let docUrl = urls[urls.endIndex-1]
+			let storeUrl = docUrl.URLByAppendingPathComponent("Patchr.sqlite")
+			
+			do {
+				/*
+				 * Light migration supported for the following changes only:
+				 * https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/CoreDataVersioning/Articles/vmLightweightMigration.html
+				 *
+				 * - Add or remove a property (attribute or relationship).
+				 * - Make a nonoptional property optional.
+				 * - Make an optional attribute nonoptional, as long as you provide a default value.
+				 * - Add or remove an entity.
+				 * - Rename a property.
+				 * - Rename an entity.
+				 */
+				let options = [NSMigratePersistentStoresAutomaticallyOption: true, NSInferMappingModelAutomaticallyOption: true]
+				try coordinator.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: storeUrl, options: options)
+			}
+			catch {
+				/* Report any error we got. */
+				var dict = [String: AnyObject]()
+				dict[NSLocalizedDescriptionKey] = "Failed to initialize the application's saved data"
+				dict[NSLocalizedFailureReasonErrorKey] = "There was an error creating or loading the application's saved data."
+				dict[NSUnderlyingErrorKey] = error as NSError
+				let wrappedError = NSError(domain: "YOUR_ERROR_DOMAIN", code: 9999, userInfo: dict)
+				/*
+				 * Replace this with code to handle the error appropriately. abort() causes the application to
+				 * generate a crash log and terminate. DO NOT use this function in a shipping application,
+				 * although it may be useful during development.
+				 */
+				NSLog("Unresolved error \(wrappedError), \(wrappedError.userInfo)")
+				abort()
+			}
 		}
 	}
 	

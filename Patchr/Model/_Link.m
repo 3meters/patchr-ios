@@ -14,6 +14,10 @@ const struct LinkAttributes LinkAttributes = {
 	.type = @"type",
 };
 
+const struct LinkRelationships LinkRelationships = {
+	.linkFor = @"linkFor",
+};
+
 @implementation LinkID
 @end
 
@@ -105,6 +109,8 @@ const struct LinkAttributes LinkAttributes = {
 @dynamic toSchema;
 
 @dynamic type;
+
+@dynamic linkFor;
 
 @end
 

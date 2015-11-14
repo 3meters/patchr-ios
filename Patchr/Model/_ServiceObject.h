@@ -3,10 +3,6 @@
 
 @import CoreData;
 
-extern const struct ServiceObjectAttributes {
-	__unsafe_unretained NSString *updateScope;
-} ServiceObjectAttributes;
-
 @interface ServiceObjectID : NSManagedObjectID {}
 @end
 
@@ -16,15 +12,8 @@ extern const struct ServiceObjectAttributes {
 + (NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_;
 @property (nonatomic, readonly, strong) ServiceObjectID* objectID;
 
-@property (nonatomic, strong) NSString* updateScope;
-
-//- (BOOL)validateUpdateScope:(id*)value_ error:(NSError**)error_;
-
 @end
 
 @interface _ServiceObject (CoreDataGeneratedPrimitiveAccessors)
-
-- (NSString*)primitiveUpdateScope;
-- (void)setPrimitiveUpdateScope:(NSString*)value;
 
 @end

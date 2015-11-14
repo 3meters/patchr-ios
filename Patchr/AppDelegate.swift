@@ -33,8 +33,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
 		self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
 		
         #if DEBUG
-        AFNetworkActivityLogger.sharedLogger().startLogging()
-        AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelInfo
+			AFNetworkActivityLogger.sharedLogger().startLogging()
+			AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelInfo
         #endif
         
         /* Turn on network activity indicator */
@@ -81,8 +81,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
         gai.logger.logLevel = GAILogLevel.None
         
         #if DEBUG
-        gai.logger.logLevel = GAILogLevel.Warning
-        gai.dispatchInterval = 5    // Seconds
+			gai.logger.logLevel = GAILogLevel.Warning
+			gai.dispatchInterval = 5    // Seconds
         #endif
         
         /* Initialize Crashlytics */
@@ -97,7 +97,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
 
         /* Setup parse for push notifications */
         Parse.setApplicationId(keys.parseApplicationId(), clientKey: keys.parseApplicationKey())
-        
+		
+		#if DEBUG
+			PDDebugger.defaultInstance().enableNetworkTrafficDebugging()
+			PDDebugger.defaultInstance().forwardAllNetworkTraffic()
+			PDDebugger.defaultInstance().enableCoreDataDebugging()
+			PDDebugger.defaultInstance().addManagedObjectContext(DataController.instance.coreDataStack.stackMainContext, withName: "Main")
+			PDDebugger.defaultInstance().addManagedObjectContext(DataController.instance.coreDataStack.stackWriterContext, withName: "Writer")
+			
+//			#if !TARGET_IPHONE_SIMULATOR
+//				PDDebugger.defaultInstance().autoConnect()
+//			#else
+				PDDebugger.defaultInstance().connectToURL(NSURL(string: "ws://127.0.0.1:9000/device"))
+//			#endif
+		#endif
+		
         /* Get the latest on the authenticated user if we have one */
 		if UserController.instance.authenticated {	// Checks for current userId and sessionKey
             UserController.instance.signinAuto()

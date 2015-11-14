@@ -7,12 +7,21 @@
 extern const struct PhotoAttributes {
 	__unsafe_unretained NSString *createdDate;
 	__unsafe_unretained NSString *height;
+	__unsafe_unretained NSString *id_;
 	__unsafe_unretained NSString *prefix;
 	__unsafe_unretained NSString *source;
 	__unsafe_unretained NSString *suffix;
 	__unsafe_unretained NSString *usingDefault;
 	__unsafe_unretained NSString *width;
 } PhotoAttributes;
+
+extern const struct PhotoRelationships {
+	__unsafe_unretained NSString *photoBigFor;
+	__unsafe_unretained NSString *photoFor;
+} PhotoRelationships;
+
+@class Notification;
+@class Entity;
 
 @interface PhotoID : ServiceObjectID {}
 @end
@@ -34,6 +43,10 @@ extern const struct PhotoAttributes {
 - (void)setHeightValue:(int32_t)value_;
 
 //- (BOOL)validateHeight:(id*)value_ error:(NSError**)error_;
+
+@property (nonatomic, strong) NSString* id_;
+
+//- (BOOL)validateId_:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSString* prefix;
 
@@ -63,6 +76,14 @@ extern const struct PhotoAttributes {
 
 //- (BOOL)validateWidth:(id*)value_ error:(NSError**)error_;
 
+@property (nonatomic, strong) Notification *photoBigFor;
+
+//- (BOOL)validatePhotoBigFor:(id*)value_ error:(NSError**)error_;
+
+@property (nonatomic, strong) Entity *photoFor;
+
+//- (BOOL)validatePhotoFor:(id*)value_ error:(NSError**)error_;
+
 @end
 
 @interface _Photo (CoreDataGeneratedPrimitiveAccessors)
@@ -75,6 +96,9 @@ extern const struct PhotoAttributes {
 
 - (int32_t)primitiveHeightValue;
 - (void)setPrimitiveHeightValue:(int32_t)value_;
+
+- (NSString*)primitiveId_;
+- (void)setPrimitiveId_:(NSString*)value;
 
 - (NSString*)primitivePrefix;
 - (void)setPrimitivePrefix:(NSString*)value;
@@ -96,5 +120,11 @@ extern const struct PhotoAttributes {
 
 - (int32_t)primitiveWidthValue;
 - (void)setPrimitiveWidthValue:(int32_t)value_;
+
+- (Notification*)primitivePhotoBigFor;
+- (void)setPrimitivePhotoBigFor:(Notification*)value;
+
+- (Entity*)primitivePhotoFor;
+- (void)setPrimitivePhotoFor:(Entity*)value;
 
 @end

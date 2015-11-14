@@ -25,6 +25,7 @@ const struct ServiceBaseRelationships ServiceBaseRelationships = {
 	.creator = @"creator",
 	.modifier = @"modifier",
 	.owner = @"owner",
+	.queriesContextFor = @"queriesContextFor",
 	.queryItems = @"queryItems",
 };
 
@@ -162,6 +163,17 @@ const struct ServiceBaseRelationships ServiceBaseRelationships = {
 @dynamic modifier;
 
 @dynamic owner;
+
+@dynamic queriesContextFor;
+
+- (NSMutableSet*)queriesContextForSet {
+	[self willAccessValueForKey:@"queriesContextFor"];
+
+	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"queriesContextFor"];
+
+	[self didAccessValueForKey:@"queriesContextFor"];
+	return result;
+}
 
 @dynamic queryItems;
 

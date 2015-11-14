@@ -34,7 +34,7 @@ extension Entity {
             fromLocation = LocationController.instance.lastLocationFromManager()
         }
         if let location = self.location where fromLocation != nil {
-            let entityLocation = CLLocation(latitude: location.latValue, longitude: location.lngValue)
+            let entityLocation = location.cllocation
             return Float(fromLocation!.distanceFromLocation(entityLocation))
         }
         return nil
@@ -63,7 +63,11 @@ extension Entity {
     }
     
     static func getDefaultPhoto(schema: String, id: String?) -> Photo {
-        
+		/*
+		 * Default photos are stored but never directly set to entity.photo.
+		 * We store them because the code expects a managed object and managed
+		 * objects expect to be associated with a managed object context.
+		 */
         var prefix: String = "imgDefaultPatch"
         var source: String = PhotoSource.resource
         
@@ -76,84 +80,26 @@ extension Entity {
                 source = PhotoSource.gravatar
             }
             else {
-                prefix = "imgDefaultUser"
+				prefix = "imgDefaultUser"	// Used primarily when user has been deleted
             }
         }
-        
-        let photo = Photo.insertInManagedObjectContext(DataController.instance.mainContext) as! Photo
-        photo.prefix = prefix
-        photo.source = source
-        
+		
+		var photo = Photo.fetchOneById(prefix, inManagedObjectContext: DataController.instance.mainContext)
+		
+		if photo == nil {
+			photo = Photo.insertInManagedObjectContext(DataController.instance.mainContext) as! Photo
+			photo.id_ = prefix
+			photo.prefix = prefix
+			photo.source = source
+			DataController.instance.saveContext(false)
+		}
+		
         return photo;
     }
 }
 
 extension Patch {
-    
-	static func bindView(view: UIView, entity: AnyObject, location: CLLocation?) -> UIView {
         
-        let entity = entity as! Entity
-        let view = view as! PatchView
-		
-		view.entity = entity
-
-        view.name.text = entity.name
-        if entity.type != nil {
-            view.type.text = entity.type.uppercaseString + " PATCH"
-        }
-		
-		if let patch = entity as? Patch {
-			
-			view.messagesGroup.hidden = false
-			view.watchingGroup.hidden = false
-			view.rule.hidden = false
-			
-			view.placeName.text = patch.place?.name.uppercaseString
-			view.visibility.hidden = (patch.visibility == "public")
-			view.status.hidden = true
-			if (patch.userWatchStatusValue == .Pending && !SCREEN_NARROW) {
-				view.status.hidden = false
-			}
-			
-			view.messageCount.text = "--"
-			view.watchingCount.text = "--"
-			
-			if let numberOfMessages = patch.numberOfMessages {
-				view.messageCount.text = numberOfMessages.stringValue
-			}
-			
-			if let numberOfWatching = patch.countWatching {
-				view.watchingCount.text = numberOfWatching.stringValue
-			}
-		}
-		else {
-			/* This is a shortcut with a subset of the info */
-			view.messagesGroup.hidden = true
-			view.watchingGroup.hidden = true
-			view.rule.hidden = true
-		}
-		
-        /* Distance */
-		if location == nil {
-			view.distance.hidden = true
-		}
-		else {
-			view.distance.hidden = false
-			view.distance.text = "--"
-			if let loc = entity.location {
-				let patchLocation = CLLocation(latitude: loc.latValue, longitude: loc.lngValue)
-				let dist = Float(location!.distanceFromLocation(patchLocation))  // in meters
-				view.distance.text = LocationController.instance.distancePretty(dist)
-			}
-		}
-
-		view.photo.showGradient = true
-		view.photo.setImageWithPhoto(entity.getPhotoManaged(), animate: view.photo.image == nil)
-		view.setNeedsLayout()
-		
-        return view
-    }
-    
     static func extras(inout parameters: [String:AnyObject]) -> [String:AnyObject] {
         if let links = Patch.links() {
             parameters["links"] = links

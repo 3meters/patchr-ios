@@ -129,6 +129,8 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>UIFileSharingEnabled</key>
+	<true/>
 	<key>branch_key</key>
 	<string>key_live_aabKfhL9u6piQ93E2lzVslklzraKnSc3</string>
 </dict>

@@ -380,7 +380,8 @@ class MessageDetailViewController: UITableViewController {
 					shareView.cornerRadius = 6
 					shareView.shadow.backgroundColor = UIColor.clearColor()
 					
-					Patch.bindView(shareView, entity: self.message!.patch!, location: nil)
+					shareView.bindToEntity(self.message!.patch!, location: nil)
+					
 					self.shareHolderCell.contentView.addSubview(shareView)
 					self.shareHolderCell.contentView.frame.size.height = 128
 					shareView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
@@ -449,7 +450,7 @@ class MessageDetailViewController: UITableViewController {
 
 		if let creator = self.message!.creator {
 			self.userName.setTitle(creator.name, forState: .Normal)
-            self.userPhoto.setImageWithPhoto(creator.getPhotoManaged())
+			self.userPhoto.setImageWithPhoto(creator.getPhotoManaged())
 		}
 		else {
 			self.userName.setTitle("Deleted", forState: .Normal)
@@ -471,7 +472,7 @@ class MessageDetailViewController: UITableViewController {
 				}
 				else {
 					DataController.instance.mainContext.deleteObject(self.message!)
-					DataController.instance.saveContext()
+					DataController.instance.saveContext(false)
 					self.navigationController?.popViewControllerAnimated(true)
 				}
 			}
@@ -490,7 +491,7 @@ class MessageDetailViewController: UITableViewController {
 					}
 					else {
 						DataController.instance.mainContext.deleteObject(self.message!)
-						DataController.instance.saveContext()
+						DataController.instance.saveContext(false)
 						self.navigationController?.popViewControllerAnimated(true)
 					}
 				}

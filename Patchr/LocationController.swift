@@ -40,7 +40,7 @@ class LocationController: NSObject {
     }
     
     func lastLocationFromManager() -> CLLocation?  {
-        return locationManager.location
+        return self.locationManager.location
     }
     
     func lastLocationAccepted() -> CLLocation?  {

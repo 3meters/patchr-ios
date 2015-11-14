@@ -6,6 +6,7 @@
 extern const struct QueryAttributes {
 	__unsafe_unretained NSString *criteria;
 	__unsafe_unretained NSString *enabled;
+	__unsafe_unretained NSString *entityId;
 	__unsafe_unretained NSString *executed;
 	__unsafe_unretained NSString *id_;
 	__unsafe_unretained NSString *more;
@@ -13,17 +14,16 @@ extern const struct QueryAttributes {
 	__unsafe_unretained NSString *offset;
 	__unsafe_unretained NSString *offsetDate;
 	__unsafe_unretained NSString *pageSize;
-	__unsafe_unretained NSString *parameters;
 	__unsafe_unretained NSString *sidecar;
 } QueryAttributes;
 
 extern const struct QueryRelationships {
+	__unsafe_unretained NSString *contextEntity;
 	__unsafe_unretained NSString *queryItems;
 } QueryRelationships;
 
+@class ServiceBase;
 @class QueryItem;
-
-@class NSDictionary;
 
 @class NSArray;
 
@@ -51,6 +51,10 @@ extern const struct QueryRelationships {
 - (void)setEnabledValue:(BOOL)value_;
 
 //- (BOOL)validateEnabled:(id*)value_ error:(NSError**)error_;
+
+@property (nonatomic, strong) NSString* entityId;
+
+//- (BOOL)validateEntityId:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSNumber* executed;
 
@@ -96,13 +100,13 @@ extern const struct QueryRelationships {
 
 //- (BOOL)validatePageSize:(id*)value_ error:(NSError**)error_;
 
-@property (nonatomic, strong) NSDictionary* parameters;
-
-//- (BOOL)validateParameters:(id*)value_ error:(NSError**)error_;
-
 @property (nonatomic, strong) NSArray* sidecar;
 
 //- (BOOL)validateSidecar:(id*)value_ error:(NSError**)error_;
+
+@property (nonatomic, strong) ServiceBase *contextEntity;
+
+//- (BOOL)validateContextEntity:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSSet *queryItems;
 
@@ -131,6 +135,9 @@ extern const struct QueryRelationships {
 
 - (BOOL)primitiveEnabledValue;
 - (void)setPrimitiveEnabledValue:(BOOL)value_;
+
+- (NSString*)primitiveEntityId;
+- (void)setPrimitiveEntityId:(NSString*)value;
 
 - (NSNumber*)primitiveExecuted;
 - (void)setPrimitiveExecuted:(NSNumber*)value;
@@ -165,11 +172,11 @@ extern const struct QueryRelationships {
 - (int32_t)primitivePageSizeValue;
 - (void)setPrimitivePageSizeValue:(int32_t)value_;
 
-- (NSDictionary*)primitiveParameters;
-- (void)setPrimitiveParameters:(NSDictionary*)value;
-
 - (NSArray*)primitiveSidecar;
 - (void)setPrimitiveSidecar:(NSArray*)value;
+
+- (ServiceBase*)primitiveContextEntity;
+- (void)setPrimitiveContextEntity:(ServiceBase*)value;
 
 - (NSMutableSet*)primitiveQueryItems;
 - (void)setPrimitiveQueryItems:(NSMutableSet*)value;

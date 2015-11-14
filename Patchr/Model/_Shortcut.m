@@ -7,6 +7,15 @@ const struct ShortcutAttributes ShortcutAttributes = {
 	.entityId = @"entityId",
 };
 
+const struct ShortcutRelationships ShortcutRelationships = {
+	.creatorFor = @"creatorFor",
+	.messageFor = @"messageFor",
+	.modifierFor = @"modifierFor",
+	.ownerFor = @"ownerFor",
+	.patchFor = @"patchFor",
+	.placeFor = @"placeFor",
+};
+
 @implementation ShortcutID
 @end
 
@@ -37,6 +46,18 @@ const struct ShortcutAttributes ShortcutAttributes = {
 }
 
 @dynamic entityId;
+
+@dynamic creatorFor;
+
+@dynamic messageFor;
+
+@dynamic modifierFor;
+
+@dynamic ownerFor;
+
+@dynamic patchFor;
+
+@dynamic placeFor;
 
 @end
 

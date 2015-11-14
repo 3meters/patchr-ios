@@ -249,7 +249,8 @@ class MessageEditViewController: EntityEditViewController {
 				shareView.cornerRadius = 6
 				shareView.shadow.backgroundColor = UIColor.clearColor()
 				
-				Patch.bindView(shareView, entity: self.shareEntity!, location: nil)
+				shareView.bindToEntity(self.shareEntity!, location: nil)
+				
 				self.shareCell.contentView.addSubview(shareView)
 				self.shareCell.contentView.frame.size.height = 128
 				shareView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
@@ -288,19 +289,7 @@ class MessageEditViewController: EntityEditViewController {
 				/* Row height not set until reloadData called below */
 				self.shareCell.contentView.frame.size.height = shareView.bounds.size.height + 24
 				holderView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
-				
-//                view = NSBundle.mainBundle().loadNibNamed("MessageView", owner: self, options: nil)[0] as! BaseView
-//                view.frame.size.width = self.shareHolder.bounds.size.width
-//                Message.bindView(view, entity: self.shareEntity!)
-//                view.frame.size.height = view.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize).height + 1
-//                self.shareHolder?.addSubview(view)
             }
-            
-//            let views = Dictionary(dictionaryLiteral: ("view", view))
-//            let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|[view]|", options: [], metrics: nil, views: views)
-//            let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|[view]|", options: [], metrics: nil, views: views)
-//            self.shareHolder?.addConstraints(horizontalConstraints)
-//            self.shareHolder?.addConstraints(verticalConstraints)
         }
     }
     

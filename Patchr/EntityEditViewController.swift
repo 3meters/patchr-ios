@@ -504,7 +504,7 @@ class EntityEditViewController: UITableViewController {
 					}
 					else {
 						DataController.instance.mainContext.deleteObject(self.entity!)
-						DataController.instance.saveContext()
+						DataController.instance.saveContext(false)
 						self.performBack()
 					}
 				}

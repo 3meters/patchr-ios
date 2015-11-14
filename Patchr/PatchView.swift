@@ -124,6 +124,67 @@ class PatchView: BaseView {
 		self.addSubview(self.shadow)
 	}
 	
+	func bindToEntity(entity: AnyObject, location: CLLocation?) {
+		
+		let entity = entity as! Entity
+		
+		self.entity = entity
+		
+		self.name.text = entity.name
+		if entity.type != nil {
+			self.type.text = entity.type.uppercaseString + " PATCH"
+		}
+		
+		if let patch = entity as? Patch {
+			
+			self.messagesGroup.hidden = false
+			self.watchingGroup.hidden = false
+			self.rule.hidden = false
+			
+			self.placeName.text = patch.place?.name.uppercaseString
+			self.visibility.hidden = (patch.visibility == "public")
+			self.status.hidden = true
+			if (patch.userWatchStatusValue == .Pending && !SCREEN_NARROW) {
+				self.status.hidden = false
+			}
+			
+			self.messageCount.text = "--"
+			self.watchingCount.text = "--"
+			
+			if let numberOfMessages = patch.numberOfMessages {
+				self.messageCount.text = numberOfMessages.stringValue
+			}
+			
+			if let numberOfWatching = patch.countWatching {
+				self.watchingCount.text = numberOfWatching.stringValue
+			}
+		}
+		else {
+			/* This is a shortcut with a subset of the info */
+			self.messagesGroup.hidden = true
+			self.watchingGroup.hidden = true
+			self.rule.hidden = true
+		}
+		
+		/* Distance */
+		if location == nil {
+			self.distance.hidden = true
+		}
+		else {
+			self.distance.hidden = false
+			self.distance.text = "--"
+			if let loc = entity.location {
+				let patchLocation = CLLocation(latitude: loc.latValue, longitude: loc.lngValue)
+				let dist = Float(location!.distanceFromLocation(patchLocation))  // in meters
+				self.distance.text = LocationController.instance.distancePretty(dist)
+			}
+		}
+		
+		self.photo.showGradient = true
+		self.photo.setImageWithPhoto(entity.getPhotoManaged(), animate: self.photo.image == nil)
+		self.setNeedsLayout()
+	}
+	
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		

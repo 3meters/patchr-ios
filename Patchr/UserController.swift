@@ -58,7 +58,7 @@ class UserController: NSObject {
         self.userId = json["session"]["_owner"].string
         self.sessionKey = json["session"]["key"].string
         writeCredentialsToUserDefaults()
-		fetchCurrentUser()
+		fetchCurrentUser()	// Includes making sure the user is in the store
     }
 
 	private func writeCredentialsToUserDefaults() {

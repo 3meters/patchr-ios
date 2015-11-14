@@ -552,7 +552,7 @@ extension PatchDetailViewController: MapViewDelegate {
     
     func locationForMap() -> CLLocation? {
         if let location = self.entity?.location {
-            return CLLocation(latitude: location.latValue, longitude: location.lngValue)
+            return location.cllocation
         }
         return nil
     }

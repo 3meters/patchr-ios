@@ -72,6 +72,9 @@ class NotificationController {
     func didReceiveRemoteNotification(application: UIApplication, notification: [NSObject : AnyObject], fetchCompletionHandler completionHandler: ((UIBackgroundFetchResult) -> Void)? ) {
         
         Log.d("Notification received...")
+		/*
+		 * Notifications targeting iOS do not come with "_id" set to a unique identifier. 
+		 */
         let state = application.applicationState
         if let stateString: String = state == .Background ? "background" : state == .Active ? "active" : "inactive" {
             Log.d("App state: \(stateString)")
@@ -91,6 +94,9 @@ class NotificationController {
             nearby["sortDate"] = nearby["sentDate"]
             nearby["type"] = "nearby"
             nearby["schema"] = "notification"
+			if nearby["id"] == nil {	// Service is planning change to start including a service generated id
+				nearby["id"] = "no.\(nearby["targetId"]!.substringFromIndex(2))"
+			}
             nearby.removeValueForKey("aps")
             Utils.updateNearbys(nearby)
         }

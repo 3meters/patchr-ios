@@ -9,6 +9,12 @@ extern const struct RichTypeAttributes {
 	__unsafe_unretained NSString *name;
 } RichTypeAttributes;
 
+extern const struct RichTypeRelationships {
+	__unsafe_unretained NSString *categoryFor;
+} RichTypeRelationships;
+
+@class Place;
+
 @interface RichTypeID : ServiceObjectID {}
 @end
 
@@ -26,6 +32,10 @@ extern const struct RichTypeAttributes {
 
 //- (BOOL)validateName:(id*)value_ error:(NSError**)error_;
 
+@property (nonatomic, strong) Place *categoryFor;
+
+//- (BOOL)validateCategoryFor:(id*)value_ error:(NSError**)error_;
+
 @end
 
 @interface _RichType (CoreDataGeneratedPrimitiveAccessors)
@@ -35,5 +45,8 @@ extern const struct RichTypeAttributes {
 
 - (NSString*)primitiveName;
 - (void)setPrimitiveName:(NSString*)value;
+
+- (Place*)primitiveCategoryFor;
+- (void)setPrimitiveCategoryFor:(Place*)value;
 
 @end

@@ -44,6 +44,7 @@
 #import <MBContactModel.h>
 #import <CommonCrypto/CommonCrypto.h>
 #import <pop/POP.h>
+#import <PDDebugger.h>
 
 #import "Patch.h"
 #import "Place.h"

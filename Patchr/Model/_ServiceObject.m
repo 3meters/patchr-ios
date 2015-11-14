@@ -3,10 +3,6 @@
 
 #import "_ServiceObject.h"
 
-const struct ServiceObjectAttributes ServiceObjectAttributes = {
-	.updateScope = @"updateScope",
-};
-
 @implementation ServiceObjectID
 @end
 
@@ -35,8 +31,6 @@ const struct ServiceObjectAttributes ServiceObjectAttributes = {
 
 	return keyPaths;
 }
-
-@dynamic updateScope;
 
 @end
 

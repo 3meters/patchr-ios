@@ -28,7 +28,7 @@ class DataController: NSObject {
 	static let instance  = DataController()
 	static let proxibase = Proxibase()
 
-	private var coreDataStack: CoreDataStack!
+	var coreDataStack: CoreDataStack!
 
 	var mainContext: NSManagedObjectContext!
 	
@@ -62,11 +62,11 @@ class DataController: NSObject {
 		self.mainContext = self.coreDataStack.stackMainContext
 	}
 	
-	func saveContext(wait: Bool = false) {
+	func saveContext(wait: Bool) {
 		self.coreDataStack.saveContext(self.mainContext, wait: wait)
 	}
 
-    func saveContext(context: NSManagedObjectContext, wait: Bool = false) {
+    func saveContext(context: NSManagedObjectContext, wait: Bool) {
         self.coreDataStack.saveContext(context, wait: wait)
     }
 
@@ -181,6 +181,7 @@ class DataController: NSObject {
 							if !dataWrapper.noopValue {
 								if let entityDictionaries = dataWrapper.data as? [[NSObject:AnyObject]] {
 									if entityDictionaries.count == 1 {
+										
 										let entity = entityType.fetchOrInsertOneById(entityId, inManagedObjectContext: privateContext)
 										entityType.setPropertiesFromDictionary(entityDictionaries[0], onObject: entity!, mappingNames: true)
 										entity!.refreshedValue = true
@@ -196,12 +197,8 @@ class DataController: NSObject {
 								}
 								
 								/* Persist the changes and triggers notifications to observers */
-								do {
-									try privateContext.save()
-								}
-								catch {
-									fatalError("Failure to save context: \(error)")
-								}
+								DataController.instance.saveContext(privateContext, wait: true)
+								DataController.instance.saveContext(false)				// Main context
 							}
 						}
 						completion(objectId, error: nil)
@@ -298,12 +295,8 @@ class DataController: NSObject {
 				
 				/* Persist the changes and triggers notifications to observers */
 				Log.d("Save context: \(query.name)")
-				do {
-					try privateContext.save()
-				}
-				catch {
-					fatalError("Failure to save context: \(error)")
-				}
+				DataController.instance.saveContext(privateContext, wait: true)
+				DataController.instance.saveContext(false)				// Main context
 				Utils.stopwatch1.segmentTime("\(query.name): context saved")
 				
 				completion(queryItems: queryItems, query: query, error: error)
@@ -319,9 +312,9 @@ class DataController: NSObject {
 		
         /* We only get here if either entity or entityId are available */
 		
-        if query.parameters != nil {
-            entity = query.parameters["entity"] as? ServiceBase
-            entityId = query.parameters["entityId"] as? String
+        if query.contextEntity != nil {
+            entity = query.contextEntity
+            entityId = query.entityId
         }
         
         if entityId == nil && entity != nil {
@@ -452,22 +445,17 @@ class DataController: NSObject {
 
 				for entityDictionary in entityDictionaries {
 
-					if let schema = entityDictionary["schema"] as? String, let modelType = schemaDictionary[schema] {
+					if let schema = entityDictionary["schema"] as? String, let entityType = schemaDictionary[schema] {
                         /*
                          * We either create a new entity or update an existing entity. If existing then
                          * we keep the same instance and overwrite the properties included in the downloaded
                          * entity retaining any other properties including local ones.
                          */
-                        var entity: Entity
-                        if let entityId = entityDictionary["_id"] as? String {
-                            entity = modelType.fetchOrInsertOneById(entityId, inManagedObjectContext: context) as! Entity
-                        }
-                        else {
-                            entity = modelType.insertInManagedObjectContext(context) as! Entity
-                        }
-                        
+						let entityId = ((entityDictionary["_id"] != nil) ? entityDictionary["_id"] : entityDictionary["id"]) as! String // Notifications use "id", everything else from service is "_id"
+                        let entity = entityType.fetchOrInsertOneById(entityId, inManagedObjectContext: context) as! Entity
+						
                         /* Transfer the properties: Updates the object if it was already in the model */
-                        modelType.setPropertiesFromDictionary(entityDictionary, onObject: entity, mappingNames: true)
+                        entityType.setPropertiesFromDictionary(entityDictionary, onObject: entity, mappingNames: true)
                         
                         /* Check to see if this entity is already part of the query */
                         var queryItem: QueryItem!

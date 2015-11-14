@@ -56,25 +56,42 @@ class UserTableViewController: BaseTableViewController {
 
     override func query() -> Query {
         if self._query == nil {
-            let query = Query.insertInManagedObjectContext(DataController.instance.mainContext) as! Query
-            
-            switch self.filter {
-                case .PatchWatchers:
-                    query.name = DataStoreQueryName.WatchersForPatch.rawValue
-                    query.pageSize = DataController.proxibase.pageSizeDefault
-                    query.parameters = ["entity": patch]
+			
+			let id = "query.\(queryName().lowercaseString)"
+			var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
+			
+			if query == nil {
+				query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
 				
-                case .MessageLikers:
-                    query.name = DataStoreQueryName.LikersForMessage.rawValue
-                    query.pageSize = DataController.proxibase.pageSizeDefault
-                    query.parameters = ["entity": message]
-            }
-            
-			DataController.instance.saveContext()
+				switch self.filter {
+					case .PatchWatchers:
+						query!.name = DataStoreQueryName.WatchersForPatch.rawValue
+						query!.pageSize = DataController.proxibase.pageSizeDefault
+						query!.contextEntity = patch
+						
+					case .MessageLikers:
+						query!.name = DataStoreQueryName.LikersForMessage.rawValue
+						query!.pageSize = DataController.proxibase.pageSizeDefault
+						query!.contextEntity = message
+				}
+				
+				DataController.instance.saveContext(false)
+			}
             self._query = query
         }
         return self._query
     }
+	
+	func queryName() -> String {
+		var queryName = "Generic"
+		switch self.filter {
+			case .PatchWatchers:
+				queryName = DataStoreQueryName.WatchersForPatch.rawValue
+			case .MessageLikers:
+				queryName = DataStoreQueryName.LikersForMessage.rawValue
+		}
+		return queryName
+	}
 	
     func watchListForOwner() -> Bool {
         if self.filter == .PatchWatchers && self.patch.visibility == "private" {
@@ -160,7 +177,7 @@ extension UserTableViewController: UserApprovalViewDelegate {
 							}
 							else {
 								user.link.enabledValue = linkEnabled
-								DataController.instance.saveContext()
+								DataController.instance.saveContext(false)
 							}
 							approvalSwitch.enabled = true
 						}
@@ -186,7 +203,7 @@ extension UserTableViewController: UserApprovalViewDelegate {
 							else {
 								DataController.instance.mainContext.deleteObject(user.link)
 								DataController.instance.mainContext.deleteObject(queryResult)
-								DataController.instance.saveContext()
+								DataController.instance.saveContext(false)
 							}
 						}
 					})

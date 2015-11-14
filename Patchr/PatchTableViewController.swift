@@ -93,6 +93,7 @@ class PatchTableViewController: BaseTableViewController {
         }
         else {
             super.viewDidAppear(animated)
+			self.location = LocationController.instance.lastLocationFromManager()
         }
     }
     
@@ -101,6 +102,9 @@ class PatchTableViewController: BaseTableViewController {
             unregisterForLocationNotifications()
             LocationController.instance.stopUpdates()
             LocationController.instance.startSignificantChangeUpdates()
+			if self._query != nil {
+				DataController.instance.mainContext.refreshObject(self._query, mergeChanges: false)
+			}
         }
         else {
             super.viewWillDisappear(animated)
@@ -127,35 +131,59 @@ class PatchTableViewController: BaseTableViewController {
     override func query() -> Query {
         if self._query == nil {
 			
-            let query = Query.insertInManagedObjectContext(DataController.instance.mainContext) as! Query
-            
-            switch self.filter {
-            case .Nearby:
-                query.name = DataStoreQueryName.NearbyPatches.rawValue
-                query.pageSize = DataController.proxibase.pageSizeNearby
-            case .Explore:
-                query.name = DataStoreQueryName.ExplorePatches.rawValue
-                query.pageSize = DataController.proxibase.pageSizeExplore
-            case .Watching:
-                query.name = DataStoreQueryName.PatchesUserIsWatching.rawValue
-                query.pageSize = DataController.proxibase.pageSizeDefault
-                query.parameters = ["entity": user]
-            case .Favorite:
-                query.name = DataStoreQueryName.FavoritePatches.rawValue
-                query.pageSize = DataController.proxibase.pageSizeDefault
-                query.parameters = ["entity": user]
-            case .Owns:
-                query.name = DataStoreQueryName.PatchesByUser.rawValue
-                query.pageSize = DataController.proxibase.pageSizeDefault
-                query.parameters = ["entity": user]
-            }
-            
-			DataController.instance.saveContext()
+			let id = "query.\(queryName().lowercaseString)"
+			var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
+			
+			if query == nil {
+				query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
+				
+				switch self.filter {
+				case .Nearby:
+					query!.name = DataStoreQueryName.NearbyPatches.rawValue
+					query!.pageSize = DataController.proxibase.pageSizeNearby
+				case .Explore:
+					query!.name = DataStoreQueryName.ExplorePatches.rawValue
+					query!.pageSize = DataController.proxibase.pageSizeExplore
+				case .Watching:
+					query!.name = DataStoreQueryName.PatchesUserIsWatching.rawValue
+					query!.pageSize = DataController.proxibase.pageSizeDefault
+					query!.contextEntity = self.user
+				case .Favorite:
+					query!.name = DataStoreQueryName.FavoritePatches.rawValue
+					query!.pageSize = DataController.proxibase.pageSizeDefault
+					query!.contextEntity = self.user
+				case .Owns:
+					query!.name = DataStoreQueryName.PatchesByUser.rawValue
+					query!.pageSize = DataController.proxibase.pageSizeDefault
+					query!.contextEntity = self.user
+				}
+				
+				DataController.instance.saveContext(true)
+			}
+			
             self._query = query
         }
+		
         return self._query!
     }
-    
+	
+	func queryName() -> String {
+		var queryName = "Generic"
+		switch self.filter {
+		case .Nearby:
+			queryName = DataStoreQueryName.NearbyPatches.rawValue
+		case .Explore:
+			queryName = DataStoreQueryName.ExplorePatches.rawValue
+		case .Watching:
+			queryName = DataStoreQueryName.PatchesUserIsWatching.rawValue
+		case .Favorite:
+			queryName = DataStoreQueryName.FavoritePatches.rawValue
+		case .Owns:
+			queryName = DataStoreQueryName.PatchesByUser.rawValue
+		}
+		return queryName
+	}
+	
 	override func bindQueryItems(force: Bool = false, paging: Bool = false) {
 		
 		if self.filter == .Nearby {
@@ -178,6 +206,7 @@ class PatchTableViewController: BaseTableViewController {
 		}
 		else {
 			if !paging {
+				/* Might be fresher than the location we cached in didAppear */
 				self.location = LocationController.instance.lastLocationFromManager()
 			}
 			super.bindQueryItems(force, paging: paging)
@@ -275,6 +304,9 @@ class PatchTableViewController: BaseTableViewController {
 								self?.emptyLabel.fadeIn()
 							}
 							else if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundEffects")) {
+								if self!.showEmptyLabel && self?.emptyLabel.alpha > 0 {
+									self?.emptyLabel.fadeOut()
+								}
 								if !query.executedValue {
 									AudioController.instance.play(Sound.greeting.rawValue)
 								}
@@ -282,6 +314,7 @@ class PatchTableViewController: BaseTableViewController {
 						}
 						
 						self?.query().executedValue = true
+						DataController.instance.saveContext(false)
 						
 						return
 					}

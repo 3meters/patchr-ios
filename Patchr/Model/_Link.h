@@ -15,6 +15,12 @@ extern const struct LinkAttributes {
 	__unsafe_unretained NSString *type;
 } LinkAttributes;
 
+extern const struct LinkRelationships {
+	__unsafe_unretained NSString *linkFor;
+} LinkRelationships;
+
+@class Entity;
+
 @interface LinkID : ServiceObjectID {}
 @end
 
@@ -64,6 +70,10 @@ extern const struct LinkAttributes {
 
 //- (BOOL)validateType:(id*)value_ error:(NSError**)error_;
 
+@property (nonatomic, strong) Entity *linkFor;
+
+//- (BOOL)validateLinkFor:(id*)value_ error:(NSError**)error_;
+
 @end
 
 @interface _Link (CoreDataGeneratedPrimitiveAccessors)
@@ -94,5 +104,8 @@ extern const struct LinkAttributes {
 
 - (NSString*)primitiveToSchema;
 - (void)setPrimitiveToSchema:(NSString*)value;
+
+- (Entity*)primitiveLinkFor;
+- (void)setPrimitiveLinkFor:(Entity*)value;
 
 @end

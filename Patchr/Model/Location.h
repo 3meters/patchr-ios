@@ -9,5 +9,5 @@
 
 
 @property (nonatomic, readonly) CLLocationCoordinate2D coordinate;
-@property (nonatomic, readonly) CLLocation* locationValue;
+@property (nonatomic, readonly) CLLocation* cllocation;
 @end

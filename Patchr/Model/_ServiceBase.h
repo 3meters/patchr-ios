@@ -26,12 +26,14 @@ extern const struct ServiceBaseRelationships {
 	__unsafe_unretained NSString *creator;
 	__unsafe_unretained NSString *modifier;
 	__unsafe_unretained NSString *owner;
+	__unsafe_unretained NSString *queriesContextFor;
 	__unsafe_unretained NSString *queryItems;
 } ServiceBaseRelationships;
 
 @class Shortcut;
 @class Shortcut;
 @class Shortcut;
+@class Query;
 @class QueryItem;
 
 @interface ServiceBaseID : ServiceObjectID {}
@@ -127,9 +129,21 @@ extern const struct ServiceBaseRelationships {
 
 //- (BOOL)validateOwner:(id*)value_ error:(NSError**)error_;
 
+@property (nonatomic, strong) NSSet *queriesContextFor;
+
+- (NSMutableSet*)queriesContextForSet;
+
 @property (nonatomic, strong) NSSet *queryItems;
 
 - (NSMutableSet*)queryItemsSet;
+
+@end
+
+@interface _ServiceBase (QueriesContextForCoreDataGeneratedAccessors)
+- (void)addQueriesContextFor:(NSSet*)value_;
+- (void)removeQueriesContextFor:(NSSet*)value_;
+- (void)addQueriesContextForObject:(Query*)value_;
+- (void)removeQueriesContextForObject:(Query*)value_;
 
 @end
 
@@ -202,6 +216,9 @@ extern const struct ServiceBaseRelationships {
 
 - (Shortcut*)primitiveOwner;
 - (void)setPrimitiveOwner:(Shortcut*)value;
+
+- (NSMutableSet*)primitiveQueriesContextFor;
+- (void)setPrimitiveQueriesContextFor:(NSMutableSet*)value;
 
 - (NSMutableSet*)primitiveQueryItems;
 - (void)setPrimitiveQueryItems:(NSMutableSet*)value;
