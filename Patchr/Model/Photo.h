@@ -6,7 +6,6 @@
 + (instancetype)fetchOrInsertOneById:(NSString *)id_ inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
 
 + (Photo *)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                              onObject:(Photo *)photo
-                          mappingNames:(BOOL)mapNames;
+                              onObject:(Photo *)photo;
 
 @end

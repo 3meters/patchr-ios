@@ -10,10 +10,9 @@
 @implementation Notification
 
 + (Notification *)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                                     onObject:(Notification *)notification
-                                 mappingNames:(BOOL)mapNames {
+                                     onObject:(Notification *)notification {
     
-    notification = (Notification *)[Entity setPropertiesFromDictionary:dictionary onObject:notification mappingNames:mapNames];
+    notification = (Notification *)[Entity setPropertiesFromDictionary:dictionary onObject:notification];
     notification.targetId = dictionary[@"targetId"] ? dictionary[@"targetId"] : dictionary[@"_target"];
     notification.parentId = dictionary[@"parentId"] ? dictionary[@"parentId"] : dictionary[@"_parent"];
     notification.userId = dictionary[@"userId"] ? dictionary[@"userId"] : dictionary[@"_user"];
@@ -37,7 +36,7 @@
     
     notification.photoBig = nil;
     if (dictionary[@"photoBig"] && notification.managedObjectContext) {
-        notification.photoBig = [Photo setPropertiesFromDictionary:dictionary[@"photoBig"] onObject:[Photo insertInManagedObjectContext:notification.managedObjectContext] mappingNames:mapNames];
+        notification.photoBig = [Photo setPropertiesFromDictionary:dictionary[@"photoBig"] onObject:[Photo insertInManagedObjectContext:notification.managedObjectContext]];
     }
     
     return notification;

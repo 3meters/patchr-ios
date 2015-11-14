@@ -3,7 +3,6 @@
 @interface Link : _Link {}
 
 + (instancetype)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                                   onObject:(Link *)link
-                               mappingNames:(BOOL)mapNames;
+                                   onObject:(Link *)link;
 
 @end

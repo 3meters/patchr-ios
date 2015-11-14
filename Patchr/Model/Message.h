@@ -3,7 +3,6 @@
 @interface Message : _Message {}
 
 + (Message *)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                                onObject:(Message *)message
-                            mappingNames:(BOOL)mapNames;
+                                onObject:(Message *)message;
 
 @end

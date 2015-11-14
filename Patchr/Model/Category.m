@@ -1,12 +1,12 @@
-#import "RichType.h"
+#import "Category.h"
 
-@interface RichType ()
+@interface Category ()
 
 // Private interface goes here.
 
 @end
 
-@implementation RichType
+@implementation Category
 
 // Custom logic goes here.
 

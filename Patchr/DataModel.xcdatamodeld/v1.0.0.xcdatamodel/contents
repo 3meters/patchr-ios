@@ -91,18 +91,13 @@
     </entity>
     <entity name="Place" representedClassName="Place" parentEntity="Entity" syncable="YES">
         <attribute name="address" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="categoryId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="categoryName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="city" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="country" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="postalCode" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="region" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="category" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="RichType" inverseName="categoryFor" inverseEntity="RichType" syncable="YES"/>
-        <relationship name="provider" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ProviderMap" inverseName="providerMapFor" inverseEntity="ProviderMap" syncable="YES"/>
-    </entity>
-    <entity name="ProviderMap" representedClassName="ProviderMap" parentEntity="ServiceObject" syncable="YES">
-        <attribute name="google" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="googleReference" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="providerMapFor" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Place" inverseName="provider" inverseEntity="Place" syncable="YES"/>
     </entity>
     <entity name="Query" representedClassName="Query" syncable="YES">
         <attribute name="criteria" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
@@ -130,11 +125,6 @@
         <attribute name="sortDate" optional="YES" attributeType="Date" syncable="YES"/>
         <relationship name="object" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ServiceBase" inverseName="queryItems" inverseEntity="ServiceBase" syncable="YES"/>
         <relationship name="query" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Query" inverseName="queryItems" inverseEntity="Query" syncable="YES"/>
-    </entity>
-    <entity name="RichType" representedClassName="RichType" parentEntity="ServiceObject" syncable="YES">
-        <attribute name="id_" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="categoryFor" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Place" inverseName="category" inverseEntity="Place" syncable="YES"/>
     </entity>
     <entity name="ServiceBase" representedClassName="ServiceBase" isAbstract="YES" parentEntity="ServiceObject" syncable="YES">
         <attribute name="activityDate" optional="YES" attributeType="Date" syncable="YES"/>
@@ -187,10 +177,8 @@
         <element name="Patch" positionX="81" positionY="-243" width="128" height="90"/>
         <element name="Photo" positionX="-693" positionY="90" width="128" height="195"/>
         <element name="Place" positionX="279" positionY="-243" width="128" height="165"/>
-        <element name="ProviderMap" positionX="-452" positionY="450" width="128" height="90"/>
         <element name="Query" positionX="-216" positionY="117" width="128" height="240"/>
         <element name="QueryItem" positionX="-495" positionY="-99" width="128" height="135"/>
-        <element name="RichType" positionX="-450" positionY="98" width="128" height="90"/>
         <element name="ServiceBase" positionX="-450" positionY="-243" width="128" height="345"/>
         <element name="ServiceObject" positionX="-695" positionY="-45" width="128" height="45"/>
         <element name="Shortcut" positionX="-486" positionY="-90" width="128" height="150"/>

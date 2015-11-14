@@ -23,53 +23,42 @@ class BaseDetailViewController: BaseTableViewController {
     
     override func viewDidLoad() {
         
-        if self.entity != nil {
-            self.entityId = self.entity!.id_
-        }
-		
         self.showEmptyLabel = false
         self.showProgress = true
         self.progressOffsetY = 80
 		self.loadMoreMessage = "LOAD MORE MESSAGES"
 		self.listType = .Messages
         
-        /* Use cached entity if available in the data model */
-        if self.entityId != nil {
-            if let entity: Entity? = Entity.fetchOneById(self.entityId!, inManagedObjectContext: DataController.instance.mainContext) {
-                self.entity = entity
-            }
-        }
-        
-        /* Use cached query if available in the data model */
-		if self.entityId != nil {
-			let id = "query.\(self.entityId!)"
-			let query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
-			if query != nil {
-				self._query = query
-				self.showProgress = false
-			}
-		}
-		
         super.viewDidLoad()
 		
 		/* Turn off estimate so rows are measured up front */
-		self.tableView.estimatedRowHeight = 150
+		self.tableView.estimatedRowHeight = 150		
+    }
+	
+	override func viewWillAppear(animated: Bool) {
 		
-		if self._query != nil {
-			if self._query!.moreValue {
-				if self.tableView.tableFooterView == nil {
-					self.tableView.tableFooterView = self.footerView
-				}
-				if let button = self.footerView.viewWithTag(1) as? UIButton,
-					spinner = self.footerView.viewWithTag(2) as? UIActivityIndicatorView {
-						button.hidden = false
-						spinner.hidden = true
-						spinner.stopAnimating()
-				}
+		if self.entity != nil {
+			/* Entity could have been deleted while we were away so check it. */
+			let item = ServiceBase.fetchOneById(self.entityId!, inManagedObjectContext: DataController.instance.mainContext)
+			if item == nil {
+				self.navigationController?.popViewControllerAnimated(false)
+				return
 			}
 		}
-    }
-
+		else {
+			/* Use cached entity if available in the data model */
+			if let entity: Entity? = Entity.fetchOneById(self.entityId!, inManagedObjectContext: DataController.instance.mainContext) {
+				self.entity = entity
+			}
+		}
+		
+		super.viewWillAppear(animated)
+		
+		if self.entity != nil {
+			draw()
+		}
+	}
+	
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
@@ -78,7 +67,7 @@ class BaseDetailViewController: BaseTableViewController {
         
         if self._query == nil {
 			
-			let id = self.entityId != nil ? "query.\(self.entityId!)" : "query.guest"
+			let id = "query.\(self.queryName!.lowercaseString).\(self.entityId!)"
             var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
             
             if query == nil {
@@ -107,7 +96,7 @@ class BaseDetailViewController: BaseTableViewController {
         
         return self._query
     }
-    
+	
     internal func bind(force: Bool = false) {
         
         /* Refreshes the top object but not the message list */

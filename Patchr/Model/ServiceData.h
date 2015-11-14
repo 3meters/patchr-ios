@@ -27,7 +27,6 @@
 @property (atomic, setter=setNoopValue:) BOOL noopValue;
 
 + (ServiceData *)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                                    onObject:(ServiceData *)serviceData
-                                mappingNames:(BOOL)mapNames;
+                                    onObject:(ServiceData *)serviceData;
 
 @end

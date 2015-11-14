@@ -175,7 +175,7 @@ class DataController: NSObject {
 						if let dictionary = response as? [NSObject:AnyObject] {
 							
 							let dataWrapper = ServiceData()
-							ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper, mappingNames: false)
+							ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper)
 							Utils.stopwatch2.segmentNote("\(entityType): service time: \(dataWrapper.time)ms")
 							
 							if !dataWrapper.noopValue {
@@ -183,7 +183,7 @@ class DataController: NSObject {
 									if entityDictionaries.count == 1 {
 										
 										let entity = entityType.fetchOrInsertOneById(entityId, inManagedObjectContext: privateContext)
-										entityType.setPropertiesFromDictionary(entityDictionaries[0], onObject: entity!, mappingNames: true)
+										entityType.setPropertiesFromDictionary(entityDictionaries[0], onObject: entity!)
 										entity!.refreshedValue = true
 										objectId = entity?.objectID
 										
@@ -314,12 +314,11 @@ class DataController: NSObject {
 		
         if query.contextEntity != nil {
             entity = query.contextEntity
-            entityId = query.entityId
+            entityId = query.contextEntity.id_
         }
-        
-        if entityId == nil && entity != nil {
-            entityId = entity.id_
-        }
+		else {
+			entityId = query.entityId
+		}
         
         if force {
             query.offsetValue = 0
@@ -394,7 +393,7 @@ class DataController: NSObject {
 		let dataWrapper = ServiceData()
 		if let dictionary = response as? [NSObject:AnyObject] {
 
-			ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper, mappingNames: false)
+			ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper)
 			Utils.stopwatch1.segmentNote("\(query.name): service time: \(dataWrapper.time)ms")
 
             if (dataWrapper.noopValue) {
@@ -455,7 +454,7 @@ class DataController: NSObject {
                         let entity = entityType.fetchOrInsertOneById(entityId, inManagedObjectContext: context) as! Entity
 						
                         /* Transfer the properties: Updates the object if it was already in the model */
-                        entityType.setPropertiesFromDictionary(entityDictionary, onObject: entity, mappingNames: true)
+                        entityType.setPropertiesFromDictionary(entityDictionary, onObject: entity)
                         
                         /* Check to see if this entity is already part of the query */
                         var queryItem: QueryItem!
@@ -476,7 +475,7 @@ class DataController: NSObject {
                         queryItem.object = entity	// The only place that associates an entity with a query item
                         queryItem.positionValue = Int64(itemPosition++)
                         queryItem.sortDate = entity.sortDate
-                        
+						
                         if let patch = entity as? Patch {
                             if let distance = patch.distanceFrom(location) {
                                 queryItem.distanceValue = distance
@@ -499,7 +498,7 @@ class DataController: NSObject {
     func dataWrapperForResponse(response: AnyObject) -> ServiceData? {
         if let dictionary = response as? [NSObject:AnyObject] {
             let dataWrapper = ServiceData()
-            ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper, mappingNames: false)
+            ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper)
 			Log.d("Service response time: \(dataWrapper.time)")
 
             return dataWrapper

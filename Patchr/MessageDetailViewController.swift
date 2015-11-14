@@ -62,9 +62,12 @@ class MessageDetailViewController: UITableViewController {
 		if self.message != nil {
 			self.messageId = self.message!.id_
 		}
+		
+		guard self.messageId != nil else {
+			fatalError("Message detail requires message id")
+		}
 
 		super.viewDidLoad()
-		
 
         /* Ui tweaks */
 		self.messagePhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
@@ -110,29 +113,24 @@ class MessageDetailViewController: UITableViewController {
 		self.userName.setTitle(nil, forState: .Normal)
 		self.userPhoto.imageView?.image = nil
         self.likesButton.setTitle(nil, forState: .Normal)
-        
-        /* Wacky activity control for body */
-		//self.activity = addActivityIndicatorTo(self.view)
-		
-        /* Use cached entity if available in the data model */
-        if self.messageId != nil {
-            if let message: Message? = Message.fetchOneById(self.messageId!, inManagedObjectContext: DataController.instance.mainContext) {
-                self.message = message
-            }
-        }
 	}
 
 	override func viewWillAppear(animated: Bool) {
-        /*
-        * Entity could have been delete while we were away to check it.
-        */
-        if self.message != nil {
-            let item = ServiceBase.fetchOneById(self.messageId!, inManagedObjectContext: DataController.instance.mainContext)
-            if item == nil {
-                self.navigationController?.popViewControllerAnimated(false)
-                return
-            }
-        }
+		
+		/* Use cached entity if available in the data model */
+		if self.message == nil {
+			if let message: Message? = Message.fetchOneById(self.messageId!, inManagedObjectContext: DataController.instance.mainContext) {
+				self.message = message
+			}
+		}
+		else {
+			/* Entity could have been delete while we were away to check it. */
+			let item = ServiceBase.fetchOneById(self.messageId!, inManagedObjectContext: DataController.instance.mainContext)
+			if item == nil {
+				self.navigationController?.popViewControllerAnimated(false)
+				return
+			}
+		}
 		
 		super.viewWillAppear(animated)
 		
@@ -217,6 +215,7 @@ class MessageDetailViewController: UITableViewController {
         if let controller = storyboard.instantiateViewControllerWithIdentifier("UserDetailViewController") as? UserDetailViewController {
             if let creator = message!.creator {
                 controller.entityId = creator.entityId
+				controller.profileMode = false
                 self.navigationController?.pushViewController(controller, animated: true)
             }
         }

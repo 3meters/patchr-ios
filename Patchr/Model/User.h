@@ -3,7 +3,6 @@
 @interface User : _User {}
 
 + (User *)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                             onObject:(User *)user
-                         mappingNames:(BOOL)mapNames;
+                             onObject:(User *)user;
 
 @end

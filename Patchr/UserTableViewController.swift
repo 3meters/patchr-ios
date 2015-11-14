@@ -14,13 +14,17 @@ class UserTableViewController: BaseTableViewController {
     var message:        Message!
 	var filter:         UserTableFilter = .PatchWatchers
 	var showOwnerUI		= false
-    
+	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		
+		guard self.patch != nil || self.message != nil else {
+			fatalError("User list requires a patch or message")
+		}
 		
 		self.tableView.estimatedRowHeight = 112
 		self.tableView.rowHeight = 112
@@ -57,7 +61,7 @@ class UserTableViewController: BaseTableViewController {
     override func query() -> Query {
         if self._query == nil {
 			
-			let id = "query.\(queryName().lowercaseString)"
+			let id = queryId()
 			var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
 			
 			if query == nil {
@@ -82,15 +86,21 @@ class UserTableViewController: BaseTableViewController {
         return self._query
     }
 	
-	func queryName() -> String {
-		var queryName = "Generic"
+	func queryId() -> String {
+		
+		var queryId: String!
 		switch self.filter {
 			case .PatchWatchers:
-				queryName = DataStoreQueryName.WatchersForPatch.rawValue
+				queryId = "query.\(DataStoreQueryName.WatchersForPatch.rawValue.lowercaseString).\(self.patch.id_)"
 			case .MessageLikers:
-				queryName = DataStoreQueryName.LikersForMessage.rawValue
+				queryId = "query.\(DataStoreQueryName.LikersForMessage.rawValue.lowercaseString).\(self.message.id_)"
 		}
-		return queryName
+		
+		guard queryId != nil else {
+			fatalError("Unassigned query id")
+		}
+		
+		return queryId
 	}
 	
     func watchListForOwner() -> Bool {
@@ -121,16 +131,25 @@ extension UserTableViewController {
 			if self.filter == .PatchWatchers {
 				if self.patch != nil {
 					view.owner.hidden = !(user.id_ == self.patch.ownerId)
+					/* Force the owner to be first in the list */
+					if user.id_ == self.patch.ownerId {
+						for item in user.queryItems {
+							let queryItem = item as! QueryItem
+							if queryItem.object == user {
+								queryItem.positionValue = -1
+							}
+						}
+					}
 				}
 				
 				if self.showOwnerUI {
 					if let currentUser = UserController.instance.currentUser {
-						if entity.id_ != currentUser.id_ {
+						if user.id_ != currentUser.id_ {
 							view.removeButton.hidden = false
 							view.approved.hidden = false
 							view.approvedSwitch.hidden = false
 							view.approvedSwitch.on = false
-							if (entity.link != nil && user.link.type == "watch") {
+							if (user.link != nil && user.link.type == "watch") {
 								view.approvedSwitch.on = user.link.enabledValue
 							}
 						}
@@ -151,7 +170,8 @@ extension UserTableViewController {
         if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
             let entity = queryResult.object as? User,
             let controller = storyboard.instantiateViewControllerWithIdentifier("UserDetailViewController") as? UserDetailViewController {
-                controller.entity = entity
+                controller.entityId = entity.id_
+				controller.profileMode = false
                 self.navigationController?.pushViewController(controller, animated: true)
         }
 	}

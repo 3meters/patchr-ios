@@ -5,16 +5,13 @@
 
 const struct PlaceAttributes PlaceAttributes = {
 	.address = @"address",
+	.categoryId = @"categoryId",
+	.categoryName = @"categoryName",
 	.city = @"city",
 	.country = @"country",
 	.phone = @"phone",
 	.postalCode = @"postalCode",
 	.region = @"region",
-};
-
-const struct PlaceRelationships PlaceRelationships = {
-	.category = @"category",
-	.provider = @"provider",
 };
 
 @implementation PlaceID
@@ -48,6 +45,10 @@ const struct PlaceRelationships PlaceRelationships = {
 
 @dynamic address;
 
+@dynamic categoryId;
+
+@dynamic categoryName;
+
 @dynamic city;
 
 @dynamic country;
@@ -57,10 +58,6 @@ const struct PlaceRelationships PlaceRelationships = {
 @dynamic postalCode;
 
 @dynamic region;
-
-@dynamic category;
-
-@dynamic provider;
 
 @end
 

@@ -3,8 +3,7 @@
 @interface Entity : _Entity {}
 
 + (Entity *)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                               onObject:(Entity *)entity
-                           mappingNames:(BOOL)mapNames;
+                               onObject:(Entity *)entity;
 
 + (NSNumber *)countForStatWithType:(NSString *)type schema:(NSString *)schema enabled:(NSString *)enabled direction:(NSString *)direction inLinkCounts:(NSDictionary *)linkCounts;
 

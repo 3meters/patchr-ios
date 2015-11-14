@@ -6,7 +6,6 @@
 + (instancetype)fetchOrInsertOneById:(NSString *)id_ inManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
 
 + (ServiceBase *)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                                    onObject:(ServiceBase *)base
-                                mappingNames:(BOOL)mapNames;
+                                    onObject:(ServiceBase *)base;
 
 @end

@@ -6,20 +6,14 @@
 
 extern const struct PlaceAttributes {
 	__unsafe_unretained NSString *address;
+	__unsafe_unretained NSString *categoryId;
+	__unsafe_unretained NSString *categoryName;
 	__unsafe_unretained NSString *city;
 	__unsafe_unretained NSString *country;
 	__unsafe_unretained NSString *phone;
 	__unsafe_unretained NSString *postalCode;
 	__unsafe_unretained NSString *region;
 } PlaceAttributes;
-
-extern const struct PlaceRelationships {
-	__unsafe_unretained NSString *category;
-	__unsafe_unretained NSString *provider;
-} PlaceRelationships;
-
-@class RichType;
-@class ProviderMap;
 
 @interface PlaceID : EntityID {}
 @end
@@ -33,6 +27,14 @@ extern const struct PlaceRelationships {
 @property (nonatomic, strong) NSString* address;
 
 //- (BOOL)validateAddress:(id*)value_ error:(NSError**)error_;
+
+@property (nonatomic, strong) NSString* categoryId;
+
+//- (BOOL)validateCategoryId:(id*)value_ error:(NSError**)error_;
+
+@property (nonatomic, strong) NSString* categoryName;
+
+//- (BOOL)validateCategoryName:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSString* city;
 
@@ -54,20 +56,18 @@ extern const struct PlaceRelationships {
 
 //- (BOOL)validateRegion:(id*)value_ error:(NSError**)error_;
 
-@property (nonatomic, strong) RichType *category;
-
-//- (BOOL)validateCategory:(id*)value_ error:(NSError**)error_;
-
-@property (nonatomic, strong) ProviderMap *provider;
-
-//- (BOOL)validateProvider:(id*)value_ error:(NSError**)error_;
-
 @end
 
 @interface _Place (CoreDataGeneratedPrimitiveAccessors)
 
 - (NSString*)primitiveAddress;
 - (void)setPrimitiveAddress:(NSString*)value;
+
+- (NSString*)primitiveCategoryId;
+- (void)setPrimitiveCategoryId:(NSString*)value;
+
+- (NSString*)primitiveCategoryName;
+- (void)setPrimitiveCategoryName:(NSString*)value;
 
 - (NSString*)primitiveCity;
 - (void)setPrimitiveCity:(NSString*)value;
@@ -83,11 +83,5 @@ extern const struct PlaceRelationships {
 
 - (NSString*)primitiveRegion;
 - (void)setPrimitiveRegion:(NSString*)value;
-
-- (RichType*)primitiveCategory;
-- (void)setPrimitiveCategory:(RichType*)value;
-
-- (ProviderMap*)primitiveProvider;
-- (void)setPrimitiveProvider:(ProviderMap*)value;
 
 @end

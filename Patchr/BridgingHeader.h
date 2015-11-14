@@ -54,7 +54,6 @@
 #import "Notification.h"
 #import "Entity.h"
 #import "ServiceBase.h"
-#import "RichType.h"
 #import "Location.h"
 #import "Photo.h"
 #import "Message.h"

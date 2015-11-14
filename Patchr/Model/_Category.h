@@ -1,28 +1,28 @@
 // DO NOT EDIT. This file is machine-generated and constantly overwritten.
-// Make changes to RichType.h instead.
+// Make changes to Category.h instead.
 
 @import CoreData;
 #import "ServiceObject.h"
 
-extern const struct RichTypeAttributes {
+extern const struct CategoryAttributes {
 	__unsafe_unretained NSString *id_;
 	__unsafe_unretained NSString *name;
-} RichTypeAttributes;
+} CategoryAttributes;
 
-extern const struct RichTypeRelationships {
+extern const struct CategoryRelationships {
 	__unsafe_unretained NSString *categoryFor;
-} RichTypeRelationships;
+} CategoryRelationships;
 
 @class Place;
 
-@interface RichTypeID : ServiceObjectID {}
+@interface CategoryID : ServiceObjectID {}
 @end
 
-@interface _RichType : ServiceObject {}
+@interface _Category : ServiceObject {}
 + (id)insertInManagedObjectContext:(NSManagedObjectContext*)moc_;
 + (NSString*)entityName;
 + (NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_;
-@property (nonatomic, readonly, strong) RichTypeID* objectID;
+@property (nonatomic, readonly, strong) CategoryID* objectID;
 
 @property (nonatomic, strong) NSString* id_;
 
@@ -38,7 +38,7 @@ extern const struct RichTypeRelationships {
 
 @end
 
-@interface _RichType (CoreDataGeneratedPrimitiveAccessors)
+@interface _Category (CoreDataGeneratedPrimitiveAccessors)
 
 - (NSString*)primitiveId_;
 - (void)setPrimitiveId_:(NSString*)value;

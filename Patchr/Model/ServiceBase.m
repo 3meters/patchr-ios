@@ -46,18 +46,17 @@
 }
 
 + (ServiceBase *)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                                    onObject:(ServiceBase *)base
-                                mappingNames:(BOOL)mapNames {
+                                    onObject:(ServiceBase *)base {
     
-    base.id_ = (mapNames && dictionary[@"_id"]) ? dictionary[@"_id"] : dictionary[@"id"];
+    base.id_ = dictionary[@"_id"];
     base.name = dictionary[@"name"];
     base.schema = dictionary[@"schema"];
     base.type = dictionary[@"type"];
     base.locked = dictionary[@"locked"];
     base.position = dictionary[@"position"];
-    base.ownerId = (mapNames && dictionary[@"_owner"]) ? dictionary[@"_owner"] : dictionary[@"owner"];
-    base.creatorId = (mapNames && dictionary[@"_creator"]) ? dictionary[@"_creator"] : dictionary[@"creator"];
-    base.modifierId = (mapNames && dictionary[@"_modifier"]) ? dictionary[@"_modifier"] : dictionary[@"modifier"];
+    base.ownerId = dictionary[@"_owner"];
+    base.creatorId = dictionary[@"_creator"];
+    base.modifierId = dictionary[@"_modifier"];
     
     base.createdDate = nil;
     base.modifiedDate = nil;
@@ -98,7 +97,7 @@
 						entityId = [@"sh." stringByAppendingString:entityId];
 					}
 					shortcut.id_ = entityId;
-					base.creator = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut mappingNames:mapNames];
+					base.creator = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut];
 				}
 			}
 		}

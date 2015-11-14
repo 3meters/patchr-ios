@@ -23,8 +23,6 @@
 		7D3F26DC1A7706610015F8E8 /* Notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D3F26DA1A7706610015F8E8 /* Notification.m */; };
 		7D40B9401A7816C400F9954C /* ServiceData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D40B93F1A7816C400F9954C /* ServiceData.m */; };
 		7D40B9421A7864A000F9954C /* NotificationsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D40B9411A7864A000F9954C /* NotificationsTableViewController.swift */; };
-		7D40B9501A79A6FD00F9954C /* _ProviderMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D40B94D1A79A6FD00F9954C /* _ProviderMap.m */; };
-		7D40B9511A79A6FD00F9954C /* ProviderMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D40B94F1A79A6FD00F9954C /* ProviderMap.m */; };
 		7D6E26471A7AB93F000128A7 /* UserDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D6E26461A7AB93F000128A7 /* UserDetailViewController.swift */; };
 		7D9651941AAFBD02000C5718 /* PatchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9651931AAFBD02000C5718 /* PatchTableViewController.swift */; };
 		7D9C9E3D1A9BAFCE0069E332 /* PatchDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */; };
@@ -173,8 +171,6 @@
 		E2F6C9271B1C94E50067D959 /* Debug.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F6C9261B1C94E50067D959 /* Debug.m */; };
 		E2F6C9291B1DF5500067D959 /* Notes.md in Resources */ = {isa = PBXBuildFile; fileRef = E2F6C9281B1DF5500067D959 /* Notes.md */; };
 		E2F6C9341B1E546F0067D959 /* _Link.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F6C92F1B1E546F0067D959 /* _Link.m */; };
-		E2F6C9351B1E546F0067D959 /* _RichType.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F6C9311B1E546F0067D959 /* _RichType.m */; };
-		E2F6C9361B1E546F0067D959 /* RichType.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F6C9331B1E546F0067D959 /* RichType.m */; };
 		E2FB81431B864111006B6690 /* AdobeCreativeSDKCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */; };
 		E2FB814A1B8647B2006B6690 /* AdobeCreativeSDKCoreResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E2FB81491B8647B2006B6690 /* AdobeCreativeSDKCoreResources.bundle */; };
 /* End PBXBuildFile section */
@@ -236,10 +232,6 @@
 		7D40B93E1A7816C400F9954C /* ServiceData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ServiceData.h; path = Model/ServiceData.h; sourceTree = "<group>"; };
 		7D40B93F1A7816C400F9954C /* ServiceData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ServiceData.m; path = Model/ServiceData.m; sourceTree = "<group>"; };
 		7D40B9411A7864A000F9954C /* NotificationsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationsTableViewController.swift; sourceTree = "<group>"; };
-		7D40B94C1A79A6FD00F9954C /* _ProviderMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _ProviderMap.h; path = Model/_ProviderMap.h; sourceTree = "<group>"; };
-		7D40B94D1A79A6FD00F9954C /* _ProviderMap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _ProviderMap.m; path = Model/_ProviderMap.m; sourceTree = "<group>"; };
-		7D40B94E1A79A6FD00F9954C /* ProviderMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProviderMap.h; path = Model/ProviderMap.h; sourceTree = "<group>"; };
-		7D40B94F1A79A6FD00F9954C /* ProviderMap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProviderMap.m; path = Model/ProviderMap.m; sourceTree = "<group>"; };
 		7D6E26461A7AB93F000128A7 /* UserDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDetailViewController.swift; sourceTree = "<group>"; };
 		7D9651931AAFBD02000C5718 /* PatchTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTableViewController.swift; sourceTree = "<group>"; };
 		7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchDetailViewController.swift; sourceTree = "<group>"; };
@@ -418,10 +410,6 @@
 		E2F6C9281B1DF5500067D959 /* Notes.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Notes.md; sourceTree = "<group>"; };
 		E2F6C92E1B1E546F0067D959 /* _Link.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _Link.h; path = Model/_Link.h; sourceTree = "<group>"; };
 		E2F6C92F1B1E546F0067D959 /* _Link.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _Link.m; path = Model/_Link.m; sourceTree = "<group>"; };
-		E2F6C9301B1E546F0067D959 /* _RichType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _RichType.h; path = Model/_RichType.h; sourceTree = "<group>"; };
-		E2F6C9311B1E546F0067D959 /* _RichType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _RichType.m; path = Model/_RichType.m; sourceTree = "<group>"; };
-		E2F6C9321B1E546F0067D959 /* RichType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RichType.h; path = Model/RichType.h; sourceTree = "<group>"; };
-		E2F6C9331B1E546F0067D959 /* RichType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RichType.m; path = Model/RichType.m; sourceTree = "<group>"; };
 		E2F6C9381B1E924B0067D959 /* PAEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PAEnums.h; path = Model/PAEnums.h; sourceTree = "<group>"; };
 		E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKCore.framework; path = Frameworks/AdobeCreativeSDKCore.framework; sourceTree = "<group>"; };
 		E2FB81491B8647B2006B6690 /* AdobeCreativeSDKCoreResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKCoreResources.bundle; path = ../Frameworks/AdobeCreativeSDKCore.framework/Versions/A/Resources/AdobeCreativeSDKCoreResources.bundle; sourceTree = "<group>"; };
@@ -545,14 +533,10 @@
 				E2F182F01B4B56DD0020F6BB /* Photo.m */,
 				7DA730811A71ACC9008C25FA /* Place.h */,
 				7DA730821A71ACC9008C25FA /* Place.m */,
-				7D40B94E1A79A6FD00F9954C /* ProviderMap.h */,
-				7D40B94F1A79A6FD00F9954C /* ProviderMap.m */,
 				7DA730831A71ACC9008C25FA /* Query.h */,
 				7DA730841A71ACC9008C25FA /* Query.m */,
 				E27DB4031B06477A0090D023 /* QueryItem.h */,
 				E27DB4041B06477A0090D023 /* QueryItem.m */,
-				E2F6C9321B1E546F0067D959 /* RichType.h */,
-				E2F6C9331B1E546F0067D959 /* RichType.m */,
 				7DA730851A71ACC9008C25FA /* ServiceBase.h */,
 				7DA730861A71ACC9008C25FA /* ServiceBase.m */,
 				7D40B93E1A7816C400F9954C /* ServiceData.h */,
@@ -871,14 +855,10 @@
 				7D3F26CE1A76F77E0015F8E8 /* _Photo.m */,
 				7DA730751A71ACC9008C25FA /* _Place.h */,
 				7DA730761A71ACC9008C25FA /* _Place.m */,
-				7D40B94C1A79A6FD00F9954C /* _ProviderMap.h */,
-				7D40B94D1A79A6FD00F9954C /* _ProviderMap.m */,
 				7DA730771A71ACC9008C25FA /* _Query.h */,
 				7DA730781A71ACC9008C25FA /* _Query.m */,
 				E27DB4061B0647960090D023 /* _QueryItem.h */,
 				E27DB4071B0647960090D023 /* _QueryItem.m */,
-				E2F6C9301B1E546F0067D959 /* _RichType.h */,
-				E2F6C9311B1E546F0067D959 /* _RichType.m */,
 				7DA730791A71ACC9008C25FA /* _ServiceBase.h */,
 				7DA7307A1A71ACC9008C25FA /* _ServiceBase.m */,
 				7DA7307B1A71ACC9008C25FA /* _ServiceObject.h */,
@@ -1231,7 +1211,6 @@
 				7DA730921A71ACC9008C25FA /* Query.m in Sources */,
 				7DB6E0F81A8174E90017A42F /* _Message.m in Sources */,
 				E2CCAAE01B67CC0E0071170C /* NotificationController.swift in Sources */,
-				E2F6C9361B1E546F0067D959 /* RichType.m in Sources */,
 				7D39D3C51ABA21B200275759 /* CALayer+XibConfiguration.m in Sources */,
 				E25327C11B13942D00990A81 /* Shared.swift in Sources */,
 				7D3D39CF1A6F086F00A44CB2 /* AppDelegate.swift in Sources */,
@@ -1240,7 +1219,6 @@
 				E2F618D61AFFACF00055D09C /* LocationController.swift in Sources */,
 				7DC1763F1ACDFF010051BA6C /* Link.m in Sources */,
 				7D3F26D41A76F77E0015F8E8 /* _Photo.m in Sources */,
-				7D40B9511A79A6FD00F9954C /* ProviderMap.m in Sources */,
 				E2B4590E1BC1E76C00155659 /* SwiftyJSON.swift in Sources */,
 				E20004DF1B094ACA00425694 /* PasswordEditViewController.swift in Sources */,
 				7DE975EE1AA7F72400C1ECE9 /* ModelUtilities.m in Sources */,
@@ -1252,7 +1230,6 @@
 				844D6E351AA4D01200EE71ED /* DevelopmentViewController.swift in Sources */,
 				7DA7308B1A71ACC9008C25FA /* _Place.m in Sources */,
 				E25327DB1B1625D900990A81 /* GCPlaceholderTextView.m in Sources */,
-				E2F6C9351B1E546F0067D959 /* _RichType.m in Sources */,
 				E2F6C9241B1BDD500067D959 /* Shortcut.m in Sources */,
 				7D021ABE1A9409450047DAAE /* SignInEditViewController.swift in Sources */,
 				7D9651941AAFBD02000C5718 /* PatchTableViewController.swift in Sources */,
@@ -1279,7 +1256,6 @@
 				E25327B21B0FCE9C00990A81 /* Constants.swift in Sources */,
 				84EF12AC1AA904700043EBBA /* Utils.swift in Sources */,
 				E29F654F1B61A0780000BEF4 /* OneShotLocationManager.swift in Sources */,
-				7D40B9501A79A6FD00F9954C /* _ProviderMap.m in Sources */,
 				7D3F26D31A76F77E0015F8E8 /* _Location.m in Sources */,
 				E2F182F11B4B56DD0020F6BB /* Photo.m in Sources */,
 				E25327B81B103ECA00990A81 /* AirImageButton.swift in Sources */,

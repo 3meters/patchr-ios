@@ -1,5 +1,4 @@
 #import "Place.h"
-#import "ProviderMap.h"
 
 @interface Place ()
 
@@ -10,10 +9,9 @@
 @implementation Place
 
 + (Place *)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                              onObject:(Place *)place
-                          mappingNames:(BOOL)mapNames {
+                              onObject:(Place *)place {
     
-    place = (Place *)[Entity setPropertiesFromDictionary:dictionary onObject:place mappingNames:mapNames];
+    place = (Place *)[Entity setPropertiesFromDictionary:dictionary onObject:place];
     
     place.address = dictionary[@"address"];
     place.city = dictionary[@"city"];
@@ -21,11 +19,6 @@
     place.country = dictionary[@"country"];
     place.postalCode = dictionary[@"postalCode"];
     place.phone = dictionary[@"phone"];
-    
-    place.provider = nil;
-    if (dictionary[@"provider"]) {
-        place.provider = [ProviderMap setPropertiesFromDictionary:dictionary[@"provider"] onObject:[ProviderMap insertInManagedObjectContext:place.managedObjectContext] mappingNames:mapNames];
-    }
     
     return place;
 }

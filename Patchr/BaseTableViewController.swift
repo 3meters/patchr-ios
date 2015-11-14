@@ -13,7 +13,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
     var _query:				Query!
 	var processingQuery		= false
 	var listType:			ItemClass = .Patches
-	var isGuest				= false
 	
 	var activity			= UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
 	var footerView			= UIView()
@@ -38,8 +37,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
     
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
-		self.isGuest = !UserController.instance.authenticated
 		
         /* Hookup refresh control */
 		let refreshControl = UIRefreshControl()
@@ -176,9 +173,9 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		/*
 		 * We re-fault the query items to free up memory.
 		 */
-		if self._query != nil {
-			DataController.instance.mainContext.refreshObject(self._query, mergeChanges: false)
-		}
+//		if self._query != nil {
+//			DataController.instance.mainContext.refreshObject(self._query, mergeChanges: false)
+//		}
 	}
 
     override func viewDidDisappear(animated: Bool) {

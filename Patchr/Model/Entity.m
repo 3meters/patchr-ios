@@ -15,14 +15,13 @@
 
 
 + (Entity *)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                               onObject:(Entity *)entity
-                           mappingNames:(BOOL)mapNames {
+                               onObject:(Entity *)entity {
     
-    entity = (Entity *)[ServiceBase setPropertiesFromDictionary:dictionary onObject:entity mappingNames:mapNames];
+    entity = (Entity *)[ServiceBase setPropertiesFromDictionary:dictionary onObject:entity];
     
     entity.subtitle = dictionary[@"subtitle"];
     entity.description_ = dictionary[@"description"];
-    entity.patchId = mapNames ? dictionary[@"_acl"] : dictionary[@"patchId"];
+    entity.patchId = dictionary[@"_acl"];
 	
 	/* Delete the related objects if they exist */
 	NSManagedObjectContext *context = [entity managedObjectContext];
@@ -43,13 +42,13 @@
 		/* We always replace the previous photo object if one existed */
 		NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"Photo" inManagedObjectContext:context];
 		Photo *photo = [[Photo alloc] initWithEntity:entityDescription insertIntoManagedObjectContext:context];
-		entity.photo = [Photo setPropertiesFromDictionary:dictionary[@"photo"] onObject:photo mappingNames:mapNames];	// Sets id_
+		entity.photo = [Photo setPropertiesFromDictionary:dictionary[@"photo"] onObject:photo];	// Sets id_
     }
 
     if (dictionary[@"location"]) {
 		NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"Location" inManagedObjectContext:context];
 		Location *location = [[Location alloc] initWithEntity:entityDescription insertIntoManagedObjectContext:context];
-        entity.location = [Location setPropertiesFromDictionary:dictionary[@"location"] onObject:location mappingNames:mapNames];
+        entity.location = [Location setPropertiesFromDictionary:dictionary[@"location"] onObject:location];
     }
     
     entity.linkCounts = dictionary[@"linkCount"];
@@ -69,7 +68,7 @@
     if (dictionary[@"link"]) {
 		NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"Link" inManagedObjectContext:context];
 		Link *link = [[Link alloc] initWithEntity:entityDescription insertIntoManagedObjectContext:context];
-		entity.link = [Link setPropertiesFromDictionary:dictionary[@"link"] onObject:link mappingNames:mapNames];
+		entity.link = [Link setPropertiesFromDictionary:dictionary[@"link"] onObject:link];
     }
     
     return entity;

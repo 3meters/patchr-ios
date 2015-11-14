@@ -1,38 +1,38 @@
 // DO NOT EDIT. This file is machine-generated and constantly overwritten.
-// Make changes to RichType.m instead.
+// Make changes to Category.m instead.
 
-#import "_RichType.h"
+#import "_Category.h"
 
-const struct RichTypeAttributes RichTypeAttributes = {
+const struct CategoryAttributes CategoryAttributes = {
 	.id_ = @"id_",
 	.name = @"name",
 };
 
-const struct RichTypeRelationships RichTypeRelationships = {
+const struct CategoryRelationships CategoryRelationships = {
 	.categoryFor = @"categoryFor",
 };
 
-@implementation RichTypeID
+@implementation CategoryID
 @end
 
-@implementation _RichType
+@implementation _Category
 
 + (id)insertInManagedObjectContext:(NSManagedObjectContext*)moc_ {
 	NSParameterAssert(moc_);
-	return [NSEntityDescription insertNewObjectForEntityForName:@"RichType" inManagedObjectContext:moc_];
+	return [NSEntityDescription insertNewObjectForEntityForName:@"Category" inManagedObjectContext:moc_];
 }
 
 + (NSString*)entityName {
-	return @"RichType";
+	return @"Category";
 }
 
 + (NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_ {
 	NSParameterAssert(moc_);
-	return [NSEntityDescription entityForName:@"RichType" inManagedObjectContext:moc_];
+	return [NSEntityDescription entityForName:@"Category" inManagedObjectContext:moc_];
 }
 
-- (RichTypeID*)objectID {
-	return (RichTypeID*)[super objectID];
+- (CategoryID*)objectID {
+	return (CategoryID*)[super objectID];
 }
 
 + (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key {

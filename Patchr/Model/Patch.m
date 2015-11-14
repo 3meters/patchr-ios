@@ -11,10 +11,9 @@
 @implementation Patch
 
 + (Patch *)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                              onObject:(Patch *)patch
-                          mappingNames:(BOOL)mapNames {
+                              onObject:(Patch *)patch {
     
-    patch = (Patch *) [Entity setPropertiesFromDictionary:dictionary onObject:patch mappingNames:mapNames];
+    patch = (Patch *) [Entity setPropertiesFromDictionary:dictionary onObject:patch];
 
     patch.countMessagesValue = 0;
     if (dictionary[@"linkCount"]) {
@@ -39,7 +38,7 @@
 						entityId = [@"sh." stringByAppendingString:entityId];
 					}
 					shortcut.id_ = entityId;
-					patch.place = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut mappingNames:mapNames];
+					patch.place = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut];
 				}
 			}
 		}

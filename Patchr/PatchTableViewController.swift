@@ -38,8 +38,6 @@ class PatchTableViewController: BaseTableViewController {
                 self.emptyMessage = "Discover popular patches here"
             case .Watching:
                 self.emptyMessage = "Watch patches and browse them here"
-            case .Favorite:
-                self.emptyMessage = "Browse your favorite patches here"
             case .Owns:
                 self.emptyMessage = "Make patches and browse them here"
         }
@@ -53,8 +51,6 @@ class PatchTableViewController: BaseTableViewController {
 				self.navigationItem.title = "Explore"
 			case .Watching:
 				self.navigationItem.title = "Patches I'm watching"
-            case .Favorite:
-                self.navigationItem.title = "Favorites"
 			case .Owns:
 				self.navigationItem.title = "Patches I own"
 		}
@@ -77,8 +73,6 @@ class PatchTableViewController: BaseTableViewController {
                 setScreenName("ExploreList")
             case .Watching:
                 setScreenName("WatchingList")
-            case .Favorite:
-                setScreenName("FavoriteList")
             case .Owns:
                 setScreenName("OwnsList")
         }
@@ -131,7 +125,7 @@ class PatchTableViewController: BaseTableViewController {
     override func query() -> Query {
         if self._query == nil {
 			
-			let id = "query.\(queryName().lowercaseString)"
+			let id = queryId()
 			var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
 			
 			if query == nil {
@@ -146,10 +140,6 @@ class PatchTableViewController: BaseTableViewController {
 					query!.pageSize = DataController.proxibase.pageSizeExplore
 				case .Watching:
 					query!.name = DataStoreQueryName.PatchesUserIsWatching.rawValue
-					query!.pageSize = DataController.proxibase.pageSizeDefault
-					query!.contextEntity = self.user
-				case .Favorite:
-					query!.name = DataStoreQueryName.FavoritePatches.rawValue
 					query!.pageSize = DataController.proxibase.pageSizeDefault
 					query!.contextEntity = self.user
 				case .Owns:
@@ -167,21 +157,25 @@ class PatchTableViewController: BaseTableViewController {
         return self._query!
     }
 	
-	func queryName() -> String {
-		var queryName = "Generic"
+	func queryId() -> String {
+		
+		var queryId: String!
 		switch self.filter {
-		case .Nearby:
-			queryName = DataStoreQueryName.NearbyPatches.rawValue
-		case .Explore:
-			queryName = DataStoreQueryName.ExplorePatches.rawValue
-		case .Watching:
-			queryName = DataStoreQueryName.PatchesUserIsWatching.rawValue
-		case .Favorite:
-			queryName = DataStoreQueryName.FavoritePatches.rawValue
-		case .Owns:
-			queryName = DataStoreQueryName.PatchesByUser.rawValue
+			case .Nearby:
+				queryId = "query.\(DataStoreQueryName.NearbyPatches.rawValue.lowercaseString)"
+			case .Explore:
+				queryId = "query.\(DataStoreQueryName.ExplorePatches.rawValue.lowercaseString)"
+			case .Watching:
+				queryId = "query.\(DataStoreQueryName.PatchesUserIsWatching.rawValue.lowercaseString).\(self.user.id_)"
+			case .Owns:
+				queryId = "query.\(DataStoreQueryName.PatchesByUser.rawValue.lowercaseString).\(self.user.id_)"
 		}
-		return queryName
+		
+		guard queryId != nil else {
+			fatalError("Unassigned query id")
+		}
+		
+		return queryId
 	}
 	
 	override func bindQueryItems(force: Bool = false, paging: Bool = false) {
@@ -383,6 +377,5 @@ enum PatchListFilter {
     case Nearby
     case Explore
     case Watching
-    case Favorite
     case Owns
 }

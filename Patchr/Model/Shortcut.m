@@ -10,12 +10,11 @@
 @implementation Shortcut
 
 + (Shortcut *)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                              onObject:(Shortcut *)shortcut
-                          mappingNames:(BOOL)mapNames {
+                              onObject:(Shortcut *)shortcut {
     
-    shortcut = (Shortcut *)[Entity setPropertiesFromDictionary:dictionary onObject:shortcut mappingNames:mapNames];    
+    shortcut = (Shortcut *)[Entity setPropertiesFromDictionary:dictionary onObject:shortcut];
     
-    shortcut.entityId = (mapNames && dictionary[@"_id"]) ? dictionary[@"_id"] : dictionary[@"id"];
+    shortcut.entityId = dictionary[@"_id"];
 	if ([shortcut.id_ rangeOfString:@"sh."].location == NSNotFound) {
 		shortcut.id_ = [@"sh." stringByAppendingString:shortcut.id_];
 	}

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -502,7 +502,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="gwA-or-tej" userLabel="user_email">
-                                                    <rect key="frame" x="8" y="20" width="304" height="44"/>
+                                                    <rect key="frame" x="12" y="20" width="296" height="44"/>
                                                     <animations/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="44" id="TG9-m3-Gdp"/>
@@ -511,7 +511,7 @@
                                                     <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="emailAddress" returnKeyType="next"/>
                                                 </textField>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fdy-Ar-MpE" userLabel="rule">
-                                                    <rect key="frame" x="8" y="68" width="304" height="1"/>
+                                                    <rect key="frame" x="12" y="68" width="296" height="1"/>
                                                     <animations/>
                                                     <color key="backgroundColor" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
@@ -519,7 +519,7 @@
                                                     </constraints>
                                                 </view>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Password (6 characters or more)" adjustsFontSizeToFit="NO" minimumFontSize="18" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="vYC-yK-reY" userLabel="user_password">
-                                                    <rect key="frame" x="8" y="72" width="304" height="44"/>
+                                                    <rect key="frame" x="12" y="72" width="296" height="44"/>
                                                     <animations/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="44" id="bQe-vM-vK4"/>
@@ -528,7 +528,7 @@
                                                     <textInputTraits key="textInputTraits" returnKeyType="go" secureTextEntry="YES"/>
                                                 </textField>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HZl-Vc-4ct" userLabel="rule">
-                                                    <rect key="frame" x="8" y="120" width="304" height="1"/>
+                                                    <rect key="frame" x="12" y="120" width="296" height="1"/>
                                                     <animations/>
                                                     <color key="backgroundColor" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
@@ -536,7 +536,7 @@
                                                     </constraints>
                                                 </view>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4dm-py-zhQ" userLabel="button_sign_in">
-                                                    <rect key="frame" x="8" y="132" width="304" height="48"/>
+                                                    <rect key="frame" x="12" y="132" width="296" height="48"/>
                                                     <animations/>
                                                     <color key="backgroundColor" red="0.0" green="0.75294117650000003" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <constraints>
@@ -559,7 +559,7 @@
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="E2e-fK-4Rp" userLabel="button_join">
-                                                    <rect key="frame" x="164" y="188" width="148" height="48"/>
+                                                    <rect key="frame" x="164" y="188" width="144" height="48"/>
                                                     <animations/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="48" id="mkr-8s-ryN"/>
@@ -584,7 +584,7 @@
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="TJy-wa-OfZ" userLabel="button_forgot_password">
-                                                    <rect key="frame" x="8" y="188" width="148" height="48"/>
+                                                    <rect key="frame" x="12" y="188" width="144" height="48"/>
                                                     <animations/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="48" id="bWP-Vd-9KU"/>
@@ -607,27 +607,27 @@
                                             </subviews>
                                             <animations/>
                                             <constraints>
-                                                <constraint firstItem="TJy-wa-OfZ" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leadingMargin" id="2iS-Oa-7Bp"/>
+                                                <constraint firstItem="TJy-wa-OfZ" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leading" constant="12" id="2iS-Oa-7Bp"/>
                                                 <constraint firstItem="TJy-wa-OfZ" firstAttribute="top" secondItem="4dm-py-zhQ" secondAttribute="bottom" constant="8" id="2ut-qH-pjc"/>
                                                 <constraint firstItem="4dm-py-zhQ" firstAttribute="top" secondItem="vYC-yK-reY" secondAttribute="bottom" constant="16" id="4PH-fB-o7I"/>
-                                                <constraint firstItem="4dm-py-zhQ" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leadingMargin" id="5BF-HH-n1b"/>
+                                                <constraint firstItem="4dm-py-zhQ" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leading" constant="12" id="5BF-HH-n1b"/>
                                                 <constraint firstItem="gwA-or-tej" firstAttribute="top" secondItem="dW2-jv-QWR" secondAttribute="topMargin" constant="12" id="5Uq-GR-SU8"/>
-                                                <constraint firstItem="fdy-Ar-MpE" firstAttribute="trailing" secondItem="dW2-jv-QWR" secondAttribute="trailingMargin" id="EJb-xA-Mh5"/>
-                                                <constraint firstItem="vYC-yK-reY" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leadingMargin" id="Ha3-8P-zAH"/>
+                                                <constraint firstItem="fdy-Ar-MpE" firstAttribute="trailing" secondItem="dW2-jv-QWR" secondAttribute="trailing" constant="-12" id="EJb-xA-Mh5"/>
+                                                <constraint firstItem="vYC-yK-reY" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leading" constant="12" id="Ha3-8P-zAH"/>
                                                 <constraint firstItem="E2e-fK-4Rp" firstAttribute="width" secondItem="TJy-wa-OfZ" secondAttribute="width" id="Ni6-Qa-sW1"/>
                                                 <constraint firstItem="fdy-Ar-MpE" firstAttribute="top" secondItem="gwA-or-tej" secondAttribute="bottom" constant="4" id="OCx-FX-X5C"/>
-                                                <constraint firstItem="gwA-or-tej" firstAttribute="trailing" secondItem="dW2-jv-QWR" secondAttribute="trailingMargin" id="R7S-Tp-rCi"/>
-                                                <constraint firstItem="fdy-Ar-MpE" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leadingMargin" id="YOj-cK-5Ir"/>
-                                                <constraint firstItem="HZl-Vc-4ct" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leadingMargin" id="Yfq-n5-Wse"/>
+                                                <constraint firstItem="gwA-or-tej" firstAttribute="trailing" secondItem="dW2-jv-QWR" secondAttribute="trailing" constant="-12" id="R7S-Tp-rCi"/>
+                                                <constraint firstItem="fdy-Ar-MpE" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leading" constant="12" id="YOj-cK-5Ir"/>
+                                                <constraint firstItem="HZl-Vc-4ct" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leading" constant="12" id="Yfq-n5-Wse"/>
                                                 <constraint firstItem="vYC-yK-reY" firstAttribute="top" secondItem="gwA-or-tej" secondAttribute="bottom" constant="8" id="atO-SF-LFE"/>
-                                                <constraint firstItem="HZl-Vc-4ct" firstAttribute="trailing" secondItem="dW2-jv-QWR" secondAttribute="trailingMargin" id="fLa-Ef-f4s"/>
-                                                <constraint firstItem="4dm-py-zhQ" firstAttribute="trailing" secondItem="dW2-jv-QWR" secondAttribute="trailingMargin" id="iUp-XE-Hax"/>
+                                                <constraint firstItem="HZl-Vc-4ct" firstAttribute="trailing" secondItem="dW2-jv-QWR" secondAttribute="trailing" constant="-12" id="fLa-Ef-f4s"/>
+                                                <constraint firstItem="4dm-py-zhQ" firstAttribute="trailing" secondItem="dW2-jv-QWR" secondAttribute="trailing" constant="-12" id="iUp-XE-Hax"/>
                                                 <constraint firstItem="HZl-Vc-4ct" firstAttribute="top" secondItem="vYC-yK-reY" secondAttribute="bottom" constant="4" id="peT-3O-McY"/>
-                                                <constraint firstItem="gwA-or-tej" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leadingMargin" id="r2f-D2-aTX"/>
+                                                <constraint firstItem="gwA-or-tej" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leading" constant="12" id="r2f-D2-aTX"/>
                                                 <constraint firstItem="E2e-fK-4Rp" firstAttribute="leading" secondItem="TJy-wa-OfZ" secondAttribute="trailing" constant="8" id="tKg-9c-hMf"/>
-                                                <constraint firstItem="E2e-fK-4Rp" firstAttribute="trailing" secondItem="dW2-jv-QWR" secondAttribute="trailingMargin" id="tLq-qs-2q8"/>
+                                                <constraint firstItem="E2e-fK-4Rp" firstAttribute="trailing" secondItem="dW2-jv-QWR" secondAttribute="trailing" constant="-12" id="tLq-qs-2q8"/>
                                                 <constraint firstItem="E2e-fK-4Rp" firstAttribute="top" secondItem="4dm-py-zhQ" secondAttribute="bottom" constant="8" id="vb0-vv-xI7"/>
-                                                <constraint firstItem="vYC-yK-reY" firstAttribute="trailing" secondItem="dW2-jv-QWR" secondAttribute="trailingMargin" id="yS2-3n-2XK"/>
+                                                <constraint firstItem="vYC-yK-reY" firstAttribute="trailing" secondItem="dW2-jv-QWR" secondAttribute="trailing" constant="-12" id="yS2-3n-2XK"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <animations/>

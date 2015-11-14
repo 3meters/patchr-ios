@@ -11,10 +11,9 @@
 @implementation Message
 
 + (Message *)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                                onObject:(Message *)message
-                            mappingNames:(BOOL)mapNames {
+                                onObject:(Message *)message {
 
-    message = (Message *)[Entity setPropertiesFromDictionary:dictionary onObject:message mappingNames:mapNames];
+    message = (Message *)[Entity setPropertiesFromDictionary:dictionary onObject:message];
 	
 	/* Delete the related objects if they exist */
 	NSManagedObjectContext *context = [message managedObjectContext];
@@ -37,7 +36,7 @@
 						entityId = [@"sh." stringByAppendingString:entityId];
 					}
 					shortcut.id_ = entityId;
-					message.patch = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut mappingNames:mapNames];
+					message.patch = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut];
 				}
 				else if ([linkMap[@"schema"] isEqualToString: @"message"]) {
 					NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"Shortcut" inManagedObjectContext:context];
@@ -48,7 +47,7 @@
 						entityId = [@"sh." stringByAppendingString:entityId];
 					}
 					shortcut.id_ = entityId;
-					message.message = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut mappingNames:mapNames];
+					message.message = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut];
 				}
 			}
 		}

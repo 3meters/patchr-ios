@@ -11,8 +11,7 @@
 @implementation ServiceData
 
 + (ServiceData *)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                                    onObject:(ServiceData *)serviceData
-                                mappingNames:(BOOL)mapNames {
+                                    onObject:(ServiceData *)serviceData {
     
     serviceData.count = dictionary[@"count"];
     serviceData.date = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"date"] doubleValue]/1000];

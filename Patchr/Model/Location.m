@@ -10,8 +10,7 @@
 @implementation Location
 
 + (Location *)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                                 onObject:(Location *)location
-                             mappingNames:(BOOL)mapNames {
+                                 onObject:(Location *)location {
     
     location.lat = dictionary[@"lat"];
     location.lng = dictionary[@"lng"];

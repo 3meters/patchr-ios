@@ -9,10 +9,9 @@
 @implementation Link
 
 + (instancetype)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                                   onObject:(Link *)link
-                               mappingNames:(BOOL)mapNames {
+                                   onObject:(Link *)link {
         
-    link.id_ = (mapNames && dictionary[@"_id"]) ? dictionary[@"_id"] : dictionary[@"id"];
+    link.id_ = dictionary[@"_id"];
     link.type = dictionary[@"type"];
     link.toSchema = dictionary[@"toSchema"];
     link.toId = dictionary[@"_to"];

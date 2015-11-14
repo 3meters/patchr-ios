@@ -103,10 +103,16 @@ extension MainTabBarController: UITabBarControllerDelegate {
                     controller.filter = PatchListFilter.Explore
                 }
             }
+			else if let controller = navigationController.topViewController as? UserDetailViewController {
+				controller.profileMode = true
+				if UserController.instance.authenticated {
+					controller.entityId = UserController.instance.currentUser.id_
+				}
+			}
         }
-                
+		
         /* A little animation sugar */
-        
+		
         if (self.selectedViewController == nil || viewController == self.selectedViewController) {
             return true;
         }

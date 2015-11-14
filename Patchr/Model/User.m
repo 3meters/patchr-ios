@@ -9,10 +9,9 @@
 @implementation User
 
 + (User *)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                             onObject:(User *)user
-                         mappingNames:(BOOL)mapNames {
+                             onObject:(User *)user {
     
-    user = (User *)[Entity setPropertiesFromDictionary:dictionary onObject:user mappingNames:mapNames];
+    user = (User *)[Entity setPropertiesFromDictionary:dictionary onObject:user];
     user.area = dictionary[@"area"];
     user.email = dictionary[@"email"];
     user.role = dictionary[@"role"];

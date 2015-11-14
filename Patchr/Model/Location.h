@@ -4,8 +4,7 @@
 @interface Location : _Location {}
 
 + (Location *)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                                 onObject:(Location *)location
-                             mappingNames:(BOOL)mapNames;
+                                 onObject:(Location *)location;
 
 
 @property (nonatomic, readonly) CLLocationCoordinate2D coordinate;

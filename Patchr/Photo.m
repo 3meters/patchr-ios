@@ -38,8 +38,7 @@
 }
 
 + (Photo *)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                              onObject:(Photo *)photo
-                          mappingNames:(BOOL)mapNames {
+                              onObject:(Photo *)photo {
     
 	photo.id_ = dictionary[@"prefix"];
     photo.prefix = dictionary[@"prefix"];

@@ -132,34 +132,9 @@ class PatchDetailViewController: BaseDetailViewController {
 	}
     
     override func viewWillAppear(animated: Bool) {
-        /*
-         * Entity could have been deleted while we were away so check it.
-         */
-        if self.entity != nil {
-            let item = ServiceBase.fetchOneById(self.entityId!, inManagedObjectContext: DataController.instance.mainContext)
-            if item == nil {
-                self.navigationController?.popViewControllerAnimated(false)
-                return
-            }
-        }
-		
-		if let indexPath = tableView.indexPathForSelectedRow {
-			tableView.deselectRowAtIndexPath(indexPath, animated: animated)
-		}
-        
-        /* Triggers query processing by results controller */
-		if !self.query().executedValue && self._query != nil {
-			self.bindQueryItems(false)
-		}
-		
-		/* Draw what we have, we look for something fresher when the view appears. */
-        if self.entity != nil {
-            draw()
-        }
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "likeDidChange:", name: Events.LikeDidChange, object: nil)
+		super.viewWillAppear(animated)
+		setScreenName("PatchDetail")
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "watchDidChange:", name: Events.WatchDidChange, object: nil)
-        setScreenName("PatchDetail")
     }
 
     override func viewDidAppear(animated: Bool){
@@ -167,10 +142,8 @@ class PatchDetailViewController: BaseDetailViewController {
 		
         /* Super hack to resize the table header to fit the contents */
         let headerView: UIView = self.tableView.tableHeaderView!
-        let height = contextButton.frame.height + bannerGroup.frame.height
         var newFrame: CGRect = self.tableView.tableHeaderView!.frame;
-        
-        newFrame.size.height = height
+        newFrame.size.height = contextButton.frame.height + bannerGroup.frame.height
         headerView.frame = newFrame
         self.tableView.tableHeaderView = headerView
 
@@ -179,7 +152,6 @@ class PatchDetailViewController: BaseDetailViewController {
     }
 
     override func viewDidDisappear(animated: Bool) {
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.LikeDidChange, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.WatchDidChange, object: nil)
     }
     

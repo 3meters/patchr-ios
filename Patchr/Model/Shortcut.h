@@ -3,7 +3,6 @@
 @interface Shortcut : _Shortcut {}
 
 + (Shortcut *)setPropertiesFromDictionary:(NSDictionary *)dictionary
-                              onObject:(Shortcut *)shortcut
-                          mappingNames:(BOOL)mapNames;
+                              onObject:(Shortcut *)shortcut;
 
 @end
