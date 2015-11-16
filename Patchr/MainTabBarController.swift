@@ -38,6 +38,7 @@ class MainTabBarController: UITabBarController {
         self.messageBar.textAlignment = NSTextAlignment.Center
         self.messageBar.textColor = UIColor.whiteColor()
         self.messageBar.layer.backgroundColor = Colors.brandColorDark.CGColor
+		self.messageBar.alpha = 0.85
         self.view.addSubview(self.messageBar)
     }
 	

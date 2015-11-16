@@ -42,15 +42,9 @@
     
 	photo.id_ = dictionary[@"prefix"];
     photo.prefix = dictionary[@"prefix"];
-    photo.suffix = dictionary[@"suffix"];
     photo.width = dictionary[@"width"];
     photo.height = dictionary[@"height"];
     photo.source = dictionary[@"source"];
-    
-    photo.createdDate = nil;
-    if (dictionary[@"createdDate"]) {
-        photo.createdDate = [NSDate dateWithTimeIntervalSince1970:[dictionary[@"createdDate"] doubleValue]/1000];
-    }
     
     return photo;
 }

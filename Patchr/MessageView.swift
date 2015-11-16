@@ -76,6 +76,7 @@ class MessageView: BaseView {
 		self.userPhoto.contentMode = UIViewContentMode.ScaleAspectFill
 		self.userPhoto.clipsToBounds = true
 		self.userPhoto.layer.cornerRadius = 24
+		self.userPhoto.layer.backgroundColor = Colors.windowColor.CGColor
 		self.addSubview(self.userPhoto)
 		
 		/* Header */
@@ -96,6 +97,66 @@ class MessageView: BaseView {
 		
 		self.addSubview(self.likeButton)
 		self.addSubview(self.likes)
+	}
+	
+	func bindToEntity(entity: AnyObject) {
+		
+		let entity = entity as! Entity
+		
+		self.entity = entity
+		
+		let linkColor = Colors.brandColorDark
+		let linkActiveColor = Colors.brandColorLight
+		
+		self.description_?.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
+		self.description_?.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
+		self.description_?.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
+		
+		if let description = entity.description_ {
+			self.description_?.text = description
+		}
+		
+		let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
+		
+		if let photo = entity.photo {
+			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.standard)
+			self.photo?.sd_setImageWithURL(photoUrl, forState: UIControlState.Normal, placeholderImage: nil, options: options)
+		}
+		
+		self.userName.text = entity.creator?.name ?? "Deleted"
+		
+		if let photo = entity.creator?.getPhotoManaged() {
+			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile)
+			self.userPhoto.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
+		}
+		else {
+			let photo = Entity.getDefaultPhoto("user", id: nil)
+			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile)
+			self.userPhoto.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
+		}
+		
+		if let message = entity as? Message {
+			
+			/* Patch */
+			if message.patch != nil {
+				self.patchName.text = message.patch.name
+			}
+			/* Likes button */
+			self.likeButton.bindEntity(message)
+			
+			if message.countLikes != nil {
+				if message.countLikes?.integerValue != 0 {
+					let likesTitle = message.countLikes?.integerValue == 1
+						? "\(message.countLikes) like"
+						: "\(message.countLikes ?? 0) likes"
+					self.likes.text = likesTitle
+				}
+			}
+		}
+		
+		self.createdDate.text = Utils.messageDateFormatter.stringFromDate(entity.createdDate)
+		
+		self.setNeedsLayout()
 	}
 	
 	override func layoutSubviews() {

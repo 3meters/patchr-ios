@@ -10,9 +10,9 @@ import UIKit
 
 class BaseTableViewController: UITableViewController, NSFetchedResultsControllerDelegate {
 	
-    var _query:				Query!
+    var query:    			Query!
 	var processingQuery		= false
-	var listType:			ItemClass = .Patches
+	var listType: ItemClass = .Patches
 	
 	var activity			= UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
 	var footerView			= UIView()
@@ -99,19 +99,17 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.automaticallyAdjustsScrollViewInsets = false
 		
         self.clearsSelectionOnViewWillAppear = false;
+		
+		/* Hookup query */
+		self.query = loadQuery()
 	}
 	
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated) // Base implementation does nothing
-		/*
-		 * First time this causes FRC to be instantiated, subsequent times
-		 * we need to reset delegate to start monitoring the data model.
-		 */
-		self.fetchedResultsController.delegate = self
 		
-		if self.query().executedValue {
+		if self.query.executedValue {
 			do {
-				if self.query().moreValue {
+				if self.query.moreValue {
 					if self.tableView.tableFooterView == nil {
 						self.tableView.tableFooterView = self.footerView
 					}
@@ -132,6 +130,9 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 				self.tableView.reloadData()
 			}
 			catch { fatalError("Fetch error: \(error)") }
+		}
+		else {
+			try! self.fetchedResultsController.performFetch()
 		}
 		
 		if let indexPath = tableView.indexPathForSelectedRow {
@@ -163,7 +164,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-		if !self.query().executedValue {
+		if !self.query.executedValue {
 			self.bindQueryItems(false)
 		}
     }
@@ -184,7 +185,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		 */
 		super.viewDidDisappear(animated)
 		self.contentOffset = self.tableView.contentOffset
-		self.fetchedResultsController.delegate = nil
 		self.activity.stopAnimating()
         self.refreshControl?.endRefreshing()
     }
@@ -234,14 +234,9 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
             return
         }
         
-		guard self.query().enabledValue else {
-			self.emptyLabel.fadeIn()
-			return
-		}
-		
 		self.processingQuery = true
 		
-        if !self.refreshControl!.refreshing && !self.query().executedValue {
+        if !self.refreshControl!.refreshing && !self.query.executedValue {
 			/* Wacky activity control for body */
 			if self.showProgress {
 				self.activity.startAnimating()
@@ -257,14 +252,14 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
          * used to add locally cached nearby notifications.
          */
         if !paging {
-            populateSidecar(query())
+            populateSidecar(self.query)
         }
 		
-		let queryId = self.query().objectID
+		let queryObjectId = self.query.objectID
 		
 		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
 			
-			DataController.instance.refreshItemsFor(queryId, force: force, paging: paging, completion: {
+			DataController.instance.refreshItemsFor(queryObjectId, force: force, paging: paging, completion: {
 				[weak self] results, query, error in
 				
 				NSOperationQueue.mainQueue().addOperationWithBlock {
@@ -272,7 +267,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 					// Delay seems to be necessary to avoid visual glitch with UIRefreshControl
 					Utils.delay(0.5) {
 						
-						let query = DataController.instance.mainContext.objectWithID(queryId) as! Query
+						let query = DataController.instance.mainContext.objectWithID(queryObjectId) as! Query
 						
 						self?.processingQuery = false
 						self?.activity.stopAnimating()
@@ -296,10 +291,10 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 						}
 						
 						if error == nil {
-							self?.query().executedValue = true
+							self?.query.executedValue = true
 							if self?.fetchedResultsController.delegate != nil {	// Delegate is unset when view controller disappears
 								if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
-									self?.query().offsetValue = Int32(fetchedObjects.count)
+									self?.query.offsetValue = Int32(fetchedObjects.count)
 									if self?.emptyLabel != nil && fetchedObjects.count == 0 {
 										self?.emptyLabel.fadeIn()
 									}
@@ -328,7 +323,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	
     func populateSidecar(query: Query) { }
 
-	func query() -> Query {
+	func loadQuery() -> Query {
 		preconditionFailure("This method must be overridden in subclass")
 	}
 	
@@ -342,14 +337,12 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		*/
         let fetchRequest = NSFetchRequest(entityName: QueryItem.entityName())
 		
-        let query: Query = self.query()
-		
-        if query.name == DataStoreQueryName.NearbyPatches.rawValue {
+        if self.query.name == DataStoreQueryName.NearbyPatches.rawValue {
             fetchRequest.sortDescriptors = [
                 NSSortDescriptor(key: "distance", ascending: true)
             ]
         }
-        else if query.name == DataStoreQueryName.NotificationsForCurrentUser.rawValue {
+        else if self.query.name == DataStoreQueryName.NotificationsForCurrentUser.rawValue {
             fetchRequest.sortDescriptors = [
                 NSSortDescriptor(key: "sortDate", ascending: false)
             ]
@@ -361,7 +354,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
             ]
         }
         
-        fetchRequest.predicate = NSPredicate(format: "query == %@", query)
+        fetchRequest.predicate = NSPredicate(format: "query == %@", self.query)
 		fetchRequest.fetchBatchSize = 20
         
         let controller = NSFetchedResultsController(
@@ -369,13 +362,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
             managedObjectContext: DataController.instance.mainContext,
             sectionNameKeyPath: nil,
             cacheName: nil)
-        
-        do {
-            try controller.performFetch() // Ensure that the controller can be accessed without blowing up
-        }
-        catch {
-            fatalError("Fetch error: \(error)")
-        }
         
         controller.delegate = self
         
@@ -422,13 +408,15 @@ extension BaseTableViewController {
 	func bindCell(cell: AirTableViewCell, entity: AnyObject, location: CLLocation?) -> UIView? {
 		
 		if self.listType == .Notifications {
-			Notification.bindView(cell.view!, entity: entity)
-			return cell.view
+			let notificationView = cell.view! as! NotificationView
+			notificationView.bindToEntity(entity)
+			return notificationView
 		}
 		
 		if self.listType == .Messages {
-			Message.bindView(cell.view!, entity: entity)
-			return cell.view
+			let messageView = cell.view! as! MessageView
+			messageView.bindToEntity(entity)
+			return messageView
 		}
 		
 		if self.listType == .Patches {
@@ -438,9 +426,11 @@ extension BaseTableViewController {
 		}
 		
 		if self.listType == .Users {
-			User.bindView(cell.view!, entity: entity)
-			return cell.view
+			let userView = cell.view! as! UserView
+			userView.bindToEntity(entity)
+			return userView
 		}
+		
 		return nil
 	}
 	
@@ -452,7 +442,7 @@ extension BaseTableViewController {
 	}
 	
 	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		let numberOfObjects = self.fetchedResultsController.sections![section].numberOfObjects
+		let numberOfObjects = self.fetchedResultsController.sections?[section].numberOfObjects ?? 0
 		return numberOfObjects
 	}
 	

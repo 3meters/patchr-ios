@@ -30,7 +30,7 @@ import UIKit
  */
 public class Proxibase {
     
-	public typealias ProxibaseCompletionBlock = (response:AnyObject?, error:NSError?) -> Void
+	public typealias CompletionBlock = (response:AnyObject?, error:NSError?) -> Void
 
 	public let StagingURI    = "https://api.aircandi.com:8443/v1/"
 	public let ProductionURI = "https://api.aircandi.com/v1/"
@@ -79,7 +79,7 @@ public class Proxibase {
 	 * PUBLIC: Fetch one
 	 *--------------------------------------------------------------------------------------------*/
 
-	public func fetchPatchById(entityId: String, criteria: [String:AnyObject], completion: ProxibaseCompletionBlock) {
+	public func fetchPatchById(entityId: String, criteria: [String:AnyObject], completion: CompletionBlock) {
 
 		var parameters: [String:AnyObject] = [:]
 		Patch.extras(&parameters)
@@ -89,7 +89,7 @@ public class Proxibase {
 		performPOSTRequestFor("find/patches/\(entityId)", parameters: parameters, completion: completion)
 	}
 
-	public func fetchMessageById(messageId: String, criteria: [String:AnyObject], completion: ProxibaseCompletionBlock) {
+	public func fetchMessageById(messageId: String, criteria: [String:AnyObject], completion: CompletionBlock) {
 
 		var parameters: [String:AnyObject] = [:]
 		Message.extras(&parameters)
@@ -99,7 +99,7 @@ public class Proxibase {
 		performPOSTRequestFor("find/messages/\(messageId)", parameters: parameters, completion: completion)
 	}
 
-	public func fetchUserById(userId: String, criteria: [String:AnyObject], completion: ProxibaseCompletionBlock) {
+	public func fetchUserById(userId: String, criteria: [String:AnyObject], completion: CompletionBlock) {
 
 		var parameters: [String:AnyObject] = [:]
 		User.extras(&parameters)
@@ -109,7 +109,7 @@ public class Proxibase {
 		performPOSTRequestFor("find/users/\(userId)", parameters: parameters, completion: completion)
 	}
 
-	public func fetchPlaceById(id: String, criteria: [String:AnyObject], completion: ProxibaseCompletionBlock) {
+	public func fetchPlaceById(id: String, criteria: [String:AnyObject], completion: CompletionBlock) {
 
 		var parameters: [String:AnyObject] = [:]
 		Place.extras(&parameters)
@@ -123,7 +123,7 @@ public class Proxibase {
 	* PUBLIC: Fetch collection
 	*--------------------------------------------------------------------------------------------*/
 
-	public func fetchNearbyPatches(location: CLLocationCoordinate2D?, radius: UInt = 10000, skip: Int = 0, completion: ProxibaseCompletionBlock) {
+	public func fetchNearbyPatches(location: CLLocationCoordinate2D?, radius: UInt = 10000, skip: Int = 0, completion: CompletionBlock) {
 
 		if let loc = location as CLLocationCoordinate2D! {
 			var parameters: [String:AnyObject] = [
@@ -142,7 +142,7 @@ public class Proxibase {
 		}
 	}
 
-	public func fetchNotifications(skip: Int = 0, completion: ProxibaseCompletionBlock) {
+	public func fetchNotifications(skip: Int = 0, completion: CompletionBlock) {
 
 		let parameters = [
 				"limit": pageSizeNotifications,
@@ -272,7 +272,7 @@ public class Proxibase {
 	 * PUBLIC: Modify
 	 *--------------------------------------------------------------------------------------------*/
 
-    public func postEntity(path: String, parameters: NSDictionary, addLocation: Bool = true, completion: ProxibaseCompletionBlock) -> NSURLSessionTask {
+    public func postEntity(path: String, parameters: NSDictionary, addLocation: Bool = true, completion: CompletionBlock) -> NSURLSessionTask {
         
         var parametersCopy = parameters.mutableCopy() as! NSMutableDictionary
         convertLocationProperties(parametersCopy)
@@ -283,11 +283,11 @@ public class Proxibase {
         return request
     }
     
-    public func deleteObject(path: String, completion: ProxibaseCompletionBlock) {
+    public func deleteObject(path: String, completion: CompletionBlock) {
 		performDELETERequestFor(path, parameters: NSDictionary(), completion: completion)
 	}
 
-	public func insertLink(fromID: String, toID: String, linkType: LinkType, completion: ProxibaseCompletionBlock) {
+	public func insertLink(fromID: String, toID: String, linkType: LinkType, completion: CompletionBlock) {
 		let linkParameters: NSDictionary = [
 				"_from": fromID,
 				"_to": toID,
@@ -302,17 +302,17 @@ public class Proxibase {
 		}
 	}
 
-	public func enableLinkById(linkId: String, enabled: Bool, completion: ProxibaseCompletionBlock) {
+	public func enableLinkById(linkId: String, enabled: Bool, completion: CompletionBlock) {
 		let parameters = ["data": ["enabled": enabled]]
 		performPOSTRequestFor("data/links/\(linkId)", parameters: parameters, completion: completion)
 	}
 
-    public func muteLinkById(linkId: String, muted: Bool, completion: ProxibaseCompletionBlock) {
+    public func muteLinkById(linkId: String, muted: Bool, completion: CompletionBlock) {
         let parameters = ["data": ["mute": muted]]
         performPOSTRequestFor("data/links/\(linkId)", parameters: parameters, completion: completion)
     }
     
-	public func deleteLinkById(linkID: String, completion: ProxibaseCompletionBlock? = nil) {
+	public func deleteLinkById(linkID: String, completion: CompletionBlock? = nil) {
 		let linkPath = "data/links/\(linkID)"
 		performDELETERequestFor(linkPath, parameters: NSDictionary()) {
 			response, error in
@@ -322,7 +322,7 @@ public class Proxibase {
 		}
 	}
 
-    public func deleteLink(fromId: String, toId: String, linkType: LinkType, completion: ProxibaseCompletionBlock? = nil) {
+    public func deleteLink(fromId: String, toId: String, linkType: LinkType, completion: CompletionBlock? = nil) {
 
         /* We are not encoding the query string because we know that all of the characters are valid */
         let queryString = "query[_to]=\(toId)&query[_from]=\(fromId)&query[type]=\(linkType.rawValue)"
@@ -340,7 +340,7 @@ public class Proxibase {
 	* PUBLIC: Bing
 	*--------------------------------------------------------------------------------------------*/
 
-	public func loadSearchImages(query: String, limit: Int64 = 50, offset: Int64 = 0, maxImageSize: Int = 500000, maxDimen: Int = Int(IMAGE_DIMENSION_MAX), completion: (response:AnyObject?, error:NSError?) -> Void) {
+	public func loadSearchImages(query: String, limit: Int64 = 50, offset: Int64 = 0, maxImageSize: Int = 500000, maxDimen: Int = Int(IMAGE_DIMENSION_MAX), completion: CompletionBlock) {
 
 		if let bingSessionManager: AFHTTPSessionManager = AFHTTPSessionManager(baseURL: NSURL(string: URI_PROXIBASE_SEARCH_IMAGES)) {
 			
@@ -375,7 +375,7 @@ public class Proxibase {
 	 * User and install
 	 *--------------------------------------------------------------------------------------------*/
 
-	public func signIn(email: NSString, password: NSString, completion: ProxibaseCompletionBlock) {
+	public func signIn(email: NSString, password: NSString, completion: CompletionBlock) {
 		/*
 		* Send an auth/signin message to the server with the user's email address and password.
 		* The completion block will be called asynchronously in either case.
@@ -419,7 +419,7 @@ public class Proxibase {
 		}
 	}
 	
-	public func updatePassword(userId: NSString, password: NSString, passwordNew: NSString, completion: ProxibaseCompletionBlock) {
+	public func updatePassword(userId: NSString, password: NSString, passwordNew: NSString, completion: CompletionBlock) {
 		let parameters = ["userId": userId, "oldPassword": password, "newPassword": passwordNew, "installId": installationIdentifier]
 		sessionManager.POST("user/changepw", parameters: addSessionParameters(parameters),
 			success: {
@@ -432,7 +432,7 @@ public class Proxibase {
 		})
 	}
 	
-	public func requestPasswordReset(email: NSString, completion: ProxibaseCompletionBlock) {
+	public func requestPasswordReset(email: NSString, completion: CompletionBlock) {
 		let parameters = ["email": email, "installId": installationIdentifier]
 		sessionManager.POST("user/reqresetpw", parameters: parameters,
 			success: {
@@ -445,7 +445,7 @@ public class Proxibase {
 		})
 	}
 	
-	public func resetPassword(password: NSString, userId: NSString, sessionKey: NSString, completion: ProxibaseCompletionBlock) {
+	public func resetPassword(password: NSString, userId: NSString, sessionKey: NSString, completion: CompletionBlock) {
 		let parameters
 		= ["password": password, "user": userId, "session": sessionKey, "installId": installationIdentifier]
 		sessionManager.POST("user/resetpw", parameters: parameters,
@@ -518,7 +518,7 @@ public class Proxibase {
 	 * Rest
 	 *--------------------------------------------------------------------------------------------*/
     
-	private func performPOSTRequestFor(path: NSString, var parameters: NSDictionary, addLocation: Bool = false, completion: ProxibaseCompletionBlock) -> NSURLSessionTask {
+	private func performPOSTRequestFor(path: NSString, var parameters: NSDictionary, addLocation: Bool = false, completion: CompletionBlock) -> NSURLSessionTask {
         
         parameters = addSessionParameters(parameters)
         
@@ -549,7 +549,7 @@ public class Proxibase {
         return request
 	}
 
-	private func performGETRequestFor(path: NSString, parameters: NSDictionary, completion: ProxibaseCompletionBlock) {
+	private func performGETRequestFor(path: NSString, parameters: NSDictionary, completion: CompletionBlock) {
 		sessionManager.GET(path as String, parameters: addSessionParameters(parameters),
 						   success: {
 							   dataTask, response in
@@ -561,7 +561,7 @@ public class Proxibase {
 						   })
 	}
 
-	private func performDELETERequestFor(path: NSString, parameters: NSDictionary, completion: ProxibaseCompletionBlock) {
+	private func performDELETERequestFor(path: NSString, parameters: NSDictionary, completion: CompletionBlock) {
 		sessionManager.DELETE(path as String, parameters: addSessionParameters(parameters),
 							  success: {
 								  dataTask, response in
@@ -580,7 +580,6 @@ public class Proxibase {
 	private func standardPatchLinks() -> [LinkSpec] {
 
 		var links = [
-				//Link(to: .Places, type: .Proximity, fields: "_id,name,photo,schema", linkFields: "_id,type,schema" ), // Place the patch is linked to
 				LinkSpec(from: .Messages, type: .Content, count: true), // Count of messages linked to the patch
 				LinkSpec(from: .Users, type: .Like, count: true), // Count of users that like the patch
 				LinkSpec(from: .Users, type: .Watch, count: true) // Count of users that are watching the patch

@@ -58,10 +58,6 @@
                 if ([linkMap[@"fromSchema"] isEqualToString:@"message"] && [linkMap[@"type"] isEqualToString:@"content"]) {
                     patch.userHasMessagedValue = YES;
                 }
-                else if ([linkMap[@"fromSchema"] isEqualToString:@"user"] && [linkMap[@"type"] isEqualToString:@"like"]) {
-                    patch.userLikesId = linkMap[@"_id"];
-                    patch.userLikesValue = YES;
-                }
                 else if ([linkMap[@"fromSchema"] isEqualToString:@"user"] && [linkMap[@"type"] isEqualToString:@"watch"]) {
                     patch.userWatchId = linkMap[@"_id"];
                     patch.userWatchStatusValue = PAWatchStatusPending;

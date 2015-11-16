@@ -61,11 +61,14 @@
     
     entity.reason = dictionary[@"reason"];
     entity.score = dictionary[@"score"];
-    entity.count = dictionary[@"count"];
-    entity.rank = dictionary[@"rank"];
     entity.visibility = dictionary[@"visibility"];
     
     if (dictionary[@"link"]) {
+		/* 
+		 * This is the only place that uses the Link object. We use it to support watch link state and management.
+		 * Will get pulled in on a user for a list of users watching a patch and on patches when showing patches a
+		 * user is watching (let's us show that a watch request is pending/approved).
+		 */
 		NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"Link" inManagedObjectContext:context];
 		Link *link = [[Link alloc] initWithEntity:entityDescription insertIntoManagedObjectContext:context];
 		entity.link = [Link setPropertiesFromDictionary:dictionary[@"link"] onObject:link];

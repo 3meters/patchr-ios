@@ -4,15 +4,12 @@
 #import "_Entity.h"
 
 const struct EntityAttributes EntityAttributes = {
-	.count = @"count",
 	.countLikes = @"countLikes",
 	.countPending = @"countPending",
 	.countWatching = @"countWatching",
 	.description_ = @"description_",
-	.image = @"image",
 	.linkCounts = @"linkCounts",
 	.patchId = @"patchId",
-	.rank = @"rank",
 	.reason = @"reason",
 	.score = @"score",
 	.subtitle = @"subtitle",
@@ -61,11 +58,6 @@ const struct EntityUserInfo EntityUserInfo = {
 + (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key {
 	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
 
-	if ([key isEqualToString:@"countValue"]) {
-		NSSet *affectingKey = [NSSet setWithObject:@"count"];
-		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
-		return keyPaths;
-	}
 	if ([key isEqualToString:@"countLikesValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"countLikes"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
@@ -78,11 +70,6 @@ const struct EntityUserInfo EntityUserInfo = {
 	}
 	if ([key isEqualToString:@"countWatchingValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"countWatching"];
-		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
-		return keyPaths;
-	}
-	if ([key isEqualToString:@"rankValue"]) {
-		NSSet *affectingKey = [NSSet setWithObject:@"rank"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
@@ -113,26 +100,6 @@ const struct EntityUserInfo EntityUserInfo = {
 	}
 
 	return keyPaths;
-}
-
-@dynamic count;
-
-- (int64_t)countValue {
-	NSNumber *result = [self count];
-	return [result longLongValue];
-}
-
-- (void)setCountValue:(int64_t)value_ {
-	[self setCount:@(value_)];
-}
-
-- (int64_t)primitiveCountValue {
-	NSNumber *result = [self primitiveCount];
-	return [result longLongValue];
-}
-
-- (void)setPrimitiveCountValue:(int64_t)value_ {
-	[self setPrimitiveCount:@(value_)];
 }
 
 @dynamic countLikes;
@@ -197,31 +164,9 @@ const struct EntityUserInfo EntityUserInfo = {
 
 @dynamic description_;
 
-@dynamic image;
-
 @dynamic linkCounts;
 
 @dynamic patchId;
-
-@dynamic rank;
-
-- (int64_t)rankValue {
-	NSNumber *result = [self rank];
-	return [result longLongValue];
-}
-
-- (void)setRankValue:(int64_t)value_ {
-	[self setRank:@(value_)];
-}
-
-- (int64_t)primitiveRankValue {
-	NSNumber *result = [self primitiveRank];
-	return [result longLongValue];
-}
-
-- (void)setPrimitiveRankValue:(int64_t)value_ {
-	[self setPrimitiveRank:@(value_)];
-}
 
 @dynamic reason;
 

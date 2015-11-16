@@ -4,8 +4,6 @@
 #import "_Query.h"
 
 const struct QueryAttributes QueryAttributes = {
-	.criteria = @"criteria",
-	.enabled = @"enabled",
 	.entityId = @"entityId",
 	.executed = @"executed",
 	.id_ = @"id_",
@@ -48,16 +46,6 @@ const struct QueryRelationships QueryRelationships = {
 + (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key {
 	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
 
-	if ([key isEqualToString:@"criteriaValue"]) {
-		NSSet *affectingKey = [NSSet setWithObject:@"criteria"];
-		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
-		return keyPaths;
-	}
-	if ([key isEqualToString:@"enabledValue"]) {
-		NSSet *affectingKey = [NSSet setWithObject:@"enabled"];
-		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
-		return keyPaths;
-	}
 	if ([key isEqualToString:@"executedValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"executed"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
@@ -80,46 +68,6 @@ const struct QueryRelationships QueryRelationships = {
 	}
 
 	return keyPaths;
-}
-
-@dynamic criteria;
-
-- (BOOL)criteriaValue {
-	NSNumber *result = [self criteria];
-	return [result boolValue];
-}
-
-- (void)setCriteriaValue:(BOOL)value_ {
-	[self setCriteria:@(value_)];
-}
-
-- (BOOL)primitiveCriteriaValue {
-	NSNumber *result = [self primitiveCriteria];
-	return [result boolValue];
-}
-
-- (void)setPrimitiveCriteriaValue:(BOOL)value_ {
-	[self setPrimitiveCriteria:@(value_)];
-}
-
-@dynamic enabled;
-
-- (BOOL)enabledValue {
-	NSNumber *result = [self enabled];
-	return [result boolValue];
-}
-
-- (void)setEnabledValue:(BOOL)value_ {
-	[self setEnabled:@(value_)];
-}
-
-- (BOOL)primitiveEnabledValue {
-	NSNumber *result = [self primitiveEnabled];
-	return [result boolValue];
-}
-
-- (void)setPrimitiveEnabledValue:(BOOL)value_ {
-	[self setPrimitiveEnabled:@(value_)];
 }
 
 @dynamic entityId;

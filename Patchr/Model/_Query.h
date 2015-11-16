@@ -4,8 +4,6 @@
 @import CoreData;
 
 extern const struct QueryAttributes {
-	__unsafe_unretained NSString *criteria;
-	__unsafe_unretained NSString *enabled;
 	__unsafe_unretained NSString *entityId;
 	__unsafe_unretained NSString *executed;
 	__unsafe_unretained NSString *id_;
@@ -35,22 +33,6 @@ extern const struct QueryRelationships {
 + (NSString*)entityName;
 + (NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_;
 @property (nonatomic, readonly, strong) QueryID* objectID;
-
-@property (nonatomic, strong) NSNumber* criteria;
-
-@property (atomic) BOOL criteriaValue;
-- (BOOL)criteriaValue;
-- (void)setCriteriaValue:(BOOL)value_;
-
-//- (BOOL)validateCriteria:(id*)value_ error:(NSError**)error_;
-
-@property (nonatomic, strong) NSNumber* enabled;
-
-@property (atomic) BOOL enabledValue;
-- (BOOL)enabledValue;
-- (void)setEnabledValue:(BOOL)value_;
-
-//- (BOOL)validateEnabled:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSString* entityId;
 
@@ -123,18 +105,6 @@ extern const struct QueryRelationships {
 @end
 
 @interface _Query (CoreDataGeneratedPrimitiveAccessors)
-
-- (NSNumber*)primitiveCriteria;
-- (void)setPrimitiveCriteria:(NSNumber*)value;
-
-- (BOOL)primitiveCriteriaValue;
-- (void)setPrimitiveCriteriaValue:(BOOL)value_;
-
-- (NSNumber*)primitiveEnabled;
-- (void)setPrimitiveEnabled:(NSNumber*)value;
-
-- (BOOL)primitiveEnabledValue;
-- (void)setPrimitiveEnabledValue:(BOOL)value_;
 
 - (NSString*)primitiveEntityId;
 - (void)setPrimitiveEntityId:(NSString*)value;

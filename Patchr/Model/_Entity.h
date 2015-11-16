@@ -7,15 +7,12 @@
 #import "PAEnums.h"
 
 extern const struct EntityAttributes {
-	__unsafe_unretained NSString *count;
 	__unsafe_unretained NSString *countLikes;
 	__unsafe_unretained NSString *countPending;
 	__unsafe_unretained NSString *countWatching;
 	__unsafe_unretained NSString *description_;
-	__unsafe_unretained NSString *image;
 	__unsafe_unretained NSString *linkCounts;
 	__unsafe_unretained NSString *patchId;
-	__unsafe_unretained NSString *rank;
 	__unsafe_unretained NSString *reason;
 	__unsafe_unretained NSString *score;
 	__unsafe_unretained NSString *subtitle;
@@ -53,14 +50,6 @@ extern const struct EntityUserInfo {
 + (NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_;
 @property (nonatomic, readonly, strong) EntityID* objectID;
 
-@property (nonatomic, strong) NSNumber* count;
-
-@property (atomic) int64_t countValue;
-- (int64_t)countValue;
-- (void)setCountValue:(int64_t)value_;
-
-//- (BOOL)validateCount:(id*)value_ error:(NSError**)error_;
-
 @property (nonatomic, strong) NSNumber* countLikes;
 
 @property (atomic) int64_t countLikesValue;
@@ -89,10 +78,6 @@ extern const struct EntityUserInfo {
 
 //- (BOOL)validateDescription_:(id*)value_ error:(NSError**)error_;
 
-@property (nonatomic, strong) NSData* image;
-
-//- (BOOL)validateImage:(id*)value_ error:(NSError**)error_;
-
 @property (nonatomic, strong) NSDictionary* linkCounts;
 
 //- (BOOL)validateLinkCounts:(id*)value_ error:(NSError**)error_;
@@ -100,14 +85,6 @@ extern const struct EntityUserInfo {
 @property (nonatomic, strong) NSString* patchId;
 
 //- (BOOL)validatePatchId:(id*)value_ error:(NSError**)error_;
-
-@property (nonatomic, strong) NSNumber* rank;
-
-@property (atomic) int64_t rankValue;
-- (int64_t)rankValue;
-- (void)setRankValue:(int64_t)value_;
-
-//- (BOOL)validateRank:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSString* reason;
 
@@ -185,12 +162,6 @@ extern const struct EntityUserInfo {
 
 @interface _Entity (CoreDataGeneratedPrimitiveAccessors)
 
-- (NSNumber*)primitiveCount;
-- (void)setPrimitiveCount:(NSNumber*)value;
-
-- (int64_t)primitiveCountValue;
-- (void)setPrimitiveCountValue:(int64_t)value_;
-
 - (NSNumber*)primitiveCountLikes;
 - (void)setPrimitiveCountLikes:(NSNumber*)value;
 
@@ -212,20 +183,11 @@ extern const struct EntityUserInfo {
 - (NSString*)primitiveDescription_;
 - (void)setPrimitiveDescription_:(NSString*)value;
 
-- (NSData*)primitiveImage;
-- (void)setPrimitiveImage:(NSData*)value;
-
 - (NSDictionary*)primitiveLinkCounts;
 - (void)setPrimitiveLinkCounts:(NSDictionary*)value;
 
 - (NSString*)primitivePatchId;
 - (void)setPrimitivePatchId:(NSString*)value;
-
-- (NSNumber*)primitiveRank;
-- (void)setPrimitiveRank:(NSNumber*)value;
-
-- (int64_t)primitiveRankValue;
-- (void)setPrimitiveRankValue:(int64_t)value_;
 
 - (NSString*)primitiveReason;
 - (void)setPrimitiveReason:(NSString*)value;

@@ -9,13 +9,11 @@ extern const struct ServiceBaseAttributes {
 	__unsafe_unretained NSString *createdDate;
 	__unsafe_unretained NSString *creatorId;
 	__unsafe_unretained NSString *id_;
-	__unsafe_unretained NSString *locked;
 	__unsafe_unretained NSString *modifiedDate;
 	__unsafe_unretained NSString *modifierId;
 	__unsafe_unretained NSString *name;
 	__unsafe_unretained NSString *namelc;
 	__unsafe_unretained NSString *ownerId;
-	__unsafe_unretained NSString *position;
 	__unsafe_unretained NSString *refreshed;
 	__unsafe_unretained NSString *schema;
 	__unsafe_unretained NSString *sortDate;
@@ -61,14 +59,6 @@ extern const struct ServiceBaseRelationships {
 
 //- (BOOL)validateId_:(id*)value_ error:(NSError**)error_;
 
-@property (nonatomic, strong) NSNumber* locked;
-
-@property (atomic) BOOL lockedValue;
-- (BOOL)lockedValue;
-- (void)setLockedValue:(BOOL)value_;
-
-//- (BOOL)validateLocked:(id*)value_ error:(NSError**)error_;
-
 @property (nonatomic, strong) NSDate* modifiedDate;
 
 //- (BOOL)validateModifiedDate:(id*)value_ error:(NSError**)error_;
@@ -88,14 +78,6 @@ extern const struct ServiceBaseRelationships {
 @property (nonatomic, strong) NSString* ownerId;
 
 //- (BOOL)validateOwnerId:(id*)value_ error:(NSError**)error_;
-
-@property (nonatomic, strong) NSNumber* position;
-
-@property (atomic) int32_t positionValue;
-- (int32_t)positionValue;
-- (void)setPositionValue:(int32_t)value_;
-
-//- (BOOL)validatePosition:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSNumber* refreshed;
 
@@ -169,12 +151,6 @@ extern const struct ServiceBaseRelationships {
 - (NSString*)primitiveId_;
 - (void)setPrimitiveId_:(NSString*)value;
 
-- (NSNumber*)primitiveLocked;
-- (void)setPrimitiveLocked:(NSNumber*)value;
-
-- (BOOL)primitiveLockedValue;
-- (void)setPrimitiveLockedValue:(BOOL)value_;
-
 - (NSDate*)primitiveModifiedDate;
 - (void)setPrimitiveModifiedDate:(NSDate*)value;
 
@@ -189,12 +165,6 @@ extern const struct ServiceBaseRelationships {
 
 - (NSString*)primitiveOwnerId;
 - (void)setPrimitiveOwnerId:(NSString*)value;
-
-- (NSNumber*)primitivePosition;
-- (void)setPrimitivePosition:(NSNumber*)value;
-
-- (int32_t)primitivePositionValue;
-- (void)setPrimitivePositionValue:(int32_t)value_;
 
 - (NSNumber*)primitiveRefreshed;
 - (void)setPrimitiveRefreshed:(NSNumber*)value;

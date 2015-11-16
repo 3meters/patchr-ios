@@ -55,6 +55,7 @@ class PatchView: BaseView {
 		self.photo.contentMode = UIViewContentMode.ScaleAspectFill
 		self.photo.clipsToBounds = true
 		self.photo.userInteractionEnabled = true
+		self.photo.backgroundColor = Colors.gray95pcntColor
 		self.photo.sizeCategory = SizeCategory.thumbnail
 		self.addSubview(self.photo)
 		

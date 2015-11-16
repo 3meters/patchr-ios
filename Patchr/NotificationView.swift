@@ -67,6 +67,7 @@ class NotificationView: BaseView {
 		self.userPhoto.contentMode = UIViewContentMode.ScaleAspectFill
 		self.userPhoto.clipsToBounds = true
 		self.userPhoto.layer.cornerRadius = 24
+		self.userPhoto.layer.backgroundColor = Colors.windowColor.CGColor
 		self.addSubview(self.userPhoto)
 		
 		/* Footer */
@@ -77,6 +78,81 @@ class NotificationView: BaseView {
 		self.addSubview(self.iconImageView)
 		self.addSubview(self.createdDate)
 		self.addSubview(self.ageDot)
+	}
+	
+	func bindToEntity(entity: AnyObject) {
+		
+		let notification = entity as! Notification
+		
+		self.entity = notification
+		
+		if let description = notification.summary {
+			self.description_?.text = description
+		}
+		
+		let linkColor = Colors.brandColorDark
+		let linkActiveColor = Colors.brandColorLight
+		
+		self.description_?.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
+		self.description_?.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
+		self.description_?.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
+		
+		let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
+		
+		if let photo = notification.photoBig {
+			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.standard)
+			self.photo?.sd_setImageWithURL(photoUrl, forState: UIControlState.Normal, placeholderImage: nil, options: options)
+		}
+		
+		let photo = notification.getPhotoManaged()
+		let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile)
+		self.userPhoto.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
+		
+		self.createdDate.text = Utils.messageDateFormatter.stringFromDate(notification.createdDate)
+		
+		/* Age indicator */
+		self.ageDot.layer.backgroundColor = Colors.accentColor.CGColor
+		let now = NSDate()
+		
+		/* Age of notification in hours */
+		let interval = Int(now.timeIntervalSinceDate(NSDate(timeIntervalSince1970: notification.createdDate.timeIntervalSince1970)) / 3600)
+		if interval > 12 {
+			self.ageDot.alpha = 0.0
+		}
+		else if interval > 1 {
+			self.ageDot.alpha = 0.25
+		}
+		else {
+			self.ageDot.alpha = 1.0
+		}
+		
+		/* Type indicator image */
+		if notification.type == "media" {
+			self.iconImageView.image = Utils.imageMedia
+		}
+		else if notification.type == "message" {
+			self.iconImageView.image = Utils.imageMessage
+		}
+		else if notification.type == "watch" {
+			self.iconImageView.image = Utils.imageWatch
+		}
+		else if notification.type == "like" {
+			if notification.targetId.hasPrefix("pa.") {
+				self.iconImageView.image = Utils.imageStar
+			}
+			else {
+				self.iconImageView.image = Utils.imageLike
+			}
+		}
+		else if notification.type == "share" {
+			self.iconImageView.image = Utils.imageShare
+		}
+		else if notification.type == "nearby" {
+			self.iconImageView.image = Utils.imageLocation
+		}
+		self.iconImageView.tintColor(Colors.brandColor)
+		
+		self.setNeedsLayout()
 	}
 	
 	override func layoutSubviews() {

@@ -352,8 +352,9 @@ class MessageDetailViewController: UITableViewController {
 					}
 					
 					shareView = MessageView(cellType: cellType)
+					let shareView = shareView as! MessageView
 					
-					Message.bindView(shareView, entity: self.message!.message!)
+					shareView.bindToEntity(self.message!.message!)
 					
 					holderView.addSubview(shareView)
 					self.shareHolderCell.contentView.addSubview(holderView)
@@ -374,6 +375,7 @@ class MessageDetailViewController: UITableViewController {
 					
 					shareView = PatchView()
 					let shareView = shareView as! PatchView
+					
 					shareView.borderColor = Colors.gray80pcntColor
 					shareView.borderWidth = 1
 					shareView.cornerRadius = 6

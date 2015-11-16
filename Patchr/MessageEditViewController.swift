@@ -244,6 +244,7 @@ class MessageEditViewController: EntityEditViewController {
 				
 				shareView = PatchView()
 				let shareView = shareView as! PatchView
+				
 				shareView.borderColor = Colors.gray80pcntColor
 				shareView.borderWidth = 1
 				shareView.cornerRadius = 6
@@ -272,8 +273,9 @@ class MessageEditViewController: EntityEditViewController {
 				}
 				
 				shareView = MessageView(cellType: cellType)
+				let shareView = shareView as! MessageView
 				
-				Message.bindView(shareView, entity: self.shareEntity!)
+				shareView.bindToEntity(self.shareEntity!)
 				
 				holderView.addSubview(shareView)
 				self.shareCell.contentView.addSubview(holderView)

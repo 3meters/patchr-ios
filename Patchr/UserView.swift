@@ -45,6 +45,7 @@ class UserView: BaseView {
 		self.photo.contentMode = UIViewContentMode.ScaleAspectFill
 		self.photo.clipsToBounds = true
 		self.photo.layer.cornerRadius = 48
+		self.photo.layer.backgroundColor = Colors.windowColor.CGColor
 		self.photo.sizeCategory = SizeCategory.profile
 		self.addSubview(self.photo)
 
@@ -78,6 +79,27 @@ class UserView: BaseView {
 		/* Approval switch */
 		self.approvedSwitch.addTarget(self, action: Selector("approvedSwitchValueChangedAction:"), forControlEvents: .TouchUpInside)
 		self.addSubview(self.approvedSwitch)
+	}
+	
+	func bindToEntity(entity: AnyObject) {
+		
+		let entity = entity as! Entity
+		
+		self.entity = entity
+		
+		self.name.text = entity.name
+		self.photo.setImageWithPhoto(entity.getPhotoManaged(), animate: self.photo.image == nil)
+		
+		if let user = entity as? User {
+			self.area.text = user.area?.uppercaseString
+			self.area.hidden = (self.area.text == nil)
+			self.owner.hidden = true
+			self.removeButton.hidden = true
+			self.approved.hidden = true
+			self.approvedSwitch.hidden = true
+		}
+		
+		self.setNeedsLayout()
 	}
 	
 	override func layoutSubviews() {

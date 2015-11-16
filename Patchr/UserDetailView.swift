@@ -54,6 +54,7 @@ class UserDetailView: BaseDetailView {
 		self.photo.contentMode = UIViewContentMode.ScaleAspectFill
 		self.photo.clipsToBounds = true
 		self.photo.layer.cornerRadius = 48
+		self.photo.layer.backgroundColor = Colors.windowColor.CGColor
 		self.photo.sizeCategory = SizeCategory.profile
 		
 		/* User name */
@@ -72,19 +73,6 @@ class UserDetailView: BaseDetailView {
 		self.userGroup.addSubview(self.email)
 		self.userGroup.addSubview(self.rule)
 		self.addSubview(self.userGroup)
-		
-		/* Favorites */
-		self.favoritesIcon.image = UIImage(named: "imgStarFilledLight")
-		self.favoritesIcon.alpha = 0.5
-		self.favoritesIcon.tintColor = UIColor.blackColor()
-		self.favoritesInfo.titleLabel!.font = UIFont(name: "HelveticaNeue-Light", size: 20)
-		self.favoritesInfo.setTitleColor(Colors.brandColorDark, forState: .Normal)
-		self.favoritesInfo.contentHorizontalAlignment = .Left
-		self.favoritesRule.backgroundColor = Colors.separatorColor
-		
-		self.favoritesGroup.addSubview(self.favoritesIcon)
-		self.favoritesGroup.addSubview(self.favoritesInfo)
-		self.favoritesGroup.addSubview(self.favoritesRule)
 		
 		/* Watching */
 		self.watchingIcon.image = UIImage(named: "imgWatchLight")
@@ -126,11 +114,6 @@ class UserDetailView: BaseDetailView {
 		self.email.alignUnder(self.name, matchingLeftAndFillingWidthWithRightPadding: 12, topPadding: 0, height: 24)
 		self.rule.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 1)
 		
-//		self.favoritesGroup.alignUnder(self.userGroup, withLeftPadding: 0, topPadding: 0, width: self.bounds.size.width, height: 48)
-//		self.favoritesIcon.anchorCenterLeftWithLeftPadding(24, width: 24, height: 24)
-//		self.favoritesInfo.alignToTheRightOf(self.favoritesIcon, matchingCenterAndFillingWidthWithLeftAndRightPadding: 20, height: 24)
-//		self.favoritesRule.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 1)
-		
 		self.watchingGroup.alignUnder(self.userGroup, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 0, height: 48)
 		self.watchingIcon.anchorCenterLeftWithLeftPadding(24, width: 24, height: 24)
 		self.watchingInfo.alignToTheRightOf(self.watchingIcon, matchingCenterAndFillingWidthWithLeftAndRightPadding: 20, height: 24)
@@ -168,10 +151,6 @@ class UserDetailView: BaseDetailView {
 				if entity.patchesOwned != nil {
 					let count = entity.patchesOwnedValue == 0 ? "--" : String(entity.patchesOwnedValue)
 					self.ownsInfo.setTitle("Owner: \(count)", forState: .Normal)
-				}
-				if entity.patchesLikes != nil {
-					let count = entity.patchesLikesValue == 0 ? "--" : String(entity.patchesLikesValue)
-					self.favoritesInfo.setTitle("Favorites: \(count)", forState: .Normal)
 				}
 			}
 		}

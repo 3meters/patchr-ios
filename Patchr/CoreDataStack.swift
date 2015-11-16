@@ -108,7 +108,7 @@ class CoreDataStack: NSObject {
 				try context.save()
 			}
 			catch {
-				Log.d("Error saving context")
+				fatalError("Failure to save context: \(error)")
 			}
 		}
 		

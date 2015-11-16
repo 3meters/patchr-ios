@@ -81,7 +81,7 @@ class PatchTableViewController: BaseTableViewController {
     override func viewDidAppear(animated: Bool) {
         if self.filter == .Nearby {
             /* We do this here so user can see the changes */
-            if DataController.instance.activityDate > self.activityDate || !self.query().executedValue {
+            if DataController.instance.activityDate > self.activityDate || !self.query.executedValue {
                 self.bindQueryItems(true)
             }
         }
@@ -96,9 +96,6 @@ class PatchTableViewController: BaseTableViewController {
             unregisterForLocationNotifications()
             LocationController.instance.stopUpdates()
             LocationController.instance.startSignificantChangeUpdates()
-			if self._query != nil {
-				DataController.instance.mainContext.refreshObject(self._query, mergeChanges: false)
-			}
         }
         else {
             super.viewWillDisappear(animated)
@@ -122,39 +119,35 @@ class PatchTableViewController: BaseTableViewController {
     * Methods
     *--------------------------------------------------------------------------------------------*/
     
-    override func query() -> Query {
-        if self._query == nil {
-			
-			let id = queryId()
-			var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
-			
-			if query == nil {
-				query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
-				
-				switch self.filter {
-				case .Nearby:
-					query!.name = DataStoreQueryName.NearbyPatches.rawValue
-					query!.pageSize = DataController.proxibase.pageSizeNearby
-				case .Explore:
-					query!.name = DataStoreQueryName.ExplorePatches.rawValue
-					query!.pageSize = DataController.proxibase.pageSizeExplore
-				case .Watching:
-					query!.name = DataStoreQueryName.PatchesUserIsWatching.rawValue
-					query!.pageSize = DataController.proxibase.pageSizeDefault
-					query!.contextEntity = self.user
-				case .Owns:
-					query!.name = DataStoreQueryName.PatchesByUser.rawValue
-					query!.pageSize = DataController.proxibase.pageSizeDefault
-					query!.contextEntity = self.user
-				}
-				
-				DataController.instance.saveContext(true)
+    override func loadQuery() -> Query {
+
+		let id = queryId()
+		var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
+
+		if query == nil {
+			query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
+
+			switch self.filter {
+			case .Nearby:
+				query!.name = DataStoreQueryName.NearbyPatches.rawValue
+				query!.pageSize = DataController.proxibase.pageSizeNearby
+			case .Explore:
+				query!.name = DataStoreQueryName.ExplorePatches.rawValue
+				query!.pageSize = DataController.proxibase.pageSizeExplore
+			case .Watching:
+				query!.name = DataStoreQueryName.PatchesUserIsWatching.rawValue
+				query!.pageSize = DataController.proxibase.pageSizeDefault
+				query!.contextEntity = self.user
+			case .Owns:
+				query!.name = DataStoreQueryName.PatchesByUser.rawValue
+				query!.pageSize = DataController.proxibase.pageSizeDefault
+				query!.contextEntity = self.user
 			}
-			
-            self._query = query
-        }
-		
-        return self._query!
+
+			DataController.instance.saveContext(true)
+		}
+
+        return query!
     }
 	
 	func queryId() -> String {
@@ -251,7 +244,7 @@ class PatchTableViewController: BaseTableViewController {
         
         self.processingQuery = true
 		
-		let queryId = self.query().objectID
+		let queryId = self.query.objectID
 		
 		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
 			Reporting.updateCrashKeys()
@@ -307,7 +300,7 @@ class PatchTableViewController: BaseTableViewController {
 							}
 						}
 						
-						self?.query().executedValue = true
+						self?.query.executedValue = true
 						DataController.instance.saveContext(false)
 						
 						return

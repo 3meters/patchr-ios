@@ -222,26 +222,25 @@ class NotificationsTableViewController: BaseTableViewController {
     * Methods
     *--------------------------------------------------------------------------------------------*/
     
-    override func query() -> Query {
+    override func loadQuery() -> Query {
 		
-        if self._query == nil {
-			
-			let id = "query.\(DataStoreQueryName.NotificationsForCurrentUser.rawValue.lowercaseString)"
-			var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
-			
-			if query == nil {
-				query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
-				query!.name = DataStoreQueryName.NotificationsForCurrentUser.rawValue
-				query!.pageSize = DataController.proxibase.pageSizeNotifications
-				DataController.instance.saveContext(true)	// Blocks until finished
-			}
-			
-            self._query = query
+        let id = queryId()
+        var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
+
+        if query == nil {
+            query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
+            query!.name = DataStoreQueryName.NotificationsForCurrentUser.rawValue
+            query!.pageSize = DataController.proxibase.pageSizeNotifications
+            DataController.instance.saveContext(true)	// Blocks until finished
         }
-		
-        return self._query
+			
+        return query!
     }
-    
+	
+	func queryId() -> String {
+		return "query.\(DataStoreQueryName.NotificationsForCurrentUser.rawValue.lowercaseString)"
+	}
+
     override func bindQueryItems(force: Bool = false, paging: Bool = false) {
         /* Always make sure we have the freshest sidecar data before a query */
         if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {

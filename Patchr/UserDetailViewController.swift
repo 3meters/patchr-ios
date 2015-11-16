@@ -27,10 +27,10 @@ class UserDetailViewController: BaseDetailViewController {
 	 *--------------------------------------------------------------------------------------------*/
 
 	override func viewDidLoad() {
+		self.queryName = DataStoreQueryName.MessagesByUser.rawValue
 		
 		super.viewDidLoad()
 		
-		self.queryName = DataStoreQueryName.MessagesByUser.rawValue
 		self.header = UserDetailView()
 		self.tableView.tableHeaderView = self.header	// Triggers table binding
 		self.progressOffsetY = 40
@@ -196,6 +196,6 @@ extension UserDetailViewController {
 	}
 	
 	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return self.entityId == nil ? 0 : self.fetchedResultsController.sections![section].numberOfObjects
+		return self.entityId == nil ? 0 : self.fetchedResultsController.sections?[section].numberOfObjects ?? 0
 	}
 }

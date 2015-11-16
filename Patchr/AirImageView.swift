@@ -203,8 +203,6 @@ class AirImageView: UIImageView {
         if error != nil {
             Log.w("Image fetch failed: " + error!.localizedDescription)
             Log.w("Failed url: \(url?.absoluteString)")
-            self.contentMode = UIViewContentMode.Center
-            self.image = Utils.imageBroken
             return
         }
         else {

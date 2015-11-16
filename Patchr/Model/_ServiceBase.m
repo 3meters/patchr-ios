@@ -8,13 +8,11 @@ const struct ServiceBaseAttributes ServiceBaseAttributes = {
 	.createdDate = @"createdDate",
 	.creatorId = @"creatorId",
 	.id_ = @"id_",
-	.locked = @"locked",
 	.modifiedDate = @"modifiedDate",
 	.modifierId = @"modifierId",
 	.name = @"name",
 	.namelc = @"namelc",
 	.ownerId = @"ownerId",
-	.position = @"position",
 	.refreshed = @"refreshed",
 	.schema = @"schema",
 	.sortDate = @"sortDate",
@@ -55,16 +53,6 @@ const struct ServiceBaseRelationships ServiceBaseRelationships = {
 + (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key {
 	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
 
-	if ([key isEqualToString:@"lockedValue"]) {
-		NSSet *affectingKey = [NSSet setWithObject:@"locked"];
-		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
-		return keyPaths;
-	}
-	if ([key isEqualToString:@"positionValue"]) {
-		NSSet *affectingKey = [NSSet setWithObject:@"position"];
-		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
-		return keyPaths;
-	}
 	if ([key isEqualToString:@"refreshedValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"refreshed"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
@@ -82,26 +70,6 @@ const struct ServiceBaseRelationships ServiceBaseRelationships = {
 
 @dynamic id_;
 
-@dynamic locked;
-
-- (BOOL)lockedValue {
-	NSNumber *result = [self locked];
-	return [result boolValue];
-}
-
-- (void)setLockedValue:(BOOL)value_ {
-	[self setLocked:@(value_)];
-}
-
-- (BOOL)primitiveLockedValue {
-	NSNumber *result = [self primitiveLocked];
-	return [result boolValue];
-}
-
-- (void)setPrimitiveLockedValue:(BOOL)value_ {
-	[self setPrimitiveLocked:@(value_)];
-}
-
 @dynamic modifiedDate;
 
 @dynamic modifierId;
@@ -111,26 +79,6 @@ const struct ServiceBaseRelationships ServiceBaseRelationships = {
 @dynamic namelc;
 
 @dynamic ownerId;
-
-@dynamic position;
-
-- (int32_t)positionValue {
-	NSNumber *result = [self position];
-	return [result intValue];
-}
-
-- (void)setPositionValue:(int32_t)value_ {
-	[self setPosition:@(value_)];
-}
-
-- (int32_t)primitivePositionValue {
-	NSNumber *result = [self primitivePosition];
-	return [result intValue];
-}
-
-- (void)setPrimitivePositionValue:(int32_t)value_ {
-	[self setPrimitivePosition:@(value_)];
-}
 
 @dynamic refreshed;
 

@@ -58,32 +58,30 @@ class UserTableViewController: BaseTableViewController {
     * Methods
     *--------------------------------------------------------------------------------------------*/
 
-    override func query() -> Query {
-        if self._query == nil {
-			
-			let id = queryId()
-			var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
-			
-			if query == nil {
-				query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
-				
-				switch self.filter {
-					case .PatchWatchers:
-						query!.name = DataStoreQueryName.WatchersForPatch.rawValue
-						query!.pageSize = DataController.proxibase.pageSizeDefault
-						query!.contextEntity = patch
-						
-					case .MessageLikers:
-						query!.name = DataStoreQueryName.LikersForMessage.rawValue
-						query!.pageSize = DataController.proxibase.pageSizeDefault
-						query!.contextEntity = message
-				}
-				
-				DataController.instance.saveContext(false)
+    override func loadQuery() -> Query {
+
+		let id = queryId()
+		var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
+
+		if query == nil {
+			query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
+
+			switch self.filter {
+				case .PatchWatchers:
+					query!.name = DataStoreQueryName.WatchersForPatch.rawValue
+					query!.pageSize = DataController.proxibase.pageSizeDefault
+					query!.contextEntity = patch
+
+				case .MessageLikers:
+					query!.name = DataStoreQueryName.LikersForMessage.rawValue
+					query!.pageSize = DataController.proxibase.pageSizeDefault
+					query!.contextEntity = message
 			}
-            self._query = query
-        }
-        return self._query
+
+			DataController.instance.saveContext(false)
+		}
+
+        return query!
     }
 	
 	func queryId() -> String {

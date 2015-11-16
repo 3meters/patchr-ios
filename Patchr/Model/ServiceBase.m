@@ -48,12 +48,10 @@
 + (ServiceBase *)setPropertiesFromDictionary:(NSDictionary *)dictionary
                                     onObject:(ServiceBase *)base {
     
-    base.id_ = dictionary[@"_id"];
+	base.id_ = (dictionary[@"_id"] != nil) ? dictionary[@"_id"] : dictionary[@"id"];
     base.name = dictionary[@"name"];
     base.schema = dictionary[@"schema"];
     base.type = dictionary[@"type"];
-    base.locked = dictionary[@"locked"];
-    base.position = dictionary[@"position"];
     base.ownerId = dictionary[@"_owner"];
     base.creatorId = dictionary[@"_creator"];
     base.modifierId = dictionary[@"_modifier"];

@@ -20,12 +20,10 @@
     
     user.patchesOwnedValue = 0;
     user.patchesWatchingValue = 0;
-    user.patchesLikesValue = 0;
 	
     if ([dictionary[@"linkCount"] isKindOfClass:[NSDictionary class]]) {
         user.patchesOwned = [User countForStatWithType:@"create" schema:@"patches" enabled:@"true" direction:@"to" inLinkCounts:user.linkCounts];
         user.patchesWatching = [User countForStatWithType:@"watch" schema:@"patches" enabled:@"true" direction:@"to" inLinkCounts:user.linkCounts];
-        user.patchesLikes = [User countForStatWithType:@"like" schema:@"patches" enabled:@"true" direction:@"to" inLinkCounts:user.linkCounts];
     }
     
     return user;

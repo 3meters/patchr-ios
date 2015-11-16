@@ -5,13 +5,10 @@
 #import "ServiceObject.h"
 
 extern const struct PhotoAttributes {
-	__unsafe_unretained NSString *createdDate;
 	__unsafe_unretained NSString *height;
 	__unsafe_unretained NSString *id_;
 	__unsafe_unretained NSString *prefix;
 	__unsafe_unretained NSString *source;
-	__unsafe_unretained NSString *suffix;
-	__unsafe_unretained NSString *usingDefault;
 	__unsafe_unretained NSString *width;
 } PhotoAttributes;
 
@@ -31,10 +28,6 @@ extern const struct PhotoRelationships {
 + (NSString*)entityName;
 + (NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_;
 @property (nonatomic, readonly, strong) PhotoID* objectID;
-
-@property (nonatomic, strong) NSDate* createdDate;
-
-//- (BOOL)validateCreatedDate:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSNumber* height;
 
@@ -56,18 +49,6 @@ extern const struct PhotoRelationships {
 
 //- (BOOL)validateSource:(id*)value_ error:(NSError**)error_;
 
-@property (nonatomic, strong) NSString* suffix;
-
-//- (BOOL)validateSuffix:(id*)value_ error:(NSError**)error_;
-
-@property (nonatomic, strong) NSNumber* usingDefault;
-
-@property (atomic) BOOL usingDefaultValue;
-- (BOOL)usingDefaultValue;
-- (void)setUsingDefaultValue:(BOOL)value_;
-
-//- (BOOL)validateUsingDefault:(id*)value_ error:(NSError**)error_;
-
 @property (nonatomic, strong) NSNumber* width;
 
 @property (atomic) int32_t widthValue;
@@ -88,9 +69,6 @@ extern const struct PhotoRelationships {
 
 @interface _Photo (CoreDataGeneratedPrimitiveAccessors)
 
-- (NSDate*)primitiveCreatedDate;
-- (void)setPrimitiveCreatedDate:(NSDate*)value;
-
 - (NSNumber*)primitiveHeight;
 - (void)setPrimitiveHeight:(NSNumber*)value;
 
@@ -105,15 +83,6 @@ extern const struct PhotoRelationships {
 
 - (NSString*)primitiveSource;
 - (void)setPrimitiveSource:(NSString*)value;
-
-- (NSString*)primitiveSuffix;
-- (void)setPrimitiveSuffix:(NSString*)value;
-
-- (NSNumber*)primitiveUsingDefault;
-- (void)setPrimitiveUsingDefault:(NSNumber*)value;
-
-- (BOOL)primitiveUsingDefaultValue;
-- (void)setPrimitiveUsingDefaultValue:(BOOL)value_;
 
 - (NSNumber*)primitiveWidth;
 - (void)setPrimitiveWidth:(NSNumber*)value;

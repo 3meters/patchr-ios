@@ -14,7 +14,6 @@ class BaseDetailViewController: BaseTableViewController {
     var entityId: String?
     var deleted = false
     var queryName: String!
-    var queryId: String!
     var patchNameVisible: Bool = true
     
     /*--------------------------------------------------------------------------------------------
@@ -63,39 +62,34 @@ class BaseDetailViewController: BaseTableViewController {
     * Methods
     *--------------------------------------------------------------------------------------------*/
     
-    override func query() -> Query {
+    override func loadQuery() -> Query {
         
-        if self._query == nil {
-			
-			let id = "query.\(self.queryName!.lowercaseString).\(self.entityId!)"
-            var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
-            
-            if query == nil {
-				
-                query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
-                query!.name = self.queryName
-                query!.pageSize = DataController.proxibase.pageSizeDefault
-                query!.contextEntity = nil
-				
-                if self.entity != nil {
-                    query!.contextEntity = self.entity
-                }
-                if self.entityId != nil {
-                    query!.entityId = self.entityId
-                }
-				
-				if self.entityId == nil && self.entity == nil {
-					query?.enabledValue = false	// Zombies it so it doesn't get executed
-				}
-				
-                DataController.instance.saveContext(false)
-            }
-            
-            self._query = query
-        }
-        
-        return self._query
+		let id = queryId()
+		var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
+
+		if query == nil {
+
+			query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
+			query!.name = self.queryName
+			query!.pageSize = DataController.proxibase.pageSizeDefault
+			query!.contextEntity = nil
+
+			if self.entity != nil {
+				query!.contextEntity = self.entity
+			}
+			if self.entityId != nil {
+				query!.entityId = self.entityId
+			}
+
+			DataController.instance.saveContext(false)
+		}
+
+        return query!
     }
+
+	func queryId() -> String {
+		return "query.\(self.queryName!.lowercaseString).\(self.entityId!)"
+	}
 	
     internal func bind(force: Bool = false) {
         
@@ -118,7 +112,7 @@ class BaseDetailViewController: BaseTableViewController {
 									/* Refresh list too if context entity was updated */
 									if entity.refreshedValue {
 										entity.refreshedValue = false
-										self?.bindQueryItems(true)
+										self?.bindQueryItems(true)	// Only place we cascade the refresh to the list otherwise a pullToRefresh is required
 										DataController.instance.saveContext(false)
 									}
 									
@@ -146,7 +140,7 @@ class BaseDetailViewController: BaseTableViewController {
     }
 	
     override func bindQueryItems(force: Bool = false, paging: Bool = false) {
-        if force || !self._query.executedValue || paging {
+        if force || !self.query.executedValue || paging {
             super.bindQueryItems(force, paging: paging)
         }
     }

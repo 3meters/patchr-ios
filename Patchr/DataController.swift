@@ -38,8 +38,8 @@ class DataController: NSObject {
 	let backgroundOperationQueue = NSOperationQueue()
 	let imageOperationQueue = NSOperationQueue()
 	let backgroundDispatch: dispatch_queue_t
-
-	private lazy var schemaDictionary: [String:ServiceBase.Type] = {
+	
+	lazy var schemaDictionary: [String: ServiceBase.Type] = {
 		return [
             "message": Message.self,
 			"notification": Notification.self,
@@ -242,19 +242,61 @@ class DataController: NSObject {
             return
         }
 
-		/* Callback when service call is complete */
+        let coordinate = LocationController.instance.lastLocationAccepted()?.coordinate
+
+        var entity: ServiceBase!
+        var entityId: String!
+		
+        /* We only get here if either entity or entityId are available */
+		
+        if query.contextEntity != nil {
+            entity = query.contextEntity
+            entityId = query.contextEntity.id_
+        }
+		else {
+			entityId = query.entityId
+		}
+        
+        if force {
+            query.offsetValue = 0
+            query.executedValue = false
+        }
+        
+        var isOwner = false
+        if entity != nil && entity.creator != nil && UserController.instance.authenticated {
+            isOwner = (entity.creator.entityId == UserController.instance.currentUser.id_)
+        }
+
+        var skip = 0
+        if paging {
+            skip = Int(ceil(Float(query.offsetValue) / Float(query.pageSizeValue)) * Float(query.pageSizeValue))
+        }
+        
+        var criteria: [String: AnyObject] = [:]
+		if !force && query.executedValue && entity != nil && !paging {
+			criteria = entity!.criteria(true)
+		}
+		
+		Utils.stopwatch1.start("List", message: "\(query.name)")
+		
+		/*--------------------------------------------------------------------------------------------
+		* Callback
+		*--------------------------------------------------------------------------------------------*/
+		
 		func refreshCompletion(response: AnyObject?, error: NSError?) -> Void {
-			/* 
-			 * Returns on background thread 
-			 */
+			/*
+			* Returns on background thread
+			*/
 			if error != nil {
+				let query = self.mainContext.objectWithID(queryId) as! Query
 				completion(queryItems: [], query: query, error: error)
 				return
 			}
 			
+			/* Use a private context */
+			
 			let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
 			privateContext.parentContext = DataController.instance.mainContext
-			
 			privateContext.performBlock {
 				
 				let query = privateContext.objectWithID(queryId) as! Query
@@ -294,67 +336,25 @@ class DataController: NSObject {
 				}
 				
 				/* Persist the changes and triggers notifications to observers */
-				Log.d("Save context: \(query.name)")
 				DataController.instance.saveContext(privateContext, wait: true)
-				DataController.instance.saveContext(false)				// Main context
+				DataController.instance.saveContext(false)						// Main context
 				Utils.stopwatch1.segmentTime("\(query.name): context saved")
 				
+				/* Sets query.executed and query.offsetDate but doesn't do anything with queryItems */
 				completion(queryItems: queryItems, query: query, error: error)
 				Utils.stopwatch1.stop("\(query.name)")
-
+				
 			}
 		}
 		
-        let coordinate = LocationController.instance.lastLocationAccepted()?.coordinate
-
-        var entity: ServiceBase!
-        var entityId: String!
-		
-        /* We only get here if either entity or entityId are available */
-		
-        if query.contextEntity != nil {
-            entity = query.contextEntity
-            entityId = query.contextEntity.id_
-        }
-		else {
-			entityId = query.entityId
-		}
-        
-        if force {
-            query.offsetValue = 0
-            query.executedValue = false
-        }
-        
-        var isOwner = false
-        if entity != nil && entity.creator != nil && UserController.instance.authenticated {
-            isOwner = (entity.creator.entityId == UserController.instance.currentUser.id_)
-        }
-
-        var skip = 0
-        if paging {
-            skip = Int(ceil(Float(query.offsetValue) / Float(query.pageSizeValue)) * Float(query.pageSizeValue))
-        }
-        
-        query.criteriaValue = false
-        var criteria: [String: AnyObject] = [:]
-		if !force && query.executedValue && entity != nil && !paging {
-			criteria = entity!.criteria(true)
-            query.criteriaValue = true
-		}
-		
-		Utils.stopwatch1.start("List", message: "\(query.name)")
-		
 		switch query.name {
 			case DataStoreQueryName.NearbyPatches.rawValue:
-                query.criteriaValue = false
                 DataController.proxibase.fetchNearbyPatches(coordinate, skip: skip, completion: refreshCompletion)
 
 			case DataStoreQueryName.NotificationsForCurrentUser.rawValue:
-                query.criteriaValue = false
                 DataController.proxibase.fetchNotifications(skip, completion: refreshCompletion)
             
 			case DataStoreQueryName.ExplorePatches.rawValue:
-                query.criteriaValue = false
                 DataController.proxibase.fetchInterestingPatches(coordinate, skip: skip, completion: refreshCompletion)
             
 			case DataStoreQueryName.MessagesByUser.rawValue:
@@ -403,8 +403,8 @@ class DataController: NSObject {
 			if var entityDictionaries = dataWrapper.data as? [[NSObject: AnyObject]] {
                 
                 /* Append the sidecar maps if any */
-                if let sidecar = query.sidecar as? [[NSObject: AnyObject]] {
-                    
+                if let sidecar = query.sidecar as? [[NSObject: AnyObject]] where sidecar.count > 0 {
+					
                     /* Find date brackets in current set */
                     var startDate = NSDate(timeIntervalSince1970: 0)
                     var endDate = NSDate()
