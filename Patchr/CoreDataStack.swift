@@ -68,7 +68,9 @@ class CoreDataStack: NSObject {
 				 * - Rename a property.
 				 * - Rename an entity.
 				 */
-				let options = [NSMigratePersistentStoresAutomaticallyOption: true, NSInferMappingModelAutomaticallyOption: true]
+				let options = [
+					NSMigratePersistentStoresAutomaticallyOption: true,
+					NSInferMappingModelAutomaticallyOption: true ]
 				try coordinator.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: storeUrl, options: options)
 			}
 			catch {
@@ -86,6 +88,17 @@ class CoreDataStack: NSObject {
 				NSLog("Unresolved error \(wrappedError), \(wrappedError.userInfo)")
 				abort()
 			}
+		}
+	}
+	
+	func reset() {
+		
+		let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
+		privateContext.parentContext = DataController.instance.mainContext
+		privateContext.performBlock {
+			privateContext.deleteAllObjects()
+			self.saveContext(privateContext, wait: true)
+			self.saveContext(false)						// Main context
 		}
 	}
 	

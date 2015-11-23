@@ -11,8 +11,8 @@ class UserController: NSObject {
 	static let instance = UserController()
 
 	var currentUser: User!
-	var userId:      String?
-	var sessionKey:  String?
+	var userId: String?
+	var sessionKey: String?
     var userName: String?
     private var jsonUser: String?
     private var jsonSession: String?
@@ -38,28 +38,39 @@ class UserController: NSObject {
 		self.currentUser = nil
         self.jsonUser = nil
         self.jsonSession = nil
+		
         writeCredentialsToUserDefaults()
+		clearStore()
         Reporting.updateCrashUser(nil)
         Branch.getInstance().logout()
     }
 
 	func handleSuccessfulSignInResponse(response: AnyObject) {
+		
         let json = JSON(response)
+		
         if let jsonString = json["user"].rawString() {
             self.jsonUser = jsonString
             Log.d("User signed in:")
             Log.d(jsonUser!)
         }
+		
         if let jsonString = json["session"].rawString() {
             self.jsonSession = jsonString
             Log.d(jsonSession!)
         }
+		
         self.userName = json["user"]["name"].string
         self.userId = json["session"]["_owner"].string
         self.sessionKey = json["session"]["key"].string
-        writeCredentialsToUserDefaults()
+		
+		writeCredentialsToUserDefaults()
 		fetchCurrentUser()	// Includes making sure the user is in the store
     }
+	
+	func clearStore() {
+		DataController.instance.reset()
+	}
 
 	private func writeCredentialsToUserDefaults() {
         let userDefaults = NSUserDefaults.standardUserDefaults()
@@ -68,7 +79,7 @@ class UserController: NSObject {
         userDefaults.setObject(self.jsonSession, forKey: PatchrUserDefaultKey("sesson"))
         userDefaults.setObject(self.userId, forKey: PatchrUserDefaultKey("userId"))
         userDefaults.setObject(self.sessionKey, forKey: PatchrUserDefaultKey("sessionKey"))
-        
+		
         if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
             groupDefaults.setObject(self.jsonUser, forKey: PatchrUserDefaultKey("user"))
             groupDefaults.setObject(self.jsonSession, forKey: PatchrUserDefaultKey("sesson"))

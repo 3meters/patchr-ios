@@ -118,11 +118,22 @@ class UserDetailViewController: BaseDetailViewController {
 	}
 
 	func actionSignout() {
+		
+		let progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+		progress.mode = MBProgressHUDMode.Indeterminate
+		progress.styleAs(.ActivityLight)
+		progress.minShowTime = 0.5
+		progress.labelText = "Signing out..."
+		progress.removeFromSuperViewOnHide = true
+		progress.show(true)
 
 		DataController.proxibase.signOut {
 			response, error in
             
 			NSOperationQueue.mainQueue().addOperationWithBlock {
+				
+				progress?.hide(true)
+
 				if error != nil {
 					Log.w("Error during logout \(error)")
 				}

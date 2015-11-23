@@ -70,6 +70,10 @@ class DataController: NSObject {
         self.coreDataStack.saveContext(context, wait: wait)
     }
 
+	func reset() {
+		self.coreDataStack.reset()
+	}
+	
 	/*--------------------------------------------------------------------------------------------
 	 * Singles
 	 *--------------------------------------------------------------------------------------------*/

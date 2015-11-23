@@ -347,3 +347,39 @@ extension Photo {
         return photo
     }
 }
+
+extension NSManagedObjectContext {
+	
+	convenience init(parentContext parent: NSManagedObjectContext, concurrencyType: NSManagedObjectContextConcurrencyType) {
+		self.init(concurrencyType: concurrencyType)
+		parentContext = parent
+	}
+	
+	func deleteAllObjects() {
+		
+		if let entitiesByName = self.persistentStoreCoordinator?.managedObjectModel.entitiesByName {
+			for (_, entityDescription) in entitiesByName {
+				deleteAllObjectsForEntity(entityDescription)
+			}
+		}
+	}
+	
+	func deleteAllObjectsForEntity(entity: NSEntityDescription) {
+		
+		let fetchRequest = NSFetchRequest()
+		fetchRequest.entity = entity
+		fetchRequest.fetchBatchSize = 50
+		
+		do {
+			let fetchResults = try executeFetchRequest(fetchRequest)
+			if let managedObjects = fetchResults as? [NSManagedObject] {
+				for object in managedObjects {
+					deleteObject(object)
+				}
+			}
+		}
+		catch let error as NSError {
+			fatalError("Fetch failed: \(error.localizedDescription)")
+		}
+	}
+}
