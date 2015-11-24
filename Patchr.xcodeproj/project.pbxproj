@@ -164,7 +164,6 @@
 		E2EFD2661AF44214003937D4 /* Lobby.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E2EFD2651AF44214003937D4 /* Lobby.storyboard */; };
 		E2F182D01B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */; };
 		E2F182E31B4B4AFD0020F6BB /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E273B5191B48349900888E73 /* Parse.framework */; };
-		E2F182E81B4B4CFF0020F6BB /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E273B5181B48349900888E73 /* Bolts.framework */; };
 		E2F618D61AFFACF00055D09C /* LocationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F618D51AFFACF00055D09C /* LocationController.swift */; };
 		E2F6C9211B1BDC7A0067D959 /* _Shortcut.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F6C9201B1BDC7A0067D959 /* _Shortcut.m */; };
 		E2F6C9241B1BDD500067D959 /* Shortcut.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F6C9231B1BDD500067D959 /* Shortcut.m */; };
@@ -427,7 +426,6 @@
 				E238BAD01B5088A40094AF41 /* MobileCoreServices.framework in Frameworks */,
 				E238BACC1B50888C0094AF41 /* SystemConfiguration.framework in Frameworks */,
 				E2F182E31B4B4AFD0020F6BB /* Parse.framework in Frameworks */,
-				E2F182E81B4B4CFF0020F6BB /* Bolts.framework in Frameworks */,
 				E238BACE1B50889A0094AF41 /* libc++.dylib in Frameworks */,
 				1AB4C23C766AEEECAE42F579 /* libPods-Patchr.a in Frameworks */,
 				C1112B52B84F042CB51F7E65 /* libPods.a in Frameworks */,

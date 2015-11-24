@@ -333,7 +333,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="taJ-ff-glV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-5221.875" y="-1684.8591549295772"/>
+            <point key="canvasLocation" x="-5169" y="-1817"/>
         </scene>
         <!--Password Reset-->
         <scene sceneID="TZv-eH-Y93">
@@ -535,98 +535,66 @@
                                                         <constraint firstAttribute="height" constant="1" id="OTN-47-Hl4"/>
                                                     </constraints>
                                                 </view>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4dm-py-zhQ" userLabel="button_sign_in">
-                                                    <rect key="frame" x="12" y="132" width="296" height="48"/>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="TJy-wa-OfZ" userLabel="button_forgot_password">
+                                                    <rect key="frame" x="12" y="128" width="296" height="24"/>
                                                     <animations/>
-                                                    <color key="backgroundColor" red="0.0" green="0.75294117650000003" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="48" id="hFJ-m7-gJA"/>
+                                                        <constraint firstAttribute="height" constant="24" id="bWP-Vd-9KU"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="15"/>
-                                                    <state key="normal" title="SIGN IN">
-                                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <state key="normal" title="FORGOT PASSWORD?">
+                                                        <color key="titleShadowColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
-                                                    <userDefinedRuntimeAttributes>
-                                                        <userDefinedRuntimeAttribute type="string" keyPath="layer.borderWidth" value="0.5"/>
-                                                        <userDefinedRuntimeAttribute type="color" keyPath="layer.borderUIColor">
-                                                            <color key="value" red="0.69999999999999996" green="0.69999999999999996" blue="0.69999999999999996" alpha="1" colorSpace="calibratedRGB"/>
-                                                        </userDefinedRuntimeAttribute>
-                                                        <userDefinedRuntimeAttribute type="string" keyPath="layer.cornerRadius" value="4"/>
-                                                    </userDefinedRuntimeAttributes>
                                                     <connections>
-                                                        <action selector="doneAction:" destination="8no-yf-GVU" eventType="touchUpInside" id="MiD-Va-Xj5"/>
+                                                        <segue destination="Uk3-Dh-Kn8" kind="show" id="rRv-y1-h56"/>
                                                     </connections>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="E2e-fK-4Rp" userLabel="button_join">
-                                                    <rect key="frame" x="164" y="188" width="144" height="48"/>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MOJ-7V-Wag" userLabel="button_facebook">
+                                                    <rect key="frame" x="12" y="176" width="296" height="48"/>
                                                     <animations/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="48" id="mkr-8s-ryN"/>
+                                                        <constraint firstAttribute="height" constant="48" id="bAu-Pq-Wnm"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="15"/>
-                                                    <state key="normal" title="JOIN">
+                                                    <state key="normal" title="CONNECT WITH FACEBOOK">
+                                                        <color key="titleColor" red="0.23137254901960785" green="0.34901960784313724" blue="0.59607843137254901" alpha="1" colorSpace="calibratedRGB"/>
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <userDefinedRuntimeAttributes>
                                                         <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
-                                                            <color key="value" red="0.70196080207824707" green="0.70196080207824707" blue="0.70196080207824707" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="value" red="0.23137254901960785" green="0.34901960784313724" blue="0.59607843137254901" alpha="1" colorSpace="calibratedRGB"/>
                                                         </userDefinedRuntimeAttribute>
                                                         <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
-                                                            <real key="value" value="0.5"/>
+                                                            <real key="value" value="1"/>
                                                         </userDefinedRuntimeAttribute>
                                                         <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
                                                             <integer key="value" value="4"/>
                                                         </userDefinedRuntimeAttribute>
                                                     </userDefinedRuntimeAttributes>
                                                     <connections>
-                                                        <segue destination="tMe-pp-m8T" kind="show" id="HwG-zD-VAa"/>
-                                                    </connections>
-                                                </button>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="TJy-wa-OfZ" userLabel="button_forgot_password">
-                                                    <rect key="frame" x="12" y="188" width="144" height="48"/>
-                                                    <animations/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="48" id="bWP-Vd-9KU"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="15"/>
-                                                    <state key="normal" title="FORGOT PASSWORD?">
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
-                                                    <userDefinedRuntimeAttributes>
-                                                        <userDefinedRuntimeAttribute type="string" keyPath="layer.borderWidth" value="0.5"/>
-                                                        <userDefinedRuntimeAttribute type="color" keyPath="layer.borderUIColor">
-                                                            <color key="value" red="0.69999999999999996" green="0.69999999999999996" blue="0.69999999999999996" alpha="1" colorSpace="calibratedRGB"/>
-                                                        </userDefinedRuntimeAttribute>
-                                                        <userDefinedRuntimeAttribute type="string" keyPath="layer.cornerRadius" value="4"/>
-                                                    </userDefinedRuntimeAttributes>
-                                                    <connections>
-                                                        <segue destination="Uk3-Dh-Kn8" kind="show" id="rRv-y1-h56"/>
+                                                        <action selector="facebookAction:" destination="8no-yf-GVU" eventType="touchUpInside" id="wtK-oN-U7O"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
                                             <animations/>
                                             <constraints>
-                                                <constraint firstItem="TJy-wa-OfZ" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leading" constant="12" id="2iS-Oa-7Bp"/>
-                                                <constraint firstItem="TJy-wa-OfZ" firstAttribute="top" secondItem="4dm-py-zhQ" secondAttribute="bottom" constant="8" id="2ut-qH-pjc"/>
-                                                <constraint firstItem="4dm-py-zhQ" firstAttribute="top" secondItem="vYC-yK-reY" secondAttribute="bottom" constant="16" id="4PH-fB-o7I"/>
-                                                <constraint firstItem="4dm-py-zhQ" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leading" constant="12" id="5BF-HH-n1b"/>
                                                 <constraint firstItem="gwA-or-tej" firstAttribute="top" secondItem="dW2-jv-QWR" secondAttribute="topMargin" constant="12" id="5Uq-GR-SU8"/>
+                                                <constraint firstItem="MOJ-7V-Wag" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leading" constant="12" id="6Au-CP-FNG"/>
                                                 <constraint firstItem="fdy-Ar-MpE" firstAttribute="trailing" secondItem="dW2-jv-QWR" secondAttribute="trailing" constant="-12" id="EJb-xA-Mh5"/>
+                                                <constraint firstAttribute="trailing" secondItem="TJy-wa-OfZ" secondAttribute="trailing" constant="12" id="FIN-ui-Ahr"/>
                                                 <constraint firstItem="vYC-yK-reY" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leading" constant="12" id="Ha3-8P-zAH"/>
-                                                <constraint firstItem="E2e-fK-4Rp" firstAttribute="width" secondItem="TJy-wa-OfZ" secondAttribute="width" id="Ni6-Qa-sW1"/>
                                                 <constraint firstItem="fdy-Ar-MpE" firstAttribute="top" secondItem="gwA-or-tej" secondAttribute="bottom" constant="4" id="OCx-FX-X5C"/>
+                                                <constraint firstItem="MOJ-7V-Wag" firstAttribute="top" secondItem="TJy-wa-OfZ" secondAttribute="bottom" constant="24" id="Q62-Dx-X4J"/>
                                                 <constraint firstItem="gwA-or-tej" firstAttribute="trailing" secondItem="dW2-jv-QWR" secondAttribute="trailing" constant="-12" id="R7S-Tp-rCi"/>
                                                 <constraint firstItem="fdy-Ar-MpE" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leading" constant="12" id="YOj-cK-5Ir"/>
                                                 <constraint firstItem="HZl-Vc-4ct" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leading" constant="12" id="Yfq-n5-Wse"/>
                                                 <constraint firstItem="vYC-yK-reY" firstAttribute="top" secondItem="gwA-or-tej" secondAttribute="bottom" constant="8" id="atO-SF-LFE"/>
                                                 <constraint firstItem="HZl-Vc-4ct" firstAttribute="trailing" secondItem="dW2-jv-QWR" secondAttribute="trailing" constant="-12" id="fLa-Ef-f4s"/>
-                                                <constraint firstItem="4dm-py-zhQ" firstAttribute="trailing" secondItem="dW2-jv-QWR" secondAttribute="trailing" constant="-12" id="iUp-XE-Hax"/>
+                                                <constraint firstItem="TJy-wa-OfZ" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leading" constant="12" id="oNc-Rd-zDL"/>
                                                 <constraint firstItem="HZl-Vc-4ct" firstAttribute="top" secondItem="vYC-yK-reY" secondAttribute="bottom" constant="4" id="peT-3O-McY"/>
+                                                <constraint firstAttribute="trailing" secondItem="MOJ-7V-Wag" secondAttribute="trailing" constant="12" id="qbU-0X-cmO"/>
                                                 <constraint firstItem="gwA-or-tej" firstAttribute="leading" secondItem="dW2-jv-QWR" secondAttribute="leading" constant="12" id="r2f-D2-aTX"/>
-                                                <constraint firstItem="E2e-fK-4Rp" firstAttribute="leading" secondItem="TJy-wa-OfZ" secondAttribute="trailing" constant="8" id="tKg-9c-hMf"/>
-                                                <constraint firstItem="E2e-fK-4Rp" firstAttribute="trailing" secondItem="dW2-jv-QWR" secondAttribute="trailing" constant="-12" id="tLq-qs-2q8"/>
-                                                <constraint firstItem="E2e-fK-4Rp" firstAttribute="top" secondItem="4dm-py-zhQ" secondAttribute="bottom" constant="8" id="vb0-vv-xI7"/>
+                                                <constraint firstItem="TJy-wa-OfZ" firstAttribute="top" secondItem="vYC-yK-reY" secondAttribute="bottom" constant="12" id="tC1-gj-6iy"/>
                                                 <constraint firstItem="vYC-yK-reY" firstAttribute="trailing" secondItem="dW2-jv-QWR" secondAttribute="trailing" constant="-12" id="yS2-3n-2XK"/>
                                             </constraints>
                                         </tableViewCellContentView>
@@ -646,7 +614,7 @@
                                 <action selector="cancelAction:" destination="8no-yf-GVU" id="NJ9-gH-sx8"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="94P-mh-sAr" userLabel="nave_done_button">
+                        <barButtonItem key="rightBarButtonItem" title="Log in" id="94P-mh-sAr" userLabel="nav_done_button">
                             <connections>
                                 <action selector="doneAction:" destination="8no-yf-GVU" id="Atq-nL-oIG"/>
                             </connections>
@@ -657,12 +625,11 @@
                     <connections>
                         <outlet property="emailField" destination="gwA-or-tej" id="JaC-xw-4RH"/>
                         <outlet property="passwordField" destination="vYC-yK-reY" id="H1a-EO-ptG"/>
-                        <outlet property="signInButton" destination="4dm-py-zhQ" id="drh-2W-B3T"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eiB-GV-X0h" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-4828.125" y="-2429.5774647887324"/>
+            <point key="canvasLocation" x="-4829" y="-2430"/>
         </scene>
         <!--Lobby Nav Controller-->
         <scene sceneID="0Ft-zb-7Hg">
@@ -689,8 +656,5 @@
         <image name="imgCityScape" width="1000" height="625"/>
         <image name="imgPatchDark" width="60" height="60"/>
     </resources>
-    <inferredMetricsTieBreakers>
-        <segue reference="gEB-lU-Hsn"/>
-    </inferredMetricsTieBreakers>
     <color key="tintColor" red="1" green="0.50196078430000002" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

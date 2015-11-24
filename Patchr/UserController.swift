@@ -7,13 +7,20 @@
 //
 
 class UserController: NSObject {
-
+	/*
+	 * Facebook access token is managed by the facebook sdk and is stored
+	 * in the device keychain. The facebook user id is available using token.userID.
+	 */
 	static let instance = UserController()
 
+	let facebookReadPermissions = ["public_profile", "email", "user_friends"]
+	
 	var currentUser: User!
+	var userName: String?
+	
 	var userId: String?
 	var sessionKey: String?
-    var userName: String?
+	
     private var jsonUser: String?
     private var jsonSession: String?
 
@@ -23,9 +30,10 @@ class UserController: NSObject {
 		let userDefaults = NSUserDefaults.standardUserDefaults()
 
 		self.userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId"))
-		self.sessionKey = userDefaults.stringForKey(PatchrUserDefaultKey("sessionKey")) // TODO: We should store this more securely
         self.jsonUser = userDefaults.stringForKey(PatchrUserDefaultKey("user"))
-        self.jsonSession = userDefaults.stringForKey(PatchrUserDefaultKey("session"))
+		
+        self.jsonSession = Lockbox.stringForKey("session") as String?
+		self.sessionKey = Lockbox.stringForKey("sessionKey") as String?
 	}
 
 	var authenticated: Bool {
@@ -33,11 +41,17 @@ class UserController: NSObject {
 	}
 
 	func discardCredentials() {
+		
         self.userId = nil
-        self.sessionKey = nil
 		self.currentUser = nil
         self.jsonUser = nil
+		
         self.jsonSession = nil
+		self.sessionKey = nil
+		
+		if FBSDKAccessToken.currentAccessToken() != nil {
+			FBSDKLoginManager().logOut()
+		}
 		
         writeCredentialsToUserDefaults()
 		clearStore()
@@ -73,18 +87,18 @@ class UserController: NSObject {
 	}
 
 	private func writeCredentialsToUserDefaults() {
+		
         let userDefaults = NSUserDefaults.standardUserDefaults()
 
         userDefaults.setObject(self.jsonUser, forKey: PatchrUserDefaultKey("user"))
-        userDefaults.setObject(self.jsonSession, forKey: PatchrUserDefaultKey("sesson"))
         userDefaults.setObject(self.userId, forKey: PatchrUserDefaultKey("userId"))
-        userDefaults.setObject(self.sessionKey, forKey: PatchrUserDefaultKey("sessionKey"))
+		
+		Lockbox.setString(self.sessionKey, forKey: "sessionKey")
+		Lockbox.setString(self.jsonSession, forKey: "session")
 		
         if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
             groupDefaults.setObject(self.jsonUser, forKey: PatchrUserDefaultKey("user"))
-            groupDefaults.setObject(self.jsonSession, forKey: PatchrUserDefaultKey("sesson"))
             groupDefaults.setObject(self.userId, forKey: PatchrUserDefaultKey("userId"))
-            groupDefaults.setObject(self.sessionKey, forKey: PatchrUserDefaultKey("sessionKey"))
         }
     }
 
@@ -128,4 +142,45 @@ class UserController: NSObject {
             Reporting.updateCrashUser(user)
         }
     }
+	
+	func signout() {
+		/*
+		 * Always switches to lobby. Caller should handle UI cleanup in viewWillDisappear()
+		 */
+		DataController.proxibase.signout {
+			response, error in
+			
+			NSOperationQueue.mainQueue().addOperationWithBlock {	// In case we are not called back on main thread
+				
+				if error != nil {
+					Log.w("Error during logout \(error)")
+				}
+				
+				/* Clear local credentials */
+				self.discardCredentials()
+				
+				/* Make sure state is cleared */
+				LocationController.instance.clearLastLocationAccepted()
+				
+				let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+				let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("LobbyNavigationController")
+				appDelegate.window!.setRootViewController(destinationViewController, animated: true)
+			}
+		}
+	}
+	
+	func facebookConnect(completion: (response: AnyObject?, error: NSError?) -> Void) {
+		
+		FBSDKLoginManager().loginBehavior = FBSDKLoginBehavior.SystemAccount
+		FBSDKLoginManager().logInWithReadPermissions(self.facebookReadPermissions, fromViewController: nil) {
+			result, error in
+			
+			if error != nil {
+				completion(response: nil, error: error)
+			}
+			else {
+				completion(response: result, error: nil)
+			}
+		}
+	}
 }

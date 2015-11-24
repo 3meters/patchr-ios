@@ -97,6 +97,8 @@ class PatchTargetViewController: UITableViewController {
         self.currentItems = recentItems
         if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
             self.userId = groupDefaults.stringForKey(PatchrUserDefaultKey("userId"))
+			self.sessionKey = Lockbox.stringForKey("sessionKey") as String?
+
             self.sessionKey = groupDefaults.stringForKey(PatchrUserDefaultKey("sessionKey"))
             if let recentPatches = groupDefaults.arrayForKey(PatchrUserDefaultKey("recent.patches")) as? [[String:AnyObject]] {
                 for recent in recentPatches {

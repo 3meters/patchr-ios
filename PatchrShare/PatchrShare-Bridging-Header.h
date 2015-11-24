@@ -16,6 +16,7 @@
 #import <MBProgressHUD.h>
 #import <Keys/PatchrKeys.h>
 #import <Google/Analytics.h>
+#import <Lockbox.h>
 
 #import "Photo.h"
 

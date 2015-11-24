@@ -11,6 +11,7 @@ import UIKit
 class UserDetailViewController: BaseDetailViewController {
 	
 	var profileMode = true
+	var progress: AirProgress?
 	
 	private var header:	UserDetailView!
 	
@@ -78,6 +79,11 @@ class UserDetailViewController: BaseDetailViewController {
 			bind(true)
 		}
     }
+	
+	override func viewWillDisappear(animated: Bool) {
+		super.viewWillDisappear(animated)
+		self.progress?.hide(true)
+	}
 
 	override func viewDidDisappear(animated: Bool) {
 		/*
@@ -119,33 +125,15 @@ class UserDetailViewController: BaseDetailViewController {
 
 	func actionSignout() {
 		
-		let progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
-		progress.mode = MBProgressHUDMode.Indeterminate
-		progress.styleAs(.ActivityLight)
-		progress.minShowTime = 0.5
-		progress.labelText = "Signing out..."
-		progress.removeFromSuperViewOnHide = true
-		progress.show(true)
-
-		DataController.proxibase.signOut {
-			response, error in
-            
-			NSOperationQueue.mainQueue().addOperationWithBlock {
-				
-				progress?.hide(true)
-
-				if error != nil {
-					Log.w("Error during logout \(error)")
-				}
-				
-				/* Make sure state is cleared */
-				LocationController.instance.clearLastLocationAccepted()
-
-				let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-				let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("LobbyNavigationController") 
-				appDelegate.window!.setRootViewController(destinationViewController, animated: true)
-			}
-		}
+		self.progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+		self.progress!.mode = MBProgressHUDMode.Indeterminate
+		self.progress!.styleAs(.ActivityLight)
+		self.progress!.minShowTime = 0.5
+		self.progress!.labelText = "Signing out..."
+		self.progress!.removeFromSuperViewOnHide = true
+		self.progress!.show(true)
+		
+		UserController.instance.signout()	// Blocks until finished
 	}
     
     func actionSignin() {

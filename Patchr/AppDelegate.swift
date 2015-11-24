@@ -85,10 +85,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
 			gai.dispatchInterval = 5    // Seconds
         #endif
         
-        /* Initialize Crashlytics */
+        /* Initialize Crashlytics: 25% of method time */
         Fabric.with([Crashlytics()])
         
-        /* Initialize Creative sdk */
+        /* Initialize Creative sdk: 25% of method time */
         AdobeUXAuthManager.sharedManager().setAuthenticationParametersWithClientID(keys.creativeSdkClientId(), clientSecret: keys.creativeSdkClientSecret(), enableSignUp: false)
         
         /* Change default font for button bar items */
@@ -99,17 +99,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
         Parse.setApplicationId(keys.parseApplicationId(), clientKey: keys.parseApplicationKey())
 		
 		#if DEBUG
-			PDDebugger.defaultInstance().enableNetworkTrafficDebugging()
-			PDDebugger.defaultInstance().forwardAllNetworkTraffic()
-			PDDebugger.defaultInstance().enableCoreDataDebugging()
-			PDDebugger.defaultInstance().addManagedObjectContext(DataController.instance.coreDataStack.stackMainContext, withName: "Main")
-			PDDebugger.defaultInstance().addManagedObjectContext(DataController.instance.coreDataStack.stackWriterContext, withName: "Writer")
-			
-//			#if !TARGET_IPHONE_SIMULATOR
-//				PDDebugger.defaultInstance().autoConnect()
-//			#else
+			#if TARGET_IPHONE_SIMULATOR
+				PDDebugger.defaultInstance().enableNetworkTrafficDebugging()
+				PDDebugger.defaultInstance().forwardAllNetworkTraffic()
+				PDDebugger.defaultInstance().enableCoreDataDebugging()
+				PDDebugger.defaultInstance().addManagedObjectContext(DataController.instance.coreDataStack.stackMainContext, withName: "Main")
+				PDDebugger.defaultInstance().addManagedObjectContext(DataController.instance.coreDataStack.stackWriterContext, withName: "Writer")
 				PDDebugger.defaultInstance().connectToURL(NSURL(string: "ws://127.0.0.1:9000/device"))
-//			#endif
+			#endif
 		#endif
 		
         /* Get the latest on the authenticated user if we have one */
@@ -158,7 +155,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
         
         /* We handle remote notifications */
         NotificationController.instance.registerForRemoteNotifications()
-        
+		
+		/* Facebook */
+		FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
+//		FBSDKLoginManager.renewSystemCredentials {
+//			result, error in
+//		}
+		
 		/* Show initial controller */
 		route()
 		
@@ -170,7 +173,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
     *--------------------------------------------------------------------------------------------*/
     
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
-        if Branch.getInstance().handleDeepLink(url) {
+		/*
+		 * Even though the Facebook SDK can make this determinitaion on its own,
+		 * let's make sure that the facebook SDK only sees urls intended for it,
+		 * facebook has enough info already!
+		 */
+		if url.scheme.hasPrefix("fb\(FBSDKSettings.appID())") && url.host == "authorize" {
+			return FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation)
+		}
+		else if Branch.getInstance().handleDeepLink(url) {
             Log.d("Branch handled deep link: \(url.absoluteString)")
             return true
         }

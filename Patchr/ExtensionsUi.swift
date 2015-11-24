@@ -200,22 +200,7 @@ extension UIViewController {
             /*
              * Error requires that the user signs in again.
              */
-            DataController.proxibase.signOut {
-                response, error in
-                
-				NSOperationQueue.mainQueue().addOperationWithBlock {
-					if error != nil {
-						Log.w("Error during logout \(error)")
-					}
-					
-					/* Make sure state is cleared */
-					LocationController.instance.clearLastLocationAccepted()
-					
-					let appDelegate               = UIApplication.sharedApplication().delegate as! AppDelegate
-					let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("LobbyNavigationController") 
-					appDelegate.window!.setRootViewController(destinationViewController, animated: true)
-				}
-            }
+			UserController.instance.signout()
         }
         else if errorAction == .LOBBY {
             /* 

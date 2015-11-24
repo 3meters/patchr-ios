@@ -394,7 +394,7 @@ public class Proxibase {
 		})
 	}
 	
-	public func signOut(completion: (response:AnyObject?, error:NSError?) -> Void) {
+	public func signout(completion: (response:AnyObject?, error:NSError?) -> Void) {
 		/*
 		* Send an auth/signout message.
 		*
@@ -404,14 +404,10 @@ public class Proxibase {
 		if UserController.instance.authenticated {
 			performGETRequestFor("auth/signout", parameters: [:]) {
 				response, error in
-				
-				UserController.instance.discardCredentials()
 				completion(response: response, error: error)
 			}
 		}
 		else {
-			UserController.instance.discardCredentials()
-			
 			dispatch_async(dispatch_get_main_queue(), {
 				() -> Void in
 				completion(response: nil, error: nil)

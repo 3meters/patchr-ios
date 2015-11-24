@@ -47,15 +47,7 @@ class DevelopmentViewController: UIViewController {
 		// If the URI changed and we were signed in then sign out
 		if uriAtStart != serverUriField.text {
 			if UserController.instance.authenticated {
-				DataController.proxibase.signOut() {
-					response, error in
-                    
-					NSOperationQueue.mainQueue().addOperationWithBlock {
-						if let error = ServerError(error) {
-							self.handleError(error)
-						}
-					}
-                }
+				UserController.instance.signout()
 			}
 		}
 	}

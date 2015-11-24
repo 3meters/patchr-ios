@@ -14,14 +14,12 @@ class SignInEditViewController: UITableViewController {
 
     @IBOutlet weak var emailField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
-    @IBOutlet weak var signInButton: UIButton!
-    
+	
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.emailField.delegate = self
         self.passwordField.delegate = self
-        
         self.emailField.text = NSUserDefaults.standardUserDefaults().objectForKey(PatchrUserDefaultKey("userEmail")) as? String
     }
     
@@ -109,6 +107,25 @@ class SignInEditViewController: UITableViewController {
     @IBAction func cancelAction(sender: AnyObject){
         self.navigationController?.popViewControllerAnimated(true)
     }
+
+	@IBAction func facebookAction(sender: AnyObject) {
+		UserController.instance.facebookConnect {
+			result, error in
+			if error != nil {
+				Log.d("Facebook error: \(error!)")
+			}
+			else if let result = result as? FBSDKLoginManagerLoginResult {
+				if result.isCancelled {
+					Log.d("User cancelled facebook connect")
+				}
+				else {
+					Log.d("Facebook token: \(result.token.tokenString)")
+					Log.d("Facebook userID: \(result.token.userID)")
+					Log.d("Facebook permissions: \(result.grantedPermissions)")
+				}
+			}
+		}
+	}	
 
     func isValid() -> Bool {
         
