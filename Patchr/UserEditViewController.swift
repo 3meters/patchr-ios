@@ -252,9 +252,10 @@ class UserEditViewController: EntityEditViewController {
         /* Upload user */
         
         queue.tasks +=~ { _, next in
+			let secret = PatchrKeys().proxibaseSecret()	// Obfuscated but highly insecure
             let createParameters: NSDictionary = [
                 "data": parameters,
-                "secret": "larissa",
+                "secret": secret,
                 "installId": DataController.proxibase.installationIdentifier
             ]
             

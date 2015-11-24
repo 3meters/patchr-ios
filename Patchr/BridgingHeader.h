@@ -21,6 +21,8 @@
 #import <AFNetworking/AFNetworkActivityIndicatorManager.h>
 #import <UIImageView+AFNetworking.h>
 #import <AWSS3/AWSS3.h>
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import <PBWebViewController.h>
 #import <MBProgressHUD.h>
 #import <SDWebImage/UIImageView+WebCache.h>

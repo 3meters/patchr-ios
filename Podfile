@@ -1,4 +1,3 @@
-
 source 'https://github.com/CocoaPods/Specs.git'
 
 platform :ios, '8.0'
@@ -14,7 +13,8 @@ plugin 'cocoapods-keys', {
     "ParseApplicationId",
     "ParseApplicationKey",
     "FabricApiKey",
-    "BranchKey"
+    "BranchKey",
+	"ProxibaseSecret"
     ]}
 
 target 'Patchr' do
@@ -26,7 +26,7 @@ pod 'PBWebViewController', '~> 0.3'     # Used to show show web content for term
 pod 'MBProgressHUD', '~> 0.9.1'
 pod 'SDWebImage', '~> 3.7.2'
 pod 'UIDevice-Hardware'                 # Convenience for determining system version and model identifier
-pod 'Lockbox'                           # Used to protect install info
+pod 'Lockbox'                           # Used to protect secrets and install info
 pod 'libPhoneNumber-iOS', '~> 0.7'      # Used to parse and format phone# for places
 pod 'Branch'							# Url routing and deep linking
 pod 'pop', '~> 1.0'						# Animation library
@@ -39,6 +39,7 @@ pod 'Google/Analytics', '~> 1.0.0'
 pod 'Fabric'
 pod 'Crashlytics'
 pod 'PonyDebugger', :git => 'https://github.com/square/PonyDebugger.git'
+pod 'FBSDKLoginKit'
 
 end
 
@@ -46,6 +47,7 @@ target 'PatchrShare' do
 
 pod 'SDWebImage', '~> 3.7.2'
 pod 'AWSS3', '~> 2.2.0'
+pod 'Lockbox'                           # Used to protect secrets and install info
 
 end
 
