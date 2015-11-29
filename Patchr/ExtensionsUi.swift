@@ -207,10 +207,12 @@ extension UIViewController {
              * Mostly because a more current client version is required. 
              */
             LocationController.instance.clearLastLocationAccepted()
-            
-            let appDelegate               = UIApplication.sharedApplication().delegate as! AppDelegate
-            let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("LobbyNavigationController") 
-            appDelegate.window!.setRootViewController(destinationViewController, animated: true)
+			
+			if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
+				let navController = UINavigationController()
+				navController.viewControllers = [LobbyViewController()]
+				appDelegate.window!.setRootViewController(navController, animated: true)
+			}
         }
         
         Log.w("Network Error Summary")
@@ -262,13 +264,13 @@ extension UIViewController {
     func sendScreenView(name: String) {
         let tracker = GAI.sharedInstance().defaultTracker
         tracker.set(kGAIScreenName, value: name)
-        tracker.send(GAIDictionaryBuilder.createScreenView().build() as [NSObject: AnyObject])
+        tracker.send(GAIDictionaryBuilder.createScreenView().build() as NSDictionary as [NSObject : AnyObject])
     }
     
     func trackEvent(category: String, action: String, label: String, value: NSNumber?) {
         let tracker = GAI.sharedInstance().defaultTracker
         let trackDictionary = GAIDictionaryBuilder.createEventWithCategory(category, action: action, label: label, value: value).build()
-        tracker.send(trackDictionary as [NSObject: AnyObject])
+        tracker.send(trackDictionary as NSDictionary as! [NSObject: AnyObject])
     }
 }
 
@@ -306,6 +308,35 @@ extension UITabBarController {
     }
 }
 
+extension UIColor {
+	
+	public convenience init(hexString: String) {
+		let r, g, b, a: CGFloat
+		
+		if hexString.hasPrefix("#") {
+			let start = hexString.startIndex.advancedBy(1)
+			let hexColor = hexString.substringFromIndex(start)
+			
+			if hexColor.characters.count == 8 {
+				let scanner = NSScanner(string: hexColor)
+				var hexNumber: UInt64 = 0
+				
+				if scanner.scanHexLongLong(&hexNumber) {
+					r = CGFloat((hexNumber & 0xff000000) >> 24) / 255
+					g = CGFloat((hexNumber & 0x00ff0000) >> 16) / 255
+					b = CGFloat((hexNumber & 0x0000ff00) >> 8) / 255
+					a = CGFloat(hexNumber & 0x000000ff) / 255
+					
+					self.init(red: r, green: g, blue: b, alpha: a)
+					return
+				}
+			}
+		}
+		self.init(red: 0, green: 0, blue: 0, alpha: 1)
+		return
+	}
+}
+
 public func ==(lhs: NSDate, rhs: NSDate) -> Bool {
 	return lhs === rhs || lhs.compare(rhs) == .OrderedSame
 }
@@ -321,14 +352,14 @@ extension String {
     var length: Int {
         return characters.count
     }
-    
+	
     var md5: String! {
-        
+		
         let str = self.cStringUsingEncoding(NSUTF8StringEncoding)
         let strLen = CC_LONG(self.lengthOfBytesUsingEncoding(NSUTF8StringEncoding))
         let digestLen = Int(CC_MD5_DIGEST_LENGTH)
         let result = UnsafeMutablePointer<CUnsignedChar>.alloc(digestLen)
-        
+		
         CC_MD5(str!, strLen, result)
         
         let hash = NSMutableString()
@@ -367,4 +398,15 @@ enum ErrorAction: Int {
     case NONE
     case SIGNOUT
     case LOBBY
+}
+
+/**
+	MissingHashMarkAsPrefix:   "Invalid RGB string, missing '#' as prefix"
+	UnableToScanHexValue:      "Scan hex error"
+	MismatchedHexStringLength: "Invalid RGB string, number of characters after '#' should be either 3, 4, 6 or 8"
+*/
+public enum UIColorInputError : ErrorType {
+	case MissingHashMarkAsPrefix,
+	UnableToScanHexValue,
+	MismatchedHexStringLength
 }

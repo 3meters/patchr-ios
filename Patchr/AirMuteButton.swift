@@ -43,7 +43,7 @@ class AirMuteButton: AirToggleButton {
         }
         
         if !UserController.instance.authenticated {
-            Shared.Toast("Sign in to mute patches")
+			UserController.instance.showGuestGuard(nil, message: nil)
             return
         }
         

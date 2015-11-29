@@ -41,6 +41,7 @@ pod 'Crashlytics'
 pod 'PonyDebugger', :git => 'https://github.com/square/PonyDebugger.git'
 pod 'FBSDKLoginKit'
 
+
 end
 
 target 'PatchrShare' do

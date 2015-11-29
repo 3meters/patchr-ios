@@ -105,9 +105,19 @@ extension MainTabBarController: UITabBarControllerDelegate {
                 }
             }
 			else if let controller = navigationController.topViewController as? UserDetailViewController {
-				controller.profileMode = true
 				if UserController.instance.authenticated {
+					controller.profileMode = true
 					controller.entityId = UserController.instance.currentUser.id_
+				}
+				else {
+					UserController.instance.showGuestGuard(self, message: nil)
+					return false
+				}
+			}
+			else if let _ = navigationController.topViewController as? NotificationsTableViewController {
+				if !UserController.instance.authenticated {
+					UserController.instance.showGuestGuard(self, message: nil)
+					return false
 				}
 			}
         }

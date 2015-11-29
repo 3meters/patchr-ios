@@ -8,20 +8,25 @@
 
 import UIKit
 
-class LobbyViewController: UIViewController {
-    
-    @IBOutlet weak var logo: UIButton!
-    
+class LobbyViewController: BaseViewController {
+	
+	var appName			= AirLabelBanner()
+	var imageBackground = AirImageView(frame: CGRectZero)
+	var imageLogo		= AirImageView(frame: CGRectZero)
+	var buttonLogin		= AirButton()
+	var buttonSignup	= AirButton()
+	var buttonGuest		= AirButtonLink()
+	var buttonGroup		= UIView()
+	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
-    
+	
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         setScreenName("Lobby")
         
         self.view.endEditing(true)
-        self.logo.imageView!.tintColor(Colors.brandColor)
         self.navigationController?.setNavigationBarHidden(true, animated: animated)
         self.setNeedsStatusBarAppearanceUpdate()
     }
@@ -31,24 +36,100 @@ class LobbyViewController: UIViewController {
         self.navigationController?.setNavigationBarHidden(false, animated: animated)
         self.setNeedsStatusBarAppearanceUpdate()
     }
+	
+	override func loadView() {
+		super.loadView()
+		initialize()
+	}
     
     /*--------------------------------------------------------------------------------------------
     * Events
     *--------------------------------------------------------------------------------------------*/
     
-    @IBAction func guestButtonAction(sender: UIButton) {
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-        let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController")
-        appDelegate.window!.setRootViewController(controller, animated: true)
-    }
-    
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		
+		self.imageBackground.fillSuperviewWithLeftPadding(-24, rightPadding: -24, topPadding: -26, bottomPadding: -36)
+		self.buttonGroup.anchorInCenterWithWidth(228, height: 96)
+		self.buttonLogin.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 44)
+		self.buttonSignup.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 44)
+		self.buttonGuest.alignUnder(self.buttonGroup, matchingCenterWithTopPadding: 120, width: 228, height: 44)
+		self.appName.alignAbove(self.buttonGroup, matchingCenterWithBottomPadding: 20, width: 228, height: 48)
+		self.imageLogo.alignAbove(self.appName, matchingCenterWithBottomPadding: -6, width: 68, height: 68)
+	}
+	
+	func loginAction(sender: AnyObject?) {
+		let controller = LoginViewController()
+		controller.onboardMode = OnboardMode.Login
+		self.navigationController?.pushViewController(controller, animated: true)
+	}
+	
+	func signupAction(sender: AnyObject?) {
+		let controller = LoginViewController()
+		controller.onboardMode = OnboardMode.Signup
+		self.navigationController?.pushViewController(controller, animated: true)
+	}
+	
+	func guestAction(sender: UIButton) {
+		let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+		let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+		let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController")
+		appDelegate.window!.setRootViewController(controller, animated: true)
+	}
+	
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
-    
+	
+	override func initialize() {
+		super.initialize()
+		
+		self.imageBackground.image = UIImage(named: "imgCityScape")
+		self.imageBackground.contentMode = UIViewContentMode.ScaleAspectFill
+		self.imageBackground.parallaxIntensity = -40
+		self.view.addSubview(self.imageBackground)
+		
+		self.imageLogo.image = UIImage(named: "imgPatchDark")
+		self.imageLogo.contentMode = UIViewContentMode.ScaleAspectFill
+		self.imageLogo.tintColor = Theme.colorTint
+		self.view.addSubview(self.imageLogo)
+		
+		self.appName.text = "Patchr"
+		self.appName.textAlignment = NSTextAlignment.Center
+		self.view.addSubview(self.appName)
+		
+		self.buttonLogin.setTitle("LOG IN", forState: .Normal)
+		self.buttonLogin.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+		self.buttonLogin.setTitleColor(Colors.brandColor, forState: .Highlighted)
+		self.buttonLogin.borderColor = UIColor.whiteColor()
+		self.buttonLogin.borderWidth = Theme.dimenButtonBorderWidth
+		self.buttonLogin.cornerRadius = Theme.dimenButtonCornerRadius
+		
+		self.buttonSignup.setTitle("SIGN UP", forState: .Normal)
+		self.buttonSignup.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+		self.buttonSignup.setTitleColor(Colors.brandColor, forState: .Highlighted)
+		self.buttonSignup.borderColor = UIColor.whiteColor()
+		self.buttonSignup.borderWidth = Theme.dimenButtonBorderWidth
+		self.buttonSignup.cornerRadius = Theme.dimenButtonCornerRadius
+		
+		self.buttonGroup.addSubview(self.buttonLogin)
+		self.buttonGroup.addSubview(self.buttonSignup)
+		self.view.addSubview(self.buttonGroup)
+		
+		self.buttonGuest.setTitle("skip", forState: .Normal)
+		self.buttonGuest.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+		self.buttonGuest.setTitleColor(Colors.brandColor, forState: .Highlighted)
+		self.buttonGuest.titleLabel?.font = UIFont(name: "HelveticaNeue-Light", size: 18)!
+		self.view.addSubview(self.buttonGuest)
+		
+		self.buttonLogin.addTarget(self, action: Selector("loginAction:"), forControlEvents: .TouchUpInside)
+		self.buttonSignup.addTarget(self, action: Selector("signupAction:"), forControlEvents: .TouchUpInside)
+		self.buttonGuest.addTarget(self, action: Selector("guestAction:"), forControlEvents: .TouchUpInside)
+	}
+	
     override func preferredStatusBarStyle() -> UIStatusBarStyle {
         return UIStatusBarStyle.LightContent
     }
+	
 }
 

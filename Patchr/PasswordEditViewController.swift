@@ -8,30 +8,68 @@
 
 import UIKit
 
-class PasswordEditViewController: UITableViewController {
+class PasswordEditViewController: BaseViewController {
 
     var processing: Bool = false
 
-    @IBOutlet weak var passwordField: UITextField!
-    @IBOutlet weak var passwordNewField: UITextField!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        self.passwordField.delegate = self
-        self.passwordNewField.delegate = self
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        setScreenName("PasswordEdit")
-    }
-    
+    var passwordField = AirTextField()
+    var passwordNewField = AirTextField()
+	
+	/*--------------------------------------------------------------------------------------------
+	* Lifecycle
+	*--------------------------------------------------------------------------------------------*/
+	
+	override func loadView() {
+		super.loadView()
+		initialize()
+	}
+	
     override func viewDidAppear(animated: Bool) {
         self.passwordField.becomeFirstResponder()
     }
-    
-    @IBAction func doneAction(sender: NSObject) {
+	
+	/*--------------------------------------------------------------------------------------------
+	* Events
+	*--------------------------------------------------------------------------------------------*/
+	
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		self.passwordField.anchorTopCenterWithTopPadding(88, width: 288, height: 48)
+		self.passwordNewField.alignUnder(self.passwordField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+	}
+
+	/*--------------------------------------------------------------------------------------------
+	* Methods
+	*--------------------------------------------------------------------------------------------*/
+	
+	override func initialize() {
+		super.initialize()
+		
+		setScreenName("PasswordEdit")
+		
+		self.passwordField.placeholder = "Old password"
+		self.passwordField.delegate = self
+		self.passwordField.secureTextEntry = true
+		self.passwordField.keyboardType = UIKeyboardType.Default
+		self.passwordField.returnKeyType = UIReturnKeyType.Next
+		self.view.addSubview(self.passwordField)
+
+		self.passwordNewField.placeholder = "Password (6 characters or more)"
+		self.passwordNewField.delegate = self
+		self.passwordNewField.secureTextEntry = true
+		self.passwordNewField.keyboardType = UIKeyboardType.Default
+		self.passwordNewField.returnKeyType = UIReturnKeyType.Done
+		self.view.addSubview(self.passwordNewField)
+		
+		/* Navigation bar buttons */
+		let doneButton   = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
+		let cancelButton   = UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.Plain, target: self, action: "cancelAction:")
+		self.navigationItem.title = "Change password"
+		self.navigationItem.rightBarButtonItems = [doneButton]
+		self.navigationItem.leftBarButtonItems = [cancelButton]
+	}
+	
+    func doneAction(sender: NSObject) {
         
         if processing { return }
         
@@ -55,8 +93,18 @@ class PasswordEditViewController: UITableViewController {
 				self.processing = false
 					
 				progress?.hide(true, afterDelay: 1.0)
-				if let error = ServerError(error) {
-					self.handleError(error)
+				if var error = ServerError(error) {	// Doesn't show in debugger correctly but is getting set
+					if error.code == .UNAUTHORIZED_CREDENTIALS {
+						error.message = "The old password is not correct."
+						self.handleError(error, errorActionType: .ALERT)
+					}
+					else if error.code == .FORBIDDEN_USER_PASSWORD_WEAK {
+						error.message = "The password is not strong enough."
+						self.handleError(error, errorActionType: .ALERT)
+					}
+					else {
+						self.handleError(error)	// Could log user out if looks like credential problem.
+					}
 				}
 				else {
 					self.dismissViewControllerAnimated(true, completion: nil)
@@ -67,8 +115,8 @@ class PasswordEditViewController: UITableViewController {
         }
     }
     
-    @IBAction func cancelAction(sender: AnyObject){
-        self.dismissViewControllerAnimated(true, completion: nil)
+    func cancelAction(sender: AnyObject){
+        self.navigationController?.popViewControllerAnimated(true)
     }
     
     func isValid() -> Bool {

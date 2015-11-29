@@ -9,10 +9,13 @@
 import UIKit
 
 class UserEditViewController: EntityEditViewController {
+	
+	var provider = AuthProvider.PROXIBASE
+	var tokenString: String?
+	var onboardMode = OnboardMode.None
 
 	@IBOutlet weak var emailField: 			 UITextField!
 	@IBOutlet weak var areaField: 			 UITextField!
-	@IBOutlet weak var passwordField: 		 UITextField!
 
     @IBOutlet weak var joinButton: 			 UIButton!
 	@IBOutlet weak var changePasswordButton: UIButton!
@@ -23,14 +26,14 @@ class UserEditViewController: EntityEditViewController {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+		self.schema = Schema.ENTITY_USER
         self.collection = "users"
-        self.defaultPhotoName = "imgDefaultUser"
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.photoView!.frame = CGRectMake(0, 0, 200, 200)
+        self.photoView!.frame = CGRectMake(0, 0, 150, 150)
         
         if editMode {
             navigationItem.title = Utils.LocalizedString("Edit profile")
@@ -52,10 +55,7 @@ class UserEditViewController: EntityEditViewController {
             /* Use tab order when inserting users */
             nameField.delegate = self
             emailField.delegate = self
-            if passwordField != nil {
-                passwordField.delegate = self
-            }
-            
+			
             /* Navigation bar buttons */
             let doneButton   = UIBarButtonItem(title: "Join", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
             self.navigationItem.rightBarButtonItems = [doneButton]
@@ -127,7 +127,6 @@ class UserEditViewController: EntityEditViewController {
         }
         else {
             parameters["email"] = nilToNull(self.email)
-            parameters["password"] = nilToNull(self.password)
             if areaField != nil {
                 parameters["area"] = nilToNull(self.area)
             }
@@ -149,9 +148,6 @@ class UserEditViewController: EntityEditViewController {
             return super.isDirty()
         }
         else {
-            if !(password.isEmpty && email.isEmpty) {
-                return true
-            }
             return super.isDirty()
         }
     }
@@ -168,18 +164,11 @@ class UserEditViewController: EntityEditViewController {
             return false
         }
 
-		if !editMode {
-            if passwordField.text!.utf16.count < 6 {
-                Alert("Enter a password with six characters or more.", message: nil, cancelButtonTitle: "OK")
-                return false
-            }
-        }
-        
         return true
     }
 
     override func endFieldEditing() {
-        for field in [nameField, emailField, areaField, passwordField] {
+        for field in [nameField, emailField, areaField] {
             if (field?.isFirstResponder() != nil) {
                 field.endEditing(false)
             }
@@ -335,15 +324,6 @@ class UserEditViewController: EntityEditViewController {
             self.areaField.text = newValue
         }
     }
-    
-    var password: String {
-        get {
-            return self.passwordField.text!
-        }
-        set {
-            self.passwordField.text = newValue
-        }
-    }
 }
 
 extension UserEditViewController: UITextFieldDelegate {
@@ -356,13 +336,9 @@ extension UserEditViewController: UITextFieldDelegate {
                 return false
             }
             else if textField == self.emailField {
-                self.passwordField.becomeFirstResponder()
-                return false
-            }
-            else if textField == self.passwordField {                
-                self.joinAction(textField)
-                textField.resignFirstResponder()
-                return false
+				self.joinAction(textField)
+				textField.resignFirstResponder()
+				return false
             }
         }
         return true

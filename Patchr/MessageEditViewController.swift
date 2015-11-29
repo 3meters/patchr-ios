@@ -49,6 +49,7 @@ class MessageEditViewController: EntityEditViewController {
     override func awakeFromNib() {
         super.awakeFromNib()
         self.collection = "messages"
+		self.schema = Schema.ENTITY_MESSAGE
     }
 	
     override func viewDidLoad() {
@@ -56,7 +57,7 @@ class MessageEditViewController: EntityEditViewController {
         
         self.descriptionField!.placeholder = "Message"
         self.photoView!.frame = CGRectMake(16, 0, self.photoHolder!.bounds.size.width - 32, self.photoHolder!.bounds.size.height)
-        
+		
         self.toPicker.prompt = nil
         self.toPicker.showPrompt = false
         self.toPicker.cellHeight = 32
@@ -172,8 +173,8 @@ class MessageEditViewController: EntityEditViewController {
     }
     
     override func viewDidAppear(animated: Bool) {
-        if photoChosen {
-            photoChosen = false
+        if self.photoView!.photoChosen {
+            self.photoView!.photoChosen = false
             let rowFrame = self.tableView.rectForRowAtIndexPath(NSIndexPath(forRow: 2, inSection: 0))
             let currentOffsetBottom = self.tableView.contentOffset.y + self.tableView.frame.size.height
             let currentRowBottom = rowFrame.origin.y + rowFrame.size.height
@@ -189,31 +190,19 @@ class MessageEditViewController: EntityEditViewController {
             self.descriptionField.becomeFirstResponder()
         }
     }
-    
+	
+	override func viewWillDisappear(animated: Bool) {
+		super.viewWillDisappear(animated)
+	}
+	
     /*--------------------------------------------------------------------------------------------
     * Events
     *--------------------------------------------------------------------------------------------*/
-
-    @IBAction override func clearPhotoAction(sender: AnyObject) {
-        super.clearPhotoAction(sender)
-        
-        self.tableView.reloadData() // Triggers row resizing
-    }
 	
 	func focusToPicker(sender: AnyObject?) {
 		self.toPicker.becomeFirstResponder()
 	}
-    
-    override func photoChosen(image: UIImage?, imageResult: ImageResult?) {
-        super.photoChosen(image, imageResult: imageResult)
-        /*
-        * We need to make sure heightForRowAtIndexPath gets fired
-        * to reset the cell height to accomodate the photo. viewDidAppear
-        * has logic to make sure the photo is scrolled into view.
-        */
-        self.tableView.reloadData()
-    }
-    
+	
     func searchTextChanged(sender: AnyObject?) {
         Log.d("searchTextChanged called")
     }
@@ -235,7 +224,7 @@ class MessageEditViewController: EntityEditViewController {
         if self.messageType == .Share {
             
             /* Set the default description */
-            self.description_ = self.shareDescription
+            self.descriptionField.text = self.shareDescription
 			
 			/* Share entity */
 			
@@ -387,7 +376,7 @@ class MessageEditViewController: EntityEditViewController {
     
     override func isDirty() -> Bool {
         if self.messageType == .Share {
-            return (descriptionField != nil && self.shareDescription != description_)
+            return (descriptionField != nil && self.shareDescription != self.descriptionField.text)
         }
         else {
             return super.isDirty()
@@ -403,13 +392,14 @@ class MessageEditViewController: EntityEditViewController {
                 return false
             }
             
-            if self.description_ == nil || self.description_!.isEmpty {
+            if self.descriptionField.text == nil || self.descriptionField.text!.isEmpty {
                 Alert("Add message", message: nil, cancelButtonTitle: "OK")
                 return false
             }
         }
         else {
-            if ((self.description_ == nil || self.description_!.isEmpty) && self.photo == nil) {
+            if ((self.descriptionField.text == nil || self.descriptionField.text!.isEmpty)
+				&& self.photoView!.imageButton.imageForState(.Normal) == nil) {
                 Alert("Add message or photo", message: nil, cancelButtonTitle: "OK")
                 return false
             }
@@ -441,7 +431,7 @@ extension MessageEditViewController {
                 if self.messageType == .Content {
                     /* Size so photo aspect ratio is 4:3 */
                     var height: CGFloat = ((UIScreen.mainScreen().bounds.size.width - 32) * 0.75) + 16
-                    if !self.photoActive {
+                    if !self.photoView!.photoActive {
                         height = 64 // Leave enough room for set photo button
                     }
                     return height

@@ -49,10 +49,6 @@ class UserController: NSObject {
         self.jsonSession = nil
 		self.sessionKey = nil
 		
-		if FBSDKAccessToken.currentAccessToken() != nil {
-			FBSDKLoginManager().logOut()
-		}
-		
         writeCredentialsToUserDefaults()
 		clearStore()
         Reporting.updateCrashUser(nil)
@@ -93,8 +89,8 @@ class UserController: NSObject {
         userDefaults.setObject(self.jsonUser, forKey: PatchrUserDefaultKey("user"))
         userDefaults.setObject(self.userId, forKey: PatchrUserDefaultKey("userId"))
 		
-		Lockbox.setString(self.sessionKey, forKey: "sessionKey")
-		Lockbox.setString(self.jsonSession, forKey: "session")
+		Lockbox.setString((self.sessionKey != nil ? self.sessionKey! : nil), forKey: "sessionKey")
+		Lockbox.setString((self.jsonSession != nil ? self.jsonSession! : nil), forKey: "session")
 		
         if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
             groupDefaults.setObject(self.jsonUser, forKey: PatchrUserDefaultKey("user"))
@@ -128,14 +124,10 @@ class UserController: NSObject {
             
             self.currentUser = user
             self.userName = user.name
-            
-            self.userId = NSUserDefaults.standardUserDefaults().stringForKey(PatchrUserDefaultKey("userId"))
-            self.sessionKey = NSUserDefaults.standardUserDefaults().stringForKey(PatchrUserDefaultKey("sessionKey")) // TODO: We should store this more securely
-            
+			
             /* Need to seed these because sign-in with previous version might not have included them */
             if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
                 groupDefaults.setObject(self.userId, forKey: PatchrUserDefaultKey("userId"))
-                groupDefaults.setObject(self.sessionKey, forKey: PatchrUserDefaultKey("sessionKey"))
             }
             
             Branch.getInstance().setIdentity(user.id_)
@@ -147,7 +139,7 @@ class UserController: NSObject {
 		/*
 		 * Always switches to lobby. Caller should handle UI cleanup in viewWillDisappear()
 		 */
-		DataController.proxibase.signout {
+		DataController.proxibase.logout {
 			response, error in
 			
 			NSOperationQueue.mainQueue().addOperationWithBlock {	// In case we are not called back on main thread
@@ -162,25 +154,22 @@ class UserController: NSObject {
 				/* Make sure state is cleared */
 				LocationController.instance.clearLastLocationAccepted()
 				
-				let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-				let destinationViewController = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("LobbyNavigationController")
-				appDelegate.window!.setRootViewController(destinationViewController, animated: true)
+				if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
+					let navController = UINavigationController()
+					navController.viewControllers = [LobbyViewController()]
+					appDelegate.window!.setRootViewController(navController, animated: true)
+				}
 			}
 		}
 	}
 	
-	func facebookConnect(completion: (response: AnyObject?, error: NSError?) -> Void) {
-		
-		FBSDKLoginManager().loginBehavior = FBSDKLoginBehavior.SystemAccount
-		FBSDKLoginManager().logInWithReadPermissions(self.facebookReadPermissions, fromViewController: nil) {
-			result, error in
-			
-			if error != nil {
-				completion(response: nil, error: error)
-			}
-			else {
-				completion(response: result, error: nil)
-			}
+	func showGuestGuard(var controller: UIViewController?, message: String?) {
+		let guestController = GuestViewController()
+		guestController.inputMessage = message
+		guestController.modalPresentationStyle = .OverFullScreen
+		if controller == nil {
+			controller = UIViewController.topMostViewController()!
 		}
+		controller!.presentViewController(guestController, animated: true, completion: nil)
 	}
 }

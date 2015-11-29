@@ -10,7 +10,7 @@ import UIKit
 
 class UserDetailView: BaseDetailView {
 
-	var name			= UILabel()
+	var name			= AirLabelTitle()
 	var photo			= AirImageView(frame: CGRectZero)
 	var email			= UILabel()
 	var rule			= UIView()

@@ -61,7 +61,7 @@ extension Entity {
         return photo
     }
     
-    static func getDefaultPhoto(schema: String, id: String?) -> Photo {
+    static func getDefaultPhoto(schema: String?, id: String?) -> Photo {
 		/*
 		 * Default photos are stored but never directly set to entity.photo.
 		 * We store them because the code expects a managed object and managed
@@ -69,19 +69,21 @@ extension Entity {
 		 */
         var prefix: String = "imgDefaultPatch"
         var source: String = PhotoSource.resource
-        
-        if schema == "place" {
-            prefix = "imgDefaultPlace";
-        }
-        else if schema == "user" || schema == "notification" {
-            if id != nil {
-                prefix = "http://www.gravatar.com/avatar/\(id!.md5)?d=identicon&r=pg"
-                source = PhotoSource.gravatar
-            }
-            else {
-				prefix = "imgDefaultUser"	// Used primarily when user has been deleted
-            }
-        }
+		
+		if schema != nil {
+			if schema == "place" {
+				prefix = "imgDefaultPlace";
+			}
+			else if schema == "user" || schema == "notification" {
+				if id != nil {
+					prefix = "http://www.gravatar.com/avatar/\(id!.md5)?d=identicon&r=pg"
+					source = PhotoSource.gravatar
+				}
+				else {
+					prefix = "imgDefaultUser"	// Used primarily when user has been deleted
+				}
+			}
+		}
 		
 		var photo = Photo.fetchOneById(prefix, inManagedObjectContext: DataController.instance.mainContext)
 		

@@ -41,7 +41,7 @@ class PatchNavigationController: UINavigationController {
     
     func addAction(sender: AnyObject?) {
         if !UserController.instance.authenticated {
-            Shared.Toast("Sign in to create a new patch")
+			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to create patches and more!")
             return
         }
         

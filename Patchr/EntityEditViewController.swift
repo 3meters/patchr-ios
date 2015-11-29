@@ -13,41 +13,30 @@ class EntityEditViewController: UITableViewController {
 
 	var entity: Entity?
     var collection: String?
-    var defaultPhotoName: String?
     var progressStartLabel: String?
     var progressFinishLabel: String?
     var cancelledLabel: String?
-    
+	var schema: String?
+	
 	var processing: Bool = false
     var firstAppearance: Bool = true
 	var backClicked = false
 	var keyboardVisible = false
 	var lastResponder: UIResponder?
     
-    var usingPhotoDefault: Bool = true
-	var photoDirty: Bool = false
-    var photoActive: Bool = false
-    var photoChosen: Bool = false
-    
     var imageUploadRequest: AWSS3TransferManagerUploadRequest?
     var entityPostRequest: NSURLSessionTask?
 
-	var editMode: Bool {
-		return entity != nil
-	}
+	var editMode: Bool { return entity != nil }
     
     var spacer: UIBarButtonItem {
         let space = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
         space.width = SPACER_WIDTH
         return space
     }
-
-    lazy var photoChooser: PhotoChooserUI = PhotoChooserUI(hostViewController: self)
-    
-    var photoView: PhotoView?
-    
-	// UI outlets and views
-
+	
+	var photoView: PhotoView?
+	
 	@IBOutlet weak var nameField:        UITextField!
 	@IBOutlet weak var descriptionField: GCPlaceholderTextView!
     @IBOutlet weak var photoHolder:      UIView?
@@ -63,9 +52,10 @@ class EntityEditViewController: UITableViewController {
         tap.delegate = self
         tap.cancelsTouchesInView = false
         self.view.addGestureRecognizer(tap)
-        
-        let array = NSBundle.mainBundle().loadNibNamed("PhotoView", owner: self, options: nil)
-        self.photoView = array[0] as? PhotoView
+		
+		/* Configure photo view */
+		
+        self.photoView = PhotoView()
         self.photoHolder?.addSubview(self.photoView!)
         
         if entity?.photo != nil {
@@ -79,11 +69,13 @@ class EntityEditViewController: UITableViewController {
                 self.photoView?.configureTo(.Empty)
             }
         }
-        
-        self.photoView?.editPhotoButton?.addTarget(self, action: Selector("editPhotoAction:"), forControlEvents: .TouchUpInside)
-        self.photoView?.clearPhotoButton?.addTarget(self, action: Selector("clearPhotoAction:"), forControlEvents: .TouchUpInside)
-        self.photoView?.setPhotoButton?.addTarget(self, action: Selector("setPhotoAction:"), forControlEvents: .TouchUpInside)
-    
+		
+		self.photoView?.photoSchema = self.entity?.schema ?? self.schema ?? Schema.ENTITY_PATCH
+		self.photoView?.photoDefaultId = self.entity?.id_
+		self.photoView?.setHostController(self)
+		
+		/* Description field */
+		
         if self.descriptionField != nil {
             self.descriptionField!.placeholderColor = Colors.hintColor
             self.descriptionField!.scrollEnabled = false
@@ -103,6 +95,8 @@ class EntityEditViewController: UITableViewController {
         notificationCenter.addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
         notificationCenter.addObserver(self, selector: "keyboardDidHide:", name: UIKeyboardDidHideNotification, object: nil)
         notificationCenter.addObserver(self, selector: "keyboardDidShow:", name: UIKeyboardDidShowNotification, object: nil)
+		notificationCenter.addObserver(self, selector: "photoDidChange:", name: Events.PhotoDidChange, object: nil)
+		notificationCenter.addObserver(self, selector: "dismissKeyboard", name: Events.PhotoViewHasFocus, object: nil)
 	}
 
     override func viewDidAppear(animated: Bool) {
@@ -117,65 +111,15 @@ class EntityEditViewController: UITableViewController {
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
-        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
+	
+	deinit {
+		NSNotificationCenter.defaultCenter().removeObserver(self)
+	}
     
     /*--------------------------------------------------------------------------------------------
     * Events
     *--------------------------------------------------------------------------------------------*/
-    
-    @IBAction func editPhotoAction(sender: AnyObject){
-        let controller = AdobeUXImageEditorViewController(image: self.photo)
-        controller.delegate = self
-        presentViewController(controller, animated: true, completion: nil)
-    }
-    
-    @IBAction func clearPhotoAction(sender: AnyObject) {
-
-        if self.collection == "messages" {
-            photo = nil
-        }
-        else {            
-            let photo: Photo = Entity.getDefaultPhoto(entity!.schema, id: entity!.id_);
-            self.photoView?.imageView?.setImageWithPhoto(photo)
-            usingPhotoDefault = true
-        }
-        
-        if !editMode {
-            self.photoDirty = (photo != nil)
-        }
-		else {
-			self.photoDirty = (entity!.photo != photo)
-		}
-        
-        if self.collection == "messages" {
-            self.photoView?.configureTo(.Empty)
-        }
-        else {
-            self.photoView?.configureTo(.Placeholder)
-        }
-        
-        photoActive = false
-    }
-    
-    @IBAction func setPhotoAction(sender: AnyObject) {
-        photoChooser.choosePhoto() {
-            [weak self] image, imageResult, cancelled in
-			
-			if cancelled {
-				if self?.lastResponder != nil {
-					self?.lastResponder?.becomeFirstResponder()
-				}
-				return
-			}
-            self?.photoChosen(image, imageResult: imageResult)
-        }
-		
-		if let responder = gimmeFirstResponder(inView: self.view) {
-			self.lastResponder = responder
-			responder.resignFirstResponder()
-		}
-    }
 	
     @IBAction func deleteAction(sender: AnyObject) {
         
@@ -226,7 +170,16 @@ class EntityEditViewController: UITableViewController {
                 }
         }
     }
-    
+	
+	func photoDidChange(sender: AnyObject) {
+		/*
+		* We need to make sure heightForRowAtIndexPath gets fired
+		* to reset the cell height to accomodate the photo. viewDidAppear
+		* has logic to make sure the photo is scrolled into view.
+		*/
+		self.tableView.reloadData() // Triggers row resizing
+	}
+	
     func alertTextFieldDidChange(sender: AnyObject) {
 		if let alertController: AirAlertController = self.presentedViewController as? AirAlertController {
 			let confirm = alertController.textFields![0] 
@@ -242,55 +195,17 @@ class EntityEditViewController: UITableViewController {
     func bind() {
 		
         if let entity = self.entity {
-            
-            /* Name and description */
-            self.name = entity.name
+			if self.nameField != nil {
+				self.nameField?.text = entity.name
+			}
             if self.descriptionField != nil {
-                self.description_ = entity.description_
+                self.descriptionField.text = entity.description_
             }
-            
-            /* Photo */
-            if entity.photo != nil {
-                self.photoView?.imageView?.setImageWithPhoto(entity.photo!)
-                self.usingPhotoDefault = false
-                self.photoActive = true
-            }
-            else {
-                if self.collection == "patches" || self.collection == "users" {
-                    let photo: Photo = Entity.getDefaultPhoto(entity.schema, id: entity.id_);
-                    self.photoView?.imageView?.setImageWithPhoto(photo)
-                }
-                self.usingPhotoDefault = true
-                self.photoActive = false
-            }
-        }
+		}
+		
+		self.photoView?.bindPhoto(self.entity?.photo)
     }
     
-    func photoChosen(image: UIImage?, imageResult: ImageResult?) -> Void {
-        
-        if image != nil {
-            self.photo = image // Image ready so pushes into photoImage
-        }
-        else {
-            self.photoView?.imageView?.setImageWithImageResult(imageResult!)  // Downloads and pushes into photoImage
-        }
-        
-        if !self.editMode {
-            self.photoDirty = (self.photo != nil)
-        }
-        else {
-            self.photoDirty = (self.entity!.photo != self.photo)
-        }
-        
-        self.usingPhotoDefault = false
-        
-        self.photoDirty = true
-        self.photoActive = true
-        self.photoChosen = true
-        
-        self.photoView?.configureTo(.Photo)
-    }
-
 	func save() {
 		if !isValid() { return }
 		post(self.editMode)
@@ -299,20 +214,20 @@ class EntityEditViewController: UITableViewController {
     func gather(parameters: NSMutableDictionary) -> NSMutableDictionary {
         
         if self.editMode {
-            if self.name != entity!.name {
-                parameters["name"] = nilToNull(self.name)
+            if self.nameField != nil && self.nameField.text != entity!.name {
+                parameters["name"] = nilToNull(self.nameField.text)
             }
-            if self.descriptionField != nil && self.description_ != self.entity!.description_ {
-                parameters["description"] = nilToNull(self.description_)
+            if self.descriptionField != nil && self.descriptionField.text != self.entity!.description_ {
+                parameters["description"] = nilToNull(self.descriptionField.text)
             }
-            if self.photoDirty {
-                parameters["photo"] = nilToNull(self.photo)
+            if self.photoView != nil && self.photoView!.photoDirty {
+                parameters["photo"] = self.nilToNull(self.photoView?.imageButton.imageForState(.Normal))
             }
         }
         else {
-            parameters["name"] = nilToNull(self.name)
-            parameters["photo"] = nilToNull(self.photo)
-            parameters["description"] = nilToNull(self.description_)
+            parameters["name"] = nilToNull(self.nameField?.text)
+            parameters["photo"] = nilToNull(self.photoView?.imageButton.imageForState(.Normal))
+            parameters["description"] = nilToNull(self.descriptionField?.text)
         }
         
         return parameters
@@ -481,11 +396,12 @@ class EntityEditViewController: UITableViewController {
 					
 					LocationController.instance.clearLastLocationAccepted()
 					
-					let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-					let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
-					let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController")
-					appDelegate.window?.setRootViewController(controller, animated: true)
-					Shared.Toast("User \(userName) erased", controller: controller)
+					if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
+						let navController = UINavigationController()
+						navController.viewControllers = [LobbyViewController()]
+						appDelegate.window!.setRootViewController(navController, animated: true)
+						Shared.Toast("User \(userName) erased", controller: navController)
+					}
 				}
             }
         }
@@ -534,27 +450,31 @@ class EntityEditViewController: UITableViewController {
 	func isDirty() -> Bool {
         
 		if self.editMode {
-            if self.entity!.name != self.name {
+            if self.entity!.name != self.nameField?.text {
                 return true
             }
-            if self.photoDirty {
-                return true
-            }
-            if (self.descriptionField != nil && self.entity!.description_ != self.description_) {
+			if let photoView = self.photoView {
+				if photoView.photoDirty {
+					return true
+				}
+			}
+            if (self.descriptionField != nil && self.entity!.description_ != self.descriptionField.text) {
                 return true
             }
             return false
 		}
 		else {
-            if self.nameField != nil && self.name != nil {
+            if self.nameField != nil && self.nameField.text != nil {
                 return true
             }
-            if self.descriptionField != nil && self.description_ != nil {
+            if self.descriptionField != nil && self.descriptionField.text != nil {
                 return true
             }
-            if self.photoDirty {
-                return true
-            }
+			if let photoView = self.photoView {
+				if photoView.photoDirty {
+					return true
+				}
+			}
             return false
 		}
 	}
@@ -657,58 +577,6 @@ class EntityEditViewController: UITableViewController {
         } else {
             return value
         }
-    }
-    
-    /*--------------------------------------------------------------------------------------------
-     * Field wrappers
-     *--------------------------------------------------------------------------------------------*/
-    
-    var name: String? {
-        get {
-            return (self.nameField == nil || self.nameField.text == "") ? nil : self.nameField.text
-        }
-        set {
-            if self.nameField != nil {
-                self.nameField.text = newValue
-            }
-        }
-    }
-    
-    var description_: String? {
-        get {
-            return (self.descriptionField == nil || self.descriptionField.text == "") ? nil : self.descriptionField.text
-        }
-        set {
-            if self.descriptionField != nil {
-                self.descriptionField.text = newValue
-            }
-        }
-    }
-    
-    var photo: UIImage? {
-        get {
-            return (self.photoView?.imageView?.imageForState(.Normal) == nil || self.usingPhotoDefault) ? nil : self.photoView?.imageView?.imageForState(.Normal)
-        }
-        set {
-            if let imageView = self.photoView?.imageView {
-                UIView.transitionWithView(imageView, duration: 1.0, options: UIViewAnimationOptions.TransitionCrossDissolve,
-                    animations: { () -> Void in
-                        imageView.setImage(newValue, forState: .Normal)
-                    }, completion: nil)
-            }
-        }
-    }
-}
-
-extension EntityEditViewController: AdobeUXImageEditorViewControllerDelegate {
-    
-    func photoEditor(editor: AdobeUXImageEditorViewController!, finishedWithImage image: UIImage!) {
-        self.photoChosen(image, imageResult: nil)
-        self.dismissViewControllerAnimated(true, completion: nil)
-    }
-    
-    func photoEditorCanceled(editor: AdobeUXImageEditorViewController!) {
-        self.dismissViewControllerAnimated(true, completion: nil)
     }
 }
 

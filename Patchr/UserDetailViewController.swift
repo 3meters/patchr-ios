@@ -30,7 +30,9 @@ class UserDetailViewController: BaseDetailViewController {
 	override func viewDidLoad() {
 		self.queryName = DataStoreQueryName.MessagesByUser.rawValue
 		
-		super.viewDidLoad()
+		if UserController.instance.authenticated {
+			super.viewDidLoad()
+		}
 		
 		self.header = UserDetailView()
 		self.tableView.tableHeaderView = self.header	// Triggers table binding
@@ -40,7 +42,7 @@ class UserDetailViewController: BaseDetailViewController {
 			if self.isCurrentUser {
 				let editImage = Utils.imageEdit
 				let editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionEdit"))
-				let signoutButton = UIBarButtonItem(title: "Sign out", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSignout"))
+				let signoutButton = UIBarButtonItem(title: "Log out", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSignout"))
 				let settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSettings"))
 				let spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
 				spacer.width = SPACER_WIDTH
@@ -49,7 +51,7 @@ class UserDetailViewController: BaseDetailViewController {
 				self.navigationItem.title = "Me"
 			}
 			else  {
-				let signinButton = UIBarButtonItem(title: "Sign in", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSignin"))
+				let signinButton = UIBarButtonItem(title: "Log in", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSignin"))
 				let settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSettings"))
 				self.navigationItem.rightBarButtonItems = [settingsButton]
 				self.navigationItem.leftBarButtonItems = [signinButton]
@@ -139,20 +141,21 @@ class UserDetailViewController: BaseDetailViewController {
     func actionSignin() {
         
         LocationController.instance.clearLastLocationAccepted()
-        let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
-        let controller = storyboard.instantiateViewControllerWithIdentifier("SignInEditViewController")
-        self.navigationController?.pushViewController(controller, animated: true)
+		
+		if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
+			let navController = UINavigationController()
+			navController.viewControllers = [LobbyViewController()]
+			appDelegate.window!.setRootViewController(navController, animated: true)
+		}
     }
     
 	func actionEdit() {
-        /* Has its own nav because we segue modally and it needs its own stack */
-        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-        let controller = storyboard.instantiateViewControllerWithIdentifier("UserEditViewController") as? UserEditViewController
-        controller!.entity = self.entity
-        let navController = UINavigationController()
-        navController.navigationBar.tintColor = Colors.brandColorDark
-        navController.viewControllers = [controller!]
-        self.navigationController?.presentViewController(navController, animated: true, completion: nil)
+		
+		let controller = ProfileViewController()
+		let navController = UINavigationController()
+		controller.inputUser = self.entity as? User
+		navController.viewControllers = [controller]
+		self.navigationController?.presentViewController(navController, animated: true, completion: nil)
 	}
 
 	func actionSettings() {

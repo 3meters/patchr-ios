@@ -31,6 +31,8 @@ class SettingsTableViewController: UITableViewController {
         
         let components = NSCalendar.currentCalendar().components([.Year, .Month, .Day], fromDate: NSDate())
         self.buildInformationLabel.text = "©\(components.year) 3meters LLC - Version \(appVersion()) (\(build()))"
+		self.buildInformationLabel.textColor = Colors.accentColor
+		self.buildInformationLabel.font = Theme.fontTextDisplay
         
         if let user = UserController.instance.currentUser {
             if user.developerValue {
@@ -38,13 +40,13 @@ class SettingsTableViewController: UITableViewController {
             }
         }
         
-        self.notificationsCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
-        self.sendFeedbackCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
-        self.rateCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
-        self.termsOfServiceCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
-        self.privacyPolicyCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
-        self.softwareLicensesCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
-        self.developmentCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
+        self.notificationsCell.textLabel!.font = Theme.fontTextDisplay
+        self.sendFeedbackCell.textLabel!.font = Theme.fontTextDisplay
+        self.rateCell.textLabel!.font = Theme.fontTextDisplay
+        self.termsOfServiceCell.textLabel!.font = Theme.fontTextDisplay
+        self.privacyPolicyCell.textLabel!.font = Theme.fontTextDisplay
+        self.softwareLicensesCell.textLabel!.font = Theme.fontTextDisplay
+        self.developmentCell.textLabel!.font = Theme.fontTextDisplay
     }
     
     override func viewWillAppear(animated: Bool) {

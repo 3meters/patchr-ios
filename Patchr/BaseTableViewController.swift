@@ -61,7 +61,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.loadMoreActivity.color = Colors.brandColorDark
 		self.loadMoreActivity.hidden = true
 		self.footerView.addSubview(self.loadMoreActivity)
-		self.footerView.backgroundColor = Colors.windowColor
+		self.footerView.backgroundColor = Theme.colorBackgroundTileList
 		
         /* Empty label */
         if self.showEmptyLabel {
@@ -91,7 +91,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.tableView.rowHeight = 136
 		
         /* A bit of UI tweaking */
-        self.tableView.backgroundColor = Colors.windowColor
+        self.tableView.backgroundColor = Theme.colorBackgroundWindow
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
         self.tableView.separatorInset = UIEdgeInsetsZero
 		self.tableView.contentInset = UIEdgeInsetsMake(64, 0.0, self.tabBarController?.tabBar.frame.size.height ?? 0, 0.0)
@@ -392,7 +392,7 @@ extension BaseTableViewController {
 			view.cornerRadius = 6
 			let cell = AirTableViewCell(view: view, padding: UIEdgeInsetsMake(8, 8, 0, 8), reuseIdentifier: cellType.rawValue)
 			cell.separator.backgroundColor = UIColor.clearColor()
-			cell.backgroundColor = Colors.windowColor
+			cell.backgroundColor = Theme.colorBackgroundTileList
 			return cell
 		}
 		else if self.listType == .Users {

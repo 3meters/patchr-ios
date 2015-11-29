@@ -33,8 +33,8 @@ class PatchEditViewController: EntityEditViewController {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+		self.schema = Schema.ENTITY_PATCH
         self.collection = "patches"
-        self.defaultPhotoName = "imgDefaultPatch"
     }
     
 	override func viewDidLoad() {
@@ -276,7 +276,7 @@ extension PatchEditViewController: MapViewDelegate {
     
     var locationTitle: String? {
         get {
-            return self.name
+            return self.nameField.text
         }
     }
     
@@ -291,7 +291,7 @@ extension PatchEditViewController: MapViewDelegate {
     
     var locationPhoto: AnyObject? {
         get {
-            return self.photo
+            return self.photoView!.imageButton.imageForState(.Normal)
         }
     }    
 }

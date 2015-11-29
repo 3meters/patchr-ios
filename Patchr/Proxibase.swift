@@ -375,13 +375,17 @@ public class Proxibase {
 	 * User and install
 	 *--------------------------------------------------------------------------------------------*/
 
-	public func signIn(email: NSString, password: NSString, completion: CompletionBlock) {
+	public func login(email: String, password: String, provider: String, token: String?, completion: CompletionBlock) {
 		/*
 		* Send an auth/signin message to the server with the user's email address and password.
 		* The completion block will be called asynchronously in either case.
 		* If signin is successful, then the credentials from the server will be written to user defaults
 		*/
-		let parameters = ["email": email, "password": password, "installId": installationIdentifier]
+		var parameters = ["email": email, "password": password, "installId": installationIdentifier]
+		if provider == AuthProvider.FACEBOOK || provider == AuthProvider.GOOGLE {
+			parameters = ["provider": provider, "token": token!, "installId": installationIdentifier]
+		}
+		
 		sessionManager.POST("auth/signin", parameters: parameters,
 			success: {
 				dataTask, response in
@@ -394,7 +398,7 @@ public class Proxibase {
 		})
 	}
 	
-	public func signout(completion: (response:AnyObject?, error:NSError?) -> Void) {
+	public func logout(completion: (response:AnyObject?, error:NSError?) -> Void) {
 		/*
 		* Send an auth/signout message.
 		*
@@ -655,8 +659,8 @@ struct ServerError {
 	*      NSLocalizedDescription: String
 	*/
 	let error:       NSError
-	var code:        ServerStatusCode = .None
-	var status:      Int?             = 200
+	var code:        ServerStatusCode = .None		// Status code from the service
+	var status:      Int?             = 200			// Status code form the network stack
 	var response:    NSDictionary?
 	var message:     String?
 	var description: String?
@@ -670,21 +674,21 @@ struct ServerError {
                     , let responseErrorDictionary = response["error"] as! NSDictionary? {
                     
                     if let responseMessage = responseErrorDictionary["message"] as? String {
-                        message = responseMessage
+                        self.message = responseMessage
                     }
                     if let responseCode = responseErrorDictionary["code"] as? Float {
-                        code = ServerStatusCode(rawValue: responseCode)!
+                        self.code = ServerStatusCode(rawValue: responseCode)!
                     }
                     if let responseStatus = responseErrorDictionary["status"] as? Int {
-                        status = responseStatus
+                        self.status = responseStatus
                     }
                 }
                 
                 if let localizedDescription = userInfoDictionary["NSLocalizedDescription"] as? String {
-                    description = localizedDescription
+                    self.description = localizedDescription
                 }
                 if let userMessage = userInfoDictionary["message"] as? String {   // Used for s3 failures
-                    message = userMessage
+                    self.message = userMessage
                 }
             }
 		}

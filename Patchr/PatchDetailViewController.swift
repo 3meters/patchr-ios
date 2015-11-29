@@ -99,27 +99,17 @@ class PatchDetailViewController: BaseDetailViewController {
         self.originalTop = patchPhotoTop.constant
         self.contextButton?.setTitle("", forState: .Normal)
 		
-		self.mapButton.imageView!.tintColor(Colors.actionOnColor)
-		self.mapButton.tintColor = Colors.actionOffColor
+		self.mapButton.tintColor = Theme.colorActionOff
 		self.mapButton.setImage(UIImage(named: "imgMapLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
 		
 		self.watchersButton.alpha = 0.0
-        self.watchButton.tintOff = Colors.actionOffColor
-		self.watchButton.tintOn = Colors.actionOnColor
-        self.watchButton.tintPending = Colors.brandColor
+        self.watchButton.tintOff = Theme.colorActionOff
+		self.watchButton.tintOn = Theme.colorActionOn
+        self.watchButton.tintPending = Theme.colorActionOn
         self.watchButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
-        
-        self.likeButton.tintOff = Colors.actionOffColor
-		self.likeButton.tintOn = Colors.actionOnColor
-        self.likeButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
-        self.likeButton.imageOn = UIImage(named: "imgStarFilledLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
-        self.likeButton.imageOff = UIImage(named: "imgStarLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
-        self.likeButton.messageOn = "Added to favorites"
-        self.likeButton.messageOff = "Removed from favorites"
-        self.likeButton.alpha = 0.0
-        
-        self.muteButton.tintOff = Colors.actionOffColor
-		self.muteButton.tintOn = Colors.actionOnColor
+		
+        self.muteButton.tintOff = Theme.colorActionOff
+		self.muteButton.tintOn = Theme.colorActionOn
         self.muteButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
         self.muteButton.imageOn = UIImage(named: "imgSoundOn2Light")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
         self.muteButton.imageOff = UIImage(named: "imgSoundOff2Light")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
@@ -176,7 +166,7 @@ class PatchDetailViewController: BaseDetailViewController {
         
         if contextAction == .CreateMessage {
             if !UserController.instance.authenticated {
-                Shared.Toast("Sign in to post messages")
+				UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to post messages and more!")
                 return
             }
             addAction()
@@ -189,7 +179,7 @@ class PatchDetailViewController: BaseDetailViewController {
         }
         else if contextAction == .SubmitJoinRequest {
             if !UserController.instance.authenticated {
-                Shared.Toast("Sign in to join patches")
+				UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to join patches and more!")
                 return
             }
             self.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
@@ -246,7 +236,7 @@ class PatchDetailViewController: BaseDetailViewController {
     
     func addAction() {
         if !UserController.instance.authenticated {
-            Shared.Toast("Sign in to post messages")
+			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to post messages and more!")
             return
         }
         /* Has its own nav because we segue modally and it needs its own stack */

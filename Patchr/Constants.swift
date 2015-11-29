@@ -11,17 +11,6 @@ let pageSizeNearby          = 50
 let pageSizeExplore         = 20
 let pageSizeNotifications   = 20
 
-let CELL_PADDING_HORIZONTAL = CGFloat(12)
-let CELL_PADDING_VERTICAL	= CGFloat(12)
-let CELL_VIEW_SPACING		= CGFloat(8)
-
-let CELL_CONTEXT_HEIGHT		= CGFloat(20)
-let CELL_HEADER_HEIGHT		= CGFloat(20)
-let CELL_FOOTER_HEIGHT		= CGFloat(20)
-
-let CELL_USER_PHOTO_SIZE	= CGFloat(48)
-let CELL_PHOTO_RATIO		= CGFloat(0.56)	// 16:9 aspect ratio
-
 let Device      = UIDevice.currentDevice()
 let iosVersion  = NSString(string: Device.systemVersion).doubleValue
 let IOS9        = iosVersion >= 9
@@ -32,7 +21,6 @@ let BUNDLE_ID	= "com.3meters.patchr.ios"
 
 let SCREEN_NARROW           = (UIScreen.mainScreen().bounds.size.width == 320)
 let PIXEL_SCALE: CGFloat    = UIScreen.mainScreen().scale
-let SPACER_WIDTH: CGFloat   = 12
 
 let TIMEOUT_REQUEST: Int    = 10   // Seconds
 
@@ -47,38 +35,11 @@ func PatchrUserDefaultKey(subKey: String) -> String {
     return NAMESPACE + subKey
 }
 
-public struct Colors {
-	static let gray95pcntColor: UIColor = UIColor(red: CGFloat(0.95), green: CGFloat(0.95), blue: CGFloat(0.95), alpha: CGFloat(1))
-	static let gray90pcntColor: UIColor = UIColor(red: CGFloat(0.9), green: CGFloat(0.9), blue: CGFloat(0.9), alpha: CGFloat(1))
-	static let gray80pcntColor: UIColor = UIColor(red: CGFloat(0.8), green: CGFloat(0.8), blue: CGFloat(0.8), alpha: CGFloat(1))
-	static let gray66pcntColor: UIColor = UIColor(red: CGFloat(0.667), green: CGFloat(0.667), blue: CGFloat(0.667), alpha: CGFloat(1)) // Light gray
-	static let gray50pcntColor: UIColor = UIColor(red: CGFloat(0.5), green: CGFloat(0.5), blue: CGFloat(0.5), alpha: CGFloat(1)) // Light gray
-	static let gray33pcntColor: UIColor = UIColor(red: CGFloat(0.33), green: CGFloat(0.33), blue: CGFloat(0.33), alpha: CGFloat(1)) // Dark gray
-	
-	static let opacity50pcntWhite: UIColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.5))
-	static let opacity75pcntWhite: UIColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.75))
-	static let opacity90pcntWhite: UIColor = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.90))
-
-	static let lightGray: UIColor = gray50pcntColor
-	static let darkGray: UIColor = gray33pcntColor
-
-    static let accentColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0.75), blue: CGFloat(1), alpha: CGFloat(1))
-    static let brandColor: UIColor = UIColor(red: CGFloat(1), green: CGFloat(0.55), blue: CGFloat(0), alpha: CGFloat(1))
-    static let brandColorLight: UIColor = UIColor(red: CGFloat(1), green: CGFloat(0.718), blue: CGFloat(0.302), alpha: CGFloat(1))
-    static let brandColorDark: UIColor = UIColor(red: CGFloat(0.93), green: CGFloat(0.42), blue: CGFloat(0), alpha: CGFloat(1))
-	
-    static let windowColor: UIColor = gray90pcntColor
-    static let hintColor: UIColor = gray80pcntColor
-	static let secondaryText: UIColor = lightGray
-	static let separatorColor: UIColor = gray90pcntColor
-	
-	static let actionOnColor = brandColor
-	static let actionOffColor = opacity90pcntWhite
-}
-
 public struct Events {
     static let LikeDidChange        = "LikeDidChange"
     static let WatchDidChange       = "WatchDidChange"
+	static let PhotoDidChange       = "PhotoDidChange"
+	static let PhotoViewHasFocus    = "PhotoViewHasFocus"
 }
 
 public struct Schema {
@@ -92,6 +53,12 @@ public struct Schema {
     static let LINK                 = "link"
 }
 
+public struct AuthProvider {
+	static let FACEBOOK				= "facebook"
+	static let GOOGLE				= "google"
+	static let PROXIBASE			= "proxibase"
+}
+
 /*
 * Any photo from the device (camera, gallery) is store in s3 and source = aircandi.images|users
 * Any search photo is not stored in s3 and source = generic. (Deprecated)
@@ -100,12 +67,12 @@ public struct Schema {
 */
 public struct PhotoSource {
     static let aircandi_images  = "aircandi.images"
-    static let foursquare       = "foursquare"
     static let gravatar         = "gravatar"
     static let google           = "google"
     static let resource         = "resource"
     static let bing             = "bing"
     static let generic          = "generic"
+	static let facebook			= "facebook"
 }
 
 public struct SizeCategory {

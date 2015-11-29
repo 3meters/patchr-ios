@@ -42,7 +42,7 @@ class AirProgress: MBProgressHUD {
             self.color = UIColor.whiteColor()
             self.labelColor = UIColor.blackColor()
             self.detailsLabelColor = UIColor.blackColor()
-            self.activityIndicatorColor = Colors.brandColorDark
+            self.activityIndicatorColor = Theme.colorActivity
             self.shadow = true
             self.square = true
         }
@@ -54,7 +54,7 @@ class AirProgress: MBProgressHUD {
             self.color = Colors.brandColorLight
             self.labelColor = UIColor.blackColor()
             self.detailsLabelColor = Colors.gray95pcntColor
-            self.activityIndicatorColor = Colors.brandColorDark
+            self.activityIndicatorColor = Theme.colorActivity
             self.shadow = true
         }
         else if progressStyle == .ActivityOnly {
@@ -63,7 +63,7 @@ class AirProgress: MBProgressHUD {
             self.color = UIColor.clearColor()
             self.labelColor = UIColor.blackColor()
             self.detailsLabelColor = Colors.gray95pcntColor
-            self.activityIndicatorColor = Colors.brandColorDark
+            self.activityIndicatorColor = Theme.colorActivity
             self.shadow = false
             self.square = true
         }

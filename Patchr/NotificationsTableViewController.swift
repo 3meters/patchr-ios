@@ -359,11 +359,11 @@ class AirStylesheet: NSObject, TWMessageBarStyleSheet {
     }
     
     @objc func backgroundColorForMessageType(type: TWMessageBarMessageType) -> UIColor! {
-        return Colors.brandColorDark
+        return Theme.colorBackgroundNotification
     }
     
     @objc func strokeColorForMessageType(type: TWMessageBarMessageType) -> UIColor! {
-        return Colors.brandColorLight
+        return Theme.colorTextNotification
     }
     
     @objc func iconImageForMessageType(type: TWMessageBarMessageType) -> UIImage! {

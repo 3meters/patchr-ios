@@ -8,31 +8,40 @@
 
 import UIKit
 
-class PasswordResetViewController: UITableViewController, UITextFieldDelegate {
+class PasswordResetViewController: BaseViewController, UITextFieldDelegate {
 
     var processing: Bool = false
     var emailConfirmed: Bool = false
     var userId: String?
     var sessionKey: String?
     
-    @IBOutlet weak var emailField: UITextField!
-    @IBOutlet weak var passwordField: UITextField!
-    @IBOutlet weak var messageLabel: UILabel!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        self.passwordField.text = nil
-        self.emailField.delegate = self
-        self.passwordField.delegate = self
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        setScreenName("PasswordReset")
-    }
-    
-    @IBAction func doneAction(sender: NSObject) {
+    var emailField = AirTextField()
+    var passwordField = AirTextField()
+    var message = AirLabelDisplay()
+	var resetButton = AirButton()
+	
+	/*--------------------------------------------------------------------------------------------
+	* Lifecycle
+	*--------------------------------------------------------------------------------------------*/
+	
+	override func loadView() {
+		super.loadView()
+		initialize()
+	}
+	
+	/*--------------------------------------------------------------------------------------------
+	* Events
+	*--------------------------------------------------------------------------------------------*/
+	
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		self.message.anchorTopCenterWithTopPadding(88, width: 288, height: 48)
+		self.emailField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+		self.passwordField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+		self.resetButton.alignUnder(self.emailField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+	}
+	
+    func doneAction(sender: NSObject) {
         
         if processing { return }
         if !isValid() { return }
@@ -46,10 +55,46 @@ class PasswordResetViewController: UITableViewController, UITextFieldDelegate {
         }
     }
     
-    @IBAction func cancelAction(sender: AnyObject){
+    func cancelAction(sender: AnyObject){
         self.navigationController?.popViewControllerAnimated(true)
     }
     
+	/*--------------------------------------------------------------------------------------------
+	* Methods
+	*--------------------------------------------------------------------------------------------*/
+	
+	override func initialize() {
+		super.initialize()
+		
+		setScreenName("PasswordReset")
+		
+		self.message.text = "Forgot your password? Enter your email address:"
+		self.message.numberOfLines = 2
+		self.message.textAlignment = .Left
+		self.view.addSubview(self.message)
+		
+		self.emailField.placeholder = "Email"
+		self.emailField.delegate = self
+		self.emailField.autocapitalizationType = .None
+		self.emailField.autocorrectionType = .No
+		self.emailField.keyboardType = UIKeyboardType.EmailAddress
+		self.emailField.returnKeyType = UIReturnKeyType.Next
+		self.view.addSubview(self.emailField)
+		
+		self.passwordField.placeholder = "Password (6 characters or more)"
+		self.passwordField.hidden = true
+		self.passwordField.delegate = self
+		self.passwordField.secureTextEntry = true
+		self.passwordField.keyboardType = UIKeyboardType.Default
+		self.passwordField.returnKeyType = UIReturnKeyType.Done
+		self.view.addSubview(self.passwordField)
+		
+		self.resetButton.setTitle("SUBMIT", forState: .Normal)
+		self.view.addSubview(self.resetButton)
+
+		self.resetButton.addTarget(self, action: Selector("doneAction:"), forControlEvents: .TouchUpInside)
+	}
+	
     func requestReset() {
         
         let progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
@@ -91,7 +136,7 @@ class PasswordResetViewController: UITableViewController, UITextFieldDelegate {
 					}
 					
 					self.emailConfirmed = true
-					self.messageLabel.text = "Email address confirmed, enter a new password:"
+					self.message.text = "Email address confirmed, enter a new password:"
 					self.emailField.fadeOut()
 					self.passwordField.hidden = false
 					self.passwordField.fadeIn()
@@ -110,7 +155,7 @@ class PasswordResetViewController: UITableViewController, UITextFieldDelegate {
 		progress.removeFromSuperViewOnHide = true
         progress.show(true)
         
-        DataController.proxibase.resetPassword(passwordField!.text!, userId: self.userId!, sessionKey: self.sessionKey!) {
+        DataController.proxibase.resetPassword(passwordField.text!, userId: self.userId!, sessionKey: self.sessionKey!) {
             response, error in
             
 			NSOperationQueue.mainQueue().addOperationWithBlock {

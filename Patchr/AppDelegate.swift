@@ -158,9 +158,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
 		
 		/* Facebook */
 		FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
-//		FBSDKLoginManager.renewSystemCredentials {
-//			result, error in
-//		}
+		FBSDKLoginManager.renewSystemCredentials {
+			result, error in
+			if error != nil {
+				Log.w("Error renewing Facebook credentials")
+			}
+		}
 		
 		/* Show initial controller */
 		route()
@@ -203,9 +206,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
             }
         }
         else {
-            let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
-            let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController")
-            self.window?.setRootViewController(controller, animated: true)
+			let controller = LobbyViewController()
+			let navController = UINavigationController()
+			navController.viewControllers = [controller]
+            self.window?.setRootViewController(navController, animated: true)
         }
 		
 		/* Configure Harpy */

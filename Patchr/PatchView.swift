@@ -42,7 +42,7 @@ class PatchView: BaseView {
 		
 		self.clipsToBounds = true
 		
-		self.layer.backgroundColor = UIColor.whiteColor().CGColor
+		self.layer.backgroundColor = Theme.colorBackgroundTile.CGColor
 		
 		/* Place name */
 		self.placeName.numberOfLines = 1

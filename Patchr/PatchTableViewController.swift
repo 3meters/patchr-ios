@@ -264,9 +264,12 @@ class PatchTableViewController: BaseTableViewController {
 						
 						/* User credentials probably need to be refreshed */
 						if error.code == ServerStatusCode.UNAUTHORIZED {
-							let storyboard: UIStoryboard = UIStoryboard(name: "Lobby", bundle: NSBundle.mainBundle())
-							let controller = storyboard.instantiateViewControllerWithIdentifier("LobbyNavigationController")
-							self?.view.window?.setRootViewController(controller, animated: true)
+							
+							if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
+								let navController = UINavigationController()
+								navController.viewControllers = [LobbyViewController()]
+								appDelegate.window!.setRootViewController(navController, animated: true)
+							}
 						}
 						
 						self?.activity.stopAnimating()

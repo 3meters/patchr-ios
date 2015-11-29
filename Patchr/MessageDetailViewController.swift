@@ -84,25 +84,7 @@ class MessageDetailViewController: UITableViewController {
         self.description_.delegate = self
         
 		/* Navigation bar buttons */
-        let shareButton  = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
-        if self.isOwner {
-            let editImage    = Utils.imageEdit
-            let editButton   = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
-            let spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
-            let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: Selector("deleteAction"))
-            spacer.width = SPACER_WIDTH
-            self.navigationItem.rightBarButtonItems = [shareButton, spacer, deleteButton, spacer, editButton]
-        }
-        else if self.isPatchOwner {
-            let removeImage    = UIImage(named: "imgRemoveLight")
-            let removeButton   = UIBarButtonItem(image: removeImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("removeAction"))
-            let spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
-            spacer.width = SPACER_WIDTH
-            self.navigationItem.rightBarButtonItems = [shareButton, spacer, removeButton]
-        }
-        else {
-            self.navigationItem.rightBarButtonItems = [shareButton]
-        }
+		drawNavButtons()
 
 		/* Make sure any old content is cleared */
 		self.description_.text?.removeAll(keepCapacity: false)
@@ -113,6 +95,28 @@ class MessageDetailViewController: UITableViewController {
 		self.userName.setTitle(nil, forState: .Normal)
 		self.userPhoto.imageView?.image = nil
         self.likesButton.setTitle(nil, forState: .Normal)
+	}
+	
+	func drawNavButtons(shareAllowed: Bool = true){
+		
+		let shareButton  = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
+		let spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
+		spacer.width = SPACER_WIDTH
+		
+		if self.isOwner {
+			let editImage    = Utils.imageEdit
+			let editButton   = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
+			let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: Selector("deleteAction"))
+			self.navigationItem.rightBarButtonItems = shareAllowed ? [shareButton, spacer, deleteButton, spacer, editButton] : [deleteButton, spacer, editButton]
+		}
+		else if self.isPatchOwner {
+			let removeImage    = UIImage(named: "imgRemoveLight")
+			let removeButton   = UIBarButtonItem(image: removeImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("removeAction"))
+			self.navigationItem.rightBarButtonItems = shareAllowed ? [shareButton, spacer, removeButton] : [removeButton]
+		}
+		else {
+			self.navigationItem.rightBarButtonItems = shareAllowed ? [shareButton] : []
+		}
 	}
 
 	override func viewWillAppear(animated: Bool) {
@@ -183,7 +187,7 @@ class MessageDetailViewController: UITableViewController {
 								self?.message = DataController.instance.mainContext.objectWithID(objectId!) as? Message
 								/* Remove share button if this is a share message */
 								if self?.message!.type != nil && self?.message!.type == "share" {
-									self?.navigationItem.rightBarButtonItems = []
+									self?.drawNavButtons(false)
 								}
 								self?.draw()	// TODO: Can skip if no change in activityDate and modifiedDate
 							}
@@ -338,8 +342,6 @@ class MessageDetailViewController: UITableViewController {
 			holderView.borderWidth = 1
 			holderView.cornerRadius = 6
 			
-			var shareView: BaseView!
-			
 			if self.shareHolderCell.contentView.subviews.count == 0 {
 				if self.message?.message != nil {
 					
@@ -351,8 +353,7 @@ class MessageDetailViewController: UITableViewController {
 						cellType = .Photo
 					}
 					
-					shareView = MessageView(cellType: cellType)
-					let shareView = shareView as! MessageView
+					let shareView = MessageView(cellType: cellType)
 					
 					shareView.bindToEntity(self.message!.message!)
 					
@@ -370,11 +371,13 @@ class MessageDetailViewController: UITableViewController {
 					/* Row height not set until reloadData called below */
 					self.shareHolderCell.contentView.frame.size.height = shareView.bounds.size.height + 24
 					holderView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
+
+					let tap = UITapGestureRecognizer(target: self, action: "shareBrowseAction:");
+					shareView.addGestureRecognizer(tap)
 				}
 				else if self.message?.patch != nil {
 					
-					shareView = PatchView()
-					let shareView = shareView as! PatchView
+					let shareView = PatchView()
 					
 					shareView.borderColor = Colors.gray80pcntColor
 					shareView.borderWidth = 1
@@ -386,10 +389,26 @@ class MessageDetailViewController: UITableViewController {
 					self.shareHolderCell.contentView.addSubview(shareView)
 					self.shareHolderCell.contentView.frame.size.height = 128
 					shareView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
+					
+					let tap = UITapGestureRecognizer(target: self, action: "shareBrowseAction:");
+					shareView.addGestureRecognizer(tap)
+				}
+				else {
+					/*
+					 * The target of the share message has been deleted'
+					 */
+					let shareView = AirLabel()
+					shareView.backgroundColor = Theme.colorBackgroundTileList
+					shareView.text = "Deleted"
+					
+					holderView.addSubview(shareView)
+					self.shareHolderCell.contentView.addSubview(holderView)
+					
+					self.shareHolderCell.contentView.frame.size.height = 48
+					holderView.fillSuperview()
+					shareView.fillSuperview()
 				}
 				
-				let tap = UITapGestureRecognizer(target: self, action: "shareBrowseAction:");
-				shareView.addGestureRecognizer(tap)
 			}
         }
         else {

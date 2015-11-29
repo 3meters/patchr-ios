@@ -47,10 +47,7 @@ class AirLikeButton: AirToggleButton {
         
         if !UserController.instance.authenticated {
             if self.entity is Message {
-                Shared.Toast("Sign in to like messages")
-            }
-            else if self.entity is Patch {
-                Shared.Toast("Sign in to favorite patches")
+				UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to like messages and more!")
             }
             return
         }
