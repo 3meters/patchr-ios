@@ -281,7 +281,7 @@ class MessageDetailViewController: UITableViewController {
         /* Has its own nav because we segue modally and it needs its own stack */
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
         if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageEditViewController") as? MessageEditViewController {
-            controller.entity = self.message
+            controller.inputEntity = self.message
             let navController = UINavigationController()
             navController.navigationBar.tintColor = Colors.brandColorDark
             navController.viewControllers = [controller]
@@ -525,10 +525,10 @@ class MessageDetailViewController: UITableViewController {
             let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
             let controller = storyboard.instantiateViewControllerWithIdentifier("MessageEditViewController") as? MessageEditViewController
             /* viewDidLoad hasn't fired yet but awakeFromNib has */
-            controller?.shareEntity = self.message
-            controller?.shareSchema = Schema.ENTITY_MESSAGE
-            controller?.shareId = self.messageId!
-            controller?.messageType = .Share
+            controller?.inputShareEntity = self.message
+            controller?.inputShareSchema = Schema.ENTITY_MESSAGE
+            controller?.inputShareId = self.messageId!
+            controller?.inputMessageType = .Share
             self.presentViewController(UINavigationController(rootViewController: controller!), animated: true, completion: nil)
         }
         else {

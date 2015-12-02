@@ -21,11 +21,19 @@
     user.patchesOwnedValue = 0;
     user.patchesWatchingValue = 0;
 	
-    if ([dictionary[@"linkCount"] isKindOfClass:[NSDictionary class]]) {
-        user.patchesOwned = [User countForStatWithType:@"create" schema:@"patches" enabled:@"true" direction:@"to" inLinkCounts:user.linkCounts];
-        user.patchesWatching = [User countForStatWithType:@"watch" schema:@"patches" enabled:@"true" direction:@"to" inLinkCounts:user.linkCounts];
-    }
-    
+	if ([dictionary[@"linkCounts"] isKindOfClass:[NSArray class]]) {
+		for (id linkMap in dictionary[@"linkCounts"]) {
+			if ([linkMap isKindOfClass:[NSDictionary class]]) {
+				if ([linkMap[@"to"] isEqualToString:@"patches"] && [linkMap[@"type"] isEqualToString:@"create"]) {
+					user.patchesOwned = linkMap[@"count"];
+				}
+				if ([linkMap[@"to"] isEqualToString:@"patches"] && [linkMap[@"type"] isEqualToString:@"watch"]) {
+					user.patchesWatching = linkMap[@"count"];
+				}
+			}
+		}
+	}
+	
     return user;
 }
 

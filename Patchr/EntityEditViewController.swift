@@ -11,23 +11,25 @@ import MapKit
 
 class EntityEditViewController: UITableViewController {
 
-	var entity: Entity?
-    var collection: String?
+	var processing: Bool = false
     var progressStartLabel: String?
     var progressFinishLabel: String?
     var cancelledLabel: String?
-	var schema: String?
 	
-	var processing: Bool = false
-    var firstAppearance: Bool = true
-	var backClicked = false
-	var keyboardVisible = false
-	var lastResponder: UIResponder?
-    
+	var schema: String?
+
     var imageUploadRequest: AWSS3TransferManagerUploadRequest?
     var entityPostRequest: NSURLSessionTask?
 
-	var editMode: Bool { return entity != nil }
+	var inputEntity:     Entity?
+
+	var collection:      String?
+    var firstAppearance: Bool = true
+	var backClicked = false
+	var keyboardVisible = false
+	var lastResponder:   UIResponder?
+
+	var editMode: Bool { return inputEntity != nil }
     
     var spacer: UIBarButtonItem {
         let space = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
@@ -58,7 +60,7 @@ class EntityEditViewController: UITableViewController {
         self.photoView = PhotoView()
         self.photoHolder?.addSubview(self.photoView!)
         
-        if entity?.photo != nil {
+        if inputEntity?.photo != nil {
             self.photoView?.configureTo(.Photo)
         }
         else {
@@ -70,8 +72,8 @@ class EntityEditViewController: UITableViewController {
             }
         }
 		
-		self.photoView?.photoSchema = self.entity?.schema ?? self.schema ?? Schema.ENTITY_PATCH
-		self.photoView?.photoDefaultId = self.entity?.id_
+		self.photoView?.photoSchema = self.inputEntity?.schema ?? self.schema ?? Schema.ENTITY_PATCH
+		self.photoView?.photoDefaultId = self.inputEntity?.id_
 		self.photoView?.setHostController(self)
 		
 		/* Description field */
@@ -123,7 +125,7 @@ class EntityEditViewController: UITableViewController {
 	
     @IBAction func deleteAction(sender: AnyObject) {
         
-        if self.entity is User {
+        if self.inputEntity is User {
             ActionConfirmationAlert(
                 "Confirm account delete",
                 message: "Deleting your user account will erase all patches and messages you have created and cannot be undone. Enter YES to confirm.",
@@ -194,7 +196,7 @@ class EntityEditViewController: UITableViewController {
     
     func bind() {
 		
-        if let entity = self.entity {
+        if let entity = self.inputEntity {
 			if self.nameField != nil {
 				self.nameField?.text = entity.name
 			}
@@ -203,7 +205,7 @@ class EntityEditViewController: UITableViewController {
             }
 		}
 		
-		self.photoView?.bindPhoto(self.entity?.photo)
+		self.photoView?.bindPhoto(self.inputEntity?.photo)
     }
     
 	func save() {
@@ -214,10 +216,10 @@ class EntityEditViewController: UITableViewController {
     func gather(parameters: NSMutableDictionary) -> NSMutableDictionary {
         
         if self.editMode {
-            if self.nameField != nil && self.nameField.text != entity!.name {
+            if self.nameField != nil && self.nameField.text != inputEntity!.name {
                 parameters["name"] = nilToNull(self.nameField.text)
             }
-            if self.descriptionField != nil && self.descriptionField.text != self.entity!.description_ {
+            if self.descriptionField != nil && self.descriptionField.text != self.inputEntity!.description_ {
                 parameters["description"] = nilToNull(self.descriptionField.text)
             }
             if self.photoView != nil && self.photoView!.photoDirty {
@@ -299,7 +301,7 @@ class EntityEditViewController: UITableViewController {
         /* Upload entity */
         
         queue.tasks +=~ { _, next in
-            let endpoint = editing ? "data/\(self.collection!)/\(self.entity!.id_)" : "data/\(self.collection!)"
+            let endpoint = editing ? "data/\(self.collection!)/\(self.inputEntity!.id_)" : "data/\(self.collection!)"
             self.entityPostRequest = DataController.proxibase.postEntity(endpoint, parameters: parameters) {
                 response, error in
                 if error == nil {
@@ -355,7 +357,7 @@ class EntityEditViewController: UITableViewController {
                         }
                     }
                     else {
-                        Log.d("Updated entity \(self.entity!.id_)")
+                        Log.d("Updated entity \(self.inputEntity!.id_)")
                     }
                 }
             }
@@ -376,9 +378,9 @@ class EntityEditViewController: UITableViewController {
         }
         self.processing = true
         
-        if let user = self.entity as? User {
+        if let user = self.inputEntity as? User {
             
-            let entityPath = "user/\((self.entity?.id_)!)?erase=true"
+            let entityPath = "user/\((self.inputEntity?.id_)!)?erase=true"
             let userName: String = user.name
             
             DataController.proxibase.deleteObject(entityPath) {
@@ -407,7 +409,7 @@ class EntityEditViewController: UITableViewController {
         }
         else  {
             
-            let entityPath = "data/\(self.collection!)/\((self.entity?.id_)!)"
+            let entityPath = "data/\(self.collection!)/\((self.inputEntity?.id_)!)"
             
             DataController.proxibase.deleteObject(entityPath) {
                 response, error in
@@ -419,7 +421,7 @@ class EntityEditViewController: UITableViewController {
 						self.handleError(error)
 					}
 					else {
-						DataController.instance.mainContext.deleteObject(self.entity!)
+						DataController.instance.mainContext.deleteObject(self.inputEntity!)
 						DataController.instance.saveContext(false)
 						self.performBack()
 					}
@@ -450,7 +452,7 @@ class EntityEditViewController: UITableViewController {
 	func isDirty() -> Bool {
         
 		if self.editMode {
-            if self.entity!.name != self.nameField?.text {
+            if self.inputEntity!.name != self.nameField?.text {
                 return true
             }
 			if let photoView = self.photoView {
@@ -458,7 +460,7 @@ class EntityEditViewController: UITableViewController {
 					return true
 				}
 			}
-            if (self.descriptionField != nil && self.entity!.description_ != self.descriptionField.text) {
+            if (self.descriptionField != nil && self.inputEntity!.description_ != self.descriptionField.text) {
                 return true
             }
             return false

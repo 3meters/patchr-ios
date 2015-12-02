@@ -459,6 +459,13 @@ class DataController: NSObject {
 						
                         /* Transfer the properties: Updates the object if it was already in the model */
                         entityType.setPropertiesFromDictionary(entityDictionary, onObject: entity)
+						
+						/* A tiny bit of fixup */
+						if let user = entity as? User where UserController.instance.authenticated {
+							if user.email == nil && user.id_ == UserController.instance.currentUser.id_ {
+								user.email = UserController.instance.currentUser.email
+							}
+						}
                         
                         /* Check to see if this entity is already part of the query */
                         var queryItem: QueryItem!

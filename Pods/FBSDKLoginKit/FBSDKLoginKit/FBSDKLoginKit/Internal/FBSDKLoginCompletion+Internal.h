@@ -32,6 +32,5 @@
 
 @property (nonatomic, readwrite, getter=isSystemAccount) BOOL systemAccount;
 @property (nonatomic, copy, readwrite) NSDate *expirationDate;
-@property (nonatomic, copy, readwrite) NSString *challenge;
 
 @end

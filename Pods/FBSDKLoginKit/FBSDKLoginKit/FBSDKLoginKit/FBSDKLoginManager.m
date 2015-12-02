@@ -17,7 +17,6 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #import "FBSDKLoginManager+Internal.h"
-#import "FBSDKLoginManagerLoginResult+Internal.h"
 
 #import <FBSDKCoreKit/FBSDKAccessToken.h>
 #import <FBSDKCoreKit/FBSDKSettings.h>
@@ -28,47 +27,26 @@
 #import "FBSDKLoginConstants.h"
 #import "FBSDKLoginError.h"
 #import "FBSDKLoginManagerLogger.h"
+#import "FBSDKLoginManagerLoginResult.h"
 #import "FBSDKLoginUtility.h"
-
-static int const FBClientStateChallengeLength = 20;
-static NSString *const FBSDKExpectedChallengeKey = @"expected_login_challenge";
 
 @implementation FBSDKLoginManager
 {
   FBSDKLoginManagerRequestTokenHandler _handler;
+  NSSet *_requestedPermissions;
   FBSDKLoginManagerLogger *_logger;
   // YES if we're calling out to the Facebook app or Safari to perform a log in
   BOOL _performingLogIn;
-  FBSDKKeychainStore *_keychainStore;
 }
 
 + (void)initialize
 {
   if (self == [FBSDKLoginManager class]) {
     [_FBSDKLoginRecoveryAttempter class];
-    [FBSDKServerConfigurationManager loadServerConfigurationWithCompletionBlock:NULL];
   }
-}
-
-- (instancetype)init
-{
-  self = [super init];
-  if (self) {
-    NSString *keyChainServiceIdentifier = [NSString stringWithFormat:@"com.facebook.sdk.loginmanager.%@", [[NSBundle mainBundle] bundleIdentifier]];
-    _keychainStore = [[FBSDKKeychainStore alloc] initWithService:keyChainServiceIdentifier accessGroup:nil];
-  }
-  return self;
 }
 
 - (void)logInWithReadPermissions:(NSArray *)permissions handler:(FBSDKLoginManagerRequestTokenHandler)handler
-{
-  [self logInWithReadPermissions:permissions
-              fromViewController:nil
-                         handler:handler];
-}
-- (void)logInWithReadPermissions:(NSArray *)permissions
-              fromViewController:(UIViewController *)fromViewController
-                         handler:(FBSDKLoginManagerRequestTokenHandler)handler
 {
   [self assertPermissions:permissions];
   NSSet *permissionSet = [NSSet setWithArray:permissions];
@@ -78,20 +56,10 @@ static NSString *const FBSDKExpectedChallengeKey = @"expected_login_challenge";
                            userInfo:nil]
      raise];
   }
-  self.fromViewController = fromViewController;
   [self logInWithPermissions:permissionSet handler:handler];
 }
 
 - (void)logInWithPublishPermissions:(NSArray *)permissions handler:(FBSDKLoginManagerRequestTokenHandler)handler
-{
-  [self logInWithPublishPermissions:permissions
-                 fromViewController:nil
-                            handler:handler];
-}
-
-- (void)logInWithPublishPermissions:(NSArray *)permissions
-                 fromViewController:(UIViewController *)fromViewController
-                            handler:(FBSDKLoginManagerRequestTokenHandler)handler
 {
   [self assertPermissions:permissions];
   NSSet *permissionSet = [NSSet setWithArray:permissions];
@@ -101,7 +69,6 @@ static NSString *const FBSDKExpectedChallengeKey = @"expected_login_challenge";
                            userInfo:nil]
      raise];
   }
-  self.fromViewController = fromViewController;
   [self logInWithPermissions:permissionSet handler:handler];
 }
 
@@ -144,32 +111,15 @@ static NSString *const FBSDKExpectedChallengeKey = @"expected_login_challenge";
   }
 }
 
-- (void)completeAuthentication:(FBSDKLoginCompletionParameters *)parameters expectChallenge:(BOOL)expectChallenge
+- (void)completeAuthentication:(FBSDKLoginCompletionParameters *)parameters
 {
   FBSDKLoginManagerLoginResult *result = nil;
   NSError *error = parameters.error;
 
-  NSString *tokenString = parameters.accessTokenString;
-  BOOL cancelled = (tokenString == nil);
-
-  BOOL challengePassed = YES;
-  if (expectChallenge) {
-    // Perform this check early so we be sure to clear expected challenge in all cases.
-    NSString *challengeReceived = parameters.challenge;
-    NSString *challengeExpected = [self loadExpectedChallenge];
-    if (![challengeExpected isEqualToString:challengeReceived]) {
-      challengePassed = NO;
-    }
-
-    // Don't overwrite an existing error, if any.
-    if (!error && !cancelled && !challengePassed) {
-      error = [FBSDKLoginError errorForFailedLoginWithCode:FBSDKLoginBadChallengeString];
-    }
-  }
-
-  [self storeExpectedChallenge:nil];
-
   if (!error) {
+    NSString *tokenString = parameters.accessTokenString;
+    BOOL cancelled = (tokenString == nil);
+
     if (!cancelled) {
       NSSet *grantedPermissions = parameters.permissions;
       NSSet *declinedPermissions = parameters.declinedPermissions;
@@ -257,27 +207,21 @@ static NSString *const FBSDKExpectedChallengeKey = @"expected_login_challenge";
 
 - (void)invokeHandler:(FBSDKLoginManagerLoginResult *)result error:(NSError *)error
 {
-  [_logger endLoginWithResult:result error:error];
-  [_logger endSession];
-  _logger = nil;
+  FBSDKLoginManagerLoggerResult authorizationResult = FBSDKLoginManagerLoggerResultSuccess;
+  if (error != nil) {
+    authorizationResult = FBSDKLoginManagerLoggerResultError;
+  } else if (result == nil || result.isCancelled) {
+    authorizationResult = FBSDKLoginManagerLoggerResultCancel;
+  }
+
+  [_logger endLoginWithResult:authorizationResult error:error];
+  [_logger endEvent];
 
   if (_handler) {
-    FBSDKLoginManagerRequestTokenHandler handler = _handler;
     _handler(result, error);
-    if (handler == _handler) {
-      _handler = nil;
-    } else {
-      [FBSDKLogger singleShotLogEntry:FBSDKLoggingBehaviorDeveloperErrors
-                         formatString:@"** WARNING: You are requesting permissions inside the completion block of an existing login."
-       "This is unsupported behavior. You should request additional permissions only when they are needed, such as requesting for publish_actions"
-       "when the user performs a sharing action."];
-    }
   }
-}
-
-- (NSString *)loadExpectedChallenge
-{
-  return [_keychainStore stringForKey:FBSDKExpectedChallengeKey];
+  _logger = nil;
+  _handler = nil;
 }
 
 - (NSDictionary *)logInParametersWithPermissions:(NSSet *)permissions
@@ -292,20 +236,12 @@ static NSString *const FBSDKExpectedChallengeKey = @"expected_login_challenge";
   loginParams[@"sdk"] = @"ios";
   loginParams[@"return_scopes"] = @"true";
   loginParams[@"sdk_version"] = FBSDK_VERSION_STRING;
-  loginParams[@"fbapp_pres"] = @([FBSDKInternalUtility isFacebookAppInstalled]);
   if ([FBSDKAccessToken currentAccessToken]) {
     loginParams[@"auth_type"] = @"rerequest";
   }
   [FBSDKInternalUtility dictionary:loginParams setObject:[FBSDKSettings appURLSchemeSuffix] forKey:@"local_client_id"];
   [FBSDKInternalUtility dictionary:loginParams setObject:[FBSDKLoginUtility stringForAudience:self.defaultAudience] forKey:@"default_audience"];
   [FBSDKInternalUtility dictionary:loginParams setObject:[[permissions allObjects] componentsJoinedByString:@","] forKey:@"scope"];
-
-  NSString *expectedChallenge = [FBSDKLoginManager stringForChallenge];
-  NSDictionary *state = @{@"challenge": [FBSDKUtility URLEncode:expectedChallenge]};
-  loginParams[@"state"] = [FBSDKInternalUtility JSONStringForObject:state error:NULL invalidObjectHandler:nil];
-
-  [self storeExpectedChallenge:expectedChallenge];
-
   return loginParams;
 }
 
@@ -316,7 +252,7 @@ static NSString *const FBSDKExpectedChallengeKey = @"expected_login_challenge";
   _handler = [handler copy];
   _requestedPermissions = permissions;
 
-  [_logger startSessionForLoginManager:self];
+  [_logger startEventWithBehavior:self.loginBehavior isReauthorize:([FBSDKAccessToken currentAccessToken] != nil)];
 
   [self logInWithBehavior:self.loginBehavior];
 }
@@ -325,89 +261,59 @@ static NSString *const FBSDKExpectedChallengeKey = @"expected_login_challenge";
 {
   NSDictionary *loginParams = [self logInParametersWithPermissions:_requestedPermissions];
 
-  void(^completion)(BOOL, NSString *, NSError *) = ^void(BOOL didPerformLogIn, NSString *authMethod, NSError *error) {
-    if (didPerformLogIn) {
-      [_logger startAuthMethod:authMethod];
-      _performingLogIn = YES;
-    } else {
-      if (!error) {
-        error = [NSError errorWithDomain:FBSDKLoginErrorDomain code:FBSDKLoginUnknownErrorCode userInfo:nil];
-      }
-      [self invokeHandler:nil error:error];
-    }
-  };
+  NSError *error = nil;
+  FBSDKLoginBehavior loginBehaviorUsed = loginBehavior;
+  BOOL didPerformLogIn = NO;
 
   switch (loginBehavior) {
-    case FBSDKLoginBehaviorNative: {
-      if ([FBSDKInternalUtility isFacebookAppInstalled]) {
-        [FBSDKServerConfigurationManager loadServerConfigurationWithCompletionBlock:^(FBSDKServerConfiguration *serverConfiguration, NSError *loadError) {
-          BOOL useNativeDialog = [serverConfiguration useNativeDialogForDialogName:FBSDKDialogConfigurationNameLogin];
-          if (useNativeDialog && loadError == nil) {
-            [self performNativeLogInWithParameters:loginParams handler:^(BOOL openedURL, NSError *openedURLError) {
-              if (openedURLError) {
-                [FBSDKLogger singleShotLogEntry:FBSDKLoggingBehaviorDeveloperErrors
-                                   formatString:@"FBSDKLoginBehaviorNative failed : %@\nTrying FBSDKLoginBehaviorBrowser", openedURLError];
-              }
-              if (openedURL) {
-                completion(YES, FBSDKLoginManagerLoggerAuthMethod_Native, openedURLError);
-              } else {
-                [self logInWithBehavior:FBSDKLoginBehaviorBrowser];
-              }
-            }];
-          } else {
-            [self logInWithBehavior:FBSDKLoginBehaviorBrowser];
-          }
-        }];
+    case FBSDKLoginBehaviorNative:
+      didPerformLogIn = [self performNativeLogInWithParameters:loginParams error:&error];
+      if (didPerformLogIn) {
         break;
       }
-      // intentional fall through.
-    }
-    case FBSDKLoginBehaviorBrowser: {
-      [self performBrowserLogInWithParameters:loginParams handler:^(BOOL openedURL,
-                                                                    NSString *authMethod,
-                                                                    NSError *openedURLError) {
-        if (openedURL) {
-          completion(YES, authMethod, openedURLError);
-        } else {
-          completion(NO, authMethod, openedURLError);
-        }
-      }];
+      // else fall through
+      loginBehaviorUsed = FBSDKLoginBehaviorBrowser;
+
+    case FBSDKLoginBehaviorBrowser:
+      if (error) {
+        [FBSDKLogger singleShotLogEntry:FBSDKLoggingBehaviorDeveloperErrors
+                           formatString:@"FBSDKLoginBehaviorNative failed : %@\nTrying FBSDKLoginBehaviorBrowser", error];
+      }
+      didPerformLogIn = [self performBrowserLogInWithParameters:loginParams error:&error];
       break;
-    }
+
     case FBSDKLoginBehaviorSystemAccount: {
+      didPerformLogIn = YES; // log in will continue asynchronously but will proceed (or fail later)
+
       [FBSDKServerConfigurationManager loadServerConfigurationWithCompletionBlock:^(FBSDKServerConfiguration *serverConfiguration, NSError *loadError) {
-        if (serverConfiguration.isSystemAuthenticationEnabled && loadError == nil) {
+        if (serverConfiguration.isSystemAuthenticationEnabled && error == nil) {
           [self beginSystemLogIn];
         } else {
           [self logInWithBehavior:FBSDKLoginBehaviorNative];
         }
       }];
-      completion(YES, FBSDKLoginManagerLoggerAuthMethod_System, nil);
       break;
     }
+
     case FBSDKLoginBehaviorWeb:
-      [self performWebLogInWithParameters:loginParams handler:^(BOOL openedURL, NSError *openedURLError) {
-        completion(openedURL, FBSDKLoginManagerLoggerAuthMethod_Webview, openedURLError);
-      }];
+      didPerformLogIn = [self performWebLogInWithParameters:loginParams];
       break;
   }
-}
 
-- (void)storeExpectedChallenge:(NSString *)challengeExpected
-{
-  [_keychainStore setString:challengeExpected
-                     forKey:FBSDKExpectedChallengeKey
-              accessibility:[FBSDKDynamicFrameworkLoader loadkSecAttrAccessibleAfterFirstUnlockThisDeviceOnly]];
-}
-
-+ (NSString *)stringForChallenge {
-  return [FBSDKCrypto randomString:FBClientStateChallengeLength];
+  if (didPerformLogIn) {
+    [_logger startLoginWithBehavior:loginBehaviorUsed];
+  } else {
+    if (!error) {
+      error = [NSError errorWithDomain:FBSDKLoginErrorDomain code:FBSDKLoginUnknownErrorCode userInfo:nil];
+    }
+    [self invokeHandler:nil error:error];
+  }
 }
 
 - (void)validateReauthentication:(FBSDKAccessToken *)currentToken withResult:(FBSDKLoginManagerLoginResult *)loginResult
 {
   FBSDKGraphRequest *requestMe = [[FBSDKGraphRequest alloc] initWithGraphPath:@"me"
-                                                                   parameters:@{@"fields":@""}
+                                                                   parameters:nil
                                                                   tokenString:loginResult.token.tokenString
                                                                    HTTPMethod:nil
                                                                         flags:FBSDKGraphRequestFlagDoNotInvalidateTokenOnError | FBSDKGraphRequestFlagDisableErrorRecovery];
@@ -445,40 +351,28 @@ static NSString *const FBSDKExpectedChallengeKey = @"expected_login_challenge";
 
 @implementation FBSDKLoginManager (Native)
 
-- (void)performNativeLogInWithParameters:(NSDictionary *)loginParams handler:(void(^)(BOOL, NSError*))handler
+- (BOOL)performNativeLogInWithParameters:(NSDictionary *)loginParams error:(NSError **)error
 {
   [_logger willAttemptAppSwitchingBehavior];
-  loginParams = [_logger parametersWithTimeStampAndClientState:loginParams forAuthMethod:FBSDKLoginManagerLoggerAuthMethod_Native];
+  loginParams = [_logger parametersWithTimeStampAndClientState:loginParams forLoginBehavior:FBSDKLoginBehaviorNative];
 
   NSString *scheme = ([FBSDKSettings appURLSchemeSuffix] ? @"fbauth2" : @"fbauth");
   NSMutableDictionary *mutableParams = [NSMutableDictionary dictionaryWithDictionary:loginParams];
   mutableParams[@"legacy_override"] = FBSDK_TARGET_PLATFORM_VERSION;
-  NSError *error;
-  NSURL *authURL = [FBSDKInternalUtility URLWithScheme:scheme host:@"authorize" path:@"" queryParameters:mutableParams error:&error];
+  NSURL *authURL = [FBSDKInternalUtility URLWithScheme:scheme host:@"authorize" path:@"" queryParameters:mutableParams error:error];
 
-  [[FBSDKApplicationDelegate sharedInstance] openURL:authURL sender:self handler:^(BOOL openedURL) {
-    if (handler) {
-      handler(openedURL, error);
-    }
-  }];
+  // if native log in is possible, a strong reference will be maintained by FBSDKApplicationDelegate during the the asynchronous operation
+  return !*error && [self tryOpenURL:authURL];
 }
 
-// change bool to auth method string.
-- (void)performBrowserLogInWithParameters:(NSDictionary *)loginParams
-                                  handler:(void(^)(BOOL didOpen, NSString *authMethod, NSError *error))handler
+- (BOOL)performBrowserLogInWithParameters:(NSDictionary *)loginParams error:(NSError **)error
 {
   [_logger willAttemptAppSwitchingBehavior];
-
-  FBSDKServerConfiguration *configuration = [FBSDKServerConfigurationManager cachedServerConfiguration];
-  BOOL useSafariViewController = [configuration useSafariViewControllerForDialogName:FBSDKDialogConfigurationNameLogin];
-  NSString *authMethod = (useSafariViewController ? FBSDKLoginManagerLoggerAuthMethod_SFVC : FBSDKLoginManagerLoggerAuthMethod_Browser);
-
-  loginParams = [_logger parametersWithTimeStampAndClientState:loginParams forAuthMethod:authMethod];
+  loginParams = [_logger parametersWithTimeStampAndClientState:loginParams forLoginBehavior:FBSDKLoginBehaviorBrowser];
 
   NSURL *authURL = nil;
-  NSError *error;
-  NSURL *redirectURL = [FBSDKInternalUtility appURLWithHost:@"authorize" path:nil queryParameters:nil error:&error];
-  if (!error) {
+  NSURL *redirectURL = [FBSDKInternalUtility appURLWithHost:@"authorize" path:nil queryParameters:nil error:error];
+  if (!*error) {
     NSMutableDictionary *browserParams = [loginParams mutableCopy];
     [FBSDKInternalUtility dictionary:browserParams
                            setObject:redirectURL
@@ -486,29 +380,21 @@ static NSString *const FBSDKExpectedChallengeKey = @"expected_login_challenge";
     authURL = [FBSDKInternalUtility facebookURLWithHostPrefix:@"m."
                                                          path:@"/dialog/oauth"
                                               queryParameters:browserParams
-                                                        error:&error];
+                                                        error:error];
   }
-  if (authURL) {
-    void(^handlerWrapper)(BOOL) = ^(BOOL didOpen) {
-      if (handler) {
-        handler(didOpen, authMethod, nil);
-      }
-    };
-    if (useSafariViewController) {
-        // Note based on above, authURL must be a http scheme. If that changes, add a guard, otherwise SFVC can throw
-      [[FBSDKApplicationDelegate sharedInstance] openURLWithSafariViewController:authURL
-                                                                          sender:self
-                                                              fromViewController:self.fromViewController
-                                                                         handler:handlerWrapper];
-    } else {
-      [[FBSDKApplicationDelegate sharedInstance] openURL:authURL sender:self handler:handlerWrapper];
-    }
-  } else {
-    error = error ?: [FBSDKError errorWithCode:FBSDKLoginUnknownErrorCode message:@"Failed to construct oauth browser url"];
-    if (handler) {
-      handler(NO, nil, error);
-    }
+
+  // if browser log in is possible, a strong reference will be maintained by FBSDKApplicationDelegate during the the asynchronous operation
+  return !*error && [self tryOpenURL:authURL];
+}
+
+- (BOOL)tryOpenURL:(NSURL *)url
+{
+  // FBSDKApplicationDelegate will maintain a strong reference and call -application:openURL:sourceApplication:annotation: below
+  if ([[FBSDKApplicationDelegate sharedInstance] openURL:url sender:self]) {
+    _performingLogIn = YES;
+    return YES;
   }
+  return NO;
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
@@ -534,7 +420,7 @@ static NSString *const FBSDKExpectedChallengeKey = @"expected_login_challenge";
 
     // any necessary strong reference is maintained by the FBSDKLoginURLCompleter handler
     [completer completeLogIn:self withHandler:^(FBSDKLoginCompletionParameters *parameters) {
-      [self completeAuthentication:parameters expectChallenge:YES];
+      [self completeAuthentication:parameters];
     }];
   }
 
@@ -554,7 +440,6 @@ static NSString *const FBSDKExpectedChallengeKey = @"expected_login_challenge";
                                                                                  isCancelled:YES
                                                                           grantedPermissions:nil
                                                                          declinedPermissions:nil];
-  [result addLoggingExtra:@(YES) forKey:@"implicit_cancel"];
   [self invokeHandler:result error:nil];
 }
 
@@ -600,16 +485,12 @@ static NSString *const FBSDKExpectedChallengeKey = @"expected_login_challenge";
     [self fallbackToNativeBehavior];
     return;
   }
-  BOOL isReauthorize = [FBSDKAccessToken currentAccessToken] != nil;
 
   // app may be asking for nothing, but we will always have a set here
   NSMutableSet *permissionsToUse = _requestedPermissions ? [_requestedPermissions mutableCopy] : [NSMutableSet set];
-  // Only add basic info if this is not reauthorize case, if it is the app should already have basic info ToSed
-  if (!isReauthorize) {
-    // Ensure that basic info is among the permissions requested so that the app will install if necessary.
-    // "email" is used as a proxy for basic_info permission.
-    [permissionsToUse addObject:@"email"];
-  }
+  // Ensure that basic info is among the permissions requested so that the app will install if necessary.
+  // "email" is used as a proxy for basic_info permission.
+  [permissionsToUse addObject:@"email"];
 
   [permissionsToUse removeObject:@"public_profile"];
   [permissionsToUse removeObject:@"user_friends"];
@@ -630,6 +511,7 @@ static NSString *const FBSDKExpectedChallengeKey = @"expected_login_challenge";
   }
 
   unsigned long timePriorToSystemAuthUI = [FBSDKInternalUtility currentTimeInMilliseconds];
+  BOOL isReauthorize = [FBSDKAccessToken currentAccessToken] != nil;
 
   // the FBSDKSystemAccountStoreAdapter completion handler maintains the strong reference during the the asynchronous operation
   [[FBSDKSystemAccountStoreAdapter sharedInstance]
@@ -689,17 +571,29 @@ static NSString *const FBSDKExpectedChallengeKey = @"expected_login_challenge";
 
   // any necessary strong reference is maintained by the FBSDKLoginSystemAccount[Error]Completer handler
   [completer completeLogIn:self withHandler:^(FBSDKLoginCompletionParameters *parameters) {
-    NSString *eventName = [NSString stringWithFormat:@"%@ %@",
-                           (state.isReauthorize ? @"Reauthorization" : @"Authorization"),
-                           (parameters.error ? @"Error" : (parameters.accessTokenString ? @"succeeded" : @"cancelled"))
-                           ];
+    NSString *eventName = nil;
 
-    [self completeAuthentication:parameters expectChallenge:NO];
+    if (state.isReauthorize) {
+      BOOL cancelled = parameters.accessTokenString == nil && parameters.error == nil;
+      if (state.didShowDialog) {
+        eventName = @"Reauthorization succeeded";
+      } else if (cancelled) {
+        eventName = @"Reauthorization cancelled";
+      }
+    } else {
+      if (state.didShowDialog) {
+        eventName = @"Authorization succeeded";
+      } else if (!state.isUnTOSedDevice) {
+        eventName = @"Authorization cancelled";
+      }
+    }
+
+    [self completeAuthentication:parameters];
 
     if (eventName != nil) {
-      NSString *sortedPermissions = (parameters.permissions.count == 0)
+      NSString *sortedPermissions = (_requestedPermissions.count == 0)
         ? @"<NoPermissionsSpecified>"
-        : [[parameters.permissions.allObjects sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] componentsJoinedByString:@","];
+        : [[_requestedPermissions.allObjects sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)] componentsJoinedByString:@","];
 
         [FBSDKAppEvents logImplicitEvent:FBSDKAppEventNamePermissionsUILaunch
                               valueToSum:nil
@@ -719,12 +613,7 @@ static NSString *const FBSDKExpectedChallengeKey = @"expected_login_challenge";
 
 - (void)fallbackToNativeBehavior
 {
-  FBSDKLoginManagerLoginResult *skippedResult = [[FBSDKLoginManagerLoginResult alloc] initWithToken:nil
-                                                                                        isCancelled:NO
-                                                                                 grantedPermissions:nil
-                                                                                declinedPermissions:nil];
-  skippedResult.isSkipped = YES;
-  [_logger endLoginWithResult:skippedResult error:nil];
+  [_logger endLoginWithResult:FBSDKLoginManagerLoggerResultSkipped error:nil];
   // any necessary strong reference will be maintained by the mechanism that is used
   [self logInWithBehavior:FBSDKLoginBehaviorNative];
 }
@@ -733,21 +622,19 @@ static NSString *const FBSDKExpectedChallengeKey = @"expected_login_challenge";
 
 @implementation FBSDKLoginManager (WebDialog)
 
-- (void)performWebLogInWithParameters:(NSDictionary *)loginParams handler:(void(^)(BOOL, NSError*))handler
+- (BOOL)performWebLogInWithParameters:(NSDictionary *)loginParams
 {
   [FBSDKInternalUtility registerTransientObject:self];
   [FBSDKInternalUtility deleteFacebookCookies];
   NSMutableDictionary *parameters = [[NSMutableDictionary alloc] initWithDictionary:loginParams];
   parameters[@"title"] = NSLocalizedStringWithDefaultValue(@"LoginWeb.LogInTitle",
                                                            @"FacebookSDK",
-                                                           [FBSDKInternalUtility bundleForStrings],
+                                                           [NSBundle mainBundle],
                                                            @"Log In",
                                                            @"Title of the web dialog that prompts the user to log in to Facebook.");
   [FBSDKWebDialog showWithName:@"oauth" parameters:loginParams delegate:self];
 
-  if (handler) {
-    handler(YES, nil);
-  }
+  return YES;
 }
 
 - (void)webDialog:(FBSDKWebDialog *)webDialog didCompleteWithResults:(NSDictionary *)results
@@ -759,23 +646,23 @@ static NSString *const FBSDKExpectedChallengeKey = @"expected_login_challenge";
   } else {
     id<FBSDKLoginCompleting> completer = [[FBSDKLoginURLCompleter alloc] initWithURLParameters:results appID:[FBSDKSettings appID]];
     [completer completeLogIn:self withHandler:^(FBSDKLoginCompletionParameters *parameters) {
-      [self completeAuthentication:parameters expectChallenge:YES];
+      [self completeAuthentication:parameters];
     }];
-    [FBSDKInternalUtility unregisterTransientObject:self];
   }
+  [FBSDKInternalUtility unregisterTransientObject:self];
 }
 
 - (void)webDialog:(FBSDKWebDialog *)webDialog didFailWithError:(NSError *)error
 {
   FBSDKLoginCompletionParameters *parameters = [[FBSDKLoginCompletionParameters alloc] initWithError:error];
-  [self completeAuthentication:parameters expectChallenge:YES];
+  [self completeAuthentication:parameters];
   [FBSDKInternalUtility unregisterTransientObject:self];
 }
 
 - (void)webDialogDidCancel:(FBSDKWebDialog *)webDialog
 {
   FBSDKLoginCompletionParameters *parameters = [[FBSDKLoginCompletionParameters alloc] init];
-  [self completeAuthentication:parameters expectChallenge:YES];
+  [self completeAuthentication:parameters];
   [FBSDKInternalUtility unregisterTransientObject:self];
 }
 

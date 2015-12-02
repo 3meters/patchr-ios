@@ -55,7 +55,7 @@ static void FBSDKLoginRequestMeAndPermissions(FBSDKLoginCompletionParameters *pa
 
   pendingCount++;
   FBSDKGraphRequest *permissionsRequest = [[FBSDKGraphRequest alloc] initWithGraphPath:@"me/permissions"
-                                                                            parameters:@{@"fields":@""}
+                                                                            parameters:nil
                                                                            tokenString:tokenString
                                                                             HTTPMethod:nil
                                                                                  flags:FBSDKGraphRequestFlagDoNotInvalidateTokenOnError | FBSDKGraphRequestFlagDisableErrorRecovery];
@@ -106,11 +106,6 @@ static void FBSDKLoginRequestMeAndPermissions(FBSDKLoginCompletionParameters *pa
   FBSDKLoginCompletionParameters *_parameters;
   id<NSObject> _observer
   ;  BOOL _performExplicitFallback;
-}
-
-- (instancetype)init NS_UNAVAILABLE
-{
-  assert(0);
 }
 
 - (instancetype)initWithURLParameters:(NSDictionary *)parameters appID:(NSString *)appID
@@ -193,10 +188,6 @@ static void FBSDKLoginRequestMeAndPermissions(FBSDKLoginCompletionParameters *pa
     expirationDate = [NSDate dateWithTimeIntervalSinceNow:[parameters[@"expires_in"] integerValue]];
   }
   _parameters.expirationDate = expirationDate;
-
-  NSError *error = nil;
-  NSDictionary *state = [FBSDKInternalUtility objectForJSONString:parameters[@"state"] error:&error];
-  _parameters.challenge = [FBSDKUtility URLDecode:state[@"challenge"]];
 }
 
 - (void)setErrorWithDictionary:(NSDictionary *)parameters
@@ -235,11 +226,6 @@ static void FBSDKLoginRequestMeAndPermissions(FBSDKLoginCompletionParameters *pa
 @implementation FBSDKLoginSystemAccountCompleter
 {
   FBSDKLoginCompletionParameters *_parameters;
-}
-
-- (instancetype)init NS_UNAVAILABLE
-{
-  assert(0);
 }
 
 - (instancetype)initWithTokenString:(NSString *)tokenString appID:(NSString *)appID
@@ -293,11 +279,6 @@ static void FBSDKLoginRequestMeAndPermissions(FBSDKLoginCompletionParameters *pa
 @implementation FBSDKLoginSystemAccountErrorCompleter
 {
   FBSDKLoginCompletionParameters *_parameters;
-}
-
-- (instancetype)init NS_UNAVAILABLE
-{
-  assert(0);
 }
 
 - (instancetype)initWithError:(NSError *)accountStoreError permissions:(NSSet *)permissions

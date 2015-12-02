@@ -8,26 +8,9 @@
 
 import UIKit
 
-class AirLabelBanner: UILabel {
+class AirLabelBanner: AirLabelBase {
     
-	required init(coder aDecoder: NSCoder) {
-		/* Called when instantiated from XIB or Storyboard */
-		super.init(coder: aDecoder)!
-		initialize()
-	}
-	
-	override init(frame: CGRect) {
-		/* Called when instantiated from code */
-		super.init(frame: frame)
-		initialize()
-	}
-	
-    override func drawTextInRect(rect: CGRect) -> Void {
-        let insets: UIEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        super.drawTextInRect(UIEdgeInsetsInsetRect(rect, insets))
-    }
-	
-	func initialize() {
+	override func initialize() {
 		self.font = Theme.fontBanner
 		self.textColor = Theme.colorTextBanner
 	}

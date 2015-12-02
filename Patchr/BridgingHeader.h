@@ -23,6 +23,7 @@
 #import <AWSS3/AWSS3.h>
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
+#import <FBSDKShareKit/FBSDKShareKit.h>
 #import <PBWebViewController.h>
 #import <MBProgressHUD.h>
 #import <SDWebImage/UIImageView+WebCache.h>
@@ -47,6 +48,7 @@
 #import <CommonCrypto/CommonCrypto.h>
 #import <pop/POP.h>
 #import <PDDebugger.h>
+#import "BFURL.h"
 
 #import "Patch.h"
 #import "Place.h"

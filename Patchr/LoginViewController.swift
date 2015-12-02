@@ -21,10 +21,13 @@ class LoginViewController: BaseViewController {
 	var doneButton				= AirButtonFeatured()
 	var googleButton			= AirButton()
 	var comment					= AirLabel()
+	var message					= AirLabelTitle()
 	var separatorGroup			= UIView()
 	var separatorRule			= UIView()
 	var separatorLabel			= AirLabel()
-	
+
+	var inputRouteToMain: Bool = true
+
 	/*--------------------------------------------------------------------------------------------
 	* Lifecycle
 	*--------------------------------------------------------------------------------------------*/
@@ -40,30 +43,44 @@ class LoginViewController: BaseViewController {
 	
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
-		
-		self.emailField.anchorTopCenterWithTopPadding(88, width: 288, height: 48)
+
+		let messageSize = self.message.sizeThatFits(CGSizeMake(288, CGFloat.max))
+		self.message.anchorTopCenterWithTopPadding(80, width: 288, height: messageSize.height)
+		self.emailField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
 		self.passwordField.alignUnder(self.emailField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-		if onboardMode == OnboardMode.Signup {
-			self.facebookButton.alignUnder(self.passwordField, matchingCenterWithTopPadding: 24, width: 288, height: 48)
-			self.googleButton.alignUnder(self.facebookButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-			self.comment.alignUnder(self.googleButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+
+		
+		if THIRD_PARTY_AUTH_ENABLED {
+			if onboardMode == OnboardMode.Signup {
+				self.facebookButton.alignUnder(self.passwordField, matchingCenterWithTopPadding: 24, width: 288, height: 48)
+				self.googleButton.alignUnder(self.facebookButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+				self.comment.alignUnder(self.googleButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+			}
+			else {
+				self.forgotPasswordButton.alignUnder(self.passwordField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+				self.doneButton.alignUnder(self.forgotPasswordButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+				self.facebookButton.alignUnder(self.doneButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+				self.googleButton.alignUnder(self.facebookButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+				self.comment.alignUnder(self.googleButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+			}
 		}
 		else {
-			self.forgotPasswordButton.alignUnder(self.passwordField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-			self.doneButton.alignUnder(self.forgotPasswordButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-			self.facebookButton.alignUnder(self.doneButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-			self.googleButton.alignUnder(self.facebookButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-			self.comment.alignUnder(self.googleButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+			if onboardMode != OnboardMode.Signup {
+				self.forgotPasswordButton.alignUnder(self.passwordField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+				self.doneButton.alignUnder(self.forgotPasswordButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+			}
 		}
 	}
 	
     func doneAction(sender: AnyObject) {
 		if isValid() {
-			self.provider = AuthProvider.PROXIBASE
 			if self.onboardMode == OnboardMode.Signup {
 				let controller = ProfileViewController()
-				controller.provider = self.provider
+				controller.inputProvider = self.provider
+				controller.inputState = State.Onboarding
 				controller.inputEmail = self.emailField.text
+				controller.inputPassword = self.passwordField.text
+				controller.inputRouteToMain = self.inputRouteToMain
 				self.navigationController?.pushViewController(controller, animated: true)
 			}
 			else {
@@ -81,19 +98,27 @@ class LoginViewController: BaseViewController {
 		
 		let provider = FacebookProvider()
 		
-		if FBSDKAccessToken.currentAccessToken() == nil {
+		if FBSDKAccessToken.currentAccessToken() == nil
+			|| !FBSDKAccessToken.currentAccessToken().hasGranted("email") {
+				
 			provider.authorize { response, error in
 				if let response = response as? FBSDKLoginManagerLoginResult where error == nil {
 					if !response.isCancelled {
-						if self.onboardMode == OnboardMode.Signup {
-							provider.profile { response, error in
-								if let profile = response as? ServiceUserProfile where error == nil {
-									self.showProfile(profile)
-								}
-							}
+						
+						if !FBSDKAccessToken.currentAccessToken().hasGranted("email") {
+							self.Alert("Email is required to connect with Facebook")
 						}
 						else {
-							self.navigateToMain()
+							if self.onboardMode == OnboardMode.Signup {
+								provider.profile { response, error in
+									if let profile = response as? ServiceUserProfile where error == nil {										
+										self.showProfile(profile)
+									}
+								}
+							}
+							else {
+								self.navigateToMain()
+							}
 						}
 					}
 				}
@@ -133,6 +158,18 @@ class LoginViewController: BaseViewController {
 	override func initialize() {
 		super.initialize()
 		
+		if self.onboardMode == .Signup {
+			self.message.text = "Sign up for a free account to post messages, create patches, and more!"
+		}
+		else {
+			self.message.text = "Welcome back!"
+		}
+		
+		self.message.textColor = Theme.colorTextTitle
+		self.message.numberOfLines = 0
+		self.message.textAlignment = .Center
+		self.view.addSubview(self.message)
+		
 		self.emailField.placeholder = "Email"
 		self.emailField.delegate = self
 		self.emailField.keyboardType = UIKeyboardType.EmailAddress
@@ -155,22 +192,31 @@ class LoginViewController: BaseViewController {
 		self.doneButton.setTitle("LOG IN", forState: .Normal)
 		self.view.addSubview(self.doneButton)
 		
-		self.facebookButton.setTitle("LOG IN WITH FACEBOOK", forState: .Normal)
-		self.view.addSubview(self.facebookButton)
-		
-		self.googleButton.setTitle("LOG IN WITH GOOGLE", forState: .Normal)
-		self.view.addSubview(self.googleButton)
-		
-		self.comment.text = "Don't worry, we won't post without your permission."
-		self.comment.textColor = Theme.colorTextSecondary
-		self.comment.numberOfLines = 2
-		self.comment.textAlignment = NSTextAlignment.Center
-		self.view.addSubview(self.comment)
+		if THIRD_PARTY_AUTH_ENABLED {
+			
+			self.facebookButton.setTitle("LOG IN WITH FACEBOOK", forState: .Normal)
+			self.view.addSubview(self.facebookButton)
+			
+			self.googleButton.setTitle("LOG IN WITH GOOGLE", forState: .Normal)
+			self.view.addSubview(self.googleButton)
+			
+			self.facebookButton.addTarget(self, action: Selector("facebookAction:"), forControlEvents: .TouchUpInside)
+			self.googleButton.addTarget(self, action: Selector("googleAction:"), forControlEvents: .TouchUpInside)
+			
+			if onboardMode == OnboardMode.Signup {
+				self.facebookButton.setTitle("CONTINUE WITH FACEBOOK", forState: .Normal)
+				self.googleButton.setTitle("CONTINUE WITH GOOGLE", forState: .Normal)
+			}
+			
+			self.comment.text = "Don't worry, we won't post without your permission."
+			self.comment.textColor = Theme.colorTextSecondary
+			self.comment.numberOfLines = 2
+			self.comment.textAlignment = NSTextAlignment.Center
+			self.view.addSubview(self.comment)
+		}
 		
 		self.forgotPasswordButton.addTarget(self, action: Selector("passwordResetAction:"), forControlEvents: .TouchUpInside)
 		self.doneButton.addTarget(self, action: Selector("doneAction:"), forControlEvents: .TouchUpInside)
-		self.facebookButton.addTarget(self, action: Selector("facebookAction:"), forControlEvents: .TouchUpInside)
-		self.googleButton.addTarget(self, action: Selector("googleAction:"), forControlEvents: .TouchUpInside)
 		
 		setScreenName(onboardMode == OnboardMode.Signup ? "Signup" : "Login")
 		
@@ -181,10 +227,7 @@ class LoginViewController: BaseViewController {
 		self.navigationItem.leftBarButtonItems = [cancelButton]
 
 		if onboardMode == OnboardMode.Signup {
-			self.navigationItem.title = "Sign up for a free account"
 			self.navigationItem.rightBarButtonItem?.title = "Next"
-			self.facebookButton.setTitle("CONTINUE WITH FACEBOOK", forState: .Normal)
-			self.googleButton.setTitle("CONTINUE WITH GOOGLE", forState: .Normal)
 			self.forgotPasswordButton.hidden = true
 			self.doneButton.hidden = true
 		}
@@ -197,7 +240,9 @@ class LoginViewController: BaseViewController {
 		
 		let controller = ProfileViewController()
 		if profile != nil {
-			controller.state = .Onboarding
+			controller.inputRouteToMain = self.inputRouteToMain
+			controller.inputState = .Onboarding
+			controller.inputProvider = self.provider
 			controller.inputName = profile?.name
 			controller.inputEmail = profile?.email
 			controller.inputUserId = profile?.userId
@@ -259,7 +304,22 @@ class LoginViewController: BaseViewController {
 							if let error = ServerError(error) {
 								Log.w("Error during registerInstall: \(error)")
 							}
-							self.navigateToMain()
+							
+							/* Navigate to main interface */
+							if self.inputRouteToMain {
+								self.navigateToMain()
+							}
+							else {
+								if self.isModal {
+									self.dismissViewControllerAnimated(true, completion: nil)
+								}
+								else {
+									self.navigationController?.popViewControllerAnimated(true)
+								}
+								if UserController.instance.userName != nil {
+									Shared.Toast("Logged in as \(UserController.instance.userName!)")
+								}
+							}
 						}
 					}
 				}
@@ -269,9 +329,10 @@ class LoginViewController: BaseViewController {
 	
 	func navigateToMain() {
 		let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-		let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-		let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController")
-		appDelegate.window?.setRootViewController(controller, animated: true)
+		let controller = MainTabBarController()
+		controller.selectedIndex = 0
+		appDelegate.window!.setRootViewController(controller, animated: true)
+		
 		if UserController.instance.userName != nil {
 			Shared.Toast("Logged in as \(UserController.instance.userName!)", controller: controller, addToWindow: false)
 		}

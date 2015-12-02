@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-	<key>TRACKING_ID</key>
-	<string>UA-33660954-6</string>
-	<key>CLIENT_ID</key>
-	<string>148529190495-0msfp4156orb1cub4kib6gimvist9ksj.apps.googleusercontent.com</string>
-	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.148529190495-0msfp4156orb1cub4kib6gimvist9ksj</string>
-	<key>PLIST_VERSION</key>
-	<string>1</string>
-	<key>BUNDLE_ID</key>
-	<string>com.3meters.patchr.ios</string>
-	<key>IS_ADS_ENABLED</key>
-	<false/>
-	<key>IS_ANALYTICS_ENABLED</key>
-	<true/>
-	<key>IS_APPINVITE_ENABLED</key>
-	<false/>
-	<key>IS_GCM_ENABLED</key>
-	<false/>
-	<key>IS_SIGNIN_ENABLED</key>
-	<true/>
-</dict>
+	<dict>
+		<key>TRACKING_ID</key>
+		<string>UA-33660954-6</string>
+		<key>CLIENT_ID</key>
+		<string>148529190495-0msfp4156orb1cub4kib6gimvist9ksj.apps.googleusercontent.com</string>
+		<key>REVERSED_CLIENT_ID</key>
+		<string>com.googleusercontent.apps.148529190495-0msfp4156orb1cub4kib6gimvist9ksj</string>
+		<key>API_KEY</key>
+		<string>AIzaSyAklP0j6tjXA2dZpi0qaqIL8QxpabvxQZU</string>
+		<key>PLIST_VERSION</key>
+		<string>1</string>
+		<key>BUNDLE_ID</key>
+		<string>com.3meters.patchr.ios</string>
+		<key>IS_ADS_ENABLED</key>
+		<false/>
+		<key>IS_ANALYTICS_ENABLED</key>
+		<true/>
+		<key>IS_APPINVITE_ENABLED</key>
+		<false/>
+		<key>IS_GCM_ENABLED</key>
+		<false/>
+		<key>IS_SIGNIN_ENABLED</key>
+		<false/>
+		<key>GOOGLE_APP_ID</key>
+		<string>1:148529190495:ios:2e74793bf3076ad4</string>
+	</dict>
 </plist>

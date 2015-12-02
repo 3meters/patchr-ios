@@ -353,11 +353,7 @@ static NSArray *prettyStringPrinters = nil;
             if (class_getClassMethod(class, @selector(isSubclassOfClass:)) == NULL) {
                 continue;
             }
-			
-			if ([NSStringFromClass(class) isEqualToString: @"AVYPhotoEditorController"]) {
-				continue;
-			}
-			
+            
             if (![class isSubclassOfClass:[NSObject class]]) {
                 continue;
             }

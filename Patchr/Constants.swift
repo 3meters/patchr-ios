@@ -19,8 +19,9 @@ let IOS7        = iosVersion >= 7 && iosVersion < 8
 let APP_ID		= "983436323"
 let BUNDLE_ID	= "com.3meters.patchr.ios"
 
-let SCREEN_NARROW           = (UIScreen.mainScreen().bounds.size.width == 320)
-let PIXEL_SCALE: CGFloat    = UIScreen.mainScreen().scale
+let SCREEN_NARROW				= (UIScreen.mainScreen().bounds.size.width == 320)
+let PIXEL_SCALE: CGFloat		= UIScreen.mainScreen().scale
+let THIRD_PARTY_AUTH_ENABLED	= false
 
 let TIMEOUT_REQUEST: Int    = 10   // Seconds
 
@@ -40,6 +41,7 @@ public struct Events {
     static let WatchDidChange       = "WatchDidChange"
 	static let PhotoDidChange       = "PhotoDidChange"
 	static let PhotoViewHasFocus    = "PhotoViewHasFocus"
+	static let BindingComplete		= "BindingComplete"
 }
 
 public struct Schema {

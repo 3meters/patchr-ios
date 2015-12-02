@@ -42,7 +42,6 @@
 
 @property (nonatomic, readonly, getter=isSystemAccount) BOOL systemAccount;
 @property (nonatomic, copy, readonly) NSDate *expirationDate;
-@property (nonatomic, copy, readonly) NSString *challenge;
 @end
 
 @protocol FBSDKLoginCompleting

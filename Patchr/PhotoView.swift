@@ -163,8 +163,13 @@ class PhotoView: UIView {
 			configureTo(.Empty)
 		}
 		else {
-			let photo: Photo = Entity.getDefaultPhoto(self.photoSchema, id: self.photoDefaultId)
-			self.imageButton.setImageWithPhoto(photo)
+			if self.photoSchema == Schema.ENTITY_USER {
+				self.imageButton.setImage(nil, forState: .Normal)
+			}
+			else {
+				let photo: Photo = Entity.getDefaultPhoto(self.photoSchema, id: nil)
+				self.imageButton.setImageWithPhoto(photo)
+			}
 			self.usingPhotoDefault = true
 			configureTo(.Placeholder)
 		}

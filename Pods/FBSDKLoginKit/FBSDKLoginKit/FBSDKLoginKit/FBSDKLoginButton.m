@@ -142,11 +142,11 @@
 
   [self configureWithIcon:nil
                     title:logInTitle
-          backgroundColor:[super defaultBackgroundColor]
+          backgroundColor:nil
          highlightedColor:nil
             selectedTitle:logOutTitle
              selectedIcon:nil
-            selectedColor:[super defaultBackgroundColor]
+            selectedColor:nil
  selectedHighlightedColor:nil];
   self.titleLabel.textAlignment = NSTextAlignmentCenter;
 
@@ -170,46 +170,36 @@
 
 - (void)_buttonPressed:(id)sender
 {
-  if ([self.delegate respondsToSelector:@selector(loginButtonWillLogin:)]) {
-    if (![self.delegate loginButtonWillLogin:self]) {
-      return;
-    }
-  }
-
-  [self logTapEventWithEventName:FBSDKAppEventNameFBSDKLoginButtonDidTap parameters:[self analyticsParameters]];
   if ([FBSDKAccessToken currentAccessToken]) {
     NSString *title = nil;
 
     if (_userName) {
       NSString *localizedFormatString =
-      NSLocalizedStringWithDefaultValue(@"LoginButton.LoggedInAs", @"FacebookSDK", [FBSDKInternalUtility bundleForStrings],
+      NSLocalizedStringWithDefaultValue(@"LoginButton.LoggedInAs", @"FacebookSDK", [NSBundle mainBundle],
                                         @"Logged in as %@",
                                         @"The format string for the FBSDKLoginButton label when the user is logged in");
       title = [NSString localizedStringWithFormat:localizedFormatString, _userName];
     } else {
       NSString *localizedLoggedIn =
-      NSLocalizedStringWithDefaultValue(@"LoginButton.LoggedIn", @"FacebookSDK", [FBSDKInternalUtility bundleForStrings],
+      NSLocalizedStringWithDefaultValue(@"LoginButton.LoggedIn", @"FacebookSDK", [NSBundle mainBundle],
                                         @"Logged in using Facebook",
                                         @"The fallback string for the FBSDKLoginButton label when the user name is not available yet");
       title = localizedLoggedIn;
     }
     NSString *cancelTitle =
-    NSLocalizedStringWithDefaultValue(@"LoginButton.CancelLogout", @"FacebookSDK", [FBSDKInternalUtility bundleForStrings],
+    NSLocalizedStringWithDefaultValue(@"LoginButton.CancelLogout", @"FacebookSDK", [NSBundle mainBundle],
                                       @"Cancel",
                                       @"The label for the FBSDKLoginButton action sheet to cancel logging out");
     NSString *logOutTitle =
-    NSLocalizedStringWithDefaultValue(@"LoginButton.ConfirmLogOut", @"FacebookSDK", [FBSDKInternalUtility bundleForStrings],
+    NSLocalizedStringWithDefaultValue(@"LoginButton.ConfirmLogOut", @"FacebookSDK", [NSBundle mainBundle],
                                       @"Log Out",
                                       @"The label for the FBSDKLoginButton action sheet to confirm logging out");
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:title
                                                        delegate:self
                                               cancelButtonTitle:cancelTitle
                                          destructiveButtonTitle:logOutTitle
                                               otherButtonTitles:nil];
     [sheet showInView:self];
-#pragma clang diagnostic pop
   } else {
     FBSDKLoginManagerRequestTokenHandler handler = ^(FBSDKLoginManagerLoginResult *result, NSError *error) {
       if ([self.delegate respondsToSelector:@selector(loginButton:didCompleteWithResult:error:)]) {
@@ -218,20 +208,16 @@
     };
 
     if (self.publishPermissions.count > 0) {
-      [_loginManager logInWithPublishPermissions:self.publishPermissions
-                              fromViewController:[FBSDKInternalUtility viewControllerforView:self]
-                                         handler:handler];
+      [_loginManager logInWithPublishPermissions:self.publishPermissions handler:handler];
     } else {
-      [_loginManager logInWithReadPermissions:self.readPermissions
-                           fromViewController:[FBSDKInternalUtility viewControllerforView:self]
-                                      handler:handler];
+      [_loginManager logInWithReadPermissions:self.readPermissions handler:handler];
     }
   }
 }
 
 - (NSString *)_logOutTitle
 {
-  return NSLocalizedStringWithDefaultValue(@"LoginButton.LogOut", @"FacebookSDK", [FBSDKInternalUtility bundleForStrings],
+  return NSLocalizedStringWithDefaultValue(@"LoginButton.LogOut", @"FacebookSDK", [NSBundle mainBundle],
                                            @"Log out",
                                            @"The label for the FBSDKLoginButton when the user is currently logged in");
   ;
@@ -239,14 +225,14 @@
 
 - (NSString *)_longLogInTitle
 {
-  return NSLocalizedStringWithDefaultValue(@"LoginButton.LogInLong", @"FacebookSDK", [FBSDKInternalUtility bundleForStrings],
+  return NSLocalizedStringWithDefaultValue(@"LoginButton.LogInLong", @"FacebookSDK", [NSBundle mainBundle],
                                            @"Log in with Facebook",
                                            @"The long label for the FBSDKLoginButton when the user is currently logged out");
 }
 
 - (NSString *)_shortLogInTitle
 {
-  return NSLocalizedStringWithDefaultValue(@"LoginButton.LogIn", @"FacebookSDK", [FBSDKInternalUtility bundleForStrings],
+  return NSLocalizedStringWithDefaultValue(@"LoginButton.LogIn", @"FacebookSDK", [NSBundle mainBundle],
                                            @"Log in",
                                            @"The short label for the FBSDKLoginButton when the user is currently logged out");
 }

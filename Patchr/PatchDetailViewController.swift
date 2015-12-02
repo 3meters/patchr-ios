@@ -8,12 +8,16 @@
 
 import UIKit
 
-class PatchDetailViewController: BaseDetailViewController {
+class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol {
 
     private var contextAction: ContextAction = .SharePatch
     private var shareButtonFunctionMap = [Int: ShareButtonFunction]()
     private var originalTop: CGFloat = 0.0
     private var originalScrollTop: CGFloat = -64.0
+	
+	var inputShowInviteWelcome = false
+	var inputInviterName: String?
+	var inviteController: InviteViewController?
 
 	/* Outlets are initialized before viewDidLoad is called */
 
@@ -61,6 +65,8 @@ class PatchDetailViewController: BaseDetailViewController {
         self.queryName = DataStoreQueryName.MessagesForPatch.rawValue
         
 		super.viewDidLoad()
+		
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "bindingComplete:", name: Events.BindingComplete, object: nil)
 
         let bannerTapGestureRecognizer = UITapGestureRecognizer(target: self, action: "flipToInfo:")
         self.bannerGroup.addGestureRecognizer(bannerTapGestureRecognizer)
@@ -85,12 +91,6 @@ class PatchDetailViewController: BaseDetailViewController {
 		gradient.startPoint = CGPoint(x: 0.5, y: 0.0)	// (0,0) upper left corner, (1,1) lower right corner
 		gradient.endPoint = CGPoint(x: 0.5, y: 1.0)
 		self.patchPhoto.layer.insertSublayer(gradient, atIndex: 0)
-		
-		let more = UITableViewCell()
-		more.frame = placeButton.bounds
-		more.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
-		more.userInteractionEnabled = false
-		self.placeButton.addSubview(more)
 		
         /* UI prep */
         self.patchNameVisible = false
@@ -189,14 +189,6 @@ class PatchDetailViewController: BaseDetailViewController {
         }
 	}
 
-    @IBAction func placeAction(sender: AnyObject) {
-        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-        if let controller = storyboard.instantiateViewControllerWithIdentifier("PlaceDetailViewController") as? PlaceDetailViewController {
-            controller.placeId = (self.entity as! Patch).place.entityId
-            self.navigationController?.pushViewController(controller, animated: true)
-        }
-    }
-    
     @IBAction func mapAction(sender: AnyObject) {
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
         if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchMapViewController") as? PatchMapViewController {
@@ -204,6 +196,22 @@ class PatchDetailViewController: BaseDetailViewController {
             self.navigationController?.pushViewController(controller, animated: true)
         }
     }
+	
+	func bindingComplete(notification: NSNotification) {
+		if notification.userInfo == nil {
+			if self.inputShowInviteWelcome {
+				if let entity = self.entity as? Patch where entity.userWatchStatusValue == .NonMember {
+					self.inputShowInviteWelcome = false
+					if self.inputInviterName != nil {
+						showInviteWelcome(nil, message: "\(self.inputInviterName!) invited you to join this patch!")
+					}
+					else {
+						showInviteWelcome(nil, message: "A friend invited you to join this patch!")
+					}
+				}
+			}
+		}
+	}
 	
     func handleRemoteNotification(notification: NSNotification) {
         
@@ -223,9 +231,16 @@ class PatchDetailViewController: BaseDetailViewController {
     }
     
     func dismissAction(sender: AnyObject) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+		self.dismissViewControllerAnimated(true) {
+			if UserController.instance.authenticated {
+				let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+				let controller = MainTabBarController()
+				controller.selectedIndex = 0
+				appDelegate.window!.setRootViewController(controller, animated: true)
+			}
+		}
     }
-    
+	
     func flipToInfo(sender: AnyObject) {
         UIView.transitionFromView(bannerGroup!, toView: infoGroup, duration: 0.4, options: [.TransitionFlipFromBottom, .ShowHideTransitionViews, .CurveEaseOut], completion: nil);
     }
@@ -242,8 +257,8 @@ class PatchDetailViewController: BaseDetailViewController {
         /* Has its own nav because we segue modally and it needs its own stack */
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
         if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageEditViewController") as? MessageEditViewController {
-            controller.toString = self.entity!.name
-            controller.patchId = self.entityId
+            controller.inputToString = self.entity!.name
+            controller.inputPatchId = self.entityId
             let navController = UINavigationController()
             navController.navigationBar.tintColor = Colors.brandColorDark
             navController.viewControllers = [controller]
@@ -255,7 +270,7 @@ class PatchDetailViewController: BaseDetailViewController {
         /* Has its own nav because we segue modally and it needs its own stack */
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
         if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchEditViewController") as? PatchEditViewController {
-            controller.entity = entity
+            controller.inputEntity = entity
             let navController = UINavigationController()
             navController.navigationBar.tintColor = Colors.brandColorDark
             navController.viewControllers = [controller]
@@ -270,6 +285,7 @@ class PatchDetailViewController: BaseDetailViewController {
             let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: nil, destructiveButtonTitle: nil)
             
             shareButtonFunctionMap[sheet.addButtonWithTitle("Invite")] = .Share
+			shareButtonFunctionMap[sheet.addButtonWithTitle("Invite using Facebook")] = .ShareFacebook
             shareButtonFunctionMap[sheet.addButtonWithTitle("Invite via")] = .ShareVia
             sheet.addButtonWithTitle("Cancel")
             sheet.cancelButtonIndex = sheet.numberOfButtons - 1
@@ -277,7 +293,25 @@ class PatchDetailViewController: BaseDetailViewController {
             sheet.showInView(self.view)
         }
     }
-    
+	
+	func loginAction(sender: AnyObject?) {
+		let controller = LoginViewController()
+		let navController = UINavigationController()
+		navController.viewControllers = [controller]
+		controller.onboardMode = OnboardMode.Login
+		controller.inputRouteToMain = false
+		self.presentViewController(navController, animated: true) {}
+	}
+	
+	func signupAction(sender: AnyObject?) {
+		let controller = LoginViewController()
+		let navController = UINavigationController()
+		navController.viewControllers = [controller]
+		controller.onboardMode = OnboardMode.Signup
+		controller.inputRouteToMain = false
+		self.presentViewController(navController, animated: true) {}
+	}
+	
     func likeDidChange(sender: NSNotification) {
         self.draw()
         self.tableView.reloadData()
@@ -286,7 +320,15 @@ class PatchDetailViewController: BaseDetailViewController {
     func watchDidChange(sender: NSNotification) {
         self.draw()
     }
-    
+	
+	func inviteFinishedWithInvitations(invitationIds: [AnyObject]!, error: NSError!) {
+		if (error != nil) {
+			print("Failed: " + error.localizedDescription)
+		} else {
+			print("Invitations sent")
+		}
+	}
+	
 	/*--------------------------------------------------------------------------------------------
 	 * Methods
 	 *--------------------------------------------------------------------------------------------*/
@@ -300,13 +342,6 @@ class PatchDetailViewController: BaseDetailViewController {
             self.patchName.text = entity.name
             self.patchType.text = entity.type == nil ? "PATCH" : entity.type.uppercaseString + " PATCH"
 			self.patchPhoto.setImageWithPhoto(entity.getPhotoManaged(), animate: false)
-            
-            /* Place */
-            
-            if entity.place != nil {
-                placeButton.setTitle(entity.place.name, forState: .Normal)
-                placeButton.fadeIn()
-            }
             
             /* Privacy */
             
@@ -460,46 +495,112 @@ class PatchDetailViewController: BaseDetailViewController {
             self.navigationItem.rightBarButtonItems = [addButton, spacer, shareButton]
         }
     }
-    
-    func shareUsing(patchr: Bool = true) {
-        
-        if patchr {
-            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-            let controller = storyboard.instantiateViewControllerWithIdentifier("MessageEditViewController") as? MessageEditViewController
-            /* viewDidLoad hasn't fired yet but awakeFromNib has */
-            controller?.shareEntity = self.entity
-            controller?.shareSchema = Schema.ENTITY_PATCH
-            controller?.shareId = self.entityId!
-            controller?.messageType = .Share
+	
+	func facebookInvite() {
+		
+		if FBSDKAccessToken.currentAccessToken() != nil {
+			let inviteDialog = FBSDKAppInviteDialog()
+			if inviteDialog.canShow() {
+				/*
+				* FIXME: SECURITY HOLE: Temporary for testing!
+				* The correct way to handle this is to have the service hold the secret, call
+				* facebook to get a long lived app access token, and pass it back to the client.
+				*/
+				let inviterName = UserController.instance.currentUser.name.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+				let tokenString = PatchrKeys().facebookToken() // app_id|app_secret
+				let deepLink = "patchr-ios://invite?entityId=\(self.entityId!)&entitySchema=patch&inviterName=\(inviterName)"
+				let ios = "[{\"app_name\":\"Patchr\", \"app_store_id\":929750075, \"url\":\"\(deepLink)\"}]"
+				let parameters = [
+					"name": "Patchr App Link",
+					"ios": ios
+				]
+				
+				FBSDKSettings.setLoggingBehavior(Set(arrayLiteral: FBSDKLoggingBehaviorGraphAPIDebugInfo))
+				
+				let request = FBSDKGraphRequest(graphPath: "app/app_link_hosts",
+					parameters: parameters as [NSObject : AnyObject], tokenString: tokenString, version: "v2.5", HTTPMethod: "POST" )
+				
+				request.startWithCompletionHandler { connection, result, error in
+					if (error != nil) {
+						Log.d("Facebook error while creating applink")
+					}
+					else {
+						let applinkUrl = "https://fb.me/\(result["id"])"
+						let photo = self.entity!.getPhotoManaged()
+						let titleEncoded = self.entity!.name.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+						let settings = "w=1200&h=628&crop&fit=crop&q=25&txtsize=96&txtalign=left,bottom&txtcolor=fff&txtshad=5&txtpad=60&txtfont=Helvetica%20Neue%20Light"
+						let photoUrl = "https://3meters-images.imgix.net/\(photo.prefix)?\(settings)&txt=\(titleEncoded)"
+						
+						let invite = FBSDKAppInviteContent()
+						invite.appLinkURL = NSURL(string: applinkUrl)
+						invite.previewImageURL = NSURL(string: photoUrl)
+						inviteDialog.content = invite
+						inviteDialog.delegate = self
+						inviteDialog.show()
+					}
+				}
+			}
+		}
+	}
+	
+	func shareUsing(route: ShareRoute) {
+		
+		if route == .Patchr {
+			
+			let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+			let controller = storyboard.instantiateViewControllerWithIdentifier("MessageEditViewController") as? MessageEditViewController
+			/* viewDidLoad hasn't fired yet but awakeFromNib has */
+			controller?.inputShareEntity = self.entity
+			controller?.inputShareSchema = Schema.ENTITY_PATCH
+			controller?.inputShareId = self.entityId!
+			controller?.inputMessageType = .Share
 			let navController = UINavigationController(rootViewController: controller!)
 			navController.navigationBar.tintColor = Colors.brandColorDark
-            self.presentViewController(navController, animated: true, completion: nil)
-        }
-        else {
-            Branch.getInstance().getShortURLWithParams(["entityId":self.entityId!, "entitySchema":"patch"], andChannel: "patchr-ios", andFeature: BRANCH_FEATURE_TAG_INVITE, andCallback: {
-                (url: String?, error: NSError?) -> Void in
-                
-                if let error = ServerError(error) {
-                    UIViewController.topMostViewController()!.handleError(error)
-                }
-                else {
-                    Log.d("Branch link created: \(url!)")
-                    let patch: PatchItem = PatchItem(entity: self.entity as! Patch, shareUrl: url!)
-                    
-                    let activityViewController = UIActivityViewController(
-                        activityItems: [patch],
-                        applicationActivities: nil)
-                    
-                    if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-                        self.presentViewController(activityViewController, animated: true, completion: nil)
-                    }
-                    else {
-                        let popup: UIPopoverController = UIPopoverController(contentViewController: activityViewController)
-                        popup.presentPopoverFromRect(CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/4, 0, 0), inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
-                    }
-                }
-            })
-        }
+			self.presentViewController(navController, animated: true, completion: nil)
+		}
+		else if route == .Facebook {
+			
+			if FBSDKAccessToken.currentAccessToken() == nil {
+				let provider = FacebookProvider()
+				provider.authorize { response, error in
+					if FBSDKAccessToken.currentAccessToken() != nil {
+						self.facebookInvite()
+					}
+				}
+			}
+			else {
+				self.facebookInvite()
+			}
+		}
+		else if route == .Actions {
+			
+			let inviterName = UserController.instance.currentUser.id_
+			Branch.getInstance().getShortURLWithParams(["entityId":self.entityId!, "entitySchema":"patch", "inviterName":inviterName],
+				andChannel: "patchr-ios",
+				andFeature: BRANCH_FEATURE_TAG_INVITE,
+				andCallback: { url, error in
+				
+				if let error = ServerError(error) {
+					UIViewController.topMostViewController()!.handleError(error)
+				}
+				else {
+					Log.d("Branch link created: \(url!)")
+					let patch: PatchItem = PatchItem(entity: self.entity as! Patch, shareUrl: url!)
+					
+					let activityViewController = UIActivityViewController(
+						activityItems: [patch],
+						applicationActivities: nil)
+					
+					if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+						self.presentViewController(activityViewController, animated: true, completion: nil)
+					}
+					else {
+						let popup: UIPopoverController = UIPopoverController(contentViewController: activityViewController)
+						popup.presentPopoverFromRect(CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/4, 0, 0), inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
+					}
+				}
+			})
+		}
     }
 
     func isOwner() -> Bool {
@@ -508,6 +609,50 @@ class PatchDetailViewController: BaseDetailViewController {
         }
         return false
     }
+	
+	func showInviteWelcome(var controller: UIViewController?, message: String?) {
+		self.inviteController = InviteViewController()
+		self.inviteController!.modalPresentationStyle = .OverFullScreen
+		self.inviteController!.modalTransitionStyle = .CrossDissolve
+		if controller == nil {
+			controller = UIViewController.topMostViewController()!
+		}
+		self.inviteController!.inputMessage = message
+		if let entity = self.entity as? Patch {
+			self.inviteController!.inputPublic = (entity.visibility == "public")
+		}
+		self.inviteController!.delegate = self
+		controller!.presentViewController(self.inviteController!, animated: true, completion: nil)
+	}
+
+	func inviteResult(result: InviteWelcomeResult) {
+		Utils.delay(0.1) {
+			self.dismissViewControllerAnimated(true) {
+				if result == .Login {
+					self.loginAction(nil)
+				}
+				else if result == .Signup {
+					self.signupAction(nil)
+				}
+				else if result == .Join {
+					self.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+				}
+			}
+		}
+	}
+}
+
+extension PatchDetailViewController: FBSDKAppInviteDialogDelegate {
+
+	func appInviteDialog(appInviteDialog: FBSDKAppInviteDialog!, didCompleteWithResults results: [NSObject : AnyObject]!) {
+		if results != nil && results["completionGesture"] as? String != "cancel" {
+			Shared.Toast("Patch invitations sent using Facebook!")
+		}
+	}
+	
+	func appInviteDialog(appInviteDialog: FBSDKAppInviteDialog!, didFailWithError error: NSError!) {
+		Log.i("Facebook invite error: \(error)")
+	}
 }
 
 extension PatchDetailViewController: MapViewDelegate {
@@ -574,10 +719,13 @@ extension PatchDetailViewController: UIActionSheetDelegate {
 				
                 switch self.shareButtonFunctionMap[buttonIndex]! {
                 case .Share:
-                    self.shareUsing(true)
+                    self.shareUsing(.Patchr)
                     
+				case .ShareFacebook:
+					self.shareUsing(.Facebook)
+					
                 case .ShareVia:
-                    self.shareUsing(false)
+                    self.shareUsing(.Actions)
                 }
             }
         }
@@ -618,7 +766,14 @@ class PatchItem: NSObject, UIActivityItemSource {
 
 private enum ShareButtonFunction {
     case Share
+	case ShareFacebook
     case ShareVia
+}
+
+enum ShareRoute {
+	case Patchr
+	case Facebook
+	case Actions
 }
 
 enum ContextAction: UInt {

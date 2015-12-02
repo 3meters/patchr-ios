@@ -77,3 +77,11 @@ extension BaseViewController: UIGestureRecognizerDelegate {
 		return true
 	}
 }
+
+enum State: Int {
+	case Editing
+	case Creating
+	case Onboarding
+	case Sharing
+	case Searching
+}

@@ -59,11 +59,11 @@ class UserDetailView: BaseDetailView {
 		
 		/* User name */
 		self.name.lineBreakMode = .ByTruncatingMiddle
-		self.name.font = UIFont(name: "HelveticaNeue-Light", size: 24)
+		self.name.font = Theme.fontTitle
 		
 		/* User email */
-		self.email.font = UIFont(name: "HelveticaNeue-Light", size: 16)
-		self.email.textColor = Colors.secondaryText
+		self.email.font = Theme.fontTextDisplay
+		self.email.textColor = Theme.colorTextSecondary
 	
 		/* Rule */
 		self.rule.backgroundColor = Colors.separatorColor
@@ -110,7 +110,7 @@ class UserDetailView: BaseDetailView {
 		
 		self.userGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 112)
 		self.photo.anchorTopLeftWithLeftPadding(8, topPadding: 8, width: 96, height: 96)
-		self.name.alignToTheRightOf(self.photo, fillingWidthWithLeftAndRightPadding: 12, topPadding: 12, height: 30)
+		self.name.alignToTheRightOf(self.photo, fillingWidthWithLeftAndRightPadding: 12, topPadding: 12, height: 36)
 		self.email.alignUnder(self.name, matchingLeftAndFillingWidthWithRightPadding: 12, topPadding: 0, height: 24)
 		self.rule.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 1)
 		

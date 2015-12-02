@@ -106,7 +106,7 @@ class PatchEditViewController: EntityEditViewController {
     override func bind() {
         super.bind()
         
-        if let patch = entity as? Patch {
+        if let patch = inputEntity as? Patch {
             
             /* Visibility */
             visibility = patch.visibility! ?? "private"
@@ -134,14 +134,14 @@ class PatchEditViewController: EntityEditViewController {
         let parameters = super.gather(parameters)
         
         if editMode {
-            if visibility != entity!.visibility {
+            if visibility != inputEntity!.visibility {
                 parameters["visibility"] = nilToNull(visibility)
             }
-            if type != entity!.type {
+            if type != inputEntity!.type {
                 parameters["type"] = nilToNull(type)
             }
-            if location != nil && entity!.location != nil {
-                if location!.coordinate != entity!.location.cllocation.coordinate {
+            if location != nil && inputEntity!.location != nil {
+                if location!.coordinate != inputEntity!.location.cllocation.coordinate {
                     parameters["location"] = nilToNull(location)
                 }
             }
@@ -157,7 +157,7 @@ class PatchEditViewController: EntityEditViewController {
 	override func isDirty() -> Bool {
         
 		if editMode {
-            let patch = entity as! Patch
+            let patch = inputEntity as! Patch
             
             if patch.type != type {
                 return true

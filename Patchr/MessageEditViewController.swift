@@ -15,28 +15,30 @@ enum MessageType: Int {
 
 class MessageEditViewController: EntityEditViewController {
 
-    var messageType:        MessageType = .Content
-	var toString:           String?     // name of patch this message links to
-    var patchId:            String?     // id of patch this message links to
-    var shareId:            String?
-    var shareSchema:        String = Schema.PHOTO
-    var shareEntity:        Entity?
-    var shareDescription:   String!
-    
-    let searchItems: NSMutableArray = NSMutableArray()
-    var searchInProgress = false
-    var searchTimer: NSTimer?
-    var searchEditing = false
-    var searchText: String = ""
-    var searchTableView: UITableView!
-    
-    let toPickerPadding: CGFloat = 32
-    
-    var suggestions: NSMutableArray = NSMutableArray()
+    var inputMessageType: MessageType = .Content
+	var inputToString: String?     // name of patch this message links to
+    var inputPatchId:  String?     // id of patch this message links to
+    var inputShareId:     String?
+    var inputShareSchema: String = Schema.PHOTO
+    var inputShareEntity: Entity?
+
+    private var shareDescription: String!
+
+    private let searchItems: NSMutableArray = NSMutableArray()
+    private var searchInProgress = false
+    private var searchTimer: NSTimer?
+    private var searchEditing = false
+    private var searchText: String = ""
+    private var searchTableView: UITableView!
+
+    private let toPickerPadding: CGFloat = 32
+
+    private var suggestions: NSMutableArray = NSMutableArray()
     
 	@IBOutlet weak var userPhotoImage:   	AirImageView!
     @IBOutlet weak var userNameLabel:       UILabel!
     @IBOutlet weak var toPicker:            MBContactPicker!
+	@IBOutlet weak var facebookButton:		UIButton!
 	
     @IBOutlet weak var descriptionCell:     UITableViewCell!
     @IBOutlet weak var photoCell:           UITableViewCell!
@@ -60,6 +62,7 @@ class MessageEditViewController: EntityEditViewController {
 		
         self.toPicker.prompt = nil
         self.toPicker.showPrompt = false
+		self.toPicker.bounds.size.height = 32
         self.toPicker.cellHeight = 32
 		
 		let tap = UITapGestureRecognizer(target: self, action: "focusToPicker:");
@@ -79,7 +82,7 @@ class MessageEditViewController: EntityEditViewController {
         self.toPicker.delegate = self
         self.toPicker.datasource = self
         
-        if self.messageType == .Share {
+        if self.inputMessageType == .Share {
             
             self.toPicker.borderWidth = 1
             self.toPicker.borderColor = Colors.windowColor
@@ -88,14 +91,16 @@ class MessageEditViewController: EntityEditViewController {
             self.progressStartLabel = "Inviting"
             self.progressFinishLabel = "Invites sent!"
             self.cancelledLabel = "Invites cancelled"
+			
+			self.photoHolder?.hidden = true
             
-            if self.shareSchema == Schema.ENTITY_PATCH {
+            if self.inputShareSchema == Schema.ENTITY_PATCH {
                 self.navigationItem.title = Utils.LocalizedString("Invite to patch")
-                self.shareDescription = "You\'re invited to the \'\(self.shareEntity!.name!)\' patch!"
+                self.shareDescription = "You\'re invited to the \'\(self.inputShareEntity!.name!)\' patch!"
             }
-            else if self.shareSchema == Schema.ENTITY_MESSAGE {
+            else if self.inputShareSchema == Schema.ENTITY_MESSAGE {
                 self.navigationItem.title = Utils.LocalizedString("Share message")
-                if let message = self.shareEntity as? Message {
+                if let message = self.inputShareEntity as? Message {
                     if message.patch != nil {
                         self.shareDescription = "Check out \(message.creator.name!)\'s message to the \'\(message.patch.name)\' patch!"
                     }
@@ -183,7 +188,7 @@ class MessageEditViewController: EntityEditViewController {
                 self.tableView.setContentOffset(CGPoint(x: 0, y: newOffset), animated: true)
             }
         }
-        if self.messageType == .Share {
+        if self.inputMessageType == .Share {
             self.toPicker.becomeFirstResponder()
         }
         else if !editMode && self.firstAppearance {
@@ -214,14 +219,14 @@ class MessageEditViewController: EntityEditViewController {
     override func bind() {
         super.bind()
         
-        if let message = self.entity as? Message {
+        if let message = self.inputEntity as? Message {
             /* User */
             self.userPhotoImage.setImageWithPhoto(message.creator.getPhotoManaged())
             self.userNameLabel.text = message.creator.name
         }
         
         /* Share */
-        if self.messageType == .Share {
+        if self.inputMessageType == .Share {
             
             /* Set the default description */
             self.descriptionField.text = self.shareDescription
@@ -229,7 +234,7 @@ class MessageEditViewController: EntityEditViewController {
 			/* Share entity */
 			
             var shareView: BaseView!
-            if self.shareSchema == Schema.ENTITY_PATCH {
+            if self.inputShareSchema == Schema.ENTITY_PATCH {
 				
 				shareView = PatchView()
 				let shareView = shareView as! PatchView
@@ -239,13 +244,13 @@ class MessageEditViewController: EntityEditViewController {
 				shareView.cornerRadius = 6
 				shareView.shadow.backgroundColor = UIColor.clearColor()
 				
-				shareView.bindToEntity(self.shareEntity!, location: nil)
+				shareView.bindToEntity(self.inputShareEntity!, location: nil)
 				
 				self.shareCell.contentView.addSubview(shareView)
 				self.shareCell.contentView.frame.size.height = 128
 				shareView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
             }
-            else if self.shareSchema == Schema.ENTITY_MESSAGE {
+            else if self.inputShareSchema == Schema.ENTITY_MESSAGE {
 				
 				let holderView = UIView()
 				holderView.clipsToBounds = true
@@ -254,17 +259,17 @@ class MessageEditViewController: EntityEditViewController {
 				holderView.cornerRadius = 6
 				
 				var cellType: CellType = .TextAndPhoto
-				if self.shareEntity!.photo == nil {
+				if self.inputShareEntity!.photo == nil {
 					cellType = .Text
 				}
-				else if self.shareEntity!.description_ == nil {
+				else if self.inputShareEntity!.description_ == nil {
 					cellType = .Photo
 				}
 				
 				shareView = MessageView(cellType: cellType)
 				let shareView = shareView as! MessageView
 				
-				shareView.bindToEntity(self.shareEntity!)
+				shareView.bindToEntity(self.inputShareEntity!)
 				
 				holderView.addSubview(shareView)
 				self.shareCell.contentView.addSubview(holderView)
@@ -357,9 +362,9 @@ class MessageEditViewController: EntityEditViewController {
         
         let parameters = super.gather(parameters)
         
-        if self.messageType == .Share {
+        if self.inputMessageType == .Share {
             let links = NSMutableArray()
-            links.addObject(["type": "share", "_to": self.shareEntity!.id_])
+            links.addObject(["type": "share", "_to": self.inputShareEntity!.id_])
             for contact in self.toPicker.contactsSelected {
                 links.addObject(["type": "share", "_to": contact.entityId])
             }
@@ -368,14 +373,14 @@ class MessageEditViewController: EntityEditViewController {
         }
         else {
             if !editMode {
-                parameters["links"] = [["type": "content", "_to": self.patchId!]]
+                parameters["links"] = [["type": "content", "_to": self.inputPatchId!]]
             }
         }
         return parameters
     }
     
     override func isDirty() -> Bool {
-        if self.messageType == .Share {
+        if self.inputMessageType == .Share {
             return (descriptionField != nil && self.shareDescription != self.descriptionField.text)
         }
         else {
@@ -386,7 +391,7 @@ class MessageEditViewController: EntityEditViewController {
     override func isValid() -> Bool {
         
         /* Share */
-        if self.messageType == .Share {
+        if self.inputMessageType == .Share {
             if self.toPicker.contactsSelected.count == 0 {
                 Alert("Please add recipient(s)", message: nil, cancelButtonTitle: "OK")
                 return false
@@ -428,7 +433,7 @@ extension MessageEditViewController {
                 return height < 96 ? 96 : height
             }
             else if indexPath.row == 2 {    // Photo
-                if self.messageType == .Content {
+                if self.inputMessageType == .Content {
                     /* Size so photo aspect ratio is 4:3 */
                     var height: CGFloat = ((UIScreen.mainScreen().bounds.size.width - 32) * 0.75) + 16
                     if !self.photoView!.photoActive {
@@ -441,15 +446,15 @@ extension MessageEditViewController {
                 }
             }
             else if indexPath.row == 3 {
-                if self.messageType == .Share {
+                if self.inputMessageType == .Share {
                     var height: CGFloat = 0
-                    if self.shareSchema == Schema.ENTITY_PATCH {
+                    if self.inputShareSchema == Schema.ENTITY_PATCH {
                         height = 400
                     }
-                    else if self.shareSchema == Schema.ENTITY_MESSAGE {
+                    else if self.inputShareSchema == Schema.ENTITY_MESSAGE {
                         height = 400
                     }
-                    else if self.shareSchema == Schema.PHOTO {
+                    else if self.inputShareSchema == Schema.PHOTO {
                         height = ((UIScreen.mainScreen().bounds.size.width - 32) * 0.75) + 16
                     }
                     return height
@@ -477,14 +482,14 @@ extension MessageEditViewController: MBContactPickerDataSource {
     }
     
     func selectedContactModelsForContactPicker(contactPickerView: MBContactPicker!) -> [AnyObject]! {
-        if self.messageType != .Share {
-            if self.toString != nil {
+        if self.inputMessageType != .Share {
+            if self.inputToString != nil {
                 let model = SuggestionModel()
-                model.contactTitle = self.toString! + " Patch"
-                model.entityId = self.patchId
+                model.contactTitle = self.inputToString! + " Patch"
+                model.entityId = self.inputPatchId
                 return [model]
             }
-            else if let message = self.entity as? Message where message.patch != nil {
+            else if let message = self.inputEntity as? Message where message.patch != nil {
                 let model = SuggestionModel()
                 model.contactTitle = message.patch.name + " Patch"
                 model.entityId = message.patch.id_

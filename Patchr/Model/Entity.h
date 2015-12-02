@@ -5,9 +5,4 @@
 + (Entity *)setPropertiesFromDictionary:(NSDictionary *)dictionary
                                onObject:(Entity *)entity;
 
-+ (NSNumber *)countForStatWithType:(NSString *)type schema:(NSString *)schema enabled:(NSString *)enabled direction:(NSString *)direction inLinkCounts:(NSDictionary *)linkCounts;
-
-// Convenience properties that query the linksInCounts (if they exist)
-@property (readonly) NSNumber *numberOfMessages;
-
 @end

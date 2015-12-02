@@ -16,7 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
     
     var window: UIWindow?
     var backgroundSessionCompletionHandler: (() -> Void)?
-    
+	var kTrackingID = "YOUR_TRACKING_ID"
+	
     class func appDelegate() -> AppDelegate {
         return UIApplication.sharedApplication().delegate as! AppDelegate
     }
@@ -24,10 +25,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
         Log.d("Patchr launching...")
-        if launchOptions != nil {
-            Log.d(String(format: "%@", launchOptions!))
-        }
-        
+		
+		/* Initialize Crashlytics: 25% of method time */
+		Fabric.with([Crashlytics()])
+		
         let keys = PatchrKeys()
 		
 		self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
@@ -36,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
 			AFNetworkActivityLogger.sharedLogger().startLogging()
 			AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelInfo
         #endif
-        
+		
         /* Turn on network activity indicator */
         AFNetworkActivityIndicatorManager.sharedManager().enabled = true
 		
@@ -61,7 +62,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
                 }                
             }
         })
-        
+		
         /* Load setting defaults */
         let defaultSettingsFile: NSString = NSBundle.mainBundle().pathForResource("DefaultSettings", ofType: "plist")!
         let settingsDictionary: NSDictionary = NSDictionary(contentsOfFile: defaultSettingsFile as String)!
@@ -71,23 +72,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
         var configureError:NSError?
         GGLContext.sharedInstance().configureWithError(&configureError)
         assert(configureError == nil, "Error configuring Google services: \(configureError)")
-        
+		
         // Optional: configure GAI options.
-        let gai = GAI.sharedInstance()
-        gai.trackerWithTrackingId("UA-33660954-6")
-        gai.trackUncaughtExceptions = true  // report uncaught exceptions
-        gai.defaultTracker.allowIDFACollection = true
-        gai.dispatchInterval = 30    // Seconds
-        gai.logger.logLevel = GAILogLevel.None
-        
-        #if DEBUG
-			gai.logger.logLevel = GAILogLevel.Warning
-			gai.dispatchInterval = 5    // Seconds
-        #endif
-        
-        /* Initialize Crashlytics: 25% of method time */
-        Fabric.with([Crashlytics()])
-        
+		if let gai = GAI.sharedInstance() {
+			gai.trackerWithTrackingId("UA-33660954-6")
+			gai.trackUncaughtExceptions = true  // report uncaught exceptions
+			gai.defaultTracker.allowIDFACollection = true
+			gai.dispatchInterval = 30    // Seconds
+			gai.logger.logLevel = GAILogLevel.None
+			
+			#if DEBUG
+				gai.logger.logLevel = GAILogLevel.Warning
+				gai.dispatchInterval = 5    // Seconds
+			#endif
+		}
+		
         /* Initialize Creative sdk: 25% of method time */
         AdobeUXAuthManager.sharedManager().setAuthenticationParametersWithClientID(keys.creativeSdkClientId(), clientSecret: keys.creativeSdkClientSecret(), enableSignUp: false)
         
@@ -98,15 +97,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
         /* Setup parse for push notifications */
         Parse.setApplicationId(keys.parseApplicationId(), clientKey: keys.parseApplicationKey())
 		
-		#if DEBUG
-			#if TARGET_IPHONE_SIMULATOR
-				PDDebugger.defaultInstance().enableNetworkTrafficDebugging()
-				PDDebugger.defaultInstance().forwardAllNetworkTraffic()
-				PDDebugger.defaultInstance().enableCoreDataDebugging()
-				PDDebugger.defaultInstance().addManagedObjectContext(DataController.instance.coreDataStack.stackMainContext, withName: "Main")
-				PDDebugger.defaultInstance().addManagedObjectContext(DataController.instance.coreDataStack.stackWriterContext, withName: "Writer")
-				PDDebugger.defaultInstance().connectToURL(NSURL(string: "ws://127.0.0.1:9000/device"))
-			#endif
+		#if DEBUG && (arch(i386) || arch(x86_64)) && os(iOS)
+			PDDebugger.defaultInstance().enableNetworkTrafficDebugging()
+			PDDebugger.defaultInstance().forwardAllNetworkTraffic()
+			PDDebugger.defaultInstance().connectToURL(NSURL(string: "ws://127.0.0.1:9000/device"))
 		#endif
 		
         /* Get the latest on the authenticated user if we have one */
@@ -158,12 +152,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
 		
 		/* Facebook */
 		FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
-		FBSDKLoginManager.renewSystemCredentials {
-			result, error in
-			if error != nil {
-				Log.w("Error renewing Facebook credentials")
-			}
-		}
+		FBSDKProfile.enableUpdatesOnAccessTokenChange(true)
 		
 		/* Show initial controller */
 		route()
@@ -176,18 +165,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
     *--------------------------------------------------------------------------------------------*/
     
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
-		/*
-		 * Even though the Facebook SDK can make this determinitaion on its own,
-		 * let's make sure that the facebook SDK only sees urls intended for it,
-		 * facebook has enough info already!
-		 */
-		if url.scheme.hasPrefix("fb\(FBSDKSettings.appID())") && url.host == "authorize" {
-			return FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation)
+		
+		/* First see Branch claims it as a deep link */
+		if Branch.getInstance().handleDeepLink(url) {
+			Log.d("Branch handled deep link: \(url.absoluteString)")
+			return true
 		}
-		else if Branch.getInstance().handleDeepLink(url) {
-            Log.d("Branch handled deep link: \(url.absoluteString)")
-            return true
-        }
+		
+		/* See if Facebook claims it */
+		if FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation) {
+			Log.d("Facebook handled url")
+			return true
+		}
+				
+		/* See if this is a Facebook deep link */
+		let parsedUrl: BFURL = BFURL(inboundURL: url, sourceApplication: sourceApplication)
+		if (parsedUrl.appLinkData != nil) {
+			if let inputQueryParameters = parsedUrl.inputQueryParameters {
+				routeDeepLink(inputQueryParameters, error: nil)
+			}
+			return true
+		}
+		
         return false
     }
     
@@ -199,11 +198,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
         
 		self.window?.makeKeyAndVisible()
         if UserController.instance.authenticated {
-            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-            if let controller = storyboard.instantiateViewControllerWithIdentifier("MainTabBarController") as? MainTabBarController {
-                self.window?.setRootViewController(controller, animated: true)
-                controller.selectedIndex = 0
-            }
+			let controller = MainTabBarController()
+			controller.selectedIndex = 0
+            self.window?.setRootViewController(controller, animated: true)
         }
         else {
 			let controller = LobbyViewController()
@@ -239,6 +236,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
             if entitySchema == "patch" {
                 if let controller = storyBoard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
                     controller.entityId = entityId
+					controller.inputShowInviteWelcome = true
+					if let inviterName = params!["inviterName"] as? String {
+						controller.inputInviterName = inviterName.stringByReplacingOccurrencesOfString("+", withString: " ")
+					}
                     /* Navigation bar buttons */
                     let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
                     controller.navigationItem.leftBarButtonItems = [doneButton]

@@ -2,25 +2,25 @@ PODS:
   - AFNetworkActivityLogger (2.0.4):
     - AFNetworking/NSURLConnection (~> 2.0)
     - AFNetworking/NSURLSession (~> 2.0)
-  - AFNetworking (2.6.2):
-    - AFNetworking/NSURLConnection (= 2.6.2)
-    - AFNetworking/NSURLSession (= 2.6.2)
-    - AFNetworking/Reachability (= 2.6.2)
-    - AFNetworking/Security (= 2.6.2)
-    - AFNetworking/Serialization (= 2.6.2)
-    - AFNetworking/UIKit (= 2.6.2)
-  - AFNetworking/NSURLConnection (2.6.2):
+  - AFNetworking (2.6.3):
+    - AFNetworking/NSURLConnection (= 2.6.3)
+    - AFNetworking/NSURLSession (= 2.6.3)
+    - AFNetworking/Reachability (= 2.6.3)
+    - AFNetworking/Security (= 2.6.3)
+    - AFNetworking/Serialization (= 2.6.3)
+    - AFNetworking/UIKit (= 2.6.3)
+  - AFNetworking/NSURLConnection (2.6.3):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-  - AFNetworking/NSURLSession (2.6.2):
+  - AFNetworking/NSURLSession (2.6.3):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-  - AFNetworking/Reachability (2.6.2)
-  - AFNetworking/Security (2.6.2)
-  - AFNetworking/Serialization (2.6.2)
-  - AFNetworking/UIKit (2.6.2):
+  - AFNetworking/Reachability (2.6.3)
+  - AFNetworking/Security (2.6.3)
+  - AFNetworking/Serialization (2.6.3)
+  - AFNetworking/UIKit (2.6.3):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
   - AirContactPicker (0.2.0)
@@ -28,50 +28,53 @@ PODS:
     - AFNetworking (~> 2.6)
     - DACircularProgress
     - pop
-  - AWSCore (2.2.7)
-  - AWSS3 (2.2.7):
-    - AWSCore (= 2.2.7)
+  - AWSCore (2.3.1)
+  - AWSS3 (2.3.1):
+    - AWSCore (= 2.3.1)
   - Bolts (1.5.0):
     - Bolts/AppLinks (= 1.5.0)
     - Bolts/Tasks (= 1.5.0)
   - Bolts/AppLinks (1.5.0):
     - Bolts/Tasks
   - Bolts/Tasks (1.5.0)
-  - Branch (0.11.8)
-  - Crashlytics (3.4.0):
+  - Branch (0.11.11)
+  - Crashlytics (3.4.1):
     - Fabric (~> 1.6.0)
   - DACircularProgress (2.3.1)
-  - Fabric (1.6.0):
-    - Fabric/Base (= 1.6.0)
-  - Fabric/Base (1.6.0)
+  - Fabric (1.6.1)
   - Facade (1.1.0)
-  - FBSDKCoreKit (4.8.0):
+  - FBSDKCoreKit (4.2.0):
     - Bolts (~> 1.1)
-    - FBSDKCoreKit/arc (= 4.8.0)
-    - FBSDKCoreKit/no-arc (= 4.8.0)
-  - FBSDKCoreKit/arc (4.8.0):
+    - FBSDKCoreKit/arc (= 4.2.0)
+    - FBSDKCoreKit/no-arc (= 4.2.0)
+  - FBSDKCoreKit/arc (4.2.0):
     - Bolts (~> 1.1)
-  - FBSDKCoreKit/no-arc (4.8.0):
+  - FBSDKCoreKit/no-arc (4.2.0):
     - Bolts (~> 1.1)
     - FBSDKCoreKit/arc
-  - FBSDKLoginKit (4.8.0):
+  - FBSDKLoginKit (4.1.0):
     - FBSDKCoreKit
-  - Google/Analytics (1.0.7):
+  - FBSDKShareKit (4.1.0):
+    - FBSDKCoreKit
+  - Google/Analytics (1.2.1):
     - Google/Core
     - GoogleAnalytics (~> 3.12)
-  - Google/Core (1.0.7):
+  - Google/Core (1.2.1):
+    - GoogleInterchangeUtilities (~> 1.0)
     - GoogleNetworkingUtilities (~> 1.0)
     - GoogleSymbolUtilities (~> 1.0)
-    - GoogleUtilities (~> 1.0)
-  - GoogleAnalytics (3.13.0)
+    - GoogleUtilities (~> 1.1)
+  - GoogleAnalytics (3.14.0)
+  - GoogleInterchangeUtilities (1.1.0):
+    - GoogleSymbolUtilities (~> 1.0)
   - GoogleNetworkingUtilities (1.0.0):
     - GoogleSymbolUtilities (~> 1.0)
   - GoogleSymbolUtilities (1.0.3)
   - GoogleUtilities (1.1.0):
     - GoogleSymbolUtilities (~> 1.0.0)
-  - Harpy (3.4.3)
+  - Harpy (3.4.4)
   - Keys (1.0.0)
-  - libPhoneNumber-iOS (0.8.8)
+  - libPhoneNumber-iOS (0.8.10)
   - Lockbox (2.1.0)
   - MBProgressHUD (0.9.1)
   - PBWebViewController (0.3)
@@ -90,13 +93,15 @@ DEPENDENCIES:
   - AFNetworking (~> 2.6)
   - AirContactPicker (from `~/code/AirContactPicker`)
   - AirPhotoBrowser (from `~/code/AirPhotoBrowser`)
-  - AWSS3 (~> 2.2.0)
+  - AWSS3 (~> 2.3.1)
   - Branch
   - Crashlytics
   - Fabric
   - Facade
-  - FBSDKLoginKit
-  - Google/Analytics (~> 1.0.0)
+  - FBSDKCoreKit (~> 4.2.0)
+  - FBSDKLoginKit (~> 4.1.0)
+  - FBSDKShareKit (~> 4.1.0)
+  - Google/Analytics (~> 1.2.0)
   - Harpy
   - Keys (from `Pods/CocoaPodsKeys`)
   - libPhoneNumber-iOS (~> 0.7)
@@ -126,27 +131,29 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
-  AFNetworking: 7f317038a9710cabfa43ec56396b307b45df72ab
+  AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
   AirContactPicker: 2f6b10dea55af4017c73daafae952b7dc0481cac
   AirPhotoBrowser: c26ba9232aea2467ebf932ce9cbabe60fd698d54
-  AWSCore: d81e1e534040780deb0f3877aaa207d297e54b4c
-  AWSS3: d39bae2ebbcdc450aef30635c85e556317b92a33
+  AWSCore: 7ad34b4bc285b778a3df699cb6f00aad3d1c446f
+  AWSS3: b7f4a0ad4da6dcc172e757dcb2b2423d26b32325
   Bolts: 722ab9a4f8b50fc4ed1b9998a5a7a2b3f16d80b4
-  Branch: 937f58efb96bc758442b02118658868e6d30716a
-  Crashlytics: 1ee87895c37472eb3f01f409ea1654a464d2f8d4
+  Branch: 71b1180c49d75e0d849e2611ecf3016de7572eac
+  Crashlytics: 41574a245bc6ae10c55d57f385ebd2004e5bee05
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
-  Fabric: d737eda3a26ac940a5430230eedb35f16b226131
+  Fabric: bf0ceb04e7c924090efc5f8c55e4fbcca189e0a0
   Facade: 509c4a0e5fa8517d5e0e1e47251b520775904a9a
-  FBSDKCoreKit: 66a935d17b6e00b6b64e604f2eb9b72c9ab7deb8
-  FBSDKLoginKit: d893fcbb98d854496925e9ff73c67b896982d3c4
-  Google: 875f5a8ade86dd02e36586e4a54814843938c7f6
-  GoogleAnalytics: fcf1f1cad57ae1a9a53520018f0f680ceeeb8b49
+  FBSDKCoreKit: 84b3616a361801f190e43a9909caead7bb6087c7
+  FBSDKLoginKit: ff6224762732e3698f30942e4544321b8c7a23e6
+  FBSDKShareKit: 8002faf0c564ff3625eadd16e506b0b0fbf3adef
+  Google: fd33b5fa40fa3aaee5176de49c873a74e3d11dce
+  GoogleAnalytics: 9be1afdb8deeac4bb5f13ca7f7d3b9db2a1f43dc
+  GoogleInterchangeUtilities: d7f7174176fbcf9710f696f1acebad4dbd98ac03
   GoogleNetworkingUtilities: 292992ab31b7b4ba32809a0e8b40e324cdfb2c0c
   GoogleSymbolUtilities: 82ad9f93d3615244b3f4ce440f5ab2515e8b4f56
   GoogleUtilities: 8ed9134debe11719097881711464752900668f10
-  Harpy: 4289dba060a73b91b9e7af2b5fe540137c0b2e72
+  Harpy: 9f77227be545fec913c2fb12a73f0132f54c32ac
   Keys: 7d2ff6ff42f6903358267ce56e9392f83c31acfe
-  libPhoneNumber-iOS: fe877b7c44c270a9da2082d3e2892d5316f6a2f9
+  libPhoneNumber-iOS: 7bfd00f843fdcd82b5182b463e8eb3b27579f41d
   Lockbox: 16442da35d9d4286966936763be728a931d589c3
   MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
   PBWebViewController: 909b1505da6ba7c5c82519a6457246027926061e

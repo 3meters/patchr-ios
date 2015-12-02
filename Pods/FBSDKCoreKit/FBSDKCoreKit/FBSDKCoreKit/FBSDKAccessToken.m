@@ -40,11 +40,6 @@ static FBSDKAccessToken *g_currentAccessToken;
 
 @implementation FBSDKAccessToken
 
-- (instancetype)init NS_UNAVAILABLE
-{
-  assert(0);
-}
-
 - (instancetype)initWithTokenString:(NSString *)tokenString
                         permissions:(NSArray *)permissions
                 declinedPermissions:(NSArray *)declinedPermissions
@@ -86,13 +81,6 @@ static FBSDKAccessToken *g_currentAccessToken;
     }
 
     g_currentAccessToken = token;
-
-    // Only need to keep current session in web view for the case when token is current
-    // When token is abandoned cookies must to be cleaned up immediatelly
-    if (token == nil) {
-      [FBSDKInternalUtility deleteFacebookCookies];
-    }
-
     [[FBSDKSettings accessTokenCache] cacheAccessToken:token];
     [[NSNotificationCenter defaultCenter] postNotificationName:FBSDKAccessTokenDidChangeNotification
                                                         object:[self class]
@@ -102,15 +90,9 @@ static FBSDKAccessToken *g_currentAccessToken;
 
 + (void)refreshCurrentAccessToken:(FBSDKGraphRequestHandler)completionHandler
 {
-  if ([FBSDKAccessToken currentAccessToken]) {
-    FBSDKGraphRequestConnection *connection = [[FBSDKGraphRequestConnection alloc] init];
-    [FBSDKGraphRequestPiggybackManager addRefreshPiggyback:connection permissionHandler:completionHandler];
-    [connection start];
-  } else {
-    if (completionHandler) {
-      completionHandler(nil, nil, [FBSDKError errorWithCode:FBSDKAccessTokenRequiredErrorCode message:@"No current access token to refresh"]);
-    }
-  }
+  FBSDKGraphRequestConnection *connection = [[FBSDKGraphRequestConnection alloc] init];
+  [FBSDKGraphRequestPiggybackManager addRefreshPiggyback:connection permissionHandler:completionHandler];
+  [connection start];
 }
 
 #pragma mark - Equality

@@ -33,6 +33,13 @@
 
 @implementation FBSDKBridgeAPIProtocolWebV1
 
+#pragma mark - Properties
+
+- (BOOL)isEnabled
+{
+  return YES;
+}
+
 #pragma mark - FBSDKBridgeAPIProtocol
 
 - (NSURL *)requestURLWithActionID:(NSString *)actionID

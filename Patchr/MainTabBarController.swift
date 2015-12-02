@@ -10,37 +10,16 @@ import UIKit
 
 class MainTabBarController: UITabBarController {
     
-    var messageBar: UILabel!
+    var messageBar = UILabel()
     
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
-        
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationWillEnterForeground",
-            name: Event.ApplicationWillEnterForeground.rawValue, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground",
-            name: Event.ApplicationDidEnterBackground.rawValue, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "reachabilityChanged",
-            name: kReachabilityChangedNotification, object: nil)
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-		delegate = self
-        
-        /* Message bar */
-        self.messageBar = UILabel(frame: CGRectMake(0, UIScreen.mainScreen().bounds.size.height - 48, UIScreen.mainScreen().bounds.size.width, 0))
-        self.messageBar.font = UIFont(name: "HelveticaNeue-Light", size: 18)
-        self.messageBar.text = "Connection is offline"
-        self.messageBar.numberOfLines = 0
-        self.messageBar.textAlignment = NSTextAlignment.Center
-        self.messageBar.textColor = UIColor.whiteColor()
-        self.messageBar.layer.backgroundColor = Colors.brandColorDark.CGColor
-		self.messageBar.alpha = 0.85
-        self.view.addSubview(self.messageBar)
-    }
+	
+	override func loadView() {
+		super.loadView()
+		initialize()
+	}
 	
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
@@ -54,6 +33,16 @@ class MainTabBarController: UITabBarController {
     /*--------------------------------------------------------------------------------------------
     * Events
     *--------------------------------------------------------------------------------------------*/
+	
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		if ReachabilityManager.instance.isReachable() {
+			self.messageBar.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 48, height: 0)
+		}
+		else {
+			self.messageBar.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 88, height: 40)
+		}
+	}
     
     func applicationWillEnterForeground() {
         /* User either switched to patchr or turned their screen back on. */
@@ -77,7 +66,68 @@ class MainTabBarController: UITabBarController {
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
-    
+	
+	func initialize() {
+		
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationWillEnterForeground",
+			name: Event.ApplicationWillEnterForeground.rawValue, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground",
+			name: Event.ApplicationDidEnterBackground.rawValue, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "reachabilityChanged",
+			name: kReachabilityChangedNotification, object: nil)
+		
+		delegate = self
+		
+		let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+		
+		let patches = PatchNavigationController()
+		patches.tabBarItem.title = "Patches"
+		patches.tabBarItem.image = UIImage(named: "tabBarPatches24")
+		patches.tabBarItem.tag = 1
+		
+		if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableViewController") as? PatchTableViewController {
+			patches.viewControllers = [controller]
+		}
+		
+		let notifications = UINavigationController()
+		notifications.tabBarItem.title = "Notifications"
+		notifications.tabBarItem.image = UIImage(named: "tabBarNotifications24")
+		notifications.tabBarItem.tag = 2
+		
+		if let controller = storyboard.instantiateViewControllerWithIdentifier("NotificationsTableViewController") as? NotificationsTableViewController {
+			notifications.viewControllers = [controller]
+		}
+		
+		let search = UINavigationController()
+		search.tabBarItem.title = "Search"
+		search.tabBarItem.image = UIImage(named: "tabBarSearch24")
+		search.tabBarItem.tag = 3
+		
+		let controller = SearchViewController()
+		search.viewControllers = [controller]
+		
+		let user = UINavigationController()
+		user.tabBarItem.title = "Me"
+		user.tabBarItem.image = UIImage(named: "tabBarUser24")
+		user.tabBarItem.tag = 4
+		
+		if let controller = storyboard.instantiateViewControllerWithIdentifier("UserDetailViewController") as? UserDetailViewController {
+			user.viewControllers = [controller]
+		}
+		
+		self.viewControllers = [patches, notifications, search, user]
+		
+		/* Message bar */
+		self.messageBar.font = UIFont(name: "HelveticaNeue-Light", size: 18)
+		self.messageBar.text = "Connection is offline"
+		self.messageBar.numberOfLines = 0
+		self.messageBar.textAlignment = NSTextAlignment.Center
+		self.messageBar.textColor = UIColor.whiteColor()
+		self.messageBar.layer.backgroundColor = Colors.brandColorDark.CGColor
+		self.messageBar.alpha = 0.85
+		self.view.addSubview(self.messageBar)
+	}
+	
     func showMessageBar() {
         UIView.animateWithDuration(0.10, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
             self.messageBar.frame = CGRectMake(0, UIScreen.mainScreen().bounds.size.height - 88, UIScreen.mainScreen().bounds.size.width, 40)

@@ -10,7 +10,6 @@ import UIKit
 
 class PatchView: BaseView {
 
-	var placeName		= UILabel()
 	var name			= UILabel()
 	var photo			= AirImageView(frame: CGRectZero)
 	var type			= UILabel()
@@ -44,13 +43,6 @@ class PatchView: BaseView {
 		
 		self.layer.backgroundColor = Theme.colorBackgroundTile.CGColor
 		
-		/* Place name */
-		self.placeName.numberOfLines = 1
-		self.placeName.lineBreakMode = .ByTruncatingTail
-		self.placeName.font = UIFont(name: "HelveticaNeue-Light", size: 12)
-		self.placeName.textColor = Colors.secondaryText
-		self.addSubview(self.placeName)
-		
 		/* Patch photo */
 		self.photo.contentMode = UIViewContentMode.ScaleAspectFill
 		self.photo.clipsToBounds = true
@@ -61,6 +53,7 @@ class PatchView: BaseView {
 		
 		/* Patch name */
 		self.name.font = UIFont(name: "HelveticaNeue-Light", size: 22)
+		self.name.numberOfLines = 2
 		self.addSubview(self.name)
 		
 		/* Patch type */
@@ -142,7 +135,6 @@ class PatchView: BaseView {
 			self.watchingGroup.hidden = false
 			self.rule.hidden = false
 			
-			self.placeName.text = patch.place?.name.uppercaseString
 			self.visibility.hidden = (patch.visibility == "public")
 			self.status.hidden = true
 			if (patch.userWatchStatusValue == .Pending && !SCREEN_NARROW) {
@@ -152,7 +144,7 @@ class PatchView: BaseView {
 			self.messageCount.text = "--"
 			self.watchingCount.text = "--"
 			
-			if let numberOfMessages = patch.numberOfMessages {
+			if let numberOfMessages = patch.countMessages {
 				self.messageCount.text = numberOfMessages.stringValue
 			}
 			
@@ -193,19 +185,13 @@ class PatchView: BaseView {
 		
 		let columnLeft = 128 + CELL_VIEW_SPACING
 		let columnWidth = self.width() - (columnLeft + CELL_PADDING_HORIZONTAL)
+		let nameSize = self.name.sizeThatFits(CGSizeMake(columnWidth, CGFloat.max))
 		
 		self.photo.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 128, height: 128)
-		
-		if self.placeName.text != nil {
-			self.placeName.anchorTopLeftWithLeftPadding(columnLeft, topPadding: CELL_PADDING_VERTICAL, width: columnWidth, height: 13)
-			self.name.alignUnder(self.placeName, matchingLeftAndFillingWidthWithRightPadding: CELL_PADDING_HORIZONTAL, topPadding: 0, height: 24)
-		}
-		else {
-			self.name.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 6, width: columnWidth, height: 24)
-		}
+		self.name.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 6, width: columnWidth, height: nameSize.height)
 		
 		self.type.sizeToFit()
-		self.type.alignUnder(self.name, matchingLeftWithTopPadding: 4, width: self.type.frame.size.width, height: 16)
+		self.type.alignUnder(self.name, matchingLeftWithTopPadding: 0, width: self.type.frame.size.width, height: 16)
 		if !self.visibility.hidden {
 			self.visibility.alignToTheRightOf(self.type, matchingCenterWithLeftPadding: 8, width: 16, height: 16)
 			if !self.status.hidden {
@@ -221,16 +207,12 @@ class PatchView: BaseView {
 		self.watchingGroup.alignToTheRightOf(self.rule, matchingBottomWithLeftPadding: 8, width: 72, height: 48)
 		
 		self.messageLabel.anchorBottomCenterFillingWidthWithLeftAndRightPadding(4, bottomPadding: 0, height: 15)
-		self.messageCount.alignAbove(self.messageLabel, fillingWidthWithLeftAndRightPadding: 0, bottomPadding: 0, height: 36)
+		self.messageCount.alignAbove(self.messageLabel, fillingWidthWithLeftAndRightPadding: 0, bottomPadding: 0, height: 32)
 		self.watchingLabel.anchorBottomCenterFillingWidthWithLeftAndRightPadding(4, bottomPadding: 0, height: 15)
-		self.watchingCount.alignAbove(self.watchingLabel, fillingWidthWithLeftAndRightPadding: 0, bottomPadding: 0, height: 36)
+		self.watchingCount.alignAbove(self.watchingLabel, fillingWidthWithLeftAndRightPadding: 0, bottomPadding: 0, height: 32)
 		
 		if self.distance.text != nil {
 			self.distance.anchorBottomLeftWithLeftPadding(8, bottomPadding: 8, width: 112, height: 16)
 		}
-	}
-	
-	override func prepareForRecycle() {
-		self.placeName.text = nil
 	}
 }

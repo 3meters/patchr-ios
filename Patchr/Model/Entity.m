@@ -37,6 +37,7 @@
 
     entity.countLikesValue = 0;
     entity.countWatchingValue = 0;
+	entity.countPendingValue = 0;
 	
     if (dictionary[@"photo"]) {
 		/* We always replace the previous photo object if one existed */
@@ -51,13 +52,22 @@
         entity.location = [Location setPropertiesFromDictionary:dictionary[@"location"] onObject:location];
     }
     
-    entity.linkCounts = dictionary[@"linkCount"];
-    
-    if ([dictionary[@"linkCount"] isKindOfClass:[NSDictionary class]]) {
-        entity.countLikes = [Entity countForStatWithType:@"like" schema:@"users" enabled:@"true" direction:@"from" inLinkCounts:entity.linkCounts];
-        entity.countWatching = [Entity countForStatWithType:@"watch" schema:@"users" enabled:@"true" direction:@"from" inLinkCounts:entity.linkCounts];
-        entity.countPending = [Entity countForStatWithType:@"watch" schema:@"users" enabled:@"false" direction:@"from" inLinkCounts:entity.linkCounts];
-    }
+	if ([dictionary[@"linkCounts"] isKindOfClass:[NSArray class]]) {
+		for (id linkMap in dictionary[@"linkCounts"]) {
+			if ([linkMap isKindOfClass:[NSDictionary class]]) {
+				
+				if ([linkMap[@"from"] isEqualToString:@"users"] && [linkMap[@"type"] isEqualToString:@"like"]) {
+					entity.countLikes = linkMap[@"count"];
+				}
+				if ([linkMap[@"from"] isEqualToString:@"users"] && [linkMap[@"type"] isEqualToString:@"watch"] && [linkMap[@"enabled"] isEqual:@YES]) {
+					entity.countWatching = linkMap[@"count"];
+				}
+				if ([linkMap[@"from"] isEqualToString:@"users"] && [linkMap[@"type"] isEqualToString:@"watch"] && [linkMap[@"enabled"] isEqual:@NO]) {
+					entity.countPending = linkMap[@"count"];
+				}
+			}
+		}
+	}
     
     entity.reason = dictionary[@"reason"];
     entity.score = dictionary[@"score"];
@@ -75,45 +85,6 @@
     }
     
     return entity;
-}
-
-- (NSNumber *)numberOfMessages {
-    return [self countForStatWithType:@"content" schema:@"messages"];
-}
-
-// Internal only
-- (NSNumber *)countForStatWithType:(NSString *)type schema:(NSString *)schema {
-    return [Entity countForStatWithType:type schema:schema enabled:@"true" direction:@"from" inLinkCounts:self.linkCounts];
-}
-
-// Internal only
-+ (NSNumber *)countForStatWithType:(NSString *)type
-                            schema:(NSString *)schema
-                           enabled:(NSString *)enabled
-                         direction:(NSString *)direction
-                      inLinkCounts:(NSDictionary *)linkCounts {
-    
-    if ([linkCounts[direction] isKindOfClass:[NSDictionary class]]) {
-        NSDictionary *fromLinkCounts = linkCounts[direction];
-        for (NSObject *key in fromLinkCounts.allKeys) {
-            if ([key isEqual:schema] && [fromLinkCounts[key] isKindOfClass:[NSDictionary class]]) {
-                NSDictionary *schemaDict = fromLinkCounts[key];
-                if ([schemaDict[type] isKindOfClass:[NSNumber class]]) {
-                    return schemaDict[type];
-                }
-                else if ([schemaDict[type] isKindOfClass:[NSDictionary class]]) {
-                    NSDictionary *typeDict = schemaDict[type];
-                    if ([enabled isEqualToString:@"true"]) {
-                        return typeDict[@"enabled"];
-                    }
-                    else if ([enabled isEqualToString:@"false"]) {
-                        return typeDict[@"disabled"];
-                    }
-                }
-            }
-        }
-    }
-    return nil; // Not found
 }
 
 @end

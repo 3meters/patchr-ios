@@ -52,6 +52,11 @@ NSString *const FBSDKBridgeAPIVersionKey = @"version";
                                userInfo:userInfo];
 }
 
++ (BOOL)checkProtocolForType:(FBSDKBridgeAPIProtocolType)type scheme:(NSString *)scheme
+{
+  return ([self _protocolForType:type scheme:scheme] != nil);
+}
+
 + (NSDictionary *)protocolMap
 {
   static NSDictionary *_protocolMap;
@@ -59,12 +64,20 @@ NSString *const FBSDKBridgeAPIVersionKey = @"version";
   dispatch_once(&onceToken, ^{
     _protocolMap = @{
                      @(FBSDKBridgeAPIProtocolTypeNative): @{
-                         FBSDK_CANOPENURL_FACEBOOK:[[FBSDKBridgeAPIProtocolNativeV1 alloc] initWithAppScheme:@"fbapi20130214"],
-                         FBSDK_CANOPENURL_MESSENGER:[[FBSDKBridgeAPIProtocolNativeV1 alloc] initWithAppScheme:@"fb-messenger-api20140430"]
+                         @"fbapi": @[
+                             [[FBSDKBridgeAPIProtocolNativeV1 alloc] initWithAppScheme:@"fbapi20130214"],
+                             ],
+                         @"fb-messenger-api": @[
+                             [[FBSDKBridgeAPIProtocolNativeV1 alloc] initWithAppScheme:@"fb-messenger-api20140430"],
+                             ],
                          },
                      @(FBSDKBridgeAPIProtocolTypeWeb): @{
-                         @"https": [[FBSDKBridgeAPIProtocolWebV1 alloc] init],
-                         @"web": [[FBSDKBridgeAPIProtocolWebV2 alloc] init]
+                         @"https": @[
+                             [[FBSDKBridgeAPIProtocolWebV1 alloc] init],
+                             ],
+                         @"web": @[
+                             [[FBSDKBridgeAPIProtocolWebV2 alloc] init],
+                             ],
                          },
                      };
   });
@@ -150,15 +163,11 @@ NSString *const FBSDKBridgeAPIVersionKey = @"version";
 
 + (id<FBSDKBridgeAPIProtocol>)_protocolForType:(FBSDKBridgeAPIProtocolType)type scheme:(NSString *)scheme
 {
-  id<FBSDKBridgeAPIProtocol> protocol = [self protocolMap][@(type)][scheme];
-  if (type == FBSDKBridgeAPIProtocolTypeWeb) {
-    return protocol;
-  }
-  NSURLComponents *components = [[NSURLComponents alloc] init];
-  components.scheme = scheme;
-  components.path = @"/";
-  if ([[UIApplication sharedApplication] canOpenURL:components.URL]) {
-    return protocol;
+  NSArray *schemeProtocolMap = [self protocolMap][@(type)][scheme];
+  for (id<FBSDKBridgeAPIProtocol> protocol in [schemeProtocolMap reverseObjectEnumerator]) {
+    if ([protocol isEnabled]) {
+      return protocol;
+    }
   }
   return nil;
 }

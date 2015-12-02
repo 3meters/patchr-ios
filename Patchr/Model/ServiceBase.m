@@ -83,21 +83,19 @@
 		[context deleteObject:base.creator];
 	}
 	
-	if (dictionary[@"linked"]) {
-		for (id linkMap in dictionary[@"linked"]) {
-			if ([linkMap isKindOfClass:[NSDictionary class]]) {
-				if ([linkMap[@"schema"] isEqual: @"user"] && [linkMap[@"_id"] isEqual: base.creatorId]) {
-					NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"Shortcut" inManagedObjectContext:context];
-					Shortcut *shortcut = [[Shortcut alloc] initWithEntity:entityDescription insertIntoManagedObjectContext:context];
-					
-					NSString *entityId = [[NSString alloc] initWithString:linkMap[@"_id"]];
-					if ([entityId rangeOfString:@"sh."].location == NSNotFound) {
-						entityId = [@"sh." stringByAppendingString:entityId];
-					}
-					shortcut.id_ = entityId;
-					base.creator = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut];
-				}
+	if (dictionary[@"creator"]) {
+		if ([dictionary[@"creator"] isKindOfClass:[NSDictionary class]]) {
+			NSDictionary *linkMap = dictionary[@"creator"];
+		
+			NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"Shortcut" inManagedObjectContext:context];
+			Shortcut *shortcut = [[Shortcut alloc] initWithEntity:entityDescription insertIntoManagedObjectContext:context];
+			
+			NSString *entityId = [[NSString alloc] initWithString:linkMap[@"_id"]];
+			if ([entityId rangeOfString:@"sh."].location == NSNotFound) {
+				entityId = [@"sh." stringByAppendingString:entityId];
 			}
+			shortcut.id_ = entityId;
+			base.creator = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut];
 		}
 	}
 	

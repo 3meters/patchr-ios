@@ -14,14 +14,15 @@ plugin 'cocoapods-keys', {
     "ParseApplicationKey",
     "FabricApiKey",
     "BranchKey",
-	"ProxibaseSecret"
+	"ProxibaseSecret",
+	"FacebookToken"
     ]}
 
 target 'Patchr' do
 
 pod 'AFNetworking', '~> 2.6'
 pod 'AFNetworkActivityLogger', '~> 2.0'
-pod 'AWSS3', '~> 2.2.0'
+pod 'AWSS3', '~> 2.3.1'
 pod 'PBWebViewController', '~> 0.3'     # Used to show show web content for terms/policy/licensing
 pod 'MBProgressHUD', '~> 0.9.1'
 pod 'SDWebImage', '~> 3.7.2'
@@ -35,19 +36,20 @@ pod 'AirContactPicker', :path => '~/code/AirContactPicker'
 pod 'TWMessageBarManager'				# In-app notifications
 pod 'Harpy'								# App update alerts
 pod 'Facade'							# Convenience methods for frame based layout
-pod 'Google/Analytics', '~> 1.0.0'
+pod 'Google/Analytics', '~> 1.2.0'
 pod 'Fabric'
 pod 'Crashlytics'
 pod 'PonyDebugger', :git => 'https://github.com/square/PonyDebugger.git'
-pod 'FBSDKLoginKit'
-
+pod 'FBSDKCoreKit', '~> 4.2.0'
+pod 'FBSDKLoginKit', '~> 4.1.0'
+pod 'FBSDKShareKit', '~> 4.1.0'
 
 end
 
 target 'PatchrShare' do
 
 pod 'SDWebImage', '~> 3.7.2'
-pod 'AWSS3', '~> 2.2.0'
+pod 'AWSS3', '~> 2.3.1'
 pod 'Lockbox'                           # Used to protect secrets and install info
 
 end

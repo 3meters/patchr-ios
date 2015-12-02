@@ -123,12 +123,14 @@ class BaseDetailViewController: BaseTableViewController {
 									}
 									self?.drawButtons()
 									self?.draw()
+									NSNotificationCenter.defaultCenter().postNotificationName(Events.BindingComplete, object: nil)
 								}
 								else {
 									Shared.Toast("Item has been deleted")
 									Utils.delay(2.0) {
 										() -> () in
 										self?.navigationController?.popViewControllerAnimated(true)
+										NSNotificationCenter.defaultCenter().postNotificationName(Events.BindingComplete, object: nil, userInfo: ["deleted":true])
 									}
 								}
 							}

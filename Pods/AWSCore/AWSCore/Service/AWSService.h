@@ -18,6 +18,8 @@
 #import "AWSCredentialsProvider.h"
 #import "AWSServiceEnum.h"
 
+FOUNDATION_EXPORT NSString *const AWSiOSSDKVersion;
+
 @class AWSEndpoint;
 
 #pragma mark - AWSService
@@ -66,9 +68,16 @@
 @property (nonatomic, assign, readonly) AWSRegionType regionType;
 @property (nonatomic, strong, readonly) id<AWSCredentialsProvider> credentialsProvider;
 @property (nonatomic, strong, readonly) AWSEndpoint *endpoint;
+@property (nonatomic, readonly) NSString *userAgent;
+
++ (NSString *)baseUserAgent;
+
++ (void)addGlobalUserAgentProductToken:(NSString *)productToken;
 
 - (instancetype)initWithRegion:(AWSRegionType)regionType
            credentialsProvider:(id<AWSCredentialsProvider>)credentialsProvider;
+
+- (void)addUserAgentProductToken:(NSString *)productToken;
 
 + (instancetype)configurationWithRegion:(AWSRegionType)regionType
                     credentialsProvider:(id<AWSCredentialsProvider>)credentialsProvider __attribute__ ((deprecated("Use '- initWithRegion:credentialsProvider:' instead.")));

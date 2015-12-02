@@ -46,7 +46,6 @@
 		7DB6E0FE1A8177060017A42F /* _User.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DB6E0FB1A8177060017A42F /* _User.m */; };
 		7DB6E0FF1A8177060017A42F /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DB6E0FD1A8177060017A42F /* User.m */; };
 		7DC1763F1ACDFF010051BA6C /* Link.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DC1763D1ACDFF010051BA6C /* Link.m */; };
-		7DC9D4911A9D46D100234E3C /* UserEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC9D4901A9D46D100234E3C /* UserEditViewController.swift */; };
 		7DD89F411AC62B90005CD004 /* UserTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD89F401AC62B90005CD004 /* UserTableViewController.swift */; };
 		7DE393E71AAE43AD00D1B80E /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */; };
 		7DE975EE1AA7F72400C1ECE9 /* ModelUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE975ED1AA7F72400C1ECE9 /* ModelUtilities.m */; };
@@ -61,7 +60,7 @@
 		9FDCC869B589AA11FBDB67F2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9FDCC978FCB0A253FA6E74F9 /* Main.storyboard */; };
 		9FDCC8F9EEEF77DEBE173AFA /* PhotoPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC06A84126B197626CEB2 /* PhotoPickerViewController.swift */; };
 		9FDCCCC0113B14385C08DA41 /* MessageDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */; };
-		9FDCCD0504D3A06C69B4F2A5 /* PatchSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC3759A624CE254394BB5 /* PatchSearchViewController.swift */; };
+		9FDCCD0504D3A06C69B4F2A5 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC3759A624CE254394BB5 /* SearchViewController.swift */; };
 		A8E20B58D29959C0889B8847 /* libPods-PatchrShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BA6097617A5336D7C15520A /* libPods-PatchrShare.a */; };
 		C1112B52B84F042CB51F7E65 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F90A7A6DF253248AE7C300A /* libPods.a */; };
 		E20004DF1B094ACA00425694 /* PasswordEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */; };
@@ -80,6 +79,7 @@
 		E20D57061BC78160004D73E2 /* AirAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20D57041BC77FCB004D73E2 /* AirAlertController.swift */; };
 		E224C3501B6ED27F00879775 /* PatchrShare.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E238BAE41B51D3290094AF41 /* PatchrShare.storyboard */; };
 		E224C3551B6EDBBE00879775 /* PatchTargetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */; };
+		E229CD121C1337A700F5BDAC /* AirLabelBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229CD111C1337A700F5BDAC /* AirLabelBase.swift */; };
 		E238BACC1B50888C0094AF41 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BACB1B50888C0094AF41 /* SystemConfiguration.framework */; };
 		E238BACE1B50889A0094AF41 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BACD1B50889A0094AF41 /* libc++.dylib */; };
 		E238BAD01B5088A40094AF41 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BACF1B5088A40094AF41 /* MobileCoreServices.framework */; };
@@ -107,11 +107,11 @@
 		E25327D21B13DEF800990A81 /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25327D11B13DEF800990A81 /* AudioController.swift */; };
 		E25327D51B14CA9800990A81 /* NGAParallaxMotion.m in Sources */ = {isa = PBXBuildFile; fileRef = E25327D41B14CA9800990A81 /* NGAParallaxMotion.m */; };
 		E25327DB1B1625D900990A81 /* GCPlaceholderTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = E25327DA1B1625D900990A81 /* GCPlaceholderTextView.m */; };
-		E25327DD1B1795E000990A81 /* PlaceDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25327DC1B1795E000990A81 /* PlaceDetailViewController.swift */; };
 		E25327E01B1A282D00990A81 /* FXBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = E25327DF1B1A282D00990A81 /* FXBlurView.m */; };
 		E256B4261BD2C9E200EBF894 /* PatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E256B4251BD2C9E200EBF894 /* PatchView.swift */; };
 		E256B4281BD3DDC900EBF894 /* AirTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E256B4271BD3DDC900EBF894 /* AirTableViewCell.swift */; };
 		E256B42A1BD3F32A00EBF894 /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E256B4291BD3F32A00EBF894 /* UserView.swift */; };
+		E269AED81C10AB9A004A1D88 /* InviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E269AED71C10AB9A004A1D88 /* InviteViewController.swift */; };
 		E26B0C891B456F8A00706F4A /* ExtensionsUi.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26B0C881B456F8A00706F4A /* ExtensionsUi.swift */; };
 		E26B0C8C1B4577D000706F4A /* TextViewChangeObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26B0C8B1B4577D000706F4A /* TextViewChangeObserver.swift */; };
 		E26B0C8E1B45783700706F4A /* TextFieldChangeObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26B0C8D1B45783700706F4A /* TextFieldChangeObserver.swift */; };
@@ -171,7 +171,7 @@
 		E2D569AF1BF3F45C001CCE58 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D569AE1BF3F45C001CCE58 /* Location.swift */; };
 		E2D569BC1C038C1B001CCE58 /* Photo.m in Sources */ = {isa = PBXBuildFile; fileRef = E2D569BB1C038C1B001CCE58 /* Photo.m */; };
 		E2D569BE1C052A30001CCE58 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D569BD1C052A30001CCE58 /* ProfileViewController.swift */; };
-		E2D569C01C05F9D6001CCE58 /* ServiceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D569BF1C05F9D6001CCE58 /* ServiceController.swift */; };
+		E2D569C01C05F9D6001CCE58 /* ProviderController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D569BF1C05F9D6001CCE58 /* ProviderController.swift */; };
 		E2DBD4F01B0F65580006575C /* ExtensionsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DBD4EF1B0F65580006575C /* ExtensionsModel.swift */; };
 		E2F182D01B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */; };
 		E2F182E31B4B4AFD0020F6BB /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E273B5191B48349900888E73 /* Parse.framework */; };
@@ -282,7 +282,6 @@
 		7DB6E0FD1A8177060017A42F /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = User.m; path = Model/User.m; sourceTree = "<group>"; };
 		7DC1763C1ACDFF010051BA6C /* Link.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Link.h; path = Model/Link.h; sourceTree = "<group>"; };
 		7DC1763D1ACDFF010051BA6C /* Link.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Link.m; path = Model/Link.m; sourceTree = "<group>"; };
-		7DC9D4901A9D46D100234E3C /* UserEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserEditViewController.swift; sourceTree = "<group>"; };
 		7DD89F401AC62B90005CD004 /* UserTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTableViewController.swift; sourceTree = "<group>"; };
 		7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
 		7DE975EC1AA7F72400C1ECE9 /* ModelUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelUtilities.h; sourceTree = "<group>"; };
@@ -297,7 +296,7 @@
 		880FE917F305BDE29B1AA196 /* Pods-PatchrShare.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrShare.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrShare/Pods-PatchrShare.debug.xcconfig"; sourceTree = "<group>"; };
 		963D1BBA8F941C4BA95675EA /* Pods-Patchr.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.adhoc.xcconfig"; sourceTree = "<group>"; };
 		9FDCC06A84126B197626CEB2 /* PhotoPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoPickerViewController.swift; sourceTree = "<group>"; };
-		9FDCC3759A624CE254394BB5 /* PatchSearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PatchSearchViewController.swift; path = PatchrShare/PatchSearchViewController.swift; sourceTree = SOURCE_ROOT; };
+		9FDCC3759A624CE254394BB5 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchViewController.swift; path = PatchrShare/SearchViewController.swift; sourceTree = SOURCE_ROOT; };
 		9FDCC5A08BC6B04C7EC67536 /* PatchTableMapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTableMapViewController.swift; sourceTree = "<group>"; };
 		9FDCC67342555A8E88594481 /* PatchrShare-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PatchrShare-Bridging-Header.h"; sourceTree = "<group>"; };
 		9FDCC90B29F27E6941869A9F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -320,6 +319,7 @@
 		E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stopwatch.swift; sourceTree = "<group>"; };
 		E20D57041BC77FCB004D73E2 /* AirAlertController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirAlertController.swift; sourceTree = "<group>"; };
 		E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTargetViewController.swift; sourceTree = "<group>"; };
+		E229CD111C1337A700F5BDAC /* AirLabelBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirLabelBase.swift; sourceTree = "<group>"; };
 		E238BACB1B50888C0094AF41 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		E238BACD1B50889A0094AF41 /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
 		E238BACF1B5088A40094AF41 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
@@ -351,12 +351,12 @@
 		E25327D41B14CA9800990A81 /* NGAParallaxMotion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NGAParallaxMotion.m; sourceTree = "<group>"; };
 		E25327D91B1625D900990A81 /* GCPlaceholderTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCPlaceholderTextView.h; sourceTree = "<group>"; };
 		E25327DA1B1625D900990A81 /* GCPlaceholderTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCPlaceholderTextView.m; sourceTree = "<group>"; };
-		E25327DC1B1795E000990A81 /* PlaceDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceDetailViewController.swift; sourceTree = "<group>"; };
 		E25327DE1B1A282D00990A81 /* FXBlurView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FXBlurView.h; sourceTree = "<group>"; };
 		E25327DF1B1A282D00990A81 /* FXBlurView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FXBlurView.m; sourceTree = "<group>"; };
 		E256B4251BD2C9E200EBF894 /* PatchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchView.swift; sourceTree = "<group>"; };
 		E256B4271BD3DDC900EBF894 /* AirTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirTableViewCell.swift; sourceTree = "<group>"; };
 		E256B4291BD3F32A00EBF894 /* UserView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
+		E269AED71C10AB9A004A1D88 /* InviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InviteViewController.swift; sourceTree = "<group>"; };
 		E26B0C881B456F8A00706F4A /* ExtensionsUi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionsUi.swift; sourceTree = "<group>"; };
 		E26B0C8B1B4577D000706F4A /* TextViewChangeObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextViewChangeObserver.swift; sourceTree = "<group>"; };
 		E26B0C8D1B45783700706F4A /* TextFieldChangeObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFieldChangeObserver.swift; sourceTree = "<group>"; };
@@ -418,7 +418,7 @@
 		E2D569AE1BF3F45C001CCE58 /* Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		E2D569BB1C038C1B001CCE58 /* Photo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Photo.m; path = Model/Photo.m; sourceTree = "<group>"; };
 		E2D569BD1C052A30001CCE58 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
-		E2D569BF1C05F9D6001CCE58 /* ServiceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceController.swift; sourceTree = "<group>"; };
+		E2D569BF1C05F9D6001CCE58 /* ProviderController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProviderController.swift; sourceTree = "<group>"; };
 		E2DBD4EF1B0F65580006575C /* ExtensionsModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionsModel.swift; sourceTree = "<group>"; };
 		E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKImage.framework; path = Frameworks/AdobeCreativeSDKImage.framework; sourceTree = "<group>"; };
 		E2F618D51AFFACF00055D09C /* LocationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocationController.swift; path = Patchr/LocationController.swift; sourceTree = "<group>"; };
@@ -492,10 +492,10 @@
 				7D3D39CD1A6F086F00A44CB2 /* Info.plist */,
 				E2F618D51AFFACF00055D09C /* LocationController.swift */,
 				E238BAEE1B5405380094AF41 /* Patchr.entitlements */,
-				E2CCAADF1B67CC0E0071170C /* NotificationController.swift */,
+				E2D569BF1C05F9D6001CCE58 /* ProviderController.swift */,
 				7D3D39EF1A6F116E00A44CB2 /* Proxibase.swift */,
+				E2CCAADF1B67CC0E0071170C /* NotificationController.swift */,
 				E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */,
-				E2D569BF1C05F9D6001CCE58 /* ServiceController.swift */,
 				E2D25DC71B23892000E51461 /* UserController.swift */,
 				E238BADF1B51D3290094AF41 /* PatchrShare */,
 				7D3D39CA1A6F086F00A44CB2 /* Products */,
@@ -656,9 +656,10 @@
 		E24D744B1BB2E7120061F339 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				E24D744F1BB2F4030061F339 /* Detail */,
-				E24D744E1BB2F3E70061F339 /* Collections */,
+				E24D744F1BB2F4030061F339 /* Forms */,
+				E24D744E1BB2F3E70061F339 /* Lists */,
 				E2F618DE1B02667A0055D09C /* Edit */,
+				E269AED61C0F9FCD004A1D88 /* Mapping */,
 			);
 			name = Data;
 			sourceTree = "<group>";
@@ -671,40 +672,41 @@
 				E2D12A7A1C091C4D00DE507E /* BaseViewController.swift */,
 				844D6E341AA4D01200EE71ED /* DevelopmentViewController.swift */,
 				7D021AC11A9423080047DAAE /* GuestViewController.swift */,
+				E269AED71C10AB9A004A1D88 /* InviteViewController.swift */,
 				E2D12A801C0A52D700DE507E /* LobbyViewController.swift */,
 				7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */,
 				E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */,
-				841082CA1AB1013300803ECE /* PatchMapViewController.swift */,
-				E2C0D9371B6D2CC700E28CE9 /* PatchNavigationController.swift */,
 				7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
 		};
-		E24D744E1BB2F3E70061F339 /* Collections */ = {
+		E24D744E1BB2F3E70061F339 /* Lists */ = {
+			isa = PBXGroup;
+			children = (
+				7DA730951A71B962008C25FA /* BaseTableViewController.swift */,
+				7D40B9411A7864A000F9954C /* NotificationsTableViewController.swift */,
+				7D9651931AAFBD02000C5718 /* PatchTableViewController.swift */,
+				9FDCC06A84126B197626CEB2 /* PhotoPickerViewController.swift */,
+				9FDCC3759A624CE254394BB5 /* SearchViewController.swift */,
+				7DD89F401AC62B90005CD004 /* UserTableViewController.swift */,
+			);
+			name = Lists;
+			sourceTree = "<group>";
+		};
+		E24D744F1BB2F4030061F339 /* Forms */ = {
 			isa = PBXGroup;
 			children = (
 				E24D74501BB349BD0061F339 /* BaseDetailViewController.swift */,
-				7DA730951A71B962008C25FA /* BaseTableViewController.swift */,
-				7D40B9411A7864A000F9954C /* NotificationsTableViewController.swift */,
-				7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */,
-				9FDCC3759A624CE254394BB5 /* PatchSearchViewController.swift */,
-				9FDCC5A08BC6B04C7EC67536 /* PatchTableMapViewController.swift */,
-				7D9651931AAFBD02000C5718 /* PatchTableViewController.swift */,
-				9FDCC06A84126B197626CEB2 /* PhotoPickerViewController.swift */,
-				7D6E26461A7AB93F000128A7 /* UserDetailViewController.swift */,
-				7DD89F401AC62B90005CD004 /* UserTableViewController.swift */,
-			);
-			name = Collections;
-			sourceTree = "<group>";
-		};
-		E24D744F1BB2F4030061F339 /* Detail */ = {
-			isa = PBXGroup;
-			children = (
+				7D021ABD1A9409450047DAAE /* LoginViewController.swift */,
 				9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */,
-				E25327DC1B1795E000990A81 /* PlaceDetailViewController.swift */,
+				E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */,
+				E20004E01B099CBD00425694 /* PasswordResetViewController.swift */,
+				7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */,
+				E2D569BD1C052A30001CCE58 /* ProfileViewController.swift */,
+				7D6E26461A7AB93F000128A7 /* UserDetailViewController.swift */,
 			);
-			name = Detail;
+			name = Forms;
 			sourceTree = "<group>";
 		};
 		E25327CA1B13D34B00990A81 /* Sounds */ = {
@@ -718,6 +720,23 @@
 				E25327C91B13D34200990A81 /* notification_pop.aac */,
 			);
 			name = Sounds;
+			sourceTree = "<group>";
+		};
+		E269AED41C0F637C004A1D88 /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				E2C0D9371B6D2CC700E28CE9 /* PatchNavigationController.swift */,
+			);
+			name = Navigation;
+			sourceTree = "<group>";
+		};
+		E269AED61C0F9FCD004A1D88 /* Mapping */ = {
+			isa = PBXGroup;
+			children = (
+				841082CA1AB1013300803ECE /* PatchMapViewController.swift */,
+				9FDCC5A08BC6B04C7EC67536 /* PatchTableMapViewController.swift */,
+			);
+			name = Mapping;
 			sourceTree = "<group>";
 		};
 		E26B0C861B44BD4000706F4A /* Docs */ = {
@@ -798,6 +817,7 @@
 				E25327B51B1000C000990A81 /* AirImageView.swift */,
 				E25327B71B103ECA00990A81 /* AirImageButton.swift */,
 				E2C720C61B4EDAFE00714B53 /* AirLabel.swift */,
+				E229CD111C1337A700F5BDAC /* AirLabelBase.swift */,
 				E2D12A821C0A58F000DE507E /* AirLabelTitle.swift */,
 				E2D12A841C0A592D00DE507E /* AirLabelBanner.swift */,
 				E2D12A7C1C0A03F100DE507E /* AirLabelDisplay.swift */,
@@ -833,6 +853,7 @@
 		E2D25DC61B22164300E51461 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				E269AED41C0F637C004A1D88 /* Navigation */,
 				E24D744B1BB2E7120061F339 /* Data */,
 				E24D744D1BB2E95D0061F339 /* View */,
 			);
@@ -856,13 +877,8 @@
 			isa = PBXGroup;
 			children = (
 				E2D25DCE1B2391A700E51461 /* EntityEditViewController.swift */,
-				7D021ABD1A9409450047DAAE /* LoginViewController.swift */,
 				843523C41AAE70B800739447 /* MessageEditViewController.swift */,
-				E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */,
-				E20004E01B099CBD00425694 /* PasswordResetViewController.swift */,
 				84A6BB631AAF970A00B7440B /* PatchEditViewController.swift */,
-				E2D569BD1C052A30001CCE58 /* ProfileViewController.swift */,
-				7DC9D4901A9D46D100234E3C /* UserEditViewController.swift */,
 			);
 			name = Edit;
 			sourceTree = "<group>";
@@ -1155,7 +1171,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "${PODS_ROOT}/Fabric/Fabric.framework/run 3f03e3891f0d0c56c4bc1c393db5efe2aa0f90c7 98cfca9f6ecedc65a98564ec3e3af57052f396d78d3bce7483d33c035a2a6c66";
+			shellScript = "${PODS_ROOT}/Fabric/run 3f03e3891f0d0c56c4bc1c393db5efe2aa0f90c7 98cfca9f6ecedc65a98564ec3e3af57052f396d78d3bce7483d33c035a2a6c66";
 		};
 		E2C0D92A1B6BC1FA00E28CE9 /* Increment Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1206,14 +1222,12 @@
 				7D01FA361A7024E200DD6DFA /* JSONResponseSerializerWithData.m in Sources */,
 				843523C51AAE70B800739447 /* MessageEditViewController.swift in Sources */,
 				E25327E01B1A282D00990A81 /* FXBlurView.m in Sources */,
-				E2D569C01C05F9D6001CCE58 /* ServiceController.swift in Sources */,
+				E2D569C01C05F9D6001CCE58 /* ProviderController.swift in Sources */,
 				E2DBD4F01B0F65580006575C /* ExtensionsModel.swift in Sources */,
 				E29A4CDA1BD077520059D5B9 /* MessageView.swift in Sources */,
 				E2A28E6F1B4A602200B3A2FE /* AirToggleButton.swift in Sources */,
 				E2064BF51BC18A66009C7B6A /* AirProgress.swift in Sources */,
-				E25327DD1B1795E000990A81 /* PlaceDetailViewController.swift in Sources */,
 				E241D15A1B1B3FCE00702E01 /* UIView+BorderLayer.m in Sources */,
-				7DC9D4911A9D46D100234E3C /* UserEditViewController.swift in Sources */,
 				7DA730931A71ACC9008C25FA /* ServiceBase.m in Sources */,
 				E2D12A7F1C0A090200DE507E /* Theming.swift in Sources */,
 				7DA7308C1A71ACC9008C25FA /* _Query.m in Sources */,
@@ -1233,6 +1247,7 @@
 				E2C7C5C21B2A0B730045038A /* NotificationSettingsViewController.swift in Sources */,
 				7DA730941A71ACC9008C25FA /* ServiceObject.m in Sources */,
 				E20C3A7D1BD70DD2008CCED1 /* AirTableView.swift in Sources */,
+				E229CD121C1337A700F5BDAC /* AirLabelBase.swift in Sources */,
 				7DA730901A71ACC9008C25FA /* Patch.m in Sources */,
 				7DA7308A1A71ACC9008C25FA /* _Patch.m in Sources */,
 				E20C3A811BDC1D57008CCED1 /* BaseDetailView.swift in Sources */,
@@ -1313,6 +1328,7 @@
 				E238BB061B571AFF0094AF41 /* ExtensionsPhoto.swift in Sources */,
 				E281776E1B5B0EE200D65AC1 /* Reporting.swift in Sources */,
 				E20C3A7B1BD6A717008CCED1 /* BaseView.swift in Sources */,
+				E269AED81C10AB9A004A1D88 /* InviteViewController.swift in Sources */,
 				E27DB4051B06477A0090D023 /* QueryItem.m in Sources */,
 				E24D74521BB865F50061F339 /* AwsS3.swift in Sources */,
 				E28D565F1BB1849F00BFD433 /* ReachabilityManager.swift in Sources */,
@@ -1320,7 +1336,7 @@
 				E2C0D9361B6D257B00E28CE9 /* SegmentsController.swift in Sources */,
 				E26B0C901B45C07D00706F4A /* AirPhotoBrowser.swift in Sources */,
 				E273B5361B488F2000888E73 /* AirPhotoPreview.swift in Sources */,
-				9FDCCD0504D3A06C69B4F2A5 /* PatchSearchViewController.swift in Sources */,
+				9FDCCD0504D3A06C69B4F2A5 /* SearchViewController.swift in Sources */,
 				9FDCC8F9EEEF77DEBE173AFA /* PhotoPickerViewController.swift in Sources */,
 				9FDCC4E31D09C35191FA3624 /* PatchTableMapViewController.swift in Sources */,
 			);

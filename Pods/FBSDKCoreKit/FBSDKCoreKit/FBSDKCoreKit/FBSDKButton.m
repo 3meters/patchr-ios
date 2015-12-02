@@ -19,10 +19,6 @@
 #import "FBSDKButton.h"
 #import "FBSDKButton+Subclass.h"
 
-#import "FBSDKAccessToken.h"
-#import "FBSDKAppEvents+Internal.h"
-#import "FBSDKAppEvents.h"
-#import "FBSDKApplicationDelegate+Internal.h"
 #import "FBSDKLogo.h"
 #import "FBSDKMath.h"
 #import "FBSDKUIUtility.h"
@@ -35,7 +31,7 @@
 
 @implementation FBSDKButton
 {
-  BOOL _skipIntrinsicContentSizing;
+  BOOL _isConfiguring;
   BOOL _isExplicitlyDisabled;
 }
 
@@ -44,9 +40,9 @@
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if ((self = [super initWithFrame:frame])) {
-    _skipIntrinsicContentSizing = YES;
+    _isConfiguring = YES;
     [self configureButton];
-    _skipIntrinsicContentSizing = NO;
+    _isConfiguring = NO;
   }
   return self;
 }
@@ -54,9 +50,9 @@
 - (void)awakeFromNib
 {
   [super awakeFromNib];
-  _skipIntrinsicContentSizing = YES;
+  _isConfiguring = YES;
   [self configureButton];
-  _skipIntrinsicContentSizing = NO;
+  _isConfiguring = NO;
 }
 
 - (void)dealloc
@@ -88,13 +84,10 @@
 
 - (CGSize)intrinsicContentSize
 {
-  if (_skipIntrinsicContentSizing) {
+  if (_isConfiguring) {
     return CGSizeZero;
   }
-  _skipIntrinsicContentSizing = YES;
-  CGSize size = [self sizeThatFits:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
-  _skipIntrinsicContentSizing = NO;
-  return size;
+  return [self sizeThatFits:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
 }
 
 - (void)layoutSubviews
@@ -163,14 +156,6 @@
 }
 
 #pragma mark - Subclass Methods
-
-- (void)logTapEventWithEventName:(NSString *)eventName parameters:(NSDictionary *)parameters
-{
-    [FBSDKAppEvents logImplicitEvent:eventName
-                          valueToSum:nil
-                          parameters:parameters
-                         accessToken:[FBSDKAccessToken currentAccessToken]];
-}
 
 - (void)checkImplicitlyDisabled
 {
@@ -376,7 +361,7 @@
   CGSize imageSize = CGSizeMake(font.pointSize, font.pointSize);
   UIImage *image = [icon imageWithSize:imageSize];
   image = [image resizableImageWithCapInsets:UIEdgeInsetsZero resizingMode:UIImageResizingModeStretch];
-  [self setImage:image forState:UIControlStateNormal];
+  [self setImage:image  forState:UIControlStateNormal];
 
   if (selectedIcon) {
     UIImage *selectedImage = [selectedIcon imageWithSize:imageSize];
@@ -392,8 +377,8 @@
 
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(_applicationDidBecomeActiveNotification:)
-                                               name:FBSDKApplicationDidBecomeActiveNotification
-                                             object:[FBSDKApplicationDelegate sharedInstance]];
+                                               name:UIApplicationDidBecomeActiveNotification
+                                             object:[UIApplication sharedApplication]];
 }
 
 - (CGFloat)_fontSizeForHeight:(CGFloat)height

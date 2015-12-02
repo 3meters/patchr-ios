@@ -212,14 +212,12 @@
     cachedIdentifiers = [[NSMutableSet alloc] init];
   });
 
-  @synchronized(self) {
-    if (![cachedIdentifiers containsObject:identifier]) {
-      NSUInteger numMatches = [regex numberOfMatchesInString:identifier options:0 range:NSMakeRange(0, identifier.length)];
-      if (numMatches > 0) {
-        [cachedIdentifiers addObject:identifier];
-      } else {
-        return NO;
-      }
+  if (![cachedIdentifiers containsObject:identifier]) {
+    NSUInteger numMatches = [regex numberOfMatchesInString:identifier options:0 range:NSMakeRange(0, identifier.length)];
+    if (numMatches > 0) {
+      [cachedIdentifiers addObject:identifier];
+    } else {
+      return NO;
     }
   }
 

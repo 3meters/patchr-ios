@@ -125,7 +125,7 @@ public class S3: NSObject {
             (task) -> AnyObject! in
             
             if task.error != nil {
-                Log.w(String(format: "getPreSignedURL error: %@", task.error))
+                Log.w(String(format: "getPreSignedURL error: %@", task.error!))
                 return nil
             }
             
@@ -216,7 +216,7 @@ extension S3 : NSURLSessionDelegate {
                     
                     dispatch_async(dispatch_get_main_queue()){
                         if task.error != nil {
-                            Log.w(String(format: "Error putObjectAcl: %@", task.error.localizedDescription))
+                            Log.w(String(format: "Error putObjectAcl: %@", task.error!.localizedDescription))
                         }
                         else {
                             Log.d("ACL for an uploaded file was changed successfully!")

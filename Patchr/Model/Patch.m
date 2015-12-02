@@ -16,9 +16,16 @@
     patch = (Patch *) [Entity setPropertiesFromDictionary:dictionary onObject:patch];
 
     patch.countMessagesValue = 0;
-    if (dictionary[@"linkCount"]) {
-        patch.countMessages = [Entity countForStatWithType:@"content" schema:@"messages" enabled:@"true" direction:@"from" inLinkCounts:dictionary[@"linkCount"]];
-    }
+	
+	if ([dictionary[@"linkCounts"] isKindOfClass:[NSArray class]]) {
+		for (id linkMap in dictionary[@"linkCounts"]) {
+			if ([linkMap isKindOfClass:[NSDictionary class]]) {
+				if ([linkMap[@"from"] isEqualToString:@"messages"] && [linkMap[@"type"] isEqualToString:@"content"]) {
+					patch.countMessages = linkMap[@"count"];
+				}
+			}
+		}
+	}
 	
 	/* Delete the related objects if they exist */
 	NSManagedObjectContext *context = [patch managedObjectContext];

@@ -29,8 +29,4 @@
 
 + (BOOL)isGraphErrorRecoveryDisabled;
 
-// used by Unity.
-+ (NSString *)userAgentSuffix;
-+ (void)setUserAgentSuffix:(NSString *)suffix;
-
 @end

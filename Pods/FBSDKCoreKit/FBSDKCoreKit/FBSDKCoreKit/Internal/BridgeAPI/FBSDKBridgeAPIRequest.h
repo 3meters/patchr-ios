@@ -30,6 +30,7 @@
                                    methodVersion:(NSString *)methodVersion
                                       parameters:(NSDictionary *)parameters
                                         userInfo:(NSDictionary *)userInfo;
++ (BOOL)checkProtocolForType:(FBSDKBridgeAPIProtocolType)type scheme:(NSString *)scheme;
 
 @property (nonatomic, copy, readonly) NSString *actionID;
 @property (nonatomic, copy, readonly) NSString *methodName;

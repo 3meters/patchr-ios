@@ -778,11 +778,12 @@ public class LinkSpec {
 	public var linked:       [LinkSpec]?
     public var links:        [LinkSpec]?
     public var linkCount:    [LinkSpec]?
+	public var refs:		 [NSObject:AnyObject]?
 
 	init(to: LinkDestination, type: LinkType, enabled: Bool? = nil, limit: UInt? = nil, count: Bool? = nil,
 		 fields: AnyObject? = nil, filter: [NSObject:AnyObject]? = nil,
 		 linkFields: AnyObject? = nil, linkedFilter: [NSObject:AnyObject]? = nil,
-         linked: [LinkSpec]? = nil, links: [LinkSpec]? = nil, linkCount: [LinkSpec]? = nil) {
+		linked: [LinkSpec]? = nil, links: [LinkSpec]? = nil, linkCount: [LinkSpec]? = nil, refs: [NSObject:AnyObject]? = nil) {
 		self.to = to
 		self.type = type
 		self.enabled = enabled
@@ -795,12 +796,13 @@ public class LinkSpec {
 		self.linked = linked
         self.links = links
         self.linkCount = linkCount
+		self.refs = refs
 	}
 
 	init(from: LinkDestination, type: LinkType, enabled: Bool? = nil, limit: UInt? = nil, count: Bool? = nil,
 		 fields: AnyObject? = nil, filter: [NSObject:AnyObject]? = nil,
 		 linkFields: AnyObject? = nil, linkedFilter: [NSObject:AnyObject]? = nil,
-         linked: [LinkSpec]? = nil, links: [LinkSpec]? = nil, linkCount: [LinkSpec]? = nil) {
+         linked: [LinkSpec]? = nil, links: [LinkSpec]? = nil, linkCount: [LinkSpec]? = nil, refs: [NSObject:AnyObject]? = nil) {
 		self.from = from
 		self.type = type
 		self.enabled = enabled
@@ -813,6 +815,7 @@ public class LinkSpec {
         self.linked = linked
         self.links = links
         self.linkCount = linkCount
+		self.refs = refs
 	}
 
 	func toDictionary() -> Dictionary<String, AnyObject> {
@@ -862,6 +865,9 @@ public class LinkSpec {
                 $0.toDictionary()
             }
         }
+		if refs != nil {
+			dictionary["refs"] = refs
+		}
 		return dictionary
 	}
 }
