@@ -40,6 +40,8 @@ class ProfileViewController: BaseViewController {
 	var comment				 = AirLabel()
 	var message				 = AirLabelTitle()
 	var activity			 = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
+	var scrollView			 = UIScrollView()
+	var contentHolder		 = UIView()
 	
 	var facebookOnGroup		 = UIView()
 	var facebookOffGroup	 = UIView()
@@ -77,7 +79,7 @@ class ProfileViewController: BaseViewController {
 		super.viewWillLayoutSubviews()
 		
 		let messageSize = self.message.sizeThatFits(CGSizeMake(288, CGFloat.max))
-		self.message.anchorTopCenterWithTopPadding(80, width: 288, height: messageSize.height)
+		self.message.anchorTopCenterWithTopPadding(0, width: 288, height: messageSize.height)
 		self.photoView.alignUnder(self.message, matchingCenterWithTopPadding: 16, width: 150, height: 150)
 		self.nameField.alignUnder(self.photoView, matchingCenterWithTopPadding: 8, width: 288, height: 48)
 
@@ -101,7 +103,11 @@ class ProfileViewController: BaseViewController {
 			self.facebookButton.anchorTopCenterWithTopPadding(0, width: 288, height: 48)
 			self.comment.alignUnder(self.facebookButton, matchingLeftWithTopPadding: 8, width: 288, height: 48)
 			self.facebookOffGroup.alignUnder(self.changePasswordButton, matchingCenterWithTopPadding: 8, width: 288, height: 104)
-		}
+		}		
+		
+		self.contentHolder.resizeToFitSubviews()
+		self.scrollView.contentSize = CGSizeMake(self.contentHolder.frame.size.width, self.contentHolder.frame.size.height + CGFloat(32))
+		self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 24, height: self.contentHolder.frame.size.height)
 	}
 	
 	func doneAction(sender: AnyObject){
@@ -267,15 +273,23 @@ class ProfileViewController: BaseViewController {
 			self.message.text = "Profile"
 		}
 		
+		let fullScreenRect = UIScreen.mainScreen().applicationFrame
+		self.scrollView.frame = fullScreenRect
+		self.scrollView.backgroundColor = Theme.colorBackgroundScreen
+		
+		self.view = self.scrollView
+		
+		self.scrollView.addSubview(self.contentHolder)
+		
 		self.message.textColor = Theme.colorTextTitle
 		self.message.numberOfLines = 0
 		self.message.textAlignment = .Center
-		self.view.addSubview(self.message)
+		self.contentHolder.addSubview(self.message)
 		
 		self.photoView.photoSchema = Schema.ENTITY_USER
 		self.photoView.photoDefaultId = self.inputEmail
 		self.photoView.setHostController(self)
-		self.view.addSubview(self.photoView)
+		self.contentHolder.addSubview(self.photoView)
 		
 		self.nameField.placeholder = "Full name"
 		self.nameField.delegate = self
@@ -283,7 +297,7 @@ class ProfileViewController: BaseViewController {
 		self.nameField.autocorrectionType = .No
 		self.nameField.keyboardType = UIKeyboardType.Default
 		self.nameField.returnKeyType = UIReturnKeyType.Next
-		self.view.addSubview(self.nameField)
+		self.contentHolder.addSubview(self.nameField)
 		
 		self.emailField.placeholder = "Email"
 		self.emailField.delegate = self
@@ -291,7 +305,7 @@ class ProfileViewController: BaseViewController {
 		self.emailField.autocorrectionType = .No
 		self.emailField.keyboardType = UIKeyboardType.EmailAddress
 		self.nameField.returnKeyType = UIReturnKeyType.Done
-		self.view.addSubview(self.emailField)
+		self.contentHolder.addSubview(self.emailField)
 		
 		if self.inputState == State.Onboarding {
 		
@@ -307,16 +321,16 @@ class ProfileViewController: BaseViewController {
 			self.emailField.textColor = Theme.colorTextSecondary
 			
 			self.joinButton.setTitle("JOIN", forState: .Normal)
-			self.view.addSubview(self.joinButton)
+			self.contentHolder.addSubview(self.joinButton)
 			
 			self.termsButton.setTitle("By joining, you agree to the Terms of Service", forState: .Normal)
 			self.termsButton.titleLabel!.numberOfLines = 2
 			self.termsButton.titleLabel!.textAlignment = NSTextAlignment.Center
-			self.view.addSubview(self.termsButton)
+			self.contentHolder.addSubview(self.termsButton)
 			
 			self.facebookButton = AirButton()
 			self.facebookButton.setTitle("AUTO FILL USING FACEBOOK", forState: .Normal)
-			self.view.addSubview(self.facebookButton)
+			self.contentHolder.addSubview(self.facebookButton)
 			
 			/* Navigation bar buttons */
 			let doneButton   = UIBarButtonItem(title: "Join", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
@@ -341,10 +355,10 @@ class ProfileViewController: BaseViewController {
 			self.areaField.delegate = self
 			self.areaField.keyboardType = UIKeyboardType.Default
 			self.areaField.returnKeyType = UIReturnKeyType.Done
-			self.view.addSubview(self.areaField)
+			self.contentHolder.addSubview(self.areaField)
 			
 			self.changePasswordButton.setTitle("CHANGE PASSWORD", forState: .Normal)
-			self.view.addSubview(self.changePasswordButton)
+			self.contentHolder.addSubview(self.changePasswordButton)
 			
 			self.facebookOnGroup.alpha = 0
 			
@@ -357,7 +371,7 @@ class ProfileViewController: BaseViewController {
 			self.comment.numberOfLines = 2
 			self.comment.textAlignment = NSTextAlignment.Center
 			self.facebookOffGroup.addSubview(self.comment)
-			self.view.addSubview(self.facebookOffGroup)
+			self.contentHolder.addSubview(self.facebookOffGroup)
 			
 			self.facebookPhoto.contentMode = UIViewContentMode.ScaleAspectFill
 			self.facebookPhoto.clipsToBounds = true
@@ -373,7 +387,7 @@ class ProfileViewController: BaseViewController {
 			
 			self.activity.hidden = true
 			self.facebookOnGroup.addSubview(self.activity)
-			self.view.addSubview(self.facebookOnGroup)
+			self.contentHolder.addSubview(self.facebookOnGroup)
 			
 			if FBSDKAccessToken.currentAccessToken() != nil {
 				self.facebookOnGroup.alpha = 1

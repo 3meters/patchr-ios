@@ -97,11 +97,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
         /* Setup parse for push notifications */
         Parse.setApplicationId(keys.parseApplicationId(), clientKey: keys.parseApplicationKey())
 		
-		#if DEBUG && (arch(i386) || arch(x86_64)) && os(iOS)
-			PDDebugger.defaultInstance().enableNetworkTrafficDebugging()
-			PDDebugger.defaultInstance().forwardAllNetworkTraffic()
-			PDDebugger.defaultInstance().connectToURL(NSURL(string: "ws://127.0.0.1:9000/device"))
-		#endif
+//		#if DEBUG && (arch(i386) || arch(x86_64)) && os(iOS)
+//			PDDebugger.defaultInstance().enableNetworkTrafficDebugging()
+//			PDDebugger.defaultInstance().forwardAllNetworkTraffic()
+//			PDDebugger.defaultInstance().connectToURL(NSURL(string: "ws://127.0.0.1:9000/device"))
+//		#endif
 		
         /* Get the latest on the authenticated user if we have one */
 		if UserController.instance.authenticated {	// Checks for current userId and sessionKey
