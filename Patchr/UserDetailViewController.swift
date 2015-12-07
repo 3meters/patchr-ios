@@ -151,7 +151,7 @@ class UserDetailViewController: BaseDetailViewController {
     
 	func actionEdit() {
 		
-		let controller = ProfileViewController()
+		let controller = ProfileEditViewController()
 		let navController = UINavigationController()
 		controller.inputUser = self.entity as? User
 		navController.viewControllers = [controller]

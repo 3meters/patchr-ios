@@ -29,7 +29,7 @@ class AirButtonFeatured: UIButton {
 		self.backgroundColor = Theme.colorButtonFillFeatured
 		self.borderColor = Theme.colorButtonBorderFeatured
 		self.borderWidth = Theme.dimenButtonBorderWidth
-		self.cornerRadius = Theme.dimenButtonCornerRadius
+		self.cornerRadius = Int(Theme.dimenButtonCornerRadius)
 	}
 	
 	override func layoutSubviews() {

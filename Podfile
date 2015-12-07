@@ -26,6 +26,7 @@ pod 'AWSS3', '~> 2.3.1'
 pod 'PBWebViewController', '~> 0.3'     # Used to show show web content for terms/policy/licensing
 pod 'MBProgressHUD', '~> 0.9.1'
 pod 'SDWebImage', '~> 3.7.2'
+pod 'DLRadioButton'
 pod 'UIDevice-Hardware'                 # Convenience for determining system version and model identifier
 pod 'Lockbox'                           # Used to protect secrets and install info
 pod 'libPhoneNumber-iOS', '~> 0.7'      # Used to parse and format phone# for places

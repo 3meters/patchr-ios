@@ -269,6 +269,6 @@ func ==(a: CLLocationCoordinate2D, b: CLLocationCoordinate2D) -> Bool {
 }
 
 func !=(a: CLLocationCoordinate2D, b: CLLocationCoordinate2D) -> Bool {
-    return !(a == b)
+	return !(a == b)
 }
 

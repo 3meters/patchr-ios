@@ -172,6 +172,13 @@ extension PatchTableMapViewController: MKMapViewDelegate {
                     annotationView!.leftCalloutAccessoryView = imageView
                     imageView.contentMode = UIViewContentMode.ScaleAspectFill
                 }
+				else {
+					let imageView = AirImageView(frame: CGRectMake(0, 0, 40, 40))
+					imageView.image = Utils.imagePatch
+					imageView.tintColor = Colors.brandColor
+					annotationView!.leftCalloutAccessoryView = imageView
+					imageView.contentMode = UIViewContentMode.ScaleAspectFill
+				}
             }
         }
         return annotationView
@@ -229,9 +236,9 @@ class EntityAnnotation: NSObject, MKAnnotation {
         }
     }
     
-    init(coordinate: CLLocationCoordinate2D, title: String?, subtitle: String?) {
+    init(coordinate: CLLocationCoordinate2D, title: String? = nil, subtitle: String? = nil) {
         self.coordinate = coordinate
-        self.title = title!
+        self.title = title
         self.subtitle = subtitle
     }
 }

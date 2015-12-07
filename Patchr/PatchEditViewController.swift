@@ -1,396 +1,768 @@
 //
-//  NewCreateEditPatch.swift
+//  RegistrationTableViewController.swift
 //  Patchr
 //
-//  Created by Brent on 2015-03-10.
+//  Created by Rob MacEachern on 2015-02-24.
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
 
-import Foundation
-import MapKit
+import UIKit
 
-class PatchEditViewController: EntityEditViewController {
+class PatchEditViewController: BaseViewController {
+	
+	var processing: Bool = false
+	var progressStartLabel: String?
+	var progressFinishLabel: String?
+	var cancelledLabel: String?
+	
+	var schema = Schema.ENTITY_PATCH
+	
+	var imageUploadRequest	 : AWSS3TransferManagerUploadRequest?
+	var entityPostRequest	 : NSURLSessionTask?
+	
+	var inputState			 : State?	= State.Editing
+	var inputPatch			 : Patch?
 
-    // An array of the patch type IDs in the UI, indexed by row in the patch type section of the UI.
-    let patchTypeIDs = ["event", "group", "place", "project"]
+	var photoView            = PhotoView()
+	var nameField            = AirTextField()
+	var descriptionField     = AirTextView()
+	
+	var visibilityGroup		 = AirRuleView()
+	var visibilitySwitch	 = UISwitch()
+	var visibilityLabel		 = AirLabelDisplay()
+	
+	var locationGroup		 = AirRuleView()
+	var locationLabel		 = AirLabelDisplay()
+	var locationAddress		 = AirButtonLink()
+	var locationValue		 : CLLocation? = nil
+	
+	var doneButton           = AirButtonFeatured()
+	var message				 = AirLabelTitle()
+	var scrollView			 = AirScrollView()
+	var contentHolder		 = UIView()
+	
+	var typeGroup			 = UIView()
+	var typeLabel			 = AirLabelDisplay()
+	var typeButtonGroup		 = AirButtonRadio()
+	var typeButtonPlace		 = AirButtonRadio()
+	var typeButtonEvent		 = AirButtonRadio()
+	var typeButtonProject	 = AirButtonRadio()
+	
+	var typeValue			 : String? = nil
+	var visibilityValue		 = "public"
 
-	var patchSwitchView: UISwitch!
-
-	// UI outlets and views
+	var progress			 : AirProgress?
+	var activeTextField		 : UIView?
+	var insertedEntity		 : Entity?
+	
+	/*--------------------------------------------------------------------------------------------
+	* Lifecycle
+	*--------------------------------------------------------------------------------------------*/
     
-	@IBOutlet weak var publicCell:       UITableViewCell!
-	@IBOutlet weak var locationCell:     UITableViewCell!
-    @IBOutlet weak var eventTypeCell:    UITableViewCell!
-    @IBOutlet weak var groupTypeCell:    UITableViewCell!
-    @IBOutlet weak var placeTypeCell:    UITableViewCell!
-    @IBOutlet weak var projectTypeCell:  UITableViewCell!
-    
-	@IBOutlet weak var createButton:     UIButton!
-
-    /*--------------------------------------------------------------------------------------------
-    * Lifecycle
-    *--------------------------------------------------------------------------------------------*/
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-		self.schema = Schema.ENTITY_PATCH
-        self.collection = "patches"
-    }
-    
-	override func viewDidLoad() {
-		super.viewDidLoad()
-        
-		self.patchSwitchView = UISwitch()
-		self.publicCell.accessoryView = patchSwitchView
-        self.descriptionField.placeholder = "Tell people about your patch"
-        self.photoView!.frame = CGRectMake(0, 0, self.photoHolder!.bounds.size.width, self.photoHolder!.bounds.size.height)
-        
-        if self.editMode {
-            
-            self.progressStartLabel = "Updating"
-            self.progressFinishLabel = "Updated!"
-            self.cancelledLabel = "Update cancelled"
-            
-            navigationItem.title = Utils.LocalizedString("Edit patch")
-            self.createButton.hidden = true
-            
-            /* Navigation bar buttons */
-            let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
-            let saveButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
-            self.navigationItem.rightBarButtonItems = [saveButton, spacer, deleteButton]            
-        }
-        else {
-            
-            self.progressStartLabel = "Patching"
-            self.progressFinishLabel = "Activated!"
-            self.cancelledLabel = "Activation cancelled"
-            self.navigationItem.title = Utils.LocalizedString("Make patch")
-            
-            /* Use location managers last location fix */
-            if let lastLocation = LocationController.instance.lastLocationFromManager() {
-                updateLocation(lastLocation)
-            }
-            
-            /* Big do it button */
-            self.createButton.targetForAction(Selector("doneAction:"), withSender: self)
-            
-            /* Public by default */
-            self.patchSwitchView.on = true
-            
-            /* Navigation bar buttons */
-            let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
-            self.navigationItem.rightBarButtonItems = [doneButton]
-		}
-        
+    override func viewDidLoad() {
+        super.viewDidLoad()
         bind()
+    }
+	
+	override func loadView() {
+		super.loadView()
+		initialize()
 	}
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        if editMode {
-            setScreenName("PatchEdit")
-        }
-        else {
-            setScreenName("PatchCreate")
-        }
-    }
+	
+	deinit {
+		NSNotificationCenter.defaultCenter().removeObserver(self)
+	}
+	
+	/*--------------------------------------------------------------------------------------------
+	 * Events
+	 *--------------------------------------------------------------------------------------------*/
 
-    /*--------------------------------------------------------------------------------------------
-    * Events
-    *--------------------------------------------------------------------------------------------*/
-    
-    /*--------------------------------------------------------------------------------------------
-     * Methods
-     *--------------------------------------------------------------------------------------------*/
-    
-    override func bind() {
-        super.bind()
-        
-        if let patch = inputEntity as? Patch {
-            
-            /* Visibility */
-            visibility = patch.visibility! ?? "private"
-            
-            /* Location */
-            if let loc = patch.location {
-                updateLocation(loc.cllocation)
-            }
-            
-            /* Type */
-            
-            // Slight hack. Because the UI isn't displayed yet, the cells I am using to back
-            // the patch type aren't loaded yet. They'll be loaded on the next turn of the runloop
-            // so do this later.
-            if patch.type != nil {
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.type = (patch.type)!
-                }
-            }
-        }        
-    }
-    
-    override func gather(parameters: NSMutableDictionary) -> NSMutableDictionary {
-        
-        let parameters = super.gather(parameters)
-        
-        if editMode {
-            if visibility != inputEntity!.visibility {
-                parameters["visibility"] = nilToNull(visibility)
-            }
-            if type != inputEntity!.type {
-                parameters["type"] = nilToNull(type)
-            }
-            if location != nil && inputEntity!.location != nil {
-                if location!.coordinate != inputEntity!.location.cllocation.coordinate {
-                    parameters["location"] = nilToNull(location)
-                }
-            }
-        }
-        else {
-            parameters["visibility"] = nilToNull(visibility)   // required
-            parameters["type"] = nilToNull(type)               // required
-            parameters["location"] = nilToNull(location!)
-        }
-        return parameters
-    }
-    
-	override func isDirty() -> Bool {
-        
-		if editMode {
-            let patch = inputEntity as! Patch
-            
-            if patch.type != type {
-                return true
-            }
-            if patch.visibility != visibility {
-                return true
-            }
-            if patch.location.cllocation.coordinate != location!.coordinate  {
-                return true
-            }
-            return super.isDirty()
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		
+		let messageSize = self.message.sizeThatFits(CGSizeMake(288, CGFloat.max))
+		let descriptionSize = self.descriptionField.sizeThatFits(CGSizeMake(288, CGFloat.max))
+		
+		self.locationLabel.sizeToFit()
+		self.locationAddress.sizeToFit()
+		self.visibilityLabel.sizeToFit()
+		self.typeLabel.sizeToFit()
+		
+		self.message.anchorTopCenterWithTopPadding(0, width: 288, height: messageSize.height)
+		self.nameField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+		self.descriptionField.alignUnder(self.nameField, matchingCenterWithTopPadding: 8, width: 288, height: max(48, descriptionSize.height))
+		self.photoView.alignUnder(self.descriptionField, matchingCenterWithTopPadding: 16, width: 288, height: 288 * 0.56)
+		self.visibilityGroup.alignUnder(self.photoView, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+		self.locationGroup.alignUnder(self.visibilityGroup, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+		self.typeGroup.alignUnder(self.locationGroup, matchingCenterWithTopPadding: 8, width: 288, height: 96)
+		
+		self.visibilityLabel.anchorCenterLeftWithLeftPadding(0, width: 144, height: self.visibilityLabel.height())
+		self.visibilitySwitch.anchorCenterRightWithRightPadding(0, width: self.visibilitySwitch.width(), height: self.visibilitySwitch.height())
+		
+		self.locationLabel.anchorCenterLeftWithLeftPadding(0, width: self.locationLabel.width(), height: self.locationLabel.height())
+		self.locationAddress.anchorCenterRightWithRightPadding(0, width: min(288 - self.locationLabel.width() + 8, self.locationAddress.width()), height: self.locationAddress.height())
+		
+		self.typeLabel.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 96, height: 48)
+		self.typeButtonEvent.alignToTheRightOf(self.typeLabel, matchingCenterWithLeftPadding: 8, width: 88, height: 24)
+		self.typeButtonGroup.alignToTheRightOf(self.typeButtonEvent, matchingCenterWithLeftPadding: 8, width: 88, height: 24)
+		self.typeButtonPlace.alignUnder(self.typeButtonEvent, matchingLeftWithTopPadding: 8, width: 88, height: 24)
+		self.typeButtonProject.alignUnder(self.typeButtonGroup, matchingLeftWithTopPadding: 8, width: 88, height: 24)
+		
+		self.contentHolder.resizeToFitSubviews()
+		self.scrollView.contentSize = CGSizeMake(self.contentHolder.frame.size.width, self.contentHolder.frame.size.height + CGFloat(32))
+		self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 16, height: self.contentHolder.frame.size.height)
+	}
+	
+	func doneAction(sender: AnyObject){
+		
+		guard isValid() else { return }
+		guard !self.processing else { return }
+		
+		self.progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+		self.progress!.mode = MBProgressHUDMode.Indeterminate
+		self.progress!.styleAs(.ActivityLight)
+		self.progress!.labelText = self.progressStartLabel
+		self.progress!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("userCancelTaskAction:")))
+		self.progress!.removeFromSuperViewOnHide = true
+		self.progress!.show(true)
+
+		Utils.delay(5.0) {
+			self.progress?.detailsLabelText = "Tap to cancel"
+		}
+		
+		let parameters = self.gather(NSMutableDictionary())
+		
+		post(parameters)
+		
+	}
+	
+	func userCancelTaskAction(sender: AnyObject) {
+		if let gesture = sender as? UIGestureRecognizer, let hud = gesture.view as? MBProgressHUD {
+			hud.animationType = MBProgressHUDAnimation.ZoomIn
+			hud.hide(true)
+			self.imageUploadRequest?.cancel() // Should do nothing if upload already complete or isn't any
+			self.entityPostRequest?.cancel()
+		}
+	}
+	
+	func cancelAction(sender: AnyObject){
+		
+		if !isDirty() {
+			self.performBack(true)
+			return
+		}
+		
+		ActionConfirmationAlert(
+			"Do you want to discard your editing changes?",
+			actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
+				doIt in
+				if doIt {
+					self.performBack(true)
+				}
+		}
+	}
+	
+	func locationAction(sender: AnyObject) {
+		let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+		if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchMapViewController") as? PatchMapViewController {
+			controller.locationDelegate = self
+			self.navigationController?.pushViewController(controller, animated: true)
+		}
+	}
+	
+	func deleteAction(sender: AnyObject) {
+		
+		guard !self.processing else { return }
+		
+		ActionConfirmationAlert(
+			"Confirm Delete",
+			message: "Are you sure you want to delete this?",
+			actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
+				doIt in
+				if doIt {
+					self.delete()
+				}
+		}
+	}
+	
+	func visibilityChanged(sender: AnyObject) {
+		if let switchView = sender as? UISwitch {
+			self.visibilityValue = (switchView.on) ? "private" : "public"
+		}
+	}
+	
+	func typeSelected(sender: AnyObject) {
+		if let button = sender as? AirButtonRadio {
+			if button == self.typeButtonEvent {
+				self.typeValue = "event"
+			}
+			if button == self.typeButtonGroup {
+				self.typeValue = "group"
+			}
+			if button == self.typeButtonPlace {
+				self.typeValue = "place"
+			}
+			if button == self.typeButtonProject {
+				self.typeValue = "project"
+			}
+		}
+	}
+	
+	/*--------------------------------------------------------------------------------------------
+	 * Methods
+	 *--------------------------------------------------------------------------------------------*/
+	
+	override func initialize() {
+		super.initialize()
+		
+		let notificationCenter = NSNotificationCenter.defaultCenter()
+		notificationCenter.addObserver(self, selector: "dismissKeyboard", name: Events.PhotoViewHasFocus, object: nil)
+		notificationCenter.addObserver(self, selector: "keyboardWillBeShown:", name: UIKeyboardWillShowNotification, object: nil)
+		notificationCenter.addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
+		
+		self.schema = Schema.ENTITY_PATCH
+		
+		let fullScreenRect = UIScreen.mainScreen().applicationFrame
+		self.scrollView.frame = fullScreenRect
+		self.scrollView.backgroundColor = Theme.colorBackgroundScreen
+		self.scrollView.addSubview(self.contentHolder)
+		self.view = self.scrollView
+		
+		self.message.textColor = Theme.colorTextTitle
+		self.message.numberOfLines = 0
+		self.message.textAlignment = .Center
+		
+		self.photoView.photoSchema = Schema.ENTITY_PATCH
+		self.photoView.setHostController(self)
+		self.photoView.configureTo(self.inputPatch?.photo != nil ? .Photo : .Placeholder)
+		
+		self.nameField.placeholder = "Title"
+		self.nameField.delegate = self
+		self.nameField.autocapitalizationType = .Words
+		self.nameField.autocorrectionType = .No
+		self.nameField.keyboardType = UIKeyboardType.Default
+		self.nameField.returnKeyType = UIReturnKeyType.Next
+		
+		self.descriptionField = AirTextView()
+		self.descriptionField.placeholderLabel.text = "Tell people about your patch"
+		self.descriptionField.initialize()
+		self.descriptionField.scrollEnabled = false
+		self.descriptionField.textContainer.lineFragmentPadding = 0
+		self.descriptionField.textContainerInset = UIEdgeInsetsMake(12, 0, 12, 0)
+		self.descriptionField.autocapitalizationType = .Sentences
+		self.descriptionField.autocorrectionType = .Yes
+		self.descriptionField.keyboardType = UIKeyboardType.Default
+		self.descriptionField.returnKeyType = UIReturnKeyType.Default
+		self.descriptionField.delegate = self
+		
+		self.visibilityLabel.text = "Private Patch"
+		self.visibilitySwitch.addTarget(self, action: Selector("visibilityChanged:"), forControlEvents: .TouchUpInside)
+		
+		self.locationLabel.text = "Location"
+		self.locationAddress.titleLabel!.font = Theme.fontTextDisplay
+		self.locationAddress.addTarget(self, action: Selector("locationAction:"), forControlEvents: .TouchUpInside)
+		
+		self.typeLabel.text = "Patch Type"
+		self.typeButtonEvent.setTitle("Event", forState: .Normal)		
+		self.typeButtonGroup.setTitle("Group", forState: .Normal)
+		self.typeButtonPlace.setTitle("Place", forState: .Normal)
+		self.typeButtonProject.setTitle("Project", forState: .Normal)
+		self.typeButtonEvent.otherButtons = [self.typeButtonGroup, self.typeButtonPlace, self.typeButtonProject]
+		
+		self.typeButtonEvent.addTarget(self, action: Selector("typeSelected:"), forControlEvents: .TouchUpInside)
+		self.typeButtonGroup.addTarget(self, action: Selector("typeSelected:"), forControlEvents: .TouchUpInside)
+		self.typeButtonPlace.addTarget(self, action: Selector("typeSelected:"), forControlEvents: .TouchUpInside)
+		self.typeButtonProject.addTarget(self, action: Selector("typeSelected:"), forControlEvents: .TouchUpInside)
+		
+		self.visibilityGroup.addSubview(self.visibilityLabel)
+		self.visibilityGroup.addSubview(self.visibilitySwitch)
+		
+		self.locationGroup.addSubview(self.locationLabel)
+		self.locationGroup.addSubview(self.locationAddress)
+		
+		self.typeGroup.addSubview(self.typeLabel)
+		self.typeGroup.addSubview(self.typeButtonEvent)
+		self.typeGroup.addSubview(self.typeButtonGroup)
+		self.typeGroup.addSubview(self.typeButtonPlace)
+		self.typeGroup.addSubview(self.typeButtonProject)
+		
+		self.contentHolder.addSubview(self.message)
+		self.contentHolder.addSubview(self.nameField)
+		self.contentHolder.addSubview(self.descriptionField)
+		self.contentHolder.addSubview(self.photoView)
+		self.contentHolder.addSubview(self.visibilityGroup)
+		self.contentHolder.addSubview(self.locationGroup)
+		self.contentHolder.addSubview(self.typeGroup)
+		
+		if self.inputState == State.Creating {
+			setScreenName("PatchNew")
+			self.message.text = "New Patch"
+			self.progressStartLabel = "Patching"
+			self.progressFinishLabel = "Activated!"
+			self.cancelledLabel = "Activation cancelled"
+			
+			/* Navigation bar buttons */
+			let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancelAction:")
+			let nextButton = UIBarButtonItem(title: "Next", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("doneAction:"))
+			self.navigationItem.leftBarButtonItems = [cancelButton]
+			self.navigationItem.rightBarButtonItems = [nextButton]
 		}
 		else {
-            return super.isDirty()
+			setScreenName("PatchEdit")
+			self.message.text = "Patch"
+			self.progressStartLabel = "Updating"
+			self.progressFinishLabel = "Updated!"
+			self.cancelledLabel = "Update cancelled"
+			self.doneButton.hidden = true
+			
+			/* Navigation bar buttons */
+			let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancelAction:")
+			let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
+			let saveButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
+			self.navigationItem.leftBarButtonItems = [cancelButton]
+			self.navigationItem.rightBarButtonItems = [saveButton, spacer, deleteButton]
+		}
+	}
+	
+    func bind() {
+		
+		if self.inputState == State.Editing {
+			
+			self.nameField.text = self.inputPatch?.name
+			self.descriptionField.text = self.inputPatch?.description_
+			self.photoView.bindPhoto(self.inputPatch?.photo)
+			
+			textViewDidChange(self.descriptionField)
+			
+			/* Visibility */
+			self.visibilitySwitch.on = (self.inputPatch?.visibility == "private")
+			self.visibilityValue = (self.inputPatch?.visibility)!
+			
+			/* Location */
+			if let loc = self.inputPatch?.location {
+				updateLocation(loc.cllocation)
+			}
+			
+			/* Type */
+			if self.inputPatch?.type == "event" {
+				self.typeButtonEvent.selected = true
+				self.typeValue = "event"
+			}
+			else if self.inputPatch?.type == "group" {
+				self.typeButtonGroup.selected = true
+				self.typeValue = "group"
+			}
+			else if self.inputPatch?.type == "place" {
+				self.typeButtonPlace.selected = true
+				self.typeValue = "place"
+			}
+			else if self.inputPatch?.type == "project" {
+				self.typeButtonProject.selected = true
+				self.typeValue = "project"
+			}
+		}
+		else {
+			
+			/* Use location managers last location fix */
+			if let lastLocation = LocationController.instance.lastLocationFromManager() {
+				updateLocation(lastLocation)
+			}
+			
+			/* Public by default */
+			self.visibilitySwitch.on = false
+		}
+    }
+	
+	func post(parameters: NSMutableDictionary) -> TaskQueue {
+		/*
+		 * Has external dependencies: progress, tasks, processing flag.
+		 */
+		
+		self.processing = true
+		var cancelled = false
+		let queue = TaskQueue()
+		
+		/* Process image if any */
+		
+		if var image = parameters["photo"] as? UIImage {
+			queue.tasks +=~ { _, next in
+				
+				/* Ensure image is resized/rotated before upload */
+				image = Utils.prepareImage(image)
+				
+				/* Generate image key */
+				let imageKey = "\(Utils.genImageKey()).jpg"
+				
+				/* Upload */
+				self.imageUploadRequest = S3.sharedService.uploadImageToS3(image, imageKey: imageKey) {
+					task in
+					
+					if let error = task.error {
+						if error.domain == AWSS3TransferManagerErrorDomain as String {
+							if let errorCode = AWSS3TransferManagerErrorType(rawValue: error.code) {
+								if errorCode == .Cancelled {
+									cancelled = true
+								}
+							}
+						}
+						queue.skip()
+						next(Result(response: nil, error: error))
+					}
+					else {
+						let photo = [
+							"width": Int(image.size.width), // width/height are in points...should be pixels?
+							"height": Int(image.size.height),
+							"source": S3.sharedService.imageSource,
+							"prefix": imageKey
+						]
+						parameters["photo"] = photo
+						next(nil)
+					}
+				}
+			}
+		}
+		
+		/* Upload entity */
+		
+		queue.tasks +=~ { _, next in
+			let endpoint = self.inputState == State.Creating ? "data/patches" : "data/patches/\(self.inputPatch!.id_!)"
+			self.entityPostRequest = DataController.proxibase.postEntity(endpoint, parameters: parameters) {
+				response, error in
+				if error == nil {
+					self.progress!.progress = 1.0
+				}
+				else if error!.code == NSURLErrorCancelled {
+					cancelled = true
+				}
+				next(Result(response: response, error: error))
+			}
+		}
+		
+		/* Download entity */
+		
+		if self.inputState == .Creating {
+			queue.tasks +=~ { _, next in
+				if let result: Result = queue.lastResult as? Result where result.error == nil {
+					let serverResponse = ServerResponse(result.response)
+					DataController.instance.withEntityId(serverResponse.resultID, refresh: true) { objectId, error in
+						if error == nil && objectId != nil {
+							self.insertedEntity = DataController.instance.mainContext.objectWithID(objectId!) as? Entity
+						}
+						next(queue.lastResult)
+					}
+				}
+				else {
+					next(queue.lastResult)
+				}
+			}
+		}
+		
+		/* Update Ui */
+		
+		queue.tasks +=! {
+			self.processing = false
+			
+			if cancelled {
+				Shared.Toast(self.cancelledLabel)
+				return
+			}
+			
+			self.progress?.hide(true)
+			
+			if let result: Result = queue.lastResult as? Result {
+				if let error = ServerError(result.error) {
+					self.handleError(error)
+					return
+				}
+				else {
+					if self.inputState == State.Creating {
+						let serverResponse = ServerResponse(result.response)
+						if serverResponse.resultCount == 1 {
+							Log.d("Inserted entity \(serverResponse.resultID)")
+							DataController.instance.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
+							let controller = InviteViewController()
+							controller.inputEntity = self.insertedEntity as! Patch
+							self.navigationController?.pushViewController(controller, animated: true)
+						}
+						return
+					}
+					else {
+						Log.d("Updated entity \(self.inputPatch!.id_)")
+					}
+				}
+			}
+			
+			self.performBack(true)
+			Shared.Toast(self.progressFinishLabel)
+		}
+		
+		/* Start tasks */
+		
+		queue.run()
+		return queue
+	}
+	
+	func delete() {
+		
+		self.processing = true
+		
+		let entityPath = "data/patches/\((self.inputPatch?.id_)!)"
+		
+		DataController.proxibase.deleteObject(entityPath) {
+			response, error in
+			
+			NSOperationQueue.mainQueue().addOperationWithBlock {
+				self.processing = false
+				
+				if let error = ServerError(error) {
+					self.handleError(error)
+				}
+				else {
+					DataController.instance.mainContext.deleteObject(self.inputPatch!)
+					DataController.instance.saveContext(false)
+					self.performBack()
+				}
+			}
+		}
+	}
+	
+    func gather(parameters: NSMutableDictionary) -> NSMutableDictionary {
+		
+		if self.inputState == State.Creating {
+			parameters["name"] = nilToNull(self.nameField.text)
+			parameters["description"] = nilToNull(self.descriptionField.text)
+			parameters["photo"] = nilToNull(self.photoView.imageButton.imageForState(.Normal))
+			parameters["visibility"] = nilToNull(self.visibilityValue)
+			parameters["location"] = nilToNull(self.locationValue)
+			parameters["type"] = nilToNull(self.typeValue)
+		}
+		else {
+			if self.nameField.text != self.inputPatch?.name  {
+				parameters["name"] = nilToNull(self.nameField.text)
+			}
+			if self.descriptionField.text != self.inputPatch?.description_  {
+				parameters["description"] = nilToNull(self.descriptionField.text)
+			}
+			if self.photoView.photoDirty {
+				parameters["photo"] = nilToNull(self.photoView.imageButton.imageForState(.Normal))
+			}
+			if self.visibilityValue != self.inputPatch?.visibility {
+				parameters["visibility"] = nilToNull(self.visibilityValue)
+			}
+			if self.typeValue != self.inputPatch?.type {
+				parameters["type"] = nilToNull(self.typeValue)
+			}
+			parameters["location"] = nilToNull(self.locationValue)
+		}
+		
+        return parameters
+    }
+	
+	func updateLocation(loc: CLLocation) {
+		/* Gets calls externally from map view */
+		self.locationValue = loc
+		
+		CLGeocoder().reverseGeocodeLocation(loc) {  // Requires network
+			placemarks, error in
+			
+			if let error = ServerError(error) {
+				self.handleError(error)
+			}
+			else if placemarks != nil && placemarks!.count > 0 {
+				let placemark = placemarks!.first
+				self.locationAddress.setTitle(placemark!.name, forState: .Normal)
+				self.viewWillLayoutSubviews()
+			}
 		}
 	}
 
-	override func isValid() -> Bool {
-        
-        if nameField.isEmpty {
-            Alert("Enter a name for the patch.", message: nil, cancelButtonTitle: "OK")
-            return false
-        }
-        
-		if type == nil {
+    func isDirty() -> Bool {
+		
+		if self.inputState == .Creating {
+			if !self.nameField.text!.isEmpty {
+				return true
+			}
+			if !self.descriptionField.text!.isEmpty {
+				return true
+			}
+			if self.photoView.photoDirty {
+				return true
+			}
+			if self.typeValue != nil {
+				return true
+			}
+		}
+		else {
+			if self.nameField.text != self.inputPatch?.name  {
+				return true
+			}
+			if self.descriptionField.text != self.inputPatch?.description_  {
+				return true
+			}
+			if self.photoView.photoDirty {
+				return true
+			}
+			if self.visibilityValue != self.inputPatch?.visibility {
+				return true
+			}
+			if self.locationValue !=  self.inputPatch?.location {
+				if (self.locationValue?.coordinate)! != (self.inputPatch?.location.coordinate)! {
+					return true
+				}
+			}
+			if self.typeValue != self.inputPatch?.type {
+				return true
+			}
+		}
+		return false
+	}
+	
+    func isValid() -> Bool {
+		
+		if self.nameField.isEmpty {
+			Alert("Enter a name for the patch.", message: nil, cancelButtonTitle: "OK")
+			return false
+		}
+		
+		if self.typeValue == nil {
 			Alert("Select a patch type.", message: nil, cancelButtonTitle: "OK")
 			return false
 		}
 
         return true
     }
-
-    func updateLocation(loc: CLLocation) {
-        /* Gets calls externally from map view */
-        location = loc
-        CLGeocoder().reverseGeocodeLocation(loc) {  // Requires network
-            placemarks, error in
-            
-            if let error = ServerError(error) {
-                self.handleError(error)
-            }
-            else if placemarks != nil && placemarks!.count > 0 {
-                let placemark = placemarks!.first
-                self.locationCell.detailTextLabel?.text = placemark!.name
-            }
-        }
-    }
-    
-    /*--------------------------------------------------------------------------------------------
-    * Helpers
-    *--------------------------------------------------------------------------------------------*/
-    
-    override func endFieldEditing() {
-        /* Find and resign the first responder */
-        for field in [nameField, descriptionField] {
-            if field.isFirstResponder() {
-                field.endEditing(false)
-            }
-        }
-    }
-    
-    /*--------------------------------------------------------------------------------------------
-     * Field wrappers
-     *--------------------------------------------------------------------------------------------*/
-    
-    var visibility: String {
-        get {
-            return patchSwitchView.on ? "public" : "private"
-        }
-        set {
-            patchSwitchView.on = (newValue == "public")
-        }
-    }
-    
-    private var location: CLLocation?
-    
-    var type: String? {
-        get {
-            if eventTypeCell.accessoryType == .Checkmark {
-                return "event"
-            }
-            else if groupTypeCell.accessoryType == .Checkmark {
-                return "group"
-            }
-            else if placeTypeCell.accessoryType == .Checkmark {
-                return "place"
-            }
-            else if projectTypeCell.accessoryType == .Checkmark {
-                return "project"
-            }
-            return nil
-        }
-        set {
-            eventTypeCell.accessoryType = newValue == "event" ? .Checkmark : .None
-            groupTypeCell.accessoryType = newValue == "group" ? .Checkmark : .None
-            placeTypeCell.accessoryType = newValue == "place" ? .Checkmark : .None
-            projectTypeCell.accessoryType = newValue == "project" ? .Checkmark : .None
-        }
-    }
+	
+	func performBack(animated: Bool = true) {
+		/* Override in subclasses for control of dismiss/pop process */
+		if isModal {
+			self.dismissViewControllerAnimated(animated, completion: nil)
+		}
+		else {
+			self.navigationController?.popViewControllerAnimated(true)
+		}
+	}
+	
+	func keyboardWillBeShown(sender: NSNotification) {
+		/* 
+		 * Called when the UIKeyboardDidShowNotification is sent. 
+		 */
+		if let scrollView = self.view as? UIScrollView {
+			
+			let info: NSDictionary = sender.userInfo!
+			let value = info.valueForKey(UIKeyboardFrameBeginUserInfoKey) as! NSValue
+			let keyboardSize = value.CGRectValue().size
+			
+			scrollView.contentInset = UIEdgeInsetsMake(64, 0, keyboardSize.height, 0)
+			scrollView.scrollIndicatorInsets = scrollView.contentInset
+			
+			/* 
+			 * If active text field is hidden by keyboard, scroll it so it's visible
+			 */
+			if self.activeTextField != nil {
+				var visibleRect = self.view.frame
+				visibleRect.size.height -= keyboardSize.height
+				
+				let activeTextFieldRect = self.activeTextField?.frame
+				let activeTextFieldOrigin = activeTextFieldRect?.origin
+				
+				if (!CGRectContainsPoint(visibleRect, activeTextFieldOrigin!)) {
+					scrollView.scrollRectToVisible(activeTextFieldRect!, animated:true)
+				}
+			}
+		}
+	}
+ 
+	func keyboardWillBeHidden(sender: NSNotification) {
+		/* 
+		 * Called when the UIKeyboardWillHideNotification is sent.
+		 */
+		if let scrollView = self.view as? UIScrollView {
+			scrollView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0)
+			scrollView.scrollIndicatorInsets = scrollView.contentInset
+		}
+	}
 }
 
 extension PatchEditViewController: MapViewDelegate {
-    
-    func locationForMap() -> CLLocation? {
-        return self.location
-    }
-    
-    func locationChangedTo(location: CLLocation) -> Void {
-        self.location = location
-        updateLocation(location)
-    }
-    
-    func locationEditable() -> Bool {
-        return true
-    }
-    
-    var locationTitle: String? {
-        get {
-            return self.nameField.text
-        }
-    }
-    
-    var locationSubtitle: String? {
-        get {
-            if let type = self.type {
-                return type.uppercaseString + " PATCH"
-            }
-            return nil
-        }
-    }
-    
-    var locationPhoto: AnyObject? {
-        get {
-            return self.photoView!.imageButton.imageForState(.Normal)
-        }
-    }    
+	
+	func locationForMap() -> CLLocation? {
+		return self.locationValue
+	}
+	
+	func locationChangedTo(location: CLLocation) -> Void {
+		self.locationValue = location
+		updateLocation(location)
+	}
+	
+	func locationEditable() -> Bool {
+		return true
+	}
+	
+	var locationTitle: String? {
+		get {
+			return self.nameField.text
+		}
+	}
+	
+	var locationSubtitle: String? {
+		
+		get {
+			if self.typeValue != nil {
+				return "\(self.typeValue!.uppercaseString) PATCH"
+			}
+			return "PATCH"
+		}
+	}
+	
+	var locationPhoto: AnyObject? {
+		get {
+			return self.photoView.imageButton.imageForState(.Normal)
+		}
+	}
 }
 
-extension PatchEditViewController {
-    /*
-    * UITableViewDelegate
-    */
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        if indexPath.section == 0 {
-            if indexPath.row == 1 {
-                let height: CGFloat = textViewHeightForRowAtIndexPath(indexPath)
-                return height < 48 ? 48 : height
-            }
-            else if indexPath.row == 2 {
-                /* Size so photo aspect ratio is 16:10 */
-                let height: CGFloat = ((UIScreen.mainScreen().bounds.size.width - 36) * 0.625) + 24
-                return height
-            }
-        }
-        return super.tableView(tableView, heightForRowAtIndexPath: indexPath)
+extension PatchEditViewController: UITextFieldDelegate {
+	
+	func textFieldDidBeginEditing(textField: UITextField) {
+		self.activeTextField = textField
+	}
+	
+	func textFieldDidEndEditing(textField: UITextField) {
+		if self.activeTextField == textField {
+			self.activeTextField = nil
+		}
+	}
+	
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+		
+		if self.inputState == .Creating {
+			if textField == self.nameField {
+				self.descriptionField.becomeFirstResponder()
+				return false
+			}
+		}
+        return true
     }
-    
-    override func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
-        
-        let index = (indexPath.section, indexPath.row)
-        
-        switch index {
-            case (0, 1):
-                return indexPath
-            case (0, 4):
-                return indexPath
-            case (0, 5):
-                return indexPath
-            case (1, _):
-                return indexPath
-            default:
-                super.endFieldEditing()
-                return nil
-        }
-    }
-    
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let index = (indexPath.section, indexPath.row)
-        
-        switch index {
-            case (0, 4):
-                tableView.deselectRowAtIndexPath(indexPath, animated: true)
-                let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-                if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchMapViewController") as? PatchMapViewController {
-                    controller.locationDelegate = self
-                    self.navigationController?.pushViewController(controller, animated: true)
-                }
+}
 
-            case (0, 5):
-                tableView.deselectRowAtIndexPath(indexPath, animated: true)
-                Alert("Will launch place picker when implemented")
-            
-            case (1, let row):
-                tableView.deselectRowAtIndexPath(indexPath, animated: true)
-                type = patchTypeIDs[row].lowercaseString
-            
-            default: break
-        }
-    }
-    
-    override func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let view = UILabel(frame: CGRect(x: 10, y: 0, width: 100, height: 20))
-        
-        if section == 1 {
-            
-            let style = NSMutableParagraphStyle()
-            style.firstLineHeadIndent = 16.0
-            
-            let attributes = [
-                NSFontAttributeName : UIFont.preferredFontForTextStyle(UIFontTextStyleSubheadline),
-                NSUnderlineStyleAttributeName : 1,
-                NSParagraphStyleAttributeName : style,
-                NSForegroundColorAttributeName : UIColor(white: 0.50, alpha: 1.0),
-                NSBaselineOffsetAttributeName : -4.0]
-            
-            view.attributedText = NSMutableAttributedString(string: "PATCH TYPE", attributes: attributes)
-        }
-        
-        view.backgroundColor = UIColor(white: 0.92, alpha: 1.0)
-        return view
-    }
-    
-    override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        
-        switch section {
-            case 1: return 40
-            default: return 0
-        }
-    }
-
-    private func textViewHeightForRowAtIndexPath(indexPath: NSIndexPath) -> CGFloat {
-        let textViewWidth: CGFloat = descriptionField!.frame.size.width
-        let size: CGSize = descriptionField.sizeThatFits(CGSizeMake(textViewWidth, CGFloat(FLT_MAX)))
-        return size.height + 24;
-    }
+extension PatchEditViewController: UITextViewDelegate {
+	
+	func textViewDidBeginEditing(textView: UITextView) {
+		if let textView = textView as? AirTextView {
+			self.activeTextField = textView
+		}
+	}
+	
+	func textViewDidEndEditing(textView: UITextView) {
+		if self.activeTextField == textView {
+			self.activeTextField = nil
+		}
+	}
+	
+	func textViewDidChange(textView: UITextView) {
+		if let textView = textView as? AirTextView {
+			textView.placeholderLabel.hidden = !self.descriptionField.text.isEmpty
+			self.viewWillLayoutSubviews()
+		}
+	}
 }

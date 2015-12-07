@@ -75,7 +75,7 @@ class LoginViewController: BaseViewController {
     func doneAction(sender: AnyObject) {
 		if isValid() {
 			if self.onboardMode == OnboardMode.Signup {
-				let controller = ProfileViewController()
+				let controller = ProfileEditViewController()
 				controller.inputProvider = self.provider
 				controller.inputState = State.Onboarding
 				controller.inputEmail = self.emailField.text
@@ -238,7 +238,7 @@ class LoginViewController: BaseViewController {
 	
 	func showProfile(profile: ServiceUserProfile?) {
 		
-		let controller = ProfileViewController()
+		let controller = ProfileEditViewController()
 		if profile != nil {
 			controller.inputRouteToMain = self.inputRouteToMain
 			controller.inputState = .Onboarding

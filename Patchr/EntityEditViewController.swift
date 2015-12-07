@@ -26,6 +26,7 @@ class EntityEditViewController: UITableViewController {
 	var collection:      String?
     var firstAppearance: Bool = true
 	var backClicked = false
+	var recentTracking = true
 	var keyboardVisible = false
 	var lastResponder:   UIResponder?
 
@@ -40,7 +41,7 @@ class EntityEditViewController: UITableViewController {
 	var photoView: PhotoView?
 	
 	@IBOutlet weak var nameField:        UITextField!
-	@IBOutlet weak var descriptionField: GCPlaceholderTextView!
+	@IBOutlet weak var descriptionField: AirTextView!
     @IBOutlet weak var photoHolder:      UIView?
 
     /*--------------------------------------------------------------------------------------------
@@ -79,11 +80,15 @@ class EntityEditViewController: UITableViewController {
 		/* Description field */
 		
         if self.descriptionField != nil {
-            self.descriptionField!.placeholderColor = Colors.hintColor
+			self.descriptionField.initialize()
             self.descriptionField!.scrollEnabled = false
-            self.descriptionField!.delegate = self
             self.descriptionField!.textContainer.lineFragmentPadding = 0
             self.descriptionField!.textContainerInset = UIEdgeInsetsZero
+			self.descriptionField.autocapitalizationType = .Sentences
+			self.descriptionField.autocorrectionType = .Yes
+			self.descriptionField.keyboardType = UIKeyboardType.Default
+			self.descriptionField.returnKeyType = UIReturnKeyType.Default
+			self.descriptionField!.delegate = self
         }
         
         let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancelAction:")
@@ -336,7 +341,7 @@ class EntityEditViewController: UITableViewController {
                     if !editing {
                         
                         /* Update recent patch list when a user sends a message */
-                        if self.collection! == "messages" {
+                        if self.recentTracking && self.collection! == "messages" {
                             if let patch = DataController.instance.currentPatch {
                                 var recent: [String:AnyObject] = [
                                     "id_":patch.id_,
@@ -608,13 +613,15 @@ extension EntityEditViewController: UITextViewDelegate {
     }
     
     func textViewDidChange(textView: UITextView) {
+		if let textView = textView as? AirTextView {
+			textView.placeholderLabel.hidden = !self.descriptionField.text.isEmpty
+		}
+
 		/* Begin/end triggers the tableview to pickup UI changes */
         self.tableView.beginUpdates()
         self.tableView.endUpdates()
 		self.scrollToCursorForTextView(textView)	// Make sure we keep the cursor visible as lines wrap
     }
     
-    func textViewDidEndEditing(textView: UITextView) {
-        self.descriptionField.placeholderColor = UIColor.lightGrayColor()
-    }    
+    func textViewDidEndEditing(textView: UITextView) { }
 }

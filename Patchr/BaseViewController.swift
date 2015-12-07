@@ -22,6 +22,10 @@ class BaseViewController: UIViewController {
 			|| self.tabBarController?.presentingViewController is UITabBarController
 	}
 	
+	/*--------------------------------------------------------------------------------------------
+	* Lifecycle
+	*--------------------------------------------------------------------------------------------*/
+	
 	override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
 		super.init(nibName: nil, bundle: nil)
 	}
@@ -38,10 +42,18 @@ class BaseViewController: UIViewController {
 		tap.cancelsTouchesInView = false
 		self.view.addGestureRecognizer(tap)
     }
+	
+	/*--------------------------------------------------------------------------------------------
+	* Events
+	*--------------------------------------------------------------------------------------------*/
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
+	
+	/*--------------------------------------------------------------------------------------------
+	* Methods
+	*--------------------------------------------------------------------------------------------*/
 	
 	func initialize() {
 		self.view.backgroundColor = Theme.colorBackgroundScreen
@@ -65,6 +77,17 @@ class BaseViewController: UIViewController {
 		} else {
 			return value
 		}
+	}
+	
+	func rectVisible(rect: CGRect) -> Bool {
+		var visibleRect: CGRect = CGRect()
+		if let scrollView = self.view as? UIScrollView {
+			visibleRect.origin = scrollView.contentOffset;
+			visibleRect.origin.y += scrollView.contentInset.top;
+			visibleRect.size = scrollView.bounds.size;
+			visibleRect.size.height -= scrollView.contentInset.top + scrollView.contentInset.bottom;
+		}
+		return CGRectContainsRect(visibleRect, rect);
 	}
 }
 

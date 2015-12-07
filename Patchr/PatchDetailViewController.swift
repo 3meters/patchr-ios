@@ -17,7 +17,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 	
 	var inputShowInviteWelcome = false
 	var inputInviterName: String?
-	var inviteController: InviteViewController?
+	var inviteController: WelcomeViewController?
 
 	/* Outlets are initialized before viewDidLoad is called */
 
@@ -267,15 +267,11 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
     }
     
     func editAction() {
-        /* Has its own nav because we segue modally and it needs its own stack */
-        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-        if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchEditViewController") as? PatchEditViewController {
-            controller.inputEntity = entity
-            let navController = UINavigationController()
-            navController.navigationBar.tintColor = Colors.brandColorDark
-            navController.viewControllers = [controller]
-            self.navigationController?.presentViewController(navController, animated: true, completion: nil)
-        }
+		let controller = PatchEditViewController()
+		let navController = UINavigationController()
+		controller.inputPatch = self.entity as? Patch
+		navController.viewControllers = [controller]
+		self.navigationController?.presentViewController(navController, animated: true, completion: nil)
     }
     
     func shareAction() {
@@ -284,9 +280,9 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
             
             let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: nil, destructiveButtonTitle: nil)
             
-            shareButtonFunctionMap[sheet.addButtonWithTitle("Invite")] = .Share
+            shareButtonFunctionMap[sheet.addButtonWithTitle("Invite using Patchr")] = .Share
 			shareButtonFunctionMap[sheet.addButtonWithTitle("Invite using Facebook")] = .ShareFacebook
-            shareButtonFunctionMap[sheet.addButtonWithTitle("Invite via")] = .ShareVia
+            shareButtonFunctionMap[sheet.addButtonWithTitle("More")] = .ShareVia
             sheet.addButtonWithTitle("Cancel")
             sheet.cancelButtonIndex = sheet.numberOfButtons - 1
             
@@ -496,53 +492,6 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
         }
     }
 	
-	func facebookInvite() {
-		
-		if FBSDKAccessToken.currentAccessToken() != nil {
-			let inviteDialog = FBSDKAppInviteDialog()
-			if inviteDialog.canShow() {
-				/*
-				* FIXME: SECURITY HOLE: Temporary for testing!
-				* The correct way to handle this is to have the service hold the secret, call
-				* facebook to get a long lived app access token, and pass it back to the client.
-				*/
-				let inviterName = UserController.instance.currentUser.name.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
-				let tokenString = PatchrKeys().facebookToken() // app_id|app_secret
-				let deepLink = "patchr-ios://invite?entityId=\(self.entityId!)&entitySchema=patch&inviterName=\(inviterName)"
-				let ios = "[{\"app_name\":\"Patchr\", \"app_store_id\":929750075, \"url\":\"\(deepLink)\"}]"
-				let parameters = [
-					"name": "Patchr App Link",
-					"ios": ios
-				]
-				
-				FBSDKSettings.setLoggingBehavior(Set(arrayLiteral: FBSDKLoggingBehaviorGraphAPIDebugInfo))
-				
-				let request = FBSDKGraphRequest(graphPath: "app/app_link_hosts",
-					parameters: parameters as [NSObject : AnyObject], tokenString: tokenString, version: "v2.5", HTTPMethod: "POST" )
-				
-				request.startWithCompletionHandler { connection, result, error in
-					if (error != nil) {
-						Log.d("Facebook error while creating applink")
-					}
-					else {
-						let applinkUrl = "https://fb.me/\(result["id"])"
-						let photo = self.entity!.getPhotoManaged()
-						let titleEncoded = self.entity!.name.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
-						let settings = "w=1200&h=628&crop&fit=crop&q=25&txtsize=96&txtalign=left,bottom&txtcolor=fff&txtshad=5&txtpad=60&txtfont=Helvetica%20Neue%20Light"
-						let photoUrl = "https://3meters-images.imgix.net/\(photo.prefix)?\(settings)&txt=\(titleEncoded)"
-						
-						let invite = FBSDKAppInviteContent()
-						invite.appLinkURL = NSURL(string: applinkUrl)
-						invite.previewImageURL = NSURL(string: photoUrl)
-						inviteDialog.content = invite
-						inviteDialog.delegate = self
-						inviteDialog.show()
-					}
-				}
-			}
-		}
-	}
-	
 	func shareUsing(route: ShareRoute) {
 		
 		if route == .Patchr {
@@ -560,16 +509,16 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		}
 		else if route == .Facebook {
 			
+			let provider = FacebookProvider()
 			if FBSDKAccessToken.currentAccessToken() == nil {
-				let provider = FacebookProvider()
 				provider.authorize { response, error in
 					if FBSDKAccessToken.currentAccessToken() != nil {
-						self.facebookInvite()
+						provider.invite(self.entity!)
 					}
 				}
 			}
 			else {
-				self.facebookInvite()
+				provider.invite(self.entity!)
 			}
 		}
 		else if route == .Actions {
@@ -611,7 +560,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
     }
 	
 	func showInviteWelcome(var controller: UIViewController?, message: String?) {
-		self.inviteController = InviteViewController()
+		self.inviteController = WelcomeViewController()
 		self.inviteController!.modalPresentationStyle = .OverFullScreen
 		self.inviteController!.modalTransitionStyle = .CrossDissolve
 		if controller == nil {
@@ -642,19 +591,6 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 	}
 }
 
-extension PatchDetailViewController: FBSDKAppInviteDialogDelegate {
-
-	func appInviteDialog(appInviteDialog: FBSDKAppInviteDialog!, didCompleteWithResults results: [NSObject : AnyObject]!) {
-		if results != nil && results["completionGesture"] as? String != "cancel" {
-			Shared.Toast("Patch invitations sent using Facebook!")
-		}
-	}
-	
-	func appInviteDialog(appInviteDialog: FBSDKAppInviteDialog!, didFailWithError error: NSError!) {
-		Log.i("Facebook invite error: \(error)")
-	}
-}
-
 extension PatchDetailViewController: MapViewDelegate {
     
     func locationForMap() -> CLLocation? {
@@ -678,7 +614,10 @@ extension PatchDetailViewController: MapViewDelegate {
     
     var locationSubtitle: String? {
         get {
-			return (self.entity?.type ?? "place")
+			if self.entity?.type != nil {
+				return "\(self.entity!.type!.uppercaseString) PATCH"
+			}
+			return "PATCH"
         }
     }
     

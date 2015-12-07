@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ProfileViewController: BaseViewController {
+class ProfileEditViewController: BaseViewController {
 	
 	var processing: Bool = false
 	var progressStartLabel: String?
@@ -706,15 +706,9 @@ class ProfileViewController: BaseViewController {
 			self.navigationController?.popViewControllerAnimated(true)
 		}
 	}
-
-    func endFieldEditing() {
-        for field in [nameField, emailField] {
-			field.endEditing(false)
-        }
-    }
 }
 
-extension ProfileViewController: UITextFieldDelegate {
+extension ProfileEditViewController: UITextFieldDelegate {
 	
     func textFieldShouldReturn(textField: UITextField) -> Bool {
 		

@@ -44,10 +44,12 @@ class PatchNavigationController: UINavigationController {
 			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to create patches and more!")
             return
         }
-        
-        let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-        let controller = storyboard.instantiateViewControllerWithIdentifier("PatchEditNavController") as? UINavigationController
-        self.presentViewController(controller!, animated: true, completion: nil)
+		
+		let controller = PatchEditViewController()
+		let navController = UINavigationController()
+		controller.inputState = .Creating
+		navController.viewControllers = [controller]
+        self.presentViewController(navController, animated: true, completion: nil)
     }
     
     /*--------------------------------------------------------------------------------------------

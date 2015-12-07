@@ -27,6 +27,7 @@ struct Utils {
 	static var imageDefaultPatch: UIImage = { return UIImage(named: "imgDefaultPatch") }()!
 	static var imageDefaultUser: UIImage = { return UIImage(named: "imgDefaultUser") }()!
 	static var imageEdit: UIImage = { return UIImage(named: "imgEdit2Light") }()!
+	static var imagePatch: UIImage = { return UIImage(named: "imgPatchLight") }()!
 	
 	static let stopwatch1 = Stopwatch()
 	static let stopwatch2 = Stopwatch()

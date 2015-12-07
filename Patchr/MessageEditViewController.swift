@@ -57,7 +57,6 @@ class MessageEditViewController: EntityEditViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.descriptionField!.placeholder = "Message"
         self.photoView!.frame = CGRectMake(16, 0, self.photoHolder!.bounds.size.width - 32, self.photoHolder!.bounds.size.height)
 		
         self.toPicker.prompt = nil
@@ -83,6 +82,8 @@ class MessageEditViewController: EntityEditViewController {
         self.toPicker.datasource = self
         
         if self.inputMessageType == .Share {
+			
+			self.recentTracking = false
             
             self.toPicker.borderWidth = 1
             self.toPicker.borderColor = Colors.windowColor
@@ -96,7 +97,7 @@ class MessageEditViewController: EntityEditViewController {
             
             if self.inputShareSchema == Schema.ENTITY_PATCH {
                 self.navigationItem.title = Utils.LocalizedString("Invite to patch")
-                self.shareDescription = "You\'re invited to the \'\(self.inputShareEntity!.name!)\' patch!"
+                self.shareDescription = "\(UserController.instance.currentUser.name) invited you to the \'\(self.inputShareEntity!.name!)\' patch!"
             }
             else if self.inputShareSchema == Schema.ENTITY_MESSAGE {
                 self.navigationItem.title = Utils.LocalizedString("Share message")
@@ -109,9 +110,9 @@ class MessageEditViewController: EntityEditViewController {
                     }
                 }
             }
-            
-            self.descriptionField!.placeholderColor = UIColor.clearColor()
-            
+			
+			self.descriptionField.placeholderLabel.text = "Add a message to your invite..."
+			
             if let user = UserController.instance.currentUser {
                 self.userPhotoImage.setImageWithPhoto(user.getPhotoManaged())
                 self.userNameLabel.text = user.name
@@ -131,6 +132,8 @@ class MessageEditViewController: EntityEditViewController {
             self.toPicker.maxVisibleRows = 1
             self.shareCell.hidden = true
 
+			self.descriptionField.placeholderLabel.text = "What\'s happening?"
+			
             if self.editMode {
                 
                 self.progressStartLabel = "Updating"
@@ -158,8 +161,7 @@ class MessageEditViewController: EntityEditViewController {
                 self.progressStartLabel = "Sending"
                 self.progressFinishLabel = "Sent!"
                 self.cancelledLabel = "Send cancelled"
-                self.descriptionField!.placeholderColor = UIColor.clearColor()
-                
+				
                 if let user = UserController.instance.currentUser {
                     self.userPhotoImage.setImageWithPhoto(user.getPhotoManaged())
                     self.userNameLabel.text = user.name
@@ -228,9 +230,6 @@ class MessageEditViewController: EntityEditViewController {
         /* Share */
         if self.inputMessageType == .Share {
             
-            /* Set the default description */
-            self.descriptionField.text = self.shareDescription
-			
 			/* Share entity */
 			
             var shareView: BaseView!
@@ -370,6 +369,7 @@ class MessageEditViewController: EntityEditViewController {
             }
             parameters["links"] = links
             parameters["type"] = "share"
+			parameters["description"] = self.descriptionField?.text ?? self.shareDescription
         }
         else {
             if !editMode {

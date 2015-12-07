@@ -54,7 +54,6 @@
 		844D6E351AA4D01200EE71ED /* DevelopmentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844D6E341AA4D01200EE71ED /* DevelopmentViewController.swift */; };
 		844D6E371AA6550400EE71ED /* PhotoChooserUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */; };
 		8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8468F8211A9D09D1007D6EE6 /* Localizable.strings */; };
-		84A6BB641AAF970A00B7440B /* PatchEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A6BB631AAF970A00B7440B /* PatchEditViewController.swift */; };
 		84EF12AC1AA904700043EBBA /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EF12AB1AA904700043EBBA /* Utils.swift */; };
 		9FDCC4E31D09C35191FA3624 /* PatchTableMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC5A08BC6B04C7EC67536 /* PatchTableMapViewController.swift */; };
 		9FDCC869B589AA11FBDB67F2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9FDCC978FCB0A253FA6E74F9 /* Main.storyboard */; };
@@ -111,7 +110,7 @@
 		E256B4261BD2C9E200EBF894 /* PatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E256B4251BD2C9E200EBF894 /* PatchView.swift */; };
 		E256B4281BD3DDC900EBF894 /* AirTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E256B4271BD3DDC900EBF894 /* AirTableViewCell.swift */; };
 		E256B42A1BD3F32A00EBF894 /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E256B4291BD3F32A00EBF894 /* UserView.swift */; };
-		E269AED81C10AB9A004A1D88 /* InviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E269AED71C10AB9A004A1D88 /* InviteViewController.swift */; };
+		E269AED81C10AB9A004A1D88 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E269AED71C10AB9A004A1D88 /* WelcomeViewController.swift */; };
 		E26B0C891B456F8A00706F4A /* ExtensionsUi.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26B0C881B456F8A00706F4A /* ExtensionsUi.swift */; };
 		E26B0C8C1B4577D000706F4A /* TextViewChangeObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26B0C8B1B4577D000706F4A /* TextViewChangeObserver.swift */; };
 		E26B0C8E1B45783700706F4A /* TextFieldChangeObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26B0C8D1B45783700706F4A /* TextFieldChangeObserver.swift */; };
@@ -130,6 +129,12 @@
 		E281777C1B5D58CB00D65AC1 /* PatchSuggestCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E238BAFC1B5712B40094AF41 /* PatchSuggestCell.xib */; };
 		E281777F1B5D591400D65AC1 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E238BAE21B51D3290094AF41 /* ShareViewController.swift */; };
 		E28D565F1BB1849F00BFD433 /* ReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */; };
+		E297305A1C135BFA00B9433B /* PatchEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29730591C135BFA00B9433B /* PatchEditViewController.swift */; };
+		E297305C1C13644800B9433B /* AirTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305B1C13644800B9433B /* AirTextView.swift */; };
+		E297305E1C136E8300B9433B /* AirButtonRadio.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305D1C136E8300B9433B /* AirButtonRadio.swift */; };
+		E29730601C14A7BC00B9433B /* AirSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305F1C14A7BC00B9433B /* AirSearchField.swift */; };
+		E29730641C15090300B9433B /* AirRuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29730631C15090300B9433B /* AirRuleView.swift */; };
+		E29730661C16295300B9433B /* InviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29730651C16295300B9433B /* InviteViewController.swift */; };
 		E29A4CD81BCF25220059D5B9 /* NotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A4CD71BCF25220059D5B9 /* NotificationView.swift */; };
 		E29A4CDA1BD077520059D5B9 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A4CD91BD077520059D5B9 /* MessageView.swift */; };
 		E29F654F1B61A0780000BEF4 /* OneShotLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E281776B1B5AB2D400D65AC1 /* OneShotLocationManager.swift */; };
@@ -170,7 +175,7 @@
 		E2D25DCF1B2391A700E51461 /* EntityEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D25DCE1B2391A700E51461 /* EntityEditViewController.swift */; };
 		E2D569AF1BF3F45C001CCE58 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D569AE1BF3F45C001CCE58 /* Location.swift */; };
 		E2D569BC1C038C1B001CCE58 /* Photo.m in Sources */ = {isa = PBXBuildFile; fileRef = E2D569BB1C038C1B001CCE58 /* Photo.m */; };
-		E2D569BE1C052A30001CCE58 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D569BD1C052A30001CCE58 /* ProfileViewController.swift */; };
+		E2D569BE1C052A30001CCE58 /* ProfileEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D569BD1C052A30001CCE58 /* ProfileEditViewController.swift */; };
 		E2D569C01C05F9D6001CCE58 /* ProviderController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D569BF1C05F9D6001CCE58 /* ProviderController.swift */; };
 		E2DBD4F01B0F65580006575C /* ExtensionsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DBD4EF1B0F65580006575C /* ExtensionsModel.swift */; };
 		E2F182D01B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */; };
@@ -291,7 +296,6 @@
 		844D6E341AA4D01200EE71ED /* DevelopmentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DevelopmentViewController.swift; sourceTree = "<group>"; };
 		844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoChooserUI.swift; sourceTree = "<group>"; };
 		8468F8201A9D09D1007D6EE6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		84A6BB631AAF970A00B7440B /* PatchEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchEditViewController.swift; sourceTree = "<group>"; };
 		84EF12AB1AA904700043EBBA /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		880FE917F305BDE29B1AA196 /* Pods-PatchrShare.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrShare.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrShare/Pods-PatchrShare.debug.xcconfig"; sourceTree = "<group>"; };
 		963D1BBA8F941C4BA95675EA /* Pods-Patchr.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.adhoc.xcconfig"; sourceTree = "<group>"; };
@@ -356,7 +360,7 @@
 		E256B4251BD2C9E200EBF894 /* PatchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchView.swift; sourceTree = "<group>"; };
 		E256B4271BD3DDC900EBF894 /* AirTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirTableViewCell.swift; sourceTree = "<group>"; };
 		E256B4291BD3F32A00EBF894 /* UserView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
-		E269AED71C10AB9A004A1D88 /* InviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InviteViewController.swift; sourceTree = "<group>"; };
+		E269AED71C10AB9A004A1D88 /* WelcomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		E26B0C881B456F8A00706F4A /* ExtensionsUi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionsUi.swift; sourceTree = "<group>"; };
 		E26B0C8B1B4577D000706F4A /* TextViewChangeObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextViewChangeObserver.swift; sourceTree = "<group>"; };
 		E26B0C8D1B45783700706F4A /* TextFieldChangeObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFieldChangeObserver.swift; sourceTree = "<group>"; };
@@ -378,6 +382,12 @@
 		E28177751B5C39E200D65AC1 /* AwsS3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AwsS3.swift; path = PatchrShare/AwsS3.swift; sourceTree = SOURCE_ROOT; };
 		E28177791B5C3C3200D65AC1 /* Proxibase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Proxibase.swift; path = PatchrShare/Proxibase.swift; sourceTree = SOURCE_ROOT; };
 		E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ReachabilityManager.swift; path = Patchr/ReachabilityManager.swift; sourceTree = "<group>"; };
+		E29730591C135BFA00B9433B /* PatchEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchEditViewController.swift; sourceTree = "<group>"; };
+		E297305B1C13644800B9433B /* AirTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirTextView.swift; sourceTree = "<group>"; };
+		E297305D1C136E8300B9433B /* AirButtonRadio.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirButtonRadio.swift; sourceTree = "<group>"; };
+		E297305F1C14A7BC00B9433B /* AirSearchField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirSearchField.swift; sourceTree = "<group>"; };
+		E29730631C15090300B9433B /* AirRuleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirRuleView.swift; sourceTree = "<group>"; };
+		E29730651C16295300B9433B /* InviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InviteViewController.swift; sourceTree = "<group>"; };
 		E29A4CD71BCF25220059D5B9 /* NotificationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationView.swift; sourceTree = "<group>"; };
 		E29A4CD91BD077520059D5B9 /* MessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
 		E29F65501B61A9280000BEF4 /* PatchSearchCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PatchSearchCell.xib; sourceTree = "<group>"; };
@@ -417,7 +427,7 @@
 		E2D569AD1BF17A4B001CCE58 /* v1.0.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = v1.0.0.xcdatamodel; sourceTree = "<group>"; };
 		E2D569AE1BF3F45C001CCE58 /* Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		E2D569BB1C038C1B001CCE58 /* Photo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Photo.m; path = Model/Photo.m; sourceTree = "<group>"; };
-		E2D569BD1C052A30001CCE58 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		E2D569BD1C052A30001CCE58 /* ProfileEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileEditViewController.swift; sourceTree = "<group>"; };
 		E2D569BF1C05F9D6001CCE58 /* ProviderController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProviderController.swift; sourceTree = "<group>"; };
 		E2DBD4EF1B0F65580006575C /* ExtensionsModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionsModel.swift; sourceTree = "<group>"; };
 		E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKImage.framework; path = Frameworks/AdobeCreativeSDKImage.framework; sourceTree = "<group>"; };
@@ -664,23 +674,6 @@
 			name = Data;
 			sourceTree = "<group>";
 		};
-		E24D744D1BB2E95D0061F339 /* View */ = {
-			isa = PBXGroup;
-			children = (
-				E26B0C8F1B45C07D00706F4A /* AirPhotoBrowser.swift */,
-				E273B5351B488F2000888E73 /* AirPhotoPreview.swift */,
-				E2D12A7A1C091C4D00DE507E /* BaseViewController.swift */,
-				844D6E341AA4D01200EE71ED /* DevelopmentViewController.swift */,
-				7D021AC11A9423080047DAAE /* GuestViewController.swift */,
-				E269AED71C10AB9A004A1D88 /* InviteViewController.swift */,
-				E2D12A801C0A52D700DE507E /* LobbyViewController.swift */,
-				7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */,
-				E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */,
-				7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */,
-			);
-			name = View;
-			sourceTree = "<group>";
-		};
 		E24D744E1BB2F3E70061F339 /* Lists */ = {
 			isa = PBXGroup;
 			children = (
@@ -703,7 +696,6 @@
 				E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */,
 				E20004E01B099CBD00425694 /* PasswordResetViewController.swift */,
 				7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */,
-				E2D569BD1C052A30001CCE58 /* ProfileViewController.swift */,
 				7D6E26461A7AB93F000128A7 /* UserDetailViewController.swift */,
 			);
 			name = Forms;
@@ -812,8 +804,9 @@
 			children = (
 				E20D57041BC77FCB004D73E2 /* AirAlertController.swift */,
 				E2D12A741C08F85E00DE507E /* AirButton.swift */,
-				E2D12A781C08FA0E00DE507E /* AirButtonLink.swift */,
 				E2D12A761C08F9CE00DE507E /* AirButtonFeatured.swift */,
+				E2D12A781C08FA0E00DE507E /* AirButtonLink.swift */,
+				E297305D1C136E8300B9433B /* AirButtonRadio.swift */,
 				E25327B51B1000C000990A81 /* AirImageView.swift */,
 				E25327B71B103ECA00990A81 /* AirImageButton.swift */,
 				E2C720C61B4EDAFE00714B53 /* AirLabel.swift */,
@@ -825,8 +818,11 @@
 				E2064BF01BBF3C26009C7B6A /* AirMuteButton.swift */,
 				E2064BF41BC18A66009C7B6A /* AirProgress.swift */,
 				E2D12A701C0778C100DE507E /* AirScrollView.swift */,
+				E297305F1C14A7BC00B9433B /* AirSearchField.swift */,
 				E20C3A7C1BD70DD2008CCED1 /* AirTableView.swift */,
 				E2D12A721C08DC4900DE507E /* AirTextField.swift */,
+				E29730631C15090300B9433B /* AirRuleView.swift */,
+				E297305B1C13644800B9433B /* AirTextView.swift */,
 				E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */,
 				E2A28E701B4A624300B3A2FE /* AirWatchButton.swift */,
 				E25327DE1B1A282D00990A81 /* FXBlurView.h */,
@@ -853,9 +849,19 @@
 		E2D25DC61B22164300E51461 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				E269AED41C0F637C004A1D88 /* Navigation */,
+				E26B0C8F1B45C07D00706F4A /* AirPhotoBrowser.swift */,
+				E273B5351B488F2000888E73 /* AirPhotoPreview.swift */,
+				E2D12A7A1C091C4D00DE507E /* BaseViewController.swift */,
+				844D6E341AA4D01200EE71ED /* DevelopmentViewController.swift */,
+				7D021AC11A9423080047DAAE /* GuestViewController.swift */,
+				E29730651C16295300B9433B /* InviteViewController.swift */,
+				E2D12A801C0A52D700DE507E /* LobbyViewController.swift */,
+				7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */,
+				E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */,
+				7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */,
+				E269AED71C10AB9A004A1D88 /* WelcomeViewController.swift */,
 				E24D744B1BB2E7120061F339 /* Data */,
-				E24D744D1BB2E95D0061F339 /* View */,
+				E269AED41C0F637C004A1D88 /* Navigation */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -878,7 +884,8 @@
 			children = (
 				E2D25DCE1B2391A700E51461 /* EntityEditViewController.swift */,
 				843523C41AAE70B800739447 /* MessageEditViewController.swift */,
-				84A6BB631AAF970A00B7440B /* PatchEditViewController.swift */,
+				E29730591C135BFA00B9433B /* PatchEditViewController.swift */,
+				E2D569BD1C052A30001CCE58 /* ProfileEditViewController.swift */,
 			);
 			name = Edit;
 			sourceTree = "<group>";
@@ -1210,6 +1217,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7DB6E0FE1A8177060017A42F /* _User.m in Sources */,
+				E29730641C15090300B9433B /* AirRuleView.swift in Sources */,
 				E2D12A851C0A592D00DE507E /* AirLabelBanner.swift in Sources */,
 				E26B0C891B456F8A00706F4A /* ExtensionsUi.swift in Sources */,
 				E2C0D9311B6C415100E28CE9 /* Log.swift in Sources */,
@@ -1232,6 +1240,7 @@
 				E2D12A7F1C0A090200DE507E /* Theming.swift in Sources */,
 				7DA7308C1A71ACC9008C25FA /* _Query.m in Sources */,
 				7D9C9E3D1A9BAFCE0069E332 /* PatchDetailViewController.swift in Sources */,
+				E297305E1C136E8300B9433B /* AirButtonRadio.swift in Sources */,
 				7DB6E0F91A8174E90017A42F /* Message.m in Sources */,
 				E256B4281BD3DDC900EBF894 /* AirTableViewCell.swift in Sources */,
 				7D40B9421A7864A000F9954C /* NotificationsTableViewController.swift in Sources */,
@@ -1253,6 +1262,7 @@
 				E20C3A811BDC1D57008CCED1 /* BaseDetailView.swift in Sources */,
 				7D021AC21A9423080047DAAE /* GuestViewController.swift in Sources */,
 				7DA7308D1A71ACC9008C25FA /* _ServiceBase.m in Sources */,
+				E29730601C14A7BC00B9433B /* AirSearchField.swift in Sources */,
 				E2D25DCF1B2391A700E51461 /* EntityEditViewController.swift in Sources */,
 				7D6E26471A7AB93F000128A7 /* UserDetailViewController.swift in Sources */,
 				7DA730921A71ACC9008C25FA /* Query.m in Sources */,
@@ -1286,7 +1296,7 @@
 				7D3D39F01A6F116E00A44CB2 /* Proxibase.swift in Sources */,
 				7D0BAD4C1A96CEB0002E602D /* MainTabBarController.swift in Sources */,
 				E2A28E711B4A624300B3A2FE /* AirWatchButton.swift in Sources */,
-				E2D569BE1C052A30001CCE58 /* ProfileViewController.swift in Sources */,
+				E2D569BE1C052A30001CCE58 /* ProfileEditViewController.swift in Sources */,
 				7DD89F411AC62B90005CD004 /* UserTableViewController.swift in Sources */,
 				E2064BF11BBF3C26009C7B6A /* AirMuteButton.swift in Sources */,
 				E2D12A711C0778C100DE507E /* AirScrollView.swift in Sources */,
@@ -1299,13 +1309,13 @@
 				E2A28E6D1B49D88900B3A2FE /* AirLikeButton.swift in Sources */,
 				E2D12A751C08F85E00DE507E /* AirButton.swift in Sources */,
 				7DA3D9121A72D5A60082D2AB /* DataController.swift in Sources */,
-				84A6BB641AAF970A00B7440B /* PatchEditViewController.swift in Sources */,
 				E2D12A771C08F9CE00DE507E /* AirButtonFeatured.swift in Sources */,
 				E2D25DC81B23892000E51461 /* UserController.swift in Sources */,
 				E20D57051BC77FCB004D73E2 /* AirAlertController.swift in Sources */,
 				E26B0C8E1B45783700706F4A /* TextFieldChangeObserver.swift in Sources */,
 				7D3F26DB1A7706610015F8E8 /* _Notification.m in Sources */,
 				E256B4261BD2C9E200EBF894 /* PatchView.swift in Sources */,
+				E29730661C16295300B9433B /* InviteViewController.swift in Sources */,
 				E2C720BD1B4C260200714B53 /* Reachability.m in Sources */,
 				E2D12A7B1C091C4D00DE507E /* BaseViewController.swift in Sources */,
 				E29A4CD81BCF25220059D5B9 /* NotificationView.swift in Sources */,
@@ -1321,6 +1331,7 @@
 				E2F6C9341B1E546F0067D959 /* _Link.m in Sources */,
 				7DA730891A71ACC9008C25FA /* _Entity.m in Sources */,
 				E2D12A7D1C0A03F100DE507E /* AirLabelDisplay.swift in Sources */,
+				E297305C1C13644800B9433B /* AirTextView.swift in Sources */,
 				E2F6C9211B1BDC7A0067D959 /* _Shortcut.m in Sources */,
 				9FDCCCC0113B14385C08DA41 /* MessageDetailViewController.swift in Sources */,
 				E2C720C71B4EDAFE00714B53 /* AirLabel.swift in Sources */,
@@ -1328,7 +1339,7 @@
 				E238BB061B571AFF0094AF41 /* ExtensionsPhoto.swift in Sources */,
 				E281776E1B5B0EE200D65AC1 /* Reporting.swift in Sources */,
 				E20C3A7B1BD6A717008CCED1 /* BaseView.swift in Sources */,
-				E269AED81C10AB9A004A1D88 /* InviteViewController.swift in Sources */,
+				E269AED81C10AB9A004A1D88 /* WelcomeViewController.swift in Sources */,
 				E27DB4051B06477A0090D023 /* QueryItem.m in Sources */,
 				E24D74521BB865F50061F339 /* AwsS3.swift in Sources */,
 				E28D565F1BB1849F00BFD433 /* ReachabilityManager.swift in Sources */,
@@ -1336,6 +1347,7 @@
 				E2C0D9361B6D257B00E28CE9 /* SegmentsController.swift in Sources */,
 				E26B0C901B45C07D00706F4A /* AirPhotoBrowser.swift in Sources */,
 				E273B5361B488F2000888E73 /* AirPhotoPreview.swift in Sources */,
+				E297305A1C135BFA00B9433B /* PatchEditViewController.swift in Sources */,
 				9FDCCD0504D3A06C69B4F2A5 /* SearchViewController.swift in Sources */,
 				9FDCC8F9EEEF77DEBE173AFA /* PhotoPickerViewController.swift in Sources */,
 				9FDCC4E31D09C35191FA3624 /* PatchTableMapViewController.swift in Sources */,

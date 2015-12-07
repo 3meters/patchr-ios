@@ -10,6 +10,7 @@ import Foundation
 import MapKit
 
 @objc protocol MapViewDelegate: NSObjectProtocol {
+	
     optional var locationTitle: String? { get }
     optional var locationSubtitle: String? { get }
     optional var locationPhoto: AnyObject? { get }
@@ -38,13 +39,10 @@ class PatchMapViewController: UIViewController {
         let currentRegion = MKCoordinateRegionMakeWithDistance(self.locationDelegate.locationForMap()!.coordinate, 2000, 2000)
         self.mapView.setRegion(currentRegion, animated: false)
 		
-		var subtitle = self.locationDelegate.locationSubtitle!
-		subtitle = "\(subtitle!.uppercaseString) PATCH"
-		
         self.annotation = EntityAnnotation(
             coordinate: self.locationDelegate.locationForMap()!.coordinate,
-            title: self.locationDelegate.locationTitle!,
-            subtitle: subtitle!)
+            title: self.locationDelegate.locationTitle ?? nil,
+            subtitle: self.locationDelegate.locationSubtitle ?? nil)
         
 		self.mapView.addAnnotation(self.annotation)
         setScreenName("PatchMap")
@@ -91,11 +89,21 @@ extension PatchMapViewController: MKMapViewDelegate {
         let annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "pin")
         annotationView.animatesDrop = true
         annotationView.canShowCallout = true
-        if self.locationDelegate.locationPhoto != nil {
+		
+		let photo = self.locationDelegate.locationPhoto ?? nil
+		
+        if photo != nil {
             let imageView = AirImageView(frame: CGRectMake(0, 0, 40, 40))
             annotationView.leftCalloutAccessoryView = imageView
             imageView.contentMode = UIViewContentMode.ScaleAspectFill
         }
+		else {
+			let imageView = AirImageView(frame: CGRectMake(0, 0, 40, 40))
+			imageView.image = Utils.imagePatch
+			imageView.tintColor = Colors.brandColor
+			annotationView.leftCalloutAccessoryView = imageView
+			imageView.contentMode = UIViewContentMode.ScaleAspectFill
+		}
 
         return annotationView
     }

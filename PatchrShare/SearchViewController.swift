@@ -35,7 +35,7 @@ class SearchViewController: UITableViewController {
         return "None"
     }
     
-    var searchField = UITextField()
+    var searchField = AirSearchField()
 	var header      = UIView(frame: CGRectMake(0, 0, 0, 64))
     
     /*--------------------------------------------------------------------------------------------
@@ -117,27 +117,9 @@ class SearchViewController: UITableViewController {
 			}
 		}
 		
-		let imageView = UIImageView(frame: CGRectMake(8, 0, 24, 24))
-		imageView.image = UIImage(named: "imgSearchLight")
-		
-		let searchView = UIView(frame: CGRectMake(0, 0, 40, 40))
-		searchView.alpha = 0.5
-		searchView.addSubview(imageView)
-		imageView.anchorInCenterWithWidth(24, height: 24)
-		
-		self.searchField.font = Theme.fontText
-		self.searchField.textColor = Theme.colorText
-		self.searchField.layer.cornerRadius = 8.0
-		self.searchField.layer.masksToBounds = true
-		self.searchField.layer.borderColor = UIColor(red: CGFloat(0.8), green: CGFloat(0.8), blue: CGFloat(0.8), alpha: CGFloat(1)).CGColor
-		self.searchField.layer.borderWidth = 1.0
-		self.searchField.attributedPlaceholder = NSAttributedString(string: "Search for patches",
-                                                                    attributes: [NSForegroundColorAttributeName:UIColor(red: CGFloat(0.8), green: CGFloat(0.8), blue: CGFloat(0.8), alpha: CGFloat(1))])
+		self.searchField.placeholder = "Search for patches"
 		self.searchField.addTarget(self, action: Selector("textFieldDidChange:"), forControlEvents: UIControlEvents.EditingChanged)
-		self.searchField.delegate = self
-		self.searchField.leftViewMode = UITextFieldViewMode.Always
-		self.searchField.leftView = searchView
-		
+		self.searchField.delegate = self		
 		self.header.addSubview(self.searchField)
 		
 		self.tableView.tableHeaderView = self.header
