@@ -113,15 +113,14 @@ class InviteViewController: BaseViewController {
 		
 		if route == .Patchr {
 			
-			let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-			let controller = storyboard.instantiateViewControllerWithIdentifier("MessageEditViewController") as? MessageEditViewController
-			/* viewDidLoad hasn't fired yet but awakeFromNib has */
-			controller?.inputShareEntity = self.inputEntity
-			controller?.inputShareSchema = Schema.ENTITY_PATCH
-			controller?.inputShareId = self.inputEntity.id_!
-			controller?.inputMessageType = .Share
-			let navController = UINavigationController(rootViewController: controller!)
-			navController.navigationBar.tintColor = Colors.brandColorDark
+			let controller = MessageEditViewController()
+			let navController = UINavigationController()
+			controller.inputShareEntity = self.inputEntity
+			controller.inputShareSchema = Schema.ENTITY_PATCH
+			controller.inputShareId = self.inputEntity.id_!
+			controller.inputMessageType = .Share
+			controller.inputState = .Sharing
+			navController.viewControllers = [controller]
 			self.presentViewController(navController, animated: true, completion: nil)
 		}
 		else if route == .Facebook {

@@ -172,12 +172,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
 			return true
 		}
 		
-		/* See if Facebook claims it */
-		if FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation) {
-			Log.d("Facebook handled url")
-			return true
-		}
-				
 		/* See if this is a Facebook deep link */
 		let parsedUrl: BFURL = BFURL(inboundURL: url, sourceApplication: sourceApplication)
 		if (parsedUrl.appLinkData != nil) {
@@ -186,6 +180,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
 			}
 			return true
 		}
+		
+		/* See if Facebook claims it */
+		if FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation) {
+			Log.d("Facebook handled url")
+			return true
+		}				
 		
         return false
     }

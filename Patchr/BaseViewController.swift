@@ -101,6 +101,15 @@ extension BaseViewController: UIGestureRecognizerDelegate {
 	}
 }
 
+class Result {
+	var response: AnyObject?
+	var error: NSError?
+	init(response: AnyObject?, error: NSError?) {
+		self.response = response
+		self.error = error
+	}
+}
+
 enum State: Int {
 	case Editing
 	case Creating

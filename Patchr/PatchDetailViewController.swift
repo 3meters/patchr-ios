@@ -255,15 +255,13 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
             return
         }
         /* Has its own nav because we segue modally and it needs its own stack */
-        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-        if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageEditViewController") as? MessageEditViewController {
-            controller.inputToString = self.entity!.name
-            controller.inputPatchId = self.entityId
-            let navController = UINavigationController()
-            navController.navigationBar.tintColor = Colors.brandColorDark
-            navController.viewControllers = [controller]
-            self.navigationController?.presentViewController(navController, animated: true, completion: nil)
-        }
+		let controller = MessageEditViewController()
+		let navController = UINavigationController()
+		controller.inputToString = self.entity!.name
+		controller.inputPatchId = self.entityId
+		controller.inputState = .Creating
+		navController.viewControllers = [controller]
+		self.navigationController?.presentViewController(navController, animated: true, completion: nil)
     }
     
     func editAction() {
@@ -496,15 +494,14 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		
 		if route == .Patchr {
 			
-			let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-			let controller = storyboard.instantiateViewControllerWithIdentifier("MessageEditViewController") as? MessageEditViewController
-			/* viewDidLoad hasn't fired yet but awakeFromNib has */
-			controller?.inputShareEntity = self.entity
-			controller?.inputShareSchema = Schema.ENTITY_PATCH
-			controller?.inputShareId = self.entityId!
-			controller?.inputMessageType = .Share
-			let navController = UINavigationController(rootViewController: controller!)
-			navController.navigationBar.tintColor = Colors.brandColorDark
+			let controller = MessageEditViewController()
+			let navController = UINavigationController()
+			controller.inputShareEntity = self.entity
+			controller.inputShareSchema = Schema.ENTITY_PATCH
+			controller.inputShareId = self.entityId!
+			controller.inputMessageType = .Share
+			controller.inputState = .Sharing
+			navController.viewControllers = [controller]
 			self.presentViewController(navController, animated: true, completion: nil)
 		}
 		else if route == .Facebook {

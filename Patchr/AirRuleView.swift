@@ -11,6 +11,7 @@ import UIKit
 class AirRuleView: UIView {
 	
 	var rule = UIView()
+	var thickness = Theme.dimenRuleThickness
 
 	required init(coder aDecoder: NSCoder) {
 		/* Called when instantiated from XIB or Storyboard */
@@ -31,6 +32,6 @@ class AirRuleView: UIView {
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		self.rule.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: Theme.dimenRuleThickness)
+		self.rule.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: self.thickness)
 	}
 }

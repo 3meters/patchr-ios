@@ -268,8 +268,8 @@ class MessageDetailViewController: UITableViewController {
         if self.message != nil {
             let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: nil, destructiveButtonTitle: nil)
             
-            shareButtonFunctionMap[sheet.addButtonWithTitle("Share")] = .Share
-            shareButtonFunctionMap[sheet.addButtonWithTitle("Share via")] = .ShareVia
+            shareButtonFunctionMap[sheet.addButtonWithTitle("Share using Patchr")] = .Share
+            shareButtonFunctionMap[sheet.addButtonWithTitle("More")] = .ShareVia
             sheet.addButtonWithTitle("Cancel")
             sheet.cancelButtonIndex = sheet.numberOfButtons - 1
             
@@ -279,14 +279,12 @@ class MessageDetailViewController: UITableViewController {
     
 	func editAction() {
         /* Has its own nav because we segue modally and it needs its own stack */
-        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-        if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageEditViewController") as? MessageEditViewController {
-            controller.inputEntity = self.message
-            let navController = UINavigationController()
-            navController.navigationBar.tintColor = Colors.brandColorDark
-            navController.viewControllers = [controller]
-            self.navigationController?.presentViewController(navController, animated: true, completion: nil)
-        }
+		let controller = MessageEditViewController()
+		let navController = UINavigationController()
+		controller.inputEntity = self.message
+		controller.inputState = .Editing
+		navController.viewControllers = [controller]
+		self.navigationController?.presentViewController(navController, animated: true, completion: nil)
 	}
     
     func deleteAction() {
@@ -522,14 +520,15 @@ class MessageDetailViewController: UITableViewController {
     func shareUsing(patchr: Bool = true) {
         
         if patchr {
-            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-            let controller = storyboard.instantiateViewControllerWithIdentifier("MessageEditViewController") as? MessageEditViewController
-            /* viewDidLoad hasn't fired yet but awakeFromNib has */
-            controller?.inputShareEntity = self.message
-            controller?.inputShareSchema = Schema.ENTITY_MESSAGE
-            controller?.inputShareId = self.messageId!
-            controller?.inputMessageType = .Share
-            self.presentViewController(UINavigationController(rootViewController: controller!), animated: true, completion: nil)
+			let controller = MessageEditViewController()
+			let navController = UINavigationController()
+			controller.inputShareEntity = self.message
+			controller.inputShareSchema = Schema.ENTITY_MESSAGE
+			controller.inputShareId = self.messageId!
+			controller.inputMessageType = .Share
+			controller.inputState = .Sharing
+			navController.viewControllers = [controller]
+			self.presentViewController(navController, animated: true, completion: nil)
         }
         else {
             Branch.getInstance().getShortURLWithParams(["entityId":self.messageId!, "entitySchema":"message"], andChannel: "patchr-ios", andFeature: BRANCH_FEATURE_TAG_SHARE, andCallback: {

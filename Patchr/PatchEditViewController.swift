@@ -246,13 +246,6 @@ class PatchEditViewController: BaseViewController {
 		self.descriptionField = AirTextView()
 		self.descriptionField.placeholderLabel.text = "Tell people about your patch"
 		self.descriptionField.initialize()
-		self.descriptionField.scrollEnabled = false
-		self.descriptionField.textContainer.lineFragmentPadding = 0
-		self.descriptionField.textContainerInset = UIEdgeInsetsMake(12, 0, 12, 0)
-		self.descriptionField.autocapitalizationType = .Sentences
-		self.descriptionField.autocorrectionType = .Yes
-		self.descriptionField.keyboardType = UIKeyboardType.Default
-		self.descriptionField.returnKeyType = UIReturnKeyType.Default
 		self.descriptionField.delegate = self
 		
 		self.visibilityLabel.text = "Private Patch"

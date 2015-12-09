@@ -43,14 +43,13 @@
 #import <Harpy.h>
 #import <Keys/PatchrKeys.h>
 #import <Google/Analytics.h>
-#import <MBContactPicker.h>
-#import <MBContactModel.h>
 #import <CommonCrypto/CommonCrypto.h>
 #import <pop/POP.h>
 #import <PDDebugger.h>
 #import <DLRadioButton.h>
-#import "BFURL.h"
+#import <THContactPicker/THContactPickerView.h>
 
+#import "BFURL.h"
 #import "Patch.h"
 #import "Place.h"
 #import "Query.h"

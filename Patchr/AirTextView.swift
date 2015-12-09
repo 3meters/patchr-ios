@@ -26,6 +26,14 @@ class AirTextView: UITextView {
 		self.placeholderLabel.hidden = !self.text.isEmpty
 		self.addSubview(self.placeholderLabel)
 		
+		self.scrollEnabled = false
+		self.textContainer.lineFragmentPadding = 0
+		self.textContainerInset = UIEdgeInsetsMake(12, 0, 12, 0)
+		self.autocapitalizationType = .Sentences
+		self.autocorrectionType = .Yes
+		self.keyboardType = UIKeyboardType.Default
+		self.returnKeyType = UIReturnKeyType.Default
+		
 		self.rule.backgroundColor = Theme.colorRule
 		self.addSubview(self.rule)
 	}

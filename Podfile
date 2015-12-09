@@ -33,7 +33,6 @@ pod 'libPhoneNumber-iOS', '~> 0.7'      # Used to parse and format phone# for pl
 pod 'Branch'							# Url routing and deep linking
 pod 'pop', '~> 1.0'						# Animation library
 pod 'AirPhotoBrowser', :path => '~/code/AirPhotoBrowser'
-pod 'AirContactPicker', :path => '~/code/AirContactPicker'
 pod 'TWMessageBarManager'				# In-app notifications
 pod 'Harpy'								# App update alerts
 pod 'Facade'							# Convenience methods for frame based layout
@@ -41,6 +40,7 @@ pod 'Google/Analytics', '~> 1.2.0'
 pod 'Fabric'
 pod 'Crashlytics'
 pod 'PonyDebugger', :git => 'https://github.com/square/PonyDebugger.git'
+pod 'THContactPicker', '~> 1.2'
 pod 'FBSDKCoreKit', '~> 4.2.0'
 pod 'FBSDKLoginKit', '~> 4.1.0'
 pod 'FBSDKShareKit', '~> 4.1.0'

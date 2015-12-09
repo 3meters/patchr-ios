@@ -1,261 +1,299 @@
 //
-//  PostMessageViewController.swift
+//  RegistrationTableViewController.swift
 //  Patchr
 //
-//  Created by Brent on 2015-03-09.
+//  Created by Rob MacEachern on 2015-02-24.
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 enum MessageType: Int {
-    case Content
-    case Share
+	case Content
+	case Share
 }
 
-class MessageEditViewController: EntityEditViewController {
-
-    var inputMessageType: MessageType = .Content
-	var inputToString: String?     // name of patch this message links to
-    var inputPatchId:  String?     // id of patch this message links to
-    var inputShareId:     String?
-    var inputShareSchema: String = Schema.PHOTO
-    var inputShareEntity: Entity?
-
-    private var shareDescription: String!
-
-    private let searchItems: NSMutableArray = NSMutableArray()
-    private var searchInProgress = false
-    private var searchTimer: NSTimer?
-    private var searchEditing = false
-    private var searchText: String = ""
-    private var searchTableView: UITableView!
-
-    private let toPickerPadding: CGFloat = 32
-
-    private var suggestions: NSMutableArray = NSMutableArray()
-    
-	@IBOutlet weak var userPhotoImage:   	AirImageView!
-    @IBOutlet weak var userNameLabel:       UILabel!
-    @IBOutlet weak var toPicker:            MBContactPicker!
-	@IBOutlet weak var facebookButton:		UIButton!
+class MessageEditViewController: BaseViewController, UITableViewDelegate, UITableViewDataSource {
 	
-    @IBOutlet weak var descriptionCell:     UITableViewCell!
-    @IBOutlet weak var photoCell:           UITableViewCell!
-    @IBOutlet weak var shareCell:           UITableViewCell!
-
-    /*--------------------------------------------------------------------------------------------
-    * Lifecycle¬
-    *--------------------------------------------------------------------------------------------*/
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        self.collection = "messages"
-		self.schema = Schema.ENTITY_MESSAGE
-    }
+	var inputState			: State? = State.Editing
+	var inputMessageType	: MessageType = .Content
+	var inputEntity			: Entity?
+	var inputToString		: String?     // name of patch this message links to
+	var inputPatchId		: String?     // id of patch this message links to
 	
+	var inputShareId		: String?
+	var inputShareSchema	: String = Schema.PHOTO
+	var inputShareEntity	: Entity?
+	
+	var processing			: Bool = false
+	var progressStartLabel	: String?
+	var progressFinishLabel	: String?
+	var cancelledLabel		: String?
+	var schema				= Schema.ENTITY_MESSAGE
+	var progress			: AirProgress?
+	var activeTextField		: UIView?
+	var insertedEntity		: Entity?
+	var firstAppearance		= true
+	
+	var imageUploadRequest	: AWSS3TransferManagerUploadRequest?
+	var entityPostRequest	: NSURLSessionTask?
+	
+	var shareDescription	: String!
+
+	let contactsSelected	: NSMutableArray = NSMutableArray()
+	var contactModels		: NSMutableArray = NSMutableArray()
+	var contactList			: UITableView?
+
+	var searchInProgress    = false
+	var searchTimer			: NSTimer?
+	var searchEditing       = false
+	var searchText			: String = ""
+
+	var addressGroup		= AirRuleView()
+	var addressField		= AirContactPicker()
+	var addressLabel		= AirLabelDisplay()
+
+	var userPhoto			= AirImageView(frame: CGRectZero)
+	var userName			= AirLabelDisplay()
+	var descriptionField	= AirTextView()
+	var photoView			= PhotoView()
+	
+	var messageView			: MessageView?
+	var patchView			: PatchView?
+	var doneButton			= AirButtonFeatured()
+	
+	var scrollView			= AirScrollView()
+	var contentHolder		= UIView()
+	
+	/*--------------------------------------------------------------------------------------------
+	* Lifecycle
+	*--------------------------------------------------------------------------------------------*/
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.photoView!.frame = CGRectMake(16, 0, self.photoHolder!.bounds.size.width - 32, self.photoHolder!.bounds.size.height)
-		
-        self.toPicker.prompt = nil
-        self.toPicker.showPrompt = false
-		self.toPicker.bounds.size.height = 32
-        self.toPicker.cellHeight = 32
-		
-		let tap = UITapGestureRecognizer(target: self, action: "focusToPicker:");
-		tap.delegate = self
-		tap.cancelsTouchesInView = false
-		self.toPicker.addGestureRecognizer(tap)
-		
-        MBContactPicker.appearance().font = UIFont(name:"HelveticaNeue-Light", size: 18)
-        MBContactCollectionViewEntryCell.appearance().font = UIFont(name:"HelveticaNeue-Light", size: 18)
-        MBContactCollectionViewContactCell.appearance().font = UIFont(name:"HelveticaNeue-Light", size: 18)
-		MBContactCollectionViewContactCell.appearance().tintColor = Colors.brandColorDark
-		MBContactCollectionViewEntryCell.appearance().tintColor = Colors.brandColorDark
-		MBContactCollectionViewPromptCell.appearance().tintColor = Colors.brandColorDark
-
-        self.toPicker.dynamicBinding = true
-        
-        self.toPicker.delegate = self
-        self.toPicker.datasource = self
-        
-        if self.inputMessageType == .Share {
-			
-			self.recentTracking = false
-            
-            self.toPicker.borderWidth = 1
-            self.toPicker.borderColor = Colors.windowColor
-            self.toPicker.cornerRadius = 4
-            
-            self.progressStartLabel = "Inviting"
-            self.progressFinishLabel = "Invites sent!"
-            self.cancelledLabel = "Invites cancelled"
-			
-			self.photoHolder?.hidden = true
-            
-            if self.inputShareSchema == Schema.ENTITY_PATCH {
-                self.navigationItem.title = Utils.LocalizedString("Invite to patch")
-                self.shareDescription = "\(UserController.instance.currentUser.name) invited you to the \'\(self.inputShareEntity!.name!)\' patch!"
-            }
-            else if self.inputShareSchema == Schema.ENTITY_MESSAGE {
-                self.navigationItem.title = Utils.LocalizedString("Share message")
-                if let message = self.inputShareEntity as? Message {
-                    if message.patch != nil {
-                        self.shareDescription = "Check out \(message.creator.name!)\'s message to the \'\(message.patch.name)\' patch!"
-                    }
-                    else {
-                        self.shareDescription = "Check out \(message.creator.name!)\'s message to a patch!"
-                    }
-                }
-            }
-			
-			self.descriptionField.placeholderLabel.text = "Add a message to your invite..."
-			
-            if let user = UserController.instance.currentUser {
-                self.userPhotoImage.setImageWithPhoto(user.getPhotoManaged())
-                self.userNameLabel.text = user.name
-            }
-            
-            /* Navigation bar buttons */
-            let doneButton   = UIBarButtonItem(title: "Send", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
-            self.navigationItem.rightBarButtonItems = [doneButton]
-            
-            /* Pull state from patch we are editing */
-            bind()
-        }
-        else {
-            
-            self.toPicker.enabled = false
-            self.toPicker.collectionView.allowsSelection = false
-            self.toPicker.maxVisibleRows = 1
-            self.shareCell.hidden = true
-
-			self.descriptionField.placeholderLabel.text = "What\'s happening?"
-			
-            if self.editMode {
-                
-                self.progressStartLabel = "Updating"
-                self.progressFinishLabel = "Updated!"
-                self.cancelledLabel = "Update cancelled"
-                navigationItem.title = Utils.LocalizedString("Edit message")
-                
-                /* Navigation bar buttons */
-                let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
-                let doneButton   = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
-                self.navigationItem.rightBarButtonItems = [doneButton, spacer, deleteButton]
-                
-                /* Box the description to make edit mode more obvious */
-                self.descriptionField!.borderWidth = 0.5
-                self.descriptionField!.borderColor = Colors.windowColor
-                self.descriptionField!.cornerRadius = 4
-                self.descriptionField!.textContainer.lineFragmentPadding = 0
-                self.descriptionField!.textContainerInset = UIEdgeInsetsMake(8, 8, 8, 8)
-                
-                /* Pull state from patch we are editing */
-                bind()
-            }
-            else {
-                
-                self.progressStartLabel = "Sending"
-                self.progressFinishLabel = "Sent!"
-                self.cancelledLabel = "Send cancelled"
-				
-                if let user = UserController.instance.currentUser {
-                    self.userPhotoImage.setImageWithPhoto(user.getPhotoManaged())
-                    self.userNameLabel.text = user.name
-                }
-                
-                /* Navigation bar buttons */
-                let doneButton = UIBarButtonItem(title: "Send", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
-                self.navigationItem.rightBarButtonItems = [doneButton]
-            }
-        }
+        bind()
     }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        setScreenName("MessageEdit")
-    }
-    
-    override func viewDidAppear(animated: Bool) {
-        if self.photoView!.photoChosen {
-            self.photoView!.photoChosen = false
-            let rowFrame = self.tableView.rectForRowAtIndexPath(NSIndexPath(forRow: 2, inSection: 0))
-            let currentOffsetBottom = self.tableView.contentOffset.y + self.tableView.frame.size.height
-            let currentRowBottom = rowFrame.origin.y + rowFrame.size.height
-            let newOffset = self.tableView.contentOffset.y + (currentRowBottom - currentOffsetBottom)
-            if newOffset > 0 {
-                self.tableView.setContentOffset(CGPoint(x: 0, y: newOffset), animated: true)
-            }
-        }
-        if self.inputMessageType == .Share {
-            self.toPicker.becomeFirstResponder()
-        }
-        else if !editMode && self.firstAppearance {
-            self.descriptionField.becomeFirstResponder()
-        }
-    }
+	
+	override func loadView() {
+		super.loadView()
+		initialize()
+	}
+	
+	override func viewDidAppear(animated: Bool) {
+		if self.inputState == State.Sharing {
+			self.addressField.becomeFirstResponder()
+		}
+		else if self.inputState == State.Creating && self.firstAppearance  {
+			self.descriptionField.becomeFirstResponder()
+		}
+	}
 	
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
+		self.firstAppearance = false
 	}
 	
-    /*--------------------------------------------------------------------------------------------
-    * Events
-    *--------------------------------------------------------------------------------------------*/
-	
-	func focusToPicker(sender: AnyObject?) {
-		self.toPicker.becomeFirstResponder()
+	deinit {
+		NSNotificationCenter.defaultCenter().removeObserver(self)
 	}
 	
-    func searchTextChanged(sender: AnyObject?) {
-        Log.d("searchTextChanged called")
-    }
-    
-    /*--------------------------------------------------------------------------------------------
-    * Methods
-    *--------------------------------------------------------------------------------------------*/
-    
-    override func bind() {
-        super.bind()
-        
-        if let message = self.inputEntity as? Message {
-            /* User */
-            self.userPhotoImage.setImageWithPhoto(message.creator.getPhotoManaged())
-            self.userNameLabel.text = message.creator.name
-        }
-        
-        /* Share */
-        if self.inputMessageType == .Share {
-            
-			/* Share entity */
+	/*--------------------------------------------------------------------------------------------
+	 * Events
+	 *--------------------------------------------------------------------------------------------*/
+
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		
+		let contentWidth = self.view.bounds.size.width - 32
+		let descriptionSize = self.descriptionField.sizeThatFits(CGSizeMake(contentWidth, CGFloat.max))
+		
+		if self.inputState == .Sharing {
 			
-            var shareView: BaseView!
-            if self.inputShareSchema == Schema.ENTITY_PATCH {
+			self.userPhoto.anchorTopLeftWithLeftPadding(16, topPadding: 8, width: 48, height: 48)
+			self.addressField.setNeedsLayout()
+			self.addressField.layoutIfNeeded()
+			self.addressField.anchorTopLeftWithLeftPadding(72, topPadding: 12, width: contentWidth - 56, height: self.addressField.height())
+			self.contactList!.alignUnder(self.addressField, matchingLeftAndRightWithTopPadding: 0, height: CGFloat(self.contactModels.count * 52))
+			self.addressGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 64, height: self.contactList!.height() + self.addressField.height() + 24)
+			self.descriptionField.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: max(96, descriptionSize.height))
+			
+			if self.inputShareSchema == Schema.ENTITY_PATCH {
+				self.patchView!.alignUnder(self.descriptionField, matchingLeftAndRightWithTopPadding: 8, height: 128)
+			}
+			else {
+				self.messageView!.alignUnder(self.descriptionField, matchingRightAndFillingWidthWithLeftPadding: 0, topPadding: 16, height: 400)
+			}
+		}
+		else {
+			
+			self.addressGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 64, height: 64)
+			self.userPhoto.anchorCenterLeftWithLeftPadding(16, width: 48, height: 48)
+			self.addressLabel.fillSuperviewWithLeftPadding(72, rightPadding: 8, topPadding: 0, bottomPadding: 0)
+			self.descriptionField.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: max(96, descriptionSize.height))
+			self.photoView.alignUnder(self.descriptionField, matchingLeftAndRightWithTopPadding: 8, height: self.photoView.photoMode == .Empty ? 48 : contentWidth * 0.75)
+		}
+		
+		self.contentHolder.resizeToFitSubviews()
+		self.scrollView.contentSize = CGSizeMake(self.contentHolder.frame.size.width, self.contentHolder.frame.size.height + CGFloat(32))
+		self.scrollView.alignUnder(self.addressGroup, centeredFillingWidthAndHeightWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
+		self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 8, height: self.contentHolder.height() + 32)
+	}
+	
+	func doneAction(sender: AnyObject){
+		
+		guard isValid() else { return }
+		guard !self.processing else { return }
+		
+		self.progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+		self.progress!.mode = MBProgressHUDMode.Indeterminate
+		self.progress!.styleAs(.ActivityLight)
+		self.progress!.labelText = self.progressStartLabel
+		self.progress!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("userCancelTaskAction:")))
+		self.progress!.removeFromSuperViewOnHide = true
+		self.progress!.show(true)
+
+		Utils.delay(5.0) {
+			self.progress?.detailsLabelText = "Tap to cancel"
+		}
+		
+		let parameters = self.gather(NSMutableDictionary())
+		
+		post(parameters)
+		
+	}
+	
+	func cancelAction(sender: AnyObject){
+		
+		if !isDirty() {
+			self.performBack(true)
+			return
+		}
+		
+		ActionConfirmationAlert(
+			"Do you want to discard your editing changes?",
+			actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
+				doIt in
+				if doIt {
+					self.performBack(true)
+				}
+		}
+	}
+	
+	func deleteAction(sender: AnyObject) {
+		
+		guard !self.processing else { return }
+		
+		ActionConfirmationAlert(
+			"Confirm Delete",
+			message: "Are you sure you want to delete this?",
+			actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
+				doIt in
+				if doIt {
+					self.delete()
+				}
+		}
+	}
+	
+	func userCancelTaskAction(sender: AnyObject) {
+		if let gesture = sender as? UIGestureRecognizer, let hud = gesture.view as? MBProgressHUD {
+			hud.animationType = MBProgressHUDAnimation.ZoomIn
+			hud.hide(true)
+			self.imageUploadRequest?.cancel() // Should do nothing if upload already complete or isn't any
+			self.entityPostRequest?.cancel()
+		}
+	}
+	
+	func photoDidChange(sender: AnyObject) {
+		viewWillLayoutSubviews()
+	}
+
+	/*--------------------------------------------------------------------------------------------
+	 * Methods
+	 *--------------------------------------------------------------------------------------------*/
+	
+	override func initialize() {
+		super.initialize()
+		
+		let notificationCenter = NSNotificationCenter.defaultCenter()
+		notificationCenter.addObserver(self, selector: "dismissKeyboard", name: Events.PhotoViewHasFocus, object: nil)
+		notificationCenter.addObserver(self, selector: "keyboardWillBeShown:", name: UIKeyboardWillShowNotification, object: nil)
+		notificationCenter.addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
+		notificationCenter.addObserver(self, selector: "photoDidChange:", name: Events.PhotoDidChange, object: nil)
+		
+		let fullScreenRect = UIScreen.mainScreen().applicationFrame
+		self.scrollView.frame = fullScreenRect
+		self.scrollView.backgroundColor = Theme.colorBackgroundScreen
+		
+		self.photoView.photoSchema = Schema.ENTITY_MESSAGE
+		self.photoView.setHostController(self)
+		self.photoView.configureTo(self.inputEntity?.photo != nil ? .Photo : .Empty)
+		
+		self.descriptionField = AirTextView()
+		self.descriptionField.placeholderLabel.text = "What\'s happening?"
+		self.descriptionField.placeholderLabel.insets = UIEdgeInsetsMake(0, 0, 0, 0)
+		self.descriptionField.initialize()
+		self.descriptionField.delegate = self
+		
+		self.userPhoto.contentMode = UIViewContentMode.ScaleAspectFill
+		self.userPhoto.clipsToBounds = true
+		self.userPhoto.layer.cornerRadius = 24
+		
+		self.addressGroup.backgroundColor = UIColor(red: CGFloat(0.98), green: CGFloat(0.98), blue: CGFloat(0.98), alpha: CGFloat(1))
+		self.addressGroup.thickness = 0.5
+		
+		self.addressGroup.addSubview(self.addressLabel)
+		self.addressGroup.addSubview(self.addressField)
+		self.addressGroup.addSubview(self.userPhoto)
+		self.contentHolder.addSubview(self.descriptionField)
+		self.contentHolder.addSubview(self.photoView)
+		self.scrollView.addSubview(self.contentHolder)
+		
+		self.view.addSubview(self.addressGroup)
+		self.view.addSubview(self.scrollView)
+		
+		if self.inputState == State.Sharing {
+			
+			self.photoView.hidden = true
+			self.addressLabel.hidden = true
+			
+			self.addressField.setPlaceholderLabelText("Who would you like to invite?")
+			self.addressField.setPromptLabelText("To: ")
+			self.addressField.delegate = self
+			
+			self.contactList = UITableView(frame: CGRectZero, style: .Plain)
+			self.contactList!.delegate = self;
+			self.contactList!.dataSource = self;
+			self.contactList!.rowHeight = 52
+			self.addressGroup.addSubview(self.contactList!)
+			
+			if self.inputShareSchema == Schema.ENTITY_PATCH {
 				
-				shareView = PatchView()
-				let shareView = shareView as! PatchView
+				setScreenName("PatchInvite")
 				
-				shareView.borderColor = Colors.gray80pcntColor
-				shareView.borderWidth = 1
-				shareView.cornerRadius = 6
-				shareView.shadow.backgroundColor = UIColor.clearColor()
+				self.progressStartLabel = "Inviting"
+				self.progressFinishLabel = "Invites sent!"
+				self.cancelledLabel = "Invites cancelled"
 				
-				shareView.bindToEntity(self.inputShareEntity!, location: nil)
+				self.patchView = PatchView()
+				self.patchView!.borderColor = Theme.colorButtonBorder
+				self.patchView!.borderWidth = Theme.dimenButtonBorderWidth
+				self.patchView!.cornerRadius = 6
+				self.patchView!.shadow.backgroundColor = UIColor.clearColor()
 				
-				self.shareCell.contentView.addSubview(shareView)
-				self.shareCell.contentView.frame.size.height = 128
-				shareView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
-            }
-            else if self.inputShareSchema == Schema.ENTITY_MESSAGE {
+				self.contentHolder.addSubview(self.patchView!)
 				
-				let holderView = UIView()
-				holderView.clipsToBounds = true
-				holderView.borderColor = Colors.gray80pcntColor
-				holderView.borderWidth = 1
-				holderView.cornerRadius = 6
+				self.descriptionField.placeholderLabel.text = "Add a message to your invite..."
+				self.navigationItem.title = "Invite to patch"
+				self.shareDescription = "\(UserController.instance.currentUser.name) invited you to the \'\(self.inputShareEntity!.name!)\' patch!"
+			}
+				
+			else if self.inputShareSchema == Schema.ENTITY_MESSAGE {
+				
+				setScreenName("MessageShare")
+				
+				self.progressStartLabel = "Sharing"
+				self.progressFinishLabel = "Shared!"
+				self.cancelledLabel = "Sharing cancelled"
 				
 				var cellType: CellType = .TextAndPhoto
 				if self.inputShareEntity!.photo == nil {
@@ -265,311 +303,565 @@ class MessageEditViewController: EntityEditViewController {
 					cellType = .Photo
 				}
 				
-				shareView = MessageView(cellType: cellType)
-				let shareView = shareView as! MessageView
+				self.messageView = MessageView(cellType: cellType)
+				self.contentHolder.addSubview(self.messageView!)
 				
-				shareView.bindToEntity(self.inputShareEntity!)
+				self.descriptionField.placeholderLabel.text = "Add a message..."
+				self.navigationItem.title = Utils.LocalizedString("Share message")
+				if let message = self.inputShareEntity as? Message {
+					if message.patch != nil {
+						self.shareDescription = "Check out \(message.creator.name!)\'s message to the \'\(message.patch.name)\' patch!"
+					}
+					else {
+						self.shareDescription = "Check out \(message.creator.name!)\'s message to a patch!"
+					}
+				}
+			}
+			
+			/* Navigation bar buttons */
+			let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancelAction:")
+			let doneButton = UIBarButtonItem(title: "Send", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("doneAction:"))
+			self.navigationItem.leftBarButtonItems = [cancelButton]
+			self.navigationItem.rightBarButtonItems = [doneButton]
+		}
+		else {
+			
+			self.addressField.hidden = true
+			
+			self.descriptionField.placeholderLabel.text = "What\'s happening?"
+			
+			if self.inputState == State.Creating {
+				setScreenName("MessageNew")
+				self.progressStartLabel = "Sending"
+				self.progressFinishLabel = "Sent!"
+				self.cancelledLabel = "Send cancelled"
 				
-				holderView.addSubview(shareView)
-				self.shareCell.contentView.addSubview(holderView)
+				/* Navigation bar buttons */
+				let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancelAction:")
+				let doneButton = UIBarButtonItem(title: "Send", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("doneAction:"))
+				self.navigationItem.leftBarButtonItems = [cancelButton]
+				self.navigationItem.rightBarButtonItems = [doneButton]
+			}
+			else {
+				setScreenName("MessageEdit")
+				self.progressStartLabel = "Updating"
+				self.progressFinishLabel = "Updated!"
+				self.cancelledLabel = "Update cancelled"
 				
-				/* Need correct width before layout and sizing */
-				holderView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
-				shareView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 12, bottomPadding: 12)
+				self.doneButton.hidden = true
 				
-				shareView.setNeedsLayout()
-				shareView.layoutIfNeeded()
-				shareView.sizeToFit()
-				
-				/* Row height not set until reloadData called below */
-				self.shareCell.contentView.frame.size.height = shareView.bounds.size.height + 24
-				holderView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
-            }
-        }
+				/* Navigation bar buttons */
+				self.navigationItem.title = "Edit message"
+				let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancelAction:")
+				let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
+				let doneButton = UIBarButtonItem(title: "Save", style: .Plain, target: self, action: "doneAction:")
+				self.navigationItem.leftBarButtonItems = [cancelButton]
+				self.navigationItem.rightBarButtonItems = [doneButton, spacer, deleteButton]
+			}
+		}
+	}
+	
+    func bind() {
+		
+		if let message = self.inputEntity as? Message {
+			self.userPhoto.setImageWithPhoto(message.creator.getPhotoManaged())
+			self.userName.text = message.creator.name
+		}
+		else if let user = UserController.instance.currentUser {
+			self.userPhoto.setImageWithPhoto(user.getPhotoManaged())
+			self.userName.text = user.name
+		}
+
+		if self.inputState == .Editing {
+			self.addressLabel.text = (self.inputEntity as! Message).patch.name
+			self.descriptionField.text = self.inputEntity!.description_
+			self.photoView.bindPhoto(self.inputEntity!.photo)
+			textViewDidChange(self.descriptionField)
+		}
+		else if self.inputState == .Creating {
+			self.addressLabel.text = self.inputToString! + " Patch"
+		}
+		else if self.inputState == .Sharing {
+			if self.inputShareSchema == Schema.ENTITY_PATCH {
+				self.patchView!.bindToEntity(self.inputShareEntity!, location: nil)
+
+			}
+			else {
+				self.messageView!.bindToEntity(self.inputShareEntity!)
+				self.messageView!.setNeedsLayout()
+				self.messageView!.layoutIfNeeded()
+			}
+		}
     }
-    
-    func suggest() {
-        
-        if self.searchInProgress {
-            return
-        }
-        
-        self.searchInProgress = true
-        let searchString = self.searchText
-        
-        Log.d("Suggest call: \(searchString)")
-        
-        let endpoint: String = "https://api.aircandi.com/v1/suggest"
-        let request = NSMutableURLRequest(URL: NSURL(string: endpoint)!)
-        let session = NSURLSession.sharedSession()
-        request.HTTPMethod = "POST"
-        
-        let body = [
-            "users": true,
-            "input": searchString.lowercaseString,
-            "limit":10 ] as [String:AnyObject]
-        
-        do {
-            request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(body, options: [])
-            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.addValue("application/json", forHTTPHeaderField: "Accept")
-            
-            let task = session.dataTaskWithRequest(request, completionHandler: {
-                data, response, error -> Void in
-                
-                self.searchInProgress = false
-                self.searchItems.removeAllObjects()
-                self.suggestions.removeAllObjects()
-                
-                if error == nil {
-                    let json:JSON = JSON(data: data!)
-                    let results = json["data"]
-                    for (index: _, subJson) in results {
-                        let patch: AnyObject = subJson.object
-                        self.searchItems.addObject(patch)
-                        
-                        let model = SuggestionModel()
-                        model.contactTitle = subJson["name"].string
-                        model.contactImage = UIImage(named: "imgDefaultUser")
-                        model.entityId = (subJson["_id"] != nil) ? subJson["_id"].string : subJson["id_"].string
-                        
-                        if subJson["photo"] != nil {
-                            
-                            let prefix = subJson["photo"]["prefix"].string
-                            let source = subJson["photo"]["source"].string
-                            let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.profile)
-                            model.contactImageUrl = photoUrl
-                            model.contactImage = UIImage(named: "imgDefaultUser")
-                        }
-                        self.suggestions.addObject(model)
-                    }
-                    
-                    dispatch_async(dispatch_get_main_queue(), {
-                        self.toPicker.showSuggestions(self.suggestions as [AnyObject])
-                    })
-                }
-            })
-            
-            task.resume()
-        }
-        catch let error as NSError {
-            print("json error: \(error.localizedDescription)")
-        }
-    }
-    
-    override func gather(parameters: NSMutableDictionary) -> NSMutableDictionary {
-        
-        let parameters = super.gather(parameters)
-        
-        if self.inputMessageType == .Share {
-            let links = NSMutableArray()
-            links.addObject(["type": "share", "_to": self.inputShareEntity!.id_])
-            for contact in self.toPicker.contactsSelected {
-                links.addObject(["type": "share", "_to": contact.entityId])
-            }
-            parameters["links"] = links
-            parameters["type"] = "share"
-			parameters["description"] = self.descriptionField?.text ?? self.shareDescription
-        }
-        else {
-            if !editMode {
-                parameters["links"] = [["type": "content", "_to": self.inputPatchId!]]
-            }
-        }
+	
+	func post(parameters: NSMutableDictionary) -> TaskQueue {
+		/*
+		 * Has external dependencies: progress, tasks, processing flag.
+		 */
+		
+		self.processing = true
+		var cancelled = false
+		let queue = TaskQueue()
+		
+		/* Process image if any */
+		
+		if var image = parameters["photo"] as? UIImage {
+			queue.tasks +=~ { _, next in
+				
+				/* Ensure image is resized/rotated before upload */
+				image = Utils.prepareImage(image)
+				
+				/* Generate image key */
+				let imageKey = "\(Utils.genImageKey()).jpg"
+				
+				/* Upload */
+				self.imageUploadRequest = S3.sharedService.uploadImageToS3(image, imageKey: imageKey) {
+					task in
+					
+					if let error = task.error {
+						if error.domain == AWSS3TransferManagerErrorDomain as String {
+							if let errorCode = AWSS3TransferManagerErrorType(rawValue: error.code) {
+								if errorCode == .Cancelled {
+									cancelled = true
+								}
+							}
+						}
+						queue.skip()
+						next(Result(response: nil, error: error))
+					}
+					else {
+						let photo = [
+							"width": Int(image.size.width), // width/height are in points...should be pixels?
+							"height": Int(image.size.height),
+							"source": S3.sharedService.imageSource,
+							"prefix": imageKey
+						]
+						parameters["photo"] = photo
+						next(nil)
+					}
+				}
+			}
+		}
+		
+		/* Upload entity */
+		
+		queue.tasks +=~ { _, next in
+			let endpoint = self.inputState == State.Creating ? "data/messages" : "data/messages/\(self.inputEntity!.id_!)"
+			self.entityPostRequest = DataController.proxibase.postEntity(endpoint, parameters: parameters) {
+				response, error in
+				if error == nil {
+					self.progress!.progress = 1.0
+				}
+				else if error!.code == NSURLErrorCancelled {
+					cancelled = true
+				}
+				next(Result(response: response, error: error))
+			}
+		}
+		
+		/* Update Ui */
+		
+		queue.tasks +=! {
+			self.processing = false
+			
+			if cancelled {
+				Shared.Toast(self.cancelledLabel)
+				return
+			}
+			
+			self.progress?.hide(true)
+			
+			if let result: Result = queue.lastResult as? Result {
+				if let error = ServerError(result.error) {
+					self.handleError(error)
+					return
+				}
+				else {
+					if self.inputState == State.Creating {
+						
+						/* Update recent patch list when a user sends a message */
+						if self.inputState == .Creating {
+							if let patch = DataController.instance.currentPatch {
+								var recent: [String:AnyObject] = [
+									"id_":patch.id_,
+									"name":patch.name,
+									"recentDate": NSNumber(longLong: Int64(NSDate().timeIntervalSince1970 * 1000)) // Only way to store Int64 as AnyObject
+								]
+								if patch.photo != nil {
+									recent["photo"] = patch.photo.asMap()
+								}
+								Utils.updateRecents(recent)
+							}
+						}
+						
+						let serverResponse = ServerResponse(result.response)
+						if serverResponse.resultCount == 1 {
+							Log.d("Inserted entity \(serverResponse.resultID)")
+							DataController.instance.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
+						}
+					}
+					else {
+						Log.d("Updated entity \(self.inputEntity!.id_)")
+					}
+				}
+			}
+			
+			self.performBack(true)
+			Shared.Toast(self.progressFinishLabel)
+		}
+		
+		/* Start tasks */
+		
+		queue.run()
+		return queue
+	}
+	
+	func delete() {
+		
+		self.processing = true
+		
+		let entityPath = "data/messages/\((self.inputEntity!.id_)!)"
+		
+		DataController.proxibase.deleteObject(entityPath) {
+			response, error in
+			
+			NSOperationQueue.mainQueue().addOperationWithBlock {
+				self.processing = false
+				
+				if let error = ServerError(error) {
+					self.handleError(error)
+				}
+				else {
+					DataController.instance.mainContext.deleteObject(self.inputEntity!)
+					DataController.instance.saveContext(false)
+					self.performBack()
+				}
+			}
+		}
+	}
+	
+	func suggest() {
+		
+		guard !self.searchInProgress else {
+			return
+		}
+		
+		self.searchInProgress = true
+		let searchString = self.searchText
+		
+		Log.d("Suggest call: \(searchString)")
+		
+		let endpoint: String = "https://api.aircandi.com/v1/suggest"
+		let request = NSMutableURLRequest(URL: NSURL(string: endpoint)!)
+		let session = NSURLSession.sharedSession()
+		request.HTTPMethod = "POST"
+		
+		let body = [
+			"users": true,
+			"input": searchString.lowercaseString,
+			"limit":10 ] as [String:AnyObject]
+		
+		do {
+			request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(body, options: [])
+			request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+			request.addValue("application/json", forHTTPHeaderField: "Accept")
+			
+			let task = session.dataTaskWithRequest(request, completionHandler: {
+				data, response, error -> Void in
+				
+				self.searchInProgress = false
+				self.contactModels.removeAllObjects()
+				
+				if error == nil {
+					let json:JSON = JSON(data: data!)
+					let results = json["data"]
+					
+					for (index: _, subJson) in results {
+						let model = SuggestionModel()
+						model.contactTitle = subJson["name"].string
+						model.contactImage = UIImage(named: "imgDefaultUser")
+						model.entityId = (subJson["_id"] != nil) ? subJson["_id"].string : subJson["id_"].string
+						
+						if subJson["photo"] != nil {
+							
+							let prefix = subJson["photo"]["prefix"].string
+							let source = subJson["photo"]["source"].string
+							let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.profile)
+							model.contactImageUrl = photoUrl
+							model.contactImage = UIImage(named: "imgDefaultUser")
+						}
+						self.contactModels.addObject(model)
+					}
+					
+					dispatch_async(dispatch_get_main_queue(), {
+						self.viewWillLayoutSubviews()
+						self.contactList?.reloadData()
+					})
+				}
+			})
+			
+			task.resume()
+		}
+		catch let error as NSError {
+			print("json error: \(error.localizedDescription)")
+		}
+	}
+	
+    func gather(parameters: NSMutableDictionary) -> NSMutableDictionary {
+		
+		if self.inputState == State.Creating {
+			parameters["description"] = nilToNull(self.descriptionField.text)
+			parameters["photo"] = nilToNull(self.photoView.imageButton.imageForState(.Normal))
+			parameters["links"] = [["type": "content", "_to": self.inputPatchId!]]
+		}
+		else {
+			if self.descriptionField.text != self.inputEntity!.description_  {
+				parameters["description"] = nilToNull(self.descriptionField.text)
+			}
+			if self.photoView.photoDirty {
+				parameters["photo"] = nilToNull(self.photoView.imageButton.imageForState(.Normal))
+			}
+		}
+		
+		if self.inputState == .Sharing {
+			let links = NSMutableArray()
+			links.addObject(["type": "share", "_to": self.inputShareEntity!.id_])
+			for contact in self.contactsSelected {
+				links.addObject(["type": "share", "_to": contact.entityId])
+			}
+			parameters["links"] = links
+			parameters["type"] = "share"
+			parameters["description"] = self.descriptionField.text ?? self.shareDescription
+		}
+		
         return parameters
     }
-    
-    override func isDirty() -> Bool {
-        if self.inputMessageType == .Share {
-            return (descriptionField != nil && self.shareDescription != self.descriptionField.text)
-        }
-        else {
-            return super.isDirty()
-        }
-    }
-    
-    override func isValid() -> Bool {
-        
-        /* Share */
-        if self.inputMessageType == .Share {
-            if self.toPicker.contactsSelected.count == 0 {
-                Alert("Please add recipient(s)", message: nil, cancelButtonTitle: "OK")
-                return false
-            }
-            
-            if self.descriptionField.text == nil || self.descriptionField.text!.isEmpty {
-                Alert("Add message", message: nil, cancelButtonTitle: "OK")
-                return false
-            }
-        }
-        else {
-            if ((self.descriptionField.text == nil || self.descriptionField.text!.isEmpty)
-				&& self.photoView!.imageButton.imageForState(.Normal) == nil) {
-                Alert("Add message or photo", message: nil, cancelButtonTitle: "OK")
-                return false
-            }
-        }
-        
+
+    func isDirty() -> Bool {
+		
+		if self.inputState == .Creating {
+			if !self.descriptionField.text!.isEmpty {
+				return true
+			}
+			if self.photoView.photoDirty {
+				return true
+			}
+		}
+		else if self.inputState == .Sharing {
+			if !self.descriptionField.text!.isEmpty {
+				return true
+			}
+		}
+		else if self.inputState == .Editing {
+			if self.descriptionField.text != self.inputEntity?.description_  {
+				return true
+			}
+			if self.photoView.photoDirty {
+				return true
+			}
+		}
+		return false
+	}
+	
+    func isValid() -> Bool {
+		
+		/* Share */
+		if self.inputState == .Sharing {
+			if self.contactsSelected.count == 0 {
+				Alert("Please add recipient(s)", message: nil, cancelButtonTitle: "OK")
+				return false
+			}
+			
+			if self.descriptionField.text == nil || self.descriptionField.text!.isEmpty {
+				Alert("Add message", message: nil, cancelButtonTitle: "OK")
+				return false
+			}
+		}
+		else {
+			if ((self.descriptionField.text == nil || self.descriptionField.text!.isEmpty)
+				&& self.photoView.imageButton.imageForState(.Normal) == nil) {
+					Alert("Add message or photo", message: nil, cancelButtonTitle: "OK")
+					return false
+			}
+		}
         return true
     }
-    
-    func showSearchTableView(visible: Bool) {
-        self.searchTableView.hidden = !visible
+	
+	func performBack(animated: Bool = true) {
+		/* Override in subclasses for control of dismiss/pop process */
+		if isModal {
+			self.dismissViewControllerAnimated(animated, completion: nil)
+		}
+		else {
+			self.navigationController?.popViewControllerAnimated(true)
+		}
+	}
+	
+	func keyboardWillBeShown(sender: NSNotification) {
+		/* 
+		 * Called when the UIKeyboardDidShowNotification is sent. 
+		 */
+		let info: NSDictionary = sender.userInfo!
+		let value = info.valueForKey(UIKeyboardFrameBeginUserInfoKey) as! NSValue
+		let keyboardSize = value.CGRectValue().size
+		
+		self.scrollView.contentInset = UIEdgeInsetsMake(0, 0, keyboardSize.height, 0)
+		self.scrollView.scrollIndicatorInsets = self.scrollView.contentInset
+		/* 
+		 * If active text field is hidden by keyboard, scroll it so it's visible
+		 */
+		if self.activeTextField != nil {
+			var visibleRect = self.scrollView.frame
+			visibleRect.size.height -= keyboardSize.height
+			
+			let activeTextFieldRect = self.activeTextField?.frame
+			let activeTextFieldOrigin = activeTextFieldRect?.origin
+			
+			if (!CGRectContainsPoint(visibleRect, activeTextFieldOrigin!)) {
+				self.scrollView.scrollRectToVisible(activeTextFieldRect!, animated:true)
+			}
+		}
+	}
+ 
+	func keyboardWillBeHidden(sender: NSNotification) {
+		/* 
+		 * Called when the UIKeyboardWillHideNotification is sent.
+		 */
+		self.scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
+		self.scrollView.scrollIndicatorInsets = scrollView.contentInset
+	}
+}
+
+extension MessageEditViewController: UITextFieldDelegate {
+	
+	func textFieldDidBeginEditing(textField: UITextField) {
+		self.activeTextField = textField
+	}
+	
+	func textFieldDidEndEditing(textField: UITextField) {
+		if self.activeTextField == textField {
+			self.activeTextField = nil
+		}
+	}
+	
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        return true
     }
+}
+
+extension MessageEditViewController: UITextViewDelegate {
+	
+	func textViewDidBeginEditing(textView: UITextView) {
+		if let textView = textView as? AirTextView {
+			self.activeTextField = textView
+		}
+	}
+	
+	func textViewDidEndEditing(textView: UITextView) {
+		if self.activeTextField == textView {
+			self.activeTextField = nil
+		}
+	}
+	
+	func textViewDidChange(textView: UITextView) {
+		if let textView = textView as? AirTextView {
+			textView.placeholderLabel.hidden = !self.descriptionField.text.isEmpty
+			self.viewWillLayoutSubviews()
+		}
+	}
 }
 
 extension MessageEditViewController {
-    /*
-     * UITableViewDelegate
-     */
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        if indexPath.section == 0 {
-            
-            if indexPath.row == 0 {         // User
-                return 64
-            }
-            else if indexPath.row == 1 {    // Description
-                let height: CGFloat = textViewHeightForRowAtIndexPath(indexPath)
-                return height < 96 ? 96 : height
-            }
-            else if indexPath.row == 2 {    // Photo
-                if self.inputMessageType == .Content {
-                    /* Size so photo aspect ratio is 4:3 */
-                    var height: CGFloat = ((UIScreen.mainScreen().bounds.size.width - 32) * 0.75) + 16
-                    if !self.photoView!.photoActive {
-                        height = 64 // Leave enough room for set photo button
-                    }
-                    return height
-                }
-                else {
-                    return 0
-                }
-            }
-            else if indexPath.row == 3 {
-                if self.inputMessageType == .Share {
-                    var height: CGFloat = 0
-                    if self.inputShareSchema == Schema.ENTITY_PATCH {
-                        height = 400
-                    }
-                    else if self.inputShareSchema == Schema.ENTITY_MESSAGE {
-                        height = 400
-                    }
-                    else if self.inputShareSchema == Schema.PHOTO {
-                        height = ((UIScreen.mainScreen().bounds.size.width - 32) * 0.75) + 16
-                    }
-                    return height
-                }
-                else {
-                    return 0
-                }
-            }
-        }
-        return super.tableView(tableView, heightForRowAtIndexPath: indexPath)
-    }
-    
-    private func textViewHeightForRowAtIndexPath(indexPath: NSIndexPath) -> CGFloat {
-        let textViewWidth: CGFloat = descriptionField!.frame.size.width
-        let size: CGSize = descriptionField.sizeThatFits(CGSizeMake(textViewWidth, CGFloat(FLT_MAX)))
-        return size.height + 16;
-    }
+	/*
+	* UITableViewDelegate
+	*/
+	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+		
+		var cell = tableView.dequeueReusableCellWithIdentifier(CELL_IDENTIFIER) as? SearchViewCell
+		
+		if cell == nil {
+			cell = SearchViewCell(style: .Default, reuseIdentifier: CELL_IDENTIFIER)
+		}
+		
+		if let model = self.contactModels[indexPath.row] as? SuggestionModel {
+			cell!.title.text = model.contactTitle
+			if model.contactImageUrl != nil {
+				cell!.photo.sd_setImageWithURL(model.contactImageUrl)
+			}
+			else {
+				cell!.photo.image = model.contactImage
+			}
+		}
+		return cell!
+	}
+	
+	func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+		return 1
+	}
+	
+	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		return self.contactModels.count
+	}
+	
+	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+		
+		if let model = self.contactModels[indexPath.row] as? SuggestionModel {
+			if !self.contactsSelected.containsObject(model) {
+				let style = THContactViewStyle(textColor: Theme.colorTextTitle, backgroundColor: Colors.white, cornerRadiusFactor: 6)
+				let styleSelected = THContactViewStyle(textColor: Colors.white, backgroundColor: Colors.accentColor, cornerRadiusFactor: 6)
+				self.contactsSelected.addObject(model)
+				self.addressField.addContact(model, withName: model.contactTitle, withStyle: style, andSelectedStyle: styleSelected )
+			}
+		}
+		self.contactModels.removeAllObjects()
+		self.viewWillLayoutSubviews()
+		self.contactList?.reloadData()
+		self.addressField.becomeFirstResponder()
+	}
 }
 
-extension MessageEditViewController: MBContactPickerDataSource {
-    
-    func contactModelsForContactPicker(contactPickerView: MBContactPicker!) -> [AnyObject]! {
-        Log.d("contact data requested")
-        return self.suggestions as [AnyObject]
-    }
-    
-    func selectedContactModelsForContactPicker(contactPickerView: MBContactPicker!) -> [AnyObject]! {
-        if self.inputMessageType != .Share {
-            if self.inputToString != nil {
-                let model = SuggestionModel()
-                model.contactTitle = self.inputToString! + " Patch"
-                model.entityId = self.inputPatchId
-                return [model]
-            }
-            else if let message = self.inputEntity as? Message where message.patch != nil {
-                let model = SuggestionModel()
-                model.contactTitle = message.patch.name + " Patch"
-                model.entityId = message.patch.id_
-                return [model]
-            }
-        }
-        return []
-    }
+extension MessageEditViewController: THContactPickerDelegate {
+	
+	func contactPickerDidRemoveContact(contact: AnyObject!) {
+		self.contactsSelected.removeObject(contact)
+	}
+	
+	func contactPickerDidResize(contactPickerView: THContactPickerView!) {
+		self.viewWillLayoutSubviews()
+	}
+	
+	func contactPickerTextFieldShouldReturn(textField: UITextField!) -> Bool {
+		return true
+	}
+	
+	func contactPickerTextViewDidChange(textViewText: String!) {
+		let text = textViewText.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+		Log.d("contactPicker: entry text did change: \(text)")
+		self.searchEditing = (text.length > 0)
+		
+		if text.length >= 2 {
+			self.searchText = text
+			/* To limit network activity, reload half a second after last key press. */
+			if let timer = self.searchTimer {
+				timer.invalidate()
+			}
+			self.searchTimer = NSTimer(timeInterval:0.2, target:self, selector:Selector("suggest"), userInfo:nil, repeats:false)
+			NSRunLoop.currentRunLoop().addTimer(self.searchTimer!, forMode: "NSDefaultRunLoopMode")
+		}
+		else {
+			if self.contactModels.count > 0 {
+				self.contactModels.removeAllObjects()
+				self.viewWillLayoutSubviews()
+				self.contactList?.reloadData()
+			}
+		}
+	}
 }
 
-extension MessageEditViewController: MBContactPickerDelegate {
-    
-    func contactCollectionView(contactCollectionView: MBContactCollectionView!, didSelectContact model: MBContactPickerModelProtocol!) {
-        resizeHeader(self.toPicker.currentContentHeight + self.toPickerPadding)
-    }
-    
-    func contactCollectionView(contactCollectionView: MBContactCollectionView!, didAddContact model: MBContactPickerModelProtocol!) {
-        resizeHeader(self.toPicker.currentContentHeight + self.toPickerPadding)
-        self.toPicker.becomeFirstResponder()
-    }
-    
-    func contactCollectionView(contactCollectionView: MBContactCollectionView!, didRemoveContact model: MBContactPickerModelProtocol!) {
-        resizeHeader(self.toPicker.currentContentHeight + self.toPickerPadding)
-    }
-    
-    func didShowFilteredContactsForContactPicker(contactPicker: MBContactPicker!) {
-        /* Can be called after the view controller has been stopped */
-        if (self.isViewLoaded() && self.view.window != nil) {
-            let pickerRectInWindow = self.view.convertRect(self.toPicker.frame, fromView: nil)
-            let newHeight = self.view.window!.bounds.size.height - pickerRectInWindow.origin.y - self.toPicker.keyboardHeight
-            resizeHeader(newHeight + self.toPickerPadding)
-        }
-    }
-    
-    func didHideFilteredContactsForContactPicker(contactPicker: MBContactPicker!) {
-        resizeHeader(self.toPicker.currentContentHeight + self.toPickerPadding)
-    }
-    
-    func contactPicker(contactPicker: MBContactPicker!, didUpdateContentHeightTo newHeight: CGFloat) {
-        resizeHeader(self.toPicker.currentContentHeight + self.toPickerPadding)
-    }
-    
-    func contactPicker(contactPicker: MBContactPicker!, entryTextDidChange text: String!) {
-        let text = text.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
-        Log.d("contactPicker: entry text did change: \(text)")
-        self.searchEditing = (text.length > 0)
-        
-        if text.length >= 2 {
-            self.searchText = text
-            /* To limit network activity, reload half a second after last key press. */
-            if let timer = self.searchTimer {
-                timer.invalidate()
-            }
-            self.searchTimer = NSTimer(timeInterval:0.2, target:self, selector:Selector("suggest"), userInfo:nil, repeats:false)
-            NSRunLoop.currentRunLoop().addTimer(self.searchTimer!, forMode: "NSDefaultRunLoopMode")
-        }
-        else {
-            self.toPicker.hideSearchTableView()
-        }
-    }
-    
-    func resizeHeader(height: CGFloat) {
-        
-        let newRect = CGRectMake(0, 0, self.view.bounds.size.width, height)
-        let headerView = self.tableView.tableHeaderView
-        
-        UIView.animateWithDuration(
-            NSTimeInterval(0),
-            delay: 0,
-            options: UIViewAnimationOptions.TransitionCrossDissolve,
-            animations: {
-                headerView!.frame = newRect
-                self.tableView.tableHeaderView = headerView
-            },
-            completion: nil)
-    }
+class SuggestionModel {
+	var entityId: String?
+	var contactTitle: String?
+	var contactSubtitle: String?
+	var contactImage: UIImage?
+	var contactImageUrl: NSURL?
 }
-
-class SuggestionModel: MBContactModel {
-    var entityId: String?
-}
-
-

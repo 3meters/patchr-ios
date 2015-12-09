@@ -58,7 +58,6 @@ install_resource()
   esac
 }
 if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_resource "../../../../code/AirContactPicker/MBContactPicker/UserTableViewCell.xib"
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPBLocalizations.bundle"
   install_resource "Harpy/Harpy/Harpy.bundle"
@@ -70,7 +69,6 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_resource "TWMessageBarManager/Classes/Icons/icon-success@2x.png"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
-  install_resource "../../../../code/AirContactPicker/MBContactPicker/UserTableViewCell.xib"
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPBLocalizations.bundle"
   install_resource "Harpy/Harpy/Harpy.bundle"
@@ -82,7 +80,6 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_resource "TWMessageBarManager/Classes/Icons/icon-success@2x.png"
 fi
 if [[ "$CONFIGURATION" == "AdHoc" ]]; then
-  install_resource "../../../../code/AirContactPicker/MBContactPicker/UserTableViewCell.xib"
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPBLocalizations.bundle"
   install_resource "Harpy/Harpy/Harpy.bundle"

@@ -23,7 +23,6 @@ PODS:
   - AFNetworking/UIKit (2.6.3):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
-  - AirContactPicker (0.2.0)
   - AirPhotoBrowser (1.7):
     - AFNetworking (~> 2.6)
     - DACircularProgress
@@ -86,13 +85,13 @@ PODS:
     - SDWebImage/Core (= 3.7.3)
   - SDWebImage/Core (3.7.3)
   - SocketRocket (0.4.2)
+  - THContactPicker (1.2)
   - TWMessageBarManager (1.7.2)
   - UIDevice-Hardware (0.1.7)
 
 DEPENDENCIES:
   - AFNetworkActivityLogger (~> 2.0)
   - AFNetworking (~> 2.6)
-  - AirContactPicker (from `~/code/AirContactPicker`)
   - AirPhotoBrowser (from `~/code/AirPhotoBrowser`)
   - AWSS3 (~> 2.3.1)
   - Branch
@@ -113,12 +112,11 @@ DEPENDENCIES:
   - PonyDebugger (from `https://github.com/square/PonyDebugger.git`)
   - pop (~> 1.0)
   - SDWebImage (~> 3.7.2)
+  - THContactPicker (~> 1.2)
   - TWMessageBarManager
   - UIDevice-Hardware
 
 EXTERNAL SOURCES:
-  AirContactPicker:
-    :path: ~/code/AirContactPicker
   AirPhotoBrowser:
     :path: ~/code/AirPhotoBrowser
   Keys:
@@ -134,7 +132,6 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
   AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
-  AirContactPicker: 2f6b10dea55af4017c73daafae952b7dc0481cac
   AirPhotoBrowser: c26ba9232aea2467ebf932ce9cbabe60fd698d54
   AWSCore: 7ad34b4bc285b778a3df699cb6f00aad3d1c446f
   AWSS3: b7f4a0ad4da6dcc172e757dcb2b2423d26b32325
@@ -164,6 +161,7 @@ SPEC CHECKSUMS:
   pop: bb773ae2c791ca2629de13b347e7a8b450fa6a57
   SDWebImage: 1d2b1a1efda1ade1b00b6f8498865f8ddedc8a84
   SocketRocket: ffe08119b00ef982f6c37052a4705a057c8494ad
+  THContactPicker: e723f7c6ab6e1d6d10d59d618322ab8bfcb00365
   TWMessageBarManager: e7adc066ee425174f5dee79473fce913b1cd1662
   UIDevice-Hardware: de848ac4b53de555f70ff1a32877454d221c71d1
 
