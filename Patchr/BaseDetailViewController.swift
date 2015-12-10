@@ -121,7 +121,7 @@ class BaseDetailViewController: BaseTableViewController {
 									if let patch = entity as? Patch {
 										DataController.instance.currentPatch = patch    // Used for context for messages
 									}
-									self?.drawButtons()
+									self?.drawButtons()	// Refresh so owner only commands can be displayed
 									self?.draw()
 									NSNotificationCenter.defaultCenter().postNotificationName(Events.BindingComplete, object: nil)
 								}

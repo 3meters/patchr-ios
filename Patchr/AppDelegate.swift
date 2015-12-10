@@ -49,19 +49,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
         
         /* Turn on status bar */
         UIApplication.sharedApplication().setStatusBarHidden(false, withAnimation: UIStatusBarAnimation.Slide)
-        
-        /* 
-         * Initialize Branch: The deepLinkHandler gets called every time the app opens.
-         * That means it should be a good place to handle all initial routing.
-         */
-        Branch.getInstance().initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
-            if error == nil {
-                if let clickedBranchLink = params["+clicked_branch_link"] as? Bool where clickedBranchLink {
-                    self.routeDeepLink(params, error: error)
-                    return
-                }                
-            }
-        })
 		
         /* Load setting defaults */
         let defaultSettingsFile: NSString = NSBundle.mainBundle().pathForResource("DefaultSettings", ofType: "plist")!
@@ -154,8 +141,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
 		FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
 		FBSDKProfile.enableUpdatesOnAccessTokenChange(true)
 		
+		
+		/*
+		* Initialize Branch: The deepLinkHandler gets called every time the app opens.
+		* That means it should be a good place to handle all initial routing.
+		*/
+		Branch.getInstance().initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
+			if let clickedBranchLink = params["+clicked_branch_link"] as? Bool where clickedBranchLink {
+				/*
+				 * Presents modally on top of main tab controller.
+				 */
+				self.routeDeepLink(params, error: error)
+			}
+		})
+		
 		/* Show initial controller */
-		route()
+		self.route()
 		
         return true
     }
@@ -166,7 +167,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
     
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
 		
-		/* First see Branch claims it as a deep link */
+		/* First see if Branch claims it as a deep link */
 		if Branch.getInstance().handleDeepLink(url) {
 			Log.d("Branch handled deep link: \(url.absoluteString)")
 			return true
@@ -189,7 +190,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
 		
         return false
     }
-    
+	
+	func application(application: UIApplication, continueUserActivity userActivity: NSUserActivity, restorationHandler: ([AnyObject]?) -> Void) -> Bool {
+		// pass the url to the handle deep link call
+		Branch.getInstance().continueUserActivity(userActivity)		
+		return true
+	}
+	
     func route() {
         
         /* Show initial controller */

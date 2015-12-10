@@ -15,6 +15,7 @@ extern const struct ShortcutRelationships {
 	__unsafe_unretained NSString *ownerFor;
 	__unsafe_unretained NSString *patchFor;
 	__unsafe_unretained NSString *placeFor;
+	__unsafe_unretained NSString *recipientFor;
 } ShortcutRelationships;
 
 @class ServiceBase;
@@ -23,6 +24,7 @@ extern const struct ShortcutRelationships {
 @class ServiceBase;
 @class Message;
 @class Patch;
+@class Message;
 
 @interface ShortcutID : EntityID {}
 @end
@@ -61,6 +63,10 @@ extern const struct ShortcutRelationships {
 
 //- (BOOL)validatePlaceFor:(id*)value_ error:(NSError**)error_;
 
+@property (nonatomic, strong) Message *recipientFor;
+
+//- (BOOL)validateRecipientFor:(id*)value_ error:(NSError**)error_;
+
 @end
 
 @interface _Shortcut (CoreDataGeneratedPrimitiveAccessors)
@@ -85,5 +91,8 @@ extern const struct ShortcutRelationships {
 
 - (Patch*)primitivePlaceFor;
 - (void)setPrimitivePlaceFor:(Patch*)value;
+
+- (Message*)primitiveRecipientFor;
+- (void)setPrimitiveRecipientFor:(Message*)value;
 
 @end

@@ -38,7 +38,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 	var imageUploadRequest	: AWSS3TransferManagerUploadRequest?
 	var entityPostRequest	: NSURLSessionTask?
 	
-	var shareDescription	: String!
+	var descriptionDefault: String!
 
 	let contactsSelected	: NSMutableArray = NSMutableArray()
 	var contactModels		: NSMutableArray = NSMutableArray()
@@ -284,7 +284,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 				
 				self.descriptionField.placeholderLabel.text = "Add a message to your invite..."
 				self.navigationItem.title = "Invite to patch"
-				self.shareDescription = "\(UserController.instance.currentUser.name) invited you to the \'\(self.inputShareEntity!.name!)\' patch!"
+				self.descriptionDefault = "\(UserController.instance.currentUser.name) invited you to the \'\(self.inputShareEntity!.name!)\' patch!"
 			}
 				
 			else if self.inputShareSchema == Schema.ENTITY_MESSAGE {
@@ -310,10 +310,10 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 				self.navigationItem.title = Utils.LocalizedString("Share message")
 				if let message = self.inputShareEntity as? Message {
 					if message.patch != nil {
-						self.shareDescription = "Check out \(message.creator.name!)\'s message to the \'\(message.patch.name)\' patch!"
+						self.descriptionDefault = "\(UserController.instance.currentUser.name) shared \(message.creator.name!)\'s message to the \'\(message.patch.name)\' patch!"
 					}
 					else {
-						self.shareDescription = "Check out \(message.creator.name!)\'s message to a patch!"
+						self.descriptionDefault = "\(UserController.instance.currentUser.name) shared \(message.creator.name!)\'s message to a patch!"
 					}
 				}
 			}
@@ -446,7 +446,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 		/* Upload entity */
 		
 		queue.tasks +=~ { _, next in
-			let endpoint = self.inputState == State.Creating ? "data/messages" : "data/messages/\(self.inputEntity!.id_!)"
+			let endpoint = self.inputEntity == nil ? "data/messages" : "data/messages/\(self.inputEntity!.id_!)"
 			self.entityPostRequest = DataController.proxibase.postEntity(endpoint, parameters: parameters) {
 				response, error in
 				if error == nil {
@@ -477,7 +477,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 					return
 				}
 				else {
-					if self.inputState == State.Creating {
+					if self.inputState == .Creating || self.inputState == .Sharing {
 						
 						/* Update recent patch list when a user sends a message */
 						if self.inputState == .Creating {
@@ -496,12 +496,12 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 						
 						let serverResponse = ServerResponse(result.response)
 						if serverResponse.resultCount == 1 {
-							Log.d("Inserted entity \(serverResponse.resultID)")
+							Log.d("Inserted message \(serverResponse.resultID)")
 							DataController.instance.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
 						}
 					}
 					else {
-						Log.d("Updated entity \(self.inputEntity!.id_)")
+						Log.d("Updated message \(self.inputEntity!.id_)")
 					}
 				}
 			}
@@ -610,11 +610,13 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
     func gather(parameters: NSMutableDictionary) -> NSMutableDictionary {
 		
 		if self.inputState == State.Creating {
+			
 			parameters["description"] = nilToNull(self.descriptionField.text)
 			parameters["photo"] = nilToNull(self.photoView.imageButton.imageForState(.Normal))
 			parameters["links"] = [["type": "content", "_to": self.inputPatchId!]]
 		}
-		else {
+		else if self.inputState == State.Editing {
+			
 			if self.descriptionField.text != self.inputEntity!.description_  {
 				parameters["description"] = nilToNull(self.descriptionField.text)
 			}
@@ -622,16 +624,24 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 				parameters["photo"] = nilToNull(self.photoView.imageButton.imageForState(.Normal))
 			}
 		}
-		
-		if self.inputState == .Sharing {
+		else if self.inputState == .Sharing {
+			
 			let links = NSMutableArray()
-			links.addObject(["type": "share", "_to": self.inputShareEntity!.id_])
+			links.addObject(["type": "share", "_to": self.inputShareEntity!.id_!])
 			for contact in self.contactsSelected {
-				links.addObject(["type": "share", "_to": contact.entityId])
+				if let contact = contact as? SuggestionModel {
+					links.addObject(["type": "share", "_to": contact.entityId])
+				}
 			}
 			parameters["links"] = links
 			parameters["type"] = "share"
-			parameters["description"] = self.descriptionField.text ?? self.shareDescription
+			
+			if self.descriptionField.text == nil || self.descriptionField.text.isEmpty {
+				parameters["description"] = self.descriptionDefault
+			}
+			else {
+				parameters["description"] = self.descriptionField.text
+			}
 		}
 		
         return parameters
@@ -669,11 +679,6 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 		if self.inputState == .Sharing {
 			if self.contactsSelected.count == 0 {
 				Alert("Please add recipient(s)", message: nil, cancelButtonTitle: "OK")
-				return false
-			}
-			
-			if self.descriptionField.text == nil || self.descriptionField.text!.isEmpty {
-				Alert("Add message", message: nil, cancelButtonTitle: "OK")
 				return false
 			}
 		}
@@ -859,7 +864,7 @@ extension MessageEditViewController: THContactPickerDelegate {
 }
 
 class SuggestionModel {
-	var entityId: String?
+	var entityId: String!
 	var contactTitle: String?
 	var contactSubtitle: String?
 	var contactImage: UIImage?

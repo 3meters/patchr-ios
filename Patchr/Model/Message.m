@@ -23,6 +23,11 @@
 	if (message.message != nil) {
 		[context deleteObject:message.message];
 	}
+	if (message.recipients != nil) {
+		for (id recipient in message.recipients) {
+			[context deleteObject:recipient];
+		}
+	}
 	
 	if (dictionary[@"linked"]) {
 		for (id linkMap in dictionary[@"linked"]) {
@@ -48,6 +53,18 @@
 					}
 					shortcut.id_ = entityId;
 					message.message = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut];
+				}
+				else if ([linkMap[@"schema"] isEqualToString: @"user"]) {	// We assume link type is equal to "share"
+					NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"Shortcut" inManagedObjectContext:context];
+					Shortcut *shortcut = [[Shortcut alloc] initWithEntity:entityDescription insertIntoManagedObjectContext:context];
+					
+					NSString *entityId = [[NSString alloc] initWithString:linkMap[@"_id"]];
+					if ([entityId rangeOfString:@"sh."].location == NSNotFound) {
+						entityId = [@"sh." stringByAppendingString:entityId];
+					}
+					shortcut.id_ = entityId;
+					shortcut = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut];
+					shortcut.recipientFor = message;
 				}
 			}
 		}

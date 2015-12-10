@@ -7,8 +7,10 @@
 extern const struct MessageRelationships {
 	__unsafe_unretained NSString *message;
 	__unsafe_unretained NSString *patch;
+	__unsafe_unretained NSString *recipients;
 } MessageRelationships;
 
+@class Shortcut;
 @class Shortcut;
 @class Shortcut;
 
@@ -29,6 +31,18 @@ extern const struct MessageRelationships {
 
 //- (BOOL)validatePatch:(id*)value_ error:(NSError**)error_;
 
+@property (nonatomic, strong) NSSet *recipients;
+
+- (NSMutableSet*)recipientsSet;
+
+@end
+
+@interface _Message (RecipientsCoreDataGeneratedAccessors)
+- (void)addRecipients:(NSSet*)value_;
+- (void)removeRecipients:(NSSet*)value_;
+- (void)addRecipientsObject:(Shortcut*)value_;
+- (void)removeRecipientsObject:(Shortcut*)value_;
+
 @end
 
 @interface _Message (CoreDataGeneratedPrimitiveAccessors)
@@ -38,5 +52,8 @@ extern const struct MessageRelationships {
 
 - (Shortcut*)primitivePatch;
 - (void)setPrimitivePatch:(Shortcut*)value;
+
+- (NSMutableSet*)primitiveRecipients;
+- (void)setPrimitiveRecipients:(NSMutableSet*)value;
 
 @end

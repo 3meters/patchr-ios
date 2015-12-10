@@ -666,17 +666,6 @@
 			name = Views;
 			sourceTree = "<group>";
 		};
-		E24D744B1BB2E7120061F339 /* Data */ = {
-			isa = PBXGroup;
-			children = (
-				E24D744F1BB2F4030061F339 /* Forms */,
-				E24D744E1BB2F3E70061F339 /* Lists */,
-				E2F618DE1B02667A0055D09C /* Edit */,
-				E269AED61C0F9FCD004A1D88 /* Mapping */,
-			);
-			name = Data;
-			sourceTree = "<group>";
-		};
 		E24D744E1BB2F3E70061F339 /* Lists */ = {
 			isa = PBXGroup;
 			children = (
@@ -864,7 +853,10 @@
 				E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */,
 				7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */,
 				E269AED71C10AB9A004A1D88 /* WelcomeViewController.swift */,
-				E24D744B1BB2E7120061F339 /* Data */,
+				E2F618DE1B02667A0055D09C /* Edit */,
+				E24D744F1BB2F4030061F339 /* Forms */,
+				E24D744E1BB2F3E70061F339 /* Lists */,
+				E269AED61C0F9FCD004A1D88 /* Mapping */,
 				E269AED41C0F637C004A1D88 /* Navigation */,
 			);
 			name = Controllers;
@@ -1000,6 +992,9 @@
 								enabled = 1;
 							};
 							com.apple.Keychain = {
+								enabled = 1;
+							};
+							com.apple.SafariKeychain = {
 								enabled = 1;
 							};
 						};
@@ -1554,7 +1549,6 @@
 					"-l\"SDWebImage\"",
 					"-l\"UIDevice-Hardware\"",
 					"-l\"c++\"",
-					"-l\"libPhoneNumber-iOS\"",
 					"-l\"pop\"",
 					"-l\"sqlite3\"",
 					"-l\"z\"",
@@ -1633,7 +1627,6 @@
 					"-l\"SDWebImage\"",
 					"-l\"UIDevice-Hardware\"",
 					"-l\"c++\"",
-					"-l\"libPhoneNumber-iOS\"",
 					"-l\"pop\"",
 					"-l\"sqlite3\"",
 					"-l\"z\"",
@@ -1749,7 +1742,6 @@
 					"-l\"SDWebImage\"",
 					"-l\"UIDevice-Hardware\"",
 					"-l\"c++\"",
-					"-l\"libPhoneNumber-iOS\"",
 					"-l\"pop\"",
 					"-l\"sqlite3\"",
 					"-l\"z\"",

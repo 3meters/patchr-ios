@@ -29,7 +29,6 @@ pod 'SDWebImage', '~> 3.7.2'
 pod 'DLRadioButton'
 pod 'UIDevice-Hardware'                 # Convenience for determining system version and model identifier
 pod 'Lockbox'                           # Used to protect secrets and install info
-pod 'libPhoneNumber-iOS', '~> 0.7'      # Used to parse and format phone# for places
 pod 'Branch'							# Url routing and deep linking
 pod 'pop', '~> 1.0'						# Animation library
 pod 'AirPhotoBrowser', :path => '~/code/AirPhotoBrowser'

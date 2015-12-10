@@ -14,6 +14,7 @@ const struct ShortcutRelationships ShortcutRelationships = {
 	.ownerFor = @"ownerFor",
 	.patchFor = @"patchFor",
 	.placeFor = @"placeFor",
+	.recipientFor = @"recipientFor",
 };
 
 @implementation ShortcutID
@@ -58,6 +59,8 @@ const struct ShortcutRelationships ShortcutRelationships = {
 @dynamic patchFor;
 
 @dynamic placeFor;
+
+@dynamic recipientFor;
 
 @end
 

@@ -6,6 +6,7 @@
 const struct MessageRelationships MessageRelationships = {
 	.message = @"message",
 	.patch = @"patch",
+	.recipients = @"recipients",
 };
 
 @implementation MessageID
@@ -40,6 +41,17 @@ const struct MessageRelationships MessageRelationships = {
 @dynamic message;
 
 @dynamic patch;
+
+@dynamic recipients;
+
+- (NSMutableSet*)recipientsSet {
+	[self willAccessValueForKey:@"recipients"];
+
+	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"recipients"];
+
+	[self didAccessValueForKey:@"recipients"];
+	return result;
+}
 
 @end
 

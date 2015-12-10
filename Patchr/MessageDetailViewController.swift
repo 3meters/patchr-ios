@@ -46,13 +46,13 @@ class MessageDetailViewController: UITableViewController {
 	@IBOutlet weak var likeButton:      AirLikeButton!
 	@IBOutlet weak var likesButton:     UIButton!
     @IBOutlet weak var description_:    TTTAttributedLabel!
-    @IBOutlet weak var recipients:      UILabel!
+    @IBOutlet weak var recipients:      AirLabelDisplay!
     
     @IBOutlet weak var patchCell:       UITableViewCell!
     @IBOutlet weak var toolbarCell:     UITableViewCell!
     @IBOutlet weak var recipientsCell:  UITableViewCell!
     @IBOutlet weak var shareHolderCell: UITableViewCell!
-    
+	
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
 	 *--------------------------------------------------------------------------------------------*/
@@ -107,15 +107,15 @@ class MessageDetailViewController: UITableViewController {
 			let editImage    = Utils.imageEdit
 			let editButton   = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
 			let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: Selector("deleteAction"))
-			self.navigationItem.rightBarButtonItems = shareAllowed ? [shareButton, spacer, deleteButton, spacer, editButton] : [deleteButton, spacer, editButton]
+			self.navigationItem.setRightBarButtonItems(shareAllowed ? [shareButton, spacer, deleteButton, spacer, editButton] : [deleteButton, spacer, editButton], animated: true)
 		}
 		else if self.isPatchOwner {
 			let removeImage    = UIImage(named: "imgRemoveLight")
 			let removeButton   = UIBarButtonItem(image: removeImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("removeAction"))
-			self.navigationItem.rightBarButtonItems = shareAllowed ? [shareButton, spacer, removeButton] : [removeButton]
+			self.navigationItem.setRightBarButtonItems(shareAllowed ? [shareButton, spacer, removeButton] : [removeButton], animated: true)
 		}
 		else {
-			self.navigationItem.rightBarButtonItems = shareAllowed ? [shareButton] : []
+			self.navigationItem.setRightBarButtonItems(shareAllowed ? [shareButton] : [], animated: true)
 		}
 	}
 
@@ -329,8 +329,10 @@ class MessageDetailViewController: UITableViewController {
         
         if self.message!.type != nil && self.message!.type == "share" {
 			
-            self.recipientsCell.hidden = true
+            self.recipientsCell.hidden = false
             self.shareHolderCell.hidden = false
+			
+			self.recipients.textColor = Theme.colorTextTitle
 			
             /* Share entity */
 			
@@ -406,7 +408,14 @@ class MessageDetailViewController: UITableViewController {
 					holderView.fillSuperview()
 					shareView.fillSuperview()
 				}
-				
+
+				self.recipients.text = ""
+				if self.message?.recipients != nil {
+					for recipient in self.message!.recipients as! Set<Shortcut> {
+						self.recipients.text!.appendContentsOf("\(recipient.name), ")
+					}
+					self.recipients.text = String(self.recipients.text!.characters.dropLast(2))
+				}
 			}
         }
         else {
@@ -587,7 +596,7 @@ extension MessageDetailViewController {
                     }
                     return 143
                 }
-                else if indexPath.row == 7 {
+				else if indexPath.row == 7 {	// Recipients
                     return 48
                 }
             }

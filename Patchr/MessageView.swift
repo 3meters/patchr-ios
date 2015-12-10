@@ -19,6 +19,8 @@ class MessageView: BaseView {
 	var userName		= UILabel()
 	var userPhoto		= UIImageView(frame: CGRectZero)
 	var createdDate		= UILabel()
+	var recipientsLabel = AirLabelDisplay()
+	var recipients		= AirLabelDisplay()
 	var likes			= UILabel()
 	var likeButton		= AirLikeButton(frame: CGRectZero)
 	var patchName		= UILabel()
@@ -91,12 +93,24 @@ class MessageView: BaseView {
 		self.addSubview(self.createdDate)
 		
 		/* Footer */
-		self.likeButton.imageView!.tintColor(Colors.brandColor)
-		self.likes.font = UIFont(name: "HelveticaNeue-Light", size: 15)
-		self.likes.textColor = Colors.brandColor
 		
-		self.addSubview(self.likeButton)
-		self.addSubview(self.likes)
+		if self.cellType == .Share {
+			self.recipientsLabel.text = "To:"
+			self.recipientsLabel.font = UIFont(name: "HelveticaNeue-Light", size: 17)
+			self.recipientsLabel.textColor = Theme.colorTextSecondary
+			self.recipients.font = UIFont(name: "HelveticaNeue-Light", size: 17)
+			self.recipients.textColor = Theme.colorTextTitle
+			self.addSubview(self.recipientsLabel)
+			self.addSubview(self.recipients)
+		}
+		else {
+			self.likeButton.imageView!.tintColor(Colors.brandColor)
+			self.likes.font = UIFont(name: "HelveticaNeue-Light", size: 15)
+			self.likes.textColor = Colors.brandColor
+			
+			self.addSubview(self.likeButton)
+			self.addSubview(self.likes)
+		}
 	}
 	
 	func bindToEntity(entity: AnyObject) {
@@ -141,15 +155,27 @@ class MessageView: BaseView {
 			if message.patch != nil {
 				self.patchName.text = message.patch.name
 			}
-			/* Likes button */
-			self.likeButton.bindEntity(message)
 			
-			if message.countLikes != nil {
-				if message.countLikes?.integerValue != 0 {
-					let likesTitle = message.countLikes?.integerValue == 1
-						? "\(message.countLikes) like"
-						: "\(message.countLikes ?? 0) likes"
-					self.likes.text = likesTitle
+			if self.cellType == .Share {
+				self.recipients.text = ""
+				if message.recipients != nil {
+					for recipient in message.recipients as! Set<Shortcut> {
+						self.recipients.text!.appendContentsOf("\(recipient.name), ")
+					}
+					self.recipients.text = String(self.recipients.text!.characters.dropLast(2))
+				}
+			}
+			else {
+				/* Likes button */
+				self.likeButton.bindEntity(message)
+				
+				if message.countLikes != nil {
+					if message.countLikes?.integerValue != 0 {
+						let likesTitle = message.countLikes?.integerValue == 1
+							? "\(message.countLikes) like"
+							: "\(message.countLikes ?? 0) likes"
+						self.likes.text = likesTitle
+					}
 				}
 			}
 		}
@@ -200,6 +226,11 @@ class MessageView: BaseView {
 		/* Body */
 		
 		var bottomView: UIView? = self.photo
+		if self.cellType == .Share {
+			bottomView = self.description_
+			let descSize = self.description_?.sizeThatFits(CGSizeMake(columnWidth, CGFloat.max))
+			self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: CELL_VIEW_SPACING, height: (descSize?.height)!)
+		}
 		if self.cellType == .TextAndPhoto {
 			let descSize = self.description_?.sizeThatFits(CGSizeMake(columnWidth, CGFloat.max))
 			self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: CELL_VIEW_SPACING, height: (descSize?.height)!)
@@ -216,8 +247,15 @@ class MessageView: BaseView {
 		
 		/* Footer */
 		
-		self.likeButton.alignUnder(bottomView!, matchingLeftWithTopPadding: CELL_VIEW_SPACING, width: 24, height: CELL_FOOTER_HEIGHT)
-		self.likes.alignToTheRightOf(self.likeButton, matchingCenterAndFillingWidthWithLeftAndRightPadding: 12, height: CELL_FOOTER_HEIGHT)
+		if self.cellType == .Share {
+			let recipientsSize = self.recipients.sizeThatFits(CGSizeMake(columnWidth - 28, CGFloat.max))
+			self.recipientsLabel.alignUnder(bottomView!, matchingLeftWithTopPadding: CELL_VIEW_SPACING, width: 28, height: CELL_FOOTER_HEIGHT)
+			self.recipients.alignToTheRightOf(self.recipientsLabel, matchingTopWithLeftPadding: 0, width: columnWidth - 28, height: recipientsSize.height)
+		}
+		else {
+			self.likeButton.alignUnder(bottomView!, matchingLeftWithTopPadding: CELL_VIEW_SPACING, width: 24, height: CELL_FOOTER_HEIGHT)
+			self.likes.alignToTheRightOf(self.likeButton, matchingCenterAndFillingWidthWithLeftAndRightPadding: 12, height: CELL_FOOTER_HEIGHT)
+		}
 	}
 	
 	static func quickHeight(width: CGFloat, showPatchName: Bool, entity: Entity) -> CGFloat {

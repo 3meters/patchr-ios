@@ -56,6 +56,7 @@
     <entity name="Message" representedClassName="Message" parentEntity="Entity" syncable="YES">
         <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Shortcut" inverseName="messageFor" inverseEntity="Shortcut" syncable="YES"/>
         <relationship name="patch" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Shortcut" inverseName="patchFor" inverseEntity="Shortcut" syncable="YES"/>
+        <relationship name="recipients" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Shortcut" inverseName="recipientFor" inverseEntity="Shortcut" syncable="YES"/>
     </entity>
     <entity name="Notification" representedClassName="Notification" parentEntity="Entity" syncable="YES">
         <attribute name="event" optional="YES" attributeType="String" syncable="YES"/>
@@ -147,6 +148,7 @@
         <relationship name="ownerFor" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ServiceBase" inverseName="owner" inverseEntity="ServiceBase" syncable="YES"/>
         <relationship name="patchFor" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="patch" inverseEntity="Message" syncable="YES"/>
         <relationship name="placeFor" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Patch" inverseName="place" inverseEntity="Patch" syncable="YES"/>
+        <relationship name="recipientFor" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="recipients" inverseEntity="Message" syncable="YES"/>
     </entity>
     <entity name="User" representedClassName="User" parentEntity="Entity" syncable="YES">
         <attribute name="area" optional="YES" attributeType="String" syncable="YES"/>
@@ -161,7 +163,7 @@
         <element name="Entity" positionX="-99" positionY="-154" width="128" height="330"/>
         <element name="Link" positionX="-288" positionY="-243" width="128" height="180"/>
         <element name="Location" positionX="-495" positionY="-153" width="128" height="165"/>
-        <element name="Message" positionX="279" positionY="-36" width="128" height="75"/>
+        <element name="Message" positionX="279" positionY="-36" width="128" height="90"/>
         <element name="Notification" positionX="279" positionY="95" width="128" height="195"/>
         <element name="Patch" positionX="81" positionY="-243" width="128" height="90"/>
         <element name="Photo" positionX="-693" positionY="90" width="128" height="150"/>
@@ -170,7 +172,7 @@
         <element name="QueryItem" positionX="-495" positionY="-99" width="128" height="135"/>
         <element name="ServiceBase" positionX="-450" positionY="-243" width="128" height="315"/>
         <element name="ServiceObject" positionX="-695" positionY="-45" width="128" height="45"/>
-        <element name="Shortcut" positionX="-486" positionY="-90" width="128" height="150"/>
+        <element name="Shortcut" positionX="-486" positionY="-90" width="128" height="165"/>
         <element name="User" positionX="81" positionY="-108" width="128" height="150"/>
     </elements>
 </model>

@@ -74,7 +74,6 @@ PODS:
     - GoogleSymbolUtilities (~> 1.0.0)
   - Harpy (3.4.4)
   - Keys (1.0.0)
-  - libPhoneNumber-iOS (0.8.10)
   - Lockbox (2.1.0)
   - MBProgressHUD (0.9.1)
   - PBWebViewController (0.3)
@@ -105,7 +104,6 @@ DEPENDENCIES:
   - Google/Analytics (~> 1.2.0)
   - Harpy
   - Keys (from `Pods/CocoaPodsKeys`)
-  - libPhoneNumber-iOS (~> 0.7)
   - Lockbox
   - MBProgressHUD (~> 0.9.1)
   - PBWebViewController (~> 0.3)
@@ -153,7 +151,6 @@ SPEC CHECKSUMS:
   GoogleUtilities: 8ed9134debe11719097881711464752900668f10
   Harpy: 9f77227be545fec913c2fb12a73f0132f54c32ac
   Keys: 7d2ff6ff42f6903358267ce56e9392f83c31acfe
-  libPhoneNumber-iOS: 7bfd00f843fdcd82b5182b463e8eb3b27579f41d
   Lockbox: 16442da35d9d4286966936763be728a931d589c3
   MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
   PBWebViewController: 909b1505da6ba7c5c82519a6457246027926061e

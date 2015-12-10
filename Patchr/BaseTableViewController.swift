@@ -465,7 +465,10 @@ extension BaseTableViewController {
 		}
 		else if self.listType == .Messages {
 			let message = entity as! Message
-			if message.photo == nil {
+			if message.type != nil && message.type == "share" {
+				cellType = .Share
+			}
+			else if message.photo == nil {
 				cellType = .Text
 			}
 			else if message.description_ == nil {
