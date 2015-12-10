@@ -34,8 +34,9 @@ class ShareViewController: SLComposeServiceViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
+			let lockbox = Lockbox(keyPrefix: KEYCHAIN_GROUP)
             self.userId = groupDefaults.stringForKey(PatchrUserDefaultKey("userId"))
-            self.sessionKey = groupDefaults.stringForKey(PatchrUserDefaultKey("sessionKey"))
+			self.sessionKey = lockbox.stringForKey("sessionKey") as String?
         }
         /*
         * ISSUE: User info won't be there if the user uses is not currently signed into Patchr.

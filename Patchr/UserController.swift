@@ -32,8 +32,9 @@ class UserController: NSObject {
 		self.userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId"))
         self.jsonUser = userDefaults.stringForKey(PatchrUserDefaultKey("user"))
 		
-        self.jsonSession = Lockbox.stringForKey("session") as String?
-		self.sessionKey = Lockbox.stringForKey("sessionKey") as String?
+		let lockbox = Lockbox(keyPrefix: KEYCHAIN_GROUP)
+        self.jsonSession = lockbox.stringForKey("session") as String?
+		self.sessionKey = lockbox.stringForKey("sessionKey") as String?
 	}
 
 	var authenticated: Bool {
@@ -89,8 +90,9 @@ class UserController: NSObject {
         userDefaults.setObject(self.jsonUser, forKey: PatchrUserDefaultKey("user"))
         userDefaults.setObject(self.userId, forKey: PatchrUserDefaultKey("userId"))
 		
-		Lockbox.setString((self.sessionKey != nil ? self.sessionKey! : nil), forKey: "sessionKey")
-		Lockbox.setString((self.jsonSession != nil ? self.jsonSession! : nil), forKey: "session")
+		let lockbox = Lockbox(keyPrefix: KEYCHAIN_GROUP)
+		lockbox.setString((self.sessionKey != nil ? self.sessionKey! : nil), forKey: "sessionKey")
+		lockbox.setString((self.jsonSession != nil ? self.jsonSession! : nil), forKey: "session")
 		
         if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
             groupDefaults.setObject(self.jsonUser, forKey: PatchrUserDefaultKey("user"))

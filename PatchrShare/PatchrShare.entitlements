@@ -6,5 +6,9 @@
 	<array>
 		<string>group.com.3meters.patchr.ios</string>
 	</array>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)com.3meters.patchr.ios</string>
+	</array>
 </dict>
 </plist>

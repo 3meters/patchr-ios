@@ -46,11 +46,12 @@ public class Proxibase {
         
 		if cachedInstallationIdentifier == nil {
 			let installationIdentifierKey    = "installationIdentifier"
-			var storedInstallationIdentifier = Lockbox.stringForKey(installationIdentifierKey) as String?
+			let lockbox = Lockbox(keyPrefix: KEYCHAIN_GROUP)
+			var storedInstallationIdentifier = lockbox.stringForKey(installationIdentifierKey) as String?
 
 			if storedInstallationIdentifier == nil {
 				storedInstallationIdentifier = NSUUID().UUIDString
-				Lockbox.setString(storedInstallationIdentifier, forKey: installationIdentifierKey)
+				lockbox.setString(storedInstallationIdentifier, forKey: installationIdentifierKey)
 			}
 			cachedInstallationIdentifier = storedInstallationIdentifier
 		}

@@ -148,7 +148,7 @@ class PhotoView: UIView {
 	func editPhotoAction(sender: AnyObject){
 		if self.controller != nil {
 			NSNotificationCenter.defaultCenter().postNotificationName(Events.PhotoViewHasFocus, object: nil)
-			let controller = AdobeUXImageEditorViewController(image: self.imageButton.imageForState(.Normal))
+			let controller = AdobeUXImageEditorViewController(image: self.imageButton.imageForState(.Normal)!)
 			controller.delegate = self
 			self.controller!.presentViewController(controller, animated: true, completion: nil)
 		}
@@ -275,12 +275,12 @@ class PhotoView: UIView {
 
 extension PhotoView: AdobeUXImageEditorViewControllerDelegate {
 	
-	func photoEditor(editor: AdobeUXImageEditorViewController!, finishedWithImage image: UIImage!) {
+	func photoEditor(editor: AdobeUXImageEditorViewController, finishedWithImage image: UIImage?) {
 		self.photoChosen(image, imageResult: nil)
 		self.controller!.dismissViewControllerAnimated(true, completion: nil)
 	}
 	
-	func photoEditorCanceled(editor: AdobeUXImageEditorViewController!) {
+	func photoEditorCanceled(editor: AdobeUXImageEditorViewController) {
 		self.controller!.dismissViewControllerAnimated(true, completion: nil)
 	}
 }

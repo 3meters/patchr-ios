@@ -967,6 +967,7 @@
 				E238BADB1B51D3290094AF41 /* Frameworks */,
 				E238BADC1B51D3290094AF41 /* Resources */,
 				B1229D698E97BDA150490454 /* Embed Pods Frameworks */,
+				E24199031C18FDD200DDA549 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -998,6 +999,9 @@
 							com.apple.BackgroundModes = {
 								enabled = 1;
 							};
+							com.apple.Keychain = {
+								enabled = 1;
+							};
 						};
 					};
 					E238BADD1B51D3290094AF41 = {
@@ -1005,6 +1009,9 @@
 						DevelopmentTeam = 7542324V6B;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+							com.apple.Keychain = {
 								enabled = 1;
 							};
 						};
@@ -1169,6 +1176,19 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PatchrShare/Pods-PatchrShare-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		E24199031C18FDD200DDA549 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\"\nif [[ -d \"Frameworks\" ]]; then\nrm -fr Frameworks\nfi";
 		};
 		E24A87291B323DEA00E6F96B /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
