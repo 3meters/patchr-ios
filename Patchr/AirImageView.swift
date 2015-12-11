@@ -199,11 +199,15 @@ class AirImageView: UIImageView {
     func imageCompletion(image: UIImage?, error: NSError?, cacheType: SDImageCacheType?, url: NSURL?, animate: Bool = true) -> Void {
         
         stopActivity()
-        
+
+		
         if error != nil {
-            Log.w("Image fetch failed: " + error!.localizedDescription)
-            Log.w("Failed url: \(url?.absoluteString)")
-            return
+			Log.w("Image fetch failed: " + error!.localizedDescription)
+			Log.w("Failed url: \(url?.absoluteString)")
+			if error!.code == HTTPStatusCode.NotFound.rawValue {
+				Shared.Toast("Image not found")
+			}
+			return
         }
         else {
             self.contentMode = UIViewContentMode.ScaleAspectFill

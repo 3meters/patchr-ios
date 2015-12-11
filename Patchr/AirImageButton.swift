@@ -157,6 +157,9 @@ class AirImageButton: UIButton {
         if error != nil {
             Log.w("Image fetch failed: " + error!.localizedDescription)
             Log.w("Failed url: \(url?.absoluteString)")
+			if error!.code == HTTPStatusCode.NotFound.rawValue {
+				Shared.Toast("Image not found")
+			}
             return
         }
         else {

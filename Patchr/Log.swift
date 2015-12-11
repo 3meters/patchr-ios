@@ -11,26 +11,26 @@ import Foundation
 struct Log {
     static func v(message: AnyObject?) {
         #if DEBUG
-            if message != nil {
-				NSLog(message! as! String)
-            }
+			if let message = message as? String {
+				NSLog("%@", message)
+			}
         #endif
     }
     static func d(message: AnyObject?) {
         #if DEBUG
-            if message != nil {
-                NSLog(message! as! String)
-            }
+			if let message = message as? String {
+				NSLog("%@", message)
+			}
         #endif
     }
     static func i(message: AnyObject?) {
-        if message != nil {
-			NSLog(message! as! String)
-        }
+		if let message = message as? String {
+			NSLog("%@", message)
+		}
     }
     static func w(message: AnyObject?) {
-        if message != nil {
-			NSLog(message! as! String)
-        }
+		if let message = message as? String {
+			NSLog("%@", message)
+		}
     }
 }
