@@ -91,7 +91,7 @@ class BaseDetailViewController: BaseTableViewController {
 		return "query.\(self.queryName!.lowercaseString).\(self.entityId!)"
 	}
 	
-    internal func bind(force: Bool = false) {
+	internal func bind(force: Bool = false, reset: Bool = false) {
         
         /* Refreshes the top object but not the message list */
 		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
@@ -102,9 +102,8 @@ class BaseDetailViewController: BaseTableViewController {
 				if self != nil {
 					NSOperationQueue.mainQueue().addOperationWithBlock {
 						
-						Utils.delay(0.0) {
-							self?.refreshControl?.endRefreshing()
-							
+						self?.refreshControl?.endRefreshing()
+						Utils.delay(0.5) {
 							if error == nil {
 								if objectId != nil {
 									let entity = DataController.instance.mainContext.objectWithID(objectId!) as! Entity
@@ -112,7 +111,7 @@ class BaseDetailViewController: BaseTableViewController {
 									/* Refresh list too if context entity was updated */
 									if entity.refreshedValue {
 										entity.refreshedValue = false
-										self?.bindQueryItems(true)	// Only place we cascade the refresh to the list otherwise a pullToRefresh is required
+										self?.bindQueryItems(true, paging: !reset)	// Only place we cascade the refresh to the list otherwise a pullToRefresh is required
 										DataController.instance.saveContext(false)
 									}
 									
@@ -154,8 +153,7 @@ class BaseDetailViewController: BaseTableViewController {
     internal func drawButtons() { /* Optional */ }
     
     override func pullToRefreshAction(sender: AnyObject?) -> Void {
-        self.bind(true)
-        self.bindQueryItems(true, paging: false)
+		self.bind(true, reset: true)
     }
 }
 

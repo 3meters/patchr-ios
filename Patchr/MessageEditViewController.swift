@@ -663,7 +663,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 			}
 		}
 		else if self.inputState == .Editing {
-			if self.descriptionField.text != self.inputEntity?.description_  {
+			if !stringsAreEqual(self.descriptionField.text, string2: self.inputEntity?.description_) {
 				return true
 			}
 			if self.photoView.photoDirty {

@@ -79,6 +79,22 @@ class BaseViewController: UIViewController {
 		}
 	}
 	
+	func stringsAreEqual(string1: String?, string2: String?) -> Bool {
+		if isEmptyString(string1) != isEmptyString(string2) {
+			/* We know one is empty and one is not */
+			return false
+		}
+		else if !isEmptyString(string1) {
+			/* Both have a value */
+			return string1 == string2
+		}
+		return true // Both are empty
+	}
+	
+	func isEmptyString(value : String?) -> Bool {
+		return (value == nil || value!.isEmpty)
+	}
+	
 	func rectVisible(rect: CGRect) -> Bool {
 		var visibleRect: CGRect = CGRect()
 		if let scrollView = self.view as? UIScrollView {

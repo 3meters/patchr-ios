@@ -586,10 +586,10 @@ class PatchEditViewController: BaseViewController {
 			}
 		}
 		else {
-			if self.nameField.text != self.inputPatch?.name  {
+			if !stringsAreEqual(self.nameField.text, string2: self.inputPatch?.name) {
 				return true
 			}
-			if self.descriptionField.text != self.inputPatch?.description_  {
+			if !stringsAreEqual(self.descriptionField.text, string2: self.inputPatch?.description_) {
 				return true
 			}
 			if self.photoView.photoDirty {
