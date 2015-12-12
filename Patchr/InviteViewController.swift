@@ -14,7 +14,7 @@ class InviteViewController: BaseViewController {
 	var invitePatchrButton   	= AirButton()
 	var inviteFacebookButton	= AirButton()
 	var inviteViaButton			= AirButton()
-	var cancelButton			= AirButtonFeatured()
+	var doneButton				= AirButtonFeatured()
 	var scrollView				= AirScrollView()
 	var contentHolder			= UIView()
 	
@@ -42,7 +42,7 @@ class InviteViewController: BaseViewController {
 		self.invitePatchrButton.alignUnder(self.message, matchingCenterWithTopPadding: 24, width: 228, height: 44)
 		self.inviteFacebookButton.alignUnder(self.invitePatchrButton, matchingCenterWithTopPadding: 8, width: 228, height: 44)
 		self.inviteViaButton.alignUnder(self.inviteFacebookButton, matchingCenterWithTopPadding: 8, width: 228, height: 44)
-		self.cancelButton.alignUnder(self.inviteViaButton, matchingCenterWithTopPadding: 8, width: 228, height: 44)
+		self.doneButton.alignUnder(self.inviteViaButton, matchingCenterWithTopPadding: 8, width: 228, height: 44)
 		
 		self.contentHolder.resizeToFitSubviews()
 		self.scrollView.contentSize = CGSizeMake(self.contentHolder.frame.size.width, self.contentHolder.frame.size.height + CGFloat(32))
@@ -61,7 +61,7 @@ class InviteViewController: BaseViewController {
 		shareUsing(.Actions)
 	}
 	
-	func cancelAction(sender: AnyObject?) {
+	func doneAction(sender: AnyObject?) {
 		self.dismissViewControllerAnimated(true, completion: nil)
 	}
 	
@@ -89,18 +89,18 @@ class InviteViewController: BaseViewController {
 		self.invitePatchrButton.setTitle("PATCHR FRIENDS", forState: .Normal)
 		self.inviteFacebookButton.setTitle("FACEBOOK FRIENDS", forState: .Normal)
 		self.inviteViaButton.setTitle("MORE", forState: .Normal)
-		self.cancelButton.setTitle("FINISHED", forState: .Normal)
+		self.doneButton.setTitle("FINISHED", forState: .Normal)
 		
 		self.invitePatchrButton.addTarget(self, action: Selector("invitePatchrAction:"), forControlEvents: .TouchUpInside)
 		self.inviteFacebookButton.addTarget(self, action: Selector("inviteFacebookAction:"), forControlEvents: .TouchUpInside)
 		self.inviteViaButton.addTarget(self, action: Selector("inviteViaAction:"), forControlEvents: .TouchUpInside)
-		self.cancelButton.addTarget(self, action: Selector("cancelAction:"), forControlEvents: .TouchUpInside)
+		self.doneButton.addTarget(self, action: Selector("doneAction:"), forControlEvents: .TouchUpInside)
 		
 		self.contentHolder.addSubview(self.message)
 		self.contentHolder.addSubview(self.invitePatchrButton)
 		self.contentHolder.addSubview(self.inviteFacebookButton)
 		self.contentHolder.addSubview(self.inviteViaButton)
-		self.contentHolder.addSubview(self.cancelButton)
+		self.contentHolder.addSubview(self.doneButton)
 		
 		/* Navigation bar buttons */
 		let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: "doneAction:")
