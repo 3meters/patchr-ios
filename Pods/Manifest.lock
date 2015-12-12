@@ -77,13 +77,10 @@ PODS:
   - Lockbox (2.1.0)
   - MBProgressHUD (0.9.1)
   - PBWebViewController (0.3)
-  - PonyDebugger (0.4.5):
-    - SocketRocket
   - pop (1.0.8)
   - SDWebImage (3.7.3):
     - SDWebImage/Core (= 3.7.3)
   - SDWebImage/Core (3.7.3)
-  - SocketRocket (0.4.2)
   - THContactPicker (1.2)
   - TWMessageBarManager (1.7.2)
   - UIDevice-Hardware (0.1.7)
@@ -107,7 +104,6 @@ DEPENDENCIES:
   - Lockbox
   - MBProgressHUD (~> 0.9.1)
   - PBWebViewController (~> 0.3)
-  - PonyDebugger (from `https://github.com/square/PonyDebugger.git`)
   - pop (~> 1.0)
   - SDWebImage (~> 3.7.2)
   - THContactPicker (~> 1.2)
@@ -119,13 +115,6 @@ EXTERNAL SOURCES:
     :path: ~/code/AirPhotoBrowser
   Keys:
     :path: Pods/CocoaPodsKeys
-  PonyDebugger:
-    :git: https://github.com/square/PonyDebugger.git
-
-CHECKOUT OPTIONS:
-  PonyDebugger:
-    :commit: 8a9149857af4bb40237ae5c589c1001de69d02f4
-    :git: https://github.com/square/PonyDebugger.git
 
 SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
@@ -154,10 +143,8 @@ SPEC CHECKSUMS:
   Lockbox: 16442da35d9d4286966936763be728a931d589c3
   MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
   PBWebViewController: 909b1505da6ba7c5c82519a6457246027926061e
-  PonyDebugger: 1c60f7c876bdb6a8b6bf0f0269087f8a234fafa7
   pop: bb773ae2c791ca2629de13b347e7a8b450fa6a57
   SDWebImage: 1d2b1a1efda1ade1b00b6f8498865f8ddedc8a84
-  SocketRocket: ffe08119b00ef982f6c37052a4705a057c8494ad
   THContactPicker: e723f7c6ab6e1d6d10d59d618322ab8bfcb00365
   TWMessageBarManager: e7adc066ee425174f5dee79473fce913b1cd1662
   UIDevice-Hardware: de848ac4b53de555f70ff1a32877454d221c71d1

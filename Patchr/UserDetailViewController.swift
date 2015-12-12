@@ -173,6 +173,7 @@ class UserDetailViewController: BaseDetailViewController {
 			self.header.bindToEntity(entity, isGuest: self.isGuest)
 			self.header.watchingInfo.addTarget(self, action: Selector("actionBrowseWatching:"), forControlEvents: UIControlEvents.TouchUpInside)
 			self.header.ownsInfo.addTarget(self, action: Selector("actionBrowseOwned:"), forControlEvents: UIControlEvents.TouchUpInside)
+			self.tableView.reloadData()
 			return
 		}
 		self.header.bindToEntity(nil, isGuest: self.isGuest)

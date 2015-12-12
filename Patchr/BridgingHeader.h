@@ -33,8 +33,6 @@
 #import <Lockbox.h>
 #import <IDMPhoto.h>
 #import <IDMPhotoBrowser.h>
-#import <AdobeCreativeSDKCore/AdobeCreativeSDKCore.h>
-#import <AdobeCreativeSDKImage/AdobeCreativeSDKImage.h>
 #import <UIView+Facade.h>
 #import <Branch.h>
 #import <TWMessageBarManager.h>
@@ -43,9 +41,11 @@
 #import <Google/Analytics.h>
 #import <CommonCrypto/CommonCrypto.h>
 #import <pop/POP.h>
-#import <PDDebugger.h>
 #import <DLRadioButton.h>
 #import <THContactPicker/THContactPickerView.h>
+
+#import <AdobeCreativeSDKCore/AdobeUXAuthManager.h>
+#import <AdobeCreativeSDKImage/AdobeUXImageEditorViewController.h>
 
 #import "BFURL.h"
 #import "Patch.h"

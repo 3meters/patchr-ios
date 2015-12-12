@@ -84,11 +84,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
         /* Setup parse for push notifications */
         Parse.setApplicationId(keys.parseApplicationId(), clientKey: keys.parseApplicationKey())
 		
-//		#if DEBUG && (arch(i386) || arch(x86_64)) && os(iOS)
-//			PDDebugger.defaultInstance().enableNetworkTrafficDebugging()
-//			PDDebugger.defaultInstance().forwardAllNetworkTraffic()
-//			PDDebugger.defaultInstance().connectToURL(NSURL(string: "ws://127.0.0.1:9000/device"))
-//		#endif
+		//		#if DEBUG && (arch(i386) || arch(x86_64)) && os(iOS)
+		//		PDDebugger.defaultInstance().connectToURL(NSURL(string: "ws://192.168.0.182:9000/device"))
+		//		PDDebugger.defaultInstance().enableNetworkTrafficDebugging()
+		//		PDDebugger.defaultInstance().forwardNetworkTrafficFromDelegateClass(AFHTTPRequestOperation.self)
+		//		PDDebugger.defaultInstance().enableViewHierarchyDebugging()
+		//		PDDebugger.defaultInstance().enableCoreDataDebugging()
+		//		PDDebugger.defaultInstance().addManagedObjectContext(DataController.instance.mainContext, withName: "Main Patchr")
+		//		#endif
 		
         /* Get the latest on the authenticated user if we have one */
 		if UserController.instance.authenticated {	// Checks for current userId and sessionKey
@@ -147,11 +150,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
 		* That means it should be a good place to handle all initial routing.
 		*/
 		Branch.getInstance().initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
-			if let clickedBranchLink = params["+clicked_branch_link"] as? Bool where clickedBranchLink {
-				/*
-				 * Presents modally on top of main tab controller.
-				 */
-				self.routeDeepLink(params, error: error)
+			if error == nil {
+				if let clickedBranchLink = params["+clicked_branch_link"] as? Bool where clickedBranchLink {
+					/* Presents modally on top of main tab controller. */
+					self.routeDeepLink(params, error: error)
+				}
 			}
 		})
 		

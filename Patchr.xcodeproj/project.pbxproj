@@ -79,9 +79,7 @@
 		E224C3551B6EDBBE00879775 /* PatchTargetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */; };
 		E229CD121C1337A700F5BDAC /* AirLabelBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229CD111C1337A700F5BDAC /* AirLabelBase.swift */; };
 		E238BACC1B50888C0094AF41 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BACB1B50888C0094AF41 /* SystemConfiguration.framework */; };
-		E238BACE1B50889A0094AF41 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BACD1B50889A0094AF41 /* libc++.dylib */; };
 		E238BAD01B5088A40094AF41 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BACF1B5088A40094AF41 /* MobileCoreServices.framework */; };
-		E238BAD41B508FE90094AF41 /* AdobeCreativeSDKImageResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E238BAD31B508FE90094AF41 /* AdobeCreativeSDKImageResources.bundle */; };
 		E238BAD61B50907F0094AF41 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BAD51B50907F0094AF41 /* Accounts.framework */; };
 		E238BAD81B5090870094AF41 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BAD71B5090870094AF41 /* Social.framework */; };
 		E238BAE81B51D3290094AF41 /* PatchrShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = E238BADE1B51D3290094AF41 /* PatchrShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -112,6 +110,10 @@
 		E256B4261BD2C9E200EBF894 /* PatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E256B4251BD2C9E200EBF894 /* PatchView.swift */; };
 		E256B4281BD3DDC900EBF894 /* AirTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E256B4271BD3DDC900EBF894 /* AirTableViewCell.swift */; };
 		E256B42A1BD3F32A00EBF894 /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E256B4291BD3F32A00EBF894 /* UserView.swift */; };
+		E25A736F1C1C81A300688EDC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E25A736D1C1C813900688EDC /* libz.tbd */; };
+		E25A73711C1C81D000688EDC /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E25A73701C1C81D000688EDC /* libc++.tbd */; };
+		E25A73761C1C87E200688EDC /* AdobeCreativeSDKCoreResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E25A73751C1C87E200688EDC /* AdobeCreativeSDKCoreResources.bundle */; };
+		E25A73781C1C87F500688EDC /* AdobeCreativeSDKImageResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E25A73771C1C87F500688EDC /* AdobeCreativeSDKImageResources.bundle */; };
 		E269AED81C10AB9A004A1D88 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E269AED71C10AB9A004A1D88 /* WelcomeViewController.swift */; };
 		E26B0C891B456F8A00706F4A /* ExtensionsUi.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26B0C881B456F8A00706F4A /* ExtensionsUi.swift */; };
 		E26B0C8C1B4577D000706F4A /* TextViewChangeObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26B0C8B1B4577D000706F4A /* TextViewChangeObserver.swift */; };
@@ -188,7 +190,6 @@
 		E2F6C9291B1DF5500067D959 /* Notes.md in Resources */ = {isa = PBXBuildFile; fileRef = E2F6C9281B1DF5500067D959 /* Notes.md */; };
 		E2F6C9341B1E546F0067D959 /* _Link.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F6C92F1B1E546F0067D959 /* _Link.m */; };
 		E2FB81431B864111006B6690 /* AdobeCreativeSDKCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */; };
-		E2FB814A1B8647B2006B6690 /* AdobeCreativeSDKCoreResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E2FB81491B8647B2006B6690 /* AdobeCreativeSDKCoreResources.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -325,9 +326,7 @@
 		E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTargetViewController.swift; sourceTree = "<group>"; };
 		E229CD111C1337A700F5BDAC /* AirLabelBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirLabelBase.swift; sourceTree = "<group>"; };
 		E238BACB1B50888C0094AF41 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		E238BACD1B50889A0094AF41 /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
 		E238BACF1B5088A40094AF41 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
-		E238BAD31B508FE90094AF41 /* AdobeCreativeSDKImageResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKImageResources.bundle; path = ../Frameworks/AdobeCreativeSDKImage.framework/Versions/A/Resources/AdobeCreativeSDKImageResources.bundle; sourceTree = "<group>"; };
 		E238BAD51B50907F0094AF41 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		E238BAD71B5090870094AF41 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		E238BADE1B51D3290094AF41 /* PatchrShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PatchrShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -363,6 +362,10 @@
 		E256B4251BD2C9E200EBF894 /* PatchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchView.swift; sourceTree = "<group>"; };
 		E256B4271BD3DDC900EBF894 /* AirTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirTableViewCell.swift; sourceTree = "<group>"; };
 		E256B4291BD3F32A00EBF894 /* UserView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
+		E25A736D1C1C813900688EDC /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		E25A73701C1C81D000688EDC /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		E25A73751C1C87E200688EDC /* AdobeCreativeSDKCoreResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKCoreResources.bundle; path = ../Frameworks/AdobeCreativeSDKCore.framework/Versions/A/Resources/AdobeCreativeSDKCoreResources.bundle; sourceTree = "<group>"; };
+		E25A73771C1C87F500688EDC /* AdobeCreativeSDKImageResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKImageResources.bundle; path = ../Frameworks/AdobeCreativeSDKImage.framework/Versions/A/Resources/AdobeCreativeSDKImageResources.bundle; sourceTree = "<group>"; };
 		E269AED71C10AB9A004A1D88 /* WelcomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		E26B0C881B456F8A00706F4A /* ExtensionsUi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionsUi.swift; sourceTree = "<group>"; };
 		E26B0C8B1B4577D000706F4A /* TextViewChangeObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextViewChangeObserver.swift; sourceTree = "<group>"; };
@@ -445,7 +448,6 @@
 		E2F6C92F1B1E546F0067D959 /* _Link.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _Link.m; path = Model/_Link.m; sourceTree = "<group>"; };
 		E2F6C9381B1E924B0067D959 /* PAEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PAEnums.h; path = Model/PAEnums.h; sourceTree = "<group>"; };
 		E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKCore.framework; path = Frameworks/AdobeCreativeSDKCore.framework; sourceTree = "<group>"; };
-		E2FB81491B8647B2006B6690 /* AdobeCreativeSDKCoreResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKCoreResources.bundle; path = ../Frameworks/AdobeCreativeSDKCore.framework/Versions/A/Resources/AdobeCreativeSDKCoreResources.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -453,6 +455,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E25A73711C1C81D000688EDC /* libc++.tbd in Frameworks */,
+				E25A736F1C1C81A300688EDC /* libz.tbd in Frameworks */,
 				E2FB81431B864111006B6690 /* AdobeCreativeSDKCore.framework in Frameworks */,
 				E2F182D01B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework in Frameworks */,
 				E238BAD81B5090870094AF41 /* Social.framework in Frameworks */,
@@ -460,7 +464,6 @@
 				E238BAD01B5088A40094AF41 /* MobileCoreServices.framework in Frameworks */,
 				E238BACC1B50888C0094AF41 /* SystemConfiguration.framework in Frameworks */,
 				E2F182E31B4B4AFD0020F6BB /* Parse.framework in Frameworks */,
-				E238BACE1B50889A0094AF41 /* libc++.dylib in Frameworks */,
 				1AB4C23C766AEEECAE42F579 /* libPods-Patchr.a in Frameworks */,
 				C1112B52B84F042CB51F7E65 /* libPods.a in Frameworks */,
 			);
@@ -602,6 +605,8 @@
 		A0DA2C2AA90D81631E6BF68D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E25A73701C1C81D000688EDC /* libc++.tbd */,
+				E25A736D1C1C813900688EDC /* libz.tbd */,
 				E238BAD71B5090870094AF41 /* Social.framework */,
 				E238BAD51B50907F0094AF41 /* Accounts.framework */,
 				E238BACF1B5088A40094AF41 /* MobileCoreServices.framework */,
@@ -610,7 +615,6 @@
 				E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */,
 				E273B5181B48349900888E73 /* Bolts.framework */,
 				E273B5191B48349900888E73 /* Parse.framework */,
-				E238BACD1B50889A0094AF41 /* libc++.dylib */,
 				6BA6097617A5336D7C15520A /* libPods-PatchrShare.a */,
 				B3CABF391F6D74EFAA64D37F /* libPods-Patchr.a */,
 				3F90A7A6DF253248AE7C300A /* libPods.a */,
@@ -621,9 +625,9 @@
 		E215995A1AEFC193002C936F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E25A73771C1C87F500688EDC /* AdobeCreativeSDKImageResources.bundle */,
+				E25A73751C1C87E200688EDC /* AdobeCreativeSDKCoreResources.bundle */,
 				E25327CA1B13D34B00990A81 /* Sounds */,
-				E2FB81491B8647B2006B6690 /* AdobeCreativeSDKCoreResources.bundle */,
-				E238BAD31B508FE90094AF41 /* AdobeCreativeSDKImageResources.bundle */,
 				8468F8211A9D09D1007D6EE6 /* Localizable.strings */,
 				7D3D39D51A6F086F00A44CB2 /* Images.xcassets */,
 				E2C7C5C31B2A19720045038A /* DefaultSettings.plist */,
@@ -1037,8 +1041,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E2FB814A1B8647B2006B6690 /* AdobeCreativeSDKCoreResources.bundle in Resources */,
-				E238BAD41B508FE90094AF41 /* AdobeCreativeSDKImageResources.bundle in Resources */,
+				E25A73781C1C87F500688EDC /* AdobeCreativeSDKImageResources.bundle in Resources */,
+				E25A73761C1C87E200688EDC /* AdobeCreativeSDKCoreResources.bundle in Resources */,
 				7D3D39D61A6F086F00A44CB2 /* Images.xcassets in Resources */,
 				E26B0C921B46D01E00706F4A /* ThumbnailCollectionViewCell.xib in Resources */,
 				E29F65511B61A9280000BEF4 /* PatchSearchCell.xib in Resources */,

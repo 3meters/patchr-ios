@@ -310,6 +310,7 @@ class PatchTableViewController: BaseTableViewController {
 						
 						self?.query.executedValue = true
 						DataController.instance.saveContext(false)
+						self?.tableView.reloadData()
 						
 						return
 					}

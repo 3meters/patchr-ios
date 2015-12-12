@@ -312,6 +312,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 							}
 							query.offsetDate = oldestDate
 							DataController.instance.saveContext(false)
+							self?.tableView.reloadData()							
 						}
 						return
 					}

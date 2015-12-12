@@ -38,7 +38,6 @@ pod 'Facade'							# Convenience methods for frame based layout
 pod 'Google/Analytics', '~> 1.2.0'
 pod 'Fabric'
 pod 'Crashlytics'
-pod 'PonyDebugger', :git => 'https://github.com/square/PonyDebugger.git'
 pod 'THContactPicker', '~> 1.2'
 pod 'FBSDKCoreKit', '~> 4.2.0'
 pod 'FBSDKLoginKit', '~> 4.1.0'

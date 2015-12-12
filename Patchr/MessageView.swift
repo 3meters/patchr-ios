@@ -169,6 +169,7 @@ class MessageView: BaseView {
 				/* Likes button */
 				self.likeButton.bindEntity(message)
 				
+				self.likes.text = nil
 				if message.countLikes != nil {
 					if message.countLikes?.integerValue != 0 {
 						let likesTitle = message.countLikes?.integerValue == 1
