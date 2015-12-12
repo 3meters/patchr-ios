@@ -99,16 +99,16 @@ class LobbyViewController: BaseViewController {
 		self.view.addSubview(self.appName)
 		
 		self.buttonLogin.setTitle("LOG IN", forState: .Normal)
-		self.buttonLogin.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+		self.buttonLogin.setTitleColor(Colors.white, forState: .Normal)
 		self.buttonLogin.setTitleColor(Colors.brandColor, forState: .Highlighted)
-		self.buttonLogin.borderColor = UIColor.whiteColor()
+		self.buttonLogin.borderColor = Colors.white
 		self.buttonLogin.borderWidth = Theme.dimenButtonBorderWidth
 		self.buttonLogin.cornerRadius = Theme.dimenButtonCornerRadius
 		
 		self.buttonSignup.setTitle("SIGN UP", forState: .Normal)
-		self.buttonSignup.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+		self.buttonSignup.setTitleColor(Colors.white, forState: .Normal)
 		self.buttonSignup.setTitleColor(Colors.brandColor, forState: .Highlighted)
-		self.buttonSignup.borderColor = UIColor.whiteColor()
+		self.buttonSignup.borderColor = Colors.white
 		self.buttonSignup.borderWidth = Theme.dimenButtonBorderWidth
 		self.buttonSignup.cornerRadius = Theme.dimenButtonCornerRadius
 		
@@ -117,7 +117,7 @@ class LobbyViewController: BaseViewController {
 		self.view.addSubview(self.buttonGroup)
 		
 		self.buttonGuest.setTitle("skip", forState: .Normal)
-		self.buttonGuest.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+		self.buttonGuest.setTitleColor(Colors.white, forState: .Normal)
 		self.buttonGuest.setTitleColor(Colors.brandColor, forState: .Highlighted)
 		self.buttonGuest.titleLabel?.font = UIFont(name: "HelveticaNeue-Light", size: 18)!
 		self.view.addSubview(self.buttonGuest)

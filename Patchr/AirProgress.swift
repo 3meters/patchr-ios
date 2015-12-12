@@ -32,17 +32,17 @@ class AirProgress: MBProgressHUD {
     
     func styleAs(progressStyle: ProgressStyle) {
         
-        self.labelFont = UIFont(name:"HelveticaNeue-Light", size: 16)
-        self.detailsLabelFont = UIFont(name:"HelveticaNeue-Light", size: 14)
+        self.labelFont = Theme.fontComment
+        self.detailsLabelFont = Theme.fontCommentSmall
         
-        if progressStyle == .ActivityLight {
+        if progressStyle == .ActivityWithText {
             self.animationType = MBProgressHUDAnimation.Zoom
             self.margin = 16
             self.cornerRadius = 8
-            self.color = UIColor.whiteColor()
-            self.labelColor = UIColor.blackColor()
-            self.detailsLabelColor = UIColor.blackColor()
-            self.activityIndicatorColor = Theme.colorActivity
+            self.color = Theme.colorBackgroundActivity
+            self.labelColor = Theme.colorTextActivity
+            self.detailsLabelColor = Theme.colorTextActivity
+            self.activityIndicatorColor = Theme.colorActivityIndicator
             self.shadow = true
             self.square = true
         }
@@ -51,19 +51,17 @@ class AirProgress: MBProgressHUD {
             self.margin = 16.0
             self.cornerRadius = 24.0
             self.opacity = 0.7
-            self.color = Colors.brandColorLight
-            self.labelColor = UIColor.blackColor()
-            self.detailsLabelColor = Colors.gray95pcntColor
-            self.activityIndicatorColor = Theme.colorActivity
+            self.color = Theme.colorBackgroundToast
+            self.labelColor = Theme.colorTextToast
+            self.detailsLabelColor = Theme.colorTextToast
+            self.activityIndicatorColor = Theme.colorActivityIndicator
             self.shadow = true
         }
         else if progressStyle == .ActivityOnly {
             self.animationType = MBProgressHUDAnimation.Fade
             self.opacity = 0.0
-            self.color = UIColor.clearColor()
-            self.labelColor = UIColor.blackColor()
-            self.detailsLabelColor = Colors.gray95pcntColor
-            self.activityIndicatorColor = Theme.colorActivity
+            self.color = Theme.colorBackgroundActivityOnly
+            self.activityIndicatorColor = Theme.colorActivityIndicator
             self.shadow = false
             self.square = true
         }
@@ -72,7 +70,7 @@ class AirProgress: MBProgressHUD {
 
 enum ProgressStyle: Int {
     case ActivityOnly
-    case ActivityLight
+    case ActivityWithText
     case ActivityDark
     case ToastLight
     case ToastDark

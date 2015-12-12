@@ -99,7 +99,7 @@ class PasswordResetViewController: BaseViewController, UITextFieldDelegate {
         
         let progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
         progress.mode = MBProgressHUDMode.Indeterminate
-        progress.styleAs(.ActivityLight)
+        progress.styleAs(.ActivityWithText)
 		progress.removeFromSuperViewOnHide = true
         progress.labelText = "Verifying..."
         progress.show(true)
@@ -150,7 +150,7 @@ class PasswordResetViewController: BaseViewController, UITextFieldDelegate {
         
         let progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
         progress.mode = MBProgressHUDMode.Indeterminate
-        progress.styleAs(.ActivityLight)
+        progress.styleAs(.ActivityWithText)
         progress.labelText = "Resetting password for: \(self.emailField.text)"
 		progress.removeFromSuperViewOnHide = true
         progress.show(true)

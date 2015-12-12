@@ -381,7 +381,7 @@ class MessageDetailViewController: UITableViewController {
 					shareView.borderColor = Colors.gray80pcntColor
 					shareView.borderWidth = 1
 					shareView.cornerRadius = 6
-					shareView.shadow.backgroundColor = UIColor.clearColor()
+					shareView.shadow.backgroundColor = Colors.white
 					
 					shareView.bindToEntity(self.message!.patch!, location: nil)
 					

@@ -63,7 +63,7 @@ class PhotoView: UIView {
 	
     func initialize() {
 		
-		self.backgroundColor = UIColor.clearColor()
+		self.backgroundColor = Colors.clear
 		
 		self.photoGroup.alpha = 0
 		self.photoGroup.backgroundColor = Theme.colorBackgroundImage
@@ -95,7 +95,7 @@ class PhotoView: UIView {
 		
 		if photoMode == .Placeholder {
 			self.setPhotoButton.backgroundColor = Theme.colorScrimLighten
-			self.setPhotoButton.borderColor = UIColor.clearColor()
+			self.setPhotoButton.borderColor = Colors.clear
 			self.setPhotoButton.cornerRadius = 24
 		}
 		else {
@@ -246,7 +246,7 @@ class PhotoView: UIView {
             }
         }
         else if photoMode == .Placeholder {
-			self.setPhotoButton.borderColor = UIColor.clearColor()
+			self.setPhotoButton.borderColor = Colors.clear
 			self.setPhotoButton.backgroundColor = Theme.colorScrimLighten
 			self.setPhotoButton.cornerRadius = 24
 			

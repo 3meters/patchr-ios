@@ -128,7 +128,7 @@ class UserDetailViewController: BaseDetailViewController {
 		
 		self.progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
 		self.progress!.mode = MBProgressHUDMode.Indeterminate
-		self.progress!.styleAs(.ActivityLight)
+		self.progress!.styleAs(.ActivityWithText)
 		self.progress!.minShowTime = 0.5
 		self.progress!.labelText = "Signing out..."
 		self.progress!.removeFromSuperViewOnHide = true

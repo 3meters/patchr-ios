@@ -45,20 +45,20 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.refreshControl = refreshControl
 		
 		/* Simple activity indicator (frame sizing) */
-		self.activity.color = Colors.brandColorDark
+		self.activity.color = Theme.colorActivityIndicator
 		self.activity.hidesWhenStopped = true
 		self.view.addSubview(activity)
 		
 		/* Footer */
 		self.loadMoreButton.tag = 1
-		self.loadMoreButton.backgroundColor = UIColor.whiteColor()
+		self.loadMoreButton.backgroundColor = Theme.colorBackgroundTile
 		self.loadMoreButton.layer.cornerRadius = 8
 		self.loadMoreButton.addTarget(self, action: Selector("loadMore:"), forControlEvents: UIControlEvents.TouchUpInside)
 		self.loadMoreButton.setTitle(self.loadMoreMessage, forState: .Normal)
 		self.footerView.addSubview(self.loadMoreButton)
 		
 		self.loadMoreActivity.tag = 2
-		self.loadMoreActivity.color = Colors.brandColorDark
+		self.loadMoreActivity.color = Theme.colorActivityIndicator
 		self.loadMoreActivity.hidden = true
 		
 		self.footerView.frame.size.height = CGFloat(48 + 16)
@@ -69,14 +69,14 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         if self.showEmptyLabel {
             self.emptyLabel.alpha = 0
             self.emptyLabel.layer.borderWidth = 1
-            self.emptyLabel.layer.borderColor = Colors.hintColor.CGColor
-			self.emptyLabel.layer.backgroundColor = UIColor.whiteColor().CGColor
+            self.emptyLabel.layer.borderColor = Theme.colorRule.CGColor
+			self.emptyLabel.layer.backgroundColor = Theme.colorBackgroundEmptyBubble.CGColor
 			self.emptyLabel.layer.cornerRadius = 80
-            self.emptyLabel.font = UIFont(name: "HelveticaNeue-Light", size: 19)
+            self.emptyLabel.font = Theme.fontTextDisplay
             self.emptyLabel.text = self.emptyMessage
             self.emptyLabel.numberOfLines = 0
 			self.emptyLabel.textAlignment = NSTextAlignment.Center
-			self.emptyLabel.textColor = UIColor(red: CGFloat(0.6), green: CGFloat(0.6), blue: CGFloat(0.6), alpha: CGFloat(1))
+			self.emptyLabel.textColor = Theme.colorTextPlaceholder
 			
             self.view.addSubview(self.emptyLabel)
         }
@@ -391,7 +391,7 @@ extension BaseTableViewController {
 			let view = PatchView()
 			view.cornerRadius = 6
 			let cell = AirTableViewCell(view: view, padding: UIEdgeInsetsMake(8, 8, 0, 8), reuseIdentifier: cellType.rawValue)
-			cell.separator.backgroundColor = UIColor.clearColor()
+			cell.separator.backgroundColor = Colors.clear
 			cell.backgroundColor = Theme.colorBackgroundTileList
 			return cell
 		}

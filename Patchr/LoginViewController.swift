@@ -262,7 +262,7 @@ class LoginViewController: BaseViewController {
 		
 		let progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
 		progress.mode = MBProgressHUDMode.Indeterminate
-		progress.styleAs(.ActivityLight)
+		progress.styleAs(.ActivityWithText)
 		progress.minShowTime = 0.5
 		progress.labelText = "Logging in..."
 		progress.removeFromSuperViewOnHide = true

@@ -32,7 +32,8 @@ protocol Theming {
 	var colorTextPlaceholder:	UIColor { get }
 	var colorTextNotification:	UIColor { get }
 	var colorTextToast:			UIColor { get }
-	
+	var colorTextActivity:		UIColor { get }
+
 	var colorBackgroundWindow:			UIColor { get }
 	var colorBackgroundScreen:			UIColor { get }
 	var colorBackgroundImage:			UIColor { get }
@@ -42,16 +43,19 @@ protocol Theming {
 	var colorBackgroundToast:			UIColor { get }
 	var colorBackgroundNotification:	UIColor { get }
 	var colorBackgroundOverlay:			UIColor { get }
-	
-	var colorRule:				UIColor { get }
-	var colorRuleActive:		UIColor { get }
-	var colorTint:				UIColor { get }
-	var colorScrimDarken:		UIColor { get }
-	var colorScrimLighten:		UIColor { get }
-	var colorActionOn:			UIColor { get }
-	var colorActionOff:			UIColor { get }
-	var colorActivity:			UIColor { get }
-	var colorActivityImage:		UIColor { get }
+	var colorBackgroundActivity:		UIColor { get }
+	var colorBackgroundActivityOnly:	UIColor { get }
+	var colorBackgroundEmptyBubble:		UIColor { get }
+
+	var colorRule:                   UIColor { get }
+	var colorRuleActive:             UIColor { get }
+	var colorTint:                   UIColor { get }
+	var colorScrimDarken:            UIColor { get }
+	var colorScrimLighten:           UIColor { get }
+	var colorActionOn:               UIColor { get }
+	var colorActionOff:              UIColor { get }
+	var colorActivityIndicator:      UIColor { get }
+	var colorActivityIndicatorImage: UIColor { get }
 	
 	var colorButtonRadioTitle:					UIColor { get }
 	var colorButtonRadioIcon:					UIColor { get }
@@ -71,6 +75,7 @@ protocol Theming {
 	var fontTitle:				UIFont { get }
 	var fontBanner:				UIFont { get }
 	var fontComment:			UIFont { get }
+	var fontCommentSmall:		UIFont { get }
 	var fontButtonTitle:		UIFont { get }
 	var fontButtonRadioTitle:	UIFont { get }
 	var fontLinkText:			UIFont { get }
@@ -89,8 +94,9 @@ class Snow: Theming {
 	let colorTextBanner			= Colors.accentColor
 	let colorTextPlaceholder	= Colors.lightGray
 	let colorTextNotification	= Colors.white
-	let colorTextToast			= Colors.brandColorLight
-	
+	let colorTextToast			= Colors.black
+	let colorTextActivity		= Colors.black
+
 	let colorBackgroundWindow		= Colors.gray90pcntColor
 	let colorBackgroundImage		= Colors.gray90pcntColor
 	let colorBackgroundNotification	= Colors.brandColor
@@ -100,16 +106,19 @@ class Snow: Theming {
 	let colorBackgroundTileList		= Colors.gray90pcntColor
 	let colorBackgroundToast		= Colors.brandColorLight
 	let colorBackgroundOverlay		= Colors.opacity75pcntBlack
-	
-	let colorRule				= Colors.gray75pcntColor
-	let colorRuleActive			= Colors.accentColor
-	let colorTint				= Colors.brandColor
-	let colorScrimDarken		= UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.3))
-	let colorScrimLighten		= UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.75))
-	let colorActionOn			= Colors.brandColor
-	let colorActionOff			= Colors.opacity90pcntWhite
-	let colorActivity			= Colors.brandColor
-	let colorActivityImage		= Colors.brandColor
+	let colorBackgroundActivity		= Colors.white
+	let colorBackgroundActivityOnly	= Colors.clear
+	let colorBackgroundEmptyBubble	= Colors.white
+
+	let colorRule                   = Colors.gray75pcntColor
+	let colorRuleActive             = Colors.accentColor
+	let colorTint                   = Colors.brandColor
+	let colorScrimDarken            = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.3))
+	let colorScrimLighten           = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.75))
+	let colorActionOn               = Colors.brandColor
+	let colorActionOff              = Colors.opacity90pcntWhite
+	let colorActivityIndicator      = Colors.brandColor
+	let colorActivityIndicatorImage = Colors.brandColor
 
 	let colorButtonRadioTitle				= Colors.black
 	let colorButtonRadioIcon				= Colors.black
@@ -129,6 +138,7 @@ class Snow: Theming {
 	let fontTitle				= UIFont(name: "HelveticaNeue-Thin", size: 36)!
 	let fontBanner				= UIFont(name: "HelveticaNeue-Thin", size: 48)!
 	let fontComment				= UIFont(name: "HelveticaNeue-Light", size: 16)!
+	let fontCommentSmall		= UIFont(name: "HelveticaNeue-Light", size: 14)!
 	let fontButtonTitle			= UIFont(name: "HelveticaNeue", size: 16)!
 	let fontButtonRadioTitle	= UIFont(name: "HelveticaNeue-Light", size: 18)!
 	let fontLinkText			= UIFont(name: "HelveticaNeue", size: 18)!

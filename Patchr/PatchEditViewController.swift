@@ -120,7 +120,7 @@ class PatchEditViewController: BaseViewController {
 		
 		self.progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
 		self.progress!.mode = MBProgressHUDMode.Indeterminate
-		self.progress!.styleAs(.ActivityLight)
+		self.progress!.styleAs(.ActivityWithText)
 		self.progress!.labelText = self.progressStartLabel
 		self.progress!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("userCancelTaskAction:")))
 		self.progress!.removeFromSuperViewOnHide = true

@@ -48,7 +48,7 @@ class UserDetailView: BaseDetailView {
 	func initialize() {
 		
 		self.clipsToBounds = true
-		self.backgroundColor = UIColor.whiteColor()
+		self.backgroundColor = Theme.colorBackgroundScreen
 		
 		/* User photo */
 		self.photo.contentMode = UIViewContentMode.ScaleAspectFill
@@ -77,7 +77,7 @@ class UserDetailView: BaseDetailView {
 		/* Watching */
 		self.watchingIcon.image = UIImage(named: "imgWatchLight")
 		self.watchingIcon.alpha = 0.5
-		self.watchingIcon.tintColor = UIColor.blackColor()
+		self.watchingIcon.tintColor = Colors.black
 		self.watchingInfo.setTitleColor(Colors.brandColorDark, forState: .Normal)
 		self.watchingInfo.titleLabel!.font = UIFont(name: "HelveticaNeue-Light", size: 20)
 		self.watchingInfo.contentHorizontalAlignment = .Left
@@ -90,7 +90,7 @@ class UserDetailView: BaseDetailView {
 		/* Owns */
 		self.ownsIcon.image = UIImage(named: "imgEditLight")
 		self.ownsIcon.alpha = 0.5
-		self.ownsIcon.tintColor = UIColor.blackColor()
+		self.ownsIcon.tintColor = Colors.black
 		self.ownsInfo.setTitleColor(Colors.brandColorDark, forState: .Normal)
 		self.ownsInfo.titleLabel!.font = UIFont(name: "HelveticaNeue-Light", size: 20)
 		self.ownsInfo.contentHorizontalAlignment = .Left

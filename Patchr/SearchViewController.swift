@@ -94,8 +94,8 @@ class SearchViewController: UITableViewController {
         /* Empty label */
         self.emptyLabel.alpha = 0
         self.emptyLabel.layer.borderWidth = 1
-        self.emptyLabel.layer.borderColor = Colors.hintColor.CGColor
-        self.emptyLabel.font = UIFont(name: "HelveticaNeue-Light", size: 19)
+        self.emptyLabel.layer.borderColor = Theme.colorRule.CGColor
+        self.emptyLabel.font = Theme.fontTextDisplay
         self.emptyLabel.text = "No results"
         self.emptyLabel.bounds.size.width = 160
         self.emptyLabel.bounds.size.height = 160
@@ -103,8 +103,8 @@ class SearchViewController: UITableViewController {
         self.view.addSubview(self.emptyLabel)
         self.emptyLabel.center = CGPointMake(UIScreen.mainScreen().bounds.size.width / 2, (UIScreen.mainScreen().bounds.size.height / 2) - 44);
         self.emptyLabel.textAlignment = NSTextAlignment.Center
-        self.emptyLabel.textColor = UIColor(red: CGFloat(0.6), green: CGFloat(0.6), blue: CGFloat(0.6), alpha: CGFloat(1))
-        self.emptyLabel.layer.backgroundColor = UIColor.whiteColor().CGColor
+        self.emptyLabel.textColor = Theme.colorTextPlaceholder
+        self.emptyLabel.layer.backgroundColor = Theme.colorBackgroundEmptyBubble.CGColor
         self.emptyLabel.layer.cornerRadius = self.emptyLabel.bounds.size.width / 2
 
         /* Hack to hide empty row separators */
@@ -303,8 +303,8 @@ extension SearchViewController: UITableViewDelegate {
             if cell == nil {
                 let nib:Array = NSBundle.mainBundle().loadNibNamed("PatchSearchCell", owner: self, options: nil)
                 cell = nib[0] as? PatchSearchCell
-                cell?.contentView.backgroundColor = UIColor.clearColor()
-                cell?.backgroundColor = UIColor.clearColor()
+                cell?.contentView.backgroundColor = Colors.clear
+                cell?.backgroundColor = Colors.clear
             }
             
             var patch: JSON = JSON(self.searchItems[indexPath.row])

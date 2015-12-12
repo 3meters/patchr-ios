@@ -13,7 +13,6 @@ class AirImageView: UIImageView {
     var activity: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
 	var showGradient: Bool = false
     var gradient: CAGradientLayer?
-    var spot: CAShapeLayer?
     var linkedPhotoUrl: NSURL?
     var sizeCategory: String = SizeCategory.thumbnail
     
@@ -28,20 +27,8 @@ class AirImageView: UIImageView {
     }
     
     func initialize(){
-		
 		self.activity.hidesWhenStopped = true
         addSubview(self.activity)
-		
-        /* Dot for debug */
-        if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("devModeEnabled")) {
-            self.spot = CAShapeLayer()
-            self.spot!.frame = CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height)
-            self.spot!.position = CGPointMake(self.bounds.size.width / 2, self.bounds.size.height / 2)
-            self.spot!.path = UIBezierPath(ovalInRect: CGRectMake(4, 4, 12, 12)).CGPath
-            self.spot!.fillColor = UIColor.lightGrayColor().CGColor
-            self.spot!.zPosition = 0
-            self.layer.addSublayer(self.spot!)
-        }
     }
 	
 	override func layoutSubviews() {
@@ -140,8 +127,6 @@ class AirImageView: UIImageView {
 			/* Stash the url we are loading so we can check for a match later when download is completed. */
 			self.linkedPhotoUrl = photoUrl
 			
-			self.spot?.fillColor = UIColor.lightGrayColor().CGColor
-			
 			self.sd_setImageWithURL(photoUrl,
 				placeholderImage: nil,
 				options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload],
@@ -166,7 +151,6 @@ class AirImageView: UIImageView {
 		/* Stash the url we are loading so we can check for a match later when download is completed. */
         self.linkedPhotoUrl = url
         
-        self.spot?.fillColor = UIColor.lightGrayColor().CGColor
         self.sd_setImageWithURL(url,
             placeholderImage: nil,
             options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage],
@@ -185,7 +169,6 @@ class AirImageView: UIImageView {
 		/* Stash the url we are loading so we can check for a match later when download is completed. */
         self.linkedPhotoUrl = url
         
-        self.spot?.fillColor = UIColor.lightGrayColor().CGColor
         self.sd_setImageWithURL(url,
             placeholderImage: nil,
             options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload],
@@ -217,21 +200,7 @@ class AirImageView: UIImageView {
         if self.linkedPhotoUrl?.absoluteString != url?.absoluteString {
             return
         }
-        
-        if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("devModeEnabled")) {
-            self.spot?.fillColor = UIColor.redColor().CGColor
-            if cacheType == SDImageCacheType.Disk {
-                self.spot?.fillColor = UIColor.orangeColor().CGColor
-            }
-            else if cacheType == SDImageCacheType.Memory {
-                self.spot?.fillColor = UIColor.greenColor().CGColor
-            }
-            self.spot?.hidden = false
-        }
-        else {
-            self.spot?.hidden = true
-        }
-		
+        		
 		if animate /*|| cacheType == SDImageCacheType.None || cacheType == SDImageCacheType.Disk*/ {
 			UIView.transitionWithView(self,
 				duration: 0.25,

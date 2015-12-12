@@ -122,7 +122,7 @@ class MainTabBarController: UITabBarController {
 		self.messageBar.text = "Connection is offline"
 		self.messageBar.numberOfLines = 0
 		self.messageBar.textAlignment = NSTextAlignment.Center
-		self.messageBar.textColor = UIColor.whiteColor()
+		self.messageBar.textColor = Colors.white
 		self.messageBar.layer.backgroundColor = Colors.brandColorDark.CGColor
 		self.messageBar.alpha = 0.85
 		self.view.addSubview(self.messageBar)

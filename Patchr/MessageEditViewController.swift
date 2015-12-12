@@ -146,7 +146,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 		
 		self.progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
 		self.progress!.mode = MBProgressHUDMode.Indeterminate
-		self.progress!.styleAs(.ActivityLight)
+		self.progress!.styleAs(.ActivityWithText)
 		self.progress!.labelText = self.progressStartLabel
 		self.progress!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("userCancelTaskAction:")))
 		self.progress!.removeFromSuperViewOnHide = true
@@ -278,7 +278,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 				self.patchView!.borderColor = Theme.colorButtonBorder
 				self.patchView!.borderWidth = Theme.dimenButtonBorderWidth
 				self.patchView!.cornerRadius = 6
-				self.patchView!.shadow.backgroundColor = UIColor.clearColor()
+				self.patchView!.shadow.backgroundColor = Colors.clear
 				
 				self.contentHolder.addSubview(self.patchView!)
 				

@@ -79,7 +79,7 @@ class PasswordEditViewController: BaseViewController {
 
 		let progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
 		progress.mode = MBProgressHUDMode.Indeterminate
-        progress.styleAs(.ActivityLight)
+        progress.styleAs(.ActivityWithText)
 		progress.labelText = "Updating..."
 		progress.removeFromSuperViewOnHide = true
 		progress.show(true)

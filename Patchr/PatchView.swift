@@ -105,8 +105,8 @@ class PatchView: BaseView {
 		self.addSubview(self.watchingGroup)
 		
 		/* Distance */
-		self.distance.font = UIFont(name: "HelveticaNeue-Medium", size: 14)
-		self.distance.textColor = UIColor.whiteColor()
+		self.distance.font = Theme.fontCommentSmall
+		self.distance.textColor = Colors.white
 		self.addSubview(self.distance)
 		
 		/* Rule */

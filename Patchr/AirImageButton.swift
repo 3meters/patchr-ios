@@ -12,7 +12,6 @@ class AirImageButton: UIButton {
 
     var progress: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
     var linkedPhotoUrl: NSURL?
-    var spot: CAShapeLayer?
     var sizeCategory: String = SizeCategory.thumbnail
 
     var progressAuto: Bool = true
@@ -34,17 +33,6 @@ class AirImageButton: UIButton {
 		
 		self.progress.hidesWhenStopped = true
 		addSubview(self.progress)
-        
-        /* Dot for debug */
-        if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("devModeEnabled")) {
-            self.spot = CAShapeLayer()
-            self.spot!.frame = CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height)
-            self.spot!.position = CGPointMake(self.bounds.size.width / 2, self.bounds.size.height / 2)
-            self.spot!.path = UIBezierPath(ovalInRect: CGRectMake(4, 4, 12, 12)).CGPath
-            self.spot!.fillColor = UIColor.lightGrayColor().CGColor
-            self.spot!.zPosition = 0
-            self.layer.addSublayer(self.spot!)
-        }
     }
 	
     func setProgressSize(size: CGFloat) {
@@ -108,8 +96,6 @@ class AirImageButton: UIButton {
         if progressAuto {
             startProgress()
         }
-    
-        self.spot?.fillColor = UIColor.lightGrayColor().CGColor
 		
 		let options: SDWebImageOptions = [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload]
 		
@@ -135,8 +121,6 @@ class AirImageButton: UIButton {
         let url = NSURL(string: GooglePlusProxy.convert(imageResult.mediaUrl!, size: Int(IMAGE_DIMENSION_MAX), dimension: dimension))
         
         self.linkedPhotoUrl = url
-        
-        self.spot?.fillColor = UIColor.lightGrayColor().CGColor
 		
         self.sd_setImageWithURL(url,
             forState:UIControlState.Normal,
@@ -169,21 +153,6 @@ class AirImageButton: UIButton {
         /* Image returned is not the one we want anymore */
         if self.linkedPhotoUrl?.absoluteString != url?.absoluteString {
             return
-        }
-        
-        self.spot?.fillColor = UIColor.lightGrayColor().CGColor
-        if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("devModeEnabled")) {
-            self.spot?.fillColor = UIColor.redColor().CGColor
-            if cacheType == SDImageCacheType.Disk {
-                self.spot?.fillColor = UIColor.orangeColor().CGColor
-            }
-            else if cacheType == SDImageCacheType.Memory {
-                self.spot?.fillColor = UIColor.greenColor().CGColor
-            }
-            self.spot?.hidden = false
-        }
-        else {
-            self.spot?.hidden = true
         }
 		
 		if animate /*|| cacheType == SDImageCacheType.None || cacheType == SDImageCacheType.Disk*/ {

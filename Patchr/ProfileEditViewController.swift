@@ -442,7 +442,7 @@ class ProfileEditViewController: BaseViewController {
 		
 		let progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
 		progress.mode = MBProgressHUDMode.Indeterminate
-		progress.styleAs(.ActivityLight)
+		progress.styleAs(.ActivityWithText)
 		progress.labelText = self.progressStartLabel
 		progress.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("progressWasCancelled:")))
 		progress.removeFromSuperViewOnHide = true
