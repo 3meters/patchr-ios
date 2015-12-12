@@ -60,6 +60,8 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.loadMoreActivity.tag = 2
 		self.loadMoreActivity.color = Colors.brandColorDark
 		self.loadMoreActivity.hidden = true
+		
+		self.footerView.frame.size.height = CGFloat(48 + 16)
 		self.footerView.addSubview(self.loadMoreActivity)
 		self.footerView.backgroundColor = Theme.colorBackgroundTileList
 		
@@ -94,10 +96,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         self.tableView.backgroundColor = Theme.colorBackgroundWindow
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
         self.tableView.separatorInset = UIEdgeInsetsZero
-		self.tableView.contentInset = UIEdgeInsetsMake(64, 0.0, self.tabBarController?.tabBar.frame.size.height ?? 0, 0.0)
-		self.tableView.scrollIndicatorInsets = UIEdgeInsetsMake(64, 0.0, self.tabBarController?.tabBar.frame.size.height ?? 0, 0.0)
-		self.automaticallyAdjustsScrollViewInsets = false
-		
         self.clearsSelectionOnViewWillAppear = false;
 		
 		/* Hookup query */
@@ -109,23 +107,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		
 		if self.query.executedValue {
 			do {
-				if self.query.moreValue {
-					if self.tableView.tableFooterView == nil {
-						self.tableView.tableFooterView = self.footerView
-					}
-					if let button = self.footerView.viewWithTag(1) as? UIButton,
-						spinner = self.footerView.viewWithTag(2) as? UIActivityIndicatorView {
-							button.hidden = false
-							spinner.hidden = true
-							spinner.stopAnimating()
-					}
-					self.tableView.contentInset = UIEdgeInsetsMake(64, 0.0, (self.tabBarController?.tabBar.frame.size.height ?? 0) + 64, 0.0)
-				}
-				else {
-					self.tableView.tableFooterView = nil
-					self.tableView.contentInset = UIEdgeInsetsMake(64, 0.0, self.tabBarController?.tabBar.frame.size.height ?? 0, 0.0)
-				}
-				
 				try self.fetchedResultsController.performFetch()
 				self.tableView.reloadData()
 			}
@@ -138,8 +119,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		if let indexPath = tableView.indexPathForSelectedRow {
 			tableView.deselectRowAtIndexPath(indexPath, animated: animated)
 		}
-		
-		self.tableView.setContentOffset(self.contentOffset, animated: true)
 	}
 	
 	override func viewWillLayoutSubviews() {
@@ -151,8 +130,8 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		
 		self.footerView.frame.size.height = CGFloat(48 + 16)
 		
-		self.loadMoreButton.fillSuperviewWithLeftPadding(8, rightPadding: 8, topPadding: 8, bottomPadding: 8)
-		self.loadMoreActivity.fillSuperview()
+		self.loadMoreButton.anchorTopCenterFillingWidthWithLeftAndRightPadding(8, topPadding: 8, height: 48)
+		self.loadMoreActivity.anchorTopCenterWithTopPadding(8, width: 48, height: 48)
 		
 		self.activity.anchorInCenterWithWidth(20, height: 20)
 		self.activity.frame.origin.y += CGFloat(self.progressOffsetY)
@@ -164,6 +143,28 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+		
+		if self.query.executedValue {
+			if self.query.moreValue {
+				if self.tableView.tableFooterView == nil {
+					self.tableView.tableFooterView = self.footerView
+				}
+				if let button = self.footerView.viewWithTag(1) as? UIButton,
+					spinner = self.footerView.viewWithTag(2) as? UIActivityIndicatorView {
+						button.hidden = false
+						spinner.hidden = true
+						spinner.stopAnimating()
+				}
+			}
+			else {
+				self.tableView.tableFooterView = nil
+			}
+			self.tableView.setNeedsLayout()
+		}
+		else {
+			try! self.fetchedResultsController.performFetch()
+		}
+
 		if !self.query.executedValue {
 			self.bindQueryItems(false)
 		}
@@ -171,12 +172,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
-		/*
-		 * We re-fault the query items to free up memory.
-		 */
-//		if self._query != nil {
-//			DataController.instance.mainContext.refreshObject(self._query, mergeChanges: false)
-//		}
 	}
 
     override func viewDidDisappear(animated: Bool) {
@@ -186,7 +181,9 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		super.viewDidDisappear(animated)
 		self.contentOffset = self.tableView.contentOffset
 		self.activity.stopAnimating()
-        self.refreshControl?.endRefreshing()
+		if self.refreshControl!.refreshing {
+			refreshControl!.endRefreshing()
+		}
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -264,6 +261,10 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 				
 				NSOperationQueue.mainQueue().addOperationWithBlock {
 					
+					if let refreshControl = self?.refreshControl where refreshControl.refreshing {
+						refreshControl.endRefreshing()
+					}
+					
 					// Delay seems to be necessary to avoid visual glitch with UIRefreshControl
 					Utils.delay(0.5) {
 						
@@ -271,7 +272,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 						
 						self?.processingQuery = false
 						self?.activity.stopAnimating()
-						self?.refreshControl?.endRefreshing()
 						
 						if query.moreValue {
 							if self?.tableView.tableFooterView == nil {
@@ -283,12 +283,11 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 									spinner.hidden = true
 									spinner.stopAnimating()
 							}
-							self?.tableView.contentInset = UIEdgeInsetsMake(64, 0.0, (self?.tabBarController?.tabBar.frame.size.height ?? 0) + 64, 0.0)
 						}
 						else {
 							self?.tableView.tableFooterView = nil
-							self?.tableView.contentInset = UIEdgeInsetsMake(64, 0.0, self?.tabBarController?.tabBar.frame.size.height ?? 0, 0.0)
 						}
+						self?.tableView.setNeedsLayout()
 						
 						if error == nil {
 							self?.query.executedValue = true

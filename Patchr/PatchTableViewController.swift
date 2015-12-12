@@ -273,7 +273,10 @@ class PatchTableViewController: BaseTableViewController {
 						}
 						
 						self?.activity.stopAnimating()
-						self?.refreshControl!.endRefreshing()
+						
+						if let refreshControl = self?.refreshControl where refreshControl.refreshing {
+							refreshControl.endRefreshing()
+						}
 						
 						return
 					}
@@ -287,7 +290,9 @@ class PatchTableViewController: BaseTableViewController {
 					
 						/* Flag query as having been executed at least once */
 						self?.activity.stopAnimating()
-						self?.refreshControl!.endRefreshing()
+						if let refreshControl = self?.refreshControl where refreshControl.refreshing {
+							refreshControl.endRefreshing()
+						}
 						
 						if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
 							if fetchedObjects.count == 0 {

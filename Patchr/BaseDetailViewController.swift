@@ -102,35 +102,32 @@ class BaseDetailViewController: BaseTableViewController {
 				if self != nil {
 					NSOperationQueue.mainQueue().addOperationWithBlock {
 						
-						self?.refreshControl?.endRefreshing()
-						Utils.delay(0.5) {
-							if error == nil {
-								if objectId != nil {
-									let entity = DataController.instance.mainContext.objectWithID(objectId!) as! Entity
-									
-									/* Refresh list too if context entity was updated */
-									if entity.refreshedValue {
-										entity.refreshedValue = false
-										self?.bindQueryItems(true, paging: !reset)	// Only place we cascade the refresh to the list otherwise a pullToRefresh is required
-										DataController.instance.saveContext(false)
-									}
-									
-									self?.entity = entity
-									self?.entityId = entity.id_
-									if let patch = entity as? Patch {
-										DataController.instance.currentPatch = patch    // Used for context for messages
-									}
-									self?.drawButtons()	// Refresh so owner only commands can be displayed
-									self?.draw()
-									NSNotificationCenter.defaultCenter().postNotificationName(Events.BindingComplete, object: nil)
+						if error == nil {
+							if objectId != nil {
+								let entity = DataController.instance.mainContext.objectWithID(objectId!) as! Entity
+								
+								/* Refresh list too if context entity was updated or reset = true */
+								if entity.refreshedValue || reset {
+									entity.refreshedValue = false
+									self?.bindQueryItems(true, paging: !reset)	// Only place we cascade the refresh to the list otherwise a pullToRefresh is required
+									DataController.instance.saveContext(false)
 								}
-								else {
-									Shared.Toast("Item has been deleted")
-									Utils.delay(2.0) {
-										() -> () in
-										self?.navigationController?.popViewControllerAnimated(true)
-										NSNotificationCenter.defaultCenter().postNotificationName(Events.BindingComplete, object: nil, userInfo: ["deleted":true])
-									}
+								
+								self?.entity = entity
+								self?.entityId = entity.id_
+								if let patch = entity as? Patch {
+									DataController.instance.currentPatch = patch    // Used for context for messages
+								}
+								self?.drawButtons()	// Refresh so owner only commands can be displayed
+								self?.draw()
+								NSNotificationCenter.defaultCenter().postNotificationName(Events.BindingComplete, object: nil)
+							}
+							else {
+								Shared.Toast("Item has been deleted")
+								Utils.delay(2.0) {
+									() -> () in
+									self?.navigationController?.popViewControllerAnimated(true)
+									NSNotificationCenter.defaultCenter().postNotificationName(Events.BindingComplete, object: nil, userInfo: ["deleted":true])
 								}
 							}
 						}

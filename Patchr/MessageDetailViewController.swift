@@ -175,7 +175,6 @@ class MessageDetailViewController: UITableViewController {
 				if self != nil {
 					NSOperationQueue.mainQueue().addOperationWithBlock {
 						self?.activity?.stopAnimating()
-						self?.refreshControl?.endRefreshing()
 						if error == nil {
 							if objectId == nil {
 								Shared.Toast("Message has been deleted")

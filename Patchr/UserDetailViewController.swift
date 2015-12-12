@@ -96,7 +96,6 @@ class UserDetailViewController: BaseDetailViewController {
 			self.fetchedResultsController.delegate = nil
 		}
 		self.activity.stopAnimating()
-		self.refreshControl?.endRefreshing()
 	}
 
 	/*--------------------------------------------------------------------------------------------
@@ -177,15 +176,6 @@ class UserDetailViewController: BaseDetailViewController {
 			return
 		}
 		self.header.bindToEntity(nil, isGuest: self.isGuest)
-	}
-	
-	override func pullToRefreshAction(sender: AnyObject?) -> Void {
-        if !self.isGuest {
-            super.pullToRefreshAction(sender)
-        }
-        else {
-            self.refreshControl?.endRefreshing()
-        }
 	}
 }
 
