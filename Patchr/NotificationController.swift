@@ -82,8 +82,8 @@ class NotificationController {
         Log.d(String(format: "%@", notification))
         
         /* Tickle the activityDate so consumers know that something has happened */
-        self.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
-        
+		self.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
+
         /* Special capture for nearby notifications */
         if let trigger = notification["trigger"] as? String where trigger == "nearby" {
             var nearby = notification
@@ -118,6 +118,9 @@ class NotificationController {
 			 * by the os as a remote notification. Muted (low priority) notifications will badge
 			 * but to not include alert or sound settings that would be handled by the os.
              */
+			let notificationDate = NSNumber(longLong: Int64(NSDate().timeIntervalSince1970 * 1000)) // Only way to store Int64 as AnyObject
+			NSUserDefaults.standardUserDefaults().setObject(notificationDate, forKey: PatchrUserDefaultKey("notificationDate"))
+			Log.d("App was system launched so stashed notification date")
         }
 		
 		if (completionHandler != nil) {

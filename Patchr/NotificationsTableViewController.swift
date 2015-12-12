@@ -50,7 +50,17 @@ class NotificationsTableViewController: BaseTableViewController {
     
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
-        if NotificationController.instance.activityDate > self.activityDate {
+
+		/*
+		 * A stashed notification date means a notification came in while
+		 * the app was closed.
+		 */
+		if let _ = NSUserDefaults.standardUserDefaults().valueForKey(PatchrUserDefaultKey("notificationDate")) {
+			NSUserDefaults.standardUserDefaults().setObject(nil, forKey: PatchrUserDefaultKey("notificationDate"))
+			self.bindQueryItems(true)
+			self.activityDate = NotificationController.instance.activityDate
+		}
+		else if NotificationController.instance.activityDate > self.activityDate {
             self.bindQueryItems(true)
             self.activityDate = NotificationController.instance.activityDate
         }
