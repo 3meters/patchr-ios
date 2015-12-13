@@ -813,7 +813,7 @@ extension MessageEditViewController {
 		if let model = self.contactModels[indexPath.row] as? SuggestionModel {
 			if !self.contactsSelected.containsObject(model) {
 				let style = THContactViewStyle(textColor: Theme.colorTextTitle, backgroundColor: Colors.white, cornerRadiusFactor: 6)
-				let styleSelected = THContactViewStyle(textColor: Colors.white, backgroundColor: Colors.accentColor, cornerRadiusFactor: 6)
+				let styleSelected = THContactViewStyle(textColor: Colors.white, backgroundColor: Theme.colorBackgroundContactSelected, cornerRadiusFactor: 6)
 				self.contactsSelected.addObject(model)
 				self.addressField.addContact(model, withName: model.contactTitle, withStyle: style, andSelectedStyle: styleSelected )
 			}

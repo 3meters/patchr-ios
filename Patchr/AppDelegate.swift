@@ -78,8 +78,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
         AdobeUXAuthManager.sharedManager().setAuthenticationParametersWithClientID(keys.creativeSdkClientId(), clientSecret: keys.creativeSdkClientSecret(), enableSignUp: false)
         
         /* Change default font for button bar items */
-        let customFont = UIFont(name:"HelveticaNeue", size: 18)
-        UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: customFont!], forState: UIControlState.Normal)
+        UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: Theme.fontBarText], forState: UIControlState.Normal)
 
         /* Setup parse for push notifications */
         Parse.setApplicationId(keys.parseApplicationId(), clientKey: keys.parseApplicationKey())
@@ -132,10 +131,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
         ReachabilityManager.instance
         
         /* Global UI tweaks */
-        self.window?.backgroundColor = Colors.windowColor /* Light gray is better than black */
-        self.window?.tintColor = Colors.brandColor
-        UITabBar.appearance().tintColor = Colors.brandColorDark
-        UISwitch.appearance().onTintColor = self.window?.tintColor
+        self.window?.backgroundColor = Theme.colorBackgroundWindow
+        self.window?.tintColor = Theme.colorTint
+        UITabBar.appearance().tintColor = Theme.colorTint
+        UISwitch.appearance().onTintColor = Theme.colorTint
         
         /* We handle remote notifications */
         NotificationController.instance.registerForRemoteNotifications()
@@ -225,7 +224,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
 				harpy.appID = APP_ID
 				harpy.appName = "Patchr"
 				harpy.presentingViewController = self.window?.rootViewController
-				harpy.alertControllerTintColor = Colors.brandColorDark
+				harpy.alertControllerTintColor = Theme.colorTint
 				harpy.majorUpdateAlertType = HarpyAlertType.Force
 				harpy.minorUpdateAlertType = HarpyAlertType.Option
 				harpy.patchUpdateAlertType = HarpyAlertType.Skip

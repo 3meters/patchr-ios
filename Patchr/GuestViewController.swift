@@ -99,14 +99,14 @@ class GuestViewController: BaseViewController {
 		/* Colors settings apply regardless of theme */
 		self.buttonLogin.setTitle("LOG IN", forState: .Normal)
 		self.buttonLogin.setTitleColor(Colors.white, forState: .Normal)
-		self.buttonLogin.setTitleColor(Colors.brandColor, forState: .Highlighted)
+		self.buttonLogin.setTitleColor(Theme.colorTint, forState: .Highlighted)
 		self.buttonLogin.borderColor = Colors.white
 		self.buttonLogin.borderWidth = Theme.dimenButtonBorderWidth
 		self.buttonLogin.cornerRadius = Theme.dimenButtonCornerRadius
 		
 		self.buttonSignup.setTitle("SIGN UP", forState: .Normal)
 		self.buttonSignup.setTitleColor(Colors.white, forState: .Normal)
-		self.buttonSignup.setTitleColor(Colors.brandColor, forState: .Highlighted)
+		self.buttonSignup.setTitleColor(Theme.colorTint, forState: .Highlighted)
 		self.buttonSignup.borderColor = Colors.white
 		self.buttonSignup.borderWidth = Theme.dimenButtonBorderWidth
 		self.buttonSignup.cornerRadius = Theme.dimenButtonCornerRadius

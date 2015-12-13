@@ -73,10 +73,10 @@ class MessageDetailViewController: UITableViewController {
 		self.messagePhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
 		self.userPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
 		self.patchPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
-		self.view.window?.backgroundColor = Colors.windowColor
+		self.view.window?.backgroundColor = Theme.colorBackgroundWindow
 		
-        let linkColor = Colors.brandColorDark
-        let linkActiveColor = Colors.brandColorLight
+        let linkColor = Theme.colorTint
+        let linkActiveColor = Theme.colorTint
         
         self.description_.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
         self.description_.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
@@ -244,7 +244,7 @@ class MessageDetailViewController: UITableViewController {
 
     func shareBrowseAction(sender: AnyObject){
 		if let view = sender as? UIView {
-			view.backgroundColor = Colors.windowColor
+			view.backgroundColor = Theme.colorBackgroundWindow
 		}
         if self.message?.message != nil {
             let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
@@ -337,7 +337,7 @@ class MessageDetailViewController: UITableViewController {
 			
 			let holderView = UIView()
 			holderView.clipsToBounds = true
-			holderView.borderColor = Colors.gray80pcntColor
+			holderView.borderColor = Theme.colorButtonBorder
 			holderView.borderWidth = 1
 			holderView.cornerRadius = 6
 			
@@ -378,10 +378,10 @@ class MessageDetailViewController: UITableViewController {
 					
 					let shareView = PatchView()
 					
-					shareView.borderColor = Colors.gray80pcntColor
+					shareView.borderColor = Theme.colorButtonBorder
 					shareView.borderWidth = 1
 					shareView.cornerRadius = 6
-					shareView.shadow.backgroundColor = Colors.white
+					shareView.shadow.hidden = true
 					
 					shareView.bindToEntity(self.message!.patch!, location: nil)
 					

@@ -454,7 +454,7 @@ extension NotificationsTableViewController {
 				if entity.summary != nil {
 					
 					let description = entity.summary as NSString
-					let attributes = [NSFontAttributeName: UIFont(name:"HelveticaNeue-Light", size: 17)!]
+					let attributes = [NSFontAttributeName: Theme.fontTextList]
 					let options: NSStringDrawingOptions = [NSStringDrawingOptions.UsesLineFragmentOrigin, NSStringDrawingOptions.UsesFontLeading]
 					
 					/* Most time is spent here */

@@ -305,7 +305,7 @@ extension PhotoPickerViewController {
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
 		
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(self.reuseIdentifier, forIndexPath: indexPath) 
-        cell.backgroundColor = Colors.windowColor
+        cell.backgroundColor = Theme.colorBackgroundImage
 		
 		if let imageResult = self.imageForIndexPath(indexPath) {
 			if let thumbCell = cell as? ThumbnailCollectionViewCell {

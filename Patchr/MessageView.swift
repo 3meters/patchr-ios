@@ -53,7 +53,7 @@ class MessageView: BaseView {
 		if self.cellType != .Photo {
 			self.description_ = TTTAttributedLabel(frame: CGRectZero)
 			self.description_!.numberOfLines = 5
-			self.description_!.font = UIFont(name: "HelveticaNeue-Light", size: 17)
+			self.description_!.font = Theme.fontTextList
 			self.addSubview(self.description_!)
 		}
 		
@@ -64,29 +64,29 @@ class MessageView: BaseView {
 			self.photo!.contentMode = .ScaleAspectFill
 			self.photo!.contentHorizontalAlignment = .Fill
 			self.photo!.contentVerticalAlignment = .Fill
-			self.photo!.backgroundColor = Colors.windowColor
+			self.photo!.backgroundColor = Theme.colorBackgroundImage
 			self.photo!.clipsToBounds = false
 			self.addSubview(self.photo!)
 		}
 		
 		/* Patch name */
-		self.patchName.font = UIFont(name: "HelveticaNeue-Light", size: 15)
-		self.patchName.textColor = Colors.secondaryText
+		self.patchName.font = Theme.fontComment
+		self.patchName.textColor = Theme.colorTextSecondary
 		self.addSubview(self.patchName)
 		
 		/* User photo */
 		self.userPhoto.contentMode = UIViewContentMode.ScaleAspectFill
 		self.userPhoto.clipsToBounds = true
 		self.userPhoto.layer.cornerRadius = 24
-		self.userPhoto.layer.backgroundColor = Colors.windowColor.CGColor
+		self.userPhoto.layer.backgroundColor = Theme.colorBackgroundImage.CGColor
 		self.addSubview(self.userPhoto)
 		
 		/* Header */
 		self.userName.lineBreakMode = .ByTruncatingMiddle
-		self.userName.font = UIFont(name: "HelveticaNeue-Bold", size: 17)
+		self.userName.font = Theme.fontHeading4
 		
-		self.createdDate.font = UIFont(name: "HelveticaNeue-Light", size: 15)
-		self.createdDate.textColor = Colors.secondaryText
+		self.createdDate.font = Theme.fontComment
+		self.createdDate.textColor = Theme.colorTextSecondary
 		self.createdDate.textAlignment = NSTextAlignment.Right
 		
 		self.addSubview(self.userName)
@@ -96,17 +96,17 @@ class MessageView: BaseView {
 		
 		if self.cellType == .Share {
 			self.recipientsLabel.text = "To:"
-			self.recipientsLabel.font = UIFont(name: "HelveticaNeue-Light", size: 17)
+			self.recipientsLabel.font = Theme.fontTextList
 			self.recipientsLabel.textColor = Theme.colorTextSecondary
-			self.recipients.font = UIFont(name: "HelveticaNeue-Light", size: 17)
+			self.recipients.font = Theme.fontTextList
 			self.recipients.textColor = Theme.colorTextTitle
 			self.addSubview(self.recipientsLabel)
 			self.addSubview(self.recipients)
 		}
 		else {
-			self.likeButton.imageView!.tintColor(Colors.brandColor)
-			self.likes.font = UIFont(name: "HelveticaNeue-Light", size: 15)
-			self.likes.textColor = Colors.brandColor
+			self.likeButton.imageView!.tintColor(Theme.colorTint)
+			self.likes.font = Theme.fontComment
+			self.likes.textColor = Theme.colorButtonTitle
 			
 			self.addSubview(self.likeButton)
 			self.addSubview(self.likes)
@@ -119,8 +119,8 @@ class MessageView: BaseView {
 		
 		self.entity = entity
 		
-		let linkColor = Colors.brandColorDark
-		let linkActiveColor = Colors.brandColorLight
+		let linkColor = Theme.colorTint
+		let linkActiveColor = Theme.colorTint
 		
 		self.description_?.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
 		self.description_?.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
@@ -276,7 +276,7 @@ class MessageView: BaseView {
 		if entity.description_ != nil {
 			
 			let description = entity.description_ as NSString
-			let attributes = [NSFontAttributeName: UIFont(name:"HelveticaNeue-Light", size: 17)!]
+			let attributes = [NSFontAttributeName: Theme.fontTextList]
 			let options: NSStringDrawingOptions = [NSStringDrawingOptions.UsesLineFragmentOrigin, NSStringDrawingOptions.UsesFontLeading]
 			
 			/* Most time is spent here */

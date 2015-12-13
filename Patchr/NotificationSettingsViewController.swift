@@ -26,12 +26,12 @@ class NotificationSettingsViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.patchesNearbyCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
-        self.patchesWatchingCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
-        self.sharingMessagesCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
-        self.likeMessagesCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
-        self.soundEffectsCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)
-        self.soundNotificationsCell.textLabel!.font = UIFont(name:"HelveticaNeue-Light", size: 18)        
+        self.patchesNearbyCell.textLabel!.font = Theme.fontTextDisplay
+        self.patchesWatchingCell.textLabel!.font = Theme.fontTextDisplay
+        self.sharingMessagesCell.textLabel!.font = Theme.fontTextDisplay
+        self.likeMessagesCell.textLabel!.font = Theme.fontTextDisplay
+        self.soundEffectsCell.textLabel!.font = Theme.fontTextDisplay
+        self.soundNotificationsCell.textLabel!.font = Theme.fontTextDisplay
         
         self.patchesNearbyCell.accessoryView = makeSwitch(.PatchesCreatedNearby, state: userDefaults.boolForKey(PatchrUserDefaultKey("PatchesCreatedNearby")))
         self.patchesWatchingCell.accessoryView = makeSwitch(.MessagesForPatchesWatching, state: userDefaults.boolForKey(PatchrUserDefaultKey("MessagesForPatchesWatching")))

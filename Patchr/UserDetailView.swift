@@ -54,7 +54,7 @@ class UserDetailView: BaseDetailView {
 		self.photo.contentMode = UIViewContentMode.ScaleAspectFill
 		self.photo.clipsToBounds = true
 		self.photo.layer.cornerRadius = 48
-		self.photo.layer.backgroundColor = Colors.windowColor.CGColor
+		self.photo.layer.backgroundColor = Theme.colorBackgroundImage.CGColor
 		self.photo.sizeCategory = SizeCategory.profile
 		
 		/* User name */
@@ -66,7 +66,7 @@ class UserDetailView: BaseDetailView {
 		self.email.textColor = Theme.colorTextSecondary
 	
 		/* Rule */
-		self.rule.backgroundColor = Colors.separatorColor
+		self.rule.backgroundColor = Theme.colorSeparator
 		
 		self.userGroup.addSubview(self.photo)
 		self.userGroup.addSubview(self.name)
@@ -78,10 +78,10 @@ class UserDetailView: BaseDetailView {
 		self.watchingIcon.image = UIImage(named: "imgWatchLight")
 		self.watchingIcon.alpha = 0.5
 		self.watchingIcon.tintColor = Colors.black
-		self.watchingInfo.setTitleColor(Colors.brandColorDark, forState: .Normal)
-		self.watchingInfo.titleLabel!.font = UIFont(name: "HelveticaNeue-Light", size: 20)
+		self.watchingInfo.setTitleColor(Theme.colorTint, forState: .Normal)
+		self.watchingInfo.titleLabel!.font = Theme.fontHeading3
 		self.watchingInfo.contentHorizontalAlignment = .Left
-		self.watchingRule.backgroundColor = Colors.separatorColor
+		self.watchingRule.backgroundColor = Theme.colorSeparator
 		
 		self.watchingGroup.addSubview(self.watchingIcon)
 		self.watchingGroup.addSubview(self.watchingInfo)
@@ -91,10 +91,10 @@ class UserDetailView: BaseDetailView {
 		self.ownsIcon.image = UIImage(named: "imgEditLight")
 		self.ownsIcon.alpha = 0.5
 		self.ownsIcon.tintColor = Colors.black
-		self.ownsInfo.setTitleColor(Colors.brandColorDark, forState: .Normal)
-		self.ownsInfo.titleLabel!.font = UIFont(name: "HelveticaNeue-Light", size: 20)
+		self.ownsInfo.setTitleColor(Theme.colorTint, forState: .Normal)
+		self.ownsInfo.titleLabel!.font = Theme.fontHeading3
 		self.ownsInfo.contentHorizontalAlignment = .Left
-		self.ownsRule.backgroundColor = Colors.separatorColor
+		self.ownsRule.backgroundColor = Theme.colorSeparator
 		
 		self.ownsGroup.addSubview(self.ownsIcon)
 		self.ownsGroup.addSubview(self.ownsInfo)

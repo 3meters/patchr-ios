@@ -45,24 +45,24 @@ class UserView: BaseView {
 		self.photo.contentMode = UIViewContentMode.ScaleAspectFill
 		self.photo.clipsToBounds = true
 		self.photo.layer.cornerRadius = 48
-		self.photo.layer.backgroundColor = Colors.windowColor.CGColor
+		self.photo.layer.backgroundColor = Theme.colorBackgroundWindow.CGColor
 		self.photo.sizeCategory = SizeCategory.profile
 		self.addSubview(self.photo)
 
 		/* User name */
 		self.name.lineBreakMode = .ByTruncatingMiddle
-		self.name.font = UIFont(name: "HelveticaNeue-Light", size: 18)
+		self.name.font = Theme.fontTextDisplay
 		self.addSubview(self.name)
 		
 		/* User area */
-		self.area.font = UIFont(name: "HelveticaNeue-Light", size: 14)
-		self.area.textColor = Colors.secondaryText
+		self.area.font = Theme.fontCommentSmall
+		self.area.textColor = Theme.colorTextSecondary
 		self.addSubview(self.area)
 		
 		/* Owner flag */
 		self.owner.text = "OWNER"
-		self.owner.font = UIFont(name: "HelveticaNeue-Light", size: 14)
-		self.owner.textColor = Colors.brandColor
+		self.owner.font = Theme.fontCommentSmall
+		self.owner.textColor = Theme.colorTint
 		self.addSubview(self.owner)
 		
 		/* Remove button */
@@ -73,7 +73,7 @@ class UserView: BaseView {
 		
 		/* Approved label */
 		self.approved.text = "Approved:"
-		self.approved.font = UIFont(name: "HelveticaNeue-Light", size: 16)
+		self.approved.font = Theme.fontComment
 		self.addSubview(self.approved)
 		
 		/* Approval switch */

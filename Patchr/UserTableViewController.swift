@@ -26,9 +26,6 @@ class UserTableViewController: BaseTableViewController {
 			fatalError("User list requires a patch or message")
 		}
 		
-		self.tableView.estimatedRowHeight = 112
-		self.tableView.rowHeight = 112
-		
         /* Content view */
 		self.listType = .Users
 
@@ -41,6 +38,9 @@ class UserTableViewController: BaseTableViewController {
 			case .MessageLikers:
 				self.navigationItem.title = "Likers"
 		}
+		
+		self.tableView.estimatedRowHeight = 112
+		self.tableView.rowHeight = 112
 	}
     
     override func viewWillAppear(animated: Bool) {
@@ -101,6 +101,20 @@ class UserTableViewController: BaseTableViewController {
 		return queryId
 	}
 	
+	override func didRefreshItems(query: Query) {
+		if self.filter == .PatchWatchers {
+			if self.patch != nil {
+				for item in query.queryItems {
+					let queryItem = item as! QueryItem
+					let user = queryItem.object as! User
+					if user.id_ == self.patch.ownerId {
+						queryItem.positionValue = -1
+					}
+				}
+			}
+		}
+	}
+	
     func watchListForOwner() -> Bool {
         if self.filter == .PatchWatchers && self.patch.visibility == "private" {
             if let currentUser = UserController.instance.currentUser {
@@ -129,15 +143,6 @@ extension UserTableViewController {
 			if self.filter == .PatchWatchers {
 				if self.patch != nil {
 					view.owner.hidden = !(user.id_ == self.patch.ownerId)
-					/* Force the owner to be first in the list */
-					if user.id_ == self.patch.ownerId {
-						for item in user.queryItems {
-							let queryItem = item as! QueryItem
-							if queryItem.object == user {
-								queryItem.positionValue = -1
-							}
-						}
-					}
 				}
 				
 				if self.showOwnerUI {

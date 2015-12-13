@@ -47,60 +47,60 @@ class PatchView: BaseView {
 		self.photo.contentMode = UIViewContentMode.ScaleAspectFill
 		self.photo.clipsToBounds = true
 		self.photo.userInteractionEnabled = true
-		self.photo.backgroundColor = Colors.gray95pcntColor
+		self.photo.backgroundColor = Theme.colorBackgroundImage
 		self.photo.sizeCategory = SizeCategory.thumbnail
 		self.addSubview(self.photo)
 		
 		/* Patch name */
-		self.name.font = UIFont(name: "HelveticaNeue-Light", size: 22)
+		self.name.font = Theme.fontHeading1
 		self.name.numberOfLines = 2
 		self.addSubview(self.name)
 		
 		/* Patch type */
-		self.type.font = UIFont(name: "HelveticaNeue-Light", size: 13)
-		self.type.textColor = Colors.secondaryText
+		self.type.font = Theme.fontCommentSmall
+		self.type.textColor = Theme.colorTextSecondary
 		self.addSubview(self.type)
 		
 		/* Patch visibility */
 		self.visibility.image = UIImage(named: "imgLockLight")
 		self.visibility.contentMode = UIViewContentMode.ScaleToFill
 		self.visibility.clipsToBounds = true
-		self.visibility.tintColor(Colors.brandColor)
+		self.visibility.tintColor(Theme.colorTint)
 		self.addSubview(self.visibility)
 		
 		/* Patch status */
 		self.status.text = "REQUESTED"
 		self.status.hidden = true
-		self.status.font = UIFont(name: "HelveticaNeue-Light", size: 13)
-		self.status.textColor = Colors.brandColor
+		self.status.font = Theme.fontCommentSmall
+		self.status.textColor = Theme.colorTint
 		self.addSubview(self.status)
 		
 		/* Message count */
 		self.messageCount.textAlignment = .Center
 		self.messageCount.lineBreakMode = .ByTruncatingMiddle
-		self.messageCount.font = UIFont(name: "HelveticaNeue-Light", size: 30)
-		self.messageCount.textColor = Colors.accentColor
+		self.messageCount.font = Theme.fontNumberFeatured
+		self.messageCount.textColor = Theme.colorTextBanner
 		self.messagesGroup.addSubview(self.messageCount)
 		
 		/* Message label */
 		self.messageLabel.text = "MESSAGES"
 		self.messageLabel.textAlignment = .Center
-		self.messageLabel.font = UIFont(name: "HelveticaNeue-Light", size: 12)
-		self.messageLabel.textColor = Colors.secondaryText
+		self.messageLabel.font = Theme.fontCommentExtraSmall
+		self.messageLabel.textColor = Theme.colorTextSecondary
 		self.messagesGroup.addSubview(self.messageLabel)
 		self.addSubview(self.messagesGroup)
 		
 		/* Watching count */
 		self.watchingCount.textAlignment = .Center
-		self.watchingCount.font = UIFont(name: "HelveticaNeue-Light", size: 30)
-		self.watchingCount.textColor = Colors.accentColor
+		self.watchingCount.font = Theme.fontNumberFeatured
+		self.watchingCount.textColor = Theme.colorTextBanner
 		self.watchingGroup.addSubview(self.watchingCount)
 		
 		/* Watching label */
 		self.watchingLabel.text = "WATCHING"
 		self.watchingLabel.textAlignment = .Center
-		self.watchingLabel.font = UIFont(name: "HelveticaNeue-Light", size: 12)
-		self.watchingLabel.textColor = Colors.secondaryText
+		self.watchingLabel.font = Theme.fontCommentExtraSmall
+		self.watchingLabel.textColor = Theme.colorTextSecondary
 		self.watchingGroup.addSubview(self.watchingLabel)
 		self.addSubview(self.watchingGroup)
 		
@@ -110,11 +110,11 @@ class PatchView: BaseView {
 		self.addSubview(self.distance)
 		
 		/* Rule */
-		self.rule.layer.backgroundColor = Colors.lightGray.CGColor
+		self.rule.layer.backgroundColor = Theme.colorRule.CGColor
 		self.addSubview(self.rule)
 		
 		/* Shadow */
-		self.shadow.layer.backgroundColor = Colors.gray80pcntColor.CGColor
+		self.shadow.layer.backgroundColor = Theme.colorShadow.CGColor
 		self.addSubview(self.shadow)
 	}
 	

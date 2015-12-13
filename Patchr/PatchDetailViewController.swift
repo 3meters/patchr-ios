@@ -94,8 +94,8 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		
         /* UI prep */
         self.patchNameVisible = false
-        self.lockImage.tintColor(Colors.brandColor)
-        self.infoLockImage.tintColor(Colors.brandColor)
+        self.lockImage.tintColor(Theme.colorTint)
+        self.infoLockImage.tintColor(Theme.colorTint)
         self.originalTop = patchPhotoTop.constant
         self.contextButton?.setTitle("", forState: .Normal)
 		

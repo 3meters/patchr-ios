@@ -118,12 +118,12 @@ class MainTabBarController: UITabBarController {
 		self.viewControllers = [patches, notifications, search, user]
 		
 		/* Message bar */
-		self.messageBar.font = UIFont(name: "HelveticaNeue-Light", size: 18)
+		self.messageBar.font = Theme.fontTextDisplay
 		self.messageBar.text = "Connection is offline"
 		self.messageBar.numberOfLines = 0
 		self.messageBar.textAlignment = NSTextAlignment.Center
 		self.messageBar.textColor = Colors.white
-		self.messageBar.layer.backgroundColor = Colors.brandColorDark.CGColor
+		self.messageBar.layer.backgroundColor = Theme.colorTint.CGColor
 		self.messageBar.alpha = 0.85
 		self.view.addSubview(self.messageBar)
 	}

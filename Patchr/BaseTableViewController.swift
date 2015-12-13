@@ -26,8 +26,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
     var showProgress		= true
     var progressOffsetY     = Float(-48)
 	var progressOffsetX     = Float(8)
-	var contentOffset		= CGPointMake(0, -64)
-	
+
 	var rowHeights:			NSMutableDictionary = [:]
 	var rowAnimation:		UITableViewRowAnimation = .Fade
 	
@@ -39,10 +38,9 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		super.viewDidLoad()
 		
         /* Hookup refresh control */
-		let refreshControl = UIRefreshControl()
-        refreshControl.tintColor = Colors.brandColor
-		refreshControl.addTarget(self, action: "pullToRefreshAction:", forControlEvents: UIControlEvents.ValueChanged)
-		self.refreshControl = refreshControl
+		self.refreshControl = UIRefreshControl()
+        self.refreshControl!.tintColor = Theme.colorTint
+		self.refreshControl?.addTarget(self, action: "pullToRefreshAction:", forControlEvents: UIControlEvents.ValueChanged)
 		
 		/* Simple activity indicator (frame sizing) */
 		self.activity.color = Theme.colorActivityIndicator
@@ -179,7 +177,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		 * Called when switching between patch view controllers.
 		 */
 		super.viewDidDisappear(animated)
-		self.contentOffset = self.tableView.contentOffset
 		self.activity.stopAnimating()
 		if self.refreshControl!.refreshing {
 			refreshControl!.endRefreshing()
@@ -191,7 +188,9 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
     *--------------------------------------------------------------------------------------------*/
     
     func pullToRefreshAction(sender: AnyObject?) -> Void {
-        self.bindQueryItems(true, paging: false)
+		Utils.delay(0.5) {	// Give the refresh animation to settle before party on the main thread
+			self.bindQueryItems(true, paging: false)
+		}
     }
 	
 	func photoAction(sender: AnyObject?) {
@@ -268,10 +267,10 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 					// Delay seems to be necessary to avoid visual glitch with UIRefreshControl
 					Utils.delay(0.5) {
 						
-						let query = DataController.instance.mainContext.objectWithID(queryObjectId) as! Query
-						
 						self?.processingQuery = false
 						self?.activity.stopAnimating()
+						
+						let query = DataController.instance.mainContext.objectWithID(queryObjectId) as! Query
 						
 						if query.moreValue {
 							if self?.tableView.tableFooterView == nil {
@@ -287,6 +286,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 						else {
 							self?.tableView.tableFooterView = nil
 						}
+						
 						self?.tableView.setNeedsLayout()
 						
 						if error == nil {
@@ -320,6 +320,8 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 			})
 		}
     }
+	
+	func didRefreshItems(query: Query) { }
 	
     func populateSidecar(query: Query) { }
 

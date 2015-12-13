@@ -44,7 +44,7 @@ class AirTableViewCell: UITableViewCell {
 	}
 	
 	func addSeparator() {
-		self.separator.layer.backgroundColor = Colors.separatorColor.CGColor
+		self.separator.layer.backgroundColor = Theme.colorSeparator.CGColor
 		self.contentView.addSubview(self.separator)
 	}
 	

@@ -12,9 +12,9 @@ class AirToggleButton: AirImageButton {
     
     var imageOff: UIImage?
     var imageOn: UIImage?
-    var tintOff: UIColor = Colors.brandColor
-    var tintOn: UIColor = Colors.brandColor
-    var tintPending: UIColor = Colors.brandColor
+    var tintOff: UIColor = Theme.colorActionOn
+    var tintOn: UIColor = Theme.colorActionOn
+    var tintPending: UIColor = Theme.colorActionOn
     var messageOn: String?
     var messageOff: String?
     

@@ -88,7 +88,7 @@ class SearchViewController: UITableViewController {
         progress!.opacity = 0.0
         progress!.removeFromSuperViewOnHide = true
         progress!.userInteractionEnabled = false
-        progress!.activityIndicatorColor = Colors.brandColorDark
+        progress!.activityIndicatorColor = Theme.colorActivityIndicator
         progress!.hide(false)
         
         /* Empty label */

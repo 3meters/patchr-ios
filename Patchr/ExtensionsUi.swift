@@ -263,7 +263,7 @@ extension UIViewController {
 	func addActivityIndicatorTo(view: UIView, offsetY: Float = 0, style: UIActivityIndicatorViewStyle = .WhiteLarge) -> UIActivityIndicatorView {
 		
 		let activity: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: style)
-		activity.color = Colors.brandColorDark
+		activity.color = Theme.colorTint
 		activity.hidesWhenStopped = true
 		view.addSubview(activity)
 		activity.anchorInCenterWithWidth(20, height: 20)

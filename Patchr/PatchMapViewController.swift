@@ -100,7 +100,7 @@ extension PatchMapViewController: MKMapViewDelegate {
 		else {
 			let imageView = AirImageView(frame: CGRectMake(0, 0, 40, 40))
 			imageView.image = Utils.imagePatch
-			imageView.tintColor = Colors.brandColor
+			imageView.tintColor = Theme.colorTint
 			annotationView.leftCalloutAccessoryView = imageView
 			imageView.contentMode = UIViewContentMode.ScaleAspectFill
 		}

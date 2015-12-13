@@ -49,7 +49,7 @@ class NotificationView: BaseView {
 			self.description_ = TTTAttributedLabel(frame: CGRectZero)
 			self.description_!.numberOfLines = 5
 			self.description_!.lineBreakMode = .ByTruncatingTail
-			self.description_!.font = UIFont(name: "HelveticaNeue-Light", size: 17)
+			self.description_!.font = Theme.fontTextList
 			self.addSubview(self.description_!)
 		}
 		
@@ -57,7 +57,7 @@ class NotificationView: BaseView {
 		if self.cellType != .Text {
 			self.photo = AirImageButton(frame: CGRectZero)
 			self.photo!.imageView!.contentMode = UIViewContentMode.ScaleAspectFill
-			self.photo!.backgroundColor = Colors.windowColor
+			self.photo!.backgroundColor = Theme.colorBackgroundImage
 			self.photo!.clipsToBounds = true
 			self.photo!.userInteractionEnabled = true
 			self.addSubview(self.photo!)
@@ -67,12 +67,12 @@ class NotificationView: BaseView {
 		self.userPhoto.contentMode = UIViewContentMode.ScaleAspectFill
 		self.userPhoto.clipsToBounds = true
 		self.userPhoto.layer.cornerRadius = 24
-		self.userPhoto.layer.backgroundColor = Colors.windowColor.CGColor
+		self.userPhoto.layer.backgroundColor = Theme.colorBackgroundImage.CGColor
 		self.addSubview(self.userPhoto)
 		
 		/* Footer */
-		self.createdDate.font = UIFont(name: "HelveticaNeue-Light", size: 15)
-		self.createdDate.textColor = Colors.secondaryText
+		self.createdDate.font = Theme.fontComment
+		self.createdDate.textColor = Theme.colorTextSecondary
 		self.ageDot.layer.cornerRadius = 6
 		
 		self.addSubview(self.iconImageView)
@@ -90,8 +90,8 @@ class NotificationView: BaseView {
 			self.description_?.text = description
 		}
 		
-		let linkColor = Colors.brandColorDark
-		let linkActiveColor = Colors.brandColorLight
+		let linkColor = Theme.colorTint
+		let linkActiveColor = Theme.colorTint
 		
 		self.description_?.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
 		self.description_?.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
@@ -111,7 +111,7 @@ class NotificationView: BaseView {
 		self.createdDate.text = Utils.messageDateFormatter.stringFromDate(notification.createdDate)
 		
 		/* Age indicator */
-		self.ageDot.layer.backgroundColor = Colors.accentColor.CGColor
+		self.ageDot.layer.backgroundColor = Theme.colorBackgroundAgeDot.CGColor
 		let now = NSDate()
 		
 		/* Age of notification in hours */
@@ -150,7 +150,7 @@ class NotificationView: BaseView {
 		else if notification.type == "nearby" {
 			self.iconImageView.image = Utils.imageLocation
 		}
-		self.iconImageView.tintColor(Colors.brandColor)
+		self.iconImageView.tintColor(Theme.colorTint)
 		
 		self.setNeedsLayout()
 	}
