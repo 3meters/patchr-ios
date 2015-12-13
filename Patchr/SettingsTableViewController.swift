@@ -10,8 +10,9 @@ import UIKit
 import MessageUI
 
 class SettingsTableViewController: UITableViewController {
-    
-    
+	
+	var progress: AirProgress?
+
     @IBOutlet weak var notificationsCell: UITableViewCell!
     @IBOutlet weak var sendFeedbackCell: UITableViewCell!
     @IBOutlet weak var rateCell: UITableViewCell!
@@ -21,7 +22,8 @@ class SettingsTableViewController: UITableViewController {
     @IBOutlet weak var developmentCell: UITableViewCell!
 
     @IBOutlet weak var buildInformationLabel: UILabel!
-    
+	@IBOutlet weak var logoutButton: AirButtonLink!
+	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
@@ -31,7 +33,7 @@ class SettingsTableViewController: UITableViewController {
         
         let components = NSCalendar.currentCalendar().components([.Year, .Month, .Day], fromDate: NSDate())
         self.buildInformationLabel.text = "©\(components.year) 3meters LLC - Version \(appVersion()) (\(build()))"
-		self.buildInformationLabel.textColor = Colors.accentColor
+		self.buildInformationLabel.textColor = Theme.colorTextTitle
 		self.buildInformationLabel.font = Theme.fontTextDisplay
         
         if let user = UserController.instance.currentUser {
@@ -47,13 +49,32 @@ class SettingsTableViewController: UITableViewController {
         self.privacyPolicyCell.textLabel!.font = Theme.fontTextDisplay
         self.softwareLicensesCell.textLabel!.font = Theme.fontTextDisplay
         self.developmentCell.textLabel!.font = Theme.fontTextDisplay
+		
+		self.logoutButton.addTarget(self, action: Selector("logoutAction:"), forControlEvents: .TouchUpInside)
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         setScreenName("Settings")
     }
-    
+	
+	/*--------------------------------------------------------------------------------------------
+	* Events
+	*--------------------------------------------------------------------------------------------*/
+
+	func logoutAction(sender: AnyObject) {
+		
+		self.progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+		self.progress!.mode = MBProgressHUDMode.Indeterminate
+		self.progress!.styleAs(.ActivityWithText)
+		self.progress!.minShowTime = 0.5
+		self.progress!.labelText = "Logging out..."
+		self.progress!.removeFromSuperViewOnHide = true
+		self.progress!.show(true)
+		
+		UserController.instance.signout()	// Blocks until finished
+	}
+	
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
@@ -131,9 +152,6 @@ extension SettingsTableViewController {
             if let controller = storyboard.instantiateViewControllerWithIdentifier("DevelopmentViewController") as? DevelopmentViewController {
                 self.navigationController?.pushViewController(controller, animated: true)
             }
-        }
-        else {
-            assert(false, "Unknown cell selection")
         }
     }
 }

@@ -42,21 +42,11 @@ class UserDetailViewController: BaseDetailViewController {
 			if self.isCurrentUser {
 				let editImage = Utils.imageEdit
 				let editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionEdit"))
-				let signoutButton = UIBarButtonItem(title: "Log out", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSignout"))
 				let settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSettings"))
 				let spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
 				spacer.width = SPACER_WIDTH
 				self.navigationItem.rightBarButtonItems = [settingsButton, spacer, editButton]
-				self.navigationItem.leftBarButtonItems = [signoutButton]
 				self.navigationItem.title = "Me"
-			}
-			else  {
-				let signinButton = UIBarButtonItem(title: "Log in", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSignin"))
-				let settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSettings"))
-				self.navigationItem.rightBarButtonItems = [settingsButton]
-				self.navigationItem.leftBarButtonItems = [signinButton]
-				self.navigationItem.title = "Guest"
-				return
 			}
 		}
 	}
@@ -66,20 +56,13 @@ class UserDetailViewController: BaseDetailViewController {
 	}
 
 	override func viewWillAppear(animated: Bool) {
+		super.viewWillAppear(animated)
 		setScreenName(self.profileMode ? "UserProfile" : "UserDetail")
-		if !self.isGuest {
-			super.viewWillAppear(animated)
-		}
-		else {
-			draw()
-		}
 	}
     
     override func viewDidAppear(animated: Bool){
-		if !self.isGuest {
-			super.viewDidAppear(animated)
-			bind(true)
-		}
+		super.viewDidAppear(animated)
+		bind(true)
     }
 	
 	override func viewWillDisappear(animated: Bool) {
@@ -91,10 +74,7 @@ class UserDetailViewController: BaseDetailViewController {
 		/*
 		* Called when switching between patch view controllers.
 		*/
-		self.contentOffset = self.tableView.contentOffset
-		if !self.isGuest {
-			self.fetchedResultsController.delegate = nil
-		}
+		self.fetchedResultsController.delegate = nil
 		self.activity.stopAnimating()
 	}
 
@@ -103,53 +83,24 @@ class UserDetailViewController: BaseDetailViewController {
 	 *--------------------------------------------------------------------------------------------*/
 
 	func actionBrowseWatching(sender: AnyObject?) {
-        if !self.isGuest {
-            let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-            if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableViewController") as? PatchTableViewController {
-                controller.filter = .Watching
-                controller.user = self.entity as! User
-                self.navigationController?.pushViewController(controller, animated: true)
-            }
-        }
+		let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+		if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableViewController") as? PatchTableViewController {
+			controller.filter = .Watching
+			controller.user = self.entity as! User
+			self.navigationController?.pushViewController(controller, animated: true)
+		}
 	}
 
 	func actionBrowseOwned(sender: AnyObject?) {
-        if !self.isGuest {
-            let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-            if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableViewController") as? PatchTableViewController {
-                controller.filter = .Owns
-                controller.user = self.entity as! User
-                self.navigationController?.pushViewController(controller, animated: true)
-            }
-        }
+		let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+		if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableViewController") as? PatchTableViewController {
+			controller.filter = .Owns
+			controller.user = self.entity as! User
+			self.navigationController?.pushViewController(controller, animated: true)
+		}
 	}
 
-	func actionSignout() {
-		
-		self.progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
-		self.progress!.mode = MBProgressHUDMode.Indeterminate
-		self.progress!.styleAs(.ActivityWithText)
-		self.progress!.minShowTime = 0.5
-		self.progress!.labelText = "Signing out..."
-		self.progress!.removeFromSuperViewOnHide = true
-		self.progress!.show(true)
-		
-		UserController.instance.signout()	// Blocks until finished
-	}
-    
-    func actionSignin() {
-        
-        LocationController.instance.clearLastLocationAccepted()
-		
-		if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
-			let navController = UINavigationController()
-			navController.viewControllers = [LobbyViewController()]
-			appDelegate.window!.setRootViewController(navController, animated: true)
-		}
-    }
-    
-	func actionEdit() {
-		
+	func actionEdit() {		
 		let controller = ProfileEditViewController()
 		let navController = UINavigationController()
 		controller.inputUser = self.entity as? User
