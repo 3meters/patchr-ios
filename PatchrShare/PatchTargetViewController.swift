@@ -99,8 +99,6 @@ class PatchTargetViewController: UITableViewController {
             self.userId = groupDefaults.stringForKey(PatchrUserDefaultKey("userId"))
 			let lockbox = Lockbox(keyPrefix: KEYCHAIN_GROUP)
 			self.sessionKey = lockbox.stringForKey("sessionKey") as String?
-
-            self.sessionKey = groupDefaults.stringForKey(PatchrUserDefaultKey("sessionKey"))
             if let recentPatches = groupDefaults.arrayForKey(PatchrUserDefaultKey("recent.patches")) as? [[String:AnyObject]] {
                 for recent in recentPatches {
                     self.recentItems.addObject(recent)

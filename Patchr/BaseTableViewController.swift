@@ -103,6 +103,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated) // Base implementation does nothing
 		
+		self.refreshControl!.endRefreshing()
 		if self.query.executedValue {
 			do {
 				try self.fetchedResultsController.performFetch()

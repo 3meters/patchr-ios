@@ -46,6 +46,11 @@ class SearchViewController: UITableViewController {
 		super.loadView()
 		initialize()
 	}
+	
+	override func viewWillAppear(animated: Bool) {
+		super.viewWillAppear(animated)
+		loadRecents()
+	}
 
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
@@ -105,17 +110,7 @@ class SearchViewController: UITableViewController {
 			}
 		}
 		
-		// Recents
-		self.currentItems = recentItems
-		if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
-			self.userId = groupDefaults.stringForKey(PatchrUserDefaultKey("userId"))
-			self.sessionKey = groupDefaults.stringForKey(PatchrUserDefaultKey("sessionKey"))
-			if let recentPatches = groupDefaults.arrayForKey(PatchrUserDefaultKey("recent.patches")) as? [[String:AnyObject]] {
-				for recent in recentPatches {
-					self.recentItems.addObject(recent)
-				}
-			}
-		}
+		self.currentItems = self.recentItems
 		
 		self.searchField.placeholder = "Search for patches"
 		self.searchField.addTarget(self, action: Selector("textFieldDidChange:"), forControlEvents: UIControlEvents.EditingChanged)
@@ -129,6 +124,20 @@ class SearchViewController: UITableViewController {
 		let gestureRecognizer = UITapGestureRecognizer(target: self, action: Selector("dismissKeyboard"))
 		gestureRecognizer.cancelsTouchesInView = false
 		self.tableView.addGestureRecognizer(gestureRecognizer)
+	}
+	
+	func loadRecents() {
+		self.recentItems.removeAllObjects()
+		if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
+			let lockbox = Lockbox(keyPrefix: KEYCHAIN_GROUP)
+			self.userId = groupDefaults.stringForKey(PatchrUserDefaultKey("userId"))
+			self.sessionKey = lockbox.stringForKey("sessionKey") as String?
+			if let recentPatches = groupDefaults.arrayForKey(PatchrUserDefaultKey("recent.patches")) as? [[String:AnyObject]] {
+				for recent in recentPatches {
+					self.recentItems.addObject(recent)
+				}
+			}
+		}
 	}
 	
     func suggest() {
