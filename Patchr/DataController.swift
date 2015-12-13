@@ -164,6 +164,11 @@ class DataController: NSObject {
 				response, error in
 				
 				/* Returns on background thread */
+				if modelEntity != nil {
+					guard !self.objectHasBeenDeleted(modelEntity) else {
+						return
+					}
+				}
 				
 				if let _ = ServerError(error) {
 					completion(nil, error: error)
@@ -291,7 +296,11 @@ class DataController: NSObject {
 			/*
 			* Returns on background thread
 			*/
-			if error != nil {
+			guard !objectHasBeenDeleted(query) else {
+				return
+			}
+			
+			guard error == nil else {
 				let query = self.mainContext.objectWithID(queryId) as! Query
 				completion(queryItems: [], query: query, error: error)
 				return
@@ -505,7 +514,23 @@ class DataController: NSObject {
 		}
         return (dataWrapper, queryItems)    // Includes existing and new, could still have orphans
 	}
-    
+	
+	func objectHasBeenDeleted(object: NSManagedObject) -> Bool {
+		if object.deleted {
+			return true
+		}
+		if object.managedObjectContext == nil {
+			return true
+		}
+		do {
+			try self.mainContext.existingObjectWithID(object.objectID)
+		}
+		catch {
+			return true
+		}
+		return false
+	}
+	
     func dataWrapperForResponse(response: AnyObject) -> ServiceData? {
         if let dictionary = response as? [NSObject:AnyObject] {
             let dataWrapper = ServiceData()
