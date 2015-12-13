@@ -1457,31 +1457,52 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection id="IZc-YH-1wA" userLabel="Logout">
+                            <tableViewSection id="IZc-YH-1wA" userLabel="Actions">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="84P-cP-lif">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="84P-cP-lif">
                                         <rect key="frame" x="0.0" y="378" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="84P-cP-lif" id="uFJ-9C-WtH">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0CZ-uT-Qyn" userLabel="logout_button" customClass="AirButtonLink" customModule="Patchr" customModuleProvider="target">
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0CZ-uT-Qyn" userLabel="clear_history_button" customClass="AirButtonLink" customModule="Patchr" customModuleProvider="target">
+                                                    <rect key="frame" x="8" y="0.0" width="398" height="43"/>
+                                                    <animations/>
+                                                    <state key="normal" title="CLEAR SEARCH HISTORY"/>
+                                                </button>
+                                            </subviews>
+                                            <animations/>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </tableViewCellContentView>
+                                        <animations/>
+                                        <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="2sX-bA-NKy">
+                                        <rect key="frame" x="0.0" y="422" width="414" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2sX-bA-NKy" id="4NW-5a-52z">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YZN-r2-Npv" userLabel="logout_button" customClass="AirButtonLink" customModule="Patchr" customModuleProvider="target">
                                                     <rect key="frame" x="8" y="0.0" width="398" height="43"/>
                                                     <animations/>
                                                     <state key="normal" title="LOG OUT"/>
                                                 </button>
                                             </subviews>
                                             <animations/>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </tableViewCellContentView>
                                         <animations/>
+                                        <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
                             <tableViewSection id="Tni-z8-VYF" userLabel="Info">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="Cj3-LS-hOw">
-                                        <rect key="frame" x="0.0" y="442" width="414" height="44"/>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="Cj3-LS-hOw">
+                                        <rect key="frame" x="0.0" y="486" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Cj3-LS-hOw" id="cPg-Dw-uFl">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="43"/>
@@ -1511,8 +1532,9 @@
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina55"/>
                     <connections>
                         <outlet property="buildInformationLabel" destination="gKc-Qh-jCZ" id="YTm-GO-XDR"/>
+                        <outlet property="clearHistoryButton" destination="0CZ-uT-Qyn" id="6a4-GJ-Qr1"/>
                         <outlet property="developmentCell" destination="YX7-4V-hZB" id="lfa-A8-Wst"/>
-                        <outlet property="logoutButton" destination="0CZ-uT-Qyn" id="haW-ac-s3w"/>
+                        <outlet property="logoutButton" destination="YZN-r2-Npv" id="QQP-31-adZ"/>
                         <outlet property="notificationsCell" destination="rw5-34-X0W" id="ACs-PD-Kn3"/>
                         <outlet property="privacyPolicyCell" destination="pmR-5i-sat" id="qHp-N5-kI6"/>
                         <outlet property="rateCell" destination="t6r-At-E8n" id="7fL-gg-lEU"/>

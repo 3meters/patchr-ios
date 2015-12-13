@@ -122,6 +122,15 @@ struct Utils {
         }
         return image
     }
+	
+	static func clearHistory() {
+		let defaults = NSUserDefaults.standardUserDefaults()
+		defaults.setObject(nil, forKey:PatchrUserDefaultKey("recent.searches"))
+		if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
+			groupDefaults.setObject(nil, forKey:PatchrUserDefaultKey("recent.patches"))
+			groupDefaults.setObject(nil, forKey:PatchrUserDefaultKey("nearby.patches"))
+		}
+	}
     
     static func updateRecents(recent: [String:AnyObject]) {
         

@@ -23,6 +23,7 @@ class SettingsTableViewController: UITableViewController {
 
     @IBOutlet weak var buildInformationLabel: UILabel!
 	@IBOutlet weak var logoutButton: AirButtonLink!
+	@IBOutlet weak var clearHistoryButton: AirButtonLink!
 	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -51,6 +52,7 @@ class SettingsTableViewController: UITableViewController {
         self.developmentCell.textLabel!.font = Theme.fontTextDisplay
 		
 		self.logoutButton.addTarget(self, action: Selector("logoutAction:"), forControlEvents: .TouchUpInside)
+		self.clearHistoryButton.addTarget(self, action: Selector("clearHistoryAction:"), forControlEvents: .TouchUpInside)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -75,10 +77,25 @@ class SettingsTableViewController: UITableViewController {
 		UserController.instance.signout()	// Blocks until finished
 	}
 	
+	func clearHistoryAction(sender: AnyObject) {
+		
+		self.progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+		self.progress!.mode = MBProgressHUDMode.Indeterminate
+		self.progress!.styleAs(.ActivityWithText)
+		self.progress!.minShowTime = 0.5
+		self.progress!.labelText = "Clearing..."
+		self.progress!.removeFromSuperViewOnHide = true
+		self.progress!.show(true)
+		
+		Utils.clearHistory()
+		
+		self.progress!.hide(true)
+	}
+	
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
-    
+	
     func appVersion() -> String {
         return NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleShortVersionString") as? String ?? "Unknown"
     }
