@@ -41,11 +41,6 @@ class SearchViewCell: UITableViewCell {
 		self.title.lineBreakMode = .ByTruncatingMiddle
 		self.title.font = Theme.fontTextDisplay
 		self.addSubview(self.title)
-		
-		/* User area */
-//		self.subtitle.font = Theme.fontComment
-//		self.subtitle.textColor = Theme.colorTextSecondary
-//		self.addSubview(self.subtitle)
 	}
 	
 	override func layoutSubviews() {

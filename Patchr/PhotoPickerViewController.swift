@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PhotoPickerViewController: UICollectionViewController {
+class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate, UITableViewDataSource {
     
     var imageResults: [ImageResult] = [ImageResult]()
     var searchBarActive: Bool = false
@@ -16,11 +16,15 @@ class PhotoPickerViewController: UICollectionViewController {
 	var threshold = 0
 	var processing = false
     
-    var searchBar: UISearchBar!
-    var pickerDelegate: PhotoBrowseControllerDelegate?
-	var activity: UIActivityIndicatorView?
-	var footerView:      UIView!
-	var loadMoreMessage: String = "LOAD MORE"
+    var searchBar				: UISearchBar!
+	var searchField				: UITextField?
+    var pickerDelegate			: PhotoBrowseControllerDelegate?
+	var activity				: UIActivityIndicatorView?
+	var footerView				: UIView!
+	var loadMoreMessage			: String = "LOAD MORE"
+	var autocompleteList		= AirTableView()
+	var autocompleteData		: NSMutableArray = NSMutableArray()
+	var searches				: NSMutableArray = NSMutableArray()
 	
 	var queue = NSOperationQueue()
 	
@@ -70,6 +74,19 @@ class PhotoPickerViewController: UICollectionViewController {
 		
 		/* Simple activity indicator */
 		self.activity = addActivityIndicatorTo(self.view)
+		
+		/* Auto complete table view */
+		self.autocompleteList.delegate = self
+		self.autocompleteList.dataSource = self
+		self.autocompleteList.scrollEnabled = true
+		self.autocompleteList.hidden = true
+		self.autocompleteList.rowHeight = 40
+		self.autocompleteList.separatorInset = UIEdgeInsetsZero
+
+		self.view.addSubview(self.autocompleteList)
+		
+		/* Past searches */
+		loadSearches()
 	}
 
 	override func viewWillAppear(animated: Bool) {
@@ -91,6 +108,9 @@ class PhotoPickerViewController: UICollectionViewController {
         if !self.searchBar!.isDescendantOfView(self.view) {
             self.view.addSubview(self.searchBar!)
         }
+		
+		
+		//		self.autocompleteList.alignUnder(self.searchBar, matchingLeftAndRightWithTopPadding: 0, height: CGFloat(self.autocompleteData.count * 44))
 		
 		/* Calculate thumbnail width */
 		availableWidth = UIScreen.mainScreen().bounds.size.width - (sectionInsets!.left + sectionInsets!.right)
@@ -125,11 +145,11 @@ class PhotoPickerViewController: UICollectionViewController {
 
     private func loadData(paging: Bool = false) {
 		
-		if self.processing {
+		guard !self.processing else {
 			return
 		}
 		
-		if self.searchBar!.text == nil || self.searchBar!.text == "" {
+		guard self.searchBar!.text != nil && !self.searchBar!.text!.isEmpty else {
 			return
 		}
         
@@ -164,6 +184,9 @@ class PhotoPickerViewController: UICollectionViewController {
 							dictionary = response as? NSDictionary,
 							data = dictionary["d"] as? NSDictionary,
 							results = data["results"] as? NSMutableArray {
+								
+								Utils.updateSearches(self.searchBar!.text!)
+								self.loadSearches()
 								
 								let resultsCopy = results.mutableCopy() as! NSMutableArray
 								let more: Bool = (resultsCopy.count > self.pageSize)
@@ -211,15 +234,42 @@ class PhotoPickerViewController: UICollectionViewController {
 		}
     }
 	
+	func loadSearches() {
+		self.searches.removeAllObjects()
+		if let searches = NSUserDefaults.standardUserDefaults().arrayForKey(PatchrUserDefaultKey("recent.searches")) as? [String] {
+			for search in searches {
+				self.searches.addObject(search)
+			}
+		}
+	}
+	
     func imageForIndexPath(indexPath: NSIndexPath) -> ImageResult? {
 		if indexPath.row > self.imageResults.count - 1 {
 			return nil
 		}
         return imageResults[indexPath.row]
     }
+	
+	func filterSearchesWithSubstring(substring: String) {
+		self.autocompleteData.removeAllObjects()
+		for search in self.searches {
+			let substringRange = search.rangeOfString(substring)
+			if substringRange.location == 0 {
+				self.autocompleteData.addObject(search)
+			}
+		}
+
+		self.autocompleteList.hidden = (self.autocompleteData.count == 0)
+		self.autocompleteList.alignUnder(self.searchBar, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: CGFloat(self.autocompleteData.count * 40))
+		self.autocompleteList.reloadData()
+	}
 }
 
 extension PhotoPickerViewController: UISearchBarDelegate {
+	
+	func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+		filterSearchesWithSubstring(searchText)
+	}
     
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
         self.searchBar!.setShowsCancelButton(true, animated: true)
@@ -238,6 +288,44 @@ extension PhotoPickerViewController: UISearchBarDelegate {
         self.loadData(false)
         searchBar.resignFirstResponder()
     }
+}
+
+extension PhotoPickerViewController {
+	/*
+	* UITableViewDelegate
+	*/
+	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+		
+		var cell = tableView.dequeueReusableCellWithIdentifier(CELL_IDENTIFIER)
+		
+		if cell == nil {
+			cell = UITableViewCell(style: .Default, reuseIdentifier: CELL_IDENTIFIER)
+		}
+		
+		if let search = self.autocompleteData[indexPath.row] as? String {
+			cell?.textLabel?.text = search
+			cell?.textLabel?.font = Theme.fontComment
+		}
+		return cell!
+	}
+	
+	func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+		return 1
+	}
+	
+	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		return self.autocompleteData.count
+	}
+	
+	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+		
+		if let search = self.autocompleteData[indexPath.row] as? String {
+			self.searchBar!.text = search
+			self.autocompleteList.hidden = true
+			self.loadData(false)
+			searchBar.resignFirstResponder()
+		}
+	}
 }
 
 extension PhotoPickerViewController {

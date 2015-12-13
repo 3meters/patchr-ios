@@ -164,16 +164,44 @@ struct Utils {
             }
         }
     }
-    
+	
+	static func updateSearches(search: String) {
+		
+		let defaults = NSUserDefaults.standardUserDefaults()
+		if var searches = defaults.arrayForKey(PatchrUserDefaultKey("recent.searches")) as? [String] {
+			
+			/* Replace if found else append */
+			var index = 0
+			var found = false
+			for item in searches {
+				if (item == search) {
+					searches[index] = search
+					found = true
+					break
+				}
+				index++
+			}
+			
+			if !found {
+				searches.append(search)
+			}
+			
+			defaults.setObject(searches, forKey:PatchrUserDefaultKey("recent.searches"))
+		}
+		else {
+			defaults.setObject([search], forKey:PatchrUserDefaultKey("recent.searches"))
+		}
+	}
+	
     static func updateNearbys(nearby: [NSObject: AnyObject]) -> [[NSObject:AnyObject]] {
-        
+		
         let nearbys: [[NSObject:AnyObject]] = [nearby]
-        
+		
         if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
             if var storedNearbys = groupDefaults.arrayForKey(PatchrUserDefaultKey("nearby.patches")) as? [[NSObject:AnyObject]] {
-                
+				
                 storedNearbys.append(nearby)
-                
+				
                 /* Sort descending */
                 storedNearbys.sortInPlace {
                     item1, item2 in

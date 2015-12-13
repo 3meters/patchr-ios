@@ -35,8 +35,8 @@ class SearchViewController: UITableViewController {
         return "None"
     }
     
-    var searchField = AirSearchField()
-	var header      = UIView(frame: CGRectMake(0, 0, 0, 64))
+    var searchField		= AirSearchField()
+	var header			= UIView(frame: CGRectMake(0, 0, 0, 64))
     
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -123,7 +123,6 @@ class SearchViewController: UITableViewController {
 		self.header.addSubview(self.searchField)
 		
 		self.tableView.tableHeaderView = self.header
-		
 		self.tableView.backgroundColor = UIColor.whiteColor()
 		self.tableView.tableFooterView = UIView()   // Triggers data binding
 		
