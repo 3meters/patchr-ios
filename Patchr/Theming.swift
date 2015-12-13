@@ -22,70 +22,7 @@ let SPACER_WIDTH: CGFloat   = 12
 
 let Theme = Snow()
 
-protocol Theming {
-	
-	var colorText:				UIColor { get }
-	var colorTextSecondary:		UIColor { get }
-	var colorTextDisplay:		UIColor { get }
-	var colorTextTitle:			UIColor { get }
-	var colorTextBanner:		UIColor { get }
-	var colorTextPlaceholder:	UIColor { get }
-	var colorTextNotification:	UIColor { get }
-	var colorTextToast:			UIColor { get }
-	var colorTextActivity:		UIColor { get }
-
-	var colorBackgroundWindow:			UIColor { get }
-	var colorBackgroundScreen:			UIColor { get }
-	var colorBackgroundImage:			UIColor { get }
-	var colorBackgroundTile:			UIColor { get }
-	var colorBackgroundTileList:		UIColor { get }
-	var colorBackgroundSidebar:			UIColor { get }
-	var colorBackgroundToast:			UIColor { get }
-	var colorBackgroundNotification:	UIColor { get }
-	var colorBackgroundOverlay:			UIColor { get }
-	var colorBackgroundActivity:		UIColor { get }
-	var colorBackgroundActivityOnly:	UIColor { get }
-	var colorBackgroundEmptyBubble:		UIColor { get }
-
-	var colorRule:                   UIColor { get }
-	var colorRuleActive:             UIColor { get }
-	var colorTint:                   UIColor { get }
-	var colorScrimDarken:            UIColor { get }
-	var colorScrimLighten:           UIColor { get }
-	var colorActionOn:               UIColor { get }
-	var colorActionOff:              UIColor { get }
-	var colorActivityIndicator:      UIColor { get }
-	var colorActivityIndicatorImage: UIColor { get }
-	
-	var colorButtonRadioTitle:					UIColor { get }
-	var colorButtonRadioIcon:					UIColor { get }
-	var colorButtonRadioIndicator:				UIColor { get }
-	
-	var colorButtonTitle:						UIColor { get }
-	var colorButtonTitleFeatured:				UIColor { get }
-	var colorButtonTitleHighlighted:			UIColor { get }
-	var colorButtonTitleFeaturedHighlighted:	UIColor { get }
-	var colorButtonBorder:						UIColor { get }
-	var colorButtonBorderFeatured:				UIColor { get }
-	var colorButtonFill:						UIColor { get }
-	var colorButtonFillFeatured:				UIColor { get }
-	
-	var fontText:				UIFont { get }
-	var fontTextDisplay:		UIFont { get }
-	var fontTitle:				UIFont { get }
-	var fontBanner:				UIFont { get }
-	var fontComment:			UIFont { get }
-	var fontCommentSmall:		UIFont { get }
-	var fontButtonTitle:		UIFont { get }
-	var fontButtonRadioTitle:	UIFont { get }
-	var fontLinkText:			UIFont { get }
-	
-	var dimenButtonCornerRadius:	Int { get }
-	var dimenButtonBorderWidth:		CGFloat { get }
-	var dimenRuleThickness:			CGFloat { get }
-}
-
-class Snow: Theming {
+class Snow {
 	
 	let colorText				= Colors.black
 	let colorTextSecondary		= Colors.gray50pcntColor
@@ -184,14 +121,16 @@ public struct Colors {
 	static let black: UIColor = UIColor.blackColor()
 	static let clear: UIColor = UIColor.clearColor()
 	
-	static let brandColor = UIColor(hexString: "#fa6900ff")
-	static let brandColorLight = UIColor(red: CGFloat(1), green: CGFloat(0.718), blue: CGFloat(0.302), alpha: CGFloat(1))
-	static let accentColor = UIColor(hexString: "#69d2e7ff")
-	static let accentColorLight = UIColor(hexString: "#a7dbdbff")
-	static let accentColorDark = UIColor(hexString: "#3d99b1ff")
+	static let brandColor = UIColor(hexString: "#FF7600FF")
+	static let brandColorLight = UIColor(hexString: "#FF9439FF")
+	static let brandColorDark = UIColor(hexString: "#C55B00FF")
+	static let accentColor = UIColor(hexString: "#69D3E7FF")
+	static let accentColorLight = UIColor(hexString: "#95E4F3FF")
+	static let accentColorDark = UIColor(hexString: "#44C0D7FF")
+	
 	static let fillColor = UIColor(hexString: "#e0e4ccff")
 	static let fillColorLight = UIColor(hexString: "#e9f0cfff")
-
+	
 	static let facebookColor = UIColor(hexString: "#3B5998ff")
 	static let googleColor = UIColor(hexString: "#DD4B39ff")
 }
