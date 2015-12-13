@@ -9,7 +9,6 @@
 #import "ModelUtilities.h"
 #import "User.h"
 #import "Message.h"
-#import "Place.h"
 #import "Patch.h"
 
 @implementation ModelUtilities
@@ -18,12 +17,12 @@
     
     if ([schema isEqualToString:@"user"]) {
         return [User class];
-    } else if ([schema isEqualToString:@"message"]) {
+    }
+	else if ([schema isEqualToString:@"message"]) {
         return [Message class];
-    } else if ([schema isEqualToString:@"patch"]) {
+    }
+	else if ([schema isEqualToString:@"patch"]) {
         return [Patch class];
-    } else if ([schema isEqualToString:@"place"]) {
-        return [Place class];
     }
     // Log.d(@"Unknown model class for schema %@", schema);
     return nil;

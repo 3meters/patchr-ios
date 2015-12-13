@@ -84,16 +84,6 @@
         <relationship name="photoBigFor" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Notification" inverseName="photoBig" inverseEntity="Notification" syncable="YES"/>
         <relationship name="photoFor" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Entity" inverseName="photo" inverseEntity="Entity" syncable="YES"/>
     </entity>
-    <entity name="Place" representedClassName="Place" parentEntity="Entity" syncable="YES">
-        <attribute name="address" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="categoryId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="categoryName" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="city" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="country" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="postalCode" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="region" optional="YES" attributeType="String" syncable="YES"/>
-    </entity>
     <entity name="Query" representedClassName="Query" syncable="YES">
         <attribute name="entityId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="executed" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
@@ -167,7 +157,6 @@
         <element name="Notification" positionX="279" positionY="95" width="128" height="195"/>
         <element name="Patch" positionX="81" positionY="-243" width="128" height="90"/>
         <element name="Photo" positionX="-693" positionY="90" width="128" height="150"/>
-        <element name="Place" positionX="279" positionY="-243" width="128" height="165"/>
         <element name="Query" positionX="-216" positionY="117" width="128" height="210"/>
         <element name="QueryItem" positionX="-495" positionY="-99" width="128" height="135"/>
         <element name="ServiceBase" positionX="-450" positionY="-243" width="128" height="315"/>

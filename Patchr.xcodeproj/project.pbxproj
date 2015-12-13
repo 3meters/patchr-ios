@@ -36,7 +36,6 @@
 		7DA7308E1A71ACC9008C25FA /* _ServiceObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA7307C1A71ACC9008C25FA /* _ServiceObject.m */; };
 		7DA7308F1A71ACC9008C25FA /* Entity.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA7307E1A71ACC9008C25FA /* Entity.m */; };
 		7DA730901A71ACC9008C25FA /* Patch.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA730801A71ACC9008C25FA /* Patch.m */; };
-		7DA730911A71ACC9008C25FA /* Place.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA730821A71ACC9008C25FA /* Place.m */; };
 		7DA730921A71ACC9008C25FA /* Query.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA730841A71ACC9008C25FA /* Query.m */; };
 		7DA730931A71ACC9008C25FA /* ServiceBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA730861A71ACC9008C25FA /* ServiceBase.m */; };
 		7DA730941A71ACC9008C25FA /* ServiceObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA730881A71ACC9008C25FA /* ServiceObject.m */; };
@@ -270,8 +269,6 @@
 		7DA7307E1A71ACC9008C25FA /* Entity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Entity.m; path = Model/Entity.m; sourceTree = "<group>"; };
 		7DA7307F1A71ACC9008C25FA /* Patch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Patch.h; path = Model/Patch.h; sourceTree = "<group>"; };
 		7DA730801A71ACC9008C25FA /* Patch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Patch.m; path = Model/Patch.m; sourceTree = "<group>"; };
-		7DA730811A71ACC9008C25FA /* Place.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Place.h; path = Model/Place.h; sourceTree = "<group>"; };
-		7DA730821A71ACC9008C25FA /* Place.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Place.m; path = Model/Place.m; sourceTree = "<group>"; };
 		7DA730831A71ACC9008C25FA /* Query.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Query.h; path = Model/Query.h; sourceTree = "<group>"; };
 		7DA730841A71ACC9008C25FA /* Query.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Query.m; path = Model/Query.m; sourceTree = "<group>"; };
 		7DA730851A71ACC9008C25FA /* ServiceBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ServiceBase.h; path = Model/ServiceBase.h; sourceTree = "<group>"; };
@@ -567,8 +564,6 @@
 				7DA730801A71ACC9008C25FA /* Patch.m */,
 				7D3F26D11A76F77E0015F8E8 /* Photo.h */,
 				E2D569BB1C038C1B001CCE58 /* Photo.m */,
-				7DA730811A71ACC9008C25FA /* Place.h */,
-				7DA730821A71ACC9008C25FA /* Place.m */,
 				7DA730831A71ACC9008C25FA /* Query.h */,
 				7DA730841A71ACC9008C25FA /* Query.m */,
 				E27DB4031B06477A0090D023 /* QueryItem.h */,
@@ -1245,7 +1240,6 @@
 				E2C0D9311B6C415100E28CE9 /* Log.swift in Sources */,
 				E24A87261B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift in Sources */,
 				E20C3A7F1BDC0EB0008CCED1 /* UserDetailView.swift in Sources */,
-				7DA730911A71ACC9008C25FA /* Place.m in Sources */,
 				E29F65531B61A9450000BEF4 /* PatchSearchCell.swift in Sources */,
 				E20C3A851BE04BBC008CCED1 /* Stopwatch.swift in Sources */,
 				E26B0C8C1B4577D000706F4A /* TextViewChangeObserver.swift in Sources */,

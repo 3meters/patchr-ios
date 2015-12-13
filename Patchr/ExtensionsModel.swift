@@ -267,56 +267,6 @@ extension User {
     }
 }
 
-extension Place {
-    
-    static func extras(inout parameters: [String:AnyObject]) -> [String:AnyObject] {
-        if let links = Place.links() {
-            parameters["links"] = links
-        }
-        if let linked = Place.linked() {
-            parameters["linked"] = linked
-        }
-        if let linkCount = Place.linkCount() {
-            parameters["linkCount"] = linkCount
-        }
-        return parameters
-    }
-    
-    static func links() -> [[String:AnyObject]]? {
-        return nil
-    }
-    
-    static func linked() -> [[String:AnyObject]]? {
-        return nil
-    }
-    
-    static func linkCount() -> [[String:AnyObject]]? {
-        return nil
-    }
-    
-    func addressBlock() -> String {
-        var addressBlock = ""
-        if address != nil && address.isEmpty {
-            addressBlock = address + "\n"
-        }
-        
-        if city != nil && region != nil && !city.isEmpty && !region.isEmpty {
-            addressBlock += city + ", " + region;
-        }
-        else if city != nil && !city.isEmpty {
-            addressBlock += city;
-        }
-        else if region != nil && !region.isEmpty {
-            addressBlock += region;
-        }
-        
-        if postalCode != nil && !postalCode.isEmpty {
-            addressBlock += " " + postalCode;
-        }
-        return addressBlock;
-    }    
-}
-
 extension Shortcut {
     
     static func decorateId(entityId: String) -> String {

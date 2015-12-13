@@ -44,7 +44,6 @@ class DataController: NSObject {
             "message": Message.self,
 			"notification": Notification.self,
 			"patch": Patch.self,
-            "place": Place.self,
 			"user": User.self
 		]
 	}()
@@ -110,16 +109,6 @@ class DataController: NSObject {
 		}
 	}
 
-    func withPlaceId(placeId: String, refresh: Bool = false, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
-        /*
-        * - Load a place for the place form
-        */
-        withEntityType(Place.self, entityId: placeId, refresh: refresh) {
-            objectId, error in
-            completion(objectId, error: error)
-        }
-    }
-    
     func withEntityId(entityId: String, refresh: Bool = false, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
         /*
         * Used by notifications which only have an entity id to work with.
@@ -127,9 +116,6 @@ class DataController: NSObject {
 		switch entityId {
 			case _ where entityId.hasPrefix("pa."):
 				withPatchId(entityId, refresh: refresh, completion: completion)
-            
-            case _ where entityId.hasPrefix("pl."):
-                withPlaceId(entityId, refresh: refresh, completion: completion)
             
 			case _ where entityId.hasPrefix("us."):
 				withUserId(entityId, refresh: refresh, completion: completion)
@@ -227,9 +213,6 @@ class DataController: NSObject {
         }
         else if let _ = type as? Message.Type {
             DataController.proxibase.fetchMessageById(id, criteria:criteria, completion: completion)
-        }
-        else if let _ = type as? Place.Type {
-            DataController.proxibase.fetchPlaceById(id, criteria:criteria, completion: completion)
         }
         else if let _ = type as? User.Type {
             DataController.proxibase.fetchUserById(id, criteria:criteria, completion: completion)

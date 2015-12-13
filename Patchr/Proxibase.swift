@@ -110,16 +110,6 @@ public class Proxibase {
 		performPOSTRequestFor("find/users/\(userId)", parameters: parameters, completion: completion)
 	}
 
-	public func fetchPlaceById(id: String, criteria: [String:AnyObject], completion: CompletionBlock) {
-
-		var parameters: [String:AnyObject] = [:]
-		Place.extras(&parameters)
-		if !criteria.isEmpty {
-			parameters["query"] = criteria
-		}
-		performPOSTRequestFor("find/places/\(id)", parameters: parameters, completion: completion)
-	}
-
 	/*--------------------------------------------------------------------------------------------
 	* PUBLIC: Fetch collection
 	*--------------------------------------------------------------------------------------------*/

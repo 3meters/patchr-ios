@@ -49,7 +49,6 @@
 
 #import "BFURL.h"
 #import "Patch.h"
-#import "Place.h"
 #import "Query.h"
 #import "QueryItem.h"
 #import "ServiceData.h"
