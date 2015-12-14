@@ -79,7 +79,7 @@ class PatchView: BaseView {
 		self.messageCount.textAlignment = .Center
 		self.messageCount.lineBreakMode = .ByTruncatingMiddle
 		self.messageCount.font = Theme.fontNumberFeatured
-		self.messageCount.textColor = Theme.colorTextBanner
+		self.messageCount.textColor = Theme.colorNumberFeatured
 		self.messagesGroup.addSubview(self.messageCount)
 		
 		/* Message label */
@@ -93,7 +93,7 @@ class PatchView: BaseView {
 		/* Watching count */
 		self.watchingCount.textAlignment = .Center
 		self.watchingCount.font = Theme.fontNumberFeatured
-		self.watchingCount.textColor = Theme.colorTextBanner
+		self.watchingCount.textColor = Theme.colorNumberFeatured
 		self.watchingGroup.addSubview(self.watchingCount)
 		
 		/* Watching label */

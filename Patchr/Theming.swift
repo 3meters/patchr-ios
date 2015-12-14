@@ -28,11 +28,12 @@ class Snow {
 	let colorTextSecondary		= Colors.gray50pcntColor
 	let colorTextDisplay		= Colors.black
 	let colorTextTitle			= Colors.accentColorDark
-	let colorTextBanner			= Colors.accentColor
+	let colorTextBanner			= Colors.white
 	let colorTextPlaceholder	= Colors.lightGray
 	let colorTextNotification	= Colors.white
 	let colorTextToast			= Colors.black
 	let colorTextActivity		= Colors.black
+	let colorNumberFeatured		= Colors.accentColor
 
 	let colorBackgroundWindow			= Colors.gray90pcntColor
 	let colorBackgroundImage			= Colors.gray90pcntColor

@@ -55,7 +55,7 @@ class LobbyViewController: BaseViewController {
 		self.buttonSignup.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 44)
 		self.buttonGuest.alignUnder(self.buttonGroup, matchingCenterWithTopPadding: 120, width: 228, height: 44)
 		self.appName.alignAbove(self.buttonGroup, matchingCenterWithBottomPadding: 20, width: 228, height: 48)
-		self.imageLogo.alignAbove(self.appName, matchingCenterWithBottomPadding: -6, width: 68, height: 68)
+		self.imageLogo.alignAbove(self.appName, matchingCenterWithBottomPadding: -6, width: 100, height: 100)
 	}
 	
 	func loginAction(sender: AnyObject?) {
@@ -89,9 +89,8 @@ class LobbyViewController: BaseViewController {
 		self.imageBackground.parallaxIntensity = -40
 		self.view.addSubview(self.imageBackground)
 		
-		self.imageLogo.image = UIImage(named: "imgPatchDark")
+		self.imageLogo.image = UIImage(named: "imgPatchr")
 		self.imageLogo.contentMode = UIViewContentMode.ScaleAspectFill
-		self.imageLogo.tintColor = Theme.colorTint
 		self.view.addSubview(self.imageLogo)
 		
 		self.appName.text = "Patchr"
