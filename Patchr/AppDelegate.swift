@@ -95,12 +95,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
         /* Get the latest on the authenticated user if we have one */
 		if UserController.instance.authenticated {	// Checks for current userId and sessionKey
             UserController.instance.signinAuto()
-            /*
-            * Register this install with the service. If install registration fails the
-            * device will not accurately track notifications.
-            */
-            DataController.proxibase.registerInstallStandard {
-                response, error in
+        }
+		
+		let registered = NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("installRegistered"))
+		if !registered {
+			/*
+			* Register this install with the service. If install registration fails the
+			* device will not accurately track notifications.
+			*/
+			DataController.proxibase.registerInstallStandard {		// Authenticated user will be associated with this install
+				response, error in
 				
 				NSOperationQueue.mainQueue().addOperationWithBlock {
 					if let error = ServerError(error) {
@@ -111,22 +115,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
 							Log.w("Error during registerInstall: \(error)")
 						}
 					}
-				}
-            }
-        }
-        else {
-			/* Register as anonymous guest user. registerInstall service call is done without user/session params */
-            DataController.proxibase.registerInstallStandard {
-                response, error in
-				
-				NSOperationQueue.mainQueue().addOperationWithBlock {
-					if let error = ServerError(error) {
-						Log.w("Error during registerInstall: \(error)")
+					else {
+						NSUserDefaults.standardUserDefaults().setBool(true, forKey:PatchrUserDefaultKey("installRegistered"))
 					}
 				}
-            }
-        }
-        
+			}
+		}
+		
         /* Instance the reachability manager */
         ReachabilityManager.instance
         

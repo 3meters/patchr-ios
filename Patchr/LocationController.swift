@@ -146,19 +146,21 @@ class LocationController: NSObject {
             }
             
             /*  Update location associated with this install */
-            DataController.proxibase.updateProximity(loc){
-                response, error in
-                
-				NSOperationQueue.mainQueue().addOperationWithBlock {
-					if let error = ServerError(error) {
-						Log.w("Error during updateProximity: \(error)")
-					}
-					if self.bgTask != UIBackgroundTaskInvalid {
-						UIApplication.sharedApplication().endBackgroundTask(self.bgTask!)
-						self.bgTask = UIBackgroundTaskInvalid
+			if UserController.instance.authenticated {
+				DataController.proxibase.updateProximity(loc){
+					response, error in
+					
+					NSOperationQueue.mainQueue().addOperationWithBlock {
+						if let error = ServerError(error) {
+							Log.w("Error during updateProximity: \(error)")
+						}
+						if self.bgTask != UIBackgroundTaskInvalid {
+							UIApplication.sharedApplication().endBackgroundTask(self.bgTask!)
+							self.bgTask = UIBackgroundTaskInvalid
+						}
 					}
 				}
-            }
+			}
         }
     }
 }

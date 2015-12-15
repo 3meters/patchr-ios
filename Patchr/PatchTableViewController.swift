@@ -222,15 +222,17 @@ class PatchTableViewController: BaseTableViewController {
         }
         
         /*  Update location associated with this install */
-        DataController.proxibase.updateProximity(loc){
-            response, error in
-			NSOperationQueue.mainQueue().addOperationWithBlock {
-				if let error = ServerError(error) {
-					Log.w("Error during updateProximity: \(error)")
+		if UserController.instance.authenticated {
+			DataController.proxibase.updateProximity(loc){
+				response, error in
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					if let error = ServerError(error) {
+						Log.w("Error during updateProximity: \(error)")
+					}
 				}
 			}
-        }
-        
+		}
+		
         Log.d(message)
         
         refreshForLocation()

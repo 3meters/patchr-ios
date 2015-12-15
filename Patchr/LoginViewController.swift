@@ -268,6 +268,10 @@ class LoginViewController: BaseViewController {
 		progress.removeFromSuperViewOnHide = true
 		progress.show(true)
 		
+		/*
+		 * Successful login will also update the install record so the authenticated user
+		 * is associated with the install. Logging out clears the associated user.
+		 */
 		DataController.proxibase.login(self.emailField.text!, password: self.passwordField.text!, provider: self.provider, token: nil) {
 			response, error in
 			
@@ -297,32 +301,44 @@ class LoginViewController: BaseViewController {
 					* current user so location updates work properly. If install registration
 					* fails the device will not accurately track notifications.
 					*/
-					DataController.proxibase.registerInstallStandard {
-						response, error in
-						
-						NSOperationQueue.mainQueue().addOperationWithBlock {
-							if let error = ServerError(error) {
-								Log.w("Error during registerInstall: \(error)")
-							}
+					let registered = NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("installRegistered"))
+					if !registered {
+						DataController.proxibase.registerInstallStandard {
+							response, error in
 							
-							/* Navigate to main interface */
-							if self.inputRouteToMain {
-								self.navigateToMain()
-							}
-							else {
-								if self.isModal {
-									self.dismissViewControllerAnimated(true, completion: nil)
+							NSOperationQueue.mainQueue().addOperationWithBlock {
+								if let error = ServerError(error) {
+									Log.w("Error during registerInstall: \(error)")
 								}
 								else {
-									self.navigationController?.popViewControllerAnimated(true)
+									NSUserDefaults.standardUserDefaults().setBool(true, forKey: PatchrUserDefaultKey("installRegistered"))
 								}
-								if UserController.instance.userName != nil {
-									Shared.Toast("Logged in as \(UserController.instance.userName!)")
-								}
+								self.didLogin()
 							}
 						}
 					}
+					else {
+						self.didLogin()
+					}
 				}
+			}
+		}
+	}
+	
+	func didLogin() {
+		/* Navigate to main interface */
+		if self.inputRouteToMain {
+			self.navigateToMain()
+		}
+		else {
+			if self.isModal {
+				self.dismissViewControllerAnimated(true, completion: nil)
+			}
+			else {
+				self.navigationController?.popViewControllerAnimated(true)
+			}
+			if UserController.instance.userName != nil {
+				Shared.Toast("Logged in as \(UserController.instance.userName!)")
 			}
 		}
 	}

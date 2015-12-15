@@ -372,9 +372,9 @@ public class Proxibase {
 		* The completion block will be called asynchronously in either case.
 		* If signin is successful, then the credentials from the server will be written to user defaults
 		*/
-		var parameters = ["email": email, "password": password, "installId": installationIdentifier]
+		var parameters = ["email": email, "password": password, "installId": self.installationIdentifier]
 		if provider == AuthProvider.FACEBOOK || provider == AuthProvider.GOOGLE {
-			parameters = ["provider": provider, "token": token!, "installId": installationIdentifier]
+			parameters = ["provider": provider, "token": token!, "installId": self.installationIdentifier]
 		}
 		
 		sessionManager.POST("auth/signin", parameters: parameters,
