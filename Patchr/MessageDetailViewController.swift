@@ -70,10 +70,13 @@ class MessageDetailViewController: UITableViewController {
 		super.viewDidLoad()
 
         /* Ui tweaks */
-		self.messagePhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
+		self.view.window?.backgroundColor = Theme.colorBackgroundWindow
 		self.userPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
 		self.patchPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
-		self.view.window?.backgroundColor = Theme.colorBackgroundWindow
+		self.messagePhoto.translatesAutoresizingMaskIntoConstraints = true
+		self.messagePhoto.contentMode = .ScaleAspectFill
+		self.messagePhoto.contentVerticalAlignment = .Fill
+		self.messagePhoto.contentHorizontalAlignment = .Fill
 		
         let linkColor = Theme.colorTint
         let linkActiveColor = Theme.colorTint
@@ -97,28 +100,6 @@ class MessageDetailViewController: UITableViewController {
         self.likesButton.setTitle(nil, forState: .Normal)
 	}
 	
-	func drawNavButtons(shareAllowed: Bool = true){
-		
-		let shareButton  = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
-		let spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
-		spacer.width = SPACER_WIDTH
-		
-		if self.isOwner {
-			let editImage    = Utils.imageEdit
-			let editButton   = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
-			let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: Selector("deleteAction"))
-			self.navigationItem.setRightBarButtonItems(shareAllowed ? [shareButton, spacer, deleteButton, spacer, editButton] : [deleteButton, spacer, editButton], animated: true)
-		}
-		else if self.isPatchOwner {
-			let removeImage    = UIImage(named: "imgRemoveLight")
-			let removeButton   = UIBarButtonItem(image: removeImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("removeAction"))
-			self.navigationItem.setRightBarButtonItems(shareAllowed ? [shareButton, spacer, removeButton] : [removeButton], animated: true)
-		}
-		else {
-			self.navigationItem.setRightBarButtonItems(shareAllowed ? [shareButton] : [], animated: true)
-		}
-	}
-
 	override func viewWillAppear(animated: Bool) {
 		
 		/* Use cached entity if available in the data model */
@@ -148,6 +129,10 @@ class MessageDetailViewController: UITableViewController {
 	
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
+		
+		let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.bounds.size.width)
+		self.tableView.bounds.size.width = viewWidth
+		self.messagePhoto.anchorInCenterWithWidth(viewWidth - 24, height: (viewWidth - 24) * 0.75)
 	}
 	
 	override func viewDidAppear(animated: Bool) {
@@ -486,6 +471,28 @@ class MessageDetailViewController: UITableViewController {
 		self.tableView.reloadData()
 	}
 
+	func drawNavButtons(shareAllowed: Bool = true){
+		
+		let shareButton  = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
+		let spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
+		spacer.width = SPACER_WIDTH
+		
+		if self.isOwner {
+			let editImage    = Utils.imageEdit
+			let editButton   = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
+			let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: Selector("deleteAction"))
+			self.navigationItem.setRightBarButtonItems(shareAllowed ? [shareButton, spacer, deleteButton, spacer, editButton] : [deleteButton, spacer, editButton], animated: true)
+		}
+		else if self.isPatchOwner {
+			let removeImage    = UIImage(named: "imgRemoveLight")
+			let removeButton   = UIBarButtonItem(image: removeImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("removeAction"))
+			self.navigationItem.setRightBarButtonItems(shareAllowed ? [shareButton, spacer, removeButton] : [removeButton], animated: true)
+		}
+		else {
+			self.navigationItem.setRightBarButtonItems(shareAllowed ? [shareButton] : [], animated: true)
+		}
+	}
+	
     func delete() {
         
         let entityPath = "data/messages/\((self.message?.id_)!)"
@@ -548,12 +555,18 @@ class MessageDetailViewController: UITableViewController {
                 else {
                     Log.d("Branch link created: \(url!)")
                     let message: MessageItem = MessageItem(entity: self.message!, shareUrl: url!)
-                    
-                    let activityViewController = UIActivityViewController(
-                        activityItems: [message],
-                        applicationActivities: nil)
-                    
-                    self.presentViewController(activityViewController, animated: true, completion: nil)
+					
+					let activityViewController = UIActivityViewController(
+						activityItems: [message],
+						applicationActivities: nil)
+					
+					if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+						self.presentViewController(activityViewController, animated: true, completion: nil)
+					}
+					else {
+						let popup: UIPopoverController = UIPopoverController(contentViewController: activityViewController)
+						popup.presentPopoverFromRect(CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/4, 0, 0), inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
+					}
                 }
             })
         }
@@ -577,7 +590,7 @@ extension MessageDetailViewController {
                 /* Size so photo aspect ratio is 4:3 */
                 var height: CGFloat = 0
                 if message.photo != nil {
-                    height = ((UIScreen.mainScreen().bounds.size.width - 24) * 0.75)
+                    height = (self.tableView.bounds.size.width - 24) * 0.75
                 }
                 return height
             }

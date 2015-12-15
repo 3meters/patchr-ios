@@ -64,6 +64,13 @@ class SettingsTableViewController: UITableViewController {
 	* Events
 	*--------------------------------------------------------------------------------------------*/
 
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		self.logoutButton.fillSuperview()
+		self.clearHistoryButton.fillSuperview()
+		self.buildInformationLabel.fillSuperview()
+	}
+	
 	func logoutAction(sender: AnyObject) {
 		
 		self.progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)

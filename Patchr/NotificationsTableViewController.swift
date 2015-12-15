@@ -446,7 +446,8 @@ extension NotificationsTableViewController {
 				
 				let minHeight: CGFloat = CELL_USER_PHOTO_SIZE + (CELL_PADDING_VERTICAL * 2)
 				let columnLeft = CELL_USER_PHOTO_SIZE + CELL_VIEW_SPACING + (CELL_PADDING_HORIZONTAL * 2)
-				let columnWidth = self.tableView.width() - columnLeft
+				
+				let columnWidth = (min(CONTENT_WIDTH_MAX, self.tableView.bounds.size.width)) - columnLeft
 				let photoHeight = columnWidth * CELL_PHOTO_RATIO
 				
 				var height: CGFloat = CELL_FOOTER_HEIGHT + (CELL_PADDING_VERTICAL * 2)    // Base size if no description or photo

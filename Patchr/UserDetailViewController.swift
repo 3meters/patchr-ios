@@ -51,10 +51,6 @@ class UserDetailViewController: BaseDetailViewController {
 		}
 	}
 	
-	override func viewWillLayoutSubviews() {
-		super.viewWillLayoutSubviews()
-	}
-
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
 		setScreenName(self.profileMode ? "UserProfile" : "UserDetail")

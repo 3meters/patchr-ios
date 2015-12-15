@@ -26,7 +26,8 @@ let THIRD_PARTY_AUTH_ENABLED	= false
 
 let TIMEOUT_REQUEST: Int    = 10   // Seconds
 
-let IMAGE_DIMENSION_MAX: CGFloat = 1280
+let IMAGE_DIMENSION_MAX	: CGFloat = 1280
+let CONTENT_WIDTH_MAX	: CGFloat = 462
 
 let URI_PROXIBASE_SEARCH_IMAGES: String = "https://api.datamarket.azure.com/Bing/Search/v1"
 let NAMESPACE: String                   = "com.3meters.patchr.ios."
