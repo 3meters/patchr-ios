@@ -43,6 +43,8 @@ pod 'FBSDKCoreKit', '~> 4.2.0'
 pod 'FBSDKLoginKit', '~> 4.1.0'
 pod 'FBSDKShareKit', '~> 4.1.0'
 
+# CreativeSDKCore and Image are on version 0.12.2127.02
+
 end
 
 target 'PatchrShare' do

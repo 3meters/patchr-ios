@@ -308,7 +308,7 @@ class DataController: NSObject {
 				}
 				
 				/* So we can provide a hint that paging is available */
-				query.moreValue = returnValue.serviceData.moreValue
+				query.moreValue = (returnValue.serviceData.moreValue && returnValue.serviceData.countValue > 0)
 				let queryItems = returnValue.queryItems
 				
 				/*
