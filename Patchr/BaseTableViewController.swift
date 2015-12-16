@@ -28,7 +28,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	var progressOffsetX     = Float(8)
 
 	var rowHeights:			NSMutableDictionary = [:]
-	var rowAnimation:		UITableViewRowAnimation = .Fade
 	
     /*--------------------------------------------------------------------------------------------
     * MARK:- Lifecycle
@@ -531,14 +530,14 @@ extension BaseTableViewController {
 		
 		switch type {
 			case .Insert:	// 1
-				self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: self.rowAnimation)
+				self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Automatic)
 			
 			case .Delete:	// 2
-				self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: self.rowAnimation)
+				self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
 				
 			case .Move:		// 3
-				self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: self.rowAnimation)
-				self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: self.rowAnimation)
+				self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
+				self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Automatic)
 				
 			case .Update:	// 4
 				self.tableView.cellForRowAtIndexPath(indexPath!)	// Better than reloadRowsAtIndexPaths because no animation
