@@ -307,15 +307,15 @@
                                         </tableViewCellContentView>
                                         <animations/>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" verticalCompressionResistancePriority="1000" selectionStyle="none" indentationWidth="10" shouldIndentWhileEditing="NO" id="EzR-8F-ZE0" userLabel="Photo Cell">
-                                        <rect key="frame" x="0.0" y="268" width="414" height="44"/>
+                                    <tableViewCell contentMode="scaleToFill" verticalCompressionResistancePriority="1000" selectionStyle="none" indentationWidth="10" shouldIndentWhileEditing="NO" rowHeight="292" id="EzR-8F-ZE0" userLabel="Photo Cell">
+                                        <rect key="frame" x="0.0" y="268" width="414" height="292"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" tableViewCell="EzR-8F-ZE0" id="SDP-Cd-dw8">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="292"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" clipsSubviews="YES" contentMode="scaleAspectFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageWhenHighlighted="NO" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="bM1-tF-5rl" userLabel="photo" customClass="AirImageButton" customModule="Patchr" customModuleProvider="target">
-                                                    <rect key="frame" x="13" y="0.0" width="388" height="292"/>
+                                                    <rect key="frame" x="12" y="0.0" width="390" height="292"/>
                                                     <animations/>
                                                     <userDefinedRuntimeAttributes>
                                                         <userDefinedRuntimeAttribute type="string" keyPath="sizeCategory" value="standard"/>
@@ -330,7 +330,7 @@
                                         <animations/>
                                     </tableViewCell>
                                     <tableViewCell hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" selectionStyle="none" indentationWidth="10" shouldIndentWhileEditing="NO" rowHeight="48" id="wVI-Au-eyn">
-                                        <rect key="frame" x="0.0" y="312" width="414" height="48"/>
+                                        <rect key="frame" x="0.0" y="560" width="414" height="48"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" tableViewCell="wVI-Au-eyn" id="smd-MS-Sud">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="48"/>
@@ -402,7 +402,7 @@
                                         <animations/>
                                     </tableViewCell>
                                     <tableViewCell hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" shouldIndentWhileEditing="NO" rowHeight="48" id="bkQ-Vf-16e">
-                                        <rect key="frame" x="0.0" y="360" width="414" height="48"/>
+                                        <rect key="frame" x="0.0" y="608" width="414" height="48"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" tableViewCell="bkQ-Vf-16e" id="azt-76-xOu">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="48"/>
@@ -412,7 +412,7 @@
                                         <animations/>
                                     </tableViewCell>
                                     <tableViewCell hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" selectionStyle="none" indentationWidth="10" shouldIndentWhileEditing="NO" rowHeight="48" id="x5K-Ks-2LH">
-                                        <rect key="frame" x="0.0" y="408" width="414" height="48"/>
+                                        <rect key="frame" x="0.0" y="656" width="414" height="48"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" tableViewCell="x5K-Ks-2LH" id="XP1-TS-iEt">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="48"/>

@@ -73,6 +73,7 @@ class MessageDetailViewController: UITableViewController {
 		self.view.window?.backgroundColor = Theme.colorBackgroundWindow
 		self.userPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
 		self.patchPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
+		self.messagePhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
 		self.messagePhoto.translatesAutoresizingMaskIntoConstraints = true
 		self.messagePhoto.contentMode = .ScaleAspectFill
 		self.messagePhoto.contentVerticalAlignment = .Fill
@@ -589,8 +590,9 @@ extension MessageDetailViewController {
                 
                 /* Size so photo aspect ratio is 4:3 */
                 var height: CGFloat = 0
+				let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.bounds.size.width)
                 if message.photo != nil {
-                    height = (self.tableView.bounds.size.width - 24) * 0.75
+                    height = (viewWidth - 24) * 0.75
                 }
                 return height
             }
