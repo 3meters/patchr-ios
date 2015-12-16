@@ -34,8 +34,11 @@ class ServiceUserProfile: NSObject {
 
 public typealias CompletionBlock = (response:AnyObject?, error:NSError?) -> Void
 
-class FacebookProvider: NSObject, ServiceProvider, FBSDKAppInviteDialogDelegate {
-	
+class FacebookProvider: NSObject, ServiceProvider, FBSDKAppInviteDialogDelegate {	
+	/*
+	* Facebook access token is managed by the facebook sdk and is stored
+	* in the device keychain. The facebook user id is available using token.userID.
+	*/
 	let permissions = ["public_profile", "email", "user_friends"]
 	
 	private var _loginManager: FBSDKLoginManager?
