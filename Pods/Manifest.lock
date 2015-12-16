@@ -27,20 +27,20 @@ PODS:
     - AFNetworking (~> 2.6)
     - DACircularProgress
     - pop
-  - AWSCore (2.3.1)
-  - AWSS3 (2.3.1):
-    - AWSCore (= 2.3.1)
+  - AWSCore (2.3.2)
+  - AWSS3 (2.3.2):
+    - AWSCore (= 2.3.2)
   - Bolts (1.5.0):
     - Bolts/AppLinks (= 1.5.0)
     - Bolts/Tasks (= 1.5.0)
   - Bolts/AppLinks (1.5.0):
     - Bolts/Tasks
   - Bolts/Tasks (1.5.0)
-  - Branch (0.11.11)
+  - Branch (0.11.12)
   - Crashlytics (3.4.1):
     - Fabric (~> 1.6.0)
   - DACircularProgress (2.3.1)
-  - DLRadioButton (1.3.5)
+  - DLRadioButton (1.4.4)
   - Fabric (1.6.1)
   - Facade (1.1.0)
   - FBSDKCoreKit (4.2.0):
@@ -72,7 +72,7 @@ PODS:
   - GoogleSymbolUtilities (1.0.3)
   - GoogleUtilities (1.1.0):
     - GoogleSymbolUtilities (~> 1.0.0)
-  - Harpy (3.4.4)
+  - Harpy (3.4.5)
   - Keys (1.0.0)
   - Lockbox (2.1.0)
   - MBProgressHUD (0.9.1)
@@ -82,7 +82,7 @@ PODS:
     - SDWebImage/Core (= 3.7.3)
   - SDWebImage/Core (3.7.3)
   - THContactPicker (1.2)
-  - TWMessageBarManager (1.7.2)
+  - TWMessageBarManager (1.8.0)
   - UIDevice-Hardware (0.1.7)
 
 DEPENDENCIES:
@@ -90,6 +90,7 @@ DEPENDENCIES:
   - AFNetworking (~> 2.6)
   - AirPhotoBrowser (from `~/code/AirPhotoBrowser`)
   - AWSS3 (~> 2.3.1)
+  - AWSS3 (~> 2.3.2)
   - Branch
   - Crashlytics
   - DLRadioButton
@@ -107,7 +108,7 @@ DEPENDENCIES:
   - pop (~> 1.0)
   - SDWebImage (~> 3.7.2)
   - THContactPicker (~> 1.2)
-  - TWMessageBarManager
+  - TWMessageBarManager (~> 1.8)
   - UIDevice-Hardware
 
 EXTERNAL SOURCES:
@@ -120,13 +121,13 @@ SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
   AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
   AirPhotoBrowser: c26ba9232aea2467ebf932ce9cbabe60fd698d54
-  AWSCore: 7ad34b4bc285b778a3df699cb6f00aad3d1c446f
-  AWSS3: b7f4a0ad4da6dcc172e757dcb2b2423d26b32325
+  AWSCore: c2f69975fd2caf38a10736961de28a0105cdb00c
+  AWSS3: 9ac201e7a4ad8be0b68348c77acfd100027b97af
   Bolts: 722ab9a4f8b50fc4ed1b9998a5a7a2b3f16d80b4
-  Branch: 71b1180c49d75e0d849e2611ecf3016de7572eac
+  Branch: 82bfbfda8fbc7f6caed9709abdbb88ec88ba6e59
   Crashlytics: 41574a245bc6ae10c55d57f385ebd2004e5bee05
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
-  DLRadioButton: 817c7cba2a630a658dea90f56d6d9740f544930d
+  DLRadioButton: 8c78ceb9e3d076a58a445f5ec505361796856539
   Fabric: bf0ceb04e7c924090efc5f8c55e4fbcca189e0a0
   Facade: 509c4a0e5fa8517d5e0e1e47251b520775904a9a
   FBSDKCoreKit: 84b3616a361801f190e43a9909caead7bb6087c7
@@ -138,7 +139,7 @@ SPEC CHECKSUMS:
   GoogleNetworkingUtilities: 292992ab31b7b4ba32809a0e8b40e324cdfb2c0c
   GoogleSymbolUtilities: 82ad9f93d3615244b3f4ce440f5ab2515e8b4f56
   GoogleUtilities: 8ed9134debe11719097881711464752900668f10
-  Harpy: 9f77227be545fec913c2fb12a73f0132f54c32ac
+  Harpy: 2891878e970d5b485ab92ba58ff0dd77af4c5647
   Keys: 7d2ff6ff42f6903358267ce56e9392f83c31acfe
   Lockbox: 16442da35d9d4286966936763be728a931d589c3
   MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
@@ -146,7 +147,7 @@ SPEC CHECKSUMS:
   pop: bb773ae2c791ca2629de13b347e7a8b450fa6a57
   SDWebImage: 1d2b1a1efda1ade1b00b6f8498865f8ddedc8a84
   THContactPicker: e723f7c6ab6e1d6d10d59d618322ab8bfcb00365
-  TWMessageBarManager: e7adc066ee425174f5dee79473fce913b1cd1662
+  TWMessageBarManager: 47f7279924329271aa38c4b3755d2f8a316ac723
   UIDevice-Hardware: de848ac4b53de555f70ff1a32877454d221c71d1
 
 COCOAPODS: 0.39.0
