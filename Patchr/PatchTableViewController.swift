@@ -65,6 +65,9 @@ class PatchTableViewController: BaseTableViewController {
         switch self.filter {
             case .Nearby:
                 setScreenName("NearbyList")
+				if !self.query.executedValue {
+					LocationController.instance.clearLastLocationAccepted()					
+				}
                 registerForLocationNotifications()
                 LocationController.instance.stopSignificantChangeUpdates()
                 LocationController.instance.startUpdates()
