@@ -433,6 +433,9 @@ public class Proxibase {
 	}
 	
 	public func registerInstall(completion: (response:AnyObject?, error:NSError?) -> Void) {
+		/*
+		 * These properties will be updated if the install already exists.
+		 */
 		let installId         = UserController.instance.installId
 		let parseInstallId    = PFInstallation.currentInstallation().installationId
 		let clientVersionName = NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleShortVersionString") as! String

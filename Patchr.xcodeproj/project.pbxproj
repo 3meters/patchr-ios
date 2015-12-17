@@ -683,10 +683,7 @@
 			isa = PBXGroup;
 			children = (
 				E24D74501BB349BD0061F339 /* BaseDetailViewController.swift */,
-				7D021ABD1A9409450047DAAE /* LoginViewController.swift */,
 				9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */,
-				E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */,
-				E20004E01B099CBD00425694 /* PasswordResetViewController.swift */,
 				7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */,
 				7D6E26461A7AB93F000128A7 /* UserDetailViewController.swift */,
 			);
@@ -877,6 +874,9 @@
 		E2F618DE1B02667A0055D09C /* Edit */ = {
 			isa = PBXGroup;
 			children = (
+				7D021ABD1A9409450047DAAE /* LoginViewController.swift */,
+				E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */,
+				E20004E01B099CBD00425694 /* PasswordResetViewController.swift */,
 				E29730591C135BFA00B9433B /* PatchEditViewController.swift */,
 				E24198FD1C1736E900DDA549 /* MessageEditViewController.swift */,
 				E2D569BD1C052A30001CCE58 /* ProfileEditViewController.swift */,
@@ -1524,10 +1524,7 @@
 				);
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"COCOAPODS=1",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				INFOPLIST_FILE = Patchr/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

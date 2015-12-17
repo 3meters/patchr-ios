@@ -36,7 +36,6 @@
 #import <UIView+Facade.h>
 #import <Branch.h>
 #import <TWMessageBarManager.h>
-#import <Harpy.h>
 #import <Keys/PatchrKeys.h>
 #import <Google/Analytics.h>
 #import <CommonCrypto/CommonCrypto.h>

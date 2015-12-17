@@ -166,7 +166,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
         
         if contextAction == .CreateMessage {
             if !UserController.instance.authenticated {
-				UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to post messages and more!")
+				UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to post messages and more.")
                 return
             }
             addAction()
@@ -179,7 +179,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
         }
         else if contextAction == .SubmitJoinRequest {
             if !UserController.instance.authenticated {
-				UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to join patches and more!")
+				UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to join patches and more.")
                 return
             }
             self.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
@@ -203,10 +203,10 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 				if let entity = self.entity as? Patch where entity.userWatchStatusValue == .NonMember {
 					self.inputShowInviteWelcome = false
 					if self.inputInviterName != nil {
-						showInviteWelcome(nil, message: "\(self.inputInviterName!) invited you to join this patch!")
+						showInviteWelcome(nil, message: "\(self.inputInviterName!) invited you to join this patch.")
 					}
 					else {
-						showInviteWelcome(nil, message: "A friend invited you to join this patch!")
+						showInviteWelcome(nil, message: "A friend invited you to join this patch.")
 					}
 				}
 			}
@@ -251,7 +251,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
     
     func addAction() {
         if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to post messages and more!")
+			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to post messages and more.")
             return
         }
         /* Has its own nav because we segue modally and it needs its own stack */

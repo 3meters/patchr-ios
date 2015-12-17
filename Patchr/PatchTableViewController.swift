@@ -229,6 +229,9 @@ class PatchTableViewController: BaseTableViewController {
 					if let _ = ServerError(error) {
 						Log.w("Error during updateProximity")
 					}
+					else {
+						Log.w("Install proximity updated")
+					}
 				}
 			}
 		}

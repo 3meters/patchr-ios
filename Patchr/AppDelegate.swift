@@ -12,7 +12,7 @@ import Crashlytics
 import Parse
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
     var backgroundSessionCompletionHandler: (() -> Void)?
@@ -35,7 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
 		
         #if DEBUG
 			AFNetworkActivityLogger.sharedLogger().startLogging()
-			AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelInfo
+			AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelFatal
         #endif
 		
         /* Turn on network activity indicator */
@@ -88,9 +88,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
             UserController.instance.signinAuto()
         }
 		
-		if !UserController.instance.installRegistered {
-			UserController.instance.registerInstall()
-		}
+		/* We call even if install record exists and using this as a chance to update the metadata */
+		UserController.instance.registerInstall()
 		
         /* Instance the reachability manager */
         ReachabilityManager.instance
@@ -170,6 +169,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
         /* If we have an authenticated user then start at the usual spot, otherwise start at the lobby scene. */
         
 		self.window?.makeKeyAndVisible()
+		
         if UserController.instance.authenticated {
 			let controller = MainTabBarController()
 			controller.selectedIndex = 0
@@ -181,24 +181,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
 			navController.viewControllers = [controller]
             self.window?.setRootViewController(navController, animated: true)
         }
-		
-		/* Configure Harpy */
-		if UIApplication.sharedApplication().isInstalledViaAppStore() {
-			if let harpy = Harpy.sharedInstance() {
-				harpy.appID = APPLE_APP_ID
-				harpy.appName = "Patchr"
-				harpy.presentingViewController = self.window?.rootViewController
-				harpy.alertControllerTintColor = Theme.colorTint
-				harpy.majorUpdateAlertType = HarpyAlertType.Force
-				harpy.minorUpdateAlertType = HarpyAlertType.Option
-				harpy.patchUpdateAlertType = HarpyAlertType.Skip
-				harpy.revisionUpdateAlertType = HarpyAlertType.None
-				harpy.checkVersion()
-				#if DEBUG
-					harpy.debugEnabled = true
-				#endif
-			}
-		}
     }
     
     func routeDeepLink(params: NSDictionary?, error: NSError?) {
@@ -253,7 +235,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
     
     func applicationDidBecomeActive(application: UIApplication) {
         NSNotificationCenter.defaultCenter().postNotificationName(Event.ApplicationDidBecomeActive.rawValue, object: nil)
-		Harpy.sharedInstance().checkVersionDaily()
     }
     
     func application(application: UIApplication, supportedInterfaceOrientationsForWindow window: UIWindow?) -> UIInterfaceOrientationMask {
@@ -267,7 +248,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
         }
         return UIInterfaceOrientationMask.Portrait;
     }
-    
+	
     /*--------------------------------------------------------------------------------------------
     * Notifications
     *--------------------------------------------------------------------------------------------*/

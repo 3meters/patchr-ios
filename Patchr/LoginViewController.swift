@@ -16,16 +16,14 @@ class LoginViewController: BaseViewController {
 
     var emailField				= AirTextField()
     var passwordField			= AirTextField()
-	var facebookButton			= AirButton()
 	var forgotPasswordButton	= AirButtonLink()
 	var doneButton				= AirButtonFeatured()
-	var googleButton			= AirButton()
-	var comment					= AirLabel()
 	var message					= AirLabelTitle()
-	var separatorGroup			= UIView()
-	var separatorRule			= UIView()
-	var separatorLabel			= AirLabel()
 
+	var scrollView			 = AirScrollView()
+	var contentHolder		 = UIView()
+	var activeTextField		 : UIView?
+	
 	var inputRouteToMain: Bool = true
 
 	/*--------------------------------------------------------------------------------------------
@@ -37,6 +35,16 @@ class LoginViewController: BaseViewController {
 		initialize()
 	}
 	
+	override func viewWillAppear(animated: Bool) {
+		let notificationCenter = NSNotificationCenter.defaultCenter()
+		notificationCenter.addObserver(self, selector: "keyboardWillBeShown:", name: UIKeyboardWillShowNotification, object: nil)
+		notificationCenter.addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
+	}
+	
+	override func viewDidDisappear(animated: Bool) {
+		NSNotificationCenter.defaultCenter().removeObserver(self)
+	}
+	
 	/*--------------------------------------------------------------------------------------------
 	* Events
 	*--------------------------------------------------------------------------------------------*/
@@ -45,31 +53,18 @@ class LoginViewController: BaseViewController {
 		super.viewWillLayoutSubviews()
 
 		let messageSize = self.message.sizeThatFits(CGSizeMake(288, CGFloat.max))
-		self.message.anchorTopCenterWithTopPadding(80, width: 288, height: messageSize.height)
+		self.message.anchorTopCenterWithTopPadding(0, width: 288, height: messageSize.height)
 		self.emailField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
 		self.passwordField.alignUnder(self.emailField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-
 		
-		if THIRD_PARTY_AUTH_ENABLED {
-			if onboardMode == OnboardMode.Signup {
-				self.facebookButton.alignUnder(self.passwordField, matchingCenterWithTopPadding: 24, width: 288, height: 48)
-				self.googleButton.alignUnder(self.facebookButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-				self.comment.alignUnder(self.googleButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-			}
-			else {
-				self.forgotPasswordButton.alignUnder(self.passwordField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-				self.doneButton.alignUnder(self.forgotPasswordButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-				self.facebookButton.alignUnder(self.doneButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-				self.googleButton.alignUnder(self.facebookButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-				self.comment.alignUnder(self.googleButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-			}
+		if onboardMode != OnboardMode.Signup {
+			self.forgotPasswordButton.alignUnder(self.passwordField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+			self.doneButton.alignUnder(self.forgotPasswordButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
 		}
-		else {
-			if onboardMode != OnboardMode.Signup {
-				self.forgotPasswordButton.alignUnder(self.passwordField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-				self.doneButton.alignUnder(self.forgotPasswordButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-			}
-		}
+		
+		self.contentHolder.resizeToFitSubviews()
+		self.scrollView.contentSize = CGSizeMake(self.contentHolder.frame.size.width, self.contentHolder.frame.size.height + CGFloat(32))
+		self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 16, height: self.contentHolder.frame.size.height)
 	}
 	
     func doneAction(sender: AnyObject) {
@@ -93,55 +88,7 @@ class LoginViewController: BaseViewController {
 		let controller = PasswordResetViewController()
 		self.navigationController?.pushViewController(controller, animated: true)
 	}
-
-	func facebookAction(sender: AnyObject) {
-		
-		let provider = FacebookProvider()
-		
-		if FBSDKAccessToken.currentAccessToken() == nil
-			|| !FBSDKAccessToken.currentAccessToken().hasGranted("email") {
-				
-			provider.authorize { response, error in
-				if let response = response as? FBSDKLoginManagerLoginResult where error == nil {
-					if !response.isCancelled {
-						
-						if !FBSDKAccessToken.currentAccessToken().hasGranted("email") {
-							self.Alert("Email is required to connect with Facebook")
-						}
-						else {
-							if self.onboardMode == OnboardMode.Signup {
-								provider.profile { response, error in
-									if let profile = response as? ServiceUserProfile where error == nil {										
-										self.showProfile(profile)
-									}
-								}
-							}
-							else {
-								self.navigateToMain()
-							}
-						}
-					}
-				}
-			}
-		}
-		else {
-			if self.onboardMode == OnboardMode.Signup {
-				provider.profile { response, error in
-					if let profile = response as? ServiceUserProfile where error == nil {
-						self.showProfile(profile)
-					}
-				}
-			}
-			else {
-				self.navigateToMain()
-			}
-		}
-	}
 	
-	func googleAction(sender: AnyObject) {
-		navigateToMain()
-	}
-
 	func cancelAction(sender: AnyObject){
 		if self.isModal {
 			self.dismissViewControllerAnimated(true, completion: nil)
@@ -159,16 +106,22 @@ class LoginViewController: BaseViewController {
 		super.initialize()
 		
 		if self.onboardMode == .Signup {
-			self.message.text = "Sign up for a free account to post messages, create patches, and more!"
+			self.message.text = "Sign up for a free account to post messages, create patches, and more."
 		}
 		else {
-			self.message.text = "Welcome back!"
+			self.message.text = "Welcome back."
 		}
+		
+		let fullScreenRect = UIScreen.mainScreen().applicationFrame
+		self.scrollView.frame = fullScreenRect
+		self.scrollView.backgroundColor = Theme.colorBackgroundScreen
+		self.scrollView.addSubview(self.contentHolder)
+		self.view = self.scrollView
 		
 		self.message.textColor = Theme.colorTextTitle
 		self.message.numberOfLines = 0
 		self.message.textAlignment = .Center
-		self.view.addSubview(self.message)
+		self.contentHolder.addSubview(self.message)
 		
 		self.emailField.placeholder = "Email"
 		self.emailField.delegate = self
@@ -176,7 +129,7 @@ class LoginViewController: BaseViewController {
 		self.emailField.autocapitalizationType = .None
 		self.emailField.autocorrectionType = .No
 		self.emailField.returnKeyType = UIReturnKeyType.Next
-		self.view.addSubview(self.emailField)
+		self.contentHolder.addSubview(self.emailField)
 		
 		self.passwordField.placeholder = "Password (6 characters or more)"
 		self.passwordField.delegate = self
@@ -184,36 +137,13 @@ class LoginViewController: BaseViewController {
 		self.passwordField.autocapitalizationType = .None
 		self.passwordField.keyboardType = UIKeyboardType.Default
 		self.passwordField.returnKeyType = (onboardMode == OnboardMode.Signup) ? UIReturnKeyType.Next : UIReturnKeyType.Done
-		self.view.addSubview(self.passwordField)
+		self.contentHolder.addSubview(self.passwordField)
 		
 		self.forgotPasswordButton.setTitle("Forgot password?", forState: .Normal)
-		self.view.addSubview(self.forgotPasswordButton)
+		self.contentHolder.addSubview(self.forgotPasswordButton)
 		
 		self.doneButton.setTitle("LOG IN", forState: .Normal)
-		self.view.addSubview(self.doneButton)
-		
-		if THIRD_PARTY_AUTH_ENABLED {
-			
-			self.facebookButton.setTitle("LOG IN WITH FACEBOOK", forState: .Normal)
-			self.view.addSubview(self.facebookButton)
-			
-			self.googleButton.setTitle("LOG IN WITH GOOGLE", forState: .Normal)
-			self.view.addSubview(self.googleButton)
-			
-			self.facebookButton.addTarget(self, action: Selector("facebookAction:"), forControlEvents: .TouchUpInside)
-			self.googleButton.addTarget(self, action: Selector("googleAction:"), forControlEvents: .TouchUpInside)
-			
-			if onboardMode == OnboardMode.Signup {
-				self.facebookButton.setTitle("CONTINUE WITH FACEBOOK", forState: .Normal)
-				self.googleButton.setTitle("CONTINUE WITH GOOGLE", forState: .Normal)
-			}
-			
-			self.comment.text = "Don't worry, we won't post without your permission."
-			self.comment.textColor = Theme.colorTextSecondary
-			self.comment.numberOfLines = 2
-			self.comment.textAlignment = NSTextAlignment.Center
-			self.view.addSubview(self.comment)
-		}
+		self.contentHolder.addSubview(self.doneButton)
 		
 		self.forgotPasswordButton.addTarget(self, action: Selector("passwordResetAction:"), forControlEvents: .TouchUpInside)
 		self.doneButton.addTarget(self, action: Selector("doneAction:"), forControlEvents: .TouchUpInside)
@@ -344,10 +274,60 @@ class LoginViewController: BaseViewController {
         
         return true
     }
+	
+	func keyboardWillBeShown(sender: NSNotification) {
+		/*
+		* Called when the UIKeyboardDidShowNotification is sent.
+		*/
+		if let scrollView = self.view as? UIScrollView {
+			
+			let info: NSDictionary = sender.userInfo!
+			let value = info.valueForKey(UIKeyboardFrameBeginUserInfoKey) as! NSValue
+			let keyboardSize = value.CGRectValue().size
+			
+			scrollView.contentInset = UIEdgeInsetsMake(64, 0, keyboardSize.height, 0)
+			scrollView.scrollIndicatorInsets = scrollView.contentInset
+			
+			/*
+			* If active text field is hidden by keyboard, scroll it so it's visible
+			*/
+			if self.activeTextField != nil {
+				var visibleRect = self.view.frame
+				visibleRect.size.height -= keyboardSize.height
+				
+				let activeTextFieldRect = self.activeTextField?.frame
+				let activeTextFieldOrigin = activeTextFieldRect?.origin
+				
+				if (!CGRectContainsPoint(visibleRect, activeTextFieldOrigin!)) {
+					scrollView.scrollRectToVisible(activeTextFieldRect!, animated:true)
+				}
+			}
+		}
+	}
+ 
+	func keyboardWillBeHidden(sender: NSNotification) {
+		/*
+		* Called when the UIKeyboardWillHideNotification is sent.
+		*/
+		if let scrollView = self.view as? UIScrollView {
+			scrollView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0)
+			scrollView.scrollIndicatorInsets = scrollView.contentInset
+		}
+	}
 }
 
 extension LoginViewController: UITextFieldDelegate {
     
+	func textFieldDidBeginEditing(textField: UITextField) {
+		self.activeTextField = textField
+	}
+	
+	func textFieldDidEndEditing(textField: UITextField) {
+		if self.activeTextField == textField {
+			self.activeTextField = nil
+		}
+	}
+	
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         
         if textField == self.emailField {
@@ -362,7 +342,6 @@ extension LoginViewController: UITextFieldDelegate {
         return true
     }
 }
-
 
 enum OnboardMode: Int {
 	case Login

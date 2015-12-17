@@ -69,10 +69,17 @@ class PatchEditViewController: BaseViewController {
 		initialize()
 	}
 	
-	deinit {
-		NSNotificationCenter.defaultCenter().removeObserver(self)
+	override func viewWillAppear(animated: Bool) {
+		let notificationCenter = NSNotificationCenter.defaultCenter()
+		notificationCenter.addObserver(self, selector: "dismissKeyboard", name: Events.PhotoViewHasFocus, object: nil)
+		notificationCenter.addObserver(self, selector: "keyboardWillBeShown:", name: UIKeyboardWillShowNotification, object: nil)
+		notificationCenter.addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
 	}
 	
+	override func viewDidDisappear(animated: Bool) {
+		NSNotificationCenter.defaultCenter().removeObserver(self)
+	}
+
 	/*--------------------------------------------------------------------------------------------
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
@@ -215,11 +222,6 @@ class PatchEditViewController: BaseViewController {
 	override func initialize() {
 		super.initialize()
 		
-		let notificationCenter = NSNotificationCenter.defaultCenter()
-		notificationCenter.addObserver(self, selector: "dismissKeyboard", name: Events.PhotoViewHasFocus, object: nil)
-		notificationCenter.addObserver(self, selector: "keyboardWillBeShown:", name: UIKeyboardWillShowNotification, object: nil)
-		notificationCenter.addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
-		
 		self.schema = Schema.ENTITY_PATCH
 		
 		let fullScreenRect = UIScreen.mainScreen().applicationFrame
@@ -291,7 +293,7 @@ class PatchEditViewController: BaseViewController {
 			setScreenName("PatchNew")
 			self.message.text = "New Patch"
 			self.progressStartLabel = "Patching"
-			self.progressFinishLabel = "Activated!"
+			self.progressFinishLabel = "Activated"
 			self.cancelledLabel = "Activation cancelled"
 			
 			/* Navigation bar buttons */
@@ -304,7 +306,7 @@ class PatchEditViewController: BaseViewController {
 			setScreenName("PatchEdit")
 			self.message.text = "Patch"
 			self.progressStartLabel = "Updating"
-			self.progressFinishLabel = "Updated!"
+			self.progressFinishLabel = "Updated"
 			self.cancelledLabel = "Update cancelled"
 			self.doneButton.hidden = true
 			

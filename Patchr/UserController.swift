@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
 import Parse
+import AdSupport
 
 class UserController: NSObject {
 	
@@ -25,30 +26,16 @@ class UserController: NSObject {
 		return (self.userId != nil && self.sessionKey != nil)
 	}
 	
-	var installRegistered: Bool {
-		return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("installRegistered"))
-	}
-	
-	private var _installId: String?
-	
 	var installId: String {
-		/*
-		* If user default data gets deleted then both installationIdentifier and
-		* installRegistered will get reset.
-		*/
-		if _installId == nil {
-			
-			var identifier = NSUserDefaults.standardUserDefaults().stringForKey(PatchrUserDefaultKey("installationIdentifier"))
-			if identifier == nil {
-				identifier = NSUUID().UUIDString
-				NSUserDefaults.standardUserDefaults().setObject(identifier, forKey:PatchrUserDefaultKey("installationIdentifier"))
-				NSUserDefaults.standardUserDefaults().setBool(false, forKey:PatchrUserDefaultKey("installRegistered"))
-				NSUserDefaults.standardUserDefaults().synchronize()
-			}
-			_installId = identifier
-		}
-		
-		return _installId!
+		/* 
+		 * Unlike the identifierForVendor property of the UIDevice, the same value is returned to 
+		 * all vendors. This identifier may change—for example, if the user erases the device—so 
+		 * you should not cache it.
+		 *
+		 * Value can be nil if device has been restarted but device is still locked. The value 
+		 * changes if user resets the device or manually resets the advertising identifier.
+		 */
+		return ASIdentifierManager.sharedManager().advertisingIdentifier.UUIDString
 	}
 
 	/*--------------------------------------------------------------------------------------------
@@ -216,8 +203,7 @@ class UserController: NSObject {
 					Log.w("Error during registerInstall: \(error)")
 				}
 				else {
-					NSUserDefaults.standardUserDefaults().setBool(true, forKey:PatchrUserDefaultKey("installRegistered"))
-					NSUserDefaults.standardUserDefaults().synchronize()
+					Log.i("Install registered or updated: \(UserController.instance.installId)")
 				}
 			}
 		}

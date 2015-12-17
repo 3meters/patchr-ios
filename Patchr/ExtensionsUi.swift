@@ -39,8 +39,18 @@ extension UIImage {
     }
 }
 
+extension UIAlertController {
+	public override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
+		return UIInterfaceOrientationMask.Portrait
+	}
+	
+	public override func shouldAutorotate() -> Bool {
+		return false
+	}
+}
+
 extension UIView {
-    
+	
     func fadeIn(duration: NSTimeInterval = 0.3, delay: NSTimeInterval = 0.0, alpha: CGFloat = 1.0, completion: ((Bool) -> Void) = {(finished: Bool) -> Void in}) {
         if self.alpha != alpha {
             UIView.animateWithDuration(duration, delay: delay, options: UIViewAnimationOptions.CurveEaseIn, animations: {

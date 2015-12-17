@@ -1507,19 +1507,21 @@
                             </tableViewSection>
                             <tableViewSection id="Tni-z8-VYF" userLabel="Info">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="Cj3-LS-hOw">
-                                        <rect key="frame" x="0.0" y="486" width="414" height="44"/>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="64" id="Cj3-LS-hOw">
+                                        <rect key="frame" x="0.0" y="486" width="414" height="64"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Cj3-LS-hOw" id="cPg-Dw-uFl">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="63"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="v1.0 build 29" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gKc-Qh-jCZ" userLabel="version_info_label">
-                                                    <rect key="frame" x="16" y="11" width="390" height="21"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gKc-Qh-jCZ" userLabel="version_info_label">
+                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="63"/>
                                                     <animations/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="21" id="lhy-LI-LbD"/>
+                                                        <constraint firstAttribute="height" constant="63" id="OKq-hF-AeI"/>
                                                     </constraints>
+                                                    <string key="text">2015 3meters LLC
+v1.0 build 29</string>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="18"/>
                                                     <color key="textColor" red="0.0" green="0.75294117650000003" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -1527,9 +1529,9 @@
                                             </subviews>
                                             <animations/>
                                             <constraints>
-                                                <constraint firstAttribute="trailing" secondItem="gKc-Qh-jCZ" secondAttribute="trailing" constant="8" id="P9Z-o7-AEx"/>
-                                                <constraint firstItem="gKc-Qh-jCZ" firstAttribute="leading" secondItem="cPg-Dw-uFl" secondAttribute="leading" constant="16" id="PaI-vJ-g1b"/>
-                                                <constraint firstItem="gKc-Qh-jCZ" firstAttribute="top" secondItem="cPg-Dw-uFl" secondAttribute="top" constant="11" id="t6A-oQ-GbL"/>
+                                                <constraint firstItem="gKc-Qh-jCZ" firstAttribute="top" secondItem="cPg-Dw-uFl" secondAttribute="top" id="423-6Z-VCP"/>
+                                                <constraint firstItem="gKc-Qh-jCZ" firstAttribute="leading" secondItem="cPg-Dw-uFl" secondAttribute="leading" id="Hoa-cZ-SGM"/>
+                                                <constraint firstAttribute="trailing" secondItem="gKc-Qh-jCZ" secondAttribute="trailing" id="thN-Sa-fGm"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <animations/>

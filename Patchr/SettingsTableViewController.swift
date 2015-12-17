@@ -33,7 +33,7 @@ class SettingsTableViewController: UITableViewController {
         super.viewDidLoad()
         
         let components = NSCalendar.currentCalendar().components([.Year, .Month, .Day], fromDate: NSDate())
-        self.buildInformationLabel.text = "©\(components.year) 3meters LLC - Version \(appVersion()) (\(build()))"
+        self.buildInformationLabel.text = "©\(components.year) 3meters LLC\nVersion \(appVersion()) (\(build()))"
 		self.buildInformationLabel.textColor = Theme.colorTextTitle
 		self.buildInformationLabel.font = Theme.fontTextDisplay
         

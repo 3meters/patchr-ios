@@ -88,12 +88,20 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 		}
 	}
 	
+	override func viewWillAppear(animated: Bool) {
+		let notificationCenter = NSNotificationCenter.defaultCenter()
+		notificationCenter.addObserver(self, selector: "dismissKeyboard", name: Events.PhotoViewHasFocus, object: nil)
+		notificationCenter.addObserver(self, selector: "keyboardWillBeShown:", name: UIKeyboardWillShowNotification, object: nil)
+		notificationCenter.addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
+		notificationCenter.addObserver(self, selector: "photoDidChange:", name: Events.PhotoDidChange, object: nil)
+	}
+	
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
 		self.firstAppearance = false
 	}
 	
-	deinit {
+	override func viewDidDisappear(animated: Bool) {
 		NSNotificationCenter.defaultCenter().removeObserver(self)
 	}
 	
@@ -214,12 +222,6 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 	override func initialize() {
 		super.initialize()
 		
-		let notificationCenter = NSNotificationCenter.defaultCenter()
-		notificationCenter.addObserver(self, selector: "dismissKeyboard", name: Events.PhotoViewHasFocus, object: nil)
-		notificationCenter.addObserver(self, selector: "keyboardWillBeShown:", name: UIKeyboardWillShowNotification, object: nil)
-		notificationCenter.addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
-		notificationCenter.addObserver(self, selector: "photoDidChange:", name: Events.PhotoDidChange, object: nil)
-		
 		let fullScreenRect = UIScreen.mainScreen().applicationFrame
 		self.scrollView.frame = fullScreenRect
 		self.scrollView.backgroundColor = Theme.colorBackgroundScreen
@@ -271,7 +273,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 				setScreenName("PatchInvite")
 				
 				self.progressStartLabel = "Inviting"
-				self.progressFinishLabel = "Invites sent!"
+				self.progressFinishLabel = "Invites sent"
 				self.cancelledLabel = "Invites cancelled"
 				
 				self.patchView = PatchView()
@@ -284,7 +286,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 				
 				self.descriptionField.placeholderLabel.text = "Add a message to your invite..."
 				self.navigationItem.title = "Invite to patch"
-				self.descriptionDefault = "\(UserController.instance.currentUser.name) invited you to the \'\(self.inputShareEntity!.name!)\' patch!"
+				self.descriptionDefault = "\(UserController.instance.currentUser.name) invited you to the \'\(self.inputShareEntity!.name!)\' patch."
 			}
 				
 			else if self.inputShareSchema == Schema.ENTITY_MESSAGE {
@@ -292,7 +294,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 				setScreenName("MessageShare")
 				
 				self.progressStartLabel = "Sharing"
-				self.progressFinishLabel = "Shared!"
+				self.progressFinishLabel = "Shared"
 				self.cancelledLabel = "Sharing cancelled"
 				
 				var cellType: CellType = .TextAndPhoto
@@ -310,10 +312,10 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 				self.navigationItem.title = Utils.LocalizedString("Share message")
 				if let message = self.inputShareEntity as? Message {
 					if message.patch != nil {
-						self.descriptionDefault = "\(UserController.instance.currentUser.name) shared \(message.creator.name!)\'s message to the \'\(message.patch.name)\' patch!"
+						self.descriptionDefault = "\(UserController.instance.currentUser.name) shared \(message.creator.name!)\'s message to the \'\(message.patch.name)\' patch."
 					}
 					else {
-						self.descriptionDefault = "\(UserController.instance.currentUser.name) shared \(message.creator.name!)\'s message to a patch!"
+						self.descriptionDefault = "\(UserController.instance.currentUser.name) shared \(message.creator.name!)\'s message to a patch."
 					}
 				}
 			}
@@ -333,7 +335,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 			if self.inputState == State.Creating {
 				setScreenName("MessageNew")
 				self.progressStartLabel = "Sending"
-				self.progressFinishLabel = "Sent!"
+				self.progressFinishLabel = "Sent"
 				self.cancelledLabel = "Send cancelled"
 				
 				/* Navigation bar buttons */
@@ -345,7 +347,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 			else {
 				setScreenName("MessageEdit")
 				self.progressStartLabel = "Updating"
-				self.progressFinishLabel = "Updated!"
+				self.progressFinishLabel = "Updated"
 				self.cancelledLabel = "Update cancelled"
 				
 				self.doneButton.hidden = true

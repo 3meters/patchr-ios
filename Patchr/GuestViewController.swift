@@ -90,7 +90,7 @@ class GuestViewController: BaseViewController {
 		self.buttonCancel.tintColor = Colors.white
 		self.view.addSubview(self.buttonCancel)
 		
-		self.message.text = self.inputMessage ?? "Sign up for a free account to post messages, create patches, and more!"
+		self.message.text = self.inputMessage ?? "Sign up for a free account to post messages, create patches, and more."
 		self.message.textAlignment = NSTextAlignment.Center
 		self.message.textColor = Colors.white
 		self.message.numberOfLines = 0

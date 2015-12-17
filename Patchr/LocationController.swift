@@ -154,6 +154,9 @@ class LocationController: NSObject {
 						if let _ = ServerError(error) {
 							Log.w("Error during updateProximity")
 						}
+						else {
+							Log.w("Install proximity updated")
+						}
 						if self.bgTask != UIBackgroundTaskInvalid {
 							UIApplication.sharedApplication().endBackgroundTask(self.bgTask!)
 							self.bgTask = UIBackgroundTaskInvalid
