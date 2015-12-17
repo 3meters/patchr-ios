@@ -5,42 +5,72 @@
 //  Created by Jay Massena on 5/11/15.
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
+import Parse
 
 class UserController: NSObject {
-	/*
-	 * Facebook access token is managed by the facebook sdk and is stored
-	 * in the device keychain. The facebook user id is available using token.userID.
-	 */
+	
 	static let instance = UserController()
 
-	let facebookReadPermissions = ["public_profile", "email", "user_friends"]
+	let lockbox = Lockbox(keyPrefix: KEYCHAIN_GROUP)
 	
 	var currentUser: User!
 	var userName: String?
-	
 	var userId: String?
 	var sessionKey: String?
 	
     private var jsonUser: String?
     private var jsonSession: String?
 
-	private override init() {
-		super.init()
-        
-		let userDefaults = NSUserDefaults.standardUserDefaults()
-
-		self.userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId"))
-        self.jsonUser = userDefaults.stringForKey(PatchrUserDefaultKey("user"))
-		
-		let lockbox = Lockbox(keyPrefix: KEYCHAIN_GROUP)
-        self.jsonSession = lockbox.stringForKey("session") as String?
-		self.sessionKey = lockbox.stringForKey("sessionKey") as String?
-	}
-
 	var authenticated: Bool {
 		return (self.userId != nil && self.sessionKey != nil)
 	}
+	
+	var installRegistered: Bool {
+		return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("installRegistered"))
+	}
+	
+	private var _installId: String?
+	
+	var installId: String {
+		/*
+		* If user default data gets deleted then both installationIdentifier and
+		* installRegistered will get reset.
+		*/
+		if _installId == nil {
+			
+			var identifier = NSUserDefaults.standardUserDefaults().stringForKey(PatchrUserDefaultKey("installationIdentifier"))
+			if identifier == nil {
+				identifier = NSUUID().UUIDString
+				NSUserDefaults.standardUserDefaults().setObject(identifier, forKey:PatchrUserDefaultKey("installationIdentifier"))
+				NSUserDefaults.standardUserDefaults().setBool(false, forKey:PatchrUserDefaultKey("installRegistered"))
+				NSUserDefaults.standardUserDefaults().synchronize()
+			}
+			_installId = identifier
+		}
+		
+		return _installId!
+	}
 
+	/*--------------------------------------------------------------------------------------------
+	* Lifecycle
+	*--------------------------------------------------------------------------------------------*/
+
+	private override init() {
+		super.init()
+		
+		let userDefaults = NSUserDefaults.standardUserDefaults()
+		
+		self.userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId"))
+		self.jsonUser = userDefaults.stringForKey(PatchrUserDefaultKey("user"))
+		
+		self.jsonSession = self.lockbox.stringForKey("session") as String?
+		self.sessionKey = self.lockbox.stringForKey("sessionKey") as String?
+	}
+	
+	/*--------------------------------------------------------------------------------------------
+	* Credentials
+	*--------------------------------------------------------------------------------------------*/
+	
 	func discardCredentials() {
 		
         self.userId = nil
@@ -90,9 +120,8 @@ class UserController: NSObject {
         userDefaults.setObject(self.jsonUser, forKey: PatchrUserDefaultKey("user"))
         userDefaults.setObject(self.userId, forKey: PatchrUserDefaultKey("userId"))
 		
-		let lockbox = Lockbox(keyPrefix: KEYCHAIN_GROUP)
-		lockbox.setString((self.sessionKey != nil ? self.sessionKey! : nil), forKey: "sessionKey")
-		lockbox.setString((self.jsonSession != nil ? self.jsonSession! : nil), forKey: "session")
+		self.lockbox.setString((self.sessionKey != nil ? self.sessionKey! : nil), forKey: "sessionKey")
+		self.lockbox.setString((self.jsonSession != nil ? self.jsonSession! : nil), forKey: "session")
 		
         if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
             groupDefaults.setObject(self.jsonUser, forKey: PatchrUserDefaultKey("user"))
@@ -173,5 +202,24 @@ class UserController: NSObject {
 			controller = UIViewController.topMostViewController()!
 		}
 		controller!.presentViewController(guestController, animated: true, completion: nil)
+	}
+	
+	/*--------------------------------------------------------------------------------------------
+	* Installations
+	*--------------------------------------------------------------------------------------------*/
+	
+	func registerInstall() {
+		DataController.proxibase.registerInstall() {
+			response, error in
+			NSOperationQueue.mainQueue().addOperationWithBlock {
+				if let error = ServerError(error) {
+					Log.w("Error during registerInstall: \(error)")
+				}
+				else {
+					NSUserDefaults.standardUserDefaults().setBool(true, forKey:PatchrUserDefaultKey("installRegistered"))
+					NSUserDefaults.standardUserDefaults().synchronize()
+				}
+			}
+		}
 	}
 }

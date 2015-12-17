@@ -289,37 +289,13 @@ class LoginViewController: BaseViewController {
 					}
 				}
 				else {
-					
 					/* Remember last email address for easy data entry */
 					if self.provider == AuthProvider.PROXIBASE {
 						NSUserDefaults.standardUserDefaults().setObject(self.emailField.text, forKey: PatchrUserDefaultKey("userEmail"))
 						NSUserDefaults.standardUserDefaults().synchronize()
 						self.passwordField.text = nil
 					}
-					/*
-					* Register this install with the service particularly to capture the
-					* current user so location updates work properly. If install registration
-					* fails the device will not accurately track notifications.
-					*/
-					let registered = NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("installRegistered"))
-					if !registered {
-						DataController.proxibase.registerInstallStandard {
-							response, error in
-							
-							NSOperationQueue.mainQueue().addOperationWithBlock {
-								if let error = ServerError(error) {
-									Log.w("Error during registerInstall: \(error)")
-								}
-								else {
-									NSUserDefaults.standardUserDefaults().setBool(true, forKey: PatchrUserDefaultKey("installRegistered"))
-								}
-								self.didLogin()
-							}
-						}
-					}
-					else {
-						self.didLogin()
-					}
+					self.didLogin()
 				}
 			}
 		}

@@ -62,7 +62,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
 		
         // Optional: configure GAI options.
 		if let gai = GAI.sharedInstance() {
-			gai.trackerWithTrackingId("UA-33660954-6")
+			gai.trackerWithTrackingId(GOOGLE_ANALYTICS_ID)
 			gai.trackUncaughtExceptions = true  // report uncaught exceptions
 			gai.defaultTracker.allowIDFACollection = true
 			gai.dispatchInterval = 30    // Seconds
@@ -83,43 +83,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
         /* Setup parse for push notifications */
         Parse.setApplicationId(keys.parseApplicationId(), clientKey: keys.parseApplicationKey())
 		
-		//		#if DEBUG && (arch(i386) || arch(x86_64)) && os(iOS)
-		//		PDDebugger.defaultInstance().connectToURL(NSURL(string: "ws://192.168.0.182:9000/device"))
-		//		PDDebugger.defaultInstance().enableNetworkTrafficDebugging()
-		//		PDDebugger.defaultInstance().forwardNetworkTrafficFromDelegateClass(AFHTTPRequestOperation.self)
-		//		PDDebugger.defaultInstance().enableViewHierarchyDebugging()
-		//		PDDebugger.defaultInstance().enableCoreDataDebugging()
-		//		PDDebugger.defaultInstance().addManagedObjectContext(DataController.instance.mainContext, withName: "Main Patchr")
-		//		#endif
-		
         /* Get the latest on the authenticated user if we have one */
 		if UserController.instance.authenticated {	// Checks for current userId and sessionKey
             UserController.instance.signinAuto()
         }
 		
-		let registered = NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("installRegistered"))
-		if !registered {
-			/*
-			* Register this install with the service. If install registration fails the
-			* device will not accurately track notifications.
-			*/
-			DataController.proxibase.registerInstallStandard {		// Authenticated user will be associated with this install
-				response, error in
-				
-				NSOperationQueue.mainQueue().addOperationWithBlock {
-					if let error = ServerError(error) {
-						if error.code == .UNAUTHORIZED_SESSION_EXPIRED {
-							UIViewController.topMostViewController()!.handleError(error, errorActionType: .TOAST)
-						}
-						else {
-							Log.w("Error during registerInstall: \(error)")
-						}
-					}
-					else {
-						NSUserDefaults.standardUserDefaults().setBool(true, forKey:PatchrUserDefaultKey("installRegistered"))
-					}
-				}
-			}
+		if !UserController.instance.installRegistered {
+			UserController.instance.registerInstall()
 		}
 		
         /* Instance the reachability manager */
@@ -137,7 +107,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
 		/* Facebook */
 		FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
 		FBSDKProfile.enableUpdatesOnAccessTokenChange(true)
-		
 		
 		/*
 		* Initialize Branch: The deepLinkHandler gets called every time the app opens.
@@ -216,7 +185,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, HarpyDelegate {
 		/* Configure Harpy */
 		if UIApplication.sharedApplication().isInstalledViaAppStore() {
 			if let harpy = Harpy.sharedInstance() {
-				harpy.appID = APP_ID
+				harpy.appID = APPLE_APP_ID
 				harpy.appName = "Patchr"
 				harpy.presentingViewController = self.window?.rootViewController
 				harpy.alertControllerTintColor = Theme.colorTint

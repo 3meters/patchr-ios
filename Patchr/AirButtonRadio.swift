@@ -29,7 +29,7 @@ class AirButtonRadio: DLRadioButton {
 		self.iconColor = Theme.colorButtonRadioIcon
 		self.indicatorColor = Theme.colorButtonRadioIndicator
 		self.contentHorizontalAlignment = .Left
-		self.isIconOnRight = false
+		self.iconOnRight = false
 		self.iconSize = 20
 		self.iconStrokeWidth = self.iconSize / self.iconSize
 		self.indicatorSize = self.iconSize * 0.6

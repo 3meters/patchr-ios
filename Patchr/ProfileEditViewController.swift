@@ -506,7 +506,7 @@ class ProfileEditViewController: BaseViewController {
 				let createParameters: NSDictionary = [
 					"data": parameters,
 					"secret": secret,
-					"installId": DataController.proxibase.installationIdentifier
+					"installId": UserController.instance.installId
 				]
 				
 				self.entityPostRequest = DataController.proxibase.postEntity("user/create", parameters: createParameters) {

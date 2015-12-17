@@ -151,8 +151,8 @@ class LocationController: NSObject {
 					response, error in
 					
 					NSOperationQueue.mainQueue().addOperationWithBlock {
-						if let error = ServerError(error) {
-							Log.w("Error during updateProximity: \(error)")
+						if let _ = ServerError(error) {
+							Log.w("Error during updateProximity")
 						}
 						if self.bgTask != UIBackgroundTaskInvalid {
 							UIApplication.sharedApplication().endBackgroundTask(self.bgTask!)

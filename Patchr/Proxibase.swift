@@ -40,25 +40,6 @@ public class Proxibase {
 	let pageSizeExplore:       Int = 50
 	let pageSizeNotifications: Int = 50
 
-	private var cachedInstallationIdentifier: String?
-
-	public var installationIdentifier: String {
-        
-		if cachedInstallationIdentifier == nil {
-			let installationIdentifierKey    = "installationIdentifier"
-			let lockbox = Lockbox(keyPrefix: KEYCHAIN_GROUP)
-			var storedInstallationIdentifier = lockbox.stringForKey(installationIdentifierKey) as String?
-
-			if storedInstallationIdentifier == nil {
-				storedInstallationIdentifier = NSUUID().UUIDString
-				lockbox.setString(storedInstallationIdentifier, forKey: installationIdentifierKey)
-			}
-			cachedInstallationIdentifier = storedInstallationIdentifier
-		}
-		
-		return cachedInstallationIdentifier!
-	}
-
 	private let sessionManager: AFHTTPSessionManager
 	
 	required public init() {
@@ -67,6 +48,7 @@ public class Proxibase {
 		if serverURI == nil {
 			serverURI = ProductionURI
 			NSUserDefaults.standardUserDefaults().setObject(serverURI, forKey: PatchrUserDefaultKey("serverURI"))
+			NSUserDefaults.standardUserDefaults().synchronize()
 		}
 
 		sessionManager = AFHTTPSessionManager(baseURL: NSURL(string: serverURI!))
@@ -372,9 +354,9 @@ public class Proxibase {
 		* The completion block will be called asynchronously in either case.
 		* If signin is successful, then the credentials from the server will be written to user defaults
 		*/
-		var parameters = ["email": email, "password": password, "installId": self.installationIdentifier]
+		var parameters = ["email": email, "password": password, "installId": UserController.instance.installId]
 		if provider == AuthProvider.FACEBOOK || provider == AuthProvider.GOOGLE {
-			parameters = ["provider": provider, "token": token!, "installId": self.installationIdentifier]
+			parameters = ["provider": provider, "token": token!, "installId": UserController.instance.installId]
 		}
 		
 		sessionManager.POST("auth/signin", parameters: parameters,
@@ -411,7 +393,7 @@ public class Proxibase {
 	}
 	
 	public func updatePassword(userId: NSString, password: NSString, passwordNew: NSString, completion: CompletionBlock) {
-		let parameters = ["userId": userId, "oldPassword": password, "newPassword": passwordNew, "installId": installationIdentifier]
+		let parameters = ["userId": userId, "oldPassword": password, "newPassword": passwordNew, "installId": UserController.instance.installId]
 		sessionManager.POST("user/changepw", parameters: addSessionParameters(parameters),
 			success: {
 				dataTask, response in
@@ -424,7 +406,7 @@ public class Proxibase {
 	}
 	
 	public func requestPasswordReset(email: NSString, completion: CompletionBlock) {
-		let parameters = ["email": email, "installId": installationIdentifier]
+		let parameters = ["email": email, "installId": UserController.instance.installId]
 		sessionManager.POST("user/reqresetpw", parameters: parameters,
 			success: {
 				dataTask, response in
@@ -438,7 +420,7 @@ public class Proxibase {
 	
 	public func resetPassword(password: NSString, userId: NSString, sessionKey: NSString, completion: CompletionBlock) {
 		let parameters
-		= ["password": password, "user": userId, "session": sessionKey, "installId": installationIdentifier]
+		= ["password": password, "user": userId, "session": sessionKey, "installId": UserController.instance.installId]
 		sessionManager.POST("user/resetpw", parameters: parameters,
 			success: {
 				dataTask, response in
@@ -450,8 +432,8 @@ public class Proxibase {
 		})
 	}
 	
-	public func registerInstallStandard(completion: (response:AnyObject?, error:NSError?) -> Void) {
-		let installId         = installationIdentifier
+	public func registerInstall(completion: (response:AnyObject?, error:NSError?) -> Void) {
+		let installId         = UserController.instance.installId
 		let parseInstallId    = PFInstallation.currentInstallation().installationId
 		let clientVersionName = NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleShortVersionString") as! String
 		let clientVersionCode = Int(NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleVersion") as! String)!
@@ -478,7 +460,7 @@ public class Proxibase {
 	
     public func updateProximity(location: CLLocation, completion: (response:AnyObject?, error:NSError?) -> Void) {
         let parameters = [
-            "installId": self.installationIdentifier,
+            "installId": UserController.instance.installId,
             "location": [
                 "accuracy": location.horizontalAccuracy,
                 "geometry": [
@@ -523,7 +505,7 @@ public class Proxibase {
                     "lat": location.coordinate.latitude,
                     "lng": location.coordinate.longitude
                 ]
-                parameters.setValue(self.installationIdentifier, forKey: "installId")
+                parameters.setValue(UserController.instance.installId, forKey: "installId")
                 parameters.setValue(locDict, forKey: "location")
             }
         }

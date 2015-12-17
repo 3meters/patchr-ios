@@ -27,7 +27,6 @@
 		7D9651941AAFBD02000C5718 /* PatchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9651931AAFBD02000C5718 /* PatchTableViewController.swift */; };
 		7D9C9E3D1A9BAFCE0069E332 /* PatchDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */; };
 		7DA3D9121A72D5A60082D2AB /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA3D9111A72D5A60082D2AB /* DataController.swift */; };
-		7DA7306D1A71A0EE008C25FA /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7DA7306B1A71A0EE008C25FA /* DataModel.xcdatamodeld */; };
 		7DA730891A71ACC9008C25FA /* _Entity.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA730721A71ACC9008C25FA /* _Entity.m */; };
 		7DA7308A1A71ACC9008C25FA /* _Patch.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA730741A71ACC9008C25FA /* _Patch.m */; };
 		7DA7308B1A71ACC9008C25FA /* _Place.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA730761A71ACC9008C25FA /* _Place.m */; };
@@ -57,7 +56,6 @@
 		9FDCC869B589AA11FBDB67F2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9FDCC978FCB0A253FA6E74F9 /* Main.storyboard */; };
 		9FDCC8F9EEEF77DEBE173AFA /* PhotoPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC06A84126B197626CEB2 /* PhotoPickerViewController.swift */; };
 		9FDCCCC0113B14385C08DA41 /* MessageDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */; };
-		9FDCCD0504D3A06C69B4F2A5 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC3759A624CE254394BB5 /* SearchViewController.swift */; };
 		A8E20B58D29959C0889B8847 /* libPods-PatchrShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BA6097617A5336D7C15520A /* libPods-PatchrShare.a */; };
 		C1112B52B84F042CB51F7E65 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F90A7A6DF253248AE7C300A /* libPods.a */; };
 		E20004DF1B094ACA00425694 /* PasswordEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */; };
@@ -150,6 +148,8 @@
 		E2A5A8811B6FDF5C006D6E81 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */; };
 		E2A5A8851B703B9B006D6E81 /* PhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A5A8841B703B9B006D6E81 /* PhotoView.swift */; };
 		E2B4590E1BC1E76C00155659 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */; };
+		E2B471D21C22304300374F1F /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B471D11C22304300374F1F /* SearchViewController.swift */; };
+		E2B471D71C2231B700374F1F /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E2B471D31C22312A00374F1F /* DataModel.xcdatamodeld */; };
 		E2C0D92F1B6BD55200E28CE9 /* TTTAttributedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D92E1B6BD55200E28CE9 /* TTTAttributedLabel.m */; };
 		E2C0D9311B6C415100E28CE9 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D9301B6C415100E28CE9 /* Log.swift */; };
 		E2C0D9321B6C46A100E28CE9 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D9301B6C415100E28CE9 /* Log.swift */; };
@@ -252,7 +252,6 @@
 		7D9651931AAFBD02000C5718 /* PatchTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTableViewController.swift; sourceTree = "<group>"; };
 		7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchDetailViewController.swift; sourceTree = "<group>"; };
 		7DA3D9111A72D5A60082D2AB /* DataController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DataController.swift; path = Patchr/DataController.swift; sourceTree = "<group>"; };
-		7DA7306C1A71A0EE008C25FA /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		7DA730711A71ACC9008C25FA /* _Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _Entity.h; path = Model/_Entity.h; sourceTree = "<group>"; };
 		7DA730721A71ACC9008C25FA /* _Entity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _Entity.m; path = Model/_Entity.m; sourceTree = "<group>"; };
 		7DA730731A71ACC9008C25FA /* _Patch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _Patch.h; path = Model/_Patch.h; sourceTree = "<group>"; };
@@ -298,7 +297,6 @@
 		880FE917F305BDE29B1AA196 /* Pods-PatchrShare.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrShare.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrShare/Pods-PatchrShare.debug.xcconfig"; sourceTree = "<group>"; };
 		963D1BBA8F941C4BA95675EA /* Pods-Patchr.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.adhoc.xcconfig"; sourceTree = "<group>"; };
 		9FDCC06A84126B197626CEB2 /* PhotoPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoPickerViewController.swift; sourceTree = "<group>"; };
-		9FDCC3759A624CE254394BB5 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SearchViewController.swift; path = PatchrShare/SearchViewController.swift; sourceTree = SOURCE_ROOT; };
 		9FDCC5A08BC6B04C7EC67536 /* PatchTableMapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTableMapViewController.swift; sourceTree = "<group>"; };
 		9FDCC67342555A8E88594481 /* PatchrShare-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PatchrShare-Bridging-Header.h"; sourceTree = "<group>"; };
 		9FDCC90B29F27E6941869A9F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -400,6 +398,9 @@
 		E2A28E701B4A624300B3A2FE /* AirWatchButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirWatchButton.swift; sourceTree = "<group>"; };
 		E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Patchr/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E2A5A8841B703B9B006D6E81 /* PhotoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoView.swift; sourceTree = "<group>"; };
+		E2B471D11C22304300374F1F /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
+		E2B471D41C22312A00374F1F /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
+		E2B471D51C22312A00374F1F /* v1.0.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = v1.0.0.xcdatamodel; sourceTree = "<group>"; };
 		E2C0D92D1B6BD55200E28CE9 /* TTTAttributedLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTTAttributedLabel.h; sourceTree = "<group>"; };
 		E2C0D92E1B6BD55200E28CE9 /* TTTAttributedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTTAttributedLabel.m; sourceTree = "<group>"; };
 		E2C0D9301B6C415100E28CE9 /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
@@ -426,7 +427,6 @@
 		E2D12A821C0A58F000DE507E /* AirLabelTitle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirLabelTitle.swift; sourceTree = "<group>"; };
 		E2D12A841C0A592D00DE507E /* AirLabelBanner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirLabelBanner.swift; sourceTree = "<group>"; };
 		E2D25DC71B23892000E51461 /* UserController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UserController.swift; path = Patchr/UserController.swift; sourceTree = "<group>"; };
-		E2D569AD1BF17A4B001CCE58 /* v1.0.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = v1.0.0.xcdatamodel; sourceTree = "<group>"; };
 		E2D569AE1BF3F45C001CCE58 /* Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		E2D569BB1C038C1B001CCE58 /* Photo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Photo.m; path = Model/Photo.m; sourceTree = "<group>"; };
 		E2D569BD1C052A30001CCE58 /* ProfileEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileEditViewController.swift; sourceTree = "<group>"; };
@@ -546,8 +546,8 @@
 		7DA730701A71ACA5008C25FA /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				E2B471D31C22312A00374F1F /* DataModel.xcdatamodeld */,
 				E2F6C9371B1E76740067D959 /* Internal */,
-				7DA7306B1A71A0EE008C25FA /* DataModel.xcdatamodeld */,
 				7DA7307D1A71ACC9008C25FA /* Entity.h */,
 				7DA7307E1A71ACC9008C25FA /* Entity.m */,
 				E2C7C5CA1B2CF2F80045038A /* ImageResult.swift */,
@@ -643,6 +643,7 @@
 		E238BAE01B51D3290094AF41 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				9FDCC67342555A8E88594481 /* PatchrShare-Bridging-Header.h */,
 				E238BAE11B51D3290094AF41 /* Info.plist */,
 				9FDCCD65EB714D83C5A818FE /* PatchrShare.entitlements */,
 			);
@@ -672,7 +673,7 @@
 				7D40B9411A7864A000F9954C /* NotificationsTableViewController.swift */,
 				7D9651931AAFBD02000C5718 /* PatchTableViewController.swift */,
 				9FDCC06A84126B197626CEB2 /* PhotoPickerViewController.swift */,
-				9FDCC3759A624CE254394BB5 /* SearchViewController.swift */,
+				E2B471D11C22304300374F1F /* SearchViewController.swift */,
 				7DD89F401AC62B90005CD004 /* UserTableViewController.swift */,
 			);
 			name = Lists;
@@ -773,9 +774,9 @@
 				E28177711B5C18BF00D65AC1 /* ExtensionsUi.swift */,
 				E281776B1B5AB2D400D65AC1 /* OneShotLocationManager.swift */,
 				E28177791B5C3C3200D65AC1 /* Proxibase.swift */,
-				9FDCC67342555A8E88594481 /* PatchrShare-Bridging-Header.h */,
 				E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */,
 				E238BAE21B51D3290094AF41 /* ShareViewController.swift */,
+				E238BAFE1B5715CF0094AF41 /* PatchSuggestCell.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -783,7 +784,6 @@
 		E2C0D93E1B6D6D8D00E28CE9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				E238BAFE1B5715CF0094AF41 /* PatchSuggestCell.swift */,
 				E238BAFC1B5712B40094AF41 /* PatchSuggestCell.xib */,
 				E238BAE41B51D3290094AF41 /* PatchrShare.storyboard */,
 			);
@@ -1284,6 +1284,7 @@
 				7DA730921A71ACC9008C25FA /* Query.m in Sources */,
 				7DB6E0F81A8174E90017A42F /* _Message.m in Sources */,
 				E2CCAAE01B67CC0E0071170C /* NotificationController.swift in Sources */,
+				E2B471D71C2231B700374F1F /* DataModel.xcdatamodeld in Sources */,
 				7D39D3C51ABA21B200275759 /* CALayer+XibConfiguration.m in Sources */,
 				E25327C11B13942D00990A81 /* Shared.swift in Sources */,
 				7D3D39CF1A6F086F00A44CB2 /* AppDelegate.swift in Sources */,
@@ -1336,7 +1337,6 @@
 				E2C720BD1B4C260200714B53 /* Reachability.m in Sources */,
 				E2D12A7B1C091C4D00DE507E /* BaseViewController.swift in Sources */,
 				E29A4CD81BCF25220059D5B9 /* NotificationView.swift in Sources */,
-				7DA7306D1A71A0EE008C25FA /* DataModel.xcdatamodeld in Sources */,
 				E25327B21B0FCE9C00990A81 /* Constants.swift in Sources */,
 				84EF12AC1AA904700043EBBA /* Utils.swift in Sources */,
 				E29F654F1B61A0780000BEF4 /* OneShotLocationManager.swift in Sources */,
@@ -1355,6 +1355,7 @@
 				E2F6C9271B1C94E50067D959 /* Debug.m in Sources */,
 				E238BB061B571AFF0094AF41 /* ExtensionsPhoto.swift in Sources */,
 				E281776E1B5B0EE200D65AC1 /* Reporting.swift in Sources */,
+				E2B471D21C22304300374F1F /* SearchViewController.swift in Sources */,
 				E20C3A7B1BD6A717008CCED1 /* BaseView.swift in Sources */,
 				E269AED81C10AB9A004A1D88 /* WelcomeViewController.swift in Sources */,
 				E27DB4051B06477A0090D023 /* QueryItem.m in Sources */,
@@ -1365,7 +1366,6 @@
 				E26B0C901B45C07D00706F4A /* AirPhotoBrowser.swift in Sources */,
 				E273B5361B488F2000888E73 /* AirPhotoPreview.swift in Sources */,
 				E297305A1C135BFA00B9433B /* PatchEditViewController.swift in Sources */,
-				9FDCCD0504D3A06C69B4F2A5 /* SearchViewController.swift in Sources */,
 				9FDCC8F9EEEF77DEBE173AFA /* PhotoPickerViewController.swift in Sources */,
 				9FDCC4E31D09C35191FA3624 /* PatchTableMapViewController.swift in Sources */,
 			);
@@ -1954,13 +1954,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		7DA7306B1A71A0EE008C25FA /* DataModel.xcdatamodeld */ = {
+		E2B471D31C22312A00374F1F /* DataModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				E2D569AD1BF17A4B001CCE58 /* v1.0.0.xcdatamodel */,
-				7DA7306C1A71A0EE008C25FA /* Model.xcdatamodel */,
+				E2B471D41C22312A00374F1F /* Model.xcdatamodel */,
+				E2B471D51C22312A00374F1F /* v1.0.0.xcdatamodel */,
 			);
-			currentVersion = E2D569AD1BF17A4B001CCE58 /* v1.0.0.xcdatamodel */;
+			currentVersion = E2B471D51C22312A00374F1F /* v1.0.0.xcdatamodel */;
 			path = DataModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

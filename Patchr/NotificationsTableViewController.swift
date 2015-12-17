@@ -57,6 +57,7 @@ class NotificationsTableViewController: BaseTableViewController {
 		 */
 		if let _ = NSUserDefaults.standardUserDefaults().valueForKey(PatchrUserDefaultKey("notificationDate")) {
 			NSUserDefaults.standardUserDefaults().setObject(nil, forKey: PatchrUserDefaultKey("notificationDate"))
+			NSUserDefaults.standardUserDefaults().synchronize()
 			self.bindQueryItems(true)
 			self.activityDate = NotificationController.instance.activityDate
 		}
@@ -359,7 +360,7 @@ class NotificationsTableViewController: BaseTableViewController {
 }
 
 class AirStylesheet: NSObject, TWMessageBarStyleSheet {
-    
+	
     var image: UIImage?
     
     init(image: UIImage?) {
@@ -368,17 +369,17 @@ class AirStylesheet: NSObject, TWMessageBarStyleSheet {
         }
     }
     
-    @objc func backgroundColorForMessageType(type: TWMessageBarMessageType) -> UIColor! {
+    @objc func backgroundColorForMessageType(type: TWMessageBarMessageType) -> UIColor {
         return Theme.colorBackgroundNotification
     }
     
-    @objc func strokeColorForMessageType(type: TWMessageBarMessageType) -> UIColor! {
+    @objc func strokeColorForMessageType(type: TWMessageBarMessageType) -> UIColor {
         return Theme.colorTextNotification
     }
     
-    @objc func iconImageForMessageType(type: TWMessageBarMessageType) -> UIImage! {
+    @objc func iconImageForMessageType(type: TWMessageBarMessageType) -> UIImage {
         let image = self.image ?? UIImage(named: "imgMessageDark")
-        return image?.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+        return image!.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
     }
 }
 

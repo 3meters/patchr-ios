@@ -31,7 +31,7 @@ struct Reporting {
         }
 
         /* Identifies device/install combo */
-        Crashlytics.sharedInstance().setObjectValue(DataController.proxibase.installationIdentifier, forKey: "install_id")
+        Crashlytics.sharedInstance().setObjectValue(UserController.instance.installId, forKey: "install_id")
         
         /* Location info */
         let location: CLLocation? = LocationController.instance.lastLocationAccepted()

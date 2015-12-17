@@ -11,14 +11,15 @@ let pageSizeNearby          = 50
 let pageSizeExplore         = 20
 let pageSizeNotifications   = 20
 
-let Device      = UIDevice.currentDevice()
-let iosVersion  = NSString(string: Device.systemVersion).doubleValue
-let IOS9        = iosVersion >= 9
-let IOS8        = iosVersion >= 8
-let IOS7        = iosVersion >= 7 && iosVersion < 8
-let APP_ID		= "983436323"
-let BUNDLE_ID	= "com.3meters.patchr.ios"
-let KEYCHAIN_GROUP = "7542324V6B.\(BUNDLE_ID)"
+let Device				= UIDevice.currentDevice()
+let iosVersion			= NSString(string: Device.systemVersion).doubleValue
+let IOS9				= iosVersion >= 9
+let IOS8				= iosVersion >= 8
+let IOS7				= iosVersion >= 7 && iosVersion < 8
+let APPLE_APP_ID		= "983436323"
+let GOOGLE_ANALYTICS_ID	= "UA-33660954-6"
+let BUNDLE_ID			= "com.3meters.patchr.ios"
+let KEYCHAIN_GROUP		= "7542324V6B.\(BUNDLE_ID)"	// Team id + bundle id
 
 let SCREEN_NARROW				= (UIScreen.mainScreen().bounds.size.width == 320)
 let PIXEL_SCALE: CGFloat		= UIScreen.mainScreen().scale

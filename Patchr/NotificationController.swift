@@ -120,6 +120,7 @@ class NotificationController {
              */
 			let notificationDate = NSNumber(longLong: Int64(NSDate().timeIntervalSince1970 * 1000)) // Only way to store Int64 as AnyObject
 			NSUserDefaults.standardUserDefaults().setObject(notificationDate, forKey: PatchrUserDefaultKey("notificationDate"))
+			NSUserDefaults.standardUserDefaults().synchronize()
 			Log.d("App was system launched so stashed notification date")
         }
 		
