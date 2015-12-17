@@ -60,7 +60,6 @@ install_resource()
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPBLocalizations.bundle"
-  install_resource "Harpy/Harpy/Harpy.bundle"
   install_resource "TWMessageBarManager/Classes/Icons/icon-error.png"
   install_resource "TWMessageBarManager/Classes/Icons/icon-error@2x.png"
   install_resource "TWMessageBarManager/Classes/Icons/icon-info.png"
@@ -71,7 +70,6 @@ fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPBLocalizations.bundle"
-  install_resource "Harpy/Harpy/Harpy.bundle"
   install_resource "TWMessageBarManager/Classes/Icons/icon-error.png"
   install_resource "TWMessageBarManager/Classes/Icons/icon-error@2x.png"
   install_resource "TWMessageBarManager/Classes/Icons/icon-info.png"
@@ -82,7 +80,6 @@ fi
 if [[ "$CONFIGURATION" == "AdHoc" ]]; then
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
   install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPBLocalizations.bundle"
-  install_resource "Harpy/Harpy/Harpy.bundle"
   install_resource "TWMessageBarManager/Classes/Icons/icon-error.png"
   install_resource "TWMessageBarManager/Classes/Icons/icon-error@2x.png"
   install_resource "TWMessageBarManager/Classes/Icons/icon-info.png"

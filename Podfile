@@ -33,7 +33,6 @@ pod 'Branch'							# Url routing and deep linking
 pod 'pop', '~> 1.0'						# Animation library
 pod 'AirPhotoBrowser', :path => '~/code/AirPhotoBrowser'
 pod 'TWMessageBarManager', '~> 1.8'		# In-app notifications
-pod 'Harpy'								# App update alerts
 pod 'Facade'							# Convenience methods for frame based layout
 pod 'Google/Analytics', '~> 1.2.0'
 pod 'Fabric'
