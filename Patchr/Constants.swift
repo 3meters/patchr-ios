@@ -45,6 +45,7 @@ public struct Events {
 	static let PhotoDidChange       = "PhotoDidChange"
 	static let PhotoViewHasFocus    = "PhotoViewHasFocus"
 	static let BindingComplete		= "BindingComplete"
+	static let ImageNotFound		= "ImageNotFound"
 }
 
 public struct Schema {

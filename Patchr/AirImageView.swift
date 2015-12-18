@@ -188,6 +188,7 @@ class AirImageView: UIImageView {
 			Log.w("Image fetch failed: " + error!.localizedDescription)
 			Log.w("Failed url: \(url?.absoluteString)")
 			if error!.code == HTTPStatusCode.NotFound.rawValue {
+				NSNotificationCenter.defaultCenter().postNotificationName(Events.ImageNotFound, object: self)
 				Shared.Toast("Image not found")
 			}
 			return

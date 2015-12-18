@@ -63,6 +63,9 @@ class PhotoView: UIView {
 	
     func initialize() {
 		
+		let notificationCenter = NSNotificationCenter.defaultCenter()
+		notificationCenter.addObserver(self, selector: "imageNotFoundAction:", name: Events.ImageNotFound, object: self.imageButton)
+		
 		self.backgroundColor = Colors.clear
 		
 		self.photoGroup.alpha = 0
@@ -145,6 +148,20 @@ class PhotoView: UIView {
 		}
 	}
 	
+	func imageNotFoundAction(sender: AnyObject) {
+		if self.photoSchema == Schema.ENTITY_MESSAGE {
+			self.imageButton.setImage(nil, forState: .Normal)
+			configureTo(.Empty)
+		}
+		else {
+			self.imageButton.setImage(nil, forState: .Normal)
+			self.usingPhotoDefault = true
+			configureTo(.Placeholder)
+		}
+		
+		self.photoActive = false
+	}
+	
 	func editPhotoAction(sender: AnyObject){
 		if self.controller != nil {
 			NSNotificationCenter.defaultCenter().postNotificationName(Events.PhotoViewHasFocus, object: nil)
@@ -163,13 +180,7 @@ class PhotoView: UIView {
 			configureTo(.Empty)
 		}
 		else {
-			if self.photoSchema == Schema.ENTITY_USER {
-				self.imageButton.setImage(nil, forState: .Normal)
-			}
-			else {
-				let photo: Photo = Entity.getDefaultPhoto(self.photoSchema, id: nil)
-				self.imageButton.setImageWithPhoto(photo)
-			}
+			self.imageButton.setImage(nil, forState: .Normal)
 			self.usingPhotoDefault = true
 			configureTo(.Placeholder)
 		}
