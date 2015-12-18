@@ -182,13 +182,16 @@ extension SettingsTableViewController {
 	
 	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
 		
-		if indexPath.row == 6 {
+		if indexPath.section == 0 && indexPath.row == 6 {
 			if let user = UserController.instance.currentUser {
 				if !user.developerValue {
 					developmentCell.hidden = true
 					return CGFloat(0)
 				}
 			}
+		}
+		else if indexPath.section == 2 && indexPath.row == 0 {
+			return CGFloat(64)
 		}
 		return CGFloat(48)
 	}
