@@ -40,6 +40,7 @@ class SettingsTableViewController: UITableViewController {
         if let user = UserController.instance.currentUser {
             if user.developerValue {
                 developmentCell.hidden = false
+				developmentCell.frame.size.height = 0
             }
         }
         
@@ -178,6 +179,19 @@ extension SettingsTableViewController {
             }
         }
     }
+	
+	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+		
+		if indexPath.row == 6 {
+			if let user = UserController.instance.currentUser {
+				if !user.developerValue {
+					developmentCell.hidden = true
+					return CGFloat(0)
+				}
+			}
+		}
+		return CGFloat(48)
+	}
 }
 
 extension SettingsTableViewController: MFMailComposeViewControllerDelegate {
