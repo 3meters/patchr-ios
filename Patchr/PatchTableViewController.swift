@@ -12,7 +12,7 @@ import AVFoundation
 class PatchTableViewController: BaseTableViewController {
 
     var user: User!
-	var filter: PatchListFilter = .Nearby
+	var filter: PatchListFilter?
     var activityDate: Int64?
 	var location: CLLocation?
     
@@ -21,16 +21,20 @@ class PatchTableViewController: BaseTableViewController {
     *--------------------------------------------------------------------------------------------*/
     
     override func viewDidLoad() {
+		
+		guard self.filter != nil else {
+			fatalError("Filter must be set on PatchTableViewController")
+		}
         
-        if user == nil {
-            user = UserController.instance.currentUser
+        if self.user == nil {
+            self.user = UserController.instance.currentUser
         }
         
 		/* Strings */
 		self.loadMoreMessage = "LOAD MORE PATCHES"
 		self.listType = .Patches
 		
-        switch self.filter {
+        switch self.filter! {
             case .Nearby:
                 self.emptyMessage = "No patches nearby"
                 self.activityDate = DataController.instance.activityDate
@@ -44,7 +48,7 @@ class PatchTableViewController: BaseTableViewController {
         
         super.viewDidLoad()
 		
-		switch self.filter {
+		switch self.filter! {
 			case .Nearby:
 				self.navigationItem.title = "Nearby"
 			case .Explore:
@@ -62,16 +66,9 @@ class PatchTableViewController: BaseTableViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        switch self.filter {
+        switch self.filter! {
             case .Nearby:
                 setScreenName("NearbyList")
-				if !self.query.executedValue {
-					LocationController.instance.clearLastLocationAccepted()					
-				}
-                registerForLocationNotifications()
-                LocationController.instance.stopSignificantChangeUpdates()
-                LocationController.instance.startUpdates()
-            
             case .Explore:
                 setScreenName("ExploreList")
             case .Watching:
@@ -82,11 +79,19 @@ class PatchTableViewController: BaseTableViewController {
     }
     
     override func viewDidAppear(animated: Bool) {
+		
         if self.filter == .Nearby {
-            /* We do this here so user can see the changes */
+			
+			registerForLocationNotifications()
+			LocationController.instance.stopSignificantChangeUpdates()
+			
             if DataController.instance.activityDate > self.activityDate || !self.query.executedValue {
+				/* We do this here so user can see the changes */
                 self.bindQueryItems(true)
             }
+			else {
+				LocationController.instance.startUpdates()
+			}
         }
         else {
             super.viewDidAppear(animated)
@@ -130,7 +135,7 @@ class PatchTableViewController: BaseTableViewController {
 		if query == nil {
 			query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
 
-			switch self.filter {
+			switch self.filter! {
 			case .Nearby:
 				query!.name = DataStoreQueryName.NearbyPatches.rawValue
 				query!.pageSize = DataController.proxibase.pageSizeNearby
@@ -156,7 +161,7 @@ class PatchTableViewController: BaseTableViewController {
 	func queryId() -> String {
 		
 		var queryId: String!
-		switch self.filter {
+		switch self.filter! {
 			case .Nearby:
 				queryId = "query.\(DataStoreQueryName.NearbyPatches.rawValue.lowercaseString)"
 			case .Explore:
@@ -178,7 +183,10 @@ class PatchTableViewController: BaseTableViewController {
 		
 		if self.filter == .Nearby {
 			if force {
-				LocationController.instance.clearLastLocationAccepted()
+				if LocationController.instance.lastLocationAccepted() != nil {
+					Log.i("Clearing last location accepted")
+					LocationController.instance.clearLastLocationAccepted()
+				}
 				LocationController.instance.stopUpdates()
 				LocationController.instance.startUpdates()
 			}
@@ -188,6 +196,9 @@ class PatchTableViewController: BaseTableViewController {
 				if self.showProgress {
 					self.activity.startAnimating()
 				}
+			}
+			else {
+				self.activity.stopAnimating()
 			}
 			
 			if self.showEmptyLabel && self.emptyLabel.alpha > 0 {

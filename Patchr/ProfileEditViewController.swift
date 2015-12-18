@@ -568,15 +568,19 @@ class ProfileEditViewController: BaseViewController {
 					* to extract the credentials.
 					*/
 					if let response: AnyObject = result.response as AnyObject? {
+						
 						UserController.instance.handleSuccessfulSignInResponse(response)
 						
 						/* Navigate to main interface */
 						if self.inputRouteToMain {
+							/*
+							 * Replaces lobby navigation stack
+							 */
 							let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
 							let controller = MainTabBarController()
 							controller.selectedIndex = 0
 							appDelegate.window!.setRootViewController(controller, animated: true)
-							Shared.Toast("Logged in as \(UserController.instance.userName!)", controller: controller)
+							Shared.Toast("Logged in as \(UserController.instance.userName!)", controller: controller)							
 						}
 						else {
 							if self.isModal {
@@ -770,6 +774,13 @@ extension ProfileEditViewController: UITextFieldDelegate {
     func textFieldShouldReturn(textField: UITextField) -> Bool {
 		
 		if self.inputState == .Onboarding {
+			if textField == self.nameField {
+				self.doneAction(textField)
+				textField.resignFirstResponder()
+				return false
+			}
+		}
+		else {
 			if textField == self.nameField {
 				self.emailField.becomeFirstResponder()
 				return false

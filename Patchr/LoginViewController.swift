@@ -10,9 +10,10 @@ import UIKit
 
 class LoginViewController: BaseViewController {
 
-    var processing: Bool = false
-	var provider = AuthProvider.PROXIBASE
-	var onboardMode = OnboardMode.Login
+    var processing				: Bool = false
+	var provider				= AuthProvider.PROXIBASE
+	var onboardMode				= OnboardMode.Login
+	var progress				: AirProgress!
 
     var emailField				= AirTextField()
     var passwordField			= AirTextField()
@@ -79,7 +80,17 @@ class LoginViewController: BaseViewController {
 				self.navigationController?.pushViewController(controller, animated: true)
 			}
 			else {
-				loginProxibase()
+				self.passwordField.resignFirstResponder()
+				
+				self.progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+				self.progress.mode = MBProgressHUDMode.Indeterminate
+				self.progress.styleAs(.ActivityWithText)
+				self.progress.minShowTime = 0.5
+				self.progress.labelText = "Logging in..."
+				self.progress.removeFromSuperViewOnHide = true
+				self.progress.show(true)
+
+				login()
 			}
 		}
     }
@@ -166,49 +177,25 @@ class LoginViewController: BaseViewController {
 		}
 	}
 	
-	func showProfile(profile: ServiceUserProfile?) {
+	func login() {
 		
-		let controller = ProfileEditViewController()
-		if profile != nil {
-			controller.inputRouteToMain = self.inputRouteToMain
-			controller.inputState = .Onboarding
-			controller.inputProvider = self.provider
-			controller.inputName = profile?.name
-			controller.inputEmail = profile?.email
-			controller.inputUserId = profile?.userId
-			controller.inputPhotoUrl = profile?.photoUrl
+		guard !self.processing else {
+			return
 		}
-		self.navigationController?.pushViewController(controller, animated: true)
-	}
-	
-	func loginProxibase() {
-		if processing { return }
-		
-		if self.provider == AuthProvider.PROXIBASE && !isValid() { return }
 		
 		processing = true
-		
-		self.passwordField.resignFirstResponder()
-		
-		let progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
-		progress.mode = MBProgressHUDMode.Indeterminate
-		progress.styleAs(.ActivityWithText)
-		progress.minShowTime = 0.5
-		progress.labelText = "Logging in..."
-		progress.removeFromSuperViewOnHide = true
-		progress.show(true)
 		
 		/*
 		 * Successful login will also update the install record so the authenticated user
 		 * is associated with the install. Logging out clears the associated user.
 		 */
-		DataController.proxibase.login(self.emailField.text!, password: self.passwordField.text!, provider: self.provider, token: nil) {
+		DataController.proxibase.login(self.emailField.text!, password: self.passwordField.text!) {
 			response, error in
 			
 			NSOperationQueue.mainQueue().addOperationWithBlock {
 				self.processing = false
 				
-				progress?.hide(true)
+				self.progress?.hide(true)
 				if var error = ServerError(error) {
 					if error.code == .UNAUTHORIZED_CREDENTIALS {
 						error.message = "Wrong email and password combination."

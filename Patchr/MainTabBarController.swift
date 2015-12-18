@@ -51,7 +51,6 @@ class MainTabBarController: UITabBarController {
     
     func applicationDidEnterBackground() {
         Log.d("Application did enter background")
-        LocationController.instance.startSignificantChangeUpdates()
     }
     
     func reachabilityChanged() {
@@ -146,18 +145,10 @@ extension MainTabBarController: UITabBarControllerDelegate {
 	func tabBarController(tabBarController: UITabBarController, shouldSelectViewController viewController: UIViewController) -> Bool {
         
         if let navigationController = viewController as? UINavigationController {
-            if let controller = navigationController.topViewController as? PatchTableViewController {
-                /*
-                 * Super hackish to key on the label but haven't found a better way.
-                 */
-                if navigationController.tabBarItem.title?.lowercaseString == "explore" {
-                    controller.filter = PatchListFilter.Explore
-                }
-            }
-			else if let controller = navigationController.topViewController as? UserDetailViewController {
+			if let controller = navigationController.topViewController as? UserDetailViewController {
 				if UserController.instance.authenticated {
 					controller.profileMode = true
-					controller.entityId = UserController.instance.currentUser.id_
+					controller.entityId = UserController.instance.userId
 				}
 				else {
 					UserController.instance.showGuestGuard(self, message: nil)

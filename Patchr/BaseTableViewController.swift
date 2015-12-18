@@ -530,14 +530,14 @@ extension BaseTableViewController {
 		
 		switch type {
 			case .Insert:	// 1
-				self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Automatic)
+				self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
 			
 			case .Delete:	// 2
-				self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
+				self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
 				
 			case .Move:		// 3
-				self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
-				self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Automatic)
+				self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
+				self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
 				
 			case .Update:	// 4
 				self.tableView.cellForRowAtIndexPath(indexPath!)	// Better than reloadRowsAtIndexPaths because no animation

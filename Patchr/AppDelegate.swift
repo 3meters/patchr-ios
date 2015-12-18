@@ -91,6 +91,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		/* We call even if install record exists and using this as a chance to update the metadata */
 		UserController.instance.registerInstall()
 		
+		/* Instance the location manager */
+		LocationController.instance
+		
         /* Instance the reachability manager */
         ReachabilityManager.instance
         

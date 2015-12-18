@@ -348,16 +348,13 @@ public class Proxibase {
 	 * User and install
 	 *--------------------------------------------------------------------------------------------*/
 
-	public func login(email: String, password: String, provider: String, token: String?, completion: CompletionBlock) {
+	public func login(email: String, password: String, completion: CompletionBlock) {
 		/*
 		* Send an auth/signin message to the server with the user's email address and password.
 		* The completion block will be called asynchronously in either case.
 		* If signin is successful, then the credentials from the server will be written to user defaults
 		*/
-		var parameters = ["email": email, "password": password, "installId": UserController.instance.installId]
-		if provider == AuthProvider.FACEBOOK || provider == AuthProvider.GOOGLE {
-			parameters = ["provider": provider, "token": token!, "installId": UserController.instance.installId]
-		}
+		let parameters = ["email": email, "password": password, "installId": UserController.instance.installId]
 		
 		sessionManager.POST("auth/signin", parameters: parameters,
 			success: {

@@ -33,7 +33,8 @@ class UserController: NSObject {
 		 * you should not cache it.
 		 *
 		 * Value can be nil if device has been restarted but device is still locked. The value 
-		 * changes if user resets the device or manually resets the advertising identifier.
+		 * changes if user resets the device or manually resets the advertising identifier in 
+		 * settings.
 		 */
 		return ASIdentifierManager.sharedManager().advertisingIdentifier.UUIDString
 	}
@@ -46,10 +47,8 @@ class UserController: NSObject {
 		super.init()
 		
 		let userDefaults = NSUserDefaults.standardUserDefaults()
-		
 		self.userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId"))
 		self.jsonUser = userDefaults.stringForKey(PatchrUserDefaultKey("user"))
-		
 		self.jsonSession = self.lockbox.stringForKey("session") as String?
 		self.sessionKey = self.lockbox.stringForKey("sessionKey") as String?
 	}
@@ -60,12 +59,11 @@ class UserController: NSObject {
 	
 	func discardCredentials() {
 		
-        self.userId = nil
 		self.currentUser = nil
-        self.jsonUser = nil
-		
-        self.jsonSession = nil
+        self.userId = nil
 		self.sessionKey = nil
+		self.jsonUser = nil
+		self.jsonSession = nil
 		
         writeCredentialsToUserDefaults()
 		clearStore()
@@ -93,7 +91,7 @@ class UserController: NSObject {
         self.sessionKey = json["session"]["key"].string
 		
 		writeCredentialsToUserDefaults()
-		fetchCurrentUser()	// Includes making sure the user is in the store
+		fetchCurrentUser(nil)	// Includes making sure the user is in the store
     }
 	
 	func clearStore() {
@@ -116,13 +114,16 @@ class UserController: NSObject {
         }
     }
 
-	func fetchCurrentUser(){
+	func fetchCurrentUser(completion: CompletionBlock?) {
 		DataController.instance.withUserId(self.userId!, refresh: true, completion: {
 			objectId, error in
-			if objectId != nil {
+			if error == nil && objectId != nil {
 				self.currentUser = DataController.instance.mainContext.objectWithID(objectId!) as! User
 				Branch.getInstance().setIdentity(self.currentUser.id_)
 				Reporting.updateCrashUser(self.currentUser)
+			}
+			if completion != nil {
+				completion!(response: self.currentUser, error: error)
 			}
 		})
 	}

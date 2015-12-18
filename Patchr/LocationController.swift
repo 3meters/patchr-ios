@@ -32,10 +32,11 @@ class LocationController: NSObject {
     override init(){
         super.init()
         locationManager = CLLocationManager()
-        locationManager.pausesLocationUpdatesAutomatically = true       // Location manager will pause to save battery when location is unlikely to change
-        locationManager.desiredAccuracy = Double(ACCURACY_PREFERRED)
-        locationManager.activityType = CLActivityType.Fitness           // Pedestrian activity vs moving transportation (car, plane, train, etc)
-        locationManager.distanceFilter = CLLocationDistance.abs(Double(MIN_DISPLACEMENT))
+		locationManager.pausesLocationUpdatesAutomatically = true       // Location manager will pause to save battery when location is unlikely to change
+		locationManager.desiredAccuracy = Double(ACCURACY_PREFERRED)
+		locationManager.activityType = CLActivityType.Fitness           // Pedestrian activity vs moving transportation (car, plane, train, etc)
+		locationManager.distanceFilter = CLLocationDistance.abs(Double(MIN_DISPLACEMENT))
+		
         locationManager.delegate = self
     }
     
@@ -52,39 +53,38 @@ class LocationController: NSObject {
     }
     
     func startUpdates(){
-        Log.d("***** Location updates started *****")
-        
 		if CLLocationManager.authorizationStatus() == .NotDetermined {
 			self.locationManager.requestWhenInUseAuthorization()
 		}
 		else if CLLocationManager.authorizationStatus() == .AuthorizedAlways
 			|| CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+				Log.d("***** Location updates started *****")
 				self.locationManager.startUpdatingLocation()
 		}
     }
 
     func stopUpdates(){
-        Log.d("***** Location updates stopped *****")
         if self.locationManager != nil {
+			Log.d("***** Location updates stopped *****")
             self.locationManager.stopUpdatingLocation()
         }
     }
     
     func startSignificantChangeUpdates(){
-        Log.d("***** Location significant change updates started *****")
-        
+		
         /* Ignores desired distance and accuracy */
         if self.locationManager != nil {
 			if CLLocationManager.authorizationStatus() == .AuthorizedAlways
 				|| CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
 					self.locationManager.startMonitoringSignificantLocationChanges()
+					Log.d("***** Location significant change updates started *****")
 			}
         }
     }
     
     func stopSignificantChangeUpdates(){
-        Log.d("***** Location significant change updates stopped *****")
         if self.locationManager != nil {
+			Log.d("***** Location significant change updates stopped *****")
             self.locationManager.stopMonitoringSignificantLocationChanges()
         }
     }
@@ -185,9 +185,13 @@ extension LocationController: CLLocationManagerDelegate {
                 message: "You can enable location access in Settings → Patchr → Location")
 		}
 	}
+	
+	func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
+		Log.w("Location manager failed: \(error)")
+	}
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        Log.d("Location update received")
+        Log.d("Location update received by location delegate")
         
         if let location = locations.last {
             
