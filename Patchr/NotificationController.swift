@@ -140,10 +140,10 @@ class NotificationController {
     }
     
     func registerForRemoteNotifications() {
-        
-        let application = UIApplication.sharedApplication()        
+        let application = UIApplication.sharedApplication()
 		let settings: UIUserNotificationSettings = UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil)
 		application.registerUserNotificationSettings(settings)
 		application.registerForRemoteNotifications()
+		Log.d("Registered for remote notifications")
     }
 }

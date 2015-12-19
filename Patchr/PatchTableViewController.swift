@@ -89,6 +89,7 @@ class PatchTableViewController: BaseTableViewController {
 			
             if DataController.instance.activityDateInsertDelete > self.activityDate || !self.query.executedValue {
 				/* We do this here so user can see the changes */
+				self.activityDate = DataController.instance.activityDateInsertDelete
                 self.bindQueryItems(true)
             }
 			else {
@@ -98,16 +99,19 @@ class PatchTableViewController: BaseTableViewController {
 		else {
 			super.viewDidAppear(animated)	// Will query if executed == false
 			self.location = LocationController.instance.lastLocationFromManager()
-//			if self.filter == .Watching && self.query.executedValue {
-//				if DataController.instance.activityDateWatching > self.activityDate {
-//					self.bindQueryItems(true, paging: false)
-//				}
-//			}
-//			else if self.filter == .Owns && self.query.executedValue {
-//				if DataController.instance.activityDateInsertDelete > self.activityDate {
-//					self.bindQueryItems(true, paging: false)
-//				}
-//			}
+			
+			if self.filter == .Watching && self.query.executedValue {
+				if DataController.instance.activityDateWatching > self.activityDate {
+					self.activityDate = DataController.instance.activityDateWatching
+					self.bindQueryItems(true, paging: false)
+				}
+			}
+			else if self.filter == .Owns && self.query.executedValue {
+				if DataController.instance.activityDateInsertDelete > self.activityDate {
+					self.activityDate = DataController.instance.activityDateInsertDelete
+					self.bindQueryItems(true, paging: false)
+				}
+			}
 		}
     }
     

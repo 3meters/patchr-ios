@@ -28,8 +28,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
 		/* Initialize Crashlytics: 25% of method time */
 		Fabric.with([Crashlytics()])
-		
-        let keys = PatchrKeys()
+
+		/* Instance the data controller */
+		DataController.instance
+
+		let keys = PatchrKeys()
 		
 		self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
 		
@@ -104,8 +107,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UISwitch.appearance().onTintColor = Theme.colorTint
         
         /* We handle remote notifications */
-        NotificationController.instance.registerForRemoteNotifications()
-		
+
+		#if os(iOS) && !arch(i386) && !arch(x86_64)
+			NotificationController.instance.registerForRemoteNotifications()			
+		#endif
+
 		/* Facebook */
 		FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
 		FBSDKProfile.enableUpdatesOnAccessTokenChange(true)
