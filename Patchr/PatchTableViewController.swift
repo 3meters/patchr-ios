@@ -37,15 +37,17 @@ class PatchTableViewController: BaseTableViewController {
         switch self.filter! {
             case .Nearby:
                 self.emptyMessage = "No patches nearby"
-                self.activityDate = DataController.instance.activityDate
+                self.activityDate = DataController.instance.activityDateInsertDelete
             case .Explore:
                 self.emptyMessage = "Discover popular patches here"
             case .Watching:
                 self.emptyMessage = "Watch patches and browse them here"
+				self.activityDate = DataController.instance.activityDateWatching
             case .Owns:
                 self.emptyMessage = "Make patches and browse them here"
+				self.activityDate = DataController.instance.activityDateInsertDelete
         }
-        
+		
         super.viewDidLoad()
 		
 		switch self.filter! {
@@ -85,7 +87,7 @@ class PatchTableViewController: BaseTableViewController {
 			registerForLocationNotifications()
 			LocationController.instance.stopSignificantChangeUpdates()
 			
-            if DataController.instance.activityDate > self.activityDate || !self.query.executedValue {
+            if DataController.instance.activityDateInsertDelete > self.activityDate || !self.query.executedValue {
 				/* We do this here so user can see the changes */
                 self.bindQueryItems(true)
             }
@@ -93,10 +95,20 @@ class PatchTableViewController: BaseTableViewController {
 				LocationController.instance.startUpdates()
 			}
         }
-        else {
-            super.viewDidAppear(animated)
+		else {
+			super.viewDidAppear(animated)	// Will query if executed == false
 			self.location = LocationController.instance.lastLocationFromManager()
-        }
+//			if self.filter == .Watching && self.query.executedValue {
+//				if DataController.instance.activityDateWatching > self.activityDate {
+//					self.bindQueryItems(true, paging: false)
+//				}
+//			}
+//			else if self.filter == .Owns && self.query.executedValue {
+//				if DataController.instance.activityDateInsertDelete > self.activityDate {
+//					self.bindQueryItems(true, paging: false)
+//				}
+//			}
+		}
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -122,7 +134,7 @@ class PatchTableViewController: BaseTableViewController {
             self.navigationController?.pushViewController(controller, animated: true)
         }
     }
-    
+
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
@@ -300,7 +312,7 @@ class PatchTableViewController: BaseTableViewController {
 						return
 					}
 					
-					self?.activityDate = DataController.instance.activityDate
+					self?.activityDate = DataController.instance.activityDateInsertDelete
 					
 					// Delay seems to be necessary to avoid visual glitch with UIRefreshControl
 					Utils.delay(0.5) {

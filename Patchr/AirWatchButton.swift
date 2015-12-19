@@ -70,6 +70,7 @@ class AirWatchButton: AirToggleButton {
 							patch!.userWatchId = nil
 							patch!.userWatchStatusValue = .NonMember
 							patch!.countWatchingValue--
+							DataController.instance.activityDateWatching = Int64(NSDate().timeIntervalSince1970 * 1000)
 						}
 					}
 					NSNotificationCenter.defaultCenter().postNotificationName(Events.WatchDidChange, object: nil)
@@ -119,6 +120,7 @@ class AirWatchButton: AirToggleButton {
 										if enabled {
 											patch!.userWatchStatusValue = .Member
 											patch!.countWatchingValue++
+											DataController.instance.activityDateWatching = Int64(NSDate().timeIntervalSince1970 * 1000)
 										}
 										else {
 											patch!.userWatchStatusValue = .Pending

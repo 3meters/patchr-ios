@@ -474,7 +474,8 @@ class PatchEditViewController: BaseViewController {
 						let serverResponse = ServerResponse(result.response)
 						if serverResponse.resultCount == 1 {
 							Log.d("Inserted entity \(serverResponse.resultID)")
-							DataController.instance.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
+							DataController.instance.activityDateInsertDelete = Int64(NSDate().timeIntervalSince1970 * 1000)
+							DataController.instance.activityDateWatching = DataController.instance.activityDateInsertDelete
 							let controller = InviteViewController()
 							controller.inputEntity = self.insertedEntity as! Patch
 							self.navigationController?.pushViewController(controller, animated: true)
@@ -515,6 +516,7 @@ class PatchEditViewController: BaseViewController {
 				else {
 					DataController.instance.mainContext.deleteObject(self.inputPatch!)
 					DataController.instance.saveContext(false)
+					DataController.instance.activityDateInsertDelete = Int64(NSDate().timeIntervalSince1970 * 1000)
 					self.performBack()
 				}
 			}
