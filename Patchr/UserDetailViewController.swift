@@ -43,9 +43,7 @@ class UserDetailViewController: BaseDetailViewController {
 				let editImage = Utils.imageEdit
 				let editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionEdit"))
 				let settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSettings"))
-				let spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
-				spacer.width = SPACER_WIDTH
-				self.navigationItem.rightBarButtonItems = [settingsButton, spacer, editButton]
+				self.navigationItem.rightBarButtonItems = [settingsButton, Utils.spacer, editButton]
 				self.navigationItem.title = "Me"
 			}
 		}
@@ -70,7 +68,6 @@ class UserDetailViewController: BaseDetailViewController {
 		/*
 		* Called when switching between patch view controllers.
 		*/
-		self.fetchedResultsController.delegate = nil
 		self.activity.stopAnimating()
 	}
 

@@ -191,6 +191,10 @@ class AirImageView: UIImageView {
 				NSNotificationCenter.defaultCenter().postNotificationName(Events.ImageNotFound, object: self)
 				Shared.Toast("Image not found")
 			}
+			else if error!.code == HTTPStatusCode.UnsupportedMediaType.rawValue {
+				NSNotificationCenter.defaultCenter().postNotificationName(Events.ImageNotFound, object: self)
+				Shared.Toast("Image format not supported")
+			}
 			return
         }
         else {
@@ -204,7 +208,7 @@ class AirImageView: UIImageView {
         		
 		if animate /*|| cacheType == SDImageCacheType.None || cacheType == SDImageCacheType.Disk*/ {
 			UIView.transitionWithView(self,
-				duration: 0.25,
+				duration: 0.4,
 				options: UIViewAnimationOptions.TransitionCrossDissolve,
 				animations: {
 					self.image = image

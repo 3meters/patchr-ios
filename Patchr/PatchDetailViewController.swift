@@ -478,15 +478,13 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
         
         let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
         let addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: Selector("addAction"))
-        let spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
-        spacer.width = SPACER_WIDTH
         if isOwner() {
             let editImage = Utils.imageEdit
             let editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
-            self.navigationItem.setRightBarButtonItems([addButton, spacer, shareButton, spacer, editButton], animated: true)
+            self.navigationItem.setRightBarButtonItems([addButton, Utils.spacer, shareButton, Utils.spacer, editButton], animated: true)
         }
         else {
-			self.navigationItem.setRightBarButtonItems([addButton, spacer, shareButton], animated: true)
+			self.navigationItem.setRightBarButtonItems([addButton, Utils.spacer, shareButton], animated: true)
         }
     }
 	

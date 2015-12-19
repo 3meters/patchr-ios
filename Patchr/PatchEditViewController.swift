@@ -315,7 +315,7 @@ class PatchEditViewController: BaseViewController {
 			let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
 			let saveButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
 			self.navigationItem.leftBarButtonItems = [cancelButton]
-			self.navigationItem.rightBarButtonItems = [saveButton, spacer, deleteButton]
+			self.navigationItem.rightBarButtonItems = [saveButton, Utils.spacer, deleteButton]
 		}
 	}
 	

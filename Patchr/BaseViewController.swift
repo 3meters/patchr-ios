@@ -10,12 +10,6 @@ import UIKit
 
 class BaseViewController: UIViewController {
 	
-	var spacer: UIBarButtonItem {
-		let space = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
-		space.width = SPACER_WIDTH
-		return space
-	}
-	
 	var isModal: Bool {
 		return self.presentingViewController?.presentedViewController == self
 			|| (self.navigationController != nil && self.navigationController?.presentingViewController?.presentedViewController == self.navigationController)

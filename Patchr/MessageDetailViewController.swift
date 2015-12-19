@@ -16,6 +16,10 @@ class MessageDetailViewController: UITableViewController {
     var deleted = false
 
     private var shareButtonFunctionMap = [Int: ShareButtonFunction]()
+	
+	private var isShare: Bool {
+		return (self.inputMessage?.type != nil && self.inputMessage!.type == "share")
+	}
 
     private var isOwner: Bool {
         if let currentUser = UserController.instance.currentUser {
@@ -88,7 +92,9 @@ class MessageDetailViewController: UITableViewController {
         self.description_.delegate = self
         
 		/* Navigation bar buttons */
-		drawNavButtons()
+		if self.inputMessage != nil {
+			drawNavButtons(true)
+		}
 
 		/* Make sure any old content is cleared */
 		self.description_.text?.removeAll(keepCapacity: false)
@@ -176,10 +182,7 @@ class MessageDetailViewController: UITableViewController {
 							}
 							else {
 								self?.inputMessage = DataController.instance.mainContext.objectWithID(objectId!) as? Message
-								/* Remove share button if this is a share message */
-								if self?.inputMessage!.type != nil && self?.inputMessage!.type == "share" {
-									self?.drawNavButtons(false)
-								}
+								self?.drawNavButtons(false)
 								self?.draw()	// TODO: Can skip if no change in activityDate and modifiedDate
 							}
 						}
@@ -318,7 +321,7 @@ class MessageDetailViewController: UITableViewController {
 		
 		Log.d("MessageDetail.draw called: \(self.inputMessage!.id_!)")
         
-        if self.inputMessage!.type != nil && self.inputMessage!.type == "share" {
+        if self.isShare {
 			
             self.recipientsCell.hidden = false
             self.shareHolderCell.hidden = false
@@ -485,25 +488,24 @@ class MessageDetailViewController: UITableViewController {
 		self.tableView.reloadData()
 	}
 
-	func drawNavButtons(shareAllowed: Bool = true){
+	func drawNavButtons(animated: Bool = false) {
 		
 		let shareButton  = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
-		let spacer       = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
-		spacer.width = SPACER_WIDTH
+		let editButton   = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
+		let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: Selector("deleteAction"))
+		let removeButton   = UIBarButtonItem(image: Utils.imageRemove, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("removeAction"))
 		
-		if self.isOwner {
-			let editImage    = Utils.imageEdit
-			let editButton   = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
-			let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: Selector("deleteAction"))
-			self.navigationItem.setRightBarButtonItems(shareAllowed ? [shareButton, spacer, deleteButton, spacer, editButton] : [deleteButton, spacer, editButton], animated: true)
+		if self.isShare && self.isOwner {
+			self.navigationItem.setRightBarButtonItems([deleteButton], animated: animated)
 		}
-		else if self.isPatchOwner {
-			let removeImage    = UIImage(named: "imgRemoveLight")
-			let removeButton   = UIBarButtonItem(image: removeImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("removeAction"))
-			self.navigationItem.setRightBarButtonItems(shareAllowed ? [shareButton, spacer, removeButton] : [removeButton], animated: true)
+		else if isOwner {
+			self.navigationItem.setRightBarButtonItems([shareButton, Utils.spacer, deleteButton, Utils.spacer, editButton], animated: animated)
+		}
+		else if isPatchOwner { // Current user is the owner of the patch this message is linked to or sharing
+			self.navigationItem.setRightBarButtonItems([shareButton, Utils.spacer, removeButton], animated: animated)
 		}
 		else {
-			self.navigationItem.setRightBarButtonItems(shareAllowed ? [shareButton] : [], animated: true)
+			self.navigationItem.setRightBarButtonItems([shareButton], animated: animated)
 		}
 	}
 	

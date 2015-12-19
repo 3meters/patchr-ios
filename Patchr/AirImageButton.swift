@@ -115,7 +115,8 @@ class AirImageButton: UIButton {
             startProgress()
         }
         /*
-         * Request image via resizer so size is capped.
+         * Request image via resizer so size is capped. We don't use imgix because it only uses
+		 * known image sources that we setup like our buckets on s3.
          */
         let dimension = imageResult.width >= imageResult.height ? ResizeDimension.width : ResizeDimension.height
         let url = NSURL(string: GooglePlusProxy.convert(imageResult.mediaUrl!, size: Int(IMAGE_DIMENSION_MAX), dimension: dimension))
@@ -145,6 +146,10 @@ class AirImageButton: UIButton {
 				NSNotificationCenter.defaultCenter().postNotificationName(Events.ImageNotFound, object: self)
 				Shared.Toast("Image not found")
 			}
+			else if error!.code == HTTPStatusCode.UnsupportedMediaType.rawValue {
+				NSNotificationCenter.defaultCenter().postNotificationName(Events.ImageNotFound, object: self)
+				Shared.Toast("Image format not supported")
+			}
             return
         }
         else {
@@ -158,7 +163,7 @@ class AirImageButton: UIButton {
 		
 		if animate /*|| cacheType == SDImageCacheType.None || cacheType == SDImageCacheType.Disk*/ {
 			UIView.transitionWithView(self,
-				duration: 0.5,
+				duration: 0.4,
 				options: UIViewAnimationOptions.TransitionCrossDissolve,
 				animations: {
 					self.setImage(image, forState:UIControlState.Normal)

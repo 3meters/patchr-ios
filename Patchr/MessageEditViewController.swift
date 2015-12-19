@@ -358,7 +358,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 				let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
 				let doneButton = UIBarButtonItem(title: "Save", style: .Plain, target: self, action: "doneAction:")
 				self.navigationItem.leftBarButtonItems = [cancelButton]
-				self.navigationItem.rightBarButtonItems = [doneButton, spacer, deleteButton]
+				self.navigationItem.rightBarButtonItems = [doneButton, Utils.spacer, deleteButton]
 			}
 		}
 	}
@@ -375,7 +375,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 		}
 
 		if self.inputState == .Editing {
-			self.addressLabel.text = (self.inputEntity as! Message).patch.name
+			self.addressLabel.text = (self.inputEntity as! Message).patch?.name
 			self.descriptionField.text = self.inputEntity!.description_
 			self.photoView.bindPhoto(self.inputEntity!.photo)
 			textViewDidChange(self.descriptionField)

@@ -28,7 +28,14 @@ struct Utils {
 	static var imageDefaultUser: UIImage = { return UIImage(named: "imgDefaultUser") }()!
 	static var imageEdit: UIImage = { return UIImage(named: "imgEdit2Light") }()!
 	static var imagePatch: UIImage = { return UIImage(named: "imgPatchLight") }()!
+	static var imageRemove: UIImage = { return UIImage(named: "imgRemoveLight") }()!
 	
+	static var spacer: UIBarButtonItem = {
+		let spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
+		spacer.width = 12
+		return spacer
+	}()
+
 	static let stopwatch1 = Stopwatch()
 	static let stopwatch2 = Stopwatch()
 	

@@ -106,7 +106,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		if self.query.executedValue {
 			do {
 				try self.fetchedResultsController.performFetch()
-				self.tableView.reloadData()
 			}
 			catch { fatalError("Fetch error: \(error)") }
 		}
@@ -315,7 +314,11 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 							}
 							query.offsetDate = oldestDate
 							DataController.instance.saveContext(false)
-							self?.tableView.reloadData()							
+							
+							do {
+								try self?.fetchedResultsController.performFetch() // Reloads table
+							}
+							catch { fatalError("Fetch error: \(error)") }
 						}
 						return
 					}

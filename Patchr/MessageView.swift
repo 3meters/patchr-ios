@@ -155,6 +155,9 @@ class MessageView: BaseView {
 			if message.patch != nil {
 				self.patchName.text = message.patch.name
 			}
+			else if message.type != nil && message.type == "share" {
+				self.patchName.text = "Shared by"
+			}
 			
 			if self.cellType == .Share {
 				self.recipients.text = ""
@@ -203,9 +206,7 @@ class MessageView: BaseView {
 		let columnWidth = self.bounds.size.width - columnLeft
 		let photoHeight = columnWidth * CELL_PHOTO_RATIO
 		
-		let entity = self.entity as? Message
-		
-		if self.showPatchName && entity?.patch?.name != nil {
+		if self.showPatchName && self.patchName.text != nil {
 			self.patchName.hidden = false
 			self.patchName.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 0, width: columnWidth, height: CELL_CONTEXT_HEIGHT)
 			self.userPhoto.anchorTopLeftWithLeftPadding(0,
@@ -268,7 +269,7 @@ class MessageView: BaseView {
 		
 		var height = CELL_HEADER_HEIGHT + CELL_FOOTER_HEIGHT + CELL_VIEW_SPACING + (CELL_PADDING_VERTICAL * 2)
 		if let message = entity as? Message {
-			if showPatchName && message.patch?.name != nil {
+			if (showPatchName && message.patch?.name != nil) || (message.type != nil && message.type == "share") {
 				height = CELL_CONTEXT_HEIGHT + CELL_HEADER_HEIGHT + CELL_FOOTER_HEIGHT + (CELL_VIEW_SPACING * 2) + (CELL_PADDING_VERTICAL * 2)
 			}
 		}

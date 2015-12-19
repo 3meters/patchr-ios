@@ -406,7 +406,7 @@ class ProfileEditViewController: BaseViewController {
 			let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
 			let doneButton   = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
 			self.navigationItem.leftBarButtonItems = [cancelButton]
-			self.navigationItem.rightBarButtonItems = [doneButton, self.spacer, deleteButton]
+			self.navigationItem.rightBarButtonItems = [doneButton, Utils.spacer, deleteButton]
 			
 			self.changePasswordButton.addTarget(self, action: Selector("changePasswordAction:"), forControlEvents: .TouchUpInside)
 			self.facebookButton.addTarget(self, action: Selector("facebookConnectAction:"), forControlEvents: .TouchUpInside)
