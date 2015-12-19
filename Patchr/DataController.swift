@@ -88,11 +88,11 @@ class DataController: NSObject {
 		}
 	}
 
-	func withMessageId(messageId: String, refresh: Bool = false, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
+	func withMessageId(messageId: String, refresh: Bool = false, blockCriteria: Bool = false, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
         /*
         * Load a message for the message form.
         */
-		withEntityType(Message.self, entityId: messageId, refresh: refresh) {
+		withEntityType(Message.self, entityId: messageId, refresh: refresh, blockCriteria: blockCriteria) {
 			objectId, error in
 			completion(objectId, error: error)
 		}
@@ -129,7 +129,11 @@ class DataController: NSObject {
 		}
 	}
 
-	private func withEntityType(entityType: ServiceBase.Type, entityId: String, refresh: Bool = false, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
+	private func withEntityType(entityType: ServiceBase.Type,
+		entityId: String,
+		refresh: Bool = false,
+		blockCriteria: Bool = false,
+		completion: (NSManagedObjectID?, error: NSError?) -> Void) {
 		
 		/* Pull from data model if available */
 		let modelEntity = entityType.fetchOneById(entityId, inManagedObjectContext: mainContext) as ServiceBase!
@@ -140,8 +144,10 @@ class DataController: NSObject {
 			var criteria: [String: AnyObject] = [:]
 			var objectId: NSManagedObjectID?
 			if modelEntity != nil {
-				criteria = modelEntity.criteria()
 				objectId = modelEntity.objectID
+				if !blockCriteria {
+					criteria = modelEntity.criteria()
+				}
 			}
 			
 			Utils.stopwatch2.start("Entity", message: "\(entityType)")
@@ -181,6 +187,9 @@ class DataController: NSObject {
 										entityType.setPropertiesFromDictionary(entityDictionaries[0], onObject: entity!)
 										entity!.refreshedValue = true
 										objectId = entity?.objectID
+										if blockCriteria {
+											entity!.decoratedValue = true
+										}
 										
 										/* Poke each impacted queryItem to trigger NSFetchedResultsController callbacks */
 										for queryItem in entity!.queryItems {

@@ -70,7 +70,7 @@ class Snow {
 	let colorButtonTitleFeatured			= Colors.white
 	let colorButtonTitleHighlighted			= Colors.lightGray
 	let colorButtonTitleFeaturedHighlighted = Colors.lightGray
-	let colorButtonBorder					= Colors.gray50pcntColor
+	let colorButtonBorder					= Colors.gray66pcntColor
 	let colorButtonBorderFeatured			= Colors.accentColor
 	let colorButtonFill						= Colors.clear
 	let colorButtonFillFeatured				= Colors.accentColor

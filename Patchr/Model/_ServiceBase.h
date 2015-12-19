@@ -8,6 +8,7 @@ extern const struct ServiceBaseAttributes {
 	__unsafe_unretained NSString *activityDate;
 	__unsafe_unretained NSString *createdDate;
 	__unsafe_unretained NSString *creatorId;
+	__unsafe_unretained NSString *decorated;
 	__unsafe_unretained NSString *id_;
 	__unsafe_unretained NSString *modifiedDate;
 	__unsafe_unretained NSString *modifierId;
@@ -54,6 +55,14 @@ extern const struct ServiceBaseRelationships {
 @property (nonatomic, strong) NSString* creatorId;
 
 //- (BOOL)validateCreatorId:(id*)value_ error:(NSError**)error_;
+
+@property (nonatomic, strong) NSNumber* decorated;
+
+@property (atomic) BOOL decoratedValue;
+- (BOOL)decoratedValue;
+- (void)setDecoratedValue:(BOOL)value_;
+
+//- (BOOL)validateDecorated:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSString* id_;
 
@@ -147,6 +156,12 @@ extern const struct ServiceBaseRelationships {
 
 - (NSString*)primitiveCreatorId;
 - (void)setPrimitiveCreatorId:(NSString*)value;
+
+- (NSNumber*)primitiveDecorated;
+- (void)setPrimitiveDecorated:(NSNumber*)value;
+
+- (BOOL)primitiveDecoratedValue;
+- (void)setPrimitiveDecoratedValue:(BOOL)value_;
 
 - (NSString*)primitiveId_;
 - (void)setPrimitiveId_:(NSString*)value;

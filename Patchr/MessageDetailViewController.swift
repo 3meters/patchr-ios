@@ -10,17 +10,17 @@ import UIKit
 
 class MessageDetailViewController: UITableViewController {
 
-	var activity:  UIActivityIndicatorView?
-	var message:   Message?
-	var messageId: String?
+	var activity:       UIActivityIndicatorView?
+	var inputMessage:   Message?
+	var inputMessageId: String?
     var deleted = false
 
     private var shareButtonFunctionMap = [Int: ShareButtonFunction]()
 
     private var isOwner: Bool {
         if let currentUser = UserController.instance.currentUser {
-            if self.message != nil && self.message!.creator != nil {
-                return currentUser.id_ == self.message!.creator.entityId
+            if self.inputMessage != nil && self.inputMessage!.creator != nil {
+                return currentUser.id_ == self.inputMessage!.creator.entityId
             }
         }
         return false
@@ -28,8 +28,8 @@ class MessageDetailViewController: UITableViewController {
     
     private var isPatchOwner: Bool {
         if let currentUser = UserController.instance.currentUser {
-            if self.message != nil && self.message!.patch != nil && self.message!.patch!.ownerId != nil {
-                return currentUser.id_ == self.message!.patch!.ownerId
+            if self.inputMessage != nil && self.inputMessage!.patch != nil && self.inputMessage!.patch!.ownerId != nil {
+                return currentUser.id_ == self.inputMessage!.patch!.ownerId
             }
         }
         return false
@@ -59,11 +59,11 @@ class MessageDetailViewController: UITableViewController {
 
 	override func viewDidLoad() {
 
-		if self.message != nil {
-			self.messageId = self.message!.id_
+		if self.inputMessage != nil {
+			self.inputMessageId = self.inputMessage!.id_
 		}
 		
-		guard self.messageId != nil else {
+		guard self.inputMessageId != nil else {
 			fatalError("Message detail requires message id")
 		}
 
@@ -104,14 +104,14 @@ class MessageDetailViewController: UITableViewController {
 	override func viewWillAppear(animated: Bool) {
 		
 		/* Use cached entity if available in the data model */
-		if self.message == nil {
-			if let message: Message? = Message.fetchOneById(self.messageId!, inManagedObjectContext: DataController.instance.mainContext) {
-				self.message = message
+		if self.inputMessage == nil {
+			if let message: Message? = Message.fetchOneById(self.inputMessageId!, inManagedObjectContext: DataController.instance.mainContext) {
+				self.inputMessage = message
 			}
 		}
 		else {
 			/* Entity could have been delete while we were away to check it. */
-			let item = ServiceBase.fetchOneById(self.messageId!, inManagedObjectContext: DataController.instance.mainContext)
+			let item = ServiceBase.fetchOneById(self.inputMessageId!, inManagedObjectContext: DataController.instance.mainContext)
 			if item == nil {
 				self.navigationController?.popViewControllerAnimated(false)
 				return
@@ -120,7 +120,7 @@ class MessageDetailViewController: UITableViewController {
 		
 		super.viewWillAppear(animated)
 		
-		if self.message != nil {
+		if self.inputMessage != nil {
 			draw()
 		}
 		
@@ -149,13 +149,19 @@ class MessageDetailViewController: UITableViewController {
 
 	private func refresh(force: Bool = false) {
         
-        if (self.message == nil) {
+        if (self.inputMessage == nil) {
 			self.activity?.startAnimating()
         }
 		
 		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
 			
-			DataController.instance.withMessageId(self.messageId!, refresh: force) {
+			let blockCriteria = (self.inputMessage != nil
+				&& self.inputMessage!.type != nil
+				&& self.inputMessage!.type == "share"
+				&& (self.inputMessage!.message == nil && self.inputMessage!.patch == nil)
+				&& !self.inputMessage!.decoratedValue)
+			
+			DataController.instance.withMessageId(self.inputMessageId!, refresh: force, blockCriteria: blockCriteria) {
 				[weak self] objectId, error in
 				
 				if self != nil {
@@ -169,9 +175,9 @@ class MessageDetailViewController: UITableViewController {
 								}
 							}
 							else {
-								self?.message = DataController.instance.mainContext.objectWithID(objectId!) as? Message
+								self?.inputMessage = DataController.instance.mainContext.objectWithID(objectId!) as? Message
 								/* Remove share button if this is a share message */
-								if self?.message!.type != nil && self?.message!.type == "share" {
+								if self?.inputMessage!.type != nil && self?.inputMessage!.type == "share" {
 									self?.drawNavButtons(false)
 								}
 								self?.draw()	// TODO: Can skip if no change in activityDate and modifiedDate
@@ -194,7 +200,7 @@ class MessageDetailViewController: UITableViewController {
 	@IBAction func patchAction(sender: AnyObject) {
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
         if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
-            controller.entityId = self.message!.patch.entityId
+            controller.entityId = self.inputMessage!.patch.entityId
             self.navigationController?.pushViewController(controller, animated: true)
         }
 	}
@@ -202,7 +208,7 @@ class MessageDetailViewController: UITableViewController {
 	@IBAction func userAction(sender: AnyObject) {
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
         if let controller = storyboard.instantiateViewControllerWithIdentifier("UserDetailViewController") as? UserDetailViewController {
-            if let creator = message!.creator {
+            if let creator = inputMessage!.creator {
                 controller.entityId = creator.entityId
 				controller.profileMode = false
                 self.navigationController?.pushViewController(controller, animated: true)
@@ -211,7 +217,7 @@ class MessageDetailViewController: UITableViewController {
 	}
 
 	@IBAction func photoAction(sender: AnyObject) {
-        let browser = Shared.showPhotoBrowser(self.messagePhoto.imageForState(.Normal), animateFromView: sender as! UIView, viewController: self, entity: self.message)
+        let browser = Shared.showPhotoBrowser(self.messagePhoto.imageForState(.Normal), animateFromView: sender as! UIView, viewController: self, entity: self.inputMessage)
         browser.target = self
 	}
 
@@ -222,7 +228,7 @@ class MessageDetailViewController: UITableViewController {
 	@IBAction func likesAction(sender: AnyObject) {
         let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
         if let controller = storyboard.instantiateViewControllerWithIdentifier("UserTableViewController") as? UserTableViewController {
-            controller.message = self.message
+            controller.message = self.inputMessage
             controller.filter = .MessageLikers
             self.navigationController?.pushViewController(controller, animated: true)
         }
@@ -232,17 +238,17 @@ class MessageDetailViewController: UITableViewController {
 		if let view = sender as? UIView {
 			view.backgroundColor = Theme.colorBackgroundWindow
 		}
-        if self.message?.message != nil {
+        if self.inputMessage?.message != nil {
             let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
             if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
-                controller.messageId = self.message!.message!.entityId
+                controller.inputMessageId = self.inputMessage!.message!.entityId
                 self.navigationController?.pushViewController(controller, animated: true)
             }
         }
-        else if self.message?.patch != nil {
+        else if self.inputMessage?.patch != nil {
             let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
             if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
-                controller.entityId = self.message!.patch!.entityId
+                controller.entityId = self.inputMessage!.patch!.entityId
                 self.navigationController?.pushViewController(controller, animated: true)
             }
         }
@@ -250,7 +256,7 @@ class MessageDetailViewController: UITableViewController {
     
 	func shareAction() {
         
-        if self.message != nil {
+        if self.inputMessage != nil {
             let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: nil, destructiveButtonTitle: nil)
             
             shareButtonFunctionMap[sheet.addButtonWithTitle("Share using Patchr")] = .Share
@@ -266,7 +272,7 @@ class MessageDetailViewController: UITableViewController {
         /* Has its own nav because we segue modally and it needs its own stack */
 		let controller = MessageEditViewController()
 		let navController = UINavigationController()
-		controller.inputEntity = self.message
+		controller.inputEntity = self.inputMessage
 		controller.inputState = .Editing
 		navController.viewControllers = [controller]
 		self.navigationController?.presentViewController(navController, animated: true, completion: nil)
@@ -310,9 +316,9 @@ class MessageDetailViewController: UITableViewController {
 
 	func draw() {
 		
-		Log.d("MessageDetail.draw called: \(self.message!.id_!)")
+		Log.d("MessageDetail.draw called: \(self.inputMessage!.id_!)")
         
-        if self.message!.type != nil && self.message!.type == "share" {
+        if self.inputMessage!.type != nil && self.inputMessage!.type == "share" {
 			
             self.recipientsCell.hidden = false
             self.shareHolderCell.hidden = false
@@ -328,22 +334,23 @@ class MessageDetailViewController: UITableViewController {
 			holderView.cornerRadius = 6
 			
 			if self.shareHolderCell.contentView.subviews.count == 0 {
-				if self.message?.message != nil {
+				if self.inputMessage?.message != nil {
 					
 					var cellType: CellType = .TextAndPhoto
-					if self.message!.message!.photo == nil {
+					if self.inputMessage!.message!.photo == nil {
 						cellType = .Text
 					}
-					else if self.message!.message!.description_ == nil {
+					else if self.inputMessage!.message!.description_ == nil {
 						cellType = .Photo
 					}
 					
 					let shareView = MessageView(cellType: cellType)
 					
-					shareView.bindToEntity(self.message!.message!)
+					shareView.bindToEntity(self.inputMessage!.message!)
 					
 					holderView.addSubview(shareView)
 					self.shareHolderCell.contentView.addSubview(holderView)
+					self.shareHolderCell.contentView.frame.size.width = self.tableView.frame.size.width
 					
 					/* Need correct width before layout and sizing */
 					holderView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
@@ -360,7 +367,7 @@ class MessageDetailViewController: UITableViewController {
 					let tap = UITapGestureRecognizer(target: self, action: "shareBrowseAction:");
 					shareView.addGestureRecognizer(tap)
 				}
-				else if self.message?.patch != nil {
+				else if self.inputMessage?.patch != nil {
 					
 					let shareView = PatchView()
 					
@@ -369,10 +376,11 @@ class MessageDetailViewController: UITableViewController {
 					shareView.cornerRadius = 6
 					shareView.shadow.hidden = true
 					
-					shareView.bindToEntity(self.message!.patch!, location: nil)
+					shareView.bindToEntity(self.inputMessage!.patch!, location: nil)
 					
 					self.shareHolderCell.contentView.addSubview(shareView)
 					self.shareHolderCell.contentView.frame.size.height = 128
+					self.shareHolderCell.contentView.frame.size.width = self.tableView.frame.size.width
 					shareView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
 					
 					let tap = UITapGestureRecognizer(target: self, action: "shareBrowseAction:");
@@ -383,20 +391,25 @@ class MessageDetailViewController: UITableViewController {
 					 * The target of the share message has been deleted'
 					 */
 					let shareView = AirLabel()
-					shareView.backgroundColor = Theme.colorBackgroundTileList
 					shareView.text = "Deleted"
+					shareView.textAlignment = .Center
+					shareView.textColor = Colors.white
 					
+					holderView.borderColor = Theme.colorBackgroundWindow
+					holderView.backgroundColor = Theme.colorBackgroundWindow
 					holderView.addSubview(shareView)
 					self.shareHolderCell.contentView.addSubview(holderView)
 					
-					self.shareHolderCell.contentView.frame.size.height = 48
-					holderView.fillSuperview()
-					shareView.fillSuperview()
+					self.shareHolderCell.contentView.frame.size.height = 144
+					self.shareHolderCell.contentView.frame.size.width = self.tableView.frame.size.width
+					
+					holderView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
+					shareView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 12, bottomPadding: 12)
 				}
 
 				self.recipients.text = ""
-				if self.message?.recipients != nil {
-					for recipient in self.message!.recipients as! Set<Shortcut> {
+				if self.inputMessage?.recipients != nil {
+					for recipient in self.inputMessage!.recipients as! Set<Shortcut> {
 						self.recipients.text!.appendContentsOf("\(recipient.name), ")
 					}
 					self.recipients.text = String(self.recipients.text!.characters.dropLast(2))
@@ -407,28 +420,28 @@ class MessageDetailViewController: UITableViewController {
             self.toolbarCell.hidden = false
             
             /* Patch */
-            if self.message!.patch != nil {
+            if self.inputMessage!.patch != nil {
                 self.patchCell.hidden = false
-                self.patchPhoto.setImageWithPhoto(self.message!.patch.getPhotoManaged())
-                self.patchName.setTitle(self.message!.patch.name, forState: .Normal)
+                self.patchPhoto.setImageWithPhoto(self.inputMessage!.patch.getPhotoManaged())
+                self.patchName.setTitle(self.inputMessage!.patch.name, forState: .Normal)
             }
         }
 
 		/* Message */
 
-		self.createdDate.text = Utils.messageDateFormatter.stringFromDate(self.message!.createdDate)
-		if self.message!.description_ != nil {
-			self.description_.text = self.message!.description_
+		self.createdDate.text = Utils.messageDateFormatter.stringFromDate(self.inputMessage!.createdDate)
+		if self.inputMessage!.description_ != nil {
+			self.description_.text = self.inputMessage!.description_
 			self.description_.sizeToFit()
 			self.description_.hidden = false
 		}
         
         /* Photo */
 
-		if message!.photo != nil {
+		if inputMessage!.photo != nil {
 			self.messagePhoto.hidden = false
-            if !self.messagePhoto.linkedToPhoto(self.message!.photo) {
-                self.messagePhoto.setImageWithPhoto(self.message!.photo)
+            if !self.messagePhoto.linkedToPhoto(self.inputMessage!.photo) {
+                self.messagePhoto.setImageWithPhoto(self.inputMessage!.photo)
             }
 		}
 		else {
@@ -439,19 +452,19 @@ class MessageDetailViewController: UITableViewController {
 
 		/* Like button */
         
-        likeButton.bindEntity(self.message)
+        likeButton.bindEntity(self.inputMessage)
 
 		/* Likes button */
 
-		if message?.countLikesValue == 0 {
+		if inputMessage?.countLikesValue == 0 {
 			if likesButton.alpha != 0 {
 				likesButton.fadeOut()
 			}
 		}
 		else {
-			let likesTitle = self.message!.countLikesValue == 1
-					? "\(self.message!.countLikes) like"
-					: "\(self.message!.countLikes ?? 0) likes"
+			let likesTitle = self.inputMessage!.countLikesValue == 1
+					? "\(self.inputMessage!.countLikes) like"
+					: "\(self.inputMessage!.countLikes ?? 0) likes"
 			self.likesButton.setTitle(likesTitle, forState: UIControlState.Normal)
 			if likesButton.alpha == 0 {
 				likesButton.fadeIn()
@@ -460,7 +473,7 @@ class MessageDetailViewController: UITableViewController {
 
 		/* User */
 
-		if let creator = self.message!.creator {
+		if let creator = self.inputMessage!.creator {
 			self.userName.setTitle(creator.name, forState: .Normal)
 			self.userPhoto.setImageWithPhoto(creator.getPhotoManaged())
 		}
@@ -496,7 +509,7 @@ class MessageDetailViewController: UITableViewController {
 	
     func delete() {
         
-        let entityPath = "data/messages/\((self.message?.id_)!)"
+        let entityPath = "data/messages/\((self.inputMessage?.id_)!)"
         DataController.proxibase.deleteObject(entityPath) {
             response, error in
 			
@@ -505,7 +518,7 @@ class MessageDetailViewController: UITableViewController {
 					self.handleError(error)
 				}
 				else {
-					DataController.instance.mainContext.deleteObject(self.message!)
+					DataController.instance.mainContext.deleteObject(self.inputMessage!)
 					DataController.instance.saveContext(false)
 					self.navigationController?.popViewControllerAnimated(true)
 				}
@@ -515,7 +528,7 @@ class MessageDetailViewController: UITableViewController {
     
     func remove() {
                 
-        if let fromId = self.message!.id_, toId = self.message!.patchId {
+        if let fromId = self.inputMessage!.id_, toId = self.inputMessage!.patchId {
             DataController.proxibase.deleteLink(fromId, toId: toId, linkType: LinkType.Content) {
                 response, error in
                 
@@ -524,7 +537,7 @@ class MessageDetailViewController: UITableViewController {
 						UIViewController.topMostViewController()!.handleError(error)
 					}
 					else {
-						DataController.instance.mainContext.deleteObject(self.message!)
+						DataController.instance.mainContext.deleteObject(self.inputMessage!)
 						DataController.instance.saveContext(false)
 						self.navigationController?.popViewControllerAnimated(true)
 					}
@@ -538,16 +551,16 @@ class MessageDetailViewController: UITableViewController {
         if patchr {
 			let controller = MessageEditViewController()
 			let navController = UINavigationController()
-			controller.inputShareEntity = self.message
+			controller.inputShareEntity = self.inputMessage
 			controller.inputShareSchema = Schema.ENTITY_MESSAGE
-			controller.inputShareId = self.messageId!
+			controller.inputShareId = self.inputMessageId!
 			controller.inputMessageType = .Share
 			controller.inputState = .Sharing
 			navController.viewControllers = [controller]
 			self.presentViewController(navController, animated: true, completion: nil)
         }
         else {
-            Branch.getInstance().getShortURLWithParams(["entityId":self.messageId!, "entitySchema":"message"], andChannel: "patchr-ios", andFeature: BRANCH_FEATURE_TAG_SHARE, andCallback: {
+            Branch.getInstance().getShortURLWithParams(["entityId":self.inputMessageId!, "entitySchema":"message"], andChannel: "patchr-ios", andFeature: BRANCH_FEATURE_TAG_SHARE, andCallback: {
                 (url: String?, error: NSError?) -> Void in
                 
                 if let error = ServerError(error) {
@@ -555,7 +568,7 @@ class MessageDetailViewController: UITableViewController {
                 }
                 else {
                     Log.d("Branch link created: \(url!)")
-                    let message: MessageItem = MessageItem(entity: self.message!, shareUrl: url!)
+                    let message: MessageItem = MessageItem(entity: self.inputMessage!, shareUrl: url!)
 					
 					let activityViewController = UIActivityViewController(
 						activityItems: [message],
@@ -580,7 +593,7 @@ extension MessageDetailViewController {
     */
 	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         
-        if let message = self.message {
+        if let message = self.inputMessage {
             if indexPath.row == 2 {
                 return (message.description_ == nil)
                     ? CGFloat(0)

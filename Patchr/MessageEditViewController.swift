@@ -101,7 +101,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 		self.firstAppearance = false
 	}
 	
-	override func viewDidDisappear(animated: Bool) {
+	deinit {
 		NSNotificationCenter.defaultCenter().removeObserver(self)
 	}
 	

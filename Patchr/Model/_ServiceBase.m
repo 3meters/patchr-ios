@@ -7,6 +7,7 @@ const struct ServiceBaseAttributes ServiceBaseAttributes = {
 	.activityDate = @"activityDate",
 	.createdDate = @"createdDate",
 	.creatorId = @"creatorId",
+	.decorated = @"decorated",
 	.id_ = @"id_",
 	.modifiedDate = @"modifiedDate",
 	.modifierId = @"modifierId",
@@ -53,6 +54,11 @@ const struct ServiceBaseRelationships ServiceBaseRelationships = {
 + (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key {
 	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
 
+	if ([key isEqualToString:@"decoratedValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"decorated"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
 	if ([key isEqualToString:@"refreshedValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"refreshed"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
@@ -67,6 +73,26 @@ const struct ServiceBaseRelationships ServiceBaseRelationships = {
 @dynamic createdDate;
 
 @dynamic creatorId;
+
+@dynamic decorated;
+
+- (BOOL)decoratedValue {
+	NSNumber *result = [self decorated];
+	return [result boolValue];
+}
+
+- (void)setDecoratedValue:(BOOL)value_ {
+	[self setDecorated:@(value_)];
+}
+
+- (BOOL)primitiveDecoratedValue {
+	NSNumber *result = [self primitiveDecorated];
+	return [result boolValue];
+}
+
+- (void)setPrimitiveDecoratedValue:(BOOL)value_ {
+	[self setPrimitiveDecorated:@(value_)];
+}
 
 @dynamic id_;
 

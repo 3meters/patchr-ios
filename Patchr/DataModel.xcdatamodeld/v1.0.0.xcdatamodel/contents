@@ -113,6 +113,7 @@
         <attribute name="activityDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="createdDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="creatorId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="decorated" optional="YES" transient="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="id_" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="modifiedDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="modifierId" optional="YES" attributeType="String" syncable="YES"/>
@@ -159,7 +160,7 @@
         <element name="Photo" positionX="-693" positionY="90" width="128" height="150"/>
         <element name="Query" positionX="-216" positionY="117" width="128" height="210"/>
         <element name="QueryItem" positionX="-495" positionY="-99" width="128" height="135"/>
-        <element name="ServiceBase" positionX="-450" positionY="-243" width="128" height="315"/>
+        <element name="ServiceBase" positionX="-450" positionY="-243" width="128" height="330"/>
         <element name="ServiceObject" positionX="-695" positionY="-45" width="128" height="45"/>
         <element name="Shortcut" positionX="-486" positionY="-90" width="128" height="165"/>
         <element name="User" positionX="81" positionY="-108" width="128" height="150"/>

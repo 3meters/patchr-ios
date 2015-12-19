@@ -187,7 +187,7 @@ extension BaseDetailViewController {
         if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
             let entity = queryResult.object as? Message,
             let controller = storyboard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
-                controller.message = entity
+                controller.inputMessage = entity
                 self.navigationController?.pushViewController(controller, animated: true)
         }
     }

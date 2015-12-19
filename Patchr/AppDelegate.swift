@@ -208,7 +208,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             else if entitySchema == "message" {
                 if let controller = storyBoard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
-                    controller.messageId = entityId
+                    controller.inputMessageId = entityId
                     /* Navigation bar buttons */
                     let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
                     controller.navigationItem.leftBarButtonItems = [doneButton]

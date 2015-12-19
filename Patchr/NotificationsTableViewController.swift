@@ -202,7 +202,7 @@ class NotificationsTableViewController: BaseTableViewController {
                             }
                             else if targetId!.hasPrefix("me.") {
                                 if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
-                                    controller.messageId = targetId
+                                    controller.inputMessageId = targetId
                                     self.navigationController?.pushViewController(controller, animated: true)
                                 }
                             }
@@ -299,7 +299,7 @@ class NotificationsTableViewController: BaseTableViewController {
                 patchController.entityId = targetId
             }
             else if let messageController = controller as? MessageDetailViewController {
-                messageController.messageId = targetId
+                messageController.inputMessageId = targetId
             }
             controller.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: Selector("dismissAction:"))
             UIViewController.topMostViewController()?.presentViewController(UINavigationController(rootViewController: controller), animated: true, completion: nil)
@@ -411,7 +411,7 @@ extension NotificationsTableViewController {
 				}
 				else if entity.targetId!.hasPrefix("me.") {
 					if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
-						controller.messageId = entity.targetId
+						controller.inputMessageId = entity.targetId
 						self.navigationController?.pushViewController(controller, animated: true)
 					}
 				}

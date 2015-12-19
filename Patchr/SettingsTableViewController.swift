@@ -193,7 +193,7 @@ extension SettingsTableViewController {
 		else if indexPath.section == 2 && indexPath.row == 0 {
 			return CGFloat(64)
 		}
-		return CGFloat(48)
+		return CGFloat(44)
 	}
 }
 
