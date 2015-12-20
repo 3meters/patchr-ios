@@ -346,10 +346,11 @@
                                                     <inset key="imageEdgeInsets" minX="10" minY="12" maxX="10" maxY="12"/>
                                                     <state key="normal" image="imgHeartLight"/>
                                                 </button>
-                                                <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" reversesTitleShadowWhenHighlighted="YES" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xyp-ei-5Dw" userLabel="likes_button">
-                                                    <rect key="frame" x="48" y="0.0" width="56" height="48"/>
+                                                <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" reversesTitleShadowWhenHighlighted="YES" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xyp-ei-5Dw" userLabel="likes_button">
+                                                    <rect key="frame" x="159" y="0.0" width="96" height="48"/>
                                                     <animations/>
                                                     <constraints>
+                                                        <constraint firstAttribute="width" constant="96" id="84y-uF-IOS"/>
                                                         <constraint firstAttribute="height" constant="48" id="tGI-QG-hf3"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="16"/>
@@ -391,10 +392,10 @@
                                                 <constraint firstAttribute="bottom" secondItem="qva-6Y-DVn" secondAttribute="bottom" id="5Al-cG-88A"/>
                                                 <constraint firstItem="Xyp-ei-5Dw" firstAttribute="top" secondItem="smd-MS-Sud" secondAttribute="top" id="9cg-OD-CQV"/>
                                                 <constraint firstItem="qva-6Y-DVn" firstAttribute="leading" secondItem="smd-MS-Sud" secondAttribute="leading" id="CQW-Vk-IpO"/>
+                                                <constraint firstItem="Xyp-ei-5Dw" firstAttribute="centerX" secondItem="smd-MS-Sud" secondAttribute="centerX" id="G9g-Kz-dcD"/>
                                                 <constraint firstAttribute="trailing" secondItem="tvX-dI-0TH" secondAttribute="trailing" constant="12" id="KKK-ld-F4g"/>
                                                 <constraint firstAttribute="trailing" secondItem="qva-6Y-DVn" secondAttribute="trailing" id="MDW-5l-0Up"/>
                                                 <constraint firstItem="tvX-dI-0TH" firstAttribute="top" secondItem="smd-MS-Sud" secondAttribute="top" id="RF5-m6-und"/>
-                                                <constraint firstItem="Xyp-ei-5Dw" firstAttribute="leading" secondItem="5KQ-kg-as3" secondAttribute="trailing" id="YUs-HJ-Qoy"/>
                                                 <constraint firstItem="5KQ-kg-as3" firstAttribute="top" secondItem="smd-MS-Sud" secondAttribute="top" id="dCG-d9-xbC"/>
                                                 <constraint firstItem="5KQ-kg-as3" firstAttribute="leading" secondItem="smd-MS-Sud" secondAttribute="leading" id="ubH-e4-s82"/>
                                             </constraints>
@@ -900,26 +901,20 @@
                                                 <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="t8t-DZ-4Sr" userLabel="button_group">
                                                     <rect key="frame" x="0.0" y="211" width="414" height="48"/>
                                                     <subviews>
-                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cXS-bO-Vkq" userLabel="map_button" customClass="AirImageButton" customModule="Patchr" customModuleProvider="target">
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cXS-bO-Vkq" userLabel="map_button" customClass="AirIconButton">
                                                             <rect key="frame" x="0.0" y="0.0" width="48" height="48"/>
                                                             <animations/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="48" id="40n-dM-Vz0"/>
                                                                 <constraint firstAttribute="height" constant="48" id="esg-9a-ZT0"/>
                                                             </constraints>
-                                                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                             <inset key="imageEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
                                                             <state key="normal" image="imgMapDark"/>
-                                                            <userDefinedRuntimeAttributes>
-                                                                <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                                                    <integer key="value" value="24"/>
-                                                                </userDefinedRuntimeAttribute>
-                                                            </userDefinedRuntimeAttributes>
                                                             <connections>
                                                                 <action selector="mapAction:" destination="dFa-9F-rNC" eventType="touchUpInside" id="erv-XH-8dh"/>
                                                             </connections>
                                                         </button>
-                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7J4-1W-AIu" userLabel="watching_button">
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7J4-1W-AIu" userLabel="watching_button" customClass="AirButtonLink" customModule="Patchr" customModuleProvider="target">
                                                             <rect key="frame" x="64" y="0.0" width="76" height="48"/>
                                                             <animations/>
                                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -934,14 +929,13 @@
                                                                 <action selector="watchersAction:" destination="dFa-9F-rNC" eventType="touchUpInside" id="Gnx-xU-If5"/>
                                                             </connections>
                                                         </button>
-                                                        <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cOi-lI-rdw" userLabel="more_button" customClass="AirImageButton" customModule="Patchr" customModuleProvider="target">
+                                                        <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cOi-lI-rdw" userLabel="more_button" customClass="AirIconButton">
                                                             <rect key="frame" x="358" y="0.0" width="48" height="48"/>
                                                             <animations/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="48" id="ciL-Aa-qcj"/>
                                                                 <constraint firstAttribute="width" constant="48" id="qPb-jA-6Vq"/>
                                                             </constraints>
-                                                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                             <inset key="imageEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
                                                             <state key="normal" image="imgOverflowDark"/>
                                                             <userDefinedRuntimeAttributes>

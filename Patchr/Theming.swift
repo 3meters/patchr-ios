@@ -53,12 +53,14 @@ class Snow {
 	let colorRule                   = Colors.gray75pcntColor
 	let colorRuleActive             = Colors.accentColor
 	let colorTint                   = Colors.brandColor
+	let colorTabBarTint             = Colors.brandColor
 	let colorShadow					= Colors.gray80pcntColor
 	let colorSeparator				= Colors.gray90pcntColor
 	let colorScrimDarken            = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.3))
 	let colorScrimLighten           = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.75))
 	let colorActionOn               = Colors.brandColor
-	let colorActionOff              = Colors.opacity90pcntWhite
+	let colorActionOff              = Colors.brandColor
+	let colorActionPending          = Colors.accentColor
 	let colorActivityIndicator      = Colors.brandColor
 	let colorActivityIndicatorImage = Colors.brandColor
 

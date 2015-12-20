@@ -79,6 +79,8 @@ class MainTabBarController: UITabBarController {
 		
 		let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
 		
+		UITabBar.appearance().tintColor = Theme.colorTabBarTint
+		
 		let patches = PatchNavigationController()
 		patches.tabBarItem.title = "Patches"
 		patches.tabBarItem.image = UIImage(named: "tabBarPatches24")

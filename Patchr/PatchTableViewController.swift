@@ -11,10 +11,11 @@ import AVFoundation
 
 class PatchTableViewController: BaseTableViewController {
 
-    var user: User!
-	var filter: PatchListFilter?
-    var activityDate: Int64?
-	var location: CLLocation?
+    var user			: User!
+	var filter			: PatchListFilter?
+    var activityDate	: Int64?
+	var location		: CLLocation?
+	var firstNearPass	= true
     
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -37,7 +38,7 @@ class PatchTableViewController: BaseTableViewController {
         switch self.filter! {
             case .Nearby:
                 self.emptyMessage = "No patches nearby"
-                self.activityDate = DataController.instance.activityDateInsertDelete
+                self.activityDate = DataController.instance.activityDateInsertDeletePatch
             case .Explore:
                 self.emptyMessage = "Discover popular patches here"
             case .Watching:
@@ -45,7 +46,7 @@ class PatchTableViewController: BaseTableViewController {
 				self.activityDate = DataController.instance.activityDateWatching
             case .Owns:
                 self.emptyMessage = "Make patches and browse them here"
-				self.activityDate = DataController.instance.activityDateInsertDelete
+				self.activityDate = DataController.instance.activityDateInsertDeletePatch
         }
 		
         super.viewDidLoad()
@@ -87,14 +88,20 @@ class PatchTableViewController: BaseTableViewController {
 			registerForLocationNotifications()
 			LocationController.instance.stopSignificantChangeUpdates()
 			
-            if DataController.instance.activityDateInsertDelete > self.activityDate || !self.query.executedValue {
+            if DataController.instance.activityDateInsertDeletePatch > self.activityDate || !self.query.executedValue {
 				/* We do this here so user can see the changes */
-				self.activityDate = DataController.instance.activityDateInsertDelete
+				self.activityDate = DataController.instance.activityDateInsertDeletePatch
                 self.bindQueryItems(true)
             }
 			else {
 				LocationController.instance.startUpdates()
+				if self.firstNearPass {
+					if LocationController.instance.lastLocationAccepted() != nil {
+						LocationController.instance.resendLast()
+					}
+				}
 			}
+			self.firstNearPass = false
         }
 		else {
 			super.viewDidAppear(animated)	// Will query if executed == false
@@ -107,8 +114,8 @@ class PatchTableViewController: BaseTableViewController {
 				}
 			}
 			else if self.filter == .Owns && self.query.executedValue {
-				if DataController.instance.activityDateInsertDelete > self.activityDate {
-					self.activityDate = DataController.instance.activityDateInsertDelete
+				if DataController.instance.activityDateInsertDeletePatch > self.activityDate {
+					self.activityDate = DataController.instance.activityDateInsertDeletePatch
 					self.bindQueryItems(true, paging: false)
 				}
 			}
@@ -316,7 +323,7 @@ class PatchTableViewController: BaseTableViewController {
 						return
 					}
 					
-					self?.activityDate = DataController.instance.activityDateInsertDelete
+					self?.activityDate = DataController.instance.activityDateInsertDeletePatch
 					
 					// Delay seems to be necessary to avoid visual glitch with UIRefreshControl
 					Utils.delay(0.5) {

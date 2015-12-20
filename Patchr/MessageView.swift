@@ -10,20 +10,20 @@ import UIKit
 
 class MessageView: BaseView {
 
-	var cellType: CellType = .TextAndPhoto
-	var showPatchName = true
+	var cellType		: CellType = .TextAndPhoto
+	var showPatchName	= true
 	
-	var description_:	TTTAttributedLabel?
-	var photo:			UIButton?
+	var description_	: TTTAttributedLabel?
+	var photo			: UIButton?
 	
-	var userName		= UILabel()
+	var userName		= AirLabelDisplay()
 	var userPhoto		= UIImageView(frame: CGRectZero)
-	var createdDate		= UILabel()
+	var createdDate		= AirLabelDisplay()
 	var recipientsLabel = AirLabelDisplay()
 	var recipients		= AirLabelDisplay()
-	var likes			= UILabel()
+	var likes			= AirLabelDisplay()
 	var likeButton		= AirLikeButton(frame: CGRectZero)
-	var patchName		= UILabel()
+	var patchName		= AirLabelDisplay()
 	
 	init(cellType: CellType?) {
 		super.init(frame: CGRectZero)
@@ -47,7 +47,7 @@ class MessageView: BaseView {
 	
 	func initialize() {
 		
-		self.clipsToBounds = false
+		self.clipsToBounds = true
 		
 		/* Description */
 		if self.cellType != .Photo {
@@ -65,7 +65,7 @@ class MessageView: BaseView {
 			self.photo!.contentHorizontalAlignment = .Fill
 			self.photo!.contentVerticalAlignment = .Fill
 			self.photo!.backgroundColor = Theme.colorBackgroundImage
-			self.photo!.clipsToBounds = false
+
 			self.addSubview(self.photo!)
 		}
 		
@@ -78,6 +78,7 @@ class MessageView: BaseView {
 		self.userPhoto.contentMode = UIViewContentMode.ScaleAspectFill
 		self.userPhoto.clipsToBounds = true
 		self.userPhoto.layer.cornerRadius = 24
+		self.userPhoto.bounds.size = CGSizeMake(48, 48)
 		self.userPhoto.layer.backgroundColor = Theme.colorBackgroundImage.CGColor
 		self.addSubview(self.userPhoto)
 		
@@ -87,7 +88,7 @@ class MessageView: BaseView {
 		
 		self.createdDate.font = Theme.fontComment
 		self.createdDate.textColor = Theme.colorTextSecondary
-		self.createdDate.textAlignment = NSTextAlignment.Right
+		self.createdDate.textAlignment = .Right
 		
 		self.addSubview(self.userName)
 		self.addSubview(self.createdDate)
@@ -105,8 +106,11 @@ class MessageView: BaseView {
 		}
 		else {
 			self.likeButton.imageView!.tintColor(Theme.colorTint)
+			self.likeButton.bounds.size = CGSizeMake(24, 20)
+
 			self.likes.font = Theme.fontComment
-			self.likes.textColor = Theme.colorButtonTitle
+			self.likes.textColor = Theme.colorTextTitle
+			self.likes.textAlignment = .Right
 			
 			self.addSubview(self.likeButton)
 			self.addSubview(self.likes)
@@ -189,6 +193,53 @@ class MessageView: BaseView {
 		self.setNeedsLayout()
 	}
 	
+	override func sizeThatFits(size: CGSize) -> CGSize {
+		
+		if let entity = self.entity {
+			
+			var heightAccum = CGFloat(0)
+			
+			let columnLeft = CGFloat(self.userPhoto.width() + 8)
+			let columnWidth = size.width - columnLeft
+			let photoHeight = columnWidth * 0.5625
+			
+			if self.showPatchName {
+				self.patchName.sizeToFit()
+				heightAccum += self.patchName.height()
+			}
+			
+			self.userName.sizeToFit()
+			heightAccum += (8 + self.userName.height())
+			
+			if entity.description_ != nil && !entity.description_.isEmpty {
+				self.description_!.bounds.size.width = columnWidth
+				self.description_!.sizeToFit()
+				heightAccum += (8 + self.description_!.height())
+			}
+			
+			if entity.photo != nil {
+				heightAccum += (8 + photoHeight)
+			}
+			
+			if self.cellType == .Share {
+				self.recipientsLabel.sizeToFit()
+				self.recipients.bounds.size.width = columnWidth - (self.recipientsLabel.width() + 12)
+				self.recipients.sizeToFit()
+				heightAccum += 8 + self.recipients.height()
+			}
+			else {
+				self.likes.sizeToFit()
+				heightAccum += (8 + max(self.likeButton.height(), self.likes.height())) // Like button
+			}
+			
+			let height = max(self.userPhoto.height(), heightAccum)
+
+			return CGSizeMake(size.width, height)
+		}
+		
+		return CGSizeZero
+	}
+	
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		/*
@@ -202,101 +253,60 @@ class MessageView: BaseView {
 		 * checked for all views in the view hierarchy for every run loop iteration.
 		 * If dirty, layoutSubviews is called in hierarchy order and flag is reset.
 		 */
-		let columnLeft = CELL_USER_PHOTO_SIZE + CELL_VIEW_SPACING
+		let columnLeft = CGFloat(self.userPhoto.width() + 8)
 		let columnWidth = self.bounds.size.width - columnLeft
-		let photoHeight = columnWidth * CELL_PHOTO_RATIO
+		let photoHeight = columnWidth * 0.5625		// 16:9 aspect ratio
 		
 		if self.showPatchName && self.patchName.text != nil {
 			self.patchName.hidden = false
-			self.patchName.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 0, width: columnWidth, height: CELL_CONTEXT_HEIGHT)
-			self.userPhoto.anchorTopLeftWithLeftPadding(0,
-				topPadding: CELL_CONTEXT_HEIGHT + CELL_VIEW_SPACING,
-				width: CELL_USER_PHOTO_SIZE, height: CELL_USER_PHOTO_SIZE)
+			self.patchName.sizeToFit()
+			self.patchName.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 0, width: self.patchName.width(), height: self.patchName.height())
+			self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: self.patchName.height() + 8, width: self.userPhoto.width(), height: self.userPhoto.height())
 		}
 		else {
 			self.patchName.hidden = true
-			self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: CELL_USER_PHOTO_SIZE, height: CELL_USER_PHOTO_SIZE)
+			self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: self.userPhoto.width(), height: self.userPhoto.height())
 		}
 		
 		/* Header */
 		
 		self.createdDate.sizeToFit()
-		let dateSize = self.createdDate.sizeThatFits(CGSizeMake(columnWidth, CGFloat.max))
-		self.userName.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: CELL_VIEW_SPACING, width: columnWidth - (dateSize.width + 8), height: CELL_HEADER_HEIGHT)
-		self.createdDate.alignToTheRightOf(self.userName, matchingCenterAndFillingWidthWithLeftAndRightPadding: 0, height: CELL_HEADER_HEIGHT)
+		self.userName.sizeToFit()
+		self.userName.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth - (self.createdDate.width() + 8), height: self.userName.height())
+		self.createdDate.alignToTheRightOf(self.userName, matchingCenterAndFillingWidthWithLeftAndRightPadding: 0, height: self.createdDate.height())
 		
 		/* Body */
 		
 		var bottomView: UIView? = self.photo
-		if self.cellType == .Share {
+		if self.cellType == .Share || self.cellType == .Text {
 			bottomView = self.description_
-			let descSize = self.description_?.sizeThatFits(CGSizeMake(columnWidth, CGFloat.max))
-			self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: CELL_VIEW_SPACING, height: (descSize?.height)!)
+			self.description_?.bounds.size.width = columnWidth
+			self.description_?.sizeToFit()
+			self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: self.description_!.height())
 		}
 		if self.cellType == .TextAndPhoto {
-			let descSize = self.description_?.sizeThatFits(CGSizeMake(columnWidth, CGFloat.max))
-			self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: CELL_VIEW_SPACING, height: (descSize?.height)!)
-			self.photo?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: CELL_VIEW_SPACING, height: photoHeight)
+			self.description_?.bounds.size.width = columnWidth
+			self.description_?.sizeToFit()
+			self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: self.description_!.height())
+			self.photo?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: photoHeight)
 		}
 		else if self.cellType == .Photo {
-			self.photo?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: CELL_VIEW_SPACING, height: photoHeight)
-		}
-		else if self.cellType == .Text {
-			bottomView = self.description_
-			let descSize = self.description_?.sizeThatFits(CGSizeMake(columnWidth, CGFloat.max))
-			self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: CELL_VIEW_SPACING, height: (descSize?.height)!)
+			self.photo?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: photoHeight)
 		}
 		
 		/* Footer */
 		
 		if self.cellType == .Share {
-			let recipientsSize = self.recipients.sizeThatFits(CGSizeMake(columnWidth - 28, CGFloat.max))
-			self.recipientsLabel.alignUnder(bottomView!, matchingLeftWithTopPadding: CELL_VIEW_SPACING, width: 28, height: CELL_FOOTER_HEIGHT)
-			self.recipients.alignToTheRightOf(self.recipientsLabel, matchingTopWithLeftPadding: 0, width: columnWidth - 28, height: recipientsSize.height)
+			self.recipientsLabel.sizeToFit()
+			self.recipients.bounds.size.width = columnWidth - (self.recipientsLabel.width() + 12)
+			self.recipients.sizeToFit()
+			self.recipientsLabel.alignUnder(bottomView!, matchingLeftWithTopPadding: 8, width: self.recipientsLabel.width(), height: self.recipientsLabel.height())
+			self.recipients.alignToTheRightOf(self.recipientsLabel, matchingTopWithLeftPadding: 12, width: self.recipients.width(), height: self.recipients.height())
 		}
 		else {
-			self.likeButton.alignUnder(bottomView!, matchingLeftWithTopPadding: CELL_VIEW_SPACING, width: 24, height: CELL_FOOTER_HEIGHT)
-			self.likes.alignToTheRightOf(self.likeButton, matchingCenterAndFillingWidthWithLeftAndRightPadding: 12, height: CELL_FOOTER_HEIGHT)
+			self.likes.sizeToFit()
+			self.likeButton.alignUnder(bottomView!, matchingLeftWithTopPadding: 8, width: self.likeButton.width(), height: self.likeButton.height())
+			self.likes.alignUnder(bottomView!, matchingRightWithTopPadding: 8, width: self.likes.width(), height: self.likes.height())
 		}
-	}
-	
-	static func quickHeight(width: CGFloat, showPatchName: Bool, entity: Entity) -> CGFloat {
-		
-		let minHeight: CGFloat = CELL_USER_PHOTO_SIZE + (CELL_PADDING_VERTICAL * 2)
-		let columnLeft = CELL_USER_PHOTO_SIZE + CELL_VIEW_SPACING + (CELL_PADDING_HORIZONTAL * 2)
-		let columnWidth = width - columnLeft
-		let photoHeight = columnWidth * CELL_PHOTO_RATIO
-		
-		var height = CELL_HEADER_HEIGHT + CELL_FOOTER_HEIGHT + CELL_VIEW_SPACING + (CELL_PADDING_VERTICAL * 2)
-		if let message = entity as? Message {
-			if (showPatchName && message.patch?.name != nil) || (message.type != nil && message.type == "share") {
-				height = CELL_CONTEXT_HEIGHT + CELL_HEADER_HEIGHT + CELL_FOOTER_HEIGHT + (CELL_VIEW_SPACING * 2) + (CELL_PADDING_VERTICAL * 2)
-			}
-		}
-		
-		if entity.description_ != nil {
-			
-			let description = entity.description_ as NSString
-			let attributes = [NSFontAttributeName: Theme.fontTextList]
-			let options: NSStringDrawingOptions = [NSStringDrawingOptions.UsesLineFragmentOrigin, NSStringDrawingOptions.UsesFontLeading]
-			
-			/* Most time is spent here */
-			let rect: CGRect = description.boundingRectWithSize(CGSizeMake(columnWidth, CGFloat.max),
-				options: options,
-				attributes: attributes,
-				context: nil)
-			
-			let descHeight = min(rect.height, 102.272)	// Cap at ~5 lines based on HNeueLight 17pts
-			height += (descHeight + CELL_VIEW_SPACING + 0.5) // Add a bit because of rounding scruff
-		}
-		
-		if entity.photo != nil {
-			/* This relies on sizing and spacing of the message view */
-			height += photoHeight + CELL_VIEW_SPACING  // 16:9 aspect ratio
-		}
-		
-		height = max(minHeight, height)
-		
-		return CGFloat(height)	// Add one for row separator
 	}
 }

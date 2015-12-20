@@ -166,6 +166,13 @@ class LocationController: NSObject {
 			}
         }
     }
+
+	func resendLast() {
+		if self._lastLocationAccepted != nil {
+			let dictionary:[NSObject: AnyObject] = ["location":self._lastLocationAccepted!]
+			NSNotificationCenter.defaultCenter().postNotificationName(Event.LocationUpdate.rawValue, object: nil, userInfo: dictionary)
+		}
+	}
 }
 
 extension LocationController: CLLocationManagerDelegate {
@@ -252,11 +259,13 @@ extension LocationController: CLLocationManagerDelegate {
         
         /* filter out nil locations */
         if newLocation == nil {
+			Log.d("Invalid location: location is nil")
             return false
         }
         
         /* filter out points with invalid accuracy */
         if newLocation.horizontalAccuracy < 0 {
+			Log.d("Invalid location: horizontal accuracy is less than zero")
             return false
         }
         
@@ -264,6 +273,7 @@ extension LocationController: CLLocationManagerDelegate {
         if oldLocation != nil {
             let secondsSinceLastPoint: NSTimeInterval = newLocation.timestamp.timeIntervalSinceDate(oldLocation!.timestamp)
             if secondsSinceLastPoint < 0 {
+				Log.d("Invalid location: location timestamp is older than last accepted location")
                 return false
             }
         }

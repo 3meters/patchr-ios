@@ -32,8 +32,9 @@ class DataController: NSObject {
 
 	var mainContext: NSManagedObjectContext!
 	
-    var activityDateInsertDelete:    Int64
-	var activityDateWatching	:    Int64
+    var activityDateInsertDeletePatch	: Int64
+	var activityDateInsertDeleteMessage	: Int64
+	var activityDateWatching			: Int64
 
     var currentPatch:         Patch?    // Currently used for message context
 	
@@ -52,8 +53,11 @@ class DataController: NSObject {
 
 	private override init() {
 		
-        self.activityDateInsertDelete = Int64(NSDate().timeIntervalSince1970 * 1000)
-		self.activityDateWatching = self.activityDateInsertDelete
+		let activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
+        self.activityDateInsertDeletePatch = activityDate
+		self.activityDateInsertDeleteMessage = activityDate
+		self.activityDateWatching = activityDate
+		
 		self.backgroundOperationQueue.name = "Background queue"
 		self.imageOperationQueue.name = "Image processing queue"
 		self.backgroundDispatch = dispatch_queue_create("background_queue", nil)

@@ -99,7 +99,6 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
         self.originalTop = patchPhotoTop.constant
         self.contextButton?.setTitle("", forState: .Normal)
 		
-		self.mapButton.tintColor = Theme.colorActionOff
 		self.mapButton.setImage(UIImage(named: "imgMapLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
 		
 		self.watchersButton.alpha = 0.0
@@ -339,67 +338,67 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
             
             /* Privacy */
             
-            if lockImage != nil {
-                lockImage.hidden = (entity.visibility == "public")
-                infoLockImage.hidden = (entity.visibility == "public")
+            if self.lockImage != nil {
+                self.lockImage.hidden = (entity.visibility == "public")
+                self.infoLockImage.hidden = (entity.visibility == "public")
             }
-            if visibility != nil {
-                visibility.hidden = (entity.visibility == "public")
-                infoVisibility.hidden = (entity.visibility == "public")
+            if self.visibility != nil {
+                self.visibility.hidden = (entity.visibility == "public")
+                self.infoVisibility.hidden = (entity.visibility == "public")
             }
             
             /* Map button */
-            mapButton.hidden = (entity.location == nil)
+            self.mapButton.hidden = (entity.location == nil)
             
             /* Watching button */
             
             if entity.countWatchingValue == 0 {
-                if watchersButton.alpha != 0 {
-                    watchersButton.fadeOut()
+                if self.watchersButton.alpha != 0 {
+                    self.watchersButton.fadeOut()
                 }
             }
             else {
                 let watchersTitle = "\(self.entity!.countWatching ?? 0) watching"
                 self.watchersButton.setTitle(watchersTitle, forState: UIControlState.Normal)
-                if watchersButton.alpha == 0 {
-                    watchersButton.fadeIn()
+                if self.watchersButton.alpha == 0 {
+                    self.watchersButton.fadeIn()
                 }
             }
             
             /* Like button */
             
-            likeButton.bindEntity(self.entity)
+            self.likeButton.bindEntity(self.entity)
             if (entity.visibility == "public" || entity.userWatchStatusValue == .Member || isOwner()) {
-                likeButton.fadeIn(alpha: 1.0)
+                self.likeButton.fadeIn(alpha: 1.0)
             }
             else {
-                likeButton.fadeOut(alpha: 0.0)
+                self.likeButton.fadeOut(alpha: 0.0)
             }
             
             /* Watch button */
             
-            watchButton.bindEntity(self.entity)
+            self.watchButton.bindEntity(self.entity)
             
             /* Mute button */
             
-            muteButton.bindEntity(self.entity)
+            self.muteButton.bindEntity(self.entity)
             if (entity.userWatchStatusValue == .Member) {
-                muteButton.fadeIn(alpha: 1.0)
+                self.muteButton.fadeIn(alpha: 1.0)
             }
             else {
-                muteButton.fadeOut(alpha: 0.0)
+                self.muteButton.fadeOut(alpha: 0.0)
             }
             
             /* Info view */
-            infoName.text = entity.name
+            self.infoName.text = entity.name
             if entity.type != nil {
-                infoType.text = entity.type.uppercaseString + " PATCH"
+                self.infoType.text = entity.type.uppercaseString + " PATCH"
             }
-            infoDescription.text = entity.description_
+            self.infoDescription.text = entity.description_
             if let distance = entity.distanceFrom(nil) {
-                infoDistance.text = LocationController.instance.distancePretty(distance)
+                self.infoDistance.text = LocationController.instance.distancePretty(distance)
             }
-            infoOwner.text = entity.creator?.name ?? "Deleted"
+            self.infoOwner.text = entity.creator?.name ?? "Deleted"
             
             if isOwner() {
                 if entity.countPendingValue > 0 {
@@ -478,9 +477,9 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
         
         let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
         let addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: Selector("addAction"))
+		let editButton = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
+		
         if isOwner() {
-            let editImage = Utils.imageEdit
-            let editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
             self.navigationItem.setRightBarButtonItems([addButton, Utils.spacer, shareButton, Utils.spacer, editButton], animated: true)
         }
         else {

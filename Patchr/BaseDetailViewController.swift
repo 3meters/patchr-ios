@@ -219,13 +219,30 @@ extension BaseDetailViewController {
 					}
 				}
 				
-				let height = MessageView.quickHeight(self.tableView.width(), showPatchName:self.patchNameVisible, entity:entity )
-				
-				if entity.id_ != nil {
-					self.rowHeights[entity.id_] = CGFloat(height)
+				var cellType: CellType = .TextAndPhoto
+				if entity.type != nil && entity.type == "share" {
+					cellType = .Share
+				}
+				else if entity.photo == nil {
+					cellType = .Text
+				}
+				else if entity.description_ == nil {
+					cellType = .Photo
 				}
 				
-				return CGFloat(height + 1)	// Add one for row separator
+				let view = MessageView(cellType: cellType)
+				view.showPatchName = self.patchNameVisible
+				view.bindToEntity(entity)
+				view.bounds.size.width = self.tableView.width() - 24
+				view.sizeToFit()
+				
+				Log.d("Size: \(view.bounds.size)")
+				
+				if entity.id_ != nil {
+					self.rowHeights[entity.id_] = view.bounds.size.height + 24 + 1
+				}
+				
+				return view.bounds.size.height + 24 + 1	// Add one for row separator
 		}
 		else {
 			return nil

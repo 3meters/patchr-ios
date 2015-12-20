@@ -499,7 +499,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 						let serverResponse = ServerResponse(result.response)
 						if serverResponse.resultCount == 1 {
 							Log.d("Inserted message \(serverResponse.resultID)")
-							DataController.instance.activityDateInsertDelete = Int64(NSDate().timeIntervalSince1970 * 1000)
+							DataController.instance.activityDateInsertDeleteMessage = Int64(NSDate().timeIntervalSince1970 * 1000)
 						}
 					}
 					else {
@@ -536,7 +536,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 				else {
 					DataController.instance.mainContext.deleteObject(self.inputEntity!)
 					DataController.instance.saveContext(false)
-					DataController.instance.activityDateInsertDelete = Int64(NSDate().timeIntervalSince1970 * 1000)
+					DataController.instance.activityDateInsertDeleteMessage = Int64(NSDate().timeIntervalSince1970 * 1000)
 					self.performBack()
 				}
 			}

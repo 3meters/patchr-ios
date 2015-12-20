@@ -392,7 +392,7 @@ extension BaseTableViewController {
 		}
 		else if self.listType == .Messages {
 			let view = MessageView(cellType: cellType)
-			let cell = AirTableViewCell(view: view, padding: UIEdgeInsetsMake(12, 12, 12, 12), reuseIdentifier: cellType.rawValue)
+			let cell = AirTableViewCell(view: view, padding: UIEdgeInsetsMake(12, 12,12, 12), reuseIdentifier: cellType.rawValue)
 			return cell
 		}
 		else if self.listType == .Patches {
@@ -479,7 +479,7 @@ extension BaseTableViewController {
 			else if message.photo == nil {
 				cellType = .Text
 			}
-			else if message.description_ == nil {
+			else if message.description_ == nil || message.description_.isEmpty {
 				cellType = .Photo
 			}
 		}
