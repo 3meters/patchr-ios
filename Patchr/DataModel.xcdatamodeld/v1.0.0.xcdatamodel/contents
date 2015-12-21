@@ -73,7 +73,6 @@
     <entity name="Patch" representedClassName="Patch" parentEntity="Entity" syncable="YES">
         <attribute name="countMessages" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="userHasMessaged" optional="YES" attributeType="Boolean" defaultValueString="0" syncable="YES"/>
-        <relationship name="place" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Shortcut" inverseName="placeFor" inverseEntity="Shortcut" syncable="YES"/>
     </entity>
     <entity name="Photo" representedClassName="Photo" parentEntity="ServiceObject" syncable="YES">
         <attribute name="height" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
@@ -138,7 +137,7 @@
         <relationship name="modifierFor" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ServiceBase" inverseName="modifier" inverseEntity="ServiceBase" syncable="YES"/>
         <relationship name="ownerFor" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ServiceBase" inverseName="owner" inverseEntity="ServiceBase" syncable="YES"/>
         <relationship name="patchFor" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="patch" inverseEntity="Message" syncable="YES"/>
-        <relationship name="placeFor" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Patch" inverseName="place" inverseEntity="Patch" syncable="YES"/>
+        <relationship name="placeFor" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Patch" syncable="YES"/>
         <relationship name="recipientFor" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="recipients" inverseEntity="Message" syncable="YES"/>
     </entity>
     <entity name="User" representedClassName="User" parentEntity="Entity" syncable="YES">
@@ -156,7 +155,7 @@
         <element name="Location" positionX="-495" positionY="-153" width="128" height="165"/>
         <element name="Message" positionX="279" positionY="-36" width="128" height="90"/>
         <element name="Notification" positionX="279" positionY="95" width="128" height="195"/>
-        <element name="Patch" positionX="81" positionY="-243" width="128" height="90"/>
+        <element name="Patch" positionX="81" positionY="-243" width="128" height="75"/>
         <element name="Photo" positionX="-693" positionY="90" width="128" height="150"/>
         <element name="Query" positionX="-216" positionY="117" width="128" height="210"/>
         <element name="QueryItem" positionX="-495" positionY="-99" width="128" height="135"/>

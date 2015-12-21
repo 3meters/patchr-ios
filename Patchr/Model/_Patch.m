@@ -8,10 +8,6 @@ const struct PatchAttributes PatchAttributes = {
 	.userHasMessaged = @"userHasMessaged",
 };
 
-const struct PatchRelationships PatchRelationships = {
-	.place = @"place",
-};
-
 @implementation PatchID
 @end
 
@@ -91,8 +87,6 @@ const struct PatchRelationships PatchRelationships = {
 - (void)setPrimitiveUserHasMessagedValue:(BOOL)value_ {
 	[self setPrimitiveUserHasMessaged:@(value_)];
 }
-
-@dynamic place;
 
 @end
 

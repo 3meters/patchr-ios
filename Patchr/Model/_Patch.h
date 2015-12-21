@@ -9,12 +9,6 @@ extern const struct PatchAttributes {
 	__unsafe_unretained NSString *userHasMessaged;
 } PatchAttributes;
 
-extern const struct PatchRelationships {
-	__unsafe_unretained NSString *place;
-} PatchRelationships;
-
-@class Shortcut;
-
 @interface PatchID : EntityID {}
 @end
 
@@ -40,10 +34,6 @@ extern const struct PatchRelationships {
 
 //- (BOOL)validateUserHasMessaged:(id*)value_ error:(NSError**)error_;
 
-@property (nonatomic, strong) Shortcut *place;
-
-//- (BOOL)validatePlace:(id*)value_ error:(NSError**)error_;
-
 @end
 
 @interface _Patch (CoreDataGeneratedPrimitiveAccessors)
@@ -59,8 +49,5 @@ extern const struct PatchRelationships {
 
 - (BOOL)primitiveUserHasMessagedValue;
 - (void)setPrimitiveUserHasMessagedValue:(BOOL)value_;
-
-- (Shortcut*)primitivePlace;
-- (void)setPrimitivePlace:(Shortcut*)value;
 
 @end

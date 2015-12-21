@@ -26,31 +26,7 @@
 			}
 		}
 	}
-	
-	/* Delete the related objects if they exist */
-	NSManagedObjectContext *context = [patch managedObjectContext];
-	if (patch.place != nil) {
-		[context deleteObject:patch.place];
-	}
-	
-	if (dictionary[@"linked"]) {
-		for (id linkMap in dictionary[@"linked"]) {
-			if ([linkMap isKindOfClass:[NSDictionary class]]) {
-				if ([linkMap[@"schema"] isEqualToString: @"place"]) {
-					NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"Shortcut" inManagedObjectContext:context];
-					Shortcut *shortcut = [[Shortcut alloc] initWithEntity:entityDescription insertIntoManagedObjectContext:context];
-					
-					NSString *entityId = [[NSString alloc] initWithString:linkMap[@"_id"]];
-					if ([entityId rangeOfString:@"sh."].location == NSNotFound) {
-						entityId = [@"sh." stringByAppendingString:entityId];
-					}
-					shortcut.id_ = entityId;
-					patch.place = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut];
-				}
-			}
-		}
-	}
-	
+		
     patch.userWatchStatusValue = PAWatchStatusNonMember;  // Default for convenience property
     patch.userWatchMutedValue = NO;
     patch.userWatchId = nil;

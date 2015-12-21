@@ -174,7 +174,7 @@ class PatchView: BaseView {
 		}
 		
 		self.photo.showGradient = true
-		self.photo.setImageWithPhoto(entity.getPhotoManaged(), animate: self.photo.image == nil)
+		self.photo.setImageWithPhoto(entity.getPhotoManaged(), animate: false)
 		self.setNeedsLayout()
 	}
 	

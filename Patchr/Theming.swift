@@ -24,16 +24,18 @@ let Theme = Snow()
 
 class Snow {
 	
+	let light					= true
+	
 	let colorText				= Colors.black
 	let colorTextSecondary		= Colors.gray50pcntColor
 	let colorTextDisplay		= Colors.black
-	let colorTextTitle			= Colors.accentColorDark
+	let colorTextTitle			= Colors.accentColorTextLight
 	let colorTextBanner			= Colors.white
 	let colorTextPlaceholder	= Colors.lightGray
 	let colorTextNotification	= Colors.white
 	let colorTextToast			= Colors.black
 	let colorTextActivity		= Colors.black
-	let colorNumberFeatured		= Colors.accentColor
+	let colorNumberFeatured		= Colors.accentColorDark
 
 	let colorBackgroundWindow			= Colors.gray90pcntColor
 	let colorBackgroundImage			= Colors.gray90pcntColor
@@ -42,43 +44,43 @@ class Snow {
 	let colorBackgroundSidebar			= Colors.white
 	let colorBackgroundTile				= Colors.white
 	let colorBackgroundTileList			= Colors.gray90pcntColor
-	let colorBackgroundToast			= Colors.brandColorLight
+	let colorBackgroundToast			= Colors.brandColorFill
 	let colorBackgroundOverlay			= Colors.opacity75pcntBlack
 	let colorBackgroundActivity			= Colors.white
 	let colorBackgroundActivityOnly		= Colors.clear
 	let colorBackgroundEmptyBubble		= Colors.white
-	let colorBackgroundAgeDot			= Colors.accentColor
-	let colorBackgroundContactSelected 	= Colors.accentColor
+	let colorBackgroundAgeDot			= Colors.accentColorFill
+	let colorBackgroundContactSelected 	= Colors.accentColorFill
 
 	let colorRule                   = Colors.gray75pcntColor
-	let colorRuleActive             = Colors.accentColor
-	let colorTint                   = Colors.brandColor
-	let colorTabBarTint             = Colors.brandColor
+	let colorRuleActive             = Colors.accentColorRule
+	let colorTint                   = Colors.brandColorTextLight
+	let colorTabBarTint             = Colors.brandColorTextLight
 	let colorShadow					= Colors.gray80pcntColor
 	let colorSeparator				= Colors.gray90pcntColor
 	let colorScrimDarken            = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.3))
 	let colorScrimLighten           = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.75))
-	let colorActionOn               = Colors.brandColor
-	let colorActionOff              = Colors.brandColor
-	let colorActionPending          = Colors.accentColor
-	let colorActivityIndicator      = Colors.brandColor
-	let colorActivityIndicatorImage = Colors.brandColor
+	let colorActionOn               = Colors.brandColorTextDark
+	let colorActionOff              = Colors.brandColorTextDark
+	let colorActionPending          = Colors.accentColorTextDark
+	let colorActivityIndicator      = Colors.brandColorTextLight
+	let colorActivityIndicatorImage = Colors.brandColorTextLight
 
 	let colorButtonRadioTitle				= Colors.black
 	let colorButtonRadioIcon				= Colors.black
-	let colorButtonRadioIndicator			= Colors.brandColor
+	let colorButtonRadioIndicator			= Colors.brandColorTextLight
 	
-	let colorButtonTitle					= Colors.brandColor
+	let colorButtonTitle					= Colors.brandColorTextLight
 	let colorButtonTitleFeatured			= Colors.white
 	let colorButtonTitleHighlighted			= Colors.lightGray
 	let colorButtonTitleFeaturedHighlighted = Colors.lightGray
 	let colorButtonBorder					= Colors.gray66pcntColor
-	let colorButtonBorderFeatured			= Colors.accentColor
+	let colorButtonBorderFeatured			= Colors.accentColorFill
 	let colorButtonFill						= Colors.clear
-	let colorButtonFillFeatured				= Colors.accentColor
+	let colorButtonFillFeatured				= Colors.accentColorFill
 
 	let fontBanner				= UIFont(name: "HelveticaNeue-Thin", size: 48)!
-	let fontTitle				= UIFont(name: "HelveticaNeue-Thin", size: 36)!
+	let fontTitle				= UIFont(name: "HelveticaNeue-Thin", size: 30)!
 	let fontHeading1			= UIFont(name: "HelveticaNeue-Light", size: 22)!
 	let fontHeading2			= UIFont(name: "HelveticaNeue-Bold", size: 20)!
 	let fontHeading3			= UIFont(name: "HelveticaNeue-Light", size: 20)!
@@ -126,13 +128,30 @@ public struct Colors {
 	
 	static let brandColor = UIColor(hexString: "#FF7600FF")
 	static let brandColorLight = UIColor(hexString: "#FF9439FF")
+	static let brandColorLighter = UIColor(hexString: "#FFAB63FF")
 	static let brandColorDark = UIColor(hexString: "#C55B00FF")
+	static let brandColorDarker = UIColor(hexString: "#9B4800FF")
+	
 	static let accentColor = UIColor(hexString: "#69D3E7FF")
 	static let accentColorLight = UIColor(hexString: "#95E4F3FF")
+	static let accentColorLighter = UIColor(hexString: "#CDF5FCFF")
 	static let accentColorDark = UIColor(hexString: "#44C0D7FF")
+	static let accentColorDarker = UIColor(hexString: "#23A6BFFF")
 	
-	static let fillColor = UIColor(hexString: "#e0e4ccff")
-	static let fillColorLight = UIColor(hexString: "#e9f0cfff")
+	static let accentOnLight = accentColorDarker
+	static let accentOnDark = accentColor
+	static let brandOnLight = brandColor
+	static let brandOnDark = brandColorLight
+	
+	static let accentColorTextLight = accentColorDarker
+	static let accentColorTextDark = accentColor
+	static let accentColorFill = accentColor
+	static let accentColorRule = accentColor
+	
+	static let brandColorTextLight = brandColor
+	static let brandColorTextDark = brandColor
+	static let brandColorFill = brandColorLight
+	static let brandColorRule = brandColor
 	
 	static let facebookColor = UIColor(hexString: "#3B5998ff")
 	static let googleColor = UIColor(hexString: "#DD4B39ff")

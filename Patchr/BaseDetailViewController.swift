@@ -89,7 +89,7 @@ class BaseDetailViewController: BaseTableViewController {
 
 	func queryId() -> String {
 		let id = self.entity?.id_ ?? self.entityId
-		return "query.\(self.queryName!.lowercaseString).\(id)"
+		return "query.\(self.queryName!.lowercaseString).\(id!)"
 	}
 	
 	internal func bind(force: Bool = false, reset: Bool = false) {

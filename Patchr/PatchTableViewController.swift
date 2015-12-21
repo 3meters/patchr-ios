@@ -298,43 +298,35 @@ class PatchTableViewController: BaseTableViewController {
 				 */
 				NSOperationQueue.mainQueue().addOperationWithBlock {
 					
-					self?.processingQuery = false
-					if let error = ServerError(error) {
-						
-						/* Always reset location after a network error */
-						LocationController.instance.clearLastLocationAccepted()
-						
-						/* User credentials probably need to be refreshed */
-						if error.code == ServerStatusCode.UNAUTHORIZED {
-							
-							if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
-								let navController = UINavigationController()
-								navController.viewControllers = [LobbyViewController()]
-								appDelegate.window!.setRootViewController(navController, animated: true)
-							}
-						}
-						
-						self?.activity.stopAnimating()
-						
-						if let refreshControl = self?.refreshControl where refreshControl.refreshing {
-							refreshControl.endRefreshing()
-						}
-						
-						return
+					if let refreshControl = self?.refreshControl where refreshControl.refreshing {
+						refreshControl.endRefreshing()
 					}
 					
-					self?.activityDate = DataController.instance.activityDateInsertDeletePatch
-					
-					// Delay seems to be necessary to avoid visual glitch with UIRefreshControl
 					Utils.delay(0.5) {
 						
-						let query = DataController.instance.mainContext.objectWithID(queryId) as! Query						
-					
-						/* Flag query as having been executed at least once */
+						self?.processingQuery = false
 						self?.activity.stopAnimating()
-						if let refreshControl = self?.refreshControl where refreshControl.refreshing {
-							refreshControl.endRefreshing()
+
+						if let error = ServerError(error) {
+							
+							/* Always reset location after a network error */
+							LocationController.instance.clearLastLocationAccepted()
+							
+							/* User credentials probably need to be refreshed */
+							if error.code == ServerStatusCode.UNAUTHORIZED {
+								
+								if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
+									let navController = UINavigationController()
+									navController.viewControllers = [LobbyViewController()]
+									appDelegate.window!.setRootViewController(navController, animated: true)
+								}
+							}
+							return
 						}
+
+						let query = DataController.instance.mainContext.objectWithID(queryId) as! Query
+						
+						query.executedValue = true
 						
 						if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
 							if fetchedObjects.count == 0 {
@@ -350,9 +342,9 @@ class PatchTableViewController: BaseTableViewController {
 							}
 						}
 						
-						self?.query.executedValue = true
-						DataController.instance.saveContext(false)
-						self?.tableView.reloadData()
+						self?.activityDate = DataController.instance.activityDateInsertDeletePatch
+						
+						DataController.instance.saveContext(false)	// Enough to trigger table update
 						
 						return
 					}

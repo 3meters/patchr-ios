@@ -901,7 +901,7 @@
                                                 <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="t8t-DZ-4Sr" userLabel="button_group">
                                                     <rect key="frame" x="0.0" y="211" width="414" height="48"/>
                                                     <subviews>
-                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cXS-bO-Vkq" userLabel="map_button" customClass="AirIconButton">
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cXS-bO-Vkq" userLabel="map_button" customClass="AirToolButton" customModule="Patchr" customModuleProvider="target">
                                                             <rect key="frame" x="0.0" y="0.0" width="48" height="48"/>
                                                             <animations/>
                                                             <constraints>
@@ -929,7 +929,7 @@
                                                                 <action selector="watchersAction:" destination="dFa-9F-rNC" eventType="touchUpInside" id="Gnx-xU-If5"/>
                                                             </connections>
                                                         </button>
-                                                        <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cOi-lI-rdw" userLabel="more_button" customClass="AirIconButton">
+                                                        <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cOi-lI-rdw" userLabel="more_button" customClass="AirToolButton" customModule="Patchr" customModuleProvider="target">
                                                             <rect key="frame" x="358" y="0.0" width="48" height="48"/>
                                                             <animations/>
                                                             <constraints>

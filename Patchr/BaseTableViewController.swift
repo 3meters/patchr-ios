@@ -10,9 +10,9 @@ import UIKit
 
 class BaseTableViewController: UITableViewController, NSFetchedResultsControllerDelegate {
 	
-    var query:    			Query!
+    var query				: Query!
 	var processingQuery		= false
-	var listType: ItemClass = .Patches
+	var listType			: ItemClass = .Patches
 	
 	var activity			= UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
 	var footerView			= UIView()
@@ -27,7 +27,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
     var progressOffsetY     = Float(-48)
 	var progressOffsetX     = Float(8)
 
-	var rowHeights:			NSMutableDictionary = [:]
+	var rowHeights			: NSMutableDictionary = [:]
 	
     /*--------------------------------------------------------------------------------------------
     * MARK:- Lifecycle

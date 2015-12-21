@@ -28,8 +28,8 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
     @IBOutlet weak var likeButton:     AirLikeButton!
     @IBOutlet weak var muteButton:     AirMuteButton!
     @IBOutlet weak var watchButton:    AirWatchButton!
-    @IBOutlet weak var mapButton:      AirImageButton!
-    @IBOutlet weak var watchersButton: UIButton!
+    @IBOutlet weak var mapButton:      AirToolButton!
+    @IBOutlet weak var watchersButton: AirButtonLink!
     @IBOutlet weak var contextButton:  UIButton!
     @IBOutlet weak var lockImage:      UIImageView!
 	@IBOutlet weak var toolbar:		   UIVisualEffectView!
@@ -102,6 +102,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		self.mapButton.setImage(UIImage(named: "imgMapLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
 		
 		self.watchersButton.alpha = 0.0
+		
         self.watchButton.tintOff = Theme.colorActionOff
 		self.watchButton.tintOn = Theme.colorActionOn
         self.watchButton.tintPending = Theme.colorActionOn
