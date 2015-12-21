@@ -98,7 +98,7 @@ class CoreDataStack: NSObject {
 		privateContext.performBlock {
 			privateContext.deleteAllObjects()
 			self.saveContext(privateContext, wait: true)
-			self.saveContext(false)						// Main context
+			self.saveContext(self.stackMainContext, wait: true)
 		}
 	}
 	

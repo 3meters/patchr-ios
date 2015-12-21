@@ -78,6 +78,8 @@ class DataController: NSObject {
 
 	func reset() {
 		self.coreDataStack.reset()
+		self.coreDataStack = CoreDataStack()
+		self.mainContext = self.coreDataStack.stackMainContext
 	}
 	
 	/*--------------------------------------------------------------------------------------------
