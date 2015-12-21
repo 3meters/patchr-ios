@@ -521,6 +521,11 @@ class ProfileEditViewController: BaseViewController {
 					if error != nil && error!.code == NSURLErrorCancelled {
 						cancelled = true
 					}
+					if error == nil {
+						/* Remember email address for easy data entry */
+						NSUserDefaults.standardUserDefaults().setObject(self.emailField.text, forKey: PatchrUserDefaultKey("userEmail"))
+						NSUserDefaults.standardUserDefaults().synchronize()
+					}
 					next(Result(response: response, error: error))
 				}
 			}
