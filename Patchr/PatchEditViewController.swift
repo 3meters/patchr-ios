@@ -87,6 +87,8 @@ class PatchEditViewController: BaseViewController {
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
+		let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+		let navHeight = self.navigationController?.navigationBar.height() ?? 0
 		let messageSize = self.message.sizeThatFits(CGSizeMake(288, CGFloat.max))
 		let descriptionSize = self.descriptionField.sizeThatFits(CGSizeMake(288, CGFloat.max))
 		

@@ -112,6 +112,8 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
+		let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+		let navHeight = self.navigationController?.navigationBar.height() ?? 0
 		let contentWidth = self.view.bounds.size.width - 32
 		let descriptionSize = self.descriptionField.sizeThatFits(CGSizeMake(contentWidth, CGFloat.max))
 		
@@ -132,9 +134,8 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 				self.messageView!.alignUnder(self.descriptionField, matchingRightAndFillingWidthWithLeftPadding: 0, topPadding: 16, height: 400)
 			}
 		}
-		else {
-			
-			self.addressGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 64, height: 64)
+		else {			
+			self.addressGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: CGFloat(statusHeight + navHeight), height: 64)
 			self.userPhoto.anchorCenterLeftWithLeftPadding(16, width: 48, height: 48)
 			self.addressLabel.fillSuperviewWithLeftPadding(72, rightPadding: 8, topPadding: 0, bottomPadding: 0)
 			self.descriptionField.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: max(96, descriptionSize.height))
