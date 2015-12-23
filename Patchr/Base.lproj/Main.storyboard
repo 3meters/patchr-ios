@@ -32,9 +32,6 @@
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="W5B-Qb-Vym" userLabel="dev_mode_switch">
                                 <rect key="frame" x="349" y="80" width="51" height="31"/>
                                 <animations/>
-                                <connections>
-                                    <action selector="devModeAction:" destination="IgM-Ma-VkV" eventType="touchUpInside" id="qrD-Ki-pcx"/>
-                                </connections>
                             </switch>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Server Address:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qhb-GO-aRq" userLabel="server_address_label">
                                 <rect key="frame" x="16" y="128" width="122" height="21"/>
@@ -103,20 +100,39 @@
                                     <action selector="clearImageCacheAction:" destination="IgM-Ma-VkV" eventType="touchUpInside" id="4X8-VU-md3"/>
                                 </connections>
                             </button>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="OJz-K6-5Fv" userLabel="statusbar_switch">
+                                <rect key="frame" x="345" y="326" width="51" height="31"/>
+                                <animations/>
+                            </switch>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status bar hidden:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zkc-Jr-d3R" userLabel="statusbar_label">
+                                <rect key="frame" x="16" y="318" width="214" height="48"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="214" id="KNH-oB-FaZ"/>
+                                    <constraint firstAttribute="height" constant="48" id="qKe-hw-N6U"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstAttribute="trailing" secondItem="OJz-K6-5Fv" secondAttribute="trailing" constant="20" id="15D-UJ-otM"/>
                             <constraint firstItem="HK1-xH-fpV" firstAttribute="top" secondItem="Qhb-GO-aRq" secondAttribute="bottom" constant="8" id="28L-aq-G8A"/>
                             <constraint firstItem="Qhb-GO-aRq" firstAttribute="top" secondItem="Xai-Ch-IYV" secondAttribute="bottom" constant="8" id="3TU-XB-c2g"/>
                             <constraint firstItem="Xai-Ch-IYV" firstAttribute="leading" secondItem="vPj-Dz-zj6" secondAttribute="leading" constant="16" id="4pA-VX-ZIY"/>
                             <constraint firstAttribute="trailing" secondItem="W5B-Qb-Vym" secondAttribute="trailing" constant="16" id="7N7-WO-xjG"/>
+                            <constraint firstItem="zkc-Jr-d3R" firstAttribute="leading" secondItem="vPj-Dz-zj6" secondAttribute="leading" constant="16" id="8QV-h7-ZbM"/>
                             <constraint firstItem="HK1-xH-fpV" firstAttribute="leading" secondItem="Qhb-GO-aRq" secondAttribute="leading" id="9jO-W4-uwG"/>
                             <constraint firstItem="eSE-Ae-BUq" firstAttribute="top" secondItem="aws-eT-TXR" secondAttribute="bottom" constant="16" id="FKI-iO-HjK"/>
                             <constraint firstItem="eSE-Ae-BUq" firstAttribute="leading" secondItem="vPj-Dz-zj6" secondAttribute="leading" constant="16" id="TGm-78-zfJ"/>
+                            <constraint firstItem="zkc-Jr-d3R" firstAttribute="top" secondItem="eSE-Ae-BUq" secondAttribute="bottom" constant="8" id="VCj-9h-XnO"/>
                             <constraint firstItem="Y2d-nD-Cfb" firstAttribute="leading" secondItem="HK1-xH-fpV" secondAttribute="leading" id="Wcf-Gi-lje"/>
                             <constraint firstItem="aws-eT-TXR" firstAttribute="leading" secondItem="Y2d-nD-Cfb" secondAttribute="trailing" constant="12" id="Yy0-Id-IiY"/>
                             <constraint firstItem="Xai-Ch-IYV" firstAttribute="leading" secondItem="Qhb-GO-aRq" secondAttribute="leading" id="aR5-fr-KmR"/>
+                            <constraint firstItem="zkc-Jr-d3R" firstAttribute="centerY" secondItem="OJz-K6-5Fv" secondAttribute="centerY" constant="0.5" id="aqW-n7-F28"/>
                             <constraint firstAttribute="trailing" secondItem="HK1-xH-fpV" secondAttribute="trailing" constant="16" id="bYh-oo-rnm"/>
                             <constraint firstAttribute="trailing" secondItem="eSE-Ae-BUq" secondAttribute="trailing" constant="16" id="g8X-6O-6Q1"/>
                             <constraint firstItem="Y2d-nD-Cfb" firstAttribute="top" secondItem="HK1-xH-fpV" secondAttribute="bottom" constant="20" id="qiY-Am-JvU"/>
@@ -133,11 +149,12 @@
                         <outlet property="devModeSwitch" destination="W5B-Qb-Vym" id="TmE-m1-dlY"/>
                         <outlet property="serverTargetOption" destination="aws-eT-TXR" id="b4q-wz-YTp"/>
                         <outlet property="serverUriField" destination="HK1-xH-fpV" id="G4p-ab-4gv"/>
+                        <outlet property="statusBarHiddenSwitch" destination="OJz-K6-5Fv" id="BEm-UZ-gV4"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ye1-Wi-cPV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="6176.25" y="-1780.9859154929577"/>
+            <point key="canvasLocation" x="6176" y="-1781"/>
         </scene>
         <!--Message Detail-->
         <scene sceneID="VU4-xc-rjr">

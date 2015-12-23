@@ -18,6 +18,7 @@ class DevelopmentViewController: UIViewController {
 	@IBOutlet weak var serverUriField: UITextField!
 	@IBOutlet weak var serverTargetOption: UISegmentedControl!
     @IBOutlet weak var devModeSwitch: UISwitch!
+	@IBOutlet weak var statusBarHiddenSwitch: UISwitch!
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -26,9 +27,13 @@ class DevelopmentViewController: UIViewController {
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
         
-        devModeSwitch.on = userDefaults.boolForKey(PatchrUserDefaultKey("devModeEnabled"))
-		serverUriField.text = userDefaults.stringForKey(PatchrUserDefaultKey("serverURI"))
-        
+        self.devModeSwitch.on = userDefaults.boolForKey(PatchrUserDefaultKey("devModeEnabled"))
+		self.statusBarHiddenSwitch.on = userDefaults.boolForKey(PatchrUserDefaultKey("statusBarHidden"))
+		self.serverUriField.text = userDefaults.stringForKey(PatchrUserDefaultKey("serverURI"))
+		
+		self.devModeSwitch.addTarget(self, action: Selector("devModeAction:"), forControlEvents: .TouchUpInside)
+		self.statusBarHiddenSwitch.addTarget(self, action: Selector("statusBarAction:"), forControlEvents: .TouchUpInside)
+		
 		observerObject = TextFieldChangeObserver(serverUriField) {
 			[unowned self] in
 			self.updateSegmentControl()
@@ -56,13 +61,18 @@ class DevelopmentViewController: UIViewController {
     * Events
     *--------------------------------------------------------------------------------------------*/
     
-    @IBAction func devModeAction(sender: AnyObject) {
+    func devModeAction(sender: AnyObject) {
         userDefaults.setBool(devModeSwitch.on, forKey: PatchrUserDefaultKey("devModeEnabled"))
         if devModeSwitch.on {
             AudioController.instance.play(Sound.pop.rawValue)
         }
     }
 
+	func statusBarAction(sender: AnyObject) {
+		userDefaults.setBool(statusBarHiddenSwitch.on, forKey: PatchrUserDefaultKey("statusBarHidden"))
+		UIApplication.sharedApplication().setStatusBarHidden(statusBarHiddenSwitch.on, withAnimation: UIStatusBarAnimation.Slide)
+	}
+	
 	@IBAction func serverControlAction(sender: AnyObject) {
 		if serverTargetOption.selectedSegmentIndex == 0 {
 			serverUriField.text = DataController.proxibase.ProductionURI
