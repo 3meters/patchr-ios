@@ -153,8 +153,7 @@ extension SettingsTableViewController {
             }
         }
         else if selectedCell == self.rateCell {
-            let appId = "983436323"
-            let appStoreURL = "itms-apps://itunes.apple.com/app/id\(appId)"
+            let appStoreURL = "itms-apps://itunes.apple.com/us/app/apple-store/id\(APPLE_APP_ID)"
             self.tableView.deselectRowAtIndexPath(indexPath, animated: true)
             if let url = NSURL(string: appStoreURL) {
                 UIApplication.sharedApplication().openURL(url)

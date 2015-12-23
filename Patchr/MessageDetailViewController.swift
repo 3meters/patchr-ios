@@ -315,8 +315,6 @@ class MessageDetailViewController: UITableViewController {
 
 	func draw() {
 		
-		Log.d("MessageDetail.draw called: \(self.inputMessage!.id_!)")
-        
         if self.isShare {
 			
             self.recipientsCell.hidden = false
@@ -674,7 +672,7 @@ class MessageItem: NSObject, UIActivityItemSource {
     
     func activityViewController(activityViewController: UIActivityViewController, itemForActivityType activityType: String) -> AnyObject? {
         
-        let text = "Check out \(UserController.instance.currentUser.name)'s message to the \(self.entity.patch.name) patch! \(self.shareUrl) \n"
+        let text = "Check out \(UserController.instance.currentUser.name)'s message posted to the \(self.entity.patch.name) patch! \(self.shareUrl) \n"
         if activityType == UIActivityTypeMail {
             return text
         }
@@ -685,7 +683,7 @@ class MessageItem: NSObject, UIActivityItemSource {
     
     func activityViewController(activityViewController: UIActivityViewController, subjectForActivityType activityType: String?) -> String {
         if activityType == UIActivityTypeMail || activityType == "com.google.Gmail.ShareExtension" {
-            return "Message by \(UserController.instance.currentUser.name) on Patchr"
+            return "Message posted by \(UserController.instance.currentUser.name) on Patchr"
         }
         return ""
     }

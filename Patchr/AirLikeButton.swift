@@ -47,7 +47,7 @@ class AirLikeButton: AirToggleButton {
         
         if !UserController.instance.authenticated {
             if self.entity is Message {
-				UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to like messages and more!")
+				UserController.instance.showGuestGuard(nil, message: Utils.LocalizedString("GUARD_LIKE"))
             }
             return
         }

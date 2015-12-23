@@ -1200,43 +1200,6 @@
             </objects>
             <point key="canvasLocation" x="508.99999999999994" y="-2578"/>
         </scene>
-        <!--Photo Picker-->
-        <scene sceneID="QbD-2w-kIB">
-            <objects>
-                <collectionViewController storyboardIdentifier="PhotoPickerViewController" id="37C-UP-kKb" userLabel="Photo Picker" customClass="PhotoPickerViewController" customModule="Patchr" customModuleProvider="target" sceneMemberID="viewController">
-                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="Cqt-rS-bga">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <animations/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="4" minimumInteritemSpacing="4" id="zwY-jV-57G">
-                            <size key="itemSize" width="100" height="100"/>
-                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                            <inset key="sectionInset" minX="4" minY="4" maxX="4" maxY="4"/>
-                        </collectionViewFlowLayout>
-                        <cells/>
-                        <connections>
-                            <outlet property="dataSource" destination="37C-UP-kKb" id="MxO-1W-PTS"/>
-                            <outlet property="delegate" destination="37C-UP-kKb" id="4ri-q0-Eux"/>
-                        </connections>
-                    </collectionView>
-                    <navigationItem key="navigationItem" title="Photo search" id="Ohp-lM-nd3" userLabel="nav_bar">
-                        <barButtonItem key="rightBarButtonItem" systemItem="cancel" id="Bel-hy-yvv">
-                            <connections>
-                                <action selector="cancelAction:" destination="37C-UP-kKb" id="MjY-aD-daj"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
-                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
-                    <connections>
-                        <outlet property="collectionView" destination="Cqt-rS-bga" id="5wb-Ym-RNQ"/>
-                    </connections>
-                </collectionViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="R8j-3J-zfS" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="4008.75" y="-1636.2676056338028"/>
-        </scene>
         <!--Settings-->
         <scene sceneID="464-Zc-ije">
             <objects>
@@ -1506,25 +1469,6 @@ v1.0 build 29</string>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jov-L0-v5D" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1297" y="-1693"/>
-        </scene>
-        <!--Photo Picker Nav-->
-        <scene sceneID="YwJ-Vk-uV6">
-            <objects>
-                <navigationController storyboardIdentifier="PhotoPickerNavController" automaticallyAdjustsScrollViewInsets="NO" id="gqO-Mc-Ur8" userLabel="Photo Picker Nav" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="454-t3-hhA">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <animations/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="37C-UP-kKb" kind="relationship" relationship="rootViewController" id="Ovh-HD-s02"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="a5r-wZ-Z0h" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3333.75" y="-1646.8309859154929"/>
         </scene>
     </scenes>
     <resources>

@@ -310,13 +310,13 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 				self.contentHolder.addSubview(self.messageView!)
 				
 				self.descriptionField.placeholderLabel.text = "Add a message..."
-				self.navigationItem.title = Utils.LocalizedString("Share message")
+				self.navigationItem.title = Utils.LocalizedString("Share posted message")
 				if let message = self.inputShareEntity as? Message {
 					if message.patch != nil {
-						self.descriptionDefault = "\(UserController.instance.currentUser.name) shared \(message.creator.name!)\'s message to the \'\(message.patch.name)\' patch."
+						self.descriptionDefault = "\(UserController.instance.currentUser.name) shared \(message.creator.name!)\'s message posted to the \'\(message.patch.name)\' patch."
 					}
 					else {
-						self.descriptionDefault = "\(UserController.instance.currentUser.name) shared \(message.creator.name!)\'s message to a patch."
+						self.descriptionDefault = "\(UserController.instance.currentUser.name) shared \(message.creator.name!)\'s message posted to a patch."
 					}
 				}
 			}
@@ -335,13 +335,13 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 			
 			if self.inputState == State.Creating {
 				setScreenName("MessageNew")
-				self.progressStartLabel = "Sending"
-				self.progressFinishLabel = "Sent"
-				self.cancelledLabel = "Send cancelled"
+				self.progressStartLabel = "Posting"
+				self.progressFinishLabel = "Posted"
+				self.cancelledLabel = "Post cancelled"
 				
 				/* Navigation bar buttons */
 				let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancelAction:")
-				let doneButton = UIBarButtonItem(title: "Send", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("doneAction:"))
+				let doneButton = UIBarButtonItem(title: "Post", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("doneAction:"))
 				self.navigationItem.leftBarButtonItems = [cancelButton]
 				self.navigationItem.rightBarButtonItems = [doneButton]
 			}

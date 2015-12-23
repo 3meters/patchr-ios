@@ -2,50 +2,7 @@
   Localizable.strings
   Patchr
 
-  Created by Brent Marykuca on 2015-02-23.
   Copyright (c) 2015 3meters. All rights reserved.
 */
 
-
-"[]Use Latest Photo" = "Use Latest Photo";
-"[]Choose From Library" = "Choose From Library";
-"[]Take Photo" = "Take Photo";
-"[]Photo Search" = "Photo Search";
-
-"[]Untitled Patch" = "Untitled Patch";
-
-"[]Registration Failure" = "Registration Failure";
-"[]Email address already in use." = "Email address already in use.";
-"[]Unknown Error" = "Unknown Error";
-"[](No Description)" = "(No Description)";
-"[]Add Photo" = "Add Photo";
-"[]Remove Photo" = "Remove Photo";
-
-// New Create Patch Scene
-"[]Patch Name" = "Patch Name";
-"[]Description" = "Description";
-"[]Public Patch" = "Public Patch";
-"[]Location" = "Location";
-"[]Event" = "Event";
-"[]Group" = "Group";
-"[]Place" = "Place";
-"[]Project" = "Project";
-"[]Here" = "Here";
-"[]Confirm Delete" = "Confirm Delete";
-"[]Cancel" = "Cancel";
-"[]Delete" = "Delete";
-"[]Are you sure you want to delete this?" = "Are you sure you want to delete this?";
-"[]Make patch" = "Make patch";
-"[]Edit patch" = "Edit patch";
-"[]Edit message" = "Edit message";
-"[]Edit profile" = "Edit profile";
-"[]Error" = "Error";
-"[]Register" = "Register";
-"[]OK" = "OK";
-"[]Like" = "Like";
-"[]Unlike" = "Unlike";
-"[]Watch" = "Watch";
-"[]Unwatch" = "Unwatch";
-
-"[]Invite to patch" = "Invite to patch";
-"[]Share message" = "Share message";
+"GUARD_LIKE" = "Sign up for a free account to like messages and more!";

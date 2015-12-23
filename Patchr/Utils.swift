@@ -58,7 +58,7 @@ struct Utils {
     }
     
     static func LocalizedString(str: String) -> String {
-        return LocalizedString("[]" + str, comment: str)
+        return LocalizedString(str, comment: str)
     }
     
     static func DateTimeTag() -> String! {
