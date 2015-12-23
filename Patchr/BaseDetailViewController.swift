@@ -193,15 +193,6 @@ extension BaseDetailViewController {
     }
 	
 	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-		if let height = quickHeight(indexPath) {
-			return height
-		}
-		else {
-			return 0
-		}
-	}
-	
-	func quickHeight(indexPath: NSIndexPath) -> CGFloat? {
 		/*
 		* Using an estimate significantly improves table view load time but we can get
 		* small scrolling glitches if actual height ends up different than estimated height.
@@ -236,8 +227,6 @@ extension BaseDetailViewController {
 				view.bounds.size.width = self.tableView.width() - 24
 				view.sizeToFit()
 				
-				Log.d("Size: \(view.bounds.size)")
-				
 				if entity.id_ != nil {
 					self.rowHeights[entity.id_] = view.bounds.size.height + 24 + 1
 				}
@@ -245,7 +234,7 @@ extension BaseDetailViewController {
 				return view.bounds.size.height + 24 + 1	// Add one for row separator
 		}
 		else {
-			return nil
+			return 0
 		}
 	}
 }

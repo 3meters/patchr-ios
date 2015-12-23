@@ -102,19 +102,30 @@ class UserView: BaseView {
 		self.setNeedsLayout()
 	}
 	
+	override func sizeThatFits(size: CGSize) -> CGSize {
+		return CGSizeMake(self.width(), 112)
+	}
+
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		
-		let columnLeft = CELL_PADDING_HORIZONTAL + 96 + CELL_VIEW_SPACING
-		let columnWidth = self.width() - (columnLeft + CELL_PADDING_HORIZONTAL)
+		let columnLeft = CGFloat(96 + 8)
+		let columnWidth = self.width() - columnLeft
+		let nameSize = self.name.sizeThatFits(CGSizeMake(columnWidth, CGFloat.max))
 		
-		self.photo.anchorTopLeftWithLeftPadding(8, topPadding: 8, width: 96, height: 96)
-		self.name.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 8, width: columnWidth, height: 22)
-		self.area.alignUnder(self.name, matchingLeftWithTopPadding: 2, width: columnWidth, height: 17)
-		self.owner.alignUnder(self.area, matchingLeftWithTopPadding: 2, width: columnWidth, height: 17)
-		self.approved.alignUnder(self.owner, matchingLeftWithTopPadding: 8, width: 100, height: 19)
-		self.approvedSwitch.alignToTheRightOf(self.approved, matchingCenterWithLeftPadding: 20, width: 51, height: 31)
-		self.removeButton.anchorTopRightWithRightPadding(8, topPadding: 8, width: 48, height: 48)
+		self.photo.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 96, height: 96)
+		self.name.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 6, width: columnWidth, height: nameSize.height)
+		
+		self.area.sizeToFit()
+		self.owner.sizeToFit()
+		self.approved.sizeToFit()
+		
+		self.area.alignUnder(self.name, matchingLeftWithTopPadding: 2, width: columnWidth, height: self.area.height())
+		self.owner.alignUnder(self.area, matchingLeftWithTopPadding: 2, width: columnWidth, height: self.owner.height())
+		self.approved.alignUnder(self.owner, matchingLeftWithTopPadding: 8, width: self.approved.width(), height: self.approved.height())
+		
+		self.approvedSwitch.alignToTheRightOf(self.approved, matchingCenterWithLeftPadding: 20, width: self.approvedSwitch.width(), height: self.approvedSwitch.height())
+		self.removeButton.anchorTopRightWithRightPadding(0, topPadding: 0, width: 48, height: 48)
 	}
 	
 	func approvedSwitchValueChangedAction(sender: UISwitch) {

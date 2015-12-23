@@ -387,12 +387,12 @@ extension BaseTableViewController {
 		*/
 		if self.listType == .Notifications {
 			let view = NotificationView(cellType: cellType)
-			let cell = AirTableViewCell(view: view, padding: UIEdgeInsetsZero, reuseIdentifier: cellType.rawValue)
+			let cell = AirTableViewCell(view: view, padding: UIEdgeInsetsMake(12, 12, 12, 12), reuseIdentifier: cellType.rawValue)
 			return cell
 		}
 		else if self.listType == .Messages {
 			let view = MessageView(cellType: cellType)
-			let cell = AirTableViewCell(view: view, padding: UIEdgeInsetsMake(12, 12,12, 12), reuseIdentifier: cellType.rawValue)
+			let cell = AirTableViewCell(view: view, padding: UIEdgeInsetsMake(12, 12, 12, 12), reuseIdentifier: cellType.rawValue)
 			return cell
 		}
 		else if self.listType == .Patches {
@@ -405,7 +405,7 @@ extension BaseTableViewController {
 		}
 		else if self.listType == .Users {
 			let view = UserView()
-			let cell = AirTableViewCell(view: view, padding: UIEdgeInsetsZero, reuseIdentifier: cellType.rawValue)
+			let cell = AirTableViewCell(view: view, padding: UIEdgeInsetsMake(8, 8, 8, 8), reuseIdentifier: cellType.rawValue)
 			return cell
 		}
 		else {

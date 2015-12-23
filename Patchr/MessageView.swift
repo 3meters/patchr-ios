@@ -52,6 +52,7 @@ class MessageView: BaseView {
 		/* Description */
 		if self.cellType != .Photo {
 			self.description_ = TTTAttributedLabel(frame: CGRectZero)
+			self.description_!.translatesAutoresizingMaskIntoConstraints = true
 			self.description_!.numberOfLines = 5
 			self.description_!.font = Theme.fontTextList
 			self.addSubview(self.description_!)
@@ -65,7 +66,6 @@ class MessageView: BaseView {
 			self.photo!.contentHorizontalAlignment = .Fill
 			self.photo!.contentVerticalAlignment = .Fill
 			self.photo!.backgroundColor = Theme.colorBackgroundImage
-
 			self.addSubview(self.photo!)
 		}
 		
@@ -206,10 +206,13 @@ class MessageView: BaseView {
 			if self.showPatchName {
 				self.patchName.sizeToFit()
 				heightAccum += self.patchName.height()
+				self.userName.sizeToFit()
+				heightAccum += (8 + self.userName.height())
 			}
-			
-			self.userName.sizeToFit()
-			heightAccum += (8 + self.userName.height())
+			else {
+				self.userName.sizeToFit()
+				heightAccum += self.userName.height()
+			}
 			
 			if entity.description_ != nil && !entity.description_.isEmpty {
 				self.description_!.bounds.size.width = columnWidth

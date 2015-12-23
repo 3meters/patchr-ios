@@ -18,7 +18,7 @@ class NotificationView: BaseView {
 	var userPhoto		= UIImageView(frame: CGRectZero)
 	var iconImageView	= UIImageView(frame: CGRectZero)
 	var ageDot			= UIView()
-	var createdDate		= UILabel()
+	var createdDate		= AirLabelDisplay()
 	
 	init(cellType: CellType?) {
 		super.init(frame: CGRectZero)
@@ -47,8 +47,8 @@ class NotificationView: BaseView {
 		/* Description */
 		if self.cellType != .Photo {
 			self.description_ = TTTAttributedLabel(frame: CGRectZero)
+			self.description_!.translatesAutoresizingMaskIntoConstraints = true
 			self.description_!.numberOfLines = 5
-			self.description_!.lineBreakMode = .ByTruncatingTail
 			self.description_!.font = Theme.fontTextList
 			self.addSubview(self.description_!)
 		}
@@ -57,9 +57,10 @@ class NotificationView: BaseView {
 		if self.cellType != .Text {
 			self.photo = AirImageButton(frame: CGRectZero)
 			self.photo!.imageView!.contentMode = UIViewContentMode.ScaleAspectFill
+			self.photo!.contentMode = .ScaleAspectFill
+			self.photo!.contentHorizontalAlignment = .Fill
+			self.photo!.contentVerticalAlignment = .Fill
 			self.photo!.backgroundColor = Theme.colorBackgroundImage
-			self.photo!.clipsToBounds = true
-			self.photo!.userInteractionEnabled = true
 			self.addSubview(self.photo!)
 		}
 		
@@ -67,12 +68,15 @@ class NotificationView: BaseView {
 		self.userPhoto.contentMode = UIViewContentMode.ScaleAspectFill
 		self.userPhoto.clipsToBounds = true
 		self.userPhoto.layer.cornerRadius = 24
+		self.userPhoto.bounds.size = CGSizeMake(48, 48)
 		self.userPhoto.layer.backgroundColor = Theme.colorBackgroundImage.CGColor
 		self.addSubview(self.userPhoto)
 		
 		/* Footer */
 		self.createdDate.font = Theme.fontComment
 		self.createdDate.textColor = Theme.colorTextSecondary
+		self.iconImageView.bounds.size = CGSizeMake(20, 20)
+		
 		self.ageDot.layer.cornerRadius = 6
 		
 		self.addSubview(self.iconImageView)
@@ -86,10 +90,6 @@ class NotificationView: BaseView {
 		
 		self.entity = notification
 		
-		if let description = notification.summary {
-			self.description_?.text = description
-		}
-		
 		let linkColor = Theme.colorTint
 		let linkActiveColor = Theme.colorTint
 		
@@ -97,12 +97,18 @@ class NotificationView: BaseView {
 		self.description_?.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
 		self.description_?.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
 		
+		if let description = notification.summary {
+			self.description_?.text = description
+		}
+		
 		let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
 		
 		if let photo = notification.photoBig {
 			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.standard)
 			self.photo?.sd_setImageWithURL(photoUrl, forState: UIControlState.Normal, placeholderImage: nil, options: options)
 		}
+		
+		/* User photo */
 		
 		let photo = notification.getPhotoManaged()
 		let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile)
@@ -155,41 +161,67 @@ class NotificationView: BaseView {
 		self.setNeedsLayout()
 	}
 	
+	override func sizeThatFits(size: CGSize) -> CGSize {
+		
+		if let entity = self.entity as? Notification {
+			
+			var heightAccum = CGFloat(0)
+			
+			let columnLeft = CGFloat(self.userPhoto.width() + 8)
+			let columnWidth = size.width - columnLeft
+			let photoHeight = columnWidth * 0.5625
+			
+			if entity.summary != nil && !entity.summary.isEmpty {
+				self.description_!.bounds.size.width = columnWidth
+				self.description_!.sizeToFit()
+				heightAccum += self.description_!.height()
+			}
+			
+			if entity.photoBig != nil {
+				heightAccum += (8 + photoHeight)
+			}
+			
+			self.createdDate.sizeToFit()
+			heightAccum += (8 + max(self.iconImageView.height(), self.createdDate.height())) // Like button
+			
+			let height = max(self.userPhoto.height(), heightAccum)
+			
+			return CGSizeMake(size.width, height)
+		}
+		
+		return CGSizeZero
+	}
+	
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		
-		let columnLeft = CELL_USER_PHOTO_SIZE + CELL_VIEW_SPACING + (CELL_PADDING_HORIZONTAL * 2)
-		let columnWidth = self.width() - columnLeft
-		let photoHeight = columnWidth * CELL_PHOTO_RATIO
+		let columnLeft = CGFloat(self.userPhoto.width() + 8)
+		let columnWidth = self.bounds.size.width - columnLeft
+		let photoHeight = columnWidth * 0.5625		// 16:9 aspect ratio
 		
-		self.userPhoto.anchorTopLeftWithLeftPadding(CELL_PADDING_HORIZONTAL, topPadding: CELL_PADDING_VERTICAL, width: CELL_USER_PHOTO_SIZE, height: CELL_USER_PHOTO_SIZE)
+		self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: self.userPhoto.width(), height: self.userPhoto.height())
 		
 		var bottomView: UIView? = self.photo
-		
-		if self.cellType == .TextAndPhoto {
-			let descSize = self.description_?.sizeThatFits(CGSizeMake(columnWidth, CGFloat.max))
-			self.description_?.alignToTheRightOf(self.userPhoto, fillingWidthWithLeftAndRightPadding: CELL_PADDING_HORIZONTAL, topPadding: CELL_PADDING_VERTICAL, height: (descSize?.height)!)
-			self.photo?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: CELL_PADDING_HORIZONTAL, topPadding: CELL_VIEW_SPACING, height: photoHeight)
+		if self.cellType == .Text {
+			bottomView = self.description_
+			self.description_?.bounds.size.width = columnWidth
+			self.description_?.sizeToFit()
+			self.description_?.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: self.description_!.height())
+		}
+		else if self.cellType == .TextAndPhoto {
+			self.description_?.bounds.size.width = columnWidth
+			self.description_?.sizeToFit()
+			self.description_?.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: self.description_!.height())
+			self.photo?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: photoHeight)
 		}
 		else if self.cellType == .Photo {
-			self.photo?.alignToTheRightOf(self.userPhoto, fillingWidthWithLeftAndRightPadding: CELL_PADDING_HORIZONTAL, topPadding: CELL_PADDING_VERTICAL, height: photoHeight)
-		}
-		else if self.cellType == .Text {
-			bottomView = self.description_
-			let descSize = self.description_?.sizeThatFits(CGSizeMake(columnWidth, CGFloat.max))
-			self.description_?.alignToTheRightOf(self.userPhoto, fillingWidthWithLeftAndRightPadding: CELL_PADDING_HORIZONTAL, topPadding: CELL_PADDING_VERTICAL, height: (descSize?.height)!)
+			self.photo?.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: photoHeight)
 		}
 		
-		self.iconImageView.alignUnder(bottomView!, matchingLeftWithTopPadding: CELL_VIEW_SPACING, width: CELL_FOOTER_HEIGHT, height: CELL_FOOTER_HEIGHT)
-		self.createdDate.alignToTheRightOf(self.iconImageView, matchingCenterAndFillingWidthWithLeftAndRightPadding: CELL_PADDING_HORIZONTAL, height: CELL_FOOTER_HEIGHT)
+		self.createdDate.sizeToFit()
+		self.iconImageView.alignUnder(bottomView!, matchingLeftWithTopPadding: 8, width: self.iconImageView.width(), height: self.iconImageView.height())
+		self.createdDate.alignToTheRightOf(self.iconImageView, matchingCenterWithLeftPadding: 8, width: self.createdDate.width(), height: self.createdDate.height())
 	}
 	
 	override func prepareForRecycle() {	}	
-}
-
-enum CellType: String {
-	case Text = "text"
-	case Photo = "photo"
-	case TextAndPhoto = "text_and_photo"
-	case Share = "share"
 }

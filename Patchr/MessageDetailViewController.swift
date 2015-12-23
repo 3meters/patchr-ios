@@ -209,14 +209,12 @@ class MessageDetailViewController: UITableViewController {
 	}
 
 	@IBAction func userAction(sender: AnyObject) {
-        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-        if let controller = storyboard.instantiateViewControllerWithIdentifier("UserDetailViewController") as? UserDetailViewController {
-            if let creator = inputMessage!.creator {
-                controller.entityId = creator.entityId
-				controller.profileMode = false
-                self.navigationController?.pushViewController(controller, animated: true)
-            }
-        }
+		let controller = UserDetailViewController()
+		if let creator = inputMessage!.creator {
+			controller.entityId = creator.entityId
+			controller.profileMode = false
+			self.navigationController?.pushViewController(controller, animated: true)
+		}
 	}
 
 	@IBAction func photoAction(sender: AnyObject) {
@@ -229,12 +227,10 @@ class MessageDetailViewController: UITableViewController {
 	}
     
 	@IBAction func likesAction(sender: AnyObject) {
-        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-        if let controller = storyboard.instantiateViewControllerWithIdentifier("UserTableViewController") as? UserTableViewController {
-            controller.message = self.inputMessage
-            controller.filter = .MessageLikers
-            self.navigationController?.pushViewController(controller, animated: true)
-        }
+		let controller = UserTableViewController()
+		controller.message = self.inputMessage
+		controller.filter = .MessageLikers
+		self.navigationController?.pushViewController(controller, animated: true)
 	}
 
     func shareBrowseAction(sender: AnyObject){

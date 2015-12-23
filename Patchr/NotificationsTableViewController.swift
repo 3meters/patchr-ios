@@ -419,15 +419,6 @@ extension NotificationsTableViewController {
 	}
 	
 	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-		if let height = quickHeight(indexPath) {
-			return height
-		}
-		else {
-			return 0
-		}
-	}
-	
-	func quickHeight(indexPath: NSIndexPath) -> CGFloat? {
 		/*
 		* Using an estimate significantly improves table view load time but we can get
 		* small scrolling glitches if actual height ends up different than estimated height.
@@ -445,45 +436,27 @@ extension NotificationsTableViewController {
 					}
 				}
 				
-				let minHeight: CGFloat = CELL_USER_PHOTO_SIZE + (CELL_PADDING_VERTICAL * 2)
-				let columnLeft = CELL_USER_PHOTO_SIZE + CELL_VIEW_SPACING + (CELL_PADDING_HORIZONTAL * 2)
-				
-				let columnWidth = (min(CONTENT_WIDTH_MAX, self.tableView.bounds.size.width)) - columnLeft
-				let photoHeight = columnWidth * CELL_PHOTO_RATIO
-				
-				var height: CGFloat = CELL_FOOTER_HEIGHT + (CELL_PADDING_VERTICAL * 2)    // Base size if no description or photo
-				
-				if entity.summary != nil {
-					
-					let description = entity.summary as NSString
-					let attributes = [NSFontAttributeName: Theme.fontTextList]
-					let options: NSStringDrawingOptions = [NSStringDrawingOptions.UsesLineFragmentOrigin, NSStringDrawingOptions.UsesFontLeading]
-					
-					/* Most time is spent here */
-					let rect: CGRect = description.boundingRectWithSize(CGSizeMake(columnWidth, CGFloat.max),
-						options: options,
-						attributes: attributes,
-						context: nil)
-					
-					let descHeight = min(rect.height, 102.272)	// Cap at ~5 lines based on HNeueLight 17pts
-					height += (descHeight + CELL_VIEW_SPACING + 0.5) // Add a bit because of rounding scruff
+				var cellType: CellType = .TextAndPhoto
+				if entity.photoBig == nil {
+					cellType = .Text
+				}
+				else if entity.summary == nil {
+					cellType = .Photo
 				}
 				
-				if entity.photoBig != nil {
-					/* This relies on sizing and spacing of the message view */
-					height += photoHeight + CELL_VIEW_SPACING  // 16:9 aspect ratio
-				}
-				
-				height = max(minHeight, height)
+				let view = NotificationView(cellType: cellType)
+				view.bindToEntity(entity)
+				view.bounds.size.width = self.tableView.width() - 24
+				view.sizeToFit()
 				
 				if entity.id_ != nil {
-					self.rowHeights[entity.id_] = CGFloat(height)
+					self.rowHeights[entity.id_] = view.bounds.size.height + 24 + 1
 				}
 				
-				return CGFloat(height + 1)	// Add one for row separator
+				return view.bounds.size.height + 24 + 1	// Add one for row separator
 		}
 		else {
-			return nil
+			return 0
 		}
 	}
 	

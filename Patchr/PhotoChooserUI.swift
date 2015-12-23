@@ -82,13 +82,12 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 
 	private func searchForPhoto() {
         chosenPhotoFunction = .SearchPhoto
-        let pickerNavController = UIStoryboard(
-            name: "Main",
-            bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("PhotoPickerNavController") as? UINavigationController
-        if let pickerController = pickerNavController?.topViewController as? PhotoPickerViewController {
-            pickerController.pickerDelegate = self
-            self.hostViewController?.presentViewController(pickerNavController!, animated: true, completion: nil)
-        }
+		let navController = UINavigationController()
+		let layout = UICollectionViewFlowLayout()
+		let controller = PhotoPickerViewController(collectionViewLayout: layout)
+		controller.pickerDelegate = self
+		navController.viewControllers = [controller]
+		self.hostViewController?.presentViewController(navController, animated: true, completion: nil)
 	}
 
 	private func addPhotoToAlbum(image: UIImage, toAlbum albumName: String, handler: CompletionHandler) {

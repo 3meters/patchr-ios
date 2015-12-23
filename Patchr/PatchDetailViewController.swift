@@ -154,12 +154,10 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 	 *--------------------------------------------------------------------------------------------*/
     
 	@IBAction func watchersAction(sender: AnyObject) {
-        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-        if let controller = storyboard.instantiateViewControllerWithIdentifier("UserTableViewController") as? UserTableViewController {
-            controller.patch = self.entity as! Patch
-            controller.filter = .PatchWatchers
-            self.navigationController?.pushViewController(controller, animated: true)
-        }
+		let controller = UserTableViewController()
+		controller.patch = self.entity as! Patch
+		controller.filter = .PatchWatchers
+		self.navigationController?.pushViewController(controller, animated: true)
 	}
 
 	@IBAction func contextButtonAction(sender: UIButton) {

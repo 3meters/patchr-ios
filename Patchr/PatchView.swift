@@ -178,13 +178,17 @@ class PatchView: BaseView {
 		self.setNeedsLayout()
 	}
 	
+	override func sizeThatFits(size: CGSize) -> CGSize {
+		return CGSizeMake(self.width(), 136)
+	}
+	
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		
 		self.shadow.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 1)
 		
-		let columnLeft = 128 + CELL_VIEW_SPACING
-		let columnWidth = self.width() - (columnLeft + CELL_PADDING_HORIZONTAL)
+		let columnLeft = CGFloat(128 + 8)
+		let columnWidth = self.width() - columnLeft
 		let nameSize = self.name.sizeThatFits(CGSizeMake(columnWidth, CGFloat.max))
 		
 		self.photo.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 128, height: 128)

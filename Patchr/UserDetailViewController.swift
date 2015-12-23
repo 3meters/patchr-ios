@@ -76,21 +76,18 @@ class UserDetailViewController: BaseDetailViewController {
 	 *--------------------------------------------------------------------------------------------*/
 
 	func actionBrowseWatching(sender: AnyObject?) {
-		let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-		if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableViewController") as? PatchTableViewController {
-			controller.filter = .Watching
-			controller.user = self.entity as! User
-			self.navigationController?.pushViewController(controller, animated: true)
-		}
+		
+		let controller = PatchTableViewController()
+		controller.filter = .Watching
+		controller.user = self.entity as! User
+		self.navigationController?.pushViewController(controller, animated: true)
 	}
 
 	func actionBrowseOwned(sender: AnyObject?) {
-		let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-		if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableViewController") as? PatchTableViewController {
-			controller.filter = .Owns
-			controller.user = self.entity as! User
-			self.navigationController?.pushViewController(controller, animated: true)
-		}
+		let controller = PatchTableViewController()
+		controller.filter = .Owns
+		controller.user = self.entity as! User
+		self.navigationController?.pushViewController(controller, animated: true)
 	}
 
 	func actionEdit() {		

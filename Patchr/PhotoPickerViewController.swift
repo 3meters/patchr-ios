@@ -70,6 +70,11 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 		super.viewDidLoad()
         
         self.collectionView!.registerNib(UINib(nibName: "ThumbnailCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: reuseIdentifier)
+		self.collectionView?.backgroundColor = Theme.colorBackgroundScreen
+		if let layout = self.collectionViewLayout as? UICollectionViewFlowLayout {
+			layout.minimumLineSpacing = 4
+			layout.minimumInteritemSpacing = 4
+		}
 		self.queue.name = "Image loading queue"
 		
 		/* Simple activity indicator */
@@ -108,9 +113,6 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
         if !self.searchBar!.isDescendantOfView(self.view) {
             self.view.addSubview(self.searchBar!)
         }
-		
-		
-		//		self.autocompleteList.alignUnder(self.searchBar, matchingLeftAndRightWithTopPadding: 0, height: CGFloat(self.autocompleteData.count * 44))
 		
 		/* Calculate thumbnail width */
 		availableWidth = UIScreen.mainScreen().bounds.size.width - (sectionInsets!.left + sectionInsets!.right)

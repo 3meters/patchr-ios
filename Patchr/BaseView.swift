@@ -28,3 +28,10 @@ class BaseView: UIView {
 		return CGSizeMake(w, h)
 	}
 }
+
+enum CellType: String {
+	case Text = "text"
+	case Photo = "photo"
+	case TextAndPhoto = "text_and_photo"
+	case Share = "share"
+}

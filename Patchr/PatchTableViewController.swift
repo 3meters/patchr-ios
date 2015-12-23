@@ -387,7 +387,15 @@ extension PatchTableViewController {
      * UITableViewDelegate
      */
 	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-		return 136
+		
+		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
+			let entity = queryResult.object as? Patch {
+				let view = PatchView()
+				view.bindToEntity(entity, location: nil)
+				view.sizeToFit()
+				return view.bounds.size.height
+		}
+		return 0
 	}
 
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {

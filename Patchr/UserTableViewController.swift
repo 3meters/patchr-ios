@@ -167,15 +167,26 @@ extension UserTableViewController {
     /*
     * UITableViewDelegate
     */
+	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+		
+		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
+			let entity = queryResult.object as? User {
+				let view = UserView()
+				view.bindToEntity(entity)
+				view.sizeToFit()
+				return view.bounds.size.height
+		}
+		return 0
+	}
+
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        
-        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+		
         if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
-            let entity = queryResult.object as? User,
-            let controller = storyboard.instantiateViewControllerWithIdentifier("UserDetailViewController") as? UserDetailViewController {
-                controller.entityId = entity.id_
-				controller.profileMode = false
-                self.navigationController?.pushViewController(controller, animated: true)
+			let entity = queryResult.object as? User {
+			let controller = UserDetailViewController()
+			controller.entityId = entity.id_
+			controller.profileMode = false
+			self.navigationController?.pushViewController(controller, animated: true)
         }
 	}
 }

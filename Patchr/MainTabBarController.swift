@@ -77,8 +77,6 @@ class MainTabBarController: UITabBarController {
 		
 		delegate = self
 		
-		let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-		
 		UITabBar.appearance().tintColor = Theme.colorTabBarTint
 		
 		let patches = PatchNavigationController()
@@ -86,18 +84,16 @@ class MainTabBarController: UITabBarController {
 		patches.tabBarItem.image = UIImage(named: "tabBarPatches24")
 		patches.tabBarItem.tag = 1
 		
-		if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableViewController") as? PatchTableViewController {
-			patches.viewControllers = [controller]
-		}
+		let patchTableViewController = PatchTableViewController()
+		patches.viewControllers = [patchTableViewController]
 		
 		let notifications = UINavigationController()
 		notifications.tabBarItem.title = "Notifications"
 		notifications.tabBarItem.image = UIImage(named: "tabBarNotifications24")
 		notifications.tabBarItem.tag = 2
 		
-		if let controller = storyboard.instantiateViewControllerWithIdentifier("NotificationsTableViewController") as? NotificationsTableViewController {
-			notifications.viewControllers = [controller]
-		}
+		let notificationsController = NotificationsTableViewController()
+		notifications.viewControllers = [notificationsController]
 		
 		let search = UINavigationController()
 		search.tabBarItem.title = "Search"
@@ -112,9 +108,8 @@ class MainTabBarController: UITabBarController {
 		user.tabBarItem.image = UIImage(named: "tabBarUser24")
 		user.tabBarItem.tag = 4
 		
-		if let controller = storyboard.instantiateViewControllerWithIdentifier("UserDetailViewController") as? UserDetailViewController {
-			user.viewControllers = [controller]
-		}
+		let userController = UserDetailViewController()
+		user.viewControllers = [userController]
 		
 		self.viewControllers = [patches, notifications, search, user]
 		
