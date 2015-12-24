@@ -47,7 +47,6 @@ class NotificationView: BaseView {
 		/* Description */
 		if self.cellType != .Photo {
 			self.description_ = TTTAttributedLabel(frame: CGRectZero)
-			self.description_!.translatesAutoresizingMaskIntoConstraints = true
 			self.description_!.numberOfLines = 5
 			self.description_!.font = Theme.fontTextList
 			self.addSubview(self.description_!)
@@ -76,6 +75,7 @@ class NotificationView: BaseView {
 		self.createdDate.font = Theme.fontComment
 		self.createdDate.textColor = Theme.colorTextSecondary
 		self.iconImageView.bounds.size = CGSizeMake(20, 20)
+		self.iconImageView.tintColor = Colors.accentColorFill
 		
 		self.ageDot.layer.cornerRadius = 6
 		
@@ -156,7 +156,6 @@ class NotificationView: BaseView {
 		else if notification.type == "nearby" {
 			self.iconImageView.image = Utils.imageLocation
 		}
-		self.iconImageView.tintColor(Theme.colorTint)
 		
 		self.setNeedsLayout()
 	}

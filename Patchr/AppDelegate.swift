@@ -196,33 +196,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func routeDeepLink(params: NSDictionary?, error: NSError?) {
         
         if let entityId = params!["entityId"] as? String, entitySchema = params!["entitySchema"] as? String {
-            let storyBoard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
             
             if entitySchema == "patch" {
-                if let controller = storyBoard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
-                    controller.entityId = entityId
-					controller.inputShowInviteWelcome = true
-					if let inviterName = params!["inviterName"] as? String {
-						controller.inputInviterName = inviterName.stringByReplacingOccurrencesOfString("+", withString: " ")
-					}
-                    /* Navigation bar buttons */
-                    let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
-                    controller.navigationItem.leftBarButtonItems = [doneButton]
-                    let navController = UINavigationController()
-                    navController.viewControllers = [controller]
-                    UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
-                }
+				let controller = PatchDetailViewController()
+				controller.entityId = entityId
+				controller.inputShowInviteWelcome = true
+				if let inviterName = params!["inviterName"] as? String {
+					controller.inputInviterName = inviterName.stringByReplacingOccurrencesOfString("+", withString: " ")
+				}
+				/* Navigation bar buttons */
+				let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
+				controller.navigationItem.leftBarButtonItems = [doneButton]
+				let navController = UINavigationController()
+				navController.viewControllers = [controller]
+				UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
             }
             else if entitySchema == "message" {
-                if let controller = storyBoard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
-                    controller.inputMessageId = entityId
-                    /* Navigation bar buttons */
-                    let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
-                    controller.navigationItem.leftBarButtonItems = [doneButton]
-                    let navController = UINavigationController()
-                    navController.viewControllers = [controller]
-                    UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
-                }
+				let controller = MessageDetailViewController()
+				controller.inputMessageId = entityId
+				/* Navigation bar buttons */
+				let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
+				controller.navigationItem.leftBarButtonItems = [doneButton]
+				let navController = UINavigationController()
+				navController.viewControllers = [controller]
+				UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
             }
         }
     }

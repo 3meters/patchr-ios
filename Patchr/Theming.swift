@@ -29,7 +29,7 @@ class Snow {
 	let colorText				= Colors.black
 	let colorTextSecondary		= Colors.gray50pcntColor
 	let colorTextDisplay		= Colors.black
-	let colorTextTitle			= Colors.accentColorTextLight
+	let colorTextTitle			= Colors.accentOnLight
 	let colorTextBanner			= Colors.white
 	let colorTextPlaceholder	= Colors.lightGray
 	let colorTextNotification	= Colors.white
@@ -37,19 +37,19 @@ class Snow {
 	let colorTextActivity		= Colors.black
 	let colorNumberFeatured		= Colors.accentColorDark
 
-	let colorBackgroundWindow			= Colors.gray90pcntColor
-	let colorBackgroundImage			= Colors.gray90pcntColor
-	let colorBackgroundNotification		= Colors.brandColor
-	let colorBackgroundScreen			= Colors.white
-	let colorBackgroundSidebar			= Colors.white
-	let colorBackgroundTile				= Colors.white
-	let colorBackgroundTileList			= Colors.gray90pcntColor
-	let colorBackgroundToast			= Colors.brandColorFill
-	let colorBackgroundOverlay			= Colors.opacity75pcntBlack
-	let colorBackgroundActivity			= Colors.white
-	let colorBackgroundActivityOnly		= Colors.clear
-	let colorBackgroundEmptyBubble		= Colors.white
-	let colorBackgroundAgeDot			= Colors.accentColorFill
+	let colorBackgroundForm         = Colors.white
+	let colorBackgroundWindow       = Colors.gray90pcntColor
+	let colorBackgroundImage        = Colors.gray90pcntColor
+	let colorBackgroundNotification = Colors.brandColor
+	let colorBackgroundSidebar      = Colors.white
+	let colorBackgroundTile         = Colors.white
+	let colorBackgroundTileList     = Colors.gray90pcntColor
+	let colorBackgroundToast        = Colors.brandColorFill
+	let colorBackgroundOverlay      = Colors.opacity75pcntBlack
+	let colorBackgroundActivity     = Colors.white
+	let colorBackgroundActivityOnly = Colors.clear
+	let colorBackgroundEmptyBubble  = Colors.white
+	let colorBackgroundAgeDot       = Colors.accentColorFill
 	let colorBackgroundContactSelected 	= Colors.accentColorFill
 
 	let colorRule                   = Colors.gray75pcntColor
@@ -63,8 +63,8 @@ class Snow {
 	let colorActionOn               = Colors.brandColorTextDark
 	let colorActionOff              = Colors.brandColorTextDark
 	let colorActionPending          = Colors.accentColorTextDark
-	let colorActivityIndicator      = Colors.brandColorTextLight
-	let colorActivityIndicatorImage = Colors.brandColorTextLight
+	let colorActivityIndicator      = Colors.brandColor
+	let colorActivityIndicatorImage = Colors.brandColor
 
 	let colorButtonRadioTitle				= Colors.black
 	let colorButtonRadioIcon				= Colors.black
@@ -80,14 +80,12 @@ class Snow {
 	let colorButtonFillFeatured				= Colors.accentColorFill
 
 	let fontBanner				= UIFont(name: "HelveticaNeue-Thin", size: 48)!
-	let fontTitle				= UIFont(name: "HelveticaNeue-Thin", size: 30)!
-	let fontHeading1			= UIFont(name: "HelveticaNeue-Light", size: 22)!
-	let fontHeading2			= UIFont(name: "HelveticaNeue-Bold", size: 20)!
-	let fontHeading3			= UIFont(name: "HelveticaNeue-Light", size: 20)!
-	let fontHeading4			= UIFont(name: "HelveticaNeue-Bold", size: 18)!
-	let fontNumberFeatured		= UIFont(name: "HelveticaNeue-Light", size: 30)!
+	let fontTitleLarge			= UIFont(name: "HelveticaNeue-Thin", size: 30)!
+	let fontTitle				= UIFont(name: "HelveticaNeue-Light", size: 22)!
+	let fontHeading				= UIFont(name: "HelveticaNeue-Light", size: 20)!
 
 	let fontText				= UIFont(name: "HelveticaNeue-Light", size: 18)!
+	let fontTextBold			= UIFont(name: "HelveticaNeue-Medium", size: 18)!
 	let fontTextDisplay			= UIFont(name: "HelveticaNeue-Light", size: 18)!
 	let fontTextList			= UIFont(name: "HelveticaNeue-Light", size: 17)!
 	let fontComment				= UIFont(name: "HelveticaNeue-Light", size: 16)!
@@ -97,6 +95,7 @@ class Snow {
 	let fontButtonRadioTitle	= UIFont(name: "HelveticaNeue-Light", size: 18)!
 	let fontLinkText			= UIFont(name: "HelveticaNeue", size: 18)!
 	let fontBarText				= UIFont(name: "HelveticaNeue", size: 18)!
+	let fontNumberFeatured		= UIFont(name: "HelveticaNeue-Light", size: 30)!
 	
 	let dimenButtonCornerRadius = 4
 	let dimenButtonBorderWidth = CGFloat(0.5)
@@ -107,6 +106,7 @@ public struct Colors {
 	
 	static let gray95pcntColor: UIColor = UIColor(red: CGFloat(0.95), green: CGFloat(0.95), blue: CGFloat(0.95), alpha: CGFloat(1))
 	static let gray90pcntColor: UIColor = UIColor(red: CGFloat(0.9), green: CGFloat(0.9), blue: CGFloat(0.9), alpha: CGFloat(1))
+	static let gray85pcntColor: UIColor = UIColor(red: CGFloat(0.85), green: CGFloat(0.85), blue: CGFloat(0.85), alpha: CGFloat(1))
 	static let gray80pcntColor: UIColor = UIColor(red: CGFloat(0.8), green: CGFloat(0.8), blue: CGFloat(0.8), alpha: CGFloat(1))
 	static let gray75pcntColor: UIColor = UIColor(red: CGFloat(0.75), green: CGFloat(0.75), blue: CGFloat(0.75), alpha: CGFloat(1))
 	static let gray66pcntColor: UIColor = UIColor(red: CGFloat(0.667), green: CGFloat(0.667), blue: CGFloat(0.667), alpha: CGFloat(1)) // Light gray

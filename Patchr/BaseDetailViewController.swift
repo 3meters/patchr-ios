@@ -166,7 +166,7 @@ extension BaseDetailViewController {
 	/*
 	 * Cells
 	 */
-	override func bindCell(cell: AirTableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
+	override func bindCell(cell: WrapperTableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
 		
 		if let view = super.bindCell(cell, entity: object, location: location) as? MessageView {
 			/* Hookup up delegates */
@@ -183,12 +183,11 @@ extension BaseDetailViewController {
      */
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
-        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
         if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
-            let entity = queryResult.object as? Message,
-            let controller = storyboard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
-                controller.inputMessage = entity
-                self.navigationController?.pushViewController(controller, animated: true)
+			let entity = queryResult.object as? Message {
+			let controller = MessageDetailViewController()
+			controller.inputMessage = entity
+			self.navigationController?.pushViewController(controller, animated: true)
         }
     }
 	
@@ -221,7 +220,7 @@ extension BaseDetailViewController {
 					cellType = .Photo
 				}
 				
-				let view = MessageView(cellType: cellType)
+				let view = MessageView(cellType: cellType, entity: nil)
 				view.showPatchName = self.patchNameVisible
 				view.bindToEntity(entity)
 				view.bounds.size.width = self.tableView.width() - 24

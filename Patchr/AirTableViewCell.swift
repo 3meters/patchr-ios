@@ -10,45 +10,24 @@ import UIKit
 
 class AirTableViewCell: UITableViewCell {
 	
-	var view: BaseView?
-	var separator = UIView()
-	var padding = UIEdgeInsetsZero
+	init () {
+		super.init(style: .Default, reuseIdentifier: nil)
+		initialize()
+	}
 	
-	init(view: UIView, padding: UIEdgeInsets, reuseIdentifier: String?) {
-		super.init(style: .Default, reuseIdentifier: reuseIdentifier)
-		self.view = view as? BaseView
-		self.padding = padding
+	override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+		super.init(style: style, reuseIdentifier: reuseIdentifier)
 		initialize()
 	}
 	
 	required init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
+		initialize()
 	}
 	
 	func initialize() {
-		addSeparator()
-		if self.view != nil {
-			self.contentView.addSubview(self.view!)
-		}
-	}
-	
-	override func layoutSubviews() {
-		
-		/* Fill contentView with injected view */
-		self.view?.fillSuperviewWithLeftPadding(self.padding.left,
-			rightPadding: self.padding.right,
-			topPadding: self.padding.top,
-			bottomPadding: self.padding.bottom + 1)
-		
-		self.separator.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 1)
-	}
-	
-	func addSeparator() {
-		self.separator.layer.backgroundColor = Theme.colorSeparator.CGColor
-		self.contentView.addSubview(self.separator)
-	}
-	
-	override func prepareForReuse() {
-		self.view?.prepareForRecycle()
+		self.accessoryType = .DisclosureIndicator
+		self.textLabel!.font = Theme.fontTextDisplay
+		self.textLabel!.textColor = Theme.colorText
 	}
 }

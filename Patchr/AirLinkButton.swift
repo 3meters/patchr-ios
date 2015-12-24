@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AirButtonRadio: DLRadioButton {
+class AirLinkButton: UIButton {
 
 	required init(coder aDecoder: NSCoder) {
 		/* Called when instantiated from XIB or Storyboard */
@@ -23,17 +23,10 @@ class AirButtonRadio: DLRadioButton {
 	}
 	
 	func initialize() {
-		self.titleLabel!.font = Theme.fontButtonRadioTitle
-		self.setTitleColor(Theme.colorButtonRadioTitle, forState: .Normal)
+		self.titleLabel!.font = Theme.fontButtonTitle
+		self.setTitleColor(Theme.colorButtonTitle, forState: .Normal)
 		self.setTitleColor(Theme.colorButtonTitleHighlighted, forState: .Highlighted)
-		self.iconColor = Theme.colorButtonRadioIcon
-		self.indicatorColor = Theme.colorButtonRadioIndicator
-		self.contentHorizontalAlignment = .Left
-		self.iconOnRight = false
-		self.iconSize = 20
-		self.iconStrokeWidth = self.iconSize / self.iconSize
-		self.indicatorSize = self.iconSize * 0.6
-		self.marginWidth = 8
+		self.backgroundColor = Theme.colorButtonFill
 	}
 	
 	override func layoutSubviews() {

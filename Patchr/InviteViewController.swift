@@ -14,7 +14,7 @@ class InviteViewController: BaseViewController {
 	var invitePatchrButton   	= AirButton()
 	var inviteFacebookButton	= AirButton()
 	var inviteViaButton			= AirButton()
-	var doneButton				= AirButtonFeatured()
+	var doneButton				= AirFeaturedButton()
 	var scrollView				= AirScrollView()
 	var contentHolder			= UIView()
 	
@@ -76,7 +76,7 @@ class InviteViewController: BaseViewController {
 		
 		let fullScreenRect = UIScreen.mainScreen().applicationFrame
 		self.scrollView.frame = fullScreenRect
-		self.scrollView.backgroundColor = Theme.colorBackgroundScreen
+		self.scrollView.backgroundColor = Theme.colorBackgroundForm
 		self.scrollView.addSubview(self.contentHolder)
 		self.view = self.scrollView
 		

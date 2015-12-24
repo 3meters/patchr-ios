@@ -14,7 +14,7 @@ class GuestViewController: BaseViewController {
 	var buttonLogin		= AirButton()
 	var buttonSignup	= AirButton()
 	var message			= AirLabel()
-	var buttonCancel	= AirButtonLink()
+	var buttonCancel	= AirLinkButton()
 	var buttonGroup		= UIView()
 	
 	var inputMessage: String?

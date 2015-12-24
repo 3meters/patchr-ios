@@ -7,13 +7,14 @@
 //
 
 import UIKit
+import MessageUI
 
-class MessageDetailViewController: UITableViewController {
+class MessageDetailViewController: BaseViewController {
 
-	var activity:       UIActivityIndicatorView?
-	var inputMessage:   Message?
-	var inputMessageId: String?
-    var deleted = false
+	var inputMessage	: Message?
+	var inputMessageId	: String?			// Used by notifications
+	
+    var deleted			= false
 
     private var shareButtonFunctionMap = [Int: ShareButtonFunction]()
 	
@@ -40,74 +41,55 @@ class MessageDetailViewController: UITableViewController {
     }
 
 	/* Outlets are initialized before viewDidLoad is called */
+	var activity		= UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
 
-	@IBOutlet weak var patchName:       UIButton!
-	@IBOutlet weak var patchPhoto:      AirImageButton!
-	@IBOutlet weak var userPhoto:       AirImageButton!
-	@IBOutlet weak var userName:        UIButton!
-	@IBOutlet weak var createdDate:     UILabel!
-	@IBOutlet weak var messagePhoto:    AirImageButton!
-	@IBOutlet weak var likeButton:      AirLikeButton!
-	@IBOutlet weak var likesButton:     UIButton!
-    @IBOutlet weak var description_:    TTTAttributedLabel!
-    @IBOutlet weak var recipients:      AirLabelDisplay!
-    
-    @IBOutlet weak var patchCell:       UITableViewCell!
-    @IBOutlet weak var toolbarCell:     UITableViewCell!
-    @IBOutlet weak var recipientsCell:  UITableViewCell!
-    @IBOutlet weak var shareHolderCell: UITableViewCell!
+	var patchGroup		= AirRuleView()
+	var patchName		= AirLinkButton()
+	var patchPhoto		= AirImageButton()
+	
+	var userGroup		= UIView()
+	var userPhoto		= AirImageButton()
+	var userName		= AirLinkButton()
+	
+	var messageGroup	= UIView()
+	var createdDate		= UILabel()
+	var description_	: TTTAttributedLabel!
+	var photo			= AirImageButton()
+	
+	var toolbarGroup	= AirRuleView()
+	var likeButton		= AirLikeButton()
+	var likesButton		= AirLinkButton()
+	var reportButton	= AirLinkButton()
+	
+	var shareGroup		= UIView()
+	var shareFrame		= AirButton()
+	var recipientsLabel = AirLabelDisplay()
+	var recipients		= AirLabelDisplay()
+	var messageView		: MessageView?
+	var patchView		: PatchView?
+	var emptyView		: AirLabelDisplay?
+
+	var scrollView		= AirScrollView()
+	var contentHolder	= UIView()
 	
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
 	 *--------------------------------------------------------------------------------------------*/
-
-	override func viewDidLoad() {
-
-		if self.inputMessage != nil {
-			self.inputMessageId = self.inputMessage!.id_
-		}
-		
-		guard self.inputMessageId != nil else {
-			fatalError("Message detail requires message id")
-		}
-
-		super.viewDidLoad()
-
-        /* Ui tweaks */
-		self.view.window?.backgroundColor = Theme.colorBackgroundWindow
-		self.userPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
-		self.patchPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
-		self.messagePhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
-		self.messagePhoto.translatesAutoresizingMaskIntoConstraints = true
-		self.messagePhoto.contentMode = .ScaleAspectFill
-		self.messagePhoto.contentVerticalAlignment = .Fill
-		self.messagePhoto.contentHorizontalAlignment = .Fill
-		
-        let linkColor = Theme.colorTint
-        let linkActiveColor = Theme.colorTint
-        
-        self.description_.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
-        self.description_.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
-        self.description_.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
-        self.description_.delegate = self
-        
-		/* Navigation bar buttons */
-		if self.inputMessage != nil {
-			drawNavButtons(true)
-		}
-
-		/* Make sure any old content is cleared */
-		self.description_.text?.removeAll(keepCapacity: false)
-		self.createdDate.text?.removeAll(keepCapacity: false)
-		self.messagePhoto.imageView?.image = nil
-		self.patchName.setTitle(nil, forState: .Normal)
-		self.patchPhoto.imageView?.image = nil
-		self.userName.setTitle(nil, forState: .Normal)
-		self.userPhoto.imageView?.image = nil
-        self.likesButton.setTitle(nil, forState: .Normal)
+	
+	override func loadView() {
+		/*
+		 * Inputs are already available.
+		 */
+		super.loadView()
+		initialize()
 	}
 	
 	override func viewWillAppear(animated: Bool) {
+		super.viewWillAppear(animated)
+		
+		guard (self.inputMessage != nil || self.inputMessageId != nil) else {
+			fatalError("Message or message id required")
+		}
 		
 		/* Use cached entity if available in the data model */
 		if self.inputMessage == nil {
@@ -117,29 +99,150 @@ class MessageDetailViewController: UITableViewController {
 		}
 		else {
 			/* Entity could have been delete while we were away to check it. */
-			let item = ServiceBase.fetchOneById(self.inputMessageId!, inManagedObjectContext: DataController.instance.mainContext)
+			let item = ServiceBase.fetchOneById(self.inputMessage!.id_, inManagedObjectContext: DataController.instance.mainContext)
 			if item == nil {
 				self.navigationController?.popViewControllerAnimated(false)
 				return
 			}
 		}
 		
-		super.viewWillAppear(animated)
-		
 		if self.inputMessage != nil {
-			draw()
+			bind()
 		}
 		
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "likeDidChange:", name: Events.LikeDidChange, object: nil)
-        setScreenName("MessageDetail")        
 	}
 	
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
-		let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.bounds.size.width)
-		self.tableView.bounds.size.width = viewWidth
-		self.messagePhoto.anchorInCenterWithWidth(viewWidth - 24, height: (viewWidth - 24) * 0.75)
+		self.activity.anchorInCenterWithWidth(24, height: 24)
+		
+		if let message = self.inputMessage {
+			
+			self.contentHolder.hidden = false
+			self.patchGroup.hidden = true
+			self.toolbarGroup.hidden = true
+			self.shareGroup.hidden = true
+			self.description_?.hidden = true
+			self.photo.hidden = true
+			
+			let viewWidth = min(CONTENT_WIDTH_MAX, self.view.bounds.size.width)
+			let contentWidth = CGFloat(viewWidth - 32)
+			
+			self.view.bounds.size.width = viewWidth
+			self.contentHolder.bounds.size.width = viewWidth
+			
+			if self.isShare {
+				self.shareGroup.hidden = false
+				
+				/*---dup ---*/
+				self.userGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 64)
+				self.userPhoto.anchorCenterLeftWithLeftPadding(16, width: self.userPhoto.width(), height: self.userPhoto.height())
+				self.userName.bounds.size.width = self.userGroup.width() - (32 + self.userPhoto.width() + 8)
+				self.userName.sizeToFit()
+				self.userName.alignToTheRightOf(self.userPhoto, matchingCenterWithLeftPadding: 8, width: self.userName.width(), height: self.userName.height())
+				
+				self.messageGroup.alignUnder(self.userGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 0)
+				
+				if message.description_ != nil && !message.description_.isEmpty {
+					self.description_.hidden = false
+					self.description_.bounds.size.width = contentWidth
+					self.description_.sizeToFit()
+					self.description_.anchorTopLeftWithLeftPadding(16, topPadding: 0, width: self.description_.width(), height: self.description_.height())
+					self.createdDate.sizeToFit()
+					self.createdDate.alignUnder(self.description_, centeredFillingWidthWithLeftAndRightPadding: 16, topPadding: 16, height: self.createdDate.height())
+				}
+				else {
+					self.createdDate.sizeToFit()
+					self.createdDate.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 0, height: self.createdDate.height())
+				}
+				
+				self.messageGroup.resizeToFitSubviews()
+				
+				/*---dup ---*/
+				
+				self.shareGroup.alignUnder(self.messageGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 100)
+				
+				if message.patch != nil {
+					self.shareFrame.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 12, height: 128)
+					self.patchView!.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 128)
+				}
+				else if message.message != nil {
+					self.shareFrame.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 12, height: self.messageView!.height() + 8)
+					self.messageView!.anchorTopCenterFillingWidthWithLeftAndRightPadding(12, topPadding: 8, height: self.messageView!.height())
+				}
+				else {
+					self.shareFrame.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 12, height:128)
+					self.emptyView!.fillSuperview()
+				}
+				
+				self.recipientsLabel.sizeToFit()
+				self.recipients.bounds.size.width = contentWidth - self.recipientsLabel.width() + 4
+				self.recipients.sizeToFit()
+				self.recipientsLabel.alignUnder(self.shareFrame, matchingLeftWithTopPadding: 12, width: self.recipientsLabel.width() + 4, height: self.recipientsLabel.height())
+				self.recipients.alignToTheRightOf(self.recipientsLabel, matchingTopWithLeftPadding: 8, width: self.recipients.width(), height: self.recipients.height())
+				
+				self.shareGroup.resizeToFitSubviews()
+			}
+			else {
+				self.toolbarGroup.hidden = false
+				
+				if message.patch != nil {
+					self.patchGroup.hidden = false
+					self.patchGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 48)
+					let photoWidth = self.patchGroup.height() * 1.7777
+					self.patchName.bounds.size.width = viewWidth - photoWidth - 24
+					self.patchName.sizeToFit()
+					self.patchPhoto.anchorCenterRightWithRightPadding(0, width: photoWidth, height: self.patchGroup.height())
+					self.patchName.anchorCenterLeftWithLeftPadding(16, width: self.patchName.width(), height: self.patchName.height())
+					self.userGroup.alignUnder(self.patchGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 64)
+				}
+				else {
+					self.userGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 64)
+				}
+				
+				self.userPhoto.anchorCenterLeftWithLeftPadding(16, width: self.userPhoto.width(), height: self.userPhoto.height())
+				self.userName.bounds.size.width = self.userGroup.width() - (32 + self.userPhoto.width() + 8)
+				self.userName.sizeToFit()
+				self.userName.alignToTheRightOf(self.userPhoto, matchingCenterWithLeftPadding: 8, width: self.userName.width(), height: self.userName.height())
+				
+				self.messageGroup.alignUnder(self.userGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 600)
+				
+				if message.description_ != nil && !message.description_.isEmpty {
+					self.description_.hidden = false
+					self.description_.bounds.size.width = contentWidth
+					self.description_.sizeToFit()
+					self.description_.anchorTopLeftWithLeftPadding(16, topPadding: 0, width: self.description_.width(), height: self.description_.height())
+					self.createdDate.sizeToFit()
+					self.createdDate.alignUnder(self.description_, centeredFillingWidthWithLeftAndRightPadding: 16, topPadding: 8, height: self.createdDate.height())
+				}
+				else {
+					self.createdDate.sizeToFit()
+					self.createdDate.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 0, height: self.createdDate.height())
+				}
+				
+				if message.photo != nil {
+					self.photo.hidden = false
+					let photoHeight = contentWidth * 0.75
+					self.photo.alignUnder(self.createdDate, matchingLeftAndFillingWidthWithRightPadding: 16, topPadding: 8, height: photoHeight)
+				}
+				
+				self.messageGroup.resizeToFitSubviews()
+				
+				self.toolbarGroup.alignUnder(self.messageGroup, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 0, height: 48)
+				self.likeButton.anchorCenterLeftWithLeftPadding(16, width: self.likeButton.width(), height: self.likeButton.height())
+				self.reportButton.sizeToFit()
+				self.reportButton.anchorCenterRightWithRightPadding(16, width: self.reportButton.width(), height: self.reportButton.height())
+				self.likesButton.sizeToFit()
+				self.likesButton.anchorInCenterWithWidth(self.likesButton.width(), height: self.likesButton.height())
+			}
+			
+			self.contentHolder.resizeToFitSubviews()
+			self.scrollView.contentSize = CGSizeMake(self.contentHolder.frame.size.width, self.contentHolder.frame.size.height)
+			self.scrollView.fillSuperview()
+			self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: self.contentHolder.height())
+		}
 	}
 	
 	override func viewDidAppear(animated: Bool) {
@@ -149,49 +252,10 @@ class MessageDetailViewController: UITableViewController {
 	
     override func viewDidDisappear(animated: Bool) {
 		super.viewDidDisappear(animated)
-		self.activity?.stopAnimating()
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+		self.activity.stopAnimating()
+		NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.LikeDidChange, object: nil)
     }
 
-	private func refresh(force: Bool = false) {
-        
-        if (self.inputMessage == nil) {
-			self.activity?.startAnimating()
-        }
-		
-		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
-			
-			let blockCriteria = (self.inputMessage != nil
-				&& self.inputMessage!.type != nil
-				&& self.inputMessage!.type == "share"
-				&& (self.inputMessage!.message == nil && self.inputMessage!.patch == nil)
-				&& !self.inputMessage!.decoratedValue)
-			
-			DataController.instance.withMessageId(self.inputMessageId!, refresh: force, blockCriteria: blockCriteria) {
-				[weak self] objectId, error in
-				
-				if self != nil {
-					NSOperationQueue.mainQueue().addOperationWithBlock {
-						self?.activity?.stopAnimating()
-						if error == nil {
-							if objectId == nil {
-								Shared.Toast("Message has been deleted")
-								Utils.delay(2.0) {
-									self?.navigationController?.popViewControllerAnimated(true)
-								}
-							}
-							else {
-								self?.inputMessage = DataController.instance.mainContext.objectWithID(objectId!) as? Message
-								self?.drawNavButtons(false)
-								self?.draw()	// TODO: Can skip if no change in activityDate and modifiedDate
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	
     deinit {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
@@ -199,16 +263,15 @@ class MessageDetailViewController: UITableViewController {
 	/*--------------------------------------------------------------------------------------------
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
+	
 
-	@IBAction func patchAction(sender: AnyObject) {
-        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-        if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
-            controller.entityId = self.inputMessage!.patch.entityId
-            self.navigationController?.pushViewController(controller, animated: true)
-        }
+	func patchAction(sender: AnyObject) {
+		let controller = PatchDetailViewController()
+		controller.entityId = self.inputMessage!.patch.entityId
+		self.navigationController?.pushViewController(controller, animated: true)
 	}
 
-	@IBAction func userAction(sender: AnyObject) {
+	func userAction(sender: AnyObject) {
 		let controller = UserDetailViewController()
 		if let creator = inputMessage!.creator {
 			controller.entityId = creator.entityId
@@ -217,16 +280,33 @@ class MessageDetailViewController: UITableViewController {
 		}
 	}
 
-	@IBAction func photoAction(sender: AnyObject) {
-        let browser = Shared.showPhotoBrowser(self.messagePhoto.imageForState(.Normal), animateFromView: sender as! UIView, viewController: self, entity: self.inputMessage)
+	func photoAction(sender: AnyObject) {
+        let browser = Shared.showPhotoBrowser(self.photo.imageForState(.Normal), animateFromView: sender as! UIView, viewController: self, entity: self.inputMessage)
         browser.target = self
 	}
 
-	@IBAction func reportAction(sender: AnyObject) {
-		Alert("Not implemented")
+	func reportAction(sender: AnyObject) {
+		
+		let email = "report@3meters.com"
+		let subject = "Report on Patchr content"
+		
+		if MFMailComposeViewController.canSendMail() {
+			let composeViewController = MFMailComposeViewController()
+			composeViewController.mailComposeDelegate = self
+			composeViewController.setToRecipients([email])
+			composeViewController.setSubject(subject)
+			self.presentViewController(composeViewController, animated: true, completion: nil)
+		}
+		else {
+			var emailURL = "mailto:\(email)"
+			emailURL = emailURL.stringByAddingPercentEncodingWithAllowedCharacters(NSMutableCharacterSet.URLQueryAllowedCharacterSet()) ?? emailURL
+			if let url = NSURL(string: emailURL) {
+				UIApplication.sharedApplication().openURL(url)
+			}
+		}
 	}
-    
-	@IBAction func likesAction(sender: AnyObject) {
+	
+	func likesAction(sender: AnyObject) {
 		let controller = UserTableViewController()
 		controller.message = self.inputMessage
 		controller.filter = .MessageLikers
@@ -234,22 +314,18 @@ class MessageDetailViewController: UITableViewController {
 	}
 
     func shareBrowseAction(sender: AnyObject){
-		if let view = sender as? UIView {
-			view.backgroundColor = Theme.colorBackgroundWindow
+		if let button = sender as? AirButton {
+			button.borderColor = Theme.colorButtonBorder
 		}
         if self.inputMessage?.message != nil {
-            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-            if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
-                controller.inputMessageId = self.inputMessage!.message!.entityId
-                self.navigationController?.pushViewController(controller, animated: true)
-            }
+			let controller = MessageDetailViewController()
+			controller.inputMessageId = self.inputMessage!.message!.entityId
+			self.navigationController?.pushViewController(controller, animated: true)
         }
         else if self.inputMessage?.patch != nil {
-            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-            if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
-                controller.entityId = self.inputMessage!.patch!.entityId
-                self.navigationController?.pushViewController(controller, animated: true)
-            }
+			let controller = PatchDetailViewController()
+            controller.entityId = self.inputMessage!.patch!.entityId
+            self.navigationController?.pushViewController(controller, animated: true)
         }
     }
     
@@ -300,125 +376,164 @@ class MessageDetailViewController: UITableViewController {
                 }
         }
     }
+	
+	func buttonTouchDownAction(sender: AnyObject) {
+		if let button = sender as? AirButton {
+			button.borderColor = Colors.brandColor
+		}
+	}
     
     func dismissAction(sender: AnyObject) {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     
     func likeDidChange(sender: NSNotification) {
-        self.draw()
+        self.bind()
     }
 
 	/*--------------------------------------------------------------------------------------------
 	* Methods
 	*--------------------------------------------------------------------------------------------*/
-
-	func draw() {
+	
+	override func initialize() {
+		super.initialize()
+		
+		setScreenName("MessageDetail")
+		
+		let fullScreenRect = UIScreen.mainScreen().applicationFrame
+		self.scrollView.frame = fullScreenRect
+		self.scrollView.backgroundColor = Theme.colorBackgroundForm
+		
+		self.patchGroup.addSubview(self.patchName)
+		self.patchGroup.addSubview(self.patchPhoto)
+		self.userGroup.addSubview(self.userPhoto)
+		self.userGroup.addSubview(self.userName)
+		self.messageGroup.addSubview(self.createdDate)
+		self.messageGroup.addSubview(self.photo)
+		self.toolbarGroup.addSubview(self.likeButton)
+		self.toolbarGroup.addSubview(self.likesButton)
+		self.toolbarGroup.addSubview(self.reportButton)
+		self.shareGroup.addSubview(self.shareFrame)
+		self.shareGroup.addSubview(self.recipientsLabel)
+		self.shareGroup.addSubview(self.recipients)
+		self.contentHolder.addSubview(self.patchGroup)
+		self.contentHolder.addSubview(self.userGroup)
+		self.contentHolder.addSubview(self.messageGroup)
+		self.contentHolder.addSubview(self.toolbarGroup)
+		self.contentHolder.addSubview(self.shareGroup)
+		self.contentHolder.hidden = true
+		self.scrollView.addSubview(self.contentHolder)
+		self.view.addSubview(self.scrollView)
+		
+		/* Ui tweaks */
+		self.view.window?.backgroundColor = Theme.colorBackgroundWindow
+		self.activity.tintColor = Theme.colorActivityIndicator
+		self.view.addSubview(self.activity)
+		
+		self.patchGroup.rule.backgroundColor = Colors.gray90pcntColor
+		self.patchPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
+		
+		self.userName.titleLabel!.font = Theme.fontHeading
+		self.patchName.titleLabel?.font = Theme.fontTextDisplay
+		
+		self.userPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
+		self.userPhoto.cornerRadius = 24
+		self.userPhoto.bounds.size = CGSizeMake(48, 48)
+		self.userPhoto.clipsToBounds = true
+		
+		self.createdDate.textColor = Theme.colorTextSecondary
+		
+		self.photo.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
+		self.photo.contentMode = .ScaleAspectFill
+		self.photo.contentVerticalAlignment = .Fill
+		self.photo.contentHorizontalAlignment = .Fill
+		self.photo.sizeCategory = SizeCategory.standard
+		
+		self.toolbarGroup.rule.backgroundColor = Colors.gray90pcntColor
+		
+		self.likesButton.imageView?.tintColor = Theme.colorTint
+		self.likeButton.bounds.size = CGSizeMake(24, 20)
+		
+		self.reportButton.setTitle("Report", forState: .Normal)
+		self.reportButton.addTarget(self, action: Selector("reportAction:"), forControlEvents: UIControlEvents.TouchUpInside)
+		self.likesButton.addTarget(self, action: Selector("likesAction:"), forControlEvents: UIControlEvents.TouchUpInside)
+		self.userName.addTarget(self, action: Selector("userAction:"), forControlEvents: UIControlEvents.TouchUpInside)
+		self.patchName.addTarget(self, action: Selector("patchAction:"), forControlEvents: UIControlEvents.TouchUpInside)
+		self.patchPhoto.addTarget(self, action: Selector("patchAction:"), forControlEvents: UIControlEvents.TouchUpInside)
+		self.photo.addTarget(self, action: Selector("photoAction:"), forControlEvents: UIControlEvents.TouchUpInside)
+		
+		self.recipients.textColor = Theme.colorTextTitle
+		self.recipientsLabel.text = "To:"
+		self.recipientsLabel.textColor = Theme.colorTextSecondary
+		
+	}
+	
+	func bind() {
+		
+		if (self.inputMessage == nil) {
+			self.activity.startAnimating()
+		}
 		
         if self.isShare {
 			
-            self.recipientsCell.hidden = false
-            self.shareHolderCell.hidden = false
-			
-			self.recipients.textColor = Theme.colorTextTitle
-			
-            /* Share entity */
-			
-			let holderView = UIView()
-			holderView.clipsToBounds = true
-			holderView.borderColor = Theme.colorButtonBorder
-			holderView.borderWidth = 1
-			holderView.cornerRadius = 6
-			
-			if self.shareHolderCell.contentView.subviews.count == 0 {
-				if self.inputMessage?.message != nil {
-					
-					var cellType: CellType = .TextAndPhoto
-					if self.inputMessage!.message!.photo == nil {
-						cellType = .Text
-					}
-					else if self.inputMessage!.message!.description_ == nil {
-						cellType = .Photo
-					}
-					
-					let shareView = MessageView(cellType: cellType)
-					
-					shareView.bindToEntity(self.inputMessage!.message!)
-					
-					holderView.addSubview(shareView)
-					self.shareHolderCell.contentView.addSubview(holderView)
-					self.shareHolderCell.contentView.frame.size.width = self.tableView.frame.size.width
-					
-					/* Need correct width before layout and sizing */
-					holderView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
-					shareView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 12, bottomPadding: 12)
-					
-					shareView.setNeedsLayout()
-					shareView.layoutIfNeeded()
-					shareView.sizeToFit()
-					
-					/* Row height not set until reloadData called below */
-					self.shareHolderCell.contentView.frame.size.height = shareView.bounds.size.height + 24
-					holderView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
+			if self.inputMessage!.message != nil {
+				
+				var cellType: CellType = .TextAndPhoto
+				if self.inputMessage!.message!.photo == nil {
+					cellType = .Text
+				}
+				else if self.inputMessage!.message!.description_ == nil {
+					cellType = .Photo
+				}
+				
+				self.messageView = MessageView(cellType: cellType, entity: self.inputMessage!.message!)
+				
+				/* Resize once here because sizing in viewWillLayoutSubviews causes recursion */
+				let viewWidth = min(CONTENT_WIDTH_MAX, self.view.bounds.size.width)
+				let contentWidth = CGFloat(viewWidth - 32)
+				self.messageView!.bounds.size.width = contentWidth - 24
+				self.messageView!.sizeToFit()
+				self.messageView?.clipsToBounds = false
+				self.shareFrame.addSubview(self.messageView!)
+				self.shareFrame.addTarget(self, action: Selector("shareBrowseAction:"), forControlEvents: UIControlEvents.TouchUpInside)
+				self.shareFrame.addTarget(self, action: Selector("buttonTouchDownAction:"), forControlEvents: UIControlEvents.TouchDown)
+				UIView.disableAllSubviewsOf(self.shareFrame)
+			}
+			else if self.inputMessage!.patch != nil {
+				
+				self.patchView = PatchView()
+				self.patchView!.bindToEntity(self.inputMessage!.patch!, location: nil)
+				self.patchView!.shadow.hidden = true
+				self.shareFrame.addSubview(self.patchView!)
+				self.shareFrame.addTarget(self, action: Selector("shareBrowseAction:"), forControlEvents: UIControlEvents.TouchUpInside)
+				self.shareFrame.addTarget(self, action: Selector("buttonTouchDownAction:"), forControlEvents: UIControlEvents.TouchDown)
+				UIView.disableAllSubviewsOf(self.shareFrame)
+			}
+			else {
+				/*
+				 * The target of the share message has been deleted'
+				 */
+				self.emptyView = AirLabelDisplay()
+				self.emptyView!.text = "Deleted"
+				self.emptyView!.textAlignment = .Center
+				self.emptyView!.textColor = Colors.white
+				self.shareFrame.borderColor = Theme.colorBackgroundWindow
+				self.shareFrame.backgroundColor = Theme.colorBackgroundWindow
+				self.shareFrame.addSubview(self.emptyView!)
+			}
 
-					let tap = UITapGestureRecognizer(target: self, action: "shareBrowseAction:");
-					shareView.addGestureRecognizer(tap)
+			self.recipients.text = ""
+			if self.inputMessage?.recipients != nil {
+				for recipient in self.inputMessage!.recipients as! Set<Shortcut> {
+					self.recipients.text!.appendContentsOf("\(recipient.name), ")
 				}
-				else if self.inputMessage?.patch != nil {
-					
-					let shareView = PatchView()
-					
-					shareView.borderColor = Theme.colorButtonBorder
-					shareView.borderWidth = 1
-					shareView.cornerRadius = 6
-					shareView.shadow.hidden = true
-					
-					shareView.bindToEntity(self.inputMessage!.patch!, location: nil)
-					
-					self.shareHolderCell.contentView.addSubview(shareView)
-					self.shareHolderCell.contentView.frame.size.height = 128
-					self.shareHolderCell.contentView.frame.size.width = self.tableView.frame.size.width
-					shareView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
-					
-					let tap = UITapGestureRecognizer(target: self, action: "shareBrowseAction:");
-					shareView.addGestureRecognizer(tap)
-				}
-				else {
-					/*
-					 * The target of the share message has been deleted'
-					 */
-					let shareView = AirLabel()
-					shareView.text = "Deleted"
-					shareView.textAlignment = .Center
-					shareView.textColor = Colors.white
-					
-					holderView.borderColor = Theme.colorBackgroundWindow
-					holderView.backgroundColor = Theme.colorBackgroundWindow
-					holderView.addSubview(shareView)
-					self.shareHolderCell.contentView.addSubview(holderView)
-					
-					self.shareHolderCell.contentView.frame.size.height = 144
-					self.shareHolderCell.contentView.frame.size.width = self.tableView.frame.size.width
-					
-					holderView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 0, bottomPadding: 0)
-					shareView.fillSuperviewWithLeftPadding(12, rightPadding: 12, topPadding: 12, bottomPadding: 12)
-				}
-
-				self.recipients.text = ""
-				if self.inputMessage?.recipients != nil {
-					for recipient in self.inputMessage!.recipients as! Set<Shortcut> {
-						self.recipients.text!.appendContentsOf("\(recipient.name), ")
-					}
-					self.recipients.text = String(self.recipients.text!.characters.dropLast(2))
-				}
+				self.recipients.text = String(self.recipients.text!.characters.dropLast(2))
 			}
         }
         else {
-            self.toolbarCell.hidden = false
-            
+			
             /* Patch */
             if self.inputMessage!.patch != nil {
-                self.patchCell.hidden = false
                 self.patchPhoto.setImageWithPhoto(self.inputMessage!.patch.getPhotoManaged())
                 self.patchName.setTitle(self.inputMessage!.patch.name, forState: .Normal)
             }
@@ -427,24 +542,28 @@ class MessageDetailViewController: UITableViewController {
 		/* Message */
 
 		self.createdDate.text = Utils.messageDateFormatter.stringFromDate(self.inputMessage!.createdDate)
+		
 		if self.inputMessage!.description_ != nil {
+			if self.description_ == nil {
+				self.description_ = TTTAttributedLabel(frame: CGRectZero)
+				self.description_.numberOfLines = 0
+				self.description_.font = Theme.fontTextDisplay
+				self.description_.linkAttributes = [kCTForegroundColorAttributeName : Theme.colorTint]
+				self.description_.activeLinkAttributes = [kCTForegroundColorAttributeName : Theme.colorTint]
+				self.description_.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue
+				self.description_.delegate = self
+				self.messageGroup.addSubview(self.description_)
+			}
 			self.description_.text = self.inputMessage!.description_
 			self.description_.sizeToFit()
-			self.description_.hidden = false
 		}
         
         /* Photo */
 
 		if inputMessage!.photo != nil {
-			self.messagePhoto.hidden = false
-            if !self.messagePhoto.linkedToPhoto(self.inputMessage!.photo) {
-                self.messagePhoto.setImageWithPhoto(self.inputMessage!.photo)
+            if !self.photo.linkedToPhoto(self.inputMessage!.photo) {
+                self.photo.setImageWithPhoto(self.inputMessage!.photo)
             }
-		}
-		else {
-			self.messagePhoto.hidden = true
-			self.messagePhoto.frame.size.height = 0
-			self.messagePhoto.sizeToFit()
 		}
 
 		/* Like button */
@@ -467,7 +586,7 @@ class MessageDetailViewController: UITableViewController {
 				likesButton.fadeIn()
 			}
 		}
-
+		
 		/* User */
 
 		if let creator = self.inputMessage!.creator {
@@ -478,8 +597,8 @@ class MessageDetailViewController: UITableViewController {
 			self.userName.setTitle("Deleted", forState: .Normal)
             self.userPhoto.setImageWithPhoto(Entity.getDefaultPhoto("user", id: nil))
 		}
-
-		self.tableView.reloadData()
+		
+		self.view.setNeedsLayout()
 	}
 
 	func drawNavButtons(animated: Bool = false) {
@@ -500,6 +619,47 @@ class MessageDetailViewController: UITableViewController {
 		}
 		else {
 			self.navigationItem.setRightBarButtonItems([shareButton], animated: animated)
+		}
+	}
+	
+	func refresh(force: Bool = false) {
+		
+		if (self.inputMessage == nil) {
+			self.activity.startAnimating()
+		}
+		
+		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
+			
+			let blockCriteria = (self.inputMessage != nil
+				&& self.inputMessage!.type != nil
+				&& self.inputMessage!.type == "share"
+				&& (self.inputMessage!.message == nil && self.inputMessage!.patch == nil)
+				&& !self.inputMessage!.decoratedValue)
+			
+			let messageId = (self.inputMessage?.id_ ?? self.inputMessageId!)!
+			
+			DataController.instance.withMessageId(messageId, refresh: force, blockCriteria: blockCriteria) {
+				[weak self] objectId, error in
+				
+				if self != nil {
+					NSOperationQueue.mainQueue().addOperationWithBlock {
+						self?.activity.stopAnimating()
+						if error == nil {
+							if objectId == nil {
+								Shared.Toast("Message has been deleted")
+								Utils.delay(2.0) {
+									self?.navigationController?.popViewControllerAnimated(true)
+								}
+							}
+							else {
+								self?.inputMessage = DataController.instance.mainContext.objectWithID(objectId!) as? Message
+								self?.drawNavButtons(false)
+								self?.bind()	// TODO: Can skip if no change in activityDate and modifiedDate
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 	
@@ -549,7 +709,7 @@ class MessageDetailViewController: UITableViewController {
 			let navController = UINavigationController()
 			controller.inputShareEntity = self.inputMessage
 			controller.inputShareSchema = Schema.ENTITY_MESSAGE
-			controller.inputShareId = self.inputMessageId!
+			controller.inputShareId = self.inputMessage?.id_ ?? self.inputMessageId!
 			controller.inputMessageType = .Share
 			controller.inputState = .Sharing
 			navController.viewControllers = [controller]
@@ -583,52 +743,6 @@ class MessageDetailViewController: UITableViewController {
     }
 }
 
-extension MessageDetailViewController {
-    /*
-    * UITableViewDelegate
-    */
-	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        
-        if let message = self.inputMessage {
-            if indexPath.row == 2 {
-                return (message.description_ == nil)
-                    ? CGFloat(0)
-                    : CGFloat(self.description_.frame.origin.y * 2 + self.description_.frame.size.height)
-            }
-            else if indexPath.row == 4 {
-                
-                /* Size so photo aspect ratio is 4:3 */
-                var height: CGFloat = 0
-				let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.bounds.size.width)
-                if message.photo != nil {
-                    height = (viewWidth - 24) * 0.75
-                }
-                return height
-            }
-            
-            if message.type != nil && message.type == "share" {
-                if indexPath.row == 0 {
-                    return 0
-                }
-                else if indexPath.row == 5 {
-                    return 0
-                }
-                else if indexPath.row == 6 {
-                    if message.message != nil {
-						return self.shareHolderCell.contentView.bounds.size.height	// Sized in draw()
-                    }
-                    return 143
-                }
-				else if indexPath.row == 7 {	// Recipients
-                    return 48
-                }
-            }
-        }
-        
-        return super.tableView(tableView, heightForRowAtIndexPath: indexPath)
-	}
-}
-
 extension MessageDetailViewController: UIActionSheetDelegate {
     
     func actionSheet(actionSheet: UIActionSheet, clickedButtonAtIndex buttonIndex: Int) {
@@ -654,6 +768,13 @@ extension MessageDetailViewController: TTTAttributedLabelDelegate {
     func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
         UIApplication.sharedApplication().openURL(url)
     }
+}
+
+extension MessageDetailViewController: MFMailComposeViewControllerDelegate {
+	
+	func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
+		self.dismissViewControllerAnimated(true, completion: nil)
+	}
 }
 
 class MessageItem: NSObject, UIActivityItemSource {

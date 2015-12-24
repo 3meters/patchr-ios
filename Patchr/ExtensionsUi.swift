@@ -107,22 +107,19 @@ extension UIView {
 		
 		self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, w, h)
 	}
-}
-
-extension UIImageView {
-    
-    func tintColor(color: UIColor) {
-        assert(self.image != nil, "Image must be set before calling tintColor")
-        /*
-        * Required because xcode IB doesn't handle template mode correctly for ios7
-        * http://stackoverflow.com/questions/25997993/how-to-use-template-rendering-mode-in-xcode-6-interface-builder
-        */
-        if IOS7 {
-            let templateImage: UIImage = self.image!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
-            self.image = templateImage
-        }
-        self.tintColor = color
-    }
+	
+	class func disableRecursivelyAllSubviews(view: UIView) {
+		view.userInteractionEnabled = false
+		for subview in view.subviews {
+			self.disableRecursivelyAllSubviews(subview)
+		}
+	}
+	
+	class func disableAllSubviewsOf(view: UIView) {
+		for subview in view.subviews {
+			self.disableRecursivelyAllSubviews(subview)
+		}
+	}
 }
 
 extension UIWindow {

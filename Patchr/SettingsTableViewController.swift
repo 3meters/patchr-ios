@@ -13,53 +13,29 @@ class SettingsTableViewController: UITableViewController {
 	
 	var progress: AirProgress?
 
-    @IBOutlet weak var notificationsCell: UITableViewCell!
-    @IBOutlet weak var sendFeedbackCell: UITableViewCell!
-    @IBOutlet weak var rateCell: UITableViewCell!
-    @IBOutlet weak var termsOfServiceCell: UITableViewCell!
-    @IBOutlet weak var privacyPolicyCell: UITableViewCell!
-    @IBOutlet weak var softwareLicensesCell: UITableViewCell!
-    @IBOutlet weak var developmentCell: UITableViewCell!
+    var notificationsCell		= AirTableViewCell()
+    var sendFeedbackCell		= AirTableViewCell()
+    var rateCell				= AirTableViewCell()
+    var termsOfServiceCell		= AirTableViewCell()
+    var privacyPolicyCell		= AirTableViewCell()
+    var softwareLicensesCell	= AirTableViewCell()
+    var developmentCell			= AirTableViewCell()
+	var logoutCell				= AirTableViewCell()
+	var clearHistoryCell		= AirTableViewCell()
+	var buildInfoCell			= AirTableViewCell()
 
-    @IBOutlet weak var buildInformationLabel: UILabel!
-	@IBOutlet weak var logoutButton: AirButtonLink!
-	@IBOutlet weak var clearHistoryButton: AirButtonLink!
+    var buildInfoLabel			= AirLabelDisplay()
+	var logoutButton			= AirLinkButton()
+	var clearHistoryButton		= AirLinkButton()
 	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        let components = NSCalendar.currentCalendar().components([.Year, .Month, .Day], fromDate: NSDate())
-        self.buildInformationLabel.text = "©\(components.year) 3meters LLC\nVersion \(appVersion()) (\(build()))"
-		self.buildInformationLabel.textColor = Theme.colorTextTitle
-		self.buildInformationLabel.font = Theme.fontTextDisplay
-        
-        if let user = UserController.instance.currentUser {
-            if user.developerValue {
-                developmentCell.hidden = false
-				developmentCell.frame.size.height = 0
-            }
-        }
-        
-        self.notificationsCell.textLabel!.font = Theme.fontTextDisplay
-        self.sendFeedbackCell.textLabel!.font = Theme.fontTextDisplay
-        self.rateCell.textLabel!.font = Theme.fontTextDisplay
-        self.termsOfServiceCell.textLabel!.font = Theme.fontTextDisplay
-        self.privacyPolicyCell.textLabel!.font = Theme.fontTextDisplay
-        self.softwareLicensesCell.textLabel!.font = Theme.fontTextDisplay
-        self.developmentCell.textLabel!.font = Theme.fontTextDisplay
-		
-		self.logoutButton.addTarget(self, action: Selector("logoutAction:"), forControlEvents: .TouchUpInside)
-		self.clearHistoryButton.addTarget(self, action: Selector("clearHistoryAction:"), forControlEvents: .TouchUpInside)
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        setScreenName("Settings")
-    }
+	
+	override func loadView() {
+		super.loadView()
+		initialize()
+	}
 	
 	/*--------------------------------------------------------------------------------------------
 	* Events
@@ -69,7 +45,7 @@ class SettingsTableViewController: UITableViewController {
 		super.viewWillLayoutSubviews()
 		self.logoutButton.fillSuperview()
 		self.clearHistoryButton.fillSuperview()
-		self.buildInformationLabel.fillSuperview()
+		self.buildInfoLabel.fillSuperview()
 	}
 	
 	func logoutAction(sender: AnyObject) {
@@ -104,6 +80,56 @@ class SettingsTableViewController: UITableViewController {
     * Methods
     *--------------------------------------------------------------------------------------------*/
 	
+	func initialize() {
+		
+		setScreenName("Settings")
+		
+		self.navigationItem.title = "Settings"
+		
+		self.tableView = UITableView(frame: self.tableView.frame, style: .Grouped)
+		self.tableView.rowHeight = 48
+		self.tableView.tableFooterView = UIView()
+		self.tableView.backgroundColor = Colors.gray95pcntColor
+		self.tableView.sectionFooterHeight = 0
+		
+		self.clearHistoryCell.contentView.addSubview(self.clearHistoryButton)
+		self.logoutCell.contentView.addSubview(self.logoutButton)
+		self.buildInfoCell.contentView.addSubview(self.buildInfoLabel)
+		self.clearHistoryCell.accessoryType = .None
+		self.logoutCell.accessoryType = .None
+		self.buildInfoCell.accessoryType = .None
+
+		let components = NSCalendar.currentCalendar().components([.Year, .Month, .Day], fromDate: NSDate())
+		self.buildInfoLabel.text = "©\(components.year) 3meters LLC\nVersion \(appVersion()) (\(build()))"
+		self.buildInfoLabel.textColor = Theme.colorTextTitle
+		self.buildInfoLabel.font = Theme.fontTextDisplay
+		self.buildInfoLabel.numberOfLines = 2
+		self.buildInfoLabel.textAlignment = .Center
+		self.buildInfoCell.userInteractionEnabled = false
+		
+		if let user = UserController.instance.currentUser {
+			if user.developerValue {
+				developmentCell.hidden = false
+				developmentCell.frame.size.height = 0
+			}
+		}
+		
+		self.notificationsCell.textLabel!.text = "Notifications"
+		self.sendFeedbackCell.textLabel!.text = "Send feedback"
+		self.rateCell.textLabel!.text = "Rate Patchr"
+		self.termsOfServiceCell.textLabel!.text = "Terms of Service"
+		self.privacyPolicyCell.textLabel!.text = "Privacy Policy"
+		self.softwareLicensesCell.textLabel!.text = "Software Licenses"
+		self.developmentCell.textLabel!.text = "Developer"
+		
+		self.clearHistoryButton.setTitle("Clear search history".uppercaseString, forState: .Normal)
+		self.logoutButton.setTitle("Log out".uppercaseString, forState: .Normal)
+		
+		self.logoutButton.addTarget(self, action: Selector("logoutAction:"), forControlEvents: .TouchUpInside)
+		self.clearHistoryButton.addTarget(self, action: Selector("clearHistoryAction:"), forControlEvents: .TouchUpInside)
+		
+	}
+	
     func appVersion() -> String {
         return NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleShortVersionString") as? String ?? "Unknown"
     }
@@ -129,10 +155,8 @@ extension SettingsTableViewController {
         let selectedCell = tableView.cellForRowAtIndexPath(indexPath)
         
         if selectedCell == self.notificationsCell {
-            let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-            if let controller = storyboard.instantiateViewControllerWithIdentifier("NotificationSettingsViewController") as? NotificationSettingsViewController {
-                self.navigationController?.pushViewController(controller, animated: true)
-            }
+			let controller = NotificationSettingsViewController()
+            self.navigationController?.pushViewController(controller, animated: true)
         }
         else if selectedCell == self.sendFeedbackCell {
             let email = "feedback@3meters.com"
@@ -143,7 +167,8 @@ extension SettingsTableViewController {
                 composeViewController.setToRecipients([email])
                 composeViewController.setSubject(subject)
                 self.presentViewController(composeViewController, animated: true, completion: nil)
-            } else {
+            }
+			else {
                 var emailURL = "mailto:\(email)"
                 emailURL = emailURL.stringByAddingPercentEncodingWithAllowedCharacters(NSMutableCharacterSet.URLQueryAllowedCharacterSet()) ?? emailURL
                 if let url = NSURL(string: emailURL) {
@@ -153,11 +178,11 @@ extension SettingsTableViewController {
             }
         }
         else if selectedCell == self.rateCell {
-            let appStoreURL = "itms-apps://itunes.apple.com/us/app/apple-store/id\(APPLE_APP_ID)"
-            self.tableView.deselectRowAtIndexPath(indexPath, animated: true)
+            let appStoreURL = "itms-apps://itunes.apple.com/app/id\(APPLE_APP_ID)"
             if let url = NSURL(string: appStoreURL) {
                 UIApplication.sharedApplication().openURL(url)
             }
+			self.tableView.deselectRowAtIndexPath(indexPath, animated: true)
         }
         else if selectedCell == self.termsOfServiceCell {
             let termsURLString = "http://patchr.com/terms"
@@ -172,10 +197,8 @@ extension SettingsTableViewController {
             self.pushWebViewController(NSURL(string: softwareLicensesURLString))
         }
         else if selectedCell == self.developmentCell {
-            let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-            if let controller = storyboard.instantiateViewControllerWithIdentifier("DevelopmentViewController") as? DevelopmentViewController {
-                self.navigationController?.pushViewController(controller, animated: true)
-            }
+			let controller = DevelopmentViewController()
+            self.navigationController?.pushViewController(controller, animated: true)
         }
     }
 	
@@ -193,6 +216,55 @@ extension SettingsTableViewController {
 			return CGFloat(64)
 		}
 		return CGFloat(44)
+	}
+	
+	override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+		switch(indexPath.section) {
+			case 0:
+				switch(indexPath.row) {
+					case 0: return self.notificationsCell
+					case 1: return self.sendFeedbackCell
+					case 2: return self.rateCell
+					case 3: return self.termsOfServiceCell
+					case 4: return self.privacyPolicyCell
+					case 5: return self.softwareLicensesCell
+					case 6: return self.developmentCell
+					default: fatalError("Unknown row in section 1")
+				}
+			case 1:
+				switch(indexPath.row) {
+					case 0: return self.clearHistoryCell
+					case 1: return self.logoutCell
+					default: fatalError("Unknown row in section 2")
+				}
+			case 2:
+				switch(indexPath.row) {
+					case 0: return self.buildInfoCell
+					default: fatalError("Unknown row in section 3")
+				}
+			default: fatalError("Unknown section")
+		}
+	}
+	
+	override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+		return section == 0 ?  "General".uppercaseString : nil
+	}
+	
+	override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+		return section == 0 ? 48 : 24
+	}
+
+	override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+		return 3
+	}
+	
+	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		switch(section) {
+			case 0: return 7
+			case 1: return 2
+			case 2: return 1
+			default: fatalError("Unknown number of sections")
+		}
 	}
 }
 

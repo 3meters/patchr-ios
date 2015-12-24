@@ -33,6 +33,17 @@ class MessageView: BaseView {
 		initialize()
 	}
 	
+	init(cellType: CellType?, entity: Entity? = nil) {
+		super.init(frame: CGRectZero)
+		if cellType != nil {
+			self.cellType = cellType!
+		}
+		initialize()
+		if entity != nil {
+			bindToEntity(entity!)
+		}		
+	}
+	
 	override init(frame: CGRect) {
 		/* Called when instantiated from code */
 		super.init(frame: frame)
@@ -52,7 +63,6 @@ class MessageView: BaseView {
 		/* Description */
 		if self.cellType != .Photo {
 			self.description_ = TTTAttributedLabel(frame: CGRectZero)
-			self.description_!.translatesAutoresizingMaskIntoConstraints = true
 			self.description_!.numberOfLines = 5
 			self.description_!.font = Theme.fontTextList
 			self.addSubview(self.description_!)
@@ -84,7 +94,7 @@ class MessageView: BaseView {
 		
 		/* Header */
 		self.userName.lineBreakMode = .ByTruncatingMiddle
-		self.userName.font = Theme.fontHeading4
+		self.userName.font = Theme.fontTextBold
 		
 		self.createdDate.font = Theme.fontComment
 		self.createdDate.textColor = Theme.colorTextSecondary
@@ -105,7 +115,7 @@ class MessageView: BaseView {
 			self.addSubview(self.recipients)
 		}
 		else {
-			self.likeButton.imageView!.tintColor(Theme.colorTint)
+			self.likeButton.imageView!.tintColor = Theme.colorTint
 			self.likeButton.bounds.size = CGSizeMake(24, 20)
 
 			self.likes.font = Theme.fontComment

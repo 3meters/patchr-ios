@@ -32,13 +32,13 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
     /*--------------------------------------------------------------------------------------------
     * MARK:- Lifecycle
     *--------------------------------------------------------------------------------------------*/
-    
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
         /* Hookup refresh control */
 		self.refreshControl = UIRefreshControl()
-        self.refreshControl!.tintColor = Theme.colorTint
+        self.refreshControl!.tintColor = Theme.colorActivityIndicator
 		self.refreshControl?.addTarget(self, action: "pullToRefreshAction:", forControlEvents: UIControlEvents.ValueChanged)
 		
 		/* Simple activity indicator (frame sizing) */
@@ -381,39 +381,39 @@ extension BaseTableViewController {
 	/*
 	 * Cells
 	 */
-	func makeCell(cellType: CellType = .TextAndPhoto) -> AirTableViewCell {
+	func makeCell(cellType: CellType = .TextAndPhoto) -> WrapperTableViewCell {
 		/*
 		* Only implementation. Called externally to measure variable row heights.
 		*/
 		if self.listType == .Notifications {
 			let view = NotificationView(cellType: cellType)
-			let cell = AirTableViewCell(view: view, padding: UIEdgeInsetsMake(12, 12, 12, 12), reuseIdentifier: cellType.rawValue)
+			let cell = WrapperTableViewCell(view: view, padding: UIEdgeInsetsMake(12, 12, 12, 12), reuseIdentifier: cellType.rawValue)
 			return cell
 		}
 		else if self.listType == .Messages {
-			let view = MessageView(cellType: cellType)
-			let cell = AirTableViewCell(view: view, padding: UIEdgeInsetsMake(12, 12, 12, 12), reuseIdentifier: cellType.rawValue)
+			let view = MessageView(cellType: cellType, entity: nil)
+			let cell = WrapperTableViewCell(view: view, padding: UIEdgeInsetsMake(12, 12, 12, 12), reuseIdentifier: cellType.rawValue)
 			return cell
 		}
 		else if self.listType == .Patches {
 			let view = PatchView()
 			view.cornerRadius = 6
-			let cell = AirTableViewCell(view: view, padding: UIEdgeInsetsMake(8, 8, 0, 8), reuseIdentifier: cellType.rawValue)
+			let cell = WrapperTableViewCell(view: view, padding: UIEdgeInsetsMake(8, 8, 0, 8), reuseIdentifier: cellType.rawValue)
 			cell.separator.backgroundColor = Colors.clear
 			cell.backgroundColor = Theme.colorBackgroundTileList
 			return cell
 		}
 		else if self.listType == .Users {
 			let view = UserView()
-			let cell = AirTableViewCell(view: view, padding: UIEdgeInsetsMake(8, 8, 8, 8), reuseIdentifier: cellType.rawValue)
+			let cell = WrapperTableViewCell(view: view, padding: UIEdgeInsetsMake(8, 8, 8, 8), reuseIdentifier: cellType.rawValue)
 			return cell
 		}
 		else {
-			return AirTableViewCell(view: UIView(), padding: UIEdgeInsetsZero, reuseIdentifier: cellType.rawValue)
+			return WrapperTableViewCell(view: UIView(), padding: UIEdgeInsetsZero, reuseIdentifier: cellType.rawValue)
 		}
 	}
 	
-	func bindCell(cell: AirTableViewCell, entity: AnyObject, location: CLLocation?) -> UIView? {
+	func bindCell(cell: WrapperTableViewCell, entity: AnyObject, location: CLLocation?) -> UIView? {
 		
 		if self.listType == .Notifications {
 			let notificationView = cell.view! as! NotificationView
@@ -484,7 +484,7 @@ extension BaseTableViewController {
 			}
 		}
 		
-		var cell = self.tableView.dequeueReusableCellWithIdentifier(cellType.rawValue) as! AirTableViewCell?
+		var cell = self.tableView.dequeueReusableCellWithIdentifier(cellType.rawValue) as! WrapperTableViewCell?
 		
 		if cell == nil {
 			cell = makeCell(cellType)

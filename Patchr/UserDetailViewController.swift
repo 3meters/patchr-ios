@@ -26,48 +26,26 @@ class UserDetailViewController: BaseDetailViewController {
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
 	 *--------------------------------------------------------------------------------------------*/
-
-	override func viewDidLoad() {
-		self.queryName = DataStoreQueryName.MessagesByUser.rawValue
-		
-		if UserController.instance.authenticated {
-			super.viewDidLoad()
-		}
-		
-		self.header = UserDetailView()
-		self.tableView.tableHeaderView = self.header	// Triggers table binding
-		self.progressOffsetY = 40
-		
-		if self.profileMode {
-			if self.isCurrentUser {
-				let editImage = Utils.imageEdit
-				let editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionEdit"))
-				let settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("actionSettings"))
-				self.navigationItem.rightBarButtonItems = [settingsButton, Utils.spacer, editButton]
-				self.navigationItem.title = "Me"
-			}
-		}
-	}
 	
+	override func loadView() {
+		/*
+		* Inputs are already available.
+		*/
+		super.loadView()
+		initialize()
+	}
+
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
-		setScreenName(self.profileMode ? "UserProfile" : "UserDetail")
+		bind(true)
 	}
     
-    override func viewDidAppear(animated: Bool){
-		super.viewDidAppear(animated)
-		bind(true)
-    }
-	
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
 		self.progress?.hide(true)
 	}
 
 	override func viewDidDisappear(animated: Bool) {
-		/*
-		* Called when switching between patch view controllers.
-		*/
 		self.activity.stopAnimating()
 	}
 
@@ -75,22 +53,21 @@ class UserDetailViewController: BaseDetailViewController {
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
 
-	func actionBrowseWatching(sender: AnyObject?) {
-		
+	func browseWatchingAction(sender: AnyObject?) {
 		let controller = PatchTableViewController()
 		controller.filter = .Watching
 		controller.user = self.entity as! User
 		self.navigationController?.pushViewController(controller, animated: true)
 	}
 
-	func actionBrowseOwned(sender: AnyObject?) {
+	func browseOwnedAction(sender: AnyObject?) {
 		let controller = PatchTableViewController()
 		controller.filter = .Owns
 		controller.user = self.entity as! User
 		self.navigationController?.pushViewController(controller, animated: true)
 	}
 
-	func actionEdit() {		
+	func editAction() {
 		let controller = ProfileEditViewController()
 		let navController = UINavigationController()
 		controller.inputUser = self.entity as? User
@@ -98,26 +75,45 @@ class UserDetailViewController: BaseDetailViewController {
 		self.navigationController?.presentViewController(navController, animated: true, completion: nil)
 	}
 
-	func actionSettings() {
-        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-        if let controller = storyboard.instantiateViewControllerWithIdentifier("SettingsTableViewController") as? SettingsTableViewController {
-            self.navigationController?.pushViewController(controller, animated: true)
-        }
+	func settingsAction() {
+		let controller = SettingsTableViewController()
+        self.navigationController?.pushViewController(controller, animated: true)
 	}
 
 	/*--------------------------------------------------------------------------------------------
 	 * Methods
 	 *--------------------------------------------------------------------------------------------*/
 	
+	func initialize() {
+		
+		setScreenName(self.profileMode ? "UserProfile" : "UserDetail")
+		
+		self.queryName = DataStoreQueryName.MessagesByUser.rawValue
+		
+		self.tableView = AirTableView(frame: self.tableView.frame, style: .Plain)
+		self.header = UserDetailView()
+		self.header.watchingButton.addTarget(self, action: Selector("browseWatchingAction:"), forControlEvents: UIControlEvents.TouchUpInside)
+		self.header.ownsButton.addTarget(self, action: Selector("browseOwnedAction:"), forControlEvents: UIControlEvents.TouchUpInside)
+		self.progressOffsetY = 40
+		
+		if self.profileMode {
+			if self.isCurrentUser {
+				let editImage = Utils.imageEdit
+				let editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
+				let settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("settingsAction"))
+				self.navigationItem.rightBarButtonItems = [settingsButton, Utils.spacer, editButton]
+				self.navigationItem.title = "Me"
+			}
+		}		
+	}
+	
 	override func draw() {
-		if let entity = self.entity as? User {
-			self.header.bindToEntity(entity, isGuest: self.isGuest)
-			self.header.watchingInfo.addTarget(self, action: Selector("actionBrowseWatching:"), forControlEvents: UIControlEvents.TouchUpInside)
-			self.header.ownsInfo.addTarget(self, action: Selector("actionBrowseOwned:"), forControlEvents: UIControlEvents.TouchUpInside)
+		if let user = self.entity as? User {
+			self.header.bindToEntity(user)
+			self.tableView.tableHeaderView = self.header	// Triggers table binding
 			self.tableView.reloadData()
 			return
 		}
-		self.header.bindToEntity(nil, isGuest: self.isGuest)
 	}
 }
 

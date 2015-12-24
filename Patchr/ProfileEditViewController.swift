@@ -35,8 +35,8 @@ class ProfileEditViewController: BaseViewController {
 	var emailField           = AirTextField()
 	var areaField            = AirTextField()
 	var changePasswordButton = AirButton()
-	var joinButton           = AirButtonFeatured()
-	var termsButton          = AirButtonLink()
+	var joinButton           = AirFeaturedButton()
+	var termsButton          = AirLinkButton()
 	var comment				 = AirLabel()
 	var message				 = AirLabelTitle()
 	
@@ -48,7 +48,7 @@ class ProfileEditViewController: BaseViewController {
 	var facebookOffGroup	 = UIView()
 	var facebookButton		 = AirButton()
 	var facebookName		 = AirLabel()
-	var facebookDisconnect	 = AirButtonLink()
+	var facebookDisconnect	 = AirLinkButton()
 	var facebookPhoto		 = AirImageView(frame: CGRectZero)
 	
 	var progress			 : AirProgress?
@@ -282,7 +282,7 @@ class ProfileEditViewController: BaseViewController {
 		
 		let fullScreenRect = UIScreen.mainScreen().applicationFrame
 		self.scrollView.frame = fullScreenRect
-		self.scrollView.backgroundColor = Theme.colorBackgroundScreen
+		self.scrollView.backgroundColor = Theme.colorBackgroundForm
 		
 		self.view = self.scrollView
 		

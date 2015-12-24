@@ -15,7 +15,7 @@ class LobbyViewController: BaseViewController {
 	var imageLogo		= AirImageView(frame: CGRectZero)
 	var buttonLogin		= AirButton()
 	var buttonSignup	= AirButton()
-	var buttonGuest		= AirButtonLink()
+	var buttonGuest		= AirLinkButton()
 	var buttonGroup		= UIView()
 	
     /*--------------------------------------------------------------------------------------------

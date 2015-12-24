@@ -33,20 +33,20 @@ class PatchEditViewController: BaseViewController {
 	
 	var locationGroup		 = AirRuleView()
 	var locationLabel		 = AirLabelDisplay()
-	var locationAddress		 = AirButtonLink()
+	var locationAddress		 = AirLinkButton()
 	var locationValue		 : CLLocation? = nil
 	
-	var doneButton           = AirButtonFeatured()
+	var doneButton           = AirFeaturedButton()
 	var message				 = AirLabelTitle()
 	var scrollView			 = AirScrollView()
 	var contentHolder		 = UIView()
 	
 	var typeGroup			 = UIView()
 	var typeLabel			 = AirLabelDisplay()
-	var typeButtonGroup		 = AirButtonRadio()
-	var typeButtonPlace		 = AirButtonRadio()
-	var typeButtonEvent		 = AirButtonRadio()
-	var typeButtonProject	 = AirButtonRadio()
+	var typeButtonGroup		 = AirRadioButton()
+	var typeButtonPlace		 = AirRadioButton()
+	var typeButtonEvent		 = AirRadioButton()
+	var typeButtonProject	 = AirRadioButton()
 	
 	var typeValue			 : String? = nil
 	var visibilityValue		 = "public"
@@ -170,11 +170,9 @@ class PatchEditViewController: BaseViewController {
 	}
 	
 	func locationAction(sender: AnyObject) {
-		let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-		if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchMapViewController") as? PatchMapViewController {
-			controller.locationDelegate = self
-			self.navigationController?.pushViewController(controller, animated: true)
-		}
+		let controller = PatchMapViewController()
+		controller.locationDelegate = self
+		self.navigationController?.pushViewController(controller, animated: true)
 	}
 	
 	func deleteAction(sender: AnyObject) {
@@ -199,7 +197,7 @@ class PatchEditViewController: BaseViewController {
 	}
 	
 	func typeSelected(sender: AnyObject) {
-		if let button = sender as? AirButtonRadio {
+		if let button = sender as? AirRadioButton {
 			if button == self.typeButtonEvent {
 				self.typeValue = "event"
 			}
@@ -226,7 +224,7 @@ class PatchEditViewController: BaseViewController {
 		
 		let fullScreenRect = UIScreen.mainScreen().applicationFrame
 		self.scrollView.frame = fullScreenRect
-		self.scrollView.backgroundColor = Theme.colorBackgroundScreen
+		self.scrollView.backgroundColor = Theme.colorBackgroundForm
 		self.scrollView.addSubview(self.contentHolder)
 		self.view = self.scrollView
 		

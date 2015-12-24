@@ -140,7 +140,7 @@ class LocationController: NSObject {
                 message = "Background location accepted ***: lat: \(lat), lng: \(lng), acc: \(loc.horizontalAccuracy)m, age: \(howRecent)s, moved: \(moved)m"
             }
             
-            if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("devModeEnabled")) {
+            if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("enableDevModeAction")) {
                 Shared.Toast(message)
                 AudioController.instance.play(Sound.pop.rawValue)
             }
@@ -206,7 +206,7 @@ extension LocationController: CLLocationManagerDelegate {
             let locationLast: CLLocation? = self._lastLocationAccepted
             let age = abs(trunc(location.timestamp.timeIntervalSinceNow * 100) / 100)
             
-            if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("devModeEnabled")) {
+            if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("enableDevModeAction")) {
                 let lat = trunc(location.coordinate.latitude * 100) / 100
                 let lng = trunc(location.coordinate.longitude * 100) / 100
                 

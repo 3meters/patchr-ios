@@ -44,10 +44,10 @@ public class Proxibase {
 	
 	required public init() {
 
-		var serverURI = NSUserDefaults.standardUserDefaults().stringForKey(PatchrUserDefaultKey("serverURI"))
+		var serverURI = NSUserDefaults.standardUserDefaults().stringForKey(PatchrUserDefaultKey("serverUri"))
 		if serverURI == nil {
 			serverURI = ProductionURI
-			NSUserDefaults.standardUserDefaults().setObject(serverURI, forKey: PatchrUserDefaultKey("serverURI"))
+			NSUserDefaults.standardUserDefaults().setObject(serverURI, forKey: PatchrUserDefaultKey("serverUri"))
 			NSUserDefaults.standardUserDefaults().synchronize()
 		}
 

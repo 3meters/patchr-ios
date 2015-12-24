@@ -32,6 +32,7 @@ class NotificationsTableViewController: BaseTableViewController {
         self.emptyMessage = "No notifications yet"
 		self.loadMoreMessage = "LOAD MORE NOTIFICATIONS"
 		self.listType = .Notifications
+		self.navigationItem.title = "Notifications"
 		
 		super.viewDidLoad()
 		
@@ -193,18 +194,15 @@ class NotificationsTableViewController: BaseTableViewController {
                             /* Knock off one because the user will be view one */
                             decrementBadges()
                             
-                            let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
                             if targetId!.hasPrefix("pa.") {
-                                if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
-                                    controller.entityId = targetId
-                                    self.navigationController?.pushViewController(controller, animated: true)
-                                }
+								let controller = PatchDetailViewController()
+                                controller.entityId = targetId
+                                self.navigationController?.pushViewController(controller, animated: true)
                             }
                             else if targetId!.hasPrefix("me.") {
-                                if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
-                                    controller.inputMessageId = targetId
-                                    self.navigationController?.pushViewController(controller, animated: true)
-                                }
+								let controller = MessageDetailViewController()
+								controller.inputMessageId = targetId
+								self.navigationController?.pushViewController(controller, animated: true)
                             }
                         
                         case .Background:   // Shouldn't ever fire
@@ -284,25 +282,17 @@ class NotificationsTableViewController: BaseTableViewController {
     }
     
     func showViewControllerBySchema(schema: String, targetId: String) {
-        var controllerId: String?
         if schema == "patch" {
-            controllerId = "PatchDetailViewController"
+			let controller = PatchDetailViewController()
+			controller.entityId = targetId
+			controller.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: Selector("dismissAction:"))
+			UIViewController.topMostViewController()?.presentViewController(UINavigationController(rootViewController: controller), animated: true, completion: nil)
         }
         else if schema == "message" {
-            controllerId = "MessageDetailViewController"
-        }
-        
-        if controllerId != nil {
-            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-            let controller = storyboard.instantiateViewControllerWithIdentifier(controllerId!)
-            if let patchController = controller as? PatchDetailViewController {
-                patchController.entityId = targetId
-            }
-            else if let messageController = controller as? MessageDetailViewController {
-                messageController.inputMessageId = targetId
-            }
-            controller.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: Selector("dismissAction:"))
-            UIViewController.topMostViewController()?.presentViewController(UINavigationController(rootViewController: controller), animated: true, completion: nil)
+			let controller = MessageDetailViewController()
+			controller.inputMessageId = targetId
+			controller.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: Selector("dismissAction:"))
+			UIViewController.topMostViewController()?.presentViewController(UINavigationController(rootViewController: controller), animated: true, completion: nil)
         }
     }
     
@@ -387,7 +377,7 @@ extension NotificationsTableViewController {
 	/*
 	 * Cells
 	 */
-	override func bindCell(cell: AirTableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
+	override func bindCell(cell: WrapperTableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
 		
 		if let view = super.bindCell(cell, entity: object, location: location) as? NotificationView {
 			view.description_?.delegate = self
@@ -400,20 +390,17 @@ extension NotificationsTableViewController {
      */
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 		
-		let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
 		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
 			let entity = queryResult.object as? Notification {
 				if entity.targetId!.hasPrefix("pa.") {
-					if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
-						controller.entityId = entity.targetId
-						self.navigationController?.pushViewController(controller, animated: true)
-					}
+					let controller = PatchDetailViewController()
+					controller.entityId = entity.targetId
+					self.navigationController?.pushViewController(controller, animated: true)
 				}
 				else if entity.targetId!.hasPrefix("me.") {
-					if let controller = storyboard.instantiateViewControllerWithIdentifier("MessageDetailViewController") as? MessageDetailViewController {
-						controller.inputMessageId = entity.targetId
-						self.navigationController?.pushViewController(controller, animated: true)
-					}
+					let controller = MessageDetailViewController()
+					controller.inputMessageId = entity.targetId
+					self.navigationController?.pushViewController(controller, animated: true)
 				}
 		}
 	}

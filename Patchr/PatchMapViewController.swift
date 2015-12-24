@@ -9,7 +9,7 @@
 import Foundation
 import MapKit
 
-@objc protocol MapViewDelegate: NSObjectProtocol {
+@objc protocol MapViewDelegate: NSObjectProtocol, UIGestureRecognizerDelegate {
 	
     optional var locationTitle: String? { get }
     optional var locationSubtitle: String? { get }
@@ -24,29 +24,16 @@ class PatchMapViewController: UIViewController {
 	weak var locationDelegate: MapViewDelegate!	// Set by calling controller
     var annotation: EntityAnnotation!
     
-    @IBOutlet weak var mapView: MKMapView!
+	var mapView: MKMapView!
     
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        self.mapView.delegate = self
-        self.mapView.showsUserLocation = true
-        
-        let currentRegion = MKCoordinateRegionMakeWithDistance(self.locationDelegate.locationForMap()!.coordinate, 2000, 2000)
-        self.mapView.setRegion(currentRegion, animated: false)
-		
-        self.annotation = EntityAnnotation(
-            coordinate: self.locationDelegate.locationForMap()!.coordinate,
-            title: self.locationDelegate.locationTitle ?? nil,
-            subtitle: self.locationDelegate.locationSubtitle ?? nil)
-        
-		self.mapView.addAnnotation(self.annotation)
-        setScreenName("PatchMap")
-    }
+	
+	override func loadView() {
+		super.loadView()
+		initialize()
+	}
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
@@ -58,24 +45,55 @@ class PatchMapViewController: UIViewController {
 		self.mapView.delegate = nil
 		self.mapView.removeFromSuperview()
 		self.mapView = nil
-        Log.d("-- deinit PatchMapVC")
     }
     
     /*--------------------------------------------------------------------------------------------
     * Events
     *--------------------------------------------------------------------------------------------*/
+	
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		self.mapView.fillSuperview()
+	}
     
-    @IBAction func longPress(gr: UILongPressGestureRecognizer) {
+    func longPress(gesture: UILongPressGestureRecognizer) {
         if self.locationDelegate.locationEditable() {
-            if gr.state == .Began {
-                let coordinate = mapView.convertPoint(gr.locationInView(mapView), toCoordinateFromView: mapView)
-                mapView.removeAnnotation(self.annotation)
-                self.locationDelegate?.locationChangedTo(CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)) // Passes to calling controller via delegate
+            if gesture.state == .Began {
+                let coordinate = self.mapView?.convertPoint(gesture.locationInView(mapView), toCoordinateFromView: self.mapView)
+                self.mapView!.removeAnnotation(self.annotation)
+                self.locationDelegate?.locationChangedTo(CLLocation(latitude: coordinate!.latitude, longitude: coordinate!.longitude)) // Passes to calling controller via delegate
                 self.annotation.coordinate = self.locationDelegate.locationForMap()!.coordinate
-                mapView.addAnnotation(self.annotation)
+                self.mapView!.addAnnotation(self.annotation)
             }
         }
     }
+	
+	/*--------------------------------------------------------------------------------------------
+	* Methods
+	*--------------------------------------------------------------------------------------------*/
+	
+	func initialize() {
+		setScreenName("PatchMap")
+		
+		self.mapView = MKMapView()
+		self.mapView.delegate = self
+		self.mapView.showsUserLocation = true
+		self.mapView.mapType = .Standard
+		
+		let currentRegion = MKCoordinateRegionMakeWithDistance(self.locationDelegate.locationForMap()!.coordinate, 2000, 2000)
+		self.mapView.setRegion(currentRegion, animated: false)
+		
+		self.annotation = EntityAnnotation(
+			coordinate: self.locationDelegate.locationForMap()!.coordinate,
+			title: self.locationDelegate.locationTitle ?? nil,
+			subtitle: self.locationDelegate.locationSubtitle ?? nil)
+		
+		let press = UILongPressGestureRecognizer(target: self, action: "longPress:");
+		self.view.addGestureRecognizer(press)
+		
+		self.mapView.addAnnotation(self.annotation)
+		self.view.addSubview(self.mapView)
+	}
 }
 
 extension PatchMapViewController: MKMapViewDelegate {

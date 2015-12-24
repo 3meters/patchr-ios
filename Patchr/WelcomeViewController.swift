@@ -24,7 +24,7 @@ class WelcomeViewController: BaseViewController {
 	var delegate: InviteWelcomeProtocol? = nil
 	
 	var message      	= AirLabelTitle()
-	var joinButton   	= AirButtonFeatured()
+	var joinButton   	= AirFeaturedButton()
 	var loginButton		= AirButton()
 	var signupButton 	= AirButton()
 	var cancelButton	= AirButton()

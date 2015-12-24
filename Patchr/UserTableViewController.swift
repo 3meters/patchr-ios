@@ -135,7 +135,7 @@ extension UserTableViewController {
 	/*
 	 * Cells
 	 */
-	override func bindCell(cell: AirTableViewCell, entity: AnyObject, location: CLLocation?) -> UIView? {
+	override func bindCell(cell: WrapperTableViewCell, entity: AnyObject, location: CLLocation?) -> UIView? {
 		
 		if let view = super.bindCell(cell, entity: entity, location: location) as? UserView {
 			

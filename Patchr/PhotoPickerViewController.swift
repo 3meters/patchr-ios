@@ -70,7 +70,7 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 		super.viewDidLoad()
         
         self.collectionView!.registerNib(UINib(nibName: "ThumbnailCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: reuseIdentifier)
-		self.collectionView?.backgroundColor = Theme.colorBackgroundScreen
+		self.collectionView?.backgroundColor = Theme.colorBackgroundForm
 		if let layout = self.collectionViewLayout as? UICollectionViewFlowLayout {
 			layout.minimumLineSpacing = 4
 			layout.minimumInteritemSpacing = 4

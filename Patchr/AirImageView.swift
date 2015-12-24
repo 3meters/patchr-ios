@@ -11,7 +11,33 @@ import UIKit
 class AirImageView: UIImageView {
 
     var activity: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
-	var showGradient: Bool = false
+	
+	var showGradient: Bool = false {
+		didSet {
+			if showGradient {
+				if self.gradient == nil {
+					self.gradient = CAGradientLayer()
+					let startColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.2))  // Bottom
+					let endColor:   UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0))    // Top
+					self.gradient!.colors = [endColor.CGColor, startColor.CGColor]
+					self.gradient!.startPoint = CGPoint(x: 0.5, y: 0.5)
+					self.gradient!.endPoint = CGPoint(x: 0.5, y: 1)
+					self.gradient!.zPosition = 1
+					self.gradient!.shouldRasterize = true
+					self.gradient!.rasterizationScale = UIScreen.mainScreen().scale
+				}
+			
+				self.layer.addSublayer(self.gradient!)
+				self.gradient!.frame = CGRectMake(0, 0, self.bounds.size.width + 10, self.bounds.size.height + 10)
+			}
+			else {
+				if self.gradient != nil {
+					self.gradient?.removeFromSuperlayer()
+				}
+			}
+		}
+	}
+	
     var gradient: CAGradientLayer?
     var linkedPhotoUrl: NSURL?
     var sizeCategory: String = SizeCategory.thumbnail
@@ -52,6 +78,11 @@ class AirImageView: UIImageView {
 			}
 			
 			self.gradient!.frame = CGRectMake(0, 0, self.bounds.size.width + 10, self.bounds.size.height + 10)
+		}
+		else {
+			if self.gradient != nil {
+				self.gradient?.removeFromSuperlayer()
+			}
 		}
 	}
 

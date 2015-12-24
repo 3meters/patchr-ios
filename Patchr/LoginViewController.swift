@@ -17,8 +17,8 @@ class LoginViewController: BaseViewController {
 
     var emailField				= AirTextField()
     var passwordField			= AirTextField()
-	var forgotPasswordButton	= AirButtonLink()
-	var doneButton				= AirButtonFeatured()
+	var forgotPasswordButton	= AirLinkButton()
+	var doneButton				= AirFeaturedButton()
 	var message					= AirLabelTitle()
 
 	var scrollView			 = AirScrollView()
@@ -125,7 +125,7 @@ class LoginViewController: BaseViewController {
 		
 		let fullScreenRect = UIScreen.mainScreen().applicationFrame
 		self.scrollView.frame = fullScreenRect
-		self.scrollView.backgroundColor = Theme.colorBackgroundScreen
+		self.scrollView.backgroundColor = Theme.colorBackgroundForm
 		self.scrollView.addSubview(self.contentHolder)
 		self.view = self.scrollView
 		

@@ -25,12 +25,8 @@ class AirTableView: UITableView {
 		initialize()
 	}
 	
-	func initialize() {	/* Stub */ }
-	
-	override func scrollRectToVisible(rect: CGRect, animated: Bool) {
-		// UIScrollView responds strangely when a textfield becomes first responder
-		// http://stackoverflow.com/a/12640831/2247399
-		return
+	func initialize() {
+		self.delaysContentTouches = false
 	}
 	
 	override func scrollToNearestSelectedRowAtScrollPosition(scrollPosition: UITableViewScrollPosition, animated: Bool) {
@@ -40,5 +36,8 @@ class AirTableView: UITableView {
 	override func scrollToRowAtIndexPath(indexPath: NSIndexPath, atScrollPosition scrollPosition: UITableViewScrollPosition, animated: Bool) {
 		return
 	}
-
+	
+	override func touchesShouldCancelInContentView(view: UIView) -> Bool {
+		return true
+	}
 }

@@ -11,7 +11,7 @@ import UIKit
 class AirLabelTitle: AirLabelBase {
 	
 	override func initialize() {
-		self.font = Theme.fontTitle
+		self.font = Theme.fontTitleLarge
 		self.textColor = Theme.colorTextTitle
 	}
 }

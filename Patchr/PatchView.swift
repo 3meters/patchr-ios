@@ -47,12 +47,12 @@ class PatchView: BaseView {
 		self.photo.contentMode = UIViewContentMode.ScaleAspectFill
 		self.photo.clipsToBounds = true
 		self.photo.userInteractionEnabled = true
-		self.photo.backgroundColor = Theme.colorBackgroundImage
+		self.photo.backgroundColor = Colors.gray80pcntColor
 		self.photo.sizeCategory = SizeCategory.thumbnail
 		self.addSubview(self.photo)
 		
 		/* Patch name */
-		self.name.font = Theme.fontHeading1
+		self.name.font = Theme.fontTitle
 		self.name.numberOfLines = 2
 		self.addSubview(self.name)
 		
@@ -65,7 +65,7 @@ class PatchView: BaseView {
 		self.visibility.image = UIImage(named: "imgLockLight")
 		self.visibility.contentMode = UIViewContentMode.ScaleToFill
 		self.visibility.clipsToBounds = true
-		self.visibility.tintColor(Theme.colorTint)
+		self.visibility.tintColor = Colors.accentColorFill
 		self.addSubview(self.visibility)
 		
 		/* Patch status */
@@ -173,8 +173,16 @@ class PatchView: BaseView {
 			}
 		}
 		
-		self.photo.showGradient = true
-		self.photo.setImageWithPhoto(entity.getPhotoManaged(), animate: false)
+		if let photo = entity.photo {
+			let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
+			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.thumbnail)
+			self.photo.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
+			self.photo.showGradient = true
+		}
+		else {
+			self.photo.image = nil
+			self.photo.showGradient = false
+		}
 		self.setNeedsLayout()
 	}
 	

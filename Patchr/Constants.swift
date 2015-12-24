@@ -22,6 +22,8 @@ let BUNDLE_ID			= "com.3meters.patchr.ios"
 let KEYCHAIN_GROUP		= "7542324V6B.\(BUNDLE_ID)"	// Team id + bundle id
 
 let SCREEN_NARROW				= (UIScreen.mainScreen().bounds.size.width == 320)
+let SCREEN_320					= (UIScreen.mainScreen().bounds.size.width == 320)
+let SCREEN_375					= (UIScreen.mainScreen().bounds.size.width == 375)
 let PIXEL_SCALE: CGFloat		= UIScreen.mainScreen().scale
 let THIRD_PARTY_AUTH_ENABLED	= false
 

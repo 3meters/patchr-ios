@@ -20,14 +20,6 @@ class BaseViewController: UIViewController {
 	* Lifecycle
 	*--------------------------------------------------------------------------------------------*/
 	
-	override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
-		super.init(nibName: nil, bundle: nil)
-	}
-	
-	required init?(coder aDecoder: NSCoder) {
-		fatalError("init(coder:) has not been implemented")
-	}
-
     override func viewDidLoad() {
         super.viewDidLoad()
 		
@@ -50,7 +42,7 @@ class BaseViewController: UIViewController {
 	*--------------------------------------------------------------------------------------------*/
 	
 	func initialize() {
-		self.view.backgroundColor = Theme.colorBackgroundScreen
+		self.view.backgroundColor = Theme.colorBackgroundForm
 	}
 	
 	func dismissKeyboard() {

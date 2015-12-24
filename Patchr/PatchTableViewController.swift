@@ -139,11 +139,9 @@ class PatchTableViewController: BaseTableViewController {
     
     func mapAction(sender: AnyObject?) {
         /* Called from dynamically generated segment controller */
-        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-        if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTableMapViewController") as? PatchTableMapViewController {
-            controller.fetchRequest = self.fetchedResultsController.fetchRequest
-            self.navigationController?.pushViewController(controller, animated: true)
-        }
+		let controller = PatchTableMapViewController()
+        controller.fetchRequest = self.fetchedResultsController.fetchRequest
+        self.navigationController?.pushViewController(controller, animated: true)
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -253,7 +251,7 @@ class PatchTableViewController: BaseTableViewController {
             message = "Location accepted ***: lat: \(lat), lng: \(lng), acc: \(loc.horizontalAccuracy)m, age: \(howRecent)s, moved: \(moved)m"
         }
         
-        if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("devModeEnabled")) {
+        if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("enableDevModeAction")) {
             Shared.Toast(message)
             AudioController.instance.play(Sound.pop.rawValue)
         }
@@ -372,7 +370,7 @@ extension PatchTableViewController {
 	/* 
 	 * Cells
 	 */
-	override func bindCell(cell: AirTableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
+	override func bindCell(cell: WrapperTableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
 		
 		var location = self.location
 		if self.filter == .Nearby || location == nil {
@@ -399,16 +397,16 @@ extension PatchTableViewController {
 	}
 
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
+		
 		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
-            let patch = queryResult.object as? Patch,
-            let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
+			let patch = queryResult.object as? Patch {
+				let controller = PatchDetailViewController()
 				controller.entityId = patch.id_
 				controller.modalPresentationStyle = UIModalPresentationStyle.FullScreen
 				controller.modalTransitionStyle = UIModalTransitionStyle.CoverVertical
 				showViewController(controller, sender: self)
 		}
-        
+		
         /* Cell won't show highlighting when navigating back to table view */
         if let cell = self.tableView.cellForRowAtIndexPath(indexPath) {
             cell.setHighlighted(false, animated: false)

@@ -38,7 +38,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 	var imageUploadRequest	: AWSS3TransferManagerUploadRequest?
 	var entityPostRequest	: NSURLSessionTask?
 	
-	var descriptionDefault: String!
+	var descriptionDefault	: String!
 
 	let contactsSelected	: NSMutableArray = NSMutableArray()
 	var contactModels		: NSMutableArray = NSMutableArray()
@@ -60,7 +60,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 	
 	var messageView			: MessageView?
 	var patchView			: PatchView?
-	var doneButton			= AirButtonFeatured()
+	var doneButton			= AirFeaturedButton()
 	
 	var scrollView			= AirScrollView()
 	var contentHolder		= UIView()
@@ -225,7 +225,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 		
 		let fullScreenRect = UIScreen.mainScreen().applicationFrame
 		self.scrollView.frame = fullScreenRect
-		self.scrollView.backgroundColor = Theme.colorBackgroundScreen
+		self.scrollView.backgroundColor = Theme.colorBackgroundForm
 		
 		self.photoView.photoSchema = Schema.ENTITY_MESSAGE
 		self.photoView.setHostController(self)
@@ -306,7 +306,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 					cellType = .Photo
 				}
 				
-				self.messageView = MessageView(cellType: cellType)
+				self.messageView = MessageView(cellType: cellType, entity: nil)
 				self.contentHolder.addSubview(self.messageView!)
 				
 				self.descriptionField.placeholderLabel.text = "Add a message..."
@@ -387,7 +387,6 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 		else if self.inputState == .Sharing {
 			if self.inputShareSchema == Schema.ENTITY_PATCH {
 				self.patchView!.bindToEntity(self.inputShareEntity!, location: nil)
-
 			}
 			else {
 				self.messageView!.bindToEntity(self.inputShareEntity!)

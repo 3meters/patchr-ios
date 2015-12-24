@@ -11,9 +11,9 @@ import MapKit
 
 class PatchTableMapViewController: UIViewController {
 
-    @IBOutlet weak var mapView: MKMapView!
+	var mapView: MKMapView!
     
-    /* If you modify the properties of the fetchRequest, you need to follow these instructions from 
+    /* If you modify the properties of the fetchRequest, you need to follow these instructions from
 	 * the Apple docs:
      *
      *   Modifying the Fetch Request
@@ -35,51 +35,56 @@ class PatchTableMapViewController: UIViewController {
 	* Lifecycle
 	*--------------------------------------------------------------------------------------------*/
 	
-    override func viewDidLoad() {
-        super.viewDidLoad()
-		
-        self.mapView.delegate = self
-		
-		do {
-			try self.fetchedResultsController.performFetch()
-		}
-		catch {
-			print("Fetch error: \(error)")
-		}
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-		
-        setScreenName("PatchMapList")
-    }
-    
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        
-		self.loadAnnotations()
-		/*
-		 * Does some fancy map math to fit the annotations into the view.
-		 * Only does it on the initial view appearance.
-		 */
-		self.mapView.showAnnotations(self.mapView.annotations, animated: true)
-    }
+	override func loadView() {
+		super.loadView()
+		initialize()
+	}
 	
 	deinit {
 		self.mapView.showsUserLocation = false
 		self.mapView.delegate = nil
 		self.mapView.removeFromSuperview()
 		self.mapView = nil
-		Log.d("-- deinit PatchMapVC")
+	}
+	
+	/*--------------------------------------------------------------------------------------------
+	* Events
+	*--------------------------------------------------------------------------------------------*/
+	
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		self.mapView.fillSuperview()
 	}
 
 	/*--------------------------------------------------------------------------------------------
 	* Methods
 	*--------------------------------------------------------------------------------------------*/
 	
+	func initialize() {
+		setScreenName("PatchMapList")
+		
+		self.mapView = MKMapView()
+		self.mapView.delegate = self
+		self.mapView.showsUserLocation = true
+		self.mapView.mapType = .Standard
+		
+		do {
+			try self.fetchedResultsController.performFetch()
+		}
+		catch { print("Fetch error: \(error)") }
+		
+		self.loadAnnotations()
+		/*
+		* Does some fancy map math to fit the annotations into the view.
+		* Only does it on the initial view appearance.
+		*/
+		self.mapView.showAnnotations(self.mapView.annotations, animated: true)
+		self.view.addSubview(self.mapView)
+	}
+	
     func loadAnnotations() -> Void {
 		
-        self.mapView.removeAnnotations(self.mapView.annotations)
+        self.mapView.removeAnnotations(self.mapView!.annotations)
 		self.location = LocationController.instance.lastLocationFromManager()
 		
         if let fetchedObjects = self.fetchedResultsController.fetchedObjects {
@@ -210,12 +215,10 @@ extension PatchTableMapViewController: MKMapViewDelegate {
     func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         if let entityAnnotation = view.annotation as? EntityAnnotation {
             if let patch = entityAnnotation.entity as? Patch {
-                let storyboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-                if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController {
-                    controller.entity = patch
-					controller.entityId = patch.id_
-                    self.navigationController?.pushViewController(controller, animated: true)
-                }
+				let controller = PatchDetailViewController()
+				controller.entity = patch
+				controller.entityId = patch.id_
+				self.navigationController?.pushViewController(controller, animated: true)
             }
         }
     }

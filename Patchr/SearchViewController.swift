@@ -277,16 +277,15 @@ extension SearchViewController {
 		
         var patchJson: JSON = JSON(self.currentItems[indexPath.row])
         if let patch = patchJson.dictionaryObject {
-            let storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle())
-            let controller = storyboard.instantiateViewControllerWithIdentifier("PatchDetailViewController") as? PatchDetailViewController
+			let controller = PatchDetailViewController()
             if let patchId = patch["id_"] as? String {
-                controller!.entityId = patchId
+                controller.entityId = patchId
             }
             else if let patchId = patch["_id"] as? String {
-                controller!.entityId = patchId
+                controller.entityId = patchId
             }
-            if controller!.entityId != nil {
-                self.navigationController?.pushViewController(controller!, animated: true)
+            if controller.entityId != nil {
+                self.navigationController?.pushViewController(controller, animated: true)
             }
         }
     }

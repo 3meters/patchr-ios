@@ -10,23 +10,17 @@ import UIKit
 
 class UserDetailView: BaseDetailView {
 
-	var name			= AirLabelTitle()
-	var photo			= AirImageView(frame: CGRectZero)
-	var email			= UILabel()
-	var rule			= UIView()
-	var userGroup		= UIView()
-	var favoritesGroup	= UIView()
-	var watchingGroup	= UIView()
-	var ownsGroup		= UIView()
-	var favoritesIcon	= UIImageView()
-	var watchingIcon	= UIImageView()
-	var ownsIcon		= UIImageView()
-	var favoritesInfo	= UIButton()
-	var watchingInfo	= UIButton()
-	var ownsInfo		= UIButton()
-	var favoritesRule	= UIView()
-	var watchingRule	= UIView()
-	var ownsRule		= UIView()
+	var name           = AirLabelTitle()
+	var photo          = AirImageView(frame: CGRectZero)
+	var email          = UILabel()
+	var rule           = UIView()
+	var userGroup      = UIView()
+	var watchingGroup  = AirRuleView()
+	var ownsGroup      = AirRuleView()
+	var watchingIcon   = UIImageView()
+	var ownsIcon       = UIImageView()
+	var watchingButton = AirLinkButton()
+	var ownsButton     = AirLinkButton()
 	
 	init() {
 		super.init(frame: CGRectZero)
@@ -40,15 +34,13 @@ class UserDetailView: BaseDetailView {
 	}
 	
 	required init?(coder aDecoder: NSCoder) {
-		/* Called when instantiated from storyboard or nib */
-		super.init(coder: aDecoder)
-		initialize()
+		fatalError("This view should never be loaded from storyboard")
 	}
 	
 	func initialize() {
 		
 		self.clipsToBounds = true
-		self.backgroundColor = Theme.colorBackgroundScreen
+		self.backgroundColor = Theme.colorBackgroundForm
 		
 		/* User photo */
 		self.photo.contentMode = UIViewContentMode.ScaleAspectFill
@@ -59,7 +51,7 @@ class UserDetailView: BaseDetailView {
 		
 		/* User name */
 		self.name.lineBreakMode = .ByTruncatingMiddle
-		self.name.font = Theme.fontTitle
+		self.name.font = Theme.fontTitleLarge
 		
 		/* User email */
 		self.email.font = Theme.fontTextDisplay
@@ -78,29 +70,26 @@ class UserDetailView: BaseDetailView {
 		self.watchingIcon.image = UIImage(named: "imgWatchLight")
 		self.watchingIcon.alpha = 0.5
 		self.watchingIcon.tintColor = Colors.black
-		self.watchingInfo.setTitleColor(Theme.colorTint, forState: .Normal)
-		self.watchingInfo.titleLabel!.font = Theme.fontHeading3
-		self.watchingInfo.contentHorizontalAlignment = .Left
-		self.watchingRule.backgroundColor = Theme.colorSeparator
+		self.watchingButton.setTitleColor(Theme.colorTint, forState: .Normal)
+		self.watchingButton.titleLabel!.font = Theme.fontHeading
+		self.watchingButton.contentHorizontalAlignment = .Left
 		
 		self.watchingGroup.addSubview(self.watchingIcon)
-		self.watchingGroup.addSubview(self.watchingInfo)
-		self.watchingGroup.addSubview(self.watchingRule)
-		
+		self.watchingGroup.addSubview(self.watchingButton)
+		self.watchingGroup.rule.backgroundColor = Theme.colorSeparator
+
 		/* Owns */
 		self.ownsIcon.image = UIImage(named: "imgEditLight")
 		self.ownsIcon.alpha = 0.5
 		self.ownsIcon.tintColor = Colors.black
-		self.ownsInfo.setTitleColor(Theme.colorTint, forState: .Normal)
-		self.ownsInfo.titleLabel!.font = Theme.fontHeading3
-		self.ownsInfo.contentHorizontalAlignment = .Left
-		self.ownsRule.backgroundColor = Theme.colorSeparator
+		self.ownsButton.setTitleColor(Theme.colorTint, forState: .Normal)
+		self.ownsButton.titleLabel!.font = Theme.fontHeading
+		self.ownsButton.contentHorizontalAlignment = .Left
 		
 		self.ownsGroup.addSubview(self.ownsIcon)
-		self.ownsGroup.addSubview(self.ownsInfo)
-		self.ownsGroup.addSubview(self.ownsRule)
-		
-		//self.addSubview(self.favoritesGroup)
+		self.ownsGroup.addSubview(self.ownsButton)
+		self.ownsGroup.rule.backgroundColor = Theme.colorSeparator
+
 		self.addSubview(self.watchingGroup)
 		self.addSubview(self.ownsGroup)
 	}
@@ -116,42 +105,30 @@ class UserDetailView: BaseDetailView {
 		
 		self.watchingGroup.alignUnder(self.userGroup, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 0, height: 48)
 		self.watchingIcon.anchorCenterLeftWithLeftPadding(24, width: 24, height: 24)
-		self.watchingInfo.alignToTheRightOf(self.watchingIcon, matchingCenterAndFillingWidthWithLeftAndRightPadding: 20, height: 24)
-		self.watchingRule.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 1)
-		
+		self.watchingButton.alignToTheRightOf(self.watchingIcon, matchingCenterAndFillingWidthWithLeftAndRightPadding: 20, height: 24)
+
 		self.ownsGroup.alignUnder(self.watchingGroup, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 0, height: 48)
 		self.ownsIcon.anchorCenterLeftWithLeftPadding(24, width: 24, height: 24)
-		self.ownsInfo.alignToTheRightOf(self.ownsIcon, matchingCenterAndFillingWidthWithLeftAndRightPadding: 20, height: 24)
-		self.ownsRule.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 1)		
+		self.ownsButton.alignToTheRightOf(self.ownsIcon, matchingCenterAndFillingWidthWithLeftAndRightPadding: 20, height: 24)
 	}
 	
-	func bindToEntity(user: User?, isGuest: Bool) {
+	func bindToEntity(entity: Entity!) {
 		
 		self.name.text?.removeAll(keepCapacity: false)
 		self.email.text?.removeAll(keepCapacity: false)
 		
-		if isGuest {
-			self.name.text = "Guest"
-			self.email.text = "discover@3meters.com"
-			self.photo.image = UIImage(named: "imgDefaultUser")
-			self.watchingInfo.setTitle("Watching: --", forState: .Normal)
-			self.ownsInfo.setTitle("Owner: --", forState: .Normal)
-			self.favoritesInfo.setTitle("Favorites: --", forState: .Normal)
-		}
-		else {
-			if let entity = user {
-				self.name.text = entity.name
-				self.email.text = entity.email
-				self.photo.setImageWithPhoto(entity.getPhotoManaged(), animate: false)
-				
-				if entity.patchesWatching != nil {
-					let count = entity.patchesWatchingValue == 0 ? "--" : String(entity.patchesWatchingValue)
-					self.watchingInfo.setTitle("Watching: \(count)", forState: .Normal)
-				}
-				if entity.patchesOwned != nil {
-					let count = entity.patchesOwnedValue == 0 ? "--" : String(entity.patchesOwnedValue)
-					self.ownsInfo.setTitle("Owner: \(count)", forState: .Normal)
-				}
+		if let user = entity as? User {
+			self.name.text = user.name
+			self.email.text = user.email
+			self.photo.setImageWithPhoto(user.getPhotoManaged(), animate: false)
+			
+			if user.patchesWatching != nil {
+				let count = user.patchesWatchingValue == 0 ? "--" : String(user.patchesWatchingValue)
+				self.watchingButton.setTitle("Watching: \(count)", forState: .Normal)
+			}
+			if user.patchesOwned != nil {
+				let count = user.patchesOwnedValue == 0 ? "--" : String(user.patchesOwnedValue)
+				self.ownsButton.setTitle("Owner: \(count)", forState: .Normal)
 			}
 		}
 		self.setNeedsLayout()

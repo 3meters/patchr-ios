@@ -58,22 +58,6 @@ extension UIView {
     }
 }
 
-extension UIImageView {
-    
-    func tintColor(color: UIColor) {
-        assert(self.image != nil, "Image must be set before calling tintColor")
-        /*
-        * Required because xcode IB doesn't handle template mode correctly for ios7
-        * http://stackoverflow.com/questions/25997993/how-to-use-template-rendering-mode-in-xcode-6-interface-builder
-        */
-        if IOS7 {
-            let templateImage: UIImage = self.image!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
-            self.image = templateImage
-        }
-        self.tintColor = color
-    }
-}
-
 enum ErrorActionType: Int {
     case AUTO
     case ALERT
