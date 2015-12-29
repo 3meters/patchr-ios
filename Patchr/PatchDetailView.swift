@@ -11,7 +11,7 @@ import UIKit
 class PatchDetailView: BaseDetailView {
 	
 	var contextAction		: ContextAction = .SharePatch
-	var photoY				= CGFloat(0)
+	var photoRect			: CGRect!
 	var infoVisible			= false
 	
 	var contentGroup		= UIView()
@@ -74,15 +74,18 @@ class PatchDetailView: BaseDetailView {
 	*--------------------------------------------------------------------------------------------*/
 	
 	override func layoutSubviews() {
+		/*
+		 * Scrolling does not cause this to be called.
+		 */
 		super.layoutSubviews()
 		
 		self.infoGroup.hidden = true
 		self.bannerGroup.hidden = false
 		let viewWidth = self.bounds.size.width
+		let viewHeight = viewWidth * 0.625
 		
-		self.contentGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: viewWidth * 0.625) // 16:10
+		self.contentGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: viewHeight) // 16:10
 		self.bannerGroup.fillSuperview()
-		self.photo.frame = CGRectMake(-24, -36, self.bannerGroup.width() + 48, self.bannerGroup.height() + 72)
 		
 		self.buttonGroup.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 48)
 		self.mapButton.anchorCenterLeftFillingHeightWithTopPadding(0, bottomPadding: 0, leftPadding: 0, width: 48)
@@ -284,19 +287,6 @@ class PatchDetailView: BaseDetailView {
 		self.soundButton.alpha = 0.0
 		
 		self.bannerGroup.clipsToBounds = true
-	}
-	
-	func getPhotoOriginalTop() -> CGFloat {
-		return CGFloat(0)
-	}
-	
-	func getPhotoTop() -> CGFloat {
-		return self.photo.bounds.origin.y
-	}
-	
-	func setPhotoTop(top: CGFloat) {
-		self.photoY = top
-		self.photo.bounds.origin.y = top
 	}
 	
 	func bindToEntity(entity: Entity!) {

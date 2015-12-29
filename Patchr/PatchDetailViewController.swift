@@ -12,8 +12,8 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 
     private var contextAction			: ContextAction = .SharePatch
     private var shareButtonFunctionMap	= [Int: ShareButtonFunction]()
-    private var originalTop				= CGFloat(0.0)
-    private var originalScrollTop		= CGFloat(0.0)
+	private var originalRect			: CGRect?
+    private var originalScrollTop		= CGFloat(-64.0)
 	
 	var inputShowInviteWelcome	= false
 	var inputInviterName		: String?
@@ -38,6 +38,10 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		bind(true)
 	}
 	
+	override func viewDidAppear(animated: Bool) {
+		super.viewDidAppear(animated)
+	}
+	
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
 	}
@@ -49,7 +53,8 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		let viewWidth = self.tableView.bounds.size.width
-		self.tableView.tableHeaderView?.frame = CGRectMake(0, 0, viewWidth, (viewWidth * 0.625) + 48)
+		let viewHeight = (viewWidth * 0.625) + 48
+		self.tableView.tableHeaderView?.bounds.size = CGSizeMake(viewWidth, viewHeight)
 	}
 	
     deinit {
@@ -234,7 +239,6 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 
 		/* UI prep */
 		self.patchNameVisible = false
-		self.originalTop = self.header.getPhotoOriginalTop()
 		self.header.contextButton.setTitle("", forState: .Normal)
 		
 		/* Navigation bar buttons */
@@ -317,8 +321,17 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 				}
 			}
 			
-			self.tableView.tableHeaderView = self.header
-			self.tableView.reloadData()
+			if self.tableView.tableHeaderView == nil {
+				let viewWidth = self.tableView.bounds.size.width
+				let viewHeight = (viewWidth * 0.625) + 48
+				self.header.frame = CGRectMake(0, 0, viewWidth, viewHeight)
+				self.header.setNeedsLayout()
+				self.header.layoutIfNeeded()
+				self.header.photo.frame = CGRectMake(-24, -36, self.header.bannerGroup.width() + 48, self.header.bannerGroup.height() + 72)
+				self.originalRect = self.header.photo.frame
+				self.tableView.tableHeaderView = self.header
+				self.tableView.reloadData()
+			}
         }
 	}
 
@@ -475,17 +488,24 @@ extension PatchDetailViewController {
     /*
      * UITableViewDelegate
      */
-    override func scrollViewDidScroll(scrollView: UIScrollView) {
+    override func scrollViewDidScroll(scrollView: UIScrollView) {		
+		
 		/* Parallax effect when user scrolls down */
-//		let offset = scrollView.contentOffset.y
-//		if offset >= originalScrollTop && offset <= 300 {
-//			let movement = originalScrollTop - scrollView.contentOffset.y
-//			let ratio: CGFloat = (movement <= 0) ? 0.50 : 1.0
-//			self.header.setPhotoTop(originalTop + (-(movement) * ratio))
-//		}
-//		else {
-//			self.header.setPhotoTop(originalTop)
-//		}
+		let offset = scrollView.contentOffset.y
+		if offset >= originalScrollTop && offset <= 300 {
+			let movement = originalScrollTop - scrollView.contentOffset.y
+			let ratio: CGFloat = (movement <= 0) ? 0.50 : 1.0
+			self.header.photo.frame.origin.y = self.originalRect!.origin.y + (-(movement) * ratio)
+		}
+		else {
+			let movement = (originalScrollTop - scrollView.contentOffset.y) * 0.25
+			if movement > 0 {
+				self.header.photo.frame.origin.y = self.originalRect!.origin.y - (movement * 0.5)
+				self.header.photo.frame.origin.x = self.originalRect!.origin.x - (movement * 0.5)
+				self.header.photo.frame.size.width = self.originalRect!.size.width + movement
+				self.header.photo.frame.size.height = self.originalRect!.size.height + movement				
+			}
+		}
     }
 }
 

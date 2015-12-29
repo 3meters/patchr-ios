@@ -192,6 +192,7 @@
 		E2F6C9341B1E546F0067D959 /* _Link.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F6C92F1B1E546F0067D959 /* _Link.m */; };
 		E2F85C6C1C302F3400FC2364 /* PatchDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C6B1C302F3400FC2364 /* PatchDetailView.swift */; };
 		E2F85C6E1C31A9EA00FC2364 /* GuestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C6D1C31A9EA00FC2364 /* GuestViewController.swift */; };
+		E2F85C741C31F0D700FC2364 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C731C31F0D700FC2364 /* UIImage+ImageEffects.m */; };
 		E2FB81431B864111006B6690 /* AdobeCreativeSDKCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */; };
 /* End PBXBuildFile section */
 
@@ -452,6 +453,8 @@
 		E2F6C9381B1E924B0067D959 /* PAEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PAEnums.h; path = Model/PAEnums.h; sourceTree = "<group>"; };
 		E2F85C6B1C302F3400FC2364 /* PatchDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PatchDetailView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2F85C6D1C31A9EA00FC2364 /* GuestViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestViewController.swift; sourceTree = "<group>"; };
+		E2F85C721C31F0D700FC2364 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
+		E2F85C731C31F0D700FC2364 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
 		E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKCore.framework; path = Frameworks/AdobeCreativeSDKCore.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -746,6 +749,8 @@
 				7D39D3C31ABA21B200275759 /* CALayer+XibConfiguration.h */,
 				7D39D3C41ABA21B200275759 /* CALayer+XibConfiguration.m */,
 				E2737DC81B8F7EA100C176B1 /* UIImage+Alpha.swift */,
+				E2F85C721C31F0D700FC2364 /* UIImage+ImageEffects.h */,
+				E2F85C731C31F0D700FC2364 /* UIImage+ImageEffects.m */,
 				E2737DC91B8F7EA100C176B1 /* UIImage+RoundedCorner.swift */,
 				E2737DC61B8F7E3B00C176B1 /* UIImage+Resize.swift */,
 				E241D1581B1B3FCE00702E01 /* UIView+BorderLayer.h */,
@@ -1318,6 +1323,7 @@
 				E2C7C5CB1B2CF2F80045038A /* ImageResult.swift in Sources */,
 				E20C3A831BDEBBB9008CCED1 /* CoreDataStack.swift in Sources */,
 				844D6E351AA4D01200EE71ED /* DevelopmentViewController.swift in Sources */,
+				E2F85C741C31F0D700FC2364 /* UIImage+ImageEffects.m in Sources */,
 				7DA7308B1A71ACC9008C25FA /* _Place.m in Sources */,
 				E25327DB1B1625D900990A81 /* GCPlaceholderTextView.m in Sources */,
 				E2F6C9241B1BDD500067D959 /* Shortcut.m in Sources */,
