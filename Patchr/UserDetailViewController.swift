@@ -48,6 +48,11 @@ class UserDetailViewController: BaseDetailViewController {
 	override func viewDidDisappear(animated: Bool) {
 		self.activity.stopAnimating()
 	}
+	
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		self.tableView.tableHeaderView?.bounds.size = CGSizeMake(self.tableView.width(), CGFloat(208))
+	}
 
 	/*--------------------------------------------------------------------------------------------
 	 * Events
@@ -87,32 +92,40 @@ class UserDetailViewController: BaseDetailViewController {
 	func initialize() {
 		
 		setScreenName(self.profileMode ? "UserProfile" : "UserDetail")
-		
 		self.queryName = DataStoreQueryName.MessagesByUser.rawValue
 		
-		self.tableView = AirTableView(frame: self.tableView.frame, style: .Plain)
 		self.header = UserDetailView()
+		self.tableView = AirTableView(frame: self.tableView.frame, style: .Plain)
+		
 		self.header.watchingButton.addTarget(self, action: Selector("browseWatchingAction:"), forControlEvents: UIControlEvents.TouchUpInside)
 		self.header.ownsButton.addTarget(self, action: Selector("browseOwnedAction:"), forControlEvents: UIControlEvents.TouchUpInside)
 		self.progressOffsetY = 40
 		
-		if self.profileMode {
-			if self.isCurrentUser {
-				let editImage = Utils.imageEdit
-				let editButton = UIBarButtonItem(image: editImage, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
-				let settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("settingsAction"))
-				self.navigationItem.rightBarButtonItems = [settingsButton, Utils.spacer, editButton]
-				self.navigationItem.title = "Me"
-			}
-		}		
+		/* Navigation bar buttons */
+		drawButtons()
 	}
 	
 	override func draw() {
 		if let user = self.entity as? User {
 			self.header.bindToEntity(user)
-			self.tableView.tableHeaderView = self.header	// Triggers table binding
-			self.tableView.reloadData()
-			return
+			if self.tableView.tableHeaderView == nil {
+				self.header.frame = CGRectMake(0, 0, self.tableView.width(), CGFloat(208))
+				self.header.setNeedsLayout()
+				self.header.layoutIfNeeded()				
+				self.tableView.tableHeaderView = self.header	// Triggers table binding
+				self.tableView.reloadData()
+			}
+		}
+	}
+	
+	override func drawButtons() {
+		if self.profileMode {
+			if self.isCurrentUser {
+				let editButton = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
+				let settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("settingsAction"))
+				self.navigationItem.rightBarButtonItems = [settingsButton, Utils.spacer, editButton]
+				self.navigationItem.title = "Me"
+			}
 		}
 	}
 }

@@ -52,7 +52,8 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 	
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
-		let viewWidth = self.tableView.bounds.size.width
+		
+		let viewWidth = self.tableView.width()
 		let viewHeight = (viewWidth * 0.625) + 48
 		self.tableView.tableHeaderView?.bounds.size = CGSizeMake(viewWidth, viewHeight)
 	}
