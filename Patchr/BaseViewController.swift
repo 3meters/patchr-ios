@@ -79,18 +79,7 @@ class BaseViewController: UIViewController {
 	
 	func isEmptyString(value : String?) -> Bool {
 		return (value == nil || value!.isEmpty)
-	}
-	
-	func rectVisible(rect: CGRect) -> Bool {
-		var visibleRect: CGRect = CGRect()
-		if let scrollView = self.view as? UIScrollView {
-			visibleRect.origin = scrollView.contentOffset;
-			visibleRect.origin.y += scrollView.contentInset.top;
-			visibleRect.size = scrollView.bounds.size;
-			visibleRect.size.height -= scrollView.contentInset.top + scrollView.contentInset.bottom;
-		}
-		return CGRectContainsRect(visibleRect, rect);
-	}
+	}	
 }
 
 extension BaseViewController: UIGestureRecognizerDelegate {

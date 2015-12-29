@@ -403,6 +403,8 @@ class MessageDetailViewController: BaseViewController {
 		let fullScreenRect = UIScreen.mainScreen().applicationFrame
 		self.scrollView.frame = fullScreenRect
 		self.scrollView.backgroundColor = Theme.colorBackgroundForm
+		self.scrollView.bounces = true
+		self.scrollView.alwaysBounceVertical = true
 		
 		self.patchGroup.addSubview(self.patchName)
 		self.patchGroup.addSubview(self.patchPhoto)
