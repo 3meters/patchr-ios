@@ -105,8 +105,9 @@ class UserController: NSObject {
         userDefaults.setObject(self.jsonUser, forKey: PatchrUserDefaultKey("user"))
         userDefaults.setObject(self.userId, forKey: PatchrUserDefaultKey("userId"))
 		
-		self.lockbox.setString((self.sessionKey != nil ? self.sessionKey! : nil), forKey: "sessionKey")
-		self.lockbox.setString((self.jsonSession != nil ? self.jsonSession! : nil), forKey: "session")
+		/* This is only place where we push to the keychain */
+		self.lockbox.setString((self.sessionKey != nil ? self.sessionKey! : nil), forKey: "sessionKey", accessibility: kSecAttrAccessibleAfterFirstUnlock)
+		self.lockbox.setString((self.jsonSession != nil ? self.jsonSession! : nil), forKey: "session", accessibility: kSecAttrAccessibleAfterFirstUnlock)
 		
         if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
             groupDefaults.setObject(self.jsonUser, forKey: PatchrUserDefaultKey("user"))
