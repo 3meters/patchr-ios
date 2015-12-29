@@ -61,7 +61,7 @@ struct Utils {
     static func LocalizedString(str: String) -> String {
         return LocalizedString(str, comment: str)
     }
-    
+	
     static func DateTimeTag() -> String! {
         let date = NSDate()     			// Initialized to current date
 		let calendar = NSCalendar.currentCalendar() // System caches currentCalendar as of iOS 7

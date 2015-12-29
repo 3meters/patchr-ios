@@ -92,4 +92,22 @@ struct Shared {
         let networkStatus: Int = reachability.currentReachabilityStatus().rawValue
         return networkStatus != 0
     }
+	
+	static func timeAgoMedium(date: NSDate) -> String {
+		if date.monthsAgo() >= 1 {
+			return date.formattedDateWithStyle(.ShortStyle)
+		}
+		else {
+			return date.timeAgoSinceNow()
+		}
+	}
+	
+	static func timeAgoShort(date: NSDate) -> String {
+		if date.monthsAgo() >= 1 {
+			return date.formattedDateWithStyle(.ShortStyle)
+		}
+		else {
+			return date.shortTimeAgoSinceNow()
+		}
+	}
 }

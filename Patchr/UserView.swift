@@ -103,7 +103,7 @@ class UserView: BaseView {
 	}
 	
 	override func sizeThatFits(size: CGSize) -> CGSize {
-		return CGSizeMake(self.width(), 112)
+		return CGSizeMake(self.width(), 113)
 	}
 
 	override func layoutSubviews() {
@@ -122,7 +122,7 @@ class UserView: BaseView {
 		
 		self.area.alignUnder(self.name, matchingLeftWithTopPadding: 2, width: columnWidth, height: self.area.height())
 		self.owner.alignUnder(self.area, matchingLeftWithTopPadding: 2, width: columnWidth, height: self.owner.height())
-		self.approved.alignUnder(self.owner, matchingLeftWithTopPadding: 8, width: self.approved.width(), height: self.approved.height())
+		self.approved.alignUnder(self.owner, matchingLeftWithTopPadding: 6, width: self.approved.width(), height: self.approved.height())
 		
 		self.approvedSwitch.alignToTheRightOf(self.approved, matchingCenterWithLeftPadding: 20, width: self.approvedSwitch.width(), height: self.approvedSwitch.height())
 		self.removeButton.anchorTopRightWithRightPadding(0, topPadding: 0, width: 48, height: 48)

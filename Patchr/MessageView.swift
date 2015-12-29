@@ -198,7 +198,7 @@ class MessageView: BaseView {
 			}
 		}
 		
-		self.createdDate.text = Utils.messageDateFormatter.stringFromDate(entity.createdDate)
+		self.createdDate.text = Shared.timeAgoShort(entity.createdDate)
 		
 		self.setNeedsLayout()
 	}

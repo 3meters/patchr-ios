@@ -40,6 +40,7 @@ PODS:
   - Crashlytics (3.4.1):
     - Fabric (~> 1.6.0)
   - DACircularProgress (2.3.1)
+  - DateTools (1.7.0)
   - DLRadioButton (1.4.4)
   - Fabric (1.6.1)
   - Facade (1.1.0)
@@ -92,6 +93,7 @@ DEPENDENCIES:
   - AWSS3 (~> 2.3.2)
   - Branch
   - Crashlytics
+  - DateTools
   - DLRadioButton
   - Fabric
   - Facade
@@ -125,6 +127,7 @@ SPEC CHECKSUMS:
   Branch: 82bfbfda8fbc7f6caed9709abdbb88ec88ba6e59
   Crashlytics: 41574a245bc6ae10c55d57f385ebd2004e5bee05
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
+  DateTools: 53288ee8b905fdc75897a1e6b5cc0144b14cba60
   DLRadioButton: 8c78ceb9e3d076a58a445f5ec505361796856539
   Fabric: bf0ceb04e7c924090efc5f8c55e4fbcca189e0a0
   Facade: 509c4a0e5fa8517d5e0e1e47251b520775904a9a

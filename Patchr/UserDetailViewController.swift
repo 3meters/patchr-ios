@@ -111,7 +111,7 @@ class UserDetailViewController: BaseDetailViewController {
 			if self.tableView.tableHeaderView == nil {
 				self.header.frame = CGRectMake(0, 0, self.tableView.width(), CGFloat(208))
 				self.header.setNeedsLayout()
-				self.header.layoutIfNeeded()				
+				self.header.layoutIfNeeded()
 				self.tableView.tableHeaderView = self.header	// Triggers table binding
 				self.tableView.reloadData()
 			}

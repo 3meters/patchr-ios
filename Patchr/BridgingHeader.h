@@ -30,6 +30,7 @@
 #import <SDWebImage/UIButton+WebCache.h>
 #import <SDWebImage/SDImageCache.h>
 #import <UIDevice-Hardware.h>
+#import <DateTools/NSDate+DateTools.h>
 #import <Lockbox.h>
 #import <IDMPhoto.h>
 #import <IDMPhotoBrowser.h>

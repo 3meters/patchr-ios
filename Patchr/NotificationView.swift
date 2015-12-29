@@ -114,7 +114,7 @@ class NotificationView: BaseView {
 		let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile)
 		self.userPhoto.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
 		
-		self.createdDate.text = Utils.messageDateFormatter.stringFromDate(notification.createdDate)
+		self.createdDate.text = Shared.timeAgoMedium(notification.createdDate)
 		
 		/* Age indicator */
 		self.ageDot.layer.backgroundColor = Theme.colorBackgroundAgeDot.CGColor
