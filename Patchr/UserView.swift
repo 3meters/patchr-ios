@@ -11,7 +11,7 @@ import UIKit
 class UserView: BaseView {
 
 	var name			= UILabel()
-	var photo			= AirImageView(frame: CGRectZero)
+	var photo			= UserPhotoView()
 	var area			= UILabel()
 	var owner			= UILabel()
 	var approved		= UILabel()
@@ -42,11 +42,6 @@ class UserView: BaseView {
 		self.clipsToBounds = true
 
 		/* User photo */
-		self.photo.contentMode = UIViewContentMode.ScaleAspectFill
-		self.photo.clipsToBounds = true
-		self.photo.layer.cornerRadius = 48
-		self.photo.layer.backgroundColor = Theme.colorBackgroundWindow.CGColor
-		self.photo.sizeCategory = SizeCategory.profile
 		self.addSubview(self.photo)
 
 		/* User name */
@@ -88,7 +83,7 @@ class UserView: BaseView {
 		self.entity = entity
 		
 		self.name.text = entity.name
-		self.photo.setImageWithPhoto(entity.getPhotoManaged(), animate: self.photo.image == nil)
+		self.photo.bindToEntity(entity)
 		
 		if let user = entity as? User {
 			self.area.text = user.area?.uppercaseString
@@ -109,11 +104,11 @@ class UserView: BaseView {
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		
-		let columnLeft = CGFloat(96 + 8)
+		let columnLeft = CGFloat(72 + 8)
 		let columnWidth = self.width() - columnLeft
 		let nameSize = self.name.sizeThatFits(CGSizeMake(columnWidth, CGFloat.max))
 		
-		self.photo.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 96, height: 96)
+		self.photo.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 72, height: 72)
 		self.name.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 6, width: columnWidth, height: nameSize.height)
 		
 		self.area.sizeToFit()

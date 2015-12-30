@@ -85,7 +85,7 @@
 		E23E02001B5873CB0035CCF0 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */; };
 		E24198FE1C1736E900DDA549 /* MessageEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24198FD1C1736E900DDA549 /* MessageEditViewController.swift */; };
 		E24199001C18ACAF00DDA549 /* AirContactPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24198FF1C18ACAF00DDA549 /* AirContactPicker.swift */; };
-		E24199021C18C1F200DDA549 /* SearchViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24199011C18C1F200DDA549 /* SearchViewCell.swift */; };
+		E24199021C18C1F200DDA549 /* UserSearchViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24199011C18C1F200DDA549 /* UserSearchViewCell.swift */; };
 		E241D15A1B1B3FCE00702E01 /* UIView+BorderLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = E241D1591B1B3FCE00702E01 /* UIView+BorderLayer.m */; };
 		E24A87261B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */; };
 		E24D74511BB349BD0061F339 /* BaseDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24D74501BB349BD0061F339 /* BaseDetailViewController.swift */; };
@@ -193,6 +193,7 @@
 		E2F85C6E1C31A9EA00FC2364 /* GuestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C6D1C31A9EA00FC2364 /* GuestViewController.swift */; };
 		E2F85C741C31F0D700FC2364 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C731C31F0D700FC2364 /* UIImage+ImageEffects.m */; };
 		E2F85C771C32E55100FC2364 /* DeviceUID.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C761C32E55100FC2364 /* DeviceUID.m */; };
+		E2F85C7A1C342B8600FC2364 /* UserPhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C791C342B8600FC2364 /* UserPhotoView.swift */; };
 		E2FB81431B864111006B6690 /* AdobeCreativeSDKCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */; };
 /* End PBXBuildFile section */
 
@@ -338,7 +339,7 @@
 		E238BB051B571AFF0094AF41 /* ExtensionsPhoto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionsPhoto.swift; sourceTree = "<group>"; };
 		E24198FD1C1736E900DDA549 /* MessageEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageEditViewController.swift; sourceTree = "<group>"; };
 		E24198FF1C18ACAF00DDA549 /* AirContactPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirContactPicker.swift; sourceTree = "<group>"; };
-		E24199011C18C1F200DDA549 /* SearchViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewCell.swift; sourceTree = "<group>"; };
+		E24199011C18C1F200DDA549 /* UserSearchViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserSearchViewCell.swift; sourceTree = "<group>"; };
 		E241D1581B1B3FCE00702E01 /* UIView+BorderLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+BorderLayer.h"; sourceTree = "<group>"; };
 		E241D1591B1B3FCE00702E01 /* UIView+BorderLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+BorderLayer.m"; sourceTree = "<group>"; };
 		E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThumbnailCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -456,6 +457,7 @@
 		E2F85C731C31F0D700FC2364 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
 		E2F85C761C32E55100FC2364 /* DeviceUID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceUID.m; sourceTree = "<group>"; };
 		E2F85C781C32E5A000FC2364 /* DeviceUID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceUID.h; sourceTree = "<group>"; };
+		E2F85C791C342B8600FC2364 /* UserPhotoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPhotoView.swift; sourceTree = "<group>"; };
 		E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKCore.framework; path = Frameworks/AdobeCreativeSDKCore.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -656,9 +658,10 @@
 				E29F65521B61A9450000BEF4 /* PatchSearchCell.swift */,
 				E256B4251BD2C9E200EBF894 /* PatchView.swift */,
 				E2A5A8841B703B9B006D6E81 /* PhotoView.swift */,
-				E24199011C18C1F200DDA549 /* SearchViewCell.swift */,
+				E24199011C18C1F200DDA549 /* UserSearchViewCell.swift */,
 				E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */,
 				E20C3A7E1BDC0EB0008CCED1 /* UserDetailView.swift */,
+				E2F85C791C342B8600FC2364 /* UserPhotoView.swift */,
 				E256B4291BD3F32A00EBF894 /* UserView.swift */,
 				E2CC15A01C2C897800316356 /* WrapperTableViewCell.swift */,
 				E26B0C911B46D01E00706F4A /* ThumbnailCollectionViewCell.xib */,
@@ -1245,6 +1248,7 @@
 			files = (
 				7DB6E0FE1A8177060017A42F /* _User.m in Sources */,
 				E29730641C15090300B9433B /* AirRuleView.swift in Sources */,
+				E2F85C7A1C342B8600FC2364 /* UserPhotoView.swift in Sources */,
 				E2D12A851C0A592D00DE507E /* AirLabelBanner.swift in Sources */,
 				E26B0C891B456F8A00706F4A /* ExtensionsUi.swift in Sources */,
 				E2C0D9311B6C415100E28CE9 /* Log.swift in Sources */,
@@ -1326,7 +1330,7 @@
 				7D3D39F01A6F116E00A44CB2 /* Proxibase.swift in Sources */,
 				7D0BAD4C1A96CEB0002E602D /* MainTabBarController.swift in Sources */,
 				E2A28E711B4A624300B3A2FE /* AirWatchButton.swift in Sources */,
-				E24199021C18C1F200DDA549 /* SearchViewCell.swift in Sources */,
+				E24199021C18C1F200DDA549 /* UserSearchViewCell.swift in Sources */,
 				E2D569BE1C052A30001CCE58 /* ProfileEditViewController.swift in Sources */,
 				E2F85C6C1C302F3400FC2364 /* PatchDetailView.swift in Sources */,
 				7DD89F411AC62B90005CD004 /* UserTableViewController.swift in Sources */,

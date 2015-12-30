@@ -173,16 +173,11 @@ class PatchView: BaseView {
 			}
 		}
 		
-		if let photo = entity.photo {
-			let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
-			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.thumbnail)
-			self.photo.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
-			self.photo.showGradient = true
-		}
-		else {
-			self.photo.image = nil
+		self.photo.setImageWithPhoto(entity.getPhotoManaged(), animate: false)
+		if entity.photo == nil {
 			self.photo.showGradient = false
 		}
+
 		self.setNeedsLayout()
 	}
 	

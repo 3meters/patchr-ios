@@ -582,7 +582,6 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 					for (index: _, subJson) in results {
 						let model = SuggestionModel()
 						model.contactTitle = subJson["name"].string
-						model.contactImage = UIImage(named: "imgDefaultUser")
 						model.entityId = (subJson["_id"] != nil) ? subJson["_id"].string : subJson["id_"].string
 						
 						if subJson["photo"] != nil {
@@ -591,7 +590,6 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 							let source = subJson["photo"]["source"].string
 							let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.profile)
 							model.contactImageUrl = photoUrl
-							model.contactImage = UIImage(named: "imgDefaultUser")
 						}
 						self.contactModels.addObject(model)
 					}
@@ -785,20 +783,15 @@ extension MessageEditViewController {
 	*/
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		
-		var cell = tableView.dequeueReusableCellWithIdentifier(CELL_IDENTIFIER) as? SearchViewCell
+		var cell = tableView.dequeueReusableCellWithIdentifier(CELL_IDENTIFIER) as? UserSearchViewCell
 		
 		if cell == nil {
-			cell = SearchViewCell(style: .Default, reuseIdentifier: CELL_IDENTIFIER)
+			cell = UserSearchViewCell(style: .Default, reuseIdentifier: CELL_IDENTIFIER)
 		}
 		
 		if let model = self.contactModels[indexPath.row] as? SuggestionModel {
 			cell!.title.text = model.contactTitle
-			if model.contactImageUrl != nil {
-				cell!.photo.sd_setImageWithURL(model.contactImageUrl)
-			}
-			else {
-				cell!.photo.image = model.contactImage
-			}
+			cell!.photo.bind(model.contactImageUrl, name: model.contactTitle)
 		}
 		return cell!
 	}
@@ -870,6 +863,5 @@ class SuggestionModel {
 	var entityId: String!
 	var contactTitle: String?
 	var contactSubtitle: String?
-	var contactImage: UIImage?
 	var contactImageUrl: NSURL?
 }

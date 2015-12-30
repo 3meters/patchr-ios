@@ -48,7 +48,7 @@ class MessageDetailViewController: BaseViewController {
 	var patchPhoto		= AirImageButton()
 	
 	var userGroup		= UIView()
-	var userPhoto		= AirImageButton()
+	var userPhoto		= UserPhotoView()
 	var userName		= AirLinkButton()
 	
 	var messageGroup	= UIView()
@@ -138,7 +138,7 @@ class MessageDetailViewController: BaseViewController {
 				
 				/*---dup ---*/
 				self.userGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 64)
-				self.userPhoto.anchorCenterLeftWithLeftPadding(16, width: self.userPhoto.width(), height: self.userPhoto.height())
+				self.userPhoto.anchorCenterLeftWithLeftPadding(16, width: 48, height: 48)
 				self.userName.bounds.size.width = self.userGroup.width() - (32 + self.userPhoto.width() + 8)
 				self.userName.sizeToFit()
 				self.userName.alignToTheRightOf(self.userPhoto, matchingCenterWithLeftPadding: 8, width: self.userName.width(), height: self.userName.height())
@@ -202,7 +202,7 @@ class MessageDetailViewController: BaseViewController {
 					self.userGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 64)
 				}
 				
-				self.userPhoto.anchorCenterLeftWithLeftPadding(16, width: self.userPhoto.width(), height: self.userPhoto.height())
+				self.userPhoto.anchorCenterLeftWithLeftPadding(16, width: 48, height: 48)
 				self.userName.bounds.size.width = self.userGroup.width() - (32 + self.userPhoto.width() + 8)
 				self.userName.sizeToFit()
 				self.userName.alignToTheRightOf(self.userPhoto, matchingCenterWithLeftPadding: 8, width: self.userName.width(), height: self.userName.height())
@@ -438,11 +438,6 @@ class MessageDetailViewController: BaseViewController {
 		self.userName.titleLabel!.font = Theme.fontHeading
 		self.patchName.titleLabel?.font = Theme.fontTextDisplay
 		
-		self.userPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
-		self.userPhoto.cornerRadius = 24
-		self.userPhoto.bounds.size = CGSizeMake(48, 48)
-		self.userPhoto.clipsToBounds = true
-		
 		self.createdDate.textColor = Theme.colorTextSecondary
 		
 		self.photo.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
@@ -591,14 +586,8 @@ class MessageDetailViewController: BaseViewController {
 		
 		/* User */
 
-		if let creator = self.inputMessage!.creator {
-			self.userName.setTitle(creator.name, forState: .Normal)
-			self.userPhoto.setImageWithPhoto(creator.getPhotoManaged())
-		}
-		else {
-			self.userName.setTitle("Deleted", forState: .Normal)
-            self.userPhoto.setImageWithPhoto(Entity.getDefaultPhoto("user", id: nil))
-		}
+		self.userPhoto.bindToEntity(self.inputMessage!.creator)
+		self.userName.setTitle(self.inputMessage?.creator.name ?? "Deleted", forState: .Normal)
 		
 		self.view.setNeedsLayout()
 	}

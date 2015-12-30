@@ -8,11 +8,11 @@
 
 import UIKit
 
-class SearchViewCell: UITableViewCell {
+class UserSearchViewCell: UITableViewCell {
 
 	var title			= AirLabelDisplay()
 	var subtitle		= AirLabelDisplay()
-	var photo			= AirImageView(frame: CGRectZero)
+	var photo			= UserPhotoView()
 
 	override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
 		super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -30,11 +30,6 @@ class SearchViewCell: UITableViewCell {
 		self.clipsToBounds = true
 
 		/* User photo */
-		self.photo.contentMode = UIViewContentMode.ScaleAspectFill
-		self.photo.clipsToBounds = true
-		self.photo.layer.cornerRadius = 24
-		self.photo.layer.backgroundColor = Theme.colorBackgroundImage.CGColor
-		self.photo.sizeCategory = SizeCategory.profile
 		self.addSubview(self.photo)
 
 		/* User name */

@@ -15,7 +15,7 @@ class NotificationView: BaseView {
 	var description_:	TTTAttributedLabel?
 	var photo:			UIButton?
 	
-	var userPhoto		= UIImageView(frame: CGRectZero)
+	var userPhoto		= UserPhotoView()
 	var iconImageView	= UIImageView(frame: CGRectZero)
 	var ageDot			= UIView()
 	var createdDate		= AirLabelDisplay()
@@ -64,11 +64,6 @@ class NotificationView: BaseView {
 		}
 		
 		/* User photo */
-		self.userPhoto.contentMode = UIViewContentMode.ScaleAspectFill
-		self.userPhoto.clipsToBounds = true
-		self.userPhoto.layer.cornerRadius = 24
-		self.userPhoto.bounds.size = CGSizeMake(48, 48)
-		self.userPhoto.layer.backgroundColor = Theme.colorBackgroundImage.CGColor
 		self.addSubview(self.userPhoto)
 		
 		/* Footer */
@@ -110,9 +105,7 @@ class NotificationView: BaseView {
 		
 		/* User photo */
 		
-		let photo = notification.getPhotoManaged()
-		let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile)
-		self.userPhoto.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
+		self.userPhoto.bindToEntity(notification)
 		
 		self.createdDate.text = Shared.timeAgoMedium(notification.createdDate)
 		
@@ -198,7 +191,7 @@ class NotificationView: BaseView {
 		let columnWidth = self.bounds.size.width - columnLeft
 		let photoHeight = columnWidth * 0.5625		// 16:9 aspect ratio
 		
-		self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: self.userPhoto.width(), height: self.userPhoto.height())
+		self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 48, height: 48)
 		
 		var bottomView: UIView? = self.photo
 		if self.cellType == .Text {

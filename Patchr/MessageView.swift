@@ -17,7 +17,7 @@ class MessageView: BaseView {
 	var photo			: UIButton?
 	
 	var userName		= AirLabelDisplay()
-	var userPhoto		= UIImageView(frame: CGRectZero)
+	var userPhoto		= UserPhotoView()
 	var createdDate		= AirLabelDisplay()
 	var recipientsLabel = AirLabelDisplay()
 	var recipients		= AirLabelDisplay()
@@ -85,11 +85,6 @@ class MessageView: BaseView {
 		self.addSubview(self.patchName)
 		
 		/* User photo */
-		self.userPhoto.contentMode = UIViewContentMode.ScaleAspectFill
-		self.userPhoto.clipsToBounds = true
-		self.userPhoto.layer.cornerRadius = 24
-		self.userPhoto.bounds.size = CGSizeMake(48, 48)
-		self.userPhoto.layer.backgroundColor = Theme.colorBackgroundImage.CGColor
 		self.addSubview(self.userPhoto)
 		
 		/* Header */
@@ -153,15 +148,7 @@ class MessageView: BaseView {
 		
 		self.userName.text = entity.creator?.name ?? "Deleted"
 		
-		if let photo = entity.creator?.getPhotoManaged() {
-			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile)
-			self.userPhoto.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
-		}
-		else {
-			let photo = Entity.getDefaultPhoto("user", id: nil)
-			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile)
-			self.userPhoto.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
-		}
+		self.userPhoto.bindToEntity(entity.creator)
 		
 		if let message = entity as? Message {
 			
@@ -274,11 +261,11 @@ class MessageView: BaseView {
 			self.patchName.hidden = false
 			self.patchName.sizeToFit()
 			self.patchName.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 0, width: self.patchName.width(), height: self.patchName.height())
-			self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: self.patchName.height() + 8, width: self.userPhoto.width(), height: self.userPhoto.height())
+			self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: self.patchName.height() + 8, width: 48, height: 48)
 		}
 		else {
 			self.patchName.hidden = true
-			self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: self.userPhoto.width(), height: self.userPhoto.height())
+			self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 48, height: 48)
 		}
 		
 		/* Header */

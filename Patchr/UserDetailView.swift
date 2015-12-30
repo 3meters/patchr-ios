@@ -11,16 +11,16 @@ import UIKit
 class UserDetailView: BaseDetailView {
 
 	var name           = AirLabelTitle()
-	var photo          = AirImageView(frame: CGRectZero)
+	var photo          = UserPhotoView()
 	var email          = UILabel()
 	var rule           = UIView()
 	var userGroup      = UIView()
-	var watchingGroup  = AirRuleView()
 	var ownsGroup      = AirRuleView()
-	var watchingIcon   = UIImageView()
 	var ownsIcon       = UIImageView()
-	var watchingButton = AirLinkButton()
 	var ownsButton     = AirLinkButton()
+	var watchingGroup  = AirRuleView()
+	var watchingIcon   = UIImageView()
+	var watchingButton = AirLinkButton()
 	
 	init() {
 		super.init(frame: CGRectZero)
@@ -41,13 +41,6 @@ class UserDetailView: BaseDetailView {
 		
 		self.clipsToBounds = true
 		self.backgroundColor = Theme.colorBackgroundForm
-		
-		/* User photo */
-		self.photo.contentMode = UIViewContentMode.ScaleAspectFill
-		self.photo.clipsToBounds = true
-		self.photo.layer.cornerRadius = 48
-		self.photo.layer.backgroundColor = Theme.colorBackgroundImage.CGColor
-		self.photo.sizeCategory = SizeCategory.profile
 		
 		/* User name */
 		self.name.lineBreakMode = .ByTruncatingMiddle
@@ -120,8 +113,8 @@ class UserDetailView: BaseDetailView {
 		if let user = entity as? User {
 			self.name.text = user.name
 			self.email.text = user.email
-			self.photo.setImageWithPhoto(user.getPhotoManaged(), animate: false)
-			
+			self.photo.bindToEntity(user)
+
 			if user.patchesWatching != nil {
 				let count = user.patchesWatchingValue == 0 ? "--" : String(user.patchesWatchingValue)
 				self.watchingButton.setTitle("Watching: \(count)", forState: .Normal)
@@ -131,8 +124,5 @@ class UserDetailView: BaseDetailView {
 				self.ownsButton.setTitle("Owner: \(count)", forState: .Normal)
 			}
 		}
-		self.setNeedsLayout()
-		self.layoutIfNeeded()
-		self.sizeToFit()
 	}
 }
