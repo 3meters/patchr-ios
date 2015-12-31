@@ -174,15 +174,15 @@ class PatchView: BaseView {
 		}
 		
 		self.photo.backgroundColor = Colors.gray80pcntColor
-		
+
 		if entity.photo != nil {
 			let photoUrl = PhotoUtils.url(entity.photo!.prefix!, source: entity.photo!.source!, category: SizeCategory.profile)
-			bind(photoUrl, name: entity.name)			
+			bind(photoUrl, name: entity.name)
 		}
 		else {
 			bind(nil, name: entity.name)
 		}
-		
+
 		self.setNeedsLayout()
 	}
 	
@@ -199,7 +199,7 @@ class PatchView: BaseView {
 			self.photo.showGradient = true
 		}
 	}
-	
+
 	func bindToEntity(entity: Entity!) {
 		if entity != nil {
 			if entity.photo != nil {
@@ -215,7 +215,7 @@ class PatchView: BaseView {
 		}
 	}
 
-	
+
 	override func sizeThatFits(size: CGSize) -> CGSize {
 		return CGSizeMake(self.width(), 136)
 	}

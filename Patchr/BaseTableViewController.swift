@@ -162,8 +162,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		if !self.query.executedValue || self.firstAppearance {
 			self.bindQueryItems(false)
 		}
-		
-		self.firstAppearance = false
     }
 	
 	override func viewWillDisappear(animated: Bool) {
@@ -284,7 +282,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 						else {
 							self?.tableView.tableFooterView = nil
 						}
-						
+
 						if error == nil {
 							self?.query.executedValue = true
 							if self?.fetchedResultsController.delegate != nil {	// Delegate is unset when view controller disappears
@@ -309,7 +307,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 							query.offsetDate = oldestDate
 							/*
 							 * Saving commits changes to the data model and the fetch controller notices
-							 * if that changes the results it has associated with it's fetch request. 
+							 * if that changes the results it has associated with it's fetch request.
 							 * The fetched results delegate is informed of any changes that should
 							 * cause an update to the table view.
 							 */
@@ -536,7 +534,7 @@ extension BaseTableViewController {
 				
 			case .Move:		// 3
 				self.tableView.moveRowAtIndexPath(indexPath!, toIndexPath: newIndexPath!)
-			
+
 			case .Update:	// 4
 				self.tableView.cellForRowAtIndexPath(indexPath!)	// Better than reloadRowsAtIndexPaths because no animation
 		}
