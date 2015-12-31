@@ -57,7 +57,10 @@ class MessageView: BaseView {
 	}
 	
 	func initialize() {
-		
+		/*
+		 * The calls to addSubview will trigger a call to layoutSubviews for
+		 * the current update cycle.
+		 */
 		self.clipsToBounds = true
 		
 		/* Description */
@@ -187,7 +190,7 @@ class MessageView: BaseView {
 		
 		self.createdDate.text = Shared.timeAgoShort(entity.createdDate)
 		
-		self.setNeedsLayout()
+		self.setNeedsLayout()	// Needed because binding can change the layout
 	}
 	
 	override func sizeThatFits(size: CGSize) -> CGSize {
@@ -196,7 +199,7 @@ class MessageView: BaseView {
 			
 			var heightAccum = CGFloat(0)
 			
-			let columnLeft = CGFloat(self.userPhoto.width() + 8)
+			let columnLeft = CGFloat(48 + 8)
 			let columnWidth = size.width - columnLeft
 			let photoHeight = columnWidth * 0.5625
 			
@@ -253,14 +256,14 @@ class MessageView: BaseView {
 		 * checked for all views in the view hierarchy for every run loop iteration.
 		 * If dirty, layoutSubviews is called in hierarchy order and flag is reset.
 		 */
-		let columnLeft = CGFloat(self.userPhoto.width() + 8)
+		let columnLeft = CGFloat(48 + 8)
 		let columnWidth = self.bounds.size.width - columnLeft
 		let photoHeight = columnWidth * 0.5625		// 16:9 aspect ratio
 		
 		if self.showPatchName && self.patchName.text != nil {
 			self.patchName.hidden = false
 			self.patchName.sizeToFit()
-			self.patchName.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 0, width: self.patchName.width(), height: self.patchName.height())
+			self.patchName.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 0, width: columnWidth, height: self.patchName.height())
 			self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: self.patchName.height() + 8, width: 48, height: 48)
 		}
 		else {

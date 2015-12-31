@@ -69,10 +69,10 @@ class UserPhotoView: BaseDetailView {
 				self.photo.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
 			}
 			else if name != nil {
-				self.name.text = initialsFromName(name!).uppercaseString
+				self.name.text = Utils.initialsFromName(name!).uppercaseString
 				self.name.hidden = false
-				let seed = numberFromName(name!)
-				self.backgroundColor = randomColor(seed)
+				let seed = Utils.numberFromName(name!)
+				self.backgroundColor = Utils.randomColor(seed)
 			}
 		}
 	}
@@ -89,40 +89,6 @@ class UserPhotoView: BaseDetailView {
 		}
 		else {
 			bind(nil, name: nil)
-		}
-	}
-	
-	func initialsFromName(fullname: String) -> String {
-		let words = fullname.componentsSeparatedByString(" ")
-		var initials = ""
-		for word in words {
-			initials.append(word[0])
-		}
-		return initials.length > 2 ? initials[0...1] : initials
-	}
-	
-	func numberFromName(fullname: String) -> UInt32 {
-		var accum: UInt32 = 0
-		for character in fullname.characters {
-			let s = (String(character).unicodeScalars)
-			accum += s[s.startIndex].value
-		}
-		return accum
-	}
-	
-	func randomColor(seed: UInt32?) -> UIColor {
-		if seed != nil {
-			srand(seed!)
-			let hue = CGFloat(Double(rand() % 256) / 256.0) // 0.0 to 1.0
-			let saturation = CGFloat(Double(rand() % 128) / 266.0 + 0.5) // 0.5 to 1.0, away from white
-			let brightness = CGFloat(Double(rand() % 128) / 256.0 + 0.5) // 0.5 to 1.0, away from black
-			return UIColor(hue: hue, saturation: saturation, brightness: brightness, alpha: 1.0)
-		}
-		else {
-			let hue = CGFloat(Double(arc4random() % 256) / 256.0) // 0.0 to 1.0
-			let saturation = CGFloat(Double(arc4random() % 128) / 266.0 + 0.5) // 0.5 to 1.0, away from white
-			let brightness = CGFloat(Double(arc4random() % 128) / 256.0 + 0.5) // 0.5 to 1.0, away from black
-			return UIColor(hue: hue, saturation: saturation, brightness: brightness, alpha: 1.0)
 		}
 	}
 }

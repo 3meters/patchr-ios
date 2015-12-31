@@ -81,6 +81,40 @@ struct Utils {
         let imageKey = "\(Utils.DateTimeTag())_\(Utils.genSalt())"
         return imageKey
     }
+	
+	static func initialsFromName(fullname: String) -> String {
+		let words = fullname.componentsSeparatedByString(" ")
+		var initials = ""
+		for word in words {
+			initials.append(word[0])
+		}
+		return initials.length > 2 ? initials[0...1] : initials
+	}
+	
+	static func numberFromName(fullname: String) -> UInt32 {
+		var accum: UInt32 = 0
+		for character in fullname.characters {
+			let s = (String(character).unicodeScalars)
+			accum += s[s.startIndex].value
+		}
+		return accum
+	}
+	
+	static func randomColor(seed: UInt32?) -> UIColor {
+		if seed != nil {
+			srand(seed!)
+			let hue = CGFloat(Double(rand() % 256) / 256.0) // 0.0 to 1.0
+			let saturation = CGFloat(Double(rand() % 128) / 266.0 + 0.5) // 0.5 to 1.0, away from white
+			let brightness = CGFloat(Double(rand() % 128) / 256.0 + 0.5) // 0.5 to 1.0, away from black
+			return UIColor(hue: hue, saturation: saturation, brightness: brightness, alpha: 1.0)
+		}
+		else {
+			let hue = CGFloat(Double(arc4random() % 256) / 256.0) // 0.0 to 1.0
+			let saturation = CGFloat(Double(arc4random() % 128) / 266.0 + 0.5) // 0.5 to 1.0, away from white
+			let brightness = CGFloat(Double(arc4random() % 128) / 256.0 + 0.5) // 0.5 to 1.0, away from black
+			return UIColor(hue: hue, saturation: saturation, brightness: brightness, alpha: 1.0)
+		}
+	}
 
     static func TemporaryFileURLForImage(image: UIImage, name: String, shared: Bool = false) -> NSURL? {
         
@@ -248,4 +282,23 @@ struct Utils {
             , dispatch_get_main_queue()
             , closure)
     }
+}
+
+extension String {
+	
+	var length: Int {
+		return characters.count
+	}
+		
+	subscript (i: Int) -> Character {
+		return self[self.startIndex.advancedBy(i)]
+	}
+	
+	subscript (i: Int) -> String {
+		return String(self[i] as Character)
+	}
+	
+	subscript (r: Range<Int>) -> String {
+		return substringWithRange(Range(start: startIndex.advancedBy(r.startIndex), end: startIndex.advancedBy(r.endIndex)))
+	}
 }

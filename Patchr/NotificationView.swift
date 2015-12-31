@@ -107,7 +107,7 @@ class NotificationView: BaseView {
 		
 		self.userPhoto.bindToEntity(notification)
 		
-		self.createdDate.text = Shared.timeAgoMedium(notification.createdDate)
+		self.createdDate.text = Shared.timeAgoMedium(notification.sortDate)
 		
 		/* Age indicator */
 		self.ageDot.layer.backgroundColor = Theme.colorBackgroundAgeDot.CGColor
@@ -150,7 +150,7 @@ class NotificationView: BaseView {
 			self.iconImageView.image = Utils.imageLocation
 		}
 		
-		self.setNeedsLayout()
+		self.setNeedsLayout()	// Needed because binding can change the layout
 	}
 	
 	override func sizeThatFits(size: CGSize) -> CGSize {
@@ -159,7 +159,7 @@ class NotificationView: BaseView {
 			
 			var heightAccum = CGFloat(0)
 			
-			let columnLeft = CGFloat(self.userPhoto.width() + 8)
+			let columnLeft = CGFloat(48 + 8)
 			let columnWidth = size.width - columnLeft
 			let photoHeight = columnWidth * 0.5625
 			
@@ -187,7 +187,7 @@ class NotificationView: BaseView {
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		
-		let columnLeft = CGFloat(self.userPhoto.width() + 8)
+		let columnLeft = CGFloat(48 + 8)
 		let columnWidth = self.bounds.size.width - columnLeft
 		let photoHeight = columnWidth * 0.5625		// 16:9 aspect ratio
 		

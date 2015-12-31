@@ -373,10 +373,6 @@ extension NSDate: Comparable { }
 
 extension String {
 	
-    var length: Int {
-        return characters.count
-    }
-	
     var md5: String! {
 		
         let str = self.cStringUsingEncoding(NSUTF8StringEncoding)
@@ -395,18 +391,6 @@ extension String {
         
         return String(format: hash as String)
     }
-	
-	subscript (i: Int) -> Character {
-		return self[self.startIndex.advancedBy(i)]
-	}
-		
-	subscript (i: Int) -> String {
-		return String(self[i] as Character)
-	}
-		
-	subscript (r: Range<Int>) -> String {
-		return substringWithRange(Range(start: startIndex.advancedBy(r.startIndex), end: startIndex.advancedBy(r.endIndex)))
-	}
 }
 
 extension Dictionary {

@@ -10,13 +10,16 @@ import UIKit
 
 class UserView: BaseView {
 
-	var name			= UILabel()
+	var titleGroup		= UIView()
+	var name			= AirLinkButton()
 	var photo			= UserPhotoView()
 	var area			= UILabel()
 	var owner			= UILabel()
+	
+	var ownerGroup		= AirRuleView()
 	var approved		= UILabel()
 	var approvedSwitch	= UISwitch()
-	var removeButton	= UIButton()
+	var removeButton	= AirLinkButton()
 
 	weak var delegate:  UserApprovalViewDelegate?
 	
@@ -45,35 +48,43 @@ class UserView: BaseView {
 		self.addSubview(self.photo)
 
 		/* User name */
-		self.name.lineBreakMode = .ByTruncatingMiddle
-		self.name.font = Theme.fontTextDisplay
-		self.addSubview(self.name)
+		self.name.titleLabel?.font = Theme.fontTextDisplay
+		self.name.contentHorizontalAlignment = .Left
+		self.name.addTarget(self, action: Selector("browseUser:"), forControlEvents: .TouchUpInside)
+		self.titleGroup.addSubview(self.name)
 		
 		/* User area */
 		self.area.font = Theme.fontCommentSmall
 		self.area.textColor = Theme.colorTextSecondary
-		self.addSubview(self.area)
+		self.titleGroup.addSubview(self.area)
 		
 		/* Owner flag */
 		self.owner.text = "OWNER"
 		self.owner.font = Theme.fontCommentSmall
-		self.owner.textColor = Theme.colorTint
-		self.addSubview(self.owner)
+		self.owner.textColor = Colors.accentOnLight
+		self.titleGroup.addSubview(self.owner)
+		
+		self.ownerGroup.ruleBottom.hidden = true
+		self.ownerGroup.ruleLeft.hidden = false
+		self.ownerGroup.ruleLeft.backgroundColor = Colors.gray90pcntColor
 		
 		/* Remove button */
 		self.removeButton.setImage(UIImage(named:"imgRemoveLight") , forState: UIControlState.Normal)
 		self.removeButton.imageView?.contentMode = UIViewContentMode.Center
 		self.removeButton.addTarget(self, action: Selector("removeButtonTouchUpInsideAction:"), forControlEvents: .TouchUpInside)
-		self.addSubview(self.removeButton)
+		self.titleGroup.addSubview(self.removeButton)
 		
 		/* Approved label */
-		self.approved.text = "Approved:"
+		self.approved.text = "Approved"
 		self.approved.font = Theme.fontComment
-		self.addSubview(self.approved)
+		self.approved.textColor = Theme.colorTextSecondary
+		self.ownerGroup.addSubview(self.approved)
 		
 		/* Approval switch */
 		self.approvedSwitch.addTarget(self, action: Selector("approvedSwitchValueChangedAction:"), forControlEvents: .TouchUpInside)
-		self.addSubview(self.approvedSwitch)
+		self.ownerGroup.addSubview(self.approvedSwitch)
+		self.addSubview(self.ownerGroup)
+		self.addSubview(self.titleGroup)
 	}
 	
 	func bindToEntity(entity: AnyObject) {
@@ -82,45 +93,85 @@ class UserView: BaseView {
 		
 		self.entity = entity
 		
-		self.name.text = entity.name
+		self.name.setTitle(entity.name, forState: .Normal)
 		self.photo.bindToEntity(entity)
 		
-		if let user = entity as? User {
-			self.area.text = user.area?.uppercaseString
-			self.area.hidden = (self.area.text == nil)
-			self.owner.hidden = true
-			self.removeButton.hidden = true
-			self.approved.hidden = true
-			self.approvedSwitch.hidden = true
+		self.ownerGroup.hidden = true
+		self.owner.hidden = true
+		self.removeButton.hidden = true
+		self.area.hidden = true
+		
+		if let user = entity as? User where user.area != nil {
+			self.area.text = user.area.uppercaseString
+			self.area.hidden = false
 		}
 		
+		self.setNeedsLayout()	// Needed because elements can have changed dimensions
+	}
+	
+	func showOwnerUI() {
+		self.ownerGroup.hidden = false
+		self.removeButton.hidden = false
 		self.setNeedsLayout()
 	}
 	
 	override func sizeThatFits(size: CGSize) -> CGSize {
-		return CGSizeMake(self.width(), 113)
+		return CGSizeMake(self.width(), 97)
 	}
 
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		
+		let ownerWidth = CGFloat(SCREEN_320 ? 96 : 112)
+		
 		let columnLeft = CGFloat(72 + 8)
-		let columnWidth = self.width() - columnLeft
-		let nameSize = self.name.sizeThatFits(CGSizeMake(columnWidth, CGFloat.max))
+		let columnRight = CGFloat(self.ownerGroup.hidden ? 0 : ownerWidth)
+		let columnWidth = self.width() - (columnLeft + columnRight)
 		
 		self.photo.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 72, height: 72)
-		self.name.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 6, width: columnWidth, height: nameSize.height)
+		self.titleGroup.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 6, width: columnWidth, height: 72)
+		self.name.sizeToFit()
+		self.name.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: self.name.width(), height: self.name.height() - 4)
 		
-		self.area.sizeToFit()
-		self.owner.sizeToFit()
-		self.approved.sizeToFit()
+		if self.area.text != nil && !self.area.text!.isEmpty {
+			self.area.bounds.size.width = self.titleGroup.width()
+			self.area.sizeToFit()
+			self.area.alignUnder(self.name, matchingLeftWithTopPadding: -2, width: columnWidth, height: self.area.height())
+		}
 		
-		self.area.alignUnder(self.name, matchingLeftWithTopPadding: 2, width: columnWidth, height: self.area.height())
-		self.owner.alignUnder(self.area, matchingLeftWithTopPadding: 2, width: columnWidth, height: self.owner.height())
-		self.approved.alignUnder(self.owner, matchingLeftWithTopPadding: 6, width: self.approved.width(), height: self.approved.height())
+		if !self.owner.hidden {
+			self.owner.sizeToFit()
+			self.owner.alignUnder(self.area, matchingLeftWithTopPadding: 2, width: columnWidth, height: self.owner.height())
+		}
 		
-		self.approvedSwitch.alignToTheRightOf(self.approved, matchingCenterWithLeftPadding: 20, width: self.approvedSwitch.width(), height: self.approvedSwitch.height())
-		self.removeButton.anchorTopRightWithRightPadding(0, topPadding: 0, width: 48, height: 48)
+		if !self.removeButton.hidden {
+			if SCREEN_320 {
+				self.removeButton.anchorBottomLeftWithLeftPadding(0, bottomPadding: 0, width: 24, height: 24)
+			}
+			else {
+				self.name.bounds.size.width = columnWidth - (8 + 24 + 8)
+				self.name.sizeToFit()
+				self.name.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: columnWidth - (8 + 24 + 8), height: self.name.height() - 4)
+				self.removeButton.alignToTheRightOf(self.name, matchingCenterWithLeftPadding: 8, width: 24, height: 24)
+			}
+		}
+		
+		if !self.ownerGroup.hidden {
+			self.ownerGroup.anchorCenterRightFillingHeightWithTopPadding(0, bottomPadding: 0, rightPadding: 0, width: ownerWidth)
+			self.approved.sizeToFit()
+			self.approvedSwitch.anchorTopCenterWithTopPadding(16, width: self.approvedSwitch.width(), height: self.approvedSwitch.height())
+			self.approved.alignUnder(self.approvedSwitch, matchingCenterWithTopPadding: 4, width: self.approved.width(), height: self.approved.height())
+		}
+	}
+	
+	func browseUser(sender: AnyObject) {
+		if self.entity != nil {
+			let controller = UserDetailViewController()
+			controller.entityId = self.entity!.id_
+			controller.profileMode = false
+			let hostController = UIViewController.topMostViewController()!
+			hostController.navigationController?.pushViewController(controller, animated: true)
+		}
 	}
 	
 	func approvedSwitchValueChangedAction(sender: UISwitch) {

@@ -139,9 +139,8 @@ class MessageDetailViewController: BaseViewController {
 				/*---dup ---*/
 				self.userGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 64)
 				self.userPhoto.anchorCenterLeftWithLeftPadding(16, width: 48, height: 48)
-				self.userName.bounds.size.width = self.userGroup.width() - (32 + self.userPhoto.width() + 8)
-				self.userName.sizeToFit()
-				self.userName.alignToTheRightOf(self.userPhoto, matchingCenterWithLeftPadding: 8, width: self.userName.width(), height: self.userName.height())
+				let nameWidth = self.userGroup.width() - (32 + 48 + 8)
+				self.userName.alignToTheRightOf(self.userPhoto, matchingCenterWithLeftPadding: 8, width: nameWidth, height: self.userName.height())
 				
 				self.messageGroup.alignUnder(self.userGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 0)
 				
@@ -192,10 +191,10 @@ class MessageDetailViewController: BaseViewController {
 					self.patchGroup.hidden = false
 					self.patchGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 48)
 					let photoWidth = self.patchGroup.height() * 1.7777
-					self.patchName.bounds.size.width = viewWidth - photoWidth - 24
-					self.patchName.sizeToFit()
 					self.patchPhoto.anchorCenterRightWithRightPadding(0, width: photoWidth, height: self.patchGroup.height())
-					self.patchName.anchorCenterLeftWithLeftPadding(16, width: self.patchName.width(), height: self.patchName.height())
+					let patchNameWidth = viewWidth - photoWidth - 24
+					self.patchName.sizeToFit()
+					self.patchName.anchorCenterLeftWithLeftPadding(16, width: patchNameWidth, height: self.patchName.height())
 					self.userGroup.alignUnder(self.patchGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 64)
 				}
 				else {
@@ -203,9 +202,9 @@ class MessageDetailViewController: BaseViewController {
 				}
 				
 				self.userPhoto.anchorCenterLeftWithLeftPadding(16, width: 48, height: 48)
-				self.userName.bounds.size.width = self.userGroup.width() - (32 + self.userPhoto.width() + 8)
+				let userNameWidth = self.userGroup.width() - (32 + 48 + 8)
 				self.userName.sizeToFit()
-				self.userName.alignToTheRightOf(self.userPhoto, matchingCenterWithLeftPadding: 8, width: self.userName.width(), height: self.userName.height())
+				self.userName.alignToTheRightOf(self.userPhoto, matchingCenterWithLeftPadding: 8, width: userNameWidth, height: self.userName.height())
 				
 				self.messageGroup.alignUnder(self.userGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 600)
 				
@@ -239,9 +238,12 @@ class MessageDetailViewController: BaseViewController {
 			}
 			
 			self.contentHolder.resizeToFitSubviews()
-			self.scrollView.contentSize = CGSizeMake(self.contentHolder.frame.size.width, self.contentHolder.frame.size.height)
 			self.scrollView.fillSuperview()
-			self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: self.contentHolder.height())
+			
+			let tabBarHeight = self.tabBarController?.tabBar.height() ?? 0
+			let contentHeight = max((self.scrollView.height() + self.scrollView.contentOffset.y) - tabBarHeight, self.contentHolder.height())			
+			self.scrollView.contentSize = CGSizeMake(self.contentHolder.frame.size.width, contentHeight)
+			self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: contentHeight)
 		}
 	}
 	
@@ -402,9 +404,12 @@ class MessageDetailViewController: BaseViewController {
 		
 		let fullScreenRect = UIScreen.mainScreen().applicationFrame
 		self.scrollView.frame = fullScreenRect
-		self.scrollView.backgroundColor = Theme.colorBackgroundForm
+		self.scrollView.backgroundColor = Theme.colorBackgroundWindow
 		self.scrollView.bounces = true
 		self.scrollView.alwaysBounceVertical = true
+		
+		self.contentHolder.hidden = true
+		self.contentHolder.backgroundColor = Theme.colorBackgroundForm
 		
 		self.patchGroup.addSubview(self.patchName)
 		self.patchGroup.addSubview(self.patchPhoto)
@@ -423,7 +428,6 @@ class MessageDetailViewController: BaseViewController {
 		self.contentHolder.addSubview(self.messageGroup)
 		self.contentHolder.addSubview(self.toolbarGroup)
 		self.contentHolder.addSubview(self.shareGroup)
-		self.contentHolder.hidden = true
 		self.scrollView.addSubview(self.contentHolder)
 		self.view.addSubview(self.scrollView)
 		
@@ -432,13 +436,18 @@ class MessageDetailViewController: BaseViewController {
 		self.activity.tintColor = Theme.colorActivityIndicator
 		self.view.addSubview(self.activity)
 		
-		self.patchGroup.rule.backgroundColor = Colors.gray90pcntColor
+		self.patchGroup.ruleBottom.backgroundColor = Colors.gray90pcntColor
 		self.patchPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
 		
 		self.userName.titleLabel!.font = Theme.fontHeading
+		self.userName.contentHorizontalAlignment = .Left
+		
 		self.patchName.titleLabel?.font = Theme.fontTextDisplay
+		self.patchName.contentHorizontalAlignment = .Left
+		self.patchName.contentVerticalAlignment = .Center
 		
 		self.createdDate.textColor = Theme.colorTextSecondary
+		self.shareFrame.clipsToBounds = true
 		
 		self.photo.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
 		self.photo.contentMode = .ScaleAspectFill
@@ -446,7 +455,7 @@ class MessageDetailViewController: BaseViewController {
 		self.photo.contentHorizontalAlignment = .Fill
 		self.photo.sizeCategory = SizeCategory.standard
 		
-		self.toolbarGroup.rule.backgroundColor = Colors.gray90pcntColor
+		self.toolbarGroup.ruleBottom.backgroundColor = Colors.gray90pcntColor
 		
 		self.likesButton.imageView?.tintColor = Theme.colorTint
 		self.likeButton.bounds.size = CGSizeMake(24, 20)
@@ -588,8 +597,6 @@ class MessageDetailViewController: BaseViewController {
 
 		self.userPhoto.bindToEntity(self.inputMessage!.creator)
 		self.userName.setTitle(self.inputMessage?.creator.name ?? "Deleted", forState: .Normal)
-		
-		self.view.setNeedsLayout()
 	}
 
 	func drawNavButtons(animated: Bool = false) {

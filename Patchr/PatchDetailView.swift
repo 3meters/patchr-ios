@@ -299,7 +299,14 @@ class PatchDetailView: BaseDetailView {
 			
 			self.name.text = entity.name
 			self.type.text = entity.type == nil ? "PATCH" : entity.type.uppercaseString + " PATCH"
-			self.photo.setImageWithPhoto(entity.getPhotoManaged(), animate: false)
+			
+			if entity.photo != nil {
+				self.photo.setImageWithPhoto(entity.photo, animate: false)
+			}
+			else {
+				let seed = Utils.numberFromName(self.name.text!)
+				self.photo.backgroundColor = Utils.randomColor(seed)
+			}
 			
 			/* Privacy */
 			
@@ -349,7 +356,7 @@ class PatchDetailView: BaseDetailView {
 			self.infoOwner.text = entity.creator?.name ?? "Deleted"
 		}
 		
-		self.setNeedsLayout()
+		self.setNeedsLayout()	// Needed because binding can change element layout
 		self.layoutIfNeeded()
 		self.sizeToFit()
 	}

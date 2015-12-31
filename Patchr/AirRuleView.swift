@@ -10,7 +10,10 @@ import UIKit
 
 class AirRuleView: UIView {
 	
-	var rule = UIView()
+	var ruleBottom = UIView()
+	var ruleTop = UIView()
+	var ruleLeft = UIView()
+	var ruleRight = UIView()
 	var thickness = Theme.dimenRuleThickness
 
 	required init(coder aDecoder: NSCoder) {
@@ -26,12 +29,27 @@ class AirRuleView: UIView {
 	}
 	
 	func initialize() {
-		self.rule.backgroundColor = Theme.colorRule
-		self.addSubview(self.rule)
+		self.ruleBottom.hidden = false
+		self.ruleTop.hidden = true
+		self.ruleLeft.hidden = true
+		self.ruleRight.hidden = true
+		
+		self.ruleBottom.backgroundColor = Theme.colorRule
+		self.ruleTop.backgroundColor = Theme.colorRule
+		self.ruleLeft.backgroundColor = Theme.colorRule
+		self.ruleRight.backgroundColor = Theme.colorRule
+		
+		self.addSubview(self.ruleBottom)
+		self.addSubview(self.ruleTop)
+		self.addSubview(self.ruleLeft)
+		self.addSubview(self.ruleRight)
 	}
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		self.rule.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: self.thickness)
+		self.ruleBottom.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: self.thickness)
+		self.ruleTop.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: self.thickness)
+		self.ruleLeft.anchorCenterLeftFillingHeightWithTopPadding(0, bottomPadding: 0, leftPadding: 0, width: self.thickness)
+		self.ruleRight.anchorCenterRightFillingHeightWithTopPadding(0, bottomPadding: 0, rightPadding: 0, width: self.thickness)
 	}
 }

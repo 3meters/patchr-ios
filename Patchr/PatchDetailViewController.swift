@@ -499,12 +499,12 @@ extension PatchDetailViewController {
 			self.header.photo.frame.origin.y = self.originalRect!.origin.y + (-(movement) * ratio)
 		}
 		else {
-			let movement = (originalScrollTop - scrollView.contentOffset.y) * 0.25
+			let movement = (originalScrollTop - scrollView.contentOffset.y) * 0.35
 			if movement > 0 {
 				self.header.photo.frame.origin.y = self.originalRect!.origin.y - (movement * 0.5)
 				self.header.photo.frame.origin.x = self.originalRect!.origin.x - (movement * 0.5)
 				self.header.photo.frame.size.width = self.originalRect!.size.width + movement
-				self.header.photo.frame.size.height = self.originalRect!.size.height + movement				
+				self.header.photo.frame.size.height = self.originalRect!.size.height + movement
 			}
 		}
     }

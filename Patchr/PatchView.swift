@@ -173,13 +173,48 @@ class PatchView: BaseView {
 			}
 		}
 		
-		self.photo.setImageWithPhoto(entity.getPhotoManaged(), animate: false)
-		if entity.photo == nil {
-			self.photo.showGradient = false
+		self.photo.backgroundColor = Colors.gray80pcntColor
+		
+		if entity.photo != nil {
+			let photoUrl = PhotoUtils.url(entity.photo!.prefix!, source: entity.photo!.source!, category: SizeCategory.profile)
+			bind(photoUrl, name: entity.name)			
 		}
-
+		else {
+			bind(nil, name: entity.name)
+		}
+		
 		self.setNeedsLayout()
 	}
+	
+	func bind(photoUrl: NSURL?, name: String?) {
+		let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
+		self.photo.image = nil
+		if photoUrl != nil {
+			self.photo.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
+			self.photo.showGradient = true
+		}
+		else if name != nil {
+			let seed = Utils.numberFromName(name!)
+			self.photo.backgroundColor = Utils.randomColor(seed)
+			self.photo.showGradient = true
+		}
+	}
+	
+	func bindToEntity(entity: Entity!) {
+		if entity != nil {
+			if entity.photo != nil {
+				let photoUrl = PhotoUtils.url(entity.photo!.prefix!, source: entity.photo!.source!, category: SizeCategory.profile)
+				bind(photoUrl, name: entity.name)
+			}
+			else {
+				bind(nil, name: entity.name)
+			}
+		}
+		else {
+			bind(nil, name: nil)
+		}
+	}
+
 	
 	override func sizeThatFits(size: CGSize) -> CGSize {
 		return CGSizeMake(self.width(), 136)
@@ -198,7 +233,7 @@ class PatchView: BaseView {
 		self.name.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 6, width: columnWidth, height: nameSize.height)
 		
 		self.type.sizeToFit()
-		self.type.alignUnder(self.name, matchingLeftWithTopPadding: 0, width: self.type.frame.size.width, height: 16)
+		self.type.alignUnder(self.name, matchingLeftWithTopPadding: 0, width: columnWidth, height: 16)
 		if !self.visibility.hidden {
 			self.visibility.alignToTheRightOf(self.type, matchingCenterWithLeftPadding: 8, width: 16, height: 16)
 			if !self.status.hidden {
