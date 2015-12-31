@@ -280,7 +280,7 @@ class PhotoView: UIView {
 			self.photoGroup.fadeOut()
         }
         self.photoMode = photoMode
-		self.setNeedsLayout()
+		self.setNeedsLayout()	// Needed because dimensions can change
     }
 }
 

@@ -13,7 +13,6 @@ class PatchTableViewController: BaseTableViewController {
 
     var user			: User!
 	var filter			: PatchListFilter?
-    var activityDate	: Int64?
 	var location		: CLLocation?
 	var firstNearPass	= true
     

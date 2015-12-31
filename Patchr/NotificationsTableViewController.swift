@@ -12,7 +12,6 @@ import AudioToolbox
 
 class NotificationsTableViewController: BaseTableViewController {
 
-    private var activityDate:   Int64!
     private var nearbys:        [[NSObject: AnyObject]] = []
 
     /*--------------------------------------------------------------------------------------------
@@ -41,7 +40,8 @@ class NotificationsTableViewController: BaseTableViewController {
 		self.tableView.rowHeight = 0
 		
 		/* Used to monitor for changes */
-        self.activityDate = NotificationController.instance.activityDate
+		self.activityDate = 0
+		//self.activityDate = NotificationController.instance.activityDate
 	}
 
     override func viewWillAppear(animated: Bool) {

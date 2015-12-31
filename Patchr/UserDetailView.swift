@@ -69,7 +69,7 @@ class UserDetailView: BaseDetailView {
 		
 		self.watchingGroup.addSubview(self.watchingIcon)
 		self.watchingGroup.addSubview(self.watchingButton)
-		self.watchingGroup.rule.backgroundColor = Theme.colorSeparator
+		self.watchingGroup.ruleBottom.backgroundColor = Theme.colorSeparator
 
 		/* Owns */
 		self.ownsIcon.image = UIImage(named: "imgEditLight")
@@ -81,7 +81,7 @@ class UserDetailView: BaseDetailView {
 		
 		self.ownsGroup.addSubview(self.ownsIcon)
 		self.ownsGroup.addSubview(self.ownsButton)
-		self.ownsGroup.rule.backgroundColor = Theme.colorSeparator
+		self.ownsGroup.ruleBottom.backgroundColor = Theme.colorSeparator
 
 		self.addSubview(self.watchingGroup)
 		self.addSubview(self.ownsGroup)

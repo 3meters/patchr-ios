@@ -13,7 +13,9 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
     var query				: Query!
 	var processingQuery		= false
 	var listType			: ItemClass = .Patches
-	
+	var activityDate		: Int64 = 0
+	var firstAppearance		= true
+
 	var activity			= UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
 	var footerView			= UIView()
 	var loadMoreButton		= UIButton(type: UIButtonType.RoundedRect)
@@ -103,15 +105,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		super.viewWillAppear(animated) // Base implementation does nothing
 		
 		self.refreshControl!.endRefreshing()
-		if self.query.executedValue {
-			do {
-				try self.fetchedResultsController.performFetch()
-			}
-			catch { fatalError("Fetch error: \(error)") }
-		}
-		else {
-			try! self.fetchedResultsController.performFetch()
-		}
+		try! self.fetchedResultsController.performFetch()
 		
 		if let indexPath = tableView.indexPathForSelectedRow {
 			tableView.deselectRowAtIndexPath(indexPath, animated: animated)
@@ -165,9 +159,11 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 			try! self.fetchedResultsController.performFetch()
 		}
 
-		if !self.query.executedValue {
+		if !self.query.executedValue || self.firstAppearance {
 			self.bindQueryItems(false)
 		}
+		
+		self.firstAppearance = false
     }
 	
 	override func viewWillDisappear(animated: Bool) {
@@ -289,8 +285,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 							self?.tableView.tableFooterView = nil
 						}
 						
-						self?.tableView.setNeedsLayout()
-						
 						if error == nil {
 							self?.query.executedValue = true
 							if self?.fetchedResultsController.delegate != nil {	// Delegate is unset when view controller disappears
@@ -313,12 +307,13 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 								}
 							}
 							query.offsetDate = oldestDate
+							/*
+							 * Saving commits changes to the data model and the fetch controller notices
+							 * if that changes the results it has associated with it's fetch request. 
+							 * The fetched results delegate is informed of any changes that should
+							 * cause an update to the table view.
+							 */
 							DataController.instance.saveContext(false)
-							
-							do {
-								try self?.fetchedResultsController.performFetch() // Reloads table
-							}
-							catch { fatalError("Fetch error: \(error)") }
 						}
 						return
 					}
@@ -406,6 +401,7 @@ extension BaseTableViewController {
 		else if self.listType == .Users {
 			let view = UserView()
 			let cell = WrapperTableViewCell(view: view, padding: UIEdgeInsetsMake(8, 8, 8, 8), reuseIdentifier: cellType.rawValue)
+			cell.selectionStyle = .None
 			return cell
 		}
 		else {
@@ -511,10 +507,10 @@ extension BaseTableViewController {
 	func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType) {
 		switch type {
 		case .Insert:
-			self.tableView.insertSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Fade)
+			self.tableView.insertSections(NSIndexSet(index: sectionIndex), withRowAnimation: .None)
 			
 		case .Delete:
-			self.tableView.deleteSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Fade)
+			self.tableView.deleteSections(NSIndexSet(index: sectionIndex), withRowAnimation: .None)
 			
 		default:
 			return
@@ -533,14 +529,14 @@ extension BaseTableViewController {
 		
 		switch type {
 			case .Insert:	// 1
-				self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
+				self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .None)
 			
 			case .Delete:	// 2
-				self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
+				self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .None)
 				
 			case .Move:		// 3
-				self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
-				self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
+				self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .None)
+				self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .None)
 				
 			case .Update:	// 4
 				self.tableView.cellForRowAtIndexPath(indexPath!)	// Better than reloadRowsAtIndexPaths because no animation

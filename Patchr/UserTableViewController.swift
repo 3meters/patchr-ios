@@ -39,8 +39,8 @@ class UserTableViewController: BaseTableViewController {
 				self.navigationItem.title = "Likers"
 		}
 		
-		self.tableView.estimatedRowHeight = 112
-		self.tableView.rowHeight = 112
+		self.tableView.estimatedRowHeight = 96
+		self.tableView.rowHeight = 96
 	}
     
     override func viewWillAppear(animated: Bool) {
@@ -102,6 +102,9 @@ class UserTableViewController: BaseTableViewController {
 	}
 	
 	override func didRefreshItems(query: Query) {
+		/* 
+		 * This is an attempt to have the owner sort at the top of the list 
+		 */
 		if self.filter == .PatchWatchers {
 			if self.patch != nil {
 				for item in query.queryItems {
@@ -148,13 +151,11 @@ extension UserTableViewController {
 				if self.showOwnerUI {
 					if let currentUser = UserController.instance.currentUser {
 						if user.id_ != currentUser.id_ {
-							view.removeButton.hidden = false
-							view.approved.hidden = false
-							view.approvedSwitch.hidden = false
 							view.approvedSwitch.on = false
 							if (user.link != nil && user.link.type == "watch") {
 								view.approvedSwitch.on = user.link.enabledValue
 							}
+							view.showOwnerUI()
 						}
 					}
 				}
@@ -177,17 +178,6 @@ extension UserTableViewController {
 				return view.bounds.size.height
 		}
 		return 0
-	}
-
-	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-		
-        if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
-			let entity = queryResult.object as? User {
-			let controller = UserDetailViewController()
-			controller.entityId = entity.id_
-			controller.profileMode = false
-			self.navigationController?.pushViewController(controller, animated: true)
-        }
 	}
 }
 
@@ -222,14 +212,26 @@ extension UserTableViewController: UserApprovalViewDelegate {
 	}
 
 	func userView(userView: UserView, removeButtonTapped removeButton: UIButton) {
-        
+		
+		self.ActionConfirmationAlert(
+			"Confirm Remove",
+			message: "Do you want to remove the request to watch your patch?",
+			actionTitle: "Remove", cancelTitle: "Cancel", delegate: self) {
+				doIt in
+				if doIt {
+					self.removeWatchRequest(userView)
+				}
+		}
+	}
+	
+	func removeWatchRequest(userView: UserView) {
 		if let indexPath = self.tableView.indexPathForCell(userView.cell!) {
 			if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
 				if let user = queryResult.object as? User {
 					
 					DataController.proxibase.deleteLinkById(user.link.id_, completion: {
 						response, error in
-                        
+						
 						NSOperationQueue.mainQueue().addOperationWithBlock {
 							if let error = ServerError(error) {
 								self.handleError(error, errorActionType: .ALERT)
