@@ -287,6 +287,8 @@ class PatchDetailView: BaseDetailView {
 		self.soundButton.alpha = 0.0
 		
 		self.bannerGroup.clipsToBounds = true
+		
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "watchDidChange:", name: Events.WatchDidChange, object: self.watchButton)
 	}
 	
 	func bindToEntity(entity: Entity!) {

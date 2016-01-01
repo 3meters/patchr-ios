@@ -54,14 +54,18 @@ class BaseDetailViewController: BaseTableViewController {
 		super.viewWillAppear(animated)
 		
 		if self.entity != nil {
-			draw()
+			bind()
 		}
 	}
 	
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
-    
+	
+	override func getActivityDate() -> Int64 {
+		return self.entity!.activityDate?.milliseconds ?? 0
+	}
+	
     override func loadQuery() -> Query {
         
 		let id = queryId()
@@ -92,12 +96,12 @@ class BaseDetailViewController: BaseTableViewController {
 		return "query.\(self.queryName!.lowercaseString).\(id!)"
 	}
 	
-	internal func bind(force: Bool = false, reset: Bool = false) {
+	func fetch(reset reset: Bool = false) {
         
         /* Refreshes the top object but not the message list */
 		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
 			
-			DataController.instance.withEntityId(self.entityId!, refresh: force) {
+			DataController.instance.withEntityId(self.entityId!, strategy: .UseCacheAndVerify) {
 				[weak self] objectId, error in
 				
 				if self != nil {
@@ -105,30 +109,35 @@ class BaseDetailViewController: BaseTableViewController {
 						
 						if error == nil {
 							if objectId != nil {
-								let entity = DataController.instance.mainContext.objectWithID(objectId!) as! Entity
 								
-								/* Refresh list too if context entity was updated or reset = true */
-								if entity.refreshedValue || reset {
-									entity.refreshedValue = false
-									self?.bindQueryItems(true, paging: !reset)	// Only place we cascade the refresh to the list otherwise a pullToRefresh is required
+								let entity = DataController.instance.mainContext.objectWithID(objectId!) as! Entity
+								self?.entity = entity
+								self?.entityId = entity.id_
+								
+								/* 
+								 * Refresh list too if context entity was updated or reset = true. 
+								 * We need reset because a real list refresh is needed even if the activityDate
+								 * hasn't changed because that is the only way to pickup link based message 
+								 * state changes such as likes.
+								 */
+								if self?.getActivityDate() != self?.query.activityDateValue || reset {
+									self?.fetchQueryItems(force: true, paging: !reset, queryDate: self?.getActivityDate())	// Only place we cascade the refresh to the list otherwise a pullToRefresh is required
 									DataController.instance.saveContext(false)
 								}
 								
-								self?.entity = entity
-								self?.entityId = entity.id_
 								if let patch = entity as? Patch {
 									DataController.instance.currentPatch = patch    // Used for context for messages
 								}
 								self?.drawButtons()	// Refresh so owner only commands can be displayed
-								self?.draw()
-								NSNotificationCenter.defaultCenter().postNotificationName(Events.BindingComplete, object: nil)
+								self?.bind()
+								NSNotificationCenter.defaultCenter().postNotificationName(Events.FetchComplete, object: nil)
 							}
 							else {
 								Shared.Toast("Item has been deleted")
 								Utils.delay(2.0) {
 									() -> () in
 									self?.navigationController?.popViewControllerAnimated(true)
-									NSNotificationCenter.defaultCenter().postNotificationName(Events.BindingComplete, object: nil, userInfo: ["deleted":true])
+									NSNotificationCenter.defaultCenter().postNotificationName(Events.FetchComplete, object: nil, userInfo: ["deleted":true])
 								}
 							}
 						}
@@ -138,20 +147,20 @@ class BaseDetailViewController: BaseTableViewController {
 		}
     }
 	
-    override func bindQueryItems(force: Bool = false, paging: Bool = false) {
+	override func fetchQueryItems(force force: Bool = false, paging: Bool = false, queryDate: Int64?) {
         if force || !self.query.executedValue || paging {
-            super.bindQueryItems(force, paging: paging)
+			super.fetchQueryItems(force: force, paging: paging, queryDate: queryDate)
         }
     }
 	
-    internal func draw() {
+    func bind() {
         assert(false, "This method must be overridden in subclass")
     }
     
-    internal func drawButtons() { /* Optional */ }
+    func drawButtons() { /* Optional */ }
     
     override func pullToRefreshAction(sender: AnyObject?) -> Void {
-		self.bind(true, reset: true)
+		self.fetch(reset: true)
     }
 }
 

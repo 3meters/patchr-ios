@@ -33,7 +33,7 @@ class DataController: NSObject {
 	var mainContext: NSManagedObjectContext!
 	
     var activityDateInsertDeletePatch	: Int64
-	var activityDateInsertDeleteMessage	: Int64
+	var activityDateInsertDeleteMessage	: Int64		// Not currently used
 	var activityDateWatching			: Int64
 
     var currentPatch:         Patch?    // Currently used for message context
@@ -53,7 +53,7 @@ class DataController: NSObject {
 
 	private override init() {
 		
-		let activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
+		let activityDate = Utils.now()
         self.activityDateInsertDeletePatch = activityDate
 		self.activityDateInsertDeleteMessage = activityDate
 		self.activityDateWatching = activityDate
@@ -86,51 +86,51 @@ class DataController: NSObject {
 	 * Singles
 	 *--------------------------------------------------------------------------------------------*/
 
-	func withPatchId(patchId: String, refresh: Bool = false, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
+	private func withPatchId(patchId: String, strategy: FetchStrategy, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
         /*
         * - Load a patch for the patch form
         * - Show a patch by id for a notification.
         */
-		withEntityType(Patch.self, entityId: patchId, refresh: refresh) {
+		withEntityType(Patch.self, entityId: patchId, strategy:	strategy) {
 			objectId, error in
 			completion(objectId, error: error)
 		}
 	}
 
-	func withMessageId(messageId: String, refresh: Bool = false, blockCriteria: Bool = false, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
+	private func withMessageId(messageId: String, strategy: FetchStrategy, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
         /*
         * Load a message for the message form.
         */
-		withEntityType(Message.self, entityId: messageId, refresh: refresh, blockCriteria: blockCriteria) {
+		withEntityType(Message.self, entityId: messageId, strategy:	strategy) {
 			objectId, error in
 			completion(objectId, error: error)
 		}
 	}
 
-	func withUserId(userId: String, refresh: Bool = false, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
+	private func withUserId(userId: String, strategy: FetchStrategy, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
         /*
         * - Load users for items in user lists
         * - Load user by id for a notification.
         */
-		withEntityType(User.self, entityId: userId, refresh: refresh) {
+		withEntityType(User.self, entityId: userId, strategy: strategy) {
 			objectId, error in
 			completion(objectId, error: error)
 		}
 	}
 
-    func withEntityId(entityId: String, refresh: Bool = false, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
+    func withEntityId(entityId: String, strategy: FetchStrategy, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
         /*
         * Used by notifications which only have an entity id to work with.
         */
 		switch entityId {
 			case _ where entityId.hasPrefix("pa."):
-				withPatchId(entityId, refresh: refresh, completion: completion)
+				withPatchId(entityId, strategy:	strategy, completion: completion)
             
 			case _ where entityId.hasPrefix("us."):
-				withUserId(entityId, refresh: refresh, completion: completion)
+				withUserId(entityId, strategy: strategy, completion: completion)
             
 			case _ where entityId.hasPrefix("me."):
-				withMessageId(entityId, refresh: refresh, completion: completion)
+				withMessageId(entityId, strategy:strategy, completion: completion)
             
 			default:
 				Log.w("WARNING: withEntity not currently implemented for id of form \(entityId)")
@@ -138,23 +138,19 @@ class DataController: NSObject {
 		}
 	}
 
-	private func withEntityType(entityType: ServiceBase.Type,
-		entityId: String,
-		refresh: Bool = false,
-		blockCriteria: Bool = false,
-		completion: (NSManagedObjectID?, error: NSError?) -> Void) {
+	private func withEntityType(entityType: ServiceBase.Type, entityId: String, strategy: FetchStrategy, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
 		
 		/* Pull from data model if available */
 		let modelEntity = entityType.fetchOneById(entityId, inManagedObjectContext: mainContext) as ServiceBase!
 		
 		/* If not in data model or caller wants the freshest available then call service */
-		if refresh || modelEntity == nil {
+		if strategy == .UseCacheAndVerify || strategy == .IgnoreCache || modelEntity == nil {
 			
 			var criteria: [String: AnyObject] = [:]
 			var objectId: NSManagedObjectID?
 			if modelEntity != nil {
 				objectId = modelEntity.objectID
-				if !blockCriteria {
+				if strategy != .IgnoreCache {
 					criteria = modelEntity.criteria()
 				}
 			}
@@ -194,9 +190,8 @@ class DataController: NSObject {
 										
 										let entity = entityType.fetchOrInsertOneById(entityId, inManagedObjectContext: privateContext)
 										entityType.setPropertiesFromDictionary(entityDictionaries[0], onObject: entity!)
-										entity!.refreshedValue = true
 										objectId = entity?.objectID
-										if blockCriteria {
+										if strategy == .IgnoreCache {
 											entity!.decoratedValue = true
 										}
 										
@@ -542,6 +537,12 @@ class DataController: NSObject {
         }
         return nil
     }    
+}
+
+enum FetchStrategy: Int {
+	case UseCache
+	case UseCacheAndVerify
+	case IgnoreCache
 }
 
 enum Event: String {

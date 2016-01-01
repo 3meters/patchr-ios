@@ -35,9 +35,17 @@ class UserDetailViewController: BaseDetailViewController {
 		initialize()
 	}
 
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		
+		let viewWidth = self.tableView.width()
+		let viewHeight = CGFloat(208)
+		self.tableView.tableHeaderView?.bounds.size = CGSizeMake(viewWidth, viewHeight)
+	}
+	
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
-		bind(true)
+		fetch(reset: false)
 	}
     
 	override func viewWillDisappear(animated: Bool) {
@@ -49,11 +57,6 @@ class UserDetailViewController: BaseDetailViewController {
 		self.activity.stopAnimating()
 	}
 	
-	override func viewWillLayoutSubviews() {
-		super.viewWillLayoutSubviews()
-		self.tableView.tableHeaderView?.bounds.size = CGSizeMake(self.tableView.width(), CGFloat(208))
-	}
-
 	/*--------------------------------------------------------------------------------------------
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
@@ -105,7 +108,7 @@ class UserDetailViewController: BaseDetailViewController {
 		drawButtons()
 	}
 	
-	override func draw() {
+	override func bind() {
 		if let user = self.entity as? User {
 			self.header.bindToEntity(user)
 			if self.tableView.tableHeaderView == nil {

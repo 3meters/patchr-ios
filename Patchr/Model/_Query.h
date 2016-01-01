@@ -4,6 +4,7 @@
 @import CoreData;
 
 extern const struct QueryAttributes {
+	__unsafe_unretained NSString *activityDate;
 	__unsafe_unretained NSString *entityId;
 	__unsafe_unretained NSString *executed;
 	__unsafe_unretained NSString *id_;
@@ -33,6 +34,14 @@ extern const struct QueryRelationships {
 + (NSString*)entityName;
 + (NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_;
 @property (nonatomic, readonly, strong) QueryID* objectID;
+
+@property (nonatomic, strong) NSNumber* activityDate;
+
+@property (atomic) int64_t activityDateValue;
+- (int64_t)activityDateValue;
+- (void)setActivityDateValue:(int64_t)value_;
+
+//- (BOOL)validateActivityDate:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSString* entityId;
 
@@ -105,6 +114,12 @@ extern const struct QueryRelationships {
 @end
 
 @interface _Query (CoreDataGeneratedPrimitiveAccessors)
+
+- (NSNumber*)primitiveActivityDate;
+- (void)setPrimitiveActivityDate:(NSNumber*)value;
+
+- (int64_t)primitiveActivityDateValue;
+- (void)setPrimitiveActivityDateValue:(int64_t)value_;
 
 - (NSString*)primitiveEntityId;
 - (void)setPrimitiveEntityId:(NSString*)value;

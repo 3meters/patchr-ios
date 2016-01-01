@@ -37,15 +37,12 @@ class PatchTableViewController: BaseTableViewController {
         switch self.filter! {
             case .Nearby:
                 self.emptyMessage = "No patches nearby"
-                self.activityDate = DataController.instance.activityDateInsertDeletePatch
             case .Explore:
                 self.emptyMessage = "Discover popular patches here"
             case .Watching:
                 self.emptyMessage = "Watch patches and browse them here"
-				self.activityDate = DataController.instance.activityDateWatching
             case .Owns:
                 self.emptyMessage = "Make patches and browse them here"
-				self.activityDate = DataController.instance.activityDateInsertDeletePatch
         }
 		
         super.viewDidLoad()
@@ -87,11 +84,9 @@ class PatchTableViewController: BaseTableViewController {
 			registerForLocationNotifications()
 			LocationController.instance.stopSignificantChangeUpdates()
 			
-            if DataController.instance.activityDateInsertDeletePatch > self.activityDate || !self.query.executedValue {
-				/* We do this here so user can see the changes */
-				self.activityDate = DataController.instance.activityDateInsertDeletePatch
-                self.bindQueryItems(true)
-            }
+			if getActivityDate() != self.query.activityDateValue {
+				self.fetchQueryItems(force: true, paging: false, queryDate: getActivityDate())
+			}
 			else {
 				LocationController.instance.startUpdates()
 				if self.firstNearPass {
@@ -103,20 +98,10 @@ class PatchTableViewController: BaseTableViewController {
 			self.firstNearPass = false
         }
 		else {
-			super.viewDidAppear(animated)	// Will query if executed == false
+			super.viewDidAppear(animated)
 			self.location = LocationController.instance.lastLocationFromManager()
-			
-			if self.filter == .Watching && self.query.executedValue {
-				if DataController.instance.activityDateWatching > self.activityDate {
-					self.activityDate = DataController.instance.activityDateWatching
-					self.bindQueryItems(true, paging: false)
-				}
-			}
-			else if self.filter == .Owns && self.query.executedValue {
-				if DataController.instance.activityDateInsertDeletePatch > self.activityDate {
-					self.activityDate = DataController.instance.activityDateInsertDeletePatch
-					self.bindQueryItems(true, paging: false)
-				}
+			if getActivityDate() != self.query.activityDateValue {
+				self.fetchQueryItems(force: true, paging: false, queryDate: getActivityDate())
 			}
 		}
     }
@@ -146,7 +131,20 @@ class PatchTableViewController: BaseTableViewController {
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
-    
+	
+	override func getActivityDate() -> Int64 {
+		switch self.filter! {
+		case .Nearby:
+			return DataController.instance.activityDateInsertDeletePatch
+		case .Explore:
+			return 1  	// Causes one update only
+		case .Watching:
+			return DataController.instance.activityDateWatching
+		case .Owns:
+			return DataController.instance.activityDateInsertDeletePatch
+		}
+	}
+	
     override func loadQuery() -> Query {
 
 		let id = queryId()
@@ -199,7 +197,7 @@ class PatchTableViewController: BaseTableViewController {
 		return queryId
 	}
 	
-	override func bindQueryItems(force: Bool = false, paging: Bool = false) {
+	override func fetchQueryItems(force force: Bool, paging: Bool, queryDate: Int64?) {
 		
 		if self.filter == .Nearby {
 			if force {
@@ -230,7 +228,7 @@ class PatchTableViewController: BaseTableViewController {
 				/* Might be fresher than the location we cached in didAppear */
 				self.location = LocationController.instance.lastLocationFromManager()
 			}
-			super.bindQueryItems(force, paging: paging)
+			super.fetchQueryItems(force: force, paging: paging, queryDate: queryDate)
 		}
 	}
 	
@@ -324,6 +322,7 @@ class PatchTableViewController: BaseTableViewController {
 						let query = DataController.instance.mainContext.objectWithID(queryId) as! Query
 						
 						query.executedValue = true
+						self?.query.activityDateValue = (self?.getActivityDate())!
 						
 						if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
 							if fetchedObjects.count == 0 {
@@ -338,8 +337,6 @@ class PatchTableViewController: BaseTableViewController {
 								}
 							}
 						}
-						
-						self?.activityDate = DataController.instance.activityDateInsertDeletePatch
 						
 						DataController.instance.saveContext(false)	// Enough to trigger table update
 						

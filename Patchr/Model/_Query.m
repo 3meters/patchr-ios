@@ -4,6 +4,7 @@
 #import "_Query.h"
 
 const struct QueryAttributes QueryAttributes = {
+	.activityDate = @"activityDate",
 	.entityId = @"entityId",
 	.executed = @"executed",
 	.id_ = @"id_",
@@ -46,6 +47,11 @@ const struct QueryRelationships QueryRelationships = {
 + (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key {
 	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
 
+	if ([key isEqualToString:@"activityDateValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"activityDate"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
 	if ([key isEqualToString:@"executedValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"executed"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
@@ -68,6 +74,26 @@ const struct QueryRelationships QueryRelationships = {
 	}
 
 	return keyPaths;
+}
+
+@dynamic activityDate;
+
+- (int64_t)activityDateValue {
+	NSNumber *result = [self activityDate];
+	return [result longLongValue];
+}
+
+- (void)setActivityDateValue:(int64_t)value_ {
+	[self setActivityDate:@(value_)];
+}
+
+- (int64_t)primitiveActivityDateValue {
+	NSNumber *result = [self primitiveActivityDate];
+	return [result longLongValue];
+}
+
+- (void)setPrimitiveActivityDateValue:(int64_t)value_ {
+	[self setPrimitiveActivityDate:@(value_)];
 }
 
 @dynamic entityId;

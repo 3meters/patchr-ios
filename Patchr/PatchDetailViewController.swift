@@ -32,30 +32,17 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		initialize()
 	}
 	
-	override func viewWillAppear(animated: Bool) {
-		super.viewWillAppear(animated)
-		NSNotificationCenter.defaultCenter().addObserver(self.header, selector: "watchDidChange:", name: Events.WatchDidChange, object: nil)
-		bind(true)
-	}
-	
-	override func viewDidAppear(animated: Bool) {
-		super.viewDidAppear(animated)
-	}
-	
-	override func viewWillDisappear(animated: Bool) {
-		super.viewWillDisappear(animated)
-	}
-
-    override func viewDidDisappear(animated: Bool) {
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.WatchDidChange, object: nil)
-    }
-	
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
 		let viewWidth = self.tableView.width()
 		let viewHeight = (viewWidth * 0.625) + 48
-		self.tableView.tableHeaderView?.bounds.size = CGSizeMake(viewWidth, viewHeight)
+		self.tableView.tableHeaderView?.bounds.size = CGSizeMake(viewWidth, viewHeight)	// Triggers layoutSubviews on header
+	}
+	
+	override func viewWillAppear(animated: Bool) {
+		super.viewWillAppear(animated)
+		fetch(reset: false)
 	}
 	
     deinit {
@@ -174,7 +161,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		self.presentViewController(navController, animated: true) {}
 	}
 	
-	func bindingComplete(notification: NSNotification) {
+	func fetchComplete(notification: NSNotification) {
 		if notification.userInfo == nil {
 			if self.inputShowInviteWelcome {
 				if let entity = self.entity as? Patch where entity.userWatchStatusValue == .NonMember {
@@ -208,7 +195,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 	}
 	
     func likeDidChange(sender: NSNotification) {
-        self.draw()
+        self.bind()
         self.tableView.reloadData()
     }
 	
@@ -228,8 +215,6 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		
 		setScreenName("PatchDetail")
 		self.queryName = DataStoreQueryName.MessagesForPatch.rawValue
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:", name: PAApplicationDidReceiveRemoteNotification, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "bindingComplete:", name: Events.BindingComplete, object: nil)
 		
 		self.header = PatchDetailView()
 		self.tableView = AirTableView(frame: self.tableView.frame, style: .Plain)
@@ -238,6 +223,9 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		self.header.watchersButton.addTarget(self, action: Selector("watchersAction:"), forControlEvents: UIControlEvents.TouchUpInside)
 		self.header.contextButton.addTarget(self, action: Selector("contextButtonAction:"), forControlEvents: .TouchUpInside)
 
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:", name: PAApplicationDidReceiveRemoteNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "fetchComplete:", name: Events.FetchComplete, object: nil)
+		
 		/* UI prep */
 		self.patchNameVisible = false
 		self.header.contextButton.setTitle("", forState: .Normal)
@@ -246,7 +234,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		drawButtons()
 	}
 	
-	override func draw() {
+	override func bind() {
         
         if let entity = self.entity as? Patch {
 			self.header.bindToEntity(entity)

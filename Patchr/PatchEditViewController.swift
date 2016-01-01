@@ -437,7 +437,7 @@ class PatchEditViewController: BaseViewController {
 			queue.tasks +=~ { _, next in
 				if let result: Result = queue.lastResult as? Result where result.error == nil {
 					let serverResponse = ServerResponse(result.response)
-					DataController.instance.withEntityId(serverResponse.resultID, refresh: true) { objectId, error in
+					DataController.instance.withEntityId(serverResponse.resultID, strategy: .UseCacheAndVerify) { objectId, error in
 						if error == nil && objectId != nil {
 							self.insertedEntity = DataController.instance.mainContext.objectWithID(objectId!) as? Entity
 						}
@@ -472,7 +472,7 @@ class PatchEditViewController: BaseViewController {
 						let serverResponse = ServerResponse(result.response)
 						if serverResponse.resultCount == 1 {
 							Log.d("Inserted entity \(serverResponse.resultID)")
-							DataController.instance.activityDateInsertDeletePatch = Int64(NSDate().timeIntervalSince1970 * 1000)
+							DataController.instance.activityDateInsertDeletePatch = Utils.now()
 							DataController.instance.activityDateWatching = DataController.instance.activityDateInsertDeletePatch
 							let controller = InviteViewController()
 							controller.inputEntity = self.insertedEntity as! Patch
@@ -514,7 +514,7 @@ class PatchEditViewController: BaseViewController {
 				else {
 					DataController.instance.mainContext.deleteObject(self.inputPatch!)
 					DataController.instance.saveContext(false)
-					DataController.instance.activityDateInsertDeletePatch = Int64(NSDate().timeIntervalSince1970 * 1000)
+					DataController.instance.activityDateInsertDeletePatch = Utils.now()
 					self.performBack()
 				}
 			}

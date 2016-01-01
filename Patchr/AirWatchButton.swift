@@ -70,10 +70,10 @@ class AirWatchButton: AirToggleButton {
 							patch!.userWatchId = nil
 							patch!.userWatchStatusValue = .NonMember
 							patch!.countWatchingValue--
-							DataController.instance.activityDateWatching = Int64(NSDate().timeIntervalSince1970 * 1000)
+							DataController.instance.activityDateWatching = Utils.now()
 						}
 					}
-					NSNotificationCenter.defaultCenter().postNotificationName(Events.WatchDidChange, object: nil)
+					NSNotificationCenter.defaultCenter().postNotificationName(Events.WatchDidChange, object: self)
 					self.toggleOn(patch!.userWatchStatusValue == .Member)
 					self.enabled = true
 				}
@@ -94,7 +94,7 @@ class AirWatchButton: AirToggleButton {
 							patch!.userWatchStatusValue = .NonMember
 						}
 					}
-					NSNotificationCenter.defaultCenter().postNotificationName(Events.WatchDidChange, object: nil)
+					NSNotificationCenter.defaultCenter().postNotificationName(Events.WatchDidChange, object: self)
 					self.toggleOn(patch!.userWatchStatusValue == .Member)
 					self.enabled = true
 				}
@@ -120,7 +120,7 @@ class AirWatchButton: AirToggleButton {
 										if enabled {
 											patch!.userWatchStatusValue = .Member
 											patch!.countWatchingValue++
-											DataController.instance.activityDateWatching = Int64(NSDate().timeIntervalSince1970 * 1000)
+											DataController.instance.activityDateWatching = Utils.now()
 										}
 										else {
 											patch!.userWatchStatusValue = .Pending
@@ -130,7 +130,7 @@ class AirWatchButton: AirToggleButton {
 							}
 						}
 					}
-					NSNotificationCenter.defaultCenter().postNotificationName(Events.WatchDidChange, object: nil)
+					NSNotificationCenter.defaultCenter().postNotificationName(Events.WatchDidChange, object: self)
 					self.toggleOn(patch!.userWatchStatusValue == .Member, pending: patch!.userWatchStatusValue == .Pending)
 					self.enabled = true
 				}

@@ -18,16 +18,13 @@ class NotificationsTableViewController: BaseTableViewController {
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
 
-	override func awakeFromNib() {
-		super.awakeFromNib()
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:",
-            name: PAApplicationDidReceiveRemoteNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidBecomeActive",
-            name: Event.ApplicationDidBecomeActive.rawValue, object: nil)
-	}
-
 	override func viewDidLoad() {
         
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:",
+			name: PAApplicationDidReceiveRemoteNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidBecomeActive",
+			name: Event.ApplicationDidBecomeActive.rawValue, object: nil)
+		
         self.emptyMessage = "No notifications yet"
 		self.loadMoreMessage = "LOAD MORE NOTIFICATIONS"
 		self.listType = .Notifications
@@ -38,10 +35,6 @@ class NotificationsTableViewController: BaseTableViewController {
 		/* Turn off estimate so rows are measured up front */
 		self.tableView.estimatedRowHeight = 0
 		self.tableView.rowHeight = 0
-		
-		/* Used to monitor for changes */
-		self.activityDate = 0
-		//self.activityDate = NotificationController.instance.activityDate
 	}
 
     override func viewWillAppear(animated: Bool) {
@@ -59,13 +52,12 @@ class NotificationsTableViewController: BaseTableViewController {
 		if let _ = NSUserDefaults.standardUserDefaults().valueForKey(PatchrUserDefaultKey("notificationDate")) {
 			NSUserDefaults.standardUserDefaults().setObject(nil, forKey: PatchrUserDefaultKey("notificationDate"))
 			NSUserDefaults.standardUserDefaults().synchronize()
-			self.bindQueryItems(true)
-			self.activityDate = NotificationController.instance.activityDate
 		}
-		else if NotificationController.instance.activityDate > self.activityDate {
-            self.bindQueryItems(true)
-            self.activityDate = NotificationController.instance.activityDate
-        }
+		
+		if getActivityDate() != self.query.activityDateValue {
+			self.fetchQueryItems(force: true, paging: false, queryDate: getActivityDate())
+		}
+
         clearBadges()
 	}
 	
@@ -104,7 +96,9 @@ class NotificationsTableViewController: BaseTableViewController {
                                     
                                 /* Only refresh notifications if view has already been loaded */
                                 if self.isViewLoaded() {
-                                    self.bindQueryItems(true)
+									if getActivityDate() != self.query.activityDateValue {
+										self.fetchQueryItems(force: true, paging: false, queryDate: getActivityDate())
+									}
                                 }
                             }
 								
@@ -230,6 +224,10 @@ class NotificationsTableViewController: BaseTableViewController {
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
+	
+	override func getActivityDate() -> Int64 {
+		return NotificationController.instance.activityDate
+	}
     
     override func loadQuery() -> Query {
 		
@@ -250,14 +248,14 @@ class NotificationsTableViewController: BaseTableViewController {
 		return "query.\(DataStoreQueryName.NotificationsForCurrentUser.rawValue.lowercaseString)"
 	}
 
-    override func bindQueryItems(force: Bool = false, paging: Bool = false) {
+	override func fetchQueryItems(force force: Bool, paging: Bool, queryDate: Int64?) {
         /* Always make sure we have the freshest sidecar data before a query */
         if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
             if let storedNearbys = groupDefaults.arrayForKey(PatchrUserDefaultKey("nearby.patches")) as? [[NSObject:AnyObject]] {
                 self.nearbys = storedNearbys
             }
         }
-        super.bindQueryItems(force, paging: paging)
+		super.fetchQueryItems(force: force, paging: paging, queryDate: queryDate)
     }
 	
 	override func populateSidecar(query: Query) {

@@ -13,7 +13,12 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
     var query				: Query!
 	var processingQuery		= false
 	var listType			: ItemClass = .Patches
-	var activityDate		: Int64 = 0
+	/*
+	 * Used to monitor whether list is stale because context entity has a fresher activityDate.
+	 * For lists without a standard context entity, we use the DataController as a proxy. That
+	 * includes nearby, notifications, and explore. We also use DataController as a proxy for
+	 * owned and watching just as an optimization.
+	 */
 	var firstAppearance		= true
 
 	var activity			= UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
@@ -101,22 +106,11 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.query = loadQuery()
 	}
 	
-	override func viewWillAppear(animated: Bool) {
-		super.viewWillAppear(animated) // Base implementation does nothing
-		
-		self.refreshControl!.endRefreshing()
-		try! self.fetchedResultsController.performFetch()
-		
-		if let indexPath = tableView.indexPathForSelectedRow {
-			tableView.deselectRowAtIndexPath(indexPath, animated: animated)
-		}
-	}
-	
 	override func viewWillLayoutSubviews() {
 		/*
-		 * Called right after viewWillAppear. Gets called
-		 * multiple times during appearance cycle.
-		 */
+		* Called right after viewWillAppear. Gets called
+		* multiple times during appearance cycle.
+		*/
 		super.viewWillLayoutSubviews()
 		
 		let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.bounds.size.width)
@@ -133,6 +127,17 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		
 		self.emptyLabel.anchorInCenterWithWidth(160, height: 160)
 		self.emptyLabel.frame.origin.y -= CGFloat(64 /* Status bar + navigation bar */)
+	}
+	
+	override func viewWillAppear(animated: Bool) {
+		super.viewWillAppear(animated) // Base implementation does nothing
+		
+		self.refreshControl!.endRefreshing()
+		try! self.fetchedResultsController.performFetch()
+		
+		if let indexPath = tableView.indexPathForSelectedRow {
+			tableView.deselectRowAtIndexPath(indexPath, animated: animated)
+		}
 	}
 	
     override func viewDidAppear(animated: Bool) {
@@ -158,10 +163,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		else {
 			try! self.fetchedResultsController.performFetch()
 		}
-
-		if !self.query.executedValue || self.firstAppearance {
-			self.bindQueryItems(false)
-		}
     }
 	
 	override func viewWillDisappear(animated: Bool) {
@@ -185,7 +186,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
     
     func pullToRefreshAction(sender: AnyObject?) -> Void {
 		Utils.delay(0.5) {	// Give the refresh animation to settle before party on the main thread
-			self.bindQueryItems(true, paging: false)
+			self.fetchQueryItems(force: true, paging: false, queryDate: self.getActivityDate())
 		}
     }
 	
@@ -217,10 +218,10 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 				spinner.startAnimating()
 		}
 		
-		self.bindQueryItems(false, paging: true)
+		self.fetchQueryItems(force: false, paging: true, queryDate: nil)
 	}
 
-    func bindQueryItems(force: Bool = false, paging: Bool = false) {
+	func fetchQueryItems(force force: Bool, paging: Bool, queryDate: Int64?) {
         
         guard !self.processingQuery else {
             return
@@ -284,6 +285,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 						}
 
 						if error == nil {
+							self?.query.activityDateValue = queryDate!
 							self?.query.executedValue = true
 							if self?.fetchedResultsController.delegate != nil {	// Delegate is unset when view controller disappears
 								if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
@@ -325,6 +327,10 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
     func populateSidecar(query: Query) { }
 
 	func loadQuery() -> Query {
+		preconditionFailure("This method must be overridden in subclass")
+	}
+	
+	func getActivityDate() -> Int64 {
 		preconditionFailure("This method must be overridden in subclass")
 	}
 	

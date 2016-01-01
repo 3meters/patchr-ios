@@ -84,6 +84,7 @@
         <relationship name="photoFor" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Entity" inverseName="photo" inverseEntity="Entity" syncable="YES"/>
     </entity>
     <entity name="Query" representedClassName="Query" syncable="YES">
+        <attribute name="activityDate" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="entityId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="executed" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="id_" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
@@ -157,7 +158,7 @@
         <element name="Notification" positionX="279" positionY="95" width="128" height="195"/>
         <element name="Patch" positionX="81" positionY="-243" width="128" height="75"/>
         <element name="Photo" positionX="-693" positionY="90" width="128" height="150"/>
-        <element name="Query" positionX="-216" positionY="117" width="128" height="210"/>
+        <element name="Query" positionX="-216" positionY="117" width="128" height="225"/>
         <element name="QueryItem" positionX="-495" positionY="-99" width="128" height="135"/>
         <element name="ServiceBase" positionX="-450" positionY="-243" width="128" height="330"/>
         <element name="ServiceObject" positionX="-695" positionY="-45" width="128" height="45"/>

@@ -282,6 +282,16 @@ struct Utils {
             , dispatch_get_main_queue()
             , closure)
     }
+
+	static func now() -> Int64 {
+		return Int64(NSDate().timeIntervalSince1970 * 1000)
+	}
+}
+
+extension NSDate {
+	var milliseconds: Int64 {
+		return Int64(self.timeIntervalSince1970 * 1000)
+	}
 }
 
 extension String {

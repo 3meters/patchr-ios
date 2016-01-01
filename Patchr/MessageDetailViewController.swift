@@ -84,35 +84,6 @@ class MessageDetailViewController: BaseViewController {
 		initialize()
 	}
 	
-	override func viewWillAppear(animated: Bool) {
-		super.viewWillAppear(animated)
-		
-		guard (self.inputMessage != nil || self.inputMessageId != nil) else {
-			fatalError("Message or message id required")
-		}
-		
-		/* Use cached entity if available in the data model */
-		if self.inputMessage == nil {
-			if let message: Message? = Message.fetchOneById(self.inputMessageId!, inManagedObjectContext: DataController.instance.mainContext) {
-				self.inputMessage = message
-			}
-		}
-		else {
-			/* Entity could have been delete while we were away to check it. */
-			let item = ServiceBase.fetchOneById(self.inputMessage!.id_, inManagedObjectContext: DataController.instance.mainContext)
-			if item == nil {
-				self.navigationController?.popViewControllerAnimated(false)
-				return
-			}
-		}
-		
-		if self.inputMessage != nil {
-			bind()
-		}
-		
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "likeDidChange:", name: Events.LikeDidChange, object: nil)
-	}
-	
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
@@ -241,15 +212,44 @@ class MessageDetailViewController: BaseViewController {
 			self.scrollView.fillSuperview()
 			
 			let tabBarHeight = self.tabBarController?.tabBar.height() ?? 0
-			let contentHeight = max((self.scrollView.height() + self.scrollView.contentOffset.y) - tabBarHeight, self.contentHolder.height())			
+			let contentHeight = max((self.scrollView.height() + self.scrollView.contentOffset.y) - tabBarHeight, self.contentHolder.height())
 			self.scrollView.contentSize = CGSizeMake(self.contentHolder.frame.size.width, contentHeight)
 			self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: contentHeight)
 		}
 	}
 	
+	override func viewWillAppear(animated: Bool) {
+		super.viewWillAppear(animated)
+		
+		guard (self.inputMessage != nil || self.inputMessageId != nil) else {
+			fatalError("Message or message id required")
+		}
+		
+		/* Use cached entity if available in the data model */
+		if self.inputMessage == nil {
+			if let message: Message? = Message.fetchOneById(self.inputMessageId!, inManagedObjectContext: DataController.instance.mainContext) {
+				self.inputMessage = message
+			}
+		}
+		else {
+			/* Entity could have been delete while we were away to check it. */
+			let item = ServiceBase.fetchOneById(self.inputMessage!.id_, inManagedObjectContext: DataController.instance.mainContext)
+			if item == nil {
+				self.navigationController?.popViewControllerAnimated(false)
+				return
+			}
+		}
+		
+		if self.inputMessage != nil {
+			bind()
+		}
+		
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "likeDidChange:", name: Events.LikeDidChange, object: nil)
+	}
+	
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
-		refresh(true)
+		fetch()
 	}
 	
     override func viewDidDisappear(animated: Bool) {
@@ -476,10 +476,6 @@ class MessageDetailViewController: BaseViewController {
 	
 	func bind() {
 		
-		if (self.inputMessage == nil) {
-			self.activity.startAnimating()
-		}
-		
         if self.isShare {
 			
 			if self.inputMessage!.message != nil {
@@ -620,23 +616,27 @@ class MessageDetailViewController: BaseViewController {
 		}
 	}
 	
-	func refresh(force: Bool = false) {
+	func fetch() {
 		
 		if (self.inputMessage == nil) {
 			self.activity.startAnimating()
 		}
 		
 		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
-			
-			let blockCriteria = (self.inputMessage != nil
+			/*
+			 * A linked message that comes with a share message is only partially
+			 * complete so we need to force a full fetch of the message from the service
+			 * by turning off the date checks (criteria).
+			 */
+			let fetchStrategy: FetchStrategy = (self.inputMessage != nil
 				&& self.inputMessage!.type != nil
 				&& self.inputMessage!.type == "share"
 				&& (self.inputMessage!.message == nil && self.inputMessage!.patch == nil)
-				&& !self.inputMessage!.decoratedValue)
+				&& !self.inputMessage!.decoratedValue) ? .IgnoreCache : .UseCacheAndVerify
 			
 			let messageId = (self.inputMessage?.id_ ?? self.inputMessageId!)!
 			
-			DataController.instance.withMessageId(messageId, refresh: force, blockCriteria: blockCriteria) {
+			DataController.instance.withEntityId(messageId, strategy: fetchStrategy) {
 				[weak self] objectId, error in
 				
 				if self != nil {

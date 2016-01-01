@@ -60,7 +60,7 @@ extension Proxibase: NSURLSessionTaskDelegate {
             Log.d("Message posted!")
             let patchId: String = ((patch["_id"] != nil) ? patch["_id"] : patch["id_"]) as! String
             var recent: [String:AnyObject] = ["id_": patchId, "name":self.patch["name"]!]
-            recent["recentDate"] = NSNumber(longLong: Int64(NSDate().timeIntervalSince1970 * 1000)) // Only way to store Int64 as AnyObject
+            recent["recentDate"] = NSNumber(longLong: Utils.now()) // Only way to store Int64 as AnyObject
             if self.patch["photo"] != nil {
                 recent["photo"] = self.patch["photo"]
             }

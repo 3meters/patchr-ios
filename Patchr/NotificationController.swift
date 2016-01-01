@@ -62,7 +62,7 @@ class NotificationController {
     var activityDate: Int64!
     
     private init() {
-        self.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
+        self.activityDate = Utils.now()
     }
     
     func didReceiveLocalNotification(application: UIApplication, notification: UILocalNotification) {
@@ -82,14 +82,14 @@ class NotificationController {
         Log.d(String(format: "%@", notification))
         
         /* Tickle the activityDate so consumers know that something has happened */
-		self.activityDate = Int64(NSDate().timeIntervalSince1970 * 1000)
+		self.activityDate = Utils.now()
 
         /* Special capture for nearby notifications */
         if let trigger = notification["trigger"] as? String where trigger == "nearby" {
             var nearby = notification
             let aps = nearby["aps"] as! NSDictionary
             nearby["summary"] = aps["alert"]
-            nearby["sentDate"] = NSNumber(longLong: Int64(NSDate().timeIntervalSince1970 * 1000)) // Only way to store Int64 as AnyObject
+            nearby["sentDate"] = NSNumber(longLong: Utils.now()) // Only way to store Int64 as AnyObject
             nearby["createdDate"] = nearby["sentDate"]
             nearby["sortDate"] = nearby["sentDate"]
             nearby["type"] = "nearby"
@@ -118,7 +118,7 @@ class NotificationController {
 			 * by the os as a remote notification. Muted (low priority) notifications will badge
 			 * but to not include alert or sound settings that would be handled by the os.
              */
-			let notificationDate = NSNumber(longLong: Int64(NSDate().timeIntervalSince1970 * 1000)) // Only way to store Int64 as AnyObject
+			let notificationDate = NSNumber(longLong: Utils.now()) // Only way to store Int64 as AnyObject
 			NSUserDefaults.standardUserDefaults().setObject(notificationDate, forKey: PatchrUserDefaultKey("notificationDate"))
 			NSUserDefaults.standardUserDefaults().synchronize()
 			Log.d("App was system launched so stashed notification date")

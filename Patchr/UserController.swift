@@ -116,7 +116,7 @@ class UserController: NSObject {
     }
 
 	func fetchCurrentUser(completion: CompletionBlock?) {
-		DataController.instance.withUserId(self.userId!, refresh: true, completion: {
+		DataController.instance.withEntityId(self.userId!, strategy: .UseCacheAndVerify, completion: {
 			objectId, error in
 			if error == nil && objectId != nil {
 				self.currentUser = DataController.instance.mainContext.objectWithID(objectId!) as! User

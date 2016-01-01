@@ -487,7 +487,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 								var recent: [String:AnyObject] = [
 									"id_":patch.id_,
 									"name":patch.name,
-									"recentDate": NSNumber(longLong: Int64(NSDate().timeIntervalSince1970 * 1000)) // Only way to store Int64 as AnyObject
+									"recentDate": NSNumber(longLong: Utils.now()) // Only way to store Int64 as AnyObject
 								]
 								if patch.photo != nil {
 									recent["photo"] = patch.photo.asMap()
@@ -499,7 +499,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 						let serverResponse = ServerResponse(result.response)
 						if serverResponse.resultCount == 1 {
 							Log.d("Inserted message \(serverResponse.resultID)")
-							DataController.instance.activityDateInsertDeleteMessage = Int64(NSDate().timeIntervalSince1970 * 1000)
+							DataController.instance.activityDateInsertDeleteMessage = Utils.now()
 						}
 					}
 					else {
@@ -536,7 +536,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 				else {
 					DataController.instance.mainContext.deleteObject(self.inputEntity!)
 					DataController.instance.saveContext(false)
-					DataController.instance.activityDateInsertDeleteMessage = Int64(NSDate().timeIntervalSince1970 * 1000)
+					DataController.instance.activityDateInsertDeleteMessage = Utils.now()
 					self.performBack()
 				}
 			}

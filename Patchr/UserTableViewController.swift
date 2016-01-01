@@ -53,10 +53,27 @@ class UserTableViewController: BaseTableViewController {
                 setScreenName("UserListMessageLikers")
         }
     }
+	
+	override func viewDidAppear(animated: Bool) {
+		super.viewDidAppear(animated)
+		
+		if getActivityDate() != self.query.activityDateValue {
+			self.fetchQueryItems(force: true, paging: false, queryDate: getActivityDate())
+		}
+	}
     
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
+	
+	override func getActivityDate() -> Int64 {
+		switch self.filter {
+		case .PatchWatchers:
+			return self.patch.activityDate?.milliseconds ?? 0
+		case .MessageLikers:
+			return self.message.activityDate?.milliseconds ?? 0
+		}
+	}
 
     override func loadQuery() -> Query {
 
@@ -70,12 +87,12 @@ class UserTableViewController: BaseTableViewController {
 				case .PatchWatchers:
 					query!.name = DataStoreQueryName.WatchersForPatch.rawValue
 					query!.pageSize = DataController.proxibase.pageSizeDefault
-					query!.contextEntity = patch
+					query!.contextEntity = self.patch
 
 				case .MessageLikers:
 					query!.name = DataStoreQueryName.LikersForMessage.rawValue
 					query!.pageSize = DataController.proxibase.pageSizeDefault
-					query!.contextEntity = message
+					query!.contextEntity = self.message
 			}
 
 			DataController.instance.saveContext(false)
