@@ -496,6 +496,13 @@ extension PatchDetailViewController {
 			}
 		}
     }
+	
+	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		if self.entity != nil && !(self.entity!.userWatchStatusValue == .Member) {
+			return 0
+		}
+		return super.tableView(tableView, numberOfRowsInSection: section)
+	}
 }
 
 extension PatchDetailViewController: UIActionSheetDelegate {
