@@ -115,10 +115,6 @@ class UserView: BaseView {
 		self.setNeedsLayout()
 	}
 	
-	override func sizeThatFits(size: CGSize) -> CGSize {
-		return CGSizeMake(self.width(), 97)
-	}
-
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		

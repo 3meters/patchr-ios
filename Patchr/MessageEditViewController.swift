@@ -277,7 +277,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 				self.progressFinishLabel = "Invites sent"
 				self.cancelledLabel = "Invites cancelled"
 				
-				self.patchView = PatchView()
+				self.patchView = PatchView(frame: CGRectMake(0, 0, self.view.width(), 136))
 				self.patchView!.borderColor = Theme.colorButtonBorder
 				self.patchView!.borderWidth = Theme.dimenButtonBorderWidth
 				self.patchView!.cornerRadius = 6
@@ -791,7 +791,7 @@ extension MessageEditViewController {
 		
 		if let model = self.contactModels[indexPath.row] as? SuggestionModel {
 			cell!.title.text = model.contactTitle
-			cell!.photo.bind(model.contactImageUrl, name: model.contactTitle)
+			cell!.photo.bindPhoto(model.contactImageUrl, name: model.contactTitle)
 		}
 		return cell!
 	}

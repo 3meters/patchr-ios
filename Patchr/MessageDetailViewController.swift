@@ -242,6 +242,7 @@ class MessageDetailViewController: BaseViewController {
 		
 		if self.inputMessage != nil {
 			bind()
+			self.view.setNeedsLayout()
 		}
 		
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "likeDidChange:", name: Events.LikeDidChange, object: nil)
@@ -266,7 +267,6 @@ class MessageDetailViewController: BaseViewController {
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
 	
-
 	func patchAction(sender: AnyObject) {
 		let controller = PatchDetailViewController()
 		controller.entityId = self.inputMessage!.patch.entityId
@@ -503,7 +503,7 @@ class MessageDetailViewController: BaseViewController {
 			}
 			else if self.inputMessage!.patch != nil {
 				
-				self.patchView = PatchView()
+				self.patchView = PatchView(frame: CGRectMake(0, 0, self.view.width(), 136))
 				self.patchView!.bindToEntity(self.inputMessage!.patch!, location: nil)
 				self.patchView!.shadow.hidden = true
 				self.shareFrame.addSubview(self.patchView!)
@@ -653,6 +653,8 @@ class MessageDetailViewController: BaseViewController {
 								self?.inputMessage = DataController.instance.mainContext.objectWithID(objectId!) as? Message
 								self?.drawNavButtons(false)
 								self?.bind()	// TODO: Can skip if no change in activityDate and modifiedDate
+								/* Need this because if a message has be be fetched, we haven't done layout yet. */
+								self?.view.setNeedsLayout()
 							}
 						}
 					}

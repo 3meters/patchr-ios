@@ -177,16 +177,16 @@ class PatchView: BaseView {
 
 		if entity.photo != nil {
 			let photoUrl = PhotoUtils.url(entity.photo!.prefix!, source: entity.photo!.source!, category: SizeCategory.profile)
-			bind(photoUrl, name: entity.name)
+			bindPhoto(photoUrl, name: entity.name)
 		}
 		else {
-			bind(nil, name: entity.name)
+			bindPhoto(nil, name: entity.name)
 		}
 
 		self.setNeedsLayout()
 	}
 	
-	func bind(photoUrl: NSURL?, name: String?) {
+	func bindPhoto(photoUrl: NSURL?, name: String?) {
 		let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
 		self.photo.image = nil
 		if photoUrl != nil {
@@ -200,26 +200,6 @@ class PatchView: BaseView {
 		}
 	}
 
-	func bindToEntity(entity: Entity!) {
-		if entity != nil {
-			if entity.photo != nil {
-				let photoUrl = PhotoUtils.url(entity.photo!.prefix!, source: entity.photo!.source!, category: SizeCategory.profile)
-				bind(photoUrl, name: entity.name)
-			}
-			else {
-				bind(nil, name: entity.name)
-			}
-		}
-		else {
-			bind(nil, name: nil)
-		}
-	}
-
-
-	override func sizeThatFits(size: CGSize) -> CGSize {
-		return CGSizeMake(self.width(), 136)
-	}
-	
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		

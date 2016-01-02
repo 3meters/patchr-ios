@@ -134,6 +134,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		
 		self.refreshControl!.endRefreshing()
 		try! self.fetchedResultsController.performFetch()
+		self.tableView.reloadData()		// Reload cells so any changes while gone will show
 		
 		if let indexPath = tableView.indexPathForSelectedRow {
 			tableView.deselectRowAtIndexPath(indexPath, animated: animated)
@@ -283,7 +284,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 						else {
 							self?.tableView.tableFooterView = nil
 						}
-
+						
 						if error == nil {
 							self?.query.activityDateValue = queryDate!
 							self?.query.executedValue = true
@@ -314,6 +315,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 							 * cause an update to the table view.
 							 */
 							DataController.instance.saveContext(false)
+							self?.tableView.reloadData()		// Update cells to show any changes
 						}
 						return
 					}
@@ -395,7 +397,7 @@ extension BaseTableViewController {
 			return cell
 		}
 		else if self.listType == .Patches {
-			let view = PatchView()
+			let view = PatchView(frame: CGRectMake(0, 0, self.view.width(), 136))
 			view.cornerRadius = 6
 			let cell = WrapperTableViewCell(view: view, padding: UIEdgeInsetsMake(8, 8, 0, 8), reuseIdentifier: cellType.rawValue)
 			cell.separator.backgroundColor = Colors.clear
@@ -403,7 +405,7 @@ extension BaseTableViewController {
 			return cell
 		}
 		else if self.listType == .Users {
-			let view = UserView()
+			let view = UserView(frame: CGRectMake(0, 0, self.view.width(), 97))
 			let cell = WrapperTableViewCell(view: view, padding: UIEdgeInsetsMake(8, 8, 8, 8), reuseIdentifier: cellType.rawValue)
 			cell.selectionStyle = .None
 			return cell

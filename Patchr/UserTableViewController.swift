@@ -31,16 +31,16 @@ class UserTableViewController: BaseTableViewController {
 
 		switch self.filter {
 			case .PatchWatchers:
-				self.navigationItem.title = "Watchers"
+				self.navigationItem.title = "Watched by"
                 if watchListForOwner() {
 					self.showOwnerUI = true
                 }
 			case .MessageLikers:
-				self.navigationItem.title = "Likers"
+				self.navigationItem.title = "Liked by"
 		}
 		
-		self.tableView.estimatedRowHeight = 96
-		self.tableView.rowHeight = 96
+		self.tableView.estimatedRowHeight = 97
+		self.tableView.rowHeight = 97
 	}
     
     override func viewWillAppear(animated: Bool) {
@@ -181,20 +181,6 @@ extension UserTableViewController {
 			view.delegate = self
 		}
 		return nil
-	}
-    /*
-    * UITableViewDelegate
-    */
-	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-		
-		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
-			let entity = queryResult.object as? User {
-				let view = UserView()
-				view.bindToEntity(entity)
-				view.sizeToFit()
-				return view.bounds.size.height
-		}
-		return 0
 	}
 }
 

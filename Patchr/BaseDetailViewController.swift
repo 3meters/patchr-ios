@@ -29,9 +29,6 @@ class BaseDetailViewController: BaseTableViewController {
 		self.listType = .Messages
         
         super.viewDidLoad()
-		
-		/* Turn off estimate so rows are measured up front */
-		self.tableView.estimatedRowHeight = 150		
     }
 	
 	override func viewWillAppear(animated: Bool) {
@@ -50,6 +47,9 @@ class BaseDetailViewController: BaseTableViewController {
 				self.entity = entity
 			}
 		}
+		
+		/* In case a row height has changed because of editing. */
+		self.rowHeights.removeAllObjects()
 		
 		super.viewWillAppear(animated)
 		
@@ -236,14 +236,12 @@ extension BaseDetailViewController {
 				view.sizeToFit()
 				
 				if entity.id_ != nil {
-					self.rowHeights[entity.id_] = view.bounds.size.height + 24 + 1
+					self.rowHeights[entity.id_] = view.height() + 24 + 1
 				}
 				
-				return view.bounds.size.height + 24 + 1	// Add one for row separator
+				return view.height() + 24 + 1	// Add one for row separator
 		}
-		else {
-			return 0
-		}
+		return 0
 	}
 }
 
