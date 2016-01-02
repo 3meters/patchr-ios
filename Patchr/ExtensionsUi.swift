@@ -99,10 +99,12 @@ extension UIView {
 		var h: CGFloat = 0
 		
 		for subview in subviews {
-			let fw = subview.frame.origin.x + subview.frame.size.width
-			let fh = subview.frame.origin.y + subview.frame.size.height
-			w = max(fw, w)
-			h = max(fh, h)
+			if !subview.hidden {
+				let fw = subview.frame.origin.x + subview.frame.size.width
+				let fh = subview.frame.origin.y + subview.frame.size.height
+				w = max(fw, w)
+				h = max(fh, h)
+			}
 		}
 		
 		self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, w, h)
