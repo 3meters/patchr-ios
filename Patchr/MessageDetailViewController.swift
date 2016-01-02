@@ -201,7 +201,7 @@ class MessageDetailViewController: BaseViewController {
 				self.messageGroup.resizeToFitSubviews()
 				
 				self.toolbarGroup.alignUnder(self.messageGroup, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 0, height: 48)
-				self.likeButton.anchorCenterLeftWithLeftPadding(16, width: self.likeButton.width(), height: self.likeButton.height())
+				self.likeButton.anchorCenterLeftWithLeftPadding(4, width: self.likeButton.width(), height: self.likeButton.height())
 				self.reportButton.sizeToFit()
 				self.reportButton.anchorCenterRightWithRightPadding(16, width: self.reportButton.width(), height: self.reportButton.height())
 				self.likesButton.sizeToFit()
@@ -219,6 +219,9 @@ class MessageDetailViewController: BaseViewController {
 	}
 	
 	override func viewWillAppear(animated: Bool) {
+		/*
+		 * Does not fire after showing photo browser.
+		 */
 		super.viewWillAppear(animated)
 		
 		guard (self.inputMessage != nil || self.inputMessageId != nil) else {
@@ -242,9 +245,10 @@ class MessageDetailViewController: BaseViewController {
 		
 		if self.inputMessage != nil {
 			bind()
+			self.view.setNeedsLayout()
 		}
 		
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "likeDidChange:", name: Events.LikeDidChange, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "likeDidChange:", name: Events.LikeDidChange, object: nil)
 	}
 	
 	override func viewDidAppear(animated: Bool) {
@@ -266,7 +270,6 @@ class MessageDetailViewController: BaseViewController {
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
 	
-
 	func patchAction(sender: AnyObject) {
 		let controller = PatchDetailViewController()
 		controller.entityId = self.inputMessage!.patch.entityId
@@ -391,6 +394,7 @@ class MessageDetailViewController: BaseViewController {
     
     func likeDidChange(sender: NSNotification) {
         self.bind()
+		self.view.setNeedsLayout()
     }
 
 	/*--------------------------------------------------------------------------------------------
@@ -458,7 +462,8 @@ class MessageDetailViewController: BaseViewController {
 		self.toolbarGroup.ruleBottom.backgroundColor = Colors.gray90pcntColor
 		
 		self.likesButton.imageView?.tintColor = Theme.colorTint
-		self.likeButton.bounds.size = CGSizeMake(24, 20)
+		self.likeButton.bounds.size = CGSizeMake(48, 48)
+		self.likeButton.imageEdgeInsets = UIEdgeInsetsMake(14, 12, 14, 12)
 		
 		self.reportButton.setTitle("Report", forState: .Normal)
 		self.reportButton.addTarget(self, action: Selector("reportAction:"), forControlEvents: UIControlEvents.TouchUpInside)
@@ -503,7 +508,7 @@ class MessageDetailViewController: BaseViewController {
 			}
 			else if self.inputMessage!.patch != nil {
 				
-				self.patchView = PatchView()
+				self.patchView = PatchView(frame: CGRectMake(0, 0, self.view.width(), 136))
 				self.patchView!.bindToEntity(self.inputMessage!.patch!, location: nil)
 				self.patchView!.shadow.hidden = true
 				self.shareFrame.addSubview(self.patchView!)
@@ -653,6 +658,8 @@ class MessageDetailViewController: BaseViewController {
 								self?.inputMessage = DataController.instance.mainContext.objectWithID(objectId!) as? Message
 								self?.drawNavButtons(false)
 								self?.bind()	// TODO: Can skip if no change in activityDate and modifiedDate
+								/* Need this because if a message has be be fetched, we haven't done layout yet. */
+								self?.view.setNeedsLayout()
 							}
 						}
 					}

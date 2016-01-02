@@ -145,7 +145,8 @@ extension Patch {
         
         let links = [
             LinkSpec(from: .Messages, type: .Content),				// Count of messages linked to the patch
-            LinkSpec(from: .Users, type: .Watch, enabled: true)     // Count of users that are watching the patch
+            LinkSpec(from: .Users, type: .Watch, enabled: true),     // Count of users that are watching the patch
+			LinkSpec(from: .Users, type: .Watch, enabled: false)     // Count of users that are pending
         ]
         
         let array = links.map {

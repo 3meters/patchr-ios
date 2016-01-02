@@ -24,7 +24,7 @@ class AirPhotoPreview: AirPhotoBrowser {
     * Methods
     *--------------------------------------------------------------------------------------------*/
     
-    override func configure() {
+    override func initialize() {
         
         /* Configure toolbar */
         

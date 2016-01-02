@@ -10,17 +10,17 @@ import UIKit
 
 class AirPhotoBrowser: IDMPhotoBrowser {
     
-    var browseDelegate: PhotoBrowseControllerDelegate?
-    var imageResult: ImageResult?
-    var likes: Bool = false
-    var target: AnyObject?
-    var likeButton: AirLikeButton = AirLikeButton()
+    var browseDelegate	: PhotoBrowseControllerDelegate?
+    var imageResult		: ImageResult?
+    var likes			: Bool = false
+    var target			: AnyObject?
+    var likeButton		= AirLikeButton()
     
     var entity: Entity?
     var linkedEntity: Entity? {
         set {
             self.entity = newValue
-                self.likeButton.bindEntity(self.entity)
+			self.likeButton.bindEntity(self.entity)
             likeButton.hidden = (self.entity == nil)
         }
         get {
@@ -35,27 +35,27 @@ class AirPhotoBrowser: IDMPhotoBrowser {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.displayDoneButton = false
-        configure()
+		self.displayDoneButton = false	// Prevent display of non-navbar done button
+        initialize()
     }
     
     /*--------------------------------------------------------------------------------------------
     * Events
     *--------------------------------------------------------------------------------------------*/
     
-    func configure() {
+    func initialize() {
         
         if self.entity?.creator != nil {
             super.shareMessage = "Photo by \(self.entity!.creator.name) on Patchr"
         }
         
-        /* Configure toolbar */
+        /* Configure bottom toolbar */
         
         let toolbar: UIToolbar = super.toolbar
         
         let flexSpacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)
         let fixedSpacer = UIBarButtonItem(barButtonSystemItem: .FixedSpace, target: self, action: nil)
-        let actionButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("actionButtonPressed:"))
+        let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("actionButtonPressed:"))
         
         likeButton.frame = CGRectMake(0, 0, 44, 44)
         likeButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: 8, bottom: 10, right:8)
@@ -71,7 +71,7 @@ class AirPhotoBrowser: IDMPhotoBrowser {
         items.append(flexSpacer)
         items.append(barLikeButton)
         items.append(flexSpacer)
-        items.append(actionButton)
+        items.append(shareButton)
         
         toolbar.items = items
     }

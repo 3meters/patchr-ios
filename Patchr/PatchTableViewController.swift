@@ -12,7 +12,7 @@ import AVFoundation
 class PatchTableViewController: BaseTableViewController {
 
     var user			: User!
-	var filter			: PatchListFilter?
+	var filter			: PatchListFilter!
 	var location		: CLLocation?
 	var firstNearPass	= true
     
@@ -53,13 +53,15 @@ class PatchTableViewController: BaseTableViewController {
 			case .Explore:
 				self.navigationItem.title = "Explore"
 			case .Watching:
-				self.navigationItem.title = "Patches I'm watching"
+				self.navigationItem.title = "Patches watching"
 			case .Owns:
-				self.navigationItem.title = "Patches I own"
+				self.navigationItem.title = "Patches owned"
 		}
 		
 		self.tableView.estimatedRowHeight = 136
 		self.tableView.rowHeight = 136
+		
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:", name: PAApplicationDidReceiveRemoteNotification, object: nil)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -127,6 +129,20 @@ class PatchTableViewController: BaseTableViewController {
         controller.fetchRequest = self.fetchedResultsController.fetchRequest
         self.navigationController?.pushViewController(controller, animated: true)
     }
+
+	func handleRemoteNotification(notification: NSNotification) {
+		
+		if self.filter == .Nearby {
+			if let userInfo = notification.userInfo {
+				if let trigger = userInfo["trigger"] as? String where trigger == "nearby" {
+					if self.isViewLoaded() {
+						self.refreshControl?.beginRefreshing()
+						self.pullToRefreshAction(self.refreshControl)
+					}
+				}
+			}
+		}
+	}
 
     /*--------------------------------------------------------------------------------------------
     * Methods
@@ -376,20 +392,6 @@ extension PatchTableViewController {
 		super.bindCell(cell, entity: object, location: location)
 		
 		return nil
-	}
-    /*
-     * UITableViewDelegate
-     */
-	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-		
-		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
-			let entity = queryResult.object as? Patch {
-				let view = PatchView()
-				view.bindToEntity(entity, location: nil)
-				view.sizeToFit()
-				return view.bounds.size.height
-		}
-		return 0
 	}
 
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {

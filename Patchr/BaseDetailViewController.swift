@@ -29,9 +29,6 @@ class BaseDetailViewController: BaseTableViewController {
 		self.listType = .Messages
         
         super.viewDidLoad()
-		
-		/* Turn off estimate so rows are measured up front */
-		self.tableView.estimatedRowHeight = 150		
     }
 	
 	override func viewWillAppear(animated: Bool) {
@@ -51,13 +48,31 @@ class BaseDetailViewController: BaseTableViewController {
 			}
 		}
 		
+		/* In case a row height has changed because of editing. */
+		self.rowHeights.removeAllObjects()
+		
 		super.viewWillAppear(animated)
+		
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "likeDidChange:", name: Events.LikeDidChange, object: nil)
 		
 		if self.entity != nil {
 			bind()
 		}
 	}
 	
+	override func viewDidDisappear(animated: Bool) {
+		super.viewDidDisappear(animated)
+		NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.LikeDidChange, object: nil)
+	}
+
+	/*--------------------------------------------------------------------------------------------
+	* Events
+	*--------------------------------------------------------------------------------------------*/
+	
+	func likeDidChange(sender: NSNotification) {
+		self.tableView.reloadData()	// To capture ui changes because of like/unlike in message item
+	}
+
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
@@ -236,14 +251,12 @@ extension BaseDetailViewController {
 				view.sizeToFit()
 				
 				if entity.id_ != nil {
-					self.rowHeights[entity.id_] = view.bounds.size.height + 24 + 1
+					self.rowHeights[entity.id_] = view.height() + 24 + 1
 				}
 				
-				return view.bounds.size.height + 24 + 1	// Add one for row separator
+				return view.height() + 24 + 1	// Add one for row separator
 		}
-		else {
-			return 0
-		}
+		return 0
 	}
 }
 

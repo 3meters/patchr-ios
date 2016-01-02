@@ -59,34 +59,6 @@ struct Shared {
         return progress
     }
     
-    static func setTabBarVisible(visible:Bool, animated:Bool, viewController: UIViewController!) {
-        
-        //* This cannot be called before viewDidLayoutSubviews(), because the frame is not set before this time
-        
-        // bail if the current state matches the desired state
-        if (tabBarIsVisible(viewController) == visible) { return }
-        
-        // get a frame calculation ready
-        let frame = viewController.tabBarController?.tabBar.frame
-        let height = frame?.size.height
-        let offsetY = (visible ? -height! : height)
-        
-        // zero duration means no animation
-        let duration:NSTimeInterval = (animated ? 0.3 : 0.0)
-        
-        //  animate the tabBar
-        if frame != nil {
-            UIView.animateWithDuration(duration) {
-                viewController.tabBarController?.tabBar.frame = CGRectOffset(frame!, 0, offsetY!)
-                return
-            }
-        }
-    }
-    
-    static func tabBarIsVisible(viewController: UIViewController) ->Bool {
-        return viewController.tabBarController?.tabBar.frame.origin.y < CGRectGetMaxY(viewController.view.frame)
-    }
-    
     static func hasConnectivity() -> Bool {
         let reachability: Reachability = Reachability.reachabilityForInternetConnection()
         let networkStatus: Int = reachability.currentReachabilityStatus().rawValue

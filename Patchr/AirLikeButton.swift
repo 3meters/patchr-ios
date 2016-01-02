@@ -71,6 +71,7 @@ class AirLikeButton: AirToggleButton {
 							self.entity!.userLikesId = nil
 							self.entity!.userLikesValue = false
 							self.entity!.countLikesValue--
+							try! self.entity!.managedObjectContext?.save()
 						}
 					}
 					
@@ -102,6 +103,7 @@ class AirLikeButton: AirToggleButton {
 								}
 								self.entity!.userLikesValue = true
 								self.entity!.countLikesValue++
+								try! self.entity!.managedObjectContext?.save()
 							}
 						}
 					}

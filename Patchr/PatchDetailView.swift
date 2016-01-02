@@ -272,7 +272,7 @@ class PatchDetailView: BaseDetailView {
 		
 		self.watchButton.tintOff = Theme.colorActionOff
 		self.watchButton.tintOn = Theme.colorActionOn
-		self.watchButton.tintPending = Theme.colorActionOn
+		self.watchButton.tintPending = Colors.accentColor
 		self.watchButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
 		self.watchButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
 		
@@ -285,7 +285,7 @@ class PatchDetailView: BaseDetailView {
 		self.soundButton.messageOff = "Notifications muted"
 		self.soundButton.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
 		self.soundButton.alpha = 0.0
-		
+
 		self.bannerGroup.clipsToBounds = true
 		
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "watchDidChange:", name: Events.WatchDidChange, object: self.watchButton)

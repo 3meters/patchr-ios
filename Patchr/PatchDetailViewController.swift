@@ -75,7 +75,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
         else if self.contextAction == .CancelJoinRequest {
             self.header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
         }
-        else if self.contextAction == .SubmitJoinRequest {
+        else if self.contextAction == .SubmitJoinRequest || self.contextAction == .JoinPatch {
             if !UserController.instance.authenticated {
 				UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to join patches and more.")
                 return
@@ -194,10 +194,9 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		}
 	}
 	
-    func likeDidChange(sender: NSNotification) {
-        self.bind()
-        self.tableView.reloadData()
-    }
+	func watchDidChange(sender: NSNotification) {
+		bindContextButton()
+	}
 	
 	func inviteFinishedWithInvitations(invitationIds: [AnyObject]!, error: NSError!) {
 		if (error != nil) {
@@ -225,6 +224,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:", name: PAApplicationDidReceiveRemoteNotification, object: nil)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "fetchComplete:", name: Events.FetchComplete, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "watchDidChange:", name: Events.WatchDidChange, object: self.header.watchButton)
 		
 		/* UI prep */
 		self.patchNameVisible = false
@@ -238,6 +238,25 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
         
         if let entity = self.entity as? Patch {
 			self.header.bindToEntity(entity)
+			bindContextButton()
+			
+			if self.tableView.tableHeaderView == nil {
+				let viewWidth = self.tableView.bounds.size.width
+				let viewHeight = (viewWidth * 0.625) + 48
+				self.header.frame = CGRectMake(0, 0, viewWidth, viewHeight)
+				self.header.setNeedsLayout()
+				self.header.layoutIfNeeded()
+				self.header.photo.frame = CGRectMake(-24, -36, self.header.bannerGroup.width() + 48, self.header.bannerGroup.height() + 72)
+				self.originalRect = self.header.photo.frame
+				self.tableView.tableHeaderView = self.header
+				self.tableView.reloadData()
+			}
+        }
+	}
+
+	func bindContextButton() {
+		
+		if let entity = self.entity as? Patch {
 			
 			if isOwner() {
 				if entity.countPendingValue > 0 {
@@ -267,13 +286,19 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 				}
 				else {
 					if entity.visibility == "public" {
-						if entity.userHasMessagedValue {
-							self.header.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
-							self.contextAction = .SharePatch
+						if entity.userWatchStatusValue == .Member {
+							if entity.userHasMessagedValue {
+								self.header.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
+								self.contextAction = .SharePatch
+							}
+							else {
+								self.header.contextButton.setTitle("Post your first message".uppercaseString, forState: .Normal)
+								self.contextAction = .CreateMessage
+							}
 						}
 						else {
-							self.header.contextButton.setTitle("Post your first message".uppercaseString, forState: .Normal)
-							self.contextAction = .CreateMessage
+							self.header.contextButton.setTitle("Join this patch".uppercaseString, forState: .Normal)
+							self.contextAction = .JoinPatch
 						}
 					}
 					else {
@@ -309,21 +334,9 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 					}
 				}
 			}
-			
-			if self.tableView.tableHeaderView == nil {
-				let viewWidth = self.tableView.bounds.size.width
-				let viewHeight = (viewWidth * 0.625) + 48
-				self.header.frame = CGRectMake(0, 0, viewWidth, viewHeight)
-				self.header.setNeedsLayout()
-				self.header.layoutIfNeeded()
-				self.header.photo.frame = CGRectMake(-24, -36, self.header.bannerGroup.width() + 48, self.header.bannerGroup.height() + 72)
-				self.originalRect = self.header.photo.frame
-				self.tableView.tableHeaderView = self.header
-				self.tableView.reloadData()
-			}
-        }
+		}
 	}
-
+	
     override func drawButtons() {
         
         let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
@@ -477,7 +490,11 @@ extension PatchDetailViewController {
     /*
      * UITableViewDelegate
      */
-    override func scrollViewDidScroll(scrollView: UIScrollView) {		
+    override func scrollViewDidScroll(scrollView: UIScrollView) {
+		
+		guard self.entity != nil else {
+			return
+		}
 		
 		/* Parallax effect when user scrolls down */
 		let offset = scrollView.contentOffset.y
@@ -498,7 +515,7 @@ extension PatchDetailViewController {
     }
 	
 	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		if self.entity != nil && !(self.entity!.userWatchStatusValue == .Member) {
+		if self.entity != nil && self.entity?.visibility == "private" && !(self.entity!.userWatchStatusValue == .Member) {
 			return 0
 		}
 		return super.tableView(tableView, numberOfRowsInSection: section)
@@ -576,6 +593,7 @@ enum ContextAction: UInt {
 	case BrowseUsersWatching
 	case SharePatch
 	case CreateMessage
+	case JoinPatch
 	case SubmitJoinRequest
 	case CancelJoinRequest
 }

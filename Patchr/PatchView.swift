@@ -66,6 +66,7 @@ class PatchView: BaseView {
 		self.visibility.contentMode = UIViewContentMode.ScaleToFill
 		self.visibility.clipsToBounds = true
 		self.visibility.tintColor = Colors.accentColorFill
+		self.visibility.hidden = true
 		self.addSubview(self.visibility)
 		
 		/* Patch status */
@@ -177,16 +178,16 @@ class PatchView: BaseView {
 
 		if entity.photo != nil {
 			let photoUrl = PhotoUtils.url(entity.photo!.prefix!, source: entity.photo!.source!, category: SizeCategory.profile)
-			bind(photoUrl, name: entity.name)
+			bindPhoto(photoUrl, name: entity.name)
 		}
 		else {
-			bind(nil, name: entity.name)
+			bindPhoto(nil, name: entity.name)
 		}
 
 		self.setNeedsLayout()
 	}
 	
-	func bind(photoUrl: NSURL?, name: String?) {
+	func bindPhoto(photoUrl: NSURL?, name: String?) {
 		let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
 		self.photo.image = nil
 		if photoUrl != nil {
@@ -200,26 +201,6 @@ class PatchView: BaseView {
 		}
 	}
 
-	func bindToEntity(entity: Entity!) {
-		if entity != nil {
-			if entity.photo != nil {
-				let photoUrl = PhotoUtils.url(entity.photo!.prefix!, source: entity.photo!.source!, category: SizeCategory.profile)
-				bind(photoUrl, name: entity.name)
-			}
-			else {
-				bind(nil, name: entity.name)
-			}
-		}
-		else {
-			bind(nil, name: nil)
-		}
-	}
-
-
-	override func sizeThatFits(size: CGSize) -> CGSize {
-		return CGSizeMake(self.width(), 136)
-	}
-	
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		
@@ -233,15 +214,17 @@ class PatchView: BaseView {
 		self.name.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 6, width: columnWidth, height: nameSize.height)
 		
 		self.type.sizeToFit()
-		self.type.alignUnder(self.name, matchingLeftWithTopPadding: 0, width: columnWidth, height: 16)
+		self.type.alignUnder(self.name, matchingLeftWithTopPadding: 0, width: self.type.width(), height: 16)
 		if !self.visibility.hidden {
 			self.visibility.alignToTheRightOf(self.type, matchingCenterWithLeftPadding: 8, width: 16, height: 16)
 			if !self.status.hidden {
-				self.status.alignToTheRightOf(self.visibility, matchingCenterAndFillingWidthWithLeftAndRightPadding: 8, height: 16)
+				self.status.sizeToFit()
+				self.status.alignToTheRightOf(self.visibility, matchingCenterWithLeftPadding: 8, width: columnWidth - (self.status.width() + self.visibility.width() + 16), height: self.status.height())
 			}
 		}
 		else if !self.status.hidden {
-			self.status.alignToTheRightOf(self.type, matchingCenterAndFillingWidthWithLeftAndRightPadding: 8, height: 16)
+			self.status.sizeToFit()
+			self.status.alignToTheRightOf(self.type, matchingCenterWithLeftPadding: 8, width: columnWidth - (self.status.width() + 8), height: self.status.height())
 		}
 		
 		self.messagesGroup.anchorBottomLeftWithLeftPadding(columnLeft, bottomPadding: 8, width: 72, height: 48)

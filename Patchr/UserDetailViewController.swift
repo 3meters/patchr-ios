@@ -87,7 +87,7 @@ class UserDetailViewController: BaseDetailViewController {
 		let controller = SettingsTableViewController()
         self.navigationController?.pushViewController(controller, animated: true)
 	}
-
+	
 	/*--------------------------------------------------------------------------------------------
 	 * Methods
 	 *--------------------------------------------------------------------------------------------*/

@@ -115,10 +115,6 @@ class UserView: BaseView {
 		self.setNeedsLayout()
 	}
 	
-	override func sizeThatFits(size: CGSize) -> CGSize {
-		return CGSizeMake(self.width(), 97)
-	}
-
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		
@@ -133,7 +129,7 @@ class UserView: BaseView {
 		self.name.sizeToFit()
 		self.name.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: self.name.width(), height: self.name.height() - 4)
 		
-		if self.area.text != nil && !self.area.text!.isEmpty {
+		if !self.area.hidden {
 			self.area.bounds.size.width = self.titleGroup.width()
 			self.area.sizeToFit()
 			self.area.alignUnder(self.name, matchingLeftWithTopPadding: -2, width: columnWidth, height: self.area.height())
@@ -141,7 +137,7 @@ class UserView: BaseView {
 		
 		if !self.owner.hidden {
 			self.owner.sizeToFit()
-			self.owner.alignUnder(self.area, matchingLeftWithTopPadding: 2, width: columnWidth, height: self.owner.height())
+			self.owner.alignUnder(self.area.hidden ? self.name : self.area, matchingLeftWithTopPadding: 2, width: columnWidth, height: self.owner.height())
 		}
 		
 		if !self.removeButton.hidden {

@@ -38,7 +38,7 @@ class UserPhotoView: BaseDetailView {
 		
 		/* User name */
 		self.name.hidden = true
-		self.name.font = Theme.fontTitle
+		self.name.font = Theme.fontHeading
 		self.name.textColor = Colors.white
 		self.name.textAlignment = .Center
 
@@ -54,7 +54,22 @@ class UserPhotoView: BaseDetailView {
 		self.name.fillSuperview()
 	}
 	
-	func bind(photoUrl: NSURL?, name: String?) {
+	func bindToEntity(entity: Entity!) {
+		if entity != nil {
+			if entity.photo != nil {
+				let photoUrl = PhotoUtils.url(entity.photo!.prefix!, source: entity.photo!.source!, category: SizeCategory.profile)
+				bindPhoto(photoUrl, name: entity.name)
+			}
+			else {
+				bindPhoto(nil, name: entity.name)
+			}
+		}
+		else {
+			bindPhoto(nil, name: nil)
+		}
+	}
+	
+	func bindPhoto(photoUrl: NSURL?, name: String?) {
 		let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
 		self.photo.image = nil
 		self.name.text = nil
@@ -75,20 +90,5 @@ class UserPhotoView: BaseDetailView {
 				self.backgroundColor = Utils.randomColor(seed)
 			}
 		}
-	}
-	
-	func bindToEntity(entity: Entity!) {
-		if entity != nil {
-			if entity.photo != nil {
-				let photoUrl = PhotoUtils.url(entity.photo!.prefix!, source: entity.photo!.source!, category: SizeCategory.profile)
-				bind(photoUrl, name: entity.name)
-			}
-			else {
-				bind(nil, name: entity.name)
-			}
-		}
-		else {
-			bind(nil, name: nil)
-		}
-	}
+	}	
 }

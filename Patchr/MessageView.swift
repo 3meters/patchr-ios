@@ -61,7 +61,6 @@ class MessageView: BaseView {
 		 * The calls to addSubview will trigger a call to layoutSubviews for
 		 * the current update cycle.
 		 */
-		self.clipsToBounds = true
 		
 		/* Description */
 		if self.cellType != .Photo {
@@ -114,7 +113,8 @@ class MessageView: BaseView {
 		}
 		else {
 			self.likeButton.imageView!.tintColor = Theme.colorTint
-			self.likeButton.bounds.size = CGSizeMake(24, 20)
+			self.likeButton.bounds.size = CGSizeMake(48, 48)
+			self.likeButton.imageEdgeInsets = UIEdgeInsetsMake(14, 12, 14, 12)
 
 			self.likes.font = Theme.fontComment
 			self.likes.textColor = Theme.colorTextTitle
@@ -232,7 +232,7 @@ class MessageView: BaseView {
 			}
 			else {
 				self.likes.sizeToFit()
-				heightAccum += (8 + max(self.likeButton.height(), self.likes.height())) // Like button
+				heightAccum += (max(self.likeButton.height() - 14, self.likes.height())) // Like button
 			}
 			
 			let height = max(self.userPhoto.height(), heightAccum)
@@ -307,9 +307,10 @@ class MessageView: BaseView {
 			self.recipients.alignToTheRightOf(self.recipientsLabel, matchingTopWithLeftPadding: 12, width: self.recipients.width(), height: self.recipients.height())
 		}
 		else {
+			self.likeButton.alignUnder(bottomView!, matchingLeftWithTopPadding: 0, width: self.likeButton.width(), height: self.likeButton.height())
+			self.likeButton.frame.origin.x -= 12
 			self.likes.sizeToFit()
-			self.likeButton.alignUnder(bottomView!, matchingLeftWithTopPadding: 8, width: self.likeButton.width(), height: self.likeButton.height())
-			self.likes.alignUnder(bottomView!, matchingRightWithTopPadding: 8, width: self.likes.width(), height: self.likes.height())
+			self.likes.alignUnder(bottomView!, matchingRightWithTopPadding: 14, width: self.likes.width(), height: self.likes.height())
 		}
 	}
 }

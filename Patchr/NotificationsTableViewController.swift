@@ -17,13 +17,22 @@ class NotificationsTableViewController: BaseTableViewController {
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
+	
+	convenience init() {
+		self.init(nibName: nil, bundle: nil)
+	}
+	
+	override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+		super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+		initialize()
+	}
+	
+	required init?(coder aDecoder: NSCoder) {
+		super.init(coder: aDecoder)
+		initialize()
+	}
 
 	override func viewDidLoad() {
-        
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:",
-			name: PAApplicationDidReceiveRemoteNotification, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidBecomeActive",
-			name: Event.ApplicationDidBecomeActive.rawValue, object: nil)
 		
         self.emptyMessage = "No notifications yet"
 		self.loadMoreMessage = "LOAD MORE NOTIFICATIONS"
@@ -32,9 +41,8 @@ class NotificationsTableViewController: BaseTableViewController {
 		
 		super.viewDidLoad()
 		
-		/* Turn off estimate so rows are measured up front */
-		self.tableView.estimatedRowHeight = 0
-		self.tableView.rowHeight = 0
+		self.tableView.estimatedRowHeight = 0	// Zero turns off estimates
+		self.tableView.rowHeight = 0			// Actual height is handled in heightForRowAtIndexPath
 	}
 
     override func viewWillAppear(animated: Bool) {
@@ -224,6 +232,13 @@ class NotificationsTableViewController: BaseTableViewController {
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
+	
+	func initialize() {
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:",
+			name: PAApplicationDidReceiveRemoteNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidBecomeActive",
+			name: Event.ApplicationDidBecomeActive.rawValue, object: nil)
+	}
 	
 	override func getActivityDate() -> Int64 {
 		return NotificationController.instance.activityDate
@@ -435,10 +450,10 @@ extension NotificationsTableViewController {
 				view.sizeToFit()
 				
 				if entity.id_ != nil {
-					self.rowHeights[entity.id_] = view.bounds.size.height + 24 + 1
+					self.rowHeights[entity.id_] = view.height() + 24 + 1
 				}
 				
-				return view.bounds.size.height + 24 + 1	// Add one for row separator
+				return view.height() + 24 + 1	// Add one for row separator
 		}
 		else {
 			return 0
