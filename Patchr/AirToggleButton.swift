@@ -50,5 +50,6 @@ class AirToggleButton: AirImageButton {
             self.imageView?.tintColor = (pending ? self.tintPending : self.tintOff)
         }
         self.toggledOn = on
+		Animation.bounce(self)
     }
 }

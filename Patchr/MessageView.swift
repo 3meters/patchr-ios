@@ -16,14 +16,16 @@ class MessageView: BaseView {
 	var description_	: TTTAttributedLabel?
 	var photo			: UIButton?
 	
+	var patchName		= AirLabelDisplay()
 	var userName		= AirLabelDisplay()
 	var userPhoto		= UserPhotoView()
 	var createdDate		= AirLabelDisplay()
 	var recipientsLabel = AirLabelDisplay()
 	var recipients		= AirLabelDisplay()
-	var likes			= AirLabelDisplay()
+	
+	var toolbar			= UIView()
 	var likeButton		= AirLikeButton(frame: CGRectZero)
-	var patchName		= AirLabelDisplay()
+	var likes			= AirLabelDisplay()
 	
 	init(cellType: CellType?) {
 		super.init(frame: CGRectZero)
@@ -55,6 +57,114 @@ class MessageView: BaseView {
 		super.init(coder: aDecoder)
 		initialize()
 	}
+	
+	deinit {
+		NSNotificationCenter.defaultCenter().removeObserver(self)
+	}
+	
+	/*--------------------------------------------------------------------------------------------
+	* Events
+	*--------------------------------------------------------------------------------------------*/
+	
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		/*
+		* Triggers:
+		* - foo.addSubview(bar) triggers layoutSubviews on foo, bar and all subviews of foo
+		* - Bounds (not frame) change for foo or foo.subviews (frame.size is propogated to bounds.size)
+		* - foo.addSubview does not trigger layoutSubviews if foo.autoresize mask == false
+		* - foo.setNeedsLayout is called
+		*
+		* Note: above triggers set dirty flag using setNeedsLayout which gets
+		* checked for all views in the view hierarchy for every run loop iteration.
+		* If dirty, layoutSubviews is called in hierarchy order and flag is reset.
+		*/
+		let columnLeft = CGFloat(48 + 8)
+		let columnWidth = self.bounds.size.width - columnLeft
+		let photoHeight = columnWidth * 0.5625		// 16:9 aspect ratio
+		
+		if self.showPatchName && self.patchName.text != nil {
+			self.patchName.hidden = false
+			self.patchName.sizeToFit()
+			self.patchName.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 0, width: columnWidth, height: self.patchName.height())
+			self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: self.patchName.height() + 8, width: 48, height: 48)
+		}
+		else {
+			self.patchName.hidden = true
+			self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 48, height: 48)
+		}
+		
+		/* Header */
+		
+		self.createdDate.sizeToFit()
+		self.userName.sizeToFit()
+		self.userName.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth - (self.createdDate.width() + 8), height: self.userName.height())
+		self.createdDate.alignToTheRightOf(self.userName, matchingCenterAndFillingWidthWithLeftAndRightPadding: 0, height: self.createdDate.height())
+		
+		/* Body */
+		
+		var bottomView: UIView? = self.photo
+		if self.cellType == .Share || self.cellType == .Text {
+			bottomView = self.description_
+			self.description_?.bounds.size.width = columnWidth
+			self.description_?.sizeToFit()
+			self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: self.description_!.height())
+		}
+		if self.cellType == .TextAndPhoto {
+			self.description_?.bounds.size.width = columnWidth
+			self.description_?.sizeToFit()
+			self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: self.description_!.height())
+			self.photo?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: photoHeight)
+		}
+		else if self.cellType == .Photo {
+			self.photo?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: photoHeight)
+		}
+		
+		/* Footer */
+		
+		if self.cellType == .Share {
+			self.recipientsLabel.sizeToFit()
+			self.recipients.bounds.size.width = columnWidth - (self.recipientsLabel.width() + 12)
+			self.recipients.sizeToFit()
+			self.recipientsLabel.alignUnder(bottomView!, matchingLeftWithTopPadding: 8, width: self.recipientsLabel.width(), height: self.recipientsLabel.height())
+			self.recipients.alignToTheRightOf(self.recipientsLabel, matchingTopWithLeftPadding: 12, width: self.recipients.width(), height: self.recipients.height())
+		}
+		else {
+			self.toolbar.alignUnder(bottomView!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 0, height: 48)
+			self.likeButton.anchorCenterLeftWithLeftPadding(0, width: self.likeButton.width(), height: self.likeButton.height())
+			self.likeButton.frame.origin.x -= 12
+			self.likes.sizeToFit()
+			self.likes.anchorCenterRightWithRightPadding(0, width: 72, height: self.likes.height())
+		}
+	}
+
+	func likeDidChange(notification: NSNotification) {
+		
+		if let userInfo = notification.userInfo,
+			let entityId = userInfo["entityId"] as? String {
+				if let message = self.entity as? Message where message.id_ != nil && entityId == message.id_ {
+					
+					/* Likes button */
+					self.likeButton.bindEntity(message)
+
+					self.likes.text = nil
+					if message.countLikes != nil {
+						if message.countLikes?.integerValue != 0 {
+							let likesTitle = message.countLikes?.integerValue == 1
+								? "\(message.countLikes) like"
+								: "\(message.countLikes ?? 0) likes"
+							self.likes.text = likesTitle
+							self.likes.sizeToFit()
+							self.likes.anchorCenterRightWithRightPadding(0, width: 72, height: self.likes.height())
+						}
+					}
+				}
+		}
+	}
+
+	/*--------------------------------------------------------------------------------------------
+	* Methods
+	*--------------------------------------------------------------------------------------------*/
 	
 	func initialize() {
 		/*
@@ -120,9 +230,12 @@ class MessageView: BaseView {
 			self.likes.textColor = Theme.colorTextTitle
 			self.likes.textAlignment = .Right
 			
-			self.addSubview(self.likeButton)
-			self.addSubview(self.likes)
+			self.toolbar.addSubview(self.likeButton)
+			self.toolbar.addSubview(self.likes)
+			self.addSubview(self.toolbar)
 		}
+		
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "likeDidChange:", name: Events.LikeDidChange, object: nil)
 	}
 	
 	func bindToEntity(entity: AnyObject) {
@@ -243,74 +356,4 @@ class MessageView: BaseView {
 		return CGSizeZero
 	}
 	
-	override func layoutSubviews() {
-		super.layoutSubviews()
-		/*
-		 * Triggers:
-		 * - foo.addSubview(bar) triggers layoutSubviews on foo, bar and all subviews of foo
-		 * - Bounds (not frame) change for foo or foo.subviews (frame.size is propogated to bounds.size)
-		 * - foo.addSubview does not trigger layoutSubviews if foo.autoresize mask == false
-		 * - foo.setNeedsLayout is called
-		 *
-		 * Note: above triggers set dirty flag using setNeedsLayout which gets
-		 * checked for all views in the view hierarchy for every run loop iteration.
-		 * If dirty, layoutSubviews is called in hierarchy order and flag is reset.
-		 */
-		let columnLeft = CGFloat(48 + 8)
-		let columnWidth = self.bounds.size.width - columnLeft
-		let photoHeight = columnWidth * 0.5625		// 16:9 aspect ratio
-		
-		if self.showPatchName && self.patchName.text != nil {
-			self.patchName.hidden = false
-			self.patchName.sizeToFit()
-			self.patchName.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 0, width: columnWidth, height: self.patchName.height())
-			self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: self.patchName.height() + 8, width: 48, height: 48)
-		}
-		else {
-			self.patchName.hidden = true
-			self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 48, height: 48)
-		}
-		
-		/* Header */
-		
-		self.createdDate.sizeToFit()
-		self.userName.sizeToFit()
-		self.userName.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth - (self.createdDate.width() + 8), height: self.userName.height())
-		self.createdDate.alignToTheRightOf(self.userName, matchingCenterAndFillingWidthWithLeftAndRightPadding: 0, height: self.createdDate.height())
-		
-		/* Body */
-		
-		var bottomView: UIView? = self.photo
-		if self.cellType == .Share || self.cellType == .Text {
-			bottomView = self.description_
-			self.description_?.bounds.size.width = columnWidth
-			self.description_?.sizeToFit()
-			self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: self.description_!.height())
-		}
-		if self.cellType == .TextAndPhoto {
-			self.description_?.bounds.size.width = columnWidth
-			self.description_?.sizeToFit()
-			self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: self.description_!.height())
-			self.photo?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: photoHeight)
-		}
-		else if self.cellType == .Photo {
-			self.photo?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: photoHeight)
-		}
-		
-		/* Footer */
-		
-		if self.cellType == .Share {
-			self.recipientsLabel.sizeToFit()
-			self.recipients.bounds.size.width = columnWidth - (self.recipientsLabel.width() + 12)
-			self.recipients.sizeToFit()
-			self.recipientsLabel.alignUnder(bottomView!, matchingLeftWithTopPadding: 8, width: self.recipientsLabel.width(), height: self.recipientsLabel.height())
-			self.recipients.alignToTheRightOf(self.recipientsLabel, matchingTopWithLeftPadding: 12, width: self.recipients.width(), height: self.recipients.height())
-		}
-		else {
-			self.likeButton.alignUnder(bottomView!, matchingLeftWithTopPadding: 0, width: self.likeButton.width(), height: self.likeButton.height())
-			self.likeButton.frame.origin.x -= 12
-			self.likes.sizeToFit()
-			self.likes.alignUnder(bottomView!, matchingRightWithTopPadding: 14, width: self.likes.width(), height: self.likes.height())
-		}
-	}
 }

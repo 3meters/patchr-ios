@@ -69,8 +69,10 @@ class AirPhotoBrowser: IDMPhotoBrowser {
         
         var items = [UIBarButtonItem]()
         items.append(flexSpacer)
+		items.append(flexSpacer)	// Doubled up hack to prevent jitters because of animation
         items.append(barLikeButton)
-        items.append(flexSpacer)
+		items.append(flexSpacer)
+		items.append(flexSpacer)
         items.append(shareButton)
         
         toolbar.items = items

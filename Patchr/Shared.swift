@@ -58,7 +58,7 @@ struct Shared {
         
         return progress
     }
-    
+	
     static func hasConnectivity() -> Bool {
         let reachability: Reachability = Reachability.reachabilityForInternetConnection()
         let networkStatus: Int = reachability.currentReachabilityStatus().rawValue

@@ -53,26 +53,15 @@ class BaseDetailViewController: BaseTableViewController {
 		
 		super.viewWillAppear(animated)
 		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "likeDidChange:", name: Events.LikeDidChange, object: nil)
-		
 		if self.entity != nil {
 			bind()
 		}
 	}
 	
-	override func viewDidDisappear(animated: Bool) {
-		super.viewDidDisappear(animated)
-		NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.LikeDidChange, object: nil)
-	}
-
 	/*--------------------------------------------------------------------------------------------
 	* Events
 	*--------------------------------------------------------------------------------------------*/
 	
-	func likeDidChange(sender: NSNotification) {
-		self.tableView.reloadData()	// To capture ui changes because of like/unlike in message item
-	}
-
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/

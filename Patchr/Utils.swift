@@ -54,14 +54,14 @@ struct Utils {
 		objc_sync_exit(lock)
 	}
 	
+	static func LocalizedString(str: String) -> String {
+		return LocalizedString(str, comment: str)
+	}
+	
     static func LocalizedString(str: String, comment: String) -> String {
         return NSLocalizedString(str, comment: comment)
     }
     
-    static func LocalizedString(str: String) -> String {
-        return LocalizedString(str, comment: str)
-    }
-	
     static func DateTimeTag() -> String! {
         let date = NSDate()     			// Initialized to current date
 		let calendar = NSCalendar.currentCalendar() // System caches currentCalendar as of iOS 7

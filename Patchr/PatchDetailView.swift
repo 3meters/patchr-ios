@@ -88,12 +88,12 @@ class PatchDetailView: BaseDetailView {
 		self.bannerGroup.fillSuperview()
 		
 		self.buttonGroup.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 48)
-		self.mapButton.anchorCenterLeftFillingHeightWithTopPadding(0, bottomPadding: 0, leftPadding: 0, width: 48)
-		self.moreButton.anchorCenterRightFillingHeightWithTopPadding(0, bottomPadding: 0, rightPadding: 0, width: 48)
-		self.watchButton.alignToTheLeftOf(self.moreButton, matchingCenterWithRightPadding: 0, width: 48, height: 48)
-		self.soundButton.alignToTheLeftOf(self.watchButton, matchingCenterWithRightPadding: 0, width: 48, height: 48)
+		self.mapButton.anchorCenterLeftWithLeftPadding(0, width: self.mapButton.width(), height: self.mapButton.height())
+		self.moreButton.anchorCenterRightWithRightPadding(0, width: self.moreButton.width(), height: self.moreButton.height())
+		self.watchButton.alignToTheLeftOf(self.moreButton, matchingCenterWithRightPadding: 0, width: self.watchButton.width(), height: self.watchButton.height())
+		self.soundButton.alignToTheLeftOf(self.watchButton, matchingCenterWithRightPadding: 0, width: self.soundButton.width(), height: self.soundButton.height())
 		self.watchersButton.sizeToFit()
-		self.watchersButton.anchorCenterLeftFillingHeightWithTopPadding(0, bottomPadding: 0, leftPadding: 68, width: self.watchersButton.width())
+		self.watchersButton.anchorCenterLeftFillingHeightWithTopPadding(0, bottomPadding: 0, leftPadding: 68, width: 112)
 		
 		self.titleGroup.alignAbove(self.buttonGroup, withLeftPadding: 68, bottomPadding: 0, width: viewWidth - 68, height: 72)
 		self.name.bounds.size.width = self.titleGroup.width()
@@ -134,7 +134,7 @@ class PatchDetailView: BaseDetailView {
 		self.infoOwner.sizeToFit()
 		self.infoOwnerLabel.anchorCenterLeftFillingHeightWithTopPadding(0, bottomPadding: 0, leftPadding: 16, width: self.infoOwnerLabel.width())
 		self.infoOwner.alignToTheRightOf(self.infoOwnerLabel, matchingCenterWithLeftPadding: 4, width: self.infoOwner.width(), height: self.infoOwner.height())
-		self.infoMoreButton.anchorCenterRightFillingHeightWithTopPadding(0, bottomPadding: 0, rightPadding: 0, width: 48)
+		self.infoMoreButton.anchorCenterRightFillingHeightWithTopPadding(0, bottomPadding: 0, rightPadding: 0, width: self.infoMoreButton.width())
 	}
 	
 	func watchDidChange(sender: NSNotification) {
@@ -258,14 +258,17 @@ class PatchDetailView: BaseDetailView {
 		self.infoLockImage.tintColor = Colors.accentOnLight
 		
 		self.mapButton.setImage(UIImage(named: "imgMapLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
+		self.mapButton.bounds.size = CGSizeMake(48, 48)
 		self.mapButton.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
 		
 		self.moreButton.setImage(UIImage(named: "imgOverflowLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
+		self.moreButton.bounds.size = CGSizeMake(48, 48)
 		self.moreButton.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
 		self.moreButton.addTarget(self, action: Selector("flipToInfo:"), forControlEvents: .TouchUpInside)
 		
 		self.infoMoreButton.setImage(UIImage(named: "imgOverflowLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
 		self.infoMoreButton.addTarget(self, action: Selector("flipToBanner:"), forControlEvents: .TouchUpInside)
+		self.infoMoreButton.bounds.size = CGSizeMake(48, 48)
 		self.infoMoreButton.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
 		
 		self.watchersButton.alpha = 0.0
@@ -274,6 +277,7 @@ class PatchDetailView: BaseDetailView {
 		self.watchButton.tintOn = Theme.colorActionOn
 		self.watchButton.tintPending = Colors.accentColor
 		self.watchButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
+		self.watchButton.bounds.size = CGSizeMake(48, 48)
 		self.watchButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
 		
 		self.soundButton.tintOff = Theme.colorActionOff
@@ -283,6 +287,7 @@ class PatchDetailView: BaseDetailView {
 		self.soundButton.imageOff = UIImage(named: "imgSoundOff2Light")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
 		self.soundButton.messageOn = "Notifications active"
 		self.soundButton.messageOff = "Notifications muted"
+		self.soundButton.bounds.size = CGSizeMake(48, 48)
 		self.soundButton.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
 		self.soundButton.alpha = 0.0
 

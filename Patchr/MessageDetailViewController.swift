@@ -205,7 +205,7 @@ class MessageDetailViewController: BaseViewController {
 				self.reportButton.sizeToFit()
 				self.reportButton.anchorCenterRightWithRightPadding(16, width: self.reportButton.width(), height: self.reportButton.height())
 				self.likesButton.sizeToFit()
-				self.likesButton.anchorInCenterWithWidth(self.likesButton.width(), height: self.likesButton.height())
+				self.likesButton.anchorInCenterWithWidth(72, height: self.likesButton.height())
 			}
 			
 			self.contentHolder.resizeToFitSubviews()
@@ -392,9 +392,13 @@ class MessageDetailViewController: BaseViewController {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     
-    func likeDidChange(sender: NSNotification) {
-        self.bind()
-		self.view.setNeedsLayout()
+    func likeDidChange(notification: NSNotification) {
+		if let userInfo = notification.userInfo,
+			let entityId = userInfo["entityId"] as? String {
+				if let message = self.inputMessage where message.id_ != nil && entityId == message.id_ {
+					self.bind()
+				}
+		}
     }
 
 	/*--------------------------------------------------------------------------------------------

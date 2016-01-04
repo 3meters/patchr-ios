@@ -61,60 +61,6 @@ class PhotoView: UIView {
         initialize()
     }
 	
-    func initialize() {
-		
-		let notificationCenter = NSNotificationCenter.defaultCenter()
-		notificationCenter.addObserver(self, selector: "imageNotFoundAction:", name: Events.ImageNotFound, object: self.imageButton)
-		
-		self.backgroundColor = Colors.clear
-		
-		self.photoGroup.alpha = 0
-		self.photoGroup.backgroundColor = Theme.colorBackgroundImage
-		self.photoGroup.cornerRadius = 4
-		self.photoGroup.clipsToBounds = true
-		self.addSubview(self.photoGroup)
-		
-		self.imageButton.contentVerticalAlignment = UIControlContentVerticalAlignment.Fill
-		self.imageButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Fill
-		self.imageButton.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
-		self.photoGroup.addSubview(self.imageButton)
-		
-		self.photoGroup.addSubview(self.scrimGroup)
-
-		self.editPhotoButton.setImage(UIImage(named: "imgEdit2Light"), forState: .Normal)
-		self.editPhotoButton.backgroundColor = Theme.colorScrimLighten
-		self.editPhotoButton.cornerRadius = 18
-		self.editPhotoButton.alpha = 0
-		self.scrimGroup.addSubview(self.editPhotoButton)
-		
-		self.clearPhotoButton.setImage(UIImage(named: "imgCancelDark"), forState: .Normal)
-		self.clearPhotoButton.backgroundColor = Theme.colorScrimLighten
-		self.clearPhotoButton.cornerRadius = 18
-		self.clearPhotoButton.alpha = 0
-		self.scrimGroup.addSubview(self.clearPhotoButton)
-		
-		self.setPhotoButton.setImage(UIImage(named: "UIButtonCamera"), forState: .Normal)
-		self.setPhotoButton.borderWidth = Theme.dimenButtonBorderWidth
-		
-		if photoMode == .Placeholder {
-			self.setPhotoButton.backgroundColor = Theme.colorScrimLighten
-			self.setPhotoButton.borderColor = Colors.clear
-			self.setPhotoButton.cornerRadius = 24
-		}
-		else {
-			self.setPhotoButton.backgroundColor = Theme.colorButtonFill
-			self.setPhotoButton.borderColor = Theme.colorButtonBorder
-			self.setPhotoButton.cornerRadius = Theme.dimenButtonCornerRadius
-		}
-
-        self.setPhotoButton.alpha = 0
-		self.addSubview(self.setPhotoButton)
-		
-		self.editPhotoButton.addTarget(self, action: Selector("editPhotoAction:"), forControlEvents: .TouchUpInside)
-		self.clearPhotoButton.addTarget(self, action: Selector("clearPhotoAction:"), forControlEvents: .TouchUpInside)
-		self.setPhotoButton.addTarget(self, action: Selector("setPhotoAction:"), forControlEvents: .TouchUpInside)
-    }
-	
 	/*--------------------------------------------------------------------------------------------
 	* Events
 	*--------------------------------------------------------------------------------------------*/
@@ -226,6 +172,60 @@ class PhotoView: UIView {
 	* Methods
 	*--------------------------------------------------------------------------------------------*/
 
+	func initialize() {
+		
+		let notificationCenter = NSNotificationCenter.defaultCenter()
+		notificationCenter.addObserver(self, selector: "imageNotFoundAction:", name: Events.ImageNotFound, object: self.imageButton)
+		
+		self.backgroundColor = Colors.clear
+		
+		self.photoGroup.alpha = 0
+		self.photoGroup.backgroundColor = Theme.colorBackgroundImage
+		self.photoGroup.cornerRadius = 4
+		self.photoGroup.clipsToBounds = true
+		self.addSubview(self.photoGroup)
+		
+		self.imageButton.contentVerticalAlignment = UIControlContentVerticalAlignment.Fill
+		self.imageButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Fill
+		self.imageButton.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
+		self.photoGroup.addSubview(self.imageButton)
+		
+		self.photoGroup.addSubview(self.scrimGroup)
+		
+		self.editPhotoButton.setImage(UIImage(named: "imgEdit2Light"), forState: .Normal)
+		self.editPhotoButton.backgroundColor = Theme.colorScrimLighten
+		self.editPhotoButton.cornerRadius = 18
+		self.editPhotoButton.alpha = 0
+		self.scrimGroup.addSubview(self.editPhotoButton)
+		
+		self.clearPhotoButton.setImage(UIImage(named: "imgCancelDark"), forState: .Normal)
+		self.clearPhotoButton.backgroundColor = Theme.colorScrimLighten
+		self.clearPhotoButton.cornerRadius = 18
+		self.clearPhotoButton.alpha = 0
+		self.scrimGroup.addSubview(self.clearPhotoButton)
+		
+		self.setPhotoButton.setImage(UIImage(named: "UIButtonCamera"), forState: .Normal)
+		self.setPhotoButton.borderWidth = Theme.dimenButtonBorderWidth
+		
+		if photoMode == .Placeholder {
+			self.setPhotoButton.backgroundColor = Theme.colorScrimLighten
+			self.setPhotoButton.borderColor = Colors.clear
+			self.setPhotoButton.cornerRadius = 24
+		}
+		else {
+			self.setPhotoButton.backgroundColor = Theme.colorButtonFill
+			self.setPhotoButton.borderColor = Theme.colorButtonBorder
+			self.setPhotoButton.cornerRadius = Theme.dimenButtonCornerRadius
+		}
+		
+		self.setPhotoButton.alpha = 0
+		self.addSubview(self.setPhotoButton)
+		
+		self.editPhotoButton.addTarget(self, action: Selector("editPhotoAction:"), forControlEvents: .TouchUpInside)
+		self.clearPhotoButton.addTarget(self, action: Selector("clearPhotoAction:"), forControlEvents: .TouchUpInside)
+		self.setPhotoButton.addTarget(self, action: Selector("setPhotoAction:"), forControlEvents: .TouchUpInside)
+	}
+	
 	func bindPhoto(photo: Photo?, showDefault: Bool = false) {
 		if photo != nil {
 			self.imageButton.setImageWithPhoto(photo!)
@@ -250,7 +250,7 @@ class PhotoView: UIView {
         if photoMode == .Photo {
             self.editPhotoButton.fadeIn()
             self.clearPhotoButton.fadeIn()
-            self.setPhotoButton.fadeOut()
+			self.setPhotoButton.fadeOut()
 			
             if self.photoMode == .Empty {
                 self.photoGroup.fadeIn()

@@ -56,7 +56,7 @@ class AirLikeButton: AirToggleButton {
         self.startProgress()
         self.imageView?.alpha = 0.0
         
-        if entity!.userLikesValue {
+        if self.entity!.userLikesValue {
             
             DataController.proxibase.deleteLinkById(entity!.userLikesId!) {
                 response, error in
@@ -78,7 +78,7 @@ class AirLikeButton: AirToggleButton {
 					if self.messageOff != nil {
 						Shared.Toast(self.messageOff)
 					}
-					NSNotificationCenter.defaultCenter().postNotificationName(Events.LikeDidChange, object: nil)
+					NSNotificationCenter.defaultCenter().postNotificationName(Events.LikeDidChange, object: self, userInfo: ["entityId":self.entity!.id_])
 					self.toggleOn(self.entity!.userLikesValue)
 					self.enabled = true
 				}				
@@ -110,7 +110,7 @@ class AirLikeButton: AirToggleButton {
 					if self.messageOn != nil {
 						Shared.Toast(self.messageOn)
 					}
-					NSNotificationCenter.defaultCenter().postNotificationName(Events.LikeDidChange, object: nil)
+					NSNotificationCenter.defaultCenter().postNotificationName(Events.LikeDidChange, object: self, userInfo: ["entityId":self.entity!.id_])
 					self.toggleOn(self.entity!.userLikesValue)
 					self.enabled = true
 				}
