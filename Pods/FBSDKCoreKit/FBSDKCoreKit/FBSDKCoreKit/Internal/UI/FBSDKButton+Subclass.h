@@ -32,6 +32,8 @@
 
 @interface FBSDKButton ()
 
+- (void)logTapEventWithEventName:(NSString *)eventName
+                      parameters:(NSDictionary *)parameters;
 - (void)checkImplicitlyDisabled;
 - (void)configureButton;
 - (void)configureWithIcon:(FBSDKIcon *)icon
@@ -48,6 +50,7 @@
  selectedHighlightedColor:(UIColor *)selectedHighlightedColor;
 - (UIColor *)defaultBackgroundColor;
 - (UIColor *)defaultDisabledColor;
+- (UIFont *)defaultFont;
 - (UIColor *)defaultHighlightedColor;
 - (FBSDKIcon *)defaultIcon;
 - (UIColor *)defaultSelectedColor;

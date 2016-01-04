@@ -58,7 +58,7 @@ class FacebookProvider: NSObject, ServiceProvider, FBSDKAppInviteDialogDelegate 
 		 * and log the user into Facebook if not already.
 		 */
 		self.loginManager.loginBehavior = FBSDKLoginBehavior.Native
-		self.loginManager.logInWithReadPermissions(self.permissions) {
+		self.loginManager.logInWithReadPermissions(self.permissions, fromViewController: nil) {
 			result, error in
 			completion?(response: result, error: error)
 		}
@@ -168,7 +168,7 @@ class FacebookProvider: NSObject, ServiceProvider, FBSDKAppInviteDialogDelegate 
 						
 						let invite = FBSDKAppInviteContent()
 						invite.appLinkURL = NSURL(string: applinkUrl)
-						invite.previewImageURL = NSURL(string: photoUrl)
+						invite.appInvitePreviewImageURL = NSURL(string: photoUrl)
 						inviteDialog.content = invite
 						inviteDialog.delegate = self
 						inviteDialog.show()

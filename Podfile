@@ -38,9 +38,9 @@ pod 'Google/Analytics', '~> 1.2.0'
 pod 'Fabric'
 pod 'Crashlytics'
 pod 'THContactPicker', '~> 1.2'
-pod 'FBSDKCoreKit', '~> 4.2.0'
-pod 'FBSDKLoginKit', '~> 4.1.0'
-pod 'FBSDKShareKit', '~> 4.1.0'
+pod 'FBSDKCoreKit', '~> 4.9.0-beta2'
+pod 'FBSDKLoginKit', '~> 4.9.0-beta2'
+pod 'FBSDKShareKit', '~> 4.9.0-beta2'
 pod 'DateTools'
 
 # CreativeSDKCore and Image are on version 0.12.2127.02
