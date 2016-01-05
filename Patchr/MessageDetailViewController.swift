@@ -294,17 +294,20 @@ class MessageDetailViewController: BaseViewController {
 		
 		let email = "report@3meters.com"
 		let subject = "Report on Patchr content"
+		let body = "Report on message id: \(self.inputMessage!.id_)\n"
 		
 		if MFMailComposeViewController.canSendMail() {
 			let composeViewController = MFMailComposeViewController()
 			composeViewController.mailComposeDelegate = self
 			composeViewController.setToRecipients([email])
 			composeViewController.setSubject(subject)
+			composeViewController.setMessageBody(body, isHTML: false)
+			
 			self.presentViewController(composeViewController, animated: true, completion: nil)
 		}
 		else {
-			var emailURL = "mailto:\(email)"
-			emailURL = emailURL.stringByAddingPercentEncodingWithAllowedCharacters(NSMutableCharacterSet.URLQueryAllowedCharacterSet()) ?? emailURL
+			let queryURL = "subject=\(subject)&body=\(body)"
+			let emailURL = "mailto:\(email)?\(queryURL.stringByAddingPercentEncodingWithAllowedCharacters(NSMutableCharacterSet.URLQueryAllowedCharacterSet()) ?? queryURL)"
 			if let url = NSURL(string: emailURL) {
 				UIApplication.sharedApplication().openURL(url)
 			}
