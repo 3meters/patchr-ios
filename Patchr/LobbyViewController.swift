@@ -59,18 +59,36 @@ class LobbyViewController: BaseViewController {
 	}
 	
 	func loginAction(sender: AnyObject?) {
+		
+		guard DataController.proxibase.versionIsValid else {
+			Shared.compatibilityUpgrade()
+			return
+		}
+		
 		let controller = LoginViewController()
 		controller.onboardMode = OnboardMode.Login
 		self.navigationController?.pushViewController(controller, animated: true)
 	}
 	
 	func signupAction(sender: AnyObject?) {
+		
+		guard DataController.proxibase.versionIsValid else {
+			Shared.compatibilityUpgrade()
+			return
+		}
+		
 		let controller = LoginViewController()
 		controller.onboardMode = OnboardMode.Signup
 		self.navigationController?.pushViewController(controller, animated: true)
 	}
 	
 	func guestAction(sender: UIButton) {
+
+		guard DataController.proxibase.versionIsValid else {
+			Shared.compatibilityUpgrade()
+			return
+		}
+		
 		let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
 		let controller = MainTabBarController()
 		controller.selectedIndex = 0

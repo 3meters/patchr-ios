@@ -32,13 +32,15 @@ public class Proxibase {
     
 	public typealias CompletionBlock = (response:AnyObject?, error:NSError?) -> Void
 
-	public let StagingURI    = "https://api.aircandi.com:8443/v1/"
-	public let ProductionURI = "https://api.aircandi.com/v1/"
+	public let StagingURI		= "https://api.aircandi.com:8443/v1/"
+	public let ProductionURI	= "https://api.aircandi.com/v1/"
 
-	let pageSizeDefault:       Int = 50
-	let pageSizeNearby:        Int = 50
-	let pageSizeExplore:       Int = 50
-	let pageSizeNotifications: Int = 50
+	let pageSizeDefault			: Int = 50
+	let pageSizeNearby			: Int = 50
+	let pageSizeExplore			: Int = 50
+	let pageSizeNotifications	: Int = 50
+	
+	var versionIsValid			= true
 
 	private let sessionManager: AFHTTPSessionManager
 	

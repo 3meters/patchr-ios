@@ -15,6 +15,7 @@ class PatchTableViewController: BaseTableViewController {
 	var filter			: PatchListFilter!
 	var location		: CLLocation?
 	var firstNearPass	= true
+	var greetingDidPlay = false
     
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -144,6 +145,21 @@ class PatchTableViewController: BaseTableViewController {
 		}
 	}
 
+	override func didFetchQuery(notification: NSNotification) {
+		super.didFetchQuery(notification)
+		
+		if self.filter == .Nearby {
+			if let userInfo = notification.userInfo {
+				if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundEffects")) {
+					if !self.greetingDidPlay && userInfo["count"] as! Int > 0 {
+						AudioController.instance.play(Sound.greeting.rawValue)
+						self.greetingDidPlay = true
+					}
+				}
+			}
+		}		
+	}
+	
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
@@ -291,11 +307,13 @@ class PatchTableViewController: BaseTableViewController {
     
     func refreshForLocation() {
         
-        if self.processingQuery {
+        guard !self.processingQuery else {
             return
         }
         
         self.processingQuery = true
+		
+		NSNotificationCenter.defaultCenter().postNotificationName(Events.WillFetchQuery, object: self, userInfo: nil)
 		
 		let queryId = self.query.objectID
 		
@@ -317,6 +335,7 @@ class PatchTableViewController: BaseTableViewController {
 						
 						self?.processingQuery = false
 						self?.activity.stopAnimating()
+						var userInfo: [NSObject:AnyObject] = ["error": (error != nil)]
 
 						if let error = ServerError(error) {
 							
@@ -334,27 +353,20 @@ class PatchTableViewController: BaseTableViewController {
 							}
 							return
 						}
-
-						let query = DataController.instance.mainContext.objectWithID(queryId) as! Query
-						
-						query.executedValue = true
-						self?.query.activityDateValue = (self?.getActivityDate())!
 						
 						if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
-							if fetchedObjects.count == 0 {
-								self?.emptyLabel.fadeIn()
-							}
-							else if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundEffects")) {
-								if self!.showEmptyLabel && self?.emptyLabel.alpha > 0 {
-									self?.emptyLabel.fadeOut()
-								}
-								if !query.executedValue {
-									AudioController.instance.play(Sound.greeting.rawValue)
-								}
-							}
+							userInfo["count"] = fetchedObjects.count
 						}
 						
+						let query = DataController.instance.mainContext.objectWithID(queryId) as! Query
+						query.executedValue = true
+						query.activityDateValue = (self?.getActivityDate())!
+						
 						DataController.instance.saveContext(false)	// Enough to trigger table update
+						
+						if self != nil {
+							NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetchQuery, object: self!, userInfo: userInfo)
+						}
 						
 						return
 					}

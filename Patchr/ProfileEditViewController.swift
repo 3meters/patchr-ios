@@ -133,7 +133,7 @@ class ProfileEditViewController: BaseViewController {
 			return
 		}
 		
-		ActionConfirmationAlert(
+		DeleteConfirmationAlert(
 			"Do you want to discard your editing changes?",
 			actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
 				doIt in
@@ -223,7 +223,7 @@ class ProfileEditViewController: BaseViewController {
 	
 	func deleteAction(sender: AnyObject) {
 		
-		ActionConfirmationAlert(
+		DeleteConfirmationAlert(
 			"Confirm account delete",
 			message: "Deleting your user account will erase all patches and messages you have created and cannot be undone. Enter YES to confirm.",
 			actionTitle: "Delete",

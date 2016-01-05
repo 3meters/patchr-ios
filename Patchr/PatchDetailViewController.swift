@@ -18,7 +18,6 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 	var inputShowInviteWelcome	= false
 	var inputInviterName		: String?
 	var inviteController		: WelcomeViewController?
-	var header					: PatchDetailView!
 
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
@@ -41,14 +40,10 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 	}
 	
 	override func viewWillAppear(animated: Bool) {
-		super.viewWillAppear(animated)
-		fetch(reset: false)
+		super.viewWillAppear(animated)		// calls bind
+		fetch(reset: self.firstAppearance)
 	}
 	
-    deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
-    }
-
 	/*--------------------------------------------------------------------------------------------
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
@@ -61,7 +56,9 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 	}
 
 	func contextButtonAction(sender: UIButton) {
-        
+		
+		let header = self.header as! PatchDetailView
+		
         if self.contextAction == .CreateMessage {
             if !UserController.instance.authenticated {
 				UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to post messages and more.")
@@ -73,14 +70,14 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
             shareAction()
         }
         else if self.contextAction == .CancelJoinRequest {
-            self.header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+            header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
         }
         else if self.contextAction == .SubmitJoinRequest || self.contextAction == .JoinPatch {
             if !UserController.instance.authenticated {
 				UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to join patches and more.")
                 return
             }
-            self.header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+            header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
         }
         else if self.contextAction == .BrowseUsersWatching {
             watchersAction(self)
@@ -161,7 +158,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		self.presentViewController(navController, animated: true) {}
 	}
 	
-	func fetchComplete(notification: NSNotification) {
+	func didFetch(notification: NSNotification) {
 		if notification.userInfo == nil {
 			if self.inputShowInviteWelcome {
 				if let entity = self.entity as? Patch where entity.userWatchStatusValue == .NonMember {
@@ -174,6 +171,14 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 					}
 				}
 			}
+		}
+		/*
+		 * HACK: We hide messages if the user is not a member of a private even if messages
+		 * were returned by the service because they are owned by the current user.
+		 */
+		let showMessages = (self.entity!.visibility == "public" || self.entity!.userWatchStatusValue == .Member)
+		if !showMessages {
+			self.emptyLabel.fadeIn()
 		}
 	}
 	
@@ -218,17 +223,24 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		self.header = PatchDetailView()
 		self.tableView = AirTableView(frame: self.tableView.frame, style: .Plain)
 		
-		self.header.mapButton.addTarget(self, action: Selector("mapAction:"), forControlEvents: .TouchUpInside)
-		self.header.watchersButton.addTarget(self, action: Selector("watchersAction:"), forControlEvents: UIControlEvents.TouchUpInside)
-		self.header.contextButton.addTarget(self, action: Selector("contextButtonAction:"), forControlEvents: .TouchUpInside)
+		let header = self.header as! PatchDetailView
+		
+		header.mapButton.addTarget(self, action: Selector("mapAction:"), forControlEvents: .TouchUpInside)
+		header.watchersButton.addTarget(self, action: Selector("watchersAction:"), forControlEvents: UIControlEvents.TouchUpInside)
+		header.contextButton.addTarget(self, action: Selector("contextButtonAction:"), forControlEvents: .TouchUpInside)
 
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:", name: PAApplicationDidReceiveRemoteNotification, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "fetchComplete:", name: Events.FetchComplete, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "watchDidChange:", name: Events.WatchDidChange, object: self.header.watchButton)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didFetch:", name: Events.DidFetch, object: self)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "watchDidChange:", name: Events.WatchDidChange, object: header.watchButton)
 		
 		/* UI prep */
 		self.patchNameVisible = false
-		self.header.contextButton.setTitle("", forState: .Normal)
+		header.contextButton.setTitle("", forState: .Normal)
+		
+		self.showEmptyLabel = true
+		self.showProgress = true
+		self.progressOffsetY = 80
+		self.loadMoreMessage = "LOAD MORE MESSAGES"
 		
 		/* Navigation bar buttons */
 		drawButtons()
@@ -237,17 +249,22 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 	override func bind() {
         
         if let entity = self.entity as? Patch {
-			self.header.bindToEntity(entity)
+			let header = self.header as! PatchDetailView
+
+			header.bindToEntity(entity)
 			bindContextButton()
+
+			self.emptyMessage = (entity.visibility == "private") ? "Only members can see messages" : "Be the first to post a message to this patch"
+			self.emptyLabel.text = self.emptyMessage
 			
 			if self.tableView.tableHeaderView == nil {
 				let viewWidth = self.tableView.bounds.size.width
 				let viewHeight = (viewWidth * 0.625) + 48
-				self.header.frame = CGRectMake(0, 0, viewWidth, viewHeight)
-				self.header.setNeedsLayout()
-				self.header.layoutIfNeeded()
-				self.header.photo.frame = CGRectMake(-24, -36, self.header.bannerGroup.width() + 48, self.header.bannerGroup.height() + 72)
-				self.originalRect = self.header.photo.frame
+				header.frame = CGRectMake(0, 0, viewWidth, viewHeight)
+				header.setNeedsLayout()
+				header.layoutIfNeeded()
+				header.photo.frame = CGRectMake(-24, -36, header.bannerGroup.width() + 48, header.bannerGroup.height() + 72)
+				self.originalRect = header.photo.frame
 				self.tableView.tableHeaderView = self.header
 				self.tableView.reloadData()
 			}
@@ -258,29 +275,31 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		
 		if let entity = self.entity as? Patch {
 			
+			let header = self.header as! PatchDetailView
+			
 			if isOwner() {
 				if entity.countPendingValue > 0 {
 					if entity.countPendingValue == 1 {
-						self.header.contextButton.setTitle("One member request".uppercaseString, forState: .Normal)
+						header.contextButton.setTitle("One member request".uppercaseString, forState: .Normal)
 					}
 					else {
-						self.header.contextButton.setTitle("\(entity.countPendingValue) member requests".uppercaseString, forState: .Normal)
+						header.contextButton.setTitle("\(entity.countPendingValue) member requests".uppercaseString, forState: .Normal)
 					}
 					self.contextAction = .BrowseUsersWatching
 				}
 				else {
-					self.header.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
+					header.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
 					self.contextAction = .SharePatch
 				}
 			}
 			else {
 				if !UserController.instance.authenticated {
 					if entity.visibility == "public" {
-						self.header.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
+						header.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
 						self.contextAction = .SharePatch
 					}
 					else {
-						self.header.contextButton.setTitle("Request to join".uppercaseString, forState: .Normal)
+						header.contextButton.setTitle("Request to join".uppercaseString, forState: .Normal)
 						self.contextAction = .SubmitJoinRequest
 					}
 				}
@@ -288,46 +307,46 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 					if entity.visibility == "public" {
 						if entity.userWatchStatusValue == .Member {
 							if entity.userHasMessagedValue {
-								self.header.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
+								header.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
 								self.contextAction = .SharePatch
 							}
 							else {
-								self.header.contextButton.setTitle("Post your first message".uppercaseString, forState: .Normal)
+								header.contextButton.setTitle("Post your first message".uppercaseString, forState: .Normal)
 								self.contextAction = .CreateMessage
 							}
 						}
 						else {
-							self.header.contextButton.setTitle("Join this patch".uppercaseString, forState: .Normal)
+							header.contextButton.setTitle("Join this patch".uppercaseString, forState: .Normal)
 							self.contextAction = .JoinPatch
 						}
 					}
 					else {
 						if entity.userWatchStatusValue == .Member {
 							if entity.userHasMessagedValue {
-								self.header.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
+								header.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
 								self.contextAction = .SharePatch
 							}
 							else {
-								self.header.contextButton.setTitle("Post your first message".uppercaseString, forState: .Normal)
+								header.contextButton.setTitle("Post your first message".uppercaseString, forState: .Normal)
 								self.contextAction = .CreateMessage
 							}
 						}
 						else if entity.userWatchStatusValue == .Pending {
-							self.header.contextButton.setTitle("Cancel join request".uppercaseString, forState: .Normal)
+							header.contextButton.setTitle("Cancel join request".uppercaseString, forState: .Normal)
 							self.contextAction = .CancelJoinRequest
 						}
 						else if entity.userWatchStatusValue == .NonMember {
-							self.header.contextButton.setTitle("Request to join".uppercaseString, forState: .Normal)
+							header.contextButton.setTitle("Request to join".uppercaseString, forState: .Normal)
 							self.contextAction = .SubmitJoinRequest
 						}
 						
 						if entity.userWatchJustApprovedValue {
 							if entity.userHasMessagedValue {
-								self.header.contextButton.setTitle("Approved! Invite your friends".uppercaseString, forState: .Normal)
+								header.contextButton.setTitle("Approved! Invite your friends".uppercaseString, forState: .Normal)
 								self.contextAction = .SharePatch
 							}
 							else {
-								self.header.contextButton.setTitle("Approved! Post your first message".uppercaseString, forState: .Normal)
+								header.contextButton.setTitle("Approved! Post your first message".uppercaseString, forState: .Normal)
 								self.contextAction = .CreateMessage
 							}
 						}
@@ -442,7 +461,8 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 					self.signupAction(nil)
 				}
 				else if result == .Join {
-					self.header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+					let header = self.header as! PatchDetailView
+					header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
 				}
 			}
 		}
@@ -487,6 +507,15 @@ extension PatchDetailViewController: MapViewDelegate {
 }
 
 extension PatchDetailViewController {
+	override func bindCell(cell: WrapperTableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
+		super.bindCell(cell, entity: object, location: location)
+		let showMessages = (self.entity!.visibility == "public" || self.entity!.userWatchStatusValue == .Member)
+		cell.hidden = !showMessages
+		return nil
+	}
+}
+
+extension PatchDetailViewController {
     /*
      * UITableViewDelegate
      */
@@ -496,28 +525,27 @@ extension PatchDetailViewController {
 			return
 		}
 		
+		let header = self.header as! PatchDetailView
+		
 		/* Parallax effect when user scrolls down */
 		let offset = scrollView.contentOffset.y
 		if offset >= originalScrollTop && offset <= 300 {
 			let movement = originalScrollTop - scrollView.contentOffset.y
 			let ratio: CGFloat = (movement <= 0) ? 0.50 : 1.0
-			self.header.photo.frame.origin.y = self.originalRect!.origin.y + (-(movement) * ratio)
+			header.photo.frame.origin.y = self.originalRect!.origin.y + (-(movement) * ratio)
 		}
 		else {
 			let movement = (originalScrollTop - scrollView.contentOffset.y) * 0.35
 			if movement > 0 {
-				self.header.photo.frame.origin.y = self.originalRect!.origin.y - (movement * 0.5)
-				self.header.photo.frame.origin.x = self.originalRect!.origin.x - (movement * 0.5)
-				self.header.photo.frame.size.width = self.originalRect!.size.width + movement
-				self.header.photo.frame.size.height = self.originalRect!.size.height + movement
+				header.photo.frame.origin.y = self.originalRect!.origin.y - (movement * 0.5)
+				header.photo.frame.origin.x = self.originalRect!.origin.x - (movement * 0.5)
+				header.photo.frame.size.width = self.originalRect!.size.width + movement
+				header.photo.frame.size.height = self.originalRect!.size.height + movement
 			}
 		}
     }
 	
 	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		if self.entity != nil && self.entity?.visibility == "private" && !(self.entity!.userWatchStatusValue == .Member) {
-			return 0
-		}
 		return super.tableView(tableView, numberOfRowsInSection: section)
 	}
 }

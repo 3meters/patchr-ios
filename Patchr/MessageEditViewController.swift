@@ -178,7 +178,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 			return
 		}
 		
-		ActionConfirmationAlert(
+		DeleteConfirmationAlert(
 			"Do you want to discard your editing changes?",
 			actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
 				doIt in
@@ -192,7 +192,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 		
 		guard !self.processing else { return }
 		
-		ActionConfirmationAlert(
+		DeleteConfirmationAlert(
 			"Confirm Delete",
 			message: "Are you sure you want to delete this?",
 			actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {

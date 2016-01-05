@@ -18,6 +18,7 @@
 @property (nonatomic, strong) NSNumber *more;
 @property (nonatomic, strong) NSNumber *time;
 @property (nonatomic, strong) NSNumber *noop;
+@property (nonatomic, strong) NSNumber *minBuild;
 @property (nonatomic, strong) id user;      // NSDictionary
 @property (nonatomic, strong) id session;   // NSDictionary
 
@@ -25,6 +26,7 @@
 @property (atomic, setter=setMoreValue:) BOOL moreValue;
 @property (atomic, setter=setTimeValue:) double timeValue;
 @property (atomic, setter=setNoopValue:) BOOL noopValue;
+@property (atomic, setter=setMinBuildValue:) int32_t minBuildValue;
 
 + (ServiceData *)setPropertiesFromDictionary:(NSDictionary *)dictionary
                                     onObject:(ServiceData *)serviceData;

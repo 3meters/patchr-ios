@@ -159,7 +159,7 @@ class PatchEditViewController: BaseViewController {
 			return
 		}
 		
-		ActionConfirmationAlert(
+		DeleteConfirmationAlert(
 			"Do you want to discard your editing changes?",
 			actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
 				doIt in
@@ -179,7 +179,7 @@ class PatchEditViewController: BaseViewController {
 		
 		guard !self.processing else { return }
 		
-		ActionConfirmationAlert(
+		DeleteConfirmationAlert(
 			"Confirm Delete",
 			message: "Are you sure you want to delete this?",
 			actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {

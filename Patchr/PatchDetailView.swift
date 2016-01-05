@@ -33,7 +33,7 @@ class PatchDetailView: BaseDetailView {
 	var moreButton			= AirToolButton()
 	
 	var contextGroup		= AirRuleView()
-	var contextButton		= AirLinkButton()
+	var contextButton		= AirFeaturedButton()
 	
 	var infoGroup			= AirRuleView()
 	
@@ -272,6 +272,7 @@ class PatchDetailView: BaseDetailView {
 		self.infoMoreButton.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
 		
 		self.watchersButton.alpha = 0.0
+		self.watchersButton.contentHorizontalAlignment = .Left
 		
 		self.watchButton.tintOff = Theme.colorActionOff
 		self.watchButton.tintOn = Theme.colorActionOn
@@ -290,6 +291,8 @@ class PatchDetailView: BaseDetailView {
 		self.soundButton.bounds.size = CGSizeMake(48, 48)
 		self.soundButton.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
 		self.soundButton.alpha = 0.0
+		
+		self.contextButton.layer.cornerRadius = 0
 
 		self.bannerGroup.clipsToBounds = true
 		

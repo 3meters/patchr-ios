@@ -79,10 +79,11 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
             self.emptyLabel.font = Theme.fontTextDisplay
             self.emptyLabel.text = self.emptyMessage
             self.emptyLabel.numberOfLines = 0
+			self.emptyLabel.insets = UIEdgeInsetsMake(16, 16, 16, 16)
 			self.emptyLabel.textAlignment = NSTextAlignment.Center
 			self.emptyLabel.textColor = Theme.colorTextPlaceholder
 			
-            self.view.addSubview(self.emptyLabel)
+            self.tableView.addSubview(self.emptyLabel)
         }
 		
 		/*
@@ -104,6 +105,9 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		
 		/* Hookup query */
 		self.query = loadQuery()
+		
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "willFetchQuery:", name: Events.WillFetchQuery, object: self)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didFetchQuery:", name: Events.DidFetchQuery, object: self)
 	}
 	
 	override func viewWillLayoutSubviews() {
@@ -115,9 +119,9 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		
 		let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.bounds.size.width)
 		self.tableView.bounds.size.width = viewWidth
+		self.view.fillSuperview()
 		
 		self.footerView.frame.size.height = CGFloat(48 + 16)
-		
 		self.loadMoreButton.anchorTopCenterFillingWidthWithLeftAndRightPadding(8, topPadding: 8, height: 48)
 		self.loadMoreActivity.anchorTopCenterWithTopPadding(8, width: 48, height: 48)
 		
@@ -125,8 +129,10 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.activity.frame.origin.y += CGFloat(self.progressOffsetY)
 		self.activity.frame.origin.x += CGFloat(self.progressOffsetX)
 		
+		let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+		let navHeight = self.navigationController?.navigationBar.height() ?? 0
 		self.emptyLabel.anchorInCenterWithWidth(160, height: 160)
-		self.emptyLabel.frame.origin.y -= CGFloat(64 /* Status bar + navigation bar */)
+		self.emptyLabel.frame.origin.y -= (statusHeight + navHeight)
 	}
 	
 	override func viewWillAppear(animated: Bool) {
@@ -164,6 +170,8 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		else {
 			try! self.fetchedResultsController.performFetch()
 		}
+		
+		self.firstAppearance = false
     }
 	
 	override func viewWillDisappear(animated: Bool) {
@@ -210,6 +218,43 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		}
 	}
 	
+	func willFetchQuery(notification: NSNotification) {
+		if !self.refreshControl!.refreshing && !self.query.executedValue {
+			/* Wacky activity control for body */
+			if self.showProgress {
+				self.activity.startAnimating()
+			}
+		}
+		
+		if self.showEmptyLabel && self.emptyLabel.alpha > 0 {
+			self.emptyLabel.fadeOut()
+		}
+	}
+	
+	func didFetchQuery(notification: NSNotification) {
+		self.activity.stopAnimating()
+		if let userInfo = notification.userInfo where userInfo["count"] != nil {
+			if self.showEmptyLabel && userInfo["count"] as! Int == 0 {
+				self.emptyLabel.fadeIn()
+			}
+		}
+		
+		if self.query.moreValue {
+			if self.tableView.tableFooterView == nil {
+				self.tableView.tableFooterView = self.footerView
+			}
+			if let button = self.footerView.viewWithTag(1) as? UIButton,
+				spinner = self.footerView.viewWithTag(2) as? UIActivityIndicatorView {
+					button.hidden = false
+					spinner.hidden = true
+					spinner.stopAnimating()
+			}
+		}
+		else {
+			self.tableView.tableFooterView = nil
+		}
+	}
+	
     /*--------------------------------------------------------------------------------------------
     * MARK:- Methods
     *--------------------------------------------------------------------------------------------*/
@@ -234,17 +279,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         
 		self.processingQuery = true
 		
-        if !self.refreshControl!.refreshing && !self.query.executedValue {
-			/* Wacky activity control for body */
-			if self.showProgress {
-				self.activity.startAnimating()
-			}
-        }
-		
-        if self.showEmptyLabel && self.emptyLabel.alpha > 0 {
-            self.emptyLabel.fadeOut()
-        }
-        
+		NSNotificationCenter.defaultCenter().postNotificationName(Events.WillFetchQuery, object: self, userInfo: nil)
         /*
          * Check to see of any subclass wants to inject using the sidecar. Currently
          * used to add locally cached nearby notifications.
@@ -270,36 +305,19 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 					Utils.delay(0.5) {
 						
 						self?.processingQuery = false
-						self?.activity.stopAnimating()
+						var userInfo: [NSObject:AnyObject] = ["error": (error != nil)]
 						
 						let query = DataController.instance.mainContext.objectWithID(queryObjectId) as! Query
 						
-						if query.moreValue {
-							if self?.tableView.tableFooterView == nil {
-								self?.tableView.tableFooterView = self?.footerView
-							}
-							if let button = self?.footerView.viewWithTag(1) as? UIButton,
-								spinner = self?.footerView.viewWithTag(2) as? UIActivityIndicatorView {
-									button.hidden = false
-									spinner.hidden = true
-									spinner.stopAnimating()
-							}
-						}
-						else {
-							self?.tableView.tableFooterView = nil
-						}
-						
 						if error == nil {
+							query.executedValue = true
 							if queryDate != nil {
-								self?.query.activityDateValue = queryDate!
+								query.activityDateValue = queryDate!
 							}
-							self?.query.executedValue = true
 							if self?.fetchedResultsController.delegate != nil {	// Delegate is unset when view controller disappears
 								if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
-									self?.query.offsetValue = Int32(fetchedObjects.count)
-									if self?.emptyLabel != nil && fetchedObjects.count == 0 {
-										self?.emptyLabel.fadeIn()
-									}
+									query.offsetValue = Int32(fetchedObjects.count)
+									userInfo["count"] = fetchedObjects.count
 								}
 							}
 							/* Find oldest (smallest) date in the set */
@@ -323,6 +341,11 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 							DataController.instance.saveContext(false)
 							self?.tableView.reloadData()		// Update cells to show any changes
 						}
+						
+						if self != nil {
+							NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetchQuery, object: self!, userInfo: userInfo)
+						}
+						
 						return
 					}
 				}

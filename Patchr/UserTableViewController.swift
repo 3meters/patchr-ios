@@ -216,7 +216,7 @@ extension UserTableViewController: UserApprovalViewDelegate {
 
 	func userView(userView: UserView, removeButtonTapped removeButton: UIButton) {
 		
-		self.ActionConfirmationAlert(
+		self.DeleteConfirmationAlert(
 			"Confirm Remove",
 			message: "Do you want to remove the request to watch your patch?",
 			actionTitle: "Remove", cancelTitle: "Cancel", delegate: self) {

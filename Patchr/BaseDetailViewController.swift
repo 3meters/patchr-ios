@@ -10,27 +10,32 @@ import UIKit
 
 class BaseDetailViewController: BaseTableViewController {
 
-    var entity: Entity?
-    var entityId: String?
-    var deleted = false
-    var queryName: String!
-    var patchNameVisible: Bool = true
+    var entity				: Entity?
+    var entityId			: String?
+    var deleted				= false
+    var queryName			: String!
+    var patchNameVisible	: Bool = true
+	var header				: UIView!
     
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
-    
+	
     override func viewDidLoad() {
-        
-        self.showEmptyLabel = false
-        self.showProgress = true
-        self.progressOffsetY = 80
-		self.loadMoreMessage = "LOAD MORE MESSAGES"
 		self.listType = .Messages
-        
         super.viewDidLoad()
     }
 	
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		
+		let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+		let navHeight = self.navigationController?.navigationBar.height() ?? 0
+		self.emptyLabel.anchorInCenterWithWidth(160, height: 160)
+		self.emptyLabel.frame.origin.y -= CGFloat(statusHeight + navHeight)
+		self.emptyLabel.frame.origin.y += self.header.height() / 2
+	}
+
 	override func viewWillAppear(animated: Bool) {
 		
 		if self.entity != nil {
@@ -56,6 +61,10 @@ class BaseDetailViewController: BaseTableViewController {
 		if self.entity != nil {
 			bind()
 		}
+	}
+	
+	deinit {
+		NSNotificationCenter.defaultCenter().removeObserver(self)
 	}
 	
 	/*--------------------------------------------------------------------------------------------
@@ -111,9 +120,12 @@ class BaseDetailViewController: BaseTableViewController {
 				if self != nil {
 					NSOperationQueue.mainQueue().addOperationWithBlock {
 						
+						var userInfo: [NSObject:AnyObject] = ["error": (error != nil)]
+
 						if error == nil {
 							if objectId != nil {
 								
+								/* entity has already been saved by DataController */
 								let entity = DataController.instance.mainContext.objectWithID(objectId!) as! Entity
 								self?.entity = entity
 								self?.entityId = entity.id_
@@ -126,7 +138,14 @@ class BaseDetailViewController: BaseTableViewController {
 								 */
 								if self?.getActivityDate() != self?.query.activityDateValue || reset {
 									self?.fetchQueryItems(force: true, paging: !reset, queryDate: self?.getActivityDate())	// Only place we cascade the refresh to the list otherwise a pullToRefresh is required
-									DataController.instance.saveContext(false)
+								}
+								else {
+									if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
+										userInfo["count"] = fetchedObjects.count
+									}
+									if self != nil {
+										NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetchQuery, object: self!, userInfo: userInfo)
+									}
 								}
 								
 								if let patch = entity as? Patch {
@@ -134,14 +153,18 @@ class BaseDetailViewController: BaseTableViewController {
 								}
 								self?.drawButtons()	// Refresh so owner only commands can be displayed
 								self?.bind()
-								NSNotificationCenter.defaultCenter().postNotificationName(Events.FetchComplete, object: nil)
+								if self != nil {
+									NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetch, object: self!)
+								}
 							}
 							else {
 								Shared.Toast("Item has been deleted")
 								Utils.delay(2.0) {
 									() -> () in
 									self?.navigationController?.popViewControllerAnimated(true)
-									NSNotificationCenter.defaultCenter().postNotificationName(Events.FetchComplete, object: nil, userInfo: ["deleted":true])
+									if self != nil {
+										NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetch, object: self!, userInfo: ["deleted":true])
+									}
 								}
 							}
 						}
@@ -188,7 +211,7 @@ extension BaseDetailViewController {
 			view.patchName.hidden = !self.patchNameVisible
 			view.photo?.addTarget(self, action: Selector("photoAction:"), forControlEvents: .TouchUpInside)
 		}
-		return nil
+		return view
 	}
     /*
      * UITableViewDelegate 

@@ -359,7 +359,7 @@ class MessageDetailViewController: BaseViewController {
 	}
     
     func deleteAction() {
-        self.ActionConfirmationAlert(
+        self.DeleteConfirmationAlert(
             "Confirm Delete",
             message: "Are you sure you want to delete this?",
             actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
@@ -371,7 +371,7 @@ class MessageDetailViewController: BaseViewController {
     }
     
     func removeAction() {
-        self.ActionConfirmationAlert(
+        self.DeleteConfirmationAlert(
             "Confirm Remove",
             message: "Are you sure you want to remove this message from the patch?",
             actionTitle: "Remove", cancelTitle: "Cancel", delegate: self) {

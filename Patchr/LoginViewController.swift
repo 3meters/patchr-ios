@@ -196,6 +196,7 @@ class LoginViewController: BaseViewController {
 				self.processing = false
 				
 				self.progress?.hide(true)
+				
 				if var error = ServerError(error) {
 					if error.code == .UNAUTHORIZED_CREDENTIALS {
 						error.message = "Wrong email and password combination."

@@ -48,7 +48,7 @@ class Snow {
 	let colorBackgroundOverlay      = Colors.opacity75pcntBlack
 	let colorBackgroundActivity     = Colors.white
 	let colorBackgroundActivityOnly = Colors.clear
-	let colorBackgroundEmptyBubble  = Colors.white
+	let colorBackgroundEmptyBubble  = Colors.gray95pcntColor
 	let colorBackgroundAgeDot       = Colors.accentColorFill
 	let colorBackgroundContactSelected 	= Colors.accentColorFill
 

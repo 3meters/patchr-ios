@@ -13,8 +13,6 @@ class UserDetailViewController: BaseDetailViewController {
 	var profileMode = true
 	var progress: AirProgress?
 	
-	private var header:	UserDetailView!
-	
 	private var isGuest: Bool {
 		return self.entityId == nil
 	}
@@ -34,17 +32,17 @@ class UserDetailViewController: BaseDetailViewController {
 		super.loadView()
 		initialize()
 	}
-
+	
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
 		let viewWidth = self.tableView.width()
 		let viewHeight = CGFloat(208)
-		self.tableView.tableHeaderView?.bounds.size = CGSizeMake(viewWidth, viewHeight)
+		self.tableView.tableHeaderView?.bounds.size = CGSizeMake(viewWidth, viewHeight)	// Triggers layoutSubviews on header
 	}
 	
 	override func viewWillAppear(animated: Bool) {
-		super.viewWillAppear(animated)
+		super.viewWillAppear(animated)	// calls bind
 		fetch(reset: false)
 	}
     
@@ -100,9 +98,16 @@ class UserDetailViewController: BaseDetailViewController {
 		self.header = UserDetailView()
 		self.tableView = AirTableView(frame: self.tableView.frame, style: .Plain)
 		
-		self.header.watchingButton.addTarget(self, action: Selector("browseWatchingAction:"), forControlEvents: UIControlEvents.TouchUpInside)
-		self.header.ownsButton.addTarget(self, action: Selector("browseOwnedAction:"), forControlEvents: UIControlEvents.TouchUpInside)
+		let header = self.header as! UserDetailView
+		
+		header.watchingButton.addTarget(self, action: Selector("browseWatchingAction:"), forControlEvents: UIControlEvents.TouchUpInside)
+		header.ownsButton.addTarget(self, action: Selector("browseOwnedAction:"), forControlEvents: UIControlEvents.TouchUpInside)
+		
+		self.showEmptyLabel = true
+		self.showProgress = true
 		self.progressOffsetY = 40
+		self.loadMoreMessage = "LOAD MORE MESSAGES"
+		self.emptyMessage = "Browse your posted messages here"
 		
 		/* Navigation bar buttons */
 		drawButtons()
@@ -110,12 +115,13 @@ class UserDetailViewController: BaseDetailViewController {
 	
 	override func bind() {
 		if let user = self.entity as? User {
-			self.header.bindToEntity(user)
+			let header = self.header as! UserDetailView
+			header.bindToEntity(user)
 			if self.tableView.tableHeaderView == nil {
-				self.header.frame = CGRectMake(0, 0, self.tableView.width(), CGFloat(208))
-				self.header.setNeedsLayout()
-				self.header.layoutIfNeeded()
-				self.tableView.tableHeaderView = self.header	// Triggers table binding
+				header.frame = CGRectMake(0, 0, self.tableView.width(), CGFloat(208))
+				header.setNeedsLayout()
+				header.layoutIfNeeded()
+				self.tableView.tableHeaderView = header	// Triggers table binding
 				self.tableView.reloadData()
 			}
 		}

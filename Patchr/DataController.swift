@@ -184,6 +184,11 @@ class DataController: NSObject {
 							ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper)
 							Utils.stopwatch2.segmentNote("\(entityType): service time: \(dataWrapper.time)ms")
 							
+							if !Shared.versionIsValid(Int(dataWrapper.minBuildValue)) {
+								Shared.compatibilityUpgrade()
+								return
+							}
+							
 							if !dataWrapper.noopValue {
 								if let entityDictionaries = dataWrapper.data as? [[NSObject:AnyObject]] {
 									if entityDictionaries.count == 1 {
@@ -314,15 +319,20 @@ class DataController: NSObject {
 				/* Turn response entities into managed entities */
 				let returnValue = self.handleServiceDataResponseForQuery(query, response: response!, context: privateContext)
 				
+				/* Check for version problem */
+				if returnValue == nil {
+					return
+				}
+				
 				/* If service query completed as a noop then bail */
-				if (returnValue.serviceData.noopValue) {
+				if (returnValue!.serviceData.noopValue) {
 					completion(queryItems: [], query: query, error: error)
 					return
 				}
 				
 				/* So we can provide a hint that paging is available */
-				query.moreValue = (returnValue.serviceData.moreValue && returnValue.serviceData.countValue > 0)
-				let queryItems = returnValue.queryItems
+				query.moreValue = (returnValue!.serviceData.moreValue && returnValue!.serviceData.countValue > 0)
+				let queryItems = returnValue!.queryItems
 				
 				/*
 				* Clearing entities that have been deleted is tricky. When paging, we don't
@@ -396,7 +406,7 @@ class DataController: NSObject {
 	 * Methods
 	 *--------------------------------------------------------------------------------------------*/
 	
-	private func handleServiceDataResponseForQuery(query: Query, response: AnyObject, context: NSManagedObjectContext) -> (serviceData:ServiceData, queryItems:[QueryItem]) {
+	private func handleServiceDataResponseForQuery(query: Query, response: AnyObject, context: NSManagedObjectContext) -> (serviceData:ServiceData, queryItems:[QueryItem])? {
 
 		var queryItems: [QueryItem] = []
 		let dataWrapper = ServiceData()
@@ -404,7 +414,12 @@ class DataController: NSObject {
 
 			ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper)
 			Utils.stopwatch1.segmentNote("\(query.name): service time: \(dataWrapper.time)ms")
-
+			
+			if !Shared.versionIsValid(Int(dataWrapper.minBuildValue)) {
+				Shared.compatibilityUpgrade()
+				return nil
+			}
+			
             if (dataWrapper.noopValue) {
                 return (dataWrapper, [])
             }
@@ -528,11 +543,11 @@ class DataController: NSObject {
 	}
 	
     func dataWrapperForResponse(response: AnyObject) -> ServiceData? {
+		
         if let dictionary = response as? [NSObject:AnyObject] {
             let dataWrapper = ServiceData()
             ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper)
 			Log.d("Service response time: \(dataWrapper.time)")
-
             return dataWrapper
         }
         return nil

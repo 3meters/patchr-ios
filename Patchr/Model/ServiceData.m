@@ -30,7 +30,14 @@
         /* Should be an array of objects */
         serviceData.data = dictionary[@"data"];
     }
-    
+	
+	if ([dictionary[@"clientMinVersions"] isKindOfClass:[NSDictionary class]]) {
+		NSDictionary *versionMap = dictionary[@"clientMinVersions"];
+		if (versionMap[@"com.3meters.patchr.ios"] != nil) {
+			serviceData.minBuild = versionMap[@"com.3meters.patchr.ios"];
+		}
+	}
+	
     if ([dictionary[@"user"] isKindOfClass:[NSDictionary class]]) {
         serviceData.user = dictionary[@"user"];
     }
@@ -72,6 +79,14 @@
 
 - (void)setNoopValue:(BOOL)noopValue {
     self.noop = [NSNumber numberWithBool:noopValue];
+}
+
+- (int32_t)minBuildValue {
+	return self.minBuild.intValue;
+}
+
+- (void)setMinBuildValue:(int32_t)minBuildValue {
+	self.minBuild = [NSNumber numberWithInt:minBuildValue];
 }
 
 @end

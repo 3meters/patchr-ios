@@ -42,12 +42,15 @@ func PatchrUserDefaultKey(subKey: String) -> String {
 }
 
 public struct Events {
-    static let LikeDidChange     = "LikeDidChange"
-    static let WatchDidChange    = "WatchDidChange"
-	static let PhotoDidChange    = "PhotoDidChange"
-	static let PhotoViewHasFocus = "PhotoViewHasFocus"
-	static let FetchComplete     = "FetchComplete"
-	static let ImageNotFound     = "ImageNotFound"
+    static let LikeDidChange        = "LikeDidChange"
+    static let WatchDidChange       = "WatchDidChange"
+	static let PhotoDidChange       = "PhotoDidChange"
+	static let PhotoViewHasFocus    = "PhotoViewHasFocus"
+	static let WillFetch			= "WillFetch"
+	static let DidFetch				= "DidFetch"
+	static let WillFetchQuery		= "WillFetchQuery"
+	static let DidFetchQuery		= "DidFetchQuery"
+	static let ImageNotFound        = "ImageNotFound"
 }
 
 public struct Schema {

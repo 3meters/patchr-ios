@@ -249,10 +249,22 @@ extension UIViewController {
 		alert.addAction(UIAlertAction(title: cancelButtonTitle, style: .Cancel, handler: nil))
 		self.presentViewController(alert, animated: true) {}
     }
-    
-    func ActionConfirmationAlert(title: String? = nil, message: String? = nil,
-        actionTitle: String, cancelTitle: String, destructConfirmation: Bool = false,
-        delegate: AnyObject? = nil, onDismiss: (Bool) -> Void) {
+	
+	func UpdateConfirmationAlert(title: String? = nil, message: String? = nil,
+		actionTitle: String, cancelTitle: String,
+		delegate: AnyObject? = nil, onDismiss: (Bool) -> Void) {
+			
+			let alert = AirAlertController(title: title, message: message, preferredStyle: .Alert)
+			let okAction = UIAlertAction(title: actionTitle, style: .Default, handler: { _ in onDismiss(true) })
+			let cancelAction = UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) })
+			alert.addAction(okAction)
+			alert.addAction(cancelAction)
+			self.presentViewController(alert, animated: true, completion: nil)
+	}
+	
+    func DeleteConfirmationAlert(title: String? = nil, message: String? = nil,
+								 actionTitle: String, cancelTitle: String, destructConfirmation: Bool = false,
+								 delegate: AnyObject? = nil, onDismiss: (Bool) -> Void) {
             
 		let alert = AirAlertController(title: title, message: message, preferredStyle: .Alert)
 		let okAction = UIAlertAction(title: actionTitle, style: .Destructive, handler: { _ in onDismiss(true) })
