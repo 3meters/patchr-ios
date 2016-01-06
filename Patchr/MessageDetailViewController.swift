@@ -294,7 +294,7 @@ class MessageDetailViewController: BaseViewController {
 		
 		let email = "report@3meters.com"
 		let subject = "Report on Patchr content"
-		let body = "Report on message id: \(self.inputMessage!.id_)\n"
+		let body = "Report on message id: \(self.inputMessage!.id_)\n\nPlease add some detail on why you are reporting this message.\n"
 		
 		if MFMailComposeViewController.canSendMail() {
 			let composeViewController = MFMailComposeViewController()
@@ -785,6 +785,19 @@ extension MessageDetailViewController: TTTAttributedLabelDelegate {
 extension MessageDetailViewController: MFMailComposeViewControllerDelegate {
 	
 	func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
+		
+		switch result.rawValue {
+			case MFMailComposeResultCancelled.rawValue:	// 0
+				Shared.Toast("Report cancelled", controller: self, addToWindow: false)
+			case MFMailComposeResultSaved.rawValue:		// 1
+				Shared.Toast("Report saved", controller: self, addToWindow: false)
+			case MFMailComposeResultSent.rawValue:		// 2
+				Shared.Toast("Report sent", controller: self, addToWindow: false)
+			case MFMailComposeResultFailed.rawValue:	// 3
+				Shared.Toast("Report send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
+			default:
+				break
+		}
 		self.dismissViewControllerAnimated(true, completion: nil)
 	}
 }
