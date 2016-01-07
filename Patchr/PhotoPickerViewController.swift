@@ -92,6 +92,10 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 		
 		/* Past searches */
 		loadSearches()
+		
+		/* Navigation bar buttons */
+		let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancelAction:")
+		self.navigationItem.leftBarButtonItems = [cancelButton]
 	}
 
 	override func viewWillAppear(animated: Bool) {
@@ -136,7 +140,7 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
     
-    @IBAction func cancelAction(sender: AnyObject){
+    func cancelAction(sender: AnyObject){
         self.pickerDelegate!.photoBrowseControllerDidCancel!()
         self.dismissViewControllerAnimated(true, completion: nil)
     }
