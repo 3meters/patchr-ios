@@ -98,7 +98,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.tableView.rowHeight = 136
 		
         /* A bit of UI tweaking */
-        self.tableView.backgroundColor = Theme.colorBackgroundWindow
+        self.tableView.backgroundColor = Theme.colorBackgroundTable
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
         self.tableView.separatorInset = UIEdgeInsetsZero
         self.clearsSelectionOnViewWillAppear = false;

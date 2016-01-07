@@ -446,7 +446,8 @@ extension NotificationsTableViewController {
 				
 				let view = NotificationView(cellType: cellType)
 				view.bindToEntity(entity)
-				view.bounds.size.width = self.tableView.width() - 24
+				let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
+				view.bounds.size.width = viewWidth - 24
 				view.sizeToFit()
 				
 				if entity.id_ != nil {

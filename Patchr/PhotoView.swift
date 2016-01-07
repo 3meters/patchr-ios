@@ -185,9 +185,11 @@ class PhotoView: UIView {
 		self.photoGroup.clipsToBounds = true
 		self.addSubview(self.photoGroup)
 		
+		self.imageButton.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
+		self.imageButton.contentMode = .ScaleAspectFill
 		self.imageButton.contentVerticalAlignment = UIControlContentVerticalAlignment.Fill
 		self.imageButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Fill
-		self.imageButton.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
+		self.imageButton.sizeCategory = SizeCategory.standard
 		self.photoGroup.addSubview(self.imageButton)
 		
 		self.photoGroup.addSubview(self.scrimGroup)

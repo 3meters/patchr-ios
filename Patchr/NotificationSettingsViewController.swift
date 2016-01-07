@@ -27,7 +27,14 @@ class NotificationSettingsViewController: UITableViewController {
 		super.loadView()
 		initialize()
 	}
-	
+
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		
+		let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.bounds.size.width)
+		self.tableView.bounds.size.width = viewWidth
+	}
+
 	/*--------------------------------------------------------------------------------------------
 	* Events
 	*--------------------------------------------------------------------------------------------*/
@@ -40,7 +47,7 @@ class NotificationSettingsViewController: UITableViewController {
 		setScreenName("NotificationSettings")
 		
 		self.navigationItem.title = "Notifications"
-
+		
 		self.tableView = UITableView(frame: self.tableView.frame, style: .Grouped)
 		self.tableView.rowHeight = 48
 		self.tableView.tableFooterView = UIView()

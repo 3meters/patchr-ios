@@ -34,7 +34,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
-		let viewWidth = self.tableView.width()
+		let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
 		let viewHeight = (viewWidth * 0.625) + 48
 		self.tableView.tableHeaderView?.bounds.size = CGSizeMake(viewWidth, viewHeight)	// Triggers layoutSubviews on header
 	}
@@ -258,7 +258,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 			self.emptyLabel.text = self.emptyMessage
 			
 			if self.tableView.tableHeaderView == nil {
-				let viewWidth = self.tableView.bounds.size.width
+				let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
 				let viewHeight = (viewWidth * 0.625) + 48
 				header.frame = CGRectMake(0, 0, viewWidth, viewHeight)
 				header.setNeedsLayout()

@@ -257,9 +257,10 @@ extension BaseDetailViewController {
 				}
 				
 				let view = MessageView(cellType: cellType, entity: nil)
+				let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
 				view.showPatchName = self.patchNameVisible
 				view.bindToEntity(entity)
-				view.bounds.size.width = self.tableView.width() - 24
+				view.bounds.size.width = viewWidth - 24
 				view.sizeToFit()
 				
 				if entity.id_ != nil {

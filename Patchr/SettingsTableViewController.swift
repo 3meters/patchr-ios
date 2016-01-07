@@ -43,6 +43,10 @@ class SettingsTableViewController: UITableViewController {
 
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
+		
+		let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.bounds.size.width)
+		self.tableView.bounds.size.width = viewWidth
+		
 		self.logoutButton.fillSuperview()
 		self.clearHistoryButton.fillSuperview()
 		self.buildInfoLabel.fillSuperview()

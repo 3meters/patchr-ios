@@ -415,7 +415,7 @@ class MessageDetailViewController: BaseViewController {
 		
 		let fullScreenRect = UIScreen.mainScreen().applicationFrame
 		self.scrollView.frame = fullScreenRect
-		self.scrollView.backgroundColor = Theme.colorBackgroundWindow
+		self.scrollView.backgroundColor = Theme.colorBackgroundTable
 		self.scrollView.bounces = true
 		self.scrollView.alwaysBounceVertical = true
 		
@@ -728,7 +728,7 @@ class MessageDetailViewController: BaseViewController {
 			self.presentViewController(navController, animated: true, completion: nil)
         }
         else {
-            Branch.getInstance().getShortURLWithParams(["entityId":self.inputMessageId!, "entitySchema":"message"], andChannel: "patchr-ios", andFeature: BRANCH_FEATURE_TAG_SHARE, andCallback: {
+            Branch.getInstance().getShortURLWithParams(["entityId":self.inputMessage!.id_!, "entitySchema":"message"], andChannel: "patchr-ios", andFeature: BRANCH_FEATURE_TAG_SHARE, andCallback: {
                 (url: String?, error: NSError?) -> Void in
                 
                 if let error = ServerError(error) {

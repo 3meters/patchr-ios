@@ -36,7 +36,7 @@ class UserDetailViewController: BaseDetailViewController {
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
-		let viewWidth = self.tableView.width()
+		let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
 		let viewHeight = CGFloat(208)
 		self.tableView.tableHeaderView?.bounds.size = CGSizeMake(viewWidth, viewHeight)	// Triggers layoutSubviews on header
 	}
@@ -103,11 +103,15 @@ class UserDetailViewController: BaseDetailViewController {
 		header.watchingButton.addTarget(self, action: Selector("browseWatchingAction:"), forControlEvents: UIControlEvents.TouchUpInside)
 		header.ownsButton.addTarget(self, action: Selector("browseOwnedAction:"), forControlEvents: UIControlEvents.TouchUpInside)
 		
-		self.showEmptyLabel = true
+		self.showEmptyLabel = false
+		if self.profileMode {
+			self.showEmptyLabel = true
+			self.emptyMessage = "Browse your posted messages here"
+		}
+		
 		self.showProgress = true
 		self.progressOffsetY = 40
 		self.loadMoreMessage = "LOAD MORE MESSAGES"
-		self.emptyMessage = "Browse your posted messages here"
 		
 		/* Navigation bar buttons */
 		drawButtons()

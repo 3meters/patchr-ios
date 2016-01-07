@@ -38,17 +38,18 @@ class Snow {
 	let colorNumberFeatured		= Colors.accentColorDark
 
 	let colorBackgroundForm         = Colors.white
+	let colorBackgroundTable		= Colors.gray95pcntColor
 	let colorBackgroundWindow       = Colors.gray90pcntColor
 	let colorBackgroundImage        = Colors.gray90pcntColor
 	let colorBackgroundNotification = Colors.brandColor
 	let colorBackgroundSidebar      = Colors.white
 	let colorBackgroundTile         = Colors.white
-	let colorBackgroundTileList     = Colors.gray90pcntColor
+	let colorBackgroundTileList     = Colors.gray95pcntColor
 	let colorBackgroundToast        = Colors.brandColorFill
 	let colorBackgroundOverlay      = Colors.opacity75pcntBlack
 	let colorBackgroundActivity     = Colors.white
 	let colorBackgroundActivityOnly = Colors.clear
-	let colorBackgroundEmptyBubble  = Colors.gray95pcntColor
+	let colorBackgroundEmptyBubble  = Colors.gray97pcntColor
 	let colorBackgroundAgeDot       = Colors.accentColorFill
 	let colorBackgroundContactSelected 	= Colors.accentColorFill
 
@@ -104,6 +105,7 @@ class Snow {
 
 public struct Colors {
 	
+	static let gray97pcntColor: UIColor = UIColor(red: CGFloat(0.97), green: CGFloat(0.97), blue: CGFloat(0.97), alpha: CGFloat(1))
 	static let gray95pcntColor: UIColor = UIColor(red: CGFloat(0.95), green: CGFloat(0.95), blue: CGFloat(0.95), alpha: CGFloat(1))
 	static let gray90pcntColor: UIColor = UIColor(red: CGFloat(0.9), green: CGFloat(0.9), blue: CGFloat(0.9), alpha: CGFloat(1))
 	static let gray85pcntColor: UIColor = UIColor(red: CGFloat(0.85), green: CGFloat(0.85), blue: CGFloat(0.85), alpha: CGFloat(1))

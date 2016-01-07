@@ -69,14 +69,59 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 	* Lifecycle
 	*--------------------------------------------------------------------------------------------*/
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        bind()
-    }
-	
 	override func loadView() {
 		super.loadView()
 		initialize()
+	}
+	
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		
+		let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+		let navHeight = self.navigationController?.navigationBar.height() ?? 0
+		let viewWidth = min(CONTENT_WIDTH_MAX, self.view.bounds.size.width)
+		let contentWidth = CGFloat(viewWidth - 32)
+		
+		self.view.bounds.size.width = viewWidth
+		self.contentHolder.bounds.size.width = viewWidth
+
+		let descriptionSize = self.descriptionField.sizeThatFits(CGSizeMake(contentWidth, CGFloat.max))
+		
+		if self.inputState == .Sharing {
+			
+			self.userPhoto.anchorTopLeftWithLeftPadding(16, topPadding: 8, width: 48, height: 48)
+			self.addressField.setNeedsLayout()
+			self.addressField.layoutIfNeeded()
+			self.addressField.anchorTopLeftWithLeftPadding(72, topPadding: 12, width: contentWidth - 56, height: self.addressField.height())
+			self.contactList!.alignUnder(self.addressField, matchingLeftAndRightWithTopPadding: 0, height: CGFloat(self.contactModels.count * 52))
+			self.addressGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 64, height: self.contactList!.height() + self.addressField.height() + 24)
+			
+			self.descriptionField.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: contentWidth, height: max(96, descriptionSize.height))
+			
+			if self.inputShareSchema == Schema.ENTITY_PATCH {
+				self.patchView!.alignUnder(self.descriptionField, matchingLeftAndRightWithTopPadding: 8, height: 128)
+			}
+			else {
+				self.messageView!.alignUnder(self.descriptionField, matchingRightAndFillingWidthWithLeftPadding: 0, topPadding: 16, height: 400)
+			}
+		}
+		else {
+			self.addressGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: CGFloat(statusHeight + navHeight), height: 64)
+			self.userPhoto.anchorCenterLeftWithLeftPadding(16, width: 48, height: 48)
+			self.addressLabel.fillSuperviewWithLeftPadding(72, rightPadding: 8, topPadding: 0, bottomPadding: 0)
+			self.descriptionField.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: contentWidth, height: max(96, descriptionSize.height))
+			self.photoView.alignUnder(self.descriptionField, matchingLeftAndRightWithTopPadding: 8, height: self.photoView.photoMode == .Empty ? 48 : contentWidth * 0.75)
+		}
+		
+		self.contentHolder.resizeToFitSubviews()
+		self.scrollView.contentSize = CGSizeMake(self.contentHolder.frame.size.width, self.contentHolder.frame.size.height + CGFloat(32))
+		self.scrollView.alignUnder(self.addressGroup, centeredFillingWidthAndHeightWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
+		self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 8, height: self.contentHolder.height() + 32)
+	}
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		bind()
 	}
 	
 	override func viewDidAppear(animated: Bool) {
@@ -109,45 +154,6 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
 
-	override func viewWillLayoutSubviews() {
-		super.viewWillLayoutSubviews()
-		
-		let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
-		let navHeight = self.navigationController?.navigationBar.height() ?? 0
-		let contentWidth = self.view.bounds.size.width - 32
-		let descriptionSize = self.descriptionField.sizeThatFits(CGSizeMake(contentWidth, CGFloat.max))
-		
-		if self.inputState == .Sharing {
-			
-			self.userPhoto.anchorTopLeftWithLeftPadding(16, topPadding: 8, width: 48, height: 48)
-			self.addressField.setNeedsLayout()
-			self.addressField.layoutIfNeeded()
-			self.addressField.anchorTopLeftWithLeftPadding(72, topPadding: 12, width: contentWidth - 56, height: self.addressField.height())
-			self.contactList!.alignUnder(self.addressField, matchingLeftAndRightWithTopPadding: 0, height: CGFloat(self.contactModels.count * 52))
-			self.addressGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 64, height: self.contactList!.height() + self.addressField.height() + 24)
-			self.descriptionField.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: max(96, descriptionSize.height))
-			
-			if self.inputShareSchema == Schema.ENTITY_PATCH {
-				self.patchView!.alignUnder(self.descriptionField, matchingLeftAndRightWithTopPadding: 8, height: 128)
-			}
-			else {
-				self.messageView!.alignUnder(self.descriptionField, matchingRightAndFillingWidthWithLeftPadding: 0, topPadding: 16, height: 400)
-			}
-		}
-		else {			
-			self.addressGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: CGFloat(statusHeight + navHeight), height: 64)
-			self.userPhoto.anchorCenterLeftWithLeftPadding(16, width: 48, height: 48)
-			self.addressLabel.fillSuperviewWithLeftPadding(72, rightPadding: 8, topPadding: 0, bottomPadding: 0)
-			self.descriptionField.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: max(96, descriptionSize.height))
-			self.photoView.alignUnder(self.descriptionField, matchingLeftAndRightWithTopPadding: 8, height: self.photoView.photoMode == .Empty ? 48 : contentWidth * 0.75)
-		}
-		
-		self.contentHolder.resizeToFitSubviews()
-		self.scrollView.contentSize = CGSizeMake(self.contentHolder.frame.size.width, self.contentHolder.frame.size.height + CGFloat(32))
-		self.scrollView.alignUnder(self.addressGroup, centeredFillingWidthAndHeightWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
-		self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 8, height: self.contentHolder.height() + 32)
-	}
-	
 	func doneAction(sender: AnyObject){
 		
 		guard isValid() else { return }
@@ -223,6 +229,8 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 	override func initialize() {
 		super.initialize()
 		
+		let viewWidth = min(CONTENT_WIDTH_MAX, self.view.bounds.size.width)
+		
 		let fullScreenRect = UIScreen.mainScreen().applicationFrame
 		self.scrollView.frame = fullScreenRect
 		self.scrollView.backgroundColor = Theme.colorBackgroundForm
@@ -247,6 +255,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 		self.addressGroup.addSubview(self.addressLabel)
 		self.addressGroup.addSubview(self.addressField)
 		self.addressGroup.addSubview(self.userPhoto)
+		
 		self.contentHolder.addSubview(self.descriptionField)
 		self.contentHolder.addSubview(self.photoView)
 		self.scrollView.addSubview(self.contentHolder)
@@ -267,6 +276,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 			self.contactList!.delegate = self;
 			self.contactList!.dataSource = self;
 			self.contactList!.rowHeight = 52
+			
 			self.addressGroup.addSubview(self.contactList!)
 			
 			if self.inputShareSchema == Schema.ENTITY_PATCH {
@@ -277,7 +287,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 				self.progressFinishLabel = "Invites sent"
 				self.cancelledLabel = "Invites cancelled"
 				
-				self.patchView = PatchView(frame: CGRectMake(0, 0, self.view.width(), 136))
+				self.patchView = PatchView(frame: CGRectMake(0, 0, viewWidth, 136))
 				self.patchView!.borderColor = Theme.colorButtonBorder
 				self.patchView!.borderWidth = Theme.dimenButtonBorderWidth
 				self.patchView!.cornerRadius = 6
