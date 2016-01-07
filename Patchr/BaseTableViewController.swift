@@ -119,7 +119,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		
 		let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.bounds.size.width)
 		self.tableView.bounds.size.width = viewWidth
-		self.view.fillSuperview()
 		
 		self.footerView.frame.size.height = CGFloat(48 + 16)
 		self.loadMoreButton.anchorTopCenterFillingWidthWithLeftAndRightPadding(8, topPadding: 8, height: 48)
