@@ -394,16 +394,14 @@ extension PatchTableViewController {
 	/* 
 	 * Cells
 	 */
-	override func bindCell(cell: WrapperTableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
+	override func bindCellToEntity(cell: WrapperTableViewCell, entity: AnyObject, location: CLLocation?) {
 		
 		var location = self.location
 		if self.filter == .Nearby || location == nil {
 			location = LocationController.instance.lastLocationFromManager()
 		}
 		
-		super.bindCell(cell, entity: object, location: location)
-		
-		return nil
+		super.bindCellToEntity(cell, entity: entity, location: location)
 	}
 
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {

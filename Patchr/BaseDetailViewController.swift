@@ -202,16 +202,17 @@ extension BaseDetailViewController {
 	/*
 	 * Cells
 	 */
-	override func bindCell(cell: WrapperTableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
+	override func bindCellToEntity(cell: WrapperTableViewCell, entity: AnyObject, location: CLLocation?) {
 		
-		if let view = super.bindCell(cell, entity: object, location: location) as? MessageView {
+		super.bindCellToEntity(cell, entity: entity, location: location)
+		
+		if let view = cell.view as? MessageView {
 			/* Hookup up delegates */
 			view.description_?.delegate = self
 			view.showPatchName = self.patchNameVisible
 			view.patchName.hidden = !self.patchNameVisible
 			view.photo?.addTarget(self, action: Selector("photoAction:"), forControlEvents: .TouchUpInside)
 		}
-		return view
 	}
     /*
      * UITableViewDelegate 

@@ -507,11 +507,11 @@ extension PatchDetailViewController: MapViewDelegate {
 }
 
 extension PatchDetailViewController {
-	override func bindCell(cell: WrapperTableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
-		super.bindCell(cell, entity: object, location: location)
+	override func bindCellToEntity(cell: WrapperTableViewCell, entity: AnyObject, location: CLLocation?) {
+		
+		super.bindCellToEntity(cell, entity: entity, location: location)
 		let showMessages = (self.entity!.visibility == "public" || self.entity!.userWatchStatusValue == .Member)
 		cell.hidden = !showMessages
-		return nil
 	}
 }
 

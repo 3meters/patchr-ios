@@ -443,33 +443,27 @@ extension BaseTableViewController {
 		}
 	}
 	
-	func bindCell(cell: WrapperTableViewCell, entity: AnyObject, location: CLLocation?) -> UIView? {
+	func bindCellToEntity(cell: WrapperTableViewCell, entity: AnyObject, location: CLLocation?) {
 		
 		if self.listType == .Notifications {
 			let notificationView = cell.view! as! NotificationView
 			notificationView.bindToEntity(entity)
-			return notificationView
 		}
 		
 		if self.listType == .Messages {
 			let messageView = cell.view! as! MessageView
 			messageView.bindToEntity(entity)
-			return messageView
 		}
 		
 		if self.listType == .Patches {
 			let patchView = cell.view! as! PatchView
 			patchView.bindToEntity(entity, location: location)
-			return patchView
 		}
 		
 		if self.listType == .Users {
 			let userView = cell.view! as! UserView
 			userView.bindToEntity(entity)
-			return userView
 		}
-		
-		return nil
 	}
 	
 	/*
@@ -519,8 +513,12 @@ extension BaseTableViewController {
 		if cell == nil {
 			cell = makeCell(cellType)
 		}
-			
-		bindCell(cell!, entity: entity!, location: nil)
+		
+		guard cell != nil && entity != nil else {
+			fatalError("Cannot bind to nil cell or entity")
+		}
+		
+		bindCellToEntity(cell!, entity: entity!, location: nil)
 		
 		return cell!
 	}
