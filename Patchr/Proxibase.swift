@@ -341,7 +341,7 @@ public class Proxibase {
 								   },
 								   failure: {
 									   dataTask, error in
-									   completion(response: ServerError(error)?.response, error: error)
+									   completion(response: nil, error: error)
 								   })
 		}
 	}
@@ -366,7 +366,7 @@ public class Proxibase {
 			},
 			failure: {
 				dataTask, error in
-				completion(response: ServerError(error)?.response, error: error)
+				completion(response: nil, error: error)
 		})
 	}
 	
@@ -400,7 +400,7 @@ public class Proxibase {
 			},
 			failure: {
 				dataTask, error in
-				completion(response: ServerError(error)?.response, error: error)
+				completion(response: nil, error: error)
 		})
 	}
 	
@@ -413,13 +413,12 @@ public class Proxibase {
 			},
 			failure: {
 				dataTask, error in
-				completion(response: ServerError(error)?.response, error: error)
+				completion(response: nil, error: error)
 		})
 	}
 	
 	public func resetPassword(password: NSString, userId: NSString, sessionKey: NSString, completion: CompletionBlock) {
-		let parameters
-		= ["password": password, "user": userId, "session": sessionKey, "installId": UserController.instance.installId]
+		let parameters = ["password": password, "user": userId, "session": sessionKey, "installId": UserController.instance.installId]
 		sessionManager.POST("user/resetpw", parameters: parameters,
 			success: {
 				dataTask, response in
@@ -427,7 +426,7 @@ public class Proxibase {
 			},
 			failure: {
 				dataTask, error in
-				completion(response: ServerError(error)?.response, error: error)
+				completion(response: nil, error: error)
 		})
 	}
 	
@@ -519,7 +518,7 @@ public class Proxibase {
 							},
 							failure: {
 								dataTask, error in
-								completion(response: ServerError(error)?.response, error: error)
+								completion(response: nil, error: error)
 							})!
         return request
 	}
@@ -532,7 +531,7 @@ public class Proxibase {
 						   },
 						   failure: {
 							   dataTask, error in
-							   completion(response: ServerError(error)?.response, error: error)
+							   completion(response: nil, error: error)
 						   })
 	}
 
@@ -544,7 +543,7 @@ public class Proxibase {
 							  },
 							  failure: {
 								  dataTask, error in
-								  completion(response: ServerError(error)?.response, error: error)
+								  completion(response: nil, error: error)
 							  })
 	}
 
@@ -647,6 +646,8 @@ struct ServerError {
             if let userInfoDictionary = (error.userInfo as NSDictionary?) {
                 if let response = (userInfoDictionary[JSONResponseSerializerWithDataKey] as! NSDictionary?)
                     , let responseErrorDictionary = response["error"] as! NSDictionary? {
+						
+					self.response = responseErrorDictionary
                     
                     if let responseMessage = responseErrorDictionary["message"] as? String {
                         self.message = responseMessage
