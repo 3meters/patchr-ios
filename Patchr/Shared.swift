@@ -37,8 +37,8 @@ struct Shared {
 	
 	static func versionIsValid(versionMin: Int) -> Bool {
 		let clientVersionCode = Int(NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleVersion") as! String)!
-		DataController.proxibase.versionIsValid = (clientVersionCode > versionMin)	// Sticks until the app is terminated
-		return (clientVersionCode > versionMin)
+		DataController.proxibase.versionIsValid = (clientVersionCode >= versionMin)	// Sticks until the app is terminated
+		return (clientVersionCode >= versionMin)
 	}
 
     static func showPhotoBrowser(image: UIImage!, animateFromView: UIView!, viewController: UIViewController!, entity: Entity?) -> AirPhotoBrowser {
