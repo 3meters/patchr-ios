@@ -180,7 +180,7 @@ class FacebookProvider: NSObject, ServiceProvider, FBSDKAppInviteDialogDelegate 
 	
 	func appInviteDialog(appInviteDialog: FBSDKAppInviteDialog!, didCompleteWithResults results: [NSObject : AnyObject]!) {
 		if results != nil && results["completionGesture"] as? String != "cancel" {
-			Shared.Toast("Patch invitations sent using Facebook!")
+			UIShared.Toast("Patch invitations sent using Facebook!")
 		}
 	}
 	

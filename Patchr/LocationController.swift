@@ -59,6 +59,11 @@ class LocationController: NSObject {
 		else if CLLocationManager.authorizationStatus() == .AuthorizedAlways
 			|| CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
 				Log.d("***** Location updates started *****")
+				if MOCK {
+					let location = CLLocation(latitude: MOCK_LAT!, longitude: MOCK_LON!)
+					locationManager(self.locationManager, didUpdateLocations: [location])
+					return
+				}
 				self.locationManager.startUpdatingLocation()
 		}
     }
@@ -141,7 +146,7 @@ class LocationController: NSObject {
             }
             
             if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("enableDevModeAction")) {
-                Shared.Toast(message)
+                UIShared.Toast(message)
                 AudioController.instance.play(Sound.pop.rawValue)
             }
             

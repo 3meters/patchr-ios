@@ -158,7 +158,7 @@ class BaseDetailViewController: BaseTableViewController {
 								}
 							}
 							else {
-								Shared.Toast("Item has been deleted")
+								UIShared.Toast("Item has been deleted")
 								Utils.delay(2.0) {
 									() -> () in
 									self?.navigationController?.popViewControllerAnimated(true)

@@ -184,8 +184,8 @@ class DataController: NSObject {
 							ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper)
 							Utils.stopwatch2.segmentNote("\(entityType): service time: \(dataWrapper.time)ms")
 							
-							if !Shared.versionIsValid(Int(dataWrapper.minBuildValue)) {
-								Shared.compatibilityUpgrade()
+							if !UIShared.versionIsValid(Int(dataWrapper.minBuildValue)) {
+								UIShared.compatibilityUpgrade()
 								return
 							}
 							
@@ -415,8 +415,8 @@ class DataController: NSObject {
 			ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper)
 			Utils.stopwatch1.segmentNote("\(query.name): service time: \(dataWrapper.time)ms")
 			
-			if !Shared.versionIsValid(Int(dataWrapper.minBuildValue)) {
-				Shared.compatibilityUpgrade()
+			if !UIShared.versionIsValid(Int(dataWrapper.minBuildValue)) {
+				UIShared.compatibilityUpgrade()
 				return nil
 			}
 			

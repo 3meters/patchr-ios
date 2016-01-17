@@ -195,18 +195,21 @@ class PhotoView: UIView {
 		self.photoGroup.addSubview(self.scrimGroup)
 		
 		self.editPhotoButton.setImage(UIImage(named: "imgEdit2Light"), forState: .Normal)
+		self.editPhotoButton.accessibilityIdentifier = "photo_edit_button"
 		self.editPhotoButton.backgroundColor = Theme.colorScrimLighten
 		self.editPhotoButton.cornerRadius = 18
 		self.editPhotoButton.alpha = 0
 		self.scrimGroup.addSubview(self.editPhotoButton)
 		
 		self.clearPhotoButton.setImage(UIImage(named: "imgCancelDark"), forState: .Normal)
+		self.clearPhotoButton.accessibilityIdentifier = "photo_clear_button"
 		self.clearPhotoButton.backgroundColor = Theme.colorScrimLighten
 		self.clearPhotoButton.cornerRadius = 18
 		self.clearPhotoButton.alpha = 0
 		self.scrimGroup.addSubview(self.clearPhotoButton)
 		
 		self.setPhotoButton.setImage(UIImage(named: "UIButtonCamera"), forState: .Normal)
+		self.setPhotoButton.accessibilityIdentifier = "photo_set_button"
 		self.setPhotoButton.borderWidth = Theme.dimenButtonBorderWidth
 		
 		if photoMode == .Placeholder {

@@ -207,8 +207,8 @@ class UserController: NSObject {
 				else {
 					Log.i("Install registered or updated: \(UserController.instance.installId)")
 					if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
-						if !Shared.versionIsValid(Int(serviceData.minBuildValue)) {
-							Shared.compatibilityUpgrade()
+						if !UIShared.versionIsValid(Int(serviceData.minBuildValue)) {
+							UIShared.compatibilityUpgrade()
 							return
 						}
 					}

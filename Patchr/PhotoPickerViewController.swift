@@ -17,7 +17,6 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 	var processing = false
     
     var searchBar				: UISearchBar!
-	var searchField				: UITextField?
     var pickerDelegate			: PhotoBrowseControllerDelegate?
 	var activity				: UIActivityIndicatorView?
 	var footerView				: UIView!
@@ -71,6 +70,7 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
         
         self.collectionView!.registerNib(UINib(nibName: "ThumbnailCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: reuseIdentifier)
 		self.collectionView?.backgroundColor = Theme.colorBackgroundForm
+		self.collectionView?.accessibilityIdentifier = "photo_collection"
 		if let layout = self.collectionViewLayout as? UICollectionViewFlowLayout {
 			layout.minimumLineSpacing = 4
 			layout.minimumInteritemSpacing = 4
@@ -95,6 +95,7 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 		
 		/* Navigation bar buttons */
 		let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancelAction:")
+		cancelButton.accessibilityIdentifier = "nav_cancel_button"
 		self.navigationItem.leftBarButtonItems = [cancelButton]
 	}
 
@@ -109,6 +110,7 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
             self.searchBar!.searchBarStyle = UISearchBarStyle.Prominent
             self.searchBar!.delegate = self
             self.searchBar!.placeholder = "Search for photos"
+			self.searchBar!.accessibilityIdentifier = "search_field"
         }
         
 		/* Scroll inset */

@@ -299,6 +299,7 @@ class ProfileEditViewController: BaseViewController {
 		self.contentHolder.addSubview(self.photoView)
 		
 		self.nameField.placeholder = "Full name"
+		self.nameField.accessibilityIdentifier = "name_field"
 		self.nameField.delegate = self
 		self.nameField.autocapitalizationType = .Words
 		self.nameField.autocorrectionType = .No
@@ -307,6 +308,7 @@ class ProfileEditViewController: BaseViewController {
 		self.contentHolder.addSubview(self.nameField)
 		
 		self.emailField.placeholder = "Email"
+		self.emailField.accessibilityIdentifier = "email_field"
 		self.emailField.delegate = self
 		self.emailField.autocapitalizationType = .None
 		self.emailField.autocorrectionType = .No
@@ -328,19 +330,24 @@ class ProfileEditViewController: BaseViewController {
 			self.emailField.textColor = Theme.colorTextSecondary
 			
 			self.joinButton.setTitle("JOIN", forState: .Normal)
+			self.joinButton.accessibilityIdentifier = "join_button"
 			self.contentHolder.addSubview(self.joinButton)
 			
 			self.termsButton.setTitle("By joining, you agree to the Terms of Service", forState: .Normal)
+			self.termsButton.accessibilityIdentifier = "terms_button"
 			self.termsButton.titleLabel!.numberOfLines = 2
 			self.termsButton.titleLabel!.textAlignment = NSTextAlignment.Center
 			self.contentHolder.addSubview(self.termsButton)
 			
 			self.facebookButton = AirButton()
 			self.facebookButton.setTitle("AUTO FILL USING FACEBOOK", forState: .Normal)
+			self.facebookButton.accessibilityIdentifier = "facebook_button"
 			self.contentHolder.addSubview(self.facebookButton)
 			
 			/* Navigation bar buttons */
 			let doneButton   = UIBarButtonItem(title: "Join", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
+			doneButton.accessibilityIdentifier = "nav_join_button"
+			
 			self.navigationItem.rightBarButtonItems = [doneButton]
 			self.navigationItem.leftBarButtonItems = nil
 			
@@ -359,17 +366,20 @@ class ProfileEditViewController: BaseViewController {
 			self.photoView.configureTo(self.inputUser?.photo != nil ? .Photo : .Placeholder)
 			
 			self.areaField.placeholder = "Location"
+			self.areaField.accessibilityIdentifier = "area_field"
 			self.areaField.delegate = self
 			self.areaField.keyboardType = UIKeyboardType.Default
 			self.areaField.returnKeyType = UIReturnKeyType.Done
 			self.contentHolder.addSubview(self.areaField)
 			
 			self.changePasswordButton.setTitle("CHANGE PASSWORD", forState: .Normal)
+			self.changePasswordButton.accessibilityIdentifier = "change_password_button"
 			self.contentHolder.addSubview(self.changePasswordButton)
 			
 			self.facebookOnGroup.alpha = 0
 			
 			self.facebookButton.setTitle("CONNECT WITH FACEBOOK", forState: .Normal)
+			self.facebookButton.accessibilityIdentifier = "facebook_button"
 			self.facebookButton.addTarget(self, action: Selector("facebookConnectAction:"), forControlEvents: .TouchUpInside)
 			self.facebookOffGroup.addSubview(self.facebookButton)
 			
@@ -390,6 +400,7 @@ class ProfileEditViewController: BaseViewController {
 			self.facebookOnGroup.addSubview(self.facebookName)
 			
 			self.facebookDisconnect.setTitle("Disconnect from Facebook", forState: .Normal)
+			self.facebookDisconnect.accessibilityIdentifier = "facebook_disconnect_button"
 			self.facebookOnGroup.addSubview(self.facebookDisconnect)
 			
 			self.activity.hidden = true
@@ -405,6 +416,11 @@ class ProfileEditViewController: BaseViewController {
 			let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancelAction:")
 			let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
 			let doneButton   = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
+			
+			doneButton.accessibilityIdentifier = "nav_submit_button"
+			cancelButton.accessibilityIdentifier = "nav_cancel_button"
+			deleteButton.accessibilityIdentifier = "nav_delete_button"
+
 			self.navigationItem.leftBarButtonItems = [cancelButton]
 			self.navigationItem.rightBarButtonItems = [doneButton, Utils.spacer, deleteButton]
 			
@@ -550,7 +566,7 @@ class ProfileEditViewController: BaseViewController {
 			self.processing = false
 			
 			if cancelled {
-				Shared.Toast(self.cancelledLabel)
+				UIShared.Toast(self.cancelledLabel)
 				return
 			}
 			
@@ -585,7 +601,7 @@ class ProfileEditViewController: BaseViewController {
 							let controller = MainTabBarController()
 							controller.selectedIndex = 0
 							appDelegate.window!.setRootViewController(controller, animated: true)
-							Shared.Toast("Logged in as \(UserController.instance.userName!)", controller: controller)							
+							UIShared.Toast("Logged in as \(UserController.instance.userName!)", controller: controller)							
 						}
 						else {
 							if self.isModal {
@@ -601,7 +617,7 @@ class ProfileEditViewController: BaseViewController {
 			}
 			
 			self.performBack(true)
-			Shared.Toast(self.progressFinishLabel)
+			UIShared.Toast(self.progressFinishLabel)
 		}
 		
 		/* Start tasks */
@@ -642,7 +658,7 @@ class ProfileEditViewController: BaseViewController {
 						let navController = UINavigationController()
 						navController.viewControllers = [LobbyViewController()]
 						appDelegate.window!.setRootViewController(navController, animated: true)
-						Shared.Toast("User \(userName) erased", controller: navController)
+						UIShared.Toast("User \(userName) erased", controller: navController)
 					}
 				}
 			}

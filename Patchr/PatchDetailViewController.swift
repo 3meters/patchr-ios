@@ -193,7 +193,6 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 			// Only refresh notifications if view has already been loaded
 			// and the notification is related to this Patch
 			if self.isViewLoaded() && impactedByNotification {
-				self.refreshControl?.beginRefreshing()
 				self.pullToRefreshAction(self.refreshControl)
 			}
 		}

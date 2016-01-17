@@ -477,7 +477,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 			self.processing = false
 			
 			if cancelled {
-				Shared.Toast(self.cancelledLabel)
+				UIShared.Toast(self.cancelledLabel)
 				return
 			}
 			
@@ -519,7 +519,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 			}
 			
 			self.performBack(true)
-			Shared.Toast(self.progressFinishLabel)
+			UIShared.Toast(self.progressFinishLabel)
 		}
 		
 		/* Start tasks */

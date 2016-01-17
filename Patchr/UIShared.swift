@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
 
-struct Shared {
+struct UIShared {
 	
 	static func compatibilityUpgrade() {
 		
@@ -64,9 +64,36 @@ struct Shared {
         
         return browser
     }
-    
+	
+	static func StickyToast(message: String?, controller: UIViewController? = nil, addToWindow: Bool = true) -> AirProgress {
+		
+		var targetView: UIView = UIApplication.sharedApplication().windows.last!
+		
+		if !addToWindow {
+			if controller == nil  {
+				targetView = UIViewController.topMostViewController()!.view
+			}
+			else {
+				targetView = controller!.view
+			}
+		}
+		
+		let progress = AirProgress.showHUDAddedTo(targetView, animated: true)
+		progress.mode = MBProgressHUDMode.Text
+		progress.styleAs(.ToastLight)
+		progress.labelText = message
+		progress.accessibilityIdentifier = "toast"
+		progress.detailsLabelText = "Tap to dismiss"
+		progress.yOffset = Float((UIScreen.mainScreen().bounds.size.height / 2) - 200)
+		progress.shadow = true
+		progress.removeFromSuperViewOnHide = false
+		progress.userInteractionEnabled = true
+		
+		return progress
+	}
+	
     static func Toast(message: String?, duration: NSTimeInterval = 3.0, controller: UIViewController? = nil, addToWindow: Bool = true) -> AirProgress {
-        
+		
         var targetView: UIView = UIApplication.sharedApplication().windows.last!
         
         if !addToWindow {
@@ -83,6 +110,7 @@ struct Shared {
         progress.mode = MBProgressHUDMode.Text
         progress.styleAs(.ToastLight)
         progress.labelText = message
+		progress.accessibilityIdentifier = "toast"
         progress.yOffset = Float((UIScreen.mainScreen().bounds.size.height / 2) - 200)
         progress.shadow = true
         progress.removeFromSuperViewOnHide = true

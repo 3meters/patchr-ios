@@ -44,9 +44,12 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		super.viewDidLoad()
 		
         /* Hookup refresh control */
-		self.refreshControl = UIRefreshControl()
-        self.refreshControl!.tintColor = Theme.colorActivityIndicator
-		self.refreshControl?.addTarget(self, action: "pullToRefreshAction:", forControlEvents: UIControlEvents.ValueChanged)
+		if !MOCK {
+			self.refreshControl = UIRefreshControl()
+			self.refreshControl!.tintColor = Theme.colorActivityIndicator
+			self.refreshControl?.addTarget(self, action: "pullToRefreshAction:", forControlEvents: UIControlEvents.ValueChanged)
+			self.refreshControl?.endRefreshing()
+		}
 		
 		/* Simple activity indicator (frame sizing) */
 		self.activity.color = Theme.colorActivityIndicator
@@ -137,7 +140,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated) // Base implementation does nothing
 		
-		self.refreshControl!.endRefreshing()
 		try! self.fetchedResultsController.performFetch()
 		self.tableView.reloadData()		// Reload cells so any changes while gone will show
 		
@@ -183,9 +185,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		 */
 		super.viewDidDisappear(animated)
 		self.activity.stopAnimating()
-		if self.refreshControl!.refreshing {
-			refreshControl!.endRefreshing()
-		}
+		self.refreshControl?.endRefreshing()
     }
 	
 	deinit {
@@ -206,19 +206,19 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		
 		if let control = sender as? AirImageView, let container = sender?.superview as? BaseView {
 			if control.image != nil {
-				Shared.showPhotoBrowser(control.image, animateFromView: control, viewController: self, entity: container.entity)
+				UIShared.showPhotoBrowser(control.image, animateFromView: control, viewController: self, entity: container.entity)
 			}
 		}
 		
 		if let control = sender as? UIButton, let container = sender?.superview as? BaseView {
 			if control.imageView!.image != nil {
-				Shared.showPhotoBrowser(control.imageView!.image, animateFromView: control, viewController: self, entity: container.entity)
+				UIShared.showPhotoBrowser(control.imageView!.image, animateFromView: control, viewController: self, entity: container.entity)
 			}
 		}
 	}
 	
 	func willFetchQuery(notification: NSNotification) {
-		if !self.refreshControl!.refreshing && !self.query.executedValue {
+		if (self.refreshControl == nil || !self.refreshControl!.refreshing) && !self.query.executedValue {
 			/* Wacky activity control for body */
 			if self.showProgress {
 				self.activity.startAnimating()
@@ -296,9 +296,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 				
 				NSOperationQueue.mainQueue().addOperationWithBlock {
 					
-					if let refreshControl = self?.refreshControl where refreshControl.refreshing {
-						refreshControl.endRefreshing()
-					}
+					self?.refreshControl?.endRefreshing()
 					
 					// Delay seems to be necessary to avoid visual glitch with UIRefreshControl
 					Utils.delay(0.5) {

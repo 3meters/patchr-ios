@@ -21,6 +21,10 @@ let GOOGLE_ANALYTICS_ID	= "UA-33660954-6"
 let BUNDLE_ID			= "com.3meters.patchr.ios"
 let KEYCHAIN_GROUP		= "7542324V6B.\(BUNDLE_ID)"	// Team id + bundle id
 
+var MOCK				= false
+var MOCK_LAT			: Double?
+var MOCK_LON			: Double?
+
 let SCREEN_NARROW				= (UIScreen.mainScreen().bounds.size.width == 320)
 let SCREEN_320					= (UIScreen.mainScreen().bounds.size.width == 320)	// iphone 4s
 let SCREEN_375					= (UIScreen.mainScreen().bounds.size.width == 375)	// iphone 6
