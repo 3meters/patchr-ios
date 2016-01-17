@@ -14,14 +14,6 @@
 		</dict>
 		<dict>
 			<key>FooterText</key>
-			<string>MIT LICENSE Found in the repo</string>
-			<key>Title</key>
-			<string>Keys</string>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-		</dict>
-		<dict>
-			<key>FooterText</key>
 			<string>Copyright (c) 2013 AFNetworking (http://afnetworking.com/)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -1061,6 +1053,14 @@ THE SOFTWARE.
 			<string>Copyright 2015 Google Inc.</string>
 			<key>Title</key>
 			<string>GoogleUtilities</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>FooterText</key>
+			<string>MIT LICENSE Found in the repo</string>
+			<key>Title</key>
+			<string>Keys</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 		</dict>

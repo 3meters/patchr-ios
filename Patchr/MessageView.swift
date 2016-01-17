@@ -301,7 +301,7 @@ class MessageView: BaseView {
 			}
 		}
 		
-		self.createdDate.text = Shared.timeAgoShort(entity.createdDate)
+		self.createdDate.text = UIShared.timeAgoShort(entity.createdDate)
 		
 		self.setNeedsLayout()	// Needed because binding can change the layout
 	}

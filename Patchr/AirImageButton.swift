@@ -144,11 +144,11 @@ class AirImageButton: UIButton {
             Log.w("Failed url: \(url?.absoluteString)")
 			if error!.code == HTTPStatusCode.NotFound.rawValue {
 				NSNotificationCenter.defaultCenter().postNotificationName(Events.ImageNotFound, object: self)
-				Shared.Toast("Image not found")
+				UIShared.Toast("Image not found")
 			}
 			else if error!.code == HTTPStatusCode.UnsupportedMediaType.rawValue {
 				NSNotificationCenter.defaultCenter().postNotificationName(Events.ImageNotFound, object: self)
-				Shared.Toast("Image format not supported")
+				UIShared.Toast("Image format not supported")
 			}
             return
         }

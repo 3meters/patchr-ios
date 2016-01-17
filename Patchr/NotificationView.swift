@@ -107,7 +107,7 @@ class NotificationView: BaseView {
 		
 		self.userPhoto.bindToEntity(notification)
 		
-		self.createdDate.text = Shared.timeAgoMedium(notification.sortDate)
+		self.createdDate.text = UIShared.timeAgoMedium(notification.sortDate)
 		
 		/* Age indicator */
 		self.ageDot.layer.backgroundColor = Theme.colorBackgroundAgeDot.CGColor

@@ -155,9 +155,11 @@ extension UserTableViewController {
 	/*
 	 * Cells
 	 */
-	override func bindCell(cell: WrapperTableViewCell, entity: AnyObject, location: CLLocation?) -> UIView? {
+	override func bindCellToEntity(cell: WrapperTableViewCell, entity: AnyObject, location: CLLocation?) {
 		
-		if let view = super.bindCell(cell, entity: entity, location: location) as? UserView {
+		super.bindCellToEntity(cell, entity: entity, location: location)
+		
+		if let view = cell.view as? UserView {
 			
 			let user = entity as! User
 			if self.filter == .PatchWatchers {
@@ -180,7 +182,6 @@ extension UserTableViewController {
 			view.cell = cell
 			view.delegate = self
 		}
-		return nil
 	}
 }
 

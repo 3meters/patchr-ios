@@ -41,5 +41,5 @@
 #import <FBSDKCoreKit/FBSDKProfilePictureView.h>
 #endif
 
-#define FBSDK_VERSION_STRING @"4.9.0.b-2"
+#define FBSDK_VERSION_STRING @"4.9.0"
 #define FBSDK_TARGET_PLATFORM_VERSION @"v2.5"

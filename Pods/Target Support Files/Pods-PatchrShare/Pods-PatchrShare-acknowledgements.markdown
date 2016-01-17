@@ -1,10 +1,6 @@
 # Acknowledgements
 This application makes use of the following third party libraries:
 
-## Keys
-
-MIT LICENSE Found in the repo
-
 ## AWSCore
 
 Apache License
@@ -640,6 +636,10 @@ The Eclipse Public License is available at
 and the Eclipse Distribution License is available at
   http://www.eclipse.org/org/documents/edl-v10.php.
 
+
+## Keys
+
+MIT LICENSE Found in the repo
 
 ## Lockbox
 

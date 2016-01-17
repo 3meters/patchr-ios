@@ -47,7 +47,7 @@
 #import "AppEvents/FBSDKTimeSpentData.h"
 #import "Base64/FBSDKBase64.h"
 #import "ErrorRecovery/FBSDKErrorRecoveryAttempter.h"
-#import "../Internal_NoARC/FBSDKDynamicFrameworkLoader.h"
+#import "FBSDKDynamicFrameworkLoader.h"
 #import "FBSDKApplicationDelegate+Internal.h"
 #import "FBSDKError.h"
 #import "FBSDKInternalUtility.h"

@@ -48,6 +48,7 @@ class PasswordEditViewController: BaseViewController {
 		setScreenName("PasswordEdit")
 		
 		self.passwordField.placeholder = "Old password"
+		self.passwordField.accessibilityIdentifier = "password_field"
 		self.passwordField.delegate = self
 		self.passwordField.secureTextEntry = true
 		self.passwordField.keyboardType = UIKeyboardType.Default
@@ -55,6 +56,7 @@ class PasswordEditViewController: BaseViewController {
 		self.view.addSubview(self.passwordField)
 
 		self.passwordNewField.placeholder = "Password (6 characters or more)"
+		self.passwordNewField.accessibilityIdentifier = "new_password_field"
 		self.passwordNewField.delegate = self
 		self.passwordNewField.secureTextEntry = true
 		self.passwordNewField.keyboardType = UIKeyboardType.Default
@@ -64,6 +66,10 @@ class PasswordEditViewController: BaseViewController {
 		/* Navigation bar buttons */
 		let doneButton   = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
 		let cancelButton   = UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.Plain, target: self, action: "cancelAction:")
+		
+		doneButton.accessibilityIdentifier = "nav_submit_button"
+		cancelButton.accessibilityIdentifier = "nav_cancel_button"
+		
 		self.navigationItem.title = "Change password"
 		self.navigationItem.rightBarButtonItems = [doneButton]
 		self.navigationItem.leftBarButtonItems = [cancelButton]
@@ -76,14 +82,17 @@ class PasswordEditViewController: BaseViewController {
         if !isValid() { return }
         
         processing = true
-
-		let progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+		
+		let progress = AirProgress.addedTo(self.view.window)
 		progress.mode = MBProgressHUDMode.Indeterminate
-        progress.styleAs(.ActivityWithText)
+		progress.styleAs(.ActivityWithText)
 		progress.labelText = "Updating..."
-		progress.removeFromSuperViewOnHide = true
+		progress.graceTime = 2.0
+		progress.minShowTime = 1.0
 		progress.show(true)
-        
+		progress.taskInProgress = true
+		progress.userInteractionEnabled = true
+		
         DataController.proxibase.updatePassword(UserController.instance.currentUser.id_,
             password: passwordField.text!,
             passwordNew: passwordNewField.text!) {
@@ -91,8 +100,9 @@ class PasswordEditViewController: BaseViewController {
                 
 			NSOperationQueue.mainQueue().addOperationWithBlock {
 				self.processing = false
+				progress.taskInProgress = false
 					
-				progress?.hide(true, afterDelay: 1.0)
+				progress.hide(true)
 				if var error = ServerError(error) {	// Doesn't show in debugger correctly but is getting set
 					if error.code == .UNAUTHORIZED_CREDENTIALS {
 						error.message = "The old password is not correct."
@@ -107,9 +117,8 @@ class PasswordEditViewController: BaseViewController {
 					}
 				}
 				else {
-					self.dismissViewControllerAnimated(true, completion: nil)
-					progress?.mode = MBProgressHUDMode.Text
-					progress?.labelText = "Password changed"
+					self.navigationController?.popViewControllerAnimated(true)	// Back to profile edit
+					UIShared.Toast("Password changed")
 				}
 			}
         }

@@ -74,6 +74,7 @@ class PasswordResetViewController: BaseViewController, UITextFieldDelegate {
 		self.view.addSubview(self.message)
 		
 		self.emailField.placeholder = "Email"
+		self.emailField.accessibilityIdentifier = "email_field"
 		self.emailField.delegate = self
 		self.emailField.autocapitalizationType = .None
 		self.emailField.autocorrectionType = .No
@@ -82,6 +83,7 @@ class PasswordResetViewController: BaseViewController, UITextFieldDelegate {
 		self.view.addSubview(self.emailField)
 		
 		self.passwordField.placeholder = "Password (6 characters or more)"
+		self.passwordField.accessibilityIdentifier = "password_field"
 		self.passwordField.hidden = true
 		self.passwordField.delegate = self
 		self.passwordField.secureTextEntry = true
@@ -90,6 +92,7 @@ class PasswordResetViewController: BaseViewController, UITextFieldDelegate {
 		self.view.addSubview(self.passwordField)
 		
 		self.resetButton.setTitle("SUBMIT", forState: .Normal)
+		self.resetButton.accessibilityIdentifier = "submit_button"
 		self.view.addSubview(self.resetButton)
 
 		self.resetButton.addTarget(self, action: Selector("doneAction:"), forControlEvents: .TouchUpInside)
@@ -97,20 +100,24 @@ class PasswordResetViewController: BaseViewController, UITextFieldDelegate {
 	
     func requestReset() {
         
-        let progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+		let progress = AirProgress.addedTo(self.view.window)
         progress.mode = MBProgressHUDMode.Indeterminate
         progress.styleAs(.ActivityWithText)
-		progress.removeFromSuperViewOnHide = true
-        progress.labelText = "Verifying..."
+		progress.labelText = "Verifying..."
+		progress.graceTime = 2.0
+		progress.minShowTime = 1.0
         progress.show(true)
-        
+		progress.taskInProgress = true
+		progress.userInteractionEnabled = true
+		
         DataController.proxibase.requestPasswordReset(emailField.text!) {
             response, error in
             
 			NSOperationQueue.mainQueue().addOperationWithBlock {
 				self.processing = false
+				progress.taskInProgress = false
 				
-				progress?.hide(true, afterDelay: 1.0)
+				progress.hide(true)
 				if var error = ServerError(error) {
 					self.emailConfirmed = false
 					if error.code == .UNAUTHORIZED {
@@ -141,32 +148,37 @@ class PasswordResetViewController: BaseViewController, UITextFieldDelegate {
 					self.passwordField.hidden = false
 					self.passwordField.fadeIn()
 					self.passwordField.becomeFirstResponder()
+					UIShared.Toast("Email verified")
 				}
 			}
         }
     }
     
     func reset() {
-        
-        let progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+		
+		let progress = AirProgress.addedTo(self.view.window)
         progress.mode = MBProgressHUDMode.Indeterminate
         progress.styleAs(.ActivityWithText)
-        progress.labelText = "Resetting password for: \(self.emailField.text)"
-		progress.removeFromSuperViewOnHide = true
+        progress.labelText = "Resetting..."
+		progress.graceTime = 2.0
+		progress.minShowTime = 1.0
         progress.show(true)
-        
+		progress.taskInProgress = true
+		
         DataController.proxibase.resetPassword(passwordField.text!, userId: self.userId!, sessionKey: self.sessionKey!) {
             response, error in
             
 			NSOperationQueue.mainQueue().addOperationWithBlock {
 				self.processing = false
+				progress.taskInProgress = false
 				
-				progress?.hide(true, afterDelay: 1.0)
+				progress.hide(true)
 				if let error = ServerError(error) {
 					self.handleError(error)
 				}
 				else {
-					self.navigationController?.popViewControllerAnimated(true)
+					UIShared.Toast("Password reset")
+					self.navigationController?.popViewControllerAnimated(true)	// Back to login
 				}
 			}
         }

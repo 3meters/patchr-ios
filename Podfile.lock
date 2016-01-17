@@ -30,26 +30,26 @@ PODS:
   - AWSCore (2.3.2)
   - AWSS3 (2.3.2):
     - AWSCore (= 2.3.2)
-  - Bolts (1.5.1):
-    - Bolts/AppLinks (= 1.5.1)
-    - Bolts/Tasks (= 1.5.1)
-  - Bolts/AppLinks (1.5.1):
+  - Bolts (1.6.0):
+    - Bolts/AppLinks (= 1.6.0)
+    - Bolts/Tasks (= 1.6.0)
+  - Bolts/AppLinks (1.6.0):
     - Bolts/Tasks
-  - Bolts/Tasks (1.5.1)
+  - Bolts/Tasks (1.6.0)
   - Branch (0.11.12)
-  - Crashlytics (3.4.1):
-    - Fabric (~> 1.6.0)
+  - Crashlytics (3.6.0):
+    - Fabric (~> 1.6.3)
   - DACircularProgress (2.3.1)
   - DateTools (1.7.0)
   - DLRadioButton (1.4.4)
-  - Fabric (1.6.1)
+  - Fabric (1.6.3)
   - Facade (1.1.0)
-  - FBSDKCoreKit (4.9.0-beta2):
+  - FBSDKCoreKit (4.9.0):
     - Bolts (~> 1.5)
-  - FBSDKLoginKit (4.9.0-beta2):
-    - FBSDKCoreKit (~> 4.9.0-beta)
-  - FBSDKShareKit (4.9.0-beta2):
-    - FBSDKCoreKit (~> 4.9.0-beta)
+  - FBSDKLoginKit (4.9.0):
+    - FBSDKCoreKit
+  - FBSDKShareKit (4.9.0):
+    - FBSDKCoreKit
   - Google/Analytics (1.2.1):
     - Google/Core
     - GoogleAnalytics (~> 3.12)
@@ -82,7 +82,6 @@ DEPENDENCIES:
   - AFNetworkActivityLogger (~> 2.0)
   - AFNetworking (~> 2.6)
   - AirPhotoBrowser (from `~/code/AirPhotoBrowser`)
-  - AWSS3 (~> 2.3.1)
   - AWSS3 (~> 2.3.2)
   - Branch
   - Crashlytics
@@ -90,9 +89,9 @@ DEPENDENCIES:
   - DLRadioButton
   - Fabric
   - Facade
-  - FBSDKCoreKit (~> 4.9.0-beta2)
-  - FBSDKLoginKit (~> 4.9.0-beta2)
-  - FBSDKShareKit (~> 4.9.0-beta2)
+  - FBSDKCoreKit (~> 4.9.0)
+  - FBSDKLoginKit (~> 4.9.0)
+  - FBSDKShareKit (~> 4.9.0)
   - Google/Analytics (~> 1.2.0)
   - Keys (from `Pods/CocoaPodsKeys`)
   - Lockbox
@@ -116,17 +115,17 @@ SPEC CHECKSUMS:
   AirPhotoBrowser: c26ba9232aea2467ebf932ce9cbabe60fd698d54
   AWSCore: c2f69975fd2caf38a10736961de28a0105cdb00c
   AWSS3: 9ac201e7a4ad8be0b68348c77acfd100027b97af
-  Bolts: a12663244b1d3351c738882e71902fc74db54f64
+  Bolts: f52a250053bb517ca874523c3913776359ab3def
   Branch: 82bfbfda8fbc7f6caed9709abdbb88ec88ba6e59
-  Crashlytics: 41574a245bc6ae10c55d57f385ebd2004e5bee05
+  Crashlytics: e4e8d02914f2608fbc7bf42b1a7af838b0db67a2
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   DateTools: 53288ee8b905fdc75897a1e6b5cc0144b14cba60
   DLRadioButton: 8c78ceb9e3d076a58a445f5ec505361796856539
-  Fabric: bf0ceb04e7c924090efc5f8c55e4fbcca189e0a0
+  Fabric: cbe0ca6c9531bba17910052f6f105fcbc5fa7f67
   Facade: 509c4a0e5fa8517d5e0e1e47251b520775904a9a
-  FBSDKCoreKit: d49cbf69741e3c5732166ec9ff4cbd9b288dd53e
-  FBSDKLoginKit: d32e83c0d2d39ef74a942543cacae2dc4de7d088
-  FBSDKShareKit: 2bd88d784d1d95e4b6e561da3a7b8d448f386ca3
+  FBSDKCoreKit: c4f25d27949a6ac80206063804d12ad1c7879612
+  FBSDKLoginKit: d46210c3955d69337c61325327f486ca50a8661f
+  FBSDKShareKit: c2e0050cf7e8f1309b0da65b0bfebfcd66712a2b
   Google: fd33b5fa40fa3aaee5176de49c873a74e3d11dce
   GoogleAnalytics: 9be1afdb8deeac4bb5f13ca7f7d3b9db2a1f43dc
   GoogleInterchangeUtilities: d7f7174176fbcf9710f696f1acebad4dbd98ac03

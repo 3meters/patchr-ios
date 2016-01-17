@@ -81,6 +81,7 @@ class MainTabBarController: UITabBarController {
 		
 		let patches = PatchNavigationController()
 		patches.tabBarItem.title = "Patches"
+		patches.tabBarItem.accessibilityIdentifier = "patches_tab"
 		patches.tabBarItem.image = UIImage(named: "tabBarPatches24")
 		patches.tabBarItem.tag = 1
 		
@@ -89,6 +90,7 @@ class MainTabBarController: UITabBarController {
 		
 		let notifications = UINavigationController()
 		notifications.tabBarItem.title = "Notifications"
+		notifications.tabBarItem.accessibilityIdentifier = "notifications_tab"
 		notifications.tabBarItem.image = UIImage(named: "tabBarNotifications24")
 		notifications.tabBarItem.tag = 2
 		
@@ -97,6 +99,7 @@ class MainTabBarController: UITabBarController {
 		
 		let search = UINavigationController()
 		search.tabBarItem.title = "Search"
+		search.tabBarItem.accessibilityIdentifier = "search_tab"
 		search.tabBarItem.image = UIImage(named: "tabBarSearch24")
 		search.tabBarItem.tag = 3
 		
@@ -105,6 +108,7 @@ class MainTabBarController: UITabBarController {
 		
 		let user = UINavigationController()
 		user.tabBarItem.title = "Me"
+		user.tabBarItem.accessibilityIdentifier = "profile_tab"
 		user.tabBarItem.image = UIImage(named: "tabBarUser24")
 		user.tabBarItem.tag = 4
 		

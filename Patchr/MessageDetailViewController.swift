@@ -286,7 +286,7 @@ class MessageDetailViewController: BaseViewController {
 	}
 
 	func photoAction(sender: AnyObject) {
-        let browser = Shared.showPhotoBrowser(self.photo.imageForState(.Normal), animateFromView: sender as! UIView, viewController: self, entity: self.inputMessage)
+        let browser = UIShared.showPhotoBrowser(self.photo.imageForState(.Normal), animateFromView: sender as! UIView, viewController: self, entity: self.inputMessage)
         browser.target = self
 	}
 
@@ -656,7 +656,7 @@ class MessageDetailViewController: BaseViewController {
 						self?.activity.stopAnimating()
 						if error == nil {
 							if objectId == nil {
-								Shared.Toast("Message has been deleted")
+								UIShared.Toast("Message has been deleted")
 								Utils.delay(2.0) {
 									self?.navigationController?.popViewControllerAnimated(true)
 								}
@@ -788,13 +788,13 @@ extension MessageDetailViewController: MFMailComposeViewControllerDelegate {
 		
 		switch result.rawValue {
 			case MFMailComposeResultCancelled.rawValue:	// 0
-				Shared.Toast("Report cancelled", controller: self, addToWindow: false)
+				UIShared.Toast("Report cancelled", controller: self, addToWindow: false)
 			case MFMailComposeResultSaved.rawValue:		// 1
-				Shared.Toast("Report saved", controller: self, addToWindow: false)
+				UIShared.Toast("Report saved", controller: self, addToWindow: false)
 			case MFMailComposeResultSent.rawValue:		// 2
-				Shared.Toast("Report sent", controller: self, addToWindow: false)
+				UIShared.Toast("Report sent", controller: self, addToWindow: false)
 			case MFMailComposeResultFailed.rawValue:	// 3
-				Shared.Toast("Report send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
+				UIShared.Toast("Report send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
 			default:
 				break
 		}

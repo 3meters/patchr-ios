@@ -137,7 +137,6 @@ class PatchTableViewController: BaseTableViewController {
 			if let userInfo = notification.userInfo {
 				if let trigger = userInfo["trigger"] as? String where trigger == "nearby" {
 					if self.isViewLoaded() {
-						self.refreshControl?.beginRefreshing()
 						self.pullToRefreshAction(self.refreshControl)
 					}
 				}
@@ -241,7 +240,7 @@ class PatchTableViewController: BaseTableViewController {
 				LocationController.instance.startUpdates()
 			}
 			
-			if !self.refreshControl!.refreshing {
+			if self.refreshControl == nil || !self.refreshControl!.refreshing {
 				/* Wacky activity control for body */
 				if self.showProgress {
 					self.activity.startAnimating()
@@ -281,7 +280,7 @@ class PatchTableViewController: BaseTableViewController {
         }
         
         if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("enableDevModeAction")) {
-            Shared.Toast(message)
+            UIShared.Toast(message)
             AudioController.instance.play(Sound.pop.rawValue)
         }
         
@@ -327,9 +326,7 @@ class PatchTableViewController: BaseTableViewController {
 				 */
 				NSOperationQueue.mainQueue().addOperationWithBlock {
 					
-					if let refreshControl = self?.refreshControl where refreshControl.refreshing {
-						refreshControl.endRefreshing()
-					}
+					self?.refreshControl?.endRefreshing()
 					
 					Utils.delay(0.5) {
 						
@@ -394,16 +391,14 @@ extension PatchTableViewController {
 	/* 
 	 * Cells
 	 */
-	override func bindCell(cell: WrapperTableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
+	override func bindCellToEntity(cell: WrapperTableViewCell, entity: AnyObject, location: CLLocation?) {
 		
 		var location = self.location
 		if self.filter == .Nearby || location == nil {
 			location = LocationController.instance.lastLocationFromManager()
 		}
 		
-		super.bindCell(cell, entity: object, location: location)
-		
-		return nil
+		super.bindCellToEntity(cell, entity: entity, location: location)
 	}
 
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {

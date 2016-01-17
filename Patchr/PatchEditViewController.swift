@@ -456,7 +456,7 @@ class PatchEditViewController: BaseViewController {
 			self.processing = false
 			
 			if cancelled {
-				Shared.Toast(self.cancelledLabel)
+				UIShared.Toast(self.cancelledLabel)
 				return
 			}
 			
@@ -487,7 +487,7 @@ class PatchEditViewController: BaseViewController {
 			}
 			
 			self.performBack(true)
-			Shared.Toast(self.progressFinishLabel)
+			UIShared.Toast(self.progressFinishLabel)
 		}
 		
 		/* Start tasks */

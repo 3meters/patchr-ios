@@ -468,6 +468,7 @@ FBSDKURLConnectionDelegate
   request.parameters[@"format"] = @"json";
   request.parameters[@"sdk"] = kSDK;
   request.parameters[@"include_headers"] = @"false";
+  request.parameters[@"locale"] = [NSLocale currentLocale].localeIdentifier;
 
   NSString *baseURL;
   if (forBatch) {

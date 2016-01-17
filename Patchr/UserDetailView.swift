@@ -64,6 +64,7 @@ class UserDetailView: BaseDetailView {
 		self.watchingIcon.alpha = 0.5
 		self.watchingIcon.tintColor = Colors.black
 		self.watchingButton.setTitleColor(Theme.colorTint, forState: .Normal)
+		self.watchingButton.accessibilityIdentifier = "user_watching_button"
 		self.watchingButton.titleLabel!.font = Theme.fontHeading
 		self.watchingButton.contentHorizontalAlignment = .Left
 		
@@ -76,6 +77,7 @@ class UserDetailView: BaseDetailView {
 		self.ownsIcon.alpha = 0.5
 		self.ownsIcon.tintColor = Colors.black
 		self.ownsButton.setTitleColor(Theme.colorTint, forState: .Normal)
+		self.ownsButton.accessibilityIdentifier = "user_owns_button"
 		self.ownsButton.titleLabel!.font = Theme.fontHeading
 		self.ownsButton.contentHorizontalAlignment = .Left
 		

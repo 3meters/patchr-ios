@@ -349,6 +349,21 @@ public class Proxibase {
 	/*--------------------------------------------------------------------------------------------
 	 * User and install
 	 *--------------------------------------------------------------------------------------------*/
+	
+	public func validEmail(email: String, completion: CompletionBlock) {
+		
+		let emailString = (CFURLCreateStringByAddingPercentEscapes(nil, email as NSString, nil, ":/?@!$&'()*+,;=" as NSString, CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)) as NSString) as String
+		
+		sessionManager.GET("find/users?q[email]=\(emailString)", parameters: nil,
+			success: {
+				dataTask, response in
+				completion(response: response, error: nil)
+			},
+			failure: {
+				dataTask, error in
+				completion(response: ServerError(error)?.response, error: error)
+		})
+	}
 
 	public func login(email: String, password: String, completion: CompletionBlock) {
 		/*

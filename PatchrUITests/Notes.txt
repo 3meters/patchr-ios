@@ -1,0 +1,18 @@
+
+Create new simulator: name, devicetype, runtime
+simctl create Fidget71iPhone5 com.apple.CoreSimulator.SimDeviceType.iPhone-5 com.apple.CoreSimulator.SimRuntime.iOS-7-1
+
+Run simulator from default location with last launched device
+open /Applications/Xcode.app/Contents/Developer/Applications/iOS\ Simulator.app
+
+Run simulator with specific device
+open -a “iOS Simulator” –args -CurrentDeviceUDID D6E1DD7F-712D-4273-A083-F9C9A12AED38
+
+Open a url in simulator
+simctl openurl D6E1DD7F-712D-4273-A083-F9C9A12AED38 http://ericasadun.com
+
+Push a photo into the photo library
+simctl addphoto D6E1DD7F-712D-4273-A083-F9C9A12AED38 ~/Desktop/test.png
+
+Launch app on device (using UDID)
+simctl launch D6E1DD7F-712D-4273-A083-F9C9A12AED38 com.3meters.patchr.ios

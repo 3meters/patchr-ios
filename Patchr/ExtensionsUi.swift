@@ -201,6 +201,13 @@ extension UIViewController {
         }
         return nil
     }
+	
+	func dismissToast(sender: AnyObject) {
+		if let gesture = sender as? UIGestureRecognizer, let hud = gesture.view as? MBProgressHUD {
+			hud.animationType = MBProgressHUDAnimation.ZoomIn
+			hud.hide(true)
+		}
+	}
     
     func handleError(error: ServerError, errorActionType: ErrorActionType = .AUTO, var errorAction: ErrorAction = .NONE ) {
         
@@ -208,7 +215,8 @@ extension UIViewController {
         let alertMessage: String = (error.message != nil ? error.message : error.description != nil ? error.description : "Unknown error")!
         
         if errorActionType == .AUTO || errorActionType == .TOAST {
-            Shared.Toast(alertMessage)
+			UIShared.Toast(alertMessage, controller: self, addToWindow: false)
+			//toast.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("dismissToast:")))
             if error.code == .UNAUTHORIZED_SESSION_EXPIRED || error.code == .UNAUTHORIZED_CREDENTIALS {
                 errorAction = .SIGNOUT
             }

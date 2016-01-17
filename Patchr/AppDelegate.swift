@@ -26,6 +26,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         Log.d("Patchr launching...")
 		
+		let args = NSProcessInfo.processInfo().arguments
+		MOCK = args.contains("MOCKFLAG")
+		if MOCK {
+			MOCK_LAT = Double(NSProcessInfo.processInfo().environment["MOCK_LAT"]!)
+			MOCK_LON = Double(NSProcessInfo.processInfo().environment["MOCK_LON"]!)
+			Log.d("Running in Mock mode for testing")
+			Log.d("Mock lat: \(MOCK_LAT!) lon: \(MOCK_LON!)")
+		}
+		
 		/* Initialize Crashlytics: 25% of method time */
 		Fabric.with([Crashlytics()])
 
@@ -89,7 +98,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
         /* Get the latest on the authenticated user if we have one */
 		if UserController.instance.authenticated {	// Checks for current userId and sessionKey
-            UserController.instance.signinAuto()
+			if MOCK {
+				UserController.instance.signout()
+			}
+			else {
+				UserController.instance.signinAuto()
+			}
         }
 		
 		/* We call even if install record exists and using this as a chance to update the metadata */
@@ -307,7 +321,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          */
         self.backgroundSessionCompletionHandler = completionHandler
         Log.d("handleEventsForBackgroundURLSession called")
-        Shared.Toast("Message Posted!")
+        UIShared.Toast("Message Posted!")
     }
 }
 

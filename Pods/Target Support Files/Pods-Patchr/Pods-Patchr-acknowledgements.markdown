@@ -1,10 +1,6 @@
 # Acknowledgements
 This application makes use of the following third party libraries:
 
-## Keys
-
-MIT LICENSE Found in the repo
-
 ## AFNetworkActivityLogger
 
 Copyright (c) 2013 AFNetworking (http://afnetworking.com/)
@@ -960,6 +956,10 @@ Copyright 2015 Google Inc.
 ## GoogleUtilities
 
 Copyright 2015 Google Inc.
+
+## Keys
+
+MIT LICENSE Found in the repo
 
 ## Lockbox
 

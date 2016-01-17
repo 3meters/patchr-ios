@@ -76,7 +76,7 @@ class AirLikeButton: AirToggleButton {
 					}
 					
 					if self.messageOff != nil {
-						Shared.Toast(self.messageOff)
+						UIShared.Toast(self.messageOff)
 					}
 					NSNotificationCenter.defaultCenter().postNotificationName(Events.LikeDidChange, object: self, userInfo: ["entityId":self.entity!.id_])
 					self.toggleOn(self.entity!.userLikesValue)
@@ -108,7 +108,7 @@ class AirLikeButton: AirToggleButton {
 						}
 					}
 					if self.messageOn != nil {
-						Shared.Toast(self.messageOn)
+						UIShared.Toast(self.messageOn)
 					}
 					NSNotificationCenter.defaultCenter().postNotificationName(Events.LikeDidChange, object: self, userInfo: ["entityId":self.entity!.id_])
 					self.toggleOn(self.entity!.userLikesValue)

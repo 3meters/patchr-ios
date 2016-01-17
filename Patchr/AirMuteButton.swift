@@ -66,11 +66,11 @@ class AirMuteButton: AirToggleButton {
 					self.toggleOn(!muted)
 					
 					if muted && self.messageOff != nil {
-						Shared.Toast(self.messageOff)
+						UIShared.Toast(self.messageOff)
 					}
 					
 					if !muted && self.messageOn != nil {
-						Shared.Toast(self.messageOn)
+						UIShared.Toast(self.messageOn)
 					}
 				}				
 				self.enabled = true

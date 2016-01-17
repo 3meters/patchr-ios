@@ -71,15 +71,21 @@ class LoginViewController: BaseViewController {
     func doneAction(sender: AnyObject) {
 		if isValid() {
 			if self.onboardMode == OnboardMode.Signup {
-				let controller = ProfileEditViewController()
-				controller.inputProvider = self.provider
-				controller.inputState = State.Onboarding
-				controller.inputEmail = self.emailField.text
-				controller.inputPassword = self.passwordField.text
-				controller.inputRouteToMain = self.inputRouteToMain
-				self.navigationController?.pushViewController(controller, animated: true)
+				
+				self.passwordField.resignFirstResponder()
+				
+				self.progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+				self.progress.mode = MBProgressHUDMode.Indeterminate
+				self.progress.styleAs(.ActivityWithText)
+				self.progress.minShowTime = 0.5
+				self.progress.labelText = "Verifying..."
+				self.progress.removeFromSuperViewOnHide = true
+				self.progress.show(true)
+				
+				validateEmail()
 			}
 			else {
+				
 				self.passwordField.resignFirstResponder()
 				
 				self.progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
@@ -135,6 +141,7 @@ class LoginViewController: BaseViewController {
 		self.contentHolder.addSubview(self.message)
 		
 		self.emailField.placeholder = "Email"
+		self.emailField.accessibilityIdentifier = "email_field"
 		self.emailField.delegate = self
 		self.emailField.keyboardType = UIKeyboardType.EmailAddress
 		self.emailField.autocapitalizationType = .None
@@ -143,6 +150,7 @@ class LoginViewController: BaseViewController {
 		self.contentHolder.addSubview(self.emailField)
 		
 		self.passwordField.placeholder = "Password (6 characters or more)"
+		self.passwordField.accessibilityIdentifier = "password_field"
 		self.passwordField.delegate = self
 		self.passwordField.secureTextEntry = true
 		self.passwordField.autocapitalizationType = .None
@@ -151,9 +159,11 @@ class LoginViewController: BaseViewController {
 		self.contentHolder.addSubview(self.passwordField)
 		
 		self.forgotPasswordButton.setTitle("Forgot password?", forState: .Normal)
+		self.forgotPasswordButton.accessibilityIdentifier = "forgot_password_button"
 		self.contentHolder.addSubview(self.forgotPasswordButton)
 		
 		self.doneButton.setTitle("LOG IN", forState: .Normal)
+		self.doneButton.accessibilityIdentifier = "login_login_button"
 		self.contentHolder.addSubview(self.doneButton)
 		
 		self.forgotPasswordButton.addTarget(self, action: Selector("passwordResetAction:"), forControlEvents: .TouchUpInside)
@@ -164,16 +174,58 @@ class LoginViewController: BaseViewController {
 		/* Navigation bar buttons */
 		let doneButton   = UIBarButtonItem(title: "Log in", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
 		let cancelButton   = UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.Plain, target: self, action: "cancelAction:")
+		
+		cancelButton.accessibilityIdentifier = "nav_cancel_button"
+		doneButton.accessibilityIdentifier = "nav_login_button"
+		
 		self.navigationItem.rightBarButtonItems = [doneButton]
 		self.navigationItem.leftBarButtonItems = [cancelButton]
 
 		if onboardMode == OnboardMode.Signup {
+			doneButton.accessibilityIdentifier = "nav_next_button"
 			self.navigationItem.rightBarButtonItem?.title = "Next"
 			self.forgotPasswordButton.hidden = true
 			self.doneButton.hidden = true
 		}
 		else {
 			self.emailField.text = NSUserDefaults.standardUserDefaults().objectForKey(PatchrUserDefaultKey("userEmail")) as? String
+		}
+	}
+	
+	func validateEmail() {
+		
+		guard !self.processing else {
+			return
+		}
+		
+		processing = true
+		
+		/*
+		* Successful login will also update the install record so the authenticated user
+		* is associated with the install. Logging out clears the associated user.
+		*/
+		DataController.proxibase.validEmail(self.emailField.text!) {
+			response, error in
+			
+			NSOperationQueue.mainQueue().addOperationWithBlock {
+				self.processing = false
+				
+				self.progress?.hide(true)
+				
+				if let error = ServerError(error) {
+					self.handleError(error)
+				}
+				else {
+					if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
+						if serviceData.count == 0 {
+							self.didValidate()
+						}
+						else {
+							self.Alert("Email has already been used.")
+						}
+					}
+				}
+			}
 		}
 	}
 	
@@ -232,9 +284,20 @@ class LoginViewController: BaseViewController {
 				self.navigationController?.popViewControllerAnimated(true)
 			}
 			if UserController.instance.userName != nil {
-				Shared.Toast("Logged in as \(UserController.instance.userName!)")
+				UIShared.Toast("Logged in as \(UserController.instance.userName!)")
 			}
 		}
+	}
+	
+	func didValidate() {
+		/* Navigate to next page */
+		let controller = ProfileEditViewController()
+		controller.inputProvider = self.provider
+		controller.inputState = State.Onboarding
+		controller.inputEmail = self.emailField.text
+		controller.inputPassword = self.passwordField.text
+		controller.inputRouteToMain = self.inputRouteToMain
+		self.navigationController?.pushViewController(controller, animated: true)
 	}
 	
 	func navigateToMain() {
@@ -244,7 +307,7 @@ class LoginViewController: BaseViewController {
 		appDelegate.window!.setRootViewController(controller, animated: true)
 		
 		if UserController.instance.userName != nil {
-			Shared.Toast("Logged in as \(UserController.instance.userName!)", controller: controller, addToWindow: false)
+			UIShared.Toast("Logged in as \(UserController.instance.userName!)", controller: controller, addToWindow: false)
 		}
 	}
 	

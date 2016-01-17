@@ -88,6 +88,7 @@ class GuestViewController: BaseViewController {
 		
 		self.buttonCancel.setImage(UIImage(named: "imgCancelDark"), forState: .Normal)
 		self.buttonCancel.tintColor = Colors.white
+		self.buttonCancel.accessibilityIdentifier = "guest_cancel_button"
 		self.view.addSubview(self.buttonCancel)
 		
 		self.message.text = self.inputMessage ?? "Sign up for a free account to post messages, create patches, and more."
@@ -98,6 +99,7 @@ class GuestViewController: BaseViewController {
 
 		/* Colors settings apply regardless of theme */
 		self.buttonLogin.setTitle("LOG IN", forState: .Normal)
+		self.buttonLogin.accessibilityIdentifier = "guest_login_button"
 		self.buttonLogin.setTitleColor(Colors.white, forState: .Normal)
 		self.buttonLogin.setTitleColor(Theme.colorTint, forState: .Highlighted)
 		self.buttonLogin.borderColor = Colors.white
@@ -105,6 +107,7 @@ class GuestViewController: BaseViewController {
 		self.buttonLogin.cornerRadius = Theme.dimenButtonCornerRadius
 		
 		self.buttonSignup.setTitle("SIGN UP", forState: .Normal)
+		self.buttonSignup.accessibilityIdentifier = "guest_signup_button"
 		self.buttonSignup.setTitleColor(Colors.white, forState: .Normal)
 		self.buttonSignup.setTitleColor(Theme.colorTint, forState: .Highlighted)
 		self.buttonSignup.borderColor = Colors.white

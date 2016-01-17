@@ -129,9 +129,11 @@ class SettingsTableViewController: UITableViewController {
 		self.clearHistoryButton.setTitle("Clear search history".uppercaseString, forState: .Normal)
 		self.logoutButton.setTitle("Log out".uppercaseString, forState: .Normal)
 		
-		self.logoutButton.addTarget(self, action: Selector("logoutAction:"), forControlEvents: .TouchUpInside)
-		self.clearHistoryButton.addTarget(self, action: Selector("clearHistoryAction:"), forControlEvents: .TouchUpInside)
+		self.clearHistoryButton.accessibilityIdentifier = "settings_clear_history_button"
+		self.logoutButton.accessibilityIdentifier = "settings_logout_button"
 		
+		self.logoutButton.addTarget(self, action: Selector("logoutAction:"), forControlEvents: .TouchUpInside)
+		self.clearHistoryButton.addTarget(self, action: Selector("clearHistoryAction:"), forControlEvents: .TouchUpInside)		
 	}
 	
     func appVersion() -> String {
@@ -278,13 +280,13 @@ extension SettingsTableViewController: MFMailComposeViewControllerDelegate {
 		
 		switch result.rawValue {
 		case MFMailComposeResultCancelled.rawValue:	// 0
-			Shared.Toast("Feedback cancelled", controller: self, addToWindow: false)
+			UIShared.Toast("Feedback cancelled", controller: self, addToWindow: false)
 		case MFMailComposeResultSaved.rawValue:		// 1
-			Shared.Toast("Feedback saved", controller: self, addToWindow: false)
+			UIShared.Toast("Feedback saved", controller: self, addToWindow: false)
 		case MFMailComposeResultSent.rawValue:		// 2
-			Shared.Toast("Feedback sent", controller: self, addToWindow: false)
+			UIShared.Toast("Feedback sent", controller: self, addToWindow: false)
 		case MFMailComposeResultFailed.rawValue:	// 3
-			Shared.Toast("Feedback send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
+			UIShared.Toast("Feedback send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
 		default:
 			break
 		}

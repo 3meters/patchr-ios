@@ -11,6 +11,41 @@ import UIKit
 class AirProgress: MBProgressHUD {
     
     var shadow: Bool = false
+	
+	override init!(view: UIView!) {
+		super.init(view: view)
+		initialize()
+	}
+	
+	override init!(window: UIWindow!) {
+		super.init(window: window)
+		initialize()
+	}
+	
+	init() {
+		super.init(frame: CGRectZero)
+		initialize()
+	}
+	
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		initialize()
+	}
+	
+	required init?(coder aDecoder: NSCoder) {
+		fatalError("This view should never be loaded from storyboard")
+	}
+	
+	func initialize() {
+		self.isAccessibilityElement = true
+	}
+	
+	static func addedTo(view: UIView!) -> AirProgress {
+		let hud = AirProgress(view: view)
+		hud.removeFromSuperViewOnHide = true
+		view.addSubview(hud)
+		return hud
+	}
 
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -29,6 +64,10 @@ class AirProgress: MBProgressHUD {
             }
         }
     }
+	
+	override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+		return false
+	}
     
     func styleAs(progressStyle: ProgressStyle) {
         

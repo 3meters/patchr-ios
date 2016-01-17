@@ -390,13 +390,12 @@ extension NotificationsTableViewController {
 	/*
 	 * Cells
 	 */
-	override func bindCell(cell: WrapperTableViewCell, entity object: AnyObject, location: CLLocation?) -> UIView? {
-		
-		if let view = super.bindCell(cell, entity: object, location: location) as? NotificationView {
+	override func bindCellToEntity(cell: WrapperTableViewCell, entity: AnyObject, location: CLLocation?) {
+		super.bindCellToEntity(cell, entity: entity, location: location)
+		if let view = cell.view as? NotificationView {
 			view.description_?.delegate = self
 			view.photo?.addTarget(self, action: Selector("photoAction:"), forControlEvents: .TouchUpInside)
 		}
-		return nil
 	}
     /*
      * UITableViewDelegate
@@ -483,7 +482,7 @@ extension NotificationsTableViewController {
 				}
 				
 				let cell = makeCell(cellType)
-				bindCell(cell, entity: queryResult.object, location: nil)
+				bindCellToEntity(cell, entity: queryResult.object, location: nil)
 				cell.setNeedsLayout()
 				cell.layoutIfNeeded()
 				let cellSize = cell.contentView.sizeThatFits(CGSizeMake(self.tableView.frame.size.height, CGFloat.max))
