@@ -14,14 +14,6 @@
 		</dict>
 		<dict>
 			<key>FooterText</key>
-			<string>MIT LICENSE Found in the repo</string>
-			<key>Title</key>
-			<string>Keys</string>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-		</dict>
-		<dict>
-			<key>FooterText</key>
 			<string>Apache License
 Version 2.0, January 2004
 
@@ -661,6 +653,14 @@ and the Eclipse Distribution License is available at
 </string>
 			<key>Title</key>
 			<string>AWSS3</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>FooterText</key>
+			<string>MIT LICENSE Found in the repo</string>
+			<key>Title</key>
+			<string>Keys</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 		</dict>
