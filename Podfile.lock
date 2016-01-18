@@ -27,9 +27,9 @@ PODS:
     - AFNetworking (~> 2.6)
     - DACircularProgress
     - pop
-  - AWSCore (2.3.2)
-  - AWSS3 (2.3.2):
-    - AWSCore (= 2.3.2)
+  - AWSCore (2.3.3)
+  - AWSS3 (2.3.3):
+    - AWSCore (= 2.3.3)
   - Bolts (1.6.0):
     - Bolts/AppLinks (= 1.6.0)
     - Bolts/Tasks (= 1.6.0)
@@ -50,10 +50,10 @@ PODS:
     - FBSDKCoreKit
   - FBSDKShareKit (4.9.0):
     - FBSDKCoreKit
-  - Google/Analytics (1.2.1):
+  - Google/Analytics (1.3.2):
     - Google/Core
     - GoogleAnalytics (~> 3.12)
-  - Google/Core (1.2.1):
+  - Google/Core (1.3.2):
     - GoogleInterchangeUtilities (~> 1.0)
     - GoogleNetworkingUtilities (~> 1.0)
     - GoogleSymbolUtilities (~> 1.0)
@@ -82,7 +82,7 @@ DEPENDENCIES:
   - AFNetworkActivityLogger (~> 2.0)
   - AFNetworking (~> 2.6)
   - AirPhotoBrowser (from `~/code/AirPhotoBrowser`)
-  - AWSS3 (~> 2.3.2)
+  - AWSS3
   - Branch
   - Crashlytics
   - DateTools
@@ -92,7 +92,7 @@ DEPENDENCIES:
   - FBSDKCoreKit (~> 4.9.0)
   - FBSDKLoginKit (~> 4.9.0)
   - FBSDKShareKit (~> 4.9.0)
-  - Google/Analytics (~> 1.2.0)
+  - Google/Analytics
   - Keys (from `Pods/CocoaPodsKeys`)
   - Lockbox
   - MBProgressHUD (~> 0.9.1)
@@ -113,8 +113,8 @@ SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
   AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
   AirPhotoBrowser: c26ba9232aea2467ebf932ce9cbabe60fd698d54
-  AWSCore: c2f69975fd2caf38a10736961de28a0105cdb00c
-  AWSS3: 9ac201e7a4ad8be0b68348c77acfd100027b97af
+  AWSCore: b12704516e21ed34cfe7547e07ab945b079d1f56
+  AWSS3: 675f59e0c338e61441117f03018187b9deb359c4
   Bolts: f52a250053bb517ca874523c3913776359ab3def
   Branch: 82bfbfda8fbc7f6caed9709abdbb88ec88ba6e59
   Crashlytics: e4e8d02914f2608fbc7bf42b1a7af838b0db67a2
@@ -126,7 +126,7 @@ SPEC CHECKSUMS:
   FBSDKCoreKit: c4f25d27949a6ac80206063804d12ad1c7879612
   FBSDKLoginKit: d46210c3955d69337c61325327f486ca50a8661f
   FBSDKShareKit: c2e0050cf7e8f1309b0da65b0bfebfcd66712a2b
-  Google: fd33b5fa40fa3aaee5176de49c873a74e3d11dce
+  Google: 97618e118111b998cce1d8dd1bd98b82301d72db
   GoogleAnalytics: 9be1afdb8deeac4bb5f13ca7f7d3b9db2a1f43dc
   GoogleInterchangeUtilities: d7f7174176fbcf9710f696f1acebad4dbd98ac03
   GoogleNetworkingUtilities: 292992ab31b7b4ba32809a0e8b40e324cdfb2c0c

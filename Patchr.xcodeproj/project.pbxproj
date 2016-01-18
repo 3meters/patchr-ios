@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1AB4C23C766AEEECAE42F579 /* libPods-Patchr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CABF391F6D74EFAA64D37F /* libPods-Patchr.a */; };
-		1E91AA39A45329397CEE4055 /* libPods-PatchrUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E8ACC3ED8328AF1908E8583 /* libPods-PatchrUITests.a */; };
+		0A0B6D9E21F82C47F10C258F /* libPods-PatchrShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A74B7B18CA98DEDF1759D9E /* libPods-PatchrShare.a */; };
 		7D01FA361A7024E200DD6DFA /* JSONResponseSerializerWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */; };
 		7D021ABE1A9409450047DAAE /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D021ABD1A9409450047DAAE /* LoginViewController.swift */; };
 		7D021AC21A9423080047DAAE /* TextZoomController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D021AC11A9423080047DAAE /* TextZoomController.swift */; };
@@ -56,9 +55,8 @@
 		9FDCC4E31D09C35191FA3624 /* PatchTableMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC5A08BC6B04C7EC67536 /* PatchTableMapViewController.swift */; };
 		9FDCC8F9EEEF77DEBE173AFA /* PhotoPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC06A84126B197626CEB2 /* PhotoPickerViewController.swift */; };
 		9FDCCCC0113B14385C08DA41 /* MessageDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */; };
-		A8E20B58D29959C0889B8847 /* libPods-PatchrShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BA6097617A5336D7C15520A /* libPods-PatchrShare.a */; };
-		C1112B52B84F042CB51F7E65 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F90A7A6DF253248AE7C300A /* libPods.a */; };
-		D67220BB77012CB6618C2EC5 /* libPods-Patchr-PatchrUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 25549375658C16145584EB85 /* libPods-Patchr-PatchrUITests.a */; };
+		A4C7E6B785E829092899706D /* libPods-PatchrUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD5FE90A2A947169CC6C9AEF /* libPods-PatchrUITests.a */; };
+		BD4E7E7C3E5E0CEE7DE752B4 /* libPods-Patchr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D330193EF9938976A31AE265 /* libPods-Patchr.a */; };
 		E20004DF1B094ACA00425694 /* PasswordEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */; };
 		E20004E11B099CBD00425694 /* PasswordResetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004E01B099CBD00425694 /* PasswordResetViewController.swift */; };
 		E2064BF11BBF3C26009C7B6A /* AirMuteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2064BF01BBF3C26009C7B6A /* AirMuteButton.swift */; };
@@ -243,12 +241,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		25549375658C16145584EB85 /* libPods-Patchr-PatchrUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Patchr-PatchrUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		2FA521C11CD1A45A8806279F /* Pods-PatchrShare.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrShare.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrShare/Pods-PatchrShare.adhoc.xcconfig"; sourceTree = "<group>"; };
-		3F90A7A6DF253248AE7C300A /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		4E8ACC3ED8328AF1908E8583 /* libPods-PatchrUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PatchrUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5CD38C9C4C2C2A4CAE6A2F5D /* Pods-PatchrShare.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrShare.release.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrShare/Pods-PatchrShare.release.xcconfig"; sourceTree = "<group>"; };
-		6BA6097617A5336D7C15520A /* libPods-PatchrShare.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PatchrShare.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4A109F86D367CF311DFC4E92 /* Pods-PatchrUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrUITests/Pods-PatchrUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		5A74B7B18CA98DEDF1759D9E /* libPods-PatchrShare.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PatchrShare.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6789A077E9087C4B77F1974E /* Pods-PatchrUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrUITests/Pods-PatchrUITests.release.xcconfig"; sourceTree = "<group>"; };
+		77F650E60AAC7571D67DCF81 /* Pods-Patchr.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.adhoc.xcconfig"; sourceTree = "<group>"; };
+		7C8097BB7E359EEF19F0B1CF /* Pods-PatchrUITests.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrUITests.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrUITests/Pods-PatchrUITests.adhoc.xcconfig"; sourceTree = "<group>"; };
 		7D01FA341A7024E200DD6DFA /* JSONResponseSerializerWithData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONResponseSerializerWithData.h; sourceTree = "<group>"; };
 		7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONResponseSerializerWithData.m; sourceTree = "<group>"; };
 		7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyJSON.swift; sourceTree = "<group>"; };
@@ -323,17 +320,17 @@
 		844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoChooserUI.swift; sourceTree = "<group>"; };
 		8468F8201A9D09D1007D6EE6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		84EF12AB1AA904700043EBBA /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
-		880FE917F305BDE29B1AA196 /* Pods-PatchrShare.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrShare.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrShare/Pods-PatchrShare.debug.xcconfig"; sourceTree = "<group>"; };
-		963D1BBA8F941C4BA95675EA /* Pods-Patchr.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.adhoc.xcconfig"; sourceTree = "<group>"; };
+		887E48F29CA34F5593C32DF3 /* Pods-PatchrShare.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrShare.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrShare/Pods-PatchrShare.adhoc.xcconfig"; sourceTree = "<group>"; };
 		9FDCC06A84126B197626CEB2 /* PhotoPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoPickerViewController.swift; sourceTree = "<group>"; };
 		9FDCC5A08BC6B04C7EC67536 /* PatchTableMapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTableMapViewController.swift; sourceTree = "<group>"; };
 		9FDCC67342555A8E88594481 /* PatchrShare-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PatchrShare-Bridging-Header.h"; sourceTree = "<group>"; };
 		9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = MessageDetailViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		9FDCCD65EB714D83C5A818FE /* PatchrShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = file.entitlements; path = PatchrShare.entitlements; sourceTree = "<group>"; };
-		A80DE63116DE3050C0FEC4EE /* Pods-Patchr.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.debug.xcconfig"; sourceTree = "<group>"; };
-		A9B11FC184124D485DAA2948 /* Pods-Patchr.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.release.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.release.xcconfig"; sourceTree = "<group>"; };
-		B3CABF391F6D74EFAA64D37F /* libPods-Patchr.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Patchr.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D5E5AE6D1BBC91CA1C35A7BD /* Pods-PatchrUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrUITests/Pods-PatchrUITests.release.xcconfig"; sourceTree = "<group>"; };
+		BBEB69261B707D327A484358 /* Pods-PatchrShare.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrShare.release.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrShare/Pods-PatchrShare.release.xcconfig"; sourceTree = "<group>"; };
+		CD5FE90A2A947169CC6C9AEF /* libPods-PatchrUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PatchrUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CDAF1A3B567B593593989D1B /* Pods-PatchrShare.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrShare.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrShare/Pods-PatchrShare.debug.xcconfig"; sourceTree = "<group>"; };
+		D330193EF9938976A31AE265 /* libPods-Patchr.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Patchr.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD2D7F91E14DE64DD894830A /* Pods-Patchr.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.debug.xcconfig"; sourceTree = "<group>"; };
 		E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordEditViewController.swift; sourceTree = "<group>"; };
 		E20004E01B099CBD00425694 /* PasswordResetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordResetViewController.swift; sourceTree = "<group>"; };
 		E2064BF01BBF3C26009C7B6A /* AirMuteButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirMuteButton.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -498,8 +495,7 @@
 		E2F85C781C32E5A000FC2364 /* DeviceUID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceUID.h; sourceTree = "<group>"; };
 		E2F85C791C342B8600FC2364 /* UserPhotoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPhotoView.swift; sourceTree = "<group>"; };
 		E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKCore.framework; path = Frameworks/AdobeCreativeSDKCore.framework; sourceTree = "<group>"; };
-		E43C1DF2CF6CB0DDA16EAC88 /* Pods-PatchrUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrUITests/Pods-PatchrUITests.debug.xcconfig"; sourceTree = "<group>"; };
-		FCB889A1FAE4F4A2AAF0D9C6 /* Pods-PatchrUITests.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrUITests.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrUITests/Pods-PatchrUITests.adhoc.xcconfig"; sourceTree = "<group>"; };
+		FF2A811DB73899C57AA39B93 /* Pods-Patchr.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.release.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -516,8 +512,7 @@
 				E238BAD01B5088A40094AF41 /* MobileCoreServices.framework in Frameworks */,
 				E238BACC1B50888C0094AF41 /* SystemConfiguration.framework in Frameworks */,
 				E2F182E31B4B4AFD0020F6BB /* Parse.framework in Frameworks */,
-				1AB4C23C766AEEECAE42F579 /* libPods-Patchr.a in Frameworks */,
-				C1112B52B84F042CB51F7E65 /* libPods.a in Frameworks */,
+				BD4E7E7C3E5E0CEE7DE752B4 /* libPods-Patchr.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -525,8 +520,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1E91AA39A45329397CEE4055 /* libPods-PatchrUITests.a in Frameworks */,
-				D67220BB77012CB6618C2EC5 /* libPods-Patchr-PatchrUITests.a in Frameworks */,
+				A4C7E6B785E829092899706D /* libPods-PatchrUITests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -534,29 +528,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A8E20B58D29959C0889B8847 /* libPods-PatchrShare.a in Frameworks */,
+				0A0B6D9E21F82C47F10C258F /* libPods-PatchrShare.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		25430FC2BE368355CD8C6FAF /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				A80DE63116DE3050C0FEC4EE /* Pods-Patchr.debug.xcconfig */,
-				A9B11FC184124D485DAA2948 /* Pods-Patchr.release.xcconfig */,
-				963D1BBA8F941C4BA95675EA /* Pods-Patchr.adhoc.xcconfig */,
-				880FE917F305BDE29B1AA196 /* Pods-PatchrShare.debug.xcconfig */,
-				5CD38C9C4C2C2A4CAE6A2F5D /* Pods-PatchrShare.release.xcconfig */,
-				2FA521C11CD1A45A8806279F /* Pods-PatchrShare.adhoc.xcconfig */,
-				E43C1DF2CF6CB0DDA16EAC88 /* Pods-PatchrUITests.debug.xcconfig */,
-				D5E5AE6D1BBC91CA1C35A7BD /* Pods-PatchrUITests.release.xcconfig */,
-				FCB889A1FAE4F4A2AAF0D9C6 /* Pods-PatchrUITests.adhoc.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 		7D3D39C01A6F086F00A44CB2 = {
 			isa = PBXGroup;
 			children = (
@@ -575,8 +553,8 @@
 				E238BADF1B51D3290094AF41 /* PatchrShare */,
 				E227707A1C45650300866733 /* PatchrUITests */,
 				7D3D39CA1A6F086F00A44CB2 /* Products */,
-				25430FC2BE368355CD8C6FAF /* Pods */,
 				A0DA2C2AA90D81631E6BF68D /* Frameworks */,
+				A138DF7A8AABE90F9EC63040 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -662,13 +640,27 @@
 				E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */,
 				E273B5181B48349900888E73 /* Bolts.framework */,
 				E273B5191B48349900888E73 /* Parse.framework */,
-				6BA6097617A5336D7C15520A /* libPods-PatchrShare.a */,
-				B3CABF391F6D74EFAA64D37F /* libPods-Patchr.a */,
-				3F90A7A6DF253248AE7C300A /* libPods.a */,
-				4E8ACC3ED8328AF1908E8583 /* libPods-PatchrUITests.a */,
-				25549375658C16145584EB85 /* libPods-Patchr-PatchrUITests.a */,
+				D330193EF9938976A31AE265 /* libPods-Patchr.a */,
+				5A74B7B18CA98DEDF1759D9E /* libPods-PatchrShare.a */,
+				CD5FE90A2A947169CC6C9AEF /* libPods-PatchrUITests.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A138DF7A8AABE90F9EC63040 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				DD2D7F91E14DE64DD894830A /* Pods-Patchr.debug.xcconfig */,
+				FF2A811DB73899C57AA39B93 /* Pods-Patchr.release.xcconfig */,
+				77F650E60AAC7571D67DCF81 /* Pods-Patchr.adhoc.xcconfig */,
+				CDAF1A3B567B593593989D1B /* Pods-PatchrShare.debug.xcconfig */,
+				BBEB69261B707D327A484358 /* Pods-PatchrShare.release.xcconfig */,
+				887E48F29CA34F5593C32DF3 /* Pods-PatchrShare.adhoc.xcconfig */,
+				4A109F86D367CF311DFC4E92 /* Pods-PatchrUITests.debug.xcconfig */,
+				6789A077E9087C4B77F1974E /* Pods-PatchrUITests.release.xcconfig */,
+				7C8097BB7E359EEF19F0B1CF /* Pods-PatchrUITests.adhoc.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 		E215995A1AEFC193002C936F /* Resources */ = {
@@ -1034,16 +1026,16 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7D3D39E81A6F087000A44CB2 /* Build configuration list for PBXNativeTarget "Patchr" */;
 			buildPhases = (
-				699A6F582CECDE419129F998 /* Check Pods Manifest.lock */,
+				5AD1A4B299BBD447E1D1DBE7 /* Check Pods Manifest.lock */,
 				7DA7306F1A71A5D9008C25FA /* Update Model Object Classes */,
 				7D3D39C51A6F086F00A44CB2 /* Sources */,
 				7D3D39C61A6F086F00A44CB2 /* Frameworks */,
 				7D3D39C71A6F086F00A44CB2 /* Resources */,
-				A73C0D055776F8D329577BE0 /* Copy Pods Resources */,
 				7DFA37DB1AB7B87B00CFCEE1 /* Warn about TODO: and FIXME: */,
 				E24A87291B323DEA00E6F96B /* ShellScript */,
 				E238BAED1B51D3290094AF41 /* Embed App Extensions */,
-				AADC1173F6BBAF4B61E89506 /* Embed Pods Frameworks */,
+				7509FF0C6B1611872A580F91 /* Embed Pods Frameworks */,
+				BE3103B6847AA6E929E2BD3B /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1059,11 +1051,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E22770831C45650300866733 /* Build configuration list for PBXNativeTarget "PatchrUITests" */;
 			buildPhases = (
-				FE1EB8813EC1CDAD327B67B9 /* Check Pods Manifest.lock */,
+				1D2BCC0A28794DDC83DB7276 /* Check Pods Manifest.lock */,
 				E22770751C45650300866733 /* Sources */,
 				E22770761C45650300866733 /* Frameworks */,
 				E22770771C45650300866733 /* Resources */,
-				6A2D339411A7442345CAEE84 /* Copy Pods Resources */,
+				F6D299C313589E6A082A0390 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1079,13 +1071,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E238BAE91B51D3290094AF41 /* Build configuration list for PBXNativeTarget "PatchrShare" */;
 			buildPhases = (
-				F81230B8409B59C3D83ABF01 /* Check Pods Manifest.lock */,
+				7B1B8E1C9FDB33EFFE116D22 /* Check Pods Manifest.lock */,
 				E2C0D92A1B6BC1FA00E28CE9 /* Increment Build Number */,
 				E238BADA1B51D3290094AF41 /* Sources */,
 				E238BADB1B51D3290094AF41 /* Frameworks */,
 				E238BADC1B51D3290094AF41 /* Resources */,
-				B1229D698E97BDA150490454 /* Embed Pods Frameworks */,
 				E24199031C18FDD200DDA549 /* ShellScript */,
+				0598CE291F5DAEB5229556FA /* Embed Pods Frameworks */,
+				0C9F713CAEB57CD401C8375F /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1212,7 +1205,37 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		699A6F582CECDE419129F998 /* Check Pods Manifest.lock */ = {
+		0598CE291F5DAEB5229556FA /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PatchrShare/Pods-PatchrShare-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		0C9F713CAEB57CD401C8375F /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PatchrShare/Pods-PatchrShare-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		1D2BCC0A28794DDC83DB7276 /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1227,19 +1250,49 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		6A2D339411A7442345CAEE84 /* Copy Pods Resources */ = {
+		5AD1A4B299BBD447E1D1DBE7 /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PatchrUITests/Pods-PatchrUITests-resources.sh\"\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		7509FF0C6B1611872A580F91 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Patchr/Pods-Patchr-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7B1B8E1C9FDB33EFFE116D22 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		7DA7306F1A71A5D9008C25FA /* Update Model Object Classes */ = {
@@ -1270,7 +1323,7 @@
 			shellPath = /bin/sh;
 			shellScript = "KEYWORDS=\"TODO:|FIXME:|\\?\\?\\?:|\\!\\!\\!:\"\nfind \"${SRCROOT}\" -path \"${SRCROOT}\"/Pods -prune -o \\( -name \"*.h\" -or -name \"*.m\" -or -name \"*.swift\" \\) -print0 | xargs -0 egrep --with-filename --line-number --only-matching \"($KEYWORDS).*\\$\" | perl -p -e \"s/($KEYWORDS)/ warning: \\$1/\"";
 		};
-		A73C0D055776F8D329577BE0 /* Copy Pods Resources */ = {
+		BE3103B6847AA6E929E2BD3B /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1283,36 +1336,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Patchr/Pods-Patchr-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		AADC1173F6BBAF4B61E89506 /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Patchr/Pods-Patchr-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B1229D698E97BDA150490454 /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PatchrShare/Pods-PatchrShare-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		E24199031C18FDD200DDA549 /* ShellScript */ = {
@@ -1355,34 +1378,19 @@
 			shellPath = /bin/sh;
 			shellScript = "echo $CONFIGURATION\nif [ $CONFIGURATION == \"Release\" ]; then\necho \"Bumping share extension build number...\"\nplist=${PROJECT_DIR}/${TARGET_NAME}/${INFOPLIST_FILE}\n\n# increment the build number\nbuildnum=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${plist}\")\nif [[ \"${buildnum}\" == \"\" ]]; then\necho \"No build number in share extension $plist\"\nexit 2\nfi\n\nbuildnum=$(expr $buildnum + 1)\n/usr/libexec/Plistbuddy -c \"Set CFBundleVersion $buildnum\" \"${plist}\"\necho \"Bumped build number to $buildnum\"\n\nelse\necho $CONFIGURATION \" build - Not bumping build number.\"\nfi";
 		};
-		F81230B8409B59C3D83ABF01 /* Check Pods Manifest.lock */ = {
+		F6D299C313589E6A082A0390 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		FE1EB8813EC1CDAD327B67B9 /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PatchrUITests/Pods-PatchrUITests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1682,7 +1690,7 @@
 		};
 		7D3D39E91A6F087000A44CB2 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A80DE63116DE3050C0FEC4EE /* Pods-Patchr.debug.xcconfig */;
+			baseConfigurationReference = DD2D7F91E14DE64DD894830A /* Pods-Patchr.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -1765,7 +1773,7 @@
 		};
 		7D3D39EA1A6F087000A44CB2 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A9B11FC184124D485DAA2948 /* Pods-Patchr.release.xcconfig */;
+			baseConfigurationReference = FF2A811DB73899C57AA39B93 /* Pods-Patchr.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -1882,7 +1890,7 @@
 		};
 		7D9C9E3F1A9BD3290069E332 /* AdHoc */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 963D1BBA8F941C4BA95675EA /* Pods-Patchr.adhoc.xcconfig */;
+			baseConfigurationReference = 77F650E60AAC7571D67DCF81 /* Pods-Patchr.adhoc.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -1962,7 +1970,7 @@
 		};
 		E22770801C45650300866733 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E43C1DF2CF6CB0DDA16EAC88 /* Pods-PatchrUITests.debug.xcconfig */;
+			baseConfigurationReference = 4A109F86D367CF311DFC4E92 /* Pods-PatchrUITests.debug.xcconfig */;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -1982,7 +1990,7 @@
 		};
 		E22770811C45650300866733 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D5E5AE6D1BBC91CA1C35A7BD /* Pods-PatchrUITests.release.xcconfig */;
+			baseConfigurationReference = 6789A077E9087C4B77F1974E /* Pods-PatchrUITests.release.xcconfig */;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -2002,7 +2010,7 @@
 		};
 		E22770821C45650300866733 /* AdHoc */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FCB889A1FAE4F4A2AAF0D9C6 /* Pods-PatchrUITests.adhoc.xcconfig */;
+			baseConfigurationReference = 7C8097BB7E359EEF19F0B1CF /* Pods-PatchrUITests.adhoc.xcconfig */;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -2022,7 +2030,7 @@
 		};
 		E238BAEA1B51D3290094AF41 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 880FE917F305BDE29B1AA196 /* Pods-PatchrShare.debug.xcconfig */;
+			baseConfigurationReference = CDAF1A3B567B593593989D1B /* Pods-PatchrShare.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PatchrShare/PatchrShare.entitlements;
@@ -2069,7 +2077,7 @@
 		};
 		E238BAEB1B51D3290094AF41 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5CD38C9C4C2C2A4CAE6A2F5D /* Pods-PatchrShare.release.xcconfig */;
+			baseConfigurationReference = BBEB69261B707D327A484358 /* Pods-PatchrShare.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PatchrShare/PatchrShare.entitlements;
@@ -2112,7 +2120,7 @@
 		};
 		E238BAEC1B51D3290094AF41 /* AdHoc */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2FA521C11CD1A45A8806279F /* Pods-PatchrShare.adhoc.xcconfig */;
+			baseConfigurationReference = 887E48F29CA34F5593C32DF3 /* Pods-PatchrShare.adhoc.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PatchrShare/PatchrShare.entitlements;

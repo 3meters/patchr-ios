@@ -307,12 +307,6 @@ class UserUITests: BaseTestCase {
 		let navSubmitButton = self.app.buttons["nav_submit_button"]
 		let navEditButton = self.app.navigationBars["Me"].buttons["user_edit_button"]
 		let facebookConnectButton = self.app.buttons["facebook_button"]
-		let facebookDisconnectButton = self.app.buttons["facebook_disconnect_button"]
-		let facebookEmailField = app.webViews.textFields["Email or Phone"]
-		let facebookPasswordField = app.webViews.textFields["Password"]
-		let facebookSubmitButton = app.webViews.buttons["OK"]
-		let facebookCancelButton = app.webViews.buttons["Cancel"]
-		let facebookTitle = app.webViews.staticTexts["Log in with Facebook"]
 		
 		TestLib.login(self)
 		
@@ -324,23 +318,5 @@ class UserUITests: BaseTestCase {
 		waitForElementToExist(navSubmitButton)
 		
 		facebookConnectButton.tap()		// Connect
-		
-		waitForElementToExist(facebookTitle)
-		
-		if facebookEmailField.exists {
-			facebookEmailField.tapAndTypeText("ada@3meters.com")
-			facebookPasswordField.tapAndTypeText("Richard2010")
-		}
-		else if facebookSubmitButton.exists {
-			facebookSubmitButton.tap()
-		}
-		
-		waitForElementToExist(navSubmitButton)
-		
-//		facebookDisconnectButton.tap()		// Disconnect
-//		
-//		navSubmitButton.tap()
-//		
-//		TestLib.logout(self)
 	}
 }

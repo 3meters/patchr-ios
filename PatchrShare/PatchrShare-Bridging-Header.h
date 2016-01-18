@@ -12,10 +12,8 @@
 #import <SDWebImage/UIImageView+WebCache.h>
 #import <SDWebImage/UIButton+WebCache.h>
 #import <AWSS3/AWSS3.h>
-#import <AWSCore/AWSCore.h>
 #import <MBProgressHUD.h>
 #import <Keys/PatchrKeys.h>
-#import <Google/Analytics.h>
 #import <Lockbox.h>
 
 #import "Photo.h"
