@@ -21,18 +21,22 @@ plugin 'cocoapods-keys', {
 
 platform :ios, '8.0'
 inhibit_all_warnings!
+#use_frameworks!
+
+def shared_pods
+	pod 'SDWebImage',				'~> 3.7.2'
+	pod 'AWSS3'
+	pod 'Lockbox'										# Used to protect secrets and install info
+end
 
 target 'Patchr' do
-	
+	shared_pods
 	pod 'AFNetworking',				'~> 2.6'
 	pod 'AFNetworkActivityLogger',	'~> 2.0'
-	pod 'AWSS3'
 	pod 'PBWebViewController',		'~> 0.3'			# Used to show show web content for terms/policy/licensing
 	pod 'MBProgressHUD',			'~> 0.9.1'
-	pod 'SDWebImage',				'~> 3.7.2'
 	pod 'DLRadioButton'
 	pod 'UIDevice-Hardware'								# Convenience for determining system version and model identifier
-	pod 'Lockbox'										# Used to protect secrets and install info
 	pod 'Branch'										# Url routing and deep linking
 	pod 'pop', '~> 1.0'									# Animation library
 	pod 'AirPhotoBrowser',			:path => '~/code/AirPhotoBrowser'
@@ -46,21 +50,14 @@ target 'Patchr' do
 	pod 'FBSDKLoginKit',			'~> 4.9.0'
 	pod 'FBSDKShareKit',			'~> 4.9.0'
 	pod 'DateTools'
-
 end
 
-target 'PatchrUITests' do
-
+target 'PatchrUITests', :exclusive => true do
 	pod 'Lockbox'
-
 end
 
-target 'PatchrShare' do
-
-	pod 'SDWebImage',				'~> 3.7.2'
-	pod 'AWSS3'
-	pod 'Lockbox'
-
+target 'PatchrShare', :exclusive => true do
+	shared_pods
 end
 
 # CreativeSDKCore and Image frameworks are on version 0.12.2127.02
