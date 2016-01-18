@@ -1,0 +1,6 @@
+framework module THContactPicker {
+  umbrella header "THContactPicker-umbrella.h"
+
+  export *
+  module * { export * }
+}

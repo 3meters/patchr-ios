@@ -1,0 +1,6 @@
+framework module Facade {
+  umbrella header "Facade-umbrella.h"
+
+  export *
+  module * { export * }
+}

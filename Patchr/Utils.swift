@@ -9,6 +9,7 @@
 import Foundation
 import ObjectiveC
 import AVFoundation
+import UIKit
 
 var temporaryFileCount = 0
 

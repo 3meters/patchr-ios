@@ -7,6 +7,9 @@
 //
 
 import Foundation
+import AWSCore
+import AWSS3
+import Keys
 
 public class S3: NSObject {
     

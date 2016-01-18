@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Facade
 
 class AirRuleView: UIView {
 	

@@ -8,7 +8,7 @@
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
 
-#import "AFURLResponseSerialization.h"
+#import "AFNetworking/AFURLResponseSerialization.h"
 
 // NSError userInfo key that will contain response data
 FOUNDATION_EXPORT NSString *const JSONResponseSerializerWithDataKey;

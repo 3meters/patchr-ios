@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
 
+import UIKit
+
 let pageSizeDefault         = 20
 let pageSizeNearby          = 50
 let pageSizeExplore         = 20

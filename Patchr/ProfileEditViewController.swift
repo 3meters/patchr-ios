@@ -7,6 +7,11 @@
 //
 
 import UIKit
+import AWSS3
+import Keys
+import FBSDKCoreKit
+import PBWebViewController
+import MBProgressHUD
 
 class ProfileEditViewController: BaseViewController {
 	

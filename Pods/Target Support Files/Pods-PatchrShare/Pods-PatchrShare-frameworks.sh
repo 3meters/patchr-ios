@@ -82,3 +82,25 @@ strip_invalid_archs() {
   fi
 }
 
+
+if [[ "$CONFIGURATION" == "Debug" ]]; then
+  install_framework "Pods-PatchrShare/AWSCore.framework"
+  install_framework "Pods-PatchrShare/AWSS3.framework"
+  install_framework "Pods-PatchrShare/Keys.framework"
+  install_framework "Pods-PatchrShare/Lockbox.framework"
+  install_framework "Pods-PatchrShare/SDWebImage.framework"
+fi
+if [[ "$CONFIGURATION" == "Release" ]]; then
+  install_framework "Pods-PatchrShare/AWSCore.framework"
+  install_framework "Pods-PatchrShare/AWSS3.framework"
+  install_framework "Pods-PatchrShare/Keys.framework"
+  install_framework "Pods-PatchrShare/Lockbox.framework"
+  install_framework "Pods-PatchrShare/SDWebImage.framework"
+fi
+if [[ "$CONFIGURATION" == "AdHoc" ]]; then
+  install_framework "Pods-PatchrShare/AWSCore.framework"
+  install_framework "Pods-PatchrShare/AWSS3.framework"
+  install_framework "Pods-PatchrShare/Keys.framework"
+  install_framework "Pods-PatchrShare/Lockbox.framework"
+  install_framework "Pods-PatchrShare/SDWebImage.framework"
+fi

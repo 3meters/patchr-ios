@@ -7,6 +7,9 @@
 //
 
 import UIKit
+import AWSS3
+import MBProgressHUD
+import Facade
 
 class PatchEditViewController: BaseViewController {
 	

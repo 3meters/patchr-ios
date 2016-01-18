@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import THContactPicker
 
 class AirContactPicker: THContactPickerView {
 	

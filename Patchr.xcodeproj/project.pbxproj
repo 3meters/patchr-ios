@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0A0B6D9E21F82C47F10C258F /* libPods-PatchrShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A74B7B18CA98DEDF1759D9E /* libPods-PatchrShare.a */; };
+		3DD028475490FEED730746ED /* Pods_PatchrUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E68708678DD52F96BCE7D44 /* Pods_PatchrUITests.framework */; };
+		5818F78426BBC5E641828637 /* Pods_PatchrShare.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E539BA4D8F6D0FEF23479804 /* Pods_PatchrShare.framework */; };
 		7D01FA361A7024E200DD6DFA /* JSONResponseSerializerWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */; };
 		7D021ABE1A9409450047DAAE /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D021ABD1A9409450047DAAE /* LoginViewController.swift */; };
 		7D021AC21A9423080047DAAE /* TextZoomController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D021AC11A9423080047DAAE /* TextZoomController.swift */; };
@@ -55,8 +56,7 @@
 		9FDCC4E31D09C35191FA3624 /* PatchTableMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC5A08BC6B04C7EC67536 /* PatchTableMapViewController.swift */; };
 		9FDCC8F9EEEF77DEBE173AFA /* PhotoPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC06A84126B197626CEB2 /* PhotoPickerViewController.swift */; };
 		9FDCCCC0113B14385C08DA41 /* MessageDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */; };
-		A4C7E6B785E829092899706D /* libPods-PatchrUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD5FE90A2A947169CC6C9AEF /* libPods-PatchrUITests.a */; };
-		BD4E7E7C3E5E0CEE7DE752B4 /* libPods-Patchr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D330193EF9938976A31AE265 /* libPods-Patchr.a */; };
+		C1C05311B926A4E13ECEEB16 /* Pods_Patchr.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BAF56487413E9EF42358BF38 /* Pods_Patchr.framework */; };
 		E20004DF1B094ACA00425694 /* PasswordEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */; };
 		E20004E11B099CBD00425694 /* PasswordResetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004E01B099CBD00425694 /* PasswordResetViewController.swift */; };
 		E2064BF11BBF3C26009C7B6A /* AirMuteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2064BF01BBF3C26009C7B6A /* AirMuteButton.swift */; };
@@ -242,7 +242,7 @@
 
 /* Begin PBXFileReference section */
 		4A109F86D367CF311DFC4E92 /* Pods-PatchrUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrUITests/Pods-PatchrUITests.debug.xcconfig"; sourceTree = "<group>"; };
-		5A74B7B18CA98DEDF1759D9E /* libPods-PatchrShare.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PatchrShare.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4E68708678DD52F96BCE7D44 /* Pods_PatchrUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PatchrUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6789A077E9087C4B77F1974E /* Pods-PatchrUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrUITests/Pods-PatchrUITests.release.xcconfig"; sourceTree = "<group>"; };
 		77F650E60AAC7571D67DCF81 /* Pods-Patchr.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.adhoc.xcconfig"; sourceTree = "<group>"; };
 		7C8097BB7E359EEF19F0B1CF /* Pods-PatchrUITests.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrUITests.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrUITests/Pods-PatchrUITests.adhoc.xcconfig"; sourceTree = "<group>"; };
@@ -326,10 +326,9 @@
 		9FDCC67342555A8E88594481 /* PatchrShare-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PatchrShare-Bridging-Header.h"; sourceTree = "<group>"; };
 		9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = MessageDetailViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		9FDCCD65EB714D83C5A818FE /* PatchrShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = file.entitlements; path = PatchrShare.entitlements; sourceTree = "<group>"; };
+		BAF56487413E9EF42358BF38 /* Pods_Patchr.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Patchr.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBEB69261B707D327A484358 /* Pods-PatchrShare.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrShare.release.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrShare/Pods-PatchrShare.release.xcconfig"; sourceTree = "<group>"; };
-		CD5FE90A2A947169CC6C9AEF /* libPods-PatchrUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PatchrUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDAF1A3B567B593593989D1B /* Pods-PatchrShare.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrShare.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrShare/Pods-PatchrShare.debug.xcconfig"; sourceTree = "<group>"; };
-		D330193EF9938976A31AE265 /* libPods-Patchr.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Patchr.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD2D7F91E14DE64DD894830A /* Pods-Patchr.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.debug.xcconfig"; sourceTree = "<group>"; };
 		E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordEditViewController.swift; sourceTree = "<group>"; };
 		E20004E01B099CBD00425694 /* PasswordResetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordResetViewController.swift; sourceTree = "<group>"; };
@@ -495,6 +494,7 @@
 		E2F85C781C32E5A000FC2364 /* DeviceUID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceUID.h; sourceTree = "<group>"; };
 		E2F85C791C342B8600FC2364 /* UserPhotoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPhotoView.swift; sourceTree = "<group>"; };
 		E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKCore.framework; path = Frameworks/AdobeCreativeSDKCore.framework; sourceTree = "<group>"; };
+		E539BA4D8F6D0FEF23479804 /* Pods_PatchrShare.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PatchrShare.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FF2A811DB73899C57AA39B93 /* Pods-Patchr.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.release.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -512,7 +512,7 @@
 				E238BAD01B5088A40094AF41 /* MobileCoreServices.framework in Frameworks */,
 				E238BACC1B50888C0094AF41 /* SystemConfiguration.framework in Frameworks */,
 				E2F182E31B4B4AFD0020F6BB /* Parse.framework in Frameworks */,
-				BD4E7E7C3E5E0CEE7DE752B4 /* libPods-Patchr.a in Frameworks */,
+				C1C05311B926A4E13ECEEB16 /* Pods_Patchr.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -520,7 +520,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A4C7E6B785E829092899706D /* libPods-PatchrUITests.a in Frameworks */,
+				3DD028475490FEED730746ED /* Pods_PatchrUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -528,7 +528,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0A0B6D9E21F82C47F10C258F /* libPods-PatchrShare.a in Frameworks */,
+				5818F78426BBC5E641828637 /* Pods_PatchrShare.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -640,9 +640,9 @@
 				E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */,
 				E273B5181B48349900888E73 /* Bolts.framework */,
 				E273B5191B48349900888E73 /* Parse.framework */,
-				D330193EF9938976A31AE265 /* libPods-Patchr.a */,
-				5A74B7B18CA98DEDF1759D9E /* libPods-PatchrShare.a */,
-				CD5FE90A2A947169CC6C9AEF /* libPods-PatchrUITests.a */,
+				BAF56487413E9EF42358BF38 /* Pods_Patchr.framework */,
+				E539BA4D8F6D0FEF23479804 /* Pods_PatchrShare.framework */,
+				4E68708678DD52F96BCE7D44 /* Pods_PatchrUITests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1669,6 +1669,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1725,18 +1726,7 @@
 					"-ObjC",
 					"-all_load",
 					"-O3",
-					"-l\"AFNetworking\"",
-					"-l\"AWSCore\"",
-					"-l\"AWSS3\"",
-					"-l\"AirPhotoBrowser\"",
-					"-l\"DACircularProgress\"",
-					"-l\"Lockbox\"",
-					"-l\"MBProgressHUD\"",
-					"-l\"PBWebViewController\"",
-					"-l\"SDWebImage\"",
-					"-l\"UIDevice-Hardware\"",
 					"-l\"c++\"",
-					"-l\"pop\"",
 					"-l\"sqlite3\"",
 					"-l\"z\"",
 					"-framework",
@@ -1805,18 +1795,7 @@
 					"-ObjC",
 					"-all_load",
 					"-O3",
-					"-l\"AFNetworking\"",
-					"-l\"AWSCore\"",
-					"-l\"AWSS3\"",
-					"-l\"AirPhotoBrowser\"",
-					"-l\"DACircularProgress\"",
-					"-l\"Lockbox\"",
-					"-l\"MBProgressHUD\"",
-					"-l\"PBWebViewController\"",
-					"-l\"SDWebImage\"",
-					"-l\"UIDevice-Hardware\"",
 					"-l\"c++\"",
-					"-l\"pop\"",
 					"-l\"sqlite3\"",
 					"-l\"z\"",
 					"-framework",
@@ -1869,6 +1848,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1922,18 +1902,7 @@
 					"-ObjC",
 					"-all_load",
 					"-O3",
-					"-l\"AFNetworking\"",
-					"-l\"AWSCore\"",
-					"-l\"AWSS3\"",
-					"-l\"AirPhotoBrowser\"",
-					"-l\"DACircularProgress\"",
-					"-l\"Lockbox\"",
-					"-l\"MBProgressHUD\"",
-					"-l\"PBWebViewController\"",
-					"-l\"SDWebImage\"",
-					"-l\"UIDevice-Hardware\"",
 					"-l\"c++\"",
-					"-l\"pop\"",
 					"-l\"sqlite3\"",
 					"-l\"z\"",
 					"-framework",
@@ -1974,7 +1943,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -2037,7 +2006,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -2050,10 +2019,6 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
-					"-l\"AWSCore\"",
-					"-l\"AWSS3\"",
-					"-l\"Keys\"",
-					"-l\"SDWebImage\"",
 					"-l\"sqlite3\"",
 					"-l\"z\"",
 					"-framework",
@@ -2093,10 +2058,6 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
-					"-l\"AWSCore\"",
-					"-l\"AWSS3\"",
-					"-l\"Keys\"",
-					"-l\"SDWebImage\"",
 					"-l\"sqlite3\"",
 					"-l\"z\"",
 					"-framework",
@@ -2136,10 +2097,6 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
-					"-l\"AWSCore\"",
-					"-l\"AWSS3\"",
-					"-l\"Keys\"",
-					"-l\"SDWebImage\"",
 					"-l\"sqlite3\"",
 					"-l\"z\"",
 					"-framework",

@@ -16,38 +16,6 @@
 #import "Reachability.h"
 #import "TTTAttributedLabel.h"
 
-#import <AFNetworking/AFNetworking.h>
-#import <AFNetworkActivityLogger/AFNetworkActivityLogger.h>
-#import <AFNetworking/AFNetworkActivityIndicatorManager.h>
-#import <UIImageView+AFNetworking.h>
-#import <AWSS3/AWSS3.h>
-#import <FBSDKCoreKit/FBSDKCoreKit.h>
-#import <FBSDKLoginKit/FBSDKLoginKit.h>
-#import <FBSDKShareKit/FBSDKShareKit.h>
-#import <PBWebViewController.h>
-#import <MBProgressHUD.h>
-#import <SDWebImage/UIImageView+WebCache.h>
-#import <SDWebImage/UIButton+WebCache.h>
-#import <SDWebImage/SDImageCache.h>
-#import <UIDevice-Hardware.h>
-#import <DateTools/NSDate+DateTools.h>
-#import <Lockbox.h>
-#import <IDMPhoto.h>
-#import <IDMPhotoBrowser.h>
-#import <UIView+Facade.h>
-#import <Branch.h>
-#import <TWMessageBarManager.h>
-#import <Keys/PatchrKeys.h>
-#import <Google/Analytics.h>
-#import <CommonCrypto/CommonCrypto.h>
-#import <pop/POP.h>
-#import <DLRadioButton.h>
-#import <THContactPicker/THContactPickerView.h>
-
-#import <AdobeCreativeSDKCore/AdobeUXAuthManager.h>
-#import <AdobeCreativeSDKImage/AdobeUXImageEditorViewController.h>
-
-#import "BFURL.h"
 #import "Patch.h"
 #import "Query.h"
 #import "QueryItem.h"
@@ -61,6 +29,13 @@
 #import "User.h"
 #import "Link.h"
 #import "Shortcut.h"
+
+//#import <IDMPhoto.h>
+//#import <IDMPhotoBrowser.h>
+#import <CommonCrypto/CommonCrypto.h>
+
+#import <AdobeCreativeSDKCore/AdobeUXAuthManager.h>
+#import <AdobeCreativeSDKImage/AdobeUXImageEditorViewController.h>
 
 
 #endif

@@ -9,6 +9,7 @@
 import UIKit
 import Social
 import MobileCoreServices
+import Lockbox
 
 class ShareViewController: SLComposeServiceViewController {
 

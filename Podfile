@@ -21,7 +21,7 @@ plugin 'cocoapods-keys', {
 
 platform :ios, '8.0'
 inhibit_all_warnings!
-#use_frameworks!
+use_frameworks!
 
 def shared_pods
 	pod 'SDWebImage',				'~> 3.7.2'

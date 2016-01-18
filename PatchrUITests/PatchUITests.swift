@@ -6,7 +6,7 @@
 //  Copyright © 2016 3meters. All rights reserved.
 //
 
-@testable import Patchr	// Makes all internal api calls available
+//@testable import Patchr	// Makes all internal api calls available
 
 class PatchUITests: BaseTestCase {
 	

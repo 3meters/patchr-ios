@@ -6,6 +6,10 @@
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
 
+import FBSDKLoginKit
+import FBSDKShareKit
+import Keys
+
 protocol ServiceProvider: NSObjectProtocol {
 	func authorize(completion: CompletionBlock?) -> Void
 	func profile(completion: CompletionBlock?) -> Void

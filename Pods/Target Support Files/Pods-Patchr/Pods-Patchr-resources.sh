@@ -57,39 +57,6 @@ install_resource()
       ;;
   esac
 }
-if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
-  install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPBLocalizations.bundle"
-  install_resource "DateTools/DateTools/DateTools.bundle"
-  install_resource "TWMessageBarManager/Classes/Icons/icon-error.png"
-  install_resource "TWMessageBarManager/Classes/Icons/icon-error@2x.png"
-  install_resource "TWMessageBarManager/Classes/Icons/icon-info.png"
-  install_resource "TWMessageBarManager/Classes/Icons/icon-info@2x.png"
-  install_resource "TWMessageBarManager/Classes/Icons/icon-success.png"
-  install_resource "TWMessageBarManager/Classes/Icons/icon-success@2x.png"
-fi
-if [[ "$CONFIGURATION" == "Release" ]]; then
-  install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
-  install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPBLocalizations.bundle"
-  install_resource "DateTools/DateTools/DateTools.bundle"
-  install_resource "TWMessageBarManager/Classes/Icons/icon-error.png"
-  install_resource "TWMessageBarManager/Classes/Icons/icon-error@2x.png"
-  install_resource "TWMessageBarManager/Classes/Icons/icon-info.png"
-  install_resource "TWMessageBarManager/Classes/Icons/icon-info@2x.png"
-  install_resource "TWMessageBarManager/Classes/Icons/icon-success.png"
-  install_resource "TWMessageBarManager/Classes/Icons/icon-success@2x.png"
-fi
-if [[ "$CONFIGURATION" == "AdHoc" ]]; then
-  install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPhotoBrowser.bundle"
-  install_resource "../../../../code/AirPhotoBrowser/Classes/IDMPBLocalizations.bundle"
-  install_resource "DateTools/DateTools/DateTools.bundle"
-  install_resource "TWMessageBarManager/Classes/Icons/icon-error.png"
-  install_resource "TWMessageBarManager/Classes/Icons/icon-error@2x.png"
-  install_resource "TWMessageBarManager/Classes/Icons/icon-info.png"
-  install_resource "TWMessageBarManager/Classes/Icons/icon-info@2x.png"
-  install_resource "TWMessageBarManager/Classes/Icons/icon-success.png"
-  install_resource "TWMessageBarManager/Classes/Icons/icon-success@2x.png"
-fi
 
 mkdir -p "${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
 rsync -avr --copy-links --no-relative --exclude '*/.svn/*' --files-from="$RESOURCES_TO_COPY" / "${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"

@@ -8,6 +8,7 @@
 
 import UIKit
 import MessageUI
+import Branch
 
 class MessageDetailViewController: BaseViewController {
 

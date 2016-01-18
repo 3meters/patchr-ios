@@ -8,6 +8,8 @@
 
 import UIKit
 import MessageUI
+import MBProgressHUD
+import PBWebViewController
 
 class SettingsTableViewController: UITableViewController {
 	

@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import FBSDKLoginKit
+import Branch
 
 class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol {
 

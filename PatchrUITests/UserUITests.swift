@@ -8,7 +8,7 @@
 
 import XCTest
 
-@testable import Patchr	// Makes all internal api calls available
+//@testable import Patchr	// Makes all internal api calls available
 
 class UserUITests: BaseTestCase {
 	

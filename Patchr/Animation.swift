@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
 
+import pop
+
 struct Animation {
 	
 	static func bounce(view: UIView) {

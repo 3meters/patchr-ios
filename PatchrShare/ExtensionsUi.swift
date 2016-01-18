@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
 
+import UIKit
+
 extension UITextField {
     var isEmpty: Bool {
         return self.text == nil || self.text!.isEmpty

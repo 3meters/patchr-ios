@@ -7,6 +7,9 @@
 //
 
 import UIKit
+import AWSS3
+import THContactPicker
+import MBProgressHUD
 
 enum MessageType: Int {
 	case Content
