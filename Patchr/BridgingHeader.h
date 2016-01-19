@@ -30,9 +30,8 @@
 #import "Link.h"
 #import "Shortcut.h"
 
-//#import <IDMPhoto.h>
-//#import <IDMPhotoBrowser.h>
 #import <CommonCrypto/CommonCrypto.h>
+#import <Google/Analytics.h>
 
 #import <AdobeCreativeSDKCore/AdobeUXAuthManager.h>
 #import <AdobeCreativeSDKImage/AdobeUXImageEditorViewController.h>
