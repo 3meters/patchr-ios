@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "82C001D49302AEA89A7691DAB3F035B2"
+               BlueprintIdentifier = "FEB732AA0C88A5CD2D7CD2DBF5669DED"
                BlueprintName = "AirPhotoBrowser"
                ReferencedContainer = "container:Pods.xcodeproj"
-               BuildableName = "libAirPhotoBrowser.a">
+               BuildableName = "AirPhotoBrowser.framework">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
