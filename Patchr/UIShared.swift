@@ -44,14 +44,14 @@ struct UIShared {
 		return (clientVersionCode >= versionMin)
 	}
 
-    static func showPhotoBrowser(image: UIImage!, animateFromView: UIView!, viewController: UIViewController!, entity: Entity?) -> AirPhotoBrowser {
+    static func showPhotoBrowser(image: UIImage!, animateFromView: UIView!, viewController: UIViewController!, entity: Entity?) -> PhotoBrowser {
         /*
         * Create browser (must be done each time photo browser is displayed. Photo
         * browser objects cannot be re-used)
         */
         let photo = IDMPhoto(image:image)
         let photos = Array([photo])
-        let browser = AirPhotoBrowser(photos:photos as [AnyObject], animatedFromView: animateFromView)
+        let browser = PhotoBrowser(photos:photos as [AnyObject], animatedFromView: animateFromView)
         
         browser.usePopAnimation = true
         browser.scaleImage = image  // Used because final image might have different aspect ratio than initially

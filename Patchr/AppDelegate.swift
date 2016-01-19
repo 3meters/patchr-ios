@@ -201,6 +201,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
 		self.window?.makeKeyAndVisible()
 		
+		if MOCK {
+			UIView.setAnimationsEnabled(false)
+			UIApplication.sharedApplication().keyWindow!.layer.speed = 100.0
+		}
+		
         if UserController.instance.authenticated {
 			let controller = MainTabBarController()
 			controller.selectedIndex = 0
@@ -267,7 +272,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, supportedInterfaceOrientationsForWindow window: UIWindow?) -> UIInterfaceOrientationMask {
         if let controller = UIViewController.topMostViewController() {
-            if controller is AirPhotoBrowser || controller is AirPhotoPreview {
+            if controller is PhotoBrowser || controller is AirPhotoPreview {
                 return UIInterfaceOrientationMask.All;
             }
             else {

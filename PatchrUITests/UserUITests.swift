@@ -176,8 +176,8 @@ class UserUITests: BaseTestCase {
 	}
 	
 	func testLoginLogout() {
-		TestLib.login(self)
-		TestLib.logout(self)
+		login(self)
+		logout(self)
 	}
 	
 	func testLoginBadPassword() {
@@ -244,7 +244,7 @@ class UserUITests: BaseTestCase {
 		let navCancelButton = self.app.buttons["nav_cancel_button"]
 		let navEditButton = self.app.navigationBars["Me"].buttons["user_edit_button"]
 		
-		TestLib.login(self)
+		login(self)
 		
 		waitForElementToExist(profileTab)
 		
@@ -262,7 +262,7 @@ class UserUITests: BaseTestCase {
 		
 		navCancelButton.tap()
 		
-		TestLib.logout(self)
+		logout(self)
 	}
 	
 	func testProfileEdit() {
@@ -273,7 +273,7 @@ class UserUITests: BaseTestCase {
 		let areaField = self.app.textFields["area_field"]
 		let nameField = self.app.textFields["name_field"]
 		
-		TestLib.login(self)
+		login(self)
 		
 		waitForElementToExist(profileTab)
 		
@@ -298,7 +298,7 @@ class UserUITests: BaseTestCase {
 		
 		navSubmitButton.tap()
 		
-		TestLib.logout(self)
+		logout(self)
 	}
 	
 	func testFacebookConnect() {
@@ -308,7 +308,7 @@ class UserUITests: BaseTestCase {
 		let navEditButton = self.app.navigationBars["Me"].buttons["user_edit_button"]
 		let facebookConnectButton = self.app.buttons["facebook_button"]
 		
-		TestLib.login(self)
+		login(self)
 		
 		waitForElementToExist(profileTab)
 		

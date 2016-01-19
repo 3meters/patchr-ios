@@ -9,7 +9,7 @@
 import UIKit
 import AirPhotoBrowser
 
-class AirPhotoBrowser: IDMPhotoBrowser {
+class PhotoBrowser: IDMPhotoBrowser {
     
     var browseDelegate	: PhotoBrowseControllerDelegate?
     var imageResult		: ImageResult?

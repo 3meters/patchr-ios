@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AirPhotoPreview: AirPhotoBrowser {
+class AirPhotoPreview: PhotoBrowser {
     
     /* Wraps photo browser with ui specialized for previewing photos from the photo picker. */
     
