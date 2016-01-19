@@ -59,7 +59,7 @@ class LocationController: NSObject {
 		else if CLLocationManager.authorizationStatus() == .AuthorizedAlways
 			|| CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
 				Log.d("***** Location updates started *****")
-				if MOCK {
+				if MOCK && MOCK_LAT != nil && MOCK_LON != nil {
 					let location = CLLocation(latitude: MOCK_LAT!, longitude: MOCK_LON!)
 					locationManager(self.locationManager, didUpdateLocations: [location])
 					return

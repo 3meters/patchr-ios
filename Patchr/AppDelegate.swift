@@ -36,10 +36,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		let args = NSProcessInfo.processInfo().arguments
 		MOCK = args.contains("MOCKFLAG")
 		if MOCK {
-			MOCK_LAT = Double(NSProcessInfo.processInfo().environment["MOCK_LAT"]!)
-			MOCK_LON = Double(NSProcessInfo.processInfo().environment["MOCK_LON"]!)
 			Log.d("Running in Mock mode for testing")
-			Log.d("Mock lat: \(MOCK_LAT!) lon: \(MOCK_LON!)")
+			let env = NSProcessInfo.processInfo().environment
+			if env["MOCK_LAT"] != nil && env["MOCK_LON"] != nil {
+				MOCK_LAT = Double(env["MOCK_LAT"]!)
+				MOCK_LON = Double(env["MOCK_LON"]!)
+				Log.d("Mock lat: \(MOCK_LAT!) lon: \(MOCK_LON!)")
+			}
 		}
 		
 		/* Initialize Crashlytics: 25% of method time */

@@ -19,6 +19,12 @@ class BaseTestCase: XCTestCase {
         self.continueAfterFailure = false
 		
 		if !self.launched {
+			/*
+			 * MOCK flag triggers the following behavior
+			 * - Signs user out if there is an authenticated user.
+			 * - Disables all animations to run tests faster.
+			 * - Checks for mock location.
+			 */
 			setupSnapshot(app)
 			self.app.launchArguments = ["MOCKFLAG"]
 			self.app.launchEnvironment = ["MOCK_LAT": "47.61579554", "MOCK_LON": "-122.20136896"]

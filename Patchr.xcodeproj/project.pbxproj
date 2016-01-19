@@ -76,7 +76,6 @@
 		E224C3501B6ED27F00879775 /* PatchrShare.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E238BAE41B51D3290094AF41 /* PatchrShare.storyboard */; };
 		E224C3551B6EDBBE00879775 /* PatchTargetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */; };
 		E227707C1C45650300866733 /* UserUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E227707B1C45650300866733 /* UserUITests.swift */; };
-		E227708A1C45BA8100866733 /* TestLib.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22770891C45BA8100866733 /* TestLib.swift */; };
 		E227708D1C46C01800866733 /* MBProgressHUD+MBProgressHudAccessible.m in Sources */ = {isa = PBXBuildFile; fileRef = E227708C1C46C01800866733 /* MBProgressHUD+MBProgressHudAccessible.m */; };
 		E227708F1C4806B400866733 /* uninstall-patchr-booted.sh in Resources */ = {isa = PBXBuildFile; fileRef = E227708E1C4806B400866733 /* uninstall-patchr-booted.sh */; };
 		E22770911C480F5000866733 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22770901C480F5000866733 /* SnapshotHelper.swift */; };
@@ -349,7 +348,6 @@
 		E22770791C45650300866733 /* PatchrUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PatchrUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E227707B1C45650300866733 /* UserUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUITests.swift; sourceTree = "<group>"; };
 		E227707D1C45650300866733 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E22770891C45BA8100866733 /* TestLib.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestLib.swift; sourceTree = "<group>"; };
 		E227708B1C46C01800866733 /* MBProgressHUD+MBProgressHudAccessible.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MBProgressHUD+MBProgressHudAccessible.h"; sourceTree = "<group>"; };
 		E227708C1C46C01800866733 /* MBProgressHUD+MBProgressHudAccessible.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MBProgressHUD+MBProgressHudAccessible.m"; sourceTree = "<group>"; };
 		E227708E1C4806B400866733 /* uninstall-patchr-booted.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "uninstall-patchr-booted.sh"; sourceTree = "<group>"; };
@@ -682,7 +680,6 @@
 				E227707B1C45650300866733 /* UserUITests.swift */,
 				E208DED31C49B46B00944242 /* PatchUITests.swift */,
 				E208DED51C49BA0000944242 /* BaseTestCase.swift */,
-				E22770891C45BA8100866733 /* TestLib.swift */,
 				E22770901C480F5000866733 /* SnapshotHelper.swift */,
 				E22770961C4828F400866733 /* Support */,
 				E22770971C4828FE00866733 /* Scripts */,
@@ -1552,7 +1549,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E227707C1C45650300866733 /* UserUITests.swift in Sources */,
-				E227708A1C45BA8100866733 /* TestLib.swift in Sources */,
 				E208DED61C49BA0000944242 /* BaseTestCase.swift in Sources */,
 				E208DED41C49B46B00944242 /* PatchUITests.swift in Sources */,
 				E22770911C480F5000866733 /* SnapshotHelper.swift in Sources */,

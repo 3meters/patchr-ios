@@ -231,7 +231,7 @@ class UserUITests: BaseTestCase {
 		passwordField.tapAndTypeText("Patchme")
 		submitButton.tap()
 
-		waitForElementToExist(loginButton)
+		waitForElementToExist(loginButton) // Returned to login view
 	}
 	
 	func testPasswordChange() {
@@ -241,7 +241,6 @@ class UserUITests: BaseTestCase {
 		let passwordNewField = self.app.secureTextFields["new_password_field"]
 		let profileTab = self.app.tabBars.buttons["profile_tab"]
 		let navSubmitButton = self.app.buttons["nav_submit_button"]
-		let navCancelButton = self.app.buttons["nav_cancel_button"]
 		let navEditButton = self.app.navigationBars["Me"].buttons["user_edit_button"]
 		
 		login(self)
@@ -258,11 +257,7 @@ class UserUITests: BaseTestCase {
 		passwordNewField.tapAndTypeText("Patchme")
 		navSubmitButton.tap()
 		
-		waitForElementToExist(changePasswordButton)
-		
-		navCancelButton.tap()
-		
-		logout(self)
+		waitForElementToExist(changePasswordButton)  // Returned to profile edit
 	}
 	
 	func testProfileEdit() {
@@ -298,7 +293,7 @@ class UserUITests: BaseTestCase {
 		
 		navSubmitButton.tap()
 		
-		logout(self)
+		waitForElementToNotExist(navSubmitButton) // Success lets us leave the view
 	}
 	
 	func testFacebookConnect() {
