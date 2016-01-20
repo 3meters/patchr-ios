@@ -50,6 +50,7 @@ target 'Patchr' do
 	pod 'FBSDKLoginKit',			'~> 4.9.0'
 	pod 'FBSDKShareKit',			'~> 4.9.0'
 	pod 'DateTools'
+	pod 'Parse'
 end
 
 target 'PatchrUITests', :exclusive => true do

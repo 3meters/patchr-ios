@@ -69,6 +69,8 @@ PODS:
   - Keys (1.0.0)
   - Lockbox (2.1.0)
   - MBProgressHUD (0.9.1)
+  - Parse (1.12.0):
+    - Bolts/Tasks (~> 1.5)
   - PBWebViewController (0.3)
   - pop (1.0.8)
   - SDWebImage (3.7.3):
@@ -96,6 +98,7 @@ DEPENDENCIES:
   - Keys (from `Pods/CocoaPodsKeys`)
   - Lockbox
   - MBProgressHUD (~> 0.9.1)
+  - Parse
   - PBWebViewController (~> 0.3)
   - pop (~> 1.0)
   - SDWebImage (~> 3.7.2)
@@ -135,6 +138,7 @@ SPEC CHECKSUMS:
   Keys: 7d2ff6ff42f6903358267ce56e9392f83c31acfe
   Lockbox: 16442da35d9d4286966936763be728a931d589c3
   MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
+  Parse: de2c52a9a1421b91ae7594ab8ce191afd184f19b
   PBWebViewController: 909b1505da6ba7c5c82519a6457246027926061e
   pop: bb773ae2c791ca2629de13b347e7a8b450fa6a57
   SDWebImage: 1d2b1a1efda1ade1b00b6f8498865f8ddedc8a84
