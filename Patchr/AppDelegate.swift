@@ -28,22 +28,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     class func appDelegate() -> AppDelegate {
         return UIApplication.sharedApplication().delegate as! AppDelegate
     }
-    
+	
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
         Log.d("Patchr launching...")
-		
-		let args = NSProcessInfo.processInfo().arguments
-		MOCK = args.contains("MOCKFLAG")
-		if MOCK {
-			Log.d("Running in Mock mode for testing")
-			let env = NSProcessInfo.processInfo().environment
-			if env["MOCK_LAT"] != nil && env["MOCK_LON"] != nil {
-				MOCK_LAT = Double(env["MOCK_LAT"]!)
-				MOCK_LON = Double(env["MOCK_LON"]!)
-				Log.d("Mock lat: \(MOCK_LAT!) lon: \(MOCK_LON!)")
-			}
-		}
 		
 		/* Initialize Crashlytics: 25% of method time */
 		Fabric.with([Crashlytics()])
@@ -108,12 +96,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
         /* Get the latest on the authenticated user if we have one */
 		if UserController.instance.authenticated {	// Checks for current userId and sessionKey
-			if MOCK {
-				UserController.instance.signout()
-			}
-			else {
-				UserController.instance.signinAuto()
-			}
+			UserController.instance.signinAuto()
         }
 		
 		/* We call even if install record exists and using this as a chance to update the metadata */
@@ -203,11 +186,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         /* If we have an authenticated user then start at the usual spot, otherwise start at the lobby scene. */
         
 		self.window?.makeKeyAndVisible()
-		
-		if MOCK {
-			UIView.setAnimationsEnabled(false)
-			UIApplication.sharedApplication().keyWindow!.layer.speed = 100.0
-		}
 		
         if UserController.instance.authenticated {
 			let controller = MainTabBarController()
@@ -342,8 +320,46 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 extension AppDelegate {
 	/*
-	* HarpyDelegate
-	*/
+	 * Testing support
+	 */
+	func resetToLobby() {
+		/*
+		 * Client state is reset but service may still see the install as signed in.
+		 * The service will still send notifications to the install based on the signed in user.
+		 * We assume that if no authenticated user then we are at correct initial state.
+		 */
+		if UserController.instance.authenticated {			
+			UserController.instance.discardCredentials()
+			NSUserDefaults.standardUserDefaults().setObject(nil, forKey: PatchrUserDefaultKey("userEmail"))
+			NSUserDefaults.standardUserDefaults().synchronize()
+		}
+		
+		UserController.instance.clearStore()
+		LocationController.instance.clearLastLocationAccepted()
+		
+		if !(UIViewController.topMostViewController() is LobbyViewController) {
+			let navController = UINavigationController()
+			navController.viewControllers = [LobbyViewController()]
+			self.window!.setRootViewController(navController, animated: true)
+		}
+	}
+	
+	func resetToHome() {
+		
+		if let controller = UIViewController.getTabBarController() {
+			controller.selectedIndex = 0	// Patches
+		}
+		else {
+			let controller = MainTabBarController()
+			controller.selectedIndex = 0
+			self.window?.setRootViewController(controller, animated: true)
+		}
+	}
+	
+	func disableAnimations(state: Bool) {
+		UIView.setAnimationsEnabled(!state)
+		UIApplication.sharedApplication().keyWindow!.layer.speed = state ? 100.0 : 1.0
+	}
 }
 
 extension UIApplication {

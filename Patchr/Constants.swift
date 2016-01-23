@@ -23,10 +23,6 @@ let GOOGLE_ANALYTICS_ID	= "UA-33660954-6"
 let BUNDLE_ID			= "com.3meters.patchr.ios"
 let KEYCHAIN_GROUP		= "7542324V6B.\(BUNDLE_ID)"	// Team id + bundle id
 
-var MOCK				= false
-var MOCK_LAT			: Double?
-var MOCK_LON			: Double?
-
 let SCREEN_NARROW				= (UIScreen.mainScreen().bounds.size.width == 320)
 let SCREEN_320					= (UIScreen.mainScreen().bounds.size.width == 320)	// iphone 4s
 let SCREEN_375					= (UIScreen.mainScreen().bounds.size.width == 375)	// iphone 6
@@ -42,6 +38,8 @@ let URI_PROXIBASE_SEARCH_IMAGES: String = "https://api.datamarket.azure.com/Bing
 let NAMESPACE: String                   = "com.3meters.patchr.ios."
 let CELL_IDENTIFIER                     = "cell"
 let COGNITO_POOLID                      = "us-east-1:ff1976dc-9c27-4046-a59f-7dd43355869b"
+
+var LOG_TIMERS = true
 
 func PatchrUserDefaultKey(subKey: String) -> String {
     return NAMESPACE + subKey
