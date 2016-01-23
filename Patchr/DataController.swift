@@ -155,7 +155,9 @@ class DataController: NSObject {
 				}
 			}
 			
-			Utils.stopwatch2.start("Entity", message: "\(entityType)")
+			let stopwatch = Stopwatch()
+			
+			stopwatch.start("Entity", message: "\(entityType)")
 			
 			fetchByEntityType(entityType, withId: entityId, criteria: criteria, completion: {
 				response, error in
@@ -175,14 +177,14 @@ class DataController: NSObject {
 					privateContext.parentContext = DataController.instance.mainContext
 					
 					privateContext.performBlock {
-						Utils.stopwatch2.segmentTime("\(entityType): network call finished")
+						stopwatch.segmentTime("\(entityType): network call finished")
 						
 						/* Turn maps and arrays into objects */
 						if let dictionary = response as? [NSObject:AnyObject] {
 							
 							let dataWrapper = ServiceData()
 							ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper)
-							Utils.stopwatch2.segmentNote("\(entityType): service time: \(dataWrapper.time)ms")
+							stopwatch.segmentNote("\(entityType): service time: \(dataWrapper.time)ms")
 							
 							if !UIShared.versionIsValid(Int(dataWrapper.minBuildValue)) {
 								UIShared.compatibilityUpgrade()
@@ -215,7 +217,7 @@ class DataController: NSObject {
 							}
 						}
 						completion(objectId, error: nil)
-						Utils.stopwatch2.stop("\(entityType)")
+						stopwatch.stop("\(entityType)")
 					}
 				}
 			})
@@ -287,7 +289,8 @@ class DataController: NSObject {
 			criteria = entity!.criteria(true)
 		}
 		
-		Utils.stopwatch1.start("List", message: "\(query.name)")
+		let stopwatch = Stopwatch()
+		stopwatch.start("List", message: "\(query.name)")
 		
 		/*--------------------------------------------------------------------------------------------
 		* Callback
@@ -314,10 +317,10 @@ class DataController: NSObject {
 			privateContext.performBlock {
 				
 				let query = privateContext.objectWithID(queryId) as! Query
-				Utils.stopwatch1.segmentTime("\(query.name): network call finished")
+				stopwatch.segmentTime("\(query.name): network call finished")
 				
 				/* Turn response entities into managed entities */
-				let returnValue = self.handleServiceDataResponseForQuery(query, response: response!, context: privateContext)
+				let returnValue = self.handleServiceDataResponseForQuery(query, response: response!, stopwatch: stopwatch, context: privateContext)
 				
 				/* Check for version problem */
 				if returnValue == nil {
@@ -357,11 +360,11 @@ class DataController: NSObject {
 				/* Persist the changes and triggers notifications to observers */
 				DataController.instance.saveContext(privateContext, wait: true)
 				DataController.instance.saveContext(false)						// Main context
-				Utils.stopwatch1.segmentTime("\(query.name): context saved")
+				stopwatch.segmentTime("\(query.name): context saved")
 				
 				/* Sets query.executed and query.offsetDate but doesn't do anything with queryItems */
 				completion(queryItems: queryItems, query: query, error: error)
-				Utils.stopwatch1.stop("\(query.name)")
+				stopwatch.stop("\(query.name)")
 				
 			}
 		}
@@ -406,14 +409,14 @@ class DataController: NSObject {
 	 * Methods
 	 *--------------------------------------------------------------------------------------------*/
 	
-	private func handleServiceDataResponseForQuery(query: Query, response: AnyObject, context: NSManagedObjectContext) -> (serviceData:ServiceData, queryItems:[QueryItem])? {
+	private func handleServiceDataResponseForQuery(query: Query, response: AnyObject, stopwatch: Stopwatch, context: NSManagedObjectContext) -> (serviceData:ServiceData, queryItems:[QueryItem])? {
 
 		var queryItems: [QueryItem] = []
 		let dataWrapper = ServiceData()
 		if let dictionary = response as? [NSObject:AnyObject] {
 
 			ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper)
-			Utils.stopwatch1.segmentNote("\(query.name): service time: \(dataWrapper.time)ms")
+			stopwatch.segmentNote("\(query.name): service time: \(dataWrapper.time)ms")
 			
 			if !UIShared.versionIsValid(Int(dataWrapper.minBuildValue)) {
 				UIShared.compatibilityUpgrade()
@@ -460,7 +463,7 @@ class DataController: NSObject {
 							}
                         }
                     }
-					Utils.stopwatch1.segmentTime("\(query.name): sidecar processed")
+					stopwatch.segmentTime("\(query.name): sidecar processed")
                 }
 
 				var itemPosition = 0 + query.offsetValue
@@ -519,7 +522,7 @@ class DataController: NSObject {
 						assert(false, "Missing or unknown schema for object \(entityDictionary)")
 					}
 				}
-				Utils.stopwatch1.segmentTime("\(query.name): list items processed")
+				stopwatch.segmentTime("\(query.name): list items processed")
 
 			}
 		}
