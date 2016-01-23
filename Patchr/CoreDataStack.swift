@@ -99,6 +99,7 @@ class CoreDataStack: NSObject {
 			privateContext.deleteAllObjects()
 			self.saveContext(privateContext, wait: true)
 			self.saveContext(self.stackMainContext, wait: true)
+			self.saveContext(self.stackWriterContext, wait: true)
 		}
 	}
 	
