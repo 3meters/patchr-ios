@@ -23,14 +23,10 @@ platform :ios, '8.0'
 inhibit_all_warnings!
 use_frameworks!
 
-def shared_pods
+def core_pods
 	pod 'SDWebImage',				'~> 3.7.2'
-	pod 'AWSS3'
 	pod 'Lockbox'										# Used to protect secrets and install info
-end
-
-target 'Patchr' do
-	shared_pods
+	pod 'AWSS3'
 	pod 'AFNetworking',				'~> 2.6'
 	pod 'AFNetworkActivityLogger',	'~> 2.0'
 	pod 'PBWebViewController',		'~> 0.3'			# Used to show show web content for terms/policy/licensing
@@ -53,13 +49,21 @@ target 'Patchr' do
 	pod 'Parse'
 end
 
-target 'PatchrUITests', :exclusive => true do
-	pod 'Lockbox'
+target 'Patchr' do
+	core_pods
 end
 
-target 'PatchrShare', :exclusive => true do
-	shared_pods
+target 'AcceptanceTests' do
+	core_pods
+	pod 'Quick',					'~> 0.8.0'
+	pod 'Nimble'
+	pod 'KIF/IdentifierTests',		'~> 3.0', :configurations => ['Debug']
+end
+
+target 'PatchrShare' do
+	pod 'SDWebImage',				'~> 3.7.2'
+	pod 'AWSS3'
+	pod 'Lockbox'										# Used to protect secrets and install info
 end
 
 # CreativeSDKCore and Image frameworks are on version 0.12.2127.02
-

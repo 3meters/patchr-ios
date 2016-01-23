@@ -67,12 +67,17 @@ PODS:
   - GoogleUtilities (1.1.0):
     - GoogleSymbolUtilities (~> 1.0.0)
   - Keys (1.0.0)
+  - KIF/Core (3.3.1)
+  - KIF/IdentifierTests (3.3.1):
+    - KIF/Core
   - Lockbox (2.1.0)
   - MBProgressHUD (0.9.1)
+  - Nimble (3.1.0)
   - Parse (1.12.0):
     - Bolts/Tasks (~> 1.5)
   - PBWebViewController (0.3)
   - pop (1.0.8)
+  - Quick (0.8.0)
   - SDWebImage (3.7.3):
     - SDWebImage/Core (= 3.7.3)
   - SDWebImage/Core (3.7.3)
@@ -96,11 +101,14 @@ DEPENDENCIES:
   - FBSDKShareKit (~> 4.9.0)
   - Google/Analytics
   - Keys (from `Pods/CocoaPodsKeys`)
+  - KIF/IdentifierTests (~> 3.0)
   - Lockbox
   - MBProgressHUD (~> 0.9.1)
+  - Nimble
   - Parse
   - PBWebViewController (~> 0.3)
   - pop (~> 1.0)
+  - Quick (~> 0.8.0)
   - SDWebImage (~> 3.7.2)
   - THContactPicker (~> 1.2)
   - TWMessageBarManager (~> 1.8)
@@ -136,11 +144,14 @@ SPEC CHECKSUMS:
   GoogleSymbolUtilities: 82ad9f93d3615244b3f4ce440f5ab2515e8b4f56
   GoogleUtilities: 8ed9134debe11719097881711464752900668f10
   Keys: 7d2ff6ff42f6903358267ce56e9392f83c31acfe
+  KIF: ff9f0e585503871bcd096937cc760081d770c5e2
   Lockbox: 16442da35d9d4286966936763be728a931d589c3
   MBProgressHUD: c47f2c166c126cf2ce36498d80f33e754d4e93ad
+  Nimble: 79d40f4d69d47314229bbabacaa02b8838c779b9
   Parse: de2c52a9a1421b91ae7594ab8ce191afd184f19b
   PBWebViewController: 909b1505da6ba7c5c82519a6457246027926061e
   pop: bb773ae2c791ca2629de13b347e7a8b450fa6a57
+  Quick: 563d0f6ec5f72e394645adb377708639b7dd38ab
   SDWebImage: 1d2b1a1efda1ade1b00b6f8498865f8ddedc8a84
   THContactPicker: e723f7c6ab6e1d6d10d59d618322ab8bfcb00365
   TWMessageBarManager: 47f7279924329271aa38c4b3755d2f8a316ac723

@@ -1,11 +1,10 @@
 #!/bin/sh
-
-# Won't run xcode ui tests without fix from xctool. https://github.com/facebook/xctool/issues/534
-# xctool/xctool.sh \
-#	-workspace Patchr.xcworkspace \
-#	-scheme Patchr \
-#	-sdk iphonesimulator \
-#	test
+# Must be device type not device name, use xcrun simctl list
+xctool	-workspace Patchr.xcworkspace \
+		-scheme Patchr \
+		-sdk iphonesimulator \
+		-destination 'name=iPhone 6 Plus' \
+		run-tests -resetSimulator
 
 # xcodebuild \
 #	-workspace Patchr.xcworkspace \
@@ -14,9 +13,9 @@
 #	-destination 'platform=iOS Simulator,name=iPhone 6 Plus Jay,OS=9.2' \
 #	test
 
-scan \
-	--workspace Patchr.xcworkspace \
-	--scheme PatchrUITests \
-	--sdk iphonesimulator \
-	--output_directory ./test_output \
-	--device 'iPhone 6 Plus Jay'
+#scan \
+#	--workspace Patchr.xcworkspace \
+#	--scheme PatchrUITests \
+#	--sdk iphonesimulator \
+#	--output_directory ./test_output \
+#	--device 'iPhone 6 Plus Jay'
