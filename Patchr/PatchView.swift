@@ -137,7 +137,7 @@ class PatchView: BaseView {
 			self.watchingGroup.hidden = false
 			self.rule.hidden = false
 			
-			self.visibility.hidden = (patch.visibility == "public")
+			self.visibility.hidden = (patch.visibility != nil && patch.visibility == "public")
 			self.status.hidden = true
 			if (patch.userWatchStatusValue == .Pending && !SCREEN_NARROW) {
 				self.status.hidden = false

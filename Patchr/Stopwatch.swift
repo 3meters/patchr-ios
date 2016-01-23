@@ -43,10 +43,12 @@ class Stopwatch: NSObject {
 		let stats = "segment time: \(Int(lapTime * 1000))ms, total time: \(Int(self.totalTime * 1000))ms"
 		if message != nil {
 			if prefixIncluded {
-				log.addObject("\(self.name!): \(message!): \(stats)")
+				let message = "\(self.name!): \(message!): \(stats)"
+				log.addObject(message)
 			}
 			else {
-				log.addObject("\(self.name!): *** Segment ***: \(message!): \(stats)")
+				let message = "\(self.name!): *** Segment ***: \(message!): \(stats)"
+				log.addObject(message)
 			}
 		}
 		return lapTime

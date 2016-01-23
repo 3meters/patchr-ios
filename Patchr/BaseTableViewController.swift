@@ -44,14 +44,14 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		super.viewDidLoad()
 		
         /* Hookup refresh control */
-		if !MOCK {
-			self.refreshControl = UIRefreshControl()
-			self.refreshControl!.tintColor = Theme.colorActivityIndicator
-			self.refreshControl?.addTarget(self, action: "pullToRefreshAction:", forControlEvents: UIControlEvents.ValueChanged)
-			self.refreshControl?.endRefreshing()
-		}
+		self.refreshControl = UIRefreshControl()
+		self.refreshControl?.accessibilityIdentifier = "refresh_control"
+		self.refreshControl!.tintColor = Theme.colorActivityIndicator
+		self.refreshControl?.addTarget(self, action: "pullToRefreshAction:", forControlEvents: UIControlEvents.ValueChanged)
+		self.refreshControl?.endRefreshing()
 		
 		/* Simple activity indicator (frame sizing) */
+		self.activity.accessibilityIdentifier = "activity_view"
 		self.activity.color = Theme.colorActivityIndicator
 		self.activity.hidesWhenStopped = true
 		self.view.addSubview(activity)
@@ -65,6 +65,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.footerView.addSubview(self.loadMoreButton)
 		
 		self.loadMoreActivity.tag = 2
+		self.loadMoreActivity.accessibilityIdentifier = "activity_more"
 		self.loadMoreActivity.color = Theme.colorActivityIndicator
 		self.loadMoreActivity.hidden = true
 		
@@ -101,6 +102,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.tableView.rowHeight = 136
 		
         /* A bit of UI tweaking */
+		self.tableView.accessibilityIdentifier = "table"
         self.tableView.backgroundColor = Theme.colorBackgroundTable
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
         self.tableView.separatorInset = UIEdgeInsetsZero

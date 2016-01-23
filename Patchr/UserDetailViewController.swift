@@ -18,7 +18,9 @@ class UserDetailViewController: BaseDetailViewController {
 	}
 
 	private var isCurrentUser: Bool {
-		return (UserController.instance.authenticated && self.entityId == UserController.instance.currentUser.id_)
+		return (UserController.instance.authenticated
+			&& UserController.instance.currentUser != nil
+			&& self.entityId == UserController.instance.currentUser.id_)
 	}
 	
 	/*--------------------------------------------------------------------------------------------
@@ -137,8 +139,8 @@ class UserDetailViewController: BaseDetailViewController {
 				let editButton = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
 				let settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("settingsAction"))
 				
-				editButton.accessibilityIdentifier = "user_edit_button"
-				settingsButton.accessibilityIdentifier = "user_settings_button"
+				editButton.accessibilityIdentifier = "edit_button"
+				settingsButton.accessibilityIdentifier = "settings_button"
 				
 				self.navigationItem.rightBarButtonItems = [settingsButton, Utils.spacer, editButton]
 				self.navigationItem.title = "Me"

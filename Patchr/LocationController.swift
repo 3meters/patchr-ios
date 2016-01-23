@@ -41,7 +41,7 @@ class LocationController: NSObject {
     }
     
     func lastLocationFromManager() -> CLLocation?  {
-        return self.locationManager.location
+        return self._lastLocationAccepted ?? self.locationManager.location
     }
     
     func lastLocationAccepted() -> CLLocation?  {
@@ -51,6 +51,12 @@ class LocationController: NSObject {
     func clearLastLocationAccepted() {
         self._lastLocationAccepted = nil
     }
+	
+	func setMockLocation(coordinate: CLLocationCoordinate2D) {
+		Log.d("Location injected")
+		let location = CLLocation(coordinate: coordinate, altitude: 0, horizontalAccuracy: 0, verticalAccuracy: 0, timestamp: NSDate())
+		locationManager(self.locationManager, didUpdateLocations: [location])
+	}
     
     func startUpdates(){
 		if CLLocationManager.authorizationStatus() == .NotDetermined {
@@ -59,11 +65,6 @@ class LocationController: NSObject {
 		else if CLLocationManager.authorizationStatus() == .AuthorizedAlways
 			|| CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
 				Log.d("***** Location updates started *****")
-				if MOCK && MOCK_LAT != nil && MOCK_LON != nil {
-					let location = CLLocation(latitude: MOCK_LAT!, longitude: MOCK_LON!)
-					locationManager(self.locationManager, didUpdateLocations: [location])
-					return
-				}
 				self.locationManager.startUpdatingLocation()
 		}
     }
@@ -199,7 +200,18 @@ extension LocationController: CLLocationManagerDelegate {
 	}
 	
 	func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
-		Log.w("Location manager failed: \(error)")
+		if error.code == CLError.LocationUnknown.rawValue {
+			Log.w("Location currently unknown")
+		}
+		else if error.code == CLError.Denied.rawValue  {
+			Log.w("Location access denied by user")
+		}
+		else if error.code == CLError.Network.rawValue  {
+			Log.w("Location error: network related error")
+		}
+		else {
+			Log.w("Location error: \(error)")
+		}
 	}
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {

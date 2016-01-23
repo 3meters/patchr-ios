@@ -33,6 +33,7 @@ class AirImageButton: UIButton {
     func initialize(){
 		
 		self.progress.hidesWhenStopped = true
+		self.progress.accessibilityIdentifier = "activity_image"
 		addSubview(self.progress)
     }
 	

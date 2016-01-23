@@ -45,7 +45,6 @@ class ProfileEditViewController: BaseViewController {
 	var comment				 = AirLabel()
 	var message				 = AirLabelTitle()
 	
-	var activity			 = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
 	var scrollView			 = UIScrollView()
 	var contentHolder		 = UIView()
 	
@@ -55,6 +54,7 @@ class ProfileEditViewController: BaseViewController {
 	var facebookName		 = AirLabel()
 	var facebookDisconnect	 = AirLinkButton()
 	var facebookPhoto		 = AirImageView(frame: CGRectZero)
+	var facebookActivity	 = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
 	
 	var progress			 : AirProgress?
 	var activeTextField		 : UIView?
@@ -113,7 +113,7 @@ class ProfileEditViewController: BaseViewController {
 			self.facebookPhoto.anchorTopCenterWithTopPadding(0, width: 72, height: 72)
 			self.facebookName.alignUnder(self.facebookPhoto, matchingCenterWithTopPadding: 8, width: 288, height: 24)
 			self.facebookDisconnect.alignUnder(self.facebookName, matchingCenterWithTopPadding: 0, width: 288, height: 24)
-			self.activity.alignUnder(self.facebookName, matchingCenterWithTopPadding: 0, width: 288, height: 24)
+			self.facebookActivity.alignUnder(self.facebookName, matchingCenterWithTopPadding: 0, width: 288, height: 24)
 			self.facebookOnGroup.alignUnder(self.changePasswordButton, matchingCenterWithTopPadding: 16, width: 288, height: 136)
 			
 			self.facebookButton.anchorTopCenterWithTopPadding(0, width: 288, height: 48)
@@ -154,13 +154,13 @@ class ProfileEditViewController: BaseViewController {
 		 * like app invites will fallback to a different provider.
 		 */
 		self.facebookDisconnect.fadeOut()
-		self.activity.fadeIn()
-		self.activity.hidesWhenStopped = true
-		self.activity.startAnimating()
+		self.facebookActivity.fadeIn()
+		self.facebookActivity.hidesWhenStopped = true
+		self.facebookActivity.startAnimating()
 		let provider = FacebookProvider()
 		if FBSDKAccessToken.currentAccessToken() != nil {
 			provider.deauthorize { response, error in
-				self.activity.stopAnimating()
+				self.facebookActivity.stopAnimating()
 				self.facebookDisconnect.fadeIn()
 				if error == nil {
 					self.facebookOffGroup.fadeIn()
@@ -288,6 +288,7 @@ class ProfileEditViewController: BaseViewController {
 		let fullScreenRect = UIScreen.mainScreen().applicationFrame
 		self.scrollView.frame = fullScreenRect
 		self.scrollView.backgroundColor = Theme.colorBackgroundForm
+		self.facebookActivity.accessibilityIdentifier = "activity_facebook"
 		
 		self.view = self.scrollView
 		
@@ -408,8 +409,8 @@ class ProfileEditViewController: BaseViewController {
 			self.facebookDisconnect.accessibilityIdentifier = "facebook_disconnect_button"
 			self.facebookOnGroup.addSubview(self.facebookDisconnect)
 			
-			self.activity.hidden = true
-			self.facebookOnGroup.addSubview(self.activity)
+			self.facebookActivity.hidden = true
+			self.facebookOnGroup.addSubview(self.facebookActivity)
 			self.contentHolder.addSubview(self.facebookOnGroup)
 			
 			if FBSDKAccessToken.currentAccessToken() != nil {
@@ -654,6 +655,7 @@ class ProfileEditViewController: BaseViewController {
 					
 					/* Return to the lobby even if there was an error since we signed out */
 					UserController.instance.discardCredentials()
+					UserController.instance.clearStore()
 					NSUserDefaults.standardUserDefaults().setObject(nil, forKey: PatchrUserDefaultKey("userEmail"))
 					NSUserDefaults.standardUserDefaults().synchronize()
 					
@@ -820,3 +822,4 @@ extension ProfileEditViewController: UITextFieldDelegate {
         return true
     }
 }
+

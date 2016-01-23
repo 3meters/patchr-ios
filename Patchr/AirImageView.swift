@@ -55,6 +55,7 @@ class AirImageView: UIImageView {
     
     func initialize(){
 		self.activity.hidesWhenStopped = true
+		self.activity.accessibilityIdentifier = "activity_image"
         addSubview(self.activity)
     }
 	

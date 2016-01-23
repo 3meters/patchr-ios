@@ -164,7 +164,7 @@ class LoginViewController: BaseViewController {
 		self.contentHolder.addSubview(self.forgotPasswordButton)
 		
 		self.doneButton.setTitle("LOG IN", forState: .Normal)
-		self.doneButton.accessibilityIdentifier = "login_login_button"
+		self.doneButton.accessibilityIdentifier = "login_button"
 		self.contentHolder.addSubview(self.doneButton)
 		
 		self.forgotPasswordButton.addTarget(self, action: Selector("passwordResetAction:"), forControlEvents: .TouchUpInside)

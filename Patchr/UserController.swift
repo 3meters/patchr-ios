@@ -30,9 +30,9 @@ class UserController: NSObject {
 	
 	var installId: String {
 		/* 
-		 * Unlike the identifierForVendor property of the UIDevice, the same value is returned to 
-		 * all vendors. This identifier may change—for example, if the user erases the device—so 
-		 * you should not cache it.
+		 * Unlike the identifierForVendor property of the UIDevice, when using advertisingIdentifier, 
+		 * the same value is returned to all vendors. This identifier may change—for example, if 
+		 * the user erases the device—so you should not cache it.
 		 *
 		 * Value can be nil if device has been restarted but device is still locked. The value 
 		 * changes if user resets the device or manually resets the advertising identifier in 
@@ -68,7 +68,6 @@ class UserController: NSObject {
 		self.jsonSession = nil
 		
         writeCredentialsToUserDefaults()
-		clearStore()
         Reporting.updateCrashUser(nil)
         Branch.getInstance().logout()
     }
@@ -79,18 +78,17 @@ class UserController: NSObject {
 		
         if let jsonString = json["user"].rawString() {
             self.jsonUser = jsonString
-            Log.d("User signed in:")
-            Log.d(jsonUser!)
         }
 		
         if let jsonString = json["session"].rawString() {
             self.jsonSession = jsonString
-            Log.d(jsonSession!)
         }
 		
         self.userName = json["user"]["name"].string
         self.userId = json["session"]["_owner"].string
         self.sessionKey = json["session"]["key"].string
+		
+		Log.d("User signed in: \(self.userName!)(\(self.userId!))")
 		
 		writeCredentialsToUserDefaults()
 		fetchCurrentUser(nil)	// Includes making sure the user is in the store
@@ -172,6 +170,9 @@ class UserController: NSObject {
 				
 				/* Clear local credentials */
 				self.discardCredentials()
+				
+				/* Clear the core data store and create new data stack, blocks until done */
+				self.clearStore()
 				
 				/* Make sure state is cleared */
 				LocationController.instance.clearLastLocationAccepted()

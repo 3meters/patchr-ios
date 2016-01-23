@@ -52,6 +52,16 @@
                ReferencedContainer = "container:Patchr.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "E2CA0C3A1C50335500E2F380"
+               BuildableName = "AcceptanceTests.xctest"
+               BlueprintName = "AcceptanceTests"
+               ReferencedContainer = "container:Patchr.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference

@@ -448,6 +448,8 @@ class MessageDetailViewController: BaseViewController {
 		self.activity.tintColor = Theme.colorActivityIndicator
 		self.view.addSubview(self.activity)
 		
+		self.activity.accessibilityIdentifier = "activity_view"
+		
 		self.patchGroup.ruleBottom.backgroundColor = Colors.gray90pcntColor
 		self.patchPhoto.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
 		

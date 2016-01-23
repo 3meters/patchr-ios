@@ -116,7 +116,7 @@ class LobbyViewController: BaseViewController {
 		self.view.addSubview(self.appName)
 		
 		self.buttonLogin.setTitle("LOG IN", forState: .Normal)
-		self.buttonLogin.accessibilityIdentifier = "lobby_login_button"
+		self.buttonLogin.accessibilityIdentifier = "login_button"
 		self.buttonLogin.setTitleColor(Colors.white, forState: .Normal)
 		self.buttonLogin.setTitleColor(Theme.colorTint, forState: .Highlighted)
 		self.buttonLogin.borderColor = Colors.white
@@ -124,7 +124,7 @@ class LobbyViewController: BaseViewController {
 		self.buttonLogin.cornerRadius = Theme.dimenButtonCornerRadius
 		
 		self.buttonSignup.setTitle("SIGN UP", forState: .Normal)
-		self.buttonSignup.accessibilityIdentifier = "lobby_signup_button"
+		self.buttonSignup.accessibilityIdentifier = "signup_button"
 		self.buttonSignup.setTitleColor(Colors.white, forState: .Normal)
 		self.buttonSignup.setTitleColor(Theme.colorTint, forState: .Highlighted)
 		self.buttonSignup.borderColor = Colors.white
@@ -136,7 +136,7 @@ class LobbyViewController: BaseViewController {
 		self.view.addSubview(self.buttonGroup)
 		
 		self.buttonGuest.setTitle("skip", forState: .Normal)
-		self.buttonGuest.accessibilityIdentifier = "lobby_guest_button"
+		self.buttonGuest.accessibilityIdentifier = "guest_button"
 		self.buttonGuest.setTitleColor(Colors.white, forState: .Normal)
 		self.buttonGuest.setTitleColor(Theme.colorTint, forState: .Highlighted)
 		self.buttonGuest.titleLabel?.font = Theme.fontLinkText

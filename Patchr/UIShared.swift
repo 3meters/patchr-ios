@@ -95,7 +95,7 @@ struct UIShared {
 		return progress
 	}
 	
-    static func Toast(message: String?, duration: NSTimeInterval = 3.0, controller: UIViewController? = nil, addToWindow: Bool = true) -> AirProgress {
+	static func Toast(message: String?, duration: NSTimeInterval = 3.0, controller: UIViewController? = nil, addToWindow: Bool = true, identifier: String? = nil) -> AirProgress {
 		
         var targetView: UIView = UIApplication.sharedApplication().windows.last!
         
@@ -113,7 +113,7 @@ struct UIShared {
         progress.mode = MBProgressHUDMode.Text
         progress.styleAs(.ToastLight)
         progress.labelText = message
-		progress.accessibilityIdentifier = "toast"
+		progress.accessibilityIdentifier = identifier ?? "toast"
         progress.yOffset = Float((UIScreen.mainScreen().bounds.size.height / 2) - 200)
         progress.shadow = true
         progress.removeFromSuperViewOnHide = true

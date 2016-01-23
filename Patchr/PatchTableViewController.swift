@@ -233,8 +233,13 @@ class PatchTableViewController: BaseTableViewController {
 		if self.filter == .Nearby {
 			if force {
 				if LocationController.instance.lastLocationAccepted() != nil {
-					Log.i("Clearing last location accepted")
-					LocationController.instance.clearLastLocationAccepted()
+					if self.firstNearPass {
+						LocationController.instance.resendLast()
+					}
+					else {
+						Log.i("Clearing last location accepted")
+						LocationController.instance.clearLastLocationAccepted()
+					}
 				}
 				LocationController.instance.stopUpdates()
 				LocationController.instance.startUpdates()

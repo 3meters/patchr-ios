@@ -292,7 +292,9 @@ extension UIViewController {
     }
 
 	func addActivityIndicatorTo(view: UIView, offsetY: Float = 0, style: UIActivityIndicatorViewStyle = .WhiteLarge) -> UIActivityIndicatorView {
-		
+		/*
+		 * Currently only called by PhotoPicker.
+		 */
 		let activity: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: style)
 		activity.color = Theme.colorTint
 		activity.hidesWhenStopped = true

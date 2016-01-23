@@ -38,9 +38,6 @@ struct Utils {
 		return spacer
 	}()
 
-	static let stopwatch1 = Stopwatch()
-	static let stopwatch2 = Stopwatch()
-	
     static var messageDateFormatter: NSDateFormatter = {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle

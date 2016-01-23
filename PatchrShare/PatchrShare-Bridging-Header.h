@@ -9,11 +9,6 @@
 #ifndef Patchr_PatchrShare_Bridging_Header_h
 #define Patchr_PatchrShare_Bridging_Header_h
 
-//#import <SDWebImage/UIImageView+WebCache.h>
-//#import <SDWebImage/UIButton+WebCache.h>
-//#import <AWSS3/AWSS3.h>
-//#import <Keys/PatchrKeys.h>
-
 #import "Photo.h"
 
 #endif

@@ -80,6 +80,7 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 		
 		/* Simple activity indicator */
 		self.activity = addActivityIndicatorTo(self.view)
+		self.activity?.accessibilityIdentifier = "activity_view"
 		
 		/* Auto complete table view */
 		self.autocompleteList.delegate = self
