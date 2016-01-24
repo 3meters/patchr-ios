@@ -17,8 +17,6 @@ class InviteViewController: BaseViewController {
 	var inviteFacebookButton	= AirButton()
 	var inviteViaButton			= AirButton()
 	var doneButton				= AirFeaturedButton()
-	var scrollView				= AirScrollView()
-	var contentHolder			= UIView()
 	
 	var inputEntity				: Patch!
 	
@@ -75,12 +73,7 @@ class InviteViewController: BaseViewController {
 		super.initialize()
 		
 		setScreenName("PatchInvite")
-		
-		let fullScreenRect = UIScreen.mainScreen().applicationFrame
-		self.scrollView.frame = fullScreenRect
-		self.scrollView.backgroundColor = Theme.colorBackgroundForm
-		self.scrollView.addSubview(self.contentHolder)
-		self.view = self.scrollView
+		self.view.accessibilityIdentifier = View.Invite
 		
 		self.message.text = "Invite friends to your new patch."
 		self.message.textAlignment = NSTextAlignment.Center

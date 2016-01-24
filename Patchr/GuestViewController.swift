@@ -79,6 +79,7 @@ class GuestViewController: BaseViewController {
 		super.initialize()
 		
 		self.view.backgroundColor = Theme.colorBackgroundOverlay
+		self.view.accessibilityIdentifier = View.Guest
 
 		setScreenName("GuestPrompt")
 		

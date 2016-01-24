@@ -20,6 +20,7 @@ class PatchNavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		
+		self.view.accessibilityIdentifier = View.Patches
 		
 		let watchLabel = SCREEN_NARROW ? "Watch" : "Watching"
 		let segItems = UserController.instance.authenticated

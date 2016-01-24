@@ -68,10 +68,12 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-        
+		
+		self.view.accessibilityIdentifier = View.PhotoSearch
+		self.collectionView!.accessibilityIdentifier = Collection.Photos
+		
         self.collectionView!.registerNib(UINib(nibName: "ThumbnailCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: reuseIdentifier)
 		self.collectionView?.backgroundColor = Theme.colorBackgroundForm
-		self.collectionView?.accessibilityIdentifier = "photo_collection"
 		if let layout = self.collectionViewLayout as? UICollectionViewFlowLayout {
 			layout.minimumLineSpacing = 4
 			layout.minimumInteritemSpacing = 4
@@ -109,10 +111,10 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
         if self.searchBar == nil {
             self.searchBarBoundsY = self.navigationController!.navigationBar.frame.size.height + UIApplication.sharedApplication().statusBarFrame.size.height
             self.searchBar = UISearchBar(frame: CGRectMake(0, self.searchBarBoundsY!, UIScreen.mainScreen().bounds.size.width, 44))
+			self.searchBar!.accessibilityIdentifier = "search_field"
             self.searchBar!.searchBarStyle = UISearchBarStyle.Prominent
             self.searchBar!.delegate = self
             self.searchBar!.placeholder = "Search for photos"
-			self.searchBar!.accessibilityIdentifier = "search_field"
         }
         
 		/* Scroll inset */
@@ -186,6 +188,8 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 				NSOperationQueue.mainQueue().addOperationWithBlock {
 					
 					self.activity?.stopAnimating()
+					var userInfo: [NSObject:AnyObject] = ["error": (error != nil)]
+					
 					if let error = ServerError(error) {
 						self.handleError(error)
 					}
@@ -234,10 +238,12 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 									self.threshold = self.imageResults.count - 20
 									self.virtualSize = self.imageResults.count + 49
 								}
+								userInfo["count"] = self.imageResults.count
 						}
 						
 						self.collectionView?.reloadData()
 					}
+					NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetchQuery, object: self, userInfo: userInfo)
 					self.processing = false
 				}
 			}

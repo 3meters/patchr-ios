@@ -68,6 +68,9 @@ class PatchTableMapViewController: UIViewController {
 		self.mapView.showsUserLocation = true
 		self.mapView.mapType = .Standard
 		
+		self.view.accessibilityIdentifier = View.PatchesMap
+		self.mapView!.accessibilityIdentifier = Map.Patches
+		
 		do {
 			try self.fetchedResultsController.performFetch()
 		}

@@ -17,6 +17,7 @@ import AWSCore
 import FBSDKCoreKit
 import Branch
 import Google
+import CocoaLumberjack
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -32,6 +33,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
         Log.d("Patchr launching...")
+		
+		/* Logging */
+		DDLog.addLogger(DDTTYLogger.sharedInstance()) // TTY = Xcode console
+		DDLog.addLogger(DDASLLogger.sharedInstance()) // ASL = Apple System Logs
+		
+		DDTTYLogger.sharedInstance().colorsEnabled = true
+		DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogVerbose, backgroundColor: nil, forFlag: DDLogFlag.Verbose)
+		DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogDebug, backgroundColor: nil, forFlag: DDLogFlag.Debug)
+		DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogInfo, backgroundColor: nil, forFlag: DDLogFlag.Info)
+		DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogWarning, backgroundColor: nil, forFlag: DDLogFlag.Warning)
+		DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogError, backgroundColor: nil, forFlag: DDLogFlag.Error)
+		
+		let fileLogger: DDFileLogger = DDFileLogger() // File Logger
+		fileLogger.rollingFrequency = 60 * 60 * 24  // 24 hours
+		fileLogger.logFileManager.maximumNumberOfLogFiles = 7
+		DDLog.addLogger(fileLogger)
 		
 		/* Initialize Crashlytics: 25% of method time */
 		Fabric.with([Crashlytics()])
@@ -330,10 +347,10 @@ extension AppDelegate {
 		 */
 		if UserController.instance.authenticated {			
 			UserController.instance.discardCredentials()
-			NSUserDefaults.standardUserDefaults().setObject(nil, forKey: PatchrUserDefaultKey("userEmail"))
-			NSUserDefaults.standardUserDefaults().synchronize()
 		}
 		
+		NSUserDefaults.standardUserDefaults().setObject(nil, forKey: PatchrUserDefaultKey("userEmail"))
+		NSUserDefaults.standardUserDefaults().synchronize()
 		UserController.instance.clearStore()
 		LocationController.instance.clearLastLocationAccepted()
 		
@@ -359,6 +376,10 @@ extension AppDelegate {
 	func disableAnimations(state: Bool) {
 		UIView.setAnimationsEnabled(!state)
 		UIApplication.sharedApplication().keyWindow!.layer.speed = state ? 100.0 : 1.0
+	}
+	
+	func logLevel(level: DDLogLevel) {
+		LOG_LEVEL = level
 	}
 }
 

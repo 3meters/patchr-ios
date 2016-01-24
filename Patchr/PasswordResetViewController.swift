@@ -9,18 +9,17 @@
 import UIKit
 import MBProgressHUD
 
-class PasswordResetViewController: BaseViewController, UITextFieldDelegate {
+class PasswordResetViewController: BaseEditViewController {
 
-    var processing: Bool = false
-    var emailConfirmed: Bool = false
-    var userId: String?
-    var sessionKey: String?
-    
-    var emailField = AirTextField()
-    var passwordField = AirTextField()
-    var message = AirLabelDisplay()
-	var resetButton = AirButton()
+    var processing			: Bool = false
+    var userId				: String?
+    var sessionKey			: String?
 	
+	var message       = AirLabelTitle()
+    var emailField    = AirTextField()
+    var passwordField = AirTextField()
+	var submitButton  = AirButton()
+		
 	/*--------------------------------------------------------------------------------------------
 	* Lifecycle
 	*--------------------------------------------------------------------------------------------*/
@@ -30,30 +29,33 @@ class PasswordResetViewController: BaseViewController, UITextFieldDelegate {
 		initialize()
 	}
 	
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		
+		let messageSize = self.message.sizeThatFits(CGSizeMake(288, CGFloat.max))
+		self.message.anchorTopCenterWithTopPadding(0, width: 288, height: messageSize.height)
+		self.emailField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+		self.passwordField.alignUnder(self.emailField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+		self.submitButton.alignUnder(self.passwordField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+		
+		self.contentHolder.resizeToFitSubviews()
+		self.scrollView.contentSize = CGSizeMake(self.contentHolder.frame.size.width, self.contentHolder.frame.size.height + CGFloat(32))
+		self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 16, height: self.contentHolder.frame.size.height)
+	}
+	
+	override func viewDidAppear(animated: Bool) {
+		self.emailField.becomeFirstResponder()
+	}
+
 	/*--------------------------------------------------------------------------------------------
 	* Events
 	*--------------------------------------------------------------------------------------------*/
 	
-	override func viewWillLayoutSubviews() {
-		super.viewWillLayoutSubviews()
-		self.message.anchorTopCenterWithTopPadding(88, width: 288, height: 48)
-		self.emailField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-		self.passwordField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-		self.resetButton.alignUnder(self.emailField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-	}
-	
-    func doneAction(sender: NSObject) {
-        
+    func submitAction(sender: AnyObject) {
         if processing { return }
-        if !isValid() { return }
-        processing = true
-        
-        if !emailConfirmed {
-            requestReset()
-        }
-        else {
-            reset()
-        }
+        if isValid() {
+			reset()
+		}
     }
     
     func cancelAction(sender: AnyObject){
@@ -68,72 +70,76 @@ class PasswordResetViewController: BaseViewController, UITextFieldDelegate {
 		super.initialize()
 		
 		setScreenName("PasswordReset")
+		self.view.accessibilityIdentifier = View.PasswordReset
 		
-		self.message.text = "Forgot your password? Enter your email address:"
-		self.message.numberOfLines = 2
-		self.message.textAlignment = .Left
-		self.view.addSubview(self.message)
+		self.message.text = "Forgot your password?"
+		self.message.numberOfLines = 0
+		self.message.textAlignment = .Center
+		self.contentHolder.addSubview(self.message)
 		
 		self.emailField.placeholder = "Email"
-		self.emailField.accessibilityIdentifier = "email_field"
+		self.emailField.accessibilityIdentifier = Field.ResetEmail
 		self.emailField.delegate = self
 		self.emailField.autocapitalizationType = .None
 		self.emailField.autocorrectionType = .No
 		self.emailField.keyboardType = UIKeyboardType.EmailAddress
 		self.emailField.returnKeyType = UIReturnKeyType.Next
-		self.view.addSubview(self.emailField)
+		self.contentHolder.addSubview(self.emailField)
 		
-		self.passwordField.placeholder = "Password (6 characters or more)"
-		self.passwordField.accessibilityIdentifier = "password_field"
-		self.passwordField.hidden = true
+		self.passwordField.placeholder = "New password (6 characters or more)"
+		self.passwordField.accessibilityIdentifier = Field.ResetPassword
 		self.passwordField.delegate = self
 		self.passwordField.secureTextEntry = true
 		self.passwordField.keyboardType = UIKeyboardType.Default
 		self.passwordField.returnKeyType = UIReturnKeyType.Done
-		self.view.addSubview(self.passwordField)
+		self.contentHolder.addSubview(self.passwordField)
 		
-		self.resetButton.setTitle("SUBMIT", forState: .Normal)
-		self.resetButton.accessibilityIdentifier = "submit_button"
-		self.view.addSubview(self.resetButton)
+		self.submitButton.setTitle("RESET", forState: .Normal)
+		self.submitButton.accessibilityIdentifier = Button.Submit
+		self.contentHolder.addSubview(self.submitButton)
 
-		self.resetButton.addTarget(self, action: Selector("doneAction:"), forControlEvents: .TouchUpInside)
+		self.submitButton.addTarget(self, action: Selector("submitAction:"), forControlEvents: .TouchUpInside)
 	}
 	
-    func requestReset() {
-        
+	func reset() -> TaskQueue {
+		
+		self.processing = true
+		
 		let progress = AirProgress.addedTo(self.view.window)
-        progress.mode = MBProgressHUDMode.Indeterminate
-        progress.styleAs(.ActivityWithText)
-		progress.labelText = "Verifying..."
-		progress.graceTime = 2.0
+		progress.mode = MBProgressHUDMode.Indeterminate
+		progress.styleAs(.ActivityWithText)
+		progress.labelText = "Resetting..."
 		progress.minShowTime = 1.0
-        progress.show(true)
-		progress.taskInProgress = true
+		progress.show(true)
 		progress.userInteractionEnabled = true
 		
-        DataController.proxibase.requestPasswordReset(emailField.text!) {
-            response, error in
-            
-			NSOperationQueue.mainQueue().addOperationWithBlock {
-				self.processing = false
-				progress.taskInProgress = false
+		let queue = TaskQueue()
+		
+		queue.tasks +=~ { _, next in
+			
+			DataController.proxibase.requestPasswordReset(self.emailField.text!) {
+				response, error in
 				
-				progress.hide(true)
 				if var error = ServerError(error) {
-					self.emailConfirmed = false
-					if error.code == .UNAUTHORIZED {
-						error.message = "This email address has not been used with this installation. Please contact support to reset your password."
-						self.handleError(error, errorActionType: .ALERT)
-					}
-					else if error.code == .NOT_FOUND {
-						error.message = "The email address could not be found."
-						self.handleError(error, errorActionType: .ALERT)
-					}
-					else {
-						self.handleError(error)
+					
+					NSOperationQueue.mainQueue().addOperationWithBlock {
+						progress.hide(true)
+						if error.code == .UNAUTHORIZED {
+							error.message = "This email address has not been used with this installation. Please contact support to reset your password."
+							self.handleError(error, errorActionType: .ALERT)
+						}
+						else if error.code == .NOT_FOUND {
+							error.message = "The email address could not be found."
+							self.handleError(error, errorActionType: .ALERT)
+						}
+						else {
+							self.handleError(error)
+						}
+						self.processing = false
 					}
 				}
 				else {
+					
 					if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
 						if let userMap = serviceData.user as? [NSObject:AnyObject] {
 							self.userId = userMap["_id"] as? String
@@ -143,62 +149,67 @@ class PasswordResetViewController: BaseViewController, UITextFieldDelegate {
 						}
 					}
 					
-					self.emailConfirmed = true
-					self.message.text = "Email address confirmed, enter a new password:"
-					self.emailField.fadeOut()
-					self.passwordField.hidden = false
-					self.passwordField.fadeIn()
-					self.passwordField.becomeFirstResponder()
-					UIShared.Toast("Email verified")
+					next(nil)
 				}
 			}
-        }
-    }
-    
-    func reset() {
+		}
 		
-		let progress = AirProgress.addedTo(self.view.window)
-        progress.mode = MBProgressHUDMode.Indeterminate
-        progress.styleAs(.ActivityWithText)
-        progress.labelText = "Resetting..."
-		progress.graceTime = 2.0
-		progress.minShowTime = 1.0
-        progress.show(true)
-		progress.taskInProgress = true
-		
-        DataController.proxibase.resetPassword(passwordField.text!, userId: self.userId!, sessionKey: self.sessionKey!) {
-            response, error in
-            
-			NSOperationQueue.mainQueue().addOperationWithBlock {
-				self.processing = false
-				progress.taskInProgress = false
+		queue.tasks +=~ { _, next in
+			
+			DataController.proxibase.resetPassword(self.passwordField.text!, userId: self.userId!, sessionKey: self.sessionKey!) {
+				response, error in
 				
-				progress.hide(true)
-				if let error = ServerError(error) {
-					self.handleError(error)
-				}
-				else {
-					UIShared.Toast("Password reset")
-					self.navigationController?.popViewControllerAnimated(true)	// Back to login
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					self.processing = false
+					
+					progress.hide(true)
+					if let error = ServerError(error) {
+						self.handleError(error)
+					}
+					else {
+						UIShared.Toast("Password reset")
+						self.navigationController?.popViewControllerAnimated(true)	// Back to login
+					}
 				}
 			}
-        }
-    }
+		}
+		
+		queue.run()
+		return queue
+	}
 
     func isValid() -> Bool {
         
-        if !emailConfirmed {
-            if emailField.isEmpty {
-                Alert("Enter an email address.")
-                return false
-            }
-        }
-        else {
-            if (passwordField.text!.utf16.count < 6) {
-                Alert("Enter a new password with six characters or more.")
-                return false
-            }
-        }
+		if emailField.isEmpty {
+			Alert("Enter an email address you have used before on this device.")
+			return false
+		}
+		
+		if !emailField.text!.isEmail() {
+			Alert("Enter a valid email address.")
+			return false
+		}
+			
+		if (passwordField.text!.utf16.count < 6) {
+			Alert("Enter a new password with six characters or more.")
+			return false
+		}
+		
         return true
     }
+	
+	override func textFieldShouldReturn(textField: UITextField) -> Bool {
+		
+		if textField == self.emailField {
+			self.passwordField.becomeFirstResponder()
+			return false
+		}
+		else if textField == self.passwordField {
+			self.submitAction(textField)
+			self.view.endEditing(true)
+			return false
+		}
+		
+		return true
+	}
 }

@@ -284,6 +284,7 @@ extension UIViewController {
 		if destructConfirmation {
 			alert.addTextFieldWithConfigurationHandler() {
 				textField in
+				textField.accessibilityIdentifier = Field.ConfirmDelete
 				textField.addTarget(delegate, action: Selector("alertTextFieldDidChange:"), forControlEvents: .EditingChanged)
 			}
 			okAction.enabled = false
@@ -398,6 +399,14 @@ public func <(lhs: NSDate, rhs: NSDate) -> Bool {
 extension NSDate: Comparable { }
 
 extension String {
+	
+	func isEmail() -> Bool {
+		let regex = try! NSRegularExpression(pattern: "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$",
+			options: [.CaseInsensitive])
+		
+		return regex.firstMatchInString(self, options:[],
+			range: NSMakeRange(0, utf16.count)) != nil
+	}
 	
     var md5: String! {
 		

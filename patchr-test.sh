@@ -15,7 +15,7 @@ xctool	-workspace Patchr.xcworkspace \
 
 #scan \
 #	--workspace Patchr.xcworkspace \
-#	--scheme PatchrUITests \
+#	--scheme Patchr \
 #	--sdk iphonesimulator \
 #	--output_directory ./test_output \
-#	--device 'iPhone 6 Plus Jay'
+#	--device 'iPhone 6 Plus'

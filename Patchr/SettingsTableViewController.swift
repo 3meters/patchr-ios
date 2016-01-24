@@ -91,6 +91,7 @@ class SettingsTableViewController: UITableViewController {
 		setScreenName("Settings")
 		
 		self.navigationItem.title = "Settings"
+		self.view.accessibilityIdentifier = View.Settings
 		
 		self.tableView = UITableView(frame: self.tableView.frame, style: .Grouped)
 		self.tableView.rowHeight = 48

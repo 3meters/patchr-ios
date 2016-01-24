@@ -98,7 +98,7 @@ class BaseDetailViewController: BaseTableViewController {
 				query!.entityId = self.entityId
 			}
 
-			DataController.instance.saveContext(false)
+			DataController.instance.saveContext(BLOCKING)
 		}
 
         return query!

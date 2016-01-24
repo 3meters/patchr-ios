@@ -98,6 +98,12 @@ class Snow {
 	let fontBarText				= UIFont(name: "HelveticaNeue", size: 18)!
 	let fontNumberFeatured		= UIFont(name: "HelveticaNeue-Light", size: 30)!
 	
+	let colorLogVerbose			= Colors.gray50pcntColor
+	let colorLogDebug			= Colors.accentColorDarker
+	let colorLogInfo			= Colors.black
+	let colorLogWarning			= UIColor.orangeColor()
+	let colorLogError			= UIColor.redColor()
+	
 	let dimenButtonCornerRadius = 4
 	let dimenButtonBorderWidth = CGFloat(0.5)
 	let dimenRuleThickness = CGFloat(1.0)

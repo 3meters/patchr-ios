@@ -60,11 +60,11 @@
 		E20004DF1B094ACA00425694 /* PasswordEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */; };
 		E20004E11B099CBD00425694 /* PasswordResetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004E01B099CBD00425694 /* PasswordResetViewController.swift */; };
 		E2017B741C52E0900062E497 /* AnonymousTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2017B731C52E0900062E497 /* AnonymousTests.swift */; };
+		E2017B771C53E3EE0062E497 /* Testing.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2017B761C53E3EE0062E497 /* Testing.swift */; };
+		E2017B781C53E4470062E497 /* Testing.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2017B761C53E3EE0062E497 /* Testing.swift */; };
 		E2064BF11BBF3C26009C7B6A /* AirMuteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2064BF01BBF3C26009C7B6A /* AirMuteButton.swift */; };
 		E2064BF31BC0212B009C7B6A /* silence.caf in Resources */ = {isa = PBXBuildFile; fileRef = E2064BF21BC0212B009C7B6A /* silence.caf */; };
 		E2064BF51BC18A66009C7B6A /* AirProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2064BF41BC18A66009C7B6A /* AirProgress.swift */; };
-		E208DED41C49B46B00944242 /* PatchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E208DED31C49B46B00944242 /* PatchUITests.swift */; };
-		E208DED61C49BA0000944242 /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E208DED51C49BA0000944242 /* BaseTestCase.swift */; };
 		E20C3A7B1BD6A717008CCED1 /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A7A1BD6A717008CCED1 /* BaseView.swift */; };
 		E20C3A7D1BD70DD2008CCED1 /* AirTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A7C1BD70DD2008CCED1 /* AirTableView.swift */; };
 		E20C3A7F1BDC0EB0008CCED1 /* UserDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A7E1BDC0EB0008CCED1 /* UserDetailView.swift */; };
@@ -76,13 +76,7 @@
 		E20D57061BC78160004D73E2 /* AirAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20D57041BC77FCB004D73E2 /* AirAlertController.swift */; };
 		E224C3501B6ED27F00879775 /* PatchrShare.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E238BAE41B51D3290094AF41 /* PatchrShare.storyboard */; };
 		E224C3551B6EDBBE00879775 /* PatchTargetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */; };
-		E227707C1C45650300866733 /* UserUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E227707B1C45650300866733 /* UserUITests.swift */; };
 		E227708D1C46C01800866733 /* MBProgressHUD+MBProgressHudAccessible.m in Sources */ = {isa = PBXBuildFile; fileRef = E227708C1C46C01800866733 /* MBProgressHUD+MBProgressHudAccessible.m */; };
-		E227708F1C4806B400866733 /* uninstall-patchr-booted.sh in Resources */ = {isa = PBXBuildFile; fileRef = E227708E1C4806B400866733 /* uninstall-patchr-booted.sh */; };
-		E22770911C480F5000866733 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22770901C480F5000866733 /* SnapshotHelper.swift */; };
-		E22770931C48139000866733 /* Snapfile in Resources */ = {isa = PBXBuildFile; fileRef = E22770921C48139000866733 /* Snapfile */; };
-		E22770951C4819F200866733 /* reset-all-simulators.sh in Resources */ = {isa = PBXBuildFile; fileRef = E22770941C4819F200866733 /* reset-all-simulators.sh */; };
-		E22770991C482BB400866733 /* Notes.txt in Resources */ = {isa = PBXBuildFile; fileRef = E22770981C482BB400866733 /* Notes.txt */; };
 		E229CD121C1337A700F5BDAC /* AirLabelBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E229CD111C1337A700F5BDAC /* AirLabelBase.swift */; };
 		E238BACC1B50888C0094AF41 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BACB1B50888C0094AF41 /* SystemConfiguration.framework */; };
 		E238BAD01B5088A40094AF41 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E238BACF1B5088A40094AF41 /* MobileCoreServices.framework */; };
@@ -158,6 +152,8 @@
 		E2A5A8801B6FCE98006D6E81 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */; };
 		E2A5A8811B6FDF5C006D6E81 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */; };
 		E2A5A8851B703B9B006D6E81 /* PhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A5A8841B703B9B006D6E81 /* PhotoView.swift */; };
+		E2B2CAB01C5434D700CAE183 /* .travis.yml in Resources */ = {isa = PBXBuildFile; fileRef = E2B2CAAF1C5434D700CAE183 /* .travis.yml */; };
+		E2B2CAB21C553A8900CAE183 /* BaseEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B2CAB11C553A8900CAE183 /* BaseEditViewController.swift */; };
 		E2B4590E1BC1E76C00155659 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */; };
 		E2B471D21C22304300374F1F /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B471D11C22304300374F1F /* SearchViewController.swift */; };
 		E2B471D71C2231B700374F1F /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E2B471D31C22312A00374F1F /* DataModel.xcdatamodeld */; };
@@ -213,13 +209,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		E227707E1C45650300866733 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7D3D39C11A6F086F00A44CB2 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 7D3D39C81A6F086F00A44CB2;
-			remoteInfo = Patchr;
-		};
 		E238BAE61B51D3290094AF41 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7D3D39C11A6F086F00A44CB2 /* Project object */;
@@ -341,11 +330,10 @@
 		E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordEditViewController.swift; sourceTree = "<group>"; };
 		E20004E01B099CBD00425694 /* PasswordResetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordResetViewController.swift; sourceTree = "<group>"; };
 		E2017B731C52E0900062E497 /* AnonymousTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnonymousTests.swift; sourceTree = "<group>"; };
+		E2017B761C53E3EE0062E497 /* Testing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Testing.swift; sourceTree = "<group>"; };
 		E2064BF01BBF3C26009C7B6A /* AirMuteButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirMuteButton.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2064BF21BC0212B009C7B6A /* silence.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = silence.caf; sourceTree = "<group>"; };
 		E2064BF41BC18A66009C7B6A /* AirProgress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirProgress.swift; sourceTree = "<group>"; };
-		E208DED31C49B46B00944242 /* PatchUITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchUITests.swift; sourceTree = "<group>"; };
-		E208DED51C49BA0000944242 /* BaseTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTestCase.swift; sourceTree = "<group>"; };
 		E20C1FB61AFE462500A471E9 /* UIShared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIShared.swift; sourceTree = "<group>"; };
 		E20C3A7A1BD6A717008CCED1 /* BaseView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseView.swift; sourceTree = "<group>"; };
 		E20C3A7C1BD70DD2008CCED1 /* AirTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirTableView.swift; sourceTree = "<group>"; };
@@ -355,16 +343,8 @@
 		E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stopwatch.swift; sourceTree = "<group>"; };
 		E20D57041BC77FCB004D73E2 /* AirAlertController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirAlertController.swift; sourceTree = "<group>"; };
 		E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTargetViewController.swift; sourceTree = "<group>"; };
-		E22770791C45650300866733 /* PatchrUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PatchrUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E227707B1C45650300866733 /* UserUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUITests.swift; sourceTree = "<group>"; };
-		E227707D1C45650300866733 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E227708B1C46C01800866733 /* MBProgressHUD+MBProgressHudAccessible.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MBProgressHUD+MBProgressHudAccessible.h"; sourceTree = "<group>"; };
 		E227708C1C46C01800866733 /* MBProgressHUD+MBProgressHudAccessible.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MBProgressHUD+MBProgressHudAccessible.m"; sourceTree = "<group>"; };
-		E227708E1C4806B400866733 /* uninstall-patchr-booted.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "uninstall-patchr-booted.sh"; sourceTree = "<group>"; };
-		E22770901C480F5000866733 /* SnapshotHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SnapshotHelper.swift; path = PatchrUITests/SnapshotHelper.swift; sourceTree = SOURCE_ROOT; };
-		E22770921C48139000866733 /* Snapfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Snapfile; sourceTree = "<group>"; };
-		E22770941C4819F200866733 /* reset-all-simulators.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "reset-all-simulators.sh"; sourceTree = "<group>"; };
-		E22770981C482BB400866733 /* Notes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Notes.txt; sourceTree = "<group>"; };
 		E229CD111C1337A700F5BDAC /* AirLabelBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirLabelBase.swift; sourceTree = "<group>"; };
 		E238BACB1B50888C0094AF41 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		E238BACF1B5088A40094AF41 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
@@ -447,6 +427,8 @@
 		E2A28E701B4A624300B3A2FE /* AirWatchButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirWatchButton.swift; sourceTree = "<group>"; };
 		E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E2A5A8841B703B9B006D6E81 /* PhotoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoView.swift; sourceTree = "<group>"; };
+		E2B2CAAF1C5434D700CAE183 /* .travis.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .travis.yml; sourceTree = "<group>"; };
+		E2B2CAB11C553A8900CAE183 /* BaseEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseEditViewController.swift; sourceTree = "<group>"; };
 		E2B471D11C22304300374F1F /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		E2B471D41C22312A00374F1F /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		E2B471D51C22312A00374F1F /* v1.0.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = v1.0.0.xcdatamodel; sourceTree = "<group>"; };
@@ -532,13 +514,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		E22770761C45650300866733 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		E238BADB1B51D3290094AF41 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -574,7 +549,6 @@
 				E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */,
 				E2D25DC71B23892000E51461 /* UserController.swift */,
 				E238BADF1B51D3290094AF41 /* PatchrShare */,
-				E227707A1C45650300866733 /* PatchrUITests */,
 				E2CA0C3C1C50335600E2F380 /* AcceptanceTests */,
 				7D3D39CA1A6F086F00A44CB2 /* Products */,
 				A0DA2C2AA90D81631E6BF68D /* Frameworks */,
@@ -587,7 +561,6 @@
 			children = (
 				7D3D39C91A6F086F00A44CB2 /* Patchr.app */,
 				E238BADE1B51D3290094AF41 /* PatchrShare.appex */,
-				E22770791C45650300866733 /* PatchrUITests.xctest */,
 				E2CA0C3B1C50335500E2F380 /* AcceptanceTests.xctest */,
 			);
 			name = Products;
@@ -686,38 +659,6 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		E227707A1C45650300866733 /* PatchrUITests */ = {
-			isa = PBXGroup;
-			children = (
-				E227707B1C45650300866733 /* UserUITests.swift */,
-				E208DED31C49B46B00944242 /* PatchUITests.swift */,
-				E208DED51C49BA0000944242 /* BaseTestCase.swift */,
-				E22770901C480F5000866733 /* SnapshotHelper.swift */,
-				E22770961C4828F400866733 /* Support */,
-				E22770971C4828FE00866733 /* Scripts */,
-			);
-			path = PatchrUITests;
-			sourceTree = "<group>";
-		};
-		E22770961C4828F400866733 /* Support */ = {
-			isa = PBXGroup;
-			children = (
-				E22770921C48139000866733 /* Snapfile */,
-				E227707D1C45650300866733 /* Info.plist */,
-			);
-			name = Support;
-			sourceTree = "<group>";
-		};
-		E22770971C4828FE00866733 /* Scripts */ = {
-			isa = PBXGroup;
-			children = (
-				E227708E1C4806B400866733 /* uninstall-patchr-booted.sh */,
-				E22770941C4819F200866733 /* reset-all-simulators.sh */,
-				E22770981C482BB400866733 /* Notes.txt */,
-			);
-			name = Scripts;
-			sourceTree = "<group>";
-		};
 		E238BADF1B51D3290094AF41 /* PatchrShare */ = {
 			isa = PBXGroup;
 			children = (
@@ -779,7 +720,6 @@
 			isa = PBXGroup;
 			children = (
 				E24D74501BB349BD0061F339 /* BaseDetailViewController.swift */,
-				9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */,
 				7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */,
 				7D6E26461A7AB93F000128A7 /* UserDetailViewController.swift */,
 			);
@@ -903,8 +843,8 @@
 			isa = PBXGroup;
 			children = (
 				E2CA0C471C50450500E2F380 /* TestAdditions.swift */,
-				E2CA0C3D1C50335600E2F380 /* OnboardingTests.swift */,
 				E2017B731C52E0900062E497 /* AnonymousTests.swift */,
+				E2CA0C3D1C50335600E2F380 /* OnboardingTests.swift */,
 				E247C5EE1C51960300EAEFFB /* UserEditingTests.swift */,
 				E2CA0C491C5045C400E2F380 /* Support */,
 			);
@@ -973,6 +913,7 @@
 				E29730651C16295300B9433B /* InviteViewController.swift */,
 				E2D12A801C0A52D700DE507E /* LobbyViewController.swift */,
 				7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */,
+				9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */,
 				E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */,
 				7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */,
 				E269AED71C10AB9A004A1D88 /* WelcomeViewController.swift */,
@@ -988,6 +929,7 @@
 		E2F618D71AFFB5430055D09C /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				E2017B761C53E3EE0062E497 /* Testing.swift */,
 				E25327B11B0FCE9C00990A81 /* Constants.swift */,
 				E2D12A7E1C0A090200DE507E /* Theming.swift */,
 				E20C1FB61AFE462500A471E9 /* UIShared.swift */,
@@ -1002,6 +944,7 @@
 		E2F618DE1B02667A0055D09C /* Edit */ = {
 			isa = PBXGroup;
 			children = (
+				E2B2CAB11C553A8900CAE183 /* BaseEditViewController.swift */,
 				7D021ABD1A9409450047DAAE /* LoginViewController.swift */,
 				E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */,
 				E20004E01B099CBD00425694 /* PasswordResetViewController.swift */,
@@ -1054,6 +997,7 @@
 				E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */,
 				7D3D39CD1A6F086F00A44CB2 /* Info.plist */,
 				E238BAEE1B5405380094AF41 /* Patchr.entitlements */,
+				E2B2CAAF1C5434D700CAE183 /* .travis.yml */,
 			);
 			name = Support;
 			sourceTree = "<group>";
@@ -1101,24 +1045,6 @@
 			productName = Patchr;
 			productReference = 7D3D39C91A6F086F00A44CB2 /* Patchr.app */;
 			productType = "com.apple.product-type.application";
-		};
-		E22770781C45650300866733 /* PatchrUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = E22770831C45650300866733 /* Build configuration list for PBXNativeTarget "PatchrUITests" */;
-			buildPhases = (
-				E22770751C45650300866733 /* Sources */,
-				E22770761C45650300866733 /* Frameworks */,
-				E22770771C45650300866733 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				E227707F1C45650300866733 /* PBXTargetDependency */,
-			);
-			name = PatchrUITests;
-			productName = PatchrUITests;
-			productReference = E22770791C45650300866733 /* PatchrUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 		E238BADD1B51D3290094AF41 /* PatchrShare */ = {
 			isa = PBXNativeTarget;
@@ -1192,10 +1118,6 @@
 							};
 						};
 					};
-					E22770781C45650300866733 = {
-						CreatedOnToolsVersion = 7.2;
-						TestTargetID = 7D3D39C81A6F086F00A44CB2;
-					};
 					E238BADD1B51D3290094AF41 = {
 						CreatedOnToolsVersion = 6.4;
 						DevelopmentTeam = 7542324V6B;
@@ -1229,7 +1151,6 @@
 			targets = (
 				7D3D39C81A6F086F00A44CB2 /* Patchr */,
 				E238BADD1B51D3290094AF41 /* PatchrShare */,
-				E22770781C45650300866733 /* PatchrUITests */,
 				E2CA0C3A1C50335500E2F380 /* AcceptanceTests */,
 			);
 		};
@@ -1245,6 +1166,7 @@
 				E2CA0C361C4FFEAF00E2F380 /* patchr-test.sh in Resources */,
 				7D3D39D61A6F086F00A44CB2 /* Images.xcassets in Resources */,
 				E26B0C921B46D01E00706F4A /* ThumbnailCollectionViewCell.xib in Resources */,
+				E2B2CAB01C5434D700CAE183 /* .travis.yml in Resources */,
 				E29F65511B61A9280000BEF4 /* PatchSearchCell.xib in Resources */,
 				E2064BF31BC0212B009C7B6A /* silence.caf in Resources */,
 				E2CA0C351C4FFEAF00E2F380 /* patchr-build.sh in Resources */,
@@ -1258,17 +1180,6 @@
 				E25327D01B13DB3000990A81 /* notification_pop.aac in Resources */,
 				E25327CD1B13DB2900990A81 /* notification_activity.aac in Resources */,
 				E2F6C9291B1DF5500067D959 /* Notes.md in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E22770771C45650300866733 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				E22770991C482BB400866733 /* Notes.txt in Resources */,
-				E22770931C48139000866733 /* Snapfile in Resources */,
-				E22770951C4819F200866733 /* reset-all-simulators.sh in Resources */,
-				E227708F1C4806B400866733 /* uninstall-patchr-booted.sh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1525,6 +1436,7 @@
 				E241D15A1B1B3FCE00702E01 /* UIView+BorderLayer.m in Sources */,
 				7DA730931A71ACC9008C25FA /* ServiceBase.m in Sources */,
 				E2D12A7F1C0A090200DE507E /* Theming.swift in Sources */,
+				E2B2CAB21C553A8900CAE183 /* BaseEditViewController.swift in Sources */,
 				7DA7308C1A71ACC9008C25FA /* _Query.m in Sources */,
 				7D9C9E3D1A9BAFCE0069E332 /* PatchDetailViewController.swift in Sources */,
 				E297305E1C136E8300B9433B /* AirRadioButton.swift in Sources */,
@@ -1644,19 +1556,9 @@
 				E26B0C901B45C07D00706F4A /* AirPhotoBrowser.swift in Sources */,
 				E273B5361B488F2000888E73 /* AirPhotoPreview.swift in Sources */,
 				E297305A1C135BFA00B9433B /* PatchEditViewController.swift in Sources */,
+				E2017B771C53E3EE0062E497 /* Testing.swift in Sources */,
 				9FDCC8F9EEEF77DEBE173AFA /* PhotoPickerViewController.swift in Sources */,
 				9FDCC4E31D09C35191FA3624 /* PatchTableMapViewController.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E22770751C45650300866733 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				E227707C1C45650300866733 /* UserUITests.swift in Sources */,
-				E208DED61C49BA0000944242 /* BaseTestCase.swift in Sources */,
-				E208DED41C49B46B00944242 /* PatchUITests.swift in Sources */,
-				E22770911C480F5000866733 /* SnapshotHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1687,6 +1589,7 @@
 			files = (
 				E2CA0C481C50450500E2F380 /* TestAdditions.swift in Sources */,
 				E247C5EF1C51960300EAEFFB /* UserEditingTests.swift in Sources */,
+				E2017B781C53E4470062E497 /* Testing.swift in Sources */,
 				E2CA0C3E1C50335600E2F380 /* OnboardingTests.swift in Sources */,
 				E2017B741C52E0900062E497 /* AnonymousTests.swift in Sources */,
 			);
@@ -1695,11 +1598,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		E227707F1C45650300866733 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 7D3D39C81A6F086F00A44CB2 /* Patchr */;
-			targetProxy = E227707E1C45650300866733 /* PBXContainerItemProxy */;
-		};
 		E238BAE71B51D3290094AF41 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = E238BADD1B51D3290094AF41 /* PatchrShare */;
@@ -1743,6 +1641,7 @@
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -1761,7 +1660,7 @@
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_SWIFT_FLAGS = "";
+				OTHER_SWIFT_FLAGS = "-D DEBUG";
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VALID_ARCHS = "arm64 armv7 armv7s";
@@ -1787,6 +1686,7 @@
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1820,7 +1720,6 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1870,7 +1769,6 @@
 					"-framework",
 					"\"UIKit\"",
 				);
-				OTHER_SWIFT_FLAGS = "-D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -1894,7 +1792,6 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1941,7 +1838,6 @@
 					"-framework",
 					"\"UIKit\"",
 				);
-				OTHER_SWIFT_FLAGS = "-D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -1970,6 +1866,7 @@
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -2003,7 +1900,6 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -2050,72 +1946,11 @@
 					"-framework",
 					"\"UIKit\"",
 				);
-				OTHER_SWIFT_FLAGS = "-D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
-			};
-			name = AdHoc;
-		};
-		E22770801C45650300866733 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = PatchrUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.PatchrUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_TARGET_NAME = Patchr;
-				USES_XCTRUNNER = YES;
-				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
-			};
-			name = Debug;
-		};
-		E22770811C45650300866733 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = PatchrUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.PatchrUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_TARGET_NAME = Patchr;
-				USES_XCTRUNNER = YES;
-				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
-			};
-			name = Release;
-		};
-		E22770821C45650300866733 /* AdHoc */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = PatchrUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.PatchrUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_TARGET_NAME = Patchr;
-				USES_XCTRUNNER = YES;
 				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
 			};
 			name = AdHoc;
@@ -2153,7 +1988,6 @@
 					"-framework",
 					"\"UIKit\"",
 				);
-				OTHER_SWIFT_FLAGS = "-D IOS8TARGET";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.3meters.patchr.ios.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -2193,7 +2027,6 @@
 					"-framework",
 					"\"UIKit\"",
 				);
-				OTHER_SWIFT_FLAGS = "-D IOS8TARGET";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.3meters.patchr.ios.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -2233,7 +2066,6 @@
 					"-framework",
 					"\"UIKit\"",
 				);
-				OTHER_SWIFT_FLAGS = "-D IOS8TARGET";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.3meters.patchr.ios.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -2327,16 +2159,6 @@
 				7D3D39E91A6F087000A44CB2 /* Debug */,
 				7D3D39EA1A6F087000A44CB2 /* Release */,
 				7D9C9E3F1A9BD3290069E332 /* AdHoc */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		E22770831C45650300866733 /* Build configuration list for PBXNativeTarget "PatchrUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				E22770801C45650300866733 /* Debug */,
-				E22770811C45650300866733 /* Release */,
-				E22770821C45650300866733 /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -9,7 +9,7 @@
 import UIKit
 import MBProgressHUD
 
-class LoginViewController: BaseViewController {
+class LoginViewController: BaseEditViewController {
 
     var processing				: Bool = false
 	var provider				= AuthProvider.PROXIBASE
@@ -22,10 +22,6 @@ class LoginViewController: BaseViewController {
 	var doneButton				= AirFeaturedButton()
 	var message					= AirLabelTitle()
 
-	var scrollView			 = AirScrollView()
-	var contentHolder		 = UIView()
-	var activeTextField		 : UIView?
-	
 	var inputRouteToMain: Bool = true
 
 	/*--------------------------------------------------------------------------------------------
@@ -37,23 +33,9 @@ class LoginViewController: BaseViewController {
 		initialize()
 	}
 	
-	override func viewWillAppear(animated: Bool) {
-		let notificationCenter = NSNotificationCenter.defaultCenter()
-		notificationCenter.addObserver(self, selector: "keyboardWillBeShown:", name: UIKeyboardWillShowNotification, object: nil)
-		notificationCenter.addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
-	}
-	
-	override func viewDidDisappear(animated: Bool) {
-		NSNotificationCenter.defaultCenter().removeObserver(self)
-	}
-	
-	/*--------------------------------------------------------------------------------------------
-	* Events
-	*--------------------------------------------------------------------------------------------*/
-	
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
-
+		
 		let messageSize = self.message.sizeThatFits(CGSizeMake(288, CGFloat.max))
 		self.message.anchorTopCenterWithTopPadding(0, width: 288, height: messageSize.height)
 		self.emailField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
@@ -68,6 +50,10 @@ class LoginViewController: BaseViewController {
 		self.scrollView.contentSize = CGSizeMake(self.contentHolder.frame.size.width, self.contentHolder.frame.size.height + CGFloat(32))
 		self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 16, height: self.contentHolder.frame.size.height)
 	}
+	
+	/*--------------------------------------------------------------------------------------------
+	* Events
+	*--------------------------------------------------------------------------------------------*/
 	
     func doneAction(sender: AnyObject) {
 		if isValid() {
@@ -130,19 +116,13 @@ class LoginViewController: BaseViewController {
 			self.message.text = "Welcome back."
 		}
 		
-		let fullScreenRect = UIScreen.mainScreen().applicationFrame
-		self.scrollView.frame = fullScreenRect
-		self.scrollView.backgroundColor = Theme.colorBackgroundForm
-		self.scrollView.addSubview(self.contentHolder)
-		self.view = self.scrollView
-		
 		self.message.textColor = Theme.colorTextTitle
 		self.message.numberOfLines = 0
 		self.message.textAlignment = .Center
 		self.contentHolder.addSubview(self.message)
 		
 		self.emailField.placeholder = "Email"
-		self.emailField.accessibilityIdentifier = "email_field"
+		self.emailField.accessibilityIdentifier = Field.Email
 		self.emailField.delegate = self
 		self.emailField.keyboardType = UIKeyboardType.EmailAddress
 		self.emailField.autocapitalizationType = .None
@@ -151,7 +131,7 @@ class LoginViewController: BaseViewController {
 		self.contentHolder.addSubview(self.emailField)
 		
 		self.passwordField.placeholder = "Password (6 characters or more)"
-		self.passwordField.accessibilityIdentifier = "password_field"
+		self.passwordField.accessibilityIdentifier = Field.Password
 		self.passwordField.delegate = self
 		self.passwordField.secureTextEntry = true
 		self.passwordField.autocapitalizationType = .None
@@ -160,11 +140,11 @@ class LoginViewController: BaseViewController {
 		self.contentHolder.addSubview(self.passwordField)
 		
 		self.forgotPasswordButton.setTitle("Forgot password?", forState: .Normal)
-		self.forgotPasswordButton.accessibilityIdentifier = "forgot_password_button"
+		self.forgotPasswordButton.accessibilityIdentifier = Button.ForgotPassword
 		self.contentHolder.addSubview(self.forgotPasswordButton)
 		
 		self.doneButton.setTitle("LOG IN", forState: .Normal)
-		self.doneButton.accessibilityIdentifier = "login_button"
+		self.doneButton.accessibilityIdentifier = Button.Submit
 		self.contentHolder.addSubview(self.doneButton)
 		
 		self.forgotPasswordButton.addTarget(self, action: Selector("passwordResetAction:"), forControlEvents: .TouchUpInside)
@@ -176,19 +156,20 @@ class LoginViewController: BaseViewController {
 		let doneButton   = UIBarButtonItem(title: "Log in", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
 		let cancelButton   = UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.Plain, target: self, action: "cancelAction:")
 		
-		cancelButton.accessibilityIdentifier = "nav_cancel_button"
-		doneButton.accessibilityIdentifier = "nav_login_button"
+		cancelButton.accessibilityIdentifier = Nav.Cancel
+		doneButton.accessibilityIdentifier = Nav.Submit
 		
 		self.navigationItem.rightBarButtonItems = [doneButton]
 		self.navigationItem.leftBarButtonItems = [cancelButton]
 
 		if onboardMode == OnboardMode.Signup {
-			doneButton.accessibilityIdentifier = "nav_next_button"
+			self.view.accessibilityIdentifier = View.SignupLogin
 			self.navigationItem.rightBarButtonItem?.title = "Next"
 			self.forgotPasswordButton.hidden = true
 			self.doneButton.hidden = true
 		}
 		else {
+			self.view.accessibilityIdentifier = View.Login
 			self.emailField.text = NSUserDefaults.standardUserDefaults().objectForKey(PatchrUserDefaultKey("userEmail")) as? String
 		}
 	}
@@ -318,7 +299,12 @@ class LoginViewController: BaseViewController {
             Alert("Enter an email address.")
             return false
         }
-        
+		
+		if !emailField.text!.isEmail() {
+			Alert("Enter a valid email address.")
+			return false
+		}
+		
         if (passwordField.text!.utf16.count < 6) {
             Alert("Enter a password with six characters or more.")
             return false
@@ -327,72 +313,19 @@ class LoginViewController: BaseViewController {
         return true
     }
 	
-	func keyboardWillBeShown(sender: NSNotification) {
-		/*
-		* Called when the UIKeyboardDidShowNotification is sent.
-		*/
-		if let scrollView = self.view as? UIScrollView {
-			
-			let info: NSDictionary = sender.userInfo!
-			let value = info.valueForKey(UIKeyboardFrameBeginUserInfoKey) as! NSValue
-			let keyboardSize = value.CGRectValue().size
-			
-			scrollView.contentInset = UIEdgeInsetsMake(64, 0, keyboardSize.height, 0)
-			scrollView.scrollIndicatorInsets = scrollView.contentInset
-			
-			/*
-			* If active text field is hidden by keyboard, scroll it so it's visible
-			*/
-			if self.activeTextField != nil {
-				var visibleRect = self.view.frame
-				visibleRect.size.height -= keyboardSize.height
-				
-				let activeTextFieldRect = self.activeTextField?.frame
-				let activeTextFieldOrigin = activeTextFieldRect?.origin
-				
-				if (!CGRectContainsPoint(visibleRect, activeTextFieldOrigin!)) {
-					scrollView.scrollRectToVisible(activeTextFieldRect!, animated:true)
-				}
-			}
+	override func textFieldShouldReturn(textField: UITextField) -> Bool {
+		
+		if textField == self.emailField {
+			self.passwordField.becomeFirstResponder()
+			return false
+		} else if textField == self.passwordField {
+			self.doneAction(textField)
+			textField.resignFirstResponder()
+			return false
 		}
+		
+		return true
 	}
- 
-	func keyboardWillBeHidden(sender: NSNotification) {
-		/*
-		* Called when the UIKeyboardWillHideNotification is sent.
-		*/
-		if let scrollView = self.view as? UIScrollView {
-			scrollView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0)
-			scrollView.scrollIndicatorInsets = scrollView.contentInset
-		}
-	}
-}
-
-extension LoginViewController: UITextFieldDelegate {
-    
-	func textFieldDidBeginEditing(textField: UITextField) {
-		self.activeTextField = textField
-	}
-	
-	func textFieldDidEndEditing(textField: UITextField) {
-		if self.activeTextField == textField {
-			self.activeTextField = nil
-		}
-	}
-	
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
-        
-        if textField == self.emailField {
-            self.passwordField.becomeFirstResponder()
-            return false
-        } else if textField == self.passwordField {
-            self.doneAction(textField)
-            textField.resignFirstResponder()
-            return false
-        }
-        
-        return true
-    }
 }
 
 enum OnboardMode: Int {

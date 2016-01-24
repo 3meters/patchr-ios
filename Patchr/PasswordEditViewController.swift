@@ -9,12 +9,14 @@
 import UIKit
 import MBProgressHUD
 
-class PasswordEditViewController: BaseViewController {
+class PasswordEditViewController: BaseEditViewController {
 
     var processing: Bool = false
 
-    var passwordField = AirTextField()
+    var message          = AirLabelTitle()
+    var passwordField    = AirTextField()
     var passwordNewField = AirTextField()
+    var submitButton      = AirButton()
 	
 	/*--------------------------------------------------------------------------------------------
 	* Lifecycle
@@ -25,6 +27,20 @@ class PasswordEditViewController: BaseViewController {
 		initialize()
 	}
 	
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		
+		let messageSize = self.message.sizeThatFits(CGSizeMake(288, CGFloat.max))
+		self.message.anchorTopCenterWithTopPadding(0, width: 288, height: messageSize.height)
+		self.passwordField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+		self.passwordNewField.alignUnder(self.passwordField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+		self.submitButton.alignUnder(self.passwordNewField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+		
+		self.contentHolder.resizeToFitSubviews()
+		self.scrollView.contentSize = CGSizeMake(self.contentHolder.frame.size.width, self.contentHolder.frame.size.height + CGFloat(32))
+		self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 16, height: self.contentHolder.frame.size.height)
+	}
+	
     override func viewDidAppear(animated: Bool) {
         self.passwordField.becomeFirstResponder()
     }
@@ -33,10 +49,11 @@ class PasswordEditViewController: BaseViewController {
 	* Events
 	*--------------------------------------------------------------------------------------------*/
 	
-	override func viewWillLayoutSubviews() {
-		super.viewWillLayoutSubviews()
-		self.passwordField.anchorTopCenterWithTopPadding(88, width: 288, height: 48)
-		self.passwordNewField.alignUnder(self.passwordField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+	func submitAction(sender: AnyObject) {
+		if processing { return }
+		if isValid() {
+			change()
+		}
 	}
 
 	/*--------------------------------------------------------------------------------------------
@@ -47,36 +64,46 @@ class PasswordEditViewController: BaseViewController {
 		super.initialize()
 		
 		setScreenName("PasswordEdit")
+		self.view.accessibilityIdentifier = View.PasswordEdit
 		
-		self.passwordField.placeholder = "Old password"
-		self.passwordField.accessibilityIdentifier = "password_field"
+		self.message.text = "Change password"
+		self.message.numberOfLines = 0
+		self.message.textAlignment = .Center
+		self.contentHolder.addSubview(self.message)
+		
+		self.passwordField.placeholder = "Current password"
+		self.passwordField.accessibilityIdentifier = Field.Password
 		self.passwordField.delegate = self
 		self.passwordField.secureTextEntry = true
 		self.passwordField.keyboardType = UIKeyboardType.Default
 		self.passwordField.returnKeyType = UIReturnKeyType.Next
-		self.view.addSubview(self.passwordField)
+		self.contentHolder.addSubview(self.passwordField)
 
-		self.passwordNewField.placeholder = "Password (6 characters or more)"
-		self.passwordNewField.accessibilityIdentifier = "new_password_field"
+		self.passwordNewField.placeholder = "New password"
+		self.passwordNewField.accessibilityIdentifier = Field.NewPassword
 		self.passwordNewField.delegate = self
 		self.passwordNewField.secureTextEntry = true
 		self.passwordNewField.keyboardType = UIKeyboardType.Default
 		self.passwordNewField.returnKeyType = UIReturnKeyType.Done
-		self.view.addSubview(self.passwordNewField)
+		self.contentHolder.addSubview(self.passwordNewField)
+		
+		self.submitButton.setTitle("CHANGE", forState: .Normal)
+		self.submitButton.accessibilityIdentifier = Button.Submit
+		self.submitButton.addTarget(self, action: Selector("submitAction:"), forControlEvents: .TouchUpInside)
+		self.contentHolder.addSubview(self.submitButton)
 		
 		/* Navigation bar buttons */
-		let doneButton   = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
-		let cancelButton   = UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.Plain, target: self, action: "cancelAction:")
+		let submitBarButton   = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.Plain, target: self, action: "submitAction:")
+		let cancelBarButton   = UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.Plain, target: self, action: "cancelAction:")
 		
-		doneButton.accessibilityIdentifier = "nav_submit_button"
-		cancelButton.accessibilityIdentifier = "nav_cancel_button"
+		submitBarButton.accessibilityIdentifier = Nav.Submit
+		cancelBarButton.accessibilityIdentifier = Nav.Cancel
 		
-		self.navigationItem.title = "Change password"
-		self.navigationItem.rightBarButtonItems = [doneButton]
-		self.navigationItem.leftBarButtonItems = [cancelButton]
+		self.navigationItem.rightBarButtonItems = [submitBarButton]
+		self.navigationItem.leftBarButtonItems = [cancelBarButton]
 	}
 	
-    func doneAction(sender: NSObject) {
+    func change() {
         
         if processing { return }
         
@@ -130,25 +157,28 @@ class PasswordEditViewController: BaseViewController {
     }
     
     func isValid() -> Bool {
+		
+		if (self.passwordField.text!.isEmpty) {
+			Alert("Enter your current password.")
+			return false
+		}
+		
         if (passwordNewField.text!.utf16.count < 6) {
             Alert("Enter a new password with six characters or more.")
             return false
         }
         return true
     }
-}
-
-extension PasswordEditViewController: UITextFieldDelegate {
-    
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
-        if textField == self.passwordField {
-            self.passwordNewField.becomeFirstResponder()
-            return false
-        } else if textField == self.passwordNewField {
-            self.doneAction(textField)
-            textField.resignFirstResponder()
-            return false
-        }
-        return true
-    }
+	
+	override func textFieldShouldReturn(textField: UITextField) -> Bool {
+		if textField == self.passwordField {
+			self.passwordNewField.becomeFirstResponder()
+			return false
+		} else if textField == self.passwordNewField {
+			self.submitAction(textField)
+			textField.resignFirstResponder()
+			return false
+		}
+		return true
+	}
 }

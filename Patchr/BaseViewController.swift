@@ -10,6 +10,9 @@ import UIKit
 
 class BaseViewController: UIViewController {
 	
+	var scrollView		= AirScrollView()
+	var contentHolder	= UIView()
+		
 	var isModal: Bool {
 		return self.presentingViewController?.presentedViewController == self
 			|| (self.navigationController != nil && self.navigationController?.presentingViewController?.presentedViewController == self.navigationController)
@@ -43,10 +46,24 @@ class BaseViewController: UIViewController {
 	
 	func initialize() {
 		self.view.backgroundColor = Theme.colorBackgroundForm
+		
+		let fullScreenRect = UIScreen.mainScreen().applicationFrame
+		self.scrollView.frame = fullScreenRect
+		self.scrollView.backgroundColor = Theme.colorBackgroundForm
+		self.scrollView.bounces = true
+		self.scrollView.alwaysBounceVertical = true
+		self.scrollView.addSubview(self.contentHolder)
+		self.view = self.scrollView
 	}
 	
-	func dismissKeyboard() {
-		self.view.endEditing(true)
+	func performBack(animated: Bool = true) {
+		/* Override in subclasses for control of dismiss/pop process */
+		if isModal {
+			self.dismissViewControllerAnimated(animated, completion: nil)
+		}
+		else {
+			self.navigationController?.popViewControllerAnimated(true)
+		}
 	}
 	
 	func nullToNil(value : AnyObject?) -> AnyObject? {

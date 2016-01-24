@@ -337,7 +337,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 							 * The fetched results delegate is informed of any changes that should
 							 * cause an update to the table view.
 							 */
-							DataController.instance.saveContext(false)
+							DataController.instance.saveContext(BLOCKING)
 							self?.tableView.reloadData()		// Update cells to show any changes
 						}
 						

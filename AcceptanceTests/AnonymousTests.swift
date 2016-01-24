@@ -10,45 +10,44 @@ import XCTest
 import KIF
 import Nimble
 import CoreLocation
+import CocoaLumberjack
 
 @testable import Patchr	// Makes all internal api calls available
 
 class AnonymousTests: KIFTestCase {
 	
 	override func beforeAll() {
-		
-		if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
-			appDelegate.resetToLobby()
-		}
+		let app = UIApplication.sharedApplication().delegate as! AppDelegate
+		app.resetToLobby()
+		app.logLevel(DDLogLevel.Debug)
 		
 		tester().tap(Button.Guest)
-		tester().waitFor(Tab.Profile)
+		tester().waitFor(View.Main)
 	}
 	
 	override func beforeEach() {
-		if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
-			appDelegate.resetToHome()
-		}
+		let app = UIApplication.sharedApplication().delegate as! AppDelegate
+		app.resetToHome()
 	}
 	
 	func testAddingPatchIsGuarded() {
 		
 		/* Show and confirm guard */
 		tester().tapLabel(Nav.Add)
-		tester().waitFor(Button.Login)
+		tester().waitFor(View.Guest)
 		
 		expect(self.tester().exists(Button.Signup)) == true
 		expect(self.tester().exists(Button.Cancel)) == true
 		
 		tester().tap(Button.Cancel)
-		tester().waitFor(Tab.Patches)
+		tester().waitFor(View.Main)
 	}
 	
 	func testGuardSupportsLoginAndSignup() {
 		
 		/* Show and confirm guard */
 		tester().tapLabel(Nav.Add)
-		tester().waitFor(Button.Login)
+		tester().waitFor(View.Guest)
 		
 		/* Nav to login */
 		tester().tap(Button.Login)
@@ -56,11 +55,12 @@ class AnonymousTests: KIFTestCase {
 		
 		/* Nav to signup */
 		tester().tapLabel(Nav.Add)
+		tester().waitFor(View.Guest)
 		tester().tap(Button.Signup)
 		tester().tap(Nav.Cancel)
 		
 		/* Cancel */
-		tester().waitFor(Tab.Patches)
+		tester().waitFor(View.Main)
 	}
 	
 	func testAnonymousCanBrowse() {
@@ -71,7 +71,7 @@ class AnonymousTests: KIFTestCase {
 		}
 		
 		if let userInfo = notification.userInfo, let count = userInfo["count"] as? Int {
-			expect(count).to(equal(50))
+			expect(count) > 0
 		}
 		
 		/* Should be there */
@@ -83,16 +83,14 @@ class AnonymousTests: KIFTestCase {
 		/* Should not be there */
 		expect(self.tester().existsLabel(Segment.Own)) == false
 		expect(self.tester().existsLabel(Segment.Watching)) == false
-		
-		tester().swipeViewWithAccessibilityIdentifier("table", inDirection: KIFSwipeDirection.Down)
-		
+
+		/* User move to new location */
 		notification = system().waitForNotificationName(Events.DidFetchQuery, object: nil) {
 			LocationController.instance.setMockLocation(Location.ballard)
-			self.tester().acknowledgeSystemAlert()
 		}
 		
 		if let userInfo = notification.userInfo, let count = userInfo["count"] as? Int {
-			expect(count).to(equal(50))
+			expect(count) > 0
 		}
 	}
 }

@@ -16,7 +16,7 @@ enum MessageType: Int {
 	case Share
 }
 
-class MessageEditViewController: BaseViewController, UITableViewDelegate, UITableViewDataSource {
+class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UITableViewDataSource {
 	
 	var inputState			: State? = State.Editing
 	var inputMessageType	: MessageType = .Content
@@ -34,7 +34,6 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 	var cancelledLabel		: String?
 	var schema				= Schema.ENTITY_MESSAGE
 	var progress			: AirProgress?
-	var activeTextField		: UIView?
 	var insertedEntity		: Entity?
 	var firstAppearance		= true
 	
@@ -64,9 +63,6 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 	var messageView			: MessageView?
 	var patchView			: PatchView?
 	var doneButton			= AirFeaturedButton()
-	
-	var scrollView			= AirScrollView()
-	var contentHolder		= UIView()
 	
 	/*--------------------------------------------------------------------------------------------
 	* Lifecycle
@@ -138,9 +134,6 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 	
 	override func viewWillAppear(animated: Bool) {
 		let notificationCenter = NSNotificationCenter.defaultCenter()
-		notificationCenter.addObserver(self, selector: "dismissKeyboard", name: Events.PhotoViewHasFocus, object: nil)
-		notificationCenter.addObserver(self, selector: "keyboardWillBeShown:", name: UIKeyboardWillShowNotification, object: nil)
-		notificationCenter.addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
 		notificationCenter.addObserver(self, selector: "photoDidChange:", name: Events.PhotoDidChange, object: nil)
 	}
 	
@@ -232,11 +225,9 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 	override func initialize() {
 		super.initialize()
 		
-		let viewWidth = min(CONTENT_WIDTH_MAX, self.view.bounds.size.width)
+		self.view.accessibilityIdentifier = View.MessageEdit
 		
-		let fullScreenRect = UIScreen.mainScreen().applicationFrame
-		self.scrollView.frame = fullScreenRect
-		self.scrollView.backgroundColor = Theme.colorBackgroundForm
+		let viewWidth = min(CONTENT_WIDTH_MAX, self.view.bounds.size.width)
 		
 		self.photoView.photoSchema = Schema.ENTITY_MESSAGE
 		self.photoView.setHostController(self)
@@ -261,10 +252,8 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 		
 		self.contentHolder.addSubview(self.descriptionField)
 		self.contentHolder.addSubview(self.photoView)
-		self.scrollView.addSubview(self.contentHolder)
 		
 		self.view.addSubview(self.addressGroup)
-		self.view.addSubview(self.scrollView)
 		
 		if self.inputState == State.Sharing {
 			
@@ -548,7 +537,7 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 				}
 				else {
 					DataController.instance.mainContext.deleteObject(self.inputEntity!)
-					DataController.instance.saveContext(false)
+					DataController.instance.saveContext(BLOCKING)
 					DataController.instance.activityDateInsertDeleteMessage = Utils.now()
 					self.performBack()
 				}
@@ -703,67 +692,6 @@ class MessageEditViewController: BaseViewController, UITableViewDelegate, UITabl
 					return false
 			}
 		}
-        return true
-    }
-	
-	func performBack(animated: Bool = true) {
-		/* Override in subclasses for control of dismiss/pop process */
-		if isModal {
-			self.dismissViewControllerAnimated(animated, completion: nil)
-		}
-		else {
-			self.navigationController?.popViewControllerAnimated(true)
-		}
-	}
-	
-	func keyboardWillBeShown(sender: NSNotification) {
-		/* 
-		 * Called when the UIKeyboardDidShowNotification is sent. 
-		 */
-		let info: NSDictionary = sender.userInfo!
-		let value = info.valueForKey(UIKeyboardFrameBeginUserInfoKey) as! NSValue
-		let keyboardSize = value.CGRectValue().size
-		
-		self.scrollView.contentInset = UIEdgeInsetsMake(0, 0, keyboardSize.height, 0)
-		self.scrollView.scrollIndicatorInsets = self.scrollView.contentInset
-		/* 
-		 * If active text field is hidden by keyboard, scroll it so it's visible
-		 */
-		if self.activeTextField != nil {
-			var visibleRect = self.scrollView.frame
-			visibleRect.size.height -= keyboardSize.height
-			
-			let activeTextFieldRect = self.activeTextField?.frame
-			let activeTextFieldOrigin = activeTextFieldRect?.origin
-			
-			if (!CGRectContainsPoint(visibleRect, activeTextFieldOrigin!)) {
-				self.scrollView.scrollRectToVisible(activeTextFieldRect!, animated:true)
-			}
-		}
-	}
- 
-	func keyboardWillBeHidden(sender: NSNotification) {
-		/* 
-		 * Called when the UIKeyboardWillHideNotification is sent.
-		 */
-		self.scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
-		self.scrollView.scrollIndicatorInsets = scrollView.contentInset
-	}
-}
-
-extension MessageEditViewController: UITextFieldDelegate {
-	
-	func textFieldDidBeginEditing(textField: UITextField) {
-		self.activeTextField = textField
-	}
-	
-	func textFieldDidEndEditing(textField: UITextField) {
-		if self.activeTextField == textField {
-			self.activeTextField = nil
-		}
-	}
-	
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
         return true
     }
 }

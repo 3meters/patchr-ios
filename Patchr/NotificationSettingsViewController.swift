@@ -47,6 +47,7 @@ class NotificationSettingsViewController: UITableViewController {
 		setScreenName("NotificationSettings")
 		
 		self.navigationItem.title = "Notifications"
+		self.view.accessibilityIdentifier = View.NotificationSettings
 		
 		self.tableView = UITableView(frame: self.tableView.frame, style: .Grouped)
 		self.tableView.rowHeight = 48

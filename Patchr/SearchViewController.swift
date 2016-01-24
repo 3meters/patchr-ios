@@ -95,6 +95,9 @@ class SearchViewController: UITableViewController {
 		setScreenName("PatchSearch")
 		self.navigationItem.title = "Search Patchr"
 		
+		self.view.accessibilityIdentifier = View.Search
+		self.tableView!.accessibilityIdentifier = Table.Search
+
 		/* If already authorized then grab the location */
 		let authorized = (CLLocationManager.authorizationStatus() == .AuthorizedAlways
 			|| CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse)
@@ -226,9 +229,11 @@ class SearchViewController: UITableViewController {
 }
 
 extension SearchViewController: UITextFieldDelegate {
+	
     func textFieldDidEndEditing(textField: UITextField) {
         self.searchField.resignFirstResponder()
     }
+	
     func textFieldShouldClear(textField: UITextField) -> Bool {
         self.searchField.resignFirstResponder()
         return true

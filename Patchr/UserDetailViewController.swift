@@ -95,6 +95,8 @@ class UserDetailViewController: BaseDetailViewController {
 	func initialize() {
 		
 		setScreenName(self.profileMode ? "UserProfile" : "UserDetail")
+		self.view.accessibilityIdentifier = View.UserDetail
+
 		self.queryName = DataStoreQueryName.MessagesByUser.rawValue
 		
 		self.header = UserDetailView()
@@ -139,8 +141,8 @@ class UserDetailViewController: BaseDetailViewController {
 				let editButton = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
 				let settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("settingsAction"))
 				
-				editButton.accessibilityIdentifier = "edit_button"
-				settingsButton.accessibilityIdentifier = "settings_button"
+				editButton.accessibilityIdentifier = "nav_edit_button"
+				settingsButton.accessibilityIdentifier = "nav_settings_button"
 				
 				self.navigationItem.rightBarButtonItems = [settingsButton, Utils.spacer, editButton]
 				self.navigationItem.title = "Me"

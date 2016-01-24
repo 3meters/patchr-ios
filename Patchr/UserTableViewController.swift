@@ -41,6 +41,9 @@ class UserTableViewController: BaseTableViewController {
 		
 		self.tableView.estimatedRowHeight = 97
 		self.tableView.rowHeight = 97
+		
+		self.view.accessibilityIdentifier = View.Users
+		self.tableView!.accessibilityIdentifier = Table.Users
 	}
     
     override func viewWillAppear(animated: Bool) {
@@ -95,7 +98,7 @@ class UserTableViewController: BaseTableViewController {
 					query!.contextEntity = self.message
 			}
 
-			DataController.instance.saveContext(false)
+			DataController.instance.saveContext(BLOCKING)
 		}
 
         return query!
@@ -205,7 +208,7 @@ extension UserTableViewController: UserApprovalViewDelegate {
 							}
 							else {
 								user.link.enabledValue = linkEnabled
-								DataController.instance.saveContext(false)
+								DataController.instance.saveContext(BLOCKING)
 							}
 							approvalSwitch.enabled = true
 						}
@@ -243,7 +246,7 @@ extension UserTableViewController: UserApprovalViewDelegate {
 							else {
 								DataController.instance.mainContext.deleteObject(user.link)
 								DataController.instance.mainContext.deleteObject(queryResult)
-								DataController.instance.saveContext(false)
+								DataController.instance.saveContext(BLOCKING)
 							}
 						}
 					})

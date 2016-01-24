@@ -37,6 +37,13 @@ PODS:
     - Bolts/Tasks
   - Bolts/Tasks (1.6.0)
   - Branch (0.11.12)
+  - CocoaLumberjack/Core (2.2.0)
+  - CocoaLumberjack/Default (2.2.0):
+    - CocoaLumberjack/Core
+  - CocoaLumberjack/Extensions (2.2.0):
+    - CocoaLumberjack/Default
+  - CocoaLumberjack/Swift (2.2.0):
+    - CocoaLumberjack/Extensions
   - Crashlytics (3.6.0):
     - Fabric (~> 1.6.3)
   - DACircularProgress (2.3.1)
@@ -91,6 +98,7 @@ DEPENDENCIES:
   - AirPhotoBrowser (from `~/code/AirPhotoBrowser`)
   - AWSS3
   - Branch
+  - CocoaLumberjack/Swift
   - Crashlytics
   - DateTools
   - DLRadioButton
@@ -128,6 +136,7 @@ SPEC CHECKSUMS:
   AWSS3: 675f59e0c338e61441117f03018187b9deb359c4
   Bolts: f52a250053bb517ca874523c3913776359ab3def
   Branch: 82bfbfda8fbc7f6caed9709abdbb88ec88ba6e59
+  CocoaLumberjack: 17fe8581f84914d5d7e6360f7c70022b173c3ae0
   Crashlytics: e4e8d02914f2608fbc7bf42b1a7af838b0db67a2
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   DateTools: 53288ee8b905fdc75897a1e6b5cc0144b14cba60

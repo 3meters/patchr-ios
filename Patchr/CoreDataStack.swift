@@ -13,6 +13,7 @@ class CoreDataStack: NSObject {
 	var stackWriterContext:         NSManagedObjectContext!		// On background thread
 	var stackMainContext:           NSManagedObjectContext!		// On main thread
 	var persistentStoreCoordinator: NSPersistentStoreCoordinator!
+	var storeUrl: NSURL?
 	
 	override init(){
 		super.init()
@@ -54,41 +55,68 @@ class CoreDataStack: NSObject {
 			
 			let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
 			let docUrl = urls[urls.endIndex-1]
-			let storeUrl = docUrl.URLByAppendingPathComponent("Patchr.sqlite")
-			
+			self.storeUrl = docUrl.URLByAppendingPathComponent("Patchr.sqlite")
+			self.createStore(self.storeUrl!)
+		}
+	}
+	
+	func createStore(storeUrl: NSURL) {
+		do {
+			/*
+			* Light migration supported for the following changes only:
+			* https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/CoreDataVersioning/Articles/vmLightweightMigration.html
+			*
+			* - Add or remove a property (attribute or relationship).
+			* - Make a nonoptional property optional.
+			* - Make an optional attribute nonoptional, as long as you provide a default value.
+			* - Add or remove an entity.
+			* - Rename a property.
+			* - Rename an entity.
+			*/
+			let options = [
+				NSMigratePersistentStoresAutomaticallyOption: true,
+				NSInferMappingModelAutomaticallyOption: true ]
+			try self.persistentStoreCoordinator.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: self.storeUrl!, options: options)
+		}
+		catch {
+			/* Report any error we got. */
+			var dict = [String: AnyObject]()
+			dict[NSLocalizedDescriptionKey] = "Failed to initialize the application's saved data"
+			dict[NSLocalizedFailureReasonErrorKey] = "There was an error creating or loading the application's saved data."
+			dict[NSUnderlyingErrorKey] = error as NSError
+			let wrappedError = NSError(domain: "YOUR_ERROR_DOMAIN", code: 9999, userInfo: dict)
+			/*
+			* Replace this with code to handle the error appropriately. abort() causes the application to
+			* generate a crash log and terminate. DO NOT use this function in a shipping application,
+			* although it may be useful during development.
+			*/
+			NSLog("Unresolved error \(wrappedError), \(wrappedError.userInfo)")
+			abort()
+		}
+	}
+	
+	func deleteStore(storeUrl: NSURL) {
+		if NSFileManager.defaultManager().fileExistsAtPath(storeUrl.path!) {
 			do {
-				/*
-				 * Light migration supported for the following changes only:
-				 * https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/CoreDataVersioning/Articles/vmLightweightMigration.html
-				 *
-				 * - Add or remove a property (attribute or relationship).
-				 * - Make a nonoptional property optional.
-				 * - Make an optional attribute nonoptional, as long as you provide a default value.
-				 * - Add or remove an entity.
-				 * - Rename a property.
-				 * - Rename an entity.
-				 */
-				let options = [
-					NSMigratePersistentStoresAutomaticallyOption: true,
-					NSInferMappingModelAutomaticallyOption: true ]
-				try coordinator.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: storeUrl, options: options)
+				for store in self.persistentStoreCoordinator.persistentStores {
+					try self.persistentStoreCoordinator.removePersistentStore(store)
+				}
+				try NSFileManager.defaultManager().removeItemAtURL(storeUrl)
+				Log.d("Store deleted")
 			}
 			catch {
-				/* Report any error we got. */
-				var dict = [String: AnyObject]()
-				dict[NSLocalizedDescriptionKey] = "Failed to initialize the application's saved data"
-				dict[NSLocalizedFailureReasonErrorKey] = "There was an error creating or loading the application's saved data."
-				dict[NSUnderlyingErrorKey] = error as NSError
-				let wrappedError = NSError(domain: "YOUR_ERROR_DOMAIN", code: 9999, userInfo: dict)
-				/*
-				 * Replace this with code to handle the error appropriately. abort() causes the application to
-				 * generate a crash log and terminate. DO NOT use this function in a shipping application,
-				 * although it may be useful during development.
-				 */
-				NSLog("Unresolved error \(wrappedError), \(wrappedError.userInfo)")
-				abort()
+				Log.w("Store delete failed")
 			}
 		}
+	}
+	
+	func replaceStore() {
+		deleteStore(self.storeUrl!)
+		createStore(self.storeUrl!)
+	}
+	
+	func resetNew() {
+		replaceStore()
 	}
 	
 	func reset() {
@@ -97,7 +125,6 @@ class CoreDataStack: NSObject {
 		privateContext.parentContext = DataController.instance.mainContext
 		privateContext.performBlock {
 			privateContext.deleteAllObjects()
-			self.saveContext(privateContext, wait: true)
 			self.saveContext(self.stackMainContext, wait: true)
 			self.saveContext(self.stackWriterContext, wait: true)
 		}
@@ -168,7 +195,7 @@ class CoreDataStack: NSObject {
 	*--------------------------------------------------------------------------------------------*/
 	
 	func mainManagedObjectContextDidSave(info: NSNotification) {
-		self.saveContext(self.stackWriterContext, wait: true)	// Commits changes to the store
+		self.saveContext(self.stackWriterContext, wait: true)	// Commits changes to the persisted store
 	}
 	
 	func appWillResignActive(info: NSNotification) {
@@ -181,7 +208,7 @@ class CoreDataStack: NSObject {
 	}
 	
 	func persistentStoreCoordinatorStoresDidChange(info: NSNotification) {
-		saveContext(self.stackWriterContext, wait: false)
+		saveContext(self.stackWriterContext, wait: BLOCKING)
 	}
 	
 	func persistentStoreDidImportUbiquitousContentChanges(info: NSNotification) {

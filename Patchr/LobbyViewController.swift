@@ -102,6 +102,8 @@ class LobbyViewController: BaseViewController {
 	override func initialize() {
 		super.initialize()
 		
+		self.view.accessibilityIdentifier = View.Lobby
+		
 		self.imageBackground.image = UIImage(named: "imgCityScape")
 		self.imageBackground.contentMode = UIViewContentMode.ScaleAspectFill
 		self.imageBackground.parallaxIntensity = -40

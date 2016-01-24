@@ -80,6 +80,9 @@ class PatchMapViewController: UIViewController {
 		self.mapView.showsUserLocation = true
 		self.mapView.mapType = .Standard
 		
+		self.view.accessibilityIdentifier = View.PatchMap
+		self.mapView!.accessibilityIdentifier = Map.Patch
+		
 		let currentRegion = MKCoordinateRegionMakeWithDistance(self.locationDelegate.locationForMap()!.coordinate, 2000, 2000)
 		self.mapView.setRegion(currentRegion, animated: false)
 		

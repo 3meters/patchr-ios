@@ -13,7 +13,7 @@ import FBSDKCoreKit
 import PBWebViewController
 import MBProgressHUD
 
-class ProfileEditViewController: BaseViewController {
+class ProfileEditViewController: BaseEditViewController {
 	
 	var processing: Bool = false
 	var progressStartLabel: String?
@@ -45,9 +45,6 @@ class ProfileEditViewController: BaseViewController {
 	var comment				 = AirLabel()
 	var message				 = AirLabelTitle()
 	
-	var scrollView			 = UIScrollView()
-	var contentHolder		 = UIView()
-	
 	var facebookOnGroup		 = UIView()
 	var facebookOffGroup	 = UIView()
 	var facebookButton		 = AirButton()
@@ -57,40 +54,22 @@ class ProfileEditViewController: BaseViewController {
 	var facebookActivity	 = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
 	
 	var progress			 : AirProgress?
-	var activeTextField		 : UIView?
 	
 	/*--------------------------------------------------------------------------------------------
 	* Lifecycle
 	*--------------------------------------------------------------------------------------------*/
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        bind()
-    }
-	
 	override func loadView() {
 		super.loadView()
 		initialize()
 		draw()
 	}
 	
-	override func viewWillAppear(animated: Bool) {
-		let notificationCenter = NSNotificationCenter.defaultCenter()
-		notificationCenter.addObserver(self, selector: "providerConnectionChanged:", name: FBSDKAccessTokenDidChangeNotification, object: nil)
-		notificationCenter.addObserver(self, selector: "draw", name: FBSDKProfileDidChangeNotification, object: nil)
-		notificationCenter.addObserver(self, selector: "dismissKeyboard", name: Events.PhotoViewHasFocus, object: nil)
-		notificationCenter.addObserver(self, selector: "keyboardWillBeShown:", name: UIKeyboardWillShowNotification, object: nil)
-		notificationCenter.addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
-	}
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        bind()
+    }
 	
-	override func viewDidDisappear(animated: Bool) {
-		NSNotificationCenter.defaultCenter().removeObserver(self)
-	}
-	
-	/*--------------------------------------------------------------------------------------------
-	 * Events
-	 *--------------------------------------------------------------------------------------------*/
-
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
@@ -98,7 +77,7 @@ class ProfileEditViewController: BaseViewController {
 		self.message.anchorTopCenterWithTopPadding(0, width: 288, height: messageSize.height)
 		self.photoView.alignUnder(self.message, matchingCenterWithTopPadding: 16, width: 150, height: 150)
 		self.nameField.alignUnder(self.photoView, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-
+		
 		if self.inputState == State.Onboarding {
 			self.emailField.alignUnder(self.nameField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
 			self.joinButton.alignUnder(self.emailField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
@@ -119,13 +98,28 @@ class ProfileEditViewController: BaseViewController {
 			self.facebookButton.anchorTopCenterWithTopPadding(0, width: 288, height: 48)
 			self.comment.alignUnder(self.facebookButton, matchingLeftWithTopPadding: 8, width: 288, height: 48)
 			self.facebookOffGroup.alignUnder(self.changePasswordButton, matchingCenterWithTopPadding: 8, width: 288, height: 104)
-		}		
+		}
 		
 		self.contentHolder.resizeToFitSubviews()
 		self.scrollView.contentSize = CGSizeMake(self.contentHolder.frame.size.width, self.contentHolder.frame.size.height + CGFloat(32))
 		self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 24, height: self.contentHolder.frame.size.height)
 	}
 	
+	override func viewWillAppear(animated: Bool) {
+		let notificationCenter = NSNotificationCenter.defaultCenter()
+		notificationCenter.addObserver(self, selector: "providerConnectionChanged:", name: FBSDKAccessTokenDidChangeNotification, object: nil)
+		notificationCenter.addObserver(self, selector: "draw", name: FBSDKProfileDidChangeNotification, object: nil)
+	}
+	
+	override func viewDidDisappear(animated: Bool) {
+		NSNotificationCenter.defaultCenter().removeObserver(self, name: FBSDKAccessTokenDidChangeNotification, object: nil)
+		NSNotificationCenter.defaultCenter().removeObserver(self, name: FBSDKProfileDidChangeNotification, object: nil)
+	}
+	
+	/*--------------------------------------------------------------------------------------------
+	 * Events
+	 *--------------------------------------------------------------------------------------------*/
+
 	func doneAction(sender: AnyObject){
 		if !isValid() { return }
 		post()
@@ -260,19 +254,6 @@ class ProfileEditViewController: BaseViewController {
 	 * Methods
 	 *--------------------------------------------------------------------------------------------*/
 	
-	func draw() {
-		if self.inputState != .Onboarding {
-			if FBSDKAccessToken.currentAccessToken() != nil {
-				if FBSDKProfile.currentProfile() != nil {
-					self.facebookName.text = FBSDKProfile.currentProfile().name
-					let userId = FBSDKProfile.currentProfile().userID
-					let url = NSURL(string: "https://graph.facebook.com/\(userId!)/picture?type=large")
-					self.facebookPhoto.sd_setImageWithURL(url, placeholderImage: nil, options: [.RetryFailed, .LowPriority])
-				}
-			}
-		}
-	}
-	
 	override func initialize() {
 		super.initialize()
 		
@@ -285,14 +266,7 @@ class ProfileEditViewController: BaseViewController {
 			self.message.text = "Profile"
 		}
 		
-		let fullScreenRect = UIScreen.mainScreen().applicationFrame
-		self.scrollView.frame = fullScreenRect
-		self.scrollView.backgroundColor = Theme.colorBackgroundForm
 		self.facebookActivity.accessibilityIdentifier = "activity_facebook"
-		
-		self.view = self.scrollView
-		
-		self.scrollView.addSubview(self.contentHolder)
 		
 		self.message.textColor = Theme.colorTextTitle
 		self.message.numberOfLines = 0
@@ -323,8 +297,10 @@ class ProfileEditViewController: BaseViewController {
 		self.contentHolder.addSubview(self.emailField)
 		
 		if self.inputState == State.Onboarding {
-		
+			
 			setScreenName("ProfileSignup")
+			self.view.accessibilityIdentifier = View.SignupProfile
+			
 			navigationItem.title = "Profile"
 			self.progressStartLabel = "Signing up..."
 			self.progressFinishLabel = "Joined"
@@ -352,7 +328,7 @@ class ProfileEditViewController: BaseViewController {
 			
 			/* Navigation bar buttons */
 			let doneButton   = UIBarButtonItem(title: "Join", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
-			doneButton.accessibilityIdentifier = "nav_join_button"
+			doneButton.accessibilityIdentifier = "nav_submit_button"
 			
 			self.navigationItem.rightBarButtonItems = [doneButton]
 			self.navigationItem.leftBarButtonItems = nil
@@ -364,6 +340,8 @@ class ProfileEditViewController: BaseViewController {
 		else {
 			
 			setScreenName("ProfileEdit")
+			self.view.accessibilityIdentifier = View.ProfileEdit
+			
 			navigationItem.title = "Edit profile"
 			self.progressStartLabel = "Updating"
 			self.progressFinishLabel = "Updated"
@@ -426,13 +404,26 @@ class ProfileEditViewController: BaseViewController {
 			doneButton.accessibilityIdentifier = "nav_submit_button"
 			cancelButton.accessibilityIdentifier = "nav_cancel_button"
 			deleteButton.accessibilityIdentifier = "nav_delete_button"
-
+			
 			self.navigationItem.leftBarButtonItems = [cancelButton]
 			self.navigationItem.rightBarButtonItems = [doneButton, Utils.spacer, deleteButton]
 			
 			self.changePasswordButton.addTarget(self, action: Selector("changePasswordAction:"), forControlEvents: .TouchUpInside)
 			self.facebookButton.addTarget(self, action: Selector("facebookConnectAction:"), forControlEvents: .TouchUpInside)
 			self.facebookDisconnect.addTarget(self, action: Selector("facebookDisconnectAction:"), forControlEvents: .TouchUpInside)
+		}
+	}
+	
+	func draw() {
+		if self.inputState != .Onboarding {
+			if FBSDKAccessToken.currentAccessToken() != nil {
+				if FBSDKProfile.currentProfile() != nil {
+					self.facebookName.text = FBSDKProfile.currentProfile().name
+					let userId = FBSDKProfile.currentProfile().userID
+					let url = NSURL(string: "https://graph.facebook.com/\(userId!)/picture?type=large")
+					self.facebookPhoto.sd_setImageWithURL(url, placeholderImage: nil, options: [.RetryFailed, .LowPriority])
+				}
+			}
 		}
 	}
 	
@@ -719,10 +710,15 @@ class ProfileEditViewController: BaseViewController {
             return false
         }
 		
-        if emailField.isEmpty {
-            Alert("Enter an email address.", message: nil, cancelButtonTitle: "OK")
-            return false
-        }
+		if emailField.isEmpty {
+			Alert("Enter an email address.", message: nil, cancelButtonTitle: "OK")
+			return false
+		}
+		
+		if !emailField.text!.isEmail() {
+			Alert("Enter a valid email address.")
+			return false
+		}		
 
         return true
     }
@@ -736,70 +732,7 @@ class ProfileEditViewController: BaseViewController {
 		}
 	}
 	
-	func performBack(animated: Bool = true) {
-		/* Override in subclasses for control of dismiss/pop process */
-		if isModal {
-			self.dismissViewControllerAnimated(animated, completion: nil)
-		}
-		else {
-			self.navigationController?.popViewControllerAnimated(true)
-		}
-	}
-
-	func keyboardWillBeShown(sender: NSNotification) {
-		/*
-		* Called when the UIKeyboardDidShowNotification is sent.
-		*/
-		if let scrollView = self.view as? UIScrollView {
-			
-			let info: NSDictionary = sender.userInfo!
-			let value = info.valueForKey(UIKeyboardFrameBeginUserInfoKey) as! NSValue
-			let keyboardSize = value.CGRectValue().size
-			
-			scrollView.contentInset = UIEdgeInsetsMake(64, 0, keyboardSize.height, 0)
-			scrollView.scrollIndicatorInsets = scrollView.contentInset
-			
-			/*
-			* If active text field is hidden by keyboard, scroll it so it's visible
-			*/
-			if self.activeTextField != nil {
-				var visibleRect = self.view.frame
-				visibleRect.size.height -= keyboardSize.height
-				
-				let activeTextFieldRect = self.activeTextField?.frame
-				let activeTextFieldOrigin = activeTextFieldRect?.origin
-				
-				if (!CGRectContainsPoint(visibleRect, activeTextFieldOrigin!)) {
-					scrollView.scrollRectToVisible(activeTextFieldRect!, animated:true)
-				}
-			}
-		}
-	}
- 
-	func keyboardWillBeHidden(sender: NSNotification) {
-		/*
-		* Called when the UIKeyboardWillHideNotification is sent.
-		*/
-		if let scrollView = self.view as? UIScrollView {
-			scrollView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0)
-			scrollView.scrollIndicatorInsets = scrollView.contentInset
-		}
-	}
-}
-
-extension ProfileEditViewController: UITextFieldDelegate {
-	
-	func textFieldDidBeginEditing(textField: UITextField) {
-		self.activeTextField = textField
-	}
-	
-	func textFieldDidEndEditing(textField: UITextField) {
-		if self.activeTextField == textField {
-			self.activeTextField = nil
-		}
-	}
-	
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+	override func textFieldShouldReturn(textField: UITextField) -> Bool {
 		
 		if self.inputState == .Onboarding {
 			if textField == self.nameField {
@@ -819,7 +752,6 @@ extension ProfileEditViewController: UITextFieldDelegate {
 				return false
 			}
 		}
-        return true
-    }
+		return true
+	}
 }
-

@@ -213,7 +213,7 @@ class DataController: NSObject {
 								
 								/* Persist the changes and triggers notifications to observers */
 								DataController.instance.saveContext(privateContext, wait: true)
-								DataController.instance.saveContext(false)				// Main context
+								DataController.instance.saveContext(BLOCKING)				// Main context
 							}
 						}
 						completion(objectId, error: nil)
@@ -359,7 +359,7 @@ class DataController: NSObject {
 				
 				/* Persist the changes and triggers notifications to observers */
 				DataController.instance.saveContext(privateContext, wait: true)
-				DataController.instance.saveContext(false)						// Main context
+				DataController.instance.saveContext(BLOCKING)						// Main context
 				stopwatch.segmentTime("\(query.name): context saved")
 				
 				/* Sets query.executed and query.offsetDate but doesn't do anything with queryItems */

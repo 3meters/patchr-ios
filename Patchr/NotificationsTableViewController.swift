@@ -240,6 +240,8 @@ class NotificationsTableViewController: BaseTableViewController {
 			name: PAApplicationDidReceiveRemoteNotification, object: nil)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidBecomeActive",
 			name: Event.ApplicationDidBecomeActive.rawValue, object: nil)
+		self.view.accessibilityIdentifier = View.Notifications
+		self.tableView.accessibilityIdentifier = Table.Notifications
 	}
 	
 	override func getActivityDate() -> Int64 {

@@ -47,6 +47,7 @@ def core_pods
 	pod 'FBSDKShareKit',			'~> 4.9.0'
 	pod 'DateTools'
 	pod 'Parse'
+	pod 'CocoaLumberjack/Swift'
 end
 
 target 'Patchr' do
@@ -64,6 +65,7 @@ target 'PatchrShare' do
 	pod 'SDWebImage',				'~> 3.7.2'
 	pod 'AWSS3'
 	pod 'Lockbox'										# Used to protect secrets and install info
+	pod 'CocoaLumberjack/Swift'
 end
 
 # CreativeSDKCore and Image frameworks are on version 0.12.2127.02

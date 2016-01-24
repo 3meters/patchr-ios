@@ -219,6 +219,8 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 	func initialize() {
 		
 		setScreenName("PatchDetail")
+		self.view.accessibilityIdentifier = View.PatchDetail
+
 		self.queryName = DataStoreQueryName.MessagesForPatch.rawValue
 		
 		self.header = PatchDetailView()

@@ -51,16 +51,22 @@ class PatchTableViewController: BaseTableViewController {
 		switch self.filter! {
 			case .Nearby:
 				self.navigationItem.title = "Nearby"
+				self.view.accessibilityIdentifier = View.PatchesNearby
 			case .Explore:
 				self.navigationItem.title = "Explore"
+				self.view.accessibilityIdentifier = View.PatchesExplore
 			case .Watching:
 				self.navigationItem.title = "Patches watching"
+				self.view.accessibilityIdentifier = View.PatchesWatching
 			case .Owns:
 				self.navigationItem.title = "Patches owned"
+				self.view.accessibilityIdentifier = View.PatchesOwn
 		}
 		
 		self.tableView.estimatedRowHeight = 136
 		self.tableView.rowHeight = 136
+		
+		self.tableView.accessibilityIdentifier = Table.Patches
 		
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:", name: PAApplicationDidReceiveRemoteNotification, object: nil)
     }
@@ -364,7 +370,7 @@ class PatchTableViewController: BaseTableViewController {
 						query.executedValue = true
 						query.activityDateValue = (self?.getActivityDate())!
 						
-						DataController.instance.saveContext(false)	// Enough to trigger table update
+						DataController.instance.saveContext(BLOCKING)	// Enough to trigger table update
 						
 						if self != nil {
 							NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetchQuery, object: self!, userInfo: userInfo)

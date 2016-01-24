@@ -91,6 +91,7 @@ class WelcomeViewController: BaseViewController {
 		setScreenName("InvitePrompt")
 		
 		self.view.backgroundColor = Colors.clear
+		self.view.accessibilityIdentifier = View.Lobby
 		
 		let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.ExtraLight)
 		self.dialog = UIVisualEffectView(effect: blurEffect)

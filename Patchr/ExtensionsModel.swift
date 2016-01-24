@@ -92,7 +92,7 @@ extension Entity {
 			photo.id_ = prefix
 			photo.prefix = prefix
 			photo.source = source
-			DataController.instance.saveContext(false)
+			DataController.instance.saveContext(BLOCKING)
 		}
 		
         return photo;
@@ -297,8 +297,7 @@ extension NSManagedObjectContext {
 		parentContext = parent
 	}
 	
-	func deleteAllObjects() {
-		
+	func deleteAllObjects() {		
 		if let entitiesByName = self.persistentStoreCoordinator?.managedObjectModel.entitiesByName {
 			for (_, entityDescription) in entitiesByName {
 				deleteAllObjectsForEntity(entityDescription)
@@ -310,7 +309,7 @@ extension NSManagedObjectContext {
 		
 		let fetchRequest = NSFetchRequest()
 		fetchRequest.entity = entity
-		fetchRequest.fetchBatchSize = 50
+		fetchRequest.includesPropertyValues = false
 		
 		do {
 			let fetchResults = try executeFetchRequest(fetchRequest)
@@ -318,6 +317,7 @@ extension NSManagedObjectContext {
 				for object in managedObjects {
 					deleteObject(object)
 				}
+				try save()
 			}
 		}
 		catch let error as NSError {

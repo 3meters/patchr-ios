@@ -57,6 +57,7 @@ class TextZoomController: BaseViewController {
 		
 		self.view.backgroundColor = Colors.opacity50pcntBlack
 		self.view.addSubview(self.messageHolder)
+		self.view.accessibilityIdentifier = View.TextZoom
 		
 		self.messageHolder.backgroundColor = Theme.colorBackgroundForm
 		self.messageHolder.cornerRadius = 8

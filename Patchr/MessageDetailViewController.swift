@@ -70,9 +70,6 @@ class MessageDetailViewController: BaseViewController {
 	var patchView		: PatchView?
 	var emptyView		: AirLabelDisplay?
 
-	var scrollView		= AirScrollView()
-	var contentHolder	= UIView()
-	
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
 	 *--------------------------------------------------------------------------------------------*/
@@ -413,12 +410,7 @@ class MessageDetailViewController: BaseViewController {
 		super.initialize()
 		
 		setScreenName("MessageDetail")
-		
-		let fullScreenRect = UIScreen.mainScreen().applicationFrame
-		self.scrollView.frame = fullScreenRect
-		self.scrollView.backgroundColor = Theme.colorBackgroundTable
-		self.scrollView.bounces = true
-		self.scrollView.alwaysBounceVertical = true
+		self.view.accessibilityIdentifier = View.MessageDetail
 		
 		self.contentHolder.hidden = true
 		self.contentHolder.backgroundColor = Theme.colorBackgroundForm
@@ -440,8 +432,6 @@ class MessageDetailViewController: BaseViewController {
 		self.contentHolder.addSubview(self.messageGroup)
 		self.contentHolder.addSubview(self.toolbarGroup)
 		self.contentHolder.addSubview(self.shareGroup)
-		self.scrollView.addSubview(self.contentHolder)
-		self.view.addSubview(self.scrollView)
 		
 		/* Ui tweaks */
 		self.view.window?.backgroundColor = Theme.colorBackgroundWindow
@@ -690,7 +680,7 @@ class MessageDetailViewController: BaseViewController {
 				}
 				else {
 					DataController.instance.mainContext.deleteObject(self.inputMessage!)
-					DataController.instance.saveContext(false)
+					DataController.instance.saveContext(BLOCKING)
 					self.navigationController?.popViewControllerAnimated(true)
 				}
 			}
@@ -709,7 +699,7 @@ class MessageDetailViewController: BaseViewController {
 					}
 					else {
 						DataController.instance.mainContext.deleteObject(self.inputMessage!)
-						DataController.instance.saveContext(false)
+						DataController.instance.saveContext(BLOCKING)
 						self.navigationController?.popViewControllerAnimated(true)
 					}
 				}

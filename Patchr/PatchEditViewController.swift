@@ -11,7 +11,7 @@ import AWSS3
 import MBProgressHUD
 import Facade
 
-class PatchEditViewController: BaseViewController {
+class PatchEditViewController: BaseEditViewController {
 	
 	var processing: Bool = false
 	var progressStartLabel: String?
@@ -41,8 +41,6 @@ class PatchEditViewController: BaseViewController {
 	
 	var doneButton           = AirFeaturedButton()
 	var message				 = AirLabelTitle()
-	var scrollView			 = AirScrollView()
-	var contentHolder		 = UIView()
 	
 	var typeGroup			 = UIView()
 	var typeLabel			 = AirLabelDisplay()
@@ -55,7 +53,6 @@ class PatchEditViewController: BaseViewController {
 	var visibilityValue		 = "public"
 
 	var progress			 : AirProgress?
-	var activeTextField		 : UIView?
 	var insertedEntity		 : Entity?
 	
 	/*--------------------------------------------------------------------------------------------
@@ -72,17 +69,6 @@ class PatchEditViewController: BaseViewController {
 		initialize()
 	}
 	
-	override func viewWillAppear(animated: Bool) {
-		let notificationCenter = NSNotificationCenter.defaultCenter()
-		notificationCenter.addObserver(self, selector: "dismissKeyboard", name: Events.PhotoViewHasFocus, object: nil)
-		notificationCenter.addObserver(self, selector: "keyboardWillBeShown:", name: UIKeyboardWillShowNotification, object: nil)
-		notificationCenter.addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
-	}
-	
-	override func viewDidDisappear(animated: Bool) {
-		NSNotificationCenter.defaultCenter().removeObserver(self)
-	}
-
 	/*--------------------------------------------------------------------------------------------
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
@@ -224,12 +210,7 @@ class PatchEditViewController: BaseViewController {
 		super.initialize()
 		
 		self.schema = Schema.ENTITY_PATCH
-		
-		let fullScreenRect = UIScreen.mainScreen().applicationFrame
-		self.scrollView.frame = fullScreenRect
-		self.scrollView.backgroundColor = Theme.colorBackgroundForm
-		self.scrollView.addSubview(self.contentHolder)
-		self.view = self.scrollView
+		self.view.accessibilityIdentifier = View.PatchEdit
 		
 		self.message.textColor = Theme.colorTextTitle
 		self.message.numberOfLines = 0
@@ -516,7 +497,7 @@ class PatchEditViewController: BaseViewController {
 				}
 				else {
 					DataController.instance.mainContext.deleteObject(self.inputPatch!)
-					DataController.instance.saveContext(false)
+					DataController.instance.saveContext(BLOCKING)
 					DataController.instance.activityDateInsertDeletePatch = Utils.now()
 					self.performBack()
 				}
@@ -630,54 +611,15 @@ class PatchEditViewController: BaseViewController {
         return true
     }
 	
-	func performBack(animated: Bool = true) {
-		/* Override in subclasses for control of dismiss/pop process */
-		if isModal {
-			self.dismissViewControllerAnimated(animated, completion: nil)
-		}
-		else {
-			self.navigationController?.popViewControllerAnimated(true)
-		}
-	}
-	
-	func keyboardWillBeShown(sender: NSNotification) {
-		/* 
-		 * Called when the UIKeyboardDidShowNotification is sent. 
-		 */
-		if let scrollView = self.view as? UIScrollView {
-			
-			let info: NSDictionary = sender.userInfo!
-			let value = info.valueForKey(UIKeyboardFrameBeginUserInfoKey) as! NSValue
-			let keyboardSize = value.CGRectValue().size
-			
-			scrollView.contentInset = UIEdgeInsetsMake(64, 0, keyboardSize.height, 0)
-			scrollView.scrollIndicatorInsets = scrollView.contentInset
-			
-			/* 
-			 * If active text field is hidden by keyboard, scroll it so it's visible
-			 */
-			if self.activeTextField != nil {
-				var visibleRect = self.view.frame
-				visibleRect.size.height -= keyboardSize.height
-				
-				let activeTextFieldRect = self.activeTextField?.frame
-				let activeTextFieldOrigin = activeTextFieldRect?.origin
-				
-				if (!CGRectContainsPoint(visibleRect, activeTextFieldOrigin!)) {
-					scrollView.scrollRectToVisible(activeTextFieldRect!, animated:true)
-				}
+	override func textFieldShouldReturn(textField: UITextField) -> Bool {
+		
+		if self.inputState == .Creating {
+			if textField == self.nameField {
+				self.descriptionField.becomeFirstResponder()
+				return false
 			}
 		}
-	}
- 
-	func keyboardWillBeHidden(sender: NSNotification) {
-		/* 
-		 * Called when the UIKeyboardWillHideNotification is sent.
-		 */
-		if let scrollView = self.view as? UIScrollView {
-			scrollView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0)
-			scrollView.scrollIndicatorInsets = scrollView.contentInset
-		}
+		return true
 	}
 }
 
@@ -717,30 +659,6 @@ extension PatchEditViewController: MapViewDelegate {
 			return self.photoView.imageButton.imageForState(.Normal)
 		}
 	}
-}
-
-extension PatchEditViewController: UITextFieldDelegate {
-	
-	func textFieldDidBeginEditing(textField: UITextField) {
-		self.activeTextField = textField
-	}
-	
-	func textFieldDidEndEditing(textField: UITextField) {
-		if self.activeTextField == textField {
-			self.activeTextField = nil
-		}
-	}
-	
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
-		
-		if self.inputState == .Creating {
-			if textField == self.nameField {
-				self.descriptionField.becomeFirstResponder()
-				return false
-			}
-		}
-        return true
-    }
 }
 
 extension PatchEditViewController: UITextViewDelegate {
