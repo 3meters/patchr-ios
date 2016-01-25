@@ -31,6 +31,7 @@ class OnboardingTests: KIFTestCase {
 	}
 	
 	func testInvalidLogin() {
+		
 		tester().tap(Button.Login)
 		tester().waitFor(View.Login)
 		
@@ -66,6 +67,7 @@ class OnboardingTests: KIFTestCase {
 	}
 	
 	func testPasswordReset() {
+		
 		tester().tap(Button.Login)
 		tester().waitFor(View.Login)
 		
@@ -134,7 +136,7 @@ class OnboardingTests: KIFTestCase {
 		tester().tapLabel(Button.UsePhoto)
 		tester().waitFor(View.SignupProfile)
 		
-		tester().tap(Button.Join)
+		tester().tap(Button.Submit)
 		tester().waitForLabel("Logged in as Superman")
 		tester().waitFor(View.Main)
 		

@@ -721,8 +721,10 @@ class MessageDetailViewController: BaseViewController {
 			self.presentViewController(navController, animated: true, completion: nil)
         }
         else {
-            Branch.getInstance().getShortURLWithParams(["entityId":self.inputMessage!.id_!, "entitySchema":"message"], andChannel: "patchr-ios", andFeature: BRANCH_FEATURE_TAG_SHARE, andCallback: {
-                (url: String?, error: NSError?) -> Void in
+            Branch.getInstance().getShortURLWithParams(["entityId":self.inputMessage!.id_!, "entitySchema":"message"],
+				andChannel: "patchr-ios",
+				andFeature: BRANCH_FEATURE_TAG_SHARE,
+				andCallback: { url, error in
                 
                 if let error = ServerError(error) {
                     UIViewController.topMostViewController()!.handleError(error)

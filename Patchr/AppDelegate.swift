@@ -361,7 +361,7 @@ extension AppDelegate {
 		}
 	}
 	
-	func resetToHome() {
+	func resetToMain() {
 		
 		if let controller = UIViewController.getTabBarController() {
 			controller.selectedIndex = 0	// Patches

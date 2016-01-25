@@ -132,8 +132,8 @@ class SettingsTableViewController: UITableViewController {
 		self.clearHistoryButton.setTitle("Clear search history".uppercaseString, forState: .Normal)
 		self.logoutButton.setTitle("Log out".uppercaseString, forState: .Normal)
 		
-		self.clearHistoryButton.accessibilityIdentifier = "clear_history_button"
-		self.logoutButton.accessibilityIdentifier = "logout_button"
+		self.clearHistoryButton.accessibilityIdentifier = Button.ClearHistory
+		self.logoutButton.accessibilityIdentifier = Button.Logout
 		
 		self.logoutButton.addTarget(self, action: Selector("logoutAction:"), forControlEvents: .TouchUpInside)
 		self.clearHistoryButton.addTarget(self, action: Selector("clearHistoryAction:"), forControlEvents: .TouchUpInside)		

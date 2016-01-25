@@ -42,12 +42,27 @@ struct Button {
     static let Login                = "login_button"
     static let Cancel               = "cancel_button"
     static let Logout               = "logout_button"
-    static let ClearHistory         = "clear_history_button"
-    static let Join                 = "join_button"
     static let PhotoSet             = "photo_set_button"
     static let Search               = "Search"
     static let UsePhoto             = "Use photo"
     static let Facebook             = "facebook_button"
+	
+	static let ClearHistory         = "clear_history_button"
+	static let Notifications		= "notifications_button"
+	static let SendFeedback			= "feedback_button"
+	static let RateApp				= "rate_app_button"
+	static let TermsOfService		= "terms_of_service_button"
+	static let PrivacyPolicy		= "privacy_policy_button"
+	static let Licensing			= "licensing_button"
+}
+
+struct Switch {
+	static let NofificationNearby	= "notification_nearby_switch"
+	static let NofificationMessage	= "notification_message_switch"
+	static let NofificationShare	= "notification_share_switch"
+	static let NofificationLike		= "notification_like_switch"
+	static let SoundNofification	= "sound_notification_switch"
+	static let SoundEffects			= "sound_effects_switch"
 }
 
 struct Sheet {

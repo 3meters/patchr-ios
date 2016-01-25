@@ -312,7 +312,7 @@ class ProfileEditViewController: BaseEditViewController {
 			self.emailField.textColor = Theme.colorTextSecondary
 			
 			self.joinButton.setTitle("JOIN", forState: .Normal)
-			self.joinButton.accessibilityIdentifier = "join_button"
+			self.joinButton.accessibilityIdentifier = "submit_button"
 			self.contentHolder.addSubview(self.joinButton)
 			
 			self.termsButton.setTitle("By joining, you agree to the Terms of Service", forState: .Normal)

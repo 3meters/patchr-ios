@@ -14,14 +14,13 @@ import CocoaLumberjack
 
 @testable import Patchr	// Makes all internal api calls available
 
-class AnonymousTests: KIFTestCase {
+class SettingsTests: KIFTestCase {
 	
 	override func beforeAll() {
 		let app = UIApplication.sharedApplication().delegate as! AppDelegate
 		app.resetToLobby()
 		app.logLevel(DDLogLevel.Debug)
-		
-		tester().tap(Button.Guest)
+		tester().login()
 		tester().waitFor(View.Main)
 	}
 	
@@ -30,7 +29,14 @@ class AnonymousTests: KIFTestCase {
 		app.resetToMain()
 	}
 	
-	func testAddingPatchIsGuarded() {
+	func testCanBrowseTermsOfService() {
+		
+		tester().tap(Tab.Profile)
+		tester().tap(Nav.Settings)
+		tester().waitFor(View.Settings)
+		
+		tester().tap(Button.TermsOfService)
+
 		
 		/* Show and confirm guard */
 		tester().tapLabel(Nav.Add)
