@@ -21,6 +21,7 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate {
     }
 	
 	override func viewWillAppear(animated: Bool) {
+		super.viewWillAppear(animated)
 		let notificationCenter = NSNotificationCenter.defaultCenter()
 		notificationCenter.addObserver(self, selector: "dismissKeyboard", name: Events.PhotoViewHasFocus, object: nil)
 		notificationCenter.addObserver(self, selector: "keyboardWillBeShown:", name: UIKeyboardWillShowNotification, object: nil)
@@ -28,6 +29,7 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate {
 	}
 	
 	override func viewDidDisappear(animated: Bool) {
+		super.viewDidDisappear(animated)
 		NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.PhotoViewHasFocus, object: nil)
 		NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
 		NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
@@ -43,10 +45,6 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate {
 	
 	override func initialize() {
 		super.initialize()
-	}
-	
-	func dismissKeyboard() {
-		self.view.endEditing(true)
 	}
 	
 	func keyboardWillBeShown(sender: NSNotification) {

@@ -66,6 +66,10 @@ class BaseViewController: UIViewController {
 		}
 	}
 	
+	func dismissKeyboard() {
+		self.view.endEditing(true)
+	}
+	
 	func nullToNil(value : AnyObject?) -> AnyObject? {
 		if value is NSNull {
 			return nil
