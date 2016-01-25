@@ -148,7 +148,7 @@ class FacebookProvider: NSObject, ServiceProvider, FBSDKAppInviteDialogDelegate 
 				let inviterName = UserController.instance.currentUser.name.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
 				let tokenString = PatchrKeys().facebookToken() // app_id|app_secret
 				let deepLink = "patchr-ios://invite?entityId=\(entity.id_)&entitySchema=patch&inviterName=\(inviterName)"
-				let ios = "[{\"app_name\":\"Patchr\", \"app_store_id\":929750075, \"url\":\"\(deepLink)\"}]"
+				let ios = "[{\"app_name\":\"Patchr\", \"app_store_id\":\(APPLE_APP_ID), \"url\":\"\(deepLink)\"}]"
 				let parameters = [
 					"name": "Patchr App Link",
 					"ios": ios
