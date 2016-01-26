@@ -195,7 +195,8 @@
 		E2D569BE1C052A30001CCE58 /* ProfileEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D569BD1C052A30001CCE58 /* ProfileEditViewController.swift */; };
 		E2D569C01C05F9D6001CCE58 /* ProviderController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D569BF1C05F9D6001CCE58 /* ProviderController.swift */; };
 		E2DBD4F01B0F65580006575C /* ExtensionsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DBD4EF1B0F65580006575C /* ExtensionsModel.swift */; };
-		E2F182D01B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */; };
+		E2E755071C57C28B00945D29 /* AdobeCreativeSDKCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2E755061C57C28B00945D29 /* AdobeCreativeSDKCore.framework */; };
+		E2E755091C57C2A400945D29 /* AdobeCreativeSDKImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2E755081C57C2A400945D29 /* AdobeCreativeSDKImage.framework */; };
 		E2F618D61AFFACF00055D09C /* LocationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F618D51AFFACF00055D09C /* LocationController.swift */; };
 		E2F6C9211B1BDC7A0067D959 /* _Shortcut.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F6C9201B1BDC7A0067D959 /* _Shortcut.m */; };
 		E2F6C9241B1BDD500067D959 /* Shortcut.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F6C9231B1BDD500067D959 /* Shortcut.m */; };
@@ -207,7 +208,7 @@
 		E2F85C741C31F0D700FC2364 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C731C31F0D700FC2364 /* UIImage+ImageEffects.m */; };
 		E2F85C771C32E55100FC2364 /* DeviceUID.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C761C32E55100FC2364 /* DeviceUID.m */; };
 		E2F85C7A1C342B8600FC2364 /* UserPhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C791C342B8600FC2364 /* UserPhotoView.swift */; };
-		E2FB81431B864111006B6690 /* AdobeCreativeSDKCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */; };
+		E5F7A00B190C1AE2D96B1F76 /* Pods_PatchrTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5497A62A14B325FFCBFA8599 /* Pods_PatchrTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -242,11 +243,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		13F0CB3E421BF21878D1E1E9 /* Pods-AcceptanceTests.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AcceptanceTests.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-AcceptanceTests/Pods-AcceptanceTests.adhoc.xcconfig"; sourceTree = "<group>"; };
 		28B59883D41B237407F117D5 /* Pods-Patchr.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.debug.xcconfig"; sourceTree = "<group>"; };
-		4EA619C7497C168A398FD413 /* Pods_AcceptanceTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AcceptanceTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F9C2E53F66145AA3E5D107C /* Pods_Patchr.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Patchr.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		74E923CA9A8E494B8126421B /* Pods-AcceptanceTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AcceptanceTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-AcceptanceTests/Pods-AcceptanceTests.release.xcconfig"; sourceTree = "<group>"; };
+		5497A62A14B325FFCBFA8599 /* Pods_PatchrTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PatchrTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		738CB0A4500DB387D3924BFE /* Pods-PatchrTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrTests/Pods-PatchrTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7D01FA341A7024E200DD6DFA /* JSONResponseSerializerWithData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONResponseSerializerWithData.h; sourceTree = "<group>"; };
 		7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONResponseSerializerWithData.m; sourceTree = "<group>"; };
 		7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyJSON.swift; sourceTree = "<group>"; };
@@ -327,8 +327,10 @@
 		9FDCC67342555A8E88594481 /* PatchrShare-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PatchrShare-Bridging-Header.h"; sourceTree = "<group>"; };
 		9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = MessageDetailViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		9FDCCD65EB714D83C5A818FE /* PatchrShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = file.entitlements; path = PatchrShare.entitlements; sourceTree = "<group>"; };
+		A1C629883ABDBF9E5522423F /* Pods-PatchrTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrTests/Pods-PatchrTests.release.xcconfig"; sourceTree = "<group>"; };
 		BF601CC48694B8BAB8DB3033 /* Pods-Patchr.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.release.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.release.xcconfig"; sourceTree = "<group>"; };
 		CFAF823C533B360789B35B9B /* Pods_PatchrShare.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PatchrShare.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFF211298881990DB2165AE0 /* Pods-PatchrTests.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrTests.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrTests/Pods-PatchrTests.adhoc.xcconfig"; sourceTree = "<group>"; };
 		E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordEditViewController.swift; sourceTree = "<group>"; };
 		E20004E01B099CBD00425694 /* PasswordResetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordResetViewController.swift; sourceTree = "<group>"; };
 		E2017B731C52E0900062E497 /* AnonymousTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnonymousTests.swift; sourceTree = "<group>"; };
@@ -408,8 +410,8 @@
 		E27DB4041B06477A0090D023 /* QueryItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QueryItem.m; path = Model/QueryItem.m; sourceTree = "<group>"; };
 		E27DB4061B0647960090D023 /* _QueryItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _QueryItem.h; path = Model/_QueryItem.h; sourceTree = "<group>"; };
 		E27DB4071B0647960090D023 /* _QueryItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _QueryItem.m; path = Model/_QueryItem.m; sourceTree = "<group>"; };
-		E27F80AC1C56BA9700D436E3 /* circle.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = circle.yml; path = ../../circle.yml; sourceTree = "<group>"; };
-		E27F80AE1C56C84700D436E3 /* run-tests.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "run-tests.sh"; path = "../run-tests.sh"; sourceTree = "<group>"; };
+		E27F80AC1C56BA9700D436E3 /* circle.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = circle.yml; path = ../circle.yml; sourceTree = "<group>"; };
+		E27F80AE1C56C84700D436E3 /* run-tests.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "run-tests.sh"; sourceTree = "<group>"; };
 		E281776B1B5AB2D400D65AC1 /* OneShotLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OneShotLocationManager.swift; path = PatchrShare/OneShotLocationManager.swift; sourceTree = SOURCE_ROOT; };
 		E281776D1B5B0EE200D65AC1 /* Reporting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reporting.swift; sourceTree = "<group>"; };
 		E28177711B5C18BF00D65AC1 /* ExtensionsUi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ExtensionsUi.swift; path = PatchrShare/ExtensionsUi.swift; sourceTree = SOURCE_ROOT; };
@@ -449,12 +451,12 @@
 		E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationSettingsViewController.swift; sourceTree = "<group>"; };
 		E2C7C5C31B2A19720045038A /* DefaultSettings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultSettings.plist; sourceTree = "<group>"; };
 		E2C7C5CA1B2CF2F80045038A /* ImageResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageResult.swift; sourceTree = "<group>"; };
-		E2CA0C331C4FFEAF00E2F380 /* build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = build.sh; path = ../build.sh; sourceTree = SOURCE_ROOT; };
-		E2CA0C341C4FFEAF00E2F380 /* test.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = test.sh; path = ../test.sh; sourceTree = SOURCE_ROOT; };
-		E2CA0C3B1C50335500E2F380 /* AcceptanceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AcceptanceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E2CA0C331C4FFEAF00E2F380 /* build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = SOURCE_ROOT; };
+		E2CA0C341C4FFEAF00E2F380 /* test.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test.sh; sourceTree = SOURCE_ROOT; };
+		E2CA0C3B1C50335500E2F380 /* PatchrTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PatchrTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2CA0C3D1C50335600E2F380 /* OnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingTests.swift; sourceTree = "<group>"; };
-		E2CA0C3F1C50335600E2F380 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E2CA0C461C503A0F00E2F380 /* AcceptanceTests-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AcceptanceTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		E2CA0C3F1C50335600E2F380 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
+		E2CA0C461C503A0F00E2F380 /* PatchrTests-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PatchrTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		E2CA0C471C50450500E2F380 /* TestAdditions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestAdditions.swift; sourceTree = "<group>"; };
 		E2CC15A01C2C897800316356 /* WrapperTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WrapperTableViewCell.swift; sourceTree = "<group>"; };
 		E2CCAADF1B67CC0E0071170C /* NotificationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NotificationController.swift; path = Patchr/NotificationController.swift; sourceTree = "<group>"; };
@@ -476,6 +478,8 @@
 		E2D569BD1C052A30001CCE58 /* ProfileEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ProfileEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2D569BF1C05F9D6001CCE58 /* ProviderController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProviderController.swift; path = Patchr/ProviderController.swift; sourceTree = "<group>"; };
 		E2DBD4EF1B0F65580006575C /* ExtensionsModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionsModel.swift; sourceTree = "<group>"; };
+		E2E755061C57C28B00945D29 /* AdobeCreativeSDKCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKCore.framework; path = Patchr/Frameworks/AdobeCreativeSDKCore.framework; sourceTree = "<group>"; };
+		E2E755081C57C2A400945D29 /* AdobeCreativeSDKImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKImage.framework; path = Patchr/Frameworks/AdobeCreativeSDKImage.framework; sourceTree = "<group>"; };
 		E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKImage.framework; path = Frameworks/AdobeCreativeSDKImage.framework; sourceTree = "<group>"; };
 		E2F618D51AFFACF00055D09C /* LocationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = LocationController.swift; path = Patchr/LocationController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2F6C91F1B1BDC7A0067D959 /* _Shortcut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _Shortcut.h; path = Model/_Shortcut.h; sourceTree = "<group>"; };
@@ -508,8 +512,8 @@
 			files = (
 				E25A73711C1C81D000688EDC /* libc++.tbd in Frameworks */,
 				E25A736F1C1C81A300688EDC /* libz.tbd in Frameworks */,
-				E2FB81431B864111006B6690 /* AdobeCreativeSDKCore.framework in Frameworks */,
-				E2F182D01B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework in Frameworks */,
+				E2E755091C57C2A400945D29 /* AdobeCreativeSDKImage.framework in Frameworks */,
+				E2E755071C57C28B00945D29 /* AdobeCreativeSDKCore.framework in Frameworks */,
 				E238BAD81B5090870094AF41 /* Social.framework in Frameworks */,
 				E238BAD61B50907F0094AF41 /* Accounts.framework in Frameworks */,
 				E238BAD01B5088A40094AF41 /* MobileCoreServices.framework in Frameworks */,
@@ -530,7 +534,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A04324BE0FBBD1A26E68CD73 /* Pods_AcceptanceTests.framework in Frameworks */,
+				E5F7A00B190C1AE2D96B1F76 /* Pods_PatchrTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -553,7 +557,7 @@
 				E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */,
 				E2D25DC71B23892000E51461 /* UserController.swift */,
 				E238BADF1B51D3290094AF41 /* PatchrShare */,
-				E2CA0C3C1C50335600E2F380 /* AcceptanceTests */,
+				E2CA0C3C1C50335600E2F380 /* PatchrTests */,
 				7D3D39CA1A6F086F00A44CB2 /* Products */,
 				A0DA2C2AA90D81631E6BF68D /* Frameworks */,
 				F5F6896B3E30F589B1687A42 /* Pods */,
@@ -565,7 +569,7 @@
 			children = (
 				7D3D39C91A6F086F00A44CB2 /* Patchr.app */,
 				E238BADE1B51D3290094AF41 /* PatchrShare.appex */,
-				E2CA0C3B1C50335500E2F380 /* AcceptanceTests.xctest */,
+				E2CA0C3B1C50335500E2F380 /* PatchrTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -633,6 +637,8 @@
 		A0DA2C2AA90D81631E6BF68D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E2E755081C57C2A400945D29 /* AdobeCreativeSDKImage.framework */,
+				E2E755061C57C28B00945D29 /* AdobeCreativeSDKCore.framework */,
 				E25A73701C1C81D000688EDC /* libc++.tbd */,
 				E25A736D1C1C813900688EDC /* libz.tbd */,
 				E238BAD71B5090870094AF41 /* Social.framework */,
@@ -643,9 +649,9 @@
 				E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */,
 				E273B5181B48349900888E73 /* Bolts.framework */,
 				E273B5191B48349900888E73 /* Parse.framework */,
-				4EA619C7497C168A398FD413 /* Pods_AcceptanceTests.framework */,
 				4F9C2E53F66145AA3E5D107C /* Pods_Patchr.framework */,
 				CFAF823C533B360789B35B9B /* Pods_PatchrShare.framework */,
+				5497A62A14B325FFCBFA8599 /* Pods_PatchrTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -655,10 +661,10 @@
 			children = (
 				E25A73771C1C87F500688EDC /* AdobeCreativeSDKImageResources.bundle */,
 				E25A73751C1C87E200688EDC /* AdobeCreativeSDKCoreResources.bundle */,
-				E25327CA1B13D34B00990A81 /* Sounds */,
 				8468F8211A9D09D1007D6EE6 /* Localizable.strings */,
 				7D3D39D51A6F086F00A44CB2 /* Images.xcassets */,
 				E2C7C5C31B2A19720045038A /* DefaultSettings.plist */,
+				E25327CA1B13D34B00990A81 /* Sounds */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -844,7 +850,7 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		E2CA0C3C1C50335600E2F380 /* AcceptanceTests */ = {
+		E2CA0C3C1C50335600E2F380 /* PatchrTests */ = {
 			isa = PBXGroup;
 			children = (
 				E2CA0C471C50450500E2F380 /* TestAdditions.swift */,
@@ -854,14 +860,14 @@
 				E247C5EE1C51960300EAEFFB /* UserEditingTests.swift */,
 				E2CA0C491C5045C400E2F380 /* Support */,
 			);
-			path = AcceptanceTests;
+			path = PatchrTests;
 			sourceTree = "<group>";
 		};
 		E2CA0C491C5045C400E2F380 /* Support */ = {
 			isa = PBXGroup;
 			children = (
 				E2CA0C3F1C50335600E2F380 /* Info.plist */,
-				E2CA0C461C503A0F00E2F380 /* AcceptanceTests-Bridging-Header.h */,
+				E2CA0C461C503A0F00E2F380 /* PatchrTests-Bridging-Header.h */,
 			);
 			name = Support;
 			sourceTree = "<group>";
@@ -1011,15 +1017,15 @@
 		F5F6896B3E30F589B1687A42 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				9235E6CEE6D8D1EB9D652170 /* Pods-AcceptanceTests.debug.xcconfig */,
-				74E923CA9A8E494B8126421B /* Pods-AcceptanceTests.release.xcconfig */,
-				13F0CB3E421BF21878D1E1E9 /* Pods-AcceptanceTests.adhoc.xcconfig */,
 				28B59883D41B237407F117D5 /* Pods-Patchr.debug.xcconfig */,
 				BF601CC48694B8BAB8DB3033 /* Pods-Patchr.release.xcconfig */,
 				E2427EA9E1B5F05EB9759555 /* Pods-Patchr.adhoc.xcconfig */,
 				FC589D7AED3F42AAECA30B55 /* Pods-PatchrShare.debug.xcconfig */,
 				E561E80147F04323880DC6B2 /* Pods-PatchrShare.release.xcconfig */,
 				F80106E9536586DEC54B6166 /* Pods-PatchrShare.adhoc.xcconfig */,
+				738CB0A4500DB387D3924BFE /* Pods-PatchrTests.debug.xcconfig */,
+				A1C629883ABDBF9E5522423F /* Pods-PatchrTests.release.xcconfig */,
+				CFF211298881990DB2165AE0 /* Pods-PatchrTests.adhoc.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -1074,9 +1080,9 @@
 			productReference = E238BADE1B51D3290094AF41 /* PatchrShare.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		E2CA0C3A1C50335500E2F380 /* AcceptanceTests */ = {
+		E2CA0C3A1C50335500E2F380 /* PatchrTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E2CA0C421C50335600E2F380 /* Build configuration list for PBXNativeTarget "AcceptanceTests" */;
+			buildConfigurationList = E2CA0C421C50335600E2F380 /* Build configuration list for PBXNativeTarget "PatchrTests" */;
 			buildPhases = (
 				C2A1CEC5F1D4F0BF5B52082C /* Check Pods Manifest.lock */,
 				E2CA0C371C50335500E2F380 /* Sources */,
@@ -1090,9 +1096,9 @@
 			dependencies = (
 				E2CA0C411C50335600E2F380 /* PBXTargetDependency */,
 			);
-			name = AcceptanceTests;
-			productName = AcceptanceTests;
-			productReference = E2CA0C3B1C50335500E2F380 /* AcceptanceTests.xctest */;
+			name = PatchrTests;
+			productName = PatchrTests;
+			productReference = E2CA0C3B1C50335500E2F380 /* PatchrTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -1157,7 +1163,7 @@
 			targets = (
 				7D3D39C81A6F086F00A44CB2 /* Patchr */,
 				E238BADD1B51D3290094AF41 /* PatchrShare */,
-				E2CA0C3A1C50335500E2F380 /* AcceptanceTests */,
+				E2CA0C3A1C50335500E2F380 /* PatchrTests */,
 			);
 		};
 /* End PBXProject section */
@@ -1237,7 +1243,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AcceptanceTests/Pods-AcceptanceTests-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PatchrTests/Pods-PatchrTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		506BD8741EED8C771E48B8E5 /* Embed Pods Frameworks */ = {
@@ -1252,7 +1258,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AcceptanceTests/Pods-AcceptanceTests-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PatchrTests/Pods-PatchrTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		7CB09CE20B238E14BEBA6C86 /* Check Pods Manifest.lock */ = {
@@ -1732,6 +1738,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks",
+					"$(PROJECT_DIR)/Patchr/Frameworks",
 				);
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -1804,6 +1811,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks",
+					"$(PROJECT_DIR)/Patchr/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
@@ -1912,6 +1920,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks",
+					"$(PROJECT_DIR)/Patchr/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
@@ -2086,7 +2095,7 @@
 		};
 		E2CA0C431C50335600E2F380 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9235E6CEE6D8D1EB9D652170 /* Pods-AcceptanceTests.debug.xcconfig */;
+			baseConfigurationReference = 738CB0A4500DB387D3924BFE /* Pods-PatchrTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -2095,12 +2104,12 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = AcceptanceTests/Info.plist;
+				INFOPLIST_FILE = PatchrTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.AcceptanceTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.PatchrTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "AcceptanceTests/AcceptanceTests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "PatchrTests/PatchrTests-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Patchr.app/Patchr";
 				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
 			};
@@ -2108,7 +2117,7 @@
 		};
 		E2CA0C441C50335600E2F380 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 74E923CA9A8E494B8126421B /* Pods-AcceptanceTests.release.xcconfig */;
+			baseConfigurationReference = A1C629883ABDBF9E5522423F /* Pods-PatchrTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -2116,12 +2125,12 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = AcceptanceTests/Info.plist;
+				INFOPLIST_FILE = PatchrTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.AcceptanceTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.PatchrTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "AcceptanceTests/AcceptanceTests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "PatchrTests/PatchrTests-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Patchr.app/Patchr";
 				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
 			};
@@ -2129,7 +2138,7 @@
 		};
 		E2CA0C451C50335600E2F380 /* AdHoc */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 13F0CB3E421BF21878D1E1E9 /* Pods-AcceptanceTests.adhoc.xcconfig */;
+			baseConfigurationReference = CFF211298881990DB2165AE0 /* Pods-PatchrTests.adhoc.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -2137,12 +2146,12 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = AcceptanceTests/Info.plist;
+				INFOPLIST_FILE = PatchrTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.AcceptanceTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.PatchrTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "AcceptanceTests/AcceptanceTests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "PatchrTests/PatchrTests-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Patchr.app/Patchr";
 				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
 			};
@@ -2181,7 +2190,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E2CA0C421C50335600E2F380 /* Build configuration list for PBXNativeTarget "AcceptanceTests" */ = {
+		E2CA0C421C50335600E2F380 /* Build configuration list for PBXNativeTarget "PatchrTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E2CA0C431C50335600E2F380 /* Debug */,

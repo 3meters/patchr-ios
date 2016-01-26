@@ -1,7 +1,4 @@
 //
-//  AcceptanceTests.swift
-//  AcceptanceTests
-//
 //  Created by Jay Massena on 1/20/16.
 //  Copyright © 2016 3meters. All rights reserved.
 //

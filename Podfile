@@ -54,7 +54,7 @@ target 'Patchr' do
 	core_pods
 end
 
-target 'AcceptanceTests' do
+target 'PatchrTests' do
 	core_pods
 	pod 'Quick',					'~> 0.8.0'
 	pod 'Nimble'

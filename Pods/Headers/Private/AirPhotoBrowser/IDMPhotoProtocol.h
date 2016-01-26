@@ -1,1 +1,1 @@
-../../../../../../../code/AirPhotoBrowser/Classes/IDMPhotoProtocol.h
+../../../../../../code/AirPhotoBrowser/Classes/IDMPhotoProtocol.h

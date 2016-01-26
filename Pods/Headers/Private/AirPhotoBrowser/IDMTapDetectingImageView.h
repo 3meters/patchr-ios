@@ -1,1 +1,1 @@
-../../../../../../../code/AirPhotoBrowser/Classes/IDMTapDetectingImageView.h
+../../../../../../code/AirPhotoBrowser/Classes/IDMTapDetectingImageView.h
