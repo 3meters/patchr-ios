@@ -295,13 +295,13 @@ class MessageDetailViewController: BaseViewController {
 		let body = "Report on message id: \(self.inputMessage!.id_)\n\nPlease add some detail on why you are reporting this message.\n"
 		
 		if MFMailComposeViewController.canSendMail() {
-			let composeViewController = MFMailComposeViewController()
-			composeViewController.mailComposeDelegate = self
-			composeViewController.setToRecipients([email])
-			composeViewController.setSubject(subject)
-			composeViewController.setMessageBody(body, isHTML: false)
+			MailComposer!.view.accessibilityIdentifier = View.Report
+			MailComposer!.mailComposeDelegate = self
+			MailComposer!.setToRecipients([email])
+			MailComposer!.setSubject(subject)
+			MailComposer!.setMessageBody(body, isHTML: false)
 			
-			self.presentViewController(composeViewController, animated: true, completion: nil)
+			self.presentViewController(MailComposer!, animated: true, completion: nil)
 		}
 		else {
 			let queryURL = "subject=\(subject)&body=\(body)"
@@ -793,7 +793,11 @@ extension MessageDetailViewController: MFMailComposeViewControllerDelegate {
 			default:
 				break
 		}
-		self.dismissViewControllerAnimated(true, completion: nil)
+		
+		self.dismissViewControllerAnimated(true) {
+			MailComposer = nil
+			MailComposer = MFMailComposeViewController()
+		}
 	}
 }
 

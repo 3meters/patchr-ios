@@ -28,12 +28,12 @@ class UserEditingTests: KIFTestCase {
 	
 	override func beforeEach() {
 		let app = UIApplication.sharedApplication().delegate as! AppDelegate
-		app.resetToHome()
+		app.resetToMain()
 	}
 	
 	override func afterEach() {
 		let app = UIApplication.sharedApplication().delegate as! AppDelegate
-		app.resetToHome()
+		app.resetToMain()
 	}
 	
 	func testPasswordChange() {

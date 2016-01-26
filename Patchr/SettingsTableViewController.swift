@@ -94,6 +94,7 @@ class SettingsTableViewController: UITableViewController {
 		self.view.accessibilityIdentifier = View.Settings
 		
 		self.tableView = UITableView(frame: self.tableView.frame, style: .Grouped)
+		self.tableView.accessibilityIdentifier = Table.Settings
 		self.tableView.rowHeight = 48
 		self.tableView.tableFooterView = UIView()
 		self.tableView.backgroundColor = Colors.gray95pcntColor
@@ -129,6 +130,13 @@ class SettingsTableViewController: UITableViewController {
 		self.softwareLicensesCell.textLabel!.text = "Software Licenses"
 		self.developmentCell.textLabel!.text = "Developer"
 		
+		self.notificationsCell.accessibilityIdentifier = Button.Notifications
+		self.sendFeedbackCell.accessibilityIdentifier = Button.SendFeedback
+		self.rateCell.accessibilityIdentifier = Button.RateApp
+		self.termsOfServiceCell.accessibilityIdentifier = Button.TermsOfService
+		self.privacyPolicyCell.accessibilityIdentifier = Button.PrivacyPolicy
+		self.softwareLicensesCell.accessibilityIdentifier = Button.Licensing
+		
 		self.clearHistoryButton.setTitle("Clear search history".uppercaseString, forState: .Normal)
 		self.logoutButton.setTitle("Log out".uppercaseString, forState: .Normal)
 		
@@ -147,8 +155,9 @@ class SettingsTableViewController: UITableViewController {
         return NSBundle.mainBundle().objectForInfoDictionaryKey(kCFBundleVersionKey as String) as? String ?? "Unknown"
     }
     
-    func pushWebViewController(url: NSURL?) -> Void {
+	func pushWebViewController(url: NSURL?, identifier: String?) -> Void {
         let webViewController = PBWebViewController()
+		webViewController.view.accessibilityIdentifier = identifier
         webViewController.URL = url
         webViewController.showsNavigationToolbar = false
         self.navigationController?.pushViewController(webViewController, animated: true)
@@ -171,11 +180,11 @@ extension SettingsTableViewController {
             let email = "feedback@3meters.com"
             let subject = "Feedback for Patchr iOS"
             if MFMailComposeViewController.canSendMail() {
-                let composeViewController = MFMailComposeViewController()
-                composeViewController.mailComposeDelegate = self
-                composeViewController.setToRecipients([email])
-                composeViewController.setSubject(subject)
-                self.presentViewController(composeViewController, animated: true, completion: nil)
+				MailComposer!.view.accessibilityIdentifier = View.Feedback
+                MailComposer!.mailComposeDelegate = self
+                MailComposer!.setToRecipients([email])
+                MailComposer!.setSubject(subject)
+                self.presentViewController(MailComposer!, animated: true, completion: nil)
             }
 			else {
                 var emailURL = "mailto:\(email)"
@@ -195,15 +204,15 @@ extension SettingsTableViewController {
         }
         else if selectedCell == self.termsOfServiceCell {
             let termsURLString = "http://patchr.com/terms"
-            self.pushWebViewController(NSURL(string: termsURLString))
+            self.pushWebViewController(NSURL(string: termsURLString), identifier: View.TermsOfService)
         }
         else if selectedCell == self.privacyPolicyCell {
             let privacyPolicyURLString = "http://patchr.com/privacy"
-            self.pushWebViewController(NSURL(string: privacyPolicyURLString))
+            self.pushWebViewController(NSURL(string: privacyPolicyURLString), identifier: View.PrivacyPolicy)
         }
         else if selectedCell == self.softwareLicensesCell {
             let softwareLicensesURLString = "http://patchr.com/ios" // TODO: need real URL
-            self.pushWebViewController(NSURL(string: softwareLicensesURLString))
+            self.pushWebViewController(NSURL(string: softwareLicensesURLString), identifier: View.Licensing)
         }
         else if selectedCell == self.developmentCell {
 			let controller = DevelopmentViewController()
@@ -293,6 +302,10 @@ extension SettingsTableViewController: MFMailComposeViewControllerDelegate {
 		default:
 			break
 		}
-		self.dismissViewControllerAnimated(true, completion: nil)
+		
+		self.dismissViewControllerAnimated(true) {
+			MailComposer = nil
+			MailComposer = MFMailComposeViewController()
+		}
 	}
 }

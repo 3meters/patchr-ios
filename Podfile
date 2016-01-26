@@ -68,4 +68,6 @@ target 'PatchrShare' do
 	pod 'CocoaLumberjack/Swift'
 end
 
+plugin 'cocoapods-no-dev-schemes'
+
 # CreativeSDKCore and Image frameworks are on version 0.12.2127.02

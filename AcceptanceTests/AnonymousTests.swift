@@ -33,7 +33,7 @@ class AnonymousTests: KIFTestCase {
 	func testAddingPatchIsGuarded() {
 		
 		/* Show and confirm guard */
-		tester().tapLabel(Nav.Add)
+		tester().tapLabel(Nav.AddLabel)
 		tester().waitFor(View.Guest)
 		
 		expect(self.tester().exists(Button.Signup)) == true
@@ -46,7 +46,7 @@ class AnonymousTests: KIFTestCase {
 	func testGuardSupportsLoginAndSignup() {
 		
 		/* Show and confirm guard */
-		tester().tapLabel(Nav.Add)
+		tester().tapLabel(Nav.AddLabel)
 		tester().waitFor(View.Guest)
 		
 		/* Nav to login */
@@ -54,7 +54,7 @@ class AnonymousTests: KIFTestCase {
 		tester().tap(Nav.Cancel)
 		
 		/* Nav to signup */
-		tester().tapLabel(Nav.Add)
+		tester().tapLabel(Nav.AddLabel)
 		tester().waitFor(View.Guest)
 		tester().tap(Button.Signup)
 		tester().tap(Nav.Cancel)
@@ -77,8 +77,8 @@ class AnonymousTests: KIFTestCase {
 		/* Should be there */
 		expect(self.tester().existsLabel(Segment.Nearby)) == true
 		expect(self.tester().existsLabel(Segment.Explore)) == true
-		expect(self.tester().existsLabel(Nav.Add)) == true
-		expect(self.tester().existsLabel(Nav.Map)) == true
+		expect(self.tester().existsLabel(Nav.AddLabel)) == true
+		expect(self.tester().existsLabel(Nav.MapLabel)) == true
 		
 		/* Should not be there */
 		expect(self.tester().existsLabel(Segment.Own)) == false

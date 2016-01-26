@@ -8,6 +8,7 @@
 
 import UIKit
 import CocoaLumberjack
+import MessageUI
 
 let pageSizeDefault         = 20
 let pageSizeNearby          = 50
@@ -33,15 +34,16 @@ let THIRD_PARTY_AUTH_ENABLED         = false
 let TIMEOUT_REQUEST: Int = 10// Seconds
 let BLOCKING             = false
 
-let IMAGE_DIMENSION_MAX	: CGFloat    = 1280
-let CONTENT_WIDTH_MAX	: CGFloat      = 462
+let IMAGE_DIMENSION_MAX	: CGFloat       = 1280
+let CONTENT_WIDTH_MAX	: CGFloat       = 462
 
 let URI_PROXIBASE_SEARCH_IMAGES: String = "https://api.datamarket.azure.com/Bing/Search/v1"
 let NAMESPACE: String                   = "com.3meters.patchr.ios."
 let CELL_IDENTIFIER                     = "cell"
 let COGNITO_POOLID                      = "us-east-1:ff1976dc-9c27-4046-a59f-7dd43355869b"
 
-var LOG_LEVEL = DDLogLevel.All
+var LOG_LEVEL                           = DDLogLevel.All
+var MailComposer: MFMailComposeViewController? = MFMailComposeViewController()
 
 func PatchrUserDefaultKey(subKey: String) -> String {
     return NAMESPACE + subKey

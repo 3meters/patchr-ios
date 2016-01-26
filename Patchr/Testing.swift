@@ -49,7 +49,7 @@ struct Button {
 	
 	static let ClearHistory         = "clear_history_button"
 	static let Notifications		= "notifications_button"
-	static let SendFeedback			= "feedback_button"
+	static let SendFeedback			= "send_feedback_button"
 	static let RateApp				= "rate_app_button"
 	static let TermsOfService		= "terms_of_service_button"
 	static let PrivacyPolicy		= "privacy_policy_button"
@@ -82,6 +82,7 @@ struct Table {
     static let Messages             = "messages_table"
     static let Notifications        = "notifications_table"
     static let Search               = "search_table"
+	static let Settings				= "settings_table"
 }
 
 struct Collection {
@@ -98,9 +99,16 @@ struct View {
     static let PasswordReset        = "password_reset_view"
     static let ProfileEdit          = "profile_edit_view"
 	
+	static let TermsOfService		= "terms_of_service_view"
+	static let PrivacyPolicy		= "privacy_policy_view"
+	static let Licensing			= "licensing_view"
+	static let Feedback				= "feedback_view"
+	static let Report				= "report_view"
+	
     static let PatchEdit            = "patch_edit_view"
     static let MessageEdit          = "message_edit_view"
     static let Settings             = "settings_view"
+	static let WebBrowser			= "web_browser_view"
     static let NotificationSettings = "notification_settings_view"
     static let Invite               = "invite_view"
     static let Main                 = "main_view"
@@ -143,8 +151,10 @@ struct Segment {
 }
 
 struct Nav {
-    static let Map                  = "Map"
-    static let Add                  = "Add"
+    static let MapLabel             = "Map"
+    static let AddLabel             = "Add"
+	static let MeLabel				= "Me"
+	static let SettingsLabel		= "Settings"
     static let Cancel               = "nav_cancel_button"
     static let Next                 = "nav_next_button"
     static let Delete               = "nav_delete_button"

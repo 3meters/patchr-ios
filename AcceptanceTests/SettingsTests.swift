@@ -33,70 +33,47 @@ class SettingsTests: KIFTestCase {
 		
 		tester().tap(Tab.Profile)
 		tester().tap(Nav.Settings)
-		tester().waitFor(View.Settings)
+		tester().waitFor(Table.Settings)
 		
 		tester().tap(Button.TermsOfService)
-
+		tester().waitFor(View.TermsOfService)
 		
-		/* Show and confirm guard */
-		tester().tapLabel(Nav.Add)
-		tester().waitFor(View.Guest)
+		tester().tapLabel(Nav.SettingsLabel)
+		tester().waitFor(Table.Settings)
 		
-		expect(self.tester().exists(Button.Signup)) == true
-		expect(self.tester().exists(Button.Cancel)) == true
-		
-		tester().tap(Button.Cancel)
+		tester().tapLabel(Nav.MeLabel)
 		tester().waitFor(View.Main)
 	}
 	
-	func testGuardSupportsLoginAndSignup() {
+	func testCanBrowsePrivacyPolicy() {
 		
-		/* Show and confirm guard */
-		tester().tapLabel(Nav.Add)
-		tester().waitFor(View.Guest)
+		tester().tap(Tab.Profile)
+		tester().tap(Nav.Settings)
+		tester().waitFor(Table.Settings)
 		
-		/* Nav to login */
-		tester().tap(Button.Login)
-		tester().tap(Nav.Cancel)
+		tester().tap(Button.PrivacyPolicy)
+		tester().waitFor(View.PrivacyPolicy)
 		
-		/* Nav to signup */
-		tester().tapLabel(Nav.Add)
-		tester().waitFor(View.Guest)
-		tester().tap(Button.Signup)
-		tester().tap(Nav.Cancel)
+		tester().tapLabel(Nav.SettingsLabel)
+		tester().waitFor(Table.Settings)
 		
-		/* Cancel */
+		tester().tapLabel(Nav.MeLabel)
 		tester().waitFor(View.Main)
 	}
 	
-	func testAnonymousCanBrowse() {
+	func testCanBrowseLicensing() {
 		
-		var notification = system().waitForNotificationName(Events.DidFetchQuery, object: nil) {
-			LocationController.instance.setMockLocation(Location.massena)
-			self.tester().acknowledgeSystemAlert()
-		}
+		tester().tap(Tab.Profile)
+		tester().tap(Nav.Settings)
+		tester().waitFor(Table.Settings)
 		
-		if let userInfo = notification.userInfo, let count = userInfo["count"] as? Int {
-			expect(count) > 0
-		}
+		tester().tap(Button.Licensing)
+		tester().waitFor(View.Licensing)
 		
-		/* Should be there */
-		expect(self.tester().existsLabel(Segment.Nearby)) == true
-		expect(self.tester().existsLabel(Segment.Explore)) == true
-		expect(self.tester().existsLabel(Nav.Add)) == true
-		expect(self.tester().existsLabel(Nav.Map)) == true
+		tester().tapLabel(Nav.SettingsLabel)
+		tester().waitFor(Table.Settings)
 		
-		/* Should not be there */
-		expect(self.tester().existsLabel(Segment.Own)) == false
-		expect(self.tester().existsLabel(Segment.Watching)) == false
-
-		/* User move to new location */
-		notification = system().waitForNotificationName(Events.DidFetchQuery, object: nil) {
-			LocationController.instance.setMockLocation(Location.ballard)
-		}
-		
-		if let userInfo = notification.userInfo, let count = userInfo["count"] as? Int {
-			expect(count) > 0
-		}
+		tester().tapLabel(Nav.MeLabel)
+		tester().waitFor(View.Main)
 	}
 }
