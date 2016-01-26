@@ -127,7 +127,6 @@
 		E27DB4081B0647960090D023 /* _QueryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = E27DB4071B0647960090D023 /* _QueryItem.m */; };
 		E27F80AD1C56BA9700D436E3 /* circle.yml in Resources */ = {isa = PBXBuildFile; fileRef = E27F80AC1C56BA9700D436E3 /* circle.yml */; };
 		E27F80AF1C56C84700D436E3 /* run-tests in Resources */ = {isa = PBXBuildFile; fileRef = E27F80AE1C56C84700D436E3 /* run-tests */; };
-		E27F80B11C56F0D400D436E3 /* Gemfile in Resources */ = {isa = PBXBuildFile; fileRef = E27F80B01C56F0D400D436E3 /* Gemfile */; };
 		E28177671B59668000D65AC1 /* ExtensionsPhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = E238BB051B571AFF0094AF41 /* ExtensionsPhoto.swift */; };
 		E281776C1B5AB2D400D65AC1 /* OneShotLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E281776B1B5AB2D400D65AC1 /* OneShotLocationManager.swift */; };
 		E281776E1B5B0EE200D65AC1 /* Reporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = E281776D1B5B0EE200D65AC1 /* Reporting.swift */; };
@@ -409,9 +408,8 @@
 		E27DB4041B06477A0090D023 /* QueryItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QueryItem.m; path = Model/QueryItem.m; sourceTree = "<group>"; };
 		E27DB4061B0647960090D023 /* _QueryItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _QueryItem.h; path = Model/_QueryItem.h; sourceTree = "<group>"; };
 		E27DB4071B0647960090D023 /* _QueryItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _QueryItem.m; path = Model/_QueryItem.m; sourceTree = "<group>"; };
-		E27F80AC1C56BA9700D436E3 /* circle.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = circle.yml; path = ../circle.yml; sourceTree = "<group>"; };
+		E27F80AC1C56BA9700D436E3 /* circle.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = circle.yml; path = ../../circle.yml; sourceTree = "<group>"; };
 		E27F80AE1C56C84700D436E3 /* run-tests */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "run-tests"; sourceTree = "<group>"; };
-		E27F80B01C56F0D400D436E3 /* Gemfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Gemfile; path = ../Gemfile; sourceTree = "<group>"; };
 		E281776B1B5AB2D400D65AC1 /* OneShotLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OneShotLocationManager.swift; path = PatchrShare/OneShotLocationManager.swift; sourceTree = SOURCE_ROOT; };
 		E281776D1B5B0EE200D65AC1 /* Reporting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reporting.swift; sourceTree = "<group>"; };
 		E28177711B5C18BF00D65AC1 /* ExtensionsUi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ExtensionsUi.swift; path = PatchrShare/ExtensionsUi.swift; sourceTree = SOURCE_ROOT; };
@@ -1006,7 +1004,6 @@
 				7D3D39CD1A6F086F00A44CB2 /* Info.plist */,
 				E238BAEE1B5405380094AF41 /* Patchr.entitlements */,
 				E27F80AC1C56BA9700D436E3 /* circle.yml */,
-				E27F80B01C56F0D400D436E3 /* Gemfile */,
 			);
 			name = Support;
 			sourceTree = "<group>";
@@ -1182,7 +1179,6 @@
 				E2CA0C351C4FFEAF00E2F380 /* build in Resources */,
 				E2C720CD1B50169400714B53 /* LaunchScreen.xib in Resources */,
 				E2CCAAE21B67EE2C0071170C /* chirp.caf in Resources */,
-				E27F80B11C56F0D400D436E3 /* Gemfile in Resources */,
 				8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */,
 				E2C7C5C41B2A19720045038A /* DefaultSettings.plist in Resources */,
 				E25327CE1B13DB3000990A81 /* notification_candi_discovered_soft.aac in Resources */,
