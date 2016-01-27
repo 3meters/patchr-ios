@@ -32,6 +32,11 @@ class BaseViewController: UIViewController {
 		self.view.addGestureRecognizer(tap)
     }
 	
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		Log.v("Layout subviews")
+	}
+	
 	/*--------------------------------------------------------------------------------------------
 	* Events
 	*--------------------------------------------------------------------------------------------*/
@@ -47,13 +52,13 @@ class BaseViewController: UIViewController {
 	func initialize() {
 		self.view.backgroundColor = Theme.colorBackgroundForm
 		
-		let fullScreenRect = UIScreen.mainScreen().applicationFrame
-		self.scrollView.frame = fullScreenRect
+		self.scrollView.frame = UIScreen.mainScreen().applicationFrame
 		self.scrollView.backgroundColor = Theme.colorBackgroundForm
 		self.scrollView.bounces = true
 		self.scrollView.alwaysBounceVertical = true
 		self.scrollView.addSubview(self.contentHolder)
-		self.view = self.scrollView
+		self.view.addSubview(self.scrollView)
+		self.scrollView.fillSuperview()
 	}
 	
 	func performBack(animated: Bool = true) {

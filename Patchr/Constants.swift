@@ -59,6 +59,7 @@ public struct Events {
 	static let WillFetchQuery		= "WillFetchQuery"
 	static let DidFetchQuery		= "DidFetchQuery"
 	static let ImageNotFound        = "ImageNotFound"
+	static let DidInsertMessage		= "DidInsertMessage"
 }
 
 public struct Schema {

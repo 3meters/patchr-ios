@@ -73,17 +73,19 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 		initialize()
 	}
 	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		bind()
+	}
+	
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
-		let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
-		let navHeight = self.navigationController?.navigationBar.height() ?? 0
 		let viewWidth = min(CONTENT_WIDTH_MAX, self.view.bounds.size.width)
 		let contentWidth = CGFloat(viewWidth - 32)
-		
 		self.view.bounds.size.width = viewWidth
 		self.contentHolder.bounds.size.width = viewWidth
-
+		
 		let descriptionSize = self.descriptionField.sizeThatFits(CGSizeMake(contentWidth, CGFloat.max))
 		
 		if self.inputState == .Sharing {
@@ -105,6 +107,10 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 			}
 		}
 		else {
+			
+			let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+			let navHeight = self.navigationController?.navigationBar.height() ?? 0
+			
 			self.addressGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: CGFloat(statusHeight + navHeight), height: 64)
 			self.userPhoto.anchorCenterLeftWithLeftPadding(16, width: 48, height: 48)
 			self.addressLabel.fillSuperviewWithLeftPadding(72, rightPadding: 8, topPadding: 0, bottomPadding: 0)
@@ -113,14 +119,14 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 		}
 		
 		self.contentHolder.resizeToFitSubviews()
-		self.scrollView.contentSize = CGSizeMake(self.contentHolder.frame.size.width, self.contentHolder.frame.size.height + CGFloat(32))
+		self.scrollView.contentSize = CGSizeMake(self.contentHolder.width(), self.contentHolder.height() + CGFloat(32))
 		self.scrollView.alignUnder(self.addressGroup, centeredFillingWidthAndHeightWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
 		self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 8, height: self.contentHolder.height() + 32)
 	}
 	
-	override func viewDidLoad() {
-		super.viewDidLoad()
-		bind()
+	override func viewWillAppear(animated: Bool) {
+		let notificationCenter = NSNotificationCenter.defaultCenter()
+		notificationCenter.addObserver(self, selector: "photoDidChange:", name: Events.PhotoDidChange, object: nil)
 	}
 	
 	override func viewDidAppear(animated: Bool) {
@@ -130,11 +136,6 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 		else if self.inputState == State.Creating && self.firstAppearance  {
 			self.descriptionField.becomeFirstResponder()
 		}
-	}
-	
-	override func viewWillAppear(animated: Bool) {
-		let notificationCenter = NSNotificationCenter.defaultCenter()
-		notificationCenter.addObserver(self, selector: "photoDidChange:", name: Events.PhotoDidChange, object: nil)
 	}
 	
 	override func viewWillDisappear(animated: Bool) {
@@ -223,11 +224,17 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 	 *--------------------------------------------------------------------------------------------*/
 	
 	override func initialize() {
-		super.initialize()
 		
 		self.view.accessibilityIdentifier = View.MessageEdit
+		self.view.backgroundColor = Theme.colorBackgroundForm
 		
 		let viewWidth = min(CONTENT_WIDTH_MAX, self.view.bounds.size.width)
+		
+		let fullScreenRect = UIScreen.mainScreen().applicationFrame
+		self.scrollView.frame = fullScreenRect
+		self.scrollView.backgroundColor = Theme.colorBackgroundForm
+		self.scrollView.bounces = true
+		self.scrollView.alwaysBounceVertical = true
 		
 		self.photoView.photoSchema = Schema.ENTITY_MESSAGE
 		self.photoView.setHostController(self)
@@ -252,8 +259,10 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 		
 		self.contentHolder.addSubview(self.descriptionField)
 		self.contentHolder.addSubview(self.photoView)
+		self.scrollView.addSubview(self.contentHolder)
 		
 		self.view.addSubview(self.addressGroup)
+		self.view.addSubview(self.scrollView)
 		
 		if self.inputState == State.Sharing {
 			
@@ -502,6 +511,11 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 						if serverResponse.resultCount == 1 {
 							Log.d("Inserted message \(serverResponse.resultID)")
 							DataController.instance.activityDateInsertDeleteMessage = Utils.now()
+						}
+						
+						if self.inputState == .Creating {
+							/* Used to trigger call to action UI */
+							NSNotificationCenter.defaultCenter().postNotificationName(Events.DidInsertMessage, object: self)
 						}
 					}
 					else {

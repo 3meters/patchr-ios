@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4B54BA358B0449F5C05F9DB4 /* Pods_PatchrShare.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFAF823C533B360789B35B9B /* Pods_PatchrShare.framework */; };
-		5BA87C3FE5792CC42F418E5E /* Pods_Patchr.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F9C2E53F66145AA3E5D107C /* Pods_Patchr.framework */; };
+		0E4E677C3C24D28EF7B77C51 /* Pods_PatchrTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 695DD59653155BFA7ADFA82C /* Pods_PatchrTests.framework */; };
+		7B76DD12EC81C9AF6E81CD55 /* Pods_Patchr.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26EEB6A32CC591556C78923F /* Pods_Patchr.framework */; };
 		7D01FA361A7024E200DD6DFA /* JSONResponseSerializerWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */; };
 		7D021ABE1A9409450047DAAE /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D021ABD1A9409450047DAAE /* LoginViewController.swift */; };
 		7D021AC21A9423080047DAAE /* TextZoomController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D021AC11A9423080047DAAE /* TextZoomController.swift */; };
@@ -56,7 +56,6 @@
 		9FDCC4E31D09C35191FA3624 /* PatchTableMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC5A08BC6B04C7EC67536 /* PatchTableMapViewController.swift */; };
 		9FDCC8F9EEEF77DEBE173AFA /* PhotoPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC06A84126B197626CEB2 /* PhotoPickerViewController.swift */; };
 		9FDCCCC0113B14385C08DA41 /* MessageDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */; };
-		A04324BE0FBBD1A26E68CD73 /* Pods_AcceptanceTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EA619C7497C168A398FD413 /* Pods_AcceptanceTests.framework */; };
 		E20004DF1B094ACA00425694 /* PasswordEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */; };
 		E20004E11B099CBD00425694 /* PasswordResetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004E01B099CBD00425694 /* PasswordResetViewController.swift */; };
 		E2017B741C52E0900062E497 /* AnonymousTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2017B731C52E0900062E497 /* AnonymousTests.swift */; };
@@ -136,6 +135,8 @@
 		E281777A1B5C3C3200D65AC1 /* Proxibase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28177791B5C3C3200D65AC1 /* Proxibase.swift */; };
 		E281777C1B5D58CB00D65AC1 /* PatchSuggestCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E238BAFC1B5712B40094AF41 /* PatchSuggestCell.xib */; };
 		E281777F1B5D591400D65AC1 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E238BAE21B51D3290094AF41 /* ShareViewController.swift */; };
+		E289158A1C5839E8005D7AA0 /* AdobeCreativeSDKCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */; };
+		E289158B1C5839FA005D7AA0 /* AdobeCreativeSDKImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */; };
 		E28D565F1BB1849F00BFD433 /* ReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */; };
 		E297305A1C135BFA00B9433B /* PatchEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29730591C135BFA00B9433B /* PatchEditViewController.swift */; };
 		E297305C1C13644800B9433B /* AirTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305B1C13644800B9433B /* AirTextView.swift */; };
@@ -195,8 +196,6 @@
 		E2D569BE1C052A30001CCE58 /* ProfileEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D569BD1C052A30001CCE58 /* ProfileEditViewController.swift */; };
 		E2D569C01C05F9D6001CCE58 /* ProviderController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D569BF1C05F9D6001CCE58 /* ProviderController.swift */; };
 		E2DBD4F01B0F65580006575C /* ExtensionsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DBD4EF1B0F65580006575C /* ExtensionsModel.swift */; };
-		E2E755071C57C28B00945D29 /* AdobeCreativeSDKCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2E755061C57C28B00945D29 /* AdobeCreativeSDKCore.framework */; };
-		E2E755091C57C2A400945D29 /* AdobeCreativeSDKImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2E755081C57C2A400945D29 /* AdobeCreativeSDKImage.framework */; };
 		E2F618D61AFFACF00055D09C /* LocationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F618D51AFFACF00055D09C /* LocationController.swift */; };
 		E2F6C9211B1BDC7A0067D959 /* _Shortcut.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F6C9201B1BDC7A0067D959 /* _Shortcut.m */; };
 		E2F6C9241B1BDD500067D959 /* Shortcut.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F6C9231B1BDD500067D959 /* Shortcut.m */; };
@@ -208,7 +207,7 @@
 		E2F85C741C31F0D700FC2364 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C731C31F0D700FC2364 /* UIImage+ImageEffects.m */; };
 		E2F85C771C32E55100FC2364 /* DeviceUID.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C761C32E55100FC2364 /* DeviceUID.m */; };
 		E2F85C7A1C342B8600FC2364 /* UserPhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C791C342B8600FC2364 /* UserPhotoView.swift */; };
-		E5F7A00B190C1AE2D96B1F76 /* Pods_PatchrTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5497A62A14B325FFCBFA8599 /* Pods_PatchrTests.framework */; };
+		FB4FA880EEB7E4C4F232488C /* Pods_PatchrShare.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2736ED85A9833F6F2DEB066 /* Pods_PatchrShare.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -243,9 +242,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		26EEB6A32CC591556C78923F /* Pods_Patchr.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Patchr.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		28B59883D41B237407F117D5 /* Pods-Patchr.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.debug.xcconfig"; sourceTree = "<group>"; };
-		4F9C2E53F66145AA3E5D107C /* Pods_Patchr.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Patchr.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5497A62A14B325FFCBFA8599 /* Pods_PatchrTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PatchrTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		695DD59653155BFA7ADFA82C /* Pods_PatchrTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PatchrTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		738CB0A4500DB387D3924BFE /* Pods-PatchrTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrTests/Pods-PatchrTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7D01FA341A7024E200DD6DFA /* JSONResponseSerializerWithData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONResponseSerializerWithData.h; sourceTree = "<group>"; };
 		7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONResponseSerializerWithData.m; sourceTree = "<group>"; };
@@ -321,7 +320,6 @@
 		844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoChooserUI.swift; sourceTree = "<group>"; };
 		8468F8201A9D09D1007D6EE6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		84EF12AB1AA904700043EBBA /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
-		9235E6CEE6D8D1EB9D652170 /* Pods-AcceptanceTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AcceptanceTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AcceptanceTests/Pods-AcceptanceTests.debug.xcconfig"; sourceTree = "<group>"; };
 		9FDCC06A84126B197626CEB2 /* PhotoPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoPickerViewController.swift; sourceTree = "<group>"; };
 		9FDCC5A08BC6B04C7EC67536 /* PatchTableMapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTableMapViewController.swift; sourceTree = "<group>"; };
 		9FDCC67342555A8E88594481 /* PatchrShare-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PatchrShare-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -329,7 +327,6 @@
 		9FDCCD65EB714D83C5A818FE /* PatchrShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = file.entitlements; path = PatchrShare.entitlements; sourceTree = "<group>"; };
 		A1C629883ABDBF9E5522423F /* Pods-PatchrTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrTests/Pods-PatchrTests.release.xcconfig"; sourceTree = "<group>"; };
 		BF601CC48694B8BAB8DB3033 /* Pods-Patchr.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.release.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.release.xcconfig"; sourceTree = "<group>"; };
-		CFAF823C533B360789B35B9B /* Pods_PatchrShare.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PatchrShare.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF211298881990DB2165AE0 /* Pods-PatchrTests.adhoc.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrTests.adhoc.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrTests/Pods-PatchrTests.adhoc.xcconfig"; sourceTree = "<group>"; };
 		E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordEditViewController.swift; sourceTree = "<group>"; };
 		E20004E01B099CBD00425694 /* PasswordResetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordResetViewController.swift; sourceTree = "<group>"; };
@@ -400,11 +397,10 @@
 		E26B0C8F1B45C07D00706F4A /* AirPhotoBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirPhotoBrowser.swift; sourceTree = "<group>"; };
 		E26B0C911B46D01E00706F4A /* ThumbnailCollectionViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ThumbnailCollectionViewCell.xib; sourceTree = "<group>"; };
 		E26C80911C3AE246001514B3 /* Animation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Animation.swift; sourceTree = "<group>"; };
+		E2736ED85A9833F6F2DEB066 /* Pods_PatchrShare.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PatchrShare.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2737DC61B8F7E3B00C176B1 /* UIImage+Resize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Resize.swift"; sourceTree = "<group>"; };
 		E2737DC81B8F7EA100C176B1 /* UIImage+Alpha.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Alpha.swift"; sourceTree = "<group>"; };
 		E2737DC91B8F7EA100C176B1 /* UIImage+RoundedCorner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+RoundedCorner.swift"; sourceTree = "<group>"; };
-		E273B5181B48349900888E73 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Bolts.framework; path = Frameworks/Bolts.framework; sourceTree = "<group>"; };
-		E273B5191B48349900888E73 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = Frameworks/Parse.framework; sourceTree = "<group>"; };
 		E273B5351B488F2000888E73 /* AirPhotoPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirPhotoPreview.swift; sourceTree = "<group>"; };
 		E27DB4031B06477A0090D023 /* QueryItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QueryItem.h; path = Model/QueryItem.h; sourceTree = "<group>"; };
 		E27DB4041B06477A0090D023 /* QueryItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QueryItem.m; path = Model/QueryItem.m; sourceTree = "<group>"; };
@@ -478,8 +474,6 @@
 		E2D569BD1C052A30001CCE58 /* ProfileEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ProfileEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2D569BF1C05F9D6001CCE58 /* ProviderController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProviderController.swift; path = Patchr/ProviderController.swift; sourceTree = "<group>"; };
 		E2DBD4EF1B0F65580006575C /* ExtensionsModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionsModel.swift; sourceTree = "<group>"; };
-		E2E755061C57C28B00945D29 /* AdobeCreativeSDKCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKCore.framework; path = Patchr/Frameworks/AdobeCreativeSDKCore.framework; sourceTree = "<group>"; };
-		E2E755081C57C2A400945D29 /* AdobeCreativeSDKImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKImage.framework; path = Patchr/Frameworks/AdobeCreativeSDKImage.framework; sourceTree = "<group>"; };
 		E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKImage.framework; path = Frameworks/AdobeCreativeSDKImage.framework; sourceTree = "<group>"; };
 		E2F618D51AFFACF00055D09C /* LocationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = LocationController.swift; path = Patchr/LocationController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2F6C91F1B1BDC7A0067D959 /* _Shortcut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _Shortcut.h; path = Model/_Shortcut.h; sourceTree = "<group>"; };
@@ -512,13 +506,13 @@
 			files = (
 				E25A73711C1C81D000688EDC /* libc++.tbd in Frameworks */,
 				E25A736F1C1C81A300688EDC /* libz.tbd in Frameworks */,
-				E2E755091C57C2A400945D29 /* AdobeCreativeSDKImage.framework in Frameworks */,
-				E2E755071C57C28B00945D29 /* AdobeCreativeSDKCore.framework in Frameworks */,
+				E289158A1C5839E8005D7AA0 /* AdobeCreativeSDKCore.framework in Frameworks */,
+				E289158B1C5839FA005D7AA0 /* AdobeCreativeSDKImage.framework in Frameworks */,
 				E238BAD81B5090870094AF41 /* Social.framework in Frameworks */,
 				E238BAD61B50907F0094AF41 /* Accounts.framework in Frameworks */,
 				E238BAD01B5088A40094AF41 /* MobileCoreServices.framework in Frameworks */,
 				E238BACC1B50888C0094AF41 /* SystemConfiguration.framework in Frameworks */,
-				5BA87C3FE5792CC42F418E5E /* Pods_Patchr.framework in Frameworks */,
+				7B76DD12EC81C9AF6E81CD55 /* Pods_Patchr.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -526,7 +520,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B54BA358B0449F5C05F9DB4 /* Pods_PatchrShare.framework in Frameworks */,
+				FB4FA880EEB7E4C4F232488C /* Pods_PatchrShare.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -534,7 +528,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E5F7A00B190C1AE2D96B1F76 /* Pods_PatchrTests.framework in Frameworks */,
+				0E4E677C3C24D28EF7B77C51 /* Pods_PatchrTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -637,8 +631,6 @@
 		A0DA2C2AA90D81631E6BF68D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E2E755081C57C2A400945D29 /* AdobeCreativeSDKImage.framework */,
-				E2E755061C57C28B00945D29 /* AdobeCreativeSDKCore.framework */,
 				E25A73701C1C81D000688EDC /* libc++.tbd */,
 				E25A736D1C1C813900688EDC /* libz.tbd */,
 				E238BAD71B5090870094AF41 /* Social.framework */,
@@ -647,11 +639,9 @@
 				E238BACB1B50888C0094AF41 /* SystemConfiguration.framework */,
 				E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */,
 				E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */,
-				E273B5181B48349900888E73 /* Bolts.framework */,
-				E273B5191B48349900888E73 /* Parse.framework */,
-				4F9C2E53F66145AA3E5D107C /* Pods_Patchr.framework */,
-				CFAF823C533B360789B35B9B /* Pods_PatchrShare.framework */,
-				5497A62A14B325FFCBFA8599 /* Pods_PatchrTests.framework */,
+				26EEB6A32CC591556C78923F /* Pods_Patchr.framework */,
+				E2736ED85A9833F6F2DEB066 /* Pods_PatchrShare.framework */,
+				695DD59653155BFA7ADFA82C /* Pods_PatchrTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1639,7 +1629,6 @@
 		7D3D39E61A6F087000A44CB2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -1656,7 +1645,6 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
-				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1684,7 +1672,6 @@
 		7D3D39E71A6F087000A44CB2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -1701,7 +1688,6 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
-				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1734,11 +1720,11 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks",
-					"$(PROJECT_DIR)/Patchr/Frameworks",
 				);
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -1802,16 +1788,16 @@
 				BUNDLE_DISPLAY_NAME_SUFFIX = "";
 				BUNDLE_ID_SUFFIX = "";
 				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_MODULE_DEBUGGING = YES;
+				CLANG_ENABLE_MODULE_DEBUGGING = NO;
 				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks",
-					"$(PROJECT_DIR)/Patchr/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
@@ -1866,7 +1852,6 @@
 		7D9C9E3E1A9BD3290069E332 /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -1883,7 +1868,6 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
-				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1911,16 +1895,16 @@
 				BUNDLE_DISPLAY_NAME_SUFFIX = "";
 				BUNDLE_ID_SUFFIX = "";
 				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_MODULE_DEBUGGING = YES;
+				CLANG_ENABLE_MODULE_DEBUGGING = NO;
 				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks",
-					"$(PROJECT_DIR)/Patchr/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;

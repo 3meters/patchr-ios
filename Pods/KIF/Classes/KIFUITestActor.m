@@ -212,11 +212,16 @@
         } else {
             [view tapAtPoint:tappablePointInElement];
         }
-
-        KIFTestCondition(![view canBecomeFirstResponder] || [view isDescendantOfFirstResponder], error, @"Failed to make the view into the first responder: %@", view);
         
         return KIFTestStepResultSuccess;
     }];
+
+    // Controls might not synchronously become first-responders. Sometimes custom controls
+    // may need to spin the runloop before reporting as the first responder.
+    [self runBlock:^KIFTestStepResult(NSError *__autoreleasing *error) {
+        KIFTestWaitCondition(![view canBecomeFirstResponder] || [view isDescendantOfFirstResponder], error, @"Failed to make the view into the first responder: %@", view);
+        return KIFTestStepResultSuccess;
+    } timeout:0.5];
 
     [self waitForAnimationsToFinish];
 }
@@ -370,8 +375,13 @@
     UIAccessibilityElement *element = nil;
     
     [self waitForAccessibilityElement:&element view:&view withLabel:label value:nil traits:traits tappable:YES];
-    [self tapAccessibilityElement:element inView:view];
-    [self waitForTimeInterval:0.25];
+
+    // In iOS7, tapping a field that is already first responder moves the cursor to the front of the field
+    if (view.window.firstResponder != view) {
+        [self tapAccessibilityElement:element inView:view];
+        [self waitForTimeInterval:0.25];
+    }
+
     [self enterTextIntoCurrentFirstResponder:text fallbackView:view];
     [self expectView:view toContainText:expectedResult ?: text];
 }
@@ -726,15 +736,20 @@
     
     // Wait for media picker view controller to be pushed.
     [self waitForTimeInterval:1];
-    
+   
     // Tap the desired photo in the grid
     // TODO: This currently only works for the first page of photos. It should scroll appropriately at some point.
-    const CGFloat headerHeight = 64.0;
+     UIAccessibilityElement *headerElt = [[UIApplication sharedApplication] accessibilityElementMatchingBlock:^(UIAccessibilityElement *element) {
+        return [NSStringFromClass(element.class) isEqual:@"UINavigationItemButtonView"];
+    }];
+    UIView* headerView = [UIAccessibilityElement viewContainingAccessibilityElement:headerElt];
+    CGRect headerFrame = [headerView convertRect:headerView.frame toView:headerView.window];
+    const CGFloat headerBottom =  headerFrame.origin.y + headerFrame.size.height;
     const CGSize thumbnailSize = CGSizeMake(75.0, 75.0);
     const CGFloat thumbnailMargin = 5.0;
     CGPoint thumbnailCenter;
     thumbnailCenter.x = thumbnailMargin + (MAX(0, column - 1) * (thumbnailSize.width + thumbnailMargin)) + thumbnailSize.width / 2.0;
-    thumbnailCenter.y = headerHeight + thumbnailMargin + (MAX(0, row - 1) * (thumbnailSize.height + thumbnailMargin)) + thumbnailSize.height / 2.0;
+    thumbnailCenter.y = headerBottom + thumbnailMargin + (MAX(0, row - 1) * (thumbnailSize.height + thumbnailMargin)) + thumbnailSize.height / 2.0;
     [self tapScreenAtPoint:thumbnailCenter];
 }
 
@@ -782,9 +797,14 @@
     [self tapItemAtIndexPath:indexPath inCollectionView:collectionView];
 }
 
-- (BOOL)acknowledgeSystemAlert {
+#if TARGET_IPHONE_SIMULATOR
+
+- (BOOL)acknowledgeSystemAlert
+{
     return [UIAutomationHelper acknowledgeSystemAlert];
 }
+
+#endif
 
 - (void)tapItemAtIndexPath:(NSIndexPath *)indexPath inCollectionView:(UICollectionView *)collectionView
 {
@@ -834,17 +854,17 @@
 
 - (void)pullToRefreshViewWithAccessibilityLabel:(NSString *)label
 {
-	[self pullToRefreshViewWithAccessibilityLabel:label value:nil pullDownDuration:nil traits:UIAccessibilityTraitNone];
+	[self pullToRefreshViewWithAccessibilityLabel:label value:nil pullDownDuration:0 traits:UIAccessibilityTraitNone];
 }
 
 - (void)pullToRefreshViewWithAccessibilityLabel:(NSString *)label pullDownDuration:(KIFPullToRefreshTiming) pullDownDuration
 {
-	[self pullToRefreshViewWithAccessibilityLabel:label value:nil pullDownDuration: pullDownDuration traits:UIAccessibilityTraitNone];
+	[self pullToRefreshViewWithAccessibilityLabel:label value:nil pullDownDuration:pullDownDuration traits:UIAccessibilityTraitNone];
 }
 
 - (void)pullToRefreshViewWithAccessibilityLabel:(NSString *)label value:(NSString *)value
 {
-	[self pullToRefreshViewWithAccessibilityLabel:label value:value pullDownDuration: nil traits:UIAccessibilityTraitNone];
+	[self pullToRefreshViewWithAccessibilityLabel:label value:value pullDownDuration:0 traits:UIAccessibilityTraitNone];
 }
 
 - (void)pullToRefreshViewWithAccessibilityLabel:(NSString *)label value:(NSString *)value pullDownDuration:(KIFPullToRefreshTiming) pullDownDuration traits:(UIAccessibilityTraits)traits
@@ -863,16 +883,10 @@
 
 	const NSUInteger kNumberOfPointsInSwipePath = pullDownDuration ? pullDownDuration : KIFPullToRefreshInAboutAHalfSecond;
 
-	// Within this method, all geometry is done in the coordinate system of the view to swipe.
-
-	CGFloat height = [(UITableView *)viewToSwipe contentSize].height;
-	CGFloat	width = [(UITableView *)viewToSwipe contentSize].width;
-	CGRect elementFrame = CGRectMake(0,0, width, height);
-
-	CGFloat halfHeight = height/2.0;
-	CGPoint swipeDisplacement = CGPointMake(width, halfHeight);
-
-	CGPoint swipeStart = CGPointCenteredInRect(elementFrame);
+    // Can handle only the touchable space.
+    CGRect elementFrame = [viewToSwipe convertRect:viewToSwipe.bounds toView:[UIApplication sharedApplication].keyWindow.rootViewController.view];
+    CGPoint swipeStart = CGPointCenteredInRect(elementFrame);
+	CGPoint swipeDisplacement = CGPointMake(CGRectGetMidX(elementFrame), CGRectGetMaxY(elementFrame));
 
 	[viewToSwipe dragFromPoint:swipeStart displacement:swipeDisplacement steps:kNumberOfPointsInSwipePath];
 }

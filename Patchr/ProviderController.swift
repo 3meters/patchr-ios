@@ -51,6 +51,7 @@ class FacebookProvider: NSObject, ServiceProvider, FBSDKAppInviteDialogDelegate 
 		get {
 			if _loginManager == nil {
 				_loginManager = FBSDKLoginManager()
+				_loginManager?.logOut()
 			}
 			return _loginManager!
 		}
@@ -136,47 +137,47 @@ class FacebookProvider: NSObject, ServiceProvider, FBSDKAppInviteDialogDelegate 
 	}
 	
 	func invite(entity: Entity) {
-		
-		if FBSDKAccessToken.currentAccessToken() != nil {
-			let inviteDialog = FBSDKAppInviteDialog()
-			if inviteDialog.canShow() {
-				/*
-				* FIXME: SECURITY HOLE: Temporary for testing!
-				* The correct way to handle this is to have the service hold the secret, call
-				* facebook to get a long lived app access token, and pass it back to the client.
-				*/
-				let inviterName = UserController.instance.currentUser.name.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
-				let tokenString = PatchrKeys().facebookToken() // app_id|app_secret
-				let deepLink = "patchr-ios://invite?entityId=\(entity.id_)&entitySchema=patch&inviterName=\(inviterName)"
-				let ios = "[{\"app_name\":\"Patchr\", \"app_store_id\":\(APPLE_APP_ID), \"url\":\"\(deepLink)\"}]"
-				let parameters = [
-					"name": "Patchr App Link",
-					"ios": ios
-				]
-				
-				FBSDKSettings.setLoggingBehavior(Set(arrayLiteral: FBSDKLoggingBehaviorGraphAPIDebugInfo))
-				
-				let request = FBSDKGraphRequest(graphPath: "app/app_link_hosts",
-					parameters: parameters as [NSObject : AnyObject], tokenString: tokenString, version: "v2.5", HTTPMethod: "POST" )
-				
-				request.startWithCompletionHandler { connection, result, error in
-					if (error != nil) {
-						Log.d("Facebook error while creating applink")
-					}
-					else {
-						let applinkUrl = "https://fb.me/\(result["id"])"
-						let photo = entity.getPhotoManaged()
-						let titleEncoded = entity.name.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
-						let settings = "w=1200&h=628&crop&fit=crop&q=25&txtsize=96&txtalign=left,bottom&txtcolor=fff&txtshad=5&txtpad=60&txtfont=Helvetica%20Neue%20Light"
-						let photoUrl = "https://3meters-images.imgix.net/\(photo.prefix)?\(settings)&txt=\(titleEncoded)"
-						
-						let invite = FBSDKAppInviteContent()
-						invite.appLinkURL = NSURL(string: applinkUrl)
-						invite.appInvitePreviewImageURL = NSURL(string: photoUrl)
-						inviteDialog.content = invite
-						inviteDialog.delegate = self
-						inviteDialog.show()
-					}
+		/*
+		 * Facebook app invites do not require a currentAccessToken.
+		 */
+		let inviteDialog = FBSDKAppInviteDialog()
+		if inviteDialog.canShow() {
+			/*
+			* FIXME: SECURITY HOLE: Temporary for testing!
+			* The correct way to handle this is to have the service hold the secret, call
+			* facebook to get a long lived app access token, and pass it back to the client.
+			*/
+			let inviterName = UserController.instance.currentUser.name.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+			let tokenString = PatchrKeys().facebookToken() // app_id|app_secret
+			let deepLink = "patchr-ios://invite?entityId=\(entity.id_)&entitySchema=patch&inviterName=\(inviterName)"
+			let ios = "[{\"app_name\":\"Patchr\", \"app_store_id\":\(APPLE_APP_ID), \"url\":\"\(deepLink)\"}]"
+			let parameters = [
+				"name": "Patchr App Link",
+				"ios": ios
+			]
+			
+			FBSDKSettings.setLoggingBehavior(Set(arrayLiteral: FBSDKLoggingBehaviorGraphAPIDebugInfo))
+			
+			let request = FBSDKGraphRequest(graphPath: "app/app_link_hosts",
+				parameters: parameters as [NSObject : AnyObject], tokenString: tokenString, version: "v2.5", HTTPMethod: "POST" )
+			
+			request.startWithCompletionHandler { connection, result, error in
+				if (error != nil) {
+					Log.d("Facebook error while creating applink")
+				}
+				else {
+					let applinkUrl = "https://fb.me/\(result["id"])"
+					let photo = entity.getPhotoManaged()
+					let titleEncoded = entity.name.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+					let settings = "w=1200&h=628&crop&fit=crop&q=25&txtsize=96&txtalign=left,bottom&txtcolor=fff&txtshad=5&txtpad=60&txtfont=Helvetica%20Neue%20Light"
+					let photoUrl = "https://3meters-images.imgix.net/\(photo.prefix)?\(settings)&txt=\(titleEncoded)"
+					
+					let invite = FBSDKAppInviteContent()
+					invite.appLinkURL = NSURL(string: applinkUrl)
+					invite.appInvitePreviewImageURL = NSURL(string: photoUrl)
+					inviteDialog.content = invite
+					inviteDialog.delegate = self
+					inviteDialog.show()
 				}
 			}
 		}

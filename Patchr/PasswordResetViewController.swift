@@ -86,7 +86,7 @@ class PasswordResetViewController: BaseEditViewController {
 		self.emailField.returnKeyType = UIReturnKeyType.Next
 		self.contentHolder.addSubview(self.emailField)
 		
-		self.passwordField.placeholder = "New password (6 characters or more)"
+		self.passwordField.placeholder = "New password"
 		self.passwordField.accessibilityIdentifier = Field.ResetPassword
 		self.passwordField.delegate = self
 		self.passwordField.secureTextEntry = true

@@ -45,7 +45,7 @@ class Snow {
 	let colorBackgroundSidebar      = Colors.white
 	let colorBackgroundTile         = Colors.white
 	let colorBackgroundTileList     = Colors.gray95pcntColor
-	let colorBackgroundToast        = Colors.brandColorFill
+	let colorBackgroundToast        = Colors.accentColorFill
 	let colorBackgroundOverlay      = Colors.opacity75pcntBlack
 	let colorBackgroundActivity     = Colors.white
 	let colorBackgroundActivityOnly = Colors.clear
@@ -76,9 +76,9 @@ class Snow {
 	let colorButtonTitleHighlighted			= Colors.lightGray
 	let colorButtonTitleFeaturedHighlighted = Colors.lightGray
 	let colorButtonBorder					= Colors.gray66pcntColor
-	let colorButtonBorderFeatured			= Colors.accentColorFill
+	let colorButtonBorderFeatured			= Colors.brandColorFill
 	let colorButtonFill						= Colors.clear
-	let colorButtonFillFeatured				= Colors.accentColorFill
+	let colorButtonFillFeatured				= Colors.brandColorFill
 
 	let fontBanner				= UIFont(name: "HelveticaNeue-Thin", size: 48)!
 	let fontTitleLarge			= UIFont(name: "HelveticaNeue-Thin", size: 30)!

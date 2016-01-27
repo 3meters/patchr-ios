@@ -7,7 +7,7 @@ This is a repository of our open source iOS SDK, and the information presented h
 There's a full demo app embedded in this repository, but you can also check out our live demo: [Branch Monster Factory](https://itunes.apple.com/us/app/id917737838). We've [open sourced the Branchster's app](https://github.com/BranchMetrics/Branchster-iOS) as well if you're ready to dig in.
 
 ## Additional Resources
-- [Integration guide](https://dev.branch.io/recipes/quickstart_guide/ios/) *Start Here*
+- [Integration guide](https://dev.branch.io/recipes/add_the_sdk/ios/) *Start Here*
 - [Changelog](https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK/blob/master/ChangeLog.md)
 - [Testing](https://dev.branch.io/recipes/testing_your_integration/ios/)
 - [Support portal, FAQ](http://support.branch.io)
@@ -93,22 +93,6 @@ With iOS 9, Apple has added the ability to allow http links to directly open you
 1. Be sure to save these settings updates.
 
 ![Dashboard Enable UL](docs/images/dashboard-ul-enable.png)
-
-### Add Your Branch Key to Your Project
-
-After you register your app, your Branch Key can be retrieved on the [Settings](https://dashboard.branch.io/#/settings) page of the dashboard. Now you need to add it to YourProject-Info.plist (Info.plist for Swift).
-
-1. In plist file, mouse hover "Information Property List," which is the root item under the Key column.
-1. After about half a second, you will see a "+" sign appear. Click it.
-1. In the newly added row, fill in "branch_key" for its key, leave type as String, and enter your app's Branch Key obtained in above steps in the value column.
-1. Save the plist file.
-
-![Branch Key Demo](docs/images/branch-key-plist.png)
-If you want to add a key for both your live and test apps at the same time, you need change the type column to Dictionary, and add two entries inside:
-1. For live app, use "live" (without double quotes) for key, String for type, and your live branch key for value.
-2. For test app, use "test" (without double quotes) for key, String for type, and your test branch key for value.
-
-![Branch Multi Key Demo](docs/images/branch-multi-key-plist.png)
 
 #### URI Scheme Considerations
 
@@ -751,7 +735,7 @@ Branch.getInstance().loadRewardsWithCallback { (changed: Bool, error: NSError!) 
     // changed boolean will indicate if the balance changed from what is currently in memory
 
     // will return the balance of the current user's credits
-    let credits = Branch().getCredits()
+    let credits = Branch.getInstance().getCredits()
 }
 ```
 

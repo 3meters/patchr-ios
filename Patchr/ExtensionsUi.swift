@@ -68,9 +68,22 @@ extension UIView {
                 }, completion: completion)
         }
     }
+	
+	func showShadow(rounded: Bool = false, cornerRadius: CGFloat = 0) {
+		self.layer.masksToBounds = false
+		self.layer.shadowOffset = CGSizeMake(2, 4)
+		self.layer.shadowRadius = 3
+		self.layer.shadowOpacity = 0.3
+		if rounded {
+			self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: cornerRadius).CGPath
+		}
+		else {
+			self.layer.shadowPath = UIBezierPath(rect: self.bounds).CGPath
+		}
+	}
 
     func showSubviews(level: Int = 0) {
-        /* 
+        /*
          * Utility to show some information about subview frames.
          */
         var indent = ""

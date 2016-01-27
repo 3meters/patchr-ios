@@ -59,21 +59,23 @@ class PatchEditViewController: BaseEditViewController {
 	* Lifecycle
 	*--------------------------------------------------------------------------------------------*/
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        bind()
-    }
-	
 	override func loadView() {
 		super.loadView()
 		initialize()
 	}
-	
-	/*--------------------------------------------------------------------------------------------
-	 * Events
-	 *--------------------------------------------------------------------------------------------*/
 
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		bind()
+	}
+	
 	override func viewWillLayoutSubviews() {
+		/*
+		 * Triggers
+		 * - addSubview called on self.view
+		 * - setting frame on self.view if size is different
+		 * - scrolling when self.view is a scrollview
+		 */
 		super.viewWillLayoutSubviews()
 		
 		let messageSize = self.message.sizeThatFits(CGSizeMake(288, CGFloat.max))
@@ -105,10 +107,14 @@ class PatchEditViewController: BaseEditViewController {
 		self.typeButtonProject.alignUnder(self.typeButtonGroup, matchingLeftWithTopPadding: 8, width: 88, height: 24)
 		
 		self.contentHolder.resizeToFitSubviews()
-		self.scrollView.contentSize = CGSizeMake(self.contentHolder.frame.size.width, self.contentHolder.frame.size.height + CGFloat(32))
-		self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 16, height: self.contentHolder.frame.size.height)
+		self.scrollView.contentSize = CGSizeMake(self.contentHolder.width(), self.contentHolder.height() + CGFloat(32))
+		self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 16, height: self.contentHolder.height())
 	}
 	
+	/*--------------------------------------------------------------------------------------------
+	 * Events
+	 *--------------------------------------------------------------------------------------------*/
+
 	func doneAction(sender: AnyObject){
 		
 		guard isValid() else { return }

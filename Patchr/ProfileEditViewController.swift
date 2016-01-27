@@ -391,6 +391,8 @@ class ProfileEditViewController: BaseEditViewController {
 			self.facebookOnGroup.addSubview(self.facebookActivity)
 			self.contentHolder.addSubview(self.facebookOnGroup)
 			
+			self.facebookOnGroup.alpha = 0
+			self.facebookOffGroup.alpha = 1
 			if FBSDKAccessToken.currentAccessToken() != nil {
 				self.facebookOnGroup.alpha = 1
 				self.facebookOffGroup.alpha = 0

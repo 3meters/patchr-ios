@@ -98,10 +98,10 @@ class InviteViewController: BaseViewController {
 		self.contentHolder.addSubview(self.doneButton)
 		
 		/* Navigation bar buttons */
-		let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: "doneAction:")
+		let submitButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: "doneAction:")
 		self.navigationItem.leftBarButtonItems = []
 		self.navigationItem.hidesBackButton = true
-		self.navigationItem.rightBarButtonItems = [doneButton]
+		self.navigationItem.rightBarButtonItems = [submitButton]
 	}
 		
 	func shareUsing(route: ShareRoute) {

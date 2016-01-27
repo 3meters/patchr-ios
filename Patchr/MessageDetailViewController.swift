@@ -91,18 +91,18 @@ class MessageDetailViewController: BaseViewController {
 			
 			self.contentHolder.hidden = false
 			self.patchGroup.hidden = true
-			self.toolbarGroup.hidden = true
-			self.shareGroup.hidden = true
 			self.description_?.hidden = true
 			self.photo.hidden = true
+			self.toolbarGroup.hidden = true
+			self.shareGroup.hidden = true
 			
 			let viewWidth = min(CONTENT_WIDTH_MAX, self.view.bounds.size.width)
 			let contentWidth = CGFloat(viewWidth - 32)
-			
 			self.view.bounds.size.width = viewWidth
 			self.contentHolder.bounds.size.width = viewWidth
 			
 			if self.isShare {
+				
 				self.shareGroup.hidden = false
 				
 				/*---dup ---*/
@@ -154,6 +154,7 @@ class MessageDetailViewController: BaseViewController {
 				self.shareGroup.resizeToFitSubviews()
 			}
 			else {
+				
 				self.toolbarGroup.hidden = false
 				
 				if message.patch != nil {
@@ -207,7 +208,6 @@ class MessageDetailViewController: BaseViewController {
 			}
 			
 			self.contentHolder.resizeToFitSubviews()
-			self.scrollView.fillSuperview()
 			
 			let tabBarHeight = self.tabBarController?.tabBar.height() ?? 0
 			let contentHeight = max((self.scrollView.height() + self.scrollView.contentOffset.y) - tabBarHeight, self.contentHolder.height())
@@ -412,32 +412,12 @@ class MessageDetailViewController: BaseViewController {
 		setScreenName("MessageDetail")
 		self.view.accessibilityIdentifier = View.MessageDetail
 		
-		self.contentHolder.hidden = true
+		//self.contentHolder.hidden = true
 		self.contentHolder.backgroundColor = Theme.colorBackgroundForm
-		
-		self.patchGroup.addSubview(self.patchName)
-		self.patchGroup.addSubview(self.patchPhoto)
-		self.userGroup.addSubview(self.userPhoto)
-		self.userGroup.addSubview(self.userName)
-		self.messageGroup.addSubview(self.createdDate)
-		self.messageGroup.addSubview(self.photo)
-		self.toolbarGroup.addSubview(self.likeButton)
-		self.toolbarGroup.addSubview(self.likesButton)
-		self.toolbarGroup.addSubview(self.reportButton)
-		self.shareGroup.addSubview(self.shareFrame)
-		self.shareGroup.addSubview(self.recipientsLabel)
-		self.shareGroup.addSubview(self.recipients)
-		self.contentHolder.addSubview(self.patchGroup)
-		self.contentHolder.addSubview(self.userGroup)
-		self.contentHolder.addSubview(self.messageGroup)
-		self.contentHolder.addSubview(self.toolbarGroup)
-		self.contentHolder.addSubview(self.shareGroup)
 		
 		/* Ui tweaks */
 		self.view.window?.backgroundColor = Theme.colorBackgroundWindow
 		self.activity.tintColor = Theme.colorActivityIndicator
-		self.view.addSubview(self.activity)
-		
 		self.activity.accessibilityIdentifier = "activity_view"
 		
 		self.patchGroup.ruleBottom.backgroundColor = Colors.gray90pcntColor
@@ -477,6 +457,30 @@ class MessageDetailViewController: BaseViewController {
 		self.recipientsLabel.text = "To:"
 		self.recipientsLabel.textColor = Theme.colorTextSecondary
 		
+		self.view.addSubview(self.activity)
+		
+		self.patchGroup.addSubview(self.patchName)
+		self.patchGroup.addSubview(self.patchPhoto)
+		
+		self.userGroup.addSubview(self.userPhoto)
+		self.userGroup.addSubview(self.userName)
+		
+		self.messageGroup.addSubview(self.createdDate)
+		self.messageGroup.addSubview(self.photo)
+		
+		self.toolbarGroup.addSubview(self.likeButton)
+		self.toolbarGroup.addSubview(self.likesButton)
+		self.toolbarGroup.addSubview(self.reportButton)
+		
+		self.shareGroup.addSubview(self.shareFrame)
+		self.shareGroup.addSubview(self.recipientsLabel)
+		self.shareGroup.addSubview(self.recipients)
+		
+		self.contentHolder.addSubview(self.patchGroup)
+		self.contentHolder.addSubview(self.userGroup)
+		self.contentHolder.addSubview(self.messageGroup)
+		self.contentHolder.addSubview(self.toolbarGroup)
+		self.contentHolder.addSubview(self.shareGroup)
 	}
 	
 	func bind() {

@@ -91,12 +91,15 @@ class WelcomeViewController: BaseViewController {
 		setScreenName("InvitePrompt")
 		
 		self.view.backgroundColor = Colors.clear
+		self.scrollView.backgroundColor = Colors.clear
 		self.view.accessibilityIdentifier = View.Lobby
 		
 		let blurEffect = UIBlurEffect(style: UIBlurEffectStyle.ExtraLight)
 		self.dialog = UIVisualEffectView(effect: blurEffect)
 		self.dialog.cornerRadius = Int(Theme.dimenButtonCornerRadius)
 		self.dialog.clipsToBounds = true
+		self.dialog.layer.borderColor = Colors.gray90pcntColor.CGColor
+		self.dialog.layer.borderWidth = 1
 
 		self.view.addSubview(self.dialog)
 
