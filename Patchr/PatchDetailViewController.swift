@@ -20,6 +20,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 	var inputShowInviteWelcome	= false
 	var inputInviterName		: String?
 	var inviteController		: WelcomeViewController?
+	var autoWatchOnAppear		= false
 
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
@@ -44,6 +45,19 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)		// calls bind
 		fetch(reset: self.firstAppearance)
+	}
+	
+	override func viewDidAppear(animated: Bool) {
+		super.viewDidAppear(animated)
+		
+		if self.autoWatchOnAppear {
+			self.autoWatchOnAppear = false
+			let header = self.header as! PatchDetailView
+			header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+			Utils.delay(1.0) {
+				UIShared.Toast("You are now watching this patch", controller: self, addToWindow: false)
+			}
+		}
 	}
 	
 	/*--------------------------------------------------------------------------------------------
@@ -166,10 +180,10 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 				if let entity = self.entity as? Patch where entity.userWatchStatusValue == .NonMember {
 					self.inputShowInviteWelcome = false
 					if self.inputInviterName != nil {
-						showInviteWelcome(nil, message: "\(self.inputInviterName!) invited you to join this patch.")
+						showInviteWelcome(self, message: "\(self.inputInviterName!) invited you to join this patch.")
 					}
 					else {
-						showInviteWelcome(nil, message: "A friend invited you to join this patch.")
+						showInviteWelcome(self, message: "A friend invited you to join this patch.")
 					}
 				}
 			}
@@ -204,6 +218,12 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		bindContextButton()
 	}
 	
+	func didInsertMessage(sender: NSNotification) {
+		if let entity = self.entity as? Patch where !entity.userHasMessagedValue {
+			self.autoWatchOnAppear = true
+		}
+	}
+	
 	func inviteFinishedWithInvitations(invitationIds: [AnyObject]!, error: NSError!) {
 		if (error != nil) {
 			print("Failed: " + error.localizedDescription)
@@ -235,6 +255,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:", name: PAApplicationDidReceiveRemoteNotification, object: nil)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didFetch:", name: Events.DidFetch, object: self)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "watchDidChange:", name: Events.WatchDidChange, object: header.watchButton)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didInsertMessage:", name: Events.DidInsertMessage, object: nil)
 		
 		/* UI prep */
 		self.patchNameVisible = false
@@ -388,22 +409,12 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 			self.presentViewController(navController, animated: true, completion: nil)
 		}
 		else if route == .Facebook {
-			
 			let provider = FacebookProvider()
-			if FBSDKAccessToken.currentAccessToken() == nil {
-				provider.authorize { response, error in
-					if FBSDKAccessToken.currentAccessToken() != nil {
-						provider.invite(self.entity!)
-					}
-				}
-			}
-			else {
-				provider.invite(self.entity!)
-			}
+			provider.invite(self.entity!)
 		}
 		else if route == .Actions {
 			
-			let inviterName = UserController.instance.currentUser.id_
+			let inviterName = UserController.instance.currentUser.name!
 			Branch.getInstance().getShortURLWithParams(["entityId":self.entityId!, "entitySchema":"patch", "inviterName":inviterName],
 				andChannel: "patchr-ios",
 				andFeature: BRANCH_FEATURE_TAG_INVITE,
@@ -440,6 +451,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
     }
 	
 	func showInviteWelcome(var controller: UIViewController?, message: String?) {
+		
 		self.inviteController = WelcomeViewController()
 		self.inviteController!.modalPresentationStyle = .OverFullScreen
 		self.inviteController!.modalTransitionStyle = .CrossDissolve
@@ -577,6 +589,10 @@ extension PatchDetailViewController: UIActionSheetDelegate {
 }
 
 class PatchItem: NSObject, UIActivityItemSource {
+	
+	let UIActivityTypeGmail = "com.google.Gmail.ShareExtension"
+	let UIActivityTypeOutlook = "com.microsoft.Office.Outlook.compose-shareextension"
+	let UIActivityTypePatchr = "com.3meters.patchr.ios.PatchrShare"
     
     var entity: Patch
     var shareUrl: String
@@ -587,21 +603,30 @@ class PatchItem: NSObject, UIActivityItemSource {
     }
     
     func activityViewControllerPlaceholderItem(activityViewController: UIActivityViewController) -> AnyObject {
+		/* Called before the share actions are displayed */
         return ""
     }
-    
+	
+	func activityViewController(activityViewController: UIActivityViewController, thumbnailImageForActivityType activityType: String?, suggestedSize size: CGSize) -> UIImage? {
+		/* Not currently called by any of the share extensions I could test. */
+		return nil
+	}
+	
     func activityViewController(activityViewController: UIActivityViewController, itemForActivityType activityType: String) -> AnyObject? {
         let text = "\(UserController.instance.currentUser.name) has invited you to the \(self.entity.name) patch! \(self.shareUrl) \n"
-        if activityType == UIActivityTypeMail {
-            return text
-        }
-        else {
-            return text
-        }
+		return text
     }
     
     func activityViewController(activityViewController: UIActivityViewController, subjectForActivityType activityType: String?) -> String {
-        if activityType == UIActivityTypeMail || activityType == "com.google.Gmail.ShareExtension" {
+		/*
+		 * Outlook: Doesn't call this.
+		 * Gmail constructs their own using the value from itemForActivityType
+		 * Apple email calls this.
+		 * Apple message calls this (I believe as an alternative if nothing provided via itemForActivityType).
+		 */
+        if activityType == UIActivityTypeMail
+			|| activityType == UIActivityTypeOutlook
+			|| activityType == UIActivityTypeGmail {
             return "Invitation to the \(self.entity.name) patch"
         }
         return ""
