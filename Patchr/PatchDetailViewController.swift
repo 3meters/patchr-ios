@@ -9,6 +9,7 @@
 import UIKit
 import FBSDKLoginKit
 import Branch
+import iRate
 
 class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol {
 
@@ -57,6 +58,9 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 			Utils.delay(1.0) {
 				UIShared.Toast("You are now watching this patch", controller: self, addToWindow: false)
 			}
+		}
+		else {
+			iRate.sharedInstance().promptIfAllCriteriaMet()
 		}
 	}
 	

@@ -47,6 +47,7 @@ def core_pods
 	pod 'FBSDKShareKit',			'~> 4.9.0'
 	pod 'DateTools'
 	pod 'Parse'
+	pod 'iRate'
 	pod 'CocoaLumberjack/Swift'
 end
 

@@ -18,6 +18,7 @@ import FBSDKCoreKit
 import Branch
 import Google
 import CocoaLumberjack
+import iRate
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -30,6 +31,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return UIApplication.sharedApplication().delegate as! AppDelegate
     }
 	
+	override class func initialize() -> Void {
+		
+		iRate.sharedInstance().daysUntilPrompt = 7
+		iRate.sharedInstance().usesUntilPrompt = 10
+		iRate.sharedInstance().remindPeriod = 1
+		iRate.sharedInstance().promptForNewVersionIfUserRated = true
+		iRate.sharedInstance().onlyPromptIfLatestVersion = true
+		iRate.sharedInstance().useUIAlertControllerIfAvailable = true
+		iRate.sharedInstance().promptAtLaunch = false
+	}
+
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
         Log.d("Patchr launching...")
