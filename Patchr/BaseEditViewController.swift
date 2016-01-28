@@ -22,22 +22,33 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate {
 	
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
+		
 		let notificationCenter = NSNotificationCenter.defaultCenter()
-		notificationCenter.addObserver(self, selector: "dismissKeyboard", name: Events.PhotoViewHasFocus, object: nil)
+		notificationCenter.addObserver(self, selector: "photoDidChange:", name: Events.PhotoDidChange, object: nil)
+		notificationCenter.addObserver(self, selector: "photoViewHasFocus:", name: Events.PhotoViewHasFocus, object: nil)
 		notificationCenter.addObserver(self, selector: "keyboardWillBeShown:", name: UIKeyboardWillShowNotification, object: nil)
 		notificationCenter.addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
 	}
 	
 	override func viewDidDisappear(animated: Bool) {
 		super.viewDidDisappear(animated)
-		NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.PhotoViewHasFocus, object: nil)
-		NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
-		NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+		
+		let notificationCenter = NSNotificationCenter.defaultCenter()
+		notificationCenter.removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+		notificationCenter.removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
 	}
-	
+
 	/*--------------------------------------------------------------------------------------------
 	* Events
 	*--------------------------------------------------------------------------------------------*/
+	
+	func photoViewHasFocus(sender: NSNotification) {
+		self.view.endEditing(true)
+	}
+	
+	func photoDidChange(sender: NSNotification) {
+		viewWillLayoutSubviews()
+	}
 	
 	/*--------------------------------------------------------------------------------------------
 	* Methods

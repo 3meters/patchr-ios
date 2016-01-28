@@ -259,10 +259,6 @@ class MessageDetailViewController: BaseViewController {
 		self.activity.stopAnimating()
 		NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.LikeDidChange, object: nil)
     }
-
-    deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
-    }
 	
 	/*--------------------------------------------------------------------------------------------
 	 * Events

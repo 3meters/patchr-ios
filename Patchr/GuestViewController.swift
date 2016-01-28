@@ -28,15 +28,11 @@ class GuestViewController: BaseViewController {
 		initialize()
 	}
     
-    /*--------------------------------------------------------------------------------------------
-    * Events
-    *--------------------------------------------------------------------------------------------*/
-    
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
-
+		
 		let messageSize = self.message.sizeThatFits(CGSizeMake(288, CGFloat.max))
-
+		
 		self.buttonGroup.anchorInCenterWithWidth(228, height: 96)
 		self.buttonLogin.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 44)
 		self.buttonSignup.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 44)
@@ -45,6 +41,10 @@ class GuestViewController: BaseViewController {
 		self.buttonCancel.anchorTopLeftWithLeftPadding(24, topPadding: 24, width: 48, height: 48)
 	}
 	
+    /*--------------------------------------------------------------------------------------------
+    * Events
+    *--------------------------------------------------------------------------------------------*/
+    
 	func loginAction(sender: AnyObject?) {
 		let controller = LoginViewController()
 		let navController = UINavigationController()

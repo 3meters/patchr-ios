@@ -10,6 +10,7 @@ import Foundation
 import ObjectiveC
 import Fabric
 import Crashlytics
+import Google
 
 struct Reporting {
     
@@ -59,4 +60,26 @@ struct Reporting {
             Crashlytics.sharedInstance().setUserEmail(nil)
         }
     }
+}
+
+extension UIViewController {
+	
+	func setScreenName(name: String) {
+		self.sendScreenView(name)
+	}
+	
+	func sendScreenView(name: String) {
+		let tracker = GAI.sharedInstance().defaultTracker
+		tracker.set(kGAIScreenName, value: name)
+		tracker.send(GAIDictionaryBuilder.createScreenView().build() as NSDictionary as [NSObject : AnyObject])
+	}
+	
+	func trackEvent(category: String, action: String, label: String, value: NSNumber?) {
+		/*
+		* Not used yet.
+		*/
+		let tracker = GAI.sharedInstance().defaultTracker
+		let trackDictionary = GAIDictionaryBuilder.createEventWithCategory(category, action: action, label: label, value: value).build()
+		tracker.send(trackDictionary as [NSObject : AnyObject])
+	}
 }

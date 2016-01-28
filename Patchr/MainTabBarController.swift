@@ -37,15 +37,16 @@ class MainTabBarController: UITabBarController {
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		if ReachabilityManager.instance.isReachable() {
-			self.messageBar.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 48, height: 0)
+			self.messageBar.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 0)
 		}
 		else {
-			self.messageBar.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 88, height: 40)
+			self.messageBar.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: self.tabBar.height(), height: 40)
 		}
 	}
     
     func applicationWillEnterForeground() {
         /* User either switched to patchr or turned their screen back on. */
+		reachabilityChanged()
         Log.d("Application will enter foreground")
     }
     
@@ -125,21 +126,36 @@ class MainTabBarController: UITabBarController {
 		self.messageBar.numberOfLines = 0
 		self.messageBar.textAlignment = NSTextAlignment.Center
 		self.messageBar.textColor = Colors.white
-		self.messageBar.layer.backgroundColor = Theme.colorTint.CGColor
+		self.messageBar.layer.backgroundColor = Colors.accentColorFill.CGColor
 		self.messageBar.alpha = 0.85
+		self.messageBar.bounds.size = CGSizeMake(self.tabBar.width(), 40)
 		self.view.addSubview(self.messageBar)
 	}
 	
     func showMessageBar() {
-        UIView.animateWithDuration(0.10, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
-            self.messageBar.frame = CGRectMake(0, UIScreen.mainScreen().bounds.size.height - 88, UIScreen.mainScreen().bounds.size.width, 40)
-            }, completion: nil)
+		let y = self.tabBar.frame.origin.y - 40
+
+        UIView.animateWithDuration(0.10,
+			delay: 0,
+			options: UIViewAnimationOptions.CurveEaseOut,
+			animations: {
+				self.messageBar.alpha = 1
+				self.messageBar.frame.origin.y = y
+			}) {_ in
+			Animation.bounce(self.messageBar)
+		}
     }
-    
+		
     func hideMessageBar() {
-        UIView.animateWithDuration(0.10, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
-            self.messageBar.frame = CGRectMake(0, UIScreen.mainScreen().bounds.size.height - 48, UIScreen.mainScreen().bounds.size.width, 0)
-            }, completion: nil)
+        UIView.animateWithDuration(0.30,
+			delay: 0,
+			options: UIViewAnimationOptions.CurveEaseOut,
+			animations: {
+				self.messageBar.alpha = 0
+			}) { _ in
+			self.messageBar.frame.origin.y = self.tabBar.frame.origin.y
+			self.messageBar.frame.size.height = 0
+		}
     }
 }
 

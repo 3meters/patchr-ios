@@ -11,8 +11,8 @@ import SDWebImage
 
 class UserPhotoView: BaseDetailView {
 
-	var name	= AirLabelDisplay()
-	var photo	= AirImageView(frame: CGRectZero)
+	var name		= AirLabelDisplay()
+	var photo		= AirImageView(frame: CGRectZero)
 	
 	init() {
 		super.init(frame: CGRectZero)
@@ -38,7 +38,6 @@ class UserPhotoView: BaseDetailView {
 		self.photo.contentMode = .ScaleAspectFill
 		
 		/* User name */
-		self.name.hidden = true
 		self.name.font = Theme.fontHeading
 		self.name.textColor = Colors.white
 		self.name.textAlignment = .Center
@@ -71,25 +70,58 @@ class UserPhotoView: BaseDetailView {
 	}
 	
 	func bindPhoto(photoUrl: NSURL?, name: String?) {
-		let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
+		
+		if self.photo.image != nil
+			&& self.photo.linkedPhotoUrl != nil
+			&& photoUrl != nil
+			&& self.photo.linkedPhotoUrl?.absoluteString == photoUrl?.absoluteString {
+			return
+		}
+		
+		let animate = true
+		
+		self.photo.hidden = true
 		self.photo.image = nil
 		self.name.text = nil
-		if photoUrl == nil && name == nil {
-			/* For some reason, the user is missing or deleted */
-			let photo = Entity.getDefaultPhoto("user", id: nil)
-			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile)
-			self.photo.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
+		self.name.hidden = false
+		
+		self.backgroundColor = Colors.gray80pcntColor
+		
+		if photoUrl != nil {
+			
+			self.photo.sd_setImageWithURL(photoUrl,
+				placeholderImage: nil,
+				options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload],
+				completed: { [weak self] image, error, cacheType, url in
+					
+					if self != nil && error == nil {
+						dispatch_async(dispatch_get_main_queue()) {
+							
+							self?.photo.linkedPhotoUrl = photoUrl
+							self?.name.hidden = true
+							self?.photo.hidden = false
+							
+							if animate && self != nil {
+								UIView.transitionWithView(self!,
+									duration: 0.4,
+									options: UIViewAnimationOptions.TransitionCrossDissolve,
+									animations: {
+										self?.photo.image = image
+									},
+									completion: nil)
+							}
+							else {
+								self?.photo.image = image
+							}
+						}
+					}
+				}
+			)
 		}
-		else {
-			if photoUrl != nil {
-				self.photo.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
-			}
-			else if name != nil {
-				self.name.text = Utils.initialsFromName(name!).uppercaseString
-				self.name.hidden = false
-				let seed = Utils.numberFromName(name!)
-				self.backgroundColor = Utils.randomColor(seed)
-			}
+		else if name != nil {
+			self.name.text = Utils.initialsFromName(name!).uppercaseString
+			let seed = Utils.numberFromName(name!)
+			self.backgroundColor = Utils.randomColor(seed)
 		}
-	}	
+	}
 }

@@ -1,0 +1,6 @@
+[
+	"-workspace", "Patchr.xcworkspace",
+	"-scheme", "PatchrTests",
+	"-sdk", "iphonesimulator",
+	"-destination","name=iPhone 6 Plus"
+]

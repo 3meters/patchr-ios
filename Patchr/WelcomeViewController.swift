@@ -42,13 +42,9 @@ class WelcomeViewController: BaseViewController {
 		initialize()
 	}
     
-    /*--------------------------------------------------------------------------------------------
-    * Events
-    *--------------------------------------------------------------------------------------------*/
-    
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
-
+		
 		let messageSize = self.message.sizeThatFits(CGSizeMake(228, CGFloat.max))
 		self.message.anchorTopCenterWithTopPadding(24, width: 228, height: messageSize.height)
 		
@@ -65,6 +61,10 @@ class WelcomeViewController: BaseViewController {
 		}
 	}
 	
+    /*--------------------------------------------------------------------------------------------
+    * Events
+    *--------------------------------------------------------------------------------------------*/
+    
 	func joinAction(sender: AnyObject?) {
 		self.delegate?.inviteResult(.Join)
 	}

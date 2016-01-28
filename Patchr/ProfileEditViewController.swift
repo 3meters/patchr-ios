@@ -106,12 +106,14 @@ class ProfileEditViewController: BaseEditViewController {
 	}
 	
 	override func viewWillAppear(animated: Bool) {
+		super.viewWillAppear(animated)
 		let notificationCenter = NSNotificationCenter.defaultCenter()
 		notificationCenter.addObserver(self, selector: "providerConnectionChanged:", name: FBSDKAccessTokenDidChangeNotification, object: nil)
 		notificationCenter.addObserver(self, selector: "draw", name: FBSDKProfileDidChangeNotification, object: nil)
 	}
 	
 	override func viewDidDisappear(animated: Bool) {
+		super.viewDidDisappear(animated)
 		NSNotificationCenter.defaultCenter().removeObserver(self, name: FBSDKAccessTokenDidChangeNotification, object: nil)
 		NSNotificationCenter.defaultCenter().removeObserver(self, name: FBSDKProfileDidChangeNotification, object: nil)
 	}

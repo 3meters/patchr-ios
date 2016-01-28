@@ -22,29 +22,10 @@ class LobbyViewController: BaseViewController {
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
 	
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        setScreenName("Lobby")
-        
-        self.view.endEditing(true)
-        self.navigationController?.setNavigationBarHidden(true, animated: animated)
-        self.setNeedsStatusBarAppearanceUpdate()
-    }
-    
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.navigationController?.setNavigationBarHidden(false, animated: animated)
-        self.setNeedsStatusBarAppearanceUpdate()
-    }
-	
 	override func loadView() {
 		super.loadView()
 		initialize()
 	}
-    
-    /*--------------------------------------------------------------------------------------------
-    * Events
-    *--------------------------------------------------------------------------------------------*/
     
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
@@ -58,6 +39,25 @@ class LobbyViewController: BaseViewController {
 		self.imageLogo.alignAbove(self.appName, matchingCenterWithBottomPadding: -6, width: 100, height: 100)
 	}
 	
+	override func viewWillAppear(animated: Bool) {
+		super.viewWillAppear(animated)
+		setScreenName("Lobby")
+		
+		self.view.endEditing(true)
+		self.navigationController?.setNavigationBarHidden(true, animated: animated)
+		self.setNeedsStatusBarAppearanceUpdate()
+	}
+	
+	override func viewWillDisappear(animated: Bool) {
+		super.viewWillDisappear(animated)
+		self.navigationController?.setNavigationBarHidden(false, animated: animated)
+		self.setNeedsStatusBarAppearanceUpdate()
+	}
+	
+    /*--------------------------------------------------------------------------------------------
+    * Events
+    *--------------------------------------------------------------------------------------------*/
+    
 	func loginAction(sender: AnyObject?) {
 		
 		guard DataController.proxibase.versionIsValid else {

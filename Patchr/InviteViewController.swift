@@ -29,13 +29,9 @@ class InviteViewController: BaseViewController {
 		initialize()
 	}
     
-    /*--------------------------------------------------------------------------------------------
-    * Events
-    *--------------------------------------------------------------------------------------------*/
-    
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
-
+		
 		let messageSize = self.message.sizeThatFits(CGSizeMake(228, CGFloat.max))
 		
 		self.message.anchorTopCenterWithTopPadding(0, width: 228, height: messageSize.height)
@@ -49,6 +45,10 @@ class InviteViewController: BaseViewController {
 		self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 16, height: self.contentHolder.frame.size.height)
 	}
 	
+    /*--------------------------------------------------------------------------------------------
+    * Events
+    *--------------------------------------------------------------------------------------------*/
+    
 	func invitePatchrAction(sender: AnyObject?) {
 		shareUsing(.Patchr)
 	}

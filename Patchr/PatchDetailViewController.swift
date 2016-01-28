@@ -245,6 +245,8 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		
 		self.header = PatchDetailView()
 		self.tableView = AirTableView(frame: self.tableView.frame, style: .Plain)
+		self.tableView.estimatedRowHeight = 0	// Zero turns off estimates
+		self.tableView.rowHeight = 0			// Actual height is handled in heightForRowAtIndexPath
 		
 		let header = self.header as! PatchDetailView
 		

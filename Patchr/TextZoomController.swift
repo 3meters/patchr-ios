@@ -24,10 +24,6 @@ class TextZoomController: BaseViewController {
 		initialize()
 	}
     
-    /*--------------------------------------------------------------------------------------------
-    * Events
-    *--------------------------------------------------------------------------------------------*/
-    
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
@@ -42,6 +38,10 @@ class TextZoomController: BaseViewController {
 		self.buttonCancel.anchorTopRightWithRightPadding(0, topPadding: 0, width: 48, height: 48)
 	}
 	
+    /*--------------------------------------------------------------------------------------------
+    * Events
+    *--------------------------------------------------------------------------------------------*/
+    
 	func cancelAction(sender: AnyObject?) {
 		self.dismissViewControllerAnimated(true, completion: nil)
 	}

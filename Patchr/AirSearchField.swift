@@ -33,6 +33,7 @@ class AirSearchField: UITextField {
 		
 		let imageView = UIImageView(frame: CGRectMake(8, 0, 20, 20))
 		imageView.image = UIImage(named: "imgSearchLight")
+		imageView.tintColor = Colors.accentColorDarker
 		
 		let searchView = UIView(frame: CGRectMake(0, 0, 40, 40))
 		searchView.alpha = 0.5

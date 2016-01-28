@@ -65,6 +65,7 @@ target 'PatchrShare' do
 	pod 'SDWebImage',				'~> 3.7.2'
 	pod 'AWSS3'
 	pod 'Lockbox'										# Used to protect secrets and install info
+	pod 'Facade'										# Convenience methods for frame based layout
 	pod 'CocoaLumberjack/Swift'
 end
 

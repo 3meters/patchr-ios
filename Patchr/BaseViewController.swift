@@ -26,7 +26,7 @@ class BaseViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		
-		let tap = UITapGestureRecognizer(target: self, action: "dismissKeyboard");
+		let tap = UITapGestureRecognizer(target: self, action: "dismissKeyboard:");
 		tap.delegate = self
 		tap.cancelsTouchesInView = false
 		self.view.addGestureRecognizer(tap)
@@ -35,6 +35,10 @@ class BaseViewController: UIViewController {
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		Log.v("Layout subviews")
+	}
+		
+	deinit {
+		NSNotificationCenter.defaultCenter().removeObserver(self)
 	}
 	
 	/*--------------------------------------------------------------------------------------------
@@ -71,7 +75,7 @@ class BaseViewController: UIViewController {
 		}
 	}
 	
-	func dismissKeyboard() {
+	func dismissKeyboard(sender: NSNotification) {
 		self.view.endEditing(true)
 	}
 	

@@ -124,12 +124,8 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 		self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 8, height: self.contentHolder.height() + 32)
 	}
 	
-	override func viewWillAppear(animated: Bool) {
-		let notificationCenter = NSNotificationCenter.defaultCenter()
-		notificationCenter.addObserver(self, selector: "photoDidChange:", name: Events.PhotoDidChange, object: nil)
-	}
-	
 	override func viewDidAppear(animated: Bool) {
+		super.viewDidAppear(animated)
 		if self.inputState == State.Sharing {
 			self.addressField.becomeFirstResponder()
 		}
@@ -141,10 +137,6 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
 		self.firstAppearance = false
-	}
-	
-	deinit {
-		NSNotificationCenter.defaultCenter().removeObserver(self)
 	}
 	
 	/*--------------------------------------------------------------------------------------------
@@ -215,10 +207,6 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 		}
 	}
 	
-	func photoDidChange(sender: AnyObject) {
-		viewWillLayoutSubviews()
-	}
-
 	/*--------------------------------------------------------------------------------------------
 	 * Methods
 	 *--------------------------------------------------------------------------------------------*/

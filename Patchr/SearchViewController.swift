@@ -47,6 +47,14 @@ class SearchViewController: UITableViewController {
 		initialize()
 	}
 	
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+		let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.bounds.size.width)
+		self.tableView.bounds.size.width = viewWidth
+		self.header.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 64)
+		self.searchField.fillSuperviewWithLeftPadding(8, rightPadding: 8, topPadding: 8, bottomPadding: 8)
+	}
+	
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
 		loadRecents()
@@ -60,14 +68,6 @@ class SearchViewController: UITableViewController {
     /*--------------------------------------------------------------------------------------------
     * Events
     *--------------------------------------------------------------------------------------------*/
-	
-	override func viewWillLayoutSubviews() {
-		super.viewWillLayoutSubviews()
-		let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.bounds.size.width)
-		self.tableView.bounds.size.width = viewWidth
-		self.header.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 64)
-		self.searchField.fillSuperviewWithLeftPadding(8, rightPadding: 8, topPadding: 8, bottomPadding: 8)
-	}
 	
     func textFieldDidChange(textField: UITextField) {
         
