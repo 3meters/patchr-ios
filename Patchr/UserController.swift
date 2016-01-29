@@ -90,6 +90,11 @@ class UserController: NSObject {
 		
 		Log.d("User signed in: \(self.userName!)(\(self.userId!))")
 		
+		/* We enable remote notifications after we have had a login */
+		#if os(iOS) && !arch(i386) && !arch(x86_64)
+			NotificationController.instance.registerForRemoteNotifications()
+		#endif
+		
 		writeCredentialsToUserDefaults()
 		fetchCurrentUser(nil)	// Includes making sure the user is in the store
     }
@@ -149,7 +154,12 @@ class UserController: NSObject {
             if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
                 groupDefaults.setObject(self.userId, forKey: PatchrUserDefaultKey("userId"))
             }
-            
+			
+			/* We handle remote notifications */
+			#if os(iOS) && !arch(i386) && !arch(x86_64)
+				NotificationController.instance.registerForRemoteNotifications()
+			#endif
+			
             Branch.getInstance().setIdentity(user.id_)
             Reporting.updateCrashUser(user)
         }

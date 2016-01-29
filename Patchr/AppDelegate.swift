@@ -120,8 +120,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         /* Change default font for button bar items */
         UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: Theme.fontBarText], forState: UIControlState.Normal)
 
-        /* Setup parse for push notifications */
-        Parse.setApplicationId(keys.parseApplicationId(), clientKey: keys.parseApplicationKey())
+        /* Setup parse for push notifications - enabling notifications with the system is done with login */
+		Parse.setApplicationId(keys.parseApplicationId(), clientKey: keys.parseApplicationKey())
 		
         /* Get the latest on the authenticated user if we have one */
 		if UserController.instance.authenticated {	// Checks for current userId and sessionKey
@@ -143,12 +143,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UITabBar.appearance().tintColor = Theme.colorTint
         UISwitch.appearance().onTintColor = Theme.colorTint
         
-        /* We handle remote notifications */
-
-		#if os(iOS) && !arch(i386) && !arch(x86_64)
-			NotificationController.instance.registerForRemoteNotifications()			
-		#endif
-
 		/* Facebook */
 		FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
 		FBSDKProfile.enableUpdatesOnAccessTokenChange(true)
@@ -277,6 +271,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationDidBecomeActive(application: UIApplication) {
+		
+		FBSDKAppEvents.activateApp()
+		
+		/* Check to see if Facebook has a deferred deep link */
+		FBSDKAppLinkUtility.fetchDeferredAppLink { url, error in
+			if error != nil {
+				Log.w("Error while fetching deferred app link \(error)")
+			}
+			if url != nil {
+				UIApplication.sharedApplication().openURL(url)
+			}
+		}
+
+		/* NotificationsTableViewController uses this to manage badging */
         NSNotificationCenter.defaultCenter().postNotificationName(Event.ApplicationDidBecomeActive.rawValue, object: nil)
     }
     

@@ -149,14 +149,14 @@ class FacebookProvider: NSObject, ServiceProvider, FBSDKAppInviteDialogDelegate 
 			*/
 			let inviterName = UserController.instance.currentUser.name.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
 			let tokenString = PatchrKeys().facebookToken() // app_id|app_secret
-			let deepLink = "patchr-ios://invite?entityId=\(entity.id_)&entitySchema=patch&inviterName=\(inviterName)"
+			let deepLink = "patchr://invite?entityId=\(entity.id_)&entitySchema=patch&inviterName=\(inviterName)"
 			let ios = "[{\"app_name\":\"Patchr\", \"app_store_id\":\(APPLE_APP_ID), \"url\":\"\(deepLink)\"}]"
 			let parameters = [
 				"name": "Patchr App Link",
 				"ios": ios
 			]
 			
-			FBSDKSettings.setLoggingBehavior(Set(arrayLiteral: FBSDKLoggingBehaviorGraphAPIDebugInfo))
+			FBSDKSettings.setLoggingBehavior(Set(arrayLiteral: FBSDKLoggingBehaviorGraphAPIDebugInfo, FBSDKLoggingBehaviorDeveloperErrors))
 			
 			let request = FBSDKGraphRequest(graphPath: "app/app_link_hosts",
 				parameters: parameters as [NSObject : AnyObject], tokenString: tokenString, version: "v2.5", HTTPMethod: "POST" )
@@ -185,6 +185,8 @@ class FacebookProvider: NSObject, ServiceProvider, FBSDKAppInviteDialogDelegate 
 	
 	func appInviteDialog(appInviteDialog: FBSDKAppInviteDialog!, didCompleteWithResults results: [NSObject : AnyObject]!) {
 		if results != nil && results["completionGesture"] as? String != "cancel" {
+			let referrerId = UserController.instance.currentUser.id_!
+			FBSDKAppEvents.logEvent("patch_invite", parameters: ["referrer":referrerId])
 			UIShared.Toast("Patch invitations sent using Facebook!")
 		}
 	}
