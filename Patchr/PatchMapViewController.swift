@@ -14,6 +14,7 @@ import MapKit
     optional var locationTitle: String? { get }
     optional var locationSubtitle: String? { get }
     optional var locationPhoto: AnyObject? { get }
+	
     func locationForMap() -> CLLocation?
     func locationChangedTo(location: CLLocation) -> Void
     func locationEditable() -> Bool
@@ -25,7 +26,8 @@ class PatchMapViewController: UIViewController {
     var annotation: EntityAnnotation!
     
 	var mapView: MKMapView!
-    
+	var messageBar = UILabel()
+	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
@@ -54,6 +56,12 @@ class PatchMapViewController: UIViewController {
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		self.mapView.fillSuperview()
+		if self.locationDelegate.locationEditable() {
+			let messageSize = self.messageBar.sizeThatFits(CGSizeMake(self.view.width(), CGFloat.max))
+			let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+			let navHeight = self.navigationController?.navigationBar.height() ?? 0
+			self.messageBar.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: (statusHeight + navHeight), height: max(messageSize.height + 16, 48))
+		}
 	}
     
     func longPress(gesture: UILongPressGestureRecognizer) {
@@ -96,6 +104,19 @@ class PatchMapViewController: UIViewController {
 		
 		self.mapView.addAnnotation(self.annotation)
 		self.view.addSubview(self.mapView)
+		
+		if self.locationDelegate.locationEditable() {
+			
+			/* Message bar */
+			self.messageBar.font = Theme.fontTextDisplay
+			self.messageBar.text = "Tap and hold to set the location for the patch."
+			self.messageBar.numberOfLines = 0
+			self.messageBar.textAlignment = NSTextAlignment.Center
+			self.messageBar.textColor = Colors.white
+			self.messageBar.layer.backgroundColor = Colors.accentColorFill.CGColor
+			self.messageBar.alpha = 0.90
+			self.view.addSubview(self.messageBar)
+		}
 	}
 }
 
