@@ -78,7 +78,8 @@ class GuestViewController: BaseViewController {
 	override func initialize() {
 		super.initialize()
 		
-		self.view.backgroundColor = Theme.colorBackgroundOverlay
+		self.view.backgroundColor = Colors.clear
+		self.scrollView.backgroundColor = Theme.colorBackgroundOverlay
 		self.view.accessibilityIdentifier = View.Guest
 
 		setScreenName("GuestPrompt")

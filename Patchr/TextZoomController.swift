@@ -54,10 +54,11 @@ class TextZoomController: BaseViewController {
 		super.initialize()
 		
 		setScreenName("TextZoom")
-		
-		self.view.backgroundColor = Colors.opacity50pcntBlack
-		self.view.addSubview(self.messageHolder)
 		self.view.accessibilityIdentifier = View.TextZoom
+		
+		self.view.backgroundColor = Colors.clear
+		self.scrollView.backgroundColor = Colors.opacity50pcntBlack
+		self.view.addSubview(self.messageHolder)
 		
 		self.messageHolder.backgroundColor = Theme.colorBackgroundForm
 		self.messageHolder.cornerRadius = 8
