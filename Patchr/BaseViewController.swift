@@ -34,7 +34,6 @@ class BaseViewController: UIViewController {
 	
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
-		Log.v("Layout subviews")
 	}
 		
 	deinit {

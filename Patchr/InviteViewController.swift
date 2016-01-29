@@ -136,7 +136,7 @@ class InviteViewController: BaseViewController {
 			
 			let inviterName = UserController.instance.currentUser.id_
 			Branch.getInstance().getShortURLWithParams(["entityId":self.inputEntity.id_!, "entitySchema":"patch", "inviterName":inviterName],
-				andChannel: "patchr-ios",
+				andChannel: "patchr-ios",	// not the same as url scheme
 				andFeature: BRANCH_FEATURE_TAG_INVITE,
 				andCallback: { url, error in
 					
