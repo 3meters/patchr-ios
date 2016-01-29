@@ -129,8 +129,8 @@ class LobbyViewController: BaseViewController {
 		
 		self.view.accessibilityIdentifier = View.Lobby
 		
-		self.imageBackground.image = UIImage(named: "imgLobby")
-		self.imageBackground.contentMode = UIViewContentMode.ScaleAspectFill
+		self.imageBackground.image = UIImage(named: "imgLobbyBackground")
+		self.imageBackground.contentMode = UIViewContentMode.ScaleToFill
 		self.view.addSubview(self.imageBackground)
 		
 		self.imageLogo.image = UIImage(named: "imgPatchrWhite")

@@ -18,7 +18,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="imgLobby" translatesAutoresizingMaskIntoConstraints="NO" id="2mA-S5-IPc">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="imgLobbyBackground" translatesAutoresizingMaskIntoConstraints="NO" id="2mA-S5-IPc">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="imgPatchrWhite" translatesAutoresizingMaskIntoConstraints="NO" id="pUI-fM-lmE">
@@ -48,7 +48,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="imgLobby" width="414" height="736"/>
+        <image name="imgLobbyBackground" width="414" height="736"/>
         <image name="imgPatchrWhite" width="161" height="199"/>
     </resources>
 </document>

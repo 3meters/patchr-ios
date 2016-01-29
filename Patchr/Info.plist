@@ -25,7 +25,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>patchr-ios</string>
+				<string>patchr</string>
 				<string>fb894654857249670</string>
 				<string>fbauth2</string>
 			</array>
