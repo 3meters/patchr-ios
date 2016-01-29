@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9059" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -18,7 +18,6 @@
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" tag="1" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Family Vacation" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="z6I-CK-6I4" userLabel="name">
                         <rect key="frame" x="16" y="21" width="181" height="21"/>
-                        <animations/>
                         <constraints>
                             <constraint firstAttribute="height" constant="21" id="vRr-tu-PZP"/>
                         </constraints>
@@ -28,14 +27,12 @@
                     </label>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" tag="2" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="HbJ-8o-LDa" userLabel="photo">
                         <rect key="frame" x="205" y="2" width="107" height="60"/>
-                        <animations/>
                         <color key="backgroundColor" red="0.95686274509803926" green="0.95686274509803926" blue="0.95686274509803926" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstAttribute="width" secondItem="HbJ-8o-LDa" secondAttribute="height" multiplier="16:9" id="gIo-bf-6AL"/>
                         </constraints>
                     </imageView>
                 </subviews>
-                <animations/>
                 <constraints>
                     <constraint firstItem="HbJ-8o-LDa" firstAttribute="top" secondItem="plh-WI-Gew" secondAttribute="top" constant="2" id="DOw-Zw-Gsl"/>
                     <constraint firstItem="HbJ-8o-LDa" firstAttribute="leading" secondItem="z6I-CK-6I4" secondAttribute="trailing" constant="8" id="FyB-Jo-hDQ"/>
@@ -45,7 +42,6 @@
                     <constraint firstAttribute="bottom" secondItem="HbJ-8o-LDa" secondAttribute="bottom" constant="1" id="vOv-3F-rhP"/>
                 </constraints>
             </tableViewCellContentView>
-            <animations/>
             <connections>
                 <outlet property="name" destination="z6I-CK-6I4" id="ery-5k-zzR"/>
                 <outlet property="photo" destination="HbJ-8o-LDa" id="GOQ-sw-Y2N"/>
