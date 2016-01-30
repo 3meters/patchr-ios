@@ -69,7 +69,7 @@ class UserController: NSObject {
 		
         writeCredentialsToUserDefaults()
         Reporting.updateCrashUser(nil)
-        Branch.getInstance().logout()
+		BranchProvider.logout()
     }
 
 	func handleSuccessfulSignInResponse(response: AnyObject) {
@@ -125,7 +125,7 @@ class UserController: NSObject {
 			objectId, error in
 			if error == nil && objectId != nil {
 				self.currentUser = DataController.instance.mainContext.objectWithID(objectId!) as! User
-				Branch.getInstance().setIdentity(self.currentUser.id_)
+				BranchProvider.setIdentity(self.currentUser.id_)
 				Reporting.updateCrashUser(self.currentUser)
 			}
 			if completion != nil {
@@ -160,7 +160,7 @@ class UserController: NSObject {
 				NotificationController.instance.registerForRemoteNotifications()
 			#endif
 			
-            Branch.getInstance().setIdentity(user.id_)
+			BranchProvider.setIdentity(user.id_)
             Reporting.updateCrashUser(user)
         }
     }

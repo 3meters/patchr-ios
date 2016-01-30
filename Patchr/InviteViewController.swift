@@ -125,47 +125,27 @@ class InviteViewController: BaseViewController {
 		}
 		else if route == .Actions {
 			
-			let inviterName = UserController.instance.currentUser.name!
-			
-			let photo = self.inputEntity!.getPhotoManaged()
-			let settings = "w=400&h=250&crop&fit=crop&q=50"
-			let photoUrl = "https://3meters-images.imgix.net/\(photo.prefix)?\(settings)"
-			let description = self.inputEntity!.description_ ?? "Patches are a fast and fun way for casual groups to share events, places, interests and projects."
-			
-			let parameters = [
-				"entityId":self.inputEntity.id_!,
-				"entitySchema":"patch",
-				"inviterName":inviterName,
-				"$og_image_url": photoUrl,
-				"$og_title": "\(self.inputEntity.name) Patch",
-				"$og_description": description
-			]
-			
-			Branch.getInstance().getShortURLWithParams(parameters,
-				andChannel: "patchr-ios",	// not the same as url scheme
-				andFeature: BRANCH_FEATURE_TAG_INVITE,
-				andCallback: { url, error in
+			BranchProvider.invite(self.inputEntity!, referrer: UserController.instance.currentUser) {
+				response, error in
+				
+				if let error = ServerError(error) {
+					UIViewController.topMostViewController()!.handleError(error)
+				}
+				else {
+					let patch = response as! PatchItem
+					let activityViewController = UIActivityViewController(
+						activityItems: [patch],
+						applicationActivities: nil)
 					
-					if let error = ServerError(error) {
-						UIViewController.topMostViewController()!.handleError(error)
+					if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+						self.presentViewController(activityViewController, animated: true, completion: nil)
 					}
 					else {
-						Log.d("Branch link created: \(url!)")
-						let patch: PatchItem = PatchItem(entity: self.inputEntity, shareUrl: url!)
-						
-						let activityViewController = UIActivityViewController(
-							activityItems: [patch],
-							applicationActivities: nil)
-						
-						if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-							self.presentViewController(activityViewController, animated: true, completion: nil)
-						}
-						else {
-							let popup: UIPopoverController = UIPopoverController(contentViewController: activityViewController)
-							popup.presentPopoverFromRect(CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/4, 0, 0), inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
-						}
+						let popup: UIPopoverController = UIPopoverController(contentViewController: activityViewController)
+						popup.presentPopoverFromRect(CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/4, 0, 0), inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
 					}
-			})
+				}
+			}
 		}
 	}
 }

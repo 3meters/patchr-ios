@@ -415,39 +415,20 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 			self.presentViewController(navController, animated: true, completion: nil)
 		}
 		else if route == .Facebook {
+			
 			let provider = FacebookProvider()
 			provider.invite(self.entity!)
 		}
 		else if route == .Actions {
 			
-			let inviterName = UserController.instance.currentUser.name!
-			
-			let photo = self.entity!.getPhotoManaged()
-			let settings = "w=400&h=250&crop&fit=crop&q=50"
-			let photoUrl = "https://3meters-images.imgix.net/\(photo.prefix)?\(settings)"
-			let description = self.entity!.description_ ?? "Patches are a fast and fun way for casual groups to share events, places, interests and projects."
-			
-			let parameters = [
-				"entityId":self.entityId!,
-				"entitySchema":"patch",
-				"inviterName":inviterName,
-				"$og_image_url": photoUrl,
-				"$og_title": "\(self.entity!.name) Patch",
-				"$og_description": description
-			]
-			
-			Branch.getInstance().getShortURLWithParams(parameters,
-				andChannel: "patchr-ios",
-				andFeature: BRANCH_FEATURE_TAG_INVITE,
-				andCallback: { url, error in
+			BranchProvider.invite(self.entity as! Patch, referrer: UserController.instance.currentUser) {
+				response, error in
 				
 				if let error = ServerError(error) {
 					UIViewController.topMostViewController()!.handleError(error)
 				}
 				else {
-					Log.d("Branch link created: \(url!)")
-					let patch: PatchItem = PatchItem(entity: self.entity as! Patch, shareUrl: url!)
-					
+					let patch = response as! PatchItem
 					let activityViewController = UIActivityViewController(
 						activityItems: [patch],
 						applicationActivities: nil)
@@ -460,7 +441,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 						popup.presentPopoverFromRect(CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/4, 0, 0), inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
 					}
 				}
-			})
+			}
 		}
     }
 

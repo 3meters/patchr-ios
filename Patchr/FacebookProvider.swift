@@ -10,13 +10,6 @@ import FBSDKLoginKit
 import FBSDKShareKit
 import Keys
 
-protocol ServiceProvider: NSObjectProtocol {
-	func authorize(completion: CompletionBlock?) -> Void
-	func profile(completion: CompletionBlock?) -> Void
-	func deauthorize(completion: CompletionBlock?) -> Void
-	func logout() -> Void
-}
-
 class ServiceUserProfile: NSObject {
 	var name: String?
 	var email: String?
@@ -38,7 +31,7 @@ class ServiceUserProfile: NSObject {
 
 public typealias CompletionBlock = (response:AnyObject?, error:NSError?) -> Void
 
-class FacebookProvider: NSObject, ServiceProvider, FBSDKAppInviteDialogDelegate {	
+class FacebookProvider: NSObject, FBSDKAppInviteDialogDelegate {	
 	/*
 	* Facebook access token is managed by the facebook sdk and is stored
 	* in the device keychain. The facebook user id is available using token.userID.

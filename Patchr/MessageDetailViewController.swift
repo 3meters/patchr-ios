@@ -707,9 +707,9 @@ class MessageDetailViewController: BaseViewController {
         }
     }
 
-    func shareUsing(patchr: Bool = true) {
+    func shareUsing(route: ShareRoute) {
         
-        if patchr {
+        if route == .Patchr {
 			
 			let controller = MessageEditViewController()
 			let navController = UINavigationController()
@@ -721,49 +721,16 @@ class MessageDetailViewController: BaseViewController {
 			navController.viewControllers = [controller]
 			self.presentViewController(navController, animated: true, completion: nil)
         }
-        else {
+        else if route == .Actions {			
 			
-			let inviterName = UserController.instance.currentUser.name!
-			
-			var parameters = [
-				"entityId":self.inputMessage!.id_!,
-				"entitySchema":"message",
-				"inviterName":inviterName,
-			]
-			
-			if self.inputMessage!.photo != nil {
-				let photo = self.inputMessage!.getPhotoManaged()
-				let settings = "h=250&crop&fit=crop&q=50"
-				let photoUrl = "https://3meters-images.imgix.net/\(photo.prefix)?\(settings)"
-				parameters["$og_image_url"] = photoUrl
-			}
-			else if self.inputMessage!.patch != nil {
-				let photo = self.inputMessage!.patch.getPhotoManaged()
-				let settings = "h=250&crop&fit=crop&q=50"
-				let photoUrl = "https://3meters-images.imgix.net/\(photo.prefix)?\(settings)"
-				parameters["$og_image_url"] = photoUrl
-			}
-			
-			var description = "\(self.inputMessage!.creator.name!) posted a photo to the \(self.inputMessage!.patch!.name) patch using Patchr"
-			if self.inputMessage!.description_ != nil && !self.inputMessage!.description_.isEmpty {
-				description = "\(self.inputMessage!.creator.name!) posted: \"\(self.inputMessage!.description_)\""
-			}
-			
-			parameters["$og_title"] = "Shared by \(inviterName)"
-			parameters["$og_description"] = description
-			
-            Branch.getInstance().getShortURLWithParams(parameters,
-				andChannel: "patchr-ios",
-				andFeature: BRANCH_FEATURE_TAG_SHARE,
-				andCallback: { url, error in
-                
-                if let error = ServerError(error) {
-                    UIViewController.topMostViewController()!.handleError(error)
-                }
-                else {
-                    Log.d("Branch link created: \(url!)")
-                    let message: MessageItem = MessageItem(entity: self.inputMessage!, shareUrl: url!)
-					
+			BranchProvider.share(self.inputMessage!, referrer: UserController.instance.currentUser) {
+				response, error in
+				
+				if let error = ServerError(error) {
+					UIViewController.topMostViewController()!.handleError(error)
+				}
+				else {
+					let message = response as! MessageItem
 					let activityViewController = UIActivityViewController(
 						activityItems: [message],
 						applicationActivities: nil)
@@ -775,8 +742,8 @@ class MessageDetailViewController: BaseViewController {
 						let popup: UIPopoverController = UIPopoverController(contentViewController: activityViewController)
 						popup.presentPopoverFromRect(CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/4, 0, 0), inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
 					}
-                }
-            })
+				}
+			}
         }
     }
 }
@@ -791,10 +758,10 @@ extension MessageDetailViewController: UIActionSheetDelegate {
 				
                 switch self.shareButtonFunctionMap[buttonIndex]! {
                 case .Share:
-                    self.shareUsing(true)
+                    self.shareUsing(.Patchr)
                     
                 case .ShareVia:
-                    self.shareUsing(false)
+                    self.shareUsing(.Actions)
                 }
             }
         }

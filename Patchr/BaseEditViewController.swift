@@ -89,7 +89,7 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate {
 		/*
 		* Called when the UIKeyboardWillHideNotification is sent.
 		*/
-		self.scrollView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0)
+		self.scrollView.contentInset = UIEdgeInsetsMake(self.scrollView.contentInset.top, 0, 0, 0)
 		self.scrollView.scrollIndicatorInsets = scrollView.contentInset
 	}
 }
