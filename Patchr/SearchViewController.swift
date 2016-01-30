@@ -57,7 +57,7 @@ class SearchViewController: UITableViewController {
 	
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
-		loadRecents()
+		loadRecents() // In case there is something new while we were away
 	}
 
     override func viewDidAppear(animated: Bool) {
@@ -71,16 +71,18 @@ class SearchViewController: UITableViewController {
 	
     func textFieldDidChange(textField: UITextField) {
         
+		if let timer = self.searchTimer {
+			timer.invalidate()
+		}
+		
         self.searchEditing = (textField.text!.length > 0)
-        if textField.text!.length == 0 {
+		
+        if !self.searchEditing {
             self.currentItems = self.recentItems
             self.tableView.reloadData()             // To reshow recents
         }
         else if textField.text!.length >= 2 {
             /* To limit network activity, reload half a second after last key press. */
-            if let timer = self.searchTimer {
-                timer.invalidate()
-            }
             self.searchTimer = NSTimer(timeInterval:0.5, target:self, selector:Selector("suggest"), userInfo:nil, repeats:false)
             NSRunLoop.currentRunLoop().addTimer(self.searchTimer!, forMode: "NSDefaultRunLoopMode")
         }
@@ -153,7 +155,7 @@ class SearchViewController: UITableViewController {
         self.searchInProgress = true
         let searchString = self.searchField.text
 		
-        Log.d("Suggest call: \(searchString)")
+        Log.d("Suggest call: \(searchString!)")
 		
         let endpoint: String = "https://api.aircandi.com/v1/suggest"
         let request = NSMutableURLRequest(URL: NSURL(string: endpoint)!)
