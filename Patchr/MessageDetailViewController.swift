@@ -710,6 +710,7 @@ class MessageDetailViewController: BaseViewController {
     func shareUsing(patchr: Bool = true) {
         
         if patchr {
+			
 			let controller = MessageEditViewController()
 			let navController = UINavigationController()
 			controller.inputShareEntity = self.inputMessage
@@ -721,7 +722,37 @@ class MessageDetailViewController: BaseViewController {
 			self.presentViewController(navController, animated: true, completion: nil)
         }
         else {
-            Branch.getInstance().getShortURLWithParams(["entityId":self.inputMessage!.id_!, "entitySchema":"message"],
+			
+			let inviterName = UserController.instance.currentUser.name!
+			
+			var parameters = [
+				"entityId":self.inputMessage!.id_!,
+				"entitySchema":"message",
+				"inviterName":inviterName,
+			]
+			
+			if self.inputMessage!.photo != nil {
+				let photo = self.inputMessage!.getPhotoManaged()
+				let settings = "h=250&crop&fit=crop&q=50"
+				let photoUrl = "https://3meters-images.imgix.net/\(photo.prefix)?\(settings)"
+				parameters["$og_image_url"] = photoUrl
+			}
+			else if self.inputMessage!.patch != nil {
+				let photo = self.inputMessage!.patch.getPhotoManaged()
+				let settings = "h=250&crop&fit=crop&q=50"
+				let photoUrl = "https://3meters-images.imgix.net/\(photo.prefix)?\(settings)"
+				parameters["$og_image_url"] = photoUrl
+			}
+			
+			var description = "\(self.inputMessage!.creator.name!) posted a photo to the \(self.inputMessage!.patch!.name) patch using Patchr"
+			if self.inputMessage!.description_ != nil && !self.inputMessage!.description_.isEmpty {
+				description = "\(self.inputMessage!.creator.name!) posted: \"\(self.inputMessage!.description_)\""
+			}
+			
+			parameters["$og_title"] = "Shared by \(inviterName)"
+			parameters["$og_description"] = description
+			
+            Branch.getInstance().getShortURLWithParams(parameters,
 				andChannel: "patchr-ios",
 				andFeature: BRANCH_FEATURE_TAG_SHARE,
 				andCallback: { url, error in
@@ -816,19 +847,15 @@ class MessageItem: NSObject, UIActivityItemSource {
     }
     
     func activityViewController(activityViewController: UIActivityViewController, itemForActivityType activityType: String) -> AnyObject? {
-        
-        let text = "Check out \(UserController.instance.currentUser.name)'s message posted to the \(self.entity.patch.name) patch! \(self.shareUrl) \n"
-        if activityType == UIActivityTypeMail {
-            return text
-        }
-        else {
-            return text
-        }
+        let text = "Check out \(self.entity.creator.name)'s message posted to the \(self.entity.patch.name) patch! \(self.shareUrl) \n"
+        return text
     }
     
     func activityViewController(activityViewController: UIActivityViewController, subjectForActivityType activityType: String?) -> String {
-        if activityType == UIActivityTypeMail || activityType == "com.google.Gmail.ShareExtension" {
-            return "Message posted by \(UserController.instance.currentUser.name) on Patchr"
+		if activityType == UIActivityTypeMail
+			|| activityType == UIActivityTypeOutlook
+			|| activityType == UIActivityTypeGmail {
+            return "Patch message posted by \(self.entity.creator.name)"
         }
         return ""
     }

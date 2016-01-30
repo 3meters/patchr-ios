@@ -121,21 +121,27 @@ class InviteViewController: BaseViewController {
 		else if route == .Facebook {
 			
 			let provider = FacebookProvider()
-			if FBSDKAccessToken.currentAccessToken() == nil {
-				provider.authorize { response, error in
-					if FBSDKAccessToken.currentAccessToken() != nil {
-						provider.invite(self.inputEntity)
-					}
-				}
-			}
-			else {
-				provider.invite(self.inputEntity)
-			}
+			provider.invite(self.inputEntity)
 		}
 		else if route == .Actions {
 			
-			let inviterName = UserController.instance.currentUser.id_
-			Branch.getInstance().getShortURLWithParams(["entityId":self.inputEntity.id_!, "entitySchema":"patch", "inviterName":inviterName],
+			let inviterName = UserController.instance.currentUser.name!
+			
+			let photo = self.inputEntity!.getPhotoManaged()
+			let settings = "w=400&h=250&crop&fit=crop&q=50"
+			let photoUrl = "https://3meters-images.imgix.net/\(photo.prefix)?\(settings)"
+			let description = self.inputEntity!.description_ ?? "Patches are a fast and fun way for casual groups to share events, places, interests and projects."
+			
+			let parameters = [
+				"entityId":self.inputEntity.id_!,
+				"entitySchema":"patch",
+				"inviterName":inviterName,
+				"$og_image_url": photoUrl,
+				"$og_title": "\(self.inputEntity.name) Patch",
+				"$og_description": description
+			]
+			
+			Branch.getInstance().getShortURLWithParams(parameters,
 				andChannel: "patchr-ios",	// not the same as url scheme
 				andFeature: BRANCH_FEATURE_TAG_INVITE,
 				andCallback: { url, error in
