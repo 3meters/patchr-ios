@@ -69,7 +69,7 @@ class UserController: NSObject {
 		
         writeCredentialsToUserDefaults()
         Reporting.updateCrashUser(nil)
-        Branch.getInstance().logout()
+		BranchProvider.logout()
     }
 
 	func handleSuccessfulSignInResponse(response: AnyObject) {
@@ -89,6 +89,11 @@ class UserController: NSObject {
         self.sessionKey = json["session"]["key"].string
 		
 		Log.d("User signed in: \(self.userName!)(\(self.userId!))")
+		
+		/* We enable remote notifications after we have had a login */
+		#if os(iOS) && !arch(i386) && !arch(x86_64)
+			NotificationController.instance.registerForRemoteNotifications()
+		#endif
 		
 		writeCredentialsToUserDefaults()
 		fetchCurrentUser(nil)	// Includes making sure the user is in the store
@@ -120,7 +125,7 @@ class UserController: NSObject {
 			objectId, error in
 			if error == nil && objectId != nil {
 				self.currentUser = DataController.instance.mainContext.objectWithID(objectId!) as! User
-				Branch.getInstance().setIdentity(self.currentUser.id_)
+				BranchProvider.setIdentity(self.currentUser.id_)
 				Reporting.updateCrashUser(self.currentUser)
 			}
 			if completion != nil {
@@ -149,8 +154,13 @@ class UserController: NSObject {
             if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
                 groupDefaults.setObject(self.userId, forKey: PatchrUserDefaultKey("userId"))
             }
-            
-            Branch.getInstance().setIdentity(user.id_)
+			
+			/* We handle remote notifications */
+			#if os(iOS) && !arch(i386) && !arch(x86_64)
+				NotificationController.instance.registerForRemoteNotifications()
+			#endif
+			
+			BranchProvider.setIdentity(user.id_)
             Reporting.updateCrashUser(user)
         }
     }

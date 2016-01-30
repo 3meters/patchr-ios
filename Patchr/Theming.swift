@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
 
+import UIKit
+
 let CELL_PADDING_HORIZONTAL = CGFloat(12)
 let CELL_PADDING_VERTICAL	= CGFloat(12)
 let CELL_VIEW_SPACING		= CGFloat(8)

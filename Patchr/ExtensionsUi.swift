@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
 import MBProgressHUD
-import Google
 
 extension UITextField {
     var isEmpty: Bool {
@@ -317,25 +316,6 @@ extension UIViewController {
 		
 		return activity
 	}
-	
-    func setScreenName(name: String) {
-        self.sendScreenView(name)
-    }
-    
-    func sendScreenView(name: String) {
-        let tracker = GAI.sharedInstance().defaultTracker
-        tracker.set(kGAIScreenName, value: name)
-        tracker.send(GAIDictionaryBuilder.createScreenView().build() as NSDictionary as [NSObject : AnyObject])
-    }
-    
-    func trackEvent(category: String, action: String, label: String, value: NSNumber?) {
-		/*
-		 * Not used yet.
-		 */
-        let tracker = GAI.sharedInstance().defaultTracker
-        let trackDictionary = GAIDictionaryBuilder.createEventWithCategory(category, action: action, label: label, value: value).build()
-        tracker.send(trackDictionary as [NSObject : AnyObject])
-    }
 }
 
 extension UINavigationController {

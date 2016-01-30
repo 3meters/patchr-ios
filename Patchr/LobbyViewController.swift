@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import pop
 
 class LobbyViewController: BaseViewController {
 	
@@ -17,47 +18,71 @@ class LobbyViewController: BaseViewController {
 	var buttonSignup	= AirButton()
 	var buttonGuest		= AirLinkButton()
 	var buttonGroup		= UIView()
+	var firstLaunch		= true
 	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
-	
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        setScreenName("Lobby")
-        
-        self.view.endEditing(true)
-        self.navigationController?.setNavigationBarHidden(true, animated: animated)
-        self.setNeedsStatusBarAppearanceUpdate()
-    }
-    
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.navigationController?.setNavigationBarHidden(false, animated: animated)
-        self.setNeedsStatusBarAppearanceUpdate()
-    }
 	
 	override func loadView() {
 		super.loadView()
 		initialize()
 	}
     
-    /*--------------------------------------------------------------------------------------------
-    * Events
-    *--------------------------------------------------------------------------------------------*/
-    
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
-		self.imageBackground.fillSuperviewWithLeftPadding(-24, rightPadding: -24, topPadding: -26, bottomPadding: -36)
+		self.imageBackground.fillSuperview()
 		self.buttonGroup.anchorInCenterWithWidth(228, height: 96)
 		self.buttonLogin.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 44)
 		self.buttonSignup.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 44)
 		self.buttonGuest.alignUnder(self.buttonGroup, matchingCenterWithTopPadding: 120, width: 228, height: 44)
 		self.appName.alignAbove(self.buttonGroup, matchingCenterWithBottomPadding: 20, width: 228, height: 48)
-		self.imageLogo.alignAbove(self.appName, matchingCenterWithBottomPadding: -6, width: 100, height: 100)
 	}
 	
+	override func viewWillAppear(animated: Bool) {
+		super.viewWillAppear(animated)
+		setScreenName("Lobby")
+		
+		self.view.endEditing(true)
+		self.navigationController?.setNavigationBarHidden(true, animated: animated)
+		self.setNeedsStatusBarAppearanceUpdate()
+		if self.firstLaunch {
+			self.imageLogo.anchorInCenterWithWidth(72, height: 72)
+		}
+	}
+	
+	override func viewDidAppear(animated: Bool) {
+		
+		if self.firstLaunch {
+			
+			let spring = POPSpringAnimation(propertyNamed: kPOPViewFrame)
+			spring.toValue = NSValue(CGRect: self.imageLogo.frame.offsetBy(dx: 0, dy: -156))
+			spring.springBounciness = 10
+			spring.springSpeed = 8
+			self.imageLogo.pop_addAnimation(spring, forKey: "moveUp")
+			
+			self.appName.hidden = false
+			self.buttonGroup.hidden = false
+			self.buttonGuest.hidden = false
+			self.appName.fadeIn(5.0)
+			self.buttonGroup.fadeIn(5.0)
+			self.buttonGuest.fadeIn(5.0)
+			
+			self.firstLaunch = false
+		}
+	}
+	
+	override func viewWillDisappear(animated: Bool) {
+		super.viewWillDisappear(animated)
+		self.navigationController?.setNavigationBarHidden(false, animated: animated)
+		self.setNeedsStatusBarAppearanceUpdate()
+	}
+	
+    /*--------------------------------------------------------------------------------------------
+    * Events
+    *--------------------------------------------------------------------------------------------*/
+    
 	func loginAction(sender: AnyObject?) {
 		
 		guard DataController.proxibase.versionIsValid else {
@@ -104,12 +129,11 @@ class LobbyViewController: BaseViewController {
 		
 		self.view.accessibilityIdentifier = View.Lobby
 		
-		self.imageBackground.image = UIImage(named: "imgCityScape")
-		self.imageBackground.contentMode = UIViewContentMode.ScaleAspectFill
-		self.imageBackground.parallaxIntensity = -40
+		self.imageBackground.image = UIImage(named: "imgLobbyBackground")
+		self.imageBackground.contentMode = UIViewContentMode.ScaleToFill
 		self.view.addSubview(self.imageBackground)
 		
-		self.imageLogo.image = UIImage(named: "imgPatchr")
+		self.imageLogo.image = UIImage(named: "imgPatchrWhite")
 		self.imageLogo.contentMode = UIViewContentMode.ScaleAspectFill
 		self.view.addSubview(self.imageLogo)
 		
@@ -147,11 +171,16 @@ class LobbyViewController: BaseViewController {
 		self.buttonLogin.addTarget(self, action: Selector("loginAction:"), forControlEvents: .TouchUpInside)
 		self.buttonSignup.addTarget(self, action: Selector("signupAction:"), forControlEvents: .TouchUpInside)
 		self.buttonGuest.addTarget(self, action: Selector("guestAction:"), forControlEvents: .TouchUpInside)
+		
+		if self.firstLaunch {
+			self.appName.hidden = true
+			self.buttonGroup.hidden = true
+			self.buttonGuest.hidden = true
+		}
 	}
 	
     override func preferredStatusBarStyle() -> UIStatusBarStyle {
         return UIStatusBarStyle.LightContent
     }
-	
 }
 

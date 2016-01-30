@@ -121,6 +121,7 @@ class BaseDetailViewController: BaseTableViewController {
 					NSOperationQueue.mainQueue().addOperationWithBlock {
 						
 						var userInfo: [NSObject:AnyObject] = ["error": (error != nil)]
+						self?.refreshControl?.endRefreshing()
 
 						if error == nil {
 							if objectId != nil {

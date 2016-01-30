@@ -108,6 +108,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "Pods-Patchr/THContactPicker.framework"
   install_framework "Pods-Patchr/TWMessageBarManager.framework"
   install_framework "Pods-Patchr/UIDevice_Hardware.framework"
+  install_framework "Pods-Patchr/iRate.framework"
   install_framework "Pods-Patchr/pop.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
@@ -135,6 +136,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "Pods-Patchr/THContactPicker.framework"
   install_framework "Pods-Patchr/TWMessageBarManager.framework"
   install_framework "Pods-Patchr/UIDevice_Hardware.framework"
+  install_framework "Pods-Patchr/iRate.framework"
   install_framework "Pods-Patchr/pop.framework"
 fi
 if [[ "$CONFIGURATION" == "AdHoc" ]]; then
@@ -162,5 +164,6 @@ if [[ "$CONFIGURATION" == "AdHoc" ]]; then
   install_framework "Pods-Patchr/THContactPicker.framework"
   install_framework "Pods-Patchr/TWMessageBarManager.framework"
   install_framework "Pods-Patchr/UIDevice_Hardware.framework"
+  install_framework "Pods-Patchr/iRate.framework"
   install_framework "Pods-Patchr/pop.framework"
 fi

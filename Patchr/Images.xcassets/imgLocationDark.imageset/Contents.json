@@ -7,12 +7,12 @@
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "ic_img_location_dark-1.png"
+      "filename" : "imgLocationDark@2x.png"
     },
     {
       "idiom" : "universal",
       "scale" : "3x",
-      "filename" : "ic_img_location_dark.png"
+      "filename" : "imgLocationDark@3x.png"
     }
   ],
   "info" : {

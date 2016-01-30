@@ -73,6 +73,7 @@ PODS:
   - GoogleSymbolUtilities (1.0.3)
   - GoogleUtilities (1.1.0):
     - GoogleSymbolUtilities (~> 1.0.0)
+  - iRate (1.11.4)
   - Keys (1.0.0)
   - KIF/Core (3.3.2)
   - KIF/IdentifierTests (3.3.2):
@@ -108,6 +109,7 @@ DEPENDENCIES:
   - FBSDKLoginKit (~> 4.9.0)
   - FBSDKShareKit (~> 4.9.0)
   - Google/Analytics
+  - iRate
   - Keys (from `Pods/CocoaPodsKeys`)
   - KIF/IdentifierTests (~> 3.0)
   - Lockbox
@@ -152,6 +154,7 @@ SPEC CHECKSUMS:
   GoogleNetworkingUtilities: 292992ab31b7b4ba32809a0e8b40e324cdfb2c0c
   GoogleSymbolUtilities: 82ad9f93d3615244b3f4ce440f5ab2515e8b4f56
   GoogleUtilities: 8ed9134debe11719097881711464752900668f10
+  iRate: 599ed07c854e0695f3c605d1b2a64c67d912acb7
   Keys: 7d2ff6ff42f6903358267ce56e9392f83c31acfe
   KIF: 9de83fa627adaf65d28ace31e40f19d830bc255c
   Lockbox: 16442da35d9d4286966936763be728a931d589c3

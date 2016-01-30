@@ -259,10 +259,6 @@ class MessageDetailViewController: BaseViewController {
 		self.activity.stopAnimating()
 		NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.LikeDidChange, object: nil)
     }
-
-    deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
-    }
 	
 	/*--------------------------------------------------------------------------------------------
 	 * Events
@@ -711,9 +707,10 @@ class MessageDetailViewController: BaseViewController {
         }
     }
 
-    func shareUsing(patchr: Bool = true) {
+    func shareUsing(route: ShareRoute) {
         
-        if patchr {
+        if route == .Patchr {
+			
 			let controller = MessageEditViewController()
 			let navController = UINavigationController()
 			controller.inputShareEntity = self.inputMessage
@@ -724,19 +721,16 @@ class MessageDetailViewController: BaseViewController {
 			navController.viewControllers = [controller]
 			self.presentViewController(navController, animated: true, completion: nil)
         }
-        else {
-            Branch.getInstance().getShortURLWithParams(["entityId":self.inputMessage!.id_!, "entitySchema":"message"],
-				andChannel: "patchr-ios",
-				andFeature: BRANCH_FEATURE_TAG_SHARE,
-				andCallback: { url, error in
-                
-                if let error = ServerError(error) {
-                    UIViewController.topMostViewController()!.handleError(error)
-                }
-                else {
-                    Log.d("Branch link created: \(url!)")
-                    let message: MessageItem = MessageItem(entity: self.inputMessage!, shareUrl: url!)
-					
+        else if route == .Actions {			
+			
+			BranchProvider.share(self.inputMessage!, referrer: UserController.instance.currentUser) {
+				response, error in
+				
+				if let error = ServerError(error) {
+					UIViewController.topMostViewController()!.handleError(error)
+				}
+				else {
+					let message = response as! MessageItem
 					let activityViewController = UIActivityViewController(
 						activityItems: [message],
 						applicationActivities: nil)
@@ -748,8 +742,8 @@ class MessageDetailViewController: BaseViewController {
 						let popup: UIPopoverController = UIPopoverController(contentViewController: activityViewController)
 						popup.presentPopoverFromRect(CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/4, 0, 0), inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
 					}
-                }
-            })
+				}
+			}
         }
     }
 }
@@ -764,10 +758,10 @@ extension MessageDetailViewController: UIActionSheetDelegate {
 				
                 switch self.shareButtonFunctionMap[buttonIndex]! {
                 case .Share:
-                    self.shareUsing(true)
+                    self.shareUsing(.Patchr)
                     
                 case .ShareVia:
-                    self.shareUsing(false)
+                    self.shareUsing(.Actions)
                 }
             }
         }
@@ -820,19 +814,15 @@ class MessageItem: NSObject, UIActivityItemSource {
     }
     
     func activityViewController(activityViewController: UIActivityViewController, itemForActivityType activityType: String) -> AnyObject? {
-        
-        let text = "Check out \(UserController.instance.currentUser.name)'s message posted to the \(self.entity.patch.name) patch! \(self.shareUrl) \n"
-        if activityType == UIActivityTypeMail {
-            return text
-        }
-        else {
-            return text
-        }
+        let text = "Check out \(self.entity.creator.name)'s message posted to the \(self.entity.patch.name) patch! \(self.shareUrl) \n"
+        return text
     }
     
     func activityViewController(activityViewController: UIActivityViewController, subjectForActivityType activityType: String?) -> String {
-        if activityType == UIActivityTypeMail || activityType == "com.google.Gmail.ShareExtension" {
-            return "Message posted by \(UserController.instance.currentUser.name) on Patchr"
+		if activityType == UIActivityTypeMail
+			|| activityType == UIActivityTypeOutlook
+			|| activityType == UIActivityTypeGmail {
+            return "Patch message posted by \(self.entity.creator.name)"
         }
         return ""
     }

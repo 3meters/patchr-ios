@@ -3,17 +3,17 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "30x30 (4).png"
+      "filename" : "UIButtonCamera.png"
     },
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "60x60 (2).png"
+      "filename" : "UIButtonCamera@2x.png"
     },
     {
       "idiom" : "universal",
       "scale" : "3x",
-      "filename" : "camera4190x90 (1).png"
+      "filename" : "UIButtonCamera@3x.png"
     }
   ],
   "info" : {

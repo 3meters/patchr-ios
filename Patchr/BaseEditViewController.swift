@@ -22,22 +22,33 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate {
 	
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
+		
 		let notificationCenter = NSNotificationCenter.defaultCenter()
-		notificationCenter.addObserver(self, selector: "dismissKeyboard", name: Events.PhotoViewHasFocus, object: nil)
+		notificationCenter.addObserver(self, selector: "photoDidChange:", name: Events.PhotoDidChange, object: nil)
+		notificationCenter.addObserver(self, selector: "photoViewHasFocus:", name: Events.PhotoViewHasFocus, object: nil)
 		notificationCenter.addObserver(self, selector: "keyboardWillBeShown:", name: UIKeyboardWillShowNotification, object: nil)
 		notificationCenter.addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
 	}
 	
 	override func viewDidDisappear(animated: Bool) {
 		super.viewDidDisappear(animated)
-		NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.PhotoViewHasFocus, object: nil)
-		NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
-		NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+		
+		let notificationCenter = NSNotificationCenter.defaultCenter()
+		notificationCenter.removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+		notificationCenter.removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
 	}
-	
+
 	/*--------------------------------------------------------------------------------------------
 	* Events
 	*--------------------------------------------------------------------------------------------*/
+	
+	func photoViewHasFocus(sender: NSNotification) {
+		self.view.endEditing(true)
+	}
+	
+	func photoDidChange(sender: NSNotification) {
+		viewWillLayoutSubviews()
+	}
 	
 	/*--------------------------------------------------------------------------------------------
 	* Methods
@@ -51,28 +62,25 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate {
 		/*
 		* Called when the UIKeyboardDidShowNotification is sent.
 		*/
-		if let scrollView = self.view as? UIScrollView {
+		let info: NSDictionary = sender.userInfo!
+		let value = info.valueForKey(UIKeyboardFrameBeginUserInfoKey) as! NSValue
+		let keyboardSize = value.CGRectValue().size
+		
+		self.scrollView.contentInset = UIEdgeInsetsMake(self.scrollView.contentInset.top, 0, keyboardSize.height, 0)
+		self.scrollView.scrollIndicatorInsets = scrollView.contentInset
+		
+		/*
+		* If active text field is hidden by keyboard, scroll it so it's visible
+		*/
+		if self.activeTextField != nil {
+			var visibleRect = self.view.frame
+			visibleRect.size.height -= keyboardSize.height
 			
-			let info: NSDictionary = sender.userInfo!
-			let value = info.valueForKey(UIKeyboardFrameBeginUserInfoKey) as! NSValue
-			let keyboardSize = value.CGRectValue().size
+			let activeTextFieldRect = self.activeTextField?.frame
+			let activeTextFieldOrigin = activeTextFieldRect?.origin
 			
-			scrollView.contentInset = UIEdgeInsetsMake(64, 0, keyboardSize.height, 0)
-			scrollView.scrollIndicatorInsets = scrollView.contentInset
-			
-			/*
-			* If active text field is hidden by keyboard, scroll it so it's visible
-			*/
-			if self.activeTextField != nil {
-				var visibleRect = self.view.frame
-				visibleRect.size.height -= keyboardSize.height
-				
-				let activeTextFieldRect = self.activeTextField?.frame
-				let activeTextFieldOrigin = activeTextFieldRect?.origin
-				
-				if (!CGRectContainsPoint(visibleRect, activeTextFieldOrigin!)) {
-					scrollView.scrollRectToVisible(activeTextFieldRect!, animated:true)
-				}
+			if (!CGRectContainsPoint(visibleRect, activeTextFieldOrigin!)) {
+				self.scrollView.scrollRectToVisible(activeTextFieldRect!, animated:true)
 			}
 		}
 	}
@@ -81,10 +89,8 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate {
 		/*
 		* Called when the UIKeyboardWillHideNotification is sent.
 		*/
-		if let scrollView = self.view as? UIScrollView {
-			scrollView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0)
-			scrollView.scrollIndicatorInsets = scrollView.contentInset
-		}
+		self.scrollView.contentInset = UIEdgeInsetsMake(self.scrollView.contentInset.top, 0, 0, 0)
+		self.scrollView.scrollIndicatorInsets = scrollView.contentInset
 	}
 }
 

@@ -9,6 +9,7 @@
 import UIKit
 import FBSDKLoginKit
 import Branch
+import iRate
 
 class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol {
 
@@ -57,6 +58,9 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 			Utils.delay(1.0) {
 				UIShared.Toast("You are now watching this patch", controller: self, addToWindow: false)
 			}
+		}
+		else {
+			iRate.sharedInstance().promptIfAllCriteriaMet()
 		}
 	}
 	
@@ -245,6 +249,8 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		
 		self.header = PatchDetailView()
 		self.tableView = AirTableView(frame: self.tableView.frame, style: .Plain)
+		self.tableView.estimatedRowHeight = 0	// Zero turns off estimates
+		self.tableView.rowHeight = 0			// Actual height is handled in heightForRowAtIndexPath
 		
 		let header = self.header as! PatchDetailView
 		
@@ -409,24 +415,20 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 			self.presentViewController(navController, animated: true, completion: nil)
 		}
 		else if route == .Facebook {
+			
 			let provider = FacebookProvider()
 			provider.invite(self.entity!)
 		}
 		else if route == .Actions {
 			
-			let inviterName = UserController.instance.currentUser.name!
-			Branch.getInstance().getShortURLWithParams(["entityId":self.entityId!, "entitySchema":"patch", "inviterName":inviterName],
-				andChannel: "patchr-ios",
-				andFeature: BRANCH_FEATURE_TAG_INVITE,
-				andCallback: { url, error in
+			BranchProvider.invite(self.entity as! Patch, referrer: UserController.instance.currentUser) {
+				response, error in
 				
 				if let error = ServerError(error) {
 					UIViewController.topMostViewController()!.handleError(error)
 				}
 				else {
-					Log.d("Branch link created: \(url!)")
-					let patch: PatchItem = PatchItem(entity: self.entity as! Patch, shareUrl: url!)
-					
+					let patch = response as! PatchItem
 					let activityViewController = UIActivityViewController(
 						activityItems: [patch],
 						applicationActivities: nil)
@@ -439,7 +441,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 						popup.presentPopoverFromRect(CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/4, 0, 0), inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
 					}
 				}
-			})
+			}
 		}
     }
 
@@ -588,12 +590,12 @@ extension PatchDetailViewController: UIActionSheetDelegate {
     }
 }
 
+let UIActivityTypeGmail = "com.google.Gmail.ShareExtension"
+let UIActivityTypeOutlook = "com.microsoft.Office.Outlook.compose-shareextension"
+let UIActivityTypePatchr = "com.3meters.patchr.ios.PatchrShare"
+
 class PatchItem: NSObject, UIActivityItemSource {
 	
-	let UIActivityTypeGmail = "com.google.Gmail.ShareExtension"
-	let UIActivityTypeOutlook = "com.microsoft.Office.Outlook.compose-shareextension"
-	let UIActivityTypePatchr = "com.3meters.patchr.ios.PatchrShare"
-    
     var entity: Patch
     var shareUrl: String
     

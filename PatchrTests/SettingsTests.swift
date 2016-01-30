@@ -6,7 +6,6 @@
 import XCTest
 import KIF
 import Nimble
-import CoreLocation
 import CocoaLumberjack
 
 @testable import Patchr	// Makes all internal api calls available

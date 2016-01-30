@@ -121,6 +121,8 @@ class OnboardingTests: KIFTestCase {
 		tester().waitFor(View.PhotoSearch)
 		
 		let notification = system().waitForNotificationName(Events.DidFetchQuery, object: nil) {
+			self.tester().tap(Field.Search)
+			self.tester().waitForSoftwareKeyboard()
 			self.tester().enterText("Superman", into: Field.Search)
 			self.tester().tap(Button.Search)
 		}

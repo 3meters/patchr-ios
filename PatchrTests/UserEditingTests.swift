@@ -5,8 +5,8 @@
 
 import XCTest
 import KIF
-import CocoaLumberjack
 import Nimble
+import CocoaLumberjack
 
 @testable import Patchr	// Makes all internal api calls available
 

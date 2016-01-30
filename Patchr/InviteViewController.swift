@@ -29,13 +29,9 @@ class InviteViewController: BaseViewController {
 		initialize()
 	}
     
-    /*--------------------------------------------------------------------------------------------
-    * Events
-    *--------------------------------------------------------------------------------------------*/
-    
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
-
+		
 		let messageSize = self.message.sizeThatFits(CGSizeMake(228, CGFloat.max))
 		
 		self.message.anchorTopCenterWithTopPadding(0, width: 228, height: messageSize.height)
@@ -49,6 +45,10 @@ class InviteViewController: BaseViewController {
 		self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 16, height: self.contentHolder.frame.size.height)
 	}
 	
+    /*--------------------------------------------------------------------------------------------
+    * Events
+    *--------------------------------------------------------------------------------------------*/
+    
 	func invitePatchrAction(sender: AnyObject?) {
 		shareUsing(.Patchr)
 	}
@@ -121,45 +121,31 @@ class InviteViewController: BaseViewController {
 		else if route == .Facebook {
 			
 			let provider = FacebookProvider()
-			if FBSDKAccessToken.currentAccessToken() == nil {
-				provider.authorize { response, error in
-					if FBSDKAccessToken.currentAccessToken() != nil {
-						provider.invite(self.inputEntity)
-					}
-				}
-			}
-			else {
-				provider.invite(self.inputEntity)
-			}
+			provider.invite(self.inputEntity)
 		}
 		else if route == .Actions {
 			
-			let inviterName = UserController.instance.currentUser.id_
-			Branch.getInstance().getShortURLWithParams(["entityId":self.inputEntity.id_!, "entitySchema":"patch", "inviterName":inviterName],
-				andChannel: "patchr-ios",
-				andFeature: BRANCH_FEATURE_TAG_INVITE,
-				andCallback: { url, error in
+			BranchProvider.invite(self.inputEntity!, referrer: UserController.instance.currentUser) {
+				response, error in
+				
+				if let error = ServerError(error) {
+					UIViewController.topMostViewController()!.handleError(error)
+				}
+				else {
+					let patch = response as! PatchItem
+					let activityViewController = UIActivityViewController(
+						activityItems: [patch],
+						applicationActivities: nil)
 					
-					if let error = ServerError(error) {
-						UIViewController.topMostViewController()!.handleError(error)
+					if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+						self.presentViewController(activityViewController, animated: true, completion: nil)
 					}
 					else {
-						Log.d("Branch link created: \(url!)")
-						let patch: PatchItem = PatchItem(entity: self.inputEntity, shareUrl: url!)
-						
-						let activityViewController = UIActivityViewController(
-							activityItems: [patch],
-							applicationActivities: nil)
-						
-						if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-							self.presentViewController(activityViewController, animated: true, completion: nil)
-						}
-						else {
-							let popup: UIPopoverController = UIPopoverController(contentViewController: activityViewController)
-							popup.presentPopoverFromRect(CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/4, 0, 0), inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
-						}
+						let popup: UIPopoverController = UIPopoverController(contentViewController: activityViewController)
+						popup.presentPopoverFromRect(CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/4, 0, 0), inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
 					}
-			})
+				}
+			}
 		}
 	}
 }

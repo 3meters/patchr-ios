@@ -11,6 +11,7 @@ import pop
 struct Animation {
 	
 	static func bounce(view: UIView) {
+		view.pop_removeAllAnimations()
 		let springAnimation = POPSpringAnimation(propertyNamed: kPOPViewScaleXY)
 		springAnimation.velocity = NSValue(CGPoint: CGPointMake(5, 5))
 		springAnimation.springBounciness = 20.0

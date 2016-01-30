@@ -7,12 +7,12 @@
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "ic_img_media_message_dark-1.png"
+      "filename" : "imgMediaDark@2x.png"
     },
     {
       "idiom" : "universal",
       "scale" : "3x",
-      "filename" : "ic_img_media_message_dark.png"
+      "filename" : "imgMediaDark@3x.png"
     }
   ],
   "info" : {

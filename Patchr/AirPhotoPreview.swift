@@ -33,6 +33,8 @@ class AirPhotoPreview: PhotoBrowser {
         let selectButton = UIBarButtonItem(title: "Use photo", style: UIBarButtonItemStyle.Plain, target: target, action: Selector("selectAction"))
         let flexSpacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)
         let fixedSpacer = UIBarButtonItem(barButtonSystemItem: .FixedSpace, target: self, action: nil)
+		
+		selectButton.tintColor = Theme.colorTint
         
         fixedSpacer.width = 16
         

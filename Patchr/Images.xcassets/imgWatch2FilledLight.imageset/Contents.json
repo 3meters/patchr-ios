@@ -7,12 +7,12 @@
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "imgWatch2SolidLight@2x.png"
+      "filename" : "imgWatch2FilledLight@2x.png"
     },
     {
       "idiom" : "universal",
       "scale" : "3x",
-      "filename" : "imgWatch2SolidLight@3x.png"
+      "filename" : "imgWatch2FilledLight@3x.png"
     }
   ],
   "info" : {

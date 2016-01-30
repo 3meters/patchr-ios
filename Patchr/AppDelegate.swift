@@ -18,6 +18,7 @@ import FBSDKCoreKit
 import Branch
 import Google
 import CocoaLumberjack
+import iRate
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -30,6 +31,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return UIApplication.sharedApplication().delegate as! AppDelegate
     }
 	
+	override class func initialize() -> Void {
+		
+		iRate.sharedInstance().daysUntilPrompt = 7
+		iRate.sharedInstance().usesUntilPrompt = 10
+		iRate.sharedInstance().remindPeriod = 1
+		iRate.sharedInstance().promptForNewVersionIfUserRated = true
+		iRate.sharedInstance().onlyPromptIfLatestVersion = true
+		iRate.sharedInstance().useUIAlertControllerIfAvailable = true
+		iRate.sharedInstance().promptAtLaunch = false
+	}
+
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
         Log.d("Patchr launching...")
@@ -108,8 +120,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         /* Change default font for button bar items */
         UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: Theme.fontBarText], forState: UIControlState.Normal)
 
-        /* Setup parse for push notifications */
-        Parse.setApplicationId(keys.parseApplicationId(), clientKey: keys.parseApplicationKey())
+        /* Setup parse for push notifications - enabling notifications with the system is done with login */
+		Parse.setApplicationId(keys.parseApplicationId(), clientKey: keys.parseApplicationKey())
 		
         /* Get the latest on the authenticated user if we have one */
 		if UserController.instance.authenticated {	// Checks for current userId and sessionKey
@@ -131,12 +143,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UITabBar.appearance().tintColor = Theme.colorTint
         UISwitch.appearance().onTintColor = Theme.colorTint
         
-        /* We handle remote notifications */
-
-		#if os(iOS) && !arch(i386) && !arch(x86_64)
-			NotificationController.instance.registerForRemoteNotifications()			
-		#endif
-
 		/* Facebook */
 		FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
 		FBSDKProfile.enableUpdatesOnAccessTokenChange(true)
@@ -265,6 +271,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationDidBecomeActive(application: UIApplication) {
+		
+		FBSDKAppEvents.activateApp()
+		
+		/* Check to see if Facebook has a deferred deep link */
+		FBSDKAppLinkUtility.fetchDeferredAppLink { url, error in
+			if error != nil {
+				Log.w("Error while fetching deferred app link \(error)")
+			}
+			if url != nil {
+				UIApplication.sharedApplication().openURL(url)
+			}
+		}
+
+		/* NotificationsTableViewController uses this to manage badging */
         NSNotificationCenter.defaultCenter().postNotificationName(Event.ApplicationDidBecomeActive.rawValue, object: nil)
     }
     

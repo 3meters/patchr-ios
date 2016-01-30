@@ -24,10 +24,6 @@ class TextZoomController: BaseViewController {
 		initialize()
 	}
     
-    /*--------------------------------------------------------------------------------------------
-    * Events
-    *--------------------------------------------------------------------------------------------*/
-    
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
@@ -42,6 +38,10 @@ class TextZoomController: BaseViewController {
 		self.buttonCancel.anchorTopRightWithRightPadding(0, topPadding: 0, width: 48, height: 48)
 	}
 	
+    /*--------------------------------------------------------------------------------------------
+    * Events
+    *--------------------------------------------------------------------------------------------*/
+    
 	func cancelAction(sender: AnyObject?) {
 		self.dismissViewControllerAnimated(true, completion: nil)
 	}
@@ -54,10 +54,11 @@ class TextZoomController: BaseViewController {
 		super.initialize()
 		
 		setScreenName("TextZoom")
-		
-		self.view.backgroundColor = Colors.opacity50pcntBlack
-		self.view.addSubview(self.messageHolder)
 		self.view.accessibilityIdentifier = View.TextZoom
+		
+		self.view.backgroundColor = Colors.clear
+		self.scrollView.backgroundColor = Colors.opacity50pcntBlack
+		self.view.addSubview(self.messageHolder)
 		
 		self.messageHolder.backgroundColor = Theme.colorBackgroundForm
 		self.messageHolder.cornerRadius = 8

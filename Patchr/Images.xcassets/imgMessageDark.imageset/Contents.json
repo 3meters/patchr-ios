@@ -7,12 +7,12 @@
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "ic_img_message_dark-1.png"
+      "filename" : "imgMessageDark@2x.png"
     },
     {
       "idiom" : "universal",
       "scale" : "3x",
-      "filename" : "ic_img_message_dark.png"
+      "filename" : "imgMessageDark@3x.png"
     }
   ],
   "info" : {

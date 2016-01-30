@@ -71,6 +71,8 @@ class AnonymousTests: KIFTestCase {
 			expect(count) > 0
 		}
 		
+		self.tester().waitForTimeInterval(1.0)
+		
 		/* Should be there */
 		expect(self.tester().existsLabel(Segment.Nearby)) == true
 		expect(self.tester().existsLabel(Segment.Explore)) == true
@@ -89,5 +91,7 @@ class AnonymousTests: KIFTestCase {
 		if let userInfo = notification.userInfo, let count = userInfo["count"] as? Int {
 			expect(count) > 0
 		}
+		
+		self.tester().waitForTimeInterval(1.0)		
 	}
 }
