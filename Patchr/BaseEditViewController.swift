@@ -66,7 +66,7 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate {
 		let value = info.valueForKey(UIKeyboardFrameBeginUserInfoKey) as! NSValue
 		let keyboardSize = value.CGRectValue().size
 		
-		self.scrollView.contentInset = UIEdgeInsetsMake(64, 0, keyboardSize.height, 0)
+		self.scrollView.contentInset = UIEdgeInsetsMake(self.scrollView.contentInset.top, 0, keyboardSize.height, 0)
 		self.scrollView.scrollIndicatorInsets = scrollView.contentInset
 		
 		/*
