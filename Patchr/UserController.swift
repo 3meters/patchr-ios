@@ -124,9 +124,12 @@ class UserController: NSObject {
 		DataController.instance.withEntityId(self.userId!, strategy: .UseCacheAndVerify, completion: {
 			objectId, error in
 			if error == nil && objectId != nil {
-				self.currentUser = DataController.instance.mainContext.objectWithID(objectId!) as! User
-				BranchProvider.setIdentity(self.currentUser.id_)
-				Reporting.updateCrashUser(self.currentUser)
+				let user = DataController.instance.mainContext.objectWithID(objectId!) as! User
+				if user.id_ != nil {
+					self.currentUser = user
+					BranchProvider.setIdentity(self.currentUser.id_)
+					Reporting.updateCrashUser(self.currentUser)
+				}
 			}
 			if completion != nil {
 				completion!(response: self.currentUser, error: error)

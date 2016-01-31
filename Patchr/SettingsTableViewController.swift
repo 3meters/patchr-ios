@@ -136,12 +136,11 @@ class SettingsTableViewController: UITableViewController {
 		self.termsOfServiceCell.accessibilityIdentifier = Button.TermsOfService
 		self.privacyPolicyCell.accessibilityIdentifier = Button.PrivacyPolicy
 		self.softwareLicensesCell.accessibilityIdentifier = Button.Licensing
+		self.logoutCell.accessibilityIdentifier = Button.Logout
+		self.clearHistoryCell.accessibilityIdentifier = Button.ClearHistory
 		
 		self.clearHistoryButton.setTitle("Clear search history".uppercaseString, forState: .Normal)
 		self.logoutButton.setTitle("Log out".uppercaseString, forState: .Normal)
-		
-		self.clearHistoryButton.accessibilityIdentifier = Button.ClearHistory
-		self.logoutButton.accessibilityIdentifier = Button.Logout
 		
 		self.logoutButton.addTarget(self, action: Selector("logoutAction:"), forControlEvents: .TouchUpInside)
 		self.clearHistoryButton.addTarget(self, action: Selector("clearHistoryAction:"), forControlEvents: .TouchUpInside)		
