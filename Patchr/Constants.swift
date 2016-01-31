@@ -50,16 +50,26 @@ func PatchrUserDefaultKey(subKey: String) -> String {
 }
 
 public struct Events {
-    static let LikeDidChange        = "LikeDidChange"
-    static let WatchDidChange       = "WatchDidChange"
-	static let PhotoDidChange       = "PhotoDidChange"
-	static let PhotoViewHasFocus    = "PhotoViewHasFocus"
-	static let WillFetch			= "WillFetch"
-	static let DidFetch				= "DidFetch"
-	static let WillFetchQuery		= "WillFetchQuery"
-	static let DidFetchQuery		= "DidFetchQuery"
-	static let ImageNotFound        = "ImageNotFound"
-	static let DidInsertMessage		= "DidInsertMessage"
+    static let LikeDidChange                  = "LikeDidChange"
+    static let WatchDidChange                 = "WatchDidChange"
+    static let PhotoDidChange                 = "PhotoDidChange"
+    static let PhotoViewHasFocus              = "PhotoViewHasFocus"
+    static let WillFetch                      = "WillFetch"
+    static let DidFetch                       = "DidFetch"
+    static let WillFetchQuery                 = "WillFetchQuery"
+    static let DidFetchQuery                  = "DidFetchQuery"
+    static let ImageNotFound                  = "ImageNotFound"
+    static let DidInsertMessage               = "DidInsertMessage"
+    static let LocationDenied                 = "LocationDenied"
+	static let LocationAllowed                = "LocationAllowed"
+    static let NotificationsDenied            = "NotificationsDenied"
+    static let PhotoDenied                    = "PhotoDenied"
+    static let ApplicationDidEnterBackground  = "applicationDidEnterBackground"
+    static let ApplicationWillEnterForeground = "applicationWillEnterForeground"
+    static let ApplicationWillResignActive    = "applicationWillResignActive"
+    static let ApplicationDidBecomeActive     = "applicationDidBecomeActive"
+    static let LocationUpdate                 = "locationUpdate"
+	
 }
 
 public struct Schema {

@@ -43,6 +43,31 @@ struct UIShared {
 		DataController.proxibase.versionIsValid = (clientVersionCode >= versionMin)	// Sticks until the app is terminated
 		return (clientVersionCode >= versionMin)
 	}
+	
+	static func enableLocationService() {
+		NSOperationQueue.mainQueue().addOperationWithBlock {
+			
+			if let controller = UIViewController.topMostViewController() {
+				controller.LocationSettingsAlert(
+					"Location Services is disabled",
+					message: "Patchr uses your location to discover nearby patches. Please turn on Location Services in your device settings.",
+					actionTitle: "Settings",
+					cancelTitle: "No Thanks") {
+						doIt in
+						if doIt {
+							Log.w("Prompt to enable location: Go to settings option selected")
+							let settingsURL = UIApplicationOpenSettingsURLString
+							if let url = NSURL(string: settingsURL) {
+								UIApplication.sharedApplication().openURL(url)
+							}
+						}
+						else {
+							Log.w("Prompt to enable location: Declined")
+						}
+				}
+			}
+		}
+	}
 
     static func showPhotoBrowser(image: UIImage!, animateFromView: UIView!, viewController: UIViewController!, entity: Entity?) -> PhotoBrowser {
         /*

@@ -563,14 +563,6 @@ enum FetchStrategy: Int {
 	case IgnoreCache
 }
 
-enum Event: String {
-    case ApplicationDidEnterBackground = "applicationDidEnterBackground"
-    case ApplicationWillEnterForeground = "applicationWillEnterForeground"
-    case ApplicationWillResignActive = "applicationWillResignActive"
-    case ApplicationDidBecomeActive = "applicationDidBecomeActive"
-    case LocationUpdate = "locationUpdate"
-}
-
 enum DataStoreQueryName: String {
 	case WatchersForPatch            = "WatchersForPatch"
     case LikersForMessage            = "LikersForMessage"

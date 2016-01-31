@@ -70,9 +70,9 @@ class MainTabBarController: UITabBarController {
 	func initialize() {
 		
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationWillEnterForeground",
-			name: Event.ApplicationWillEnterForeground.rawValue, object: nil)
+			name: Events.ApplicationWillEnterForeground, object: nil)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground",
-			name: Event.ApplicationDidEnterBackground.rawValue, object: nil)
+			name: Events.ApplicationDidEnterBackground, object: nil)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "reachabilityChanged",
 			name: kReachabilityChangedNotification, object: nil)
 		

@@ -11,11 +11,12 @@ import AVFoundation
 
 class PatchTableViewController: BaseTableViewController {
 
-    var user			: User!
-	var filter			: PatchListFilter!
-	var location		: CLLocation?
-	var firstNearPass	= true
-	var greetingDidPlay = false
+    var user				: User!
+	var filter				: PatchListFilter!
+	var location			: CLLocation?
+	var firstNearPass		= true
+	var greetingDidPlay		= false
+	var locationDialogShot	= false
     
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -69,6 +70,10 @@ class PatchTableViewController: BaseTableViewController {
 		self.tableView.accessibilityIdentifier = Table.Patches
 		
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:", name: PAApplicationDidReceiveRemoteNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "locationDenied", name: Events.LocationDenied, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "locationAllowed", name: Events.LocationAllowed, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidBecomeActive", name: Events.ApplicationDidBecomeActive, object: nil)
+		
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -91,19 +96,36 @@ class PatchTableViewController: BaseTableViewController {
         if self.filter == .Nearby {
 			
 			registerForLocationNotifications()
-			LocationController.instance.stopSignificantChangeUpdates()
 			
+			if CLLocationManager.authorizationStatus() == .Denied {
+				locationDenied()
+				if !self.locationDialogShot {
+					UIShared.enableLocationService()
+					self.locationDialogShot = true
+				}
+				return
+			}
+			
+			if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+				LocationController.instance.stopSignificantChangeUpdates()
+			}
+			
+			if CLLocationManager.authorizationStatus() == .NotDetermined {
+				LocationController.instance.requestAuthorizationIfNeeded()
+				self.locationDialogShot = true
+			}
+			
+			/*
+			* Always true on first load because date is initialized to now and only
+			* updated when user creates or deletes a patch.
+			*/
 			if getActivityDate() != self.query.activityDateValue {
 				self.fetchQueryItems(force: true, paging: false, queryDate: getActivityDate())
 			}
 			else {
 				LocationController.instance.startUpdates()
-				if self.firstNearPass {
-					if LocationController.instance.lastLocationAccepted() != nil {
-						LocationController.instance.resendLast()
-					}
-				}
 			}
+			
 			self.firstNearPass = false
         }
 		else {
@@ -163,6 +185,38 @@ class PatchTableViewController: BaseTableViewController {
 				}
 			}
 		}		
+	}
+	
+	func locationDenied() {
+		self.emptyLabel.text = "Location Services disabled"
+		if let fetchedObjects = self.fetchedResultsController.fetchedObjects as [AnyObject]? {
+			if fetchedObjects.count == 0 {
+				if self.showEmptyLabel && self.emptyLabel.alpha == 0 {
+					self.emptyLabel.fadeIn()
+				}
+			}
+		}
+		self.refreshControl?.endRefreshing()
+		self.activity.stopAnimating()
+	}
+	
+	func locationAllowed() {
+		self.emptyLabel.text = self.emptyMessage
+		LocationController.instance.startUpdates()
+	}
+	
+	func applicationDidBecomeActive() {
+		/* User either switched to patchr or turned their screen back on. */
+		if self.tabBarController?.selectedViewController == self.navigationController
+			&& self.navigationController?.topViewController == self
+			&& self.filter == .Nearby {
+				/* 
+				 * This view controller is currently visible. viewDidAppear does not
+				 * fire on its own when returning from Location settings so we do it.
+				 */
+				Log.d("Nearby became active")
+				viewDidAppear(true)
+		}
 	}
 	
     /*--------------------------------------------------------------------------------------------
@@ -237,6 +291,21 @@ class PatchTableViewController: BaseTableViewController {
 	override func fetchQueryItems(force force: Bool, paging: Bool, queryDate: Int64?) {
 		
 		if self.filter == .Nearby {
+			/*
+			 * - Denied means that the user has specifically denied location service
+			 *	 for Patchr.
+			 * - Restricted most likely means they have disabled location services for the
+			 *	 device itself so all apps are hosed.
+			 * - Undetermined: User has not chosen anything yet. Could be fresh install
+			 *   or they may done a device wide reset on privacy and locations.
+			 */
+			if CLLocationManager.authorizationStatus() == .Restricted
+				|| CLLocationManager.authorizationStatus() == .Denied {
+					self.refreshControl?.endRefreshing()
+					UIShared.Toast("Waiting for location...")
+					return
+			}
+			
 			if force {
 				if LocationController.instance.lastLocationAccepted() != nil {
 					if self.firstNearPass {
@@ -251,18 +320,20 @@ class PatchTableViewController: BaseTableViewController {
 				LocationController.instance.startUpdates()
 			}
 			
-			if self.refreshControl == nil || !self.refreshControl!.refreshing {
-				/* Wacky activity control for body */
-				if self.showProgress {
-					self.activity.startAnimating()
+			if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+				if self.refreshControl == nil || !self.refreshControl!.refreshing {
+					/* Wacky activity control for body */
+					if self.showProgress {
+						self.activity.startAnimating()
+					}
 				}
-			}
-			else {
-				self.activity.stopAnimating()
-			}
-			
-			if self.showEmptyLabel && self.emptyLabel.alpha > 0 {
-				self.emptyLabel.fadeOut()
+				else {
+					self.activity.stopAnimating()
+				}
+				
+				if self.showEmptyLabel && self.emptyLabel.alpha > 0 {
+					self.emptyLabel.fadeOut()
+				}
 			}
 		}
 		else {
@@ -385,12 +456,12 @@ class PatchTableViewController: BaseTableViewController {
 	
     func registerForLocationNotifications() {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "didUpdateLocation:",
-            name: Event.LocationUpdate.rawValue, object: nil)
+            name: Events.LocationUpdate, object: nil)
     }
 	
     func unregisterForLocationNotifications(){
         NSNotificationCenter.defaultCenter().removeObserver(self,
-            name: Event.LocationUpdate.rawValue, object: nil)
+            name: Events.LocationUpdate, object: nil)
     }
 }
 
@@ -406,7 +477,9 @@ extension PatchTableViewController {
 		
 		var location = self.location
 		if self.filter == .Nearby || location == nil {
-			location = LocationController.instance.lastLocationFromManager()
+			if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+				location = LocationController.instance.lastLocationFromManager()
+			}
 		}
 		
 		super.bindCellToEntity(cell, entity: entity, location: location)

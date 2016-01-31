@@ -132,7 +132,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		UserController.instance.registerInstall()
 		
 		/* Instance the location manager */
-		LocationController.instance
+		//LocationController.instance
 		
         /* Instance the reachability manager */
         ReachabilityManager.instance
@@ -259,15 +259,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     *--------------------------------------------------------------------------------------------*/
     
     func applicationDidEnterBackground(application: UIApplication) {
-        NSNotificationCenter.defaultCenter().postNotificationName(Event.ApplicationDidEnterBackground.rawValue, object: nil)
+        NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationDidEnterBackground, object: nil)
     }
 
     func applicationWillEnterForeground(application: UIApplication){
-        NSNotificationCenter.defaultCenter().postNotificationName(Event.ApplicationWillEnterForeground.rawValue, object: nil)
+        NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationWillEnterForeground, object: nil)
     }
     
     func applicationWillResignActive(application: UIApplication){
-        NSNotificationCenter.defaultCenter().postNotificationName(Event.ApplicationWillResignActive.rawValue, object: nil)
+        NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationWillResignActive, object: nil)
     }
     
     func applicationDidBecomeActive(application: UIApplication) {
@@ -285,7 +285,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		}
 
 		/* NotificationsTableViewController uses this to manage badging */
-        NSNotificationCenter.defaultCenter().postNotificationName(Event.ApplicationDidBecomeActive.rawValue, object: nil)
+        NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationDidBecomeActive, object: nil)
     }
     
     func application(application: UIApplication, supportedInterfaceOrientationsForWindow window: UIWindow?) -> UIInterfaceOrientationMask {

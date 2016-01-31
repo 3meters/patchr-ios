@@ -31,17 +31,23 @@ class LocationController: NSObject {
     
     override init(){
         super.init()
-        locationManager = CLLocationManager()
+		initialize()
+    }
+	
+	func initialize() {
+		locationManager = CLLocationManager()
 		locationManager.pausesLocationUpdatesAutomatically = true       // Location manager will pause to save battery when location is unlikely to change
 		locationManager.desiredAccuracy = Double(ACCURACY_PREFERRED)
 		locationManager.activityType = CLActivityType.Fitness           // Pedestrian activity vs moving transportation (car, plane, train, etc)
 		locationManager.distanceFilter = CLLocationDistance.abs(Double(MIN_DISPLACEMENT))
-		
-        locationManager.delegate = self
-    }
-    
+		locationManager.delegate = self
+	}
+	
     func lastLocationFromManager() -> CLLocation?  {
-        return self._lastLocationAccepted ?? self.locationManager.location
+		if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+			return self._lastLocationAccepted ?? self.locationManager.location
+		}
+		return nil
     }
     
     func lastLocationAccepted() -> CLLocation?  {
@@ -57,44 +63,48 @@ class LocationController: NSObject {
 		let location = CLLocation(coordinate: coordinate, altitude: 0, horizontalAccuracy: 0, verticalAccuracy: 0, timestamp: NSDate())
 		locationManager(self.locationManager, didUpdateLocations: [location])
 	}
-    
-    func startUpdates(){
+	
+	func requestAuthorizationIfNeeded() {
 		if CLLocationManager.authorizationStatus() == .NotDetermined {
 			self.locationManager.requestWhenInUseAuthorization()
 		}
-		else if CLLocationManager.authorizationStatus() == .AuthorizedAlways
-			|| CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
-				Log.d("***** Location updates started *****")
-				self.locationManager.startUpdatingLocation()
+	}
+    
+    func startUpdates(){
+		if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+			Log.d("***** Location updates started *****")
+			self.locationManager.startUpdatingLocation()
 		}
     }
 
-    func stopUpdates(){
-        if self.locationManager != nil {
-			Log.d("***** Location updates stopped *****")
-            self.locationManager.stopUpdatingLocation()
-        }
+    func stopUpdates(){		
+		if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+			if self.locationManager != nil {
+				Log.d("***** Location updates stopped *****")
+				self.locationManager.stopUpdatingLocation()
+			}
+		}
     }
-    
+	
     func startSignificantChangeUpdates(){
-		
         /* Ignores desired distance and accuracy */
-        if self.locationManager != nil {
-			if CLLocationManager.authorizationStatus() == .AuthorizedAlways
-				|| CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
-					self.locationManager.startMonitoringSignificantLocationChanges()
-					Log.d("***** Location significant change updates started *****")
+		if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+			if self.locationManager != nil {
+				self.locationManager.startMonitoringSignificantLocationChanges()
+				Log.d("***** Location significant change updates started *****")
 			}
         }
     }
     
     func stopSignificantChangeUpdates(){
-        if self.locationManager != nil {
-			Log.d("***** Location significant change updates stopped *****")
-            self.locationManager.stopMonitoringSignificantLocationChanges()
-        }
+		if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+			if self.locationManager != nil {
+				Log.d("***** Location significant change updates stopped *****")
+				self.locationManager.stopMonitoringSignificantLocationChanges()
+			}
+		}
     }
-    
+	
     func distancePretty(meters: Float) -> String {
         var info: String = "here"
         /*
@@ -176,7 +186,7 @@ class LocationController: NSObject {
 	func resendLast() {
 		if self._lastLocationAccepted != nil {
 			let dictionary:[NSObject: AnyObject] = ["location":self._lastLocationAccepted!]
-			NSNotificationCenter.defaultCenter().postNotificationName(Event.LocationUpdate.rawValue, object: nil, userInfo: dictionary)
+			NSNotificationCenter.defaultCenter().postNotificationName(Events.LocationUpdate, object: nil, userInfo: dictionary)
 		}
 	}
 }
@@ -185,17 +195,14 @@ extension LocationController: CLLocationManagerDelegate {
 
 	func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
         
-		if CLLocationManager.authorizationStatus() == .AuthorizedAlways
-			|| CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
-				manager.startUpdatingLocation()
-				return
+		if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+			Log.d("Location service authorized")
+			NSNotificationCenter.defaultCenter().postNotificationName(Events.LocationAllowed, object: nil, userInfo: nil)
+			startUpdates()
 		}
-		
-        if status == CLAuthorizationStatus.Denied {
-            let windowList = UIApplication.sharedApplication().windows
-            let topWindow = windowList[windowList.count - 1] 
-            topWindow.rootViewController?.Alert("Location Disabled",
-                message: "You can enable location access in Settings → Patchr → Location")
+        else if status == CLAuthorizationStatus.Denied {
+			Log.d("Location service denied")
+			NSNotificationCenter.defaultCenter().postNotificationName(Events.LocationDenied, object: nil, userInfo: nil)
 		}
 	}
 	
@@ -267,7 +274,7 @@ extension LocationController: CLLocationManagerDelegate {
                 sendBackgroundLocation(dictionary)
             }
             else {
-                NSNotificationCenter.defaultCenter().postNotificationName(Event.LocationUpdate.rawValue, object: nil, userInfo: dictionary)
+                NSNotificationCenter.defaultCenter().postNotificationName(Events.LocationUpdate, object: nil, userInfo: dictionary)
             }
         }
     }

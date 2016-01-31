@@ -272,6 +272,18 @@ extension UIViewController {
 		self.presentViewController(alert, animated: true) {}
     }
 	
+	func LocationSettingsAlert(title: String? = nil, message: String? = nil,
+		actionTitle: String, cancelTitle: String,
+		delegate: AnyObject? = nil, onDismiss: (Bool) -> Void) {
+			
+			let alert = AirAlertController(title: title, message: message, preferredStyle: .Alert)
+			let okAction = UIAlertAction(title: actionTitle, style: .Default, handler: { _ in onDismiss(true) })
+			let cancelAction = UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) })
+			alert.addAction(okAction)
+			alert.addAction(cancelAction)
+			self.presentViewController(alert, animated: true, completion: nil)
+	}
+	
 	func UpdateConfirmationAlert(title: String? = nil, message: String? = nil,
 		actionTitle: String, cancelTitle: String,
 		delegate: AnyObject? = nil, onDismiss: (Bool) -> Void) {
