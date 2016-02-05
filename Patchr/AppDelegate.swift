@@ -172,7 +172,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
 		
-		/* First see if Branch claims it as a deep link */
+		/* 
+		 * First see if Branch claims it as a deep link. Calls handler registered in 
+		 * onLaunch.
+		 */
 		if Branch.getInstance().handleDeepLink(url) {
 			Log.d("Branch handled deep link: \(url.absoluteString)")
 			return true
