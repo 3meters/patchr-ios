@@ -333,6 +333,11 @@ class MessageDetailViewController: BaseViewController {
     
 	func shareAction() {
         
+		if !UserController.instance.authenticated {
+			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to share messages and more.")
+			return
+		}
+		
         if self.inputMessage != nil {
             let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: nil, destructiveButtonTitle: nil)
             

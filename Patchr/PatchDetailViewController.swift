@@ -145,11 +145,14 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
     }
     
     func shareAction() {
-        
+		
+		if !UserController.instance.authenticated {
+			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to invite people to patches and more.")
+			return
+		}
+		
         if self.entity != nil {
-            
             let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: nil, destructiveButtonTitle: nil)
-            
             shareButtonFunctionMap[sheet.addButtonWithTitle("Invite using Patchr")] = .Share
 			shareButtonFunctionMap[sheet.addButtonWithTitle("Invite using Facebook")] = .ShareFacebook
             shareButtonFunctionMap[sheet.addButtonWithTitle("More")] = .ShareVia
