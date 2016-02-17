@@ -152,6 +152,7 @@ class UserController: NSObject {
             
             self.currentUser = user
             self.userName = user.name
+			self.userId = user.id_
 			
             /* Need to seed these because sign-in with previous version might not have included them */
             if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
