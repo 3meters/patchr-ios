@@ -9,7 +9,7 @@
 import UIKit
 import SDWebImage
 
-class UserPhotoView: BaseDetailView {
+class UserPhotoView: UIControl {
 
 	var name		= AirLabelDisplay()
 	var photo		= AirImageView(frame: CGRectZero)

@@ -38,65 +38,7 @@ extension Entity {
             return Float(fromLocation!.distanceFromLocation(entityLocation))
         }
         return nil
-    }
-    
-    func getPhotoManaged() -> Photo {
-        var photo = self.photo
-        if photo == nil {
-            var id: String?
-            
-            /* For notification and shortcuts, we cherry pick the user id. */
-            if let notification = self as? Notification {
-                id = notification.userId
-            }
-            else if let shortcut = self as? Shortcut {
-                id = shortcut.ownerId
-            }
-            else if let user = self as? User {
-                id = user.id_
-            }
-            
-            photo = Entity.getDefaultPhoto(self.schema, id: id)
-        }
-        return photo
-    }
-    
-    static func getDefaultPhoto(schema: String?, id: String?) -> Photo {
-		/*
-		 * Default photos are stored but never directly set to entity.photo.
-		 * We store them because the code expects a managed object and managed
-		 * objects expect to be associated with a managed object context.
-		 */
-        var prefix: String = "imgDefaultPatch"
-        var source: String = PhotoSource.resource
-		
-		if schema != nil {
-			if schema == "place" {
-				prefix = "imgDefaultPlace";
-			}
-			else if schema == "user" || schema == "notification" {
-				if id != nil {
-					prefix = "http://www.gravatar.com/avatar/\(id!.md5)?d=identicon&r=pg"
-					source = PhotoSource.gravatar
-				}
-				else {
-					prefix = "imgDefaultUser"	// Used primarily when user has been deleted
-				}
-			}
-		}
-		
-		var photo = Photo.fetchOneById(prefix, inManagedObjectContext: DataController.instance.mainContext)
-		
-		if photo == nil {
-			photo = Photo.insertInManagedObjectContext(DataController.instance.mainContext) as! Photo
-			photo.id_ = prefix
-			photo.prefix = prefix
-			photo.source = source
-			DataController.instance.saveContext(BLOCKING)
-		}
-		
-        return photo;
-    }
+    }	
 }
 
 extension Patch {

@@ -33,6 +33,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
     var showProgress		= true
     var progressOffsetY     = Float(-48)
 	var progressOffsetX     = Float(8)
+	var disableCells		= false
 
 	var rowHeights			: NSMutableDictionary = [:]
 	
@@ -234,10 +235,22 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	
 	func didFetchQuery(notification: NSNotification) {
 		self.activity.stopAnimating()
+		var empty = false
 		if let userInfo = notification.userInfo where userInfo["count"] != nil {
 			if self.showEmptyLabel && userInfo["count"] as! Int == 0 {
-				self.emptyLabel.fadeIn()
+				empty = true
 			}
+		}
+		/*
+		* HACK: We hide messages if the user is not a member of a private even if messages
+		* were returned by the service because they are owned by the current user.
+		*/
+		if self.disableCells {
+			empty = true
+		}
+	
+		if empty {
+			self.emptyLabel.fadeIn()
 		}
 		
 		if self.query.moreValue {
@@ -339,11 +352,14 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 							 */
 							DataController.instance.saveContext(BLOCKING)
 							self?.tableView.reloadData()		// Update cells to show any changes
+							
+							dispatch_async(dispatch_get_main_queue(), { () -> Void in
+								if self != nil {
+									NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetchQuery, object: self!, userInfo: userInfo)
+								}								
+							})
 						}
 						
-						if self != nil {
-							NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetchQuery, object: self!, userInfo: userInfo)
-						}
 						
 						return
 					}

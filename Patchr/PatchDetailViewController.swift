@@ -10,17 +10,22 @@ import UIKit
 import FBSDKLoginKit
 import Branch
 import iRate
+import AGWindowView
+import BubbleTransition
 
-class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol {
+class PatchDetailViewController: BaseDetailViewController, InviteProtocol {
 
     private var contextAction			: ContextAction = .SharePatch
     private var shareButtonFunctionMap	= [Int: ShareButtonFunction]()
 	private var originalRect			: CGRect?
     private var originalScrollTop		= CGFloat(-64.0)
 	
-	var inputShowInviteWelcome	= false
-	var inputInviterName		: String?
-	var inviteController		: WelcomeViewController?
+	let transition = BubbleTransition()
+	
+	var inputReferrerName		: String?
+	var inputReferrerPhotoUrl	: String?
+	var inviteUserPhotoView		: UserPhotoView?
+	var inviteController		: InviteSheetViewController?
 	var autoWatchOnAppear		= false
 
 	/*--------------------------------------------------------------------------------------------
@@ -41,6 +46,10 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
 		let viewHeight = (viewWidth * 0.625) + 48
 		self.tableView.tableHeaderView?.bounds.size = CGSizeMake(viewWidth, viewHeight)	// Triggers layoutSubviews on header
+		
+		if self.inputReferrerName != nil {
+			self.inviteUserPhotoView?.anchorBottomRightWithRightPadding(16, bottomPadding: 16, width: 72, height: 72)
+		}
 	}
 	
 	override func viewWillAppear(animated: Bool) {
@@ -61,6 +70,20 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		}
 		else {
 			iRate.sharedInstance().promptIfAllCriteriaMet()
+		}
+		
+		if self.inputReferrerName != nil {
+			AppDelegate.appDelegate().window?.addSubview(self.inviteUserPhotoView!)
+			Utils.delay(0.5) {
+				Animation.bounce(self.inviteUserPhotoView)
+			}
+		}
+	}
+	
+	override func viewWillDisappear(animated: Bool) {
+		super.viewWillDisappear(animated)
+		if self.inputReferrerName != nil {
+			self.inviteUserPhotoView?.removeFromSuperview()
 		}
 	}
 	
@@ -182,26 +205,12 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 	}
 	
 	func didFetch(notification: NSNotification) {
-		if notification.userInfo == nil {
-			if self.inputShowInviteWelcome {
-				if let entity = self.entity as? Patch where entity.userWatchStatusValue == .NonMember {
-					self.inputShowInviteWelcome = false
-					if self.inputInviterName != nil {
-						showInviteWelcome(self, message: "\(self.inputInviterName!) invited you to join this patch.")
-					}
-					else {
-						showInviteWelcome(self, message: "A friend invited you to join this patch.")
-					}
-				}
+		
+		if notification.userInfo == nil && self.inputReferrerName != nil {
+			if let entity = self.entity as? Patch
+				where entity.userWatchStatusValue == .NonMember || !UserController.instance.authenticated {
+					showInvite()
 			}
-		}
-		/*
-		 * HACK: We hide messages if the user is not a member of a private even if messages
-		 * were returned by the service because they are owned by the current user.
-		 */
-		let showMessages = (self.entity!.visibility == "public" || self.entity!.userWatchStatusValue == .Member)
-		if !showMessages {
-			self.emptyLabel.fadeIn()
 		}
 	}
 	
@@ -222,6 +231,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 	}
 	
 	func watchDidChange(sender: NSNotification) {
+		fetch(reset: true)
 		bindContextButton()
 	}
 	
@@ -275,6 +285,14 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		self.progressOffsetY = 80
 		self.loadMoreMessage = "LOAD MORE MESSAGES"
 		
+		if self.inputReferrerName != nil {
+			let url = self.inputReferrerPhotoUrl != nil ? NSURL(string: self.inputReferrerPhotoUrl!) : nil
+			self.inviteUserPhotoView = UserPhotoView()
+			self.inviteUserPhotoView!.bindPhoto(url, name: self.inputReferrerName)
+			self.inviteUserPhotoView!.addTarget(self, action: Selector("showInvite"), forControlEvents: UIControlEvents.TouchUpInside)
+			AppDelegate.appDelegate().window?.addSubview(self.inviteUserPhotoView!)
+		}
+		
 		/* Navigation bar buttons */
 		drawButtons()
 	}
@@ -282,6 +300,9 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 	override func bind() {
         
         if let entity = self.entity as? Patch {
+			
+			self.disableCells = (entity.visibility == "private" && entity.userWatchStatusValue != .Member)
+			
 			let header = self.header as! PatchDetailView
 
 			header.bindToEntity(entity)
@@ -304,6 +325,20 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
         }
 	}
 
+	override func drawButtons() {
+		
+		let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
+		let addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: Selector("addAction"))
+		let editButton = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
+		
+		if isOwner() {
+			self.navigationItem.setRightBarButtonItems([addButton, Utils.spacer, shareButton, Utils.spacer, editButton], animated: true)
+		}
+		else {
+			self.navigationItem.setRightBarButtonItems([addButton, Utils.spacer, shareButton], animated: true)
+		}
+	}
+	
 	func bindContextButton() {
 		
 		if let entity = self.entity as? Patch {
@@ -389,20 +424,6 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		}
 	}
 	
-    override func drawButtons() {
-        
-        let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
-        let addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: Selector("addAction"))
-		let editButton = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
-		
-        if isOwner() {
-            self.navigationItem.setRightBarButtonItems([addButton, Utils.spacer, shareButton, Utils.spacer, editButton], animated: true)
-        }
-        else {
-			self.navigationItem.setRightBarButtonItems([addButton, Utils.spacer, shareButton], animated: true)
-        }
-    }
-	
 	func shareUsing(route: ShareRoute) {
 		
 		if route == .Patchr {
@@ -455,35 +476,37 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
         return false
     }
 	
-	func showInviteWelcome(var controller: UIViewController?, message: String?) {
+	func showInvite() {
 		
-		self.inviteController = WelcomeViewController()
-		self.inviteController!.modalPresentationStyle = .OverFullScreen
-		self.inviteController!.modalTransitionStyle = .CrossDissolve
-		if controller == nil {
-			controller = UIViewController.topMostViewController()!
-		}
-		self.inviteController!.inputMessage = message
-		if let entity = self.entity as? Patch {
-			self.inviteController!.inputPublic = (entity.visibility == "public")
-		}
-		self.inviteController!.delegate = self
-		controller!.presentViewController(self.inviteController!, animated: true, completion: nil)
+		let visibility = self.entity?.visibility ?? "public"
+		let url = self.inputReferrerPhotoUrl != nil ? NSURL(string: self.inputReferrerPhotoUrl!) : nil
+		
+		self.inviteController = InviteSheetViewController()
+		self.inviteController!.inviteView.bind("\(self.inputReferrerName!) has invited you to join this \(visibility) patch.", photoUrl: url, name: self.inputReferrerName)
+		self.inviteController!.inviteView.delegate = self
+		self.inviteController!.transitioningDelegate = self
+		self.inviteController!.modalPresentationStyle = .Custom
+		
+		self.presentViewController(self.inviteController!, animated: true, completion: nil)
 	}
-
-	func inviteResult(result: InviteWelcomeResult) {
-		Utils.delay(0.1) {
-			self.dismissViewControllerAnimated(true) {
-				if result == .Login {
-					self.loginAction(nil)
-				}
-				else if result == .Signup {
-					self.signupAction(nil)
-				}
-				else if result == .Join {
-					let header = self.header as! PatchDetailView
-					header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
-				}
+	
+	func inviteResult(result: InviteResult) {
+		if result == .Login {
+			self.loginAction(nil)
+		}
+		else if result == .Signup {
+			self.signupAction(nil)
+		}
+		else if result == .Join {
+			let header = self.header as! PatchDetailView
+			header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+			fetch(reset: true)
+			self.inviteUserPhotoView?.fadeOut()
+			self.inputReferrerName = nil
+			self.inputReferrerPhotoUrl = nil
+			self.inviteController!.dismissViewControllerAnimated(true) {
+				AudioController.instance.play(Sound.pop.rawValue)
+				UIShared.Toast("Welcome!")
 			}
 		}
 	}
@@ -527,11 +550,10 @@ extension PatchDetailViewController: MapViewDelegate {
 }
 
 extension PatchDetailViewController {
+	
 	override func bindCellToEntity(cell: WrapperTableViewCell, entity: AnyObject, location: CLLocation?) {
-		
 		super.bindCellToEntity(cell, entity: entity, location: location)
-		let showMessages = (self.entity!.visibility == "public" || self.entity!.userWatchStatusValue == .Member)
-		cell.hidden = !showMessages
+		cell.hidden = self.disableCells
 	}
 }
 
@@ -567,6 +589,25 @@ extension PatchDetailViewController {
 	
 	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return super.tableView(tableView, numberOfRowsInSection: section)
+	}
+}
+
+extension PatchDetailViewController: UIViewControllerTransitioningDelegate {
+	
+	func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+		transition.transitionMode = .Present
+		transition.duration = 0.3
+		transition.startingPoint = self.inviteUserPhotoView!.center
+		transition.bubbleColor = Theme.colorScrimInvite
+		return transition
+	}
+	
+	func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+		transition.transitionMode = .Dismiss
+		transition.duration = 0.3
+		transition.startingPoint = self.inviteUserPhotoView!.center
+		transition.bubbleColor = Theme.colorScrimInvite
+		return transition
 	}
 }
 

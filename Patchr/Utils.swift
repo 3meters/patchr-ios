@@ -46,6 +46,10 @@ struct Utils {
         return dateFormatter
     }()
 	
+	static func encodeForUrlQuery(target: String) -> String {
+		return target.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+	}
+	
 	static func synced(lock: AnyObject, closure: () -> ()) {
 		objc_sync_enter(lock)
 		closure()

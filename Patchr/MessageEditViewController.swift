@@ -55,7 +55,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 	var addressField		= AirContactPicker()
 	var addressLabel		= AirLabelDisplay()
 
-	var userPhoto			= AirImageView(frame: CGRectZero)
+	var userPhoto			= UserPhotoView()
 	var userName			= AirLabelDisplay()
 	var descriptionField	= AirTextView()
 	var photoView			= PhotoView()
@@ -366,11 +366,11 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
     func bind() {
 		
 		if let message = self.inputEntity as? Message {
-			self.userPhoto.setImageWithPhoto(message.creator.getPhotoManaged())
+			self.userPhoto.bindToEntity(message.creator)
 			self.userName.text = message.creator.name
 		}
 		else if let user = UserController.instance.currentUser {
-			self.userPhoto.setImageWithPhoto(user.getPhotoManaged())
+			self.userPhoto.bindToEntity(user)
 			self.userName.text = user.name
 		}
 

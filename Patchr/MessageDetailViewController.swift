@@ -546,7 +546,13 @@ class MessageDetailViewController: BaseViewController {
 			
             /* Patch */
             if self.inputMessage!.patch != nil {
-                self.patchPhoto.setImageWithPhoto(self.inputMessage!.patch.getPhotoManaged())
+				if let photo = self.inputMessage!.patch.photo {
+					self.patchPhoto.setImageWithPhoto(photo)
+				}
+				else if let name = self.inputMessage!.patch.name {
+					let seed = Utils.numberFromName(name)
+					self.photo.backgroundColor = Utils.randomColor(seed)
+				}
                 self.patchName.setTitle(self.inputMessage!.patch.name, forState: .Normal)
             }
         }

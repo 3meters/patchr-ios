@@ -61,6 +61,7 @@ class Snow {
 	let colorTabBarTint             = Colors.brandColorTextLight
 	let colorShadow					= Colors.gray80pcntColor
 	let colorSeparator				= Colors.gray90pcntColor
+	let colorScrimInvite            = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.15))
 	let colorScrimDarken            = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.3))
 	let colorScrimLighten           = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.75))
 	let colorActionOn               = Colors.brandColorTextDark

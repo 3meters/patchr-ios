@@ -184,13 +184,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		/* See if this is a Facebook deep link */
 		let parsedUrl: BFURL = BFURL(inboundURL: url, sourceApplication: sourceApplication)
 		if (parsedUrl.appLinkData != nil) {
-			if let inputQueryParameters = parsedUrl.inputQueryParameters {
-				routeDeepLink(inputQueryParameters, error: nil)
+			if let params = parsedUrl.targetQueryParameters {
+				routeDeepLink(params, error: nil)
 			}
 			return true
 		}
 		
-		/* See if Facebook claims it */
+		/* See if Facebook claims it as part of interaction with native Facebook client and Facebook dialogs */
 		if FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation) {
 			Log.d("Facebook handled url")
 			return true
@@ -198,12 +198,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
         return false
     }
-	
-	func application(application: UIApplication, continueUserActivity userActivity: NSUserActivity, restorationHandler: ([AnyObject]?) -> Void) -> Bool {
-		// pass the url to the handle deep link call
-		Branch.getInstance().continueUserActivity(userActivity)		
-		return true
-	}
 	
     func route() {
         
@@ -231,12 +225,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let entityId = params!["entityId"] as? String, entitySchema = params!["entitySchema"] as? String {
             
             if entitySchema == "patch" {
+				
 				let controller = PatchDetailViewController()
 				controller.entityId = entityId
-				controller.inputShowInviteWelcome = true
-				if let inviterName = params!["inviterName"] as? String {
-					controller.inputInviterName = inviterName.stringByReplacingOccurrencesOfString("+", withString: " ")
+				
+				if let referrerName = params!["referrerName"] as? String {
+					controller.inputReferrerName = referrerName.stringByReplacingOccurrencesOfString("+", withString: " ")
 				}
+				if let referrerPhotoUrl = params!["referrerPhotoUrl"] as? String {
+					controller.inputReferrerPhotoUrl = referrerPhotoUrl
+				}
+				
 				/* Navigation bar buttons */
 				let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
 				controller.navigationItem.leftBarButtonItems = [doneButton]
@@ -245,8 +244,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 				UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
             }
             else if entitySchema == "message" {
+				
 				let controller = MessageDetailViewController()
 				controller.inputMessageId = entityId
+				
 				/* Navigation bar buttons */
 				let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
 				controller.navigationItem.leftBarButtonItems = [doneButton]
@@ -256,24 +257,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
+	
+	func application(application: UIApplication, continueUserActivity userActivity: NSUserActivity, restorationHandler: ([AnyObject]?) -> Void) -> Bool {
+		// pass the url to the handle deep link call
+		Branch.getInstance().continueUserActivity(userActivity)
+		return true
+	}
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
     
-    func applicationDidEnterBackground(application: UIApplication) {
-        NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationDidEnterBackground, object: nil)
-    }
-
-    func applicationWillEnterForeground(application: UIApplication){
-        NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationWillEnterForeground, object: nil)
-    }
-    
-    func applicationWillResignActive(application: UIApplication){
-        NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationWillResignActive, object: nil)
-    }
-    
-    func applicationDidBecomeActive(application: UIApplication) {
+	func applicationDidBecomeActive(application: UIApplication) {
 		
 		FBSDKAppEvents.activateApp()
 		
@@ -286,9 +281,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 				UIApplication.sharedApplication().openURL(url)
 			}
 		}
-
+		
 		/* NotificationsTableViewController uses this to manage badging */
-        NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationDidBecomeActive, object: nil)
+		NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationDidBecomeActive, object: nil)
+	}
+	
+    func applicationDidEnterBackground(application: UIApplication) {
+        NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationDidEnterBackground, object: nil)
+    }
+
+    func applicationWillEnterForeground(application: UIApplication){
+        NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationWillEnterForeground, object: nil)
+    }
+    
+    func applicationWillResignActive(application: UIApplication){
+        NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationWillResignActive, object: nil)
     }
     
     func application(application: UIApplication, supportedInterfaceOrientationsForWindow window: UIWindow?) -> UIInterfaceOrientationMask {

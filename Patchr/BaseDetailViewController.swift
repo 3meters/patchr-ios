@@ -75,40 +75,6 @@ class BaseDetailViewController: BaseTableViewController {
     * Methods
     *--------------------------------------------------------------------------------------------*/
 	
-	override func getActivityDate() -> Int64 {
-		return self.entity!.activityDate?.milliseconds ?? 0
-	}
-	
-    override func loadQuery() -> Query {
-        
-		let id = queryId()
-		var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
-
-		if query == nil {
-
-			query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
-			query!.name = self.queryName
-			query!.pageSize = DataController.proxibase.pageSizeDefault
-			query!.contextEntity = nil
-
-			if self.entity != nil {
-				query!.contextEntity = self.entity
-			}
-			if self.entityId != nil {
-				query!.entityId = self.entityId
-			}
-
-			DataController.instance.saveContext(BLOCKING)
-		}
-
-        return query!
-    }
-
-	func queryId() -> String {
-		let id = self.entity?.id_ ?? self.entityId
-		return "query.\(self.queryName!.lowercaseString).\(id!)"
-	}
-	
 	func fetch(reset reset: Bool = false) {
         
         /* Refreshes the top object but not the message list */
@@ -131,7 +97,11 @@ class BaseDetailViewController: BaseTableViewController {
 								self?.entity = entity
 								self?.entityId = entity.id_
 								
-								/* 
+								if let patch = entity as? Patch {
+									self?.disableCells = (patch.visibility == "private" && patch.userWatchStatusValue != .Member)
+								}
+								
+								/*
 								 * Refresh list too if context entity was updated or reset = true. 
 								 * We need reset because a real list refresh is needed even if the activityDate
 								 * hasn't changed because that is the only way to pickup link based message 
@@ -188,8 +158,42 @@ class BaseDetailViewController: BaseTableViewController {
     func drawButtons() { /* Optional */ }
     
     override func pullToRefreshAction(sender: AnyObject?) -> Void {
-		self.fetch(reset: true)
+		fetch(reset: true)
     }
+
+	override func getActivityDate() -> Int64 {
+		return self.entity!.activityDate?.milliseconds ?? 0
+	}
+	
+	override func loadQuery() -> Query {
+		
+		let id = queryId()
+		var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
+		
+		if query == nil {
+			
+			query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
+			query!.name = self.queryName
+			query!.pageSize = DataController.proxibase.pageSizeDefault
+			query!.contextEntity = nil
+			
+			if self.entity != nil {
+				query!.contextEntity = self.entity
+			}
+			if self.entityId != nil {
+				query!.entityId = self.entityId
+			}
+			
+			DataController.instance.saveContext(BLOCKING)
+		}
+		
+		return query!
+	}
+	
+	func queryId() -> String {
+		let id = self.entity?.id_ ?? self.entityId
+		return "query.\(self.queryName!.lowercaseString).\(id!)"
+	}
 }
 
 extension BaseDetailViewController: TTTAttributedLabelDelegate {
@@ -238,6 +242,10 @@ extension BaseDetailViewController {
 		* Note: Called once only for each row in fetchResultController when FRC is making a data pass in
 		* response to managedContext.save.
 		*/
+		if self.disableCells {
+			return 0
+		}
+		
 		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
 			let entity = queryResult.object as? Message {
 				

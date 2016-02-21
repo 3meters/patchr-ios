@@ -446,9 +446,6 @@ class ProfileEditViewController: BaseEditViewController {
 				self.photoView.imageButton.setImageWithImageResult(imageResult)
 				self.photoView.configureTo(.Photo)
 			}
-			else {
-				self.photoView.bindPhoto(nil) // Shows default
-			}
 		}
 		else {
 			self.nameField.text = self.inputUser?.name
