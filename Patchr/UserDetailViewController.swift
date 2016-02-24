@@ -45,7 +45,17 @@ class UserDetailViewController: BaseDetailViewController {
 	
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)	// calls bind
-		fetch(reset: false)
+		
+		if self.invalidated {
+			Log.d("Resetting user and messages because user logged in")
+			fetch(strategy: .IgnoreCache, resetList: true)
+		}
+		else if self.isCurrentUser && self.firstAppearance {
+			fetch(strategy: .IgnoreCache, resetList: true)
+		}
+		else {
+			fetch(strategy: .UseCacheAndVerify)
+		}
 	}
     
 	override func viewWillDisappear(animated: Bool) {

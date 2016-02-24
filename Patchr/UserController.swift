@@ -68,12 +68,14 @@ class UserController: NSObject {
 		self.jsonSession = nil
 		
         writeCredentialsToUserDefaults()
-        Reporting.updateCrashUser(nil)
-		BranchProvider.logout()
     }
 
-	func handleSuccessfulSignInResponse(response: AnyObject) {
-		
+	func handleSuccessfulLoginResponse(response: AnyObject) {
+		/*
+		 * Called everytime we have a new authenticated user. The store can
+		 * contain entities that are missing state that is tied to the current 
+		 * user so we need to clear it to get the correct contextual state.
+		 */
         let json = JSON(response)
 		
         if let jsonString = json["user"].rawString() {
@@ -88,7 +90,7 @@ class UserController: NSObject {
         self.userId = json["session"]["_owner"].string
         self.sessionKey = json["session"]["key"].string
 		
-		Log.d("User signed in: \(self.userName!)(\(self.userId!))")
+		Log.i("User logged in: \(self.userName!) (\(self.userId!))")
 		
 		/* We enable remote notifications after we have had a login */
 		#if os(iOS) && !arch(i386) && !arch(x86_64)
@@ -96,13 +98,11 @@ class UserController: NSObject {
 		#endif
 		
 		writeCredentialsToUserDefaults()
-		fetchCurrentUser(nil)	// Includes making sure the user is in the store
+		fetchCurrentUser(nil) // Includes making sure the user is in the store
+		
+		NSNotificationCenter.defaultCenter().postNotificationName(Events.UserDidLogin, object: nil, userInfo: nil)
     }
 	
-	func clearStore() {
-		DataController.instance.reset()
-	}
-
 	private func writeCredentialsToUserDefaults() {
 		
         let userDefaults = NSUserDefaults.standardUserDefaults()
@@ -111,8 +111,15 @@ class UserController: NSObject {
         userDefaults.setObject(self.userId, forKey: PatchrUserDefaultKey("userId"))
 		
 		/* This is only place where we push to the keychain */
-		self.lockbox.setString((self.sessionKey != nil ? self.sessionKey! : nil), forKey: "sessionKey", accessibility: kSecAttrAccessibleAfterFirstUnlock)
-		self.lockbox.setString((self.jsonSession != nil ? self.jsonSession! : nil), forKey: "session", accessibility: kSecAttrAccessibleAfterFirstUnlock)
+		var success = false
+		success = self.lockbox.setString((self.sessionKey != nil ? self.sessionKey! : nil), forKey: "sessionKey", accessibility: kSecAttrAccessibleAfterFirstUnlock)
+		if success {
+			self.lockbox.setString((self.jsonSession != nil ? self.jsonSession! : nil), forKey: "session", accessibility: kSecAttrAccessibleAfterFirstUnlock)
+		}
+		
+		if !success {
+			Log.w("Failed to store session in keychain")
+		}
 		
         if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
             groupDefaults.setObject(self.jsonUser, forKey: PatchrUserDefaultKey("user"))
@@ -121,14 +128,11 @@ class UserController: NSObject {
     }
 
 	func fetchCurrentUser(completion: CompletionBlock?) {
-		DataController.instance.withEntityId(self.userId!, strategy: .UseCacheAndVerify, completion: {
-			objectId, error in
+		DataController.instance.withEntityId(self.userId!, strategy: .UseCacheAndVerify, completion: { objectId, error in
 			if error == nil && objectId != nil {
 				let user = DataController.instance.mainContext.objectWithID(objectId!) as! User
 				if user.id_ != nil {
-					self.currentUser = user
-					BranchProvider.setIdentity(self.currentUser.id_)
-					Reporting.updateCrashUser(self.currentUser)
+					self.initUserState(user)
 				}
 			}
 			if completion != nil {
@@ -149,23 +153,15 @@ class UserController: NSObject {
             let user: User = User.fetchOrInsertOneById(userAsJson["_id"].string, inManagedObjectContext: DataController.instance.mainContext)
             User.setPropertiesFromDictionary(userAsMap as [NSObject : AnyObject], onObject: user)
             user.activityDate = NSDate(timeIntervalSince1970: 0) // Ensures that the user will be freshed from the service
-            
-            self.currentUser = user
-            self.userName = user.name
-			self.userId = user.id_
 			
-            /* Need to seed these because sign-in with previous version might not have included them */
-            if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
-                groupDefaults.setObject(self.userId, forKey: PatchrUserDefaultKey("userId"))
-            }
+			self.initUserState(user)
 			
 			/* We handle remote notifications */
 			#if os(iOS) && !arch(i386) && !arch(x86_64)
 				NotificationController.instance.registerForRemoteNotifications()
 			#endif
 			
-			BranchProvider.setIdentity(user.id_)
-            Reporting.updateCrashUser(user)
+			Log.i("User auto logged in: \(self.userName!) (\(self.userId!))")
         }
     }
 	
@@ -182,14 +178,8 @@ class UserController: NSObject {
 					Log.w("Error during logout \(error)")
 				}
 				
-				/* Clear local credentials */
-				self.discardCredentials()
-				
-				/* Clear the core data store and create new data stack, blocks until done */
-				self.clearStore()
-				
-				/* Make sure state is cleared */
-				LocationController.instance.clearLastLocationAccepted()
+				self.clearUserState()
+				Log.i("User logged out")
 				
 				if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
 					let navController = UINavigationController()
@@ -198,6 +188,34 @@ class UserController: NSObject {
 				}
 			}
 		}
+	}
+	
+	func clearUserState() {
+		/*
+		* Should be called when logging out or if for any reason do not have a valid user.
+		*/
+		self.discardCredentials()
+		self.clearStore()		// Clear the core data store and create new data stack, blocks until done
+		LocationController.instance.clearLastLocationAccepted()  // Triggers fresh location processing
+		Reporting.updateCrashUser(nil)
+		BranchProvider.logout()
+	}
+	
+	func initUserState(user: User!) {
+		self.currentUser = user
+		self.userName = user.name
+		self.userId = user.id_
+		BranchProvider.setIdentity(user.id_)
+		Reporting.updateCrashUser(user)
+		
+		/* Need to seed these because sign-in with previous version might not have included them */
+		if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
+			groupDefaults.setObject(user.id_, forKey: PatchrUserDefaultKey("userId"))
+		}
+	}
+	
+	func clearStore() {
+		DataController.instance.reset()
 	}
 	
 	func showGuestGuard(var controller: UIViewController?, message: String?) {

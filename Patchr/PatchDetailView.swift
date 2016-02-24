@@ -33,7 +33,7 @@ class PatchDetailView: BaseDetailView {
 	var moreButton			= AirToolButton()
 	
 	var contextGroup		= AirRuleView()
-	var contextButton		= AirFeaturedButton()
+	var contextView			: UIView = AirFeaturedButton()
 	
 	var infoGroup			= AirRuleView()
 	
@@ -62,6 +62,12 @@ class PatchDetailView: BaseDetailView {
 	override init(frame: CGRect) {
 		/* Called when instantiated from code */
 		super.init(frame: frame)
+		initialize()
+	}
+	
+	init(contextView: UIView!) {
+		super.init(frame: CGRectZero)
+		self.contextView = contextView
 		initialize()
 	}
 	
@@ -103,11 +109,19 @@ class PatchDetailView: BaseDetailView {
 		self.type.alignAbove(self.name, withLeftPadding: 0, bottomPadding: 0, width: self.type.width(), height: self.type.height())
 		self.lockImage.alignToTheRightOf(self.type, matchingCenterWithLeftPadding: 4, width: 16, height: 16)
 		
-		self.contextGroup.alignUnder(self.bannerGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 48)
-		self.contextButton.fillSuperview()
-		
 		let gradientHeight = self.bannerGroup.width() * 0.35
 		self.gradient.frame = CGRectMake(0, self.bannerGroup.height() - gradientHeight, self.bannerGroup.width(), gradientHeight)
+		
+		/* Context Group */
+		if self.contextView is UIButton {
+			self.contextGroup.alignUnder(self.bannerGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 48)
+			self.contextView.fillSuperview()
+		}
+		else if self.contextView is UserInviteView {
+			self.contextView.resizeToFitSubviews()
+			self.contextGroup.alignUnder(self.bannerGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: self.contextView.height() + 32)
+			self.contextView.fillSuperviewWithLeftPadding(16, rightPadding: 16, topPadding: 16, bottomPadding: 16)
+		}
 		
 		/* Info Group */
 		
@@ -194,7 +208,7 @@ class PatchDetailView: BaseDetailView {
 		
 		self.contentGroup.addSubview(self.bannerGroup)
 		self.contentGroup.addSubview(self.infoGroup)
-		self.contextGroup.addSubview(self.contextButton)
+		self.contextGroup.addSubview(self.contextView)
 		
 		self.addSubview(contentGroup)
 		self.addSubview(contextGroup)
@@ -292,7 +306,7 @@ class PatchDetailView: BaseDetailView {
 		self.soundButton.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
 		self.soundButton.alpha = 0.0
 		
-		self.contextButton.layer.cornerRadius = 0
+		self.contextView.layer.cornerRadius = 0
 
 		self.bannerGroup.clipsToBounds = true
 		

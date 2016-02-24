@@ -42,6 +42,10 @@ extension Entity {
 }
 
 extension Patch {
+
+    func userIsMember() -> Bool {
+        return (self.userWatchStatusValue == .Member)
+    }
         
     static func extras(inout parameters: [String:AnyObject]) -> [String:AnyObject] {
         if let links = Patch.links() {

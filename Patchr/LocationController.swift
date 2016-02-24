@@ -28,6 +28,7 @@ class LocationController: NSObject {
     private var bgTask:             	UIBackgroundTaskIdentifier?
     private var locationManager:    	CLLocationManager!
     private var _lastLocationAccepted:  CLLocation?
+	private var updatesActive = false
     
     override init(){
         super.init()
@@ -70,18 +71,30 @@ class LocationController: NSObject {
 		}
 	}
     
-    func startUpdates(){
+	func startUpdates(force force: Bool = false){
+		
+		guard force || !self.updatesActive else { return }
+		
 		if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
-			Log.d("***** Location updates started *****")
-			self.locationManager.startUpdatingLocation()
+			if self.locationManager != nil {
+				Log.d("***** Location updates started *****")
+				if force {
+					self.locationManager.stopUpdatingLocation()	// Ensures that we will get at least one location update.
+				}
+				self.locationManager.startUpdatingLocation()
+				self.updatesActive = true
+			}
 		}
     }
 
     func stopUpdates(){		
+		guard self.updatesActive else { return }
+		
 		if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
 			if self.locationManager != nil {
 				Log.d("***** Location updates stopped *****")
 				self.locationManager.stopUpdatingLocation()
+				self.updatesActive = false
 			}
 		}
     }
@@ -171,7 +184,7 @@ class LocationController: NSObject {
 							Log.w("Error during updateProximity")
 						}
 						else {
-							Log.w("Install proximity updated")
+							Log.d("Install proximity updated because of accepted background location")
 						}
 						if self.bgTask != UIBackgroundTaskInvalid {
 							UIApplication.sharedApplication().endBackgroundTask(self.bgTask!)
@@ -229,21 +242,19 @@ extension LocationController: CLLocationManagerDelegate {
             let isInBackground = (UIApplication.sharedApplication().applicationState == UIApplicationState.Background)
             let locationLast: CLLocation? = self._lastLocationAccepted
             let age = abs(trunc(location.timestamp.timeIntervalSinceNow * 100) / 100)
-            
-            if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("enableDevModeAction")) {
-                let lat = trunc(location.coordinate.latitude * 100) / 100
-                let lng = trunc(location.coordinate.longitude * 100) / 100
-                
-                var message = "Location received: lat: \(lat), lng: \(lng), acc: \(location.horizontalAccuracy)m, age: \(age)s"
-                
-                if locationLast != nil {
-                    let moved = Int(location.distanceFromLocation(locationLast!))
-                    message = "Location received: lat: \(lat), lng: \(lng), acc: \(location.horizontalAccuracy)m, age: \(age)s, moved: \(moved)m"
-                }
-                Log.d(message)
-            }
-            
+			let lat = trunc(location.coordinate.latitude * 100) / 100
+			let lng = trunc(location.coordinate.longitude * 100) / 100
+			
+			var message = "Location received: lat: \(lat), lng: \(lng), acc: \(location.horizontalAccuracy)m, age: \(age)s"
+			
+			if locationLast != nil {
+				let moved = Int(location.distanceFromLocation(locationLast!))
+				message = "Location received: lat: \(lat), lng: \(lng), acc: \(location.horizontalAccuracy)m, age: \(age)s, moved: \(moved)m"
+			}
+			Log.v(message)
+			
             if !isValidLocation(location, oldLocation: locationLast) {
+				Log.d("Location rejected as invalid")
                 return
             }
             
@@ -269,11 +280,26 @@ extension LocationController: CLLocationManagerDelegate {
             }
             
             self._lastLocationAccepted = location
-            
+			
             if isInBackground {
                 sendBackgroundLocation(dictionary)
             }
             else {
+				
+				message = "Location accepted ***: lat: \(lat), lng: \(lng), acc: \(location.horizontalAccuracy)m, age: \(age)s"
+				
+				if let locOld = locationLast {
+					let moved = Int(location.distanceFromLocation(locOld))
+					message = "Location accepted ***: lat: \(lat), lng: \(lng), acc: \(location.horizontalAccuracy)m, age: \(age)s, moved: \(moved)m"
+				}
+				
+				Log.i(message)
+				
+				if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("enableDevModeAction")) {
+					UIShared.Toast(message)
+					AudioController.instance.play(Sound.pop.rawValue)
+				}
+				
                 NSNotificationCenter.defaultCenter().postNotificationName(Events.LocationUpdate, object: nil, userInfo: dictionary)
             }
         }

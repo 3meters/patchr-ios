@@ -37,7 +37,6 @@ PODS:
     - Bolts/Tasks
   - Bolts/Tasks (1.6.0)
   - Branch (0.11.14)
-  - BubbleTransition (1.0.1)
   - CocoaLumberjack/Core (2.2.0)
   - CocoaLumberjack/Default (2.2.0):
     - CocoaLumberjack/Core
@@ -93,6 +92,7 @@ PODS:
   - THContactPicker (1.2)
   - TWMessageBarManager (1.8.0)
   - UIDevice-Hardware (0.1.7)
+  - ZOZolaZoomTransition (1.0.0)
 
 DEPENDENCIES:
   - AFNetworkActivityLogger (~> 2.0)
@@ -100,7 +100,6 @@ DEPENDENCIES:
   - AirPhotoBrowser (from `~/code/AirPhotoBrowser`)
   - AWSS3
   - Branch
-  - BubbleTransition (~> 1.0)
   - CocoaLumberjack/Swift
   - Crashlytics
   - DateTools
@@ -125,6 +124,7 @@ DEPENDENCIES:
   - THContactPicker (~> 1.2)
   - TWMessageBarManager (~> 1.8)
   - UIDevice-Hardware
+  - ZOZolaZoomTransition (~> 1.0.0)
 
 EXTERNAL SOURCES:
   AirPhotoBrowser:
@@ -140,7 +140,6 @@ SPEC CHECKSUMS:
   AWSS3: 675f59e0c338e61441117f03018187b9deb359c4
   Bolts: f52a250053bb517ca874523c3913776359ab3def
   Branch: 8f76ea498816981768f318f74624250a41620f54
-  BubbleTransition: 76d5e306dbda0f622260ea7d082c971d976422ab
   CocoaLumberjack: 17fe8581f84914d5d7e6360f7c70022b173c3ae0
   Crashlytics: e4e8d02914f2608fbc7bf42b1a7af838b0db67a2
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
@@ -171,5 +170,6 @@ SPEC CHECKSUMS:
   THContactPicker: e723f7c6ab6e1d6d10d59d618322ab8bfcb00365
   TWMessageBarManager: 47f7279924329271aa38c4b3755d2f8a316ac723
   UIDevice-Hardware: de848ac4b53de555f70ff1a32877454d221c71d1
+  ZOZolaZoomTransition: 650b873204e4fe601334a99b49628d19c8e54cdd
 
 COCOAPODS: 0.39.0

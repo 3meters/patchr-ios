@@ -588,12 +588,12 @@ class ProfileEditViewController: BaseEditViewController {
 					*/
 					if let response: AnyObject = result.response as AnyObject? {
 						
-						UserController.instance.handleSuccessfulSignInResponse(response)
+						UserController.instance.handleSuccessfulLoginResponse(response)
 						
 						/* Navigate to main interface */
 						if self.inputRouteToMain {
 							/*
-							 * Replaces lobby navigation stack
+							 * Replaces any current navigation stack
 							 */
 							let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
 							let controller = MainTabBarController()
@@ -647,6 +647,8 @@ class ProfileEditViewController: BaseEditViewController {
 					
 					/* Return to the lobby even if there was an error since we signed out */
 					UserController.instance.discardCredentials()
+					Reporting.updateCrashUser(nil)
+					BranchProvider.logout()
 					UserController.instance.clearStore()
 					NSUserDefaults.standardUserDefaults().setObject(nil, forKey: PatchrUserDefaultKey("userEmail"))
 					NSUserDefaults.standardUserDefaults().synchronize()

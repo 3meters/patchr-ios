@@ -8,6 +8,7 @@
 
 import UIKit
 import AVFoundation
+import ZOZolaZoomTransition
 
 class PatchTableViewController: BaseTableViewController {
 
@@ -17,6 +18,7 @@ class PatchTableViewController: BaseTableViewController {
 	var firstNearPass		= true
 	var greetingDidPlay		= false
 	var locationDialogShot	= false
+	var selectedCell		: WrapperTableViewCell?
     
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -70,10 +72,7 @@ class PatchTableViewController: BaseTableViewController {
 		self.tableView.accessibilityIdentifier = Table.Patches
 		
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:", name: PAApplicationDidReceiveRemoteNotification, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "locationDenied", name: Events.LocationDenied, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "locationAllowed", name: Events.LocationAllowed, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidBecomeActive", name: Events.ApplicationDidBecomeActive, object: nil)
-		
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidBecomeActive:", name: Events.ApplicationDidBecomeActive, object: nil)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -98,7 +97,7 @@ class PatchTableViewController: BaseTableViewController {
 			registerForLocationNotifications()
 			
 			if CLLocationManager.authorizationStatus() == .Denied {
-				locationDenied()
+				locationDenied(nil)
 				if !self.locationDialogShot {
 					UIShared.enableLocationService()
 					self.locationDialogShot = true
@@ -120,10 +119,24 @@ class PatchTableViewController: BaseTableViewController {
 			* updated when user creates or deletes a patch.
 			*/
 			if getActivityDate() != self.query.activityDateValue {
-				self.fetchQueryItems(force: true, paging: false, queryDate: getActivityDate())
+				self.fetchQueryItems(force: true, paging: false, queryDate: getActivityDate())	// Starts location updates and busy UI
 			}
 			else {
 				LocationController.instance.startUpdates()
+			}
+			
+			/*
+			 * In case we never get a location. If we finally do get one after this
+			 * timeout then the UI will still update anyway.
+			 */
+			Utils.delay(10) {
+				if self.refreshControl == nil || self.refreshControl!.refreshing {
+					self.refreshControl?.endRefreshing()
+				}
+				/* Wacky activity control for body */
+				if self.activity.isAnimating() {
+					self.activity.stopAnimating()
+				}
 			}
 			
 			self.firstNearPass = false
@@ -159,19 +172,10 @@ class PatchTableViewController: BaseTableViewController {
         self.navigationController?.pushViewController(controller, animated: true)
     }
 
-	func handleRemoteNotification(notification: NSNotification) {
-		
-		if self.filter == .Nearby {
-			if let userInfo = notification.userInfo {
-				if let trigger = userInfo["trigger"] as? String where trigger == "nearby" {
-					if self.isViewLoaded() {
-						self.pullToRefreshAction(self.refreshControl)
-					}
-				}
-			}
-		}
-	}
-
+	/*--------------------------------------------------------------------------------------------
+	* Notifications
+	*--------------------------------------------------------------------------------------------*/
+	
 	override func didFetchQuery(notification: NSNotification) {
 		super.didFetchQuery(notification)
 		
@@ -184,10 +188,32 @@ class PatchTableViewController: BaseTableViewController {
 					}
 				}
 			}
-		}		
+		}
 	}
 	
-	func locationDenied() {
+	func didUpdateLocation(notification: NSNotification) {
+		
+		let loc = notification.userInfo!["location"] as! CLLocation
+		
+		/*  Update location associated with this install */
+		if UserController.instance.authenticated {
+			DataController.proxibase.updateProximity(loc){
+				response, error in
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					if let _ = ServerError(error) {
+						Log.w("Error during updateProximity")
+					}
+					else {
+						Log.d("Install proximity updated because of accepted location")
+					}
+				}
+			}
+		}
+		
+		refreshForLocation()
+	}
+	
+	func locationDenied(notification: NSNotification?) {
 		self.emptyLabel.text = "Location Services disabled"
 		if let fetchedObjects = self.fetchedResultsController.fetchedObjects as [AnyObject]? {
 			if fetchedObjects.count == 0 {
@@ -200,22 +226,36 @@ class PatchTableViewController: BaseTableViewController {
 		self.activity.stopAnimating()
 	}
 	
-	func locationAllowed() {
+	func locationAllowed(notification: NSNotification) {
 		self.emptyLabel.text = self.emptyMessage
 		LocationController.instance.startUpdates()
 	}
 	
-	func applicationDidBecomeActive() {
+	func applicationDidBecomeActive(notification: NSNotification) {
 		/* User either switched to patchr or turned their screen back on. */
 		if self.tabBarController?.selectedViewController == self.navigationController
 			&& self.navigationController?.topViewController == self
-			&& self.filter == .Nearby {
-				/* 
-				 * This view controller is currently visible. viewDidAppear does not
-				 * fire on its own when returning from Location settings so we do it.
-				 */
+			&& self.filter == .Nearby
+			&& !self.firstAppearance {
+				/*
+				* This view controller is currently visible. viewDidAppear does not
+				* fire on its own when returning from Location settings so we do it.
+				*/
 				Log.d("Nearby became active")
 				viewDidAppear(true)
+		}
+	}
+	
+	func handleRemoteNotification(notification: NSNotification) {
+		
+		if self.filter == .Nearby {
+			if let userInfo = notification.userInfo {
+				if let trigger = userInfo["trigger"] as? String where trigger == "nearby" {
+					if self.isViewLoaded() {
+						self.pullToRefreshAction(self.refreshControl)
+					}
+				}
+			}
 		}
 	}
 	
@@ -316,8 +356,7 @@ class PatchTableViewController: BaseTableViewController {
 						LocationController.instance.clearLastLocationAccepted()
 					}
 				}
-				LocationController.instance.stopUpdates()
-				LocationController.instance.startUpdates()
+				LocationController.instance.startUpdates(force: true)
 			}
 			
 			if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
@@ -345,47 +384,6 @@ class PatchTableViewController: BaseTableViewController {
 		}
 	}
 	
-    func didUpdateLocation(notification: NSNotification) {
-        
-        let loc = notification.userInfo!["location"] as! CLLocation
-        
-        let eventDate = loc.timestamp
-        let howRecent = abs(trunc(eventDate.timeIntervalSinceNow * 100) / 100)
-        let lat = trunc(loc.coordinate.latitude * 100) / 100
-        let lng = trunc(loc.coordinate.longitude * 100) / 100
-        
-        var message = "Location accepted ***: lat: \(lat), lng: \(lng), acc: \(loc.horizontalAccuracy)m, age: \(howRecent)s"
-        
-        if let locOld = notification.userInfo!["locationOld"] as? CLLocation {
-            let moved = Int(loc.distanceFromLocation(locOld))
-            message = "Location accepted ***: lat: \(lat), lng: \(lng), acc: \(loc.horizontalAccuracy)m, age: \(howRecent)s, moved: \(moved)m"
-        }
-        
-        if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("enableDevModeAction")) {
-            UIShared.Toast(message)
-            AudioController.instance.play(Sound.pop.rawValue)
-        }
-        
-        /*  Update location associated with this install */
-		if UserController.instance.authenticated {
-			DataController.proxibase.updateProximity(loc){
-				response, error in
-				NSOperationQueue.mainQueue().addOperationWithBlock {
-					if let _ = ServerError(error) {
-						Log.w("Error during updateProximity")
-					}
-					else {
-						Log.w("Install proximity updated")
-					}
-				}
-			}
-		}
-		
-        Log.d(message)
-        
-        refreshForLocation()
-    }
-    
     func refreshForLocation() {
         
         guard !self.processingQuery else {
@@ -455,13 +453,15 @@ class PatchTableViewController: BaseTableViewController {
     }
 	
     func registerForLocationNotifications() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didUpdateLocation:",
-            name: Events.LocationUpdate, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "locationDenied:", name: Events.LocationDenied, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "locationAllowed:", name: Events.LocationAllowed, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "didUpdateLocation:", name: Events.LocationUpdate, object: nil)
     }
 	
     func unregisterForLocationNotifications(){
-        NSNotificationCenter.defaultCenter().removeObserver(self,
-            name: Events.LocationUpdate, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.LocationDenied, object: nil)
+		NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.LocationAllowed, object: nil)
+		NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.LocationUpdate, object: nil)
     }
 }
 
@@ -487,20 +487,86 @@ extension PatchTableViewController {
 
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 		
+		/* Cell won't show highlighting when navigating back to table view */
+		if let cell = self.tableView.cellForRowAtIndexPath(indexPath) {
+			self.selectedCell = cell as? WrapperTableViewCell
+			cell.setHighlighted(false, animated: false)
+			cell.setSelected(false, animated: false)
+		}
+		
 		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
 			let patch = queryResult.object as? Patch {
 				let controller = PatchDetailViewController()
 				controller.entityId = patch.id_
-				controller.modalPresentationStyle = UIModalPresentationStyle.FullScreen
-				controller.modalTransitionStyle = UIModalTransitionStyle.CoverVertical
-				showViewController(controller, sender: self)
+//				controller.modalPresentationStyle = UIModalPresentationStyle.FullScreen
+//				controller.modalTransitionStyle = UIModalTransitionStyle.CoverVertical
+//				showViewController(controller, sender: self)
+				self.navigationController?.pushViewController(controller, animated: true)
 		}
+	}
+}
+
+extension PatchTableViewController: UINavigationControllerDelegate {
+	
+	func navigationController(navigationController: UINavigationController,
+		animationControllerForOperation operation: UINavigationControllerOperation,
+		fromViewController fromVC: UIViewController,
+		toViewController toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
 		
-        /* Cell won't show highlighting when navigating back to table view */
-        if let cell = self.tableView.cellForRowAtIndexPath(indexPath) {
-            cell.setHighlighted(false, animated: false)
-            cell.setSelected(false, animated: false)
-        }
+		let type: ZOTransitionType = (fromVC == self) ? .Presenting: .Dismissing
+		let patchView = self.selectedCell?.view! as! PatchView
+		let transition = ZOZolaZoomTransition(fromView: patchView.photo, type: type, duration: 0.5, delegate: self)
+		transition.fadeColor = Theme.colorBackgroundForm
+		return transition
+	}
+}
+
+extension PatchTableViewController: ZOZolaZoomTransitionDelegate {
+	
+	func zolaZoomTransition(zoomTransition: ZOZolaZoomTransition!,
+		startingFrameForView targetView: UIView!,
+		relativeToView relativeView: UIView!,
+		fromViewController: UIViewController!,
+		toViewController: UIViewController!) -> CGRect {
+		
+		if fromViewController == self {
+			/* We're pushing to the detail controller. The starting frame is taken from the selected cell's imageView. */
+			if let patchView = self.selectedCell?.view! as? PatchView {
+				let imageView = patchView.photo as UIImageView
+				return imageView.convertRect(imageView.bounds, toView: relativeView)
+			}
+		}
+		else if fromViewController is PatchDetailViewController {
+			/* We're popping back to this master controller. The starting frame is taken from the detailController's imageView. */
+			let controller: PatchDetailViewController = fromViewController as! PatchDetailViewController
+			let header = controller.header as! PatchDetailView
+			let imageView = header.photo as UIImageView
+			return imageView.convertRect(imageView.bounds, toView: relativeView)
+		}
+		return CGRectZero
+	}
+	
+	func zolaZoomTransition(zoomTransition: ZOZolaZoomTransition!,
+		finishingFrameForView targetView: UIView!,
+		relativeToView relativeView: UIView!,
+		fromViewController fromViewComtroller: UIViewController!,
+		toViewController: UIViewController!) -> CGRect {
+		
+		if fromViewComtroller == self {
+			/* We're pushing to the detail controller. The finishing frame is taken from the detailControllers imageView. */
+			let controller: PatchDetailViewController = toViewController as! PatchDetailViewController
+			let header = controller.header as! PatchDetailView
+			let imageView = header.photo as UIImageView
+			return imageView.convertRect(imageView.bounds, toView: relativeView)
+		}
+		else if fromViewComtroller is PatchDetailViewController {
+			/* We're popping back to this master controller. The finishing frame is taken from the selected cell's imageView. */
+			if let patchView = self.selectedCell?.view! as? PatchView {
+				let imageView = patchView.photo as UIImageView
+				return imageView.convertRect(imageView.bounds, toView: relativeView)
+			}
+		}
+		return CGRectZero
 	}
 }
 

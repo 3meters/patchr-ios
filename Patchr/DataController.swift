@@ -77,7 +77,8 @@ class DataController: NSObject {
     }
 
 	func reset() {
-		self.coreDataStack.reset()
+		let coreDataStack = self.coreDataStack
+		coreDataStack.reset()
 		self.coreDataStack = CoreDataStack()
 		self.mainContext = self.coreDataStack.stackMainContext
 	}
@@ -144,7 +145,7 @@ class DataController: NSObject {
 		let modelEntity = entityType.fetchOneById(entityId, inManagedObjectContext: mainContext) as ServiceBase!
 		
 		/* If not in data model or caller wants the freshest available then call service */
-		if strategy == .UseCacheAndVerify || strategy == .IgnoreCache || modelEntity == nil {
+		if strategy == .UseCacheAndVerify || strategy == .IgnoreCache || modelEntity == nil || self.objectHasBeenDeleted(modelEntity) {
 			
 			var criteria: [String: AnyObject] = [:]
 			var objectId: NSManagedObjectID?
@@ -175,8 +176,8 @@ class DataController: NSObject {
 				else {
 					let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
 					privateContext.parentContext = DataController.instance.mainContext
-					
 					privateContext.performBlock {
+						
 						stopwatch.segmentTime("\(entityType): network call finished")
 						
 						/* Turn maps and arrays into objects */

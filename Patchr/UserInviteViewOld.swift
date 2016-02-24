@@ -8,27 +8,27 @@
 
 import UIKit
 
-enum InviteResult: Int {
-	case Join
-	case Login
-	case Signup
-	case Finished
-}
+//enum InviteResult: Int {
+//	case Join
+//	case Login
+//	case Signup
+//	case Finished
+//}
+//
+//protocol InviteProtocol {
+//	func inviteResult(result: InviteResult)
+//}
 
-protocol InviteProtocol {
-	func inviteResult(result: InviteResult)
-}
-
-class UserInviteView: BaseDetailView {
+class UserInviteViewOld: BaseDetailView {
 	
 	var delegate			: InviteProtocol?
 
 	var message				= AirLabelDisplay()
-	var member				= AirLabelDisplay()
 	var photo				= UserPhotoView()
 	var joinButton			= AirLinkButton()
 	var loginButton			= AirLinkButton()
 	var signupButton		= AirLinkButton()
+	var userGroup			= UIView()
 	var buttonGroup			= UIView()
 	var patch				: Patch?
 	
@@ -50,23 +50,22 @@ class UserInviteView: BaseDetailView {
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		
-		let messageSize = self.message.sizeThatFits(CGSizeMake(self.width(), CGFloat.max))
+		let columnLeft = CGFloat(48 + 8)
+		let columnWidth = self.width() - columnLeft
+		let messageSize = self.message.sizeThatFits(CGSizeMake(columnWidth, CGFloat.max))
 		
-		self.photo.anchorTopCenterWithTopPadding(0, width: 64, height: 64)
-		self.message.alignUnder(self.photo, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 8, height: messageSize.height)
+		self.photo.anchorTopLeftWithLeftPadding(8, topPadding: 8, width: 48, height: 48)
+		self.message.alignToTheRightOf(self.photo, matchingTopAndFillingWidthWithLeftAndRightPadding: 8, height: messageSize.height)
+		self.userGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 96)
 		
-		if !self.member.hidden {
-			self.buttonGroup.alignUnder(self.message, matchingLeftAndRightWithTopPadding: 8, height: 32)
-			self.member.fillSuperview()
-		}
-		else if !self.joinButton.hidden {
-			self.buttonGroup.alignUnder(self.message, matchingLeftAndRightWithTopPadding: 8, height: 32)
-			self.joinButton.anchorInCenterWithWidth(192, height: 32)
+		if !self.joinButton.hidden {
+			self.buttonGroup.alignUnder(self.userGroup, matchingLeftAndRightWithTopPadding: 8, height: 44)
+			self.joinButton.anchorInCenterWithWidth(192, height: 44)
 		}
 		else if !self.loginButton.hidden && !self.signupButton.hidden {
-			self.buttonGroup.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 200, height: 32)
-			self.loginButton.anchorCenterLeftWithLeftPadding(0, width: 96, height: 32)
-			self.signupButton.alignToTheRightOf(self.loginButton, matchingCenterWithLeftPadding: 8, width: 96, height: 32)
+			self.buttonGroup.alignUnder(self.userGroup, matchingCenterWithTopPadding: 8, width: 200, height: 44)
+			self.loginButton.anchorCenterLeftWithLeftPadding(0, width: 96, height: 44)
+			self.signupButton.alignToTheRightOf(self.loginButton, matchingCenterWithLeftPadding: 8, width: 96, height: 44)
 		}
 	}
 	
@@ -104,16 +103,9 @@ class UserInviteView: BaseDetailView {
 		
 		/* message */
 		self.message.numberOfLines = 3
-		self.message.lineBreakMode = .ByTruncatingTail
-		self.message.textAlignment = .Center
 		
-		self.addSubview(self.photo)
-		self.addSubview(self.message)
-		
-		self.member.text = "You are a member of this patch!"
-		self.member.textColor = Colors.accentColorDarker
-		self.member.textAlignment = .Center
-		self.member.numberOfLines = 1
+		self.userGroup.addSubview(self.photo)
+		self.userGroup.addSubview(self.message)
 		
 		self.joinButton.setTitle("JOIN", forState: .Normal)
 		self.loginButton.setTitle("LOG IN", forState: .Normal)
@@ -125,8 +117,8 @@ class UserInviteView: BaseDetailView {
 		self.buttonGroup.addSubview(self.joinButton)
 		self.buttonGroup.addSubview(self.loginButton)
 		self.buttonGroup.addSubview(self.signupButton)
-		self.buttonGroup.addSubview(self.member)
 		
+		self.addSubview(self.userGroup)
 		self.addSubview(buttonGroup)
 	}
 	

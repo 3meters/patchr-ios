@@ -16,7 +16,8 @@ class BaseDetailViewController: BaseTableViewController {
     var queryName			: String!
     var patchNameVisible	: Bool = true
 	var header				: UIView!
-    
+	var invalidated			= false
+	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
@@ -24,6 +25,7 @@ class BaseDetailViewController: BaseTableViewController {
     override func viewDidLoad() {
 		self.listType = .Messages
         super.viewDidLoad()
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "userDidLogin:", name: Events.UserDidLogin, object: nil)
     }
 	
 	override func viewWillLayoutSubviews() {
@@ -68,19 +70,24 @@ class BaseDetailViewController: BaseTableViewController {
 	}
 	
 	/*--------------------------------------------------------------------------------------------
-	* Events
+	* Notifications
 	*--------------------------------------------------------------------------------------------*/
+	
+	func userDidLogin(sender: NSNotification) {
+		/* Can be called from a background thread */
+		self.invalidated = true
+	}
 	
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
 	
-	func fetch(reset reset: Bool = false) {
+	func fetch(strategy strategy: FetchStrategy, resetList: Bool = false) {
         
         /* Refreshes the top object but not the message list */
 		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
 			
-			DataController.instance.withEntityId(self.entityId!, strategy: .UseCacheAndVerify) {
+			DataController.instance.withEntityId(self.entityId!, strategy: strategy) {
 				[weak self] objectId, error in
 				
 				if self != nil {
@@ -98,7 +105,7 @@ class BaseDetailViewController: BaseTableViewController {
 								self?.entityId = entity.id_
 								
 								if let patch = entity as? Patch {
-									self?.disableCells = (patch.visibility == "private" && patch.userWatchStatusValue != .Member)
+									self?.disableCells = (patch.visibility == "private" && !patch.userIsMember())
 								}
 								
 								/*
@@ -107,8 +114,8 @@ class BaseDetailViewController: BaseTableViewController {
 								 * hasn't changed because that is the only way to pickup link based message 
 								 * state changes such as likes.
 								 */
-								if self?.getActivityDate() != self?.query.activityDateValue || reset {
-									self?.fetchQueryItems(force: true, paging: !reset, queryDate: self?.getActivityDate())	// Only place we cascade the refresh to the list otherwise a pullToRefresh is required
+								if resetList || self?.getActivityDate() != self?.query.activityDateValue {
+									self?.fetchQueryItems(force: true, paging: !resetList, queryDate: self?.getActivityDate())	// Only place we cascade the refresh to the list otherwise a pullToRefresh is required
 								}
 								else {
 									if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
@@ -158,7 +165,7 @@ class BaseDetailViewController: BaseTableViewController {
     func drawButtons() { /* Optional */ }
     
     override func pullToRefreshAction(sender: AnyObject?) -> Void {
-		fetch(reset: true)
+		fetch(strategy: .UseCacheAndVerify, resetList: true)
     }
 
 	override func getActivityDate() -> Int64 {

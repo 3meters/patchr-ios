@@ -91,7 +91,6 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "Pods-Patchr/AirPhotoBrowser.framework"
   install_framework "Pods-Patchr/Bolts.framework"
   install_framework "Pods-Patchr/Branch.framework"
-  install_framework "Pods-Patchr/BubbleTransition.framework"
   install_framework "Pods-Patchr/CocoaLumberjack.framework"
   install_framework "Pods-Patchr/DACircularProgress.framework"
   install_framework "Pods-Patchr/DLRadioButton.framework"
@@ -109,6 +108,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "Pods-Patchr/THContactPicker.framework"
   install_framework "Pods-Patchr/TWMessageBarManager.framework"
   install_framework "Pods-Patchr/UIDevice_Hardware.framework"
+  install_framework "Pods-Patchr/ZOZolaZoomTransition.framework"
   install_framework "Pods-Patchr/iRate.framework"
   install_framework "Pods-Patchr/pop.framework"
 fi
@@ -120,7 +120,6 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "Pods-Patchr/AirPhotoBrowser.framework"
   install_framework "Pods-Patchr/Bolts.framework"
   install_framework "Pods-Patchr/Branch.framework"
-  install_framework "Pods-Patchr/BubbleTransition.framework"
   install_framework "Pods-Patchr/CocoaLumberjack.framework"
   install_framework "Pods-Patchr/DACircularProgress.framework"
   install_framework "Pods-Patchr/DLRadioButton.framework"
@@ -138,6 +137,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "Pods-Patchr/THContactPicker.framework"
   install_framework "Pods-Patchr/TWMessageBarManager.framework"
   install_framework "Pods-Patchr/UIDevice_Hardware.framework"
+  install_framework "Pods-Patchr/ZOZolaZoomTransition.framework"
   install_framework "Pods-Patchr/iRate.framework"
   install_framework "Pods-Patchr/pop.framework"
 fi
@@ -149,7 +149,6 @@ if [[ "$CONFIGURATION" == "AdHoc" ]]; then
   install_framework "Pods-Patchr/AirPhotoBrowser.framework"
   install_framework "Pods-Patchr/Bolts.framework"
   install_framework "Pods-Patchr/Branch.framework"
-  install_framework "Pods-Patchr/BubbleTransition.framework"
   install_framework "Pods-Patchr/CocoaLumberjack.framework"
   install_framework "Pods-Patchr/DACircularProgress.framework"
   install_framework "Pods-Patchr/DLRadioButton.framework"
@@ -167,6 +166,7 @@ if [[ "$CONFIGURATION" == "AdHoc" ]]; then
   install_framework "Pods-Patchr/THContactPicker.framework"
   install_framework "Pods-Patchr/TWMessageBarManager.framework"
   install_framework "Pods-Patchr/UIDevice_Hardware.framework"
+  install_framework "Pods-Patchr/ZOZolaZoomTransition.framework"
   install_framework "Pods-Patchr/iRate.framework"
   install_framework "Pods-Patchr/pop.framework"
 fi

@@ -40,6 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		iRate.sharedInstance().onlyPromptIfLatestVersion = true
 		iRate.sharedInstance().useUIAlertControllerIfAvailable = true
 		iRate.sharedInstance().promptAtLaunch = false
+		iRate.sharedInstance().verboseLogging = false
 	}
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
@@ -377,6 +378,8 @@ extension AppDelegate {
 		 */
 		if UserController.instance.authenticated {			
 			UserController.instance.discardCredentials()
+			Reporting.updateCrashUser(nil)
+			BranchProvider.logout()
 		}
 		
 		NSUserDefaults.standardUserDefaults().setObject(nil, forKey: PatchrUserDefaultKey("userEmail"))

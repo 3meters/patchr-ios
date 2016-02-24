@@ -379,7 +379,7 @@ public class Proxibase {
 		sessionManager.POST("auth/signin", parameters: parameters,
 			success: {
 				dataTask, response in
-				UserController.instance.handleSuccessfulSignInResponse(response)
+				UserController.instance.handleSuccessfulLoginResponse(response)
 				completion(response: response, error: nil)
 			},
 			failure: {

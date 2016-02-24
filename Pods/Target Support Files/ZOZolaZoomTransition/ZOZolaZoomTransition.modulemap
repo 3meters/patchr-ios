@@ -1,0 +1,6 @@
+framework module ZOZolaZoomTransition {
+  umbrella header "ZOZolaZoomTransition-umbrella.h"
+
+  export *
+  module * { export * }
+}

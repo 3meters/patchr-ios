@@ -287,9 +287,8 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 
 	func fetchQueryItems(force force: Bool, paging: Bool, queryDate: Int64?) {
         
-        guard !self.processingQuery else {
-            return
-        }
+        guard !self.processingQuery else { return }
+		guard !self.query.deleted else { return }
         
 		self.processingQuery = true
 		

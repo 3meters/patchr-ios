@@ -103,7 +103,7 @@ class Snow {
 	
 	let colorLogVerbose			= Colors.gray50pcntColor
 	let colorLogDebug			= Colors.accentColorDarker
-	let colorLogInfo			= Colors.black
+	let colorLogInfo			= UIColor.purpleColor()
 	let colorLogWarning			= UIColor.orangeColor()
 	let colorLogError			= UIColor.redColor()
 	

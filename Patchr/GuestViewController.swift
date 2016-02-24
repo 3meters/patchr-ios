@@ -50,6 +50,7 @@ class GuestViewController: BaseViewController {
 		let navController = UINavigationController()
 		navController.viewControllers = [controller]
 		controller.onboardMode = OnboardMode.Login
+		controller.inputRouteToMain = false
 
 		self.dismissViewControllerAnimated(true) {
 			UIViewController.topMostViewController()!.presentViewController(navController, animated: true) {}
@@ -61,6 +62,7 @@ class GuestViewController: BaseViewController {
 		let navController = UINavigationController()
 		navController.viewControllers = [controller]
 		controller.onboardMode = OnboardMode.Signup
+		controller.inputRouteToMain = false
 		
 		self.dismissViewControllerAnimated(true) {
 			UIViewController.topMostViewController()!.presentViewController(navController, animated: true) {}
