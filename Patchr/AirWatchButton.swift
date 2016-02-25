@@ -46,7 +46,7 @@ class AirWatchButton: AirToggleButton {
         }
         
         if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to watch patches and more!")
+			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to join patches and more!")
             return
         }
         

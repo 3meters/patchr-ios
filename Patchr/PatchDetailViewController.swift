@@ -8,12 +8,12 @@
 
 import UIKit
 import Branch
+import MessageUI
 import iRate
 
 class PatchDetailViewController: BaseDetailViewController, InviteProtocol {
 
     private var contextAction			: ContextAction = .SharePatch
-    private var shareButtonFunctionMap	= [Int: ShareButtonFunction]()
 	private var originalRect			: CGRect?
     private var originalScrollTop		= CGFloat(-64.0)
 	
@@ -64,7 +64,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteProtocol {
 			let header = self.header as! PatchDetailView
 			header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
 			Utils.delay(1.0) {
-				UIShared.Toast("You are now watching this patch", controller: self, addToWindow: false)
+				UIShared.Toast("You are now a member of this patch", controller: self, addToWindow: false)
 			}
 		}
 		else {
@@ -164,16 +164,90 @@ class PatchDetailViewController: BaseDetailViewController, InviteProtocol {
 		}
 		
         if self.entity != nil {
-            let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: nil, destructiveButtonTitle: nil)
-            shareButtonFunctionMap[sheet.addButtonWithTitle("Invite using Patchr")] = .Share
-			shareButtonFunctionMap[sheet.addButtonWithTitle("Invite using Facebook")] = .ShareFacebook
-            shareButtonFunctionMap[sheet.addButtonWithTitle("More")] = .ShareVia
-            sheet.addButtonWithTitle("Cancel")
-            sheet.cancelButtonIndex = sheet.numberOfButtons - 1
-            
-            sheet.showInView(self.view)
+			
+			let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
+			
+			let patchr = UIAlertAction(title: "Invite using Patchr", style: .Default) { action in
+				self.shareUsing(.Patchr)
+			}
+			let facebook = UIAlertAction(title: "Invite using Facebook", style: .Default) { action in
+				self.shareUsing(.Facebook)
+			}
+			let android = UIAlertAction(title: "More...", style: .Default) { action in
+				self.shareUsing(.Actions)
+			}
+			let cancel = UIAlertAction(title: "Cancel", style: .Cancel) { action in
+				sheet.dismissViewControllerAnimated(true, completion: nil)
+			}
+			
+			sheet.addAction(patchr)
+			sheet.addAction(facebook)
+			sheet.addAction(android)
+			sheet.addAction(cancel)
+			
+			presentViewController(sheet, animated: true, completion: nil)
         }
     }
+	
+	func reportAction(sender: AnyObject?) {
+		
+		let email = "report@3meters.com"
+		let subject = "Report on Patchr content"
+		let body = "Report on patch id: \(self.entityId!)\n\nPlease add some detail on why you are reporting this patch.\n"
+		
+		if MFMailComposeViewController.canSendMail() {
+			MailComposer!.view.accessibilityIdentifier = View.Report
+			MailComposer!.mailComposeDelegate = self
+			MailComposer!.setToRecipients([email])
+			MailComposer!.setSubject(subject)
+			MailComposer!.setMessageBody(body, isHTML: false)
+			
+			self.presentViewController(MailComposer!, animated: true, completion: nil)
+		}
+		else {
+			let queryURL = "subject=\(subject)&body=\(body)"
+			let emailURL = "mailto:\(email)?\(queryURL.stringByAddingPercentEncodingWithAllowedCharacters(NSMutableCharacterSet.URLQueryAllowedCharacterSet()) ?? queryURL)"
+			if let url = NSURL(string: emailURL) {
+				UIApplication.sharedApplication().openURL(url)
+			}
+		}
+	}
+
+	func moreAction(sender: AnyObject?) {
+		
+		if !UserController.instance.authenticated {
+			return
+		}
+		
+		if self.entity != nil {
+			
+			let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
+			
+			if let patch = self.entity as? Patch {
+				if patch.userWatchStatusValue == .Member {
+					let leave = UIAlertAction(title: "Leave patch", style: .Destructive) { action in
+						let header = self.header as! PatchDetailView
+						header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+						Utils.delay(1.0) {
+							UIShared.Toast("You have left this patch", controller: self, addToWindow: false)
+						}
+					}
+					sheet.addAction(leave)
+				}
+			}
+
+			let report = UIAlertAction(title: "Report patch", style: .Default) { action in
+				self.reportAction(self)
+			}
+			let cancel = UIAlertAction(title: "Cancel", style: .Cancel) { action in
+				sheet.dismissViewControllerAnimated(true, completion: nil)
+			}
+			sheet.addAction(report)
+			sheet.addAction(cancel)
+			
+			presentViewController(sheet, animated: true, completion: nil)
+		}
+	}
 	
 	func loginAction(sender: AnyObject?) {
 		let controller = LoginViewController()
@@ -206,7 +280,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteProtocol {
 	}
 	
 	func didInsertMessage(sender: NSNotification) {
-		if let entity = self.entity as? Patch where !entity.userHasMessagedValue {
+		if let entity = self.entity as? Patch where (!entity.userHasMessagedValue && entity.visibility == "public") {
 			self.autoWatchOnAppear = true
 		}
 	}
@@ -252,6 +326,8 @@ class PatchDetailViewController: BaseDetailViewController, InviteProtocol {
 		
 		header.mapButton.addTarget(self, action: Selector("mapAction:"), forControlEvents: .TouchUpInside)
 		header.watchersButton.addTarget(self, action: Selector("watchersAction:"), forControlEvents: UIControlEvents.TouchUpInside)
+		header.moreButton.addTarget(self, action: Selector("moreAction:"), forControlEvents: .TouchUpInside)
+		header.infoMoreButton.addTarget(self, action: Selector("moreAction:"), forControlEvents: .TouchUpInside)
 		
 		if let contextButton = header.contextView as? AirFeaturedButton {
 			contextButton.addTarget(self, action: Selector("contextButtonAction:"), forControlEvents: .TouchUpInside)
@@ -312,7 +388,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteProtocol {
 		let addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: Selector("addAction"))
 		let editButton = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
 		
-		if isOwner() {
+		if isUserOwner() {
 			self.navigationItem.setRightBarButtonItems([addButton, Utils.spacer, shareButton, Utils.spacer, editButton], animated: true)
 		}
 		else {
@@ -372,7 +448,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteProtocol {
 			}
 			
 			if let button = header.contextView as? UIButton {
-				if isOwner() {
+				if isUserOwner() {
 					if patch.countPendingValue > 0 {
 						if patch.countPendingValue == 1 {
 							button.setTitle("One member request".uppercaseString, forState: .Normal)
@@ -381,6 +457,10 @@ class PatchDetailViewController: BaseDetailViewController, InviteProtocol {
 							button.setTitle("\(patch.countPendingValue) member requests".uppercaseString, forState: .Normal)
 						}
 						self.contextAction = .BrowseUsersWatching
+					}
+					else if patch.userWatchStatusValue == .NonMember {
+						button.setTitle("Join".uppercaseString, forState: .Normal)
+						self.contextAction = .SubmitJoinRequest
 					}
 					else {
 						button.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
@@ -394,7 +474,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteProtocol {
 							self.contextAction = .SharePatch
 						}
 						else {
-							button.setTitle("Request to join".uppercaseString, forState: .Normal)
+							button.setTitle("Join".uppercaseString, forState: .Normal)
 							self.contextAction = .SubmitJoinRequest
 						}
 					}
@@ -411,7 +491,7 @@ class PatchDetailViewController: BaseDetailViewController, InviteProtocol {
 								}
 							}
 							else {
-								button.setTitle("Join this patch".uppercaseString, forState: .Normal)
+								button.setTitle("Join".uppercaseString, forState: .Normal)
 								self.contextAction = .JoinPatch
 							}
 						}
@@ -427,11 +507,11 @@ class PatchDetailViewController: BaseDetailViewController, InviteProtocol {
 								}
 							}
 							else if patch.userWatchStatusValue == .Pending {
-								button.setTitle("Cancel join request".uppercaseString, forState: .Normal)
+								button.setTitle("Requested".uppercaseString, forState: .Normal)
 								self.contextAction = .CancelJoinRequest
 							}
 							else if patch.userWatchStatusValue == .NonMember {
-								button.setTitle("Request to join".uppercaseString, forState: .Normal)
+								button.setTitle("Join".uppercaseString, forState: .Normal)
 								self.contextAction = .SubmitJoinRequest
 							}
 							
@@ -498,7 +578,11 @@ class PatchDetailViewController: BaseDetailViewController, InviteProtocol {
 		}
     }
 
-    func isOwner() -> Bool {
+	/*--------------------------------------------------------------------------------------------
+	* Properties
+	*--------------------------------------------------------------------------------------------*/
+	
+    func isUserOwner() -> Bool {
         if let currentUser = UserController.instance.currentUser, let entity = self.entity {
             return currentUser.id_ == entity.creator?.entityId
         }
@@ -601,27 +685,28 @@ extension PatchDetailViewController {
 	}
 }
 
-extension PatchDetailViewController: UIActionSheetDelegate {
-    
-    func actionSheet(actionSheet: UIActionSheet, clickedButtonAtIndex buttonIndex: Int) {
-        if buttonIndex != actionSheet.cancelButtonIndex {
-            // There are some strange visual artifacts with the share sheet and the presented
-            // view controllers. Adding a small delay seems to prevent them.
-            Utils.delay(0.4) {
-				
-                switch self.shareButtonFunctionMap[buttonIndex]! {
-                case .Share:
-                    self.shareUsing(.Patchr)
-                    
-				case .ShareFacebook:
-					self.shareUsing(.Facebook)
-					
-                case .ShareVia:
-                    self.shareUsing(.Actions)
-                }
-            }
-        }
-    }
+extension PatchDetailViewController: MFMailComposeViewControllerDelegate {
+	
+	func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
+		
+		switch result.rawValue {
+		case MFMailComposeResultCancelled.rawValue:	// 0
+			UIShared.Toast("Report cancelled", controller: self, addToWindow: false)
+		case MFMailComposeResultSaved.rawValue:		// 1
+			UIShared.Toast("Report saved", controller: self, addToWindow: false)
+		case MFMailComposeResultSent.rawValue:		// 2
+			UIShared.Toast("Report sent", controller: self, addToWindow: false)
+		case MFMailComposeResultFailed.rawValue:	// 3
+			UIShared.Toast("Report send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
+		default:
+			break
+		}
+		
+		self.dismissViewControllerAnimated(true) {
+			MailComposer = nil
+			MailComposer = MFMailComposeViewController()
+		}
+	}
 }
 
 let UIActivityTypeGmail = "com.google.Gmail.ShareExtension"
@@ -673,6 +758,11 @@ private enum ShareButtonFunction {
     case Share
 	case ShareFacebook
     case ShareVia
+}
+
+private enum ActionButtonFunction {
+	case Leave
+	case Report
 }
 
 enum ShareRoute {

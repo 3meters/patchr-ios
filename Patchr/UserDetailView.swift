@@ -119,7 +119,7 @@ class UserDetailView: BaseDetailView {
 
 			if user.patchesWatching != nil {
 				let count = user.patchesWatchingValue == 0 ? "--" : String(user.patchesWatchingValue)
-				self.watchingButton.setTitle("Watching: \(count)", forState: .Normal)
+				self.watchingButton.setTitle("Member: \(count)", forState: .Normal)
 			}
 			if user.patchesOwned != nil {
 				let count = user.patchesOwnedValue == 0 ? "--" : String(user.patchesOwnedValue)

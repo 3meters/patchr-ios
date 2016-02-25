@@ -99,7 +99,7 @@ class PatchView: BaseView {
 		self.watchingGroup.addSubview(self.watchingCount)
 		
 		/* Watching label */
-		self.watchingLabel.text = "WATCHING"
+		self.watchingLabel.text = "MEMBERS"
 		self.watchingLabel.textAlignment = .Center
 		self.watchingLabel.font = Theme.fontCommentExtraSmall
 		self.watchingLabel.textColor = Theme.colorTextSecondary

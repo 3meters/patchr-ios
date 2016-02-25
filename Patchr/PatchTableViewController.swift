@@ -44,7 +44,7 @@ class PatchTableViewController: BaseTableViewController {
             case .Explore:
                 self.emptyMessage = "Discover popular patches here"
             case .Watching:
-                self.emptyMessage = "Watch patches and browse them here"
+                self.emptyMessage = "Join patches and browse them here"
             case .Owns:
                 self.emptyMessage = "Make patches and browse them here"
         }
@@ -59,10 +59,10 @@ class PatchTableViewController: BaseTableViewController {
 				self.navigationItem.title = "Explore"
 				self.view.accessibilityIdentifier = View.PatchesExplore
 			case .Watching:
-				self.navigationItem.title = "Patches watching"
+				self.navigationItem.title = "Member of"
 				self.view.accessibilityIdentifier = View.PatchesWatching
 			case .Owns:
-				self.navigationItem.title = "Patches owned"
+				self.navigationItem.title = "Owner of"
 				self.view.accessibilityIdentifier = View.PatchesOwn
 		}
 		
@@ -84,7 +84,7 @@ class PatchTableViewController: BaseTableViewController {
             case .Explore:
                 setScreenName("ExploreList")
             case .Watching:
-                setScreenName("WatchingList")
+                setScreenName("JoinedList")
             case .Owns:
                 setScreenName("OwnsList")
         }
@@ -99,7 +99,7 @@ class PatchTableViewController: BaseTableViewController {
 			if CLLocationManager.authorizationStatus() == .Denied {
 				locationDenied(nil)
 				if !self.locationDialogShot {
-					UIShared.enableLocationService()
+					UIShared.askToEnableLocationService()
 					self.locationDialogShot = true
 				}
 				return
@@ -113,7 +113,6 @@ class PatchTableViewController: BaseTableViewController {
 				LocationController.instance.requestAuthorizationIfNeeded()
 				self.locationDialogShot = true
 			}
-			
 			/*
 			* Always true on first load because date is initialized to now and only
 			* updated when user creates or deletes a patch.
@@ -122,11 +121,10 @@ class PatchTableViewController: BaseTableViewController {
 				self.fetchQueryItems(force: true, paging: false, queryDate: getActivityDate())	// Starts location updates and busy UI
 			}
 			else {
-				LocationController.instance.startUpdates()
+				LocationController.instance.startUpdates(force: false)
 			}
-			
 			/*
-			 * In case we never get a location. If we finally do get one after this
+			 * Cleanup fallback in case we never get a location. If we finally do get one after this
 			 * timeout then the UI will still update anyway.
 			 */
 			Utils.delay(10) {
@@ -228,7 +226,7 @@ class PatchTableViewController: BaseTableViewController {
 	
 	func locationAllowed(notification: NSNotification) {
 		self.emptyLabel.text = self.emptyMessage
-		LocationController.instance.startUpdates()
+		LocationController.instance.startUpdates(force: true)
 	}
 	
 	func applicationDidBecomeActive(notification: NSNotification) {
@@ -347,16 +345,10 @@ class PatchTableViewController: BaseTableViewController {
 			}
 			
 			if force {
-				if LocationController.instance.lastLocationAccepted() != nil {
-					if self.firstNearPass {
-						LocationController.instance.resendLast()
-					}
-					else {
-						Log.i("Clearing last location accepted")
-						LocationController.instance.clearLastLocationAccepted()
-					}
+				/* We want a fresh location fix */
+				if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+					LocationController.instance.startUpdates(force: true)
 				}
-				LocationController.instance.startUpdates(force: true)
 			}
 			
 			if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {

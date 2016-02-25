@@ -36,6 +36,7 @@ class LocationController: NSObject {
     }
 	
 	func initialize() {
+		Log.d("***** Location controller initialized *****")
 		locationManager = CLLocationManager()
 		locationManager.pausesLocationUpdatesAutomatically = true       // Location manager will pause to save battery when location is unlikely to change
 		locationManager.desiredAccuracy = Double(ACCURACY_PREFERRED)
@@ -71,18 +72,38 @@ class LocationController: NSObject {
 		}
 	}
     
-	func startUpdates(force force: Bool = false){
+	func startUpdates(force force: Bool){
 		
+		/* Exit if not force and updates are already active */
 		guard force || !self.updatesActive else { return }
 		
 		if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
 			if self.locationManager != nil {
-				Log.d("***** Location updates started *****")
-				if force {
-					self.locationManager.stopUpdatingLocation()	// Ensures that we will get at least one location update.
+				
+				if self.locationManager.delegate == nil {
+					Log.w("Location manager delegate is nil")
 				}
+				
+				Log.d("***** Location updates \((force && self.updatesActive) ? "restarted" : "started")")
+				
+				if force {
+					self.locationManager.stopUpdatingLocation()	// Supposed to ensure that we will get at least one location update.
+					self.clearLastLocationAccepted()
+				}
+				
 				self.locationManager.startUpdatingLocation()
 				self.updatesActive = true
+				
+				/* Last ditch effort to deliver a location */
+				Utils.delay(5.0) {
+					if self.updatesActive && self._lastLocationAccepted == nil {
+						if let last = self.locationManager.location {
+							/* Force in a location because sometimes we seem to be stuck. */
+							Log.d("Manual push of last location")
+							self.locationManager(self.locationManager, didUpdateLocations: [last])
+						}
+					}
+				}
 			}
 		}
     }
@@ -104,7 +125,6 @@ class LocationController: NSObject {
 		if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
 			if self.locationManager != nil {
 				self.locationManager.startMonitoringSignificantLocationChanges()
-				Log.d("***** Location significant change updates started *****")
 			}
         }
     }
@@ -112,7 +132,6 @@ class LocationController: NSObject {
     func stopSignificantChangeUpdates(){
 		if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
 			if self.locationManager != nil {
-				Log.d("***** Location significant change updates stopped *****")
 				self.locationManager.stopMonitoringSignificantLocationChanges()
 			}
 		}
@@ -157,16 +176,15 @@ class LocationController: NSObject {
                 UIApplication.sharedApplication().endBackgroundTask(self.bgTask!)
             }
             
-            let eventDate = loc.timestamp
-            let howRecent = abs(trunc(eventDate.timeIntervalSinceNow * 100) / 100)
+            let age = abs(trunc(loc.timestamp.timeIntervalSinceNow * 100) / 100)
             let lat = trunc(loc.coordinate.latitude * 100) / 100
             let lng = trunc(loc.coordinate.longitude * 100) / 100
             
-            var message = "Background location accepted ***: lat: \(lat), lng: \(lng), acc: \(loc.horizontalAccuracy)m, age: \(howRecent)s"
+            var message = "Background location accepted ***: lat: \(lat), lng: \(lng), acc: \(loc.horizontalAccuracy)m, age: \(age)s"
             
             if let locOld = locations["locationOld"] {
                 let moved = Int(loc.distanceFromLocation(locOld))
-                message = "Background location accepted ***: lat: \(lat), lng: \(lng), acc: \(loc.horizontalAccuracy)m, age: \(howRecent)s, moved: \(moved)m"
+                message = "Background location accepted ***: lat: \(lat), lng: \(lng), acc: \(loc.horizontalAccuracy)m, age: \(age)s, moved: \(moved)m"
             }
             
             if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("enableDevModeAction")) {
@@ -211,11 +229,13 @@ extension LocationController: CLLocationManagerDelegate {
 		if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
 			Log.d("Location service authorized")
 			NSNotificationCenter.defaultCenter().postNotificationName(Events.LocationAllowed, object: nil, userInfo: nil)
-			startUpdates()
 		}
         else if status == CLAuthorizationStatus.Denied {
 			Log.d("Location service denied")
 			NSNotificationCenter.defaultCenter().postNotificationName(Events.LocationDenied, object: nil, userInfo: nil)
+		}
+		else if status == CLAuthorizationStatus.NotDetermined {
+			Log.d("Location service not determined")
 		}
 	}
 	
@@ -235,8 +255,7 @@ extension LocationController: CLLocationManagerDelegate {
 	}
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        Log.d("Location update received by location delegate")
-        
+		
         if let location = locations.last {
             
             let isInBackground = (UIApplication.sharedApplication().applicationState == UIApplicationState.Background)
@@ -271,6 +290,9 @@ extension LocationController: CLLocationManagerDelegate {
                         Log.d("Location update ignored: distance moved only: \(moved)m")
                         return
                     }
+					else {
+						Log.d("Location upgraded: distance moved only: \(moved)m but at least double the accuracy")
+					}
                 }
             }
             

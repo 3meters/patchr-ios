@@ -254,7 +254,8 @@ class DataController: NSObject {
             completion(queryItems: [], query: query, error: nil)
             return
         }
-
+		
+		/* Should not be nil if this is for nearby patches */
         let coordinate = LocationController.instance.lastLocationAccepted()?.coordinate
 
         var entity: ServiceBase!

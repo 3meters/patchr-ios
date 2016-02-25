@@ -24,7 +24,6 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
     typealias CompletionHandler = (success:Bool) -> Void
     
     private weak var hostViewController: UIViewController?
-	private var photoButtonFunctionMap = [Int: PhotoButtonFunction]()
 	private var finishedChoosing: ((UIImage?, ImageResult?, Bool) -> Void)? = nil
     private var library: ALAssetsLibrary?
     private var chosenPhotoFunction: PhotoButtonFunction?
@@ -42,26 +41,38 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 	func choosePhoto(finishedChoosing: (UIImage?, ImageResult?, Bool) -> Void) {
 
 		self.finishedChoosing = finishedChoosing
-
-		let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: nil, destructiveButtonTitle: nil)
-
 		let cameraAvailable       = UIImagePickerController.isSourceTypeAvailable(.Camera)
 		let photoLibraryAvailable = UIImagePickerController.isSourceTypeAvailable(.PhotoLibrary)
-		let photoSearchAvailable  = true
-
-		if photoSearchAvailable {
-			photoButtonFunctionMap[sheet.addButtonWithTitle("Search for photos")] = .SearchPhoto
+		
+		let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
+		
+		let search = UIAlertAction(title: "Search for photos", style: .Default) { action in
+			self.searchForPhoto()
 		}
-        if photoLibraryAvailable {
-            photoButtonFunctionMap[sheet.addButtonWithTitle("Select a library photo")] = .ChooseLibraryPhoto
-        }
+		sheet.addAction(search)
+		
+		if photoLibraryAvailable {
+			let library = UIAlertAction(title: "Select a library photo", style: .Default) { action in
+				self.choosePhotoFromLibrary()
+			}
+			sheet.addAction(library)
+		}
+		
 		if cameraAvailable {
-			photoButtonFunctionMap[sheet.addButtonWithTitle("Take a new photo")] = .TakePhoto
+			let camera = UIAlertAction(title: "Take a new photo", style: .Default) { action in
+				self.takePhotoWithCamera()
+			}
+			sheet.addAction(camera)
 		}
-        
-        sheet.addButtonWithTitle("Cancel")
-        sheet.cancelButtonIndex = sheet.numberOfButtons - 1
-		sheet.showInView((hostViewController?.view)!)
+		
+		let cancel = UIAlertAction(title: "Cancel", style: .Cancel) { action in
+			sheet.dismissViewControllerAnimated(true, completion: nil)
+			self.finishedChoosing!(nil, nil, true)
+		}
+		
+		sheet.addAction(cancel)
+		
+		hostViewController?.presentViewController(sheet, animated: true, completion: nil)
 	}
 
 	private func choosePhotoFromLibrary() {
@@ -195,30 +206,5 @@ extension PhotoChooserUI: UIImagePickerControllerDelegate {
 
 	func imagePickerControllerDidCancel(picker: UIImagePickerController) {
 		hostViewController?.dismissViewControllerAnimated(true, completion: nil)
-	}
-}
-
-extension PhotoChooserUI: UIActionSheetDelegate {
-    
-	func actionSheet(actionSheet: UIActionSheet, clickedButtonAtIndex buttonIndex: Int) {
-		if buttonIndex != actionSheet.cancelButtonIndex {
-			// There are some strange visual artifacts with the share sheet and the presented
-			// view controllers. Adding a small delay seems to prevent them.
-            Utils.delay(0.4) {
-				switch self.photoButtonFunctionMap[buttonIndex]! {
-					case .TakePhoto:
-						self.takePhotoWithCamera()
-
-					case .ChooseLibraryPhoto:
-						self.choosePhotoFromLibrary()
-
-					case .SearchPhoto:
-						self.searchForPhoto()
-				}
-			}
-		}
-		else {
-			self.finishedChoosing!(nil, nil, true)
-		}
 	}
 }

@@ -592,14 +592,7 @@ class ProfileEditViewController: BaseEditViewController {
 						
 						/* Navigate to main interface */
 						if self.inputRouteToMain {
-							/*
-							 * Replaces any current navigation stack
-							 */
-							let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-							let controller = MainTabBarController()
-							controller.selectedIndex = 0
-							appDelegate.window!.setRootViewController(controller, animated: true)
-							UIShared.Toast("Logged in as \(UserController.instance.userName!)", controller: controller)							
+							self.navigateToMain() // Replaces any current navigation stack
 						}
 						else {
 							if self.isModal {
@@ -608,6 +601,9 @@ class ProfileEditViewController: BaseEditViewController {
 							else {
 								self.navigationController?.popViewControllerAnimated(true)
 							}
+//							if UserController.instance.userName != nil {
+//								UIShared.Toast("Logged in as \(UserController.instance.userName!)")
+//							}
 						}
 						return
 					}
@@ -644,6 +640,9 @@ class ProfileEditViewController: BaseEditViewController {
 					if let error = ServerError(error) {
 						self.handleError(error)
 					}
+					else {
+						Log.i("User deleted: \(userName)")
+					}
 					
 					/* Return to the lobby even if there was an error since we signed out */
 					UserController.instance.discardCredentials()
@@ -677,6 +676,17 @@ class ProfileEditViewController: BaseEditViewController {
         return parameters
     }
 
+	func navigateToMain() {
+		let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+		let controller = MainTabBarController()
+		controller.selectedIndex = 0
+		appDelegate.window!.setRootViewController(controller, animated: true)
+		
+		if UserController.instance.userName != nil {
+			UIShared.Toast("Logged in as \(UserController.instance.userName!)", controller: controller, addToWindow: false)
+		}
+	}
+	
     func isDirty() -> Bool {
 		
 		if self.inputState == .Onboarding {

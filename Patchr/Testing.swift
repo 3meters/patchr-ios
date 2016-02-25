@@ -145,7 +145,7 @@ struct Tab {
 
 struct Segment {
     static let Nearby               = "Nearby"
-    static let Watching             = "Watching"
+    static let Watching             = "Groups"
     static let Own                  = "Own"
     static let Explore              = "Explore"
 }

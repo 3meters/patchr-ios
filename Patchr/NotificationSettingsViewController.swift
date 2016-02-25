@@ -56,7 +56,7 @@ class NotificationSettingsViewController: UITableViewController {
 		self.tableView.sectionFooterHeight = 0
 		
 		self.patchesNearbyCell.textLabel?.text = "Created Nearby"
-		self.patchesWatchingCell.textLabel?.text = "To Patches I\'m Watching"
+		self.patchesWatchingCell.textLabel?.text = "To Patches I\'m a Member Of"
 		self.sharingMessagesCell.textLabel?.text = "Sharing a Patch or Message"
 		self.likeMessagesCell.textLabel?.text = "Like My Messages"
 		self.soundEffectsCell.textLabel?.text = "Notifications"

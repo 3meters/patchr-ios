@@ -31,7 +31,7 @@ class UserTableViewController: BaseTableViewController {
 
 		switch self.filter {
 			case .PatchWatchers:
-				self.navigationItem.title = "Watched by"
+				self.navigationItem.title = "Members"
                 if watchListForOwner() {
 					self.showOwnerUI = true
                 }
@@ -222,7 +222,7 @@ extension UserTableViewController: UserApprovalViewDelegate {
 		
 		self.DeleteConfirmationAlert(
 			"Confirm Remove",
-			message: "Do you want to remove the request to watch your patch?",
+			message: "Do you want to remove the request to join your patch?",
 			actionTitle: "Remove", cancelTitle: "Cancel", delegate: self) {
 				doIt in
 				if doIt {

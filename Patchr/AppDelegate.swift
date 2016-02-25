@@ -33,6 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	
 	override class func initialize() -> Void {
 		
+		iRate.sharedInstance().verboseLogging = false
 		iRate.sharedInstance().daysUntilPrompt = 7
 		iRate.sharedInstance().usesUntilPrompt = 10
 		iRate.sharedInstance().remindPeriod = 1
@@ -40,7 +41,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		iRate.sharedInstance().onlyPromptIfLatestVersion = true
 		iRate.sharedInstance().useUIAlertControllerIfAvailable = true
 		iRate.sharedInstance().promptAtLaunch = false
-		iRate.sharedInstance().verboseLogging = false
 	}
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
@@ -80,6 +80,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
         /* Turn on network activity indicator */
         AFNetworkActivityIndicatorManager.sharedManager().enabled = true
+		/* 
+		 * Init location controller. If this is done in the init of the nearby patch list 
+		 * controller, we don't get properly hooked up when onboarding a new user. I could not
+		 * figure out exactly what causes the problem. Init does not require or trigger the
+		 * location permission request.
+		 */
+		LocationController.instance
 		
         /* Default config for AWS */
         // let credProvider = AWSCognitoCredentialsProvider(regionType: CognitoRegionType, identityPoolId: COGNITO_POOLID)

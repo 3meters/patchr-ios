@@ -24,9 +24,8 @@ class PatchNavigationController: UINavigationController {
 		
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "userDidLogin:", name: Events.UserDidLogin, object: nil)
 		
-		let watchLabel = SCREEN_NARROW ? "Watch" : "Watching"
 		let segItems = UserController.instance.authenticated
-			? ["Nearby", watchLabel, "Own", "Explore"]
+			? ["Nearby", "Member", "Own", "Explore"]
 			: ["Nearby", "Explore"]
 			
         self.segmentsController = SegmentsController(navigationController: self, viewControllers: segmentViewControllers())
@@ -68,10 +67,8 @@ class PatchNavigationController: UINavigationController {
 		/* Can be called from a background thread */
 		NSOperationQueue.mainQueue().addOperationWithBlock {
 			
-			let watchLabel = SCREEN_NARROW ? "Watch" : "Watching"
-			
 			self.segmentedControl.insertSegmentWithTitle("Own", atIndex: 1, animated: true)
-			self.segmentedControl.insertSegmentWithTitle(watchLabel, atIndex: 1, animated: true)
+			self.segmentedControl.insertSegmentWithTitle("Member", atIndex: 1, animated: true)
 			
 			let owns = PatchTableViewController()
 			let watching = PatchTableViewController()

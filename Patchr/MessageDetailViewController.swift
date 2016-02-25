@@ -17,8 +17,6 @@ class MessageDetailViewController: BaseViewController {
 	
     var deleted			= false
 
-    private var shareButtonFunctionMap = [Int: ShareButtonFunction]()
-	
 	private var isShare: Bool {
 		return (self.inputMessage?.type != nil && self.inputMessage!.type == "share")
 	}
@@ -339,14 +337,24 @@ class MessageDetailViewController: BaseViewController {
 		}
 		
         if self.inputMessage != nil {
-            let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: nil, destructiveButtonTitle: nil)
-            
-            shareButtonFunctionMap[sheet.addButtonWithTitle("Share using Patchr")] = .Share
-            shareButtonFunctionMap[sheet.addButtonWithTitle("More")] = .ShareVia
-            sheet.addButtonWithTitle("Cancel")
-            sheet.cancelButtonIndex = sheet.numberOfButtons - 1
-            
-            sheet.showInView(self.view)
+			
+			let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
+			
+			let patchr = UIAlertAction(title: "Share using Patchr", style: .Default) { action in
+				self.shareUsing(.Patchr)
+			}
+			let android = UIAlertAction(title: "More...", style: .Default) { action in
+				self.shareUsing(.Actions)
+			}
+			let cancel = UIAlertAction(title: "Cancel", style: .Cancel) { action in
+				sheet.dismissViewControllerAnimated(true, completion: nil)
+			}
+			
+			sheet.addAction(patchr)
+			sheet.addAction(android)
+			sheet.addAction(cancel)
+			
+			presentViewController(sheet, animated: true, completion: nil)
         }
 	}
     
@@ -755,26 +763,6 @@ class MessageDetailViewController: BaseViewController {
 					}
 				}
 			}
-        }
-    }
-}
-
-extension MessageDetailViewController: UIActionSheetDelegate {
-    
-    func actionSheet(actionSheet: UIActionSheet, clickedButtonAtIndex buttonIndex: Int) {
-        if buttonIndex != actionSheet.cancelButtonIndex {
-            // There are some strange visual artifacts with the share sheet and the presented
-            // view controllers. Adding a small delay seems to prevent them.
-            Utils.delay(0.4) {
-				
-                switch self.shareButtonFunctionMap[buttonIndex]! {
-                case .Share:
-                    self.shareUsing(.Patchr)
-                    
-                case .ShareVia:
-                    self.shareUsing(.Actions)
-                }
-            }
         }
     }
 }
