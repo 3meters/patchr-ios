@@ -43,20 +43,20 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
+
         /* Hookup refresh control */
 		self.refreshControl = UIRefreshControl()
 		self.refreshControl?.accessibilityIdentifier = "refresh_control"
 		self.refreshControl!.tintColor = Theme.colorActivityIndicator
 		self.refreshControl?.addTarget(self, action: "pullToRefreshAction:", forControlEvents: UIControlEvents.ValueChanged)
 		self.refreshControl?.endRefreshing()
-		
+
 		/* Simple activity indicator (frame sizing) */
 		self.activity.accessibilityIdentifier = "activity_view"
 		self.activity.color = Theme.colorActivityIndicator
 		self.activity.hidesWhenStopped = true
 		self.view.addSubview(activity)
-		
+
 		/* Footer */
 		self.loadMoreButton.tag = 1
 		self.loadMoreButton.backgroundColor = Theme.colorBackgroundTile
@@ -64,16 +64,16 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.loadMoreButton.addTarget(self, action: Selector("loadMore:"), forControlEvents: UIControlEvents.TouchUpInside)
 		self.loadMoreButton.setTitle(self.loadMoreMessage, forState: .Normal)
 		self.footerView.addSubview(self.loadMoreButton)
-		
+
 		self.loadMoreActivity.tag = 2
 		self.loadMoreActivity.accessibilityIdentifier = "activity_more"
 		self.loadMoreActivity.color = Theme.colorActivityIndicator
 		self.loadMoreActivity.hidden = true
-		
+
 		self.footerView.frame.size.height = CGFloat(48 + 16)
 		self.footerView.addSubview(self.loadMoreActivity)
 		self.footerView.backgroundColor = Theme.colorBackgroundTileList
-		
+
         /* Empty label */
         if self.showEmptyLabel {
             self.emptyLabel.alpha = 0
@@ -87,31 +87,31 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 			self.emptyLabel.insets = UIEdgeInsetsMake(16, 16, 16, 16)
 			self.emptyLabel.textAlignment = NSTextAlignment.Center
 			self.emptyLabel.textColor = Theme.colorTextPlaceholder
-			
+
             self.tableView.addSubview(self.emptyLabel)
         }
-		
+
 		/*
-		* Setting the estimated row height prevents the table view from calling 
+		* Setting the estimated row height prevents the table view from calling
 		* tableView:heightForRowAtIndexPath: for every row in the table on
-		* first load; it will only be called as cells are about to scroll onscreen. 
+		* first load; it will only be called as cells are about to scroll onscreen.
 		* This is a major performance optimization.
 		*/
 		self.tableView.estimatedRowHeight = 136
-		
+
 		/* Self sizing table view cells require this setting */
 		self.tableView.rowHeight = 136
-		
+
         /* A bit of UI tweaking */
 		self.tableView.accessibilityIdentifier = "table"
         self.tableView.backgroundColor = Theme.colorBackgroundTable
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
         self.tableView.separatorInset = UIEdgeInsetsZero
         self.clearsSelectionOnViewWillAppear = false;
-		
+
 		/* Hookup query */
 		self.query = loadQuery()
-		
+
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "willFetchQuery:", name: Events.WillFetchQuery, object: self)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didFetchQuery:", name: Events.DidFetchQuery, object: self)
 	}
@@ -155,6 +155,8 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         super.viewDidAppear(animated)
 		
 		if self.query.executedValue {
+			
+			/* Configure paging button in footer */
 			if self.query.moreValue {
 				if self.tableView.tableFooterView == nil {
 					self.tableView.tableFooterView = self.footerView
@@ -169,6 +171,8 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 			else {
 				self.tableView.tableFooterView = nil
 			}
+			
+			/* Ensure that the tableview layout is current */
 			self.tableView.setNeedsLayout()
 		}
 		else {
@@ -272,7 +276,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
     /*--------------------------------------------------------------------------------------------
     * MARK:- Methods
     *--------------------------------------------------------------------------------------------*/
-	
+
 	func loadMore(sender: AnyObject?) {
 		
 		if let button = self.footerView.viewWithTag(1) as? UIButton,
@@ -373,6 +377,10 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 
 	func loadQuery() -> Query {
 		preconditionFailure("This method must be overridden in subclass")
+	}
+	
+	func clearQueryItems() {
+		self.query.queryItemsSet().removeAllObjects()
 	}
 	
 	func getActivityDate() -> Int64 {

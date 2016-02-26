@@ -36,6 +36,13 @@ class PatchDetailViewController: BaseDetailViewController, InviteProtocol {
 		initialize()
 	}
 	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		if self.showEmptyLabel {
+			self.emptyLabel.layer.borderWidth = 0
+		}
+	}
+	
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		

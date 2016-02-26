@@ -347,7 +347,7 @@ class PatchEditViewController: BaseEditViewController {
 		else {
 			
 			/* Use location managers last location fix */
-			if let lastLocation = LocationController.instance.lastLocationFromManager() {
+			if let lastLocation = LocationController.instance.mostRecentAvailableLocation() {
 				updateLocation(lastLocation)
 			}
 			

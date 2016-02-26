@@ -469,7 +469,7 @@ class DataController: NSObject {
                 }
 
 				var itemPosition = 0 + query.offsetValue
-				let location = LocationController.instance.lastLocationFromManager()
+				let location = LocationController.instance.mostRecentAvailableLocation()
 
 				for entityDictionary in entityDictionaries {
 
@@ -496,7 +496,7 @@ class DataController: NSObject {
                         var queryItem: QueryItem!
                         for item in entity.queryItems {
                             let existingQueryItem = item as! QueryItem
-                            if existingQueryItem.query == query {
+                            if existingQueryItem.query != nil && existingQueryItem.query == query {
                                 queryItem = existingQueryItem
                             }
                         }

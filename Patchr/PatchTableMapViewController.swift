@@ -88,7 +88,7 @@ class PatchTableMapViewController: UIViewController {
     func loadAnnotations() -> Void {
 		
         self.mapView.removeAnnotations(self.mapView!.annotations)
-		self.location = LocationController.instance.lastLocationFromManager()
+		self.location = LocationController.instance.mostRecentAvailableLocation()
 		
         if let fetchedObjects = self.fetchedResultsController.fetchedObjects {
             var nearestDistance: Float = 1000000

@@ -26,7 +26,7 @@ class UserInviteView: BaseDetailView {
 	var message				= AirLabelDisplay()
 	var member				= AirLabelDisplay()
 	var photo				= UserPhotoView()
-	var joinButton			= AirLinkButton()
+	var joinButton			= AirFeaturedButton()
 	var loginButton			= AirLinkButton()
 	var signupButton		= AirLinkButton()
 	var buttonGroup			= UIView()

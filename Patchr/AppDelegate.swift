@@ -47,6 +47,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         Log.d("Patchr launching...")
 		
+		/* Initialize Crashlytics: 25% of method time */
+		Fabric.with([Crashlytics()])
+
+		/* Instance the data controller */
+		DataController.instance
+
+		let keys = PatchrKeys()
+		
+		self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
+		
+        #if DEBUG
+			AFNetworkActivityLogger.sharedLogger().startLogging()
+			AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelFatal
+        #endif
+		/*
+		* Init location controller. If this is done in the init of the nearby patch list
+		* controller, we don't get properly hooked up when onboarding a new user. I could not
+		* figure out exactly what causes the problem. Init does not require or trigger the
+		* location permission request.
+		*/
+		LocationController.instance
+		/*
+		* We might have been launched because of a location change. We have
+		* about ten seconds to call updateProximity with the new location.
+		*/
+		if launchOptions?[UIApplicationLaunchOptionsLocationKey] != nil {
+			if let locationManager = LocationController.instance.locationManager {
+				if let last = LocationController.instance.mostRecentAvailableLocation() {
+					LocationController.instance.locationManager(locationManager, didUpdateLocations: [last])
+				}
+			}
+			return true
+		}
+		
 		/* Logging */
 		DDLog.addLogger(DDTTYLogger.sharedInstance()) // TTY = Xcode console
 		DDLog.addLogger(DDASLLogger.sharedInstance()) // ASL = Apple System Logs
@@ -63,30 +97,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		fileLogger.logFileManager.maximumNumberOfLogFiles = 7
 		DDLog.addLogger(fileLogger)
 		
-		/* Initialize Crashlytics: 25% of method time */
-		Fabric.with([Crashlytics()])
-
-		/* Instance the data controller */
-		DataController.instance
-
-		let keys = PatchrKeys()
-		
-		self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
-		
-        #if DEBUG
-			AFNetworkActivityLogger.sharedLogger().startLogging()
-			AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelFatal
-        #endif
-		
         /* Turn on network activity indicator */
         AFNetworkActivityIndicatorManager.sharedManager().enabled = true
-		/* 
-		 * Init location controller. If this is done in the init of the nearby patch list 
-		 * controller, we don't get properly hooked up when onboarding a new user. I could not
-		 * figure out exactly what causes the problem. Init does not require or trigger the
-		 * location permission request.
-		 */
-		LocationController.instance
 		
         /* Default config for AWS */
         // let credProvider = AWSCognitoCredentialsProvider(regionType: CognitoRegionType, identityPoolId: COGNITO_POOLID)
@@ -138,9 +150,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
 		/* We call even if install record exists and using this as a chance to update the metadata */
 		UserController.instance.registerInstall()
-		
-		/* Instance the location manager */
-		//LocationController.instance
 		
         /* Instance the reachability manager */
         ReachabilityManager.instance

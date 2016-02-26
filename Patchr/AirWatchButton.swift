@@ -133,6 +133,11 @@ class AirWatchButton: AirToggleButton {
 					NSNotificationCenter.defaultCenter().postNotificationName(Events.WatchDidChange, object: self)
 					self.toggleOn(patch!.userWatchStatusValue == .Member, pending: patch!.userWatchStatusValue == .Pending)
 					self.enabled = true
+					
+					let application = UIApplication.sharedApplication()
+					if !application.isRegisteredForRemoteNotifications() {
+						NotificationController.instance.guardedRegisterForRemoteNotifications(nil)
+					}
 				}
             }
         }

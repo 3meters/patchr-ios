@@ -26,7 +26,7 @@ class UserDetailViewController: BaseDetailViewController {
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
 	 *--------------------------------------------------------------------------------------------*/
-	
+
 	override func loadView() {
 		/*
 		* Inputs are already available.
@@ -34,7 +34,7 @@ class UserDetailViewController: BaseDetailViewController {
 		super.loadView()
 		initialize()
 	}
-	
+
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
@@ -108,7 +108,7 @@ class UserDetailViewController: BaseDetailViewController {
 		self.view.accessibilityIdentifier = View.UserDetail
 
 		self.queryName = DataStoreQueryName.MessagesByUser.rawValue
-		
+
 		self.header = UserDetailView()
 		self.tableView = AirTableView(frame: self.tableView.frame, style: .Plain)
 		self.tableView.estimatedRowHeight = 0	// Zero turns off estimates
@@ -123,6 +123,7 @@ class UserDetailViewController: BaseDetailViewController {
 		if self.profileMode {
 			self.showEmptyLabel = true
 			self.emptyMessage = "Browse your posted messages here"
+			self.emptyLabel.text = self.emptyMessage
 		}
 		
 		self.showProgress = true

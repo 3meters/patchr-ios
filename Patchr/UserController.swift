@@ -94,7 +94,10 @@ class UserController: NSObject {
 		
 		/* We enable remote notifications after we have had a login */
 		#if os(iOS) && !arch(i386) && !arch(x86_64)
-			NotificationController.instance.registerForRemoteNotifications()
+			let application = UIApplication.sharedApplication()
+			if application.isRegisteredForRemoteNotifications() {
+				NotificationController.instance.registerForRemoteNotifications()
+			}
 		#endif
 		
 		writeCredentialsToUserDefaults()
@@ -158,7 +161,10 @@ class UserController: NSObject {
 			
 			/* We handle remote notifications */
 			#if os(iOS) && !arch(i386) && !arch(x86_64)
-				NotificationController.instance.registerForRemoteNotifications()
+				let application = UIApplication.sharedApplication()
+				if application.isRegisteredForRemoteNotifications() {
+					NotificationController.instance.registerForRemoteNotifications()
+				}
 			#endif
 			
 			Log.i("User auto logged in: \(self.userName!) (\(self.userId!))")

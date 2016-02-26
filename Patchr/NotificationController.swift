@@ -138,11 +138,34 @@ class NotificationController {
     func didFailToRegisterForRemoteNotificationsWithError(application: UIApplication, error: NSError) {
         Log.w("failed to register for remote notifications: \(error)")
     }
-    
+	
+	func guardedRegisterForRemoteNotifications(message: String?) {
+		
+		let message = message ?? "Would you like to alerted when messages are posted to this patch?"
+		
+		if let controller = UIViewController.topMostViewController() {
+			
+			let alert = UIAlertController(title: "Joining Patch", message: message, preferredStyle: UIAlertControllerStyle.Alert)
+			let submit = UIAlertAction(title: "Notify me", style: .Default) { action in
+				self.registerForRemoteNotifications()
+			}
+			let cancel = UIAlertAction(title: "No thanks", style: .Cancel) { action in
+				Log.d("Remote notifications declined")
+				alert.dismissViewControllerAnimated(true, completion: nil)
+			}
+			
+			alert.addAction(cancel)
+			alert.addAction(submit)
+			
+			controller.presentViewController(alert, animated: true, completion: nil)
+		}
+	}
+	
     func registerForRemoteNotifications() {
+		/* Only called from UserController or self */
         let application = UIApplication.sharedApplication()
 		let settings: UIUserNotificationSettings = UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil)
-		application.registerUserNotificationSettings(settings)
+		application.registerUserNotificationSettings(settings)	// Triggers notification permission UI to the user
 		application.registerForRemoteNotifications()
 		Log.d("Registered for remote notifications")
     }

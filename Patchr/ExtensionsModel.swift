@@ -31,7 +31,7 @@ extension Entity {
     
     func distanceFrom(var fromLocation: CLLocation?) -> Float? {
         if fromLocation == nil {
-            fromLocation = LocationController.instance.lastLocationFromManager()
+            fromLocation = LocationController.instance.mostRecentAvailableLocation()
         }
         if let location = self.location where fromLocation != nil {
             let entityLocation = location.cllocation
