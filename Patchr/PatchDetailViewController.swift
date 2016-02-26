@@ -299,8 +299,10 @@ class PatchDetailViewController: BaseDetailViewController {
 	}
 	
 	func didInsertMessage(sender: NSNotification) {
-		if let entity = self.entity as? Patch where (!entity.userHasMessagedValue && entity.visibility == "public") {
-			self.autoWatchOnAppear = true
+		if let patch = self.entity as? Patch {
+			if patch.visibility != nil && !patch.userHasMessagedValue && patch.visibility == "public" {
+				self.autoWatchOnAppear = true
+			}
 		}
 	}
 	

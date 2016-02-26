@@ -660,6 +660,12 @@ class MessageDetailViewController: BaseViewController {
 			self.activity.startAnimating()
 		}
 		
+		/* Message could have been deleted downstream */		
+		if self.inputMessage?.id_ == nil && self.inputMessageId == nil {
+			self.navigationController?.popViewControllerAnimated(true)
+			return
+		}
+		
 		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
 			/*
 			 * A linked message that comes with a share message is only partially
@@ -671,6 +677,7 @@ class MessageDetailViewController: BaseViewController {
 				&& self.inputMessage!.type == "share"
 				&& (self.inputMessage!.message == nil && self.inputMessage!.patch == nil)
 				&& !self.inputMessage!.decoratedValue) ? .IgnoreCache : .UseCacheAndVerify
+			
 			
 			let messageId = (self.inputMessage?.id_ ?? self.inputMessageId!)!
 			

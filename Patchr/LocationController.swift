@@ -49,7 +49,7 @@ class LocationController: NSObject {
     func mostRecentAvailableLocation() -> CLLocation?  {
 		if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse
 			|| CLLocationManager.authorizationStatus() == .AuthorizedAlways {
-			return self._lastLocationAccepted ?? self.locationManager.location ?? lastLocationFromSettings()
+			return self._lastLocationAccepted ?? self.locationManager.location ?? lastLocationFromSettings() ?? nil
 		}
 		return nil
     }
@@ -136,7 +136,11 @@ class LocationController: NSObject {
 				Utils.delay(5.0) {
 					if self.updatesActive && self._lastLocationAccepted == nil {
 						if let last = self.mostRecentAvailableLocation() {
-							/* Force in a location because sometimes we seem to be stuck. */
+							/* 
+							 * Force in a location as a last resort. It will be updated when
+							 * and if we get something better. Also can get here because device just
+							 * doesn't have location support like the simulators.
+							 */
 							Log.d("Hail mary manual push of most recent available location")
 							self.locationManager(self.locationManager, didUpdateLocations: [last])
 						}
@@ -205,15 +209,17 @@ class LocationController: NSObject {
         return info
     }
 	
-	private func lastLocationFromSettings() -> CLLocation {
+	private func lastLocationFromSettings() -> CLLocation? {
 		let userDefaults = NSUserDefaults.standardUserDefaults()
-		let lat = userDefaults.doubleForKey(PatchrUserDefaultKey("last_loc_lat"))
-		let lng = userDefaults.doubleForKey(PatchrUserDefaultKey("last_loc_lng"))
-		let acc = userDefaults.doubleForKey(PatchrUserDefaultKey("last_loc_acc"))
-		let timestamp = userDefaults.objectForKey(PatchrUserDefaultKey("last_loc_timestamp")) as! NSDate
-		let coordinate = CLLocationCoordinate2DMake(lat, lng)
-		let location = CLLocation(coordinate: coordinate, altitude: 0, horizontalAccuracy: acc, verticalAccuracy: 0, timestamp: timestamp)
-		return location
+		if let timestamp = userDefaults.objectForKey(PatchrUserDefaultKey("last_loc_timestamp")) as? NSDate {
+			let lat = userDefaults.doubleForKey(PatchrUserDefaultKey("last_loc_lat"))
+			let lng = userDefaults.doubleForKey(PatchrUserDefaultKey("last_loc_lng"))
+			let acc = userDefaults.doubleForKey(PatchrUserDefaultKey("last_loc_acc"))
+			let coordinate = CLLocationCoordinate2DMake(lat, lng)
+			let location = CLLocation(coordinate: coordinate, altitude: 0, horizontalAccuracy: acc, verticalAccuracy: 0, timestamp: timestamp ?? NSDate())
+			return location
+		}
+		return nil
 	}
 	
     private func sendBackgroundLocation(locations: [String:CLLocation]) {
@@ -299,7 +305,7 @@ extension LocationController: CLLocationManagerDelegate {
 	}
 	
 	func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
-		if error.code == CLError.LocationUnknown.rawValue {
+		if error.code == CLError.LocationUnknown.rawValue {	// This fires on simulator without a location mocked
 			Log.w("Location currently unknown")
 		}
 		else if error.code == CLError.Denied.rawValue  {

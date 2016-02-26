@@ -56,18 +56,19 @@ class LobbyViewController: BaseViewController {
 		
 		if self.firstLaunch {
 			
-			let spring = POPSpringAnimation(propertyNamed: kPOPViewFrame)
-			spring.toValue = NSValue(CGRect: self.imageLogo.frame.offsetBy(dx: 0, dy: -156))
-			spring.springBounciness = 10
-			spring.springSpeed = 8
-			self.imageLogo.pop_addAnimation(spring, forKey: "moveUp")
+			Utils.delay(0.5){
+				let spring = POPSpringAnimation(propertyNamed: kPOPViewFrame)
+				spring.toValue = NSValue(CGRect: self.imageLogo.frame.offsetBy(dx: 0, dy: -156))
+				spring.springBounciness = 10
+				spring.springSpeed = 8
+				self.imageLogo.pop_addAnimation(spring, forKey: "moveUp")
+				
+				self.appName.fadeIn(0.5)
+				self.buttonGroup.fadeIn(1.0)
+				self.buttonGuest.fadeIn(1.5)
+			}
 			
-			self.appName.hidden = false
-			self.buttonGroup.hidden = false
-			self.buttonGuest.hidden = false
-			self.appName.fadeIn(5.0)
-			self.buttonGroup.fadeIn(5.0)
-			self.buttonGuest.fadeIn(5.0)
+			Animation.bounce(self.imageLogo)
 			
 			self.firstLaunch = false
 		}
@@ -173,9 +174,9 @@ class LobbyViewController: BaseViewController {
 		self.buttonGuest.addTarget(self, action: Selector("guestAction:"), forControlEvents: .TouchUpInside)
 		
 		if self.firstLaunch {
-			self.appName.hidden = true
-			self.buttonGroup.hidden = true
-			self.buttonGuest.hidden = true
+			self.appName.alpha = 0.0
+			self.buttonGroup.alpha = 0.0
+			self.buttonGuest.alpha = 0.0
 		}
 	}
 	
