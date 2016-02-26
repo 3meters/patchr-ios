@@ -556,7 +556,7 @@ class DataController: NSObject {
             return dataWrapper
         }
         return nil
-    }    
+    }
 }
 
 enum FetchStrategy: Int {

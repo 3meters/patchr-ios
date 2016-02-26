@@ -11,7 +11,7 @@ import Branch
 import MessageUI
 import iRate
 
-class PatchDetailViewController: BaseDetailViewController, InviteProtocol {
+class PatchDetailViewController: BaseDetailViewController {
 
     private var contextAction			: ContextAction = .SharePatch
 	private var originalRect			: CGRect?
@@ -256,6 +256,18 @@ class PatchDetailViewController: BaseDetailViewController, InviteProtocol {
 		}
 	}
 	
+	func joinAction(sender: AnyObject?) {
+		let header = self.header as! PatchDetailView
+		header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside) // Should trigger fetch via watch notification
+		AudioController.instance.play(Sound.pop.rawValue)
+	}
+	
+	func cancelRequestAction(sender: AnyObject?) {
+		let header = self.header as! PatchDetailView
+		header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside) // Should trigger fetch via watch notification
+		AudioController.instance.play(Sound.pop.rawValue)
+	}
+	
 	func loginAction(sender: AnyObject?) {
 		let controller = LoginViewController()
 		let navController = UINavigationController()
@@ -313,6 +325,12 @@ class PatchDetailViewController: BaseDetailViewController, InviteProtocol {
 		fetch(strategy: .IgnoreCache, resetList: true)
 	}
 	
+	func applicationDidEnterBackground() {
+		if self.inputReferrerName != nil {
+			self.dismissViewControllerAnimated(true, completion: nil)
+		}
+	}
+
 	/*--------------------------------------------------------------------------------------------
 	 * Methods
 	 *--------------------------------------------------------------------------------------------*/
@@ -345,7 +363,8 @@ class PatchDetailViewController: BaseDetailViewController, InviteProtocol {
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didFetch:", name: Events.DidFetch, object: self)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "watchDidChange:", name: Events.WatchDidChange, object: header.watchButton)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didInsertMessage:", name: Events.DidInsertMessage, object: nil)
-		
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground", name: Events.ApplicationDidEnterBackground, object: nil)
+
 		/* UI prep */
 		self.patchNameVisible = false
 		if self.inputReferrerName != nil {
@@ -417,10 +436,10 @@ class PatchDetailViewController: BaseDetailViewController, InviteProtocol {
 					let url = self.inputReferrerPhotoUrl != nil ? NSURL(string: self.inputReferrerPhotoUrl!) : nil
 					let inviteView = UserInviteView()
 					inviteView.bind("\(self.inputReferrerName!) has invited you to join this patch.", photoUrl: url, name: self.inputReferrerName)
-					inviteView.delegate = self
 					self.inviteView = inviteView
 					header.contextView = inviteView
 					header.contextGroup.addSubview(header.contextView)
+					
 				}
 
 				self.inviteView!.joinButton.hidden = true
@@ -431,13 +450,24 @@ class PatchDetailViewController: BaseDetailViewController, InviteProtocol {
 				if patch.userIsMember() {
 					self.inviteView?.member.hidden = false
 				}
+				else if patch.userWatchStatusValue == .Pending {
+					self.inviteView!.joinButton.hidden = false
+					self.inviteView!.joinButton.setTitle("Requested".uppercaseString, forState: .Normal)
+					self.inviteView!.joinButton.removeTarget(nil, action: nil, forControlEvents: .TouchUpInside)
+					self.inviteView!.joinButton.addTarget(self, action: Selector("cancelRequestAction:"), forControlEvents: .TouchUpInside)
+				}
 				else {
 					if UserController.instance.authenticated {
 						self.inviteView!.joinButton.hidden = false
+						self.inviteView!.joinButton.setTitle("Join".uppercaseString, forState: .Normal)
+						self.inviteView!.joinButton.removeTarget(nil, action: nil, forControlEvents: .TouchUpInside)
+						self.inviteView!.joinButton.addTarget(self, action: Selector("joinAction:"), forControlEvents: .TouchUpInside)
 					}
 					else {
 						self.inviteView!.loginButton.hidden = false
 						self.inviteView!.signupButton.hidden = false
+						self.inviteView!.loginButton.addTarget(self, action: Selector("loginAction:"), forControlEvents: .TouchUpInside)
+						self.inviteView!.signupButton.addTarget(self, action: Selector("signupAction:"), forControlEvents: .TouchUpInside)
 					}
 				}
 
@@ -595,21 +625,6 @@ class PatchDetailViewController: BaseDetailViewController, InviteProtocol {
         }
         return false
     }
-	
-	func inviteResult(result: InviteResult) {
-		if result == .Login {
-			self.loginAction(nil)
-		}
-		else if result == .Signup {
-			self.signupAction(nil)
-		}
-		else if result == .Join {
-			let header = self.header as! PatchDetailView
-			header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside) // Should trigger fetch via watch notification
-			AudioController.instance.play(Sound.pop.rawValue)
-			UIShared.Toast("Welcome!")
-		}
-	}
 }
 
 extension PatchDetailViewController: MapViewDelegate {

@@ -265,6 +265,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 				let controller = MessageDetailViewController()
 				controller.inputMessageId = entityId
 				
+				if let referrerName = params!["referrerName"] as? String {
+					controller.inputReferrerName = referrerName.stringByReplacingOccurrencesOfString("+", withString: " ")
+				}
+				if let referrerPhotoUrl = params!["referrerPhotoUrl"] as? String {
+					controller.inputReferrerPhotoUrl = referrerPhotoUrl
+				}
+				
 				/* Navigation bar buttons */
 				let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
 				controller.navigationItem.leftBarButtonItems = [doneButton]

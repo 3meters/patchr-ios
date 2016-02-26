@@ -273,6 +273,10 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		}
 	}
 	
+	override func didReceiveMemoryWarning() {
+		super.didReceiveMemoryWarning()
+	}
+	
     /*--------------------------------------------------------------------------------------------
     * MARK:- Methods
     *--------------------------------------------------------------------------------------------*/

@@ -8,21 +8,8 @@
 
 import UIKit
 
-enum InviteResult: Int {
-	case Join
-	case Login
-	case Signup
-	case Finished
-}
-
-protocol InviteProtocol {
-	func inviteResult(result: InviteResult)
-}
-
 class UserInviteView: BaseDetailView {
 	
-	var delegate			: InviteProtocol?
-
 	var message				= AirLabelDisplay()
 	var member				= AirLabelDisplay()
 	var photo				= UserPhotoView()
@@ -71,32 +58,6 @@ class UserInviteView: BaseDetailView {
 	}
 	
 	/*--------------------------------------------------------------------------------------------
-	* Events
-	*--------------------------------------------------------------------------------------------*/
-	
-	func joinAction(sender: AnyObject?) {
-		self.delegate?.inviteResult(.Join)
-	}
-	
-	func loginAction(sender: AnyObject?) {
-		let controller = LoginViewController()
-		let navController = UINavigationController()
-		navController.viewControllers = [controller]
-		controller.onboardMode = OnboardMode.Login
-		controller.inputRouteToMain = false
-		UIViewController.topMostViewController()!.presentViewController(navController, animated: true) {}
-	}
-	
-	func signupAction(sender: AnyObject?) {
-		let controller = LoginViewController()
-		let navController = UINavigationController()
-		navController.viewControllers = [controller]
-		controller.onboardMode = OnboardMode.Signup
-		controller.inputRouteToMain = false
-		UIViewController.topMostViewController()!.presentViewController(navController, animated: true) {}
-	}
-	
-	/*--------------------------------------------------------------------------------------------
 	* Methods
 	*--------------------------------------------------------------------------------------------*/
 
@@ -118,9 +79,6 @@ class UserInviteView: BaseDetailView {
 		self.joinButton.setTitle("JOIN", forState: .Normal)
 		self.loginButton.setTitle("LOG IN", forState: .Normal)
 		self.signupButton.setTitle("SIGN UP", forState: .Normal)
-		self.joinButton.addTarget(self, action: Selector("joinAction:"), forControlEvents: .TouchUpInside)
-		self.loginButton.addTarget(self, action: Selector("loginAction:"), forControlEvents: .TouchUpInside)
-		self.signupButton.addTarget(self, action: Selector("signupAction:"), forControlEvents: .TouchUpInside)
 		
 		self.buttonGroup.addSubview(self.joinButton)
 		self.buttonGroup.addSubview(self.loginButton)

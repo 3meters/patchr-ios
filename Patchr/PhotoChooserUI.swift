@@ -9,6 +9,7 @@
 import AssetsLibrary
 import Foundation
 import UIKit
+import MobileCoreServices
 
 // PhotoChooserUI
 //
@@ -80,6 +81,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 		let pickerController = UIImagePickerController()
         pickerController.sourceType = .PhotoLibrary
 		pickerController.delegate = self
+		pickerController.mediaTypes = [kUTTypeImage as String]
 		self.hostViewController?.presentViewController(pickerController, animated: true, completion: nil)
 	}
 
@@ -88,6 +90,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 		let pickerController = UIImagePickerController()
 		pickerController.sourceType = .Camera
 		pickerController.delegate = self
+		pickerController.mediaTypes = [kUTTypeImage as String]
 		self.hostViewController?.presentViewController(pickerController, animated: true, completion: nil)
 	}
 

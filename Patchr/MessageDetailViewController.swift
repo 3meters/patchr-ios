@@ -14,6 +14,8 @@ class MessageDetailViewController: BaseViewController {
 
 	var inputMessage	: Message?
 	var inputMessageId	: String?			// Used by notifications
+	var inputReferrerName		: String?
+	var inputReferrerPhotoUrl	: String?
 	
     var deleted			= false
 
@@ -401,7 +403,11 @@ class MessageDetailViewController: BaseViewController {
     func dismissAction(sender: AnyObject) {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
-    
+
+	/*--------------------------------------------------------------------------------------------
+	* Notifications
+	*--------------------------------------------------------------------------------------------*/
+
     func likeDidChange(notification: NSNotification) {
 		if let userInfo = notification.userInfo,
 			let entityId = userInfo["entityId"] as? String {
@@ -410,6 +416,12 @@ class MessageDetailViewController: BaseViewController {
 				}
 		}
     }
+	
+	func applicationDidEnterBackground() {
+		if self.inputReferrerName != nil {
+			self.dismissViewControllerAnimated(true, completion: nil)
+		}
+	}
 
 	/*--------------------------------------------------------------------------------------------
 	* Methods
@@ -490,6 +502,8 @@ class MessageDetailViewController: BaseViewController {
 		self.contentHolder.addSubview(self.messageGroup)
 		self.contentHolder.addSubview(self.toolbarGroup)
 		self.contentHolder.addSubview(self.shareGroup)
+		
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground", name: Events.ApplicationDidEnterBackground, object: nil)
 	}
 	
 	func bind() {
