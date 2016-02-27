@@ -22,9 +22,10 @@ class PatchNavigationController: UINavigationController {
 		
 		self.view.accessibilityIdentifier = View.Patches
 		
-		let watchLabel = SCREEN_NARROW ? "Watch" : "Watching"
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "userDidLogin:", name: Events.UserDidLogin, object: nil)
+		
 		let segItems = UserController.instance.authenticated
-			? ["Nearby", watchLabel, "Own", "Explore"]
+			? ["Nearby", "Member", "Own", "Explore"]
 			: ["Nearby", "Explore"]
 			
         self.segmentsController = SegmentsController(navigationController: self, viewControllers: segmentViewControllers())
@@ -35,6 +36,10 @@ class PatchNavigationController: UINavigationController {
         self.segmentedControl.selectedSegmentIndex = 0
         self.segmentsController.indexDidChangeForSegmentedControl(self.segmentedControl)
     }
+	
+	deinit {
+		NSNotificationCenter.defaultCenter().removeObserver(self)		
+	}
 
     /*--------------------------------------------------------------------------------------------
     * Events
@@ -52,6 +57,31 @@ class PatchNavigationController: UINavigationController {
 		navController.viewControllers = [controller]
         self.presentViewController(navController, animated: true, completion: nil)
     }
+	
+	/*--------------------------------------------------------------------------------------------
+	* Notifications
+	*--------------------------------------------------------------------------------------------*/
+	
+	func userDidLogin(sender: NSNotification) {
+		
+		/* Can be called from a background thread */
+		NSOperationQueue.mainQueue().addOperationWithBlock {
+			
+			self.segmentedControl.insertSegmentWithTitle("Own", atIndex: 1, animated: true)
+			self.segmentedControl.insertSegmentWithTitle("Member", atIndex: 1, animated: true)
+			
+			let owns = PatchTableViewController()
+			let watching = PatchTableViewController()
+
+			owns.filter = PatchListFilter.Owns
+			owns.user = UserController.instance.currentUser
+			watching.filter = PatchListFilter.Watching
+			watching.user = UserController.instance.currentUser
+			
+			self.segmentsController.viewControllers.insert(owns, atIndex: 1)
+			self.segmentsController.viewControllers.insert(watching, atIndex: 1)
+		}
+	}
     
     /*--------------------------------------------------------------------------------------------
     * Methods

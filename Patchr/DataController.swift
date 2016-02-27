@@ -77,7 +77,8 @@ class DataController: NSObject {
     }
 
 	func reset() {
-		self.coreDataStack.reset()
+		let coreDataStack = self.coreDataStack
+		coreDataStack.reset()
 		self.coreDataStack = CoreDataStack()
 		self.mainContext = self.coreDataStack.stackMainContext
 	}
@@ -144,7 +145,7 @@ class DataController: NSObject {
 		let modelEntity = entityType.fetchOneById(entityId, inManagedObjectContext: mainContext) as ServiceBase!
 		
 		/* If not in data model or caller wants the freshest available then call service */
-		if strategy == .UseCacheAndVerify || strategy == .IgnoreCache || modelEntity == nil {
+		if strategy == .UseCacheAndVerify || strategy == .IgnoreCache || modelEntity == nil || self.objectHasBeenDeleted(modelEntity) {
 			
 			var criteria: [String: AnyObject] = [:]
 			var objectId: NSManagedObjectID?
@@ -175,8 +176,8 @@ class DataController: NSObject {
 				else {
 					let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
 					privateContext.parentContext = DataController.instance.mainContext
-					
 					privateContext.performBlock {
+						
 						stopwatch.segmentTime("\(entityType): network call finished")
 						
 						/* Turn maps and arrays into objects */
@@ -253,7 +254,8 @@ class DataController: NSObject {
             completion(queryItems: [], query: query, error: nil)
             return
         }
-
+		
+		/* Should not be nil if this is for nearby patches */
         let coordinate = LocationController.instance.lastLocationAccepted()?.coordinate
 
         var entity: ServiceBase!
@@ -467,7 +469,7 @@ class DataController: NSObject {
                 }
 
 				var itemPosition = 0 + query.offsetValue
-				let location = LocationController.instance.lastLocationFromManager()
+				let location = LocationController.instance.mostRecentAvailableLocation()
 
 				for entityDictionary in entityDictionaries {
 
@@ -494,7 +496,7 @@ class DataController: NSObject {
                         var queryItem: QueryItem!
                         for item in entity.queryItems {
                             let existingQueryItem = item as! QueryItem
-                            if existingQueryItem.query == query {
+                            if existingQueryItem.query != nil && existingQueryItem.query == query {
                                 queryItem = existingQueryItem
                             }
                         }
@@ -554,7 +556,7 @@ class DataController: NSObject {
             return dataWrapper
         }
         return nil
-    }    
+    }
 }
 
 enum FetchStrategy: Int {

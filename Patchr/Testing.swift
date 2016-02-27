@@ -122,7 +122,7 @@ struct View {
     static let Users                = "users_view"
     static let PhotoSearch          = "photo_search_view"
     static let Development          = "development_view"
-    static let Welcome              = "welcome_view"
+    static let Invitation           = "invitation_view"
     static let TextZoom             = "text_zoom_view"
     static let Patches              = "patches_view"
     static let PatchesNearby        = "patches_nearby_view"
@@ -145,7 +145,7 @@ struct Tab {
 
 struct Segment {
     static let Nearby               = "Nearby"
-    static let Watching             = "Watching"
+    static let Watching             = "Groups"
     static let Own                  = "Own"
     static let Explore              = "Explore"
 }

@@ -3,8 +3,8 @@
    LastUpgradeVersion = "0720"
    version = "1.3">
    <BuildAction
-      parallelizeBuildables = "YES"
-      buildImplicitDependencies = "NO">
+      parallelizeBuildables = "NO"
+      buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
@@ -39,6 +39,15 @@
             </BuildableReference>
          </TestableReference>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "E2CA0C3A1C50335500E2F380"
+            BuildableName = "PatchrTests.xctest"
+            BlueprintName = "PatchrTests"
+            ReferencedContainer = "container:Patchr.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
@@ -70,6 +79,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "E2CA0C3A1C50335500E2F380"
+            BuildableName = "PatchrTests.xctest"
+            BlueprintName = "PatchrTests"
+            ReferencedContainer = "container:Patchr.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

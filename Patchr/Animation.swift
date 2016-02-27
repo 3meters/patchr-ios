@@ -10,12 +10,14 @@ import pop
 
 struct Animation {
 	
-	static func bounce(view: UIView) {
-		view.pop_removeAllAnimations()
-		let springAnimation = POPSpringAnimation(propertyNamed: kPOPViewScaleXY)
-		springAnimation.velocity = NSValue(CGPoint: CGPointMake(5, 5))
-		springAnimation.springBounciness = 20.0
-		springAnimation.toValue = NSValue(CGPoint: CGPointMake(1, 1))
-		view.pop_addAnimation(springAnimation, forKey: "springAnimation")
+	static func bounce(view: UIView?) {
+		if view != nil {
+			view!.pop_removeAllAnimations()
+			let springAnimation = POPSpringAnimation(propertyNamed: kPOPViewScaleXY)
+			springAnimation.velocity = NSValue(CGPoint: CGPointMake(5, 5))
+			springAnimation.springBounciness = 20.0
+			springAnimation.toValue = NSValue(CGPoint: CGPointMake(1, 1))
+			view!.pop_addAnimation(springAnimation, forKey: "springAnimation")
+		}
 	}
 }

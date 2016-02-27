@@ -446,9 +446,6 @@ class ProfileEditViewController: BaseEditViewController {
 				self.photoView.imageButton.setImageWithImageResult(imageResult)
 				self.photoView.configureTo(.Photo)
 			}
-			else {
-				self.photoView.bindPhoto(nil) // Shows default
-			}
 		}
 		else {
 			self.nameField.text = self.inputUser?.name
@@ -591,18 +588,11 @@ class ProfileEditViewController: BaseEditViewController {
 					*/
 					if let response: AnyObject = result.response as AnyObject? {
 						
-						UserController.instance.handleSuccessfulSignInResponse(response)
+						UserController.instance.handleSuccessfulLoginResponse(response)
 						
 						/* Navigate to main interface */
 						if self.inputRouteToMain {
-							/*
-							 * Replaces lobby navigation stack
-							 */
-							let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-							let controller = MainTabBarController()
-							controller.selectedIndex = 0
-							appDelegate.window!.setRootViewController(controller, animated: true)
-							UIShared.Toast("Logged in as \(UserController.instance.userName!)", controller: controller)							
+							self.navigateToMain() // Replaces any current navigation stack
 						}
 						else {
 							if self.isModal {
@@ -611,6 +601,9 @@ class ProfileEditViewController: BaseEditViewController {
 							else {
 								self.navigationController?.popViewControllerAnimated(true)
 							}
+//							if UserController.instance.userName != nil {
+//								UIShared.Toast("Logged in as \(UserController.instance.userName!)")
+//							}
 						}
 						return
 					}
@@ -647,9 +640,14 @@ class ProfileEditViewController: BaseEditViewController {
 					if let error = ServerError(error) {
 						self.handleError(error)
 					}
+					else {
+						Log.i("User deleted: \(userName)")
+					}
 					
 					/* Return to the lobby even if there was an error since we signed out */
 					UserController.instance.discardCredentials()
+					Reporting.updateCrashUser(nil)
+					BranchProvider.logout()
 					UserController.instance.clearStore()
 					NSUserDefaults.standardUserDefaults().setObject(nil, forKey: PatchrUserDefaultKey("userEmail"))
 					NSUserDefaults.standardUserDefaults().synchronize()
@@ -678,6 +676,17 @@ class ProfileEditViewController: BaseEditViewController {
         return parameters
     }
 
+	func navigateToMain() {
+		let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+		let controller = MainTabBarController()
+		controller.selectedIndex = 0
+		appDelegate.window!.setRootViewController(controller, animated: true)
+		
+		if UserController.instance.userName != nil {
+			UIShared.Toast("Logged in as \(UserController.instance.userName!)", controller: controller, addToWindow: false)
+		}
+	}
+	
     func isDirty() -> Bool {
 		
 		if self.inputState == .Onboarding {

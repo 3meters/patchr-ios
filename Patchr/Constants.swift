@@ -43,6 +43,7 @@ let CELL_IDENTIFIER                     = "cell"
 let COGNITO_POOLID                      = "us-east-1:ff1976dc-9c27-4046-a59f-7dd43355869b"
 
 var LOG_LEVEL                           = DDLogLevel.All
+var LOG_TIMERS							= false
 var MailComposer: MFMailComposeViewController? = MFMailComposeViewController()
 
 func PatchrUserDefaultKey(subKey: String) -> String {
@@ -60,16 +61,17 @@ public struct Events {
     static let DidFetchQuery                  = "DidFetchQuery"
     static let ImageNotFound                  = "ImageNotFound"
     static let DidInsertMessage               = "DidInsertMessage"
-    static let LocationDenied                 = "LocationDenied"
-	static let LocationAllowed                = "LocationAllowed"
+    static let LocationWasDenied              = "LocationWasDenied"
+	static let LocationWasAllowed             = "LocationWasAllowed"
+	static let LocationWasUpdated             = "LocationWasUpdated"
+	static let LocationWasRestricted          = "LocationWasRestricted"
     static let NotificationsDenied            = "NotificationsDenied"
     static let PhotoDenied                    = "PhotoDenied"
-    static let ApplicationDidEnterBackground  = "applicationDidEnterBackground"
-    static let ApplicationWillEnterForeground = "applicationWillEnterForeground"
-    static let ApplicationWillResignActive    = "applicationWillResignActive"
-    static let ApplicationDidBecomeActive     = "applicationDidBecomeActive"
-    static let LocationUpdate                 = "locationUpdate"
-	
+    static let ApplicationDidEnterBackground  = "ApplicationDidEnterBackground"
+    static let ApplicationWillEnterForeground = "ApplicationWillEnterForeground"
+    static let ApplicationWillResignActive    = "ApplicationWillResignActive"
+    static let ApplicationDidBecomeActive     = "ApplicationDidBecomeActive"
+	static let UserDidLogin					  = "UserDidLogin"
 }
 
 public struct Schema {

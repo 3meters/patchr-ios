@@ -23,36 +23,45 @@ class BranchProvider: NSObject {
 	
 	static func invite(entity: Patch, referrer: User, completion: CompletionBlock) {
 		
-		let referrerName = referrer.name!
-		let ownerName = entity.creator.name!
 		let patchName = entity.name!
+		let referrerName = referrer.name!
+		let referrerId = referrer.id_!
+		let ownerName = entity.creator.name!
+		let path = "patch/\(entity.id_!)"
 		
-		var parameters = [
-			"entityId":entity.id_!,
-			"entitySchema":"patch",
-			"referrerName":referrerName,
-			"ownerName": ownerName,
-			"patchName": patchName,
-			"feature": BRANCH_FEATURE_TAG_INVITE,
-			"$og_title": "Invite by \(referrerName) to the \(patchName) patch",
-		]
+		let applink = BranchUniversalObject(canonicalIdentifier: path)
+		applink.metadata["entityId"] = entity.id_!
+		applink.metadata["entitySchema"] = "patch"
+		applink.metadata["referrerName"] = referrerName
+		applink.metadata["referrerId"] = referrerId
+		applink.metadata["ownerName"] = ownerName
+		applink.metadata["patchName"] = patchName
 		
+		if let photo = UserController.instance.currentUser.photo {
+			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile)
+			applink.metadata["referrerPhotoUrl"] = photoUrl
+		}
+		
+		/* $og_title */
+		applink.title = "Invite by \(referrerName) to the \(patchName) patch"
+		
+		/* $og_image */
 		if entity.photo != nil {
-			let photo = entity.getPhotoManaged()
 			let settings = "h=250&crop&fit=crop&q=50"
-			let photoUrl = "https://3meters-images.imgix.net/\(photo.prefix)?\(settings)"
-			parameters["$og_image_url"] = photoUrl
+			let photoUrl = "https://3meters-images.imgix.net/\(entity.photo!.prefix)?\(settings)"
+			applink.imageUrl = photoUrl
 		}
 		
+		/* $og_description */
 		if entity.description_ != nil && !entity.description_.isEmpty {
-			parameters["$og_description"] = entity.description_
+			applink.contentDescription = entity.description_!
 		}
 		
-		Branch.getInstance().getShortURLWithParams(parameters,
-			andChannel: "patchr-ios",	// not the same as url scheme
-			andFeature: BRANCH_FEATURE_TAG_INVITE,
-			andCallback: { url, error in
-				
+		let linkProperties = BranchLinkProperties()
+		linkProperties.channel = "patchr-ios"
+		linkProperties.feature = BRANCH_FEATURE_TAG_INVITE
+		
+		applink.getShortUrlWithLinkProperties(linkProperties, andCallback: { url, error in
 			if error != nil {
 				completion(response: nil, error: error)
 			}
@@ -66,56 +75,63 @@ class BranchProvider: NSObject {
 	
 	static func share(entity: Message, referrer: User, completion: CompletionBlock) {
 		
-		let referrerName = referrer.name!
-		let ownerName = entity.creator.name!
 		let patchName = entity.patch?.name!
+		let referrerName = referrer.name!
+		let referrerId = referrer.id_!
+		let ownerName = entity.creator.name!
+		let path = "message/\(entity.id_!)"
 		
-		var parameters = [
-			"entityId": entity.id_!,
-			"entitySchema": "message",
-			"feature": BRANCH_FEATURE_TAG_SHARE,
-			"referrerName": referrerName,
-			"ownerName": ownerName
-		]
+		let applink = BranchUniversalObject(canonicalIdentifier: path)
+		applink.metadata["entityId"] = entity.id_!
+		applink.metadata["entitySchema"] = "message"
+		applink.metadata["referrerName"] = referrerName
+		applink.metadata["referrerId"] = referrerId
+		applink.metadata["ownerName"] = ownerName
 		
 		if patchName != nil {
-			parameters["patchName"] = patchName
+			applink.metadata["patchName"] = patchName
 		}
 		
+		if let photo = UserController.instance.currentUser.photo {
+			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile)
+			applink.metadata["referrerPhotoUrl"] = photoUrl
+		}
+		
+		/* $og_title */
+		applink.title = "Shared by \(referrerName)"
+		
+		/* $og_image */
 		if entity.photo != nil {
-			let photo = entity.getPhotoManaged()
 			let settings = "h=250&crop&fit=crop&q=50"
-			let photoUrl = "https://3meters-images.imgix.net/\(photo.prefix)?\(settings)"
-			parameters["$og_image_url"] = photoUrl
+			let photoUrl = "https://3meters-images.imgix.net/\(entity.photo!.prefix)?\(settings)"
+			applink.imageUrl = photoUrl
 		}
-		else if entity.patch != nil {
-			let photo = entity.patch.getPhotoManaged()
+		else if entity.patch?.photo != nil {
 			let settings = "h=250&crop&fit=crop&q=50"
-			let photoUrl = "https://3meters-images.imgix.net/\(photo.prefix)?\(settings)"
-			parameters["$og_image_url"] = photoUrl
+			let photoUrl = "https://3meters-images.imgix.net/\(entity.patch!.photo!.prefix!)?\(settings)"
+			applink.imageUrl = photoUrl
 		}
 		
+		/* $og_description */
 		var description = "\(ownerName) posted a photo to the \(entity.patch!.name) patch using Patchr"
 		if entity.description_ != nil && !entity.description_.isEmpty {
 			description = "\(ownerName) posted: \"\(entity.description_)\""
 		}
+		applink.contentDescription = description
 		
-		parameters["$og_title"] = "Shared by \(referrerName)"
-		parameters["$og_description"] = description
+		let linkProperties = BranchLinkProperties()
+		linkProperties.channel = "patchr-ios"
+		linkProperties.feature = BRANCH_FEATURE_TAG_SHARE
 		
-		Branch.getInstance().getShortURLWithParams(parameters,
-			andChannel: "patchr-ios",	// not the same as url scheme
-			andFeature: BRANCH_FEATURE_TAG_SHARE,
-			andCallback: { url, error in
-				
-				if error != nil {
-					completion(response: nil, error: error)
-				}
-				else {
-					Log.d("Branch link created: \(url!)")
-					let message: MessageItem = MessageItem(entity: entity, shareUrl: url!)
-					completion(response: message, error: nil)
-				}
+		applink.getShortUrlWithLinkProperties(linkProperties, andCallback: { url, error in
+			if error != nil {
+				completion(response: nil, error: error)
+			}
+			else {
+				Log.d("Branch link created: \(url!)")
+				let message: MessageItem = MessageItem(entity: entity, shareUrl: url!)
+				completion(response: message, error: nil)
+			}
 		})
 	}
 }

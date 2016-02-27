@@ -44,7 +44,7 @@ struct UIShared {
 		return (clientVersionCode >= versionMin)
 	}
 	
-	static func enableLocationService() {
+	static func askToEnableLocationService() {
 		NSOperationQueue.mainQueue().addOperationWithBlock {
 			
 			if let controller = UIViewController.topMostViewController() {

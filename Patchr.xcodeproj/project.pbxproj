@@ -140,6 +140,7 @@
 		E289158F1C5A7A1A005D7AA0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D3D39D51A6F086F00A44CB2 /* Images.xcassets */; };
 		E28915911C5A85CF005D7AA0 /* .xctool-args in Resources */ = {isa = PBXBuildFile; fileRef = E28915901C5A85CF005D7AA0 /* .xctool-args */; };
 		E28915931C5AD528005D7AA0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E28915921C5AD528005D7AA0 /* LaunchScreen.storyboard */; };
+		E28A9EFC1C79F5850073F14E /* InviteSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28A9EFB1C79F5850073F14E /* InviteSheetViewController.swift */; };
 		E28D565F1BB1849F00BFD433 /* ReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */; };
 		E297305A1C135BFA00B9433B /* PatchEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29730591C135BFA00B9433B /* PatchEditViewController.swift */; };
 		E297305C1C13644800B9433B /* AirTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305B1C13644800B9433B /* AirTextView.swift */; };
@@ -199,6 +200,7 @@
 		E2D569C01C05F9D6001CCE58 /* FacebookProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D569BF1C05F9D6001CCE58 /* FacebookProvider.swift */; };
 		E2DBD4F01B0F65580006575C /* ExtensionsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DBD4EF1B0F65580006575C /* ExtensionsModel.swift */; };
 		E2E271291C5D1ED600E36804 /* BranchProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E271281C5D1ED600E36804 /* BranchProvider.swift */; };
+		E2F0E3791C78E0180012BF90 /* UserInviteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F0E3781C78E0180012BF90 /* UserInviteView.swift */; };
 		E2F618D61AFFACF00055D09C /* LocationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F618D51AFFACF00055D09C /* LocationController.swift */; };
 		E2F6C9211B1BDC7A0067D959 /* _Shortcut.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F6C9201B1BDC7A0067D959 /* _Shortcut.m */; };
 		E2F6C9241B1BDD500067D959 /* Shortcut.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F6C9231B1BDD500067D959 /* Shortcut.m */; };
@@ -417,6 +419,7 @@
 		E28177791B5C3C3200D65AC1 /* Proxibase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Proxibase.swift; path = PatchrShare/Proxibase.swift; sourceTree = SOURCE_ROOT; };
 		E28915901C5A85CF005D7AA0 /* .xctool-args */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ".xctool-args"; sourceTree = "<group>"; };
 		E28915921C5AD528005D7AA0 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		E28A9EFB1C79F5850073F14E /* InviteSheetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InviteSheetViewController.swift; sourceTree = "<group>"; };
 		E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ReachabilityManager.swift; path = Patchr/ReachabilityManager.swift; sourceTree = "<group>"; };
 		E29730591C135BFA00B9433B /* PatchEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PatchEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E297305B1C13644800B9433B /* AirTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirTextView.swift; sourceTree = "<group>"; };
@@ -478,6 +481,7 @@
 		E2D569BF1C05F9D6001CCE58 /* FacebookProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacebookProvider.swift; sourceTree = "<group>"; };
 		E2DBD4EF1B0F65580006575C /* ExtensionsModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionsModel.swift; sourceTree = "<group>"; };
 		E2E271281C5D1ED600E36804 /* BranchProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BranchProvider.swift; sourceTree = "<group>"; };
+		E2F0E3781C78E0180012BF90 /* UserInviteView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInviteView.swift; sourceTree = "<group>"; };
 		E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKImage.framework; path = Frameworks/AdobeCreativeSDKImage.framework; sourceTree = "<group>"; };
 		E2F618D51AFFACF00055D09C /* LocationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = LocationController.swift; path = Patchr/LocationController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2F6C91F1B1BDC7A0067D959 /* _Shortcut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _Shortcut.h; path = Model/_Shortcut.h; sourceTree = "<group>"; };
@@ -698,6 +702,7 @@
 				E24199011C18C1F200DDA549 /* UserSearchViewCell.swift */,
 				E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */,
 				E20C3A7E1BDC0EB0008CCED1 /* UserDetailView.swift */,
+				E2F0E3781C78E0180012BF90 /* UserInviteView.swift */,
 				E2F85C791C342B8600FC2364 /* UserPhotoView.swift */,
 				E256B4291BD3F32A00EBF894 /* UserView.swift */,
 				E2CC15A01C2C897800316356 /* WrapperTableViewCell.swift */,
@@ -796,7 +801,6 @@
 				E2F6C9261B1C94E50067D959 /* Debug.m */,
 				7D01FA341A7024E200DD6DFA /* JSONResponseSerializerWithData.h */,
 				7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */,
-				844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */,
 				E2C720BB1B4C25C900714B53 /* Reachability.h */,
 				E2C720BC1B4C260200714B53 /* Reachability.m */,
 				E2C0D9351B6D257B00E28CE9 /* SegmentsController.swift */,
@@ -918,11 +922,13 @@
 				844D6E341AA4D01200EE71ED /* DevelopmentViewController.swift */,
 				7D021AC11A9423080047DAAE /* TextZoomController.swift */,
 				E2F85C6D1C31A9EA00FC2364 /* GuestViewController.swift */,
+				E28A9EFB1C79F5850073F14E /* InviteSheetViewController.swift */,
 				E29730651C16295300B9433B /* InviteViewController.swift */,
 				E2D12A801C0A52D700DE507E /* LobbyViewController.swift */,
 				7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */,
 				9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */,
 				E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */,
+				844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */,
 				7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */,
 				E269AED71C10AB9A004A1D88 /* WelcomeViewController.swift */,
 				E2F618DE1B02667A0055D09C /* Edit */,
@@ -1523,6 +1529,7 @@
 				E2F85C6C1C302F3400FC2364 /* PatchDetailView.swift in Sources */,
 				7DD89F411AC62B90005CD004 /* UserTableViewController.swift in Sources */,
 				E2064BF11BBF3C26009C7B6A /* AirMuteButton.swift in Sources */,
+				E2F0E3791C78E0180012BF90 /* UserInviteView.swift in Sources */,
 				E2D12A711C0778C100DE507E /* AirScrollView.swift in Sources */,
 				7D40B9401A7816C400F9954C /* ServiceData.m in Sources */,
 				E2CC15A11C2C897800316356 /* WrapperTableViewCell.swift in Sources */,
@@ -1561,6 +1568,7 @@
 				E2F6C9211B1BDC7A0067D959 /* _Shortcut.m in Sources */,
 				9FDCCCC0113B14385C08DA41 /* MessageDetailViewController.swift in Sources */,
 				E2C720C71B4EDAFE00714B53 /* AirLabel.swift in Sources */,
+				E28A9EFC1C79F5850073F14E /* InviteSheetViewController.swift in Sources */,
 				E2F6C9271B1C94E50067D959 /* Debug.m in Sources */,
 				E238BB061B571AFF0094AF41 /* ExtensionsPhoto.swift in Sources */,
 				E281776E1B5B0EE200D65AC1 /* Reporting.swift in Sources */,
@@ -1646,7 +1654,6 @@
 		7D3D39E61A6F087000A44CB2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -1660,7 +1667,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1690,7 +1697,6 @@
 		7D3D39E71A6F087000A44CB2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -1704,7 +1710,6 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1737,7 +1742,6 @@
 				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1809,7 +1813,6 @@
 				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1869,7 +1872,6 @@
 		7D9C9E3E1A9BD3290069E332 /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -1883,7 +1885,6 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1916,7 +1917,6 @@
 				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1978,11 +1978,11 @@
 			baseConfigurationReference = FC589D7AED3F42AAECA30B55 /* Pods-PatchrShare.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = NO;
 				CODE_SIGN_ENTITLEMENTS = PatchrShare/PatchrShare.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_BITCODE = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -2023,11 +2023,11 @@
 			baseConfigurationReference = E561E80147F04323880DC6B2 /* Pods-PatchrShare.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = NO;
 				CODE_SIGN_ENTITLEMENTS = PatchrShare/PatchrShare.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_BITCODE = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -2064,11 +2064,11 @@
 			baseConfigurationReference = F80106E9536586DEC54B6166 /* Pods-PatchrShare.adhoc.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = NO;
 				CODE_SIGN_ENTITLEMENTS = PatchrShare/PatchrShare.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = NO;
 				ENABLE_BITCODE = NO;
 				GCC_NO_COMMON_BLOCKS = YES;

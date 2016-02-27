@@ -49,6 +49,7 @@ def core_pods
 	pod 'Parse'
 	pod 'iRate'
 	pod 'CocoaLumberjack/Swift'
+	pod 'ZOZolaZoomTransition',		'~> 1.0.0'
 end
 
 target 'Patchr' do

@@ -33,7 +33,7 @@ class PatchDetailView: BaseDetailView {
 	var moreButton			= AirToolButton()
 	
 	var contextGroup		= AirRuleView()
-	var contextButton		= AirFeaturedButton()
+	var contextView			: UIView = AirFeaturedButton()
 	
 	var infoGroup			= AirRuleView()
 	
@@ -65,6 +65,12 @@ class PatchDetailView: BaseDetailView {
 		initialize()
 	}
 	
+	init(contextView: UIView!) {
+		super.init(frame: CGRectZero)
+		self.contextView = contextView
+		initialize()
+	}
+	
 	required init?(coder aDecoder: NSCoder) {
 		fatalError("This view should never be loaded from storyboard")
 	}
@@ -90,8 +96,8 @@ class PatchDetailView: BaseDetailView {
 		self.buttonGroup.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 48)
 		self.mapButton.anchorCenterLeftWithLeftPadding(0, width: self.mapButton.width(), height: self.mapButton.height())
 		self.moreButton.anchorCenterRightWithRightPadding(0, width: self.moreButton.width(), height: self.moreButton.height())
-		self.watchButton.alignToTheLeftOf(self.moreButton, matchingCenterWithRightPadding: 0, width: self.watchButton.width(), height: self.watchButton.height())
-		self.soundButton.alignToTheLeftOf(self.watchButton, matchingCenterWithRightPadding: 0, width: self.soundButton.width(), height: self.soundButton.height())
+		self.watchButton.alignToTheLeftOf(self.soundButton, matchingCenterWithRightPadding: 0, width: self.watchButton.width(), height: self.watchButton.height())
+		self.soundButton.alignToTheLeftOf(self.moreButton, matchingCenterWithRightPadding: 0, width: self.soundButton.width(), height: self.soundButton.height())
 		self.watchersButton.sizeToFit()
 		self.watchersButton.anchorCenterLeftFillingHeightWithTopPadding(0, bottomPadding: 0, leftPadding: 68, width: 112)
 		
@@ -103,11 +109,19 @@ class PatchDetailView: BaseDetailView {
 		self.type.alignAbove(self.name, withLeftPadding: 0, bottomPadding: 0, width: self.type.width(), height: self.type.height())
 		self.lockImage.alignToTheRightOf(self.type, matchingCenterWithLeftPadding: 4, width: 16, height: 16)
 		
-		self.contextGroup.alignUnder(self.bannerGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 48)
-		self.contextButton.fillSuperview()
-		
 		let gradientHeight = self.bannerGroup.width() * 0.35
 		self.gradient.frame = CGRectMake(0, self.bannerGroup.height() - gradientHeight, self.bannerGroup.width(), gradientHeight)
+		
+		/* Context Group */
+		if self.contextView is UIButton {
+			self.contextGroup.alignUnder(self.bannerGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 48)
+			self.contextView.fillSuperview()
+		}
+		else if self.contextView is UserInviteView {
+			self.contextView.resizeToFitSubviews()
+			self.contextGroup.alignUnder(self.bannerGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: self.contextView.height() + 32)
+			self.contextView.fillSuperviewWithLeftPadding(16, rightPadding: 16, topPadding: 16, bottomPadding: 16)
+		}
 		
 		/* Info Group */
 		
@@ -144,7 +158,7 @@ class PatchDetailView: BaseDetailView {
 			}
 		}
 		else {
-			let watchersTitle = "\(self.entity?.countWatching ?? 0) watching"
+			let watchersTitle = "\(self.entity?.countWatching ?? 0) members"
 			self.watchersButton.setTitle(watchersTitle, forState: UIControlState.Normal)
 			if self.watchersButton.alpha == 0 {
 				self.watchersButton.fadeIn()
@@ -194,7 +208,7 @@ class PatchDetailView: BaseDetailView {
 		
 		self.contentGroup.addSubview(self.bannerGroup)
 		self.contentGroup.addSubview(self.infoGroup)
-		self.contextGroup.addSubview(self.contextButton)
+		self.contextGroup.addSubview(self.contextView)
 		
 		self.addSubview(contentGroup)
 		self.addSubview(contextGroup)
@@ -207,6 +221,11 @@ class PatchDetailView: BaseDetailView {
 		self.photo.clipsToBounds = true
 		self.photo.contentMode = UIViewContentMode.ScaleAspectFill
 		self.photo.backgroundColor = Theme.colorBackgroundImage
+		
+		let bannerTapGestureRecognizer = UITapGestureRecognizer(target: self, action: "flipToInfo:")
+		self.bannerGroup.addGestureRecognizer(bannerTapGestureRecognizer)
+		let infoTapGestureRecognizer = UITapGestureRecognizer(target: self, action: "flipToBanner:")
+		self.infoGroup.addGestureRecognizer(infoTapGestureRecognizer)
 		
 		/* Apply gradient to banner */
 		let topColor:   UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.0))		// Top
@@ -264,10 +283,8 @@ class PatchDetailView: BaseDetailView {
 		self.moreButton.setImage(UIImage(named: "imgOverflowLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
 		self.moreButton.bounds.size = CGSizeMake(48, 48)
 		self.moreButton.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
-		self.moreButton.addTarget(self, action: Selector("flipToInfo:"), forControlEvents: .TouchUpInside)
 		
 		self.infoMoreButton.setImage(UIImage(named: "imgOverflowLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
-		self.infoMoreButton.addTarget(self, action: Selector("flipToBanner:"), forControlEvents: .TouchUpInside)
 		self.infoMoreButton.bounds.size = CGSizeMake(48, 48)
 		self.infoMoreButton.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
 		
@@ -280,6 +297,7 @@ class PatchDetailView: BaseDetailView {
 		self.watchButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
 		self.watchButton.bounds.size = CGSizeMake(48, 48)
 		self.watchButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
+		self.watchButton.alpha = 0.0
 		
 		self.soundButton.tintOff = Theme.colorActionOff
 		self.soundButton.tintOn = Theme.colorActionOn
@@ -292,7 +310,7 @@ class PatchDetailView: BaseDetailView {
 		self.soundButton.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
 		self.soundButton.alpha = 0.0
 		
-		self.contextButton.layer.cornerRadius = 0
+		self.contextView.layer.cornerRadius = 0
 
 		self.bannerGroup.clipsToBounds = true
 		
@@ -336,7 +354,7 @@ class PatchDetailView: BaseDetailView {
 				}
 			}
 			else {
-				let watchersTitle = "\(entity.countWatching ?? 0) watching"
+				let watchersTitle = "\(entity.countWatching ?? 0) \(entity.countWatchingValue == 1 ? "member": "members")"
 				self.watchersButton.setTitle(watchersTitle, forState: UIControlState.Normal)
 				if self.watchersButton.alpha == 0 {
 					self.watchersButton.fadeIn()

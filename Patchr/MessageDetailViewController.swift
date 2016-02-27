@@ -14,11 +14,11 @@ class MessageDetailViewController: BaseViewController {
 
 	var inputMessage	: Message?
 	var inputMessageId	: String?			// Used by notifications
+	var inputReferrerName		: String?
+	var inputReferrerPhotoUrl	: String?
 	
     var deleted			= false
 
-    private var shareButtonFunctionMap = [Int: ShareButtonFunction]()
-	
 	private var isShare: Bool {
 		return (self.inputMessage?.type != nil && self.inputMessage!.type == "share")
 	}
@@ -333,15 +333,30 @@ class MessageDetailViewController: BaseViewController {
     
 	func shareAction() {
         
+		if !UserController.instance.authenticated {
+			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to share messages and more.")
+			return
+		}
+		
         if self.inputMessage != nil {
-            let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: nil, destructiveButtonTitle: nil)
-            
-            shareButtonFunctionMap[sheet.addButtonWithTitle("Share using Patchr")] = .Share
-            shareButtonFunctionMap[sheet.addButtonWithTitle("More")] = .ShareVia
-            sheet.addButtonWithTitle("Cancel")
-            sheet.cancelButtonIndex = sheet.numberOfButtons - 1
-            
-            sheet.showInView(self.view)
+			
+			let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
+			
+			let patchr = UIAlertAction(title: "Share using Patchr", style: .Default) { action in
+				self.shareUsing(.Patchr)
+			}
+			let android = UIAlertAction(title: "More...", style: .Default) { action in
+				self.shareUsing(.Actions)
+			}
+			let cancel = UIAlertAction(title: "Cancel", style: .Cancel) { action in
+				sheet.dismissViewControllerAnimated(true, completion: nil)
+			}
+			
+			sheet.addAction(patchr)
+			sheet.addAction(android)
+			sheet.addAction(cancel)
+			
+			presentViewController(sheet, animated: true, completion: nil)
         }
 	}
     
@@ -388,7 +403,11 @@ class MessageDetailViewController: BaseViewController {
     func dismissAction(sender: AnyObject) {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
-    
+
+	/*--------------------------------------------------------------------------------------------
+	* Notifications
+	*--------------------------------------------------------------------------------------------*/
+
     func likeDidChange(notification: NSNotification) {
 		if let userInfo = notification.userInfo,
 			let entityId = userInfo["entityId"] as? String {
@@ -397,6 +416,12 @@ class MessageDetailViewController: BaseViewController {
 				}
 		}
     }
+	
+	func applicationDidEnterBackground() {
+		if self.inputReferrerName != nil {
+			self.dismissViewControllerAnimated(true, completion: nil)
+		}
+	}
 
 	/*--------------------------------------------------------------------------------------------
 	* Methods
@@ -477,6 +502,8 @@ class MessageDetailViewController: BaseViewController {
 		self.contentHolder.addSubview(self.messageGroup)
 		self.contentHolder.addSubview(self.toolbarGroup)
 		self.contentHolder.addSubview(self.shareGroup)
+		
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground", name: Events.ApplicationDidEnterBackground, object: nil)
 	}
 	
 	func bind() {
@@ -541,7 +568,13 @@ class MessageDetailViewController: BaseViewController {
 			
             /* Patch */
             if self.inputMessage!.patch != nil {
-                self.patchPhoto.setImageWithPhoto(self.inputMessage!.patch.getPhotoManaged())
+				if let photo = self.inputMessage!.patch.photo {
+					self.patchPhoto.setImageWithPhoto(photo)
+				}
+				else if let name = self.inputMessage!.patch.name {
+					let seed = Utils.numberFromName(name)
+					self.photo.backgroundColor = Utils.randomColor(seed)
+				}
                 self.patchName.setTitle(self.inputMessage!.patch.name, forState: .Normal)
             }
         }
@@ -627,6 +660,12 @@ class MessageDetailViewController: BaseViewController {
 			self.activity.startAnimating()
 		}
 		
+		/* Message could have been deleted downstream */		
+		if self.inputMessage?.id_ == nil && self.inputMessageId == nil {
+			self.navigationController?.popViewControllerAnimated(true)
+			return
+		}
+		
 		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
 			/*
 			 * A linked message that comes with a share message is only partially
@@ -638,6 +677,7 @@ class MessageDetailViewController: BaseViewController {
 				&& self.inputMessage!.type == "share"
 				&& (self.inputMessage!.message == nil && self.inputMessage!.patch == nil)
 				&& !self.inputMessage!.decoratedValue) ? .IgnoreCache : .UseCacheAndVerify
+			
 			
 			let messageId = (self.inputMessage?.id_ ?? self.inputMessageId!)!
 			
@@ -744,26 +784,6 @@ class MessageDetailViewController: BaseViewController {
 					}
 				}
 			}
-        }
-    }
-}
-
-extension MessageDetailViewController: UIActionSheetDelegate {
-    
-    func actionSheet(actionSheet: UIActionSheet, clickedButtonAtIndex buttonIndex: Int) {
-        if buttonIndex != actionSheet.cancelButtonIndex {
-            // There are some strange visual artifacts with the share sheet and the presented
-            // view controllers. Adding a small delay seems to prevent them.
-            Utils.delay(0.4) {
-				
-                switch self.shareButtonFunctionMap[buttonIndex]! {
-                case .Share:
-                    self.shareUsing(.Patchr)
-                    
-                case .ShareVia:
-                    self.shareUsing(.Actions)
-                }
-            }
         }
     }
 }

@@ -33,6 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	
 	override class func initialize() -> Void {
 		
+		iRate.sharedInstance().verboseLogging = false
 		iRate.sharedInstance().daysUntilPrompt = 7
 		iRate.sharedInstance().usesUntilPrompt = 10
 		iRate.sharedInstance().remindPeriod = 1
@@ -45,6 +46,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
         Log.d("Patchr launching...")
+		
+		/* Initialize Crashlytics: 25% of method time */
+		Fabric.with([Crashlytics()])
+
+		/* Instance the data controller */
+		DataController.instance
+
+		let keys = PatchrKeys()
+		
+		self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
+		
+        #if DEBUG
+			AFNetworkActivityLogger.sharedLogger().startLogging()
+			AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelFatal
+        #endif
+		/*
+		* Init location controller. If this is done in the init of the nearby patch list
+		* controller, we don't get properly hooked up when onboarding a new user. I could not
+		* figure out exactly what causes the problem. Init does not require or trigger the
+		* location permission request.
+		*/
+		LocationController.instance
+		/*
+		* We might have been launched because of a location change. We have
+		* about ten seconds to call updateProximity with the new location.
+		*/
+		if launchOptions?[UIApplicationLaunchOptionsLocationKey] != nil {
+			if let locationManager = LocationController.instance.locationManager {
+				if let last = LocationController.instance.mostRecentAvailableLocation() {
+					LocationController.instance.locationManager(locationManager, didUpdateLocations: [last])
+				}
+			}
+			return true
+		}
 		
 		/* Logging */
 		DDLog.addLogger(DDTTYLogger.sharedInstance()) // TTY = Xcode console
@@ -61,21 +96,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		fileLogger.rollingFrequency = 60 * 60 * 24  // 24 hours
 		fileLogger.logFileManager.maximumNumberOfLogFiles = 7
 		DDLog.addLogger(fileLogger)
-		
-		/* Initialize Crashlytics: 25% of method time */
-		Fabric.with([Crashlytics()])
-
-		/* Instance the data controller */
-		DataController.instance
-
-		let keys = PatchrKeys()
-		
-		self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
-		
-        #if DEBUG
-			AFNetworkActivityLogger.sharedLogger().startLogging()
-			AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelFatal
-        #endif
 		
         /* Turn on network activity indicator */
         AFNetworkActivityIndicatorManager.sharedManager().enabled = true
@@ -131,9 +151,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		/* We call even if install record exists and using this as a chance to update the metadata */
 		UserController.instance.registerInstall()
 		
-		/* Instance the location manager */
-		//LocationController.instance
-		
         /* Instance the reachability manager */
         ReachabilityManager.instance
         
@@ -172,7 +189,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
 		
-		/* First see if Branch claims it as a deep link */
+		/* 
+		 * First see if Branch claims it as a deep link. Calls handler registered in 
+		 * onLaunch.
+		 */
 		if Branch.getInstance().handleDeepLink(url) {
 			Log.d("Branch handled deep link: \(url.absoluteString)")
 			return true
@@ -181,13 +201,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		/* See if this is a Facebook deep link */
 		let parsedUrl: BFURL = BFURL(inboundURL: url, sourceApplication: sourceApplication)
 		if (parsedUrl.appLinkData != nil) {
-			if let inputQueryParameters = parsedUrl.inputQueryParameters {
-				routeDeepLink(inputQueryParameters, error: nil)
+			if let params = parsedUrl.targetQueryParameters {
+				routeDeepLink(params, error: nil)
 			}
 			return true
 		}
 		
-		/* See if Facebook claims it */
+		/* See if Facebook claims it as part of interaction with native Facebook client and Facebook dialogs */
 		if FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation) {
 			Log.d("Facebook handled url")
 			return true
@@ -195,12 +215,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
         return false
     }
-	
-	func application(application: UIApplication, continueUserActivity userActivity: NSUserActivity, restorationHandler: ([AnyObject]?) -> Void) -> Bool {
-		// pass the url to the handle deep link call
-		Branch.getInstance().continueUserActivity(userActivity)		
-		return true
-	}
 	
     func route() {
         
@@ -228,12 +242,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let entityId = params!["entityId"] as? String, entitySchema = params!["entitySchema"] as? String {
             
             if entitySchema == "patch" {
+				
 				let controller = PatchDetailViewController()
 				controller.entityId = entityId
-				controller.inputShowInviteWelcome = true
-				if let inviterName = params!["inviterName"] as? String {
-					controller.inputInviterName = inviterName.stringByReplacingOccurrencesOfString("+", withString: " ")
+				
+				if let referrerName = params!["referrerName"] as? String {
+					controller.inputReferrerName = referrerName.stringByReplacingOccurrencesOfString("+", withString: " ")
 				}
+				if let referrerPhotoUrl = params!["referrerPhotoUrl"] as? String {
+					controller.inputReferrerPhotoUrl = referrerPhotoUrl
+				}
+				
 				/* Navigation bar buttons */
 				let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
 				controller.navigationItem.leftBarButtonItems = [doneButton]
@@ -242,8 +261,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 				UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
             }
             else if entitySchema == "message" {
+				
 				let controller = MessageDetailViewController()
 				controller.inputMessageId = entityId
+				
+				if let referrerName = params!["referrerName"] as? String {
+					controller.inputReferrerName = referrerName.stringByReplacingOccurrencesOfString("+", withString: " ")
+				}
+				if let referrerPhotoUrl = params!["referrerPhotoUrl"] as? String {
+					controller.inputReferrerPhotoUrl = referrerPhotoUrl
+				}
+				
 				/* Navigation bar buttons */
 				let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
 				controller.navigationItem.leftBarButtonItems = [doneButton]
@@ -253,24 +281,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
+	
+	func application(application: UIApplication, continueUserActivity userActivity: NSUserActivity, restorationHandler: ([AnyObject]?) -> Void) -> Bool {
+		// pass the url to the handle deep link call
+		Branch.getInstance().continueUserActivity(userActivity)
+		return true
+	}
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
     
-    func applicationDidEnterBackground(application: UIApplication) {
-        NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationDidEnterBackground, object: nil)
-    }
-
-    func applicationWillEnterForeground(application: UIApplication){
-        NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationWillEnterForeground, object: nil)
-    }
-    
-    func applicationWillResignActive(application: UIApplication){
-        NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationWillResignActive, object: nil)
-    }
-    
-    func applicationDidBecomeActive(application: UIApplication) {
+	func applicationDidBecomeActive(application: UIApplication) {
 		
 		FBSDKAppEvents.activateApp()
 		
@@ -283,9 +305,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 				UIApplication.sharedApplication().openURL(url)
 			}
 		}
-
+		
 		/* NotificationsTableViewController uses this to manage badging */
-        NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationDidBecomeActive, object: nil)
+		NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationDidBecomeActive, object: nil)
+	}
+	
+    func applicationDidEnterBackground(application: UIApplication) {
+        NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationDidEnterBackground, object: nil)
+    }
+
+    func applicationWillEnterForeground(application: UIApplication){
+        NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationWillEnterForeground, object: nil)
+    }
+    
+    func applicationWillResignActive(application: UIApplication){
+        NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationWillResignActive, object: nil)
     }
     
     func application(application: UIApplication, supportedInterfaceOrientationsForWindow window: UIWindow?) -> UIInterfaceOrientationMask {
@@ -367,6 +401,8 @@ extension AppDelegate {
 		 */
 		if UserController.instance.authenticated {			
 			UserController.instance.discardCredentials()
+			Reporting.updateCrashUser(nil)
+			BranchProvider.logout()
 		}
 		
 		NSUserDefaults.standardUserDefaults().setObject(nil, forKey: PatchrUserDefaultKey("userEmail"))

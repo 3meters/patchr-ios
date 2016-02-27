@@ -88,9 +88,6 @@ class MainTabBarController: UITabBarController {
 		patches.tabBarItem.image = UIImage(named: "tabBarPatches24")
 		patches.tabBarItem.tag = 1
 		
-		let patchTableViewController = PatchTableViewController()
-		patches.viewControllers = [patchTableViewController]
-		
 		let notifications = UINavigationController()
 		notifications.tabBarItem.title = "Notifications"
 		notifications.tabBarItem.accessibilityIdentifier = Tab.Notifications

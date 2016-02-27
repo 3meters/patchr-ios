@@ -7,20 +7,21 @@
 //
 
 import UIKit
-import FBSDKLoginKit
 import Branch
+import MessageUI
 import iRate
 
-class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol {
+class PatchDetailViewController: BaseDetailViewController {
 
     private var contextAction			: ContextAction = .SharePatch
-    private var shareButtonFunctionMap	= [Int: ShareButtonFunction]()
 	private var originalRect			: CGRect?
     private var originalScrollTop		= CGFloat(-64.0)
 	
-	var inputShowInviteWelcome	= false
-	var inputInviterName		: String?
-	var inviteController		: WelcomeViewController?
+	var inputReferrerName		: String?
+	var inputReferrerPhotoUrl	: String?
+	var inviteView				: UserInviteView?
+	var inviteActive			= false
+	
 	var autoWatchOnAppear		= false
 
 	/*--------------------------------------------------------------------------------------------
@@ -35,33 +36,51 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		initialize()
 	}
 	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		if self.showEmptyLabel {
+			self.emptyLabel.layer.borderWidth = 0
+		}
+	}
+	
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
 		let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
-		let viewHeight = (viewWidth * 0.625) + 48
+		let header = self.header as! PatchDetailView
+		let viewHeight = (viewWidth * 0.625) + header.contextGroup.height()
 		self.tableView.tableHeaderView?.bounds.size = CGSizeMake(viewWidth, viewHeight)	// Triggers layoutSubviews on header
 	}
 	
 	override func viewWillAppear(animated: Bool) {
-		super.viewWillAppear(animated)		// calls bind
-		fetch(reset: self.firstAppearance)
+		super.viewWillAppear(animated)		// calls bind if we have cached entity
+		if self.invalidated {
+			Log.d("Resetting patch and messages because user logged in")
+			fetch(strategy: .IgnoreCache, resetList: true)
+		}
+		else {
+			fetch(strategy: .UseCacheAndVerify , resetList: self.firstAppearance)
+		}
 	}
 	
 	override func viewDidAppear(animated: Bool) {
-		super.viewDidAppear(animated)
+		super.viewDidAppear(animated)	// Clears firstAppearance
 		
 		if self.autoWatchOnAppear {
 			self.autoWatchOnAppear = false
 			let header = self.header as! PatchDetailView
 			header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
 			Utils.delay(1.0) {
-				UIShared.Toast("You are now watching this patch", controller: self, addToWindow: false)
+				UIShared.Toast("You are now a member of this patch", controller: self, addToWindow: false)
 			}
 		}
 		else {
 			iRate.sharedInstance().promptIfAllCriteriaMet()
 		}
+	}
+	
+	override func viewWillDisappear(animated: Bool) {
+		super.viewWillDisappear(animated)
 	}
 	
 	/*--------------------------------------------------------------------------------------------
@@ -145,20 +164,109 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
     }
     
     func shareAction() {
-        
+		
+		if !UserController.instance.authenticated {
+			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to invite people to patches and more.")
+			return
+		}
+		
         if self.entity != nil {
-            
-            let sheet = UIActionSheet(title: nil, delegate: self, cancelButtonTitle: nil, destructiveButtonTitle: nil)
-            
-            shareButtonFunctionMap[sheet.addButtonWithTitle("Invite using Patchr")] = .Share
-			shareButtonFunctionMap[sheet.addButtonWithTitle("Invite using Facebook")] = .ShareFacebook
-            shareButtonFunctionMap[sheet.addButtonWithTitle("More")] = .ShareVia
-            sheet.addButtonWithTitle("Cancel")
-            sheet.cancelButtonIndex = sheet.numberOfButtons - 1
-            
-            sheet.showInView(self.view)
+			
+			let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
+			
+			let patchr = UIAlertAction(title: "Invite using Patchr", style: .Default) { action in
+				self.shareUsing(.Patchr)
+			}
+			let facebook = UIAlertAction(title: "Invite using Facebook", style: .Default) { action in
+				self.shareUsing(.Facebook)
+			}
+			let android = UIAlertAction(title: "More...", style: .Default) { action in
+				self.shareUsing(.Actions)
+			}
+			let cancel = UIAlertAction(title: "Cancel", style: .Cancel) { action in
+				sheet.dismissViewControllerAnimated(true, completion: nil)
+			}
+			
+			sheet.addAction(patchr)
+			sheet.addAction(facebook)
+			sheet.addAction(android)
+			sheet.addAction(cancel)
+			
+			presentViewController(sheet, animated: true, completion: nil)
         }
     }
+	
+	func reportAction(sender: AnyObject?) {
+		
+		let email = "report@3meters.com"
+		let subject = "Report on Patchr content"
+		let body = "Report on patch id: \(self.entityId!)\n\nPlease add some detail on why you are reporting this patch.\n"
+		
+		if MFMailComposeViewController.canSendMail() {
+			MailComposer!.view.accessibilityIdentifier = View.Report
+			MailComposer!.mailComposeDelegate = self
+			MailComposer!.setToRecipients([email])
+			MailComposer!.setSubject(subject)
+			MailComposer!.setMessageBody(body, isHTML: false)
+			
+			self.presentViewController(MailComposer!, animated: true, completion: nil)
+		}
+		else {
+			let queryURL = "subject=\(subject)&body=\(body)"
+			let emailURL = "mailto:\(email)?\(queryURL.stringByAddingPercentEncodingWithAllowedCharacters(NSMutableCharacterSet.URLQueryAllowedCharacterSet()) ?? queryURL)"
+			if let url = NSURL(string: emailURL) {
+				UIApplication.sharedApplication().openURL(url)
+			}
+		}
+	}
+
+	func moreAction(sender: AnyObject?) {
+		
+		if !UserController.instance.authenticated {
+			return
+		}
+		
+		if self.entity != nil {
+			
+			let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
+			
+			if let patch = self.entity as? Patch {
+				if patch.userWatchStatusValue == .Member {
+					let leave = UIAlertAction(title: "Leave patch", style: .Destructive) { action in
+						let header = self.header as! PatchDetailView
+						header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+						Utils.delay(1.0) {
+							UIShared.Toast("You have left this patch", controller: self, addToWindow: false)
+						}
+					}
+					sheet.addAction(leave)
+				}
+			}
+
+			let report = UIAlertAction(title: "Report patch", style: .Default) { action in
+				self.reportAction(self)
+			}
+			let cancel = UIAlertAction(title: "Cancel", style: .Cancel) { action in
+				sheet.dismissViewControllerAnimated(true, completion: nil)
+			}
+			sheet.addAction(report)
+			sheet.addAction(cancel)
+			
+			presentViewController(sheet, animated: true, completion: nil)
+		}
+	}
+	
+	func joinAction(sender: AnyObject?) {
+		let header = self.header as! PatchDetailView
+		header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside) // Should trigger fetch via watch notification
+		AudioController.instance.play(Sound.pop.rawValue)
+	}
+	
+	func cancelRequestAction(sender: AnyObject?) {
+		let header = self.header as! PatchDetailView
+		header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside) // Should trigger fetch via watch notification
+		AudioController.instance.play(Sound.pop.rawValue)
+	}
 	
 	func loginAction(sender: AnyObject?) {
 		let controller = LoginViewController()
@@ -177,28 +285,24 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		controller.inputRouteToMain = false
 		self.presentViewController(navController, animated: true) {}
 	}
-	
+
+	/*--------------------------------------------------------------------------------------------
+	* Notifications
+	*--------------------------------------------------------------------------------------------*/
+
 	func didFetch(notification: NSNotification) {
-		if notification.userInfo == nil {
-			if self.inputShowInviteWelcome {
-				if let entity = self.entity as? Patch where entity.userWatchStatusValue == .NonMember {
-					self.inputShowInviteWelcome = false
-					if self.inputInviterName != nil {
-						showInviteWelcome(self, message: "\(self.inputInviterName!) invited you to join this patch.")
-					}
-					else {
-						showInviteWelcome(self, message: "A friend invited you to join this patch.")
-					}
-				}
-			}
-		}
 		/*
-		 * HACK: We hide messages if the user is not a member of a private even if messages
-		 * were returned by the service because they are owned by the current user.
+		 * Called after fetch is complete for form entity. bind() is called
+		 * just before this notification.
 		 */
-		let showMessages = (self.entity!.visibility == "public" || self.entity!.userWatchStatusValue == .Member)
-		if !showMessages {
-			self.emptyLabel.fadeIn()
+		bindContextView()
+	}
+	
+	func didInsertMessage(sender: NSNotification) {
+		if let patch = self.entity as? Patch {
+			if patch.visibility != nil && !patch.userHasMessagedValue && patch.visibility == "public" {
+				self.autoWatchOnAppear = true
+			}
 		}
 	}
 	
@@ -219,23 +323,16 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 	}
 	
 	func watchDidChange(sender: NSNotification) {
-		bindContextButton()
+		Log.d("Resetting patch and messages because watch status changed")
+		fetch(strategy: .IgnoreCache, resetList: true)
 	}
 	
-	func didInsertMessage(sender: NSNotification) {
-		if let entity = self.entity as? Patch where !entity.userHasMessagedValue {
-			self.autoWatchOnAppear = true
+	func applicationDidEnterBackground() {
+		if self.inputReferrerName != nil {
+			self.dismissViewControllerAnimated(true, completion: nil)
 		}
 	}
-	
-	func inviteFinishedWithInvitations(invitationIds: [AnyObject]!, error: NSError!) {
-		if (error != nil) {
-			print("Failed: " + error.localizedDescription)
-		} else {
-			print("Invitations sent")
-		}
-	}
-	
+
 	/*--------------------------------------------------------------------------------------------
 	 * Methods
 	 *--------------------------------------------------------------------------------------------*/
@@ -256,16 +353,25 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		
 		header.mapButton.addTarget(self, action: Selector("mapAction:"), forControlEvents: .TouchUpInside)
 		header.watchersButton.addTarget(self, action: Selector("watchersAction:"), forControlEvents: UIControlEvents.TouchUpInside)
-		header.contextButton.addTarget(self, action: Selector("contextButtonAction:"), forControlEvents: .TouchUpInside)
+		header.moreButton.addTarget(self, action: Selector("moreAction:"), forControlEvents: .TouchUpInside)
+		header.infoMoreButton.addTarget(self, action: Selector("moreAction:"), forControlEvents: .TouchUpInside)
+		
+		if let contextButton = header.contextView as? AirFeaturedButton {
+			contextButton.addTarget(self, action: Selector("contextButtonAction:"), forControlEvents: .TouchUpInside)
+			contextButton.setTitle("", forState: .Normal)
+		}
 
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:", name: PAApplicationDidReceiveRemoteNotification, object: nil)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didFetch:", name: Events.DidFetch, object: self)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "watchDidChange:", name: Events.WatchDidChange, object: header.watchButton)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didInsertMessage:", name: Events.DidInsertMessage, object: nil)
-		
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground", name: Events.ApplicationDidEnterBackground, object: nil)
+
 		/* UI prep */
 		self.patchNameVisible = false
-		header.contextButton.setTitle("", forState: .Normal)
+		if self.inputReferrerName != nil {
+			self.inviteActive = true
+		}
 		
 		self.showEmptyLabel = true
 		self.showProgress = true
@@ -278,13 +384,16 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 	
 	override func bind() {
         
-        if let entity = self.entity as? Patch {
+        if let patch = self.entity as? Patch {
+			
+			self.disableCells = (patch.visibility == "private" && !patch.userIsMember())
+			
 			let header = self.header as! PatchDetailView
 
-			header.bindToEntity(entity)
-			bindContextButton()
+			header.bindToEntity(patch)
+			bindContextView()
 
-			self.emptyMessage = (entity.visibility == "private") ? "Only members can see messages" : "Be the first to post a message to this patch"
+			self.emptyMessage = (patch.visibility == "private") ? "Only members can see messages" : "Be the first to post a message to this patch"
 			self.emptyLabel.text = self.emptyMessage
 			
 			if self.tableView.tableHeaderView == nil {
@@ -301,104 +410,167 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
         }
 	}
 
-	func bindContextButton() {
+	override func drawButtons() {
 		
-		if let entity = self.entity as? Patch {
-			
-			let header = self.header as! PatchDetailView
-			
-			if isOwner() {
-				if entity.countPendingValue > 0 {
-					if entity.countPendingValue == 1 {
-						header.contextButton.setTitle("One member request".uppercaseString, forState: .Normal)
-					}
-					else {
-						header.contextButton.setTitle("\(entity.countPendingValue) member requests".uppercaseString, forState: .Normal)
-					}
-					self.contextAction = .BrowseUsersWatching
-				}
-				else {
-					header.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
-					self.contextAction = .SharePatch
-				}
-			}
-			else {
-				if !UserController.instance.authenticated {
-					if entity.visibility == "public" {
-						header.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
-						self.contextAction = .SharePatch
-					}
-					else {
-						header.contextButton.setTitle("Request to join".uppercaseString, forState: .Normal)
-						self.contextAction = .SubmitJoinRequest
-					}
-				}
-				else {
-					if entity.visibility == "public" {
-						if entity.userWatchStatusValue == .Member {
-							if entity.userHasMessagedValue {
-								header.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
-								self.contextAction = .SharePatch
-							}
-							else {
-								header.contextButton.setTitle("Post your first message".uppercaseString, forState: .Normal)
-								self.contextAction = .CreateMessage
-							}
-						}
-						else {
-							header.contextButton.setTitle("Join this patch".uppercaseString, forState: .Normal)
-							self.contextAction = .JoinPatch
-						}
-					}
-					else {
-						if entity.userWatchStatusValue == .Member {
-							if entity.userHasMessagedValue {
-								header.contextButton.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
-								self.contextAction = .SharePatch
-							}
-							else {
-								header.contextButton.setTitle("Post your first message".uppercaseString, forState: .Normal)
-								self.contextAction = .CreateMessage
-							}
-						}
-						else if entity.userWatchStatusValue == .Pending {
-							header.contextButton.setTitle("Cancel join request".uppercaseString, forState: .Normal)
-							self.contextAction = .CancelJoinRequest
-						}
-						else if entity.userWatchStatusValue == .NonMember {
-							header.contextButton.setTitle("Request to join".uppercaseString, forState: .Normal)
-							self.contextAction = .SubmitJoinRequest
-						}
-						
-						if entity.userWatchJustApprovedValue {
-							if entity.userHasMessagedValue {
-								header.contextButton.setTitle("Approved! Invite your friends".uppercaseString, forState: .Normal)
-								self.contextAction = .SharePatch
-							}
-							else {
-								header.contextButton.setTitle("Approved! Post your first message".uppercaseString, forState: .Normal)
-								self.contextAction = .CreateMessage
-							}
-						}
-					}
-				}
-			}
+		let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
+		let addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: Selector("addAction"))
+		let editButton = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
+		
+		if isUserOwner() {
+			self.navigationItem.setRightBarButtonItems([addButton, Utils.spacer, shareButton, Utils.spacer, editButton], animated: true)
+		}
+		else {
+			self.navigationItem.setRightBarButtonItems([addButton, Utils.spacer, shareButton], animated: true)
 		}
 	}
 	
-    override func drawButtons() {
-        
-        let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
-        let addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: Selector("addAction"))
-		let editButton = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
+	func bindContextView() {
 		
-        if isOwner() {
-            self.navigationItem.setRightBarButtonItems([addButton, Utils.spacer, shareButton, Utils.spacer, editButton], animated: true)
-        }
-        else {
-			self.navigationItem.setRightBarButtonItems([addButton, Utils.spacer, shareButton], animated: true)
-        }
-    }
+		if let patch = self.entity as? Patch {
+			
+			let header = self.header as! PatchDetailView
+			
+			/* Do we have an active invite and a non-member? */
+			if self.inviteActive  {
+					
+				if !(header.contextView is UserInviteView) {
+					header.contextView.removeFromSuperview()
+					let url = self.inputReferrerPhotoUrl != nil ? NSURL(string: self.inputReferrerPhotoUrl!) : nil
+					let inviteView = UserInviteView()
+					inviteView.bind("\(self.inputReferrerName!) has invited you to join this patch.", photoUrl: url, name: self.inputReferrerName)
+					self.inviteView = inviteView
+					header.contextView = inviteView
+					header.contextGroup.addSubview(header.contextView)
+					
+				}
+
+				self.inviteView!.joinButton.hidden = true
+				self.inviteView!.loginButton.hidden = true
+				self.inviteView!.signupButton.hidden = true
+				self.inviteView!.member.hidden = true
+
+				if patch.userIsMember() {
+					self.inviteView?.member.hidden = false
+				}
+				else if patch.userWatchStatusValue == .Pending {
+					self.inviteView!.joinButton.hidden = false
+					self.inviteView!.joinButton.setTitle("Requested".uppercaseString, forState: .Normal)
+					self.inviteView!.joinButton.removeTarget(nil, action: nil, forControlEvents: .TouchUpInside)
+					self.inviteView!.joinButton.addTarget(self, action: Selector("cancelRequestAction:"), forControlEvents: .TouchUpInside)
+				}
+				else {
+					if UserController.instance.authenticated {
+						self.inviteView!.joinButton.hidden = false
+						self.inviteView!.joinButton.setTitle("Join".uppercaseString, forState: .Normal)
+						self.inviteView!.joinButton.removeTarget(nil, action: nil, forControlEvents: .TouchUpInside)
+						self.inviteView!.joinButton.addTarget(self, action: Selector("joinAction:"), forControlEvents: .TouchUpInside)
+					}
+					else {
+						self.inviteView!.loginButton.hidden = false
+						self.inviteView!.signupButton.hidden = false
+						self.inviteView!.loginButton.addTarget(self, action: Selector("loginAction:"), forControlEvents: .TouchUpInside)
+						self.inviteView!.signupButton.addTarget(self, action: Selector("signupAction:"), forControlEvents: .TouchUpInside)
+					}
+				}
+
+				self.inviteView!.setNeedsLayout()
+				self.inviteView!.layoutIfNeeded()
+				header.setNeedsLayout()
+				return
+			}
+			
+			if !(header.contextView is UIButton) {
+				header.contextView.removeFromSuperview()
+				header.contextView = AirFeaturedButton()
+				header.contextGroup.addSubview(header.contextView)
+				self.inviteView = nil
+			}
+			
+			if let button = header.contextView as? UIButton {
+				if isUserOwner() {
+					if patch.countPendingValue > 0 {
+						if patch.countPendingValue == 1 {
+							button.setTitle("One member request".uppercaseString, forState: .Normal)
+						}
+						else {
+							button.setTitle("\(patch.countPendingValue) member requests".uppercaseString, forState: .Normal)
+						}
+						self.contextAction = .BrowseUsersWatching
+					}
+					else if patch.userWatchStatusValue == .NonMember {
+						button.setTitle("Join".uppercaseString, forState: .Normal)
+						self.contextAction = .SubmitJoinRequest
+					}
+					else {
+						button.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
+						self.contextAction = .SharePatch
+					}
+				}
+				else {
+					if !UserController.instance.authenticated {
+						if patch.visibility == "public" {
+							button.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
+							self.contextAction = .SharePatch
+						}
+						else {
+							button.setTitle("Join".uppercaseString, forState: .Normal)
+							self.contextAction = .SubmitJoinRequest
+						}
+					}
+					else {
+						if patch.visibility == "public" {
+							if patch.userWatchStatusValue == .Member {
+								if patch.userHasMessagedValue {
+									button.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
+									self.contextAction = .SharePatch
+								}
+								else {
+									button.setTitle("Post your first message".uppercaseString, forState: .Normal)
+									self.contextAction = .CreateMessage
+								}
+							}
+							else {
+								button.setTitle("Join".uppercaseString, forState: .Normal)
+								self.contextAction = .JoinPatch
+							}
+						}
+						else {
+							if patch.userWatchStatusValue == .Member {
+								if patch.userHasMessagedValue {
+									button.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
+									self.contextAction = .SharePatch
+								}
+								else {
+									button.setTitle("Post your first message".uppercaseString, forState: .Normal)
+									self.contextAction = .CreateMessage
+								}
+							}
+							else if patch.userWatchStatusValue == .Pending {
+								button.setTitle("Requested".uppercaseString, forState: .Normal)
+								self.contextAction = .CancelJoinRequest
+							}
+							else if patch.userWatchStatusValue == .NonMember {
+								button.setTitle("Join".uppercaseString, forState: .Normal)
+								self.contextAction = .SubmitJoinRequest
+							}
+							
+							if patch.userWatchJustApprovedValue {
+								if patch.userHasMessagedValue {
+									button.setTitle("Approved! Invite your friends".uppercaseString, forState: .Normal)
+									self.contextAction = .SharePatch
+								}
+								else {
+									button.setTitle("Approved! Post your first message".uppercaseString, forState: .Normal)
+									self.contextAction = .CreateMessage
+								}
+							}
+						}
+					}
+				}
+			}
+			
+		}
+	}
 	
 	func shareUsing(route: ShareRoute) {
 		
@@ -445,45 +617,16 @@ class PatchDetailViewController: BaseDetailViewController, InviteWelcomeProtocol
 		}
     }
 
-    func isOwner() -> Bool {
+	/*--------------------------------------------------------------------------------------------
+	* Properties
+	*--------------------------------------------------------------------------------------------*/
+	
+    func isUserOwner() -> Bool {
         if let currentUser = UserController.instance.currentUser, let entity = self.entity {
             return currentUser.id_ == entity.creator?.entityId
         }
         return false
     }
-	
-	func showInviteWelcome(var controller: UIViewController?, message: String?) {
-		
-		self.inviteController = WelcomeViewController()
-		self.inviteController!.modalPresentationStyle = .OverFullScreen
-		self.inviteController!.modalTransitionStyle = .CrossDissolve
-		if controller == nil {
-			controller = UIViewController.topMostViewController()!
-		}
-		self.inviteController!.inputMessage = message
-		if let entity = self.entity as? Patch {
-			self.inviteController!.inputPublic = (entity.visibility == "public")
-		}
-		self.inviteController!.delegate = self
-		controller!.presentViewController(self.inviteController!, animated: true, completion: nil)
-	}
-
-	func inviteResult(result: InviteWelcomeResult) {
-		Utils.delay(0.1) {
-			self.dismissViewControllerAnimated(true) {
-				if result == .Login {
-					self.loginAction(nil)
-				}
-				else if result == .Signup {
-					self.signupAction(nil)
-				}
-				else if result == .Join {
-					let header = self.header as! PatchDetailView
-					header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
-				}
-			}
-		}
-	}
 }
 
 extension PatchDetailViewController: MapViewDelegate {
@@ -524,11 +667,10 @@ extension PatchDetailViewController: MapViewDelegate {
 }
 
 extension PatchDetailViewController {
+	
 	override func bindCellToEntity(cell: WrapperTableViewCell, entity: AnyObject, location: CLLocation?) {
-		
 		super.bindCellToEntity(cell, entity: entity, location: location)
-		let showMessages = (self.entity!.visibility == "public" || self.entity!.userWatchStatusValue == .Member)
-		cell.hidden = !showMessages
+		cell.hidden = self.disableCells
 	}
 }
 
@@ -567,27 +709,28 @@ extension PatchDetailViewController {
 	}
 }
 
-extension PatchDetailViewController: UIActionSheetDelegate {
-    
-    func actionSheet(actionSheet: UIActionSheet, clickedButtonAtIndex buttonIndex: Int) {
-        if buttonIndex != actionSheet.cancelButtonIndex {
-            // There are some strange visual artifacts with the share sheet and the presented
-            // view controllers. Adding a small delay seems to prevent them.
-            Utils.delay(0.4) {
-				
-                switch self.shareButtonFunctionMap[buttonIndex]! {
-                case .Share:
-                    self.shareUsing(.Patchr)
-                    
-				case .ShareFacebook:
-					self.shareUsing(.Facebook)
-					
-                case .ShareVia:
-                    self.shareUsing(.Actions)
-                }
-            }
-        }
-    }
+extension PatchDetailViewController: MFMailComposeViewControllerDelegate {
+	
+	func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
+		
+		switch result.rawValue {
+		case MFMailComposeResultCancelled.rawValue:	// 0
+			UIShared.Toast("Report cancelled", controller: self, addToWindow: false)
+		case MFMailComposeResultSaved.rawValue:		// 1
+			UIShared.Toast("Report saved", controller: self, addToWindow: false)
+		case MFMailComposeResultSent.rawValue:		// 2
+			UIShared.Toast("Report sent", controller: self, addToWindow: false)
+		case MFMailComposeResultFailed.rawValue:	// 3
+			UIShared.Toast("Report send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
+		default:
+			break
+		}
+		
+		self.dismissViewControllerAnimated(true) {
+			MailComposer = nil
+			MailComposer = MFMailComposeViewController()
+		}
+	}
 }
 
 let UIActivityTypeGmail = "com.google.Gmail.ShareExtension"
@@ -639,6 +782,11 @@ private enum ShareButtonFunction {
     case Share
 	case ShareFacebook
     case ShareVia
+}
+
+private enum ActionButtonFunction {
+	case Leave
+	case Report
 }
 
 enum ShareRoute {

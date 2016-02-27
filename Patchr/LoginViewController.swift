@@ -256,7 +256,7 @@ class LoginViewController: BaseEditViewController {
 	func didLogin() {
 		/* Navigate to main interface */
 		if self.inputRouteToMain {
-			self.navigateToMain()
+			self.navigateToMain()	// Replaces any current navigation stack
 		}
 		else {
 			if self.isModal {

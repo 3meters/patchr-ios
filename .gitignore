@@ -40,4 +40,6 @@ Pods/CocoaPodsKeys
 # Frameworks
 # We don't include frameworks in source control because some exceed the 100MB github limit.
 Frameworks/
+
+# Misc
 fastlane/

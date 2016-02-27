@@ -143,10 +143,12 @@ class AirImageButton: UIButton {
         
         if error != nil {
             Log.w("Image fetch failed: " + error!.localizedDescription)
-            Log.w("Failed url: \(url?.absoluteString)")
-			if error!.code == HTTPStatusCode.NotFound.rawValue {
+            Log.w("Failed url: \(url!.absoluteString)")
+			if error!.code == HTTPStatusCode.NotFound.rawValue
+				|| error!.code == HTTPStatusCode.BadGateway.rawValue
+				|| error!.code == HTTPStatusCode.Forbidden.rawValue {
 				NSNotificationCenter.defaultCenter().postNotificationName(Events.ImageNotFound, object: self)
-				UIShared.Toast("Image not found")
+				UIShared.Toast("Image not available")
 			}
 			else if error!.code == HTTPStatusCode.UnsupportedMediaType.rawValue {
 				NSNotificationCenter.defaultCenter().postNotificationName(Events.ImageNotFound, object: self)
