@@ -180,6 +180,9 @@ class PatchDetailViewController: BaseDetailViewController {
 			let facebook = UIAlertAction(title: "Invite using Facebook", style: .Default) { action in
 				self.shareUsing(.Facebook)
 			}
+			let airdrop = UIAlertAction(title: "AirDrop", style: .Default) { action in
+				self.shareUsing(.AirDrop)
+			}
 			let android = UIAlertAction(title: "More...", style: .Default) { action in
 				self.shareUsing(.Actions)
 			}
@@ -189,6 +192,7 @@ class PatchDetailViewController: BaseDetailViewController {
 			
 			sheet.addAction(patchr)
 			sheet.addAction(facebook)
+			sheet.addAction(airdrop)
 			sheet.addAction(android)
 			sheet.addAction(cancel)
 			
@@ -591,6 +595,48 @@ class PatchDetailViewController: BaseDetailViewController {
 			let provider = FacebookProvider()
 			provider.invite(self.entity!)
 		}
+		else if route == .AirDrop {
+			
+			BranchProvider.invite(self.entity as! Patch, referrer: UserController.instance.currentUser) {
+				response, error in
+				
+				if let error = ServerError(error) {
+					UIViewController.topMostViewController()!.handleError(error)
+				}
+				else {
+					let patch = response as! PatchItem
+					let excluded = [
+						UIActivityTypePostToTwitter,
+						UIActivityTypePostToFacebook,
+						UIActivityTypePostToWeibo,
+						UIActivityTypeMessage,
+						UIActivityTypeMail,
+						UIActivityTypePrint,
+						UIActivityTypeCopyToPasteboard,
+						UIActivityTypeAssignToContact,
+						UIActivityTypeSaveToCameraRoll,
+						UIActivityTypeAddToReadingList,
+						UIActivityTypePostToFlickr,
+						UIActivityTypePostToVimeo,
+						UIActivityTypePostToTencentWeibo
+					]
+					
+					let activityViewController = UIActivityViewController(
+						activityItems: [NSURL.init(string: patch.shareUrl, relativeToURL: nil)!],
+						applicationActivities: nil)
+					
+					activityViewController.excludedActivityTypes = excluded
+					
+					if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+						self.presentViewController(activityViewController, animated: true, completion: nil)
+					}
+					else {
+						let popup: UIPopoverController = UIPopoverController(contentViewController: activityViewController)
+						popup.presentPopoverFromRect(CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/4, 0, 0), inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
+					}
+				}
+			}
+		}
 		else if route == .Actions {
 			
 			BranchProvider.invite(self.entity as! Patch, referrer: UserController.instance.currentUser) {
@@ -601,9 +647,15 @@ class PatchDetailViewController: BaseDetailViewController {
 				}
 				else {
 					let patch = response as! PatchItem
+					let excluded = [
+						UIActivityTypeAirDrop
+					]
+					
 					let activityViewController = UIActivityViewController(
 						activityItems: [patch],
 						applicationActivities: nil)
+					
+					activityViewController.excludedActivityTypes = excluded
 					
 					if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
 						self.presentViewController(activityViewController, animated: true, completion: nil)
@@ -792,6 +844,7 @@ private enum ActionButtonFunction {
 enum ShareRoute {
 	case Patchr
 	case Facebook
+	case AirDrop
 	case Actions
 }
 
