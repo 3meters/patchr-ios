@@ -12,12 +12,12 @@ import Branch
 
 class MessageDetailViewController: BaseViewController {
 
-	var inputMessage	: Message?
-	var inputMessageId	: String?			// Used by notifications
+	var inputMessage			: Message?
+	var inputMessageId			: String?			// Used by notifications
 	var inputReferrerName		: String?
 	var inputReferrerPhotoUrl	: String?
-	
-    var deleted			= false
+	var shareActive				= false
+    var deleted					= false
 
 	private var isShare: Bool {
 		return (self.inputMessage?.type != nil && self.inputMessage!.type == "share")
@@ -247,6 +247,9 @@ class MessageDetailViewController: BaseViewController {
 			bind()
 			self.view.setNeedsLayout()
 		}
+		else {
+			self.scrollView.hidden = true
+		}
 		
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "likeDidChange:", name: Events.LikeDidChange, object: nil)
 	}
@@ -445,10 +448,7 @@ class MessageDetailViewController: BaseViewController {
 		setScreenName("MessageDetail")
 		self.view.accessibilityIdentifier = View.MessageDetail
 		
-		//self.contentHolder.backgroundColor = Theme.colorBackgroundForm
-		
 		/* Ui tweaks */
-		//self.view.window?.backgroundColor = Theme.colorBackgroundWindow
 		self.activity.tintColor = Theme.colorActivityIndicator
 		self.activity.accessibilityIdentifier = "activity_view"
 		
@@ -518,6 +518,8 @@ class MessageDetailViewController: BaseViewController {
 	}
 	
 	func bind() {
+		
+		self.scrollView.hidden = false
 		
         if self.isShare {
 			
@@ -700,10 +702,19 @@ class MessageDetailViewController: BaseViewController {
 						self?.activity.stopAnimating()
 						if error == nil {
 							if objectId == nil {
-								UIShared.Toast("Message has been deleted")
-								Utils.delay(2.0) {
-									self?.navigationController?.popViewControllerAnimated(true)
-								}
+								self?.emptyLabel.text = "Message is private or has been deleted"
+								self?.emptyLabel.fadeIn()
+
+//								if (self != nil && self!.shareActive) {
+//									self?.emptyLabel.text = "Message is private or has been deleted"
+//									self?.emptyLabel.fadeIn()
+//								}
+//								else {
+//									UIShared.Toast("Message is private or has been deleted")
+//									Utils.delay(2.0) {
+//										self?.navigationController?.popViewControllerAnimated(true)
+//									}
+//								}
 							}
 							else {
 								self?.inputMessage = DataController.instance.mainContext.objectWithID(objectId!) as? Message

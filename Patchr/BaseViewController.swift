@@ -12,7 +12,8 @@ class BaseViewController: UIViewController {
 	
 	var scrollView		= AirScrollView()
 	var contentHolder	= UIView()
-		
+	var emptyLabel		= AirLabel(frame: CGRectZero)
+	
 	var isModal: Bool {
 		return self.presentingViewController?.presentedViewController == self
 			|| (self.navigationController != nil && self.navigationController?.presentingViewController?.presentedViewController == self.navigationController)
@@ -34,6 +35,7 @@ class BaseViewController: UIViewController {
 	
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
+		self.emptyLabel.anchorInCenterWithWidth(160, height: 160)
 	}
 		
 	deinit {
@@ -57,6 +59,19 @@ class BaseViewController: UIViewController {
 		self.scrollView.alwaysBounceVertical = true
 		self.scrollView.addSubview(self.contentHolder)
 		self.view.addSubview(self.scrollView)
+		
+		/* Empty label */
+		self.emptyLabel.alpha = 0
+		self.emptyLabel.layer.borderWidth = 1
+		self.emptyLabel.layer.borderColor = Theme.colorRule.CGColor
+		self.emptyLabel.layer.backgroundColor = Theme.colorBackgroundEmptyBubble.CGColor
+		self.emptyLabel.layer.cornerRadius = 80
+		self.emptyLabel.font = Theme.fontTextDisplay
+		self.emptyLabel.numberOfLines = 0
+		self.emptyLabel.insets = UIEdgeInsetsMake(16, 16, 16, 16)
+		self.emptyLabel.textAlignment = NSTextAlignment.Center
+		self.emptyLabel.textColor = Theme.colorTextPlaceholder
+		self.view.addSubview(self.emptyLabel)
 	}
 	
 	func performBack(animated: Bool = true) {

@@ -264,6 +264,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 				
 				let controller = MessageDetailViewController()
 				controller.inputMessageId = entityId
+				controller.shareActive = true
 				
 				if let referrerName = params!["referrerName"] as? String {
 					controller.inputReferrerName = referrerName.stringByReplacingOccurrencesOfString("+", withString: " ")
