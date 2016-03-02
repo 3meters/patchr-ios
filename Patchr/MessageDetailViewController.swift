@@ -98,8 +98,10 @@ class MessageDetailViewController: BaseViewController {
 			
 			let viewWidth = min(CONTENT_WIDTH_MAX, self.view.bounds.size.width)
 			let contentWidth = CGFloat(viewWidth - 32)
+			
 			self.view.bounds.size.width = viewWidth
 			self.contentHolder.bounds.size.width = viewWidth
+			self.scrollView.anchorTopCenterWithTopPadding(0, width: viewWidth, height: self.view.bounds.height)
 			
 			if self.isShare {
 				
@@ -331,8 +333,8 @@ class MessageDetailViewController: BaseViewController {
         }
     }
     
-	func shareAction() {
-        
+	func shareAction(sender: AnyObject?) {
+		
 		if !UserController.instance.authenticated {
 			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to share messages and more.")
 			return
@@ -355,6 +357,16 @@ class MessageDetailViewController: BaseViewController {
 			sheet.addAction(patchr)
 			sheet.addAction(android)
 			sheet.addAction(cancel)
+			
+			if let presenter = sheet.popoverPresentationController {
+				if let button = sender as? UIBarButtonItem {
+					presenter.barButtonItem = button
+				}
+				else if let button = sender as? UIView {
+					presenter.sourceView = button;
+					presenter.sourceRect = button.bounds;
+				}
+			}
 			
 			presentViewController(sheet, animated: true, completion: nil)
         }
@@ -433,11 +445,10 @@ class MessageDetailViewController: BaseViewController {
 		setScreenName("MessageDetail")
 		self.view.accessibilityIdentifier = View.MessageDetail
 		
-		//self.contentHolder.hidden = true
-		self.contentHolder.backgroundColor = Theme.colorBackgroundForm
+		//self.contentHolder.backgroundColor = Theme.colorBackgroundForm
 		
 		/* Ui tweaks */
-		self.view.window?.backgroundColor = Theme.colorBackgroundWindow
+		//self.view.window?.backgroundColor = Theme.colorBackgroundWindow
 		self.activity.tintColor = Theme.colorActivityIndicator
 		self.activity.accessibilityIdentifier = "activity_view"
 		
@@ -635,7 +646,7 @@ class MessageDetailViewController: BaseViewController {
 
 	func drawNavButtons(animated: Bool = false) {
 		
-		let shareButton  = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
+		let shareButton  = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction:"))
 		let editButton   = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
 		let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: Selector("deleteAction"))
 		let removeButton   = UIBarButtonItem(image: Utils.imageRemove, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("removeAction"))

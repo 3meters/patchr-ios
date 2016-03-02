@@ -139,7 +139,7 @@ class PhotoView: UIView {
 	
 	func setPhotoAction(sender: AnyObject) {
 		NSNotificationCenter.defaultCenter().postNotificationName(Events.PhotoViewHasFocus, object: nil)
-		self.photoChooser?.choosePhoto() {
+		self.photoChooser?.choosePhoto(sender) {
 			[weak self] image, imageResult, cancelled in
 			
 			if !cancelled {

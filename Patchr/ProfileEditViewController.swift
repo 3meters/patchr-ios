@@ -239,7 +239,7 @@ class ProfileEditViewController: BaseEditViewController {
 	}
 	
 	func alertTextFieldDidChange(sender: AnyObject) {
-		if let alertController: AirAlertController = self.presentedViewController as? AirAlertController {
+		if let alertController: UIAlertController = self.presentedViewController as? UIAlertController {
 			let confirm = alertController.textFields![0]
 			let okAction = alertController.actions[0]
 			okAction.enabled = confirm.text == "YES"

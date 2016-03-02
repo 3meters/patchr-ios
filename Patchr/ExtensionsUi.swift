@@ -41,6 +41,11 @@ extension UIImage {
 }
 
 extension UIAlertController {
+	/*
+	* http://http://stackoverflow.com/questions/31406820
+	* Fix for iOS 9 bug that produces infinite recursion loop looking for
+	* supportInterfaceOrientations.
+	*/
 	public override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
 		return UIInterfaceOrientationMask.Portrait
 	}
@@ -267,7 +272,7 @@ extension UIViewController {
     }
     
     func Alert(title: String?, message: String? = nil, cancelButtonTitle: String = "OK") {
-		let alert = AirAlertController(title: title, message: message, preferredStyle: .Alert)
+		let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
 		alert.addAction(UIAlertAction(title: cancelButtonTitle, style: .Cancel, handler: nil))
 		self.presentViewController(alert, animated: true) {}
     }
@@ -276,7 +281,7 @@ extension UIViewController {
 		actionTitle: String, cancelTitle: String,
 		delegate: AnyObject? = nil, onDismiss: (Bool) -> Void) {
 			
-			let alert = AirAlertController(title: title, message: message, preferredStyle: .Alert)
+			let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
 			let okAction = UIAlertAction(title: actionTitle, style: .Default, handler: { _ in onDismiss(true) })
 			let cancelAction = UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) })
 			alert.addAction(okAction)
@@ -288,7 +293,7 @@ extension UIViewController {
 		actionTitle: String, cancelTitle: String,
 		delegate: AnyObject? = nil, onDismiss: (Bool) -> Void) {
 			
-			let alert = AirAlertController(title: title, message: message, preferredStyle: .Alert)
+			let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
 			let okAction = UIAlertAction(title: actionTitle, style: .Default, handler: { _ in onDismiss(true) })
 			let cancelAction = UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) })
 			alert.addAction(okAction)
@@ -300,7 +305,7 @@ extension UIViewController {
 								 actionTitle: String, cancelTitle: String, destructConfirmation: Bool = false,
 								 delegate: AnyObject? = nil, onDismiss: (Bool) -> Void) {
             
-		let alert = AirAlertController(title: title, message: message, preferredStyle: .Alert)
+		let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
 		let okAction = UIAlertAction(title: actionTitle, style: .Destructive, handler: { _ in onDismiss(true) })
 		let cancelAction = UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) })
 		alert.addAction(okAction)

@@ -144,6 +144,9 @@ class LocationController: NSObject {
 							Log.d("Hail mary manual push of most recent available location")
 							self.locationManager(self.locationManager, didUpdateLocations: [last])
 						}
+						else {
+							Log.w("Hail mary manual push failed because we have never had a location fix")
+						}
 					}
 				}
 			}

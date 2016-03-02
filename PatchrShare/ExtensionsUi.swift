@@ -41,6 +41,21 @@ extension UIImage {
     }
 }
 
+extension UIAlertController {
+	/*
+	* http://http://stackoverflow.com/questions/31406820
+	* Fix for iOS 9 bug that produces infinite recursion loop looking for
+	* supportInterfaceOrientations.
+	*/
+	public override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
+		return UIInterfaceOrientationMask.Portrait
+	}
+
+	public override func shouldAutorotate() -> Bool {
+		return false
+	}
+}
+
 extension UIView {
     
     func fadeIn(duration: NSTimeInterval = 0.3, delay: NSTimeInterval = 0.0, alpha: CGFloat = 1.0, completion: ((Bool) -> Void) = {(finished: Bool) -> Void in}) {

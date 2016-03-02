@@ -39,8 +39,8 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 		super.init()
 	}
 
-	func choosePhoto(finishedChoosing: (UIImage?, ImageResult?, Bool) -> Void) {
-
+	func choosePhoto(sender: AnyObject, finishedChoosing: (UIImage?, ImageResult?, Bool) -> Void) {
+		
 		self.finishedChoosing = finishedChoosing
 		let cameraAvailable       = UIImagePickerController.isSourceTypeAvailable(.Camera)
 		let photoLibraryAvailable = UIImagePickerController.isSourceTypeAvailable(.PhotoLibrary)
@@ -72,6 +72,16 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 		}
 		
 		sheet.addAction(cancel)
+		
+		if let presenter = sheet.popoverPresentationController {
+			if let button = sender as? UIBarButtonItem {
+				presenter.barButtonItem = button
+			}
+			else if let button = sender as? UIView {
+				presenter.sourceView = button;
+				presenter.sourceRect = button.bounds;
+			}
+		}
 		
 		hostViewController?.presentViewController(sheet, animated: true, completion: nil)
 	}

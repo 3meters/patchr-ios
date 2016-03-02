@@ -44,7 +44,7 @@ class ShareViewController: SLComposeServiceViewController {
         * So we alert and bail when this case is detected.
         */
         if self.userId == nil {
-            let alert = AirAlertController(title: "Patchr sign in",
+            let alert = UIAlertController(title: "Patchr sign in",
                 message: "To share messages and photos to Patchr, you need to be signed in.",
                 preferredStyle: .Alert)
             let action = UIAlertAction(title: "OK", style: .Cancel) { _ in
@@ -116,7 +116,7 @@ class ShareViewController: SLComposeServiceViewController {
                                 }
                             }
                             else {
-                                let alert = AirAlertController(title: "Error", message: "Error loading image", preferredStyle: .Alert)
+                                let alert = UIAlertController(title: "Error", message: "Error loading image", preferredStyle: .Alert)
                                 let action = UIAlertAction(title: "Error", style: .Cancel) { _ in
                                     strongSelf.dismissViewControllerAnimated(true, completion: nil)
                                 }

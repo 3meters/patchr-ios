@@ -71,8 +71,6 @@
 		E20C3A831BDEBBB9008CCED1 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A821BDEBBB9008CCED1 /* CoreDataStack.swift */; };
 		E20C3A851BE04BBC008CCED1 /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */; };
 		E20C3A861BE08887008CCED1 /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */; };
-		E20D57051BC77FCB004D73E2 /* AirAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20D57041BC77FCB004D73E2 /* AirAlertController.swift */; };
-		E20D57061BC78160004D73E2 /* AirAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20D57041BC77FCB004D73E2 /* AirAlertController.swift */; };
 		E224C3501B6ED27F00879775 /* PatchrShare.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E238BAE41B51D3290094AF41 /* PatchrShare.storyboard */; };
 		E224C3551B6EDBBE00879775 /* PatchTargetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */; };
 		E227708D1C46C01800866733 /* MBProgressHUD+MBProgressHudAccessible.m in Sources */ = {isa = PBXBuildFile; fileRef = E227708C1C46C01800866733 /* MBProgressHUD+MBProgressHudAccessible.m */; };
@@ -347,7 +345,6 @@
 		E20C3A801BDC1D57008CCED1 /* BaseDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseDetailView.swift; sourceTree = "<group>"; };
 		E20C3A821BDEBBB9008CCED1 /* CoreDataStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CoreDataStack.swift; path = Patchr/CoreDataStack.swift; sourceTree = "<group>"; };
 		E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stopwatch.swift; sourceTree = "<group>"; };
-		E20D57041BC77FCB004D73E2 /* AirAlertController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirAlertController.swift; sourceTree = "<group>"; };
 		E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTargetViewController.swift; sourceTree = "<group>"; };
 		E227708B1C46C01800866733 /* MBProgressHUD+MBProgressHudAccessible.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MBProgressHUD+MBProgressHudAccessible.h"; sourceTree = "<group>"; };
 		E227708C1C46C01800866733 /* MBProgressHUD+MBProgressHudAccessible.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MBProgressHUD+MBProgressHudAccessible.m"; sourceTree = "<group>"; };
@@ -875,7 +872,6 @@
 		E2CE389F1AEFBF7600710227 /* Widgets */ = {
 			isa = PBXGroup;
 			children = (
-				E20D57041BC77FCB004D73E2 /* AirAlertController.swift */,
 				E2D12A741C08F85E00DE507E /* AirButton.swift */,
 				E24198FF1C18ACAF00DDA549 /* AirContactPicker.swift */,
 				E2D12A761C08F9CE00DE507E /* AirFeaturedButton.swift */,
@@ -1543,7 +1539,6 @@
 				7DA3D9121A72D5A60082D2AB /* DataController.swift in Sources */,
 				E2D12A771C08F9CE00DE507E /* AirFeaturedButton.swift in Sources */,
 				E2D25DC81B23892000E51461 /* UserController.swift in Sources */,
-				E20D57051BC77FCB004D73E2 /* AirAlertController.swift in Sources */,
 				E26B0C8E1B45783700706F4A /* TextFieldChangeObserver.swift in Sources */,
 				7D3F26DB1A7706610015F8E8 /* _Notification.m in Sources */,
 				E256B4261BD2C9E200EBF894 /* PatchView.swift in Sources */,
@@ -1607,7 +1602,6 @@
 				E224C3551B6EDBBE00879775 /* PatchTargetViewController.swift in Sources */,
 				E238BB021B5718E40094AF41 /* Constants.swift in Sources */,
 				E281776F1B5B0F4A00D65AC1 /* Utils.swift in Sources */,
-				E20D57061BC78160004D73E2 /* AirAlertController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

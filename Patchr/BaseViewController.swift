@@ -57,7 +57,6 @@ class BaseViewController: UIViewController {
 		self.scrollView.alwaysBounceVertical = true
 		self.scrollView.addSubview(self.contentHolder)
 		self.view.addSubview(self.scrollView)
-		self.scrollView.fillSuperview()
 	}
 	
 	func performBack(animated: Bool = true) {

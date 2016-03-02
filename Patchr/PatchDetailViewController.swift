@@ -106,7 +106,7 @@ class PatchDetailViewController: BaseDetailViewController {
             addAction()
         }
         else if self.contextAction == .SharePatch {
-            shareAction()
+            shareAction(sender)
         }
         else if self.contextAction == .CancelJoinRequest {
             header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
@@ -163,7 +163,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		self.navigationController?.presentViewController(navController, animated: true, completion: nil)
     }
     
-    func shareAction() {
+	func shareAction(sender: AnyObject?) {
 		
 		if !UserController.instance.authenticated {
 			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to invite people to patches and more.")
@@ -195,6 +195,16 @@ class PatchDetailViewController: BaseDetailViewController {
 			sheet.addAction(airdrop)
 			sheet.addAction(android)
 			sheet.addAction(cancel)
+			
+			if let presenter = sheet.popoverPresentationController {
+				if let button = sender as? UIBarButtonItem {
+					presenter.barButtonItem = button
+				}
+				else if let button = sender as? UIView {
+					presenter.sourceView = button;
+					presenter.sourceRect = button.bounds;
+				}
+			}
 			
 			presentViewController(sheet, animated: true, completion: nil)
         }
@@ -255,6 +265,16 @@ class PatchDetailViewController: BaseDetailViewController {
 			}
 			sheet.addAction(report)
 			sheet.addAction(cancel)
+			
+			if let presenter = sheet.popoverPresentationController {
+				if let button = sender as? UIBarButtonItem {
+					presenter.barButtonItem = button
+				}
+				else if let button = sender as? UIView {
+					presenter.sourceView = button;
+					presenter.sourceRect = button.bounds;
+				}
+			}
 			
 			presentViewController(sheet, animated: true, completion: nil)
 		}
@@ -416,7 +436,7 @@ class PatchDetailViewController: BaseDetailViewController {
 
 	override func drawButtons() {
 		
-		let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction"))
+		let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction:"))
 		let addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: Selector("addAction"))
 		let editButton = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
 		
@@ -622,7 +642,7 @@ class PatchDetailViewController: BaseDetailViewController {
 					]
 					
 					let activityViewController = UIActivityViewController(
-						activityItems: [NSURL.init(string: patch.shareUrl, relativeToURL: nil)!],
+						activityItems: [patch, NSURL.init(string: patch.shareUrl, relativeToURL: nil)!],
 						applicationActivities: nil)
 					
 					activityViewController.excludedActivityTypes = excluded
@@ -652,7 +672,7 @@ class PatchDetailViewController: BaseDetailViewController {
 					]
 					
 					let activityViewController = UIActivityViewController(
-						activityItems: [patch],
+						activityItems: [patch, NSURL.init(string: patch.shareUrl, relativeToURL: nil)!],
 						applicationActivities: nil)
 					
 					activityViewController.excludedActivityTypes = excluded
@@ -810,7 +830,7 @@ class PatchItem: NSObject, UIActivityItemSource {
 	}
 	
     func activityViewController(activityViewController: UIActivityViewController, itemForActivityType activityType: String) -> AnyObject? {
-        let text = "\(UserController.instance.currentUser.name) has invited you to the \(self.entity.name) patch! \(self.shareUrl) \n"
+		let text = "\(UserController.instance.currentUser.name) has invited you to the \(self.entity.name) patch!"
 		return text
     }
     
