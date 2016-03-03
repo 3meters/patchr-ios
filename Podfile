@@ -29,7 +29,7 @@ def core_pods
 	pod 'AWSS3'
 	pod 'AFNetworking',				'~> 2.6'
 	pod 'AFNetworkActivityLogger',	'~> 2.0'
-	pod 'PBWebViewController',		'~> 0.3'			# Used to show show web content for terms/policy/licensing
+	pod 'PBWebViewController',		'~> 0.5'			# Used to show show web content for terms/policy/licensing
 	pod 'MBProgressHUD',			'~> 0.9.1'
 	pod 'DLRadioButton'
 	pod 'UIDevice-Hardware'								# Convenience for determining system version and model identifier
@@ -42,9 +42,9 @@ def core_pods
 	pod 'Fabric'
 	pod 'Crashlytics'
 	pod 'THContactPicker',			'~> 1.2'
-	pod 'FBSDKCoreKit',				'~> 4.9.0'
-	pod 'FBSDKLoginKit',			'~> 4.9.0'
-	pod 'FBSDKShareKit',			'~> 4.9.0'
+	pod 'FBSDKCoreKit',				'~> 4.10.0'
+	pod 'FBSDKLoginKit',			'~> 4.10.0'
+	pod 'FBSDKShareKit',			'~> 4.10.0'
 	pod 'DateTools'
 	pod 'Parse'
 	pod 'iRate'
@@ -58,7 +58,7 @@ end
 
 target 'PatchrTests' do
 	core_pods
-	pod 'Quick',					'~> 0.8.0'
+	pod 'Quick',					'~> 0.9.0'
 	pod 'Nimble'
 	pod 'KIF/IdentifierTests',		'~> 3.0', :configurations => ['Debug']
 end
