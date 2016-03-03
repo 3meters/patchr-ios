@@ -82,6 +82,8 @@ class Snow {
 	let colorButtonBorderFeatured			= Colors.brandColorFill
 	let colorButtonFill						= Colors.clear
 	let colorButtonFillFeatured				= Colors.brandColorFill
+	
+	let fontSize				= 18
 
 	let fontBanner				= UIFont(name: "HelveticaNeue-Thin", size: 48)!
 	let fontTitleLarge			= UIFont(name: "HelveticaNeue-Thin", size: 30)!

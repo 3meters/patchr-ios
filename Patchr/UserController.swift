@@ -69,6 +69,30 @@ class UserController: NSObject {
 		
         writeCredentialsToUserDefaults()
     }
+	
+	func handlePasswordChange(response: AnyObject) {
+		/*
+		 * Capture and update the session
+		 */
+		let json = JSON(response)
+		
+		if let jsonString = json["session"].rawString() {
+			self.jsonSession = jsonString
+		}
+		
+		self.sessionKey = json["session"]["key"].string
+		
+		Log.i("User changed password: \(self.userName!) (\(self.userId!))")
+		
+		let success = self.lockbox.setString((self.sessionKey != nil ? self.sessionKey! : nil), forKey: "sessionKey", accessibility: kSecAttrAccessibleAfterFirstUnlock)
+		if success {
+			self.lockbox.setString((self.jsonSession != nil ? self.jsonSession! : nil), forKey: "session", accessibility: kSecAttrAccessibleAfterFirstUnlock)
+		}
+		
+		if !success {
+			Log.w("Failed to store session in keychain")
+		}
+	}
 
 	func handleSuccessfulLoginResponse(response: AnyObject) {
 		/*

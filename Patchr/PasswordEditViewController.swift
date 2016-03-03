@@ -13,10 +13,12 @@ class PasswordEditViewController: BaseEditViewController {
 
     var processing: Bool = false
 
-    var message          = AirLabelTitle()
-    var passwordField    = AirTextField()
-    var passwordNewField = AirTextField()
-    var submitButton      = AirButton()
+    var message				= AirLabelTitle()
+    var passwordField		= AirTextField()
+    var passwordNewField	= AirTextField()
+	var hideShowButton		= AirHideShowButton()
+	var hideShowNewButton	= AirHideShowButton()
+    var submitButton		= AirButton()
 	
 	/*--------------------------------------------------------------------------------------------
 	* Lifecycle
@@ -56,6 +58,20 @@ class PasswordEditViewController: BaseEditViewController {
 			change()
 		}
 	}
+	
+	func hideShowPasswordAction(sender: AnyObject?) {
+		if let button = sender as? AirHideShowButton {
+			button.toggleOn(!button.toggledOn)
+			self.passwordField.secureTextEntry = !button.toggledOn
+		}
+	}
+
+	func hideShowNewPasswordAction(sender: AnyObject?) {
+		if let button = sender as? AirHideShowButton {
+			button.toggleOn(!button.toggledOn)
+			self.passwordNewField.secureTextEntry = !button.toggledOn
+		}
+	}
 
 	/*--------------------------------------------------------------------------------------------
 	* Methods
@@ -78,6 +94,8 @@ class PasswordEditViewController: BaseEditViewController {
 		self.passwordField.secureTextEntry = true
 		self.passwordField.keyboardType = UIKeyboardType.Default
 		self.passwordField.returnKeyType = UIReturnKeyType.Next
+		self.passwordField.rightView = self.hideShowButton
+		self.passwordField.rightViewMode = .Always
 		self.contentHolder.addSubview(self.passwordField)
 
 		self.passwordNewField.placeholder = "New password"
@@ -86,7 +104,17 @@ class PasswordEditViewController: BaseEditViewController {
 		self.passwordNewField.secureTextEntry = true
 		self.passwordNewField.keyboardType = UIKeyboardType.Default
 		self.passwordNewField.returnKeyType = UIReturnKeyType.Done
+		self.passwordNewField.rightView = self.hideShowNewButton
+		self.passwordNewField.rightViewMode = .Always
 		self.contentHolder.addSubview(self.passwordNewField)
+		
+		self.hideShowButton.bounds.size = CGSizeMake(48, 48)
+		self.hideShowButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
+		self.hideShowButton.addTarget(self, action: Selector("hideShowPasswordAction:"), forControlEvents: .TouchUpInside)
+		
+		self.hideShowNewButton.bounds.size = CGSizeMake(48, 48)
+		self.hideShowNewButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
+		self.hideShowNewButton.addTarget(self, action: Selector("hideShowNewPasswordAction:"), forControlEvents: .TouchUpInside)
 		
 		self.submitButton.setTitle("CHANGE", forState: .Normal)
 		self.submitButton.accessibilityIdentifier = Button.Submit
@@ -124,8 +152,7 @@ class PasswordEditViewController: BaseEditViewController {
 		
         DataController.proxibase.updatePassword(UserController.instance.currentUser.id_,
             password: passwordField.text!,
-            passwordNew: passwordNewField.text!) {
-            response, error in
+            passwordNew: passwordNewField.text!) { response, error in
                 
 			NSOperationQueue.mainQueue().addOperationWithBlock {
 				self.processing = false
@@ -146,6 +173,7 @@ class PasswordEditViewController: BaseEditViewController {
 					}
 				}
 				else {
+					/* Password change has already been handled with UserController */
 					self.navigationController?.popViewControllerAnimated(true)	// Back to profile edit
 					UIShared.Toast("Password changed")
 				}

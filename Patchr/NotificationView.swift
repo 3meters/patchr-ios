@@ -43,7 +43,7 @@ class NotificationView: BaseView {
 	
 	func initialize() {
 		
-		self.clipsToBounds = true
+		self.clipsToBounds = false
 		
 		/* Description */
 		if self.cellType != .Photo {
@@ -94,7 +94,8 @@ class NotificationView: BaseView {
 		self.description_?.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
 		
 		if let description = notification.summary {
-			self.description_?.text = description
+			let attributed = Utils.convertText(description, font: UIFont(name: "HelveticaNeue-Light", size: 16)!)
+			self.description_?.attributedText = attributed
 		}
 		
 		let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
@@ -171,7 +172,7 @@ class NotificationView: BaseView {
 			}
 			
 			if entity.photoBig != nil {
-				heightAccum += (8 + photoHeight)
+				heightAccum += (12 + photoHeight)
 			}
 			
 			self.createdDate.sizeToFit()
@@ -205,7 +206,7 @@ class NotificationView: BaseView {
 			self.description_?.bounds.size.width = columnWidth
 			self.description_?.sizeToFit()
 			self.description_?.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: self.description_!.height())
-			self.photo?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: photoHeight)
+			self.photo?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 12, height: photoHeight)
 		}
 		else if self.cellType == .Photo {
 			self.photo?.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: photoHeight)

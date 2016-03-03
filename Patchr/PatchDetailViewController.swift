@@ -351,7 +351,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		fetch(strategy: .IgnoreCache, resetList: true)
 	}
 	
-	func applicationDidEnterBackground() {
+	func applicationDidEnterBackground(sender: NSNotification) {
 		if self.inputReferrerName != nil {
 			self.dismissViewControllerAnimated(true, completion: nil)
 		}
@@ -389,7 +389,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didFetch:", name: Events.DidFetch, object: self)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "watchDidChange:", name: Events.WatchDidChange, object: header.watchButton)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didInsertMessage:", name: Events.DidInsertMessage, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground", name: Events.ApplicationDidEnterBackground, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground:", name: UIApplicationDidEnterBackgroundNotification, object: nil)
 
 		/* UI prep */
 		self.patchNameVisible = false

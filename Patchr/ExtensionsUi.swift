@@ -146,7 +146,7 @@ extension UIView {
 extension UIWindow {
     
     func setRootViewController(rootViewController: UIViewController, animated: Bool) {
-        
+		
         if !animated {
             self.rootViewController = rootViewController
             return
@@ -155,17 +155,16 @@ extension UIWindow {
         UIView.transitionWithView(self,
             duration: 0.65,
             options: UIViewAnimationOptions.TransitionCrossDissolve,
-            animations: {
-                () -> Void in
-                
-                // The animation enabling/disabling are to address a status bar
-                // issue on the destination view controller. http://stackoverflow.com/a/8505364/2247399
+            animations: {				
+                /*
+				 * The animation enabling/disabling are to address a status bar issue 
+				 * on the destination view controller: http://stackoverflow.com/a/8505364/2247399
+				 */
                 let oldState = UIView.areAnimationsEnabled()
                 UIView.setAnimationsEnabled(false)
                 self.rootViewController = rootViewController
                 UIView.setAnimationsEnabled(oldState)
-            })
-            { (_) -> Void in } // Trailing closure
+            }, completion: nil)
     }
 }
 

@@ -25,7 +25,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
     var backgroundSessionCompletionHandler: (() -> Void)?
-	var kTrackingID = "YOUR_TRACKING_ID"
 	
     class func appDelegate() -> AppDelegate {
         return UIApplication.sharedApplication().delegate as! AppDelegate
@@ -43,10 +42,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		iRate.sharedInstance().promptAtLaunch = false
 	}
 
+	/*--------------------------------------------------------------------------------------------
+	* Delegate methods
+	*--------------------------------------------------------------------------------------------*/
+	
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-        Log.d("Patchr launching...")
-		
 		/* Initialize Crashlytics: 25% of method time */
 		Fabric.with([Crashlytics()])
 
@@ -97,6 +98,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		fileLogger.logFileManager.maximumNumberOfLogFiles = 7
 		DDLog.addLogger(fileLogger)
 		
+		Log.i("Patchr launching...")
+		
         /* Turn on network activity indicator */
         AFNetworkActivityIndicatorManager.sharedManager().enabled = true
 		
@@ -137,9 +140,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         /* Initialize Creative sdk: 25% of method time */
         AdobeUXAuthManager.sharedManager().setAuthenticationParametersWithClientID(keys.creativeSdkClientId(), clientSecret: keys.creativeSdkClientSecret(), enableSignUp: false)
         
-        /* Change default font for button bar items */
-        UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: Theme.fontBarText], forState: UIControlState.Normal)
-
         /* Setup parse for push notifications - enabling notifications with the system is done with login */
 		Parse.setApplicationId(keys.parseApplicationId(), clientKey: keys.parseApplicationKey())
 		
@@ -155,46 +155,54 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ReachabilityManager.instance
         
         /* Global UI tweaks */
+		UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: Theme.fontBarText], forState: UIControlState.Normal)
         self.window?.backgroundColor = Theme.colorBackgroundWindow
         self.window?.tintColor = Theme.colorTint
         UITabBar.appearance().tintColor = Theme.colorTint
         UISwitch.appearance().onTintColor = Theme.colorTint
-        
-		/* Facebook */
-		FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
-		FBSDKProfile.enableUpdatesOnAccessTokenChange(true)
 		
+		/* Facebook */
+		FBSDKProfile.enableUpdatesOnAccessTokenChange(true)
+		FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
 		/*
 		* Initialize Branch: The deepLinkHandler gets called every time the app opens.
 		* That means it should be a good place to handle all initial routing.
 		*/
 		Branch.getInstance().initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
 			if error == nil {
+				/* A hit could mean a deferred link match */
 				if let clickedBranchLink = params["+clicked_branch_link"] as? Bool where clickedBranchLink {
-					/* Presents modally on top of main tab controller. */
-					self.routeDeepLink(params, error: error)
+					Log.d("Deep link routing based on clicked branch link")
+					self.routeDeepLink(params, error: error)	/* Presents modally on top of main tab controller. */
 				}
 			}
 		})
 		
-		/* Show initial controller */
-		self.route()
+		/* If we have an authenticated user then start at the usual spot, otherwise start at the lobby scene. */
+		if UserController.instance.authenticated {
+			let controller = MainTabBarController()
+			controller.selectedIndex = 0
+			self.window?.setRootViewController(controller, animated: true)
+		}
+		else {
+			let controller = LobbyViewController()
+			let navController = UINavigationController()
+			navController.viewControllers = [controller]
+			self.window?.setRootViewController(navController, animated: true)
+		}
+		
+		self.window?.makeKeyAndVisible()
 		
         return true
     }
     
-    /*--------------------------------------------------------------------------------------------
-    * Routing
-    *--------------------------------------------------------------------------------------------*/
-    
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
-		
 		/* 
 		 * First see if Branch claims it as a deep link. Calls handler registered in 
 		 * onLaunch.
 		 */
 		if Branch.getInstance().handleDeepLink(url) {
-			Log.d("Branch handled deep link: \(url.absoluteString)")
+			Log.d("Branch detected a deep link in openUrl: \(url.absoluteString)")
 			return true
 		}
 		
@@ -202,6 +210,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		let parsedUrl: BFURL = BFURL(inboundURL: url, sourceApplication: sourceApplication)
 		if (parsedUrl.appLinkData != nil) {
 			if let params = parsedUrl.targetQueryParameters {
+				Log.d("Facebook detected a deep link in openUrl: \(url.absoluteString)")
 				routeDeepLink(params, error: nil)
 			}
 			return true
@@ -209,39 +218,57 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
 		/* See if Facebook claims it as part of interaction with native Facebook client and Facebook dialogs */
 		if FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation) {
-			Log.d("Facebook handled url")
+			Log.d("Url passed to openUrl was intended for Facebook: \(url.absoluteString)")
 			return true
 		}				
 		
         return false
     }
 	
-    func route() {
-        
-        /* Show initial controller */
+	func applicationDidBecomeActive(application: UIApplication) {		
+		FBSDKAppEvents.activateApp()
+		/*
+		* Check to see if Facebook has a deferred deep link. Should only be
+		* called after any launching url is processed. The facebook code
+		* makes a graph call. It looks at appId/activities endpoint. The
+		* advertisingId and the time the link was clicked in Facebook are key elements
+		* in the matching process. They append fb_click_time_utc param to url.
+		*/
+		FBSDKAppLinkUtility.fetchDeferredAppLink { url, error in
+			if url != nil && UIApplication.sharedApplication().canOpenURL(url) {
+				Log.d("Facebook has detected a deferred app link, calling openUrl: \(url!.absoluteString)")
+				UIApplication.sharedApplication().openURL(url)
+			}
+		}
+	}
+	
+	func application(application: UIApplication, supportedInterfaceOrientationsForWindow window: UIWindow?) -> UIInterfaceOrientationMask {
+		if let controller = UIViewController.topMostViewController() {
+			if controller is PhotoBrowser || controller is AirPhotoPreview {
+				return UIInterfaceOrientationMask.All;
+			}
+			else {
+				return UIInterfaceOrientationMask.Portrait;
+			}
+		}
+		return UIInterfaceOrientationMask.Portrait;
+	}
+	
+	func application(application: UIApplication, continueUserActivity userActivity: NSUserActivity, restorationHandler: ([AnyObject]?) -> Void) -> Bool {
+		// pass the url to the handle deep link call
+		Branch.getInstance().continueUserActivity(userActivity)
+		return true
+	}
+
+    /*--------------------------------------------------------------------------------------------
+    * Methods
+    *--------------------------------------------------------------------------------------------*/
+	
+	func routeDeepLink(params: NSDictionary?, error: NSError?) {
 		
-        /* If we have an authenticated user then start at the usual spot, otherwise start at the lobby scene. */
-        
-		self.window?.makeKeyAndVisible()
-		
-        if UserController.instance.authenticated {
-			let controller = MainTabBarController()
-			controller.selectedIndex = 0
-            self.window?.setRootViewController(controller, animated: true)
-        }
-        else {
-			let controller = LobbyViewController()
-			let navController = UINavigationController()
-			navController.viewControllers = [controller]
-            self.window?.setRootViewController(navController, animated: true)
-        }
-    }
-    
-    func routeDeepLink(params: NSDictionary?, error: NSError?) {
-        
-        if let entityId = params!["entityId"] as? String, entitySchema = params!["entitySchema"] as? String {
-            
-            if entitySchema == "patch" {
+		if let entityId = params!["entityId"] as? String, entitySchema = params!["entitySchema"] as? String {
+			
+			if entitySchema == "patch" {
 				
 				let controller = PatchDetailViewController()
 				controller.entityId = entityId
@@ -259,8 +286,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 				let navController = UINavigationController()
 				navController.viewControllers = [controller]
 				UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
-            }
-            else if entitySchema == "message" {
+			}
+			else if entitySchema == "message" {
 				
 				let controller = MessageDetailViewController()
 				controller.inputMessageId = entityId
@@ -279,61 +306,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 				let navController = UINavigationController()
 				navController.viewControllers = [controller]
 				UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
-            }
-        }
-    }
-	
-	func application(application: UIApplication, continueUserActivity userActivity: NSUserActivity, restorationHandler: ([AnyObject]?) -> Void) -> Bool {
-		// pass the url to the handle deep link call
-		Branch.getInstance().continueUserActivity(userActivity)
-		return true
-	}
-
-    /*--------------------------------------------------------------------------------------------
-    * Lifecycle
-    *--------------------------------------------------------------------------------------------*/
-    
-	func applicationDidBecomeActive(application: UIApplication) {
-		
-		FBSDKAppEvents.activateApp()
-		
-		/* Check to see if Facebook has a deferred deep link */
-		FBSDKAppLinkUtility.fetchDeferredAppLink { url, error in
-			if error != nil {
-				Log.w("Error while fetching deferred app link \(error)")
-			}
-			if url != nil {
-				UIApplication.sharedApplication().openURL(url)
 			}
 		}
-		
-		/* NotificationsTableViewController uses this to manage badging */
-		NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationDidBecomeActive, object: nil)
 	}
-	
-    func applicationDidEnterBackground(application: UIApplication) {
-        NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationDidEnterBackground, object: nil)
-    }
-
-    func applicationWillEnterForeground(application: UIApplication){
-        NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationWillEnterForeground, object: nil)
-    }
-    
-    func applicationWillResignActive(application: UIApplication){
-        NSNotificationCenter.defaultCenter().postNotificationName(Events.ApplicationWillResignActive, object: nil)
-    }
-    
-    func application(application: UIApplication, supportedInterfaceOrientationsForWindow window: UIWindow?) -> UIInterfaceOrientationMask {
-        if let controller = UIViewController.topMostViewController() {
-            if controller is PhotoBrowser || controller is AirPhotoPreview {
-                return UIInterfaceOrientationMask.All;
-            }
-            else {
-                return UIInterfaceOrientationMask.Portrait;
-            }
-        }
-        return UIInterfaceOrientationMask.Portrait;
-    }
 	
     /*--------------------------------------------------------------------------------------------
     * Notifications

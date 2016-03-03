@@ -46,6 +46,34 @@ struct Utils {
         return dateFormatter
     }()
 	
+	static func convertText(inputText: String, font: UIFont?) -> NSAttributedString {
+		let baseFont = font ?? Theme.fontText
+		let boldFont = UIFont(name: "HelveticaNeue", size: baseFont.pointSize)!
+		let style = NSMutableParagraphStyle()
+		style.maximumLineHeight = CGFloat(baseFont.pointSize + 3)
+		let attributes = [NSFontAttributeName: baseFont, NSParagraphStyleAttributeName: style]
+		
+		let attrString = NSMutableAttributedString(string: inputText, attributes: attributes )
+		
+		var r1 = (attrString.string as NSString).rangeOfString("<b>")
+		
+		while r1.location != NSNotFound {
+			let r2 = (attrString.string as NSString).rangeOfString("</b>")
+			if r2.location != NSNotFound  && r2.location > r1.location {
+				let r3 = NSMakeRange(r1.location + r1.length, r2.location - r1.location - r1.length)
+				attrString.addAttribute(NSFontAttributeName, value: boldFont, range: r3)
+				attrString.replaceCharactersInRange(r2, withString: "")
+				attrString.replaceCharactersInRange(r1, withString: "")
+			}
+			else {
+				break
+			}
+			r1 = (attrString.string as NSString).rangeOfString("<b>")
+		}
+		
+		return attrString
+	}
+	
 	static func encodeForUrlQuery(target: String) -> String {
 		return target.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
 	}

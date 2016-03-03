@@ -67,10 +67,6 @@ public struct Events {
 	static let LocationWasRestricted          = "LocationWasRestricted"
     static let NotificationsDenied            = "NotificationsDenied"
     static let PhotoDenied                    = "PhotoDenied"
-    static let ApplicationDidEnterBackground  = "ApplicationDidEnterBackground"
-    static let ApplicationWillEnterForeground = "ApplicationWillEnterForeground"
-    static let ApplicationWillResignActive    = "ApplicationWillResignActive"
-    static let ApplicationDidBecomeActive     = "ApplicationDidBecomeActive"
 	static let UserDidLogin					  = "UserDidLogin"
 }
 

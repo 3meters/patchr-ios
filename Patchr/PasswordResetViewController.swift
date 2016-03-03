@@ -15,10 +15,11 @@ class PasswordResetViewController: BaseEditViewController {
     var userId				: String?
     var sessionKey			: String?
 	
-	var message       = AirLabelTitle()
-    var emailField    = AirTextField()
-    var passwordField = AirTextField()
-	var submitButton  = AirButton()
+	var message			= AirLabelTitle()
+    var emailField		= AirTextField()
+    var passwordField	= AirTextField()
+	var hideShowButton	= AirHideShowButton()
+	var submitButton	= AirButton()
 		
 	/*--------------------------------------------------------------------------------------------
 	* Lifecycle
@@ -58,7 +59,14 @@ class PasswordResetViewController: BaseEditViewController {
 			reset()
 		}
     }
-    
+	
+	func hideShowPasswordAction(sender: AnyObject?) {
+		if let button = sender as? AirHideShowButton {
+			button.toggleOn(!button.toggledOn)
+			self.passwordField.secureTextEntry = !button.toggledOn
+		}
+	}
+	
     func cancelAction(sender: AnyObject){
         self.navigationController?.popViewControllerAnimated(true)
     }
@@ -93,7 +101,13 @@ class PasswordResetViewController: BaseEditViewController {
 		self.passwordField.secureTextEntry = true
 		self.passwordField.keyboardType = UIKeyboardType.Default
 		self.passwordField.returnKeyType = UIReturnKeyType.Done
+		self.passwordField.rightView = self.hideShowButton
+		self.passwordField.rightViewMode = .Always
 		self.contentHolder.addSubview(self.passwordField)
+		
+		self.hideShowButton.bounds.size = CGSizeMake(48, 48)
+		self.hideShowButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
+		self.hideShowButton.addTarget(self, action: Selector("hideShowPasswordAction:"), forControlEvents: .TouchUpInside)
 		
 		self.submitButton.setTitle("RESET", forState: .Normal)
 		self.submitButton.accessibilityIdentifier = Button.Submit
@@ -125,12 +139,12 @@ class PasswordResetViewController: BaseEditViewController {
 					
 					NSOperationQueue.mainQueue().addOperationWithBlock {
 						progress.hide(true)
-						if error.code == .UNAUTHORIZED {
-							error.message = "This email address has not been used with this installation. Please contact support to reset your password."
+						if error.code == .NOT_FOUND {
+							error.message = "The email address could not be found."
 							self.handleError(error, errorActionType: .ALERT)
 						}
-						else if error.code == .NOT_FOUND {
-							error.message = "The email address could not be found."
+						else if error.code == .UNAUTHORIZED {
+							error.message = "This email address has not been used with this installation. Please contact support to reset your password."
 							self.handleError(error, errorActionType: .ALERT)
 						}
 						else {

@@ -18,6 +18,7 @@ class LoginViewController: BaseEditViewController {
 
     var emailField				= AirTextField()
     var passwordField			= AirTextField()
+	var hideShowButton			= AirHideShowButton()
 	var forgotPasswordButton	= AirLinkButton()
 	var doneButton				= AirFeaturedButton()
 	var message					= AirLabelTitle()
@@ -87,6 +88,13 @@ class LoginViewController: BaseEditViewController {
 			}
 		}
     }
+	
+	func hideShowPasswordAction(sender: AnyObject?) {
+		if let button = sender as? AirHideShowButton {
+			button.toggleOn(!button.toggledOn)
+			self.passwordField.secureTextEntry = !button.toggledOn
+		}
+	}
     
 	func passwordResetAction(sender: AnyObject) {
 		let controller = PasswordResetViewController()
@@ -130,14 +138,20 @@ class LoginViewController: BaseEditViewController {
 		self.emailField.returnKeyType = UIReturnKeyType.Next
 		self.contentHolder.addSubview(self.emailField)
 		
-		self.passwordField.placeholder = "Password (6 characters or more)"
+		self.passwordField.placeholder = "Password (6+ characters)"
 		self.passwordField.accessibilityIdentifier = Field.Password
 		self.passwordField.delegate = self
 		self.passwordField.secureTextEntry = true
 		self.passwordField.autocapitalizationType = .None
 		self.passwordField.keyboardType = UIKeyboardType.Default
 		self.passwordField.returnKeyType = (onboardMode == OnboardMode.Signup) ? UIReturnKeyType.Next : UIReturnKeyType.Done
+		self.passwordField.rightView = self.hideShowButton
+		self.passwordField.rightViewMode = .Always
 		self.contentHolder.addSubview(self.passwordField)
+		
+		self.hideShowButton.bounds.size = CGSizeMake(48, 48)
+		self.hideShowButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
+		self.hideShowButton.addTarget(self, action: Selector("hideShowPasswordAction:"), forControlEvents: .TouchUpInside)
 		
 		self.forgotPasswordButton.setTitle("Forgot password?", forState: .Normal)
 		self.forgotPasswordButton.accessibilityIdentifier = Button.ForgotPassword

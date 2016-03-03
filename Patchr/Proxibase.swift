@@ -414,6 +414,7 @@ public class Proxibase {
 		sessionManager.POST("user/changepw", parameters: addSessionParameters(parameters),
 			success: {
 				dataTask, response in
+				UserController.instance.handlePasswordChange(response)
 				completion(response: response, error: nil)
 			},
 			failure: {

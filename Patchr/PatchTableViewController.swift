@@ -72,7 +72,7 @@ class PatchTableViewController: BaseTableViewController {
 		self.tableView.accessibilityIdentifier = Table.Patches
 		
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:", name: PAApplicationDidReceiveRemoteNotification, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidBecomeActive:", name: Events.ApplicationDidBecomeActive, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidBecomeActive:", name: UIApplicationDidBecomeActiveNotification, object: nil)
 	}
 	
     override func viewWillAppear(animated: Bool) {
@@ -183,7 +183,7 @@ class PatchTableViewController: BaseTableViewController {
 		refreshForLocation()
 	}
 	
-	func locationWasDenied(notification: NSNotification?) {
+	func locationWasDenied(sender: NSNotification?) {
 		
 		self.emptyLabel.text = "Location Services disabled for Patchr"
 		if !CLLocationManager.locationServicesEnabled() {
@@ -198,12 +198,13 @@ class PatchTableViewController: BaseTableViewController {
 		self.activity.stopAnimating()
 	}
 	
-	func locationWasAllowed(notification: NSNotification) {
+	func locationWasAllowed(sender: NSNotification) {
 		self.emptyLabel.text = self.emptyMessage
 		LocationController.instance.startUpdates(force: true)
 	}
 	
-	func applicationDidBecomeActive(notification: NSNotification) {
+	func applicationDidBecomeActive(sender: NSNotification) {
+		
 		/* User either switched to patchr or turned their screen back on. */
 		if self.tabBarController?.selectedViewController == self.navigationController
 			&& self.navigationController?.topViewController == self
@@ -218,10 +219,10 @@ class PatchTableViewController: BaseTableViewController {
 		}
 	}
 	
-	func handleRemoteNotification(notification: NSNotification) {
+	func handleRemoteNotification(sender: NSNotification) {
 		
 		if self.filter == .Nearby {
-			if let userInfo = notification.userInfo {
+			if let userInfo = sender.userInfo {
 				if let trigger = userInfo["trigger"] as? String where trigger == "nearby" {
 					if self.isViewLoaded() {
 						self.pullToRefreshAction(self.refreshControl)

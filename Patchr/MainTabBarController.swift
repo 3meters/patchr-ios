@@ -44,13 +44,13 @@ class MainTabBarController: UITabBarController {
 		}
 	}
     
-    func applicationWillEnterForeground() {
+	func applicationWillEnterForeground(sender: NSNotification) {
         /* User either switched to patchr or turned their screen back on. */
 		reachabilityChanged()
         Log.d("Application will enter foreground")
     }
     
-    func applicationDidEnterBackground() {
+    func applicationDidEnterBackground(sender: NSNotification) {
         Log.d("Application did enter background")
     }
     
@@ -69,12 +69,9 @@ class MainTabBarController: UITabBarController {
 	
 	func initialize() {
 		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationWillEnterForeground",
-			name: Events.ApplicationWillEnterForeground, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground",
-			name: Events.ApplicationDidEnterBackground, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "reachabilityChanged",
-			name: kReachabilityChangedNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationWillEnterForeground:", name: UIApplicationWillEnterForegroundNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground:", name: UIApplicationDidEnterBackgroundNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "reachabilityChanged", name: kReachabilityChangedNotification, object: nil)
 		
 		delegate = self
 		

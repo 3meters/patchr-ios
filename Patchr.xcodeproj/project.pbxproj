@@ -180,6 +180,7 @@
 		E2CC15A11C2C897800316356 /* WrapperTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CC15A01C2C897800316356 /* WrapperTableViewCell.swift */; };
 		E2CCAAE01B67CC0E0071170C /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CCAADF1B67CC0E0071170C /* NotificationController.swift */; };
 		E2CCAAE21B67EE2C0071170C /* chirp.caf in Resources */ = {isa = PBXBuildFile; fileRef = E2CCAAE11B67EE2C0071170C /* chirp.caf */; };
+		E2D10E5C1C87AA760099EA6E /* AirHideShowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D10E5B1C87AA760099EA6E /* AirHideShowButton.swift */; };
 		E2D12A711C0778C100DE507E /* AirScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A701C0778C100DE507E /* AirScrollView.swift */; };
 		E2D12A731C08DC4900DE507E /* AirTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A721C08DC4900DE507E /* AirTextField.swift */; };
 		E2D12A751C08F85E00DE507E /* AirButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A741C08F85E00DE507E /* AirButton.swift */; };
@@ -460,6 +461,7 @@
 		E2CC15A01C2C897800316356 /* WrapperTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WrapperTableViewCell.swift; sourceTree = "<group>"; };
 		E2CCAADF1B67CC0E0071170C /* NotificationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NotificationController.swift; path = Patchr/NotificationController.swift; sourceTree = "<group>"; };
 		E2CCAAE11B67EE2C0071170C /* chirp.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = chirp.caf; sourceTree = "<group>"; };
+		E2D10E5B1C87AA760099EA6E /* AirHideShowButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirHideShowButton.swift; sourceTree = "<group>"; };
 		E2D12A701C0778C100DE507E /* AirScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirScrollView.swift; sourceTree = "<group>"; };
 		E2D12A721C08DC4900DE507E /* AirTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirTextField.swift; sourceTree = "<group>"; };
 		E2D12A741C08F85E00DE507E /* AirButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirButton.swift; sourceTree = "<group>"; };
@@ -897,6 +899,7 @@
 				E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */,
 				E2B471D91C2612AD00374F1F /* AirToolButton.swift */,
 				E2A28E701B4A624300B3A2FE /* AirWatchButton.swift */,
+				E2D10E5B1C87AA760099EA6E /* AirHideShowButton.swift */,
 				E25327DE1B1A282D00990A81 /* FXBlurView.h */,
 				E25327DF1B1A282D00990A81 /* FXBlurView.m */,
 				E25327D91B1625D900990A81 /* GCPlaceholderTextView.h */,
@@ -1483,6 +1486,7 @@
 				E20C3A811BDC1D57008CCED1 /* BaseDetailView.swift in Sources */,
 				7D021AC21A9423080047DAAE /* TextZoomController.swift in Sources */,
 				7DA7308D1A71ACC9008C25FA /* _ServiceBase.m in Sources */,
+				E2D10E5C1C87AA760099EA6E /* AirHideShowButton.swift in Sources */,
 				E29730601C14A7BC00B9433B /* AirSearchField.swift in Sources */,
 				7D6E26471A7AB93F000128A7 /* UserDetailViewController.swift in Sources */,
 				7DA730921A71ACC9008C25FA /* Query.m in Sources */,

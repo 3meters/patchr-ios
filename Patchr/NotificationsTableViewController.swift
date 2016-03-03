@@ -217,7 +217,8 @@ class NotificationsTableViewController: BaseTableViewController {
         }
     }
     
-    func applicationDidBecomeActive() {
+	func applicationDidBecomeActive(sender: NSNotification) {
+		
         /* User either switched to patchr or turned their screen back on. */
         Log.d("Notifications tab: application did become active")
         if self.tabBarController?.selectedViewController == self.navigationController
@@ -236,10 +237,8 @@ class NotificationsTableViewController: BaseTableViewController {
     *--------------------------------------------------------------------------------------------*/
 	
 	func initialize() {
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:",
-			name: PAApplicationDidReceiveRemoteNotification, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidBecomeActive",
-			name: Events.ApplicationDidBecomeActive, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:", name: PAApplicationDidReceiveRemoteNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidBecomeActive:", name: UIApplicationDidBecomeActiveNotification, object: nil)
 		self.view.accessibilityIdentifier = View.Notifications
 		self.tableView.accessibilityIdentifier = Table.Notifications
 	}
@@ -461,46 +460,6 @@ extension NotificationsTableViewController {
 		}
 		else {
 			return 0
-		}
-	}
-	
-	func layoutHeight(indexPath: NSIndexPath) -> CGFloat? {
-		
-		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
-			let entity = queryResult.object as? Notification {
-				
-				if entity.id_ != nil {
-					if let cachedHeight = self.rowHeights.objectForKey(entity.id_) as? CGFloat {
-						return cachedHeight
-					}
-				}
-				
-				/* Create and bind a cell */
-				var cellType: CellType = .TextAndPhoto
-				
-				if entity.photoBig == nil {
-					cellType = .Text
-				}
-				else if entity.summary == nil {
-					cellType = .Photo
-				}
-				
-				let cell = makeCell(cellType)
-				bindCellToEntity(cell, entity: queryResult.object, location: nil)
-				cell.setNeedsLayout()
-				cell.layoutIfNeeded()
-				let cellSize = cell.contentView.sizeThatFits(CGSizeMake(self.tableView.frame.size.height, CGFloat.max))
-				
-				/* Get the actual height required for the cell */
-				let height = cellSize.height + 1
-				if entity.id_ != nil {
-					self.rowHeights[entity.id_] = CGFloat(height)
-				}
-				
-				return CGFloat(height)
-		}
-		else {
-			return nil
 		}
 	}
 }

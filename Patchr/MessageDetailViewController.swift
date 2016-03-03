@@ -432,7 +432,7 @@ class MessageDetailViewController: BaseViewController {
 		}
     }
 	
-	func applicationDidEnterBackground() {
+	func applicationDidEnterBackground(sender: NSNotification) {
 		if self.inputReferrerName != nil {
 			self.dismissViewControllerAnimated(true, completion: nil)
 		}
@@ -514,7 +514,7 @@ class MessageDetailViewController: BaseViewController {
 		self.contentHolder.addSubview(self.toolbarGroup)
 		self.contentHolder.addSubview(self.shareGroup)
 		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground", name: Events.ApplicationDidEnterBackground, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground:", name: UIApplicationDidEnterBackgroundNotification, object: nil)
 	}
 	
 	func bind() {
