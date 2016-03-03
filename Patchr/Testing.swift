@@ -134,6 +134,7 @@ struct View {
 struct AlertButton {
     static let Delete               = "Delete"
     static let Ok                   = "OK"
+	static let NearbyAndNew         = "Nearby and new patches"
 }
 
 struct Tab {

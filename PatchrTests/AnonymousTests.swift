@@ -20,6 +20,10 @@ class AnonymousTests: KIFTestCase {
 		
 		tester().tap(Button.Guest)
 		tester().waitFor(View.Main)
+		
+		tester().waitForContains("Let Patchr use your location")
+		tester().tapLabel(AlertButton.NearbyAndNew)
+		tester().acknowledgeSystemAlert()
 	}
 	
 	override func beforeEach() {

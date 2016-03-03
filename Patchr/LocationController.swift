@@ -111,7 +111,6 @@ class LocationController: NSObject {
 		}
 	}
 
-
 	func startUpdates(force force: Bool){
 		
 		/* Exit if not force and updates are already active */
