@@ -51,8 +51,8 @@ class UserController: NSObject {
 		let userDefaults = NSUserDefaults.standardUserDefaults()
 		self.userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId"))
 		self.jsonUser = userDefaults.stringForKey(PatchrUserDefaultKey("user"))
-		self.jsonSession = self.lockbox.stringForKey("session") as String?
-		self.sessionKey = self.lockbox.stringForKey("sessionKey") as String?
+		self.jsonSession = self.lockbox.unarchiveObjectForKey("session") as? String
+		self.sessionKey = self.lockbox.unarchiveObjectForKey("sessionKey") as? String
 	}
 	
 	/*--------------------------------------------------------------------------------------------
@@ -84,9 +84,9 @@ class UserController: NSObject {
 		
 		Log.i("User changed password: \(self.userName!) (\(self.userId!))")
 		
-		let success = self.lockbox.setString((self.sessionKey != nil ? self.sessionKey! : nil), forKey: "sessionKey", accessibility: kSecAttrAccessibleAfterFirstUnlock)
+		let success = self.lockbox.archiveObject((self.sessionKey != nil ? self.sessionKey! : nil), forKey: "sessionKey", accessibility: kSecAttrAccessibleAfterFirstUnlock)
 		if success {
-			self.lockbox.setString((self.jsonSession != nil ? self.jsonSession! : nil), forKey: "session", accessibility: kSecAttrAccessibleAfterFirstUnlock)
+			self.lockbox.archiveObject((self.jsonSession != nil ? self.jsonSession! : nil), forKey: "session", accessibility: kSecAttrAccessibleAfterFirstUnlock)
 		}
 		
 		if !success {
@@ -139,9 +139,9 @@ class UserController: NSObject {
 		
 		/* This is only place where we push to the keychain */
 		var success = false
-		success = self.lockbox.setString((self.sessionKey != nil ? self.sessionKey! : nil), forKey: "sessionKey", accessibility: kSecAttrAccessibleAfterFirstUnlock)
+		success = self.lockbox.archiveObject((self.sessionKey != nil ? self.sessionKey! : nil), forKey: "sessionKey", accessibility: kSecAttrAccessibleAfterFirstUnlock)
 		if success {
-			self.lockbox.setString((self.jsonSession != nil ? self.jsonSession! : nil), forKey: "session", accessibility: kSecAttrAccessibleAfterFirstUnlock)
+			self.lockbox.archiveObject((self.jsonSession != nil ? self.jsonSession! : nil), forKey: "session", accessibility: kSecAttrAccessibleAfterFirstUnlock)
 		}
 		
 		if !success {

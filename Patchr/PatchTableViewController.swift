@@ -8,7 +8,6 @@
 
 import UIKit
 import AVFoundation
-import ZOZolaZoomTransition
 
 class PatchTableViewController: BaseTableViewController {
 
@@ -497,75 +496,8 @@ extension PatchTableViewController {
 			let patch = queryResult.object as? Patch {
 				let controller = PatchDetailViewController()
 				controller.entityId = patch.id_
-//				controller.modalPresentationStyle = UIModalPresentationStyle.FullScreen
-//				controller.modalTransitionStyle = UIModalTransitionStyle.CoverVertical
-//				showViewController(controller, sender: self)
 				self.navigationController?.pushViewController(controller, animated: true)
 		}
-	}
-}
-
-extension PatchTableViewController: UINavigationControllerDelegate {
-	
-	func navigationController(navigationController: UINavigationController,
-		animationControllerForOperation operation: UINavigationControllerOperation,
-		fromViewController fromVC: UIViewController,
-		toViewController toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-		
-		let type: ZOTransitionType = (fromVC == self) ? .Presenting: .Dismissing
-		let patchView = self.selectedCell?.view! as! PatchView
-		let transition = ZOZolaZoomTransition(fromView: patchView.photo, type: type, duration: 0.5, delegate: self)
-		transition.fadeColor = Theme.colorBackgroundForm
-		return transition
-	}
-}
-
-extension PatchTableViewController: ZOZolaZoomTransitionDelegate {
-	
-	func zolaZoomTransition(zoomTransition: ZOZolaZoomTransition!,
-		startingFrameForView targetView: UIView!,
-		relativeToView relativeView: UIView!,
-		fromViewController: UIViewController!,
-		toViewController: UIViewController!) -> CGRect {
-		
-		if fromViewController == self {
-			/* We're pushing to the detail controller. The starting frame is taken from the selected cell's imageView. */
-			if let patchView = self.selectedCell?.view! as? PatchView {
-				let imageView = patchView.photo as UIImageView
-				return imageView.convertRect(imageView.bounds, toView: relativeView)
-			}
-		}
-		else if fromViewController is PatchDetailViewController {
-			/* We're popping back to this master controller. The starting frame is taken from the detailController's imageView. */
-			let controller: PatchDetailViewController = fromViewController as! PatchDetailViewController
-			let header = controller.header as! PatchDetailView
-			let imageView = header.photo as UIImageView
-			return imageView.convertRect(imageView.bounds, toView: relativeView)
-		}
-		return CGRectZero
-	}
-	
-	func zolaZoomTransition(zoomTransition: ZOZolaZoomTransition!,
-		finishingFrameForView targetView: UIView!,
-		relativeToView relativeView: UIView!,
-		fromViewController fromViewComtroller: UIViewController!,
-		toViewController: UIViewController!) -> CGRect {
-		
-		if fromViewComtroller == self {
-			/* We're pushing to the detail controller. The finishing frame is taken from the detailControllers imageView. */
-			let controller: PatchDetailViewController = toViewController as! PatchDetailViewController
-			let header = controller.header as! PatchDetailView
-			let imageView = header.photo as UIImageView
-			return imageView.convertRect(imageView.bounds, toView: relativeView)
-		}
-		else if fromViewComtroller is PatchDetailViewController {
-			/* We're popping back to this master controller. The finishing frame is taken from the selected cell's imageView. */
-			if let patchView = self.selectedCell?.view! as? PatchView {
-				let imageView = patchView.photo as UIImageView
-				return imageView.convertRect(imageView.bounds, toView: relativeView)
-			}
-		}
-		return CGRectZero
 	}
 }
 
