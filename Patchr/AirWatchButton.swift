@@ -56,7 +56,7 @@ class AirWatchButton: AirToggleButton {
         let patch = self.entity as? Patch
         
         if patch!.userWatchStatusValue == .Member {
-            /* TODO: If not owner then confirm leave */
+			
             DataController.proxibase.deleteLinkById(patch!.userWatchId!) {
                 response, error in
 				
@@ -80,6 +80,7 @@ class AirWatchButton: AirToggleButton {
             }
         }
         else if patch!.userWatchStatusValue == .Pending {
+			
             DataController.proxibase.deleteLinkById(patch!.userWatchId!) {
                 response, error in
 				
@@ -101,6 +102,7 @@ class AirWatchButton: AirToggleButton {
             }
         }
         else if patch!.userWatchStatusValue == .NonMember {
+			
             /* Service automatically sets enabled = false if user is not the patch owner */
             DataController.proxibase.insertLink(UserController.instance.userId! as String, toID: patch!.id_, linkType: .Watch) {
                 response, error in

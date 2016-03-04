@@ -704,24 +704,12 @@ class MessageDetailViewController: BaseViewController {
 							if objectId == nil {
 								self?.emptyLabel.text = "Message is private or has been deleted"
 								self?.emptyLabel.fadeIn()
-
-//								if (self != nil && self!.shareActive) {
-//									self?.emptyLabel.text = "Message is private or has been deleted"
-//									self?.emptyLabel.fadeIn()
-//								}
-//								else {
-//									UIShared.Toast("Message is private or has been deleted")
-//									Utils.delay(2.0) {
-//										self?.navigationController?.popViewControllerAnimated(true)
-//									}
-//								}
 							}
 							else {
 								self?.inputMessage = DataController.instance.mainContext.objectWithID(objectId!) as? Message
 								self?.drawNavButtons(false)
-								self?.bind()	// TODO: Can skip if no change in activityDate and modifiedDate
-								/* Need this because if a message has be be fetched, we haven't done layout yet. */
-								self?.view.setNeedsLayout()
+								self?.bind()
+								self?.view.setNeedsLayout() /* Need this because if a message has be be fetched, we haven't done layout yet. */
 							}
 						}
 					}

@@ -210,7 +210,7 @@ extension SettingsTableViewController {
             self.pushWebViewController(NSURL(string: privacyPolicyURLString), identifier: View.PrivacyPolicy)
         }
         else if selectedCell == self.softwareLicensesCell {
-            let softwareLicensesURLString = "http://patchr.com/ios" // TODO: need real URL
+            let softwareLicensesURLString = "http://patchr.com/ios"
             self.pushWebViewController(NSURL(string: softwareLicensesURLString), identifier: View.Licensing)
         }
         else if selectedCell == self.developmentCell {

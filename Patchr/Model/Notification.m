@@ -24,13 +24,7 @@
     
     notification.priority = dictionary[@"priority"];
     notification.trigger = dictionary[@"trigger"];
-    notification.summary = dictionary[@"summary"];
-    
-    if (notification.summary) {
-        // TODO: the API currently returns an HTML-like summary and we need to figure out how to handle it nicely (attributed string?)
-		//notification.summary = [Notification stringByStrippingHTMLFromString:notification.summary];
-    }
-    
+	notification.summary = dictionary[@"summary"];	// can have html markup	
     notification.event = dictionary[@"event"];
     notification.ticker = dictionary[@"ticker"];
     
