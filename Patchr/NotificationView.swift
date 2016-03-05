@@ -155,37 +155,6 @@ class NotificationView: BaseView {
 		self.setNeedsLayout()	// Needed because binding can change the layout
 	}
 	
-	override func sizeThatFits(size: CGSize) -> CGSize {
-		
-		if let entity = self.entity as? Notification {
-			
-			var heightAccum = CGFloat(0)
-			
-			let columnLeft = CGFloat(48 + 8)
-			let columnWidth = size.width - columnLeft
-			let photoHeight = columnWidth * 0.5625
-			
-			if entity.summary != nil && !entity.summary.isEmpty {
-				self.description_!.bounds.size.width = columnWidth
-				self.description_!.sizeToFit()
-				heightAccum += self.description_!.height()
-			}
-			
-			if entity.photoBig != nil {
-				heightAccum += (12 + photoHeight)
-			}
-			
-			self.createdDate.sizeToFit()
-			heightAccum += (8 + max(self.iconImageView.height(), self.createdDate.height())) // Like button
-			
-			let height = max(self.userPhoto.height(), heightAccum)
-			
-			return CGSizeMake(size.width, height)
-		}
-		
-		return CGSizeZero
-	}
-	
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		
@@ -215,7 +184,6 @@ class NotificationView: BaseView {
 		self.createdDate.sizeToFit()
 		self.iconImageView.alignUnder(bottomView!, matchingLeftWithTopPadding: 8, width: self.iconImageView.width(), height: self.iconImageView.height())
 		self.createdDate.alignToTheRightOf(self.iconImageView, matchingCenterWithLeftPadding: 8, width: self.createdDate.width(), height: self.createdDate.height())
+		self.ageDot.alignUnder(bottomView!, matchingRightWithTopPadding: 8, width: 12, height: 12)
 	}
-	
-	override func prepareForRecycle() {	}	
 }

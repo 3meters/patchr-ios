@@ -109,7 +109,7 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
         setScreenName("PhotoPicker")
 		
         if self.searchBar == nil {
-            self.searchBarBoundsY = self.navigationController!.navigationBar.frame.size.height + UIApplication.sharedApplication().statusBarFrame.size.height
+            self.searchBarBoundsY = self.navigationController!.navigationBar.frame.size.height + UIShared.statusHeight
             self.searchBar = UISearchBar(frame: CGRectMake(0, self.searchBarBoundsY!, UIScreen.mainScreen().bounds.size.width, 44))
 			self.searchBar!.accessibilityIdentifier = "search_field"
             self.searchBar!.searchBarStyle = UISearchBarStyle.Prominent

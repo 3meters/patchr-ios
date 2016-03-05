@@ -438,25 +438,17 @@ extension NotificationsTableViewController {
 					}
 				}
 				
-				var cellType: CellType = .TextAndPhoto
-				if entity.photoBig == nil {
-					cellType = .Text
-				}
-				else if entity.summary == nil {
-					cellType = .Photo
-				}
-				
-				let view = NotificationView(cellType: cellType)
+				let view = NotificationView(cellType: entity.photoBig == nil ? .Text : entity.summary == nil ? .Photo : .TextAndPhoto)
 				view.bindToEntity(entity)
+				
 				let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
-				view.bounds.size.width = viewWidth - 24
-				view.sizeToFit()
+				let viewHeight = view.sizeThatFits(CGSizeMake(viewWidth - 24, CGFloat.max)).height + 24 + 1 // Add one for row separator
 				
 				if entity.id_ != nil {
-					self.rowHeights[entity.id_] = view.height() + 24 + 1
+					self.rowHeights[entity.id_] = viewHeight
 				}
 				
-				return view.height() + 24 + 1	// Add one for row separator
+				return viewHeight
 		}
 		else {
 			return 0

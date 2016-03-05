@@ -134,17 +134,15 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.activity.frame.origin.y += CGFloat(self.progressOffsetY)
 		self.activity.frame.origin.x += CGFloat(self.progressOffsetX)
 		
-		let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
 		let navHeight = self.navigationController?.navigationBar.height() ?? 0
 		self.emptyLabel.anchorInCenterWithWidth(160, height: 160)
-		self.emptyLabel.frame.origin.y -= (statusHeight + navHeight)
+		self.emptyLabel.frame.origin.y -= (UIShared.statusHeight + navHeight)
 	}
 	
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated) // Base implementation does nothing
 		
 		try! self.fetchedResultsController.performFetch()
-		self.tableView.reloadData()		// Reload cells so any changes while gone will show
 		
 		if let indexPath = tableView.indexPathForSelectedRow {
 			tableView.deselectRowAtIndexPath(indexPath, animated: animated)
@@ -597,7 +595,7 @@ extension BaseTableViewController {
 				self.tableView.moveRowAtIndexPath(indexPath!, toIndexPath: newIndexPath!)
 
 			case .Update:	// 4
-				self.tableView.cellForRowAtIndexPath(indexPath!)	// Better than reloadRowsAtIndexPaths because no animation
+				self.tableView.reloadRowsAtIndexPaths([indexPath!], withRowAnimation: .None)
 		}
 	}
 }

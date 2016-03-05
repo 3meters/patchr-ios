@@ -19,7 +19,6 @@ import Branch
 import Google
 import CocoaLumberjack
 import iRate
-import RZTransitions
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
