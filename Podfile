@@ -41,7 +41,7 @@ def core_pods
 	pod 'Google/Analytics'
 	pod 'Fabric'
 	pod 'Crashlytics'
-	pod 'THContactPicker',			'~> 1.2'
+	pod 'THContactPicker',			'~> 1.2'			# Used in message edit
 	pod 'FBSDKCoreKit',				'~> 4.10.0'
 	pod 'FBSDKLoginKit',			'~> 4.10.0'
 	pod 'FBSDKShareKit',			'~> 4.10.0'

@@ -13,7 +13,7 @@ import CocoaLumberjack
 class SettingsTests: KIFTestCase {
 	
 	override func beforeAll() {
-		let app = UIApplication.sharedApplication().delegate as! AppDelegate
+		let app = AppDelegate.appDelegate()
 		app.resetToLobby()
 		app.logLevel(DDLogLevel.Debug)
 		tester().login()
@@ -21,7 +21,7 @@ class SettingsTests: KIFTestCase {
 	}
 	
 	override func beforeEach() {
-		let app = UIApplication.sharedApplication().delegate as! AppDelegate
+		let app = AppDelegate.appDelegate()
 		app.resetToMain()
 	}
 	

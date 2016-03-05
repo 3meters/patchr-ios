@@ -73,7 +73,7 @@ class LocationController: NSObject {
 		self.locationManager.requestWhenInUseAuthorization()
 	}
 
-	private func requestAlwaysAuthorization() {
+	func requestAlwaysAuthorization() {
 		self.locationManager.requestAlwaysAuthorization()
 	}
 	

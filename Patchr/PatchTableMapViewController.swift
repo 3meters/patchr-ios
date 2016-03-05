@@ -144,7 +144,6 @@ extension PatchTableMapViewController: NSFetchedResultsControllerDelegate {
         let queryResult = anObject as? QueryItem
         if queryResult == nil { return }
         
-        /* TODO: we can do better than a full reload */
         switch type {
 			case .Insert:
 				if let entity = queryResult!.object as? Entity {

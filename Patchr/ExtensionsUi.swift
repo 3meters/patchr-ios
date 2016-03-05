@@ -109,10 +109,6 @@ extension UIView {
 		return image
 	}
 	
-	func prepareForRecycle() {
-		
-	}
-
 	func resizeToFitSubviews() {
 		var w: CGFloat = 0
 		var h: CGFloat = 0
@@ -127,6 +123,22 @@ extension UIView {
 		}
 		
 		self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, w, h)
+	}
+	
+	func sizeThatFitsSubviews() -> CGSize {
+		var w: CGFloat = 0
+		var h: CGFloat = 0
+		
+		for subview in subviews {
+			if !subview.hidden {
+				let fw = subview.frame.origin.x + subview.frame.size.width
+				let fh = subview.frame.origin.y + subview.frame.size.height
+				w = max(fw, w)
+				h = max(fh, h)
+			}
+		}
+		
+		return CGSizeMake(w, h)
 	}
 	
 	class func disableRecursivelyAllSubviews(view: UIView) {
@@ -257,11 +269,9 @@ extension UIViewController {
              */
             LocationController.instance.clearLastLocationAccepted()
 			
-			if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
-				let navController = UINavigationController()
-				navController.viewControllers = [LobbyViewController()]
-				appDelegate.window!.setRootViewController(navController, animated: true)
-			}
+			let navController = UINavigationController()
+			navController.viewControllers = [LobbyViewController()]
+			AppDelegate.appDelegate().window!.setRootViewController(navController, animated: true)
         }
         
         Log.w("Network Error Summary")

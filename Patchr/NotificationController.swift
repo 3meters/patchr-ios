@@ -9,51 +9,7 @@
 import UIKit
 import Foundation
 import Parse
-
-/*
-2015-07-27 17:10:15.925 Patchr[3944:1140648] {
-aps =     {
-alert = "\"Moo\" sent a message to your patch \"Test Me!\": \"Yay\"";
-badge = 18;
-};
-parentId = "pa.150227.01674.918.326046";
-targetId = "me.150728.00614.046.516341";
-trigger = "own_to";
-}
-2015-07-27 17:13:23.899 Patchr[3944:1140648] {
-aps =     {
-alert = "\"Moo\" liked your message: \"Let try it\"";
-badge = 19;
-};
-targetId = "me.150608.85514.713.474815";
-trigger = "own_to";
-}
-2015-07-27 17:14:34.355 Patchr[3944:1140648] {
-aps =     {
-alert = "\"Moo\" created the patch \"Moo Time\" nearby";
-badge = 20;
-};
-targetId = "pa.150728.00872.983.302833";
-trigger = nearby;
-}
-2015-07-27 17:16:59.047 Patchr[3944:1140648] {
-aps =     {
-alert = "\"Moo\" added your patch \"Test Me!\" as a favorite";
-badge = 21;
-};
-targetId = "pa.150227.01674.918.326046";
-trigger = "own_to";
-}
-2015-07-27 17:17:01.630 Patchr[3944:1140648] {
-aps =     {
-alert = "\"Moo\" started watching your patch \"Test Me!\"";
-badge = 22;
-};
-targetId = "pa.150227.01674.918.326046";
-trigger = "own_to";
-}
-*/
-let PAApplicationDidReceiveRemoteNotification = "PAApplicationDidReceiveRemoteNotification"
+import AudioToolbox
 
 class NotificationController {
     
@@ -64,6 +20,10 @@ class NotificationController {
     private init() {
         self.activityDate = Utils.now()
     }
+	
+	/*--------------------------------------------------------------------------------------------
+	* Notifications
+	*--------------------------------------------------------------------------------------------*/
     
     func didReceiveLocalNotification(application: UIApplication, notification: UILocalNotification) {
         didReceiveRemoteNotification(application, notification: notification.userInfo!, fetchCompletionHandler: nil)
@@ -107,7 +67,7 @@ class NotificationController {
         if state == .Inactive || state == .Active {
             let augmentedUserInfo = NSMutableDictionary(dictionary: notification)
             augmentedUserInfo["receivedInApplicationState"] = application.applicationState.rawValue // active, inactive, background
-            NSNotificationCenter.defaultCenter().postNotificationName(PAApplicationDidReceiveRemoteNotification, object: self, userInfo: augmentedUserInfo as [NSObject : AnyObject])
+            NSNotificationCenter.defaultCenter().postNotificationName(Events.DidReceiveRemoteNotification, object: self, userInfo: augmentedUserInfo as [NSObject : AnyObject])
         }
         /*
          * Background = notification received while app is not active (background or dead)
@@ -122,6 +82,25 @@ class NotificationController {
 			NSUserDefaults.standardUserDefaults().setObject(notificationDate, forKey: PatchrUserDefaultKey("notificationDate"))
 			NSUserDefaults.standardUserDefaults().synchronize()
 			Log.d("App was system launched so stashed notification date")
+			
+			if let settings =  UIApplication.sharedApplication().currentUserNotificationSettings() {
+				/*
+				 * If allowed, we play a sound even if the user has disabled notifications.
+				 */
+				if settings.types == .None {
+					let json:JSON = JSON(notification)
+					
+					/* Only chirp if sounds turned on in app and not muted for the related patch */
+					if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundForNotifications")) {
+						if let priority = json["priority"].int {
+							if priority == 2 {
+								return
+							}
+						}
+						AudioServicesPlaySystemSound(AudioController.chirpSound)
+					}
+				}
+			}
         }
 		
 		if (completionHandler != nil) {
@@ -138,7 +117,11 @@ class NotificationController {
     func didFailToRegisterForRemoteNotificationsWithError(application: UIApplication, error: NSError) {
         Log.w("failed to register for remote notifications: \(error)")
     }
-	
+
+	/*--------------------------------------------------------------------------------------------
+	* Methods
+	*--------------------------------------------------------------------------------------------*/
+
 	func guardedRegisterForRemoteNotifications(message: String?) {
 		
 		let message = message ?? "Would you like to alerted when messages are posted to this patch?"

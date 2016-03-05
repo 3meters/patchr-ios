@@ -87,7 +87,7 @@ class NotificationsTableViewController: BaseTableViewController {
         }
     }
     
-    func handleRemoteNotification(notification: NSNotification) {
+    func didReceiveRemoteNotification(notification: NSNotification) {
 		
         if let userInfo = notification.userInfo {
 			
@@ -99,8 +99,11 @@ class NotificationsTableViewController: BaseTableViewController {
                     switch applicationState {
                         case .Active: // App was active when remote notification was received
 							
+							let json:JSON = JSON(userInfo)
+							let trigger = json["trigger"].string
+							
 							/* Viewing notification list */
-                            
+							
                             if self.tabBarController?.selectedViewController == self.navigationController
                                 && self.navigationController?.topViewController == self {
                                     
@@ -108,6 +111,21 @@ class NotificationsTableViewController: BaseTableViewController {
                                 if self.isViewLoaded() {
 									if getActivityDate() != self.query.activityDateValue {
 										self.fetchQueryItems(force: true, paging: false, queryDate: getActivityDate())
+										
+										/* Bail if user has disabled this in-app notification */
+										if !notificationEnabledFor(trigger!, description: description) {
+											return
+										}
+										
+										/* Chirp */
+										if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundForNotifications")) {
+											if let priority = json["priority"].int {
+												if priority == 2 {
+													return
+												}
+											}
+											AudioServicesPlaySystemSound(AudioController.chirpSound)
+										}
 									}
                                 }
                             }
@@ -119,16 +137,12 @@ class NotificationsTableViewController: BaseTableViewController {
                                 /* Add one because user isn't viewing nofications right now */
                                 incrementBadges()
                                 
-                                let json:JSON = JSON(userInfo)
-								
 								/* Bail if low priority */
 								if let priority = json["priority"].int {
 									if priority == 3 {
 										return
 									}
 								}
-								
-								let trigger = json["trigger"].string
 								
                                 var alert = json["aps"]["alert"].string
                                 if alert == nil {
@@ -153,11 +167,15 @@ class NotificationsTableViewController: BaseTableViewController {
                                     if json["description"] == nil {
                                         description = subtitle!
                                     }
-                                    else {
-                                        description = "\(description)\n\n\(subtitle!)"
-                                    }
                                 }
-                                
+								
+								let invitation = json["trigger"] != nil && json["trigger"].string == "share" && description.lowercaseString.rangeOfString("invite") != nil
+								var duration: CGFloat = 5.0
+								if invitation {
+									duration = 10.0
+									description += "\n\nTap to go to the invitation"
+								}
+								
                                 if json["photo"] != nil {
                                     let prefix = json["photo"]["prefix"].string
                                     let source = json["photo"]["source"].string
@@ -166,12 +184,12 @@ class NotificationsTableViewController: BaseTableViewController {
                                     SDWebImageManager.sharedManager().downloadImageWithURL(photoUrl, options: SDWebImageOptions.HighPriority, progress: nil, completed: {
                                         (image:UIImage!, error:NSError!, cacheType:SDImageCacheType, finished:Bool, url:NSURL!) -> Void in
                                         if image != nil && finished {
-                                            self.showNotificationBar(json["name"].string!, description: description, image: image, targetId: json["targetId"].string!)
+											self.showNotificationBar(json["name"].string!, description: description, image: image, targetId: json["targetId"].string!, duration: duration)
                                         }
                                     })
                                 }
                                 else {
-                                    self.showNotificationBar("Notification", description: description, image: nil, targetId: json["targetId"].string!)
+									self.showNotificationBar(json["name"].string!, description: description, image: nil, targetId: json["targetId"].string!, duration: duration)
                                 }
                                 
                                 /* Chirp */
@@ -181,7 +199,7 @@ class NotificationsTableViewController: BaseTableViewController {
 											return
 										}
 									}
-									AudioServicesPlaySystemSound(chirpSound)
+									AudioServicesPlaySystemSound(AudioController.chirpSound)
                                 }
                             }
                             
@@ -237,7 +255,7 @@ class NotificationsTableViewController: BaseTableViewController {
     *--------------------------------------------------------------------------------------------*/
 	
 	func initialize() {
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:", name: PAApplicationDidReceiveRemoteNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didReceiveRemoteNotification:", name: Events.DidReceiveRemoteNotification, object: nil)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidBecomeActive:", name: UIApplicationDidBecomeActiveNotification, object: nil)
 		self.view.accessibilityIdentifier = View.Notifications
 		self.tableView.accessibilityIdentifier = Table.Notifications
@@ -280,38 +298,30 @@ class NotificationsTableViewController: BaseTableViewController {
 		query.sidecar = self.nearbys    // Should make a copy
 	}
 	
-    func showNotificationBar(title: String, description: String, image: UIImage?, targetId: String) {
+	func showNotificationBar(title: String, description: String, image: UIImage?, targetId: String, duration: CGFloat = 5.0) {
         
         TWMessageBarManager.sharedInstance().styleSheet = AirStylesheet(image: image)
+		
         TWMessageBarManager.sharedInstance().showMessageWithTitle(title,
             description: description,
             type: TWMessageBarMessageType.Info,
-            duration: 5.0) {
+            duration: duration) {
                 
             if targetId.hasPrefix("me.") {
-                self.showViewControllerBySchema("message", targetId: targetId)
+				let controller = MessageDetailViewController()
+				controller.inputMessageId = targetId
+				controller.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: Selector("dismissAction:"))
+				UIViewController.topMostViewController()?.presentViewController(UINavigationController(rootViewController: controller), animated: true, completion: nil)
             }
             else if targetId.hasPrefix("pa.") {
-                self.showViewControllerBySchema("patch", targetId: targetId)
+				let controller = PatchDetailViewController()
+				controller.entityId = targetId
+				controller.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: Selector("dismissAction:"))
+				UIViewController.topMostViewController()?.presentViewController(UINavigationController(rootViewController: controller), animated: true, completion: nil)
             }
         }
     }
-    
-    func showViewControllerBySchema(schema: String, targetId: String) {
-        if schema == "patch" {
-			let controller = PatchDetailViewController()
-			controller.entityId = targetId
-			controller.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: Selector("dismissAction:"))
-			UIViewController.topMostViewController()?.presentViewController(UINavigationController(rootViewController: controller), animated: true, completion: nil)
-        }
-        else if schema == "message" {
-			let controller = MessageDetailViewController()
-			controller.inputMessageId = targetId
-			controller.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: Selector("dismissAction:"))
-			UIViewController.topMostViewController()?.presentViewController(UINavigationController(rootViewController: controller), animated: true, completion: nil)
-        }
-    }
-    
+	
     func notificationEnabledFor(trigger: String, description: String) -> Bool {
         if trigger == "nearby" {
             return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("PatchesCreatedNearby"))
@@ -374,13 +384,21 @@ class AirStylesheet: NSObject, TWMessageBarStyleSheet {
             self.image = image
         }
     }
-    
+	
+	@objc func titleColorForMessageType(type: TWMessageBarMessageType) -> UIColor {
+		return Colors.white
+	}
+	
+	@objc func descriptionColorForMessageType(type: TWMessageBarMessageType) -> UIColor {
+		return Colors.white
+	}
+	
     @objc func backgroundColorForMessageType(type: TWMessageBarMessageType) -> UIColor {
         return Theme.colorBackgroundNotification
     }
     
     @objc func strokeColorForMessageType(type: TWMessageBarMessageType) -> UIColor {
-        return Theme.colorTextNotification
+        return Theme.colorBackgroundNotification
     }
     
     @objc func iconImageForMessageType(type: TWMessageBarMessageType) -> UIImage {
@@ -438,25 +456,17 @@ extension NotificationsTableViewController {
 					}
 				}
 				
-				var cellType: CellType = .TextAndPhoto
-				if entity.photoBig == nil {
-					cellType = .Text
-				}
-				else if entity.summary == nil {
-					cellType = .Photo
-				}
-				
-				let view = NotificationView(cellType: cellType)
+				let view = NotificationView(cellType: entity.photoBig == nil ? .Text : entity.summary == nil ? .Photo : .TextAndPhoto)
 				view.bindToEntity(entity)
+				
 				let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
-				view.bounds.size.width = viewWidth - 24
-				view.sizeToFit()
+				let viewHeight = view.sizeThatFits(CGSizeMake(viewWidth - 24, CGFloat.max)).height + 24 + 1 // Add one for row separator
 				
 				if entity.id_ != nil {
-					self.rowHeights[entity.id_] = view.height() + 24 + 1
+					self.rowHeights[entity.id_] = viewHeight
 				}
 				
-				return view.height() + 24 + 1	// Add one for row separator
+				return viewHeight
 		}
 		else {
 			return 0
@@ -469,13 +479,4 @@ extension NotificationsTableViewController: TTTAttributedLabelDelegate {
     func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
         UIApplication.sharedApplication().openURL(url)
     }
-}
-
-let chirpSound: SystemSoundID = createChirpSound()
-
-func createChirpSound() -> SystemSoundID {
-    var soundID: SystemSoundID = 0
-    let soundURL = CFBundleCopyResourceURL(CFBundleGetMainBundle(), "chirp", "caf", nil)
-    AudioServicesCreateSystemSoundID(soundURL, &soundID)
-    return soundID
 }

@@ -654,12 +654,10 @@ class ProfileEditViewController: BaseEditViewController {
 					
 					LocationController.instance.clearLastLocationAccepted()
 					
-					if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
-						let navController = UINavigationController()
-						navController.viewControllers = [LobbyViewController()]
-						appDelegate.window!.setRootViewController(navController, animated: true)
-						UIShared.Toast("User \(userName) erased", controller: navController)
-					}
+					let navController = UINavigationController()
+					navController.viewControllers = [LobbyViewController()]
+					AppDelegate.appDelegate().window!.setRootViewController(navController, animated: true)
+					UIShared.Toast("User \(userName) erased", controller: navController)
 				}
 			}
 		}
@@ -677,13 +675,22 @@ class ProfileEditViewController: BaseEditViewController {
     }
 
 	func navigateToMain() {
-		let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-		let controller = MainTabBarController()
-		controller.selectedIndex = 0
-		appDelegate.window!.setRootViewController(controller, animated: true)
 		
-		if UserController.instance.userName != nil {
-			UIShared.Toast("Logged in as \(UserController.instance.userName!)", controller: controller, addToWindow: false)
+		if CLLocationManager.authorizationStatus() == .NotDetermined
+			|| !UIApplication.sharedApplication().isRegisteredForRemoteNotifications() {
+				let controller = PermissionsViewController()
+				self.navigationController?.pushViewController(controller, animated: true)
+				if UserController.instance.userName != nil {
+					UIShared.Toast("Logged in as \(UserController.instance.userName!)", controller: controller, addToWindow: false)
+				}
+		}
+		else {
+			let controller = MainTabBarController()
+			controller.selectedIndex = 0
+			AppDelegate.appDelegate().window!.setRootViewController(controller, animated: true)
+			if UserController.instance.userName != nil {
+				UIShared.Toast("Logged in as \(UserController.instance.userName!)", controller: controller, addToWindow: false)
+			}
 		}
 	}
 	

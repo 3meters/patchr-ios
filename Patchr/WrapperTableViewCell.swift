@@ -47,8 +47,4 @@ class WrapperTableViewCell: UITableViewCell {
 		self.separator.layer.backgroundColor = Theme.colorSeparator.CGColor
 		self.contentView.addSubview(self.separator)
 	}
-	
-	override func prepareForReuse() {
-		self.view?.prepareForRecycle()
-	}
 }

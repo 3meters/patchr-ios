@@ -27,8 +27,8 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	var loadMoreActivity	= UIActivityIndicatorView(activityIndicatorStyle: .White)
 	var loadMoreMessage		= "LOAD MORE"
 	
-	var emptyLabel			= AirLabel(frame: CGRectZero)
-	var emptyMessage:		String?
+	var emptyLabel			= AirLinkButton(frame: CGRectZero)
+	var emptyMessage		: String?
     var showEmptyLabel		= true
     var showProgress		= true
     var progressOffsetY     = Float(-48)
@@ -81,12 +81,12 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
             self.emptyLabel.layer.borderColor = Theme.colorRule.CGColor
 			self.emptyLabel.layer.backgroundColor = Theme.colorBackgroundEmptyBubble.CGColor
 			self.emptyLabel.layer.cornerRadius = 80
-            self.emptyLabel.font = Theme.fontTextDisplay
-            self.emptyLabel.text = self.emptyMessage
-            self.emptyLabel.numberOfLines = 0
-			self.emptyLabel.insets = UIEdgeInsetsMake(16, 16, 16, 16)
-			self.emptyLabel.textAlignment = NSTextAlignment.Center
-			self.emptyLabel.textColor = Theme.colorTextPlaceholder
+            self.emptyLabel.titleLabel!.font = Theme.fontTextDisplay
+            self.emptyLabel.titleLabel!.numberOfLines = 0
+			self.emptyLabel.titleLabel!.textAlignment = NSTextAlignment.Center
+			self.emptyLabel.titleEdgeInsets = UIEdgeInsetsMake(16, 16, 16, 16)
+			self.emptyLabel.setTitle(self.emptyMessage, forState: .Normal)
+			self.emptyLabel.setTitleColor(Theme.colorTextPlaceholder, forState: .Normal)
 
             self.tableView.addSubview(self.emptyLabel)
         }
@@ -134,10 +134,9 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.activity.frame.origin.y += CGFloat(self.progressOffsetY)
 		self.activity.frame.origin.x += CGFloat(self.progressOffsetX)
 		
-		let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
 		let navHeight = self.navigationController?.navigationBar.height() ?? 0
 		self.emptyLabel.anchorInCenterWithWidth(160, height: 160)
-		self.emptyLabel.frame.origin.y -= (statusHeight + navHeight)
+		self.emptyLabel.frame.origin.y -= (UIShared.statusHeight + navHeight)
 	}
 	
 	override func viewWillAppear(animated: Bool) {
@@ -597,7 +596,7 @@ extension BaseTableViewController {
 				self.tableView.moveRowAtIndexPath(indexPath!, toIndexPath: newIndexPath!)
 
 			case .Update:	// 4
-				self.tableView.cellForRowAtIndexPath(indexPath!)	// Better than reloadRowsAtIndexPaths because no animation
+				self.tableView.reloadRowsAtIndexPaths([indexPath!], withRowAnimation: .None)
 		}
 	}
 }

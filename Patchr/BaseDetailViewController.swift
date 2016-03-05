@@ -31,10 +31,9 @@ class BaseDetailViewController: BaseTableViewController {
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
-		let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
 		let navHeight = self.navigationController?.navigationBar.height() ?? 0
 		self.emptyLabel.anchorInCenterWithWidth(160, height: 160)
-		self.emptyLabel.frame.origin.y -= CGFloat(statusHeight + navHeight)
+		self.emptyLabel.frame.origin.y -= CGFloat(UIShared.statusHeight + navHeight)
 		self.emptyLabel.frame.origin.y += self.header.height() / 2
 	}
 
@@ -274,17 +273,17 @@ extension BaseDetailViewController {
 				}
 				
 				let view = MessageView(cellType: cellType, entity: nil)
-				let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
 				view.showPatchName = self.patchNameVisible
 				view.bindToEntity(entity)
-				view.bounds.size.width = viewWidth - 24
-				view.sizeToFit()
+				
+				let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
+				let viewHeight = view.sizeThatFits(CGSizeMake(viewWidth - 24, CGFloat.max)).height + 24 + 1 // Add one for row separator
 				
 				if entity.id_ != nil {
-					self.rowHeights[entity.id_] = view.height() + 24 + 1
+					self.rowHeights[entity.id_] = viewHeight
 				}
 				
-				return view.height() + 24 + 1	// Add one for row separator
+				return viewHeight
 		}
 		return 0
 	}

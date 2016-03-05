@@ -55,11 +55,10 @@ class DevelopmentViewController: UIViewController {
 		super.viewWillLayoutSubviews()
 		
 		let contentWidth = self.view.width() - 32
-		let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
 		let navHeight = self.navigationController?.navigationBar.height() ?? 0
 
 		self.enableDevModeLabel.sizeToFit()
-		self.enableDevModeLabel.anchorTopLeftWithLeftPadding(16, topPadding: statusHeight + navHeight + 24, width: contentWidth - (self.enableDevModeSwitch.width() + 8), height: self.enableDevModeLabel.height())
+		self.enableDevModeLabel.anchorTopLeftWithLeftPadding(16, topPadding: UIShared.statusHeight + navHeight + 24, width: contentWidth - (self.enableDevModeSwitch.width() + 8), height: self.enableDevModeLabel.height())
 		self.enableDevModeSwitch.alignToTheRightOf(self.enableDevModeLabel, matchingCenterWithLeftPadding: 8, width: self.enableDevModeSwitch.width(), height: self.enableDevModeSwitch.height())
 		
 		self.statusBarHiddenLabel.sizeToFit()

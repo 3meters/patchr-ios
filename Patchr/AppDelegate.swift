@@ -178,20 +178,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			}
 		})
 		
-		/* If we have an authenticated user then start at the usual spot, otherwise start at the lobby scene. */
-		if UserController.instance.authenticated {
-			let controller = MainTabBarController()
-			controller.selectedIndex = 0
-			self.window?.setRootViewController(controller, animated: true)
-		}
-		else {
-			let controller = LobbyViewController()
-			let navController = UINavigationController()
-			navController.viewControllers = [controller]
-			self.window?.setRootViewController(navController, animated: true)
-		}
-		
-		self.window?.makeKeyAndVisible()
+		routeForRoot()
 		
         return true
     }
@@ -225,7 +212,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return false
     }
 	
-	func applicationDidBecomeActive(application: UIApplication) {		
+	func applicationDidBecomeActive(application: UIApplication) {
+		/*
+		 * UIApplicationWillEnterForegroundNotification fires before this
+		 * is called.
+		 */
 		FBSDKAppEvents.activateApp()
 		/*
 		* Check to see if Facebook has a deferred deep link. Should only be
@@ -239,6 +230,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 				Log.d("Facebook has detected a deferred app link, calling openUrl: \(url!.absoluteString)")
 				UIApplication.sharedApplication().openURL(url)
 			}
+		}
+
+		/* Guard against becoming active without any UI */
+		if self.window?.rootViewController == nil {
+			Log.w("Patchr is becoming active without a root view controller, resetting to launch routing")
+			routeForRoot()
 		}
 	}
 	
@@ -263,6 +260,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
+	
+	func routeForRoot() {
+		
+		/* If we have an authenticated user then start at the usual spot, otherwise start at the lobby scene. */
+		if UserController.instance.authenticated {
+			let controller = MainTabBarController()
+			controller.selectedIndex = 0
+			self.window?.setRootViewController(controller, animated: true)
+		}
+		else {
+			let controller = LobbyViewController()
+			let navController = UINavigationController()
+			navController.viewControllers = [controller]
+			self.window?.setRootViewController(navController, animated: true)
+		}
+		
+		self.window?.makeKeyAndVisible()
+	}
 	
 	func routeDeepLink(params: NSDictionary?, error: NSError?) {
 		

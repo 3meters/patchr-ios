@@ -11,6 +11,8 @@ import AirPhotoBrowser
 
 struct UIShared {
 	
+	static let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+	
 	static func compatibilityUpgrade() {
 		
 		NSOperationQueue.mainQueue().addOperationWithBlock {

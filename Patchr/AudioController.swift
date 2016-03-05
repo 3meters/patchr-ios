@@ -11,8 +11,9 @@ import AVFoundation
 class AudioController: NSObject {
     
     static let instance = AudioController()
-    
-    var player: AVAudioPlayer! = nil
+	static let chirpSound: SystemSoundID = createChirpSound()
+	
+	var player: AVAudioPlayer! = nil
     
     func play(sound: String) {
         do {
@@ -30,6 +31,13 @@ class AudioController: NSObject {
         let fileUri: NSURL = NSURL(fileURLWithPath: path!)
         return fileUri
     }
+}
+
+func createChirpSound() -> SystemSoundID {
+	var soundID: SystemSoundID = 0
+	let soundURL = CFBundleCopyResourceURL(CFBundleGetMainBundle(), "chirp", "caf", nil)
+	AudioServicesCreateSystemSoundID(soundURL, &soundID)
+	return soundID
 }
 
 extension AudioController: AVAudioPlayerDelegate {
