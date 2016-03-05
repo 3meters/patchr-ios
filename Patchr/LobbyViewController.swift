@@ -115,10 +115,9 @@ class LobbyViewController: BaseViewController {
 			return
 		}
 		
-		let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
 		let controller = MainTabBarController()
 		controller.selectedIndex = 0
-		appDelegate.window!.setRootViewController(controller, animated: true)
+		AppDelegate.appDelegate().window!.setRootViewController(controller, animated: true)
 	}
 	
     /*--------------------------------------------------------------------------------------------

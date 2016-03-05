@@ -132,10 +132,9 @@ class PatchDetailViewController: BaseDetailViewController {
     func dismissAction(sender: AnyObject) {
 		self.dismissViewControllerAnimated(true) {
 			if UserController.instance.authenticated {
-				let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
 				let controller = MainTabBarController()
 				controller.selectedIndex = 0
-				appDelegate.window!.setRootViewController(controller, animated: true)
+				AppDelegate.appDelegate().window!.setRootViewController(controller, animated: true)
 			}
 		}
     }
@@ -330,7 +329,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		}
 	}
 	
-	func handleRemoteNotification(notification: NSNotification) {
+	func didReceiveRemoteNotification(notification: NSNotification) {
 		
 		if let userInfo = notification.userInfo {
 			let parentId = userInfo["parentId"] as? String
@@ -385,22 +384,23 @@ class PatchDetailViewController: BaseDetailViewController {
 			contextButton.setTitle("", forState: .Normal)
 		}
 
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleRemoteNotification:", name: PAApplicationDidReceiveRemoteNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didReceiveRemoteNotification:", name: Events.DidReceiveRemoteNotification, object: nil)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didFetch:", name: Events.DidFetch, object: self)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "watchDidChange:", name: Events.WatchDidChange, object: header.watchButton)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didInsertMessage:", name: Events.DidInsertMessage, object: nil)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground:", name: UIApplicationDidEnterBackgroundNotification, object: nil)
-
-		/* UI prep */
-		self.patchNameVisible = false
-		if self.inputReferrerName != nil {
-			self.inviteActive = true
-		}
 		
 		self.showEmptyLabel = true
 		self.showProgress = true
 		self.progressOffsetY = 80
 		self.loadMoreMessage = "LOAD MORE MESSAGES"
+		
+		/* UI prep */
+		self.patchNameVisible = false
+		if self.inputReferrerName != nil {
+			self.inviteActive = true
+			self.showEmptyLabel = false
+		}
 		
 		/* Navigation bar buttons */
 		drawButtons()
@@ -418,7 +418,7 @@ class PatchDetailViewController: BaseDetailViewController {
 			bindContextView()
 
 			self.emptyMessage = (patch.visibility == "private") ? "Only members can see messages" : "Be the first to post a message to this patch"
-			self.emptyLabel.text = self.emptyMessage
+			self.emptyLabel.setTitle(self.emptyMessage, forState: .Normal)
 			
 			if self.tableView.tableHeaderView == nil {
 				let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())

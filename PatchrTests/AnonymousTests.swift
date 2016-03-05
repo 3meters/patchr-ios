@@ -14,7 +14,7 @@ import CocoaLumberjack
 class AnonymousTests: KIFTestCase {
 	
 	override func beforeAll() {
-		let app = UIApplication.sharedApplication().delegate as! AppDelegate
+		let app = AppDelegate.appDelegate()
 		app.resetToLobby()
 		app.logLevel(DDLogLevel.Debug)
 		
@@ -27,7 +27,7 @@ class AnonymousTests: KIFTestCase {
 	}
 	
 	override func beforeEach() {
-		let app = UIApplication.sharedApplication().delegate as! AppDelegate
+		let app = AppDelegate.appDelegate()
 		app.resetToMain()
 	}
 	

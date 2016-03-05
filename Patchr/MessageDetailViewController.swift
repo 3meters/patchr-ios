@@ -322,8 +322,10 @@ class MessageDetailViewController: BaseViewController {
 
     func shareBrowseAction(sender: AnyObject){
 		if let button = sender as? AirButton {
-			button.borderColor = Theme.colorButtonBorder
+			button.borderColor = Colors.brandColor
+			self.patchView?.name.textColor = Colors.brandColor
 		}
+		
         if self.inputMessage?.message != nil {
 			let controller = MessageDetailViewController()
 			controller.inputMessageId = self.inputMessage!.message!.entityId
@@ -332,6 +334,11 @@ class MessageDetailViewController: BaseViewController {
         else if self.inputMessage?.patch != nil {
 			let controller = PatchDetailViewController()
             controller.entityId = self.inputMessage!.patch!.entityId
+			controller.inputReferrerName = self.inputMessage!.creator.name
+			if let photo = self.inputMessage!.creator.photo {
+				let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile)
+				controller.inputReferrerPhotoUrl = photoUrl.absoluteString
+			}
             self.navigationController?.pushViewController(controller, animated: true)
         }
     }
@@ -411,7 +418,8 @@ class MessageDetailViewController: BaseViewController {
 	
 	func buttonTouchDownAction(sender: AnyObject) {
 		if let button = sender as? AirButton {
-			button.borderColor = Colors.brandColor
+			button.borderColor = Theme.colorButtonBorder
+			self.patchView?.name.textColor = Theme.colorButtonBorder
 		}
 	}
     
@@ -464,6 +472,7 @@ class MessageDetailViewController: BaseViewController {
 		
 		self.createdDate.textColor = Theme.colorTextSecondary
 		self.shareFrame.clipsToBounds = true
+		self.shareFrame.borderColor = Colors.brandColor
 		
 		self.photo.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
 		self.photo.contentMode = .ScaleAspectFill
@@ -551,6 +560,7 @@ class MessageDetailViewController: BaseViewController {
 				self.patchView = PatchView(frame: CGRectMake(0, 0, self.view.width(), 136))
 				self.patchView!.bindToEntity(self.inputMessage!.patch!, location: nil)
 				self.patchView!.shadow.hidden = true
+				self.patchView?.name.textColor = Colors.brandColor
 				self.shareFrame.addSubview(self.patchView!)
 				self.shareFrame.addTarget(self, action: Selector("shareBrowseAction:"), forControlEvents: UIControlEvents.TouchUpInside)
 				self.shareFrame.addTarget(self, action: Selector("buttonTouchDownAction:"), forControlEvents: UIControlEvents.TouchDown)

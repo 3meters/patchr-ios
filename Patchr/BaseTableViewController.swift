@@ -27,8 +27,8 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	var loadMoreActivity	= UIActivityIndicatorView(activityIndicatorStyle: .White)
 	var loadMoreMessage		= "LOAD MORE"
 	
-	var emptyLabel			= AirLabel(frame: CGRectZero)
-	var emptyMessage:		String?
+	var emptyLabel			= AirLinkButton(frame: CGRectZero)
+	var emptyMessage		: String?
     var showEmptyLabel		= true
     var showProgress		= true
     var progressOffsetY     = Float(-48)
@@ -81,12 +81,12 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
             self.emptyLabel.layer.borderColor = Theme.colorRule.CGColor
 			self.emptyLabel.layer.backgroundColor = Theme.colorBackgroundEmptyBubble.CGColor
 			self.emptyLabel.layer.cornerRadius = 80
-            self.emptyLabel.font = Theme.fontTextDisplay
-            self.emptyLabel.text = self.emptyMessage
-            self.emptyLabel.numberOfLines = 0
-			self.emptyLabel.insets = UIEdgeInsetsMake(16, 16, 16, 16)
-			self.emptyLabel.textAlignment = NSTextAlignment.Center
-			self.emptyLabel.textColor = Theme.colorTextPlaceholder
+            self.emptyLabel.titleLabel!.font = Theme.fontTextDisplay
+            self.emptyLabel.titleLabel!.numberOfLines = 0
+			self.emptyLabel.titleLabel!.textAlignment = NSTextAlignment.Center
+			self.emptyLabel.titleEdgeInsets = UIEdgeInsetsMake(16, 16, 16, 16)
+			self.emptyLabel.setTitle(self.emptyMessage, forState: .Normal)
+			self.emptyLabel.setTitleColor(Theme.colorTextPlaceholder, forState: .Normal)
 
             self.tableView.addSubview(self.emptyLabel)
         }
@@ -143,6 +143,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		super.viewWillAppear(animated) // Base implementation does nothing
 		
 		try! self.fetchedResultsController.performFetch()
+		self.tableView.reloadData()		// Reload cells so any changes while gone will show
 		
 		if let indexPath = tableView.indexPathForSelectedRow {
 			tableView.deselectRowAtIndexPath(indexPath, animated: animated)

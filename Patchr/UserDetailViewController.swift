@@ -123,7 +123,7 @@ class UserDetailViewController: BaseDetailViewController {
 		if self.profileMode {
 			self.showEmptyLabel = true
 			self.emptyMessage = "Browse your posted messages here"
-			self.emptyLabel.text = self.emptyMessage
+			self.emptyLabel.setTitle(self.emptyMessage, forState: .Normal)
 		}
 		
 		self.showProgress = true

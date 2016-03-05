@@ -269,11 +269,9 @@ extension UIViewController {
              */
             LocationController.instance.clearLastLocationAccepted()
 			
-			if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
-				let navController = UINavigationController()
-				navController.viewControllers = [LobbyViewController()]
-				appDelegate.window!.setRootViewController(navController, animated: true)
-			}
+			let navController = UINavigationController()
+			navController.viewControllers = [LobbyViewController()]
+			AppDelegate.appDelegate().window!.setRootViewController(navController, animated: true)
         }
         
         Log.w("Network Error Summary")

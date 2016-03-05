@@ -136,9 +136,8 @@ class AirWatchButton: AirToggleButton {
 					self.toggleOn(patch!.userWatchStatusValue == .Member, pending: patch!.userWatchStatusValue == .Pending)
 					self.enabled = true
 					
-					let application = UIApplication.sharedApplication()
-					if !application.isRegisteredForRemoteNotifications() {
-						NotificationController.instance.guardedRegisterForRemoteNotifications(nil)
+					if !UIApplication.sharedApplication().isRegisteredForRemoteNotifications() {
+						NotificationController.instance.guardedRegisterForRemoteNotifications("Would you like to alerted when messages are posted to this patch?")
 					}
 				}
             }

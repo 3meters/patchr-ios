@@ -168,4 +168,5 @@ enum NotificationType: Int {
     case LikeMessage
     case SoundEffects
     case SoundForNotifications
+	case PatchInvitation
 }

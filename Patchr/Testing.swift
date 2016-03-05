@@ -111,6 +111,7 @@ struct View {
 	static let WebBrowser			= "web_browser_view"
     static let NotificationSettings = "notification_settings_view"
     static let Invite               = "invite_view"
+	static let Permissions          = "permissions_view"
     static let Main                 = "main_view"
     static let MessageDetail        = "message_detail_view"
     static let PatchDetail          = "patch_detail_view"

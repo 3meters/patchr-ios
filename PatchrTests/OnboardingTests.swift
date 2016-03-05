@@ -13,12 +13,12 @@ import CocoaLumberjack
 class OnboardingTests: KIFTestCase {
 	
 	override func beforeAll() {
-		let app = UIApplication.sharedApplication().delegate as! AppDelegate
+		let app = AppDelegate.appDelegate()
 		app.logLevel(DDLogLevel.Debug)
 	}
 	
 	override func beforeEach() {
-		let app = UIApplication.sharedApplication().delegate as! AppDelegate
+		let app = AppDelegate.appDelegate()
 		app.resetToLobby()
 	}
 		

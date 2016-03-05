@@ -13,7 +13,7 @@ import CocoaLumberjack
 class UserEditingTests: KIFTestCase {
 	
 	override func beforeAll() {
-		let app = UIApplication.sharedApplication().delegate as! AppDelegate
+		let app = AppDelegate.appDelegate()
 		app.resetToLobby()
 		app.logLevel(DDLogLevel.Debug)
 		tester().login()
@@ -24,12 +24,12 @@ class UserEditingTests: KIFTestCase {
 	}
 	
 	override func beforeEach() {
-		let app = UIApplication.sharedApplication().delegate as! AppDelegate
+		let app = AppDelegate.appDelegate()
 		app.resetToMain()
 	}
 	
 	override func afterEach() {
-		let app = UIApplication.sharedApplication().delegate as! AppDelegate
+		let app = AppDelegate.appDelegate()
 		app.resetToMain()
 	}
 	

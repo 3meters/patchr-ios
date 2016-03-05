@@ -51,23 +51,24 @@ func PatchrUserDefaultKey(subKey: String) -> String {
 }
 
 public struct Events {
-    static let LikeDidChange                  = "LikeDidChange"
-    static let WatchDidChange                 = "WatchDidChange"
-    static let PhotoDidChange                 = "PhotoDidChange"
-    static let PhotoViewHasFocus              = "PhotoViewHasFocus"
-    static let WillFetch                      = "WillFetch"
-    static let DidFetch                       = "DidFetch"
-    static let WillFetchQuery                 = "WillFetchQuery"
-    static let DidFetchQuery                  = "DidFetchQuery"
-    static let ImageNotFound                  = "ImageNotFound"
-    static let DidInsertMessage               = "DidInsertMessage"
-    static let LocationWasDenied              = "LocationWasDenied"
-	static let LocationWasAllowed             = "LocationWasAllowed"
-	static let LocationWasUpdated             = "LocationWasUpdated"
-	static let LocationWasRestricted          = "LocationWasRestricted"
-    static let NotificationsDenied            = "NotificationsDenied"
-    static let PhotoDenied                    = "PhotoDenied"
-	static let UserDidLogin					  = "UserDidLogin"
+    static let LikeDidChange                = "LikeDidChange"
+    static let WatchDidChange               = "WatchDidChange"
+    static let PhotoDidChange               = "PhotoDidChange"
+    static let PhotoViewHasFocus            = "PhotoViewHasFocus"
+    static let WillFetch                    = "WillFetch"
+    static let DidFetch                     = "DidFetch"
+    static let WillFetchQuery               = "WillFetchQuery"
+    static let DidFetchQuery                = "DidFetchQuery"
+    static let ImageNotFound                = "ImageNotFound"
+    static let DidInsertMessage             = "DidInsertMessage"
+    static let LocationWasDenied            = "LocationWasDenied"
+    static let LocationWasAllowed           = "LocationWasAllowed"
+    static let LocationWasUpdated           = "LocationWasUpdated"
+    static let LocationWasRestricted        = "LocationWasRestricted"
+    static let NotificationsDenied          = "NotificationsDenied"
+    static let PhotoDenied                  = "PhotoDenied"
+    static let UserDidLogin                 = "UserDidLogin"
+    static let DidReceiveRemoteNotification = "DidReceiveRemoteNotification"
 }
 
 public struct Schema {
@@ -108,4 +109,3 @@ public struct SizeCategory {
     static let thumbnail        = "thumbnail"
     static let standard         = "standard"
 }
-
