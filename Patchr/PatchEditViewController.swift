@@ -26,7 +26,7 @@ class PatchEditViewController: BaseEditViewController {
 	var inputState			 : State?	= State.Editing
 	var inputPatch			 : Patch?
 
-	var photoView            = PhotoView()
+	var photoView            = PhotoEditView()
 	var nameField            = AirTextField()
 	var descriptionField     = AirTextView()
 	

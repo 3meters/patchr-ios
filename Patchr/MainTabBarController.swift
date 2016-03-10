@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 class MainTabBarController: UITabBarController {
     
@@ -24,6 +25,12 @@ class MainTabBarController: UITabBarController {
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
 		reachabilityChanged()
+	}
+	
+	override func didReceiveMemoryWarning() {
+		super.didReceiveMemoryWarning()
+		Log.w("Patchr received memory warning: clearing memory image cache")
+		SDImageCache.sharedImageCache().clearMemory()
 	}
     
     deinit {

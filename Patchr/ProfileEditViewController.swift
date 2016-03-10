@@ -35,7 +35,7 @@ class ProfileEditViewController: BaseEditViewController {
 	var inputUserId: String?
 	var inputPhotoUrl: NSURL?
 
-	var photoView            = PhotoView()
+	var photoView            = PhotoEditView()
 	var nameField            = AirTextField()
 	var emailField           = AirTextField()
 	var areaField            = AirTextField()

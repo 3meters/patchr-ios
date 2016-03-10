@@ -15,7 +15,7 @@ enum PhotoMode: Int {
     case Photo
 }
 
-class PhotoView: UIView {
+class PhotoEditView: UIView {
 	
 	override var layoutMargins: UIEdgeInsets {
 		get { return UIEdgeInsetsZero }
@@ -283,7 +283,7 @@ class PhotoView: UIView {
     }
 }
 
-extension PhotoView: AdobeUXImageEditorViewControllerDelegate {
+extension PhotoEditView: AdobeUXImageEditorViewControllerDelegate {
 	
 	func photoEditor(editor: AdobeUXImageEditorViewController, finishedWithImage image: UIImage?) {
 		self.photoChosen(image, imageResult: nil)

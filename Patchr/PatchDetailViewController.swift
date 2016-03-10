@@ -10,6 +10,7 @@ import UIKit
 import Branch
 import MessageUI
 import iRate
+import Crashlytics
 
 class PatchDetailViewController: BaseDetailViewController {
 
@@ -144,6 +145,14 @@ class PatchDetailViewController: BaseDetailViewController {
 			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to post messages and more.")
             return
         }
+		
+		if let patch = self.entity as? Patch {
+			if patch.visibility != nil && patch.visibility == "private" && patch.userWatchStatusValue != .Member {
+				Alert("Join the patch to post messages.", message: nil, cancelButtonTitle: "OK")
+				return
+			}
+		}
+		
         /* Has its own nav because we segue modally and it needs its own stack */
 		let controller = MessageEditViewController()
 		let navController = UINavigationController()
@@ -323,7 +332,7 @@ class PatchDetailViewController: BaseDetailViewController {
 	
 	func didInsertMessage(sender: NSNotification) {
 		if let patch = self.entity as? Patch {
-			if patch.visibility != nil && !patch.userHasMessagedValue && patch.visibility == "public" {
+			if patch.visibility != nil && patch.visibility == "public" && patch.userWatchStatusValue == .NonMember {
 				self.autoWatchOnAppear = true
 			}
 		}
