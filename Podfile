@@ -39,8 +39,6 @@ def core_pods
 	pod 'TWMessageBarManager',		'~> 1.8'			# In-app notifications
 	pod 'Facade'										# Convenience methods for frame based layout
 	pod 'Google/Analytics'
-	pod 'Fabric'
-	pod 'Crashlytics'
 	pod 'THContactPicker',			'~> 1.2'			# Used in message edit
 	pod 'FBSDKCoreKit',				'~> 4.10.0'
 	pod 'FBSDKLoginKit',			'~> 4.10.0'
@@ -49,6 +47,7 @@ def core_pods
 	pod 'Parse'
 	pod 'iRate'
 	pod 'CocoaLumberjack/Swift'
+	pod 'Bugsnag'
 end
 
 target 'Patchr' do
@@ -68,6 +67,7 @@ target 'PatchrShare' do
 	pod 'Lockbox'										# Used to protect secrets and install info
 	pod 'Facade'										# Convenience methods for frame based layout
 	pod 'CocoaLumberjack/Swift'
+	pod 'Bugsnag'
 end
 
 plugin 'cocoapods-no-dev-schemes'

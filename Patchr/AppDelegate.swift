@@ -7,8 +7,6 @@
 //
 
 import UIKit
-import Fabric
-import Crashlytics
 import Parse
 import Keys
 import AFNetworking
@@ -19,6 +17,7 @@ import Branch
 import Google
 import CocoaLumberjack
 import iRate
+import Bugsnag
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -49,7 +48,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
 		/* Initialize Crashlytics: 25% of method time */
-		Fabric.with([Crashlytics()])
+		Bugsnag.startBugsnagWithApiKey("d1313b8d5fc14d937419406f33fd4c01")
 
 		/* Instance the data controller */
 		DataController.instance
@@ -172,7 +171,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			if error == nil {
 				/* A hit could mean a deferred link match */
 				if let clickedBranchLink = params["+clicked_branch_link"] as? Bool where clickedBranchLink {
-					Log.d("Deep link routing based on clicked branch link")
+					Log.d("Deep link routing based on clicked branch link", breadcrumb: true)
 					self.routeDeepLink(params, error: error)	/* Presents modally on top of main tab controller. */
 				}
 			}
@@ -189,7 +188,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		 * onLaunch.
 		 */
 		if Branch.getInstance().handleDeepLink(url) {
-			Log.d("Branch detected a deep link in openUrl: \(url.absoluteString)")
+			Log.d("Branch detected a deep link in openUrl: \(url.absoluteString)", breadcrumb: true)
 			return true
 		}
 		
@@ -197,7 +196,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		let parsedUrl: BFURL = BFURL(inboundURL: url, sourceApplication: sourceApplication)
 		if (parsedUrl.appLinkData != nil) {
 			if let params = parsedUrl.targetQueryParameters {
-				Log.d("Facebook detected a deep link in openUrl: \(url.absoluteString)")
+				Log.d("Facebook detected a deep link in openUrl: \(url.absoluteString)", breadcrumb: true)
 				routeDeepLink(params, error: nil)
 			}
 			return true
@@ -205,7 +204,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
 		/* See if Facebook claims it as part of interaction with native Facebook client and Facebook dialogs */
 		if FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation) {
-			Log.d("Url passed to openUrl was intended for Facebook: \(url.absoluteString)")
+			Log.d("Url passed to openUrl was intended for Facebook: \(url.absoluteString)", breadcrumb: true)
 			return true
 		}				
 		
@@ -227,14 +226,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		*/
 		FBSDKAppLinkUtility.fetchDeferredAppLink { url, error in
 			if url != nil && UIApplication.sharedApplication().canOpenURL(url) {
-				Log.d("Facebook has detected a deferred app link, calling openUrl: \(url!.absoluteString)")
+				Log.d("Facebook has detected a deferred app link, calling openUrl: \(url!.absoluteString)", breadcrumb: true)
 				UIApplication.sharedApplication().openURL(url)
 			}
 		}
 
 		/* Guard against becoming active without any UI */
 		if self.window?.rootViewController == nil {
-			Log.w("Patchr is becoming active without a root view controller, resetting to launch routing")
+			Log.w("Patchr is becoming active without a root view controller, resetting to launch routing", breadcrumb: true)
 			routeForRoot()
 		}
 	}

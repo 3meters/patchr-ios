@@ -8,9 +8,8 @@
 
 import Foundation
 import ObjectiveC
-import Fabric
-import Crashlytics
 import Google
+import Bugsnag
 
 struct Reporting {
     
@@ -19,45 +18,45 @@ struct Reporting {
         let reachability: Reachability = Reachability.reachabilityForInternetConnection()
         let networkStatus: Int = reachability.currentReachabilityStatus().rawValue
         if networkStatus == 0 {
-            Crashlytics.sharedInstance().setBoolValue(false, forKey: "connected")
+			Bugsnag.addAttribute("connected", withValue: false, toTabWithName: "network")
         }
         else {
-            Crashlytics.sharedInstance().setBoolValue(true, forKey: "connected")
+			Bugsnag.addAttribute("connected", withValue: true, toTabWithName: "network")
             if networkStatus == 1 {
-                Crashlytics.sharedInstance().setObjectValue("wifi", forKey: "network_type")
+				Bugsnag.addAttribute("network_type", withValue: "wifi", toTabWithName: "network")
             }
             else if networkStatus == 2 {
-                Crashlytics.sharedInstance().setObjectValue("wwan", forKey: "network_type")
+				Bugsnag.addAttribute("network_type", withValue: "wwan", toTabWithName: "network")
             }
         }
 
         /* Identifies device/install combo */
-        Crashlytics.sharedInstance().setObjectValue(UserController.instance.installId, forKey: "install_id")
-        
+		Bugsnag.addAttribute("patchr_install_id", withValue: UserController.instance.installId, toTabWithName: "device")
+		
         /* Location info */
         let location: CLLocation? = LocationController.instance.lastLocationAccepted()
         if location != nil {
             let eventDate = location!.timestamp
             let howRecent = abs(trunc(eventDate.timeIntervalSinceNow * 100) / 100)
-            Crashlytics.sharedInstance().setFloatValue(Float(location!.horizontalAccuracy), forKey: "location_accuracy")
-            Crashlytics.sharedInstance().setIntValue(Int32(howRecent), forKey: "location_age")
+			Bugsnag.addAttribute("accuracy", withValue: location!.horizontalAccuracy, toTabWithName: "location")
+			Bugsnag.addAttribute("age", withValue: howRecent, toTabWithName: "location")
         }
         else {
-            Crashlytics.sharedInstance().setFloatValue(0, forKey: "location_accuracy")
-            Crashlytics.sharedInstance().setIntValue(0 , forKey: "location_age")
+			Bugsnag.addAttribute("accuracy", withValue: nil, toTabWithName: "location")
+			Bugsnag.addAttribute("age", withValue: nil, toTabWithName: "location")
         }
     }
+	
+	static func breadcrumb(message: String!) {
+		Bugsnag.leaveBreadcrumbWithMessage(message);
+	}
     
     static func updateCrashUser(user: User?) {
         if user != nil {
-            Crashlytics.sharedInstance().setUserIdentifier(user!.id_)
-            Crashlytics.sharedInstance().setUserName(user!.name)
-            Crashlytics.sharedInstance().setUserEmail(user!.email)
+			Bugsnag.configuration().setUser(user!.id_, withName: user!.name, andEmail: user!.email)
         }
         else {
-            Crashlytics.sharedInstance().setUserIdentifier(nil)
-            Crashlytics.sharedInstance().setUserName(nil)
-            Crashlytics.sharedInstance().setUserEmail(nil)
+			Bugsnag.configuration().setUser(nil, withName: nil, andEmail: nil)
         }
     }
 }

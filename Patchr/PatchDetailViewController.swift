@@ -10,7 +10,6 @@ import UIKit
 import Branch
 import MessageUI
 import iRate
-import Crashlytics
 
 class PatchDetailViewController: BaseDetailViewController {
 
@@ -409,6 +408,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		if self.inputReferrerName != nil {
 			self.inviteActive = true
 			self.showEmptyLabel = false
+			Log.d("Active patch invite: referrer: \(self.inputReferrerName)", breadcrumb: true)
 		}
 		
 		/* Navigation bar buttons */
