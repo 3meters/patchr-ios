@@ -425,8 +425,14 @@ class PatchDetailViewController: BaseDetailViewController {
 
 			header.bindToEntity(patch)
 			bindContextView()
+			
+			if patch.userWatchStatusValue == .Member {
+				self.emptyMessage = "Be the first to post a message to this patch"
+			}
+			else {
+				self.emptyMessage = (patch.visibility == "private") ? "Only members can see messages" : "Be the first to post a message to this patch"
+			}
 
-			self.emptyMessage = (patch.visibility == "private") ? "Only members can see messages" : "Be the first to post a message to this patch"
 			self.emptyLabel.setTitle(self.emptyMessage, forState: .Normal)
 			
 			if self.tableView.tableHeaderView == nil {
