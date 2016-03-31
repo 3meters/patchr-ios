@@ -276,7 +276,6 @@ class ProfileEditViewController: BaseEditViewController {
 		self.contentHolder.addSubview(self.message)
 		
 		self.photoView.photoSchema = Schema.ENTITY_USER
-		self.photoView.photoDefaultId = self.inputEmail
 		self.photoView.setHostController(self)
 		self.contentHolder.addSubview(self.photoView)
 		

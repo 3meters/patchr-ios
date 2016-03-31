@@ -22,7 +22,7 @@ import Bugsnag
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
-    var window: UIWindow?
+	var window: UIWindow?
     var backgroundSessionCompletionHandler: (() -> Void)?
 	
     class func appDelegate() -> AppDelegate {
@@ -47,7 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
-		/* Initialize Crashlytics: 25% of method time */
+		/* Initialize Bugsnag */
 		Bugsnag.startBugsnagWithApiKey("d1313b8d5fc14d937419406f33fd4c01")
 
 		/* Instance the data controller */
@@ -125,7 +125,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Optional: configure GAI options.
 		if let gai = GAI.sharedInstance() {
 			gai.trackerWithTrackingId(GOOGLE_ANALYTICS_ID)
-			gai.trackUncaughtExceptions = true  // report uncaught exceptions
+			gai.trackUncaughtExceptions = false  // report uncaught exceptions
 			gai.defaultTracker.allowIDFACollection = true
 			gai.dispatchInterval = 30    // Seconds
 			gai.logger.logLevel = GAILogLevel.None
@@ -157,7 +157,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: Theme.fontBarText], forState: UIControlState.Normal)
         self.window?.backgroundColor = Theme.colorBackgroundWindow
         self.window?.tintColor = Theme.colorTint
-        UITabBar.appearance().tintColor = Theme.colorTint
+		UINavigationBar.appearance().tintColor = Theme.colorTint
+		UITabBar.appearance().tintColor = Theme.colorTabBarTint
         UISwitch.appearance().onTintColor = Theme.colorTint
 		
 		/* Facebook */
@@ -251,7 +252,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	}
 	
 	func application(application: UIApplication, continueUserActivity userActivity: NSUserActivity, restorationHandler: ([AnyObject]?) -> Void) -> Bool {
-		// pass the url to the handle deep link call
+		/* 
+		 * This is the initial entry point for universal links. 
+		 * Pass the url to the branch deep link handler we regsitered in didFinishLaunchingWithOptions.
+		 */
 		Branch.getInstance().continueUserActivity(userActivity)
 		return true
 	}
@@ -279,6 +283,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	}
 	
 	func routeDeepLink(params: NSDictionary?, error: NSError?) {
+		
+		if let feature = params!["~feature"] as? String where feature == "reset_password" {
+			if let token = params!["token"] as? String {
+				
+				/* Skip if we are already showing the reset screen */
+				if let topController = UIViewController.topMostViewController() as? PasswordResetViewController {
+					if topController.inputToken == token {
+						return
+					}
+				}
+				
+				let controller = PasswordResetViewController()
+				controller.inputToken = token
+				if let userName = params!["userName"] as? String {
+					controller.inputUserName = userName.stringByReplacingOccurrencesOfString("+", withString: " ")
+					if let userPhoto = params!["userPhoto"] as? String {
+						controller.inputUserPhoto = userPhoto
+					}
+				}
+				let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: Selector("cancelAction:"))
+				controller.navigationItem.leftBarButtonItems = [cancelButton]
+				let navController = UINavigationController()
+				navController.viewControllers = [controller]
+				UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
+			}
+		}
 		
 		if let entityId = params!["entityId"] as? String, entitySchema = params!["entitySchema"] as? String {
 			

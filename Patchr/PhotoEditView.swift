@@ -29,7 +29,6 @@ class PhotoEditView: UIView {
 	var controller: UIViewController?
 	
 	var photoSchema: String?
-	var photoDefaultId: String?
 	
 	var photoChooser: PhotoChooserUI?
     var photoMode: PhotoMode = .Empty

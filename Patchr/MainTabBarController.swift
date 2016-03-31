@@ -84,8 +84,6 @@ class MainTabBarController: UITabBarController {
 		
 		self.view.accessibilityIdentifier = View.Main
 		
-		UITabBar.appearance().tintColor = Theme.colorTabBarTint
-		
 		let patches = PatchNavigationController()
 		patches.tabBarItem.title = "Patches"
 		patches.tabBarItem.accessibilityIdentifier = Tab.Patches
