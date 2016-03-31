@@ -86,8 +86,10 @@ strip_invalid_archs() {
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "Pods-PatchrShare/AWSCore.framework"
   install_framework "Pods-PatchrShare/AWSS3.framework"
+  install_framework "Pods-PatchrShare/Bugsnag.framework"
   install_framework "Pods-PatchrShare/CocoaLumberjack.framework"
   install_framework "Pods-PatchrShare/Facade.framework"
+  install_framework "Pods-PatchrShare/KSCrash.framework"
   install_framework "Pods-PatchrShare/Keys.framework"
   install_framework "Pods-PatchrShare/Lockbox.framework"
   install_framework "Pods-PatchrShare/SDWebImage.framework"
@@ -95,8 +97,10 @@ fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "Pods-PatchrShare/AWSCore.framework"
   install_framework "Pods-PatchrShare/AWSS3.framework"
+  install_framework "Pods-PatchrShare/Bugsnag.framework"
   install_framework "Pods-PatchrShare/CocoaLumberjack.framework"
   install_framework "Pods-PatchrShare/Facade.framework"
+  install_framework "Pods-PatchrShare/KSCrash.framework"
   install_framework "Pods-PatchrShare/Keys.framework"
   install_framework "Pods-PatchrShare/Lockbox.framework"
   install_framework "Pods-PatchrShare/SDWebImage.framework"
@@ -104,8 +108,10 @@ fi
 if [[ "$CONFIGURATION" == "AdHoc" ]]; then
   install_framework "Pods-PatchrShare/AWSCore.framework"
   install_framework "Pods-PatchrShare/AWSS3.framework"
+  install_framework "Pods-PatchrShare/Bugsnag.framework"
   install_framework "Pods-PatchrShare/CocoaLumberjack.framework"
   install_framework "Pods-PatchrShare/Facade.framework"
+  install_framework "Pods-PatchrShare/KSCrash.framework"
   install_framework "Pods-PatchrShare/Keys.framework"
   install_framework "Pods-PatchrShare/Lockbox.framework"
   install_framework "Pods-PatchrShare/SDWebImage.framework"

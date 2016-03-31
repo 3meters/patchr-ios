@@ -66,7 +66,7 @@ class BranchProvider: NSObject {
 				completion(response: nil, error: error)
 			}
 			else {
-				Log.d("Branch link created: \(url!)")
+				Log.d("Branch invite link created: \(url!)", breadcrumb: true)
 				let patch: PatchItem = PatchItem(entity: entity, shareUrl: url!)
 				completion(response: patch, error: nil)
 			}
@@ -128,7 +128,7 @@ class BranchProvider: NSObject {
 				completion(response: nil, error: error)
 			}
 			else {
-				Log.d("Branch link created: \(url!)")
+				Log.d("Branch share link created: \(url!)", breadcrumb: true)
 				let message: MessageItem = MessageItem(entity: entity, shareUrl: url!)
 				completion(response: message, error: nil)
 			}

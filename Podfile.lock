@@ -37,6 +37,8 @@ PODS:
     - Bolts/Tasks
   - Bolts/Tasks (1.6.0)
   - Branch (0.11.16)
+  - Bugsnag (5.1.0):
+    - KSCrash/RecordingAdvanced (~> 1.0.3)
   - CocoaLumberjack/Core (2.2.0)
   - CocoaLumberjack/Default (2.2.0):
     - CocoaLumberjack/Core
@@ -44,12 +46,9 @@ PODS:
     - CocoaLumberjack/Default
   - CocoaLumberjack/Swift (2.2.0):
     - CocoaLumberjack/Extensions
-  - Crashlytics (3.7.0):
-    - Fabric (~> 1.6.3)
   - DACircularProgress (2.3.1)
   - DateTools (1.7.0)
   - DLRadioButton (1.4.6)
-  - Fabric (1.6.6)
   - Facade (1.1.0)
   - FBSDKCoreKit (4.10.0):
     - Bolts (~> 1.5)
@@ -78,6 +77,11 @@ PODS:
   - KIF/Core (3.3.2)
   - KIF/IdentifierTests (3.3.2):
     - KIF/Core
+  - KSCrash/no-arc (1.0.3)
+  - KSCrash/Recording (1.0.3):
+    - KSCrash/no-arc
+  - KSCrash/RecordingAdvanced (1.0.3):
+    - KSCrash/Recording
   - Lockbox (3.0.0)
   - MBProgressHUD (0.9.2)
   - Nimble (3.1.0)
@@ -99,11 +103,10 @@ DEPENDENCIES:
   - AirPhotoBrowser (from `~/code/AirPhotoBrowser`)
   - AWSS3
   - Branch
+  - Bugsnag
   - CocoaLumberjack/Swift
-  - Crashlytics
   - DateTools
   - DLRadioButton
-  - Fabric
   - Facade
   - FBSDKCoreKit (~> 4.10.0)
   - FBSDKLoginKit (~> 4.10.0)
@@ -138,12 +141,11 @@ SPEC CHECKSUMS:
   AWSS3: 967f4ad3c91f1ed2c9dca09a9dcf905111232a87
   Bolts: f52a250053bb517ca874523c3913776359ab3def
   Branch: 6cdaad57d256fc823a30f725256e2494e91e8c67
+  Bugsnag: f766e45078ebdcf621e26739d41a1d26228d3988
   CocoaLumberjack: 17fe8581f84914d5d7e6360f7c70022b173c3ae0
-  Crashlytics: c3a2333dea9e2733d2777f730910321fc9e25c0d
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   DateTools: 53288ee8b905fdc75897a1e6b5cc0144b14cba60
   DLRadioButton: 4005319c135297c2998781d4b3dabc5e9b9781c4
-  Fabric: 1abc1e59f11fa39ede6f690ef7309d8563e3ec59
   Facade: 509c4a0e5fa8517d5e0e1e47251b520775904a9a
   FBSDKCoreKit: 13bec8373fb3af94d44daf2aa1e0958687897fbd
   FBSDKLoginKit: d3d4a2e9d31954deb00bfea964167a05ca1ea976
@@ -157,6 +159,7 @@ SPEC CHECKSUMS:
   iRate: 599ed07c854e0695f3c605d1b2a64c67d912acb7
   Keys: 7d2ff6ff42f6903358267ce56e9392f83c31acfe
   KIF: 9de83fa627adaf65d28ace31e40f19d830bc255c
+  KSCrash: e8f1367230da7e33f37deb7329c299079202b07e
   Lockbox: 3b23507064de0bfcd772f54eddf41064d4152703
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
   Nimble: 79d40f4d69d47314229bbabacaa02b8838c779b9

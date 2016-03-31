@@ -58,7 +58,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 	var userPhoto			= UserPhotoView()
 	var userName			= AirLabelDisplay()
 	var descriptionField	= AirTextView()
-	var photoView			= PhotoView()
+	var photoView			= PhotoEditView()
 	
 	var messageView			: MessageView?
 	var patchView			: PatchView?

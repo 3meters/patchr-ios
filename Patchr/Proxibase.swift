@@ -425,7 +425,7 @@ public class Proxibase {
 	
 	public func requestPasswordReset(email: NSString, completion: CompletionBlock) {
 		let parameters = ["email": email, "installId": UserController.instance.installId]
-		sessionManager.POST("user/reqresetpw", parameters: parameters,
+		sessionManager.POST("user/pw/reqreset", parameters: parameters,
 			success: {
 				dataTask, response in
 				completion(response: response, error: nil)
@@ -436,11 +436,12 @@ public class Proxibase {
 		})
 	}
 	
-	public func resetPassword(password: NSString, userId: NSString, sessionKey: NSString, completion: CompletionBlock) {
-		let parameters = ["password": password, "user": userId, "session": sessionKey, "installId": UserController.instance.installId]
-		sessionManager.POST("user/resetpw", parameters: parameters,
+	public func resetPassword(password: NSString, token: NSString, completion: CompletionBlock) {
+		let parameters = ["password": password, "token": token]
+		sessionManager.POST("user/pw/reset", parameters: parameters,
 			success: {
 				dataTask, response in
+				UserController.instance.handleSuccessfulLoginResponse(response)
 				completion(response: response, error: nil)
 			},
 			failure: {

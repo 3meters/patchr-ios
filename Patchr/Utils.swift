@@ -116,7 +116,9 @@ struct Utils {
 		let words = fullname.componentsSeparatedByString(" ")
 		var initials = ""
 		for word in words {
-			initials.append(word[0])
+			if !word.isEmpty {
+				initials.append(word.uppercaseString[0])
+			}
 		}
 		return initials.length > 2 ? initials[0...1] : initials
 	}

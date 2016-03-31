@@ -215,7 +215,6 @@ class AirImageView: UIImageView {
     func imageCompletion(image: UIImage?, error: NSError?, cacheType: SDImageCacheType?, url: NSURL?, animate: Bool = true) -> Void {
         
         stopActivity()
-
 		
         if error != nil {
 			Log.w("Image fetch failed: " + error!.localizedDescription)

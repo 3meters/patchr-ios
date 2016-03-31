@@ -35,7 +35,7 @@ class ProfileEditViewController: BaseEditViewController {
 	var inputUserId: String?
 	var inputPhotoUrl: NSURL?
 
-	var photoView            = PhotoView()
+	var photoView            = PhotoEditView()
 	var nameField            = AirTextField()
 	var emailField           = AirTextField()
 	var areaField            = AirTextField()
@@ -276,7 +276,6 @@ class ProfileEditViewController: BaseEditViewController {
 		self.contentHolder.addSubview(self.message)
 		
 		self.photoView.photoSchema = Schema.ENTITY_USER
-		self.photoView.photoDefaultId = self.inputEmail
 		self.photoView.setHostController(self)
 		self.contentHolder.addSubview(self.photoView)
 		

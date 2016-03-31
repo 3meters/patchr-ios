@@ -134,6 +134,7 @@ class FacebookProvider: NSObject, FBSDKAppInviteDialogDelegate {
 		 * Facebook app invites do not require a currentAccessToken.
 		 */
 		let inviteDialog = FBSDKAppInviteDialog()
+		Log.d("Show facebook invite dialog", breadcrumb: true)
 		
 		if inviteDialog.canShow() {
 			

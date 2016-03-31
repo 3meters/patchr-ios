@@ -34,6 +34,7 @@ class PatchNavigationController: UINavigationController {
         self.segmentedControl.sizeToFit()
         self.segmentedControl.addTarget(self.segmentsController, action: Selector("indexDidChangeForSegmentedControl:"), forControlEvents: .ValueChanged)
         self.segmentedControl.selectedSegmentIndex = 0
+		self.segmentedControl.tintAdjustmentMode = .Normal
         self.segmentsController.indexDidChangeForSegmentedControl(self.segmentedControl)
     }
 	

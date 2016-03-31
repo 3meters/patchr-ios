@@ -25,13 +25,13 @@ class ReachabilityManager: NSObject {
         self.reach!.reachableBlock = { (let reach: Reachability!) -> Void in
             self.reachable = true
             dispatch_async(dispatch_get_main_queue()) {
-                Log.d("Network is reachable: \(reach)")
+                Log.d("Network is reachable: \(reach)", breadcrumb: true)
             }
         }
         
         self.reach!.unreachableBlock = { (let reach: Reachability!) -> Void in
             self.reachable = false
-            Log.d("Network is unreachable: \(reach)")
+            Log.d("Network is unreachable: \(reach)", breadcrumb: true)
         }
         
         self.reach.startNotifier()
