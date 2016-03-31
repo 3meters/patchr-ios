@@ -280,11 +280,18 @@ extension UIViewController {
         Log.w(error.description)
     }
     
-    func Alert(title: String?, message: String? = nil, cancelButtonTitle: String = "OK") {
+//    func Alert(title: String?, message: String? = nil, cancelButtonTitle: String = "OK") {
+//		let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+//		alert.addAction(UIAlertAction(title: cancelButtonTitle, style: .Cancel, handler: nil))
+//		self.presentViewController(alert, animated: true) {}
+//    }
+	
+	func Alert(title: String?, message: String? = nil, cancelButtonTitle: String = "OK", onDismiss: (() -> Void)? = nil) {
 		let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-		alert.addAction(UIAlertAction(title: cancelButtonTitle, style: .Cancel, handler: nil))
+		let okAction = UIAlertAction(title: cancelButtonTitle, style: .Cancel, handler: { _ in onDismiss?() })
+		alert.addAction(okAction)
 		self.presentViewController(alert, animated: true) {}
-    }
+	}
 	
 	func LocationSettingsAlert(title: String? = nil, message: String? = nil,
 		actionTitle: String, cancelTitle: String,
