@@ -13,6 +13,7 @@ class PasswordResetViewController: BaseEditViewController {
 
     var processing			: Bool = false
 	var emailValidated		: Bool = false
+	var resetRequested		: Bool = false
 	var progress			: AirProgress!
     var userId				: String?
     var sessionKey			: String?
@@ -69,7 +70,9 @@ class PasswordResetViewController: BaseEditViewController {
 	
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
-		self.emailField.becomeFirstResponder()
+		if self.emailField.isEmpty {
+			self.emailField.becomeFirstResponder()
+		}
 	}
 
 	/*--------------------------------------------------------------------------------------------
@@ -83,8 +86,11 @@ class PasswordResetViewController: BaseEditViewController {
 				if !self.emailValidated {
 					validateEmail()
 				}
-				else {
+				else if !self.resetRequested {
 					resetEmail()
+				}
+				else {
+					cancelAction(nil)
 				}
 			}
 			else {
@@ -124,7 +130,7 @@ class PasswordResetViewController: BaseEditViewController {
 		self.view.accessibilityIdentifier = View.PasswordReset
 		
 		self.message.text = "Find your account"
-		self.message.numberOfLines = 0
+		self.message.numberOfLines = 3
 		self.message.textAlignment = .Center
 		self.contentHolder.addSubview(self.message)
 		
@@ -227,8 +233,10 @@ class PasswordResetViewController: BaseEditViewController {
 						if serviceData.count != 0 {
 							self.message.text = "Email verified!"
 							self.submitButton.setTitle("SEND PASSWORD RESET EMAIL", forState: .Normal)
+							self.emailField.textAlignment = NSTextAlignment.Center
 							self.emailField.enabled = false;
 							self.emailValidated = true
+							Animation.bounce(self.message)
 						}
 						else {
 							self.Alert("Email address not found.")
@@ -267,9 +275,12 @@ class PasswordResetViewController: BaseEditViewController {
 					self.handleError(error)
 				}
 				else {
-					self.Alert("An email has been sent to your account\'s email address. Please check your email to continue.", onDismiss: {
-						self.navigationController?.popViewControllerAnimated(true)
-					})
+					self.resetRequested = true
+					self.message.numberOfLines = 0
+					self.message.text = "An email has been sent to your account\'s email address. Please check your email to continue."
+					self.view.setNeedsLayout()
+					self.submitButton.setTitle("FINISHED", forState: .Normal)
+					Animation.bounce(self.message)
 				}
 			}
 		}
@@ -282,6 +293,8 @@ class PasswordResetViewController: BaseEditViewController {
 		}
 		
 		processing = true
+		
+		self.passwordField.resignFirstResponder()
 		
 		let progress = AirProgress.addedTo(self.view.window)
 		progress.mode = MBProgressHUDMode.Indeterminate
@@ -299,10 +312,16 @@ class PasswordResetViewController: BaseEditViewController {
 				
 				progress.hide(true)
 				if let error = ServerError(error) {
-					self.handleError(error)
+					if error.code == .UNAUTHORIZED_CREDENTIALS {
+						self.Alert("Password reset has expired or is invalid. Request password reset again.", onDismiss: {
+							self.cancelAction(nil)
+						})
+					}
+					else {
+						self.handleError(error)	// Could log user out if looks like credential problem.
+					}
 				}
 				else {
-					UIShared.Toast("Password reset")
 					self.navigateToMain()
 				}
 			}

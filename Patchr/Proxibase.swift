@@ -441,6 +441,7 @@ public class Proxibase {
 		sessionManager.POST("user/pw/reset", parameters: parameters,
 			success: {
 				dataTask, response in
+				UserController.instance.handleSuccessfulLoginResponse(response)
 				completion(response: response, error: nil)
 			},
 			failure: {
