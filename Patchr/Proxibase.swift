@@ -437,7 +437,7 @@ public class Proxibase {
 	}
 	
 	public func resetPassword(password: NSString, token: NSString, completion: CompletionBlock) {
-		let parameters = ["password": password, "token": token]
+		let parameters = ["password": password, "token": token, "installId": UserController.instance.installId]
 		sessionManager.POST("user/pw/reset", parameters: parameters,
 			success: {
 				dataTask, response in

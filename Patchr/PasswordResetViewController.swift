@@ -332,7 +332,7 @@ class PasswordResetViewController: BaseEditViewController {
 		
 		if !self.resetActive {
 			if emailField.isEmpty {
-				Alert("Enter an email address you have used before on this device.")
+				Alert("Enter the email address associated with your account.")
 				return false
 			}
 			

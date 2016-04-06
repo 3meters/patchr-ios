@@ -47,10 +47,6 @@ struct Reporting {
         }
     }
 	
-	static func breadcrumb(message: String!) {
-		Bugsnag.leaveBreadcrumbWithMessage(message);
-	}
-    
     static func updateCrashUser(user: User?) {
         if user != nil {
 			Bugsnag.configuration().setUser(user!.id_, withName: user!.name, andEmail: user!.email)
