@@ -73,6 +73,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		* about ten seconds to call updateProximity with the new location.
 		*/
 		if launchOptions?[UIApplicationLaunchOptionsLocationKey] != nil {
+			Log.d("Launching with location key", breadcrumb: true)
 			if let locationManager = LocationController.instance.locationManager {
 				if let last = LocationController.instance.mostRecentAvailableLocation() {
 					LocationController.instance.locationManager(locationManager, didUpdateLocations: [last])
@@ -108,10 +109,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let serviceConfig = AWSServiceConfiguration(region: AWSRegionType(rawValue: 3/*'us-west-2'*/)!, credentialsProvider: credProvider)
         AWSServiceManager.defaultServiceManager().defaultServiceConfiguration = serviceConfig
         
-        /* Turn on status bar */
-		let statusBarHidden = NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("statusBarHidden"))
-        UIApplication.sharedApplication().setStatusBarHidden(statusBarHidden, withAnimation: UIStatusBarAnimation.Slide)
-		
         /* Load setting defaults */
         let defaultSettingsFile: NSString = NSBundle.mainBundle().pathForResource("DefaultSettings", ofType: "plist")!
         let settingsDictionary: NSDictionary = NSDictionary(contentsOfFile: defaultSettingsFile as String)!
@@ -142,24 +139,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         /* Setup parse for push notifications - enabling notifications with the system is done with login */
 		Parse.setApplicationId(keys.parseApplicationId(), clientKey: keys.parseApplicationKey())
 		
-        /* Get the latest on the authenticated user if we have one */
-		if UserController.instance.authenticated {	// Checks for current userId and sessionKey
-			UserController.instance.signinAuto()
-        }
-		
-		/* We call even if install record exists and using this as a chance to update the metadata */
-		UserController.instance.registerInstall()
-		
         /* Instance the reachability manager */
         ReachabilityManager.instance
-        
-        /* Global UI tweaks */
-		UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: Theme.fontBarText], forState: UIControlState.Normal)
-        self.window?.backgroundColor = Theme.colorBackgroundWindow
-        self.window?.tintColor = Theme.colorTint
-		UINavigationBar.appearance().tintColor = Theme.colorTint
-		UITabBar.appearance().tintColor = Theme.colorTabBarTint
-        UISwitch.appearance().onTintColor = Theme.colorTint
 		
 		/* Facebook */
 		FBSDKProfile.enableUpdatesOnAccessTokenChange(true)
@@ -177,6 +158,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 				}
 			}
 		})
+		
+		initUser()
+		
+		initUI()
 		
 		routeForRoot()
 		
@@ -235,6 +220,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		/* Guard against becoming active without any UI */
 		if self.window?.rootViewController == nil {
 			Log.w("Patchr is becoming active without a root view controller, resetting to launch routing", breadcrumb: true)
+			initUser()
+			initUI()
 			routeForRoot()
 		}
 	}
@@ -259,10 +246,45 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		Branch.getInstance().continueUserActivity(userActivity)
 		return true
 	}
+	
+	func applicationWillEnterForeground(application: UIApplication) {
+		Log.d("application will enter foreground", breadcrumb: true)
+	}
+	
+	func applicationWillResignActive(application: UIApplication) {
+		Log.d("application will resign active", breadcrumb: true)
+	}
 
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
+	
+	func initUI() {
+		
+		/* Turn on status bar */
+		let statusBarHidden = NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("statusBarHidden"))
+		UIApplication.sharedApplication().setStatusBarHidden(statusBarHidden, withAnimation: UIStatusBarAnimation.Slide)
+		
+		/* Global UI tweaks */
+		UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: Theme.fontBarText], forState: UIControlState.Normal)
+		self.window?.backgroundColor = Theme.colorBackgroundWindow
+		self.window?.tintColor = Theme.colorTint
+		UINavigationBar.appearance().tintColor = Theme.colorTint
+		UITabBar.appearance().tintColor = Theme.colorTabBarTint
+		UISwitch.appearance().onTintColor = Theme.colorTint
+		
+	}
+	
+	func initUser() {
+		
+		/* Get the latest on the authenticated user if we have one */
+		if UserController.instance.authenticated {	// Checks for current userId and sessionKey
+			UserController.instance.signinAuto()
+		}
+		
+		/* We call even if install record exists and using this as a chance to update the metadata */
+		UserController.instance.registerInstall()
+	}
 	
 	func routeForRoot() {
 		
