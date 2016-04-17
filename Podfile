@@ -40,9 +40,9 @@ def core_pods
 	pod 'Facade'										# Convenience methods for frame based layout
 	pod 'Google/Analytics'
 	pod 'THContactPicker',			'~> 1.2'			# Used in message edit
-	pod 'FBSDKCoreKit',				'~> 4.10.0'
-	pod 'FBSDKLoginKit',			'~> 4.10.0'
-	pod 'FBSDKShareKit',			'~> 4.10.0'
+	pod 'FBSDKCoreKit',				'~> 4.11.0'
+	pod 'FBSDKLoginKit',			'~> 4.11.0'
+	pod 'FBSDKShareKit',			'~> 4.11.0'
 	pod 'DateTools'
 	pod 'Parse'
 	pod 'iRate'
