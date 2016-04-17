@@ -285,8 +285,7 @@ class MessageDetailViewController: BaseViewController {
 	}
 
 	func photoAction(sender: AnyObject) {
-        let browser = UIShared.showPhotoBrowser(self.photo.imageForState(.Normal), animateFromView: sender as! UIView, viewController: self, entity: self.inputMessage)
-        browser.target = self
+        UIShared.showPhotoBrowser(self.photo.imageForState(.Normal), animateFromView: sender as! UIView, viewController: self, entity: self.inputMessage)
 	}
 
 	func reportAction(sender: AnyObject) {

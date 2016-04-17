@@ -14,7 +14,7 @@ class NotificationView: BaseView {
 	var cellType: CellType = .TextAndPhoto
 	
 	var description_:	TTTAttributedLabel?
-	var photo:			UIButton?
+	var photo:			UIImageView?
 	
 	var userPhoto		= UserPhotoView()
 	var iconImageView	= UIImageView(frame: CGRectZero)
@@ -55,11 +55,9 @@ class NotificationView: BaseView {
 		
 		/* Photo */
 		if self.cellType != .Text {
-			self.photo = AirImageButton(frame: CGRectZero)
-			self.photo!.imageView!.contentMode = UIViewContentMode.ScaleAspectFill
+			self.photo = AirImageView(frame: CGRectZero)
+			self.photo!.clipsToBounds = true
 			self.photo!.contentMode = .ScaleAspectFill
-			self.photo!.contentHorizontalAlignment = .Fill
-			self.photo!.contentVerticalAlignment = .Fill
 			self.photo!.backgroundColor = Theme.colorBackgroundImage
 			self.addSubview(self.photo!)
 		}
@@ -102,7 +100,7 @@ class NotificationView: BaseView {
 		
 		if let photo = notification.photoBig {
 			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.standard)
-			self.photo?.sd_setImageWithURL(photoUrl, forState: UIControlState.Normal, placeholderImage: nil, options: options)
+			self.photo?.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
 		}
 		
 		/* User photo */

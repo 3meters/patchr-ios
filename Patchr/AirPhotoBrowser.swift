@@ -11,24 +11,12 @@ import AirPhotoBrowser
 
 class PhotoBrowser: IDMPhotoBrowser {
     
-    var browseDelegate	: PhotoBrowseControllerDelegate?
+	var browseDelegate	: PhotoBrowseControllerDelegate?  // Used by photo preview feature in photo search
     var imageResult		: ImageResult?
     var likes			: Bool = false
-    var target			: AnyObject?
     var likeButton		= AirLikeButton()
-    
-    var entity: Entity?
-    var linkedEntity: Entity? {
-        set {
-            self.entity = newValue
-			self.likeButton.bindEntity(self.entity)
-            likeButton.hidden = (self.entity == nil)
-        }
-        get {
-            return self.entity
-        }
-    }
-    
+    var entity			: Entity?
+	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
@@ -41,7 +29,7 @@ class PhotoBrowser: IDMPhotoBrowser {
     }
     
     /*--------------------------------------------------------------------------------------------
-    * Events
+    * Methods
     *--------------------------------------------------------------------------------------------*/
     
     func initialize() {
@@ -56,18 +44,16 @@ class PhotoBrowser: IDMPhotoBrowser {
         
         let flexSpacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)
         let fixedSpacer = UIBarButtonItem(barButtonSystemItem: .FixedSpace, target: self, action: nil)
-        let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("actionButtonPressed:"))
+        let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("actionButtonPressed:"))    // Handled by IDMPhotoBrowser
         
-        likeButton.frame = CGRectMake(0, 0, 44, 44)
-        likeButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: 8, bottom: 10, right:8)
-        likeButton.hidden = (self.entity == nil)
+        self.likeButton.frame = CGRectMake(0, 0, 44, 44)
+        self.likeButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: 8, bottom: 10, right:8)
+        self.likeButton.hidden = (self.entity == nil)
         
         fixedSpacer.width = 16
         
-        let barLikeButton = UIBarButtonItem(customView: likeButton)
-        barLikeButton.target = self
-        barLikeButton.action = Selector("likeAction:")
-        
+        let barLikeButton = UIBarButtonItem(customView: self.likeButton)
+
         var items = [UIBarButtonItem]()
         items.append(flexSpacer)
 		items.append(flexSpacer)	// Doubled up hack to prevent jitters because of animation
@@ -78,4 +64,10 @@ class PhotoBrowser: IDMPhotoBrowser {
         
         toolbar.items = items
     }
+	
+	func bindEntity(entity: Entity?) {
+		self.entity = entity
+		self.likeButton.bindEntity(entity)
+		self.likeButton.hidden = (entity == nil)
+	}
 }

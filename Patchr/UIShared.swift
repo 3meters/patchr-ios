@@ -87,7 +87,7 @@ struct UIShared {
         browser.disableVerticalSwipe = false
 		
         if entity != nil {
-            browser.linkedEntity = entity
+            browser.bindEntity(entity)
         }
         
         viewController.navigationController!.presentViewController(browser, animated:true, completion:nil)

@@ -415,7 +415,7 @@ extension NotificationsTableViewController {
 		super.bindCellToEntity(cell, entity: entity, location: location)
 		if let view = cell.view as? NotificationView {
 			view.description_?.delegate = self
-			view.photo?.addTarget(self, action: Selector("photoAction:"), forControlEvents: .TouchUpInside)
+			//view.photo?.addTarget(self, action: Selector("photoAction:"), forControlEvents: .TouchUpInside)
 		}
 	}
     /*

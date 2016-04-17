@@ -11,7 +11,9 @@ import UIKit
 class AirPhotoPreview: PhotoBrowser {
     
     /* Wraps photo browser with ui specialized for previewing photos from the photo picker. */
-    
+
+    var target			: AnyObject?
+
     /*--------------------------------------------------------------------------------------------
     * Events
     *--------------------------------------------------------------------------------------------*/
@@ -30,7 +32,7 @@ class AirPhotoPreview: PhotoBrowser {
         
         let toolbar: UIToolbar = super.toolbar
         
-        let selectButton = UIBarButtonItem(title: "Use photo", style: UIBarButtonItemStyle.Plain, target: target, action: Selector("selectAction"))
+        let selectButton = UIBarButtonItem(title: "Use photo", style: UIBarButtonItemStyle.Plain, target: self.target, action: Selector("selectAction"))
         let flexSpacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)
         let fixedSpacer = UIBarButtonItem(barButtonSystemItem: .FixedSpace, target: self, action: nil)
 		
