@@ -56,9 +56,10 @@ class DevelopmentViewController: UIViewController {
 		
 		let contentWidth = self.view.width() - 32
 		let navHeight = self.navigationController?.navigationBar.height() ?? 0
+		let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
 
 		self.enableDevModeLabel.sizeToFit()
-		self.enableDevModeLabel.anchorTopLeftWithLeftPadding(16, topPadding: UIShared.statusHeight + navHeight + 24, width: contentWidth - (self.enableDevModeSwitch.width() + 8), height: self.enableDevModeLabel.height())
+		self.enableDevModeLabel.anchorTopLeftWithLeftPadding(16, topPadding: statusHeight + navHeight + 24, width: contentWidth - (self.enableDevModeSwitch.width() + 8), height: self.enableDevModeLabel.height())
 		self.enableDevModeSwitch.alignToTheRightOf(self.enableDevModeLabel, matchingCenterWithLeftPadding: 8, width: self.enableDevModeSwitch.width(), height: self.enableDevModeSwitch.height())
 		
 		self.statusBarHiddenLabel.sizeToFit()
@@ -78,7 +79,7 @@ class DevelopmentViewController: UIViewController {
     }
 
 	func statusBarHiddenAction(sender: AnyObject) {
-		userDefaults.setBool(statusBarHiddenSwitch.on, forKey: PatchrUserDefaultKey("statusBarHidden"))
+		self.userDefaults.setBool(statusBarHiddenSwitch.on, forKey: PatchrUserDefaultKey("statusBarHidden"))
 		UIApplication.sharedApplication().setStatusBarHidden(statusBarHiddenSwitch.on, withAnimation: UIStatusBarAnimation.Slide)
 		self.view.setNeedsLayout()
 	}

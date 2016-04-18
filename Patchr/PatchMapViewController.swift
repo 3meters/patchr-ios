@@ -56,10 +56,11 @@ class PatchMapViewController: UIViewController {
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		self.mapView.fillSuperview()
-		if self.locationDelegate.locationEditable() {
+		if self.locationDelegate.locationEditable() {			
 			let messageSize = self.messageBar.sizeThatFits(CGSizeMake(self.view.width(), CGFloat.max))
 			let navHeight = self.navigationController?.navigationBar.height() ?? 0
-			self.messageBar.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: (UIShared.statusHeight + navHeight), height: max(messageSize.height + 16, 48))
+			let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+			self.messageBar.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: (statusHeight + navHeight), height: max(messageSize.height + 16, 48))
 		}
 	}
     

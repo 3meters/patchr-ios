@@ -87,6 +87,8 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 		self.contentHolder.bounds.size.width = viewWidth
 		
 		let descriptionSize = self.descriptionField.sizeThatFits(CGSizeMake(contentWidth, CGFloat.max))
+		let navHeight = self.navigationController?.navigationBar.height() ?? 0
+		let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
 		
 		if self.inputState == .Sharing {
 			
@@ -95,8 +97,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 			self.addressField.layoutIfNeeded()
 			self.addressField.anchorTopLeftWithLeftPadding(72, topPadding: 12, width: contentWidth - 56, height: self.addressField.height())
 			self.contactList!.alignUnder(self.addressField, matchingLeftAndRightWithTopPadding: 0, height: CGFloat(self.contactModels.count * 52))
-			self.addressGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 64, height: self.contactList!.height() + self.addressField.height() + 24)
-			
+			self.addressGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: CGFloat(statusHeight + navHeight), height: self.contactList!.height() + self.addressField.height() + 24)
 			self.descriptionField.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: contentWidth, height: max(96, descriptionSize.height))
 			
 			if self.inputShareSchema == Schema.ENTITY_PATCH {
@@ -107,10 +108,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 			}
 		}
 		else {
-			
-			let navHeight = self.navigationController?.navigationBar.height() ?? 0
-			
-			self.addressGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: CGFloat(UIShared.statusHeight + navHeight), height: 64)
+			self.addressGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: CGFloat(statusHeight + navHeight), height: 64)
 			self.userPhoto.anchorCenterLeftWithLeftPadding(16, width: 48, height: 48)
 			self.addressLabel.fillSuperviewWithLeftPadding(72, rightPadding: 8, topPadding: 0, bottomPadding: 0)
 			self.descriptionField.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: contentWidth, height: max(96, descriptionSize.height))

@@ -11,8 +11,6 @@ import AirPhotoBrowser
 
 struct UIShared {
 	
-	static let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
-	
 	static func compatibilityUpgrade() {
 		
 		NSOperationQueue.mainQueue().addOperationWithBlock {
@@ -83,7 +81,6 @@ struct UIShared {
         browser.usePopAnimation = true
         browser.scaleImage = image  // Used because final image might have different aspect ratio than initially
         browser.useWhiteBackgroundColor = true
-        browser.forceHideStatusBar = true
         browser.disableVerticalSwipe = false
 		
         if entity != nil {

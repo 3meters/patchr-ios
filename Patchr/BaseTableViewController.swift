@@ -135,8 +135,10 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.activity.frame.origin.x += CGFloat(self.progressOffsetX)
 		
 		let navHeight = self.navigationController?.navigationBar.height() ?? 0
+		let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+
 		self.emptyLabel.anchorInCenterWithWidth(160, height: 160)
-		self.emptyLabel.frame.origin.y -= (UIShared.statusHeight + navHeight)
+		self.emptyLabel.frame.origin.y -= (statusHeight + navHeight)
 	}
 	
 	override func viewWillAppear(animated: Bool) {
@@ -328,6 +330,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 						let query = DataController.instance.mainContext.objectWithID(queryObjectId) as! Query
 						
 						if error == nil {
+							
 							query.executedValue = true
 							if queryDate != nil {
 								query.activityDateValue = queryDate!
@@ -365,7 +368,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 								}								
 							})
 						}
-						
 						
 						return
 					}
@@ -507,7 +509,7 @@ extension BaseTableViewController {
 	override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		
 		/* Bind the cell to the entity */
-		let queryResult = self.fetchedResultsController.sections![indexPath.section].objects![indexPath.row] as? QueryItem
+		let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem
 		let entity = queryResult!.object as? Entity
 				
 		var cellType: CellType = .TextAndPhoto

@@ -32,8 +32,10 @@ class BaseDetailViewController: BaseTableViewController {
 		super.viewWillLayoutSubviews()
 		
 		let navHeight = self.navigationController?.navigationBar.height() ?? 0
+		let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+
 		self.emptyLabel.anchorInCenterWithWidth(160, height: 160)
-		self.emptyLabel.frame.origin.y -= CGFloat(UIShared.statusHeight + navHeight)
+		self.emptyLabel.frame.origin.y -= CGFloat(statusHeight + navHeight)
 		self.emptyLabel.frame.origin.y += self.header.height() / 2
 	}
 

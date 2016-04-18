@@ -109,7 +109,10 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
         setScreenName("PhotoPicker")
 		
         if self.searchBar == nil {
-            self.searchBarBoundsY = self.navigationController!.navigationBar.frame.size.height + UIShared.statusHeight
+			let navHeight = self.navigationController?.navigationBar.height() ?? 0
+			let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+
+            self.searchBarBoundsY = navHeight + statusHeight
             self.searchBar = UISearchBar(frame: CGRectMake(0, self.searchBarBoundsY!, UIScreen.mainScreen().bounds.size.width, 44))
 			self.searchBar!.accessibilityIdentifier = "search_field"
             self.searchBar!.searchBarStyle = UISearchBarStyle.Prominent
@@ -388,7 +391,6 @@ extension PhotoPickerViewController {
             browser.scaleImage = cell.thumbnail.image  // Used because final image might have different aspect ratio than initially
             browser.useWhiteBackgroundColor = true
             browser.disableVerticalSwipe = false
-            browser.forceHideStatusBar = true
             
             browser.browseDelegate = self.pickerDelegate  // Pass delegate through
             browser.imageResult = self.imageForIndexPath(indexPath)
