@@ -493,9 +493,10 @@ class MessageDetailViewController: BaseViewController {
 		self.patchPhoto.addTarget(self, action: Selector("patchAction:"), forControlEvents: UIControlEvents.TouchUpInside)
 		self.photo.addTarget(self, action: Selector("photoAction:"), forControlEvents: UIControlEvents.TouchUpInside)
 		
-		self.recipients.textColor = Theme.colorTextTitle
 		self.recipientsLabel.text = "To:"
 		self.recipientsLabel.textColor = Theme.colorTextSecondary
+		self.recipients.textColor = Theme.colorTextTitle
+		self.recipients.numberOfLines = 0
 		
 		self.view.addSubview(self.activity)
 		

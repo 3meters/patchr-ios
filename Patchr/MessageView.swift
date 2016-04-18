@@ -219,6 +219,7 @@ class MessageView: BaseView {
 			self.recipientsLabel.textColor = Theme.colorTextSecondary
 			self.recipients.font = Theme.fontTextList
 			self.recipients.textColor = Theme.colorTextTitle
+			self.recipients.numberOfLines = 0
 			self.addSubview(self.recipientsLabel)
 			self.addSubview(self.recipients)
 		}
