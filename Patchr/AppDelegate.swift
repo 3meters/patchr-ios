@@ -23,6 +23,7 @@ import Bugsnag
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
 	var window: UIWindow?
+	var firstLaunch: Bool = false
     var backgroundSessionCompletionHandler: (() -> Void)?
 	
     class func appDelegate() -> AppDelegate {
@@ -61,6 +62,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			AFNetworkActivityLogger.sharedLogger().startLogging()
 			AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelFatal
         #endif
+		
+		/* Flag first launch for special treatment */
+		if !NSUserDefaults.standardUserDefaults().boolForKey("firstLaunch") {
+			NSUserDefaults.standardUserDefaults().setBool(true, forKey: "firstLaunch")
+			NSUserDefaults.standardUserDefaults().synchronize()
+			self.firstLaunch = true
+		}
 		/*
 		* Init location controller. If this is done in the init of the nearby patch list
 		* controller, we don't get properly hooked up when onboarding a new user. I could not
@@ -159,6 +167,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			}
 		})
 		
+		/*
+		* We might have been launched because of a deferred facebook deep link.
+		*/
+		if launchOptions?[UIApplicationLaunchOptionsURLKey] == nil && self.firstLaunch {
+			FBSDKAppLinkUtility.fetchDeferredAppInvite() { url in
+				if url != nil {
+					Log.d("Deep link routing for deferred facebook app invite", breadcrumb: true)
+				}
+			}
+		}
+		
 		initUser()
 		
 		initUI()
@@ -248,13 +267,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	}
 	
 	func applicationWillEnterForeground(application: UIApplication) {
-		Log.d("application will enter foreground", breadcrumb: true)
+		Log.d("Application will enter foreground", breadcrumb: true)
 	}
 	
 	func applicationWillResignActive(application: UIApplication) {
-		Log.d("application will resign active", breadcrumb: true)
+		Log.d("Application will resign active", breadcrumb: true)
 	}
-
+	
+	func applicationDidEnterBackground(application: UIApplication) {
+		Log.d("Application did enter background", breadcrumb: true)
+	}
+	
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
@@ -262,7 +285,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	func initUI() {
 		
 		/* Turn on status bar */
-		let statusBarHidden = NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("statusBarHidden"))
+		let statusBarHidden = NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("statusBarHidden"))	// Default = false, set in dev settings
 		UIApplication.sharedApplication().setStatusBarHidden(statusBarHidden, withAnimation: UIStatusBarAnimation.Slide)
 		
 		/* Global UI tweaks */
