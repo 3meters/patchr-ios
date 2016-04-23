@@ -48,7 +48,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.refreshControl = UIRefreshControl()
 		self.refreshControl?.accessibilityIdentifier = "refresh_control"
 		self.refreshControl!.tintColor = Theme.colorActivityIndicator
-		self.refreshControl?.addTarget(self, action: "pullToRefreshAction:", forControlEvents: UIControlEvents.ValueChanged)
+		self.refreshControl?.addTarget(self, action: #selector(BaseTableViewController.pullToRefreshAction(_:)), forControlEvents: UIControlEvents.ValueChanged)
 		self.refreshControl?.endRefreshing()
 
 		/* Simple activity indicator (frame sizing) */
@@ -61,7 +61,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.loadMoreButton.tag = 1
 		self.loadMoreButton.backgroundColor = Theme.colorBackgroundTile
 		self.loadMoreButton.layer.cornerRadius = 8
-		self.loadMoreButton.addTarget(self, action: Selector("loadMore:"), forControlEvents: UIControlEvents.TouchUpInside)
+		self.loadMoreButton.addTarget(self, action: #selector(BaseTableViewController.loadMore(_:)), forControlEvents: UIControlEvents.TouchUpInside)
 		self.loadMoreButton.setTitle(self.loadMoreMessage, forState: .Normal)
 		self.footerView.addSubview(self.loadMoreButton)
 
@@ -112,8 +112,8 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		/* Hookup query */
 		self.query = loadQuery()
 
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "willFetchQuery:", name: Events.WillFetchQuery, object: self)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didFetchQuery:", name: Events.DidFetchQuery, object: self)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(BaseTableViewController.willFetchQuery(_:)), name: Events.WillFetchQuery, object: self)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(BaseTableViewController.didFetchQuery(_:)), name: Events.DidFetchQuery, object: self)
 	}
 	
 	override func viewWillLayoutSubviews() {
@@ -429,15 +429,10 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
             cacheName: nil)
         
         controller.delegate = self
-        
+		
         return controller
     }()
-}
-
-extension BaseTableViewController {
-	/*
-	 * Cells
-	 */
+	
 	func makeCell(cellType: CellType = .TextAndPhoto) -> WrapperTableViewCell {
 		/*
 		* Only implementation. Called externally to measure variable row heights.
@@ -450,6 +445,11 @@ extension BaseTableViewController {
 		else if self.listType == .Messages {
 			let view = MessageView(cellType: cellType, entity: nil)
 			let cell = WrapperTableViewCell(view: view, padding: UIEdgeInsetsMake(12, 12, 12, 12), reuseIdentifier: cellType.rawValue)
+			if view.description_ != nil && view.description_!.isKindOfClass(TTTAttributedLabel) {
+				let label = view.description_ as! TTTAttributedLabel
+				label.delegate = self
+			}
+			view.photo?.addTarget(self, action: #selector(BaseTableViewController.photoAction(_:)), forControlEvents: .TouchUpInside)
 			return cell
 		}
 		else if self.listType == .Patches {
@@ -470,7 +470,12 @@ extension BaseTableViewController {
 			return WrapperTableViewCell(view: UIView(), padding: UIEdgeInsetsZero, reuseIdentifier: cellType.rawValue)
 		}
 	}
-	
+}
+
+extension BaseTableViewController {
+	/*
+	 * Cells
+	 */
 	func bindCellToEntity(cell: WrapperTableViewCell, entity: AnyObject, location: CLLocation?) {
 		
 		if self.listType == .Notifications {
@@ -493,7 +498,6 @@ extension BaseTableViewController {
 			userView.bindToEntity(entity)
 		}
 	}
-	
 	/*
 	 * UITableViewDataSource
 	 */
@@ -602,6 +606,15 @@ extension BaseTableViewController {
 		}
 	}
 }
+
+extension BaseTableViewController: TTTAttributedLabelDelegate {
+	
+	func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
+		UIApplication.sharedApplication().openURL(url)
+	}
+}
+
+
 
 enum ItemClass {
 	case Messages

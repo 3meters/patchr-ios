@@ -39,7 +39,7 @@ class AirLikeButton: AirToggleButton {
         }
 	}
 
-    func onClick(sender: AnyObject) {
+    override func onClick(sender: AnyObject) {
         
         if self.entity == nil {
             return
@@ -47,7 +47,7 @@ class AirLikeButton: AirToggleButton {
         
         if !UserController.instance.authenticated {
             if self.entity is Message {
-				UserController.instance.showGuestGuard(nil, message: Utils.LocalizedString("GUARD_LIKE"))
+				UserController.instance.showGuestGuard(controller: nil, message: Utils.LocalizedString("GUARD_LIKE"))
             }
             return
         }
@@ -70,7 +70,7 @@ class AirLikeButton: AirToggleButton {
 						if DataController.instance.dataWrapperForResponse(response!) != nil {
 							self.entity!.userLikesId = nil
 							self.entity!.userLikesValue = false
-							self.entity!.countLikesValue--
+							self.entity!.countLikesValue -= 1
 							try! self.entity!.managedObjectContext?.save()
 						}
 					}
@@ -102,7 +102,7 @@ class AirLikeButton: AirToggleButton {
 									self.entity!.userLikesId = map["_id"] as! String
 								}
 								self.entity!.userLikesValue = true
-								self.entity!.countLikesValue++
+								self.entity!.countLikesValue += 1
 								try! self.entity!.managedObjectContext?.save()
 							}
 						}

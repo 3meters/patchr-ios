@@ -122,9 +122,9 @@ class GuestViewController: BaseViewController {
 		self.buttonGroup.addSubview(self.buttonSignup)
 		self.view.addSubview(self.buttonGroup)
 		
-		self.buttonLogin.addTarget(self, action: Selector("loginAction:"), forControlEvents: .TouchUpInside)
-		self.buttonSignup.addTarget(self, action: Selector("signupAction:"), forControlEvents: .TouchUpInside)
-		self.buttonCancel.addTarget(self, action: Selector("cancelAction:"), forControlEvents: .TouchUpInside)
+		self.buttonLogin.addTarget(self, action: #selector(GuestViewController.loginAction(_:)), forControlEvents: .TouchUpInside)
+		self.buttonSignup.addTarget(self, action: #selector(GuestViewController.signupAction(_:)), forControlEvents: .TouchUpInside)
+		self.buttonCancel.addTarget(self, action: #selector(GuestViewController.cancelAction(_:)), forControlEvents: .TouchUpInside)
 	}
 	
 	override func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool    {

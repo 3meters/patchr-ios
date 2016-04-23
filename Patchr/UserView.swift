@@ -50,7 +50,7 @@ class UserView: BaseView {
 		/* User name */
 		self.name.titleLabel?.font = Theme.fontTextDisplay
 		self.name.contentHorizontalAlignment = .Left
-		self.name.addTarget(self, action: Selector("browseUser:"), forControlEvents: .TouchUpInside)
+		self.name.addTarget(self, action: #selector(UserView.browseUser(_:)), forControlEvents: .TouchUpInside)
 		self.titleGroup.addSubview(self.name)
 		
 		/* User area */
@@ -71,7 +71,7 @@ class UserView: BaseView {
 		/* Remove button */
 		self.removeButton.setImage(UIImage(named:"imgRemoveLight") , forState: UIControlState.Normal)
 		self.removeButton.imageView?.contentMode = UIViewContentMode.Center
-		self.removeButton.addTarget(self, action: Selector("removeButtonTouchUpInsideAction:"), forControlEvents: .TouchUpInside)
+		self.removeButton.addTarget(self, action: #selector(UserView.removeButtonTouchUpInsideAction(_:)), forControlEvents: .TouchUpInside)
 		self.titleGroup.addSubview(self.removeButton)
 		
 		/* Approved label */
@@ -81,7 +81,7 @@ class UserView: BaseView {
 		self.ownerGroup.addSubview(self.approved)
 		
 		/* Approval switch */
-		self.approvedSwitch.addTarget(self, action: Selector("approvedSwitchValueChangedAction:"), forControlEvents: .TouchUpInside)
+		self.approvedSwitch.addTarget(self, action: #selector(UserView.approvedSwitchValueChangedAction(_:)), forControlEvents: .TouchUpInside)
 		self.ownerGroup.addSubview(self.approvedSwitch)
 		self.addSubview(self.ownerGroup)
 		self.addSubview(self.titleGroup)
@@ -179,8 +179,7 @@ class UserView: BaseView {
 	}
 }
 
-@objc
-protocol UserApprovalViewDelegate {
+@objc protocol UserApprovalViewDelegate {
 	func userView(userView: UserView, approvalSwitchValueChanged approvalSwitch: UISwitch)
 	func userView(userView: UserView, removeButtonTapped removeButton: UIButton)
 }

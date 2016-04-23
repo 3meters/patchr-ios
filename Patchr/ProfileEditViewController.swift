@@ -108,8 +108,8 @@ class ProfileEditViewController: BaseEditViewController {
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
 		let notificationCenter = NSNotificationCenter.defaultCenter()
-		notificationCenter.addObserver(self, selector: "providerConnectionChanged:", name: FBSDKAccessTokenDidChangeNotification, object: nil)
-		notificationCenter.addObserver(self, selector: "draw", name: FBSDKProfileDidChangeNotification, object: nil)
+		notificationCenter.addObserver(self, selector: #selector(ProfileEditViewController.providerConnectionChanged(_:)), name: FBSDKAccessTokenDidChangeNotification, object: nil)
+		notificationCenter.addObserver(self, selector: #selector(ProfileEditViewController.draw), name: FBSDKProfileDidChangeNotification, object: nil)
 	}
 	
 	override func viewDidDisappear(animated: Bool) {
@@ -238,14 +238,6 @@ class ProfileEditViewController: BaseEditViewController {
 		}
 	}
 	
-	func alertTextFieldDidChange(sender: AnyObject) {
-		if let alertController: UIAlertController = self.presentedViewController as? UIAlertController {
-			let confirm = alertController.textFields![0]
-			let okAction = alertController.actions[0]
-			okAction.enabled = confirm.text == "YES"
-		}
-	}
-
 	func providerConnectionChanged(notification: NSNotification) {
 		if notification.userInfo![FBSDKAccessTokenDidChangeUserID] != nil {
 			draw()
@@ -328,15 +320,15 @@ class ProfileEditViewController: BaseEditViewController {
 			self.contentHolder.addSubview(self.facebookButton)
 			
 			/* Navigation bar buttons */
-			let doneButton   = UIBarButtonItem(title: "Join", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
+			let doneButton   = UIBarButtonItem(title: "Join", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(ProfileEditViewController.doneAction(_:)))
 			doneButton.accessibilityIdentifier = "nav_submit_button"
 			
 			self.navigationItem.rightBarButtonItems = [doneButton]
 			self.navigationItem.leftBarButtonItems = nil
 			
-			self.joinButton.addTarget(self, action: Selector("doneAction:"), forControlEvents: .TouchUpInside)
-			self.termsButton.addTarget(self, action: Selector("termsAction:"), forControlEvents: .TouchUpInside)
-			self.facebookButton.addTarget(self, action: Selector("facebookConnectAction:"), forControlEvents: .TouchUpInside)
+			self.joinButton.addTarget(self, action: #selector(ProfileEditViewController.doneAction(_:)), forControlEvents: .TouchUpInside)
+			self.termsButton.addTarget(self, action: #selector(ProfileEditViewController.termsAction(_:)), forControlEvents: .TouchUpInside)
+			self.facebookButton.addTarget(self, action: #selector(ProfileEditViewController.facebookConnectAction(_:)), forControlEvents: .TouchUpInside)
 		}
 		else {
 			
@@ -365,7 +357,7 @@ class ProfileEditViewController: BaseEditViewController {
 			
 			self.facebookButton.setTitle("CONNECT WITH FACEBOOK", forState: .Normal)
 			self.facebookButton.accessibilityIdentifier = "facebook_button"
-			self.facebookButton.addTarget(self, action: Selector("facebookConnectAction:"), forControlEvents: .TouchUpInside)
+			self.facebookButton.addTarget(self, action: #selector(ProfileEditViewController.facebookConnectAction(_:)), forControlEvents: .TouchUpInside)
 			self.facebookOffGroup.addSubview(self.facebookButton)
 			
 			self.comment.text = "Don't worry, we won't post without your permission."
@@ -400,9 +392,9 @@ class ProfileEditViewController: BaseEditViewController {
 			}
 			
 			/* Navigation bar buttons */
-			let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancelAction:")
-			let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
-			let doneButton   = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
+			let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: #selector(ProfileEditViewController.cancelAction(_:)))
+			let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: #selector(ProfileEditViewController.deleteAction(_:)))
+			let doneButton   = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: #selector(ProfileEditViewController.doneAction(_:)))
 			
 			doneButton.accessibilityIdentifier = "nav_submit_button"
 			cancelButton.accessibilityIdentifier = "nav_cancel_button"
@@ -411,9 +403,9 @@ class ProfileEditViewController: BaseEditViewController {
 			self.navigationItem.leftBarButtonItems = [cancelButton]
 			self.navigationItem.rightBarButtonItems = [doneButton, Utils.spacer, deleteButton]
 			
-			self.changePasswordButton.addTarget(self, action: Selector("changePasswordAction:"), forControlEvents: .TouchUpInside)
-			self.facebookButton.addTarget(self, action: Selector("facebookConnectAction:"), forControlEvents: .TouchUpInside)
-			self.facebookDisconnect.addTarget(self, action: Selector("facebookDisconnectAction:"), forControlEvents: .TouchUpInside)
+			self.changePasswordButton.addTarget(self, action: #selector(ProfileEditViewController.changePasswordAction(_:)), forControlEvents: .TouchUpInside)
+			self.facebookButton.addTarget(self, action: #selector(ProfileEditViewController.facebookConnectAction(_:)), forControlEvents: .TouchUpInside)
+			self.facebookDisconnect.addTarget(self, action: #selector(ProfileEditViewController.facebookDisconnectAction(_:)), forControlEvents: .TouchUpInside)
 		}
 	}
 	
@@ -464,7 +456,7 @@ class ProfileEditViewController: BaseEditViewController {
 		progress.mode = MBProgressHUDMode.Indeterminate
 		progress.styleAs(.ActivityWithText)
 		progress.labelText = self.progressStartLabel
-		progress.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("progressWasCancelled:")))
+		progress.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileEditViewController.progressWasCancelled(_:))))
 		progress.removeFromSuperViewOnHide = true
 		progress.show(true)
 		
@@ -483,7 +475,7 @@ class ProfileEditViewController: BaseEditViewController {
 			queue.tasks +=~ { _, next in
 				
 				/* Ensure image is resized/rotated before upload */
-				image = Utils.prepareImage(image)
+				image = Utils.prepareImage(image: image)
 				
 				/* Generate image key */
 				let imageKey = "\(Utils.genImageKey()).jpg"

@@ -509,11 +509,12 @@ class DataController: NSObject {
                         /* Set properties */
                         queryItem.query = query     // Sets both query and query.queryItems
                         queryItem.object = entity	// The only place that associates an entity with a query item
-                        queryItem.positionValue = Int64(itemPosition++)
+                        queryItem.positionValue = Int64(itemPosition)
+						itemPosition += 1
                         queryItem.sortDate = entity.sortDate
 						
                         if let patch = entity as? Patch {
-                            if let distance = patch.distanceFrom(location) {
+                            if let distance = patch.distanceFrom(fromLocation: location) {
                                 queryItem.distanceValue = distance
                             }
                         }

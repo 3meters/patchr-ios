@@ -251,7 +251,7 @@ class MessageDetailViewController: BaseViewController {
 			self.scrollView.hidden = true
 		}
 		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "likeDidChange:", name: Events.LikeDidChange, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MessageDetailViewController.likeDidChange(_:)), name: Events.LikeDidChange, object: nil)
 	}
 	
 	override func viewDidAppear(animated: Bool) {
@@ -345,7 +345,7 @@ class MessageDetailViewController: BaseViewController {
 	func shareAction(sender: AnyObject?) {
 		
 		if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to share messages and more.")
+			UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to share messages and more.")
 			return
 		}
 		
@@ -486,12 +486,12 @@ class MessageDetailViewController: BaseViewController {
 		self.likeButton.imageEdgeInsets = UIEdgeInsetsMake(14, 12, 14, 12)
 		
 		self.reportButton.setTitle("Report", forState: .Normal)
-		self.reportButton.addTarget(self, action: Selector("reportAction:"), forControlEvents: UIControlEvents.TouchUpInside)
-		self.likesButton.addTarget(self, action: Selector("likesAction:"), forControlEvents: UIControlEvents.TouchUpInside)
-		self.userName.addTarget(self, action: Selector("userAction:"), forControlEvents: UIControlEvents.TouchUpInside)
-		self.patchName.addTarget(self, action: Selector("patchAction:"), forControlEvents: UIControlEvents.TouchUpInside)
-		self.patchPhoto.addTarget(self, action: Selector("patchAction:"), forControlEvents: UIControlEvents.TouchUpInside)
-		self.photo.addTarget(self, action: Selector("photoAction:"), forControlEvents: UIControlEvents.TouchUpInside)
+		self.reportButton.addTarget(self, action: #selector(MessageDetailViewController.reportAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+		self.likesButton.addTarget(self, action: #selector(MessageDetailViewController.likesAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+		self.userName.addTarget(self, action: #selector(MessageDetailViewController.userAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+		self.patchName.addTarget(self, action: #selector(MessageDetailViewController.patchAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+		self.patchPhoto.addTarget(self, action: #selector(MessageDetailViewController.patchAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+		self.photo.addTarget(self, action: #selector(MessageDetailViewController.photoAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
 		
 		self.recipientsLabel.text = "To:"
 		self.recipientsLabel.textColor = Theme.colorTextSecondary
@@ -523,7 +523,7 @@ class MessageDetailViewController: BaseViewController {
 		self.contentHolder.addSubview(self.toolbarGroup)
 		self.contentHolder.addSubview(self.shareGroup)
 		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground:", name: UIApplicationDidEnterBackgroundNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidEnterBackground(_:)), name: UIApplicationDidEnterBackgroundNotification, object: nil)
 	}
 	
 	func bind() {
@@ -551,8 +551,8 @@ class MessageDetailViewController: BaseViewController {
 				self.messageView!.sizeToFit()
 				self.messageView?.clipsToBounds = false
 				self.shareFrame.addSubview(self.messageView!)
-				self.shareFrame.addTarget(self, action: Selector("shareBrowseAction:"), forControlEvents: UIControlEvents.TouchUpInside)
-				self.shareFrame.addTarget(self, action: Selector("buttonTouchDownAction:"), forControlEvents: UIControlEvents.TouchDown)
+				self.shareFrame.addTarget(self, action: #selector(MessageDetailViewController.shareBrowseAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+				self.shareFrame.addTarget(self, action: #selector(MessageDetailViewController.buttonTouchDownAction(_:)), forControlEvents: UIControlEvents.TouchDown)
 				UIView.disableAllSubviewsOf(self.shareFrame)
 			}
 			else if self.inputMessage!.patch != nil {
@@ -562,8 +562,8 @@ class MessageDetailViewController: BaseViewController {
 				self.patchView!.shadow.hidden = true
 				self.patchView?.name.textColor = Colors.brandColor
 				self.shareFrame.addSubview(self.patchView!)
-				self.shareFrame.addTarget(self, action: Selector("shareBrowseAction:"), forControlEvents: UIControlEvents.TouchUpInside)
-				self.shareFrame.addTarget(self, action: Selector("buttonTouchDownAction:"), forControlEvents: UIControlEvents.TouchDown)
+				self.shareFrame.addTarget(self, action: #selector(MessageDetailViewController.shareBrowseAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+				self.shareFrame.addTarget(self, action: #selector(MessageDetailViewController.buttonTouchDownAction(_:)), forControlEvents: UIControlEvents.TouchDown)
 				UIView.disableAllSubviewsOf(self.shareFrame)
 			}
 			else {
@@ -658,10 +658,10 @@ class MessageDetailViewController: BaseViewController {
 
 	func drawNavButtons(animated: Bool = false) {
 		
-		let shareButton  = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction:"))
-		let editButton   = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
-		let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: Selector("deleteAction"))
-		let removeButton   = UIBarButtonItem(image: Utils.imageRemove, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("removeAction"))
+		let shareButton  = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: #selector(MessageDetailViewController.shareAction(_:)))
+		let editButton   = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(MessageDetailViewController.editAction))
+		let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: #selector(MessageDetailViewController.deleteAction))
+		let removeButton   = UIBarButtonItem(image: Utils.imageRemove, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(MessageDetailViewController.removeAction))
 		
 		if self.isShare && self.isOwner {
 			self.navigationItem.setRightBarButtonItems([deleteButton], animated: animated)

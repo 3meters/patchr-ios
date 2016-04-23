@@ -92,7 +92,7 @@ class InviteSheetViewController: UIViewController {
 		self.buttonCancel.setImage(UIImage(named: "imgCancelDark"), forState: .Normal)
 		self.buttonCancel.tintColor = Colors.brandColor
 		self.buttonCancel.accessibilityIdentifier = "cancel_button"
-		self.buttonCancel.addTarget(self, action: Selector("cancelAction:"), forControlEvents: .TouchUpInside)
+		self.buttonCancel.addTarget(self, action: #selector(InviteSheetViewController.cancelAction(_:)), forControlEvents: .TouchUpInside)
 		
 		self.inviteHolder.addSubview(self.inviteView)
 		self.inviteHolder.addSubview(self.buttonCancel)

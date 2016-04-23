@@ -168,9 +168,9 @@ class LobbyViewController: BaseViewController {
 		self.buttonGuest.titleLabel?.font = Theme.fontLinkText
 		self.view.addSubview(self.buttonGuest)
 		
-		self.buttonLogin.addTarget(self, action: Selector("loginAction:"), forControlEvents: .TouchUpInside)
-		self.buttonSignup.addTarget(self, action: Selector("signupAction:"), forControlEvents: .TouchUpInside)
-		self.buttonGuest.addTarget(self, action: Selector("guestAction:"), forControlEvents: .TouchUpInside)
+		self.buttonLogin.addTarget(self, action: #selector(LobbyViewController.loginAction(_:)), forControlEvents: .TouchUpInside)
+		self.buttonSignup.addTarget(self, action: #selector(LobbyViewController.signupAction(_:)), forControlEvents: .TouchUpInside)
+		self.buttonGuest.addTarget(self, action: #selector(LobbyViewController.guestAction(_:)), forControlEvents: .TouchUpInside)
 		
 		if self.firstLaunch {
 			self.appName.alpha = 0.0

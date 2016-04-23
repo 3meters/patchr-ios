@@ -151,7 +151,7 @@ class LoginViewController: BaseEditViewController {
 		
 		self.hideShowButton.bounds.size = CGSizeMake(48, 48)
 		self.hideShowButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
-		self.hideShowButton.addTarget(self, action: Selector("hideShowPasswordAction:"), forControlEvents: .TouchUpInside)
+		self.hideShowButton.addTarget(self, action: #selector(LoginViewController.hideShowPasswordAction(_:)), forControlEvents: .TouchUpInside)
 		
 		self.forgotPasswordButton.setTitle("Forgot password?", forState: .Normal)
 		self.forgotPasswordButton.accessibilityIdentifier = Button.ForgotPassword
@@ -161,14 +161,14 @@ class LoginViewController: BaseEditViewController {
 		self.doneButton.accessibilityIdentifier = Button.Submit
 		self.contentHolder.addSubview(self.doneButton)
 		
-		self.forgotPasswordButton.addTarget(self, action: Selector("passwordResetAction:"), forControlEvents: .TouchUpInside)
-		self.doneButton.addTarget(self, action: Selector("doneAction:"), forControlEvents: .TouchUpInside)
+		self.forgotPasswordButton.addTarget(self, action: #selector(LoginViewController.passwordResetAction(_:)), forControlEvents: .TouchUpInside)
+		self.doneButton.addTarget(self, action: #selector(LoginViewController.doneAction(_:)), forControlEvents: .TouchUpInside)
 		
 		setScreenName(onboardMode == OnboardMode.Signup ? "Signup" : "Login")
 		
 		/* Navigation bar buttons */
-		let doneButton   = UIBarButtonItem(title: "Log in", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
-		let cancelButton   = UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.Plain, target: self, action: "cancelAction:")
+		let doneButton   = UIBarButtonItem(title: "Log in", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(LoginViewController.doneAction(_:)))
+		let cancelButton   = UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(LoginViewController.cancelAction(_:)))
 		
 		cancelButton.accessibilityIdentifier = Nav.Cancel
 		doneButton.accessibilityIdentifier = Nav.Submit

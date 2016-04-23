@@ -110,20 +110,20 @@ class PasswordEditViewController: BaseEditViewController {
 		
 		self.hideShowButton.bounds.size = CGSizeMake(48, 48)
 		self.hideShowButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
-		self.hideShowButton.addTarget(self, action: Selector("hideShowPasswordAction:"), forControlEvents: .TouchUpInside)
+		self.hideShowButton.addTarget(self, action: #selector(PasswordEditViewController.hideShowPasswordAction(_:)), forControlEvents: .TouchUpInside)
 		
 		self.hideShowNewButton.bounds.size = CGSizeMake(48, 48)
 		self.hideShowNewButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
-		self.hideShowNewButton.addTarget(self, action: Selector("hideShowNewPasswordAction:"), forControlEvents: .TouchUpInside)
+		self.hideShowNewButton.addTarget(self, action: #selector(PasswordEditViewController.hideShowNewPasswordAction(_:)), forControlEvents: .TouchUpInside)
 		
 		self.submitButton.setTitle("CHANGE", forState: .Normal)
 		self.submitButton.accessibilityIdentifier = Button.Submit
-		self.submitButton.addTarget(self, action: Selector("submitAction:"), forControlEvents: .TouchUpInside)
+		self.submitButton.addTarget(self, action: #selector(PasswordEditViewController.submitAction(_:)), forControlEvents: .TouchUpInside)
 		self.contentHolder.addSubview(self.submitButton)
 		
 		/* Navigation bar buttons */
-		let submitBarButton   = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.Plain, target: self, action: "submitAction:")
-		let cancelBarButton   = UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.Plain, target: self, action: "cancelAction:")
+		let submitBarButton   = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(PasswordEditViewController.submitAction(_:)))
+		let cancelBarButton   = UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(PasswordEditViewController.cancelAction(_:)))
 		
 		submitBarButton.accessibilityIdentifier = Nav.Submit
 		cancelBarButton.accessibilityIdentifier = Nav.Cancel

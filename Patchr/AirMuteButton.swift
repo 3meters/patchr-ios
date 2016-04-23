@@ -36,14 +36,14 @@ class AirMuteButton: AirToggleButton {
         }
 	}
 
-    func onClick(sender: AnyObject) {
+    override func onClick(sender: AnyObject) {
     
         if self.entity == nil {
             return
         }
         
         if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(nil, message: nil)
+			UserController.instance.showGuestGuard(controller: nil, message: nil)
             return
         }
         

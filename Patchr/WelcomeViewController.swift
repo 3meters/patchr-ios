@@ -114,20 +114,20 @@ class WelcomeViewController: BaseViewController {
 		if UserController.instance.authenticated {
 			self.joinButton.setTitle("JOIN", forState: .Normal)
 			self.cancelButton.setTitle("NOT NOW", forState: .Normal)
-			self.joinButton.addTarget(self, action: Selector("joinAction:"), forControlEvents: .TouchUpInside)
+			self.joinButton.addTarget(self, action: #selector(WelcomeViewController.joinAction(_:)), forControlEvents: .TouchUpInside)
 			self.dialog.addSubview(self.joinButton)
 		}
 		else {
 			self.loginButton.setTitle("LOG IN", forState: .Normal)
 			self.signupButton.setTitle("SIGN UP", forState: .Normal)
 			self.cancelButton.setTitle("NOT NOW", forState: .Normal)
-			self.loginButton.addTarget(self, action: Selector("loginAction:"), forControlEvents: .TouchUpInside)
-			self.signupButton.addTarget(self, action: Selector("signupAction:"), forControlEvents: .TouchUpInside)
+			self.loginButton.addTarget(self, action: #selector(WelcomeViewController.loginAction(_:)), forControlEvents: .TouchUpInside)
+			self.signupButton.addTarget(self, action: #selector(WelcomeViewController.signupAction(_:)), forControlEvents: .TouchUpInside)
 			self.dialog.addSubview(self.loginButton)
 			self.dialog.addSubview(self.signupButton)
 		}
 		self.dialog.addSubview(self.cancelButton)
-		self.cancelButton.addTarget(self, action: Selector("cancelAction:"), forControlEvents: .TouchUpInside)
+		self.cancelButton.addTarget(self, action: #selector(WelcomeViewController.cancelAction(_:)), forControlEvents: .TouchUpInside)
 	}
 }
 

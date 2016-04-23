@@ -100,7 +100,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		
         if self.contextAction == .CreateMessage {
             if !UserController.instance.authenticated {
-				UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to post messages and more.")
+				UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to post messages and more.")
                 return
             }
             addAction()
@@ -113,7 +113,7 @@ class PatchDetailViewController: BaseDetailViewController {
         }
         else if self.contextAction == .SubmitJoinRequest || self.contextAction == .JoinPatch {
             if !UserController.instance.authenticated {
-				UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to join patches and more.")
+				UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to join patches and more.")
                 return
             }
             header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
@@ -141,7 +141,7 @@ class PatchDetailViewController: BaseDetailViewController {
 	
     func addAction() {
         if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to post messages and more.")
+			UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to post messages and more.")
             return
         }
 		
@@ -173,7 +173,7 @@ class PatchDetailViewController: BaseDetailViewController {
 	func shareAction(sender: AnyObject?) {
 		
 		if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to invite people to patches and more.")
+			UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to invite people to patches and more.")
 			return
 		}
 		
@@ -382,21 +382,21 @@ class PatchDetailViewController: BaseDetailViewController {
 		
 		let header = self.header as! PatchDetailView
 		
-		header.mapButton.addTarget(self, action: Selector("mapAction:"), forControlEvents: .TouchUpInside)
-		header.watchersButton.addTarget(self, action: Selector("watchersAction:"), forControlEvents: UIControlEvents.TouchUpInside)
-		header.moreButton.addTarget(self, action: Selector("moreAction:"), forControlEvents: .TouchUpInside)
-		header.infoMoreButton.addTarget(self, action: Selector("moreAction:"), forControlEvents: .TouchUpInside)
+		header.mapButton.addTarget(self, action: #selector(PatchDetailViewController.mapAction(_:)), forControlEvents: .TouchUpInside)
+		header.watchersButton.addTarget(self, action: #selector(PatchDetailViewController.watchersAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+		header.moreButton.addTarget(self, action: #selector(PatchDetailViewController.moreAction(_:)), forControlEvents: .TouchUpInside)
+		header.infoMoreButton.addTarget(self, action: #selector(PatchDetailViewController.moreAction(_:)), forControlEvents: .TouchUpInside)
 		
 		if let contextButton = header.contextView as? AirFeaturedButton {
-			contextButton.addTarget(self, action: Selector("contextButtonAction:"), forControlEvents: .TouchUpInside)
+			contextButton.addTarget(self, action: #selector(PatchDetailViewController.contextButtonAction(_:)), forControlEvents: .TouchUpInside)
 			contextButton.setTitle("", forState: .Normal)
 		}
 
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didReceiveRemoteNotification:", name: Events.DidReceiveRemoteNotification, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didFetch:", name: Events.DidFetch, object: self)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "watchDidChange:", name: Events.WatchDidChange, object: header.watchButton)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didInsertMessage:", name: Events.DidInsertMessage, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground:", name: UIApplicationDidEnterBackgroundNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchDetailViewController.didReceiveRemoteNotification(_:)), name: Events.DidReceiveRemoteNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchDetailViewController.didFetch(_:)), name: Events.DidFetch, object: self)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchDetailViewController.watchDidChange(_:)), name: Events.WatchDidChange, object: header.watchButton)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchDetailViewController.didInsertMessage(_:)), name: Events.DidInsertMessage, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidEnterBackground(_:)), name: UIApplicationDidEnterBackgroundNotification, object: nil)
 		
 		self.showEmptyLabel = true
 		self.showProgress = true
@@ -451,9 +451,9 @@ class PatchDetailViewController: BaseDetailViewController {
 
 	override func drawButtons() {
 		
-		let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction:"))
-		let addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: Selector("addAction"))
-		let editButton = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
+		let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: #selector(PatchDetailViewController.shareAction(_:)))
+		let addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: #selector(PatchDetailViewController.addAction))
+		let editButton = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(PatchDetailViewController.editAction))
 		
 		if isUserOwner() {
 			self.navigationItem.setRightBarButtonItems([addButton, Utils.spacer, shareButton, Utils.spacer, editButton], animated: true)
@@ -495,20 +495,20 @@ class PatchDetailViewController: BaseDetailViewController {
 					self.inviteView!.joinButton.hidden = false
 					self.inviteView!.joinButton.setTitle("Requested".uppercaseString, forState: .Normal)
 					self.inviteView!.joinButton.removeTarget(nil, action: nil, forControlEvents: .TouchUpInside)
-					self.inviteView!.joinButton.addTarget(self, action: Selector("cancelRequestAction:"), forControlEvents: .TouchUpInside)
+					self.inviteView!.joinButton.addTarget(self, action: #selector(PatchDetailViewController.cancelRequestAction(_:)), forControlEvents: .TouchUpInside)
 				}
 				else {
 					if UserController.instance.authenticated {
 						self.inviteView!.joinButton.hidden = false
 						self.inviteView!.joinButton.setTitle("Join".uppercaseString, forState: .Normal)
 						self.inviteView!.joinButton.removeTarget(nil, action: nil, forControlEvents: .TouchUpInside)
-						self.inviteView!.joinButton.addTarget(self, action: Selector("joinAction:"), forControlEvents: .TouchUpInside)
+						self.inviteView!.joinButton.addTarget(self, action: #selector(PatchDetailViewController.joinAction(_:)), forControlEvents: .TouchUpInside)
 					}
 					else {
 						self.inviteView!.loginButton.hidden = false
 						self.inviteView!.signupButton.hidden = false
-						self.inviteView!.loginButton.addTarget(self, action: Selector("loginAction:"), forControlEvents: .TouchUpInside)
-						self.inviteView!.signupButton.addTarget(self, action: Selector("signupAction:"), forControlEvents: .TouchUpInside)
+						self.inviteView!.loginButton.addTarget(self, action: #selector(PatchDetailViewController.loginAction(_:)), forControlEvents: .TouchUpInside)
+						self.inviteView!.signupButton.addTarget(self, action: #selector(PatchDetailViewController.signupAction(_:)), forControlEvents: .TouchUpInside)
 					}
 				}
 

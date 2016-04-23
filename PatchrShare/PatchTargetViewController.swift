@@ -88,7 +88,7 @@ class PatchTargetViewController: UITableViewController {
             if let _ = self.searchTimer {
                 self.searchTimer?.invalidate()
             }
-            self.searchTimer = NSTimer(timeInterval:0.5, target:self, selector:Selector("suggest"), userInfo:nil, repeats:false)
+            self.searchTimer = NSTimer(timeInterval:0.5, target:self, selector:#selector(PatchTargetViewController.suggest), userInfo:nil, repeats:false)
             NSRunLoop.currentRunLoop().addTimer(self.searchTimer!, forMode: "NSDefaultRunLoopMode")
         }
     }
@@ -136,7 +136,7 @@ class PatchTargetViewController: UITableViewController {
 		
 		self.searchField.placeholder = "Search for patches"
 		self.searchField.delegate = self
-		self.searchField.addTarget(self, action: Selector("textFieldDidChange:"), forControlEvents: UIControlEvents.EditingChanged)
+		self.searchField.addTarget(self, action: #selector(PatchTargetViewController.textFieldDidChange(_:)), forControlEvents: UIControlEvents.EditingChanged)
 		
 		// Recents
 		self.currentItems = recentItems

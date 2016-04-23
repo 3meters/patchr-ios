@@ -130,10 +130,10 @@ class DevelopmentViewController: UIViewController {
 		self.view.addSubview(self.statusBarHiddenLabel)
 		self.view.addSubview(self.statusBarHiddenSwitch)
 		
-		self.enableDevModeSwitch.addTarget(self, action: Selector("enableDevModeAction:"), forControlEvents: .TouchUpInside)
-		self.statusBarHiddenSwitch.addTarget(self, action: Selector("statusBarHiddenAction:"), forControlEvents: .TouchUpInside)
-		self.serverAddressOption.addTarget(self, action: Selector("serverAddressOptionAction:"), forControlEvents: .ValueChanged)
-		self.clearImageCacheButton.addTarget(self, action: Selector("clearImageCacheAction:"), forControlEvents: .TouchUpInside)
+		self.enableDevModeSwitch.addTarget(self, action: #selector(DevelopmentViewController.enableDevModeAction(_:)), forControlEvents: .TouchUpInside)
+		self.statusBarHiddenSwitch.addTarget(self, action: #selector(DevelopmentViewController.statusBarHiddenAction(_:)), forControlEvents: .TouchUpInside)
+		self.serverAddressOption.addTarget(self, action: #selector(DevelopmentViewController.serverAddressOptionAction(_:)), forControlEvents: .ValueChanged)
+		self.clearImageCacheButton.addTarget(self, action: #selector(DevelopmentViewController.clearImageCacheAction(_:)), forControlEvents: .TouchUpInside)
 		
 		self.observerObject = TextFieldChangeObserver(self.serverUriField) {
 			[unowned self] in

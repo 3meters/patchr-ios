@@ -222,9 +222,9 @@ class PatchDetailView: BaseDetailView {
 		self.photo.contentMode = UIViewContentMode.ScaleAspectFill
 		self.photo.backgroundColor = Theme.colorBackgroundImage
 		
-		let bannerTapGestureRecognizer = UITapGestureRecognizer(target: self, action: "flipToInfo:")
+		let bannerTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(PatchDetailView.flipToInfo(_:)))
 		self.bannerGroup.addGestureRecognizer(bannerTapGestureRecognizer)
-		let infoTapGestureRecognizer = UITapGestureRecognizer(target: self, action: "flipToBanner:")
+		let infoTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(PatchDetailView.flipToBanner(_:)))
 		self.infoGroup.addGestureRecognizer(infoTapGestureRecognizer)
 		
 		/* Apply gradient to banner */
@@ -314,7 +314,7 @@ class PatchDetailView: BaseDetailView {
 
 		self.bannerGroup.clipsToBounds = true
 		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "watchDidChange:", name: Events.WatchDidChange, object: self.watchButton)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchDetailView.watchDidChange(_:)), name: Events.WatchDidChange, object: self.watchButton)
 	}
 	
 	func bindToEntity(entity: Entity!) {

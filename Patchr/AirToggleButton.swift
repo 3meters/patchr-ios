@@ -29,25 +29,27 @@ class AirToggleButton: AirImageButton {
         super.init(frame: frame)
         initialize()
     }
-    
+	
+	func onClick(sender: AnyObject) { }
+		
     override func initialize(){
         super.initialize()
         toggleOn(false)
         self.progressAuto = false
         self.imageView?.contentMode = UIViewContentMode.ScaleToFill
-        self.addTarget(self, action: Selector("onClick:"), forControlEvents: UIControlEvents.TouchUpInside)
+        self.addTarget(self, action: #selector(AirToggleButton.onClick(_:)), forControlEvents: UIControlEvents.TouchUpInside)
     }
     
     func toggleOn(on: Bool, pending: Bool = false) {
         if on {
             self.setImage(imageOn, forState: .Normal)
             self.tintColor = self.tintOn
-            self.imageView?.tintColor = self.tintOn
+			//self.imageView?.tintColor = self.tintOn
         }
         else {
             self.setImage(imageOff, forState: .Normal)
             self.tintColor = self.tintOff
-            self.imageView?.tintColor = (pending ? self.tintPending : self.tintOff)
+			//self.imageView?.tintColor = (pending ? self.tintPending : self.tintOff)
         }
         self.toggledOn = on
 		Animation.bounce(self)

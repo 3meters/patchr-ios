@@ -86,21 +86,6 @@ extension UIView {
 		}
 	}
 
-    func showSubviews(level: Int = 0) {
-        /*
-         * Utility to show some information about subview frames.
-         */
-        var indent = ""
-        for _ in 0 ..< level {
-            indent += "  "
-        }
-        var count = 0
-        for subview in self.subviews {
-            Log.d("\(indent)\(count++). \(subview.frame)")
-            subview.showSubviews(level + 1)
-        }
-    }
-
 	func snapshot() -> UIImage {
 		UIGraphicsBeginImageContextWithOptions(bounds.size, false, UIScreen.mainScreen().scale)
 		drawViewHierarchyInRect(self.bounds, afterScreenUpdates: true)
@@ -239,16 +224,18 @@ extension UIViewController {
 		}
 	}
     
-    func handleError(error: ServerError, errorActionType: ErrorActionType = .AUTO, var errorAction: ErrorAction = .NONE ) {
+    func handleError(error: ServerError, errorActionType: ErrorActionType = .AUTO, errorAction: ErrorAction = .NONE ) {
         
         /* Show any required ui */
         let alertMessage: String = (error.message != nil ? error.message : error.description != nil ? error.description : "Unknown error")!
+		
+		var errAction = errorAction
         
         if errorActionType == .AUTO || errorActionType == .TOAST {
 			UIShared.Toast(alertMessage, controller: self, addToWindow: false)
 			//toast.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("dismissToast:")))
             if error.code == .UNAUTHORIZED_SESSION_EXPIRED || error.code == .UNAUTHORIZED_CREDENTIALS {
-                errorAction = .SIGNOUT
+                errAction = .SIGNOUT
             }
         }
         else if errorActionType == .ALERT {
@@ -257,13 +244,13 @@ extension UIViewController {
         
         /* Perform any follow-up actions */
         
-        if errorAction == .SIGNOUT {
+        if errAction == .SIGNOUT {
             /*
              * Error requires that the user signs in again.
              */
 			UserController.instance.signout()
         }
-        else if errorAction == .LOBBY {
+        else if errAction == .LOBBY {
             /* 
              * Mostly because a more current client version is required. 
              */
@@ -280,12 +267,6 @@ extension UIViewController {
         Log.w(error.description)
     }
     
-//    func Alert(title: String?, message: String? = nil, cancelButtonTitle: String = "OK") {
-//		let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-//		alert.addAction(UIAlertAction(title: cancelButtonTitle, style: .Cancel, handler: nil))
-//		self.presentViewController(alert, animated: true) {}
-//    }
-	
 	func Alert(title: String?, message: String? = nil, cancelButtonTitle: String = "OK", onDismiss: (() -> Void)? = nil) {
 		let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
 		let okAction = UIAlertAction(title: cancelButtonTitle, style: .Cancel, handler: { _ in onDismiss?() })
@@ -330,12 +311,20 @@ extension UIViewController {
 			alert.addTextFieldWithConfigurationHandler() {
 				textField in
 				textField.accessibilityIdentifier = Field.ConfirmDelete
-				textField.addTarget(delegate, action: Selector("alertTextFieldDidChange:"), forControlEvents: .EditingChanged)
+				textField.addTarget(delegate, action: #selector(UIViewController.alertTextFieldDidChange(_:)), forControlEvents: .EditingChanged)
 			}
 			okAction.enabled = false
 		}
 		self.presentViewController(alert, animated: true, completion: nil)
     }
+	
+	func alertTextFieldDidChange(sender: AnyObject) {
+		if let alertController: UIAlertController = self.presentedViewController as? UIAlertController {
+			let confirm = alertController.textFields![0]
+			let okAction = alertController.actions[0]
+			okAction.enabled = confirm.text == "YES"
+		}
+	}
 
 	func addActivityIndicatorTo(view: UIView, offsetY: Float = 0, style: UIActivityIndicatorViewStyle = .WhiteLarge) -> UIActivityIndicatorView {
 		/*

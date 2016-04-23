@@ -142,8 +142,8 @@ class SettingsTableViewController: UITableViewController {
 		self.clearHistoryButton.setTitle("Clear search history".uppercaseString, forState: .Normal)
 		self.logoutButton.setTitle("Log out".uppercaseString, forState: .Normal)
 		
-		self.logoutButton.addTarget(self, action: Selector("logoutAction:"), forControlEvents: .TouchUpInside)
-		self.clearHistoryButton.addTarget(self, action: Selector("clearHistoryAction:"), forControlEvents: .TouchUpInside)		
+		self.logoutButton.addTarget(self, action: #selector(SettingsTableViewController.logoutAction(_:)), forControlEvents: .TouchUpInside)
+		self.clearHistoryButton.addTarget(self, action: #selector(SettingsTableViewController.clearHistoryAction(_:)), forControlEvents: .TouchUpInside)		
 	}
 	
     func appVersion() -> String {

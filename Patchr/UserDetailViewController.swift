@@ -116,8 +116,8 @@ class UserDetailViewController: BaseDetailViewController {
 		
 		let header = self.header as! UserDetailView
 		
-		header.watchingButton.addTarget(self, action: Selector("browseWatchingAction:"), forControlEvents: UIControlEvents.TouchUpInside)
-		header.ownsButton.addTarget(self, action: Selector("browseOwnedAction:"), forControlEvents: UIControlEvents.TouchUpInside)
+		header.watchingButton.addTarget(self, action: #selector(UserDetailViewController.browseWatchingAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+		header.ownsButton.addTarget(self, action: #selector(UserDetailViewController.browseOwnedAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
 		
 		self.showEmptyLabel = false
 		if self.profileMode {
@@ -151,8 +151,8 @@ class UserDetailViewController: BaseDetailViewController {
 	override func drawButtons() {
 		if self.profileMode {
 			if self.isCurrentUser {
-				let editButton = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
-				let settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("settingsAction"))
+				let editButton = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(UserDetailViewController.editAction))
+				let settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(UserDetailViewController.settingsAction))
 				
 				editButton.accessibilityIdentifier = "nav_edit_button"
 				settingsButton.accessibilityIdentifier = "nav_settings_button"

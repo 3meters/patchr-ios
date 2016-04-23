@@ -174,7 +174,7 @@ class PhotoEditView: UIView {
 	func initialize() {
 		
 		let notificationCenter = NSNotificationCenter.defaultCenter()
-		notificationCenter.addObserver(self, selector: "imageNotFoundAction:", name: Events.ImageNotFound, object: self.imageButton)
+		notificationCenter.addObserver(self, selector: #selector(PhotoEditView.imageNotFoundAction(_:)), name: Events.ImageNotFound, object: self.imageButton)
 		
 		self.backgroundColor = Colors.clear
 		
@@ -225,9 +225,9 @@ class PhotoEditView: UIView {
 		self.setPhotoButton.alpha = 0
 		self.addSubview(self.setPhotoButton)
 		
-		self.editPhotoButton.addTarget(self, action: Selector("editPhotoAction:"), forControlEvents: .TouchUpInside)
-		self.clearPhotoButton.addTarget(self, action: Selector("clearPhotoAction:"), forControlEvents: .TouchUpInside)
-		self.setPhotoButton.addTarget(self, action: Selector("setPhotoAction:"), forControlEvents: .TouchUpInside)
+		self.editPhotoButton.addTarget(self, action: #selector(PhotoEditView.editPhotoAction(_:)), forControlEvents: .TouchUpInside)
+		self.clearPhotoButton.addTarget(self, action: #selector(PhotoEditView.clearPhotoAction(_:)), forControlEvents: .TouchUpInside)
+		self.setPhotoButton.addTarget(self, action: #selector(PhotoEditView.setPhotoAction(_:)), forControlEvents: .TouchUpInside)
 	}
 	
 	func bindPhoto(photo: Photo?) {

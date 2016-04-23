@@ -29,7 +29,8 @@ extension ServiceBase {
 
 extension Entity {
     
-    func distanceFrom(var fromLocation: CLLocation?) -> Float? {
+    func distanceFrom(fromLocation paramLocation: CLLocation?) -> Float? {
+		var fromLocation = paramLocation
         if fromLocation == nil {
             fromLocation = LocationController.instance.mostRecentAvailableLocation()
         }

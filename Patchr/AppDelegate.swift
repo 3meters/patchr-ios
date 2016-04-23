@@ -347,7 +347,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 						controller.inputUserPhoto = userPhoto
 					}
 				}
-				let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: Selector("cancelAction:"))
+				let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: #selector(controller.cancelAction(_:)))
 				controller.navigationItem.leftBarButtonItems = [cancelButton]
 				let navController = UINavigationController()
 				navController.viewControllers = [controller]
@@ -370,7 +370,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 				}
 				
 				/* Navigation bar buttons */
-				let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
+				let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: #selector(controller.dismissAction(_:)))
 				controller.navigationItem.leftBarButtonItems = [doneButton]
 				let navController = UINavigationController()
 				navController.viewControllers = [controller]
@@ -390,7 +390,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 				}
 				
 				/* Navigation bar buttons */
-				let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: Selector("dismissAction:"))
+				let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: #selector(controller.dismissAction(_:)))
 				controller.navigationItem.leftBarButtonItems = [doneButton]
 				let navController = UINavigationController()
 				navController.viewControllers = [controller]

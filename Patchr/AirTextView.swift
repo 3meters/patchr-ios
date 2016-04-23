@@ -15,8 +15,8 @@ class AirTextView: UITextView {
 	
 	func initialize() {
 		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "editingBegin:", name: UITextFieldTextDidBeginEditingNotification, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "editingBegin:", name: UITextViewTextDidBeginEditingNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AirTextView.editingBegin(_:)), name: UITextFieldTextDidBeginEditingNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AirTextView.editingBegin(_:)), name: UITextViewTextDidBeginEditingNotification, object: nil)
 		
 		self.textColor = Theme.colorText
 		self.font = Theme.fontText

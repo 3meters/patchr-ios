@@ -39,14 +39,14 @@ class AirWatchButton: AirToggleButton {
         }
 	}
 
-    func onClick(sender: AnyObject) {
+    override func onClick(sender: AnyObject) {
         
         if self.entity == nil {
             return
         }
         
         if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to join patches and more!")
+			UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to join patches and more!")
             return
         }
         
@@ -69,7 +69,7 @@ class AirWatchButton: AirToggleButton {
 						if DataController.instance.dataWrapperForResponse(response!) != nil {
 							patch!.userWatchId = nil
 							patch!.userWatchStatusValue = .NonMember
-							patch!.countWatchingValue--
+							patch!.countWatchingValue -= 1
 							DataController.instance.activityDateWatching = Utils.now()
 						}
 					}
@@ -121,7 +121,7 @@ class AirWatchButton: AirToggleButton {
 									if let enabled = map["enabled"] as? Bool {
 										if enabled {
 											patch!.userWatchStatusValue = .Member
-											patch!.countWatchingValue++
+											patch!.countWatchingValue += 1
 											DataController.instance.activityDateWatching = Utils.now()
 										}
 										else {

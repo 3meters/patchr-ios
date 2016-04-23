@@ -246,7 +246,8 @@ class UserController: NSObject {
 		DataController.instance.reset()
 	}
 	
-	func showGuestGuard(var controller: UIViewController?, message: String?) {
+	func showGuestGuard(controller inController: UIViewController?, message: String?) {
+		var controller = inController
 		let guestController = GuestViewController()
 		guestController.inputMessage = message
 		guestController.modalPresentationStyle = .OverFullScreen

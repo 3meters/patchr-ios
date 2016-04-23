@@ -18,6 +18,12 @@ class BaseDetailViewController: BaseTableViewController {
 	var header				: UIView!
 	var invalidated			= false
 	
+	/* Only used for row sizing */
+	let shareMessage		= MessageView(cellType: .Share, entity: nil)
+	let photoMessage		= MessageView(cellType: .Photo, entity: nil)
+	let textMessage			= MessageView(cellType: .Text, entity: nil)
+	let photoTextMessage	= MessageView(cellType: .TextAndPhoto, entity: nil)
+	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
@@ -25,7 +31,7 @@ class BaseDetailViewController: BaseTableViewController {
     override func viewDidLoad() {
 		self.listType = .Messages
         super.viewDidLoad()
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "userDidLogin:", name: Events.UserDidLogin, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(BaseDetailViewController.userDidLogin(_:)), name: Events.UserDidLogin, object: nil)
     }
 	
 	override func viewWillLayoutSubviews() {
@@ -202,31 +208,18 @@ class BaseDetailViewController: BaseTableViewController {
 		let id = self.entity?.id_ ?? self.entityId
 		return "query.\(self.queryName!.lowercaseString).\(id!)"
 	}
-}
 
-extension BaseDetailViewController: TTTAttributedLabelDelegate {
-    
-    func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
-        UIApplication.sharedApplication().openURL(url)
-    }
+	override func makeCell(cellType: CellType) -> WrapperTableViewCell {
+		let cell = super.makeCell(cellType)
+		if let view = cell.view as? MessageView {
+			view.showPatchName = self.patchNameVisible
+			view.patchName.hidden = !self.patchNameVisible
+		}
+		return cell
+	}
 }
 
 extension BaseDetailViewController {
-	/*
-	 * Cells
-	 */
-	override func bindCellToEntity(cell: WrapperTableViewCell, entity: AnyObject, location: CLLocation?) {
-		
-		super.bindCellToEntity(cell, entity: entity, location: location)
-		
-		if let view = cell.view as? MessageView {
-			/* Hookup up delegates */
-			view.description_?.delegate = self
-			view.showPatchName = self.patchNameVisible
-			view.patchName.hidden = !self.patchNameVisible
-			view.photo?.addTarget(self, action: Selector("photoAction:"), forControlEvents: .TouchUpInside)
-		}
-	}
     /*
      * UITableViewDelegate 
      * These are shared by patch and user detail views.
@@ -257,35 +250,34 @@ extension BaseDetailViewController {
 		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
 			let entity = queryResult.object as? Message {
 				
-				if entity.id_ != nil {
-					if let cachedHeight = self.rowHeights.objectForKey(entity.id_) as? CGFloat {
-						return cachedHeight
-					}
+			if entity.id_ != nil {
+				if let cachedHeight = self.rowHeights.objectForKey(entity.id_) as? CGFloat {
+					return cachedHeight
 				}
-				
-				var cellType: CellType = .TextAndPhoto
-				if entity.type != nil && entity.type == "share" {
-					cellType = .Share
-				}
-				else if entity.photo == nil {
-					cellType = .Text
-				}
-				else if entity.description_ == nil {
-					cellType = .Photo
-				}
-				
-				let view = MessageView(cellType: cellType, entity: nil)
-				view.showPatchName = self.patchNameVisible
-				view.bindToEntity(entity)
-				
-				let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
-				let viewHeight = view.sizeThatFits(CGSizeMake(viewWidth - 24, CGFloat.max)).height + 24 + 1 // Add one for row separator
-				
-				if entity.id_ != nil {
-					self.rowHeights[entity.id_] = viewHeight
-				}
-				
-				return viewHeight
+			}
+			
+			var view = self.photoTextMessage
+			if entity.type != nil && entity.type == "share" {
+				view = self.shareMessage
+			}
+			else if entity.photo == nil {
+				view = self.textMessage
+			}
+			else if entity.description_ == nil {
+				view = self.photoMessage
+			}
+			
+			view.showPatchName = self.patchNameVisible	// Need this again because this is temp and not the real cell
+			view.bindToEntity(entity)
+			
+			let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
+			let viewHeight = view.sizeThatFits(CGSizeMake(viewWidth - 24, CGFloat.max)).height + 24 + 1 // Add one for row separator
+			
+			if entity.id_ != nil {
+				self.rowHeights[entity.id_] = viewHeight
+			}
+			
+			return viewHeight
 		}
 		return 0
 	}

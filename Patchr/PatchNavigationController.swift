@@ -22,7 +22,7 @@ class PatchNavigationController: UINavigationController {
 		
 		self.view.accessibilityIdentifier = View.Patches
 		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "userDidLogin:", name: Events.UserDidLogin, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchNavigationController.userDidLogin(_:)), name: Events.UserDidLogin, object: nil)
 		
 		let segItems = UserController.instance.authenticated
 			? ["Nearby", "Member", "Own", "Explore"]
@@ -32,7 +32,7 @@ class PatchNavigationController: UINavigationController {
         
         self.segmentedControl = UISegmentedControl(items: segItems)
         self.segmentedControl.sizeToFit()
-        self.segmentedControl.addTarget(self.segmentsController, action: Selector("indexDidChangeForSegmentedControl:"), forControlEvents: .ValueChanged)
+		self.segmentedControl.addTarget(self.segmentsController, action:  #selector(self.segmentsController.indexDidChangeForSegmentedControl(_:)), forControlEvents: .ValueChanged)
         self.segmentedControl.selectedSegmentIndex = 0
 		self.segmentedControl.tintAdjustmentMode = .Normal
         self.segmentsController.indexDidChangeForSegmentedControl(self.segmentedControl)
@@ -48,7 +48,7 @@ class PatchNavigationController: UINavigationController {
     
     func addAction(sender: AnyObject?) {
         if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to create patches and more.")
+			UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to create patches and more.")
             return
         }
 		

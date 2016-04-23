@@ -86,10 +86,10 @@ class InviteViewController: BaseViewController {
 		self.inviteViaButton.setTitle("MORE", forState: .Normal)
 		self.doneButton.setTitle("FINISHED", forState: .Normal)
 		
-		self.invitePatchrButton.addTarget(self, action: Selector("invitePatchrAction:"), forControlEvents: .TouchUpInside)
-		self.inviteFacebookButton.addTarget(self, action: Selector("inviteFacebookAction:"), forControlEvents: .TouchUpInside)
-		self.inviteViaButton.addTarget(self, action: Selector("inviteViaAction:"), forControlEvents: .TouchUpInside)
-		self.doneButton.addTarget(self, action: Selector("doneAction:"), forControlEvents: .TouchUpInside)
+		self.invitePatchrButton.addTarget(self, action: #selector(InviteViewController.invitePatchrAction(_:)), forControlEvents: .TouchUpInside)
+		self.inviteFacebookButton.addTarget(self, action: #selector(InviteViewController.inviteFacebookAction(_:)), forControlEvents: .TouchUpInside)
+		self.inviteViaButton.addTarget(self, action: #selector(InviteViewController.inviteViaAction(_:)), forControlEvents: .TouchUpInside)
+		self.doneButton.addTarget(self, action: #selector(InviteViewController.doneAction(_:)), forControlEvents: .TouchUpInside)
 		
 		self.contentHolder.addSubview(self.message)
 		self.contentHolder.addSubview(self.invitePatchrButton)
@@ -98,7 +98,7 @@ class InviteViewController: BaseViewController {
 		self.contentHolder.addSubview(self.doneButton)
 		
 		/* Navigation bar buttons */
-		let submitButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: "doneAction:")
+		let submitButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: #selector(InviteViewController.doneAction(_:)))
 		self.navigationItem.leftBarButtonItems = []
 		self.navigationItem.hidesBackButton = true
 		self.navigationItem.rightBarButtonItems = [submitButton]

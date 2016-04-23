@@ -98,9 +98,9 @@ public class S3: NSObject {
         return nil
     }
     
-    func uploadImage(var image: UIImage, key: String, bucket: String, shared: Bool = false) {
+    func uploadImage(image inImage: UIImage, key: String, bucket: String, shared: Bool = false) {
         Log.d("Posting image to s3...")
-        image = Utils.prepareImage(image)   // resizing
+        let image = Utils.prepareImage(image: inImage)   // resizing
         /*
          * We need to stash the image as a file in the shared container in NSData format.
          */

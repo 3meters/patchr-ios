@@ -24,10 +24,10 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate {
 		super.viewWillAppear(animated)
 		
 		let notificationCenter = NSNotificationCenter.defaultCenter()
-		notificationCenter.addObserver(self, selector: "photoDidChange:", name: Events.PhotoDidChange, object: nil)
-		notificationCenter.addObserver(self, selector: "photoViewHasFocus:", name: Events.PhotoViewHasFocus, object: nil)
-		notificationCenter.addObserver(self, selector: "keyboardWillBeShown:", name: UIKeyboardWillShowNotification, object: nil)
-		notificationCenter.addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
+		notificationCenter.addObserver(self, selector: #selector(BaseEditViewController.photoDidChange(_:)), name: Events.PhotoDidChange, object: nil)
+		notificationCenter.addObserver(self, selector: #selector(BaseEditViewController.photoViewHasFocus(_:)), name: Events.PhotoViewHasFocus, object: nil)
+		notificationCenter.addObserver(self, selector: #selector(BaseEditViewController.keyboardWillBeShown(_:)), name: UIKeyboardWillShowNotification, object: nil)
+		notificationCenter.addObserver(self, selector: #selector(BaseEditViewController.keyboardWillBeHidden(_:)), name: UIKeyboardWillHideNotification, object: nil)
 	}
 	
 	override func viewDidDisappear(animated: Bool) {

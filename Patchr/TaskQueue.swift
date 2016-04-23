@@ -106,7 +106,7 @@ class TaskQueue: CustomStringConvertible {
         objc_sync_enter(self)
         if self.tasks.count > 0 {
             task = self.tasks.removeAtIndex(0)
-            self.numberOfActiveTasks++
+            self.numberOfActiveTasks += 1
         }
         objc_sync_exit(self)
 
@@ -121,7 +121,7 @@ class TaskQueue: CustomStringConvertible {
         
         let executeTask = {
             task!(self.maximumNumberOfActiveTasks>1 ? nil: result) { (nextResult: AnyObject?) in
-                self.numberOfActiveTasks--
+                self.numberOfActiveTasks -= 1
                 self._runNextTask(nextResult)
             }
         }
@@ -185,7 +185,7 @@ class TaskQueue: CustomStringConvertible {
         currentTask = nil
         
         self._delay(seconds: delay) {
-            self.numberOfActiveTasks--
+            self.numberOfActiveTasks -= 1
             self._runNextTask(self.lastResult)
         }
     }

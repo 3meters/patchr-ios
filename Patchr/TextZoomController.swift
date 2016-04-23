@@ -75,7 +75,7 @@ class TextZoomController: BaseViewController {
 		self.messageHolder.addSubview(self.description_)
 		self.messageHolder.addSubview(self.buttonCancel)
 
-		self.buttonCancel.addTarget(self, action: Selector("cancelAction:"), forControlEvents: .TouchUpInside)
+		self.buttonCancel.addTarget(self, action: #selector(TextZoomController.cancelAction(_:)), forControlEvents: .TouchUpInside)
 	}
 }
 

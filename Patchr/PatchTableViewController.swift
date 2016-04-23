@@ -70,8 +70,8 @@ class PatchTableViewController: BaseTableViewController {
 		
 		self.tableView.accessibilityIdentifier = Table.Patches
 		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didReceiveRemoteNotification:", name: Events.DidReceiveRemoteNotification, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidBecomeActive:", name: UIApplicationDidBecomeActiveNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchTableViewController.didReceiveRemoteNotification(_:)), name: Events.DidReceiveRemoteNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidBecomeActive(_:)), name: UIApplicationDidBecomeActiveNotification, object: nil)
 	}
 	
     override func viewWillAppear(animated: Bool) {
@@ -203,7 +203,7 @@ class PatchTableViewController: BaseTableViewController {
 		}
 		else {
 			self.emptyLabel.setTitleColor(Theme.colorButtonTitle, forState: .Normal)
-			self.emptyLabel.addTarget(self, action: Selector("presentPermissionAction:"), forControlEvents: .TouchUpInside)
+			self.emptyLabel.addTarget(self, action: #selector(PatchTableViewController.presentPermissionAction(_:)), forControlEvents: .TouchUpInside)
 		}
 		
 		clearQueryItems()
@@ -475,9 +475,9 @@ class PatchTableViewController: BaseTableViewController {
     }
 	
     func registerForLocationNotifications() {
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "locationWasDenied:", name: Events.LocationWasDenied, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "locationWasAllowed:", name: Events.LocationWasAllowed, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "locationWasUpdated:", name: Events.LocationWasUpdated, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchTableViewController.locationWasDenied(_:)), name: Events.LocationWasDenied, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchTableViewController.locationWasAllowed(_:)), name: Events.LocationWasAllowed, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchTableViewController.locationWasUpdated(_:)), name: Events.LocationWasUpdated, object: nil)
     }
 	
     func unregisterForLocationNotifications(){

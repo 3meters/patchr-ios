@@ -26,11 +26,16 @@ class SegmentsController: NSObject {
         self.navigationController.setViewControllers([incomingViewController], animated: false)
         
         incomingViewController.navigationItem.titleView = segmentedControl
-        
-        let addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self.navigationController, action: Selector("addAction:"))
-        let mapButton = UIBarButtonItem(title: "Map", style: UIBarButtonItemStyle.Plain, target: incomingViewController, action: Selector("mapAction:"))
-        incomingViewController.navigationItem.leftBarButtonItem = mapButton
-        incomingViewController.navigationItem.rightBarButtonItem = addButton
+		
+		if let controller = incomingViewController as? PatchTableViewController {
+			let mapButton = UIBarButtonItem(title: "Map", style: UIBarButtonItemStyle.Plain, target: incomingViewController, action: #selector(controller.mapAction(_:)))
+			incomingViewController.navigationItem.leftBarButtonItem = mapButton
+		}
+		
+		if let navController = self.navigationController as? PatchNavigationController {
+			let addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self.navigationController, action: #selector(navController.addAction(_:)))
+			incomingViewController.navigationItem.rightBarButtonItem = addButton
+		}
     }
 }
 

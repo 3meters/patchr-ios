@@ -149,7 +149,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 		self.progress!.mode = MBProgressHUDMode.Indeterminate
 		self.progress!.styleAs(.ActivityWithText)
 		self.progress!.labelText = self.progressStartLabel
-		self.progress!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("userCancelTaskAction:")))
+		self.progress!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(MessageEditViewController.userCancelTaskAction(_:))))
 		self.progress!.removeFromSuperViewOnHide = true
 		self.progress!.show(true)
 
@@ -318,8 +318,8 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 			}
 			
 			/* Navigation bar buttons */
-			let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancelAction:")
-			let doneButton = UIBarButtonItem(title: "Send", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("doneAction:"))
+			let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: #selector(MessageEditViewController.cancelAction(_:)))
+			let doneButton = UIBarButtonItem(title: "Send", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(MessageEditViewController.doneAction(_:)))
 			self.navigationItem.leftBarButtonItems = [cancelButton]
 			self.navigationItem.rightBarButtonItems = [doneButton]
 		}
@@ -336,8 +336,8 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 				self.cancelledLabel = "Post cancelled"
 				
 				/* Navigation bar buttons */
-				let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancelAction:")
-				let doneButton = UIBarButtonItem(title: "Post", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("doneAction:"))
+				let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: #selector(MessageEditViewController.cancelAction(_:)))
+				let doneButton = UIBarButtonItem(title: "Post", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(MessageEditViewController.doneAction(_:)))
 				self.navigationItem.leftBarButtonItems = [cancelButton]
 				self.navigationItem.rightBarButtonItems = [doneButton]
 			}
@@ -351,9 +351,9 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 				
 				/* Navigation bar buttons */
 				self.navigationItem.title = "Edit message"
-				let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancelAction:")
-				let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
-				let doneButton = UIBarButtonItem(title: "Save", style: .Plain, target: self, action: "doneAction:")
+				let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: #selector(MessageEditViewController.cancelAction(_:)))
+				let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: #selector(MessageEditViewController.deleteAction(_:)))
+				let doneButton = UIBarButtonItem(title: "Save", style: .Plain, target: self, action: #selector(MessageEditViewController.doneAction(_:)))
 				self.navigationItem.leftBarButtonItems = [cancelButton]
 				self.navigationItem.rightBarButtonItems = [doneButton, Utils.spacer, deleteButton]
 			}
@@ -407,7 +407,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 			queue.tasks +=~ { _, next in
 				
 				/* Ensure image is resized/rotated before upload */
-				image = Utils.prepareImage(image)
+				image = Utils.prepareImage(image: image)
 				
 				/* Generate image key */
 				let imageKey = "\(Utils.genImageKey()).jpg"
@@ -786,7 +786,7 @@ extension MessageEditViewController: THContactPickerDelegate {
 			if let timer = self.searchTimer {
 				timer.invalidate()
 			}
-			self.searchTimer = NSTimer(timeInterval:0.2, target:self, selector:Selector("suggest"), userInfo:nil, repeats:false)
+			self.searchTimer = NSTimer(timeInterval:0.2, target:self, selector:#selector(MessageEditViewController.suggest), userInfo:nil, repeats:false)
 			NSRunLoop.currentRunLoop().addTimer(self.searchTimer!, forMode: "NSDefaultRunLoopMode")
 		}
 		else {

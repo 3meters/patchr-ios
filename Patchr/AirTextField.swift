@@ -40,7 +40,7 @@ class AirTextField: UITextField {
 	}
 	
 	func initialize() {
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "editingBegin:", name: UITextFieldTextDidBeginEditingNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AirTextField.editingBegin(_:)), name: UITextFieldTextDidBeginEditingNotification, object: nil)
 		self.rule.backgroundColor = Theme.colorRule
 		self.font = Theme.fontText
 		self.textColor = Theme.colorText

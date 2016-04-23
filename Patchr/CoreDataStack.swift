@@ -165,15 +165,15 @@ class CoreDataStack: NSObject {
 
 	func registerForNotifications() {
 		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "mainManagedObjectContextDidSave:",
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(CoreDataStack.mainManagedObjectContextDidSave(_:)),
 			name: NSManagedObjectContextDidSaveNotification, object: self.stackMainContext)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "appWillResignActive:",
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(CoreDataStack.appWillResignActive(_:)),
 			name: UIApplicationWillResignActiveNotification, object: self.stackMainContext)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "persistentStoreCoordinatorStoresWillChange:",
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(CoreDataStack.persistentStoreCoordinatorStoresWillChange(_:)),
 			name: NSPersistentStoreCoordinatorStoresWillChangeNotification, object: self.persistentStoreCoordinator)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "persistentStoreCoordinatorStoresDidChange:",
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(CoreDataStack.persistentStoreCoordinatorStoresDidChange(_:)),
 			name: NSPersistentStoreCoordinatorStoresDidChangeNotification, object: self.persistentStoreCoordinator)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "persistentStoreDidImportUbiquitousContentChanges:",
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(CoreDataStack.persistentStoreDidImportUbiquitousContentChanges(_:)),
 			name: NSPersistentStoreDidImportUbiquitousContentChangesNotification, object: self.persistentStoreCoordinator)
 	}
 	

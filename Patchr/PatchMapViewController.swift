@@ -99,7 +99,7 @@ class PatchMapViewController: UIViewController {
 			title: self.locationDelegate.locationTitle ?? nil,
 			subtitle: self.locationDelegate.locationSubtitle ?? nil)
 		
-		let press = UILongPressGestureRecognizer(target: self, action: "longPress:");
+		let press = UILongPressGestureRecognizer(target: self, action: #selector(PatchMapViewController.longPress(_:)));
 		self.view.addGestureRecognizer(press)
 		
 		self.mapView.addAnnotation(self.annotation)

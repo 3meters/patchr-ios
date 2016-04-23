@@ -137,7 +137,7 @@ class PasswordResetViewController: BaseEditViewController {
 		self.submitButton.setTitle("RESET", forState: .Normal)
 		self.submitButton.accessibilityIdentifier = Button.Submit
 		self.contentHolder.addSubview(self.submitButton)
-		self.submitButton.addTarget(self, action: Selector("submitAction:"), forControlEvents: .TouchUpInside)
+		self.submitButton.addTarget(self, action: #selector(PasswordResetViewController.submitAction(_:)), forControlEvents: .TouchUpInside)
 		
 		if !self.resetActive {
 			
@@ -176,7 +176,7 @@ class PasswordResetViewController: BaseEditViewController {
 			
 			self.hideShowButton.bounds.size = CGSizeMake(48, 48)
 			self.hideShowButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
-			self.hideShowButton.addTarget(self, action: Selector("hideShowPasswordAction:"), forControlEvents: .TouchUpInside)
+			self.hideShowButton.addTarget(self, action: #selector(PasswordResetViewController.hideShowPasswordAction(_:)), forControlEvents: .TouchUpInside)
 			
 			self.submitButton.setTitle("RESET", forState: .Normal)
 		}

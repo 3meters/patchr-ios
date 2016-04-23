@@ -124,7 +124,7 @@ class PatchEditViewController: BaseEditViewController {
 		self.progress!.mode = MBProgressHUDMode.Indeterminate
 		self.progress!.styleAs(.ActivityWithText)
 		self.progress!.labelText = self.progressStartLabel
-		self.progress!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("userCancelTaskAction:")))
+		self.progress!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(PatchEditViewController.userCancelTaskAction(_:))))
 		self.progress!.removeFromSuperViewOnHide = true
 		self.progress!.show(true)
 
@@ -239,11 +239,11 @@ class PatchEditViewController: BaseEditViewController {
 		self.descriptionField.delegate = self
 		
 		self.visibilityLabel.text = "Private Patch"
-		self.visibilitySwitch.addTarget(self, action: Selector("visibilityChanged:"), forControlEvents: .TouchUpInside)
+		self.visibilitySwitch.addTarget(self, action: #selector(PatchEditViewController.visibilityChanged(_:)), forControlEvents: .TouchUpInside)
 		
 		self.locationLabel.text = "Location"
 		self.locationAddress.titleLabel!.font = Theme.fontTextDisplay
-		self.locationAddress.addTarget(self, action: Selector("locationAction:"), forControlEvents: .TouchUpInside)
+		self.locationAddress.addTarget(self, action: #selector(PatchEditViewController.locationAction(_:)), forControlEvents: .TouchUpInside)
 		
 		self.typeLabel.text = "Patch Type"
 		self.typeButtonEvent.setTitle("Event", forState: .Normal)		
@@ -252,10 +252,10 @@ class PatchEditViewController: BaseEditViewController {
 		self.typeButtonProject.setTitle("Project", forState: .Normal)
 		self.typeButtonEvent.otherButtons = [self.typeButtonGroup, self.typeButtonPlace, self.typeButtonProject]
 		
-		self.typeButtonEvent.addTarget(self, action: Selector("typeSelected:"), forControlEvents: .TouchUpInside)
-		self.typeButtonGroup.addTarget(self, action: Selector("typeSelected:"), forControlEvents: .TouchUpInside)
-		self.typeButtonPlace.addTarget(self, action: Selector("typeSelected:"), forControlEvents: .TouchUpInside)
-		self.typeButtonProject.addTarget(self, action: Selector("typeSelected:"), forControlEvents: .TouchUpInside)
+		self.typeButtonEvent.addTarget(self, action: #selector(PatchEditViewController.typeSelected(_:)), forControlEvents: .TouchUpInside)
+		self.typeButtonGroup.addTarget(self, action: #selector(PatchEditViewController.typeSelected(_:)), forControlEvents: .TouchUpInside)
+		self.typeButtonPlace.addTarget(self, action: #selector(PatchEditViewController.typeSelected(_:)), forControlEvents: .TouchUpInside)
+		self.typeButtonProject.addTarget(self, action: #selector(PatchEditViewController.typeSelected(_:)), forControlEvents: .TouchUpInside)
 		
 		self.visibilityGroup.addSubview(self.visibilityLabel)
 		self.visibilityGroup.addSubview(self.visibilitySwitch)
@@ -285,8 +285,8 @@ class PatchEditViewController: BaseEditViewController {
 			self.cancelledLabel = "Activation cancelled"
 			
 			/* Navigation bar buttons */
-			let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancelAction:")
-			let nextButton = UIBarButtonItem(title: "Next", style: UIBarButtonItemStyle.Plain, target: self, action: Selector("doneAction:"))
+			let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: #selector(PatchEditViewController.cancelAction(_:)))
+			let nextButton = UIBarButtonItem(title: "Next", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(PatchEditViewController.doneAction(_:)))
 			self.navigationItem.leftBarButtonItems = [cancelButton]
 			self.navigationItem.rightBarButtonItems = [nextButton]
 		}
@@ -299,9 +299,9 @@ class PatchEditViewController: BaseEditViewController {
 			self.doneButton.hidden = true
 			
 			/* Navigation bar buttons */
-			let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancelAction:")
-			let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteAction:")
-			let saveButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "doneAction:")
+			let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: #selector(PatchEditViewController.cancelAction(_:)))
+			let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: #selector(PatchEditViewController.deleteAction(_:)))
+			let saveButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: #selector(PatchEditViewController.doneAction(_:)))
 			self.navigationItem.leftBarButtonItems = [cancelButton]
 			self.navigationItem.rightBarButtonItems = [saveButton, Utils.spacer, deleteButton]
 		}
@@ -371,7 +371,7 @@ class PatchEditViewController: BaseEditViewController {
 			queue.tasks +=~ { _, next in
 				
 				/* Ensure image is resized/rotated before upload */
-				image = Utils.prepareImage(image)
+				image = Utils.prepareImage(image: image)
 				
 				/* Generate image key */
 				let imageKey = "\(Utils.genImageKey()).jpg"

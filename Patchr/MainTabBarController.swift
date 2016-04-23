@@ -71,8 +71,8 @@ class MainTabBarController: UITabBarController {
 	
 	func initialize() {
 		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationWillEnterForeground:", name: UIApplicationWillEnterForegroundNotification, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "reachabilityChanged", name: kReachabilityChangedNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(UIApplicationDelegate.applicationWillEnterForeground(_:)), name: UIApplicationWillEnterForegroundNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MainTabBarController.reachabilityChanged), name: kReachabilityChangedNotification, object: nil)
 		
 		delegate = self
 		
@@ -163,13 +163,13 @@ extension MainTabBarController: UITabBarControllerDelegate {
 					controller.entityId = UserController.instance.userId
 				}
 				else {
-					UserController.instance.showGuestGuard(self, message: nil)
+					UserController.instance.showGuestGuard(controller: self, message: nil)
 					return false
 				}
 			}
 			else if let _ = navigationController.topViewController as? NotificationsTableViewController {
 				if !UserController.instance.authenticated {
-					UserController.instance.showGuestGuard(self, message: nil)
+					UserController.instance.showGuestGuard(controller: self, message: nil)
 					return false
 				}
 			}

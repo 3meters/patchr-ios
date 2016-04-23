@@ -177,7 +177,7 @@ class ShareViewController: SLComposeServiceViewController {
         let message = buildMessage(imageKey)
         Proxibase.sharedService.postMessage(message, patch: self.patch!)
         if self.image != nil {
-            S3.sharedService.uploadImage(self.image!, key: imageKey, bucket: S3.sharedService.imageBucket, shared: true)
+            S3.sharedService.uploadImage(image: self.image!, key: imageKey, bucket: S3.sharedService.imageBucket, shared: true)
         }
         self.extensionContext?.completeRequestReturningItems([], completionHandler: nil)
     }

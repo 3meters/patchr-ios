@@ -255,8 +255,8 @@ class NotificationsTableViewController: BaseTableViewController {
     *--------------------------------------------------------------------------------------------*/
 	
 	func initialize() {
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didReceiveRemoteNotification:", name: Events.DidReceiveRemoteNotification, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidBecomeActive:", name: UIApplicationDidBecomeActiveNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(NotificationsTableViewController.didReceiveRemoteNotification(_:)), name: Events.DidReceiveRemoteNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidBecomeActive(_:)), name: UIApplicationDidBecomeActiveNotification, object: nil)
 		self.view.accessibilityIdentifier = View.Notifications
 		self.tableView.accessibilityIdentifier = Table.Notifications
 	}
@@ -310,13 +310,13 @@ class NotificationsTableViewController: BaseTableViewController {
             if targetId.hasPrefix("me.") {
 				let controller = MessageDetailViewController()
 				controller.inputMessageId = targetId
-				controller.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: Selector("dismissAction:"))
+				controller.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: #selector(controller.dismissAction(_:)))
 				UIViewController.topMostViewController()?.presentViewController(UINavigationController(rootViewController: controller), animated: true, completion: nil)
             }
             else if targetId.hasPrefix("pa.") {
 				let controller = PatchDetailViewController()
 				controller.entityId = targetId
-				controller.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: Selector("dismissAction:"))
+				controller.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: #selector(controller.dismissAction(_:)))
 				UIViewController.topMostViewController()?.presentViewController(UINavigationController(rootViewController: controller), animated: true, completion: nil)
             }
         }
@@ -471,11 +471,4 @@ extension NotificationsTableViewController {
 			return 0
 		}
 	}
-}
-
-extension NotificationsTableViewController: TTTAttributedLabelDelegate {
-    
-    func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
-        UIApplication.sharedApplication().openURL(url)
-    }
 }

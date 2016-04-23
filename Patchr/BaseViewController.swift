@@ -27,7 +27,7 @@ class BaseViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		
-		let tap = UITapGestureRecognizer(target: self, action: "dismissKeyboard:");
+		let tap = UITapGestureRecognizer(target: self, action: #selector(BaseViewController.dismissKeyboard(_:)));
 		tap.delegate = self
 		tap.cancelsTouchesInView = false
 		self.view.addGestureRecognizer(tap)

@@ -98,7 +98,7 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 		loadSearches()
 		
 		/* Navigation bar buttons */
-		let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancelAction:")
+		let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: #selector(PhotoPickerViewController.cancelAction(_:)))
 		cancelButton.accessibilityIdentifier = "nav_cancel_button"
 		self.navigationItem.leftBarButtonItems = [cancelButton]
 	}

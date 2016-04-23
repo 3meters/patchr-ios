@@ -83,7 +83,7 @@ class SearchViewController: UITableViewController {
         }
         else if textField.text!.length >= 2 {
             /* To limit network activity, reload half a second after last key press. */
-            self.searchTimer = NSTimer(timeInterval:0.5, target:self, selector:Selector("suggest"), userInfo:nil, repeats:false)
+            self.searchTimer = NSTimer(timeInterval:0.5, target:self, selector:#selector(SearchViewController.suggest), userInfo:nil, repeats:false)
             NSRunLoop.currentRunLoop().addTimer(self.searchTimer!, forMode: "NSDefaultRunLoopMode")
         }
     }
@@ -120,7 +120,7 @@ class SearchViewController: UITableViewController {
 		self.currentItems = self.recentItems
 		
 		self.searchField.placeholder = "Search for patches"
-		self.searchField.addTarget(self, action: Selector("textFieldDidChange:"), forControlEvents: UIControlEvents.EditingChanged)
+		self.searchField.addTarget(self, action: #selector(SearchViewController.textFieldDidChange(_:)), forControlEvents: UIControlEvents.EditingChanged)
 		self.searchField.delegate = self		
 		self.header.addSubview(self.searchField)
 		
@@ -128,7 +128,7 @@ class SearchViewController: UITableViewController {
 		self.tableView.backgroundColor = UIColor.whiteColor()
 		self.tableView.tableFooterView = UIView()   // Triggers data binding
 		
-		let gestureRecognizer = UITapGestureRecognizer(target: self, action: Selector("dismissKeyboard"))
+		let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(SearchViewController.dismissKeyboard))
 		gestureRecognizer.cancelsTouchesInView = false
 		self.tableView.addGestureRecognizer(gestureRecognizer)
 	}

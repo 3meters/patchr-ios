@@ -27,7 +27,7 @@ class PhotoBrowser: IDMPhotoBrowser {
 		self.displayDoneButton = false	// Prevent display of non-navbar done button
         initialize()
     }
-    
+	
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
@@ -44,7 +44,7 @@ class PhotoBrowser: IDMPhotoBrowser {
         
         let flexSpacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)
         let fixedSpacer = UIBarButtonItem(barButtonSystemItem: .FixedSpace, target: self, action: nil)
-        let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("actionButtonPressed:"))    // Handled by IDMPhotoBrowser
+		let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: #selector(IDMPhotoBrowser.actionButtonPressed(_:)))    // Handled by IDMPhotoBrowser
         
         self.likeButton.frame = CGRectMake(0, 0, 44, 44)
         self.likeButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: 8, bottom: 10, right:8)

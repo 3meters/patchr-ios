@@ -411,7 +411,7 @@ public class Proxibase {
 	
 	public func updatePassword(userId: NSString, password: NSString, passwordNew: NSString, completion: CompletionBlock) {
 		let parameters = ["userId": userId, "oldPassword": password, "newPassword": passwordNew, "installId": UserController.instance.installId]
-		sessionManager.POST("user/changepw", parameters: addSessionParameters(parameters),
+		sessionManager.POST("user/changepw", parameters: addSessionParameters(parameters: parameters),
 			success: {
 				dataTask, response in
 				UserController.instance.handlePasswordChange(response)
@@ -494,8 +494,9 @@ public class Proxibase {
         performPOSTRequestFor("do/updateProximity", parameters: parameters, completion: completion)
     }
 
-	private func addSessionParameters(var parameters: NSDictionary) -> NSDictionary {
+	private func addSessionParameters(parameters inParameters: NSDictionary) -> NSDictionary {
 		/* Skip if already includes a sessionKey */
+		var parameters = inParameters
 		if parameters["session"] == nil {
 			if UserController.instance.authenticated {
 				let userId         = UserController.instance.userId as NSString?
@@ -512,9 +513,10 @@ public class Proxibase {
 	 * Rest
 	 *--------------------------------------------------------------------------------------------*/
     
-	private func performPOSTRequestFor(path: NSString, var parameters: NSDictionary, addLocation: Bool = false, completion: CompletionBlock) -> NSURLSessionTask {
+	private func performPOSTRequestFor(path: NSString, parameters inParameters: NSDictionary, addLocation: Bool = false, completion: CompletionBlock) -> NSURLSessionTask {
         
-        parameters = addSessionParameters(parameters)
+		var parameters = inParameters
+        parameters = addSessionParameters(parameters: parameters)
         
         if addLocation {
             if let location = LocationController.instance.lastLocationAccepted() {
@@ -544,7 +546,7 @@ public class Proxibase {
 	}
 
 	private func performGETRequestFor(path: NSString, parameters: NSDictionary, completion: CompletionBlock) {
-		sessionManager.GET(path as String, parameters: addSessionParameters(parameters),
+		sessionManager.GET(path as String, parameters: addSessionParameters(parameters: parameters),
 						   success: {
 							   dataTask, response in
 							   completion(response: response, error: nil)
@@ -556,7 +558,7 @@ public class Proxibase {
 	}
 
 	private func performDELETERequestFor(path: NSString, parameters: NSDictionary, completion: CompletionBlock) {
-		sessionManager.DELETE(path as String, parameters: addSessionParameters(parameters),
+		sessionManager.DELETE(path as String, parameters: addSessionParameters(parameters: parameters),
 							  success: {
 								  dataTask, response in
 								  completion(response: response, error: nil)

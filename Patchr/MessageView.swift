@@ -10,11 +10,11 @@ import UIKit
 import SDWebImage
 
 class MessageView: BaseView {
-
+	
 	var cellType		: CellType = .TextAndPhoto
 	var showPatchName	= true
 	
-	var description_	: TTTAttributedLabel?
+	var description_	: UILabel?
 	var photo			: UIButton?
 	
 	var patchName		= AirLabelDisplay()
@@ -25,7 +25,7 @@ class MessageView: BaseView {
 	var recipients		= AirLabelDisplay()
 	
 	var toolbar			= UIView()
-	var likeButton		= AirLikeButton(frame: CGRectZero)
+	var likeButton		: AirLikeButton?
 	var likes			= AirLabelDisplay()
 	
 	init(cellType: CellType?) {
@@ -132,8 +132,10 @@ class MessageView: BaseView {
 		}
 		else {
 			self.toolbar.alignUnder(bottomView!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 0, height: 48)
-			self.likeButton.anchorCenterLeftWithLeftPadding(0, width: self.likeButton.width(), height: self.likeButton.height())
-			self.likeButton.frame.origin.x -= 12
+			if likeButton != nil {
+				self.likeButton!.anchorCenterLeftWithLeftPadding(0, width: self.likeButton!.width(), height: self.likeButton!.height())
+				self.likeButton!.frame.origin.x -= 12
+			}
 			self.likes.sizeToFit()
 			self.likes.anchorCenterRightWithRightPadding(0, width: 72, height: self.likes.height())
 		}
@@ -146,7 +148,7 @@ class MessageView: BaseView {
 				if let message = self.entity as? Message where message.id_ != nil && entityId == message.id_ {
 					
 					/* Likes button */
-					self.likeButton.bindEntity(message)
+					self.likeButton?.bindEntity(message)
 
 					self.likes.text = nil
 					if message.countLikes != nil {
@@ -176,6 +178,7 @@ class MessageView: BaseView {
 		/* Description */
 		if self.cellType != .Photo {
 			self.description_ = TTTAttributedLabel(frame: CGRectZero)
+			//			self.description_ = UILabel(frame: CGRectZero)
 			self.description_!.numberOfLines = 5
 			self.description_!.font = Theme.fontTextList
 			self.addSubview(self.description_!)
@@ -224,20 +227,23 @@ class MessageView: BaseView {
 			self.addSubview(self.recipients)
 		}
 		else {
-			self.likeButton.imageView!.tintColor = Theme.colorTint
-			self.likeButton.bounds.size = CGSizeMake(48, 48)
-			self.likeButton.imageEdgeInsets = UIEdgeInsetsMake(14, 12, 14, 12)
+			self.likeButton = AirLikeButton(frame: CGRectZero)
+			if (self.likeButton != nil) {
+				self.likeButton!.imageView!.tintColor = Theme.colorTint
+				self.likeButton!.bounds.size = CGSizeMake(48, 48)
+				self.likeButton!.imageEdgeInsets = UIEdgeInsetsMake(14, 12, 14, 12)
+				self.toolbar.addSubview(self.likeButton!)
+			}
 
 			self.likes.font = Theme.fontComment
 			self.likes.textColor = Theme.colorTextTitle
 			self.likes.textAlignment = .Right
 			
-			self.toolbar.addSubview(self.likeButton)
 			self.toolbar.addSubview(self.likes)
 			self.addSubview(self.toolbar)
 		}
 		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "likeDidChange:", name: Events.LikeDidChange, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MessageView.likeDidChange(_:)), name: Events.LikeDidChange, object: nil)
 	}
 	
 	func bindToEntity(entity: AnyObject) {
@@ -249,9 +255,12 @@ class MessageView: BaseView {
 		let linkColor = Theme.colorTint
 		let linkActiveColor = Theme.colorTint
 		
-		self.description_?.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
-		self.description_?.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
-		self.description_?.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
+		if self.description_ != nil && self.description_!.isKindOfClass(TTTAttributedLabel) {
+			let label = self.description_ as! TTTAttributedLabel
+			label.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
+			label.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
+			label.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
+		}
 		
 		if let description = entity.description_ {
 			self.description_?.text = description
@@ -289,7 +298,7 @@ class MessageView: BaseView {
 			}
 			else {
 				/* Likes button */
-				self.likeButton.bindEntity(message)
+				self.likeButton?.bindEntity(message)
 				
 				self.likes.text = nil
 				if message.countLikes != nil {
@@ -347,7 +356,12 @@ class MessageView: BaseView {
 			}
 			else {
 				self.likes.sizeToFit()
-				heightAccum += (max(self.likeButton.height() - 14, self.likes.height())) // Like button
+				if self.likeButton != nil {
+					heightAccum += (max(self.likeButton!.height() - 14, self.likes.height())) // Like button
+				}
+				else {
+					heightAccum += self.likes.height()
+				}
 			}
 			
 			let height = max(self.userPhoto.height(), heightAccum)
