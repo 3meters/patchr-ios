@@ -32,7 +32,7 @@ class AirMuteButton: AirToggleButton {
 	func bindEntity(entity: Entity?) {
 		self.entity = entity
         if let patch = self.entity as? Patch {
-            toggleOn(!patch.userWatchMutedValue)
+            toggleOn(!patch.userWatchMutedValue, animate: false)
         }
 	}
 

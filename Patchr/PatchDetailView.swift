@@ -29,7 +29,6 @@ class PatchDetailView: BaseDetailView {
 	var mapButton			= AirToolButton()
 	var watchersButton		= AirLinkButton()
 	var soundButton			= AirMuteButton()
-	var watchButton			= AirWatchButton()
 	var moreButton			= AirToolButton()
 	
 	var contextGroup		= AirRuleView()
@@ -96,7 +95,6 @@ class PatchDetailView: BaseDetailView {
 		self.buttonGroup.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 48)
 		self.mapButton.anchorCenterLeftWithLeftPadding(0, width: self.mapButton.width(), height: self.mapButton.height())
 		self.moreButton.anchorCenterRightWithRightPadding(0, width: self.moreButton.width(), height: self.moreButton.height())
-		self.watchButton.alignToTheLeftOf(self.soundButton, matchingCenterWithRightPadding: 0, width: self.watchButton.width(), height: self.watchButton.height())
 		self.soundButton.alignToTheLeftOf(self.moreButton, matchingCenterWithRightPadding: 0, width: self.soundButton.width(), height: self.soundButton.height())
 		self.watchersButton.sizeToFit()
 		self.watchersButton.anchorCenterLeftFillingHeightWithTopPadding(0, bottomPadding: 0, leftPadding: 68, width: 112)
@@ -186,7 +184,6 @@ class PatchDetailView: BaseDetailView {
 		self.buttonGroup.addSubview(self.mapButton)
 		self.buttonGroup.addSubview(self.watchersButton)
 		self.buttonGroup.addSubview(self.soundButton)
-		self.buttonGroup.addSubview(self.watchButton)
 		self.buttonGroup.addSubview(self.moreButton)
 		
 		self.bannerGroup.addSubview(self.photo)
@@ -291,16 +288,6 @@ class PatchDetailView: BaseDetailView {
 		self.watchersButton.alpha = 0.0
 		self.watchersButton.contentHorizontalAlignment = .Left
 		
-		self.watchButton.tintOff = Theme.colorActionOff
-		self.watchButton.tintOn = Theme.colorActionOn
-		self.watchButton.tintPending = Colors.accentColor
-		self.watchButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
-		self.watchButton.bounds.size = CGSizeMake(48, 48)
-		self.watchButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
-		self.watchButton.alpha = 0.0
-		
-		self.soundButton.tintOff = Theme.colorActionOff
-		self.soundButton.tintOn = Theme.colorActionOn
 		self.soundButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
 		self.soundButton.imageOn = UIImage(named: "imgSoundOn2Light")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
 		self.soundButton.imageOff = UIImage(named: "imgSoundOff2Light")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
@@ -313,8 +300,6 @@ class PatchDetailView: BaseDetailView {
 		self.contextView.layer.cornerRadius = 0
 
 		self.bannerGroup.clipsToBounds = true
-		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchDetailView.watchDidChange(_:)), name: Events.WatchDidChange, object: self.watchButton)
 	}
 	
 	func bindToEntity(entity: Entity!) {
@@ -360,10 +345,6 @@ class PatchDetailView: BaseDetailView {
 					self.watchersButton.fadeIn()
 				}
 			}
-			
-			/* Watch button */
-			
-			self.watchButton.bindEntity(entity)
 			
 			/* Mute button */
 			

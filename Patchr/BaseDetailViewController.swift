@@ -268,7 +268,7 @@ extension BaseDetailViewController {
 			}
 			
 			view.showPatchName = self.patchNameVisible	// Need this again because this is temp and not the real cell
-			view.bindToEntity(entity)
+			view.bindToEntity(entity, forSizing: true)
 			
 			let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
 			let viewHeight = view.sizeThatFits(CGSizeMake(viewWidth - 24, CGFloat.max)).height + 24 + 1 // Add one for row separator

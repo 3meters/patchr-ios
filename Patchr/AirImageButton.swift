@@ -11,11 +11,10 @@ import SDWebImage
 
 class AirImageButton: UIButton {
 
-    var progress: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
-    var linkedPhotoUrl: NSURL?
-    var sizeCategory: String = SizeCategory.thumbnail
-
-    var progressAuto: Bool = true
+    var progress		: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
+    var linkedPhotoUrl	: NSURL?
+    var sizeCategory	= SizeCategory.thumbnail
+    var progressAuto	= true
     
     private var progressStyle: UIActivityIndicatorViewStyle = .Gray
     private var progressSize: CGFloat = 12
@@ -31,7 +30,6 @@ class AirImageButton: UIButton {
     }
     
     func initialize(){
-		
 		self.progress.hidesWhenStopped = true
 		self.progress.accessibilityIdentifier = "activity_image"
 		addSubview(self.progress)
@@ -58,7 +56,7 @@ class AirImageButton: UIButton {
 		self.progress.anchorInCenterWithWidth(self.progressSize, height: self.progressSize)
 	}
 	
-    func linkedToPhoto(photo: Photo) -> Bool {
+    func isLinkedToPhoto(photo: Photo) -> Bool {
         if self.linkedPhotoUrl == nil {
             return false
         }

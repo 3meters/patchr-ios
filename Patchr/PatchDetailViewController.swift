@@ -68,8 +68,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		
 		if self.autoWatchOnAppear {
 			self.autoWatchOnAppear = false
-			let header = self.header as! PatchDetailView
-			header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+			watchAction()
 			Utils.delay(1.0) {
 				UIShared.Toast("You are now a member of this patch", controller: self, addToWindow: false)
 			}
@@ -96,8 +95,6 @@ class PatchDetailViewController: BaseDetailViewController {
 
 	func contextButtonAction(sender: UIButton) {
 		
-		let header = self.header as! PatchDetailView
-		
         if self.contextAction == .CreateMessage {
             if !UserController.instance.authenticated {
 				UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to post messages and more.")
@@ -109,14 +106,14 @@ class PatchDetailViewController: BaseDetailViewController {
             shareAction(sender)
         }
         else if self.contextAction == .CancelJoinRequest {
-            header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+			watchAction()
         }
         else if self.contextAction == .SubmitJoinRequest || self.contextAction == .JoinPatch {
             if !UserController.instance.authenticated {
 				UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to join patches and more.")
                 return
             }
-            header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+			watchAction()
         }
         else if self.contextAction == .BrowseUsersWatching {
             watchersAction(self)
@@ -169,7 +166,112 @@ class PatchDetailViewController: BaseDetailViewController {
 		navController.viewControllers = [controller]
 		self.navigationController?.presentViewController(navController, animated: true, completion: nil)
     }
-    
+	
+	func watchAction() {
+		
+		if self.entity == nil {
+			return
+		}
+		
+		if !UserController.instance.authenticated {
+			UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to join patches and more!")
+			return
+		}
+		
+		let patch = self.entity as? Patch
+		
+		if patch!.userWatchStatusValue == .Member {
+			
+			DataController.proxibase.deleteLinkById(patch!.userWatchId!) {
+				response, error in
+				
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					if let error = ServerError(error) {
+						UIViewController.topMostViewController()!.handleError(error)
+					}
+					else {
+						if DataController.instance.dataWrapperForResponse(response!) != nil {
+							patch!.userWatchId = nil
+							patch!.userWatchStatusValue = .NonMember
+							patch!.countWatchingValue -= 1
+							DataController.instance.activityDateWatching = Utils.now()
+						}
+					}
+					Log.d("Resetting patch and messages because watch status changed")
+					if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundEffects")) {
+						AudioController.instance.play(Sound.pop.rawValue)
+					}
+					self.fetch(strategy: .IgnoreCache, resetList: true)
+				}
+			}
+		}
+		else if patch!.userWatchStatusValue == .Pending {
+			
+			DataController.proxibase.deleteLinkById(patch!.userWatchId!) {
+				response, error in
+				
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					if let error = ServerError(error) {
+						UIViewController.topMostViewController()!.handleError(error)
+					}
+					else {
+						if DataController.instance.dataWrapperForResponse(response!) != nil {
+							patch!.userWatchId = nil
+							patch!.userWatchStatusValue = .NonMember
+						}
+					}
+					Log.d("Resetting patch and messages because watch status changed")
+					if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundEffects")) {
+						AudioController.instance.play(Sound.pop.rawValue)
+					}
+					self.fetch(strategy: .IgnoreCache, resetList: true)
+				}
+			}
+		}
+		else if patch!.userWatchStatusValue == .NonMember {
+			
+			/* Service automatically sets enabled = false if user is not the patch owner */
+			DataController.proxibase.insertLink(UserController.instance.userId! as String, toID: patch!.id_, linkType: .Watch) {
+				response, error in
+				
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					if let error = ServerError(error) {
+						UIViewController.topMostViewController()!.handleError(error)
+					}
+					else {
+						if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
+							if serviceData.countValue == 1 {
+								if let entityDictionaries = serviceData.data as? [[String:NSObject]] {
+									let map = entityDictionaries[0]
+									patch!.userWatchId = map["_id"] as! String
+									if let enabled = map["enabled"] as? Bool {
+										if enabled {
+											patch!.userWatchStatusValue = .Member
+											patch!.countWatchingValue += 1
+											DataController.instance.activityDateWatching = Utils.now()
+										}
+										else {
+											patch!.userWatchStatusValue = .Pending
+										}
+									}
+								}
+							}
+						}
+					}
+					Log.d("Resetting patch and messages because watch status changed")
+					if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundEffects")) {
+						AudioController.instance.play(Sound.pop.rawValue)
+					}
+					self.fetch(strategy: .IgnoreCache, resetList: true)
+					
+					if !UIApplication.sharedApplication().isRegisteredForRemoteNotifications() {
+						NotificationController.instance.guardedRegisterForRemoteNotifications("Would you like to be alerted when messages are posted to this patch?")
+					}
+				}
+			}
+		}
+	}
+	
 	func shareAction(sender: AnyObject?) {
 		
 		if !UserController.instance.authenticated {
@@ -254,8 +356,7 @@ class PatchDetailViewController: BaseDetailViewController {
 			if let patch = self.entity as? Patch {
 				if patch.userWatchStatusValue == .Member {
 					let leave = UIAlertAction(title: "Leave patch", style: .Destructive) { action in
-						let header = self.header as! PatchDetailView
-						header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+						self.watchAction()
 						Utils.delay(1.0) {
 							UIShared.Toast("You have left this patch", controller: self, addToWindow: false)
 						}
@@ -288,15 +389,11 @@ class PatchDetailViewController: BaseDetailViewController {
 	}
 	
 	func joinAction(sender: AnyObject?) {
-		let header = self.header as! PatchDetailView
-		header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside) // Should trigger fetch via watch notification
-		AudioController.instance.play(Sound.pop.rawValue)
+		watchAction() // Should trigger fetch via watch notification
 	}
 	
 	func cancelRequestAction(sender: AnyObject?) {
-		let header = self.header as! PatchDetailView
-		header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside) // Should trigger fetch via watch notification
-		AudioController.instance.play(Sound.pop.rawValue)
+		watchAction() // Should trigger fetch via watch notification
 	}
 	
 	func loginAction(sender: AnyObject?) {
@@ -353,11 +450,6 @@ class PatchDetailViewController: BaseDetailViewController {
 		}
 	}
 	
-	func watchDidChange(sender: NSNotification) {
-		Log.d("Resetting patch and messages because watch status changed")
-		fetch(strategy: .IgnoreCache, resetList: true)
-	}
-	
 	func applicationDidEnterBackground(sender: NSNotification) {
 		if self.inputReferrerName != nil {
 			self.dismissViewControllerAnimated(true, completion: nil)
@@ -394,7 +486,6 @@ class PatchDetailViewController: BaseDetailViewController {
 
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchDetailViewController.didReceiveRemoteNotification(_:)), name: Events.DidReceiveRemoteNotification, object: nil)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchDetailViewController.didFetch(_:)), name: Events.DidFetch, object: self)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchDetailViewController.watchDidChange(_:)), name: Events.WatchDidChange, object: header.watchButton)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchDetailViewController.didInsertMessage(_:)), name: Events.DidInsertMessage, object: nil)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidEnterBackground(_:)), name: UIApplicationDidEnterBackgroundNotification, object: nil)
 		

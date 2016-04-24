@@ -154,7 +154,6 @@
 		E29F65531B61A9450000BEF4 /* PatchSearchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29F65521B61A9450000BEF4 /* PatchSearchCell.swift */; };
 		E2A28E6D1B49D88900B3A2FE /* AirLikeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A28E6C1B49D88800B3A2FE /* AirLikeButton.swift */; };
 		E2A28E6F1B4A602200B3A2FE /* AirToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */; };
-		E2A28E711B4A624300B3A2FE /* AirWatchButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A28E701B4A624300B3A2FE /* AirWatchButton.swift */; };
 		E2A5A8801B6FCE98006D6E81 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */; };
 		E2A5A8811B6FDF5C006D6E81 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */; };
 		E2A5A8851B703B9B006D6E81 /* PhotoEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A5A8841B703B9B006D6E81 /* PhotoEditView.swift */; };
@@ -433,7 +432,6 @@
 		E29F65521B61A9450000BEF4 /* PatchSearchCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchSearchCell.swift; sourceTree = "<group>"; };
 		E2A28E6C1B49D88800B3A2FE /* AirLikeButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirLikeButton.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirToggleButton.swift; sourceTree = "<group>"; };
-		E2A28E701B4A624300B3A2FE /* AirWatchButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirWatchButton.swift; sourceTree = "<group>"; };
 		E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E2A5A8841B703B9B006D6E81 /* PhotoEditView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoEditView.swift; sourceTree = "<group>"; };
 		E2B2CAB11C553A8900CAE183 /* BaseEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseEditViewController.swift; sourceTree = "<group>"; };
@@ -900,7 +898,6 @@
 				E297305B1C13644800B9433B /* AirTextView.swift */,
 				E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */,
 				E2B471D91C2612AD00374F1F /* AirToolButton.swift */,
-				E2A28E701B4A624300B3A2FE /* AirWatchButton.swift */,
 				E2D10E5B1C87AA760099EA6E /* AirHideShowButton.swift */,
 				E25327DE1B1A282D00990A81 /* FXBlurView.h */,
 				E25327DF1B1A282D00990A81 /* FXBlurView.m */,
@@ -1561,7 +1558,6 @@
 				7D9651941AAFBD02000C5718 /* PatchTableViewController.swift in Sources */,
 				7D3D39F01A6F116E00A44CB2 /* Proxibase.swift in Sources */,
 				7D0BAD4C1A96CEB0002E602D /* MainTabBarController.swift in Sources */,
-				E2A28E711B4A624300B3A2FE /* AirWatchButton.swift in Sources */,
 				E24199021C18C1F200DDA549 /* UserSearchViewCell.swift in Sources */,
 				E2D569BE1C052A30001CCE58 /* ProfileEditViewController.swift in Sources */,
 				E2F85C6C1C302F3400FC2364 /* PatchDetailView.swift in Sources */,

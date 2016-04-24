@@ -246,75 +246,112 @@ class MessageView: BaseView {
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MessageView.likeDidChange(_:)), name: Events.LikeDidChange, object: nil)
 	}
 	
-	func bindToEntity(entity: AnyObject) {
+	func bindToEntity(entity: AnyObject, forSizing: Bool = false) {
 		
 		let entity = entity as! Entity
 		
 		self.entity = entity
 		
-		let linkColor = Theme.colorTint
-		let linkActiveColor = Theme.colorTint
-		
-		if self.description_ != nil && self.description_!.isKindOfClass(TTTAttributedLabel) {
-			let label = self.description_ as! TTTAttributedLabel
-			label.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
-			label.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
-			label.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
-		}
-		
-		if let description = entity.description_ {
-			self.description_?.text = description
-		}
-		
-		let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
-		
-		if let photo = entity.photo {
-			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.standard)
-			self.photo?.sd_setImageWithURL(photoUrl, forState: UIControlState.Normal, placeholderImage: nil, options: options)
-		}
-		
-		self.userName.text = entity.creator?.name ?? "Deleted"
-		
-		self.userPhoto.bindToEntity(entity.creator)
-		
-		if let message = entity as? Message {
+		if forSizing {
 			
-			/* Patch */
-			if message.patch != nil {
-				self.patchName.text = message.patch.name
-			}
-			else if message.type != nil && message.type == "share" {
-				self.patchName.text = "Shared by"
-			}
+			/* Just enough for sizing purposes */
 			
-			if self.cellType == .Share {
-				self.recipients.text = ""
-				if message.recipients != nil {
-					for recipient in message.recipients as! Set<Shortcut> {
-						self.recipients.text!.appendContentsOf("\(recipient.name), ")
+			if let description = entity.description_ {
+				self.description_?.text = description
+			}
+			self.userName.text = entity.creator?.name ?? "Deleted"
+			if let message = entity as? Message {
+				if message.patch != nil {
+					self.patchName.text = message.patch.name
+				}
+				else if message.type != nil && message.type == "share" {
+					self.patchName.text = "Shared by"
+				}
+				if self.cellType == .Share {
+					self.recipients.text = ""
+					if message.recipients != nil {
+						for recipient in message.recipients as! Set<Shortcut> {
+							self.recipients.text!.appendContentsOf("\(recipient.name), ")
+						}
+						self.recipients.text = String(self.recipients.text!.characters.dropLast(2))
 					}
-					self.recipients.text = String(self.recipients.text!.characters.dropLast(2))
+				}
+				else {
+					self.likes.text = nil
+					if message.countLikes != nil {
+						if message.countLikes?.integerValue != 0 {
+							let likesTitle = message.countLikes?.integerValue == 1
+								? "\(message.countLikes) like"
+								: "\(message.countLikes ?? 0) likes"
+							self.likes.text = likesTitle
+						}
+					}
 				}
 			}
-			else {
-				/* Likes button */
-				self.likeButton?.bindEntity(message)
+		}
+		else {
+			if self.description_ != nil && self.description_!.isKindOfClass(TTTAttributedLabel) {
+				let linkColor = Theme.colorTint
+				let linkActiveColor = Theme.colorTint
+				let label = self.description_ as! TTTAttributedLabel
+				label.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
+				label.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
+				label.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
+			}
+			
+			if let description = entity.description_ {
+				self.description_?.text = description
+			}
+			
+			let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
+			
+			if let photo = entity.photo {
+				let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.standard)
+				self.photo?.sd_setImageWithURL(photoUrl, forState: UIControlState.Normal, placeholderImage: nil, options: options)
+			}
+			
+			self.userName.text = entity.creator?.name ?? "Deleted"
+			
+			self.userPhoto.bindToEntity(entity.creator)
+			
+			if let message = entity as? Message {
 				
-				self.likes.text = nil
-				if message.countLikes != nil {
-					if message.countLikes?.integerValue != 0 {
-						let likesTitle = message.countLikes?.integerValue == 1
-							? "\(message.countLikes) like"
-							: "\(message.countLikes ?? 0) likes"
-						self.likes.text = likesTitle
+				/* Patch */
+				if message.patch != nil {
+					self.patchName.text = message.patch.name
+				}
+				else if message.type != nil && message.type == "share" {
+					self.patchName.text = "Shared by"
+				}
+				
+				if self.cellType == .Share {
+					self.recipients.text = ""
+					if message.recipients != nil {
+						for recipient in message.recipients as! Set<Shortcut> {
+							self.recipients.text!.appendContentsOf("\(recipient.name), ")
+						}
+						self.recipients.text = String(self.recipients.text!.characters.dropLast(2))
+					}
+				}
+				else {
+					/* Likes button */
+					self.likeButton?.bindEntity(message)
+					
+					self.likes.text = nil
+					if message.countLikes != nil {
+						if message.countLikes?.integerValue != 0 {
+							let likesTitle = message.countLikes?.integerValue == 1
+								? "\(message.countLikes) like"
+								: "\(message.countLikes ?? 0) likes"
+							self.likes.text = likesTitle
+						}
 					}
 				}
 			}
+			
+			self.createdDate.text = UIShared.timeAgoShort(entity.createdDate)
+			self.setNeedsLayout()	// Needed because binding can change the layout
 		}
-		
-		self.createdDate.text = UIShared.timeAgoShort(entity.createdDate)
-		
-		self.setNeedsLayout()	// Needed because binding can change the layout
 	}
 	
 	override func sizeThatFits(size: CGSize) -> CGSize {

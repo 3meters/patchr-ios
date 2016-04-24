@@ -16,9 +16,9 @@ class NotificationSettingsViewController: UITableViewController {
     var patchesWatchingCell		= AirTableViewCell()
     var sharingMessagesCell		= AirTableViewCell()
     var likeMessagesCell		= AirTableViewCell()
+	var soundNotificationsCell	= AirTableViewCell()
     var soundEffectsCell		= AirTableViewCell()
-    var soundNotificationsCell	= AirTableViewCell()
-    
+	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
@@ -30,7 +30,6 @@ class NotificationSettingsViewController: UITableViewController {
 
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
-		
 		let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.bounds.size.width)
 		self.tableView.bounds.size.width = viewWidth
 	}
@@ -59,15 +58,15 @@ class NotificationSettingsViewController: UITableViewController {
 		self.patchesWatchingCell.textLabel?.text = "To Patches I\'m a Member Of"
 		self.sharingMessagesCell.textLabel?.text = "Sharing a Patch or Message"
 		self.likeMessagesCell.textLabel?.text = "Like My Messages"
-		self.soundEffectsCell.textLabel?.text = "Notifications"
-		self.soundNotificationsCell.textLabel?.text = "Sound Effects"
+		self.soundNotificationsCell.textLabel?.text = "Notifications"
+		self.soundEffectsCell.textLabel?.text = "Sound Effects"
 		
 		self.patchesNearbyCell.accessoryView = makeSwitch(.PatchesCreatedNearby, state: userDefaults.boolForKey(PatchrUserDefaultKey("PatchesCreatedNearby")))
 		self.patchesWatchingCell.accessoryView = makeSwitch(.MessagesForPatchesWatching, state: userDefaults.boolForKey(PatchrUserDefaultKey("MessagesForPatchesWatching")))
 		self.sharingMessagesCell.accessoryView = makeSwitch(.MessagesSharing, state: userDefaults.boolForKey(PatchrUserDefaultKey("MessagesSharing")))
 		self.likeMessagesCell.accessoryView = makeSwitch(.LikeMessage, state: userDefaults.boolForKey(PatchrUserDefaultKey("LikeMessage")))
-		self.soundEffectsCell.accessoryView = makeSwitch(.SoundEffects, state: userDefaults.boolForKey(PatchrUserDefaultKey("SoundEffects")))
 		self.soundNotificationsCell.accessoryView = makeSwitch(.SoundForNotifications, state: userDefaults.boolForKey(PatchrUserDefaultKey("SoundForNotifications")))
+		self.soundEffectsCell.accessoryView = makeSwitch(.SoundEffects, state: userDefaults.boolForKey(PatchrUserDefaultKey("SoundEffects")))
 	}
 	
     func toggleAction(sender: AnyObject?) {
@@ -84,15 +83,15 @@ class NotificationSettingsViewController: UITableViewController {
             else if switcher.tag == NotificationType.LikeMessage.rawValue {
                 userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("LikeMessage"))
             }
-            else if switcher.tag == NotificationType.SoundEffects.rawValue {
-                userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("SoundEffects"))
-            }
             else if switcher.tag == NotificationType.SoundForNotifications.rawValue {
                 userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("SoundForNotifications"))
             }
+			else if switcher.tag == NotificationType.SoundEffects.rawValue {
+				userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("SoundEffects"))
+			}
         }
     }
-    
+	
     func makeSwitch(notificationType: NotificationType, state: Bool = false) -> UISwitch {
         let switchView = UISwitch()
         switchView.tag = notificationType.rawValue
@@ -138,8 +137,8 @@ extension NotificationSettingsViewController {
 				}
 			case 3:
 				switch(indexPath.row) {
-					case 0: return self.soundEffectsCell
-					case 1: return self.soundNotificationsCell
+					case 0: return self.soundNotificationsCell
+					case 1: return self.soundEffectsCell
 					default: fatalError("Unknown row in section 3")
 				}
 			default: fatalError("Unknown section")

@@ -66,7 +66,6 @@ class Snow {
 	let colorScrimLighten           = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.75))
 	let colorActionOn               = Colors.brandColorTextDark
 	let colorActionOff              = Colors.brandColorTextDark
-	let colorActionPending          = Colors.accentColorTextDark
 	let colorActivityIndicator      = Colors.brandColor
 	let colorActivityIndicatorImage = Colors.brandColor
 

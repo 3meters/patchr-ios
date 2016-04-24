@@ -32,10 +32,10 @@ class AirLikeButton: AirToggleButton {
 	func bindEntity(entity: Entity?) {
 		self.entity = entity
         if entity != nil {
-            toggleOn(entity!.userLikesValue)
+            toggleOn(entity!.userLikesValue, animate: false)
         }
         else {
-            toggleOn(false)
+            toggleOn(false, animate: false)
         }
 	}
 
