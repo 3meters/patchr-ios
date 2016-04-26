@@ -125,7 +125,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         /* Initialize Google analytics */
         var configureError:NSError?
         GGLContext.sharedInstance().configureWithError(&configureError)
-        assert(configureError == nil, "Error configuring Google services: \(configureError)")
+        precondition(configureError == nil, "Error configuring Google services: \(configureError)")
 		
         // Optional: configure GAI options.
 		if let gai = GAI.sharedInstance() {

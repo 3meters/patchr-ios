@@ -403,7 +403,7 @@ class DataController: NSObject {
                 DataController.proxibase.fetchUsersFavoritePatches(entityId, criteria: criteria, skip: skip, completion: refreshCompletion)
             
 			default:
-				assert(false, "No refreshResultsFor implementation for query name \(query.name)")
+				precondition(false, "No refreshResultsFor implementation for query name \(query.name)")
 		}
 	}
 
@@ -522,7 +522,7 @@ class DataController: NSObject {
                         queryItems.append(queryItem)
 					}
 					else {
-						assert(false, "Missing or unknown schema for object \(entityDictionary)")
+						precondition(false, "Missing or unknown schema for object \(entityDictionary)")
 					}
 				}
 				stopwatch.segmentTime("\(query.name): list items processed")

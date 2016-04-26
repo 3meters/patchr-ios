@@ -166,7 +166,7 @@ class BaseDetailViewController: BaseTableViewController {
     }
 	
     func bind() {
-        assert(false, "This method must be overridden in subclass")
+        precondition(false, "This method must be overridden in subclass")
     }
     
     func drawButtons() { /* Optional */ }

@@ -228,7 +228,7 @@ class NotificationsTableViewController: BaseTableViewController {
                             }
                         
                         case .Background:   // Shouldn't ever fire
-                            assert(false, "Notification controller should never get called when app state == background")
+                            precondition(false, "Notification controller should never get called when app state == background")
                     }
                 }
             }

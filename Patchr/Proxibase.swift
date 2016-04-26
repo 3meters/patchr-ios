@@ -725,7 +725,7 @@ struct ServerResponse {
 
 	/* Single-result accessors */
 	var resultObject: NSDictionary {
-		assert(resultCount == 1, "resultObject called when there are more than one result objects")
+		precondition(resultCount == 1, "resultObject called when there are more than one result objects")
 
 		if let resultDict = responseDictionary["data"] as? NSDictionary {
 			return resultDict
@@ -735,7 +735,7 @@ struct ServerResponse {
 			return resultArray[0] as! NSDictionary
 		}
 
-		assert(false, "Unexpected result")
+		precondition(false, "Unexpected result")
 
 		return NSDictionary()
 	}

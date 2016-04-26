@@ -12,6 +12,7 @@ import UIKit
 class PhotoUtils {
     
     static func url(prefix: String, source: String, category: String) -> NSURL {
+		
         var path: String = ""
         var quality: Int = 75
         if PIXEL_SCALE >= 3 {
@@ -43,7 +44,7 @@ class PhotoUtils {
             let width: CGFloat = CGFloat(100) * PIXEL_SCALE
             path = "\(prefix)&s=\(width)"
         }
-        
+		
         return NSURL(string: path)!
     }
 }

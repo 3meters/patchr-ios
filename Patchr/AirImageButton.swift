@@ -141,7 +141,9 @@ class AirImageButton: UIButton {
         
         if error != nil {
             Log.w("Image fetch failed: " + error!.localizedDescription)
-            Log.w("Failed url: \(url!.absoluteString)")
+			if url != nil {
+				Log.w("Failed url: \(url!.absoluteString)", breadcrumb: true)
+			}
 			if error!.code == HTTPStatusCode.NotFound.rawValue
 				|| error!.code == HTTPStatusCode.BadGateway.rawValue
 				|| error!.code == HTTPStatusCode.Forbidden.rawValue {
