@@ -11,23 +11,14 @@ import SDWebImage
 
 class NotificationView: BaseView {
 	
-	var cellType: CellType = .TextAndPhoto
-	
-	var description_:	TTTAttributedLabel?
-	var photo:			UIImageView?
+	var description_	: TTTAttributedLabel?
+	var photo			: UIImageView?
+	var hasPhoto		= false
 	
 	var userPhoto		= UserPhotoView()
 	var iconImageView	= UIImageView(frame: CGRectZero)
 	var ageDot			= UIView()
 	var createdDate		= AirLabelDisplay()
-	
-	init(cellType: CellType?) {
-		super.init(frame: CGRectZero)
-		if cellType != nil {
-			self.cellType = cellType!
-		}
-		initialize()
-	}
 	
 	override init(frame: CGRect) {
 		/* Called when instantiated from code */
@@ -46,21 +37,17 @@ class NotificationView: BaseView {
 		self.clipsToBounds = false
 		
 		/* Description */
-		if self.cellType != .Photo {
-			self.description_ = TTTAttributedLabel(frame: CGRectZero)
-			self.description_!.numberOfLines = 5
-			self.description_!.font = Theme.fontTextList
-			self.addSubview(self.description_!)
-		}
+		self.description_ = TTTAttributedLabel(frame: CGRectZero)
+		self.description_!.numberOfLines = 5
+		self.description_!.font = Theme.fontTextList
+		self.addSubview(self.description_!)
 		
 		/* Photo */
-		if self.cellType != .Text {
-			self.photo = AirImageView(frame: CGRectZero)
-			self.photo!.clipsToBounds = true
-			self.photo!.contentMode = .ScaleAspectFill
-			self.photo!.backgroundColor = Theme.colorBackgroundImage
-			self.addSubview(self.photo!)
-		}
+		self.photo = AirImageView(frame: CGRectZero)
+		self.photo!.clipsToBounds = true
+		self.photo!.contentMode = .ScaleAspectFill
+		self.photo!.backgroundColor = Theme.colorBackgroundImage
+		self.addSubview(self.photo!)
 		
 		/* User photo */
 		self.addSubview(self.userPhoto)
@@ -78,11 +65,12 @@ class NotificationView: BaseView {
 		self.addSubview(self.ageDot)
 	}
 	
-	func bindToEntity(entity: AnyObject) {
+	override func bindToEntity(entity: AnyObject, location: CLLocation?) {
 		
 		let notification = entity as! Notification
 		
 		self.entity = notification
+		self.hasPhoto = (notification.photoBig != nil)
 		
 		let linkColor = Theme.colorTint
 		let linkActiveColor = Theme.colorTint
@@ -99,8 +87,12 @@ class NotificationView: BaseView {
 		let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
 		
 		if let photo = notification.photoBig {
+			self.photo?.hidden = false
 			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.standard)
 			self.photo?.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
+		}
+		else {
+			self.photo?.hidden = true
 		}
 		
 		/* User photo */
@@ -163,20 +155,20 @@ class NotificationView: BaseView {
 		self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 48, height: 48)
 		
 		var bottomView: UIView? = self.photo
-		if self.cellType == .Text {
+		if !self.hasPhoto {	// Text only
 			bottomView = self.description_
 			self.description_?.bounds.size.width = columnWidth
 			self.description_?.sizeToFit()
 			self.description_?.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: self.description_!.height())
 		}
-		else if self.cellType == .TextAndPhoto {
+		else if self.entity?.description_ == nil { // Photo only
+			self.photo?.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: photoHeight)
+		}
+		else { // Text and photo
 			self.description_?.bounds.size.width = columnWidth
 			self.description_?.sizeToFit()
 			self.description_?.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: self.description_!.height())
 			self.photo?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 12, height: photoHeight)
-		}
-		else if self.cellType == .Photo {
-			self.photo?.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: photoHeight)
 		}
 		
 		self.createdDate.sizeToFit()

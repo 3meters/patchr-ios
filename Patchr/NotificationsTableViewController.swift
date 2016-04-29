@@ -15,7 +15,7 @@ import TWMessageBarManager
 class NotificationsTableViewController: BaseTableViewController {
 
     private var nearbys:        [[NSObject: AnyObject]] = []
-
+	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
@@ -39,12 +39,12 @@ class NotificationsTableViewController: BaseTableViewController {
         self.emptyMessage = "No notifications yet"
 		self.loadMoreMessage = "LOAD MORE NOTIFICATIONS"
 		self.listType = .Notifications
+		self.itemTemplate = NotificationView()
+		self.itemPadding = UIEdgeInsetsMake(12, 12, 12, 12)
+
 		self.navigationItem.title = "Notifications"
 		
 		super.viewDidLoad()
-		
-		self.tableView.estimatedRowHeight = 0	// Zero turns off estimates
-		self.tableView.rowHeight = 0			// Actual height is handled in heightForRowAtIndexPath
 	}
 
     override func viewWillAppear(animated: Bool) {
@@ -409,17 +409,15 @@ class AirStylesheet: NSObject, TWMessageBarStyleSheet {
 
 extension NotificationsTableViewController {
 	/*
-	 * Cells
-	 */
+	* UITableViewDelegate
+	*/
 	override func bindCellToEntity(cell: WrapperTableViewCell, entity: AnyObject, location: CLLocation?) {
 		super.bindCellToEntity(cell, entity: entity, location: location)
 		if let view = cell.view as? NotificationView {
 			view.description_?.delegate = self
 		}
 	}
-    /*
-     * UITableViewDelegate
-     */
+	
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 		
 		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
@@ -434,41 +432,6 @@ extension NotificationsTableViewController {
 					controller.inputMessageId = entity.targetId
 					self.navigationController?.pushViewController(controller, animated: true)
 				}
-		}
-	}
-	
-	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-		/*
-		* Using an estimate significantly improves table view load time but we can get
-		* small scrolling glitches if actual height ends up different than estimated height.
-		* So we try to provide the best estimate we can and still deliver it quickly.
-		*
-		* Note: Called once only for each row in fetchResultController when FRC is making a data pass in
-		* response to managedContext.save.
-		*/
-		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
-			let entity = queryResult.object as? Notification {
-				
-				if entity.id_ != nil {
-					if let cachedHeight = self.rowHeights.objectForKey(entity.id_) as? CGFloat {
-						return cachedHeight
-					}
-				}
-				
-				let view = NotificationView(cellType: entity.photoBig == nil ? .Text : entity.summary == nil ? .Photo : .TextAndPhoto)
-				view.bindToEntity(entity)
-				
-				let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
-				let viewHeight = view.sizeThatFits(CGSizeMake(viewWidth - 24, CGFloat.max)).height + 24 + 1 // Add one for row separator
-				
-				if entity.id_ != nil {
-					self.rowHeights[entity.id_] = viewHeight
-				}
-				
-				return viewHeight
-		}
-		else {
-			return 0
 		}
 	}
 }

@@ -20,6 +20,8 @@ class UserTableViewController: BaseTableViewController {
     *--------------------------------------------------------------------------------------------*/
 
 	override func viewDidLoad() {
+		self.itemPadding = UIEdgeInsetsMake(8, 8, 8, 8)
+		
 		super.viewDidLoad()
 		
 		guard self.patch != nil || self.message != nil else {
@@ -38,9 +40,6 @@ class UserTableViewController: BaseTableViewController {
 			case .MessageLikers:
 				self.navigationItem.title = "Liked by"
 		}
-		
-		self.tableView.estimatedRowHeight = 97
-		self.tableView.rowHeight = 97
 		
 		self.view.accessibilityIdentifier = View.Users
 		self.tableView!.accessibilityIdentifier = Table.Users
@@ -185,6 +184,10 @@ extension UserTableViewController {
 			view.cell = cell
 			view.delegate = self
 		}
+	}
+	
+	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+		return 97
 	}
 }
 

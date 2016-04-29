@@ -11,41 +11,24 @@ import SDWebImage
 
 class MessageView: BaseView {
 	
-	var cellType		: CellType = .TextAndPhoto
 	var showPatchName	= true
 	
 	var description_	: UILabel?
 	var photo			: UIButton?
+	var isShare			= false
 	
 	var patchName		= AirLabelDisplay()
 	var userName		= AirLabelDisplay()
 	var userPhoto		= UserPhotoView()
 	var createdDate		= AirLabelDisplay()
+
+	var recipientsGroup = UIView()
 	var recipientsLabel = AirLabelDisplay()
 	var recipients		= AirLabelDisplay()
 	
 	var toolbar			= UIView()
-	var likeButton		: AirLikeButton?
+	var likeButton		= AirLikeButton(frame: CGRectZero)
 	var likes			= AirLabelDisplay()
-	
-	init(cellType: CellType?) {
-		super.init(frame: CGRectZero)
-		if cellType != nil {
-			self.cellType = cellType!
-		}
-		initialize()
-	}
-	
-	init(cellType: CellType?, entity: Entity? = nil) {
-		super.init(frame: CGRectZero)
-		if cellType != nil {
-			self.cellType = cellType!
-		}
-		initialize()
-		if entity != nil {
-			bindToEntity(entity!)
-		}		
-	}
 	
 	override init(frame: CGRect) {
 		/* Called when instantiated from code */
@@ -85,13 +68,11 @@ class MessageView: BaseView {
 		let photoHeight = columnWidth * 0.5625		// 16:9 aspect ratio
 		
 		if self.showPatchName && self.patchName.text != nil {
-			self.patchName.hidden = false
 			self.patchName.sizeToFit()
 			self.patchName.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 0, width: columnWidth, height: self.patchName.height())
 			self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: self.patchName.height() + 8, width: 48, height: 48)
 		}
 		else {
-			self.patchName.hidden = true
 			self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 48, height: 48)
 		}
 		
@@ -105,37 +86,37 @@ class MessageView: BaseView {
 		/* Body */
 		
 		var bottomView: UIView? = self.photo
-		if self.cellType == .Share || self.cellType == .Text {
+		if self.isShare || self.entity?.photo == nil {
 			bottomView = self.description_
 			self.description_?.bounds.size.width = columnWidth
 			self.description_?.sizeToFit()
 			self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: self.description_!.height())
 		}
-		if self.cellType == .TextAndPhoto {
+		
+		if self.entity?.description_ != nil && self.entity?.photo != nil {
 			self.description_?.bounds.size.width = columnWidth
 			self.description_?.sizeToFit()
 			self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: self.description_!.height())
 			self.photo?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: photoHeight)
 		}
-		else if self.cellType == .Photo {
+		else if self.entity?.photo != nil {
 			self.photo?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: photoHeight)
 		}
 		
 		/* Footer */
 		
-		if self.cellType == .Share {
+		if self.isShare {
 			self.recipientsLabel.sizeToFit()
 			self.recipients.bounds.size.width = columnWidth - (self.recipientsLabel.width() + 12)
 			self.recipients.sizeToFit()
-			self.recipientsLabel.alignUnder(bottomView!, matchingLeftWithTopPadding: 8, width: self.recipientsLabel.width(), height: self.recipientsLabel.height())
+			self.recipientsLabel.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: self.recipientsLabel.width(), height: self.recipientsLabel.height())
 			self.recipients.alignToTheRightOf(self.recipientsLabel, matchingTopWithLeftPadding: 12, width: self.recipients.width(), height: self.recipients.height())
+			self.recipientsGroup.alignUnder(bottomView!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: self.recipients.height() + 12)
 		}
 		else {
 			self.toolbar.alignUnder(bottomView!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 0, height: 48)
-			if likeButton != nil {
-				self.likeButton!.anchorCenterLeftWithLeftPadding(0, width: self.likeButton!.width(), height: self.likeButton!.height())
-				self.likeButton!.frame.origin.x -= 12
-			}
+			self.likeButton.anchorCenterLeftWithLeftPadding(0, width: self.likeButton.width(), height: self.likeButton.height())
+			self.likeButton.frame.origin.x -= 12
 			self.likes.sizeToFit()
 			self.likes.anchorCenterRightWithRightPadding(0, width: 72, height: self.likes.height())
 		}
@@ -148,7 +129,7 @@ class MessageView: BaseView {
 				if let message = self.entity as? Message where message.id_ != nil && entityId == message.id_ {
 					
 					/* Likes button */
-					self.likeButton?.bindEntity(message)
+					self.likeButton.bindEntity(message)
 
 					self.likes.text = nil
 					if message.countLikes != nil {
@@ -176,38 +157,47 @@ class MessageView: BaseView {
 		 */
 		
 		/* Description */
-		if self.cellType != .Photo {
-			self.description_ = TTTAttributedLabel(frame: CGRectZero)
-			//			self.description_ = UILabel(frame: CGRectZero)
-			self.description_!.numberOfLines = 5
-			self.description_!.font = Theme.fontTextList
-			self.addSubview(self.description_!)
+		self.description_ = TTTAttributedLabel(frame: CGRectZero)
+		self.description_!.numberOfLines = 5
+		self.description_!.font = Theme.fontTextList
+		
+		if self.description_ != nil && self.description_!.isKindOfClass(TTTAttributedLabel) {
+			let linkColor = Theme.colorTint
+			let linkActiveColor = Theme.colorTint
+			let label = self.description_ as! TTTAttributedLabel
+			label.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
+			label.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
+			label.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
 		}
+
+		self.addSubview(self.description_!)
 		
 		/* Photo */
-		if self.cellType != .Text {
-			self.photo = UIButton(frame: CGRectZero)
-			self.photo!.imageView!.contentMode = UIViewContentMode.ScaleAspectFill
-			self.photo!.contentMode = .ScaleAspectFill
-			self.photo!.contentHorizontalAlignment = .Fill
-			self.photo!.contentVerticalAlignment = .Fill
-			self.photo!.backgroundColor = Theme.colorBackgroundImage
-			self.addSubview(self.photo!)
-		}
+		self.photo = UIButton(frame: CGRectZero)
+		self.photo!.imageView!.contentMode = UIViewContentMode.ScaleAspectFill
+		self.photo!.contentMode = .ScaleAspectFill
+		self.photo!.contentHorizontalAlignment = .Fill
+		self.photo!.contentVerticalAlignment = .Fill
+		self.photo!.backgroundColor = Theme.colorBackgroundImage
+		self.addSubview(self.photo!)
 		
 		/* Patch name */
 		self.patchName.font = Theme.fontComment
 		self.patchName.textColor = Theme.colorTextSecondary
+		self.patchName.numberOfLines = 1
+		self.patchName.lineBreakMode = .ByTruncatingMiddle
 		self.addSubview(self.patchName)
 		
 		/* User photo */
 		self.addSubview(self.userPhoto)
 		
 		/* Header */
-		self.userName.lineBreakMode = .ByTruncatingMiddle
 		self.userName.font = Theme.fontTextBold
+		self.userName.numberOfLines = 1
+		self.userName.lineBreakMode = .ByTruncatingMiddle
 		
 		self.createdDate.font = Theme.fontComment
+		self.createdDate.numberOfLines = 1
 		self.createdDate.textColor = Theme.colorTextSecondary
 		self.createdDate.textAlignment = .Right
 		
@@ -216,197 +206,101 @@ class MessageView: BaseView {
 		
 		/* Footer */
 		
-		if self.cellType == .Share {
-			self.recipientsLabel.text = "To:"
-			self.recipientsLabel.font = Theme.fontTextList
-			self.recipientsLabel.textColor = Theme.colorTextSecondary
-			self.recipients.font = Theme.fontTextList
-			self.recipients.textColor = Theme.colorTextTitle
-			self.recipients.numberOfLines = 0
-			self.addSubview(self.recipientsLabel)
-			self.addSubview(self.recipients)
-		}
-		else {
-			self.likeButton = AirLikeButton(frame: CGRectZero)
-			if (self.likeButton != nil) {
-				self.likeButton!.imageView!.tintColor = Theme.colorTint
-				self.likeButton!.bounds.size = CGSizeMake(48, 48)
-				self.likeButton!.imageEdgeInsets = UIEdgeInsetsMake(14, 12, 14, 12)
-				self.toolbar.addSubview(self.likeButton!)
-			}
+		self.recipientsLabel.text = "To:"
+		self.recipientsLabel.font = Theme.fontTextList
+		self.recipientsLabel.textColor = Theme.colorTextSecondary
+		self.recipientsLabel.numberOfLines = 1
+		self.recipients.font = Theme.fontTextList
+		self.recipients.textColor = Theme.colorTextTitle
+		self.recipients.numberOfLines = 0
 
-			self.likes.font = Theme.fontComment
-			self.likes.textColor = Theme.colorTextTitle
-			self.likes.textAlignment = .Right
-			
-			self.toolbar.addSubview(self.likes)
-			self.addSubview(self.toolbar)
-		}
+		self.recipientsGroup.addSubview(self.recipientsLabel)
+		self.recipientsGroup.addSubview(self.recipients)
+		self.addSubview(self.recipientsGroup)
+		
+		self.likeButton.imageView!.tintColor = Theme.colorTint
+		self.likeButton.bounds.size = CGSizeMake(48, 48)
+		self.likeButton.imageEdgeInsets = UIEdgeInsetsMake(14, 12, 14, 12)
+
+		self.likes.font = Theme.fontComment
+		self.likes.numberOfLines = 1
+		self.likes.textColor = Theme.colorTextTitle
+		self.likes.textAlignment = .Right
+		
+		self.toolbar.addSubview(self.likeButton)
+		self.toolbar.addSubview(self.likes)
+		self.addSubview(self.toolbar)
 		
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MessageView.likeDidChange(_:)), name: Events.LikeDidChange, object: nil)
 	}
 	
-	func bindToEntity(entity: AnyObject, forSizing: Bool = false) {
+	override func bindToEntity(entity: AnyObject, location: CLLocation?) {
 		
 		let entity = entity as! Entity
 		
 		self.entity = entity
+		self.isShare = (self.entity?.type != nil && self.entity?.type == "share")
 		
-		if forSizing {
-			
-			/* Just enough for sizing purposes */
-			
-			if let description = entity.description_ {
-				self.description_?.text = description
-			}
-			self.userName.text = entity.creator?.name ?? "Deleted"
-			if let message = entity as? Message {
-				if message.patch != nil {
-					self.patchName.text = message.patch.name
-				}
-				else if message.type != nil && message.type == "share" {
-					self.patchName.text = "Shared by"
-				}
-				if self.cellType == .Share {
-					self.recipients.text = ""
-					if message.recipients != nil {
-						for recipient in message.recipients as! Set<Shortcut> {
-							self.recipients.text!.appendContentsOf("\(recipient.name), ")
-						}
-						self.recipients.text = String(self.recipients.text!.characters.dropLast(2))
-					}
-				}
-				else {
-					self.likes.text = nil
-					if message.countLikes != nil {
-						if message.countLikes?.integerValue != 0 {
-							let likesTitle = message.countLikes?.integerValue == 1
-								? "\(message.countLikes) like"
-								: "\(message.countLikes ?? 0) likes"
-							self.likes.text = likesTitle
-						}
-					}
-				}
-			}
+		self.description_?.hidden = true
+		self.photo?.hidden = true
+		self.patchName.hidden = true
+		self.toolbar.hidden = true
+		self.recipientsGroup.hidden = true
+		
+		if let description = entity.description_ {
+			self.description_?.hidden = false
+			self.description_?.text = description
 		}
-		else {
-			if self.description_ != nil && self.description_!.isKindOfClass(TTTAttributedLabel) {
-				let linkColor = Theme.colorTint
-				let linkActiveColor = Theme.colorTint
-				let label = self.description_ as! TTTAttributedLabel
-				label.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
-				label.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
-				label.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
-			}
-			
-			if let description = entity.description_ {
-				self.description_?.text = description
-			}
-			
+		
+		if let photo = entity.photo {
+			self.photo?.hidden = false
 			let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
+			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.standard)
+			self.photo?.sd_setImageWithURL(photoUrl, forState: UIControlState.Normal, placeholderImage: nil, options: options)
+		}
+		
+		self.userName.text = entity.creator?.name ?? "Deleted"
+		self.userPhoto.bindToEntity(entity.creator)
+		self.createdDate.text = UIShared.timeAgoShort(entity.createdDate)
+		
+		if let message = entity as? Message {
 			
-			if let photo = entity.photo {
-				let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.standard)
-				self.photo?.sd_setImageWithURL(photoUrl, forState: UIControlState.Normal, placeholderImage: nil, options: options)
-			}
-			
-			self.userName.text = entity.creator?.name ?? "Deleted"
-			
-			self.userPhoto.bindToEntity(entity.creator)
-			
-			if let message = entity as? Message {
-				
-				/* Patch */
+			/* Patch */
+			if self.showPatchName {
+				self.patchName.hidden = false
 				if message.patch != nil {
 					self.patchName.text = message.patch.name
 				}
 				else if message.type != nil && message.type == "share" {
 					self.patchName.text = "Shared by"
 				}
-				
-				if self.cellType == .Share {
-					self.recipients.text = ""
-					if message.recipients != nil {
-						for recipient in message.recipients as! Set<Shortcut> {
-							self.recipients.text!.appendContentsOf("\(recipient.name), ")
-						}
-						self.recipients.text = String(self.recipients.text!.characters.dropLast(2))
-					}
-				}
-				else {
-					/* Likes button */
-					self.likeButton?.bindEntity(message)
-					
-					self.likes.text = nil
-					if message.countLikes != nil {
-						if message.countLikes?.integerValue != 0 {
-							let likesTitle = message.countLikes?.integerValue == 1
-								? "\(message.countLikes) like"
-								: "\(message.countLikes ?? 0) likes"
-							self.likes.text = likesTitle
-						}
-					}
-				}
 			}
 			
-			self.createdDate.text = UIShared.timeAgoShort(entity.createdDate)
-			self.setNeedsLayout()	// Needed because binding can change the layout
-		}
-	}
-	
-	override func sizeThatFits(size: CGSize) -> CGSize {
-		
-		if let entity = self.entity {
-			
-			var heightAccum = CGFloat(0)
-			
-			let columnLeft = CGFloat(48 + 8)
-			let columnWidth = size.width - columnLeft
-			let photoHeight = columnWidth * 0.5625
-			
-			if self.showPatchName {
-				self.patchName.sizeToFit()
-				heightAccum += self.patchName.height()
-				self.userName.sizeToFit()
-				heightAccum += (8 + self.userName.height())
+			if self.isShare {
+				self.recipientsGroup.hidden = false
+				self.recipients.text = ""
+				if message.recipients != nil {
+					for recipient in message.recipients as! Set<Shortcut> {
+						self.recipients.text!.appendContentsOf("\(recipient.name), ")
+					}
+					self.recipients.text = String(self.recipients.text!.characters.dropLast(2))
+				}
 			}
 			else {
-				self.userName.sizeToFit()
-				heightAccum += self.userName.height()
-			}
-			
-			if entity.description_ != nil && !entity.description_.isEmpty {
-				self.description_!.bounds.size.width = columnWidth
-				self.description_!.sizeToFit()
-				heightAccum += (8 + self.description_!.height())
-			}
-			
-			if entity.photo != nil {
-				heightAccum += (8 + photoHeight)
-			}
-			
-			if self.cellType == .Share {
-				self.recipientsLabel.sizeToFit()
-				self.recipients.bounds.size.width = columnWidth - (self.recipientsLabel.width() + 12)
-				self.recipients.sizeToFit()
-				heightAccum += 8 + self.recipients.height()
-			}
-			else {
-				self.likes.sizeToFit()
-				if self.likeButton != nil {
-					heightAccum += (max(self.likeButton!.height() - 14, self.likes.height())) // Like button
-				}
-				else {
-					heightAccum += self.likes.height()
+				self.toolbar.hidden = false
+				self.likeButton.bindEntity(message)
+				self.likes.text = nil
+				if message.countLikes != nil {
+					if message.countLikes?.integerValue != 0 {
+						let likesTitle = message.countLikes?.integerValue == 1
+							? "\(message.countLikes) like"
+							: "\(message.countLikes ?? 0) likes"
+						self.likes.text = likesTitle
+					}
 				}
 			}
-			
-			let height = max(self.userPhoto.height(), heightAccum)
-
-			return CGSizeMake(size.width, height)
 		}
 		
-		return CGSizeZero
+		self.setNeedsLayout()	// Needed because binding can change the layout
 	}
-	
 }

@@ -48,6 +48,8 @@ class PatchTableViewController: BaseTableViewController {
 			self.emptyMessage = "Make patches and browse them here"
 		}
 		
+		self.itemPadding = UIEdgeInsetsMake(8, 8, 0, 8)
+		
 		super.viewDidLoad()
 		
 		switch self.filter! {
@@ -64,9 +66,6 @@ class PatchTableViewController: BaseTableViewController {
 			self.navigationItem.title = "Owner of"
 			self.view.accessibilityIdentifier = View.PatchesOwn
 		}
-		
-		self.tableView.estimatedRowHeight = 136
-		self.tableView.rowHeight = 136
 		
 		self.tableView.accessibilityIdentifier = Table.Patches
 		
@@ -492,9 +491,9 @@ class PatchTableViewController: BaseTableViewController {
  *--------------------------------------------------------------------------------------------*/
 
 extension PatchTableViewController {
-	/* 
-	 * Cells
-	 */
+	/*
+	* UITableViewDelegate
+	*/
 	override func bindCellToEntity(cell: WrapperTableViewCell, entity: AnyObject, location: CLLocation?) {
 		
 		var location = self.cachedLocation
@@ -523,6 +522,10 @@ extension PatchTableViewController {
 				controller.entityId = patch.id_
 				self.navigationController?.pushViewController(controller, animated: true)
 		}
+	}
+	
+	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+		return 136
 	}
 }
 

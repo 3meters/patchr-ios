@@ -19,11 +19,6 @@ class BaseView: UIView {
 		self.layoutIfNeeded()
 		return sizeThatFitsSubviews()
 	}
-}
-
-enum CellType: String {
-	case Text = "text"
-	case Photo = "photo"
-	case TextAndPhoto = "text_and_photo"
-	case Share = "share"
+	
+	func bindToEntity(entity: AnyObject, location: CLLocation?) {}
 }

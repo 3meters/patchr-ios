@@ -294,15 +294,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 				self.progressFinishLabel = "Shared"
 				self.cancelledLabel = "Sharing cancelled"
 				
-				var cellType: CellType = .TextAndPhoto
-				if self.inputShareEntity!.photo == nil {
-					cellType = .Text
-				}
-				else if self.inputShareEntity!.description_ == nil {
-					cellType = .Photo
-				}
-				
-				self.messageView = MessageView(cellType: cellType, entity: nil)
+				self.messageView = MessageView()
 				self.contentHolder.addSubview(self.messageView!)
 				
 				self.descriptionField.placeholderLabel.text = "Add a message..."
@@ -385,7 +377,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 				self.patchView!.bindToEntity(self.inputShareEntity!, location: nil)
 			}
 			else {
-				self.messageView!.bindToEntity(self.inputShareEntity!)
+				self.messageView!.bindToEntity(self.inputShareEntity!, location: nil)
 				self.messageView!.setNeedsLayout()
 				self.messageView!.layoutIfNeeded()
 			}

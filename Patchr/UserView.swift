@@ -87,7 +87,7 @@ class UserView: BaseView {
 		self.addSubview(self.titleGroup)
 	}
 	
-	func bindToEntity(entity: AnyObject) {
+	override func bindToEntity(entity: AnyObject, location: CLLocation?) {
 		
 		let entity = entity as! Entity
 		

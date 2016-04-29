@@ -18,19 +18,19 @@ class BaseDetailViewController: BaseTableViewController {
 	var header				: UIView!
 	var invalidated			= false
 	
-	/* Only used for row sizing */
-	let shareMessage		= MessageView(cellType: .Share, entity: nil)
-	let photoMessage		= MessageView(cellType: .Photo, entity: nil)
-	let textMessage			= MessageView(cellType: .Text, entity: nil)
-	let photoTextMessage	= MessageView(cellType: .TextAndPhoto, entity: nil)
-	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
 	
     override func viewDidLoad() {
 		self.listType = .Messages
+		let template = MessageView()
+		template.showPatchName = self.patchNameVisible
+		self.itemTemplate = template
+		self.itemPadding = UIEdgeInsetsMake(12, 12, 0, 12)
+		
         super.viewDidLoad()
+
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(BaseDetailViewController.userDidLogin(_:)), name: Events.UserDidLogin, object: nil)
     }
 	
@@ -209,8 +209,8 @@ class BaseDetailViewController: BaseTableViewController {
 		return "query.\(self.queryName!.lowercaseString).\(id!)"
 	}
 
-	override func makeCell(cellType: CellType) -> WrapperTableViewCell {
-		let cell = super.makeCell(cellType)
+	override func makeCell() -> WrapperTableViewCell {
+		let cell = super.makeCell()
 		if let view = cell.view as? MessageView {
 			view.showPatchName = self.patchNameVisible
 			view.patchName.hidden = !self.patchNameVisible
@@ -233,53 +233,5 @@ extension BaseDetailViewController {
 			self.navigationController?.pushViewController(controller, animated: true)
         }
     }
-	
-	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-		/*
-		* Using an estimate significantly improves table view load time but we can get
-		* small scrolling glitches if actual height ends up different than estimated height.
-		* So we try to provide the best estimate we can and still deliver it quickly.
-		*
-		* Note: Called once only for each row in fetchResultController when FRC is making a data pass in
-		* response to managedContext.save.
-		*/
-		if self.disableCells {
-			return 0
-		}
-		
-		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
-			let entity = queryResult.object as? Message {
-				
-			if entity.id_ != nil {
-				if let cachedHeight = self.rowHeights.objectForKey(entity.id_) as? CGFloat {
-					return cachedHeight
-				}
-			}
-			
-			var view = self.photoTextMessage
-			if entity.type != nil && entity.type == "share" {
-				view = self.shareMessage
-			}
-			else if entity.photo == nil {
-				view = self.textMessage
-			}
-			else if entity.description_ == nil {
-				view = self.photoMessage
-			}
-			
-			view.showPatchName = self.patchNameVisible	// Need this again because this is temp and not the real cell
-			view.bindToEntity(entity, forSizing: true)
-			
-			let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
-			let viewHeight = view.sizeThatFits(CGSizeMake(viewWidth - 24, CGFloat.max)).height + 24 + 1 // Add one for row separator
-			
-			if entity.id_ != nil {
-				self.rowHeights[entity.id_] = viewHeight
-			}
-			
-			return viewHeight
-		}
-		return 0
-	}
 }
 

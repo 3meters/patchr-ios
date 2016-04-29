@@ -30,6 +30,7 @@ class WrapperTableViewCell: UITableViewCell {
 		if self.view != nil {
 			self.contentView.addSubview(self.view!)
 		}
+		self.selectionStyle = .None
 	}
 	
 	override func layoutSubviews() {

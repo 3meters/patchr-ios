@@ -35,7 +35,10 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	var progressOffsetX     = Float(8)
 	var disableCells		= false
 
+	/* Only used for row sizing */
 	var rowHeights			: NSMutableDictionary = [:]
+	var itemTemplate		: BaseView?
+	var itemPadding			= UIEdgeInsetsZero
 	
     /*--------------------------------------------------------------------------------------------
     * MARK:- Lifecycle
@@ -91,16 +94,8 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
             self.tableView.addSubview(self.emptyLabel)
         }
 
-		/*
-		* Setting the estimated row height prevents the table view from calling
-		* tableView:heightForRowAtIndexPath: for every row in the table on
-		* first load; it will only be called as cells are about to scroll onscreen.
-		* This is a major performance optimization.
-		*/
-		self.tableView.estimatedRowHeight = 136
-
-		/* Self sizing table view cells require this setting */
-		self.tableView.rowHeight = 136
+		self.tableView.estimatedRowHeight = 0	// Zero turns off estimates
+		self.tableView.rowHeight = 0			// Actual height is handled in heightForRowAtIndexPath
 
         /* A bit of UI tweaking */
 		self.tableView.accessibilityIdentifier = "table"
@@ -433,18 +428,18 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         return controller
     }()
 	
-	func makeCell(cellType: CellType = .TextAndPhoto) -> WrapperTableViewCell {
+	func makeCell() -> WrapperTableViewCell {
 		/*
 		* Only implementation. Called externally to measure variable row heights.
 		*/
 		if self.listType == .Notifications {
-			let view = NotificationView(cellType: cellType)
-			let cell = WrapperTableViewCell(view: view, padding: UIEdgeInsetsMake(12, 12, 12, 12), reuseIdentifier: cellType.rawValue)
+			let view = NotificationView()
+			let cell = WrapperTableViewCell(view: view, padding: self.itemPadding, reuseIdentifier: "cell")
 			return cell
 		}
 		else if self.listType == .Messages {
-			let view = MessageView(cellType: cellType, entity: nil)
-			let cell = WrapperTableViewCell(view: view, padding: UIEdgeInsetsMake(12, 12, 12, 12), reuseIdentifier: cellType.rawValue)
+			let view = MessageView()
+			let cell = WrapperTableViewCell(view: view, padding: self.itemPadding, reuseIdentifier: "cell")
 			if view.description_ != nil && view.description_!.isKindOfClass(TTTAttributedLabel) {
 				let label = view.description_ as! TTTAttributedLabel
 				label.delegate = self
@@ -455,19 +450,19 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		else if self.listType == .Patches {
 			let view = PatchView(frame: CGRectMake(0, 0, self.view.width(), 136))
 			view.cornerRadius = 6
-			let cell = WrapperTableViewCell(view: view, padding: UIEdgeInsetsMake(8, 8, 0, 8), reuseIdentifier: cellType.rawValue)
+			let cell = WrapperTableViewCell(view: view, padding: self.itemPadding, reuseIdentifier: "cell")
 			cell.separator.backgroundColor = Colors.clear
 			cell.backgroundColor = Theme.colorBackgroundTileList
 			return cell
 		}
 		else if self.listType == .Users {
 			let view = UserView(frame: CGRectMake(0, 0, self.view.width(), 97))
-			let cell = WrapperTableViewCell(view: view, padding: UIEdgeInsetsMake(8, 8, 8, 8), reuseIdentifier: cellType.rawValue)
+			let cell = WrapperTableViewCell(view: view, padding: self.itemPadding, reuseIdentifier: "cell")
 			cell.selectionStyle = .None
 			return cell
 		}
 		else {
-			return WrapperTableViewCell(view: UIView(), padding: UIEdgeInsetsZero, reuseIdentifier: cellType.rawValue)
+			return WrapperTableViewCell(view: UIView(), padding: self.itemPadding, reuseIdentifier: "cell")
 		}
 	}
 }
@@ -480,12 +475,12 @@ extension BaseTableViewController {
 		
 		if self.listType == .Notifications {
 			let notificationView = cell.view! as! NotificationView
-			notificationView.bindToEntity(entity)
+			notificationView.bindToEntity(entity, location: nil)
 		}
 		
 		if self.listType == .Messages {
 			let messageView = cell.view! as! MessageView
-			messageView.bindToEntity(entity)
+			messageView.bindToEntity(entity, location: nil)
 		}
 		
 		if self.listType == .Patches {
@@ -495,7 +490,7 @@ extension BaseTableViewController {
 		
 		if self.listType == .Users {
 			let userView = cell.view! as! UserView
-			userView.bindToEntity(entity)
+			userView.bindToEntity(entity, location: nil)
 		}
 	}
 	/*
@@ -515,35 +510,10 @@ extension BaseTableViewController {
 		/* Bind the cell to the entity */
 		let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem
 		let entity = queryResult!.object as? Entity
-				
-		var cellType: CellType = .TextAndPhoto
-		
-		if self.listType == .Notifications {
-			let notification = entity as! Notification
-			if notification.photoBig == nil {
-				cellType = .Text
-			}
-			else if notification.summary == nil {
-				cellType = .Photo
-			}
-		}
-		else if self.listType == .Messages {
-			let message = entity as! Message
-			if message.type != nil && message.type == "share" {
-				cellType = .Share
-			}
-			else if message.photo == nil {
-				cellType = .Text
-			}
-			else if message.description_ == nil || message.description_.isEmpty {
-				cellType = .Photo
-			}
-		}
-		
-		var cell = self.tableView.dequeueReusableCellWithIdentifier(cellType.rawValue) as! WrapperTableViewCell?
+		var cell = self.tableView.dequeueReusableCellWithIdentifier("cell") as! WrapperTableViewCell?
 		
 		if cell == nil {
-			cell = makeCell(cellType)
+			cell = makeCell()
 		}
 		
 		guard cell != nil && entity != nil else {
@@ -554,6 +524,44 @@ extension BaseTableViewController {
 		
 		return cell!
 	}
+	
+	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+		/*
+		* Using an estimate significantly improves table view load time but we can get
+		* small scrolling glitches if actual height ends up different than estimated height.
+		* So we try to provide the best estimate we can and still deliver it quickly.
+		*
+		* Note: Called once only for each row in fetchResultController when FRC is making a data pass in
+		* response to managedContext.save.
+		*/
+		if self.disableCells {
+			return 0
+		}
+		
+		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
+			let entity = queryResult.object as? Entity {
+			
+			if entity.id_ != nil {
+				if let cachedHeight = self.rowHeights.objectForKey(entity.id_) as? CGFloat {
+					return cachedHeight
+				}
+			}
+			
+			let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
+			self.itemTemplate!.bindToEntity(entity, location: nil)
+			self.itemTemplate!.bounds.size.width = viewWidth - (self.itemPadding.left + self.itemPadding.right)
+			self.itemTemplate!.sizeToFit()
+			let viewHeight = self.itemTemplate!.height() + (self.itemPadding.top + self.itemPadding.bottom + 1)
+			
+			if entity.id_ != nil {
+				self.rowHeights[entity.id_] = viewHeight
+			}
+			
+			return viewHeight
+		}
+		return 0
+	}
+
 }
 
 extension BaseTableViewController {

@@ -534,15 +534,8 @@ class MessageDetailViewController: BaseViewController {
 			
 			if self.inputMessage!.message != nil {
 				
-				var cellType: CellType = .TextAndPhoto
-				if self.inputMessage!.message!.photo == nil {
-					cellType = .Text
-				}
-				else if self.inputMessage!.message!.description_ == nil {
-					cellType = .Photo
-				}
-				
-				self.messageView = MessageView(cellType: cellType, entity: self.inputMessage!.message!)
+				self.messageView = MessageView()
+				self.messageView?.bindToEntity(self.inputMessage!.message!, location: nil)
 				
 				/* Resize once here because sizing in viewWillLayoutSubviews causes recursion */
 				let viewWidth = min(CONTENT_WIDTH_MAX, self.view.bounds.size.width)

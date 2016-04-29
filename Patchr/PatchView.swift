@@ -120,7 +120,7 @@ class PatchView: BaseView {
 		self.addSubview(self.shadow)
 	}
 	
-	func bindToEntity(entity: AnyObject, location: CLLocation?) {
+	override func bindToEntity(entity: AnyObject, location: CLLocation?) {
 		
 		let entity = entity as! Entity
 		
