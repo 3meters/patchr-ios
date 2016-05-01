@@ -37,6 +37,7 @@ class FacebookProvider: NSObject, FBSDKAppInviteDialogDelegate {
 	* in the device keychain. The facebook user id is available using token.userID.
 	*/
 	let permissions = ["public_profile", "email"]
+	let controller: UIViewController
 	
 	private var _loginManager: FBSDKLoginManager?
 	
@@ -48,6 +49,10 @@ class FacebookProvider: NSObject, FBSDKAppInviteDialogDelegate {
 			}
 			return _loginManager!
 		}
+	}
+	
+	init(controller: UIViewController) {
+		self.controller = controller
 	}
 	
 	func authorize(completion: CompletionBlock?) {
@@ -129,44 +134,42 @@ class FacebookProvider: NSObject, FBSDKAppInviteDialogDelegate {
 		}
 	}
 	
-	func invite(entity: Entity, controller: UIViewController) {
+	func invite(entity: Entity) {
 		/*
 		 * Facebook app invites do not require a currentAccessToken.
 		 */
-		let inviteDialog = FBSDKAppInviteDialog()
 		Log.d("Show facebook invite dialog", breadcrumb: true)
 		
-		if inviteDialog.canShow() {
-			
-			let patchNameEncoded = Utils.encodeForUrlQuery(entity.name)
-			var patchPhotoUrl : String?
-			let referrerNameEncoded = Utils.encodeForUrlQuery(UserController.instance.currentUser.name)
-			var referrerPhotoUrl = ""
-			
-			if let photo = UserController.instance.currentUser.photo {
-				let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile)
-				let photoUriEncoded = Utils.encodeForUrlQuery(photoUrl.absoluteString)
-				referrerPhotoUrl = "&referrerPhotoUrl=\(photoUriEncoded)"
-			}
-			
-			let queryString = "entityId=\(entity.id_)&entitySchema=patch&referrerName=\(referrerNameEncoded)\(referrerPhotoUrl)"
-			let applink = "https://fb.me/934234473291708?\(queryString)"
-			
-			FBSDKSettings.setLoggingBehavior(Set(arrayLiteral: FBSDKLoggingBehaviorGraphAPIDebugInfo, FBSDKLoggingBehaviorDeveloperErrors))
-			
-			if let photo = entity.photo {
-				let settings = "w=1200&h=628&crop&fit=crop&q=25&txtsize=96&txtalign=left,bottom&txtcolor=fff&txtshad=5&txtpad=60&txtfont=Helvetica%20Neue%20Light"
-				patchPhotoUrl = "https://3meters-images.imgix.net/\(photo.prefix)?\(settings)&txt=\(patchNameEncoded)"
-			}
-			
-			let content = FBSDKAppInviteContent()
-			content.appLinkURL = NSURL(string: applink)
-			if patchPhotoUrl != nil {
-				content.appInvitePreviewImageURL = NSURL(string: patchPhotoUrl!)
-			}
-			
-			FBSDKAppInviteDialog.showFromViewController(controller, withContent: content, delegate: self)
+		let patchNameEncoded = Utils.encodeForUrlQuery(entity.name)
+		var patchPhotoUrl : String?
+		let referrerNameEncoded = Utils.encodeForUrlQuery(UserController.instance.currentUser.name)
+		var referrerPhotoUrl = ""
+		
+		if let photo = UserController.instance.currentUser.photo {
+			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile)
+			let photoUriEncoded = Utils.encodeForUrlQuery(photoUrl.absoluteString)
+			referrerPhotoUrl = "&referrerPhotoUrl=\(photoUriEncoded)"
 		}
+		
+		let queryString = "entityId=\(entity.id_)&entitySchema=patch&referrerName=\(referrerNameEncoded)\(referrerPhotoUrl)"
+		let applink = "https://fb.me/934234473291708?\(queryString)"
+		
+		FBSDKSettings.setLoggingBehavior(Set(arrayLiteral: FBSDKLoggingBehaviorGraphAPIDebugInfo, FBSDKLoggingBehaviorDeveloperErrors))
+		
+		if let photo = entity.photo {
+			let settings = "w=1200&h=628&crop&fit=crop&q=25&txtsize=96&txtalign=left,bottom&txtcolor=fff&txtshad=5&txtpad=60&txtfont=Helvetica%20Neue%20Light"
+			patchPhotoUrl = "https://3meters-images.imgix.net/\(photo.prefix)?\(settings)&txt=\(patchNameEncoded)"
+		}
+		
+		FBSDKAppInviteDialog.initialize()
+		
+		let content = FBSDKAppInviteContent()
+		content.appLinkURL = NSURL(string: applink)
+		if patchPhotoUrl != nil {
+			content.appInvitePreviewImageURL = NSURL(string: patchPhotoUrl!)
+		}
+		
+		FBSDKAppInviteDialog.showFromViewController(self.controller, withContent: content, delegate: self)
 	}
 	
 	func appInviteDialog(appInviteDialog: FBSDKAppInviteDialog!, didCompleteWithResults results: [NSObject : AnyObject]!) {
@@ -174,7 +177,11 @@ class FacebookProvider: NSObject, FBSDKAppInviteDialogDelegate {
 			let referrerId = UserController.instance.currentUser.id_!
 			FBSDKAppEvents.logEvent("patch_invite", parameters: ["referrer":referrerId])
 			Reporting.track("Sent Patch Invitation", properties: ["network": "Facebook"])
-			UIShared.Toast("Patch invitations sent using Facebook!")
+			Log.d("Patch invitations sent using facebook")
+			UIShared.Toast("Patch invitations sent using Facebook!", controller: self.controller)
+			if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundEffects")) {
+				AudioController.instance.play(Sound.pop.rawValue)
+			}
 		}
 	}
 	

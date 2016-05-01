@@ -144,10 +144,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
 		FBSDKProfile.enableUpdatesOnAccessTokenChange(true)
 		
-		/*
-		* Initialize Branch: The deepLinkHandler gets called every time the app opens.
-		* That means it should be a good place to handle all initial routing.
-		*/
+		/* Initialize Branch: The deepLinkHandler gets called every time the app opens. */
 		Branch.getInstance().initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
 			if error == nil {
 				/* A hit could mean a deferred link match */
@@ -158,9 +155,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			}
 		})
 		
-		/*
-		* We might have been launched because of a deferred facebook deep link.
-		*/
+		/* We might have been launched because of a deferred facebook deep link. */
 		if launchOptions?[UIApplicationLaunchOptionsURLKey] == nil && self.firstLaunch {
 			FBSDKAppLinkUtility.fetchDeferredAppInvite() { url in
 				if url != nil {
@@ -177,8 +172,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
         return true
     }
-    
+	
+	@available(iOS 9.0, *)
+	func application(application: UIApplication, openURL url: NSURL, options: [String : AnyObject]) -> Bool {
+		let sourceApplication: String? = options[UIApplicationOpenURLOptionsSourceApplicationKey] as? String
+		return openUrl(application, openURL: url, sourceApplication: sourceApplication, annotation: nil)
+	}
+	
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
+		return  openUrl(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation)
+    }
+	
+	func openUrl(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
 		
 		/* First see if Branch claims it as a deep link. Calls handler registered in onLaunch. */
 		if Branch.getInstance().handleDeepLink(url) {
@@ -202,8 +207,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			return true
 		}
 		
-        return false
-    }
+		return false
+	}
 	
 	func applicationDidBecomeActive(application: UIApplication) {
 		

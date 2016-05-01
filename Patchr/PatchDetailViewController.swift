@@ -23,6 +23,7 @@ class PatchDetailViewController: BaseDetailViewController {
 	var inviteActive			= false
 	
 	var autoWatchOnAppear		= false
+	var provider				: FacebookProvider!
 
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
@@ -466,6 +467,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		self.view.accessibilityIdentifier = View.PatchDetail
 
 		self.queryName = DataStoreQueryName.MessagesForPatch.rawValue
+		self.provider = FacebookProvider(controller: self)
 		
 		self.header = PatchDetailView()
 		self.tableView = AirTableView(frame: self.tableView.frame, style: .Plain)
@@ -716,8 +718,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		}
 		else if route == .Facebook {
 			
-			let provider = FacebookProvider()
-			provider.invite(self.entity!, controller: self)
+			self.provider.invite(self.entity!)
 		}
 		else if route == .AirDrop {
 			
