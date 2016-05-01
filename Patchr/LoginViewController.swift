@@ -164,7 +164,7 @@ class LoginViewController: BaseEditViewController {
 		self.forgotPasswordButton.addTarget(self, action: #selector(LoginViewController.passwordResetAction(_:)), forControlEvents: .TouchUpInside)
 		self.doneButton.addTarget(self, action: #selector(LoginViewController.doneAction(_:)), forControlEvents: .TouchUpInside)
 		
-		setScreenName(onboardMode == OnboardMode.Signup ? "Signup" : "Login")
+		screen(onboardMode == OnboardMode.Signup ? "Signup" : "Login")
 		
 		/* Navigation bar buttons */
 		let doneButton   = UIBarButtonItem(title: "Log in", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(LoginViewController.doneAction(_:)))

@@ -156,6 +156,7 @@ class PhotoEditView: UIView {
 			self.imageButton.setImageWithImageResult(imageResult!)  // Downloads and pushes into photoImage
 		}
 		
+		Reporting.track("Set Photo", properties: ["target":self.photoSchema!])
 		self.usingPhotoDefault = false
 		
 		self.photoDirty = true
@@ -286,6 +287,7 @@ extension PhotoEditView: AdobeUXImageEditorViewControllerDelegate {
 	
 	func photoEditor(editor: AdobeUXImageEditorViewController, finishedWithImage image: UIImage?) {
 		self.photoChosen(image, imageResult: nil)
+		Reporting.track("Edited Photo", properties: nil)
 		self.controller!.dismissViewControllerAnimated(true, completion: nil)
 	}
 	

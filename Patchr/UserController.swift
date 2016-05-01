@@ -9,6 +9,7 @@ import Parse
 import AdSupport
 import Lockbox
 import Branch
+import Analytics
 
 class UserController: NSObject {
 	
@@ -209,6 +210,7 @@ class UserController: NSObject {
 				}
 				
 				self.clearUserState()
+				Reporting.track("Logged Out", properties: nil)
 				Log.i("User logged out")
 				
 				let navController = UINavigationController()
@@ -226,6 +228,9 @@ class UserController: NSObject {
 		self.clearStore()		// Clear the core data store and create new data stack, blocks until done
 		LocationController.instance.clearLastLocationAccepted()  // Triggers fresh location processing
 		Reporting.updateCrashUser(nil)
+		SEGAnalytics.sharedAnalytics().flush()
+		SEGAnalytics.sharedAnalytics().reset()
+		SEGAnalytics.sharedAnalytics().identify(UserController.instance.installId, traits: ["name":"Anonymous"])
 		BranchProvider.logout()
 	}
 	
@@ -234,6 +239,9 @@ class UserController: NSObject {
 		self.userName = user.name
 		self.userId = user.id_
 		BranchProvider.setIdentity(user.id_)
+		SEGAnalytics.sharedAnalytics().flush()
+		SEGAnalytics.sharedAnalytics().reset()
+		SEGAnalytics.sharedAnalytics().identify(user.id_, traits: ["name":user.name, "email":user.email])
 		Reporting.updateCrashUser(user)
 		
 		/* Need to seed these because sign-in with previous version might not have included them */

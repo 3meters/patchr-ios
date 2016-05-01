@@ -87,6 +87,26 @@ class DataController: NSObject {
 	 * Singles
 	 *--------------------------------------------------------------------------------------------*/
 
+	func withEntityId(entityId: String, strategy: FetchStrategy, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
+		/*
+		* Used by notifications which only have an entity id to work with.
+		*/
+		switch entityId {
+		case _ where entityId.hasPrefix("pa."):
+			withPatchId(entityId, strategy:	strategy, completion: completion)
+			
+		case _ where entityId.hasPrefix("us."):
+			withUserId(entityId, strategy: strategy, completion: completion)
+			
+		case _ where entityId.hasPrefix("me."):
+			withMessageId(entityId, strategy:strategy, completion: completion)
+			
+		default:
+			Log.w("WARNING: withEntity not currently implemented for id of form \(entityId)")
+			completion(nil, error: nil)
+		}
+	}
+	
 	private func withPatchId(patchId: String, strategy: FetchStrategy, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
         /*
         * - Load a patch for the patch form
@@ -116,26 +136,6 @@ class DataController: NSObject {
 		withEntityType(User.self, entityId: userId, strategy: strategy) {
 			objectId, error in
 			completion(objectId, error: error)
-		}
-	}
-
-    func withEntityId(entityId: String, strategy: FetchStrategy, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
-        /*
-        * Used by notifications which only have an entity id to work with.
-        */
-		switch entityId {
-			case _ where entityId.hasPrefix("pa."):
-				withPatchId(entityId, strategy:	strategy, completion: completion)
-            
-			case _ where entityId.hasPrefix("us."):
-				withUserId(entityId, strategy: strategy, completion: completion)
-            
-			case _ where entityId.hasPrefix("me."):
-				withMessageId(entityId, strategy:strategy, completion: completion)
-            
-			default:
-				Log.w("WARNING: withEntity not currently implemented for id of form \(entityId)")
-				completion(nil, error: nil)
 		}
 	}
 

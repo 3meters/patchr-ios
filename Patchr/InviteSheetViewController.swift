@@ -79,7 +79,7 @@ class InviteSheetViewController: UIViewController {
 	
 	func initialize() {
 		
-		setScreenName("InviteSheet")
+		screen("InviteSheet")
 		
 		self.view.backgroundColor = Theme.colorScrimInvite
 		self.view.accessibilityIdentifier = View.Invitation

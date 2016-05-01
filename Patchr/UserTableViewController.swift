@@ -50,9 +50,9 @@ class UserTableViewController: BaseTableViewController {
         
         switch self.filter {
             case .PatchWatchers:
-                setScreenName("UserListPatchWatchers")
+                screen("UserListPatchWatchers")
             case .MessageLikers:
-                setScreenName("UserListMessageLikers")
+                screen("UserListMessageLikers")
         }
     }
 	
@@ -210,6 +210,7 @@ extension UserTableViewController: UserApprovalViewDelegate {
 								self.handleError(error, errorActionType: .ALERT)
 							}
 							else {
+								Reporting.track(linkEnabled ? "Approved Member" : "Unapproved Member", properties: nil)
 								user.link.enabledValue = linkEnabled
 								DataController.instance.saveContext(BLOCKING)
 							}
@@ -247,6 +248,7 @@ extension UserTableViewController: UserApprovalViewDelegate {
 								self.handleError(error, errorActionType: .ALERT)
 							}
 							else {
+								Reporting.track("Removed Member Request", properties: nil)
 								DataController.instance.mainContext.deleteObject(user.link)
 								DataController.instance.mainContext.deleteObject(queryResult)
 								DataController.instance.saveContext(BLOCKING)

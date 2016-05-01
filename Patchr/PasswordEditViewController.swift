@@ -80,7 +80,7 @@ class PasswordEditViewController: BaseEditViewController {
 	override func initialize() {
 		super.initialize()
 		
-		setScreenName("PasswordEdit")
+		screen("PasswordEdit")
 		self.view.accessibilityIdentifier = View.PasswordEdit
 		
 		self.message.text = "Change password"
@@ -175,6 +175,7 @@ class PasswordEditViewController: BaseEditViewController {
 				else {
 					/* Password change has already been handled with UserController */
 					self.navigationController?.popViewControllerAnimated(true)	// Back to profile edit
+					Reporting.track("Password Changed", properties: nil)					
 					UIShared.Toast("Password changed")
 				}
 			}

@@ -64,64 +64,44 @@
 		<dict>
 			<key>akamaihd.net</key>
 			<dict>
-				<key>NSIncludesSubdomains</key>
-				<true/>
-				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
-				<false/>
+				<key>NSIncludesSubdomains</key><true/>
+				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key><false/>
 			</dict>
 			<key>amazonaws.com</key>
 			<dict>
-				<key>NSIncludesSubdomains</key>
-				<true/>
-				<key>NSThirdPartyExceptionMinimumTLSVersion</key>
-				<string>TLSv1.0</string>
-				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
-				<false/>
+				<key>NSIncludesSubdomains</key><true/>
+				<key>NSThirdPartyExceptionMinimumTLSVersion</key><string>TLSv1.0</string>
+				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key><false/>
 			</dict>
 			<key>amazonaws.com.cn</key>
 			<dict>
-				<key>NSIncludesSubdomains</key>
-				<true/>
-				<key>NSThirdPartyExceptionMinimumTLSVersion</key>
-				<string>TLSv1.0</string>
-				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
-				<false/>
+				<key>NSIncludesSubdomains</key><true/>
+				<key>NSThirdPartyExceptionMinimumTLSVersion</key><string>TLSv1.0</string>
+				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key><false/>
 			</dict>
 			<key>bing.net</key>
 			<dict>
-				<key>NSIncludesSubdomains</key>
-				<true/>
-				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-				<key>NSThirdPartyExceptionMinimumTLSVersion</key>
-				<string>TLSv1.0</string>
-				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
-				<false/>
+				<key>NSIncludesSubdomains</key><true/>
+				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key><true/>
+				<key>NSThirdPartyExceptionMinimumTLSVersion</key><string>TLSv1.0</string>
+				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key><false/>
 			</dict>
 			<key>facebook.com</key>
 			<dict>
-				<key>NSIncludesSubdomains</key>
-				<true/>
-				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
-				<false/>
+				<key>NSIncludesSubdomains</key><true/>
+				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key><false/>
 			</dict>
 			<key>fbcdn.net</key>
 			<dict>
-				<key>NSIncludesSubdomains</key>
-				<true/>
-				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
-				<false/>
+				<key>NSIncludesSubdomains</key><true/>
+				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key><false/>
 			</dict>
 			<key>patchr.com</key>
 			<dict>
-				<key>NSIncludesSubdomains</key>
-				<true/>
-				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-				<key>NSThirdPartyExceptionMinimumTLSVersion</key>
-				<string>TLSv1.0</string>
-				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
-				<false/>
+				<key>NSIncludesSubdomains</key><true/>
+				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key><true/>
+				<key>NSThirdPartyExceptionMinimumTLSVersion</key><string>TLSv1.0</string>
+				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key><false/>
 			</dict>
 		</dict>
 	</dict>

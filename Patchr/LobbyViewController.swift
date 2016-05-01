@@ -42,7 +42,7 @@ class LobbyViewController: BaseViewController {
 	
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
-		setScreenName("Lobby")
+		screen("Lobby")
 		
 		self.view.endEditing(true)
 		self.navigationController?.setNavigationBarHidden(true, animated: animated)
@@ -118,6 +118,7 @@ class LobbyViewController: BaseViewController {
 		let controller = MainTabBarController()
 		controller.selectedIndex = 0
 		AppDelegate.appDelegate().window!.setRootViewController(controller, animated: true)
+		Reporting.track("Enter As Guest", properties: nil)
 	}
 	
     /*--------------------------------------------------------------------------------------------

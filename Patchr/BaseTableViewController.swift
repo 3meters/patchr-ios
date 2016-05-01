@@ -94,15 +94,14 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
             self.tableView.addSubview(self.emptyLabel)
         }
 
-		self.tableView.estimatedRowHeight = 0	// Zero turns off estimates
-		self.tableView.rowHeight = 0			// Actual height is handled in heightForRowAtIndexPath
+		self.tableView.estimatedRowHeight = 100						// Zero turns off estimates
+		self.tableView.rowHeight = UITableViewAutomaticDimension	// Actual height is handled in heightForRowAtIndexPath
 
         /* A bit of UI tweaking */
 		self.tableView.accessibilityIdentifier = "table"
         self.tableView.backgroundColor = Theme.colorBackgroundTable
         self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
         self.tableView.separatorInset = UIEdgeInsetsZero
-        self.clearsSelectionOnViewWillAppear = false;
 
 		/* Hookup query */
 		self.query = loadQuery()
@@ -140,17 +139,14 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		super.viewWillAppear(animated) // Base implementation does nothing
 		
 		try! self.fetchedResultsController.performFetch()
-		self.tableView.reloadData()		// Reload cells so any changes while gone will show
-		
-		if let indexPath = tableView.indexPathForSelectedRow {
-			tableView.deselectRowAtIndexPath(indexPath, animated: animated)
-		}
 	}
 	
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
 		
 		if self.query.executedValue {
+			
+			self.tableView.reloadData()		// Reload cells so any changes while gone will show
 			
 			/* Configure paging button in footer */
 			if self.query.moreValue {
@@ -514,6 +510,10 @@ extension BaseTableViewController {
 		
 		if cell == nil {
 			cell = makeCell()
+			cell!.selectionStyle = .Default
+			let backgroundView = UIView()
+			backgroundView.backgroundColor = Theme.colorBackgroundSelected
+			cell!.selectedBackgroundView = backgroundView
 		}
 		
 		guard cell != nil && entity != nil else {

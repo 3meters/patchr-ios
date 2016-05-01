@@ -88,7 +88,7 @@ class WelcomeViewController: BaseViewController {
 	override func initialize() {
 		super.initialize()
 		
-		setScreenName("InvitePrompt")
+		screen("InvitePrompt")
 		
 		self.view.backgroundColor = Colors.clear
 		self.scrollView.backgroundColor = Colors.clear

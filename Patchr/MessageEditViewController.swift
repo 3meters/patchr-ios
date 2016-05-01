@@ -267,7 +267,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 			
 			if self.inputShareSchema == Schema.ENTITY_PATCH {
 				
-				setScreenName("PatchInvite")
+				screen("PatchInvite")
 				
 				self.progressStartLabel = "Inviting"
 				self.progressFinishLabel = "Invites sent"
@@ -288,7 +288,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 				
 			else if self.inputShareSchema == Schema.ENTITY_MESSAGE {
 				
-				setScreenName("MessageShare")
+				screen("MessageShare")
 				
 				self.progressStartLabel = "Sharing"
 				self.progressFinishLabel = "Shared"
@@ -322,7 +322,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 			self.descriptionField.placeholderLabel.text = "What\'s happening?"
 			
 			if self.inputState == State.Creating {
-				setScreenName("MessageNew")
+				screen("MessageNew")
 				self.progressStartLabel = "Posting"
 				self.progressFinishLabel = "Posted"
 				self.cancelledLabel = "Post cancelled"
@@ -334,7 +334,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 				self.navigationItem.rightBarButtonItems = [doneButton]
 			}
 			else {
-				setScreenName("MessageEdit")
+				screen("MessageEdit")
 				self.progressStartLabel = "Updating"
 				self.progressFinishLabel = "Updated"
 				self.cancelledLabel = "Update cancelled"
@@ -493,10 +493,20 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 						if self.inputState == .Creating {
 							/* Used to trigger call to action UI */
 							NSNotificationCenter.defaultCenter().postNotificationName(Events.DidInsertMessage, object: self)
+							Reporting.track("Posted Message", properties: ["target": "Patch"])
+						}
+						else {
+							if self.inputShareSchema == Schema.ENTITY_PATCH {
+								Reporting.track("Sent Patch Invitation", properties: ["network": "Patchr"])
+							}
+							else if self.inputShareSchema == Schema.ENTITY_MESSAGE {
+								Reporting.track("Shared Message", properties: ["network": "Patchr"])
+							}
 						}
 					}
 					else {
 						Log.d("Updated message \(self.inputEntity!.id_)")
+						Reporting.track("Updated Message", properties: nil)
 					}
 				}
 			}
@@ -530,6 +540,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 					DataController.instance.mainContext.deleteObject(self.inputEntity!)
 					DataController.instance.saveContext(BLOCKING)
 					DataController.instance.activityDateInsertDeleteMessage = Utils.now()
+					Reporting.track("Message Deleted", properties: nil)
 					self.performBack()
 				}
 			}

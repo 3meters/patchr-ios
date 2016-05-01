@@ -452,7 +452,7 @@ class MessageDetailViewController: BaseViewController {
 	override func initialize() {
 		super.initialize()
 		
-		setScreenName("MessageDetail")
+		screen("MessageDetail")
 		self.view.accessibilityIdentifier = View.MessageDetail
 		
 		/* Ui tweaks */
@@ -734,6 +734,7 @@ class MessageDetailViewController: BaseViewController {
 				else {
 					DataController.instance.mainContext.deleteObject(self.inputMessage!)
 					DataController.instance.saveContext(BLOCKING)
+					Reporting.track("Message Deleted", properties: nil)
 					self.navigationController?.popViewControllerAnimated(true)
 				}
 			}
@@ -818,6 +819,7 @@ extension MessageDetailViewController: MFMailComposeViewControllerDelegate {
 			case MFMailComposeResultSaved.rawValue:		// 1
 				UIShared.Toast("Report saved", controller: self, addToWindow: false)
 			case MFMailComposeResultSent.rawValue:		// 2
+				Reporting.track("Sent Report", properties: ["target":"Message"])
 				UIShared.Toast("Report sent", controller: self, addToWindow: false)
 			case MFMailComposeResultFailed.rawValue:	// 3
 				UIShared.Toast("Report send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)

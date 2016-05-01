@@ -53,7 +53,7 @@ class TextZoomController: BaseViewController {
 	override func initialize() {
 		super.initialize()
 		
-		setScreenName("TextZoom")
+		screen("TextZoom")
 		self.view.accessibilityIdentifier = View.TextZoom
 		
 		self.view.backgroundColor = Colors.clear

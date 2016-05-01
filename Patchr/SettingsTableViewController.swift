@@ -1,3 +1,4 @@
+
 //
 //  SettingsTableViewController.swift
 //  Patchr
@@ -78,6 +79,7 @@ class SettingsTableViewController: UITableViewController {
 		self.progress!.show(true)
 		
 		Utils.clearHistory()
+		Reporting.track("Cleared History", properties: nil)
 		
 		self.progress!.hide(true)
 	}
@@ -88,7 +90,7 @@ class SettingsTableViewController: UITableViewController {
 	
 	func initialize() {
 		
-		setScreenName("Settings")
+		screen("Settings")
 		
 		self.navigationItem.title = "Settings"
 		self.view.accessibilityIdentifier = View.Settings
@@ -295,6 +297,7 @@ extension SettingsTableViewController: MFMailComposeViewControllerDelegate {
 		case MFMailComposeResultSaved.rawValue:		// 1
 			UIShared.Toast("Feedback saved", controller: self, addToWindow: false)
 		case MFMailComposeResultSent.rawValue:		// 2
+			Reporting.track("Sent Feedback", properties: nil)
 			UIShared.Toast("Feedback sent", controller: self, addToWindow: false)
 		case MFMailComposeResultFailed.rawValue:	// 3
 			UIShared.Toast("Feedback send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)

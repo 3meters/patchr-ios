@@ -64,6 +64,7 @@ class AirMuteButton: AirToggleButton {
 				else {
 					self.entity!.userWatchMutedValue = muted
 					self.toggleOn(!muted)
+					Reporting.track(muted ? "Muted Patch" : "Unmuted Patch", properties: nil)
 					
 					if muted && self.messageOff != nil {
 						UIShared.Toast(self.messageOff)

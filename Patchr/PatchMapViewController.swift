@@ -81,7 +81,7 @@ class PatchMapViewController: UIViewController {
 	*--------------------------------------------------------------------------------------------*/
 	
 	func initialize() {
-		setScreenName("PatchMap")
+		screen("PatchMap")
 		
 		self.mapView = MKMapView()
 		self.mapView.delegate = self

@@ -12,24 +12,24 @@ import CoreLocation
 
 class SearchViewController: UITableViewController {
     
-    var patch = "None"
-    var userId: String?
-    var sessionKey: String?
+    var patch				= "None"
+    var userId				: String?
+    var sessionKey			: String?
     
-    var headerView: UIView!
+    var headerView			: UIView!
     
-    let searchItems: NSMutableArray = []
-    let recentItems: NSMutableArray = []
-	var currentItems: NSMutableArray = []
+    let searchItems			: NSMutableArray = []
+    let recentItems			: NSMutableArray = []
+	var currentItems		: NSMutableArray = []
     
-    var searchInProgress = false
-    var searchTimer: NSTimer?
-    var searchEditing = false
+    var searchInProgress	= false
+    var searchTimer			: NSTimer?
+    var searchEditing		= false
 	
-	var inputState: State? = State.Searching
+	var inputState			: State? = State.Searching
 	
-    var locationCurrent : CLLocation?
-    var manager: OneShotLocationManager?
+    var locationCurrent		: CLLocation?
+    var manager				: OneShotLocationManager?
     
     class func defaultPatch() -> String{
         return "None"
@@ -94,7 +94,7 @@ class SearchViewController: UITableViewController {
 	
 	func initialize() {
 		
-		setScreenName("PatchSearch")
+		screen("PatchSearch")
 		self.navigationItem.title = "Search Patchr"
 		
 		self.view.accessibilityIdentifier = View.Search

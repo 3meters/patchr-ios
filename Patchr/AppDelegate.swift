@@ -14,7 +14,7 @@ import AFNetworkActivityLogger
 import AWSCore
 import FBSDKCoreKit
 import Branch
-import Google
+import Analytics
 import CocoaLumberjack
 import iRate
 import Bugsnag
@@ -50,6 +50,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
 		/* Initialize Bugsnag */
 		Bugsnag.startBugsnagWithApiKey("d1313b8d5fc14d937419406f33fd4c01")
+		
+		/* Initialize Segment */
+		let configuration = SEGAnalyticsConfiguration(writeKey: "RyiR81qsJCF0aS0dPucR01MaxqI9HTnB")
+		configuration.flushAt = 20
+		#if DEBUG
+			configuration.flushAt = 1
+		#endif
+		SEGAnalytics.setupWithConfiguration(configuration)
 
 		/* Instance the data controller */
 		DataController.instance
@@ -68,6 +76,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			NSUserDefaults.standardUserDefaults().setBool(true, forKey: "firstLaunch")
 			NSUserDefaults.standardUserDefaults().synchronize()
 			self.firstLaunch = true
+			Reporting.track("First Launch", properties: nil)
 		}
 		/*
 		* Init location controller. If this is done in the init of the nearby patch list
@@ -121,25 +130,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let defaultSettingsFile: NSString = NSBundle.mainBundle().pathForResource("DefaultSettings", ofType: "plist")!
         let settingsDictionary: NSDictionary = NSDictionary(contentsOfFile: defaultSettingsFile as String)!
         NSUserDefaults.standardUserDefaults().registerDefaults(settingsDictionary as! [String : AnyObject])
-        
-        /* Initialize Google analytics */
-        var configureError:NSError?
-        GGLContext.sharedInstance().configureWithError(&configureError)
-        precondition(configureError == nil, "Error configuring Google services: \(configureError)")
-		
-        // Optional: configure GAI options.
-		if let gai = GAI.sharedInstance() {
-			gai.trackerWithTrackingId(GOOGLE_ANALYTICS_ID)
-			gai.trackUncaughtExceptions = false  // report uncaught exceptions
-			gai.defaultTracker.allowIDFACollection = true
-			gai.dispatchInterval = 30    // Seconds
-			gai.logger.logLevel = GAILogLevel.None
-			
-			#if DEBUG
-				gai.logger.logLevel = GAILogLevel.Warning
-				gai.dispatchInterval = 5    // Seconds
-			#endif
-		}
 		
         /* Initialize Creative sdk: 25% of method time */
         AdobeUXAuthManager.sharedManager().setAuthenticationParametersWithClientID(keys.creativeSdkClientId(), clientSecret: keys.creativeSdkClientSecret(), enableSignUp: false)
@@ -151,8 +141,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ReachabilityManager.instance
 		
 		/* Facebook */
-		FBSDKProfile.enableUpdatesOnAccessTokenChange(true)
 		FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
+		FBSDKProfile.enableUpdatesOnAccessTokenChange(true)
+		
 		/*
 		* Initialize Branch: The deepLinkHandler gets called every time the app opens.
 		* That means it should be a good place to handle all initial routing.
@@ -188,16 +179,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
-		/* 
-		 * First see if Branch claims it as a deep link. Calls handler registered in 
-		 * onLaunch.
-		 */
+		
+		/* First see if Branch claims it as a deep link. Calls handler registered in onLaunch. */
 		if Branch.getInstance().handleDeepLink(url) {
 			Log.d("Branch detected a deep link in openUrl: \(url.absoluteString)", breadcrumb: true)
 			return true
 		}
 		
-		/* See if this is a Facebook deep link */
+		/* See if Facebook claims it as part of interaction with native Facebook client and Facebook dialogs */
+		if FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation) {
+			Log.d("Url passed to openUrl was intended for Facebook: \(url.absoluteString)", breadcrumb: true)
+			return true
+		}
+		
+		/* If the Branch or Facebook did not handle the incoming URL, check it for app link data */
 		let parsedUrl: BFURL = BFURL(inboundURL: url, sourceApplication: sourceApplication)
 		if (parsedUrl.appLinkData != nil) {
 			if let params = parsedUrl.targetQueryParameters {
@@ -207,21 +202,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			return true
 		}
 		
-		/* See if Facebook claims it as part of interaction with native Facebook client and Facebook dialogs */
-		if FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation) {
-			Log.d("Url passed to openUrl was intended for Facebook: \(url.absoluteString)", breadcrumb: true)
-			return true
-		}				
-		
         return false
     }
 	
 	func applicationDidBecomeActive(application: UIApplication) {
-		/*
-		 * UIApplicationWillEnterForegroundNotification fires before this
-		 * is called.
-		 */
+		
+		/* UIApplicationWillEnterForegroundNotification fires before this is called. */
 		FBSDKAppEvents.activateApp()
+		
 		/*
 		* Check to see if Facebook has a deferred deep link. Should only be
 		* called after any launching url is processed. The facebook code
@@ -260,7 +248,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	func application(application: UIApplication, continueUserActivity userActivity: NSUserActivity, restorationHandler: ([AnyObject]?) -> Void) -> Bool {
 		/* 
 		 * This is the initial entry point for universal links. 
-		 * Pass the url to the branch deep link handler we regsitered in didFinishLaunchingWithOptions.
+		 * Pass the url to the branch deep link handler we registered in didFinishLaunchingWithOptions.
 		 */
 		Branch.getInstance().continueUserActivity(userActivity)
 		return true

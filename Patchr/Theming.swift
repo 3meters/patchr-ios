@@ -54,6 +54,7 @@ class Snow {
 	let colorBackgroundEmptyBubble  = Colors.gray97pcntColor
 	let colorBackgroundAgeDot       = Colors.accentColorFill
 	let colorBackgroundContactSelected 	= Colors.accentColorFill
+	let colorBackgroundSelected		= Colors.gray90pcntColor
 
 	let colorRule                   = Colors.gray75pcntColor
 	let colorRuleActive             = Colors.accentColorRule

@@ -33,21 +33,21 @@ def core_pods
 	pod 'MBProgressHUD',			'~> 0.9.1'
 	pod 'DLRadioButton'
 	pod 'UIDevice-Hardware'								# Convenience for determining system version and model identifier
-	pod 'Branch'										# Url routing and deep linking
 	pod 'pop', '~> 1.0'									# Animation library
 	pod 'AirPhotoBrowser',			:path => '~/code/AirPhotoBrowser'
 	pod 'TWMessageBarManager',		'~> 1.8'			# In-app notifications
 	pod 'Facade'										# Convenience methods for frame based layout
-	pod 'Google/Analytics'
 	pod 'THContactPicker',			'~> 1.2'			# Used in message edit
 	pod 'FBSDKCoreKit',				'~> 4.11.0'
 	pod 'FBSDKLoginKit',			'~> 4.11.0'
 	pod 'FBSDKShareKit',			'~> 4.11.0'
 	pod 'DateTools'
-	pod 'Parse'
+	pod 'Parse'											# Push notifications
 	pod 'iRate'
 	pod 'CocoaLumberjack/Swift'
-	pod 'Bugsnag'
+	pod 'Analytics',				'~> 3.0'			# Segment pipeline
+	pod 'Branch'										# Url routing and deep linking
+	pod 'Bugsnag'										# Crash reporting
 end
 
 target 'Patchr' do

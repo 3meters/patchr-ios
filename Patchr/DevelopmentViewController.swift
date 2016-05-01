@@ -107,7 +107,7 @@ class DevelopmentViewController: UIViewController {
 	
 	func initialize() {
 		
-		setScreenName("DevelopmentSettings")
+		screen("DevelopmentSettings")
 		self.view.backgroundColor = Theme.colorBackgroundForm
 		
 		self.enableDevModeSwitch.on = userDefaults.boolForKey(PatchrUserDefaultKey("enableDevModeAction"))

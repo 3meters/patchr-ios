@@ -129,7 +129,7 @@ class FacebookProvider: NSObject, FBSDKAppInviteDialogDelegate {
 		}
 	}
 	
-	func invite(entity: Entity) {
+	func invite(entity: Entity, controller: UIViewController) {
 		/*
 		 * Facebook app invites do not require a currentAccessToken.
 		 */
@@ -159,14 +159,13 @@ class FacebookProvider: NSObject, FBSDKAppInviteDialogDelegate {
 				patchPhotoUrl = "https://3meters-images.imgix.net/\(photo.prefix)?\(settings)&txt=\(patchNameEncoded)"
 			}
 			
-			let invite = FBSDKAppInviteContent()
-			invite.appLinkURL = NSURL(string: applink)
+			let content = FBSDKAppInviteContent()
+			content.appLinkURL = NSURL(string: applink)
 			if patchPhotoUrl != nil {
-				invite.appInvitePreviewImageURL = NSURL(string: patchPhotoUrl!)
+				content.appInvitePreviewImageURL = NSURL(string: patchPhotoUrl!)
 			}
-			inviteDialog.content = invite
-			inviteDialog.delegate = self
-			inviteDialog.show()
+			
+			FBSDKAppInviteDialog.showFromViewController(controller, withContent: content, delegate: self)
 		}
 	}
 	
@@ -174,6 +173,7 @@ class FacebookProvider: NSObject, FBSDKAppInviteDialogDelegate {
 		if results != nil && results["completionGesture"] as? String != "cancel" {
 			let referrerId = UserController.instance.currentUser.id_!
 			FBSDKAppEvents.logEvent("patch_invite", parameters: ["referrer":referrerId])
+			Reporting.track("Sent Patch Invitation", properties: ["network": "Facebook"])
 			UIShared.Toast("Patch invitations sent using Facebook!")
 		}
 	}

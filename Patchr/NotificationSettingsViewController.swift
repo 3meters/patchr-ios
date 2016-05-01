@@ -43,7 +43,7 @@ class NotificationSettingsViewController: UITableViewController {
     *--------------------------------------------------------------------------------------------*/
 	
 	func initialize() {
-		setScreenName("NotificationSettings")
+		screen("NotificationSettings")
 		
 		self.navigationItem.title = "Notifications"
 		self.view.accessibilityIdentifier = View.NotificationSettings

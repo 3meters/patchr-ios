@@ -72,7 +72,7 @@ class InviteViewController: BaseViewController {
 	override func initialize() {
 		super.initialize()
 		
-		setScreenName("PatchInvite")
+		screen("PatchInvite")
 		self.view.accessibilityIdentifier = View.Invite
 		
 		self.message.text = "Invite friends to your new patch."
@@ -121,7 +121,7 @@ class InviteViewController: BaseViewController {
 		else if route == .Facebook {
 			
 			let provider = FacebookProvider()
-			provider.invite(self.inputEntity)
+			provider.invite(self.inputEntity, controller: self)
 		}
 		else if route == .Actions {
 			

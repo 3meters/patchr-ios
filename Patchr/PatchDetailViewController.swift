@@ -462,15 +462,13 @@ class PatchDetailViewController: BaseDetailViewController {
 	
 	func initialize() {
 		
-		setScreenName("PatchDetail")
+		screen("PatchDetail")
 		self.view.accessibilityIdentifier = View.PatchDetail
 
 		self.queryName = DataStoreQueryName.MessagesForPatch.rawValue
 		
 		self.header = PatchDetailView()
 		self.tableView = AirTableView(frame: self.tableView.frame, style: .Plain)
-		self.tableView.estimatedRowHeight = 0	// Zero turns off estimates
-		self.tableView.rowHeight = 0			// Actual height is handled in heightForRowAtIndexPath
 		
 		let header = self.header as! PatchDetailView
 		
@@ -719,7 +717,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		else if route == .Facebook {
 			
 			let provider = FacebookProvider()
-			provider.invite(self.entity!)
+			provider.invite(self.entity!, controller: self)
 		}
 		else if route == .AirDrop {
 			
@@ -751,6 +749,13 @@ class PatchDetailViewController: BaseDetailViewController {
 						activityItems: [patch, NSURL.init(string: patch.shareUrl, relativeToURL: nil)!],
 						applicationActivities: nil)
 					
+					activityViewController.completionWithItemsHandler = {
+						activityType, completed, items, activityError in
+						if completed && activityType != nil {
+							Reporting.track("Sent Patch Invitation", properties: ["network": activityType!])
+						}
+					}
+					
 					activityViewController.excludedActivityTypes = excluded
 					
 					if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
@@ -780,6 +785,13 @@ class PatchDetailViewController: BaseDetailViewController {
 					let activityViewController = UIActivityViewController(
 						activityItems: [patch, NSURL.init(string: patch.shareUrl, relativeToURL: nil)!],
 						applicationActivities: nil)
+					
+					activityViewController.completionWithItemsHandler = {
+						activityType, completed, items, activityError in
+						if completed && activityType != nil {
+							Reporting.track("Sent Patch Invitation", properties: ["network": activityType!])
+						}
+					}
 					
 					activityViewController.excludedActivityTypes = excluded
 					
@@ -897,6 +909,7 @@ extension PatchDetailViewController: MFMailComposeViewControllerDelegate {
 		case MFMailComposeResultSaved.rawValue:		// 1
 			UIShared.Toast("Report saved", controller: self, addToWindow: false)
 		case MFMailComposeResultSent.rawValue:		// 2
+			Reporting.track("Sent Report", properties: ["target":"Patch"])
 			UIShared.Toast("Report sent", controller: self, addToWindow: false)
 		case MFMailComposeResultFailed.rawValue:	// 3
 			UIShared.Toast("Report send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)

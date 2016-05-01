@@ -291,7 +291,7 @@ class ProfileEditViewController: BaseEditViewController {
 		
 		if self.inputState == State.Onboarding {
 			
-			setScreenName("ProfileSignup")
+			screen("ProfileSignup")
 			self.view.accessibilityIdentifier = View.SignupProfile
 			
 			navigationItem.title = "Profile"
@@ -332,7 +332,7 @@ class ProfileEditViewController: BaseEditViewController {
 		}
 		else {
 			
-			setScreenName("ProfileEdit")
+			screen("ProfileEdit")
 			self.view.accessibilityIdentifier = View.ProfileEdit
 			
 			navigationItem.title = "Edit profile"
@@ -592,12 +592,13 @@ class ProfileEditViewController: BaseEditViewController {
 							else {
 								self.navigationController?.popViewControllerAnimated(true)
 							}
-//							if UserController.instance.userName != nil {
-//								UIShared.Toast("Logged in as \(UserController.instance.userName!)")
-//							}
 						}
+						Reporting.track("Created Profile", properties: nil)
 						return
 					}
+				}
+				else {
+					Reporting.track("Updated Profile", properties: nil)
 				}
 			}
 			
@@ -648,6 +649,7 @@ class ProfileEditViewController: BaseEditViewController {
 					let navController = UINavigationController()
 					navController.viewControllers = [LobbyViewController()]
 					AppDelegate.appDelegate().window!.setRootViewController(navController, animated: true)
+					Reporting.track("User Deleted", properties: ["id":self.inputUser!.id_, "name": userName, "email": self.inputUser!.email])
 					UIShared.Toast("User \(userName) erased", controller: navController)
 				}
 			}

@@ -78,19 +78,24 @@ class PatchTableViewController: BaseTableViewController {
 
         switch self.filter! {
             case .Nearby:
-                setScreenName("NearbyList")
+                screen("NearbyList")
             case .Explore:
-                setScreenName("ExploreList")
+                screen("ExploreList")
             case .Watching:
-                setScreenName("JoinedList")
+                screen("JoinedList")
             case .Owns:
-                setScreenName("OwnsList")
+                screen("OwnsList")
         }
     }
 
     override func viewDidAppear(animated: Bool) {
 
         if self.filter == .Nearby {
+			
+			/* Refresh data and ui to catch changes while gone */
+			try! self.fetchedResultsController.performFetch()
+			self.tableView.reloadData()
+
 			registerForLocationNotifications()
 			var level = Level.Background
 			if CLLocationManager.locationServicesEnabled() && self.locationServicesDisabled {
@@ -161,8 +166,9 @@ class PatchTableViewController: BaseTableViewController {
 		if self.filter == .Nearby {
 			if let userInfo = notification.userInfo {
 				if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundEffects")) {
-					if !self.greetingDidPlay && userInfo["count"] as! Int > 0 {
+					if !self.greetingDidPlay && userInfo["count"] != nil && userInfo["count"] as! Int > 0 {
 						AudioController.instance.play(Sound.greeting.rawValue)
+						Log.d("Play some sparkle!")
 						self.greetingDidPlay = true
 					}
 				}
