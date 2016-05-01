@@ -52,6 +52,7 @@ class ProfileEditViewController: BaseEditViewController {
 	var facebookDisconnect	 = AirLinkButton()
 	var facebookPhoto		 = AirImageView(frame: CGRectZero)
 	var facebookActivity	 = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
+	var provider			 : FacebookProvider!
 	
 	var progress			 : AirProgress?
 	
@@ -153,9 +154,8 @@ class ProfileEditViewController: BaseEditViewController {
 		self.facebookActivity.fadeIn()
 		self.facebookActivity.hidesWhenStopped = true
 		self.facebookActivity.startAnimating()
-		let provider = FacebookProvider()
 		if FBSDKAccessToken.currentAccessToken() != nil {
-			provider.deauthorize { response, error in
+			self.provider.deauthorize { response, error in
 				self.facebookActivity.stopAnimating()
 				self.facebookDisconnect.fadeIn()
 				if error == nil {
@@ -171,12 +171,11 @@ class ProfileEditViewController: BaseEditViewController {
 		* User stays logged in with proxibase. Any features that use Google
 		* like app invites will fallback to a different provider.
 		*/
-		let provider = FacebookProvider()
 		if FBSDKAccessToken.currentAccessToken() == nil {
-			provider.authorize { response, error in
+			self.provider.authorize { response, error in
 				if FBSDKAccessToken.currentAccessToken() != nil {
 					if self.inputState == .Onboarding {
-						provider.profile {
+						self.provider.profile {
 							response, error in
 							if let profile = response as? ServiceUserProfile where error == nil {
 								self.inputName = profile.name
@@ -261,6 +260,7 @@ class ProfileEditViewController: BaseEditViewController {
 		}
 		
 		self.facebookActivity.accessibilityIdentifier = "activity_facebook"
+		self.provider = FacebookProvider(controller: self)
 		
 		self.message.textColor = Theme.colorTextTitle
 		self.message.numberOfLines = 0
