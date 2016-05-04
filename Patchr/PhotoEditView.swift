@@ -287,7 +287,7 @@ extension PhotoEditView: AdobeUXImageEditorViewControllerDelegate {
 	
 	func photoEditor(editor: AdobeUXImageEditorViewController, finishedWithImage image: UIImage?) {
 		self.photoChosen(image, imageResult: nil)
-		Reporting.track("Edited Photo", properties: nil)
+		Reporting.track("Edited Photo")
 		self.controller!.dismissViewControllerAnimated(true, completion: nil)
 	}
 	

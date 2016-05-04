@@ -15,6 +15,7 @@ class LoginViewController: BaseEditViewController {
 	var provider				= AuthProvider.PROXIBASE
 	var onboardMode				= OnboardMode.Login
 	var progress				: AirProgress!
+	var source					= "Lobby"
 
     var emailField				= AirTextField()
     var passwordField			= AirTextField()
@@ -261,6 +262,7 @@ class LoginViewController: BaseEditViewController {
 						NSUserDefaults.standardUserDefaults().synchronize()
 						self.passwordField.text = nil
 					}
+					Reporting.track("Logged In", properties: ["source":self.source])
 					self.didLogin()
 				}
 			}
@@ -293,6 +295,7 @@ class LoginViewController: BaseEditViewController {
 		controller.inputEmail = self.emailField.text
 		controller.inputPassword = self.passwordField.text
 		controller.inputRouteToMain = self.inputRouteToMain
+		controller.source = self.source
 		self.navigationController?.pushViewController(controller, animated: true)
 	}
 	

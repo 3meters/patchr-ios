@@ -352,6 +352,9 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 							 */
 							DataController.instance.saveContext(BLOCKING)
 							self?.tableView.reloadData()		// Update cells to show any changes
+							if paging {
+								Reporting.track("Paged List")
+							}
 							
 							dispatch_async(dispatch_get_main_queue(), { () -> Void in
 								if self != nil {

@@ -50,6 +50,7 @@ class GuestViewController: BaseViewController {
 		let navController = UINavigationController()
 		navController.viewControllers = [controller]
 		controller.onboardMode = OnboardMode.Login
+		controller.source = "Guard"
 		controller.inputRouteToMain = false
 
 		self.dismissViewControllerAnimated(true) {
@@ -62,6 +63,7 @@ class GuestViewController: BaseViewController {
 		let navController = UINavigationController()
 		navController.viewControllers = [controller]
 		controller.onboardMode = OnboardMode.Signup
+		controller.source = "Guard"
 		controller.inputRouteToMain = false
 		
 		self.dismissViewControllerAnimated(true) {

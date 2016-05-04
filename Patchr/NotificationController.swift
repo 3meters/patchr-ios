@@ -131,10 +131,12 @@ class NotificationController {
 			let alert = UIAlertController(title: "Joining Patch", message: message, preferredStyle: UIAlertControllerStyle.Alert)
 			let submit = UIAlertAction(title: "Notify me", style: .Default) { action in
 				self.registerForRemoteNotifications()
+				Reporting.track("Selected Notifications for Patch")
 			}
 			let cancel = UIAlertAction(title: "No thanks", style: .Cancel) { action in
 				Log.d("Remote notifications declined")
 				alert.dismissViewControllerAnimated(true, completion: nil)
+				Reporting.track("Declined Notifications for Patch")
 			}
 			
 			alert.addAction(cancel)

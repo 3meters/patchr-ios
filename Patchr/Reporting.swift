@@ -49,16 +49,14 @@ struct Reporting {
 	
     static func updateUser(user: User?) {
         if user != nil {
-			SEGAnalytics.sharedAnalytics().flush()
-			SEGAnalytics.sharedAnalytics().reset()
-			SEGAnalytics.sharedAnalytics().identify(user!.id_, traits: ["name":user!.name, "email":user!.email], options:nil)
+			SEGAnalytics.sharedAnalytics().alias(user!.id_)
+			SEGAnalytics.sharedAnalytics().identify(user!.id_, traits: ["name":user!.name, "email":user!.email])
 			BranchProvider.setIdentity(user!.id_)
 			Bugsnag.configuration().setUser(user!.id_, withName: user!.name, andEmail: user!.email)
         }
         else {
-			SEGAnalytics.sharedAnalytics().flush()
-			SEGAnalytics.sharedAnalytics().reset()
-			SEGAnalytics.sharedAnalytics().identify(nil, traits: ["name":"Anonymous"], options:["anonymousId":UserController.instance.installId])
+			SEGAnalytics.sharedAnalytics().flush()	// Trigger upload of all queued events before clearing identity
+			SEGAnalytics.sharedAnalytics().reset()	// Clears user id being used by segmentio
 			BranchProvider.logout()
 			Bugsnag.configuration().setUser(nil, withName: nil, andEmail: nil)
         }

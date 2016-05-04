@@ -70,7 +70,7 @@ class PatchTableViewController: BaseTableViewController {
 		self.tableView.accessibilityIdentifier = Table.Patches
 		
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchTableViewController.didReceiveRemoteNotification(_:)), name: Events.DidReceiveRemoteNotification, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidBecomeActive(_:)), name: UIApplicationDidBecomeActiveNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchTableViewController.applicationDidBecomeActive(_:)), name: UIApplicationDidBecomeActiveNotification, object: nil)
 	}
 	
     override func viewWillAppear(animated: Bool) {
@@ -108,6 +108,7 @@ class PatchTableViewController: BaseTableViewController {
 			if CLLocationManager.authorizationStatus() == .AuthorizedAlways {
 				LocationController.instance.stopSignificantChangeUpdates()
 			}
+			self.firstAppearance = false
         }
 		else {
 			super.viewDidAppear(animated)

@@ -20,7 +20,7 @@ import iRate
 import Bugsnag
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
     
 	var window: UIWindow?
 	var firstLaunch: Bool = false
@@ -47,7 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	*--------------------------------------------------------------------------------------------*/
 	
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        
+		
 		/* Initialize Bugsnag */
 		Bugsnag.startBugsnagWithApiKey("d1313b8d5fc14d937419406f33fd4c01")
 		
@@ -61,6 +61,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 		/* Instance the data controller */
 		DataController.instance
+		
+		iRate.sharedInstance().delegate = self
 
 		let keys = PatchrKeys()
 		
@@ -76,7 +78,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			NSUserDefaults.standardUserDefaults().setBool(true, forKey: "firstLaunch")
 			NSUserDefaults.standardUserDefaults().synchronize()
 			self.firstLaunch = true
-			Reporting.track("First Launch", properties: nil)
+			Reporting.track("Launched for First Time")
 		}
 		/*
 		* Init location controller. If this is done in the init of the nearby patch list
@@ -445,6 +447,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Log.d("handleEventsForBackgroundURLSession called")
         UIShared.Toast("Message Posted!")
     }
+}
+
+extension AppDelegate {
+	
+	func iRateDidPromptForRating() {
+		Reporting.track("Prompted for Rating")
+	}
+	
+	func iRateUserDidAttemptToRateApp() {
+		Reporting.track("Attempted to Rate")
+	}
+	
+	func iRateUserDidDeclineToRateApp() {
+		Reporting.track("Declined to Rate")
+	}
+	
+	func iRateUserDidRequestReminderToRateApp() {
+		Reporting.track("Requested Reminder to Rate")
+	}
 }
 
 extension AppDelegate {

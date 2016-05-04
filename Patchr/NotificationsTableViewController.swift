@@ -256,7 +256,7 @@ class NotificationsTableViewController: BaseTableViewController {
 	
 	func initialize() {
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(NotificationsTableViewController.didReceiveRemoteNotification(_:)), name: Events.DidReceiveRemoteNotification, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidBecomeActive(_:)), name: UIApplicationDidBecomeActiveNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(NotificationsTableViewController.applicationDidBecomeActive(_:)), name: UIApplicationDidBecomeActiveNotification, object: nil)
 		self.view.accessibilityIdentifier = View.Notifications
 		self.tableView.accessibilityIdentifier = Table.Notifications
 	}

@@ -197,12 +197,13 @@ class PatchDetailViewController: BaseDetailViewController {
 							patch!.countWatchingValue -= 1
 							DataController.instance.activityDateWatching = Utils.now()
 						}
+						Reporting.track("Left Patch")
+						Log.d("Resetting patch and messages because watch status changed")
+						if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundEffects")) {
+							AudioController.instance.play(Sound.pop.rawValue)
+						}
+						self.fetch(strategy: .IgnoreCache, resetList: true)
 					}
-					Log.d("Resetting patch and messages because watch status changed")
-					if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundEffects")) {
-						AudioController.instance.play(Sound.pop.rawValue)
-					}
-					self.fetch(strategy: .IgnoreCache, resetList: true)
 				}
 			}
 		}
@@ -220,12 +221,13 @@ class PatchDetailViewController: BaseDetailViewController {
 							patch!.userWatchId = nil
 							patch!.userWatchStatusValue = .NonMember
 						}
+						Reporting.track("Canceled Member Request")
+						Log.d("Resetting patch and messages because watch status changed")
+						if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundEffects")) {
+							AudioController.instance.play(Sound.pop.rawValue)
+						}
+						self.fetch(strategy: .IgnoreCache, resetList: true)
 					}
-					Log.d("Resetting patch and messages because watch status changed")
-					if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundEffects")) {
-						AudioController.instance.play(Sound.pop.rawValue)
-					}
-					self.fetch(strategy: .IgnoreCache, resetList: true)
 				}
 			}
 		}
@@ -250,23 +252,25 @@ class PatchDetailViewController: BaseDetailViewController {
 											patch!.userWatchStatusValue = .Member
 											patch!.countWatchingValue += 1
 											DataController.instance.activityDateWatching = Utils.now()
+											Reporting.track("Joined Patch")
 										}
 										else {
 											patch!.userWatchStatusValue = .Pending
+											Reporting.track("Requested to Join Patch")
 										}
 									}
 								}
 							}
 						}
-					}
-					Log.d("Resetting patch and messages because watch status changed")
-					if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundEffects")) {
-						AudioController.instance.play(Sound.pop.rawValue)
-					}
-					self.fetch(strategy: .IgnoreCache, resetList: true)
-					
-					if !UIApplication.sharedApplication().isRegisteredForRemoteNotifications() {
-						NotificationController.instance.guardedRegisterForRemoteNotifications("Would you like to be alerted when messages are posted to this patch?")
+						Log.d("Resetting patch and messages because watch status changed")
+						if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundEffects")) {
+							AudioController.instance.play(Sound.pop.rawValue)
+						}
+						self.fetch(strategy: .IgnoreCache, resetList: true)
+						
+						if !UIApplication.sharedApplication().isRegisteredForRemoteNotifications() {
+							NotificationController.instance.guardedRegisterForRemoteNotifications("Would you like to be alerted when messages are posted to this patch?")
+						}
 					}
 				}
 			}
@@ -403,6 +407,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		navController.viewControllers = [controller]
 		controller.onboardMode = OnboardMode.Login
 		controller.inputRouteToMain = false
+		controller.source = "Invite"
 		self.presentViewController(navController, animated: true) {}
 	}
 	
@@ -412,6 +417,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		navController.viewControllers = [controller]
 		controller.onboardMode = OnboardMode.Signup
 		controller.inputRouteToMain = false
+		controller.source = "Invite"
 		self.presentViewController(navController, animated: true) {}
 	}
 

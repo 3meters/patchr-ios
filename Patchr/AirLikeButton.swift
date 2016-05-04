@@ -67,7 +67,7 @@ class AirLikeButton: AirToggleButton {
 						UIViewController.topMostViewController()!.handleError(error)
 					}
 					else {
-						Reporting.track("Unliked Message", properties: nil)
+						Reporting.track("Unliked Message")
 						if DataController.instance.dataWrapperForResponse(response!) != nil {
 							self.entity!.userLikesId = nil
 							self.entity!.userLikesValue = false
@@ -98,7 +98,7 @@ class AirLikeButton: AirToggleButton {
 					else {
 						if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
 							if serviceData.countValue == 1 {
-								Reporting.track("Liked Message", properties: nil)
+								Reporting.track("Liked Message")
 								if let entityDictionaries = serviceData.data as? [[String:NSObject]] {
 									let map = entityDictionaries[0]
 									self.entity!.userLikesId = map["_id"] as! String

@@ -87,14 +87,17 @@ class LocationController: NSObject {
 			
 			let always = UIAlertAction(title: "Nearby and new patches", style: .Default) { action in
 				Log.d("Guarded always location authorization accepted")
+				Reporting.track("Selected Always Location Authorization")
 				self.requestAlwaysAuthorization()
 			}
 			let nearby = UIAlertAction(title: "Nearby patches only", style: .Default) { action in
 				Log.d("Guarded when in use location authorization accepted")
+				Reporting.track("Selected When In Use Location Authorization")
 				self.requestWhenInUseAuthorization()
 			}
 			let cancel = UIAlertAction(title: "Not now", style: .Cancel) { action in
 				Log.d("Guarded location authorization declined")
+				Reporting.track("Selected Decline Location Authorization")
 				NSNotificationCenter.defaultCenter().postNotificationName(Events.LocationWasDenied, object: nil, userInfo: nil)
 				alert.dismissViewControllerAnimated(true, completion: nil)
 			}
@@ -295,10 +298,12 @@ extension LocationController: CLLocationManagerDelegate {
 		}
         else if status == CLAuthorizationStatus.Denied {
 			Log.d("Location service denied for Patchr")
+			Reporting.track("Denied Location Service")
 			NSNotificationCenter.defaultCenter().postNotificationName(Events.LocationWasDenied, object: nil, userInfo: nil)
 		}
 		else if status == CLAuthorizationStatus.Restricted {
 			Log.d("Location service restricted")
+			Reporting.track("Restricted Location Service")
 			NSNotificationCenter.defaultCenter().postNotificationName(Events.LocationWasRestricted, object: nil, userInfo: nil)
 		}
 		else if status == CLAuthorizationStatus.NotDetermined {

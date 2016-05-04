@@ -210,7 +210,7 @@ extension UserTableViewController: UserApprovalViewDelegate {
 								self.handleError(error, errorActionType: .ALERT)
 							}
 							else {
-								Reporting.track(linkEnabled ? "Approved Member" : "Unapproved Member", properties: nil)
+								Reporting.track(linkEnabled ? "Approved Member" : "Unapproved Member")
 								user.link.enabledValue = linkEnabled
 								DataController.instance.saveContext(BLOCKING)
 							}
@@ -248,7 +248,7 @@ extension UserTableViewController: UserApprovalViewDelegate {
 								self.handleError(error, errorActionType: .ALERT)
 							}
 							else {
-								Reporting.track("Removed Member Request", properties: nil)
+								Reporting.track("Removed Member Request")
 								DataController.instance.mainContext.deleteObject(user.link)
 								DataController.instance.mainContext.deleteObject(queryResult)
 								DataController.instance.saveContext(BLOCKING)

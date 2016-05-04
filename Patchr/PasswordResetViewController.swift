@@ -322,7 +322,7 @@ class PasswordResetViewController: BaseEditViewController {
 					}
 				}
 				else {
-					Reporting.track("Reset Password and Logged In", properties: nil)
+					Reporting.track("Reset Password and Logged In")
 					self.navigateToMain()
 				}
 			}

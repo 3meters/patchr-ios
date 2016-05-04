@@ -22,18 +22,19 @@ class ProfileEditViewController: BaseEditViewController {
 	
 	var schema: String?
 	
-	var imageUploadRequest: AWSS3TransferManagerUploadRequest?
-	var entityPostRequest: NSURLSessionTask?
+	var imageUploadRequest	: AWSS3TransferManagerUploadRequest?
+	var entityPostRequest	: NSURLSessionTask?
 	
-	var inputRouteToMain: Bool = true
-	var inputProvider: String? = AuthProvider.PROXIBASE
-	var inputState: State? = State.Editing
-	var inputUser: User?
-	var inputName: String?
-	var inputEmail: String?
-	var inputPassword: String?
-	var inputUserId: String?
-	var inputPhotoUrl: NSURL?
+	var inputRouteToMain	: Bool = true
+	var inputProvider		: String? = AuthProvider.PROXIBASE
+	var inputState			: State? = State.Editing
+	var inputUser			: User?
+	var inputName			: String?
+	var inputEmail			: String?
+	var inputPassword		: String?
+	var inputUserId			: String?
+	var inputPhotoUrl		: NSURL?
+	var source				= "Lobby"
 
 	var photoView            = PhotoEditView()
 	var nameField            = AirTextField()
@@ -593,12 +594,12 @@ class ProfileEditViewController: BaseEditViewController {
 								self.navigationController?.popViewControllerAnimated(true)
 							}
 						}
-						Reporting.track("Created User and Logged In", properties: nil)
+						Reporting.track("Created User and Logged In", properties: ["source":self.source])
 						return
 					}
 				}
 				else {
-					Reporting.track("Updated User", properties: nil)
+					Reporting.track("Updated User")
 				}
 			}
 			

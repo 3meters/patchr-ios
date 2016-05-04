@@ -506,7 +506,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 					}
 					else {
 						Log.d("Updated message \(self.inputEntity!.id_)")
-						Reporting.track("Updated Message", properties: nil)
+						Reporting.track("Updated Message")
 					}
 				}
 			}
@@ -540,7 +540,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 					DataController.instance.mainContext.deleteObject(self.inputEntity!)
 					DataController.instance.saveContext(BLOCKING)
 					DataController.instance.activityDateInsertDeleteMessage = Utils.now()
-					Reporting.track("Deleted Message", properties: nil)
+					Reporting.track("Deleted Message")
 					self.performBack()
 				}
 			}

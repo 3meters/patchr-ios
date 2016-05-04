@@ -79,7 +79,7 @@ class SettingsTableViewController: UITableViewController {
 		self.progress!.show(true)
 		
 		Utils.clearHistory()
-		Reporting.track("Cleared History", properties: nil)
+		Reporting.track("Cleared History")
 		
 		self.progress!.hide(true)
 	}
@@ -206,14 +206,17 @@ extension SettingsTableViewController {
         else if selectedCell == self.termsOfServiceCell {
             let termsURLString = "http://patchr.com/terms"
             self.pushWebViewController(NSURL(string: termsURLString), identifier: View.TermsOfService)
+			Reporting.track("Viewed Terms of Service")
         }
         else if selectedCell == self.privacyPolicyCell {
             let privacyPolicyURLString = "http://patchr.com/privacy"
             self.pushWebViewController(NSURL(string: privacyPolicyURLString), identifier: View.PrivacyPolicy)
+			Reporting.track("Viewed Privacy Policy")
         }
         else if selectedCell == self.softwareLicensesCell {
             let softwareLicensesURLString = "http://patchr.com/ios"
             self.pushWebViewController(NSURL(string: softwareLicensesURLString), identifier: View.Licensing)
+			Reporting.track("Viewed Software Licenses")
         }
         else if selectedCell == self.developmentCell {
 			let controller = DevelopmentViewController()
@@ -297,7 +300,7 @@ extension SettingsTableViewController: MFMailComposeViewControllerDelegate {
 		case MFMailComposeResultSaved.rawValue:		// 1
 			UIShared.Toast("Feedback saved", controller: self, addToWindow: false)
 		case MFMailComposeResultSent.rawValue:		// 2
-			Reporting.track("Sent Feedback", properties: nil)
+			Reporting.track("Sent Feedback")
 			UIShared.Toast("Feedback sent", controller: self, addToWindow: false)
 		case MFMailComposeResultFailed.rawValue:	// 3
 			UIShared.Toast("Feedback send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)

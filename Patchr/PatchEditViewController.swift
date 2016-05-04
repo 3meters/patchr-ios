@@ -468,12 +468,12 @@ class PatchEditViewController: BaseEditViewController {
 							controller.inputEntity = self.insertedEntity as! Patch
 							self.navigationController?.pushViewController(controller, animated: true)
 						}
-						Reporting.track("Created Patch", properties: nil)
+						Reporting.track("Created Patch")
 						return
 					}
 					else {
 						Log.d("Updated entity \(self.inputPatch!.id_)")
-						Reporting.track("Updated Patch", properties: nil)
+						Reporting.track("Updated Patch")
 					}
 				}
 			}
@@ -507,7 +507,7 @@ class PatchEditViewController: BaseEditViewController {
 					DataController.instance.mainContext.deleteObject(self.inputPatch!)
 					DataController.instance.saveContext(BLOCKING)
 					DataController.instance.activityDateInsertDeletePatch = Utils.now()
-					Reporting.track("Deleted Patch", properties: nil)
+					Reporting.track("Deleted Patch")
 					self.performBack()
 				}
 			}

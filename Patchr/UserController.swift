@@ -210,7 +210,7 @@ class UserController: NSObject {
 				}
 				
 				self.clearUserState()
-				Reporting.track("Logged Out", properties: nil)
+				Reporting.track("Logged Out")
 				Log.i("User logged out")
 				
 				let navController = UINavigationController()

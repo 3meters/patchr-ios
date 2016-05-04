@@ -59,10 +59,12 @@ class PermissionsViewController: BaseViewController {
 			NotificationController.instance.registerForRemoteNotifications()
 			routeToMain()
 		}
+		Reporting.track("Selected Full Permissions")
 	}
 	
 	func cancelAction(sender: AnyObject?) {
 		routeToMain()
+		Reporting.track("Selected Limited Permissions")
 	}
 	
 	/*--------------------------------------------------------------------------------------------

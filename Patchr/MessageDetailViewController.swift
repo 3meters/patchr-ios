@@ -734,7 +734,7 @@ class MessageDetailViewController: BaseViewController {
 				else {
 					DataController.instance.mainContext.deleteObject(self.inputMessage!)
 					DataController.instance.saveContext(BLOCKING)
-					Reporting.track("Deleted Message", properties: nil)
+					Reporting.track("Deleted Message")
 					self.navigationController?.popViewControllerAnimated(true)
 				}
 			}

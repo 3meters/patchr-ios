@@ -118,7 +118,7 @@ class LobbyViewController: BaseViewController {
 		let controller = MainTabBarController()
 		controller.selectedIndex = 0
 		AppDelegate.appDelegate().window!.setRootViewController(controller, animated: true)
-		Reporting.track("Entered as Guest", properties: nil)
+		Reporting.track("Entered as Guest")
 	}
 	
     /*--------------------------------------------------------------------------------------------

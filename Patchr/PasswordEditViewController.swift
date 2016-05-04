@@ -175,7 +175,7 @@ class PasswordEditViewController: BaseEditViewController {
 				else {
 					/* Password change has already been handled with UserController */
 					self.navigationController?.popViewControllerAnimated(true)	// Back to profile edit
-					Reporting.track("Changed Password", properties: nil)
+					Reporting.track("Changed Password")
 					UIShared.Toast("Password changed")
 				}
 			}
