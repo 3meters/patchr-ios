@@ -73,7 +73,7 @@ class InviteViewController: BaseViewController {
 	override func initialize() {
 		super.initialize()
 		
-		screen("PatchInvite")
+		Reporting.screen("PatchInvite")
 		self.view.accessibilityIdentifier = View.Invite
 		
 		self.provider = FacebookProvider(controller: self)

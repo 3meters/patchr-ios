@@ -49,7 +49,7 @@ class NotificationsTableViewController: BaseTableViewController {
 
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        screen("NotificationList")
+        Reporting.screen("NotificationList")
     }
     
 	override func viewDidAppear(animated: Bool) {

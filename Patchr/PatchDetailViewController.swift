@@ -463,7 +463,7 @@ class PatchDetailViewController: BaseDetailViewController {
 	
 	func initialize() {
 		
-		screen("PatchDetail")
+		Reporting.screen("PatchDetail")
 		self.view.accessibilityIdentifier = View.PatchDetail
 
 		self.queryName = DataStoreQueryName.MessagesForPatch.rawValue

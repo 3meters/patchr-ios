@@ -78,13 +78,13 @@ class PatchTableViewController: BaseTableViewController {
 
         switch self.filter! {
             case .Nearby:
-                screen("NearbyList")
+                Reporting.screen("NearbyList")
             case .Explore:
-                screen("ExploreList")
+                Reporting.screen("ExploreList")
             case .Watching:
-                screen("JoinedList")
+                Reporting.screen("JoinedList")
             case .Owns:
-                screen("OwnsList")
+                Reporting.screen("OwnsList")
         }
     }
 

@@ -278,7 +278,7 @@ class PatchEditViewController: BaseEditViewController {
 		self.contentHolder.addSubview(self.typeGroup)
 		
 		if self.inputState == State.Creating {
-			screen("PatchNew")
+			Reporting.screen("PatchNew")
 			self.message.text = "New Patch"
 			self.progressStartLabel = "Patching"
 			self.progressFinishLabel = "Activated"
@@ -291,7 +291,7 @@ class PatchEditViewController: BaseEditViewController {
 			self.navigationItem.rightBarButtonItems = [nextButton]
 		}
 		else {
-			screen("PatchEdit")
+			Reporting.screen("PatchEdit")
 			self.message.text = "Patch"
 			self.progressStartLabel = "Updating"
 			self.progressFinishLabel = "Updated"
@@ -507,7 +507,7 @@ class PatchEditViewController: BaseEditViewController {
 					DataController.instance.mainContext.deleteObject(self.inputPatch!)
 					DataController.instance.saveContext(BLOCKING)
 					DataController.instance.activityDateInsertDeletePatch = Utils.now()
-					Reporting.track("Patch Deleted", properties: nil)
+					Reporting.track("Deleted Patch", properties: nil)
 					self.performBack()
 				}
 			}

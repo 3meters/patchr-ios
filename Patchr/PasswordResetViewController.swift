@@ -126,7 +126,7 @@ class PasswordResetViewController: BaseEditViewController {
 			self.resetActive = true
 		}
 		
-		screen("PasswordReset")
+		Reporting.screen("PasswordReset")
 		self.view.accessibilityIdentifier = View.PasswordReset
 		
 		self.message.text = "Find your account"
@@ -322,7 +322,7 @@ class PasswordResetViewController: BaseEditViewController {
 					}
 				}
 				else {
-					Reporting.track("Password Reset", properties: nil)
+					Reporting.track("Reset Password and Logged In", properties: nil)
 					self.navigateToMain()
 				}
 			}

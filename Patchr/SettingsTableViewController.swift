@@ -90,7 +90,7 @@ class SettingsTableViewController: UITableViewController {
 	
 	func initialize() {
 		
-		screen("Settings")
+		Reporting.screen("Settings")
 		
 		self.navigationItem.title = "Settings"
 		self.view.accessibilityIdentifier = View.Settings

@@ -104,7 +104,7 @@ class UserDetailViewController: BaseDetailViewController {
 	
 	func initialize() {
 		
-		screen(self.profileMode ? "UserProfile" : "UserDetail")
+		Reporting.screen(self.profileMode ? "UserProfile" : "UserDetail")
 		self.view.accessibilityIdentifier = View.UserDetail
 
 		self.queryName = DataStoreQueryName.MessagesByUser.rawValue

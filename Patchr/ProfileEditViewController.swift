@@ -291,7 +291,7 @@ class ProfileEditViewController: BaseEditViewController {
 		
 		if self.inputState == State.Onboarding {
 			
-			screen("ProfileSignup")
+			Reporting.screen("ProfileSignup")
 			self.view.accessibilityIdentifier = View.SignupProfile
 			
 			navigationItem.title = "Profile"
@@ -332,7 +332,7 @@ class ProfileEditViewController: BaseEditViewController {
 		}
 		else {
 			
-			screen("ProfileEdit")
+			Reporting.screen("ProfileEdit")
 			self.view.accessibilityIdentifier = View.ProfileEdit
 			
 			navigationItem.title = "Edit profile"
@@ -593,12 +593,12 @@ class ProfileEditViewController: BaseEditViewController {
 								self.navigationController?.popViewControllerAnimated(true)
 							}
 						}
-						Reporting.track("Created Profile", properties: nil)
+						Reporting.track("Created User and Logged In", properties: nil)
 						return
 					}
 				}
 				else {
-					Reporting.track("Updated Profile", properties: nil)
+					Reporting.track("Updated User", properties: nil)
 				}
 			}
 			
@@ -638,7 +638,7 @@ class ProfileEditViewController: BaseEditViewController {
 					
 					/* Return to the lobby even if there was an error since we signed out */
 					UserController.instance.discardCredentials()
-					Reporting.updateCrashUser(nil)
+					Reporting.updateUser(nil)
 					BranchProvider.logout()
 					UserController.instance.clearStore()
 					NSUserDefaults.standardUserDefaults().setObject(nil, forKey: PatchrUserDefaultKey("userEmail"))
@@ -649,7 +649,7 @@ class ProfileEditViewController: BaseEditViewController {
 					let navController = UINavigationController()
 					navController.viewControllers = [LobbyViewController()]
 					AppDelegate.appDelegate().window!.setRootViewController(navController, animated: true)
-					Reporting.track("User Deleted", properties: ["id":self.inputUser!.id_, "name": userName, "email": self.inputUser!.email])
+					Reporting.track("Deleted User", properties: ["id":self.inputUser!.id_, "name": userName, "email": self.inputUser!.email])
 					UIShared.Toast("User \(userName) erased", controller: navController)
 				}
 			}

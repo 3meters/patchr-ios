@@ -84,7 +84,7 @@ class GuestViewController: BaseViewController {
 		self.scrollView.backgroundColor = Theme.colorBackgroundOverlay
 		self.view.accessibilityIdentifier = View.Guest
 
-		screen("GuestPrompt")
+		Reporting.screen("GuestPrompt")
 		
 		self.appName.text = "Patchr"
 		self.appName.textAlignment = NSTextAlignment.Center

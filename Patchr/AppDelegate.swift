@@ -459,7 +459,7 @@ extension AppDelegate {
 		 */
 		if UserController.instance.authenticated {			
 			UserController.instance.discardCredentials()
-			Reporting.updateCrashUser(nil)
+			Reporting.updateUser(nil)
 			BranchProvider.logout()
 		}
 		

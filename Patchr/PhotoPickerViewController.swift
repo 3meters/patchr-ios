@@ -106,7 +106,7 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
         
-        screen("PhotoPicker")
+        Reporting.screen("PhotoPicker")
 		
         if self.searchBar == nil {
 			let navHeight = self.navigationController?.navigationBar.height() ?? 0

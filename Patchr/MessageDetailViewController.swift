@@ -452,7 +452,7 @@ class MessageDetailViewController: BaseViewController {
 	override func initialize() {
 		super.initialize()
 		
-		screen("MessageDetail")
+		Reporting.screen("MessageDetail")
 		self.view.accessibilityIdentifier = View.MessageDetail
 		
 		/* Ui tweaks */
@@ -734,7 +734,7 @@ class MessageDetailViewController: BaseViewController {
 				else {
 					DataController.instance.mainContext.deleteObject(self.inputMessage!)
 					DataController.instance.saveContext(BLOCKING)
-					Reporting.track("Message Deleted", properties: nil)
+					Reporting.track("Deleted Message", properties: nil)
 					self.navigationController?.popViewControllerAnimated(true)
 				}
 			}

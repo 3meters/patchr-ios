@@ -90,7 +90,7 @@ class PermissionsViewController: BaseViewController {
 	override func initialize() {
 		super.initialize()
 		
-		screen("Permissions")
+		Reporting.screen("Permissions")
 		self.view.accessibilityIdentifier = View.Permissions
 		
 		if CLLocationManager.authorizationStatus() != .NotDetermined {

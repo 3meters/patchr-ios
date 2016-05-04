@@ -50,9 +50,9 @@ class UserTableViewController: BaseTableViewController {
         
         switch self.filter {
             case .PatchWatchers:
-                screen("UserListPatchWatchers")
+                Reporting.screen("UserListPatchWatchers")
             case .MessageLikers:
-                screen("UserListMessageLikers")
+                Reporting.screen("UserListMessageLikers")
         }
     }
 	

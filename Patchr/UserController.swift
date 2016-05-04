@@ -227,22 +227,14 @@ class UserController: NSObject {
 		self.discardCredentials()
 		self.clearStore()		// Clear the core data store and create new data stack, blocks until done
 		LocationController.instance.clearLastLocationAccepted()  // Triggers fresh location processing
-		Reporting.updateCrashUser(nil)
-		SEGAnalytics.sharedAnalytics().flush()
-		SEGAnalytics.sharedAnalytics().reset()
-		SEGAnalytics.sharedAnalytics().identify(UserController.instance.installId, traits: ["name":"Anonymous"])
-		BranchProvider.logout()
+		Reporting.updateUser(nil)
 	}
 	
 	func initUserState(user: User!) {
 		self.currentUser = user
 		self.userName = user.name
 		self.userId = user.id_
-		BranchProvider.setIdentity(user.id_)
-		SEGAnalytics.sharedAnalytics().flush()
-		SEGAnalytics.sharedAnalytics().reset()
-		SEGAnalytics.sharedAnalytics().identify(user.id_, traits: ["name":user.name, "email":user.email])
-		Reporting.updateCrashUser(user)
+		Reporting.updateUser(user)
 		
 		/* Need to seed these because sign-in with previous version might not have included them */
 		if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {

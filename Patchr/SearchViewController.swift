@@ -94,7 +94,7 @@ class SearchViewController: UITableViewController {
 	
 	func initialize() {
 		
-		screen("PatchSearch")
+		Reporting.screen("PatchSearch")
 		self.navigationItem.title = "Search Patchr"
 		
 		self.view.accessibilityIdentifier = View.Search

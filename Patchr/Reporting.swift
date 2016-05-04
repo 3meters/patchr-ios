@@ -47,11 +47,19 @@ struct Reporting {
         }
     }
 	
-    static func updateCrashUser(user: User?) {
+    static func updateUser(user: User?) {
         if user != nil {
+			SEGAnalytics.sharedAnalytics().flush()
+			SEGAnalytics.sharedAnalytics().reset()
+			SEGAnalytics.sharedAnalytics().identify(user!.id_, traits: ["name":user!.name, "email":user!.email], options:nil)
+			BranchProvider.setIdentity(user!.id_)
 			Bugsnag.configuration().setUser(user!.id_, withName: user!.name, andEmail: user!.email)
         }
         else {
+			SEGAnalytics.sharedAnalytics().flush()
+			SEGAnalytics.sharedAnalytics().reset()
+			SEGAnalytics.sharedAnalytics().identify(nil, traits: ["name":"Anonymous"], options:["anonymousId":UserController.instance.installId])
+			BranchProvider.logout()
 			Bugsnag.configuration().setUser(nil, withName: nil, andEmail: nil)
         }
     }
@@ -59,11 +67,8 @@ struct Reporting {
 	static func track(event: String, properties: [String:AnyObject]? = nil) {
 		SEGAnalytics.sharedAnalytics().track(event, properties: properties)
 	}
-}
-
-extension UIViewController {
 	
-	func screen(name: String) {
+	static func screen(name: String) {
 		SEGAnalytics.sharedAnalytics().screen(name)
 	}
 }

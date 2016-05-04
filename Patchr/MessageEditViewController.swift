@@ -267,7 +267,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 			
 			if self.inputShareSchema == Schema.ENTITY_PATCH {
 				
-				screen("PatchInvite")
+				Reporting.screen("PatchInvite")
 				
 				self.progressStartLabel = "Inviting"
 				self.progressFinishLabel = "Invites sent"
@@ -288,7 +288,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 				
 			else if self.inputShareSchema == Schema.ENTITY_MESSAGE {
 				
-				screen("MessageShare")
+				Reporting.screen("MessageShare")
 				
 				self.progressStartLabel = "Sharing"
 				self.progressFinishLabel = "Shared"
@@ -322,7 +322,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 			self.descriptionField.placeholderLabel.text = "What\'s happening?"
 			
 			if self.inputState == State.Creating {
-				screen("MessageNew")
+				Reporting.screen("MessageNew")
 				self.progressStartLabel = "Posting"
 				self.progressFinishLabel = "Posted"
 				self.cancelledLabel = "Post cancelled"
@@ -334,7 +334,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 				self.navigationItem.rightBarButtonItems = [doneButton]
 			}
 			else {
-				screen("MessageEdit")
+				Reporting.screen("MessageEdit")
 				self.progressStartLabel = "Updating"
 				self.progressFinishLabel = "Updated"
 				self.cancelledLabel = "Update cancelled"
@@ -493,7 +493,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 						if self.inputState == .Creating {
 							/* Used to trigger call to action UI */
 							NSNotificationCenter.defaultCenter().postNotificationName(Events.DidInsertMessage, object: self)
-							Reporting.track("Posted Message", properties: ["target": "Patch"])
+							Reporting.track("Created Message", properties: ["target": "Patch"])
 						}
 						else {
 							if self.inputShareSchema == Schema.ENTITY_PATCH {
@@ -540,7 +540,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 					DataController.instance.mainContext.deleteObject(self.inputEntity!)
 					DataController.instance.saveContext(BLOCKING)
 					DataController.instance.activityDateInsertDeleteMessage = Utils.now()
-					Reporting.track("Message Deleted", properties: nil)
+					Reporting.track("Deleted Message", properties: nil)
 					self.performBack()
 				}
 			}

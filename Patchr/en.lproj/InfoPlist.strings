@@ -1,0 +1,8 @@
+/* 
+  InfoPlist.strings
+  Patchr
+
+  Created by Jay Massena on 5/3/16.
+  Copyright © 2016 3meters. All rights reserved.
+*/
+"CFBundleDisplayName" = "Patchr";
