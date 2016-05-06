@@ -430,7 +430,9 @@ class PatchDetailViewController: BaseDetailViewController {
 		 * Called after fetch is complete for form entity. bind() is called
 		 * just before this notification.
 		 */
-		bindContextView()
+		if ((notification.userInfo?["deleted"]) == nil) {
+			bindContextView()
+		}
 	}
 	
 	func didInsertMessage(sender: NSNotification) {
