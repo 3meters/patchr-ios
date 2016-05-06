@@ -65,8 +65,8 @@ public class S3: NSObject {
         * It is expected that this will be called on a background thread.
         */
         
-        /* Store imagae to file as NSData */
-        if let imageURL = Utils.TemporaryFileURLForImage(image, name: NSUUID().UUIDString) {
+        /* Store image to file as NSData */
+        if let imageURL = Utils.TemporaryFileURLForImage(image, name: NSUUID().UUIDString) { // Saves as compressed jpeg
             
             /* Construct request */
             let uploadRequest = S3.sharedService.buildUploadRequest(imageURL, contentType: "image/jpeg", bucket: self.imageBucket, key: imageKey)
@@ -99,13 +99,14 @@ public class S3: NSObject {
     }
     
     func uploadImage(image inImage: UIImage, key: String, bucket: String, shared: Bool = false) {
+		
+		/* Only called by share extension */
         Log.d("Posting image to s3...")
         let image = Utils.prepareImage(image: inImage)   // resizing
-        /*
-         * We need to stash the image as a file in the shared container in NSData format.
-         */
+		
+        /* We need to stash the image as a file in the shared container in NSData format. */
         let uuid = NSUUID().UUIDString
-        if let imageURL = Utils.TemporaryFileURLForImage(image, name: uuid, shared: shared) {
+		if let imageURL = Utils.TemporaryFileURLForImage(image, name: uuid, shared: shared) {	// Saves as compressed jpeg
             uploadTaskToS3(imageURL, contentType: "image/jpeg", bucket: imageBucket, key: key)
         }
     }
