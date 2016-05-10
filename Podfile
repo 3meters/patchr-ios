@@ -5,6 +5,8 @@ plugin 'cocoapods-keys', {
 	:project => "Patchr",
 	:targets => ["Patchr", "PatchrShare"],
 	:keys => [
+		"BugsnagKey",
+		"SegmentKey",
 		"BingAccessKey",
 		"CreativeSdkClientId",
 		"CreativeSdkClientSecret",
@@ -12,7 +14,6 @@ plugin 'cocoapods-keys', {
 		"AwsS3Secret",
 		"ParseApplicationId",
 		"ParseApplicationKey",
-		"FabricApiKey",
 		"BranchKey",
 		"ProxibaseSecret",
 		"FacebookToken"

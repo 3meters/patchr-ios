@@ -48,11 +48,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 	
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 		
+		let keys = PatchrKeys()
+		
 		/* Initialize Bugsnag */
-		Bugsnag.startBugsnagWithApiKey("d1313b8d5fc14d937419406f33fd4c01")
+		Bugsnag.startBugsnagWithApiKey(keys.bugsnagKey())
 		
 		/* Initialize Segment */
-		let configuration = SEGAnalyticsConfiguration(writeKey: "RyiR81qsJCF0aS0dPucR01MaxqI9HTnB")
+		let configuration = SEGAnalyticsConfiguration(writeKey: keys.segmentKey())
 		configuration.flushAt = 20
 		#if DEBUG
 			configuration.flushAt = 1
@@ -63,8 +65,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 		DataController.instance
 		
 		iRate.sharedInstance().delegate = self
-
-		let keys = PatchrKeys()
 		
 		self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
 		
@@ -133,9 +133,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
         let settingsDictionary: NSDictionary = NSDictionary(contentsOfFile: defaultSettingsFile as String)!
         NSUserDefaults.standardUserDefaults().registerDefaults(settingsDictionary as! [String : AnyObject])
 		
-        /* Initialize Creative sdk: 25% of method time */
-        AdobeUXAuthManager.sharedManager().setAuthenticationParametersWithClientID(keys.creativeSdkClientId(), clientSecret: keys.creativeSdkClientSecret(), enableSignUp: false)
-        
         /* Setup parse for push notifications - enabling notifications with the system is done with login */
 		Parse.setApplicationId(keys.parseApplicationId(), clientKey: keys.parseApplicationKey())
 		
@@ -278,6 +275,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
     *--------------------------------------------------------------------------------------------*/
 	
 	func initUI() {
+		
+		/* Initialize Creative sdk: 25% of method time */
+		AdobeUXAuthManager.sharedManager().setAuthenticationParametersWithClientID(PatchrKeys().creativeSdkClientId(), clientSecret: PatchrKeys().creativeSdkClientSecret(), enableSignUp: false)
 		
 		/* Turn on status bar */
 		let statusBarHidden = NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("statusBarHidden"))	// Default = false, set in dev settings
