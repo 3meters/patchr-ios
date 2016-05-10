@@ -83,6 +83,7 @@
 		E238BAFF1B5715CF0094AF41 /* PatchSuggestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E238BAFE1B5715CF0094AF41 /* PatchSuggestCell.swift */; };
 		E238BB021B5718E40094AF41 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25327B11B0FCE9C00990A81 /* Constants.swift */; };
 		E238BB061B571AFF0094AF41 /* ExtensionsPhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = E238BB051B571AFF0094AF41 /* ExtensionsPhoto.swift */; };
+		E23C010D1CE243F2009C56B2 /* Keys.md in Sources */ = {isa = PBXBuildFile; fileRef = E23C010C1CE243F2009C56B2 /* Keys.md */; };
 		E23E02001B5873CB0035CCF0 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */; };
 		E24198FE1C1736E900DDA549 /* MessageEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24198FD1C1736E900DDA549 /* MessageEditViewController.swift */; };
 		E24199001C18ACAF00DDA549 /* AirContactPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24198FF1C18ACAF00DDA549 /* AirContactPicker.swift */; };
@@ -362,6 +363,7 @@
 		E238BAFC1B5712B40094AF41 /* PatchSuggestCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PatchSuggestCell.xib; path = PatchrShare/PatchSuggestCell.xib; sourceTree = SOURCE_ROOT; };
 		E238BAFE1B5715CF0094AF41 /* PatchSuggestCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PatchSuggestCell.swift; path = PatchrShare/PatchSuggestCell.swift; sourceTree = SOURCE_ROOT; };
 		E238BB051B571AFF0094AF41 /* ExtensionsPhoto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionsPhoto.swift; sourceTree = "<group>"; };
+		E23C010C1CE243F2009C56B2 /* Keys.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Keys.md; sourceTree = "<group>"; };
 		E24198FD1C1736E900DDA549 /* MessageEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = MessageEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E24198FF1C18ACAF00DDA549 /* AirContactPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirContactPicker.swift; sourceTree = "<group>"; };
 		E24199011C18C1F200DDA549 /* UserSearchViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserSearchViewCell.swift; sourceTree = "<group>"; };
@@ -767,6 +769,7 @@
 		E26B0C861B44BD4000706F4A /* Docs */ = {
 			isa = PBXGroup;
 			children = (
+				E23C010C1CE243F2009C56B2 /* Keys.md */,
 				E2F6C9281B1DF5500067D959 /* Notes.md */,
 			);
 			name = Docs;
@@ -1574,6 +1577,7 @@
 				7D3F26DC1A7706610015F8E8 /* Notification.m in Sources */,
 				E2D12A731C08DC4900DE507E /* AirTextField.swift in Sources */,
 				E2A28E6D1B49D88900B3A2FE /* AirLikeButton.swift in Sources */,
+				E23C010D1CE243F2009C56B2 /* Keys.md in Sources */,
 				E2D12A751C08F85E00DE507E /* AirButton.swift in Sources */,
 				7DA3D9121A72D5A60082D2AB /* DataController.swift in Sources */,
 				E2D12A771C08F9CE00DE507E /* AirFeaturedButton.swift in Sources */,
