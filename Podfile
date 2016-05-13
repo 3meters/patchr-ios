@@ -35,7 +35,7 @@ def core_pods
 	pod 'DLRadioButton'
 	pod 'UIDevice-Hardware'								# Convenience for determining system version and model identifier
 	pod 'pop', '~> 1.0'									# Animation library
-	pod 'AirPhotoBrowser',			:path => '~/code/AirPhotoBrowser'
+	pod 'IDMPhotoBrowser',			:path => '~/code/IDMPhotoBrowser'
 	pod 'TWMessageBarManager',		'~> 1.8'			# In-app notifications
 	pod 'Facade'										# Convenience methods for frame based layout
 	pod 'THContactPicker',			'~> 1.2'			# Used in message edit

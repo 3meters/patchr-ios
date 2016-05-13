@@ -1,6 +1,0 @@
-framework module AirPhotoBrowser {
-  umbrella header "AirPhotoBrowser-umbrella.h"
-
-  export *
-  module * { export * }
-}

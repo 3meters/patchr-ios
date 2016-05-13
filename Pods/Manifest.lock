@@ -23,10 +23,6 @@ PODS:
   - AFNetworking/UIKit (2.6.3):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
-  - AirPhotoBrowser (1.7):
-    - AFNetworking (~> 2.6)
-    - DACircularProgress
-    - pop
   - Analytics (3.0.7)
   - AWSCore (2.3.5)
   - AWSS3 (2.3.5):
@@ -57,6 +53,10 @@ PODS:
     - FBSDKCoreKit
   - FBSDKShareKit (4.11.0):
     - FBSDKCoreKit
+  - IDMPhotoBrowser (1.7):
+    - AFNetworking (~> 2.6)
+    - DACircularProgress
+    - pop
   - iRate (1.11.4)
   - Keys (1.0.0)
   - KIF/Core (3.3.2)
@@ -75,9 +75,9 @@ PODS:
   - PBWebViewController (0.5.0)
   - pop (1.0.9)
   - Quick (0.9.1)
-  - SDWebImage (3.7.5):
-    - SDWebImage/Core (= 3.7.5)
-  - SDWebImage/Core (3.7.5)
+  - SDWebImage (3.7.6):
+    - SDWebImage/Core (= 3.7.6)
+  - SDWebImage/Core (3.7.6)
   - THContactPicker (1.2)
   - TWMessageBarManager (1.8.1)
   - UIDevice-Hardware (0.1.7)
@@ -85,7 +85,6 @@ PODS:
 DEPENDENCIES:
   - AFNetworkActivityLogger (~> 2.0)
   - AFNetworking (~> 2.6)
-  - AirPhotoBrowser (from `~/code/AirPhotoBrowser`)
   - Analytics (~> 3.0)
   - AWSS3
   - Branch
@@ -97,6 +96,7 @@ DEPENDENCIES:
   - FBSDKCoreKit (~> 4.11.0)
   - FBSDKLoginKit (~> 4.11.0)
   - FBSDKShareKit (~> 4.11.0)
+  - IDMPhotoBrowser (from `~/code/IDMPhotoBrowser`)
   - iRate
   - Keys (from `Pods/CocoaPodsKeys`)
   - KIF/IdentifierTests (~> 3.0)
@@ -113,15 +113,14 @@ DEPENDENCIES:
   - UIDevice-Hardware
 
 EXTERNAL SOURCES:
-  AirPhotoBrowser:
-    :path: ~/code/AirPhotoBrowser
+  IDMPhotoBrowser:
+    :path: ~/code/IDMPhotoBrowser
   Keys:
     :path: Pods/CocoaPodsKeys
 
 SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
   AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
-  AirPhotoBrowser: c26ba9232aea2467ebf932ce9cbabe60fd698d54
   Analytics: b342fb4f43fa4f97ca6f4358b44d3295217ba294
   AWSCore: 8022eda5778fd7b87c9182709d8a27388e1a31fb
   AWSS3: 967f4ad3c91f1ed2c9dca09a9dcf905111232a87
@@ -136,6 +135,7 @@ SPEC CHECKSUMS:
   FBSDKCoreKit: 686ac982723a14ec9ddb85e2f81235d7706c891b
   FBSDKLoginKit: bade9fc78277764149ccc5bfaadbf13c83175c6a
   FBSDKShareKit: 2d1746144cfc8a9dbbd24997c34ee0471be51b6a
+  IDMPhotoBrowser: c1edb3547733f40d5474243b6329e2b2f571b85b
   iRate: 599ed07c854e0695f3c605d1b2a64c67d912acb7
   Keys: 7d2ff6ff42f6903358267ce56e9392f83c31acfe
   KIF: 9de83fa627adaf65d28ace31e40f19d830bc255c
@@ -147,7 +147,7 @@ SPEC CHECKSUMS:
   PBWebViewController: 6537990155ca850fb8d0563efbc12becebc953ef
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
   Quick: a5221fc21788b6aeda934805e68b061839bc3165
-  SDWebImage: 69c6303e3348fba97e03f65d65d4fbc26740f461
+  SDWebImage: c325cf02c30337336b95beff20a13df489ec0ec9
   THContactPicker: e723f7c6ab6e1d6d10d59d618322ab8bfcb00365
   TWMessageBarManager: fd84e7948ba7968a2b5d9454859135761214ec56
   UIDevice-Hardware: de848ac4b53de555f70ff1a32877454d221c71d1

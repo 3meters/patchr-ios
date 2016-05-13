@@ -7,15 +7,13 @@
 //
 
 import UIKit
-import AirPhotoBrowser
+import IDMPhotoBrowser
 
 class PhotoBrowser: IDMPhotoBrowser {
     
-	var browseDelegate	: PhotoBrowseControllerDelegate?  // Used by photo preview feature in photo search
-    var imageResult		: ImageResult?
-    var likes			: Bool = false
-    var likeButton		= AirLikeButton()
-    var entity			: Entity?
+    var likes					: Bool = false
+    internal var likeButton		= AirLikeButton()
+    var entity					: Entity?
 	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -33,9 +31,9 @@ class PhotoBrowser: IDMPhotoBrowser {
     *--------------------------------------------------------------------------------------------*/
     
     func initialize() {
-        
+
         if self.entity?.creator != nil {
-            super.shareMessage = "Photo by \(self.entity!.creator.name) on Patchr"
+			super.shareMessage = "Photo by \(self.entity!.creator.name) on Patchr"
         }
         
         /* Configure bottom toolbar */
@@ -48,7 +46,7 @@ class PhotoBrowser: IDMPhotoBrowser {
         
         self.likeButton.frame = CGRectMake(0, 0, 44, 44)
         self.likeButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: 8, bottom: 10, right:8)
-        self.likeButton.hidden = (self.entity == nil)
+		self.likeButton.hidden = (self.entity == nil)
         
         fixedSpacer.width = 16
         

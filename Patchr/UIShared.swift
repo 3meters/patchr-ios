@@ -7,7 +7,7 @@
 //
 import MBProgressHUD
 import DateTools
-import AirPhotoBrowser
+import IDMPhotoBrowser
 
 struct UIShared {
 	
@@ -73,7 +73,7 @@ struct UIShared {
 		}
 	}
 
-    static func showPhotoBrowser(image: UIImage!, animateFromView: UIView!, viewController: UIViewController!, entity: Entity?) -> PhotoBrowser {
+    static func showPhoto(image: UIImage!, animateFromView: UIView!, viewController: UIViewController!, entity: Entity?) -> PhotoBrowser {
         /*
         * Create browser (must be done each time photo browser is displayed. Photo
         * browser objects cannot be re-used)

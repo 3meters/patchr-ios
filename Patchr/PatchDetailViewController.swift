@@ -10,12 +10,18 @@ import UIKit
 import Branch
 import MessageUI
 import iRate
+import IDMPhotoBrowser
 
 class PatchDetailViewController: BaseDetailViewController {
 
     private var contextAction			: ContextAction = .SharePatch
 	private var originalRect			: CGRect?
     private var originalScrollTop		= CGFloat(-64.0)
+	
+	var displayPhotos			= [DisplayPhoto]()
+	var processing				= false
+	var pageSize				= 10
+	var virtualSize				= 0
 	
 	var inputReferrerName		: String?
 	var inputReferrerPhotoUrl	: String?
@@ -92,6 +98,15 @@ class PatchDetailViewController: BaseDetailViewController {
 		controller.patch = self.entity as! Patch
 		controller.filter = .PatchWatchers
 		self.navigationController?.pushViewController(controller, animated: true)
+	}
+	
+	func photosAction(sender: AnyObject) {
+		if self.displayPhotos.count == 0 {
+			loadPhotos()
+		}
+		else {
+			showPhotos()
+		}
 	}
 
 	func contextButtonAction(sender: UIButton) {
@@ -484,6 +499,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		
 		header.mapButton.addTarget(self, action: #selector(PatchDetailViewController.mapAction(_:)), forControlEvents: .TouchUpInside)
 		header.watchersButton.addTarget(self, action: #selector(PatchDetailViewController.watchersAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+		header.photosButton.addTarget(self, action: #selector(PatchDetailViewController.photosAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
 		header.moreButton.addTarget(self, action: #selector(PatchDetailViewController.moreAction(_:)), forControlEvents: .TouchUpInside)
 		header.infoMoreButton.addTarget(self, action: #selector(PatchDetailViewController.moreAction(_:)), forControlEvents: .TouchUpInside)
 		
@@ -710,6 +726,74 @@ class PatchDetailViewController: BaseDetailViewController {
 		}
 	}
 	
+	func loadPhotos() {
+		
+		guard !self.processing else {
+			return
+		}
+		
+		self.processing = true
+		
+		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
+			
+			DataController.proxibase.fetchPhotosForPatch(self.entityId!, limit: self.pageSize, skip: self.virtualSize) {
+				response, error in
+				
+				if ServerError(error) == nil {
+					let dataWrapper = ServiceData()
+					if let dictionary = response as? [String:AnyObject] {
+						ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper)
+						if let maps = dataWrapper.data as? [[String: AnyObject]] {
+							for map in maps {
+								let displayPhoto = DisplayPhoto.fromMap(map)
+								self.displayPhotos.append(displayPhoto)
+							}
+						}
+					}
+				}
+				
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					
+					if let error = ServerError(error) {
+						self.handleError(error)
+					}
+					else {
+						self.virtualSize += self.pageSize
+						if self.displayPhotos.count > 0 {
+							self.showPhotos()
+						}
+						else {
+							UIShared.Toast("No photos yet", controller: self, addToWindow: false)
+						}
+					}
+					self.processing = false
+				}
+			}
+		}
+	}
+	
+	func showPhotos() {
+		/*
+		* Create browser (must be done each time photo browser is displayed. Photo
+		* browser objects cannot be re-used)
+		*/
+		if let browser = self.navigationController?.presentedViewController as? GalleryBrowser {
+			browser.photos = NSMutableArray(array: self.displayPhotos)
+			browser.reloadData()
+		}
+		else {
+			let browser = GalleryBrowser(photos:self.displayPhotos)
+			
+			browser.useWhiteBackgroundColor = true
+			browser.usePopAnimation = true
+			browser.disableVerticalSwipe = false
+			browser.autoHideInterface = false
+			browser.delegate = self
+			
+			self.navigationController!.presentViewController(browser, animated:true, completion:nil)
+		}
+	}
+	
 	func shareUsing(route: ShareRoute) {
 		
 		if route == .Patchr {
@@ -826,6 +910,24 @@ class PatchDetailViewController: BaseDetailViewController {
         }
         return false
     }
+}
+
+extension PatchDetailViewController: IDMPhotoBrowserDelegate {
+	
+	func photoBrowser(photoBrowser: IDMPhotoBrowser!, captionViewForPhotoAtIndex index: UInt) -> IDMCaptionView! {
+		let captionView = CaptionView(displayPhoto: self.displayPhotos[Int(index)])
+		return captionView
+	}
+	
+	func photoBrowser(photoBrowser: IDMPhotoBrowser!, didShowPhotoAtIndex index: UInt) {
+		if let browser = photoBrowser as? GalleryBrowser {
+			let displayPhoto = self.displayPhotos[Int(index)]
+			browser.likeButton.bind(displayPhoto)
+		}
+		if Int(index) > self.displayPhotos.count - 5 {
+			loadPhotos()
+		}
+	}
 }
 
 extension PatchDetailViewController: MapViewDelegate {

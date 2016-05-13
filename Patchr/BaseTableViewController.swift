@@ -205,13 +205,13 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		
 		if let control = sender as? AirImageView, let container = sender?.superview as? BaseView {
 			if control.image != nil {
-				UIShared.showPhotoBrowser(control.image, animateFromView: control, viewController: self, entity: container.entity)
+				UIShared.showPhoto(control.image, animateFromView: control, viewController: self, entity: container.entity)
 			}
 		}
 		
 		if let control = sender as? UIButton, let container = sender?.superview as? BaseView {
 			if control.imageView!.image != nil {
-				UIShared.showPhotoBrowser(control.imageView!.image, animateFromView: control, viewController: self, entity: container.entity)
+				UIShared.showPhoto(control.imageView!.image, animateFromView: control, viewController: self, entity: container.entity)
 			}
 		}
 	}

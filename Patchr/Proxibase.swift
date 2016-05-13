@@ -161,6 +161,38 @@ public class Proxibase {
 		}
 		performPOSTRequestFor("find/users/\(userId)", parameters: parameters, completion: completion)
 	}
+	
+	public func fetchPhotosForPatch(patchId: String, criteria: [String:AnyObject] = [:], limit: Int, skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
+		
+		var linked: [String:AnyObject] = [
+			"from": "messages",
+			"limit": limit,
+			"linkedFilter": ["photo":["$exists": true]],
+			"more": true,
+			"refs": ["_creator":"_id,name,photo,schema,type"],
+			"skip": skip,
+			"type": "content",
+			"fields": "createdDate,description,photo,_creator"
+			]
+		
+		let userDefaults = NSUserDefaults.standardUserDefaults()
+		if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
+			let links = [
+				LinkSpec(from: .Users, type: .Like, fields: "_id,type", filter: ["_from": userId])	// Has the current user liked the message
+			]
+			let array = links.map {
+				$0.toDictionary() // Returns an array of maps
+			}
+			linked["links"] = array
+		}
+		
+		let parameters: [String:AnyObject] = [
+			"linked": linked,
+			"promote": "linked",
+			]
+		
+		performPOSTRequestFor("find/patches/\(patchId)", parameters: parameters, completion: completion)
+	}
 
 	public func fetchMessagesForPatch(patchId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
 

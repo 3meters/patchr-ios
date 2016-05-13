@@ -239,7 +239,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 	
 	func application(application: UIApplication, supportedInterfaceOrientationsForWindow window: UIWindow?) -> UIInterfaceOrientationMask {
 		if let controller = UIViewController.topMostViewController() {
-			if controller is PhotoBrowser || controller is AirPhotoPreview {
+			if controller is PhotoBrowser || controller is PhotoPreview {
 				return UIInterfaceOrientationMask.All;
 			}
 			else {

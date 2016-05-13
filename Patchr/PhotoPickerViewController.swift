@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import AirPhotoBrowser
+import IDMPhotoBrowser
 
 class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate, UITableViewDataSource {
     
@@ -385,7 +385,7 @@ extension PhotoPickerViewController {
             
             let photo = IDMPhoto(image:cell.thumbnail.image)
             let photos = Array([photo])
-            let browser = AirPhotoPreview(photos:photos as [AnyObject], animatedFromView: cell.thumbnail)
+            let browser = PhotoPreview(photos:photos as [AnyObject], animatedFromView: cell.thumbnail)
             
             browser.usePopAnimation = true
             browser.scaleImage = cell.thumbnail.image  // Used because final image might have different aspect ratio than initially

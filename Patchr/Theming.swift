@@ -94,6 +94,7 @@ class Snow {
 	let fontTextBold			: UIFont! = UIFont(name: "HelveticaNeue-Medium", size: 18)
 	let fontTextDisplay			: UIFont! = UIFont(name: "HelveticaNeue-Light", size: 18)
 	let fontTextList			: UIFont! = UIFont(name: "HelveticaNeue-Light", size: 17)
+	let fontTextListBold		: UIFont! = UIFont(name: "HelveticaNeue", size: 17)
 	let fontComment				: UIFont! = UIFont(name: "HelveticaNeue-Light", size: 16)
 	let fontCommentSmall		: UIFont! = UIFont(name: "HelveticaNeue-Light", size: 14)
 	let fontCommentExtraSmall	: UIFont! = UIFont(name: "HelveticaNeue-Light", size: 12)

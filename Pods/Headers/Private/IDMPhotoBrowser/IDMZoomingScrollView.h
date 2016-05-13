@@ -1,0 +1,1 @@
+../../../../../../code/IDMPhotoBrowser/Classes/IDMZoomingScrollView.h

@@ -9,6 +9,6 @@
 #import "IDMTapDetectingView.h"
 #import "IDMZoomingScrollView.h"
 
-FOUNDATION_EXPORT double AirPhotoBrowserVersionNumber;
-FOUNDATION_EXPORT const unsigned char AirPhotoBrowserVersionString[];
+FOUNDATION_EXPORT double IDMPhotoBrowserVersionNumber;
+FOUNDATION_EXPORT const unsigned char IDMPhotoBrowserVersionString[];
 
