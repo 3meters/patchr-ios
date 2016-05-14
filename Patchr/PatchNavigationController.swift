@@ -46,19 +46,6 @@ class PatchNavigationController: UINavigationController {
     * Events
     *--------------------------------------------------------------------------------------------*/
     
-    func addAction(sender: AnyObject?) {
-        if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to create patches and more.")
-            return
-        }
-		
-		let controller = PatchEditViewController()
-		let navController = UINavigationController()
-		controller.inputState = .Creating
-		navController.viewControllers = [controller]
-        self.presentViewController(navController, animated: true, completion: nil)
-    }
-	
 	/*--------------------------------------------------------------------------------------------
 	* Notifications
 	*--------------------------------------------------------------------------------------------*/

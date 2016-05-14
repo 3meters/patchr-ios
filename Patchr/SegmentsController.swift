@@ -31,11 +31,6 @@ class SegmentsController: NSObject {
 			let mapButton = UIBarButtonItem(title: "Map", style: UIBarButtonItemStyle.Plain, target: incomingViewController, action: #selector(controller.mapAction(_:)))
 			incomingViewController.navigationItem.leftBarButtonItem = mapButton
 		}
-		
-		if let navController = self.navigationController as? PatchNavigationController {
-			let addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self.navigationController, action: #selector(navController.addAction(_:)))
-			incomingViewController.navigationItem.rightBarButtonItem = addButton
-		}
     }
 }
 

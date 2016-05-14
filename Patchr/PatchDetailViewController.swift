@@ -83,10 +83,17 @@ class PatchDetailViewController: BaseDetailViewController {
 		else {
 			iRate.sharedInstance().promptIfAllCriteriaMet()
 		}
+		
+		if let bar = self.tabBarController as? MainTabBarController {
+			bar.actionDelegate = self
+		}
 	}
 	
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
+		if let bar = self.tabBarController as? MainTabBarController {
+			bar.actionDelegate = nil
+		}
 	}
 	
 	/*--------------------------------------------------------------------------------------------
@@ -567,14 +574,13 @@ class PatchDetailViewController: BaseDetailViewController {
 	override func drawButtons() {
 		
 		let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: #selector(PatchDetailViewController.shareAction(_:)))
-		let addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: #selector(PatchDetailViewController.addAction))
 		let editButton = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(PatchDetailViewController.editAction))
 		
 		if isUserOwner() {
-			self.navigationItem.setRightBarButtonItems([addButton, Utils.spacer, shareButton, Utils.spacer, editButton], animated: true)
+			self.navigationItem.setRightBarButtonItems([shareButton, Utils.spacer, editButton], animated: true)
 		}
 		else {
-			self.navigationItem.setRightBarButtonItems([addButton, Utils.spacer, shareButton], animated: true)
+			self.navigationItem.setRightBarButtonItems([shareButton], animated: true)
 		}
 	}
 	
@@ -910,6 +916,12 @@ class PatchDetailViewController: BaseDetailViewController {
         }
         return false
     }
+}
+
+extension PatchDetailViewController: ActionDelegate {
+	func actionPressed() {
+		addAction()
+	}
 }
 
 extension PatchDetailViewController: IDMPhotoBrowserDelegate {

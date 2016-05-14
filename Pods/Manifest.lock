@@ -46,6 +46,7 @@ PODS:
   - DACircularProgress (2.3.1)
   - DateTools (1.7.0)
   - DLRadioButton (1.4.6)
+  - DynamicButton (2.1.0)
   - Facade (1.1.1)
   - FBSDKCoreKit (4.11.0):
     - Bolts (~> 1.7)
@@ -92,6 +93,7 @@ DEPENDENCIES:
   - CocoaLumberjack/Swift
   - DateTools
   - DLRadioButton
+  - DynamicButton (~> 2.1.0)
   - Facade
   - FBSDKCoreKit (~> 4.11.0)
   - FBSDKLoginKit (~> 4.11.0)
@@ -131,6 +133,7 @@ SPEC CHECKSUMS:
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   DateTools: 53288ee8b905fdc75897a1e6b5cc0144b14cba60
   DLRadioButton: 4005319c135297c2998781d4b3dabc5e9b9781c4
+  DynamicButton: 08c809fdee3c4feb34a20beeba64c069a529d176
   Facade: 3c5c6fb1ba042d20885cfe5a290050f5b9351ca2
   FBSDKCoreKit: 686ac982723a14ec9ddb85e2f81235d7706c891b
   FBSDKLoginKit: bade9fc78277764149ccc5bfaadbf13c83175c6a

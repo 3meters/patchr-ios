@@ -33,6 +33,7 @@ def core_pods
 	pod 'PBWebViewController',		'~> 0.5'			# Used to show show web content for terms/policy/licensing
 	pod 'MBProgressHUD',			'~> 0.9.1'
 	pod 'DLRadioButton'
+	pod 'DynamicButton',			'~> 2.1.0'
 	pod 'UIDevice-Hardware'								# Convenience for determining system version and model identifier
 	pod 'pop', '~> 1.0'									# Animation library
 	pod 'IDMPhotoBrowser',			:path => '~/code/IDMPhotoBrowser'

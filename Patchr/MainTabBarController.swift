@@ -8,11 +8,14 @@
 
 import UIKit
 import SDWebImage
+import DynamicButton
 
 class MainTabBarController: UITabBarController {
     
-    var messageBar = UILabel()
-    
+    var messageBar		= UILabel()
+	var centerButton	: DynamicButton!
+	var actionDelegate	: ActionDelegate?
+	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
@@ -43,6 +46,24 @@ class MainTabBarController: UITabBarController {
 	
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
+		
+		let heightDifference = self.centerButton!.frame.size.height - self.tabBar.frame.size.height
+		if (heightDifference < 0) {
+			self.centerButton!.center = self.tabBar.center;
+		}
+		else {
+			var center = self.tabBar.center;
+			center.y = (center.y - heightDifference / 2.0) - 4
+			self.centerButton!.center = center;
+		}
+		
+		self.centerButton.layer.masksToBounds = false
+		self.centerButton.layer.shadowOffset = CGSizeMake(0.0, 2.0)
+		self.centerButton.layer.shadowRadius = 2.0
+		self.centerButton.layer.shadowOpacity = 0.3
+		let path: UIBezierPath = UIBezierPath(roundedRect: self.centerButton.bounds, cornerRadius: CGFloat(self.centerButton.layer.cornerRadius))
+		self.centerButton.layer.shadowPath = path.CGPath
+		
 		if ReachabilityManager.instance.isReachable() {
 			self.messageBar.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 0)
 		}
@@ -64,6 +85,24 @@ class MainTabBarController: UITabBarController {
             showMessageBar()
         }
     }
+	
+	func addAction(sender: AnyObject) {
+		if self.actionDelegate != nil {
+			self.actionDelegate!.actionPressed!()
+		}
+		else {
+			if !UserController.instance.authenticated {
+				UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to create patches and more.")
+				return
+			}
+			
+			let controller = PatchEditViewController()
+			let navController = UINavigationController()
+			controller.inputState = .Creating
+			navController.viewControllers = [controller]
+			self.presentViewController(navController, animated: true, completion: nil)
+		}
+	}
     
     /*--------------------------------------------------------------------------------------------
     * Methods
@@ -79,39 +118,53 @@ class MainTabBarController: UITabBarController {
 		self.view.accessibilityIdentifier = View.Main
 		
 		let patches = PatchNavigationController()
-		patches.tabBarItem.title = "Patches"
-		patches.tabBarItem.accessibilityIdentifier = Tab.Patches
-		patches.tabBarItem.image = UIImage(named: "tabBarPatches24")
-		patches.tabBarItem.tag = 1
+		patches.tabBarItem = UITabBarItem(title: "Patches", image: UIImage(named: "tabBarPatches24"), selectedImage: nil)
+		var tabBarItem = patches.tabBarItem
+		tabBarItem.accessibilityIdentifier = Tab.Patches
+		tabBarItem.tag = 1
 		
 		let notifications = UINavigationController()
-		notifications.tabBarItem.title = "Notifications"
-		notifications.tabBarItem.accessibilityIdentifier = Tab.Notifications
-		notifications.tabBarItem.image = UIImage(named: "tabBarNotifications24")
-		notifications.tabBarItem.tag = 2
+		notifications.tabBarItem = UITabBarItem(title: "Notifications", image: UIImage(named: "tabBarNotifications24"), selectedImage: nil)
+		tabBarItem = notifications.tabBarItem
+		tabBarItem.accessibilityIdentifier = Tab.Notifications
+		tabBarItem.tag = 2
 		
 		let notificationsController = NotificationsTableViewController()
 		notifications.viewControllers = [notificationsController]
 		
 		let search = UINavigationController()
-		search.tabBarItem.title = "Search"
-		search.tabBarItem.accessibilityIdentifier = Tab.Search
-		search.tabBarItem.image = UIImage(named: "tabBarSearch24")
-		search.tabBarItem.tag = 3
+		search.tabBarItem = UITabBarItem(title: "Search", image: UIImage(named: "tabBarSearch24"), selectedImage: nil)
+		tabBarItem = search.tabBarItem
+		tabBarItem.accessibilityIdentifier = Tab.Search
+		tabBarItem.tag = 3
 		
 		let controller = SearchViewController()
 		search.viewControllers = [controller]
 		
 		let user = UINavigationController()
-		user.tabBarItem.title = "Me"
-		user.tabBarItem.accessibilityIdentifier = Tab.Profile
-		user.tabBarItem.image = UIImage(named: "tabBarUser24")
-		user.tabBarItem.tag = 4
+		user.tabBarItem = UITabBarItem(title: "Me", image: UIImage(named: "tabBarUser24"), selectedImage: nil)
+		tabBarItem = user.tabBarItem
+		tabBarItem.accessibilityIdentifier = Tab.Profile
+		tabBarItem.tag = 4
 		
 		let userController = UserDetailViewController()
 		user.viewControllers = [userController]
 		
-		self.viewControllers = [patches, notifications, search, user]
+		let blank = UINavigationController()
+		
+		self.viewControllers = [patches, notifications, blank, search, user]
+		
+		/* Center button */
+		let button = DynamicButton(style: DynamicButtonStylePlus.self)
+		button.frame = CGRectMake(0, 0, 60, 60)
+		button.contentEdgeInsets = UIEdgeInsets(top: 22, left: 22, bottom: 22, right: 22)
+		button.autoresizingMask = [.FlexibleRightMargin, .FlexibleLeftMargin, .FlexibleBottomMargin, .FlexibleTopMargin]
+		button.layer.cornerRadius = button.bounds.width / 2
+		button.backgroundColor = Colors.accentColor
+		button.strokeColor = Colors.white
+		self.view.addSubview(button)
+		self.centerButton = button
+		button.addTarget(self, action: #selector(MainTabBarController.addAction(_:)), forControlEvents: .TouchUpInside)
 		
 		/* Message bar */
 		self.messageBar.font = Theme.fontTextDisplay
@@ -150,6 +203,10 @@ class MainTabBarController: UITabBarController {
 			self.messageBar.frame.size.height = 0
 		}
     }
+}
+
+@objc protocol ActionDelegate {
+	optional func actionPressed() -> Void
 }
 
 extension MainTabBarController: UITabBarControllerDelegate {
