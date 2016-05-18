@@ -25,6 +25,7 @@ class PatchEditViewController: BaseEditViewController {
 	
 	var inputState			 : State?	= State.Editing
 	var inputPatch			 : Patch?
+	var inputType			 : String?
 
 	var photoView            = PhotoEditView()
 	var nameField            = AirTextField()
@@ -39,15 +40,16 @@ class PatchEditViewController: BaseEditViewController {
 	var locationAddress		 = AirLinkButton()
 	var locationValue		 : CLLocation? = nil
 	
-	var doneButton           = AirFeaturedButton()
-	var message				 = AirLabelTitle()
-	
+	var doneButton			= AirFeaturedButton()
+	var banner     			= AirLabelTitle()
+	var message     		= AirLabelDisplay()
+
 	var typeGroup			 = UIView()
 	var typeLabel			 = AirLabelDisplay()
 	var typeButtonGroup		 = AirRadioButton()
 	var typeButtonPlace		 = AirRadioButton()
 	var typeButtonEvent		 = AirRadioButton()
-	var typeButtonProject	 = AirRadioButton()
+	var typeButtonTrip		 = AirRadioButton()
 	
 	var typeValue			 : String? = nil
 	var visibilityValue		 = "public"
@@ -78,6 +80,7 @@ class PatchEditViewController: BaseEditViewController {
 		 */
 		super.viewWillLayoutSubviews()
 		
+		let bannerSize = self.banner.sizeThatFits(CGSizeMake(288, CGFloat.max))
 		let messageSize = self.message.sizeThatFits(CGSizeMake(288, CGFloat.max))
 		let descriptionSize = self.descriptionField.sizeThatFits(CGSizeMake(288, CGFloat.max))
 		
@@ -86,7 +89,8 @@ class PatchEditViewController: BaseEditViewController {
 		self.visibilityLabel.sizeToFit()
 		self.typeLabel.sizeToFit()
 		
-		self.message.anchorTopCenterWithTopPadding(0, width: 288, height: messageSize.height)
+		self.banner.anchorTopCenterWithTopPadding(0, width: 288, height: bannerSize.height)
+		self.message.alignUnder(self.banner, matchingCenterWithTopPadding: 8, width: 288, height: messageSize.height)
 		self.nameField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
 		self.descriptionField.alignUnder(self.nameField, matchingCenterWithTopPadding: 8, width: 288, height: max(48, descriptionSize.height))
 		self.photoView.alignUnder(self.descriptionField, matchingCenterWithTopPadding: 16, width: 288, height: 288 * 0.56)
@@ -104,7 +108,7 @@ class PatchEditViewController: BaseEditViewController {
 		self.typeButtonEvent.alignToTheRightOf(self.typeLabel, matchingCenterWithLeftPadding: 8, width: 88, height: 24)
 		self.typeButtonGroup.alignToTheRightOf(self.typeButtonEvent, matchingCenterWithLeftPadding: 8, width: 88, height: 24)
 		self.typeButtonPlace.alignUnder(self.typeButtonEvent, matchingLeftWithTopPadding: 8, width: 88, height: 24)
-		self.typeButtonProject.alignUnder(self.typeButtonGroup, matchingLeftWithTopPadding: 8, width: 88, height: 24)
+		self.typeButtonTrip.alignUnder(self.typeButtonGroup, matchingLeftWithTopPadding: 8, width: 88, height: 24)
 		
 		self.contentHolder.resizeToFitSubviews()
 		self.scrollView.contentSize = CGSizeMake(self.contentHolder.width(), self.contentHolder.height() + CGFloat(32))
@@ -202,8 +206,8 @@ class PatchEditViewController: BaseEditViewController {
 			if button == self.typeButtonPlace {
 				self.typeValue = "place"
 			}
-			if button == self.typeButtonProject {
-				self.typeValue = "project"
+			if button == self.typeButtonTrip {
+				self.typeValue = "trip"
 			}
 		}
 	}
@@ -218,7 +222,10 @@ class PatchEditViewController: BaseEditViewController {
 		self.schema = Schema.ENTITY_PATCH
 		self.view.accessibilityIdentifier = View.PatchEdit
 		
-		self.message.textColor = Theme.colorTextTitle
+		self.banner.textColor = Theme.colorTextTitle
+		self.banner.numberOfLines = 0
+		self.banner.textAlignment = .Center
+		
 		self.message.numberOfLines = 0
 		self.message.textAlignment = .Center
 		
@@ -249,13 +256,13 @@ class PatchEditViewController: BaseEditViewController {
 		self.typeButtonEvent.setTitle("Event", forState: .Normal)		
 		self.typeButtonGroup.setTitle("Group", forState: .Normal)
 		self.typeButtonPlace.setTitle("Place", forState: .Normal)
-		self.typeButtonProject.setTitle("Project", forState: .Normal)
-		self.typeButtonEvent.otherButtons = [self.typeButtonGroup, self.typeButtonPlace, self.typeButtonProject]
+		self.typeButtonTrip.setTitle("Trip", forState: .Normal)
+		self.typeButtonEvent.otherButtons = [self.typeButtonGroup, self.typeButtonPlace, self.typeButtonTrip]
 		
 		self.typeButtonEvent.addTarget(self, action: #selector(PatchEditViewController.typeSelected(_:)), forControlEvents: .TouchUpInside)
 		self.typeButtonGroup.addTarget(self, action: #selector(PatchEditViewController.typeSelected(_:)), forControlEvents: .TouchUpInside)
 		self.typeButtonPlace.addTarget(self, action: #selector(PatchEditViewController.typeSelected(_:)), forControlEvents: .TouchUpInside)
-		self.typeButtonProject.addTarget(self, action: #selector(PatchEditViewController.typeSelected(_:)), forControlEvents: .TouchUpInside)
+		self.typeButtonTrip.addTarget(self, action: #selector(PatchEditViewController.typeSelected(_:)), forControlEvents: .TouchUpInside)
 		
 		self.visibilityGroup.addSubview(self.visibilityLabel)
 		self.visibilityGroup.addSubview(self.visibilitySwitch)
@@ -267,19 +274,32 @@ class PatchEditViewController: BaseEditViewController {
 		self.typeGroup.addSubview(self.typeButtonEvent)
 		self.typeGroup.addSubview(self.typeButtonGroup)
 		self.typeGroup.addSubview(self.typeButtonPlace)
-		self.typeGroup.addSubview(self.typeButtonProject)
+		self.typeGroup.addSubview(self.typeButtonTrip)
 		
+		self.contentHolder.addSubview(self.banner)
 		self.contentHolder.addSubview(self.message)
 		self.contentHolder.addSubview(self.nameField)
 		self.contentHolder.addSubview(self.descriptionField)
 		self.contentHolder.addSubview(self.photoView)
 		self.contentHolder.addSubview(self.visibilityGroup)
 		self.contentHolder.addSubview(self.locationGroup)
-		self.contentHolder.addSubview(self.typeGroup)
 		
 		if self.inputState == State.Creating {
+			
 			Reporting.screen("PatchNew")
-			self.message.text = "New Patch"
+			self.banner.text = (self.inputType != nil ? "New \(self.inputType!.capitalizedString) Patch" : "New Patch")
+			if self.inputType == "event" {
+				self.message.text = "Share all the important moments with an event patch."
+			}
+			else if self.inputType == "place" {
+				self.message.text = "Share it forward so future Patchr users get the most from a place or venue."
+			}
+			else if self.inputType == "group" {
+				self.message.text = "Share and stay connected to members with the same interests."
+			}
+			else if self.inputType == "trip" {
+				self.message.text = "Capture and share all the important moments with a trip patch."
+			}
 			self.progressStartLabel = "Patching"
 			self.progressFinishLabel = "Activated"
 			self.cancelledLabel = "Activation cancelled"
@@ -292,11 +312,13 @@ class PatchEditViewController: BaseEditViewController {
 		}
 		else {
 			Reporting.screen("PatchEdit")
-			self.message.text = "Patch"
+			self.banner.text = "Patch"
 			self.progressStartLabel = "Updating"
 			self.progressFinishLabel = "Updated"
 			self.cancelledLabel = "Update cancelled"
 			self.doneButton.hidden = true
+			
+			self.contentHolder.addSubview(self.typeGroup)
 			
 			/* Navigation bar buttons */
 			let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: #selector(PatchEditViewController.cancelAction(_:)))
@@ -339,9 +361,9 @@ class PatchEditViewController: BaseEditViewController {
 				self.typeButtonPlace.selected = true
 				self.typeValue = "place"
 			}
-			else if self.inputPatch?.type == "project" {
-				self.typeButtonProject.selected = true
-				self.typeValue = "project"
+			else if self.inputPatch?.type == "trip" {
+				self.typeButtonTrip.selected = true
+				self.typeValue = "trip"
 			}
 		}
 		else {
@@ -353,6 +375,10 @@ class PatchEditViewController: BaseEditViewController {
 			
 			/* Public by default */
 			self.visibilitySwitch.on = false
+			
+			/* Type */
+			self.typeGroup.hidden = true
+			self.typeValue = self.inputType
 		}
     }
 	
@@ -574,9 +600,6 @@ class PatchEditViewController: BaseEditViewController {
 				return true
 			}
 			if self.photoView.photoDirty {
-				return true
-			}
-			if self.typeValue != nil {
 				return true
 			}
 		}

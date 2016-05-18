@@ -11,6 +11,7 @@ import Branch
 import MessageUI
 import iRate
 import IDMPhotoBrowser
+import NHBalancedFlowLayout
 
 class PatchDetailViewController: BaseDetailViewController {
 
@@ -18,10 +19,7 @@ class PatchDetailViewController: BaseDetailViewController {
 	private var originalRect			: CGRect?
     private var originalScrollTop		= CGFloat(-64.0)
 	
-	var displayPhotos			= [DisplayPhoto]()
 	var processing				= false
-	var pageSize				= 10
-	var virtualSize				= 0
 	
 	var inputReferrerName		: String?
 	var inputReferrerPhotoUrl	: String?
@@ -68,6 +66,15 @@ class PatchDetailViewController: BaseDetailViewController {
 		else {
 			fetch(strategy: .UseCacheAndVerify , resetList: self.firstAppearance)
 		}
+		
+		if let bar = self.tabBarController as? MainTabBarController {
+			bar.setActionDelegate(self)
+			bar.centerButton.imageInsets = UIEdgeInsetsMake(14, 14, 14, 14)
+			bar.centerButton.showBackground = false
+			bar.centerButton.setNeedsLayout()
+			bar.centerButton.imageView.image = UIImage(named: "imgEdit2Light")	// Default
+			bar.centerButton.imageView.fadeIn(0.2)
+		}
 	}
 	
 	override func viewDidAppear(animated: Bool) {
@@ -83,23 +90,21 @@ class PatchDetailViewController: BaseDetailViewController {
 		else {
 			iRate.sharedInstance().promptIfAllCriteriaMet()
 		}
-		
-		if let bar = self.tabBarController as? MainTabBarController {
-			bar.actionDelegate = self
-		}
 	}
 	
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
-		if let bar = self.tabBarController as? MainTabBarController {
-			bar.actionDelegate = nil
-		}
 	}
 	
 	/*--------------------------------------------------------------------------------------------
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
     
+	override func photoAction(sender: AnyObject?) {
+		super.photoAction(sender)
+		/* Stub to handle processing if we unify gallery browsing */
+	}
+	
 	func watchersAction(sender: AnyObject) {
 		let controller = UserTableViewController()
 		controller.patch = self.entity as! Patch
@@ -108,14 +113,9 @@ class PatchDetailViewController: BaseDetailViewController {
 	}
 	
 	func photosAction(sender: AnyObject) {
-		if self.displayPhotos.count == 0 {
-			loadPhotos()
-		}
-		else {
-			showPhotos()
-		}
+		showPhotos()
 	}
-
+	
 	func contextButtonAction(sender: UIButton) {
 		
         if self.contextAction == .CreateMessage {
@@ -300,7 +300,6 @@ class PatchDetailViewController: BaseDetailViewController {
 	}
 	
 	func shareAction(sender: AnyObject?) {
-		
 		if !UserController.instance.authenticated {
 			UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to invite people to patches and more.")
 			return
@@ -348,7 +347,7 @@ class PatchDetailViewController: BaseDetailViewController {
 	
 	func reportAction(sender: AnyObject?) {
 		
-		let email = "report@3meters.com"
+		let email = "report@patchr.com"
 		let subject = "Report on Patchr content"
 		let body = "Report on patch id: \(self.entityId!)\n\nPlease add some detail on why you are reporting this patch.\n"
 		
@@ -455,6 +454,10 @@ class PatchDetailViewController: BaseDetailViewController {
 		if ((notification.userInfo?["deleted"]) == nil) {
 			bindContextView()
 		}
+	}
+	
+	override func didFetchQuery(notification: NSNotification) {
+		super.didFetchQuery(notification)
 	}
 	
 	func didInsertMessage(sender: NSNotification) {
@@ -574,7 +577,7 @@ class PatchDetailViewController: BaseDetailViewController {
 	override func drawButtons() {
 		
 		let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: #selector(PatchDetailViewController.shareAction(_:)))
-		let editButton = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(PatchDetailViewController.editAction))
+		let editButton = UIBarButtonItem(title: "Edit", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(PatchDetailViewController.editAction))
 		
 		if isUserOwner() {
 			self.navigationItem.setRightBarButtonItems([shareButton, Utils.spacer, editButton], animated: true)
@@ -732,72 +735,26 @@ class PatchDetailViewController: BaseDetailViewController {
 		}
 	}
 	
-	func loadPhotos() {
+	func showPhotos() {
 		
-		guard !self.processing else {
-			return
-		}
-		
-		self.processing = true
-		
-		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
-			
-			DataController.proxibase.fetchPhotosForPatch(self.entityId!, limit: self.pageSize, skip: self.virtualSize) {
-				response, error in
-				
-				if ServerError(error) == nil {
-					let dataWrapper = ServiceData()
-					if let dictionary = response as? [String:AnyObject] {
-						ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper)
-						if let maps = dataWrapper.data as? [[String: AnyObject]] {
-							for map in maps {
-								let displayPhoto = DisplayPhoto.fromMap(map)
-								self.displayPhotos.append(displayPhoto)
-							}
-						}
-					}
-				}
-				
-				NSOperationQueue.mainQueue().addOperationWithBlock {
-					
-					if let error = ServerError(error) {
-						self.handleError(error)
-					}
-					else {
-						self.virtualSize += self.pageSize
-						if self.displayPhotos.count > 0 {
-							self.showPhotos()
-						}
-						else {
-							UIShared.Toast("No photos yet", controller: self, addToWindow: false)
-						}
-					}
-					self.processing = false
-				}
+		/* Cherry pick display photos */
+		var displayPhotos = [String: DisplayPhoto]()
+
+		for item in self.query.queryItems {
+			let queryItem = item as! QueryItem
+			let entity = queryItem.object as! Entity
+			if entity.photo != nil {
+				let displayPhoto = DisplayPhoto.fromEntity(entity)
+				displayPhotos[displayPhoto.entityId!] = displayPhoto
 			}
 		}
-	}
-	
-	func showPhotos() {
-		/*
-		* Create browser (must be done each time photo browser is displayed. Photo
-		* browser objects cannot be re-used)
-		*/
-		if let browser = self.navigationController?.presentedViewController as? GalleryBrowser {
-			browser.photos = NSMutableArray(array: self.displayPhotos)
-			browser.reloadData()
-		}
-		else {
-			let browser = GalleryBrowser(photos:self.displayPhotos)
-			
-			browser.useWhiteBackgroundColor = true
-			browser.usePopAnimation = true
-			browser.disableVerticalSwipe = false
-			browser.autoHideInterface = false
-			browser.delegate = self
-			
-			self.navigationController!.presentViewController(browser, animated:true, completion:nil)
-		}
+
+		let navController = UINavigationController()
+		let layout = NHBalancedFlowLayout()
+		let controller = GalleryGridViewController(collectionViewLayout: layout)
+		controller.displayPhotos = displayPhotos
+		navController.viewControllers = [controller]
+		self.navigationController!.presentViewController(navController, animated: true, completion: nil)
 	}
 	
 	func shareUsing(route: ShareRoute) {
@@ -919,26 +876,11 @@ class PatchDetailViewController: BaseDetailViewController {
 }
 
 extension PatchDetailViewController: ActionDelegate {
-	func actionPressed() {
+	
+	func actionButtonTapped(button: AirRadialMenu) -> Bool {
+		Animation.bounce(button)
 		addAction()
-	}
-}
-
-extension PatchDetailViewController: IDMPhotoBrowserDelegate {
-	
-	func photoBrowser(photoBrowser: IDMPhotoBrowser!, captionViewForPhotoAtIndex index: UInt) -> IDMCaptionView! {
-		let captionView = CaptionView(displayPhoto: self.displayPhotos[Int(index)])
-		return captionView
-	}
-	
-	func photoBrowser(photoBrowser: IDMPhotoBrowser!, didShowPhotoAtIndex index: UInt) {
-		if let browser = photoBrowser as? GalleryBrowser {
-			let displayPhoto = self.displayPhotos[Int(index)]
-			browser.likeButton.bind(displayPhoto)
-		}
-		if Int(index) > self.displayPhotos.count - 5 {
-			loadPhotos()
-		}
+		return true
 	}
 }
 

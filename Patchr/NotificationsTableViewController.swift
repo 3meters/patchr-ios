@@ -50,6 +50,15 @@ class NotificationsTableViewController: BaseTableViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         Reporting.screen("NotificationList")
+		
+		if let bar = self.tabBarController as? MainTabBarController {
+			bar.setActionDelegate(self)
+			bar.centerButton.imageInsets = UIEdgeInsetsMake(10, 10, 10, 10)
+			bar.centerButton.showBackground = false
+			bar.centerButton.setNeedsLayout()
+			bar.centerButton.imageView.image = UIImage(named: "imgRefreshLight")	// Default
+			bar.centerButton.imageView.fadeIn(0.3)
+		}
     }
     
 	override func viewDidAppear(animated: Bool) {
@@ -373,6 +382,18 @@ class NotificationsTableViewController: BaseTableViewController {
         PFInstallation.currentInstallation().badge = badge
         PFInstallation.currentInstallation().saveEventually(nil)
     }
+}
+
+extension NotificationsTableViewController: ActionDelegate {
+	
+	func actionItemTapped(type: String) -> Bool {
+		return true
+	}
+	
+	func actionButtonTapped(button: AirRadialMenu) -> Bool {
+		beginRefreshingTableView()
+		return true
+	}
 }
 
 class AirStylesheet: NSObject, TWMessageBarStyleSheet {

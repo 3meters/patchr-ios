@@ -55,9 +55,9 @@ PODS:
   - FBSDKShareKit (4.11.0):
     - FBSDKCoreKit
   - IDMPhotoBrowser (1.7):
-    - AFNetworking (~> 2.6)
     - DACircularProgress
     - pop
+    - SDWebImage
   - iRate (1.11.4)
   - Keys (1.0.0)
   - KIF/Core (3.3.2)
@@ -70,6 +70,7 @@ PODS:
     - KSCrash/Recording
   - Lockbox (3.0.0)
   - MBProgressHUD (0.9.2)
+  - NHBalancedFlowLayout (0.2)
   - Nimble (3.1.0)
   - Parse (1.13.0):
     - Bolts/Tasks (~> 1.6)
@@ -104,6 +105,7 @@ DEPENDENCIES:
   - KIF/IdentifierTests (~> 3.0)
   - Lockbox
   - MBProgressHUD (~> 0.9.1)
+  - NHBalancedFlowLayout (~> 0.2)
   - Nimble
   - Parse
   - PBWebViewController (~> 0.5)
@@ -138,13 +140,14 @@ SPEC CHECKSUMS:
   FBSDKCoreKit: 686ac982723a14ec9ddb85e2f81235d7706c891b
   FBSDKLoginKit: bade9fc78277764149ccc5bfaadbf13c83175c6a
   FBSDKShareKit: 2d1746144cfc8a9dbbd24997c34ee0471be51b6a
-  IDMPhotoBrowser: c1edb3547733f40d5474243b6329e2b2f571b85b
+  IDMPhotoBrowser: bcd6cbc9ccaf7e945c3a5a065ffa1a4dee81b722
   iRate: 599ed07c854e0695f3c605d1b2a64c67d912acb7
   Keys: 7d2ff6ff42f6903358267ce56e9392f83c31acfe
   KIF: 9de83fa627adaf65d28ace31e40f19d830bc255c
   KSCrash: e8f1367230da7e33f37deb7329c299079202b07e
   Lockbox: 3b23507064de0bfcd772f54eddf41064d4152703
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
+  NHBalancedFlowLayout: fd253023c6754e605acdb180d50123e582cc62bb
   Nimble: 79d40f4d69d47314229bbabacaa02b8838c779b9
   Parse: f51c24d2feb412e4b2d6cc73d37cb24e8d0089bc
   PBWebViewController: 6537990155ca850fb8d0563efbc12becebc953ef

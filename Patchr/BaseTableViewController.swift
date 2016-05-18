@@ -176,6 +176,9 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
+//		if let bar = self.tabBarController as? MainTabBarController {
+//			bar.setActionDelegate(nil)
+//		}
 	}
 
     override func viewDidDisappear(animated: Bool) {
@@ -284,6 +287,12 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		
 		self.fetchQueryItems(force: false, paging: true, queryDate: nil)
 	}
+	
+	func beginRefreshingTableView() {
+		self.refreshControl?.beginRefreshing()
+		self.tableView.setContentOffset(CGPointMake(0, self.tableView.contentOffset.y - (self.refreshControl?.height())!), animated: true)
+		pullToRefreshAction(nil)
+	}
 
 	func fetchQueryItems(force force: Bool, paging: Bool, queryDate: Int64?) {
         
@@ -380,6 +389,10 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	
 	func clearQueryItems() {
 		self.query.queryItemsSet().removeAllObjects()
+	}
+	
+	func scrollToFirstRow(animated: Bool = true) {
+		self.tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: animated)
 	}
 	
 	func getActivityDate() -> Int64 {

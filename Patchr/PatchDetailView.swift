@@ -289,7 +289,11 @@ class PatchDetailView: BaseDetailView {
 		self.infoMoreButton.bounds.size = CGSizeMake(48, 48)
 		self.infoMoreButton.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
 		
-		self.photosButton.setTitle("PHOTOS", forState: .Normal)
+		self.photosButton.setTitle("Gallery", forState: .Normal)
+		self.photosButton.setImage(UIImage(named: "imgGalleryLight"), forState: .Normal)
+		self.photosButton.imageView!.contentMode = UIViewContentMode.ScaleAspectFit
+		self.photosButton.imageView?.tintColor = Colors.brandColorDark
+		self.photosButton.imageEdgeInsets = UIEdgeInsetsMake(10, 4, 10, 24)
 		self.photosButton.contentHorizontalAlignment = .Center
 		self.photosButton.backgroundColor = Colors.gray95pcntColor
 		
@@ -347,7 +351,7 @@ class PatchDetailView: BaseDetailView {
 				}
 			}
 			else {
-				let watchersTitle = "\(entity.countWatching ?? 0) \(entity.countWatchingValue == 1 ? "MEMBER": "MEMBERS")"
+				let watchersTitle = "\(entity.countWatching ?? 0) \(entity.countWatchingValue == 1 ? "Member": "Members")"
 				self.watchersButton.setTitle(watchersTitle, forState: UIControlState.Normal)
 				if self.watchersButton.alpha == 0 {
 					self.watchersButton.fadeIn()

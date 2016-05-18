@@ -58,6 +58,15 @@ class SearchViewController: UITableViewController {
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
 		loadRecents() // In case there is something new while we were away
+		
+		if let bar = self.tabBarController as? MainTabBarController {
+			bar.setActionDelegate(self)
+			bar.centerButton.imageInsets = UIEdgeInsetsMake(10, 10, 10, 10)
+			bar.centerButton.showBackground = false
+			bar.centerButton.setNeedsLayout()
+			bar.centerButton.imageView.image = UIImage(named: "imgPatchLight")	// Default
+			bar.centerButton.imageView.fadeIn(0.3)
+		}
 	}
 
     override func viewDidAppear(animated: Bool) {
@@ -230,6 +239,17 @@ class SearchViewController: UITableViewController {
     }
 }
 
+extension SearchViewController: ActionDelegate {
+	
+	func actionItemTapped(type: String) -> Bool {
+		return true
+	}
+	
+	func actionButtonTapped(button: AirRadialMenu) -> Bool {
+		return true
+	}
+}
+
 extension SearchViewController: UITextFieldDelegate {
 	
     func textFieldDidEndEditing(textField: UITextField) {
@@ -258,17 +278,18 @@ extension SearchViewController {
         var patch: JSON = JSON(self.currentItems[indexPath.row])
         cell!.name.text = patch["name"].string
         
-        if patch["photo"] != nil {
-            
+        if patch["photo"] != nil {            
             let prefix = patch["photo"]["prefix"].string
             let source = patch["photo"]["source"].string
             let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.thumbnail)
             cell!.photo.sd_setImageWithURL(photoUrl)
         }
-        else {
-            cell!.photo.image = UIImage(named: "imgDefaultPatch")
-            cell!.photo.updateConstraints()
-        }
+		else if patch["name"] != nil {
+			let seed = Utils.numberFromName(patch["name"].string!)
+			cell!.photo.backgroundColor = Utils.randomColor(seed)
+			cell!.photo.updateConstraints()
+		}
+		
         return cell!
     }
     

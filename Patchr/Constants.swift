@@ -10,11 +10,6 @@ import UIKit
 import CocoaLumberjack
 import MessageUI
 
-let pageSizeDefault         = 20
-let pageSizeNearby          = 50
-let pageSizeExplore         = 20
-let pageSizeNotifications   = 20
-
 let Device                          = UIDevice.currentDevice()
 let iosVersion                      = NSString(string: Device.systemVersion).doubleValue
 let IOS9                            = iosVersion >= 9

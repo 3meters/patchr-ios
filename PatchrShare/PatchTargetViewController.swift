@@ -249,16 +249,17 @@ extension PatchTargetViewController {
         cell!.name.text = patch["name"].string
         
         if patch["photo"] != nil {
-            
             let prefix = patch["photo"]["prefix"].string
             let source = patch["photo"]["source"].string
             let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.thumbnail)
             cell!.photo.sd_setImageWithURL(photoUrl)
         }
-        else {
-            cell!.photo.image = UIImage(named: "imgDefaultPatch")
-            cell!.photo.updateConstraints()
-        }
+		else if patch["name"] != nil {
+			let seed = Utils.numberFromName(patch["name"].string!)
+			cell!.photo.backgroundColor = Utils.randomColor(seed)
+			cell!.photo.updateConstraints()
+		}
+		
         return cell!
     }
     

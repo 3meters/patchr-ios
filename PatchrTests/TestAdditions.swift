@@ -60,7 +60,7 @@ extension KIFUITestActor {
 	func login() {
 		tester().tap(Button.Login)
 		tester().waitFor(View.Login)
-		tester().enterText("batman@3meters.com", into: Field.Email)
+		tester().enterText("batman@patchr.com", into: Field.Email)
 		tester().enterText("Patchme", into: Field.Password)
 		tester().tap(Button.Submit)
 		tester().waitForLabel(Toast.LoggedIn + " Batman")

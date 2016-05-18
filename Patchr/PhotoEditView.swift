@@ -152,8 +152,14 @@ class PhotoEditView: UIView {
 		if image != nil {
 			self.imageButton.setImage(image, forState: .Normal)
 		}
-		else {
-			self.imageButton.setImageWithImageResult(imageResult!)  // Downloads and pushes into photoImage
+		else if imageResult != nil {
+			/*
+			 * Request image via resizer so size is capped. We don't use imgix because it only uses
+			 * known image sources that we setup like our buckets on s3.
+			 */
+			let dimension = imageResult!.width >= imageResult!.height ? ResizeDimension.width : ResizeDimension.height
+			let url = NSURL(string: GooglePlusProxy.convert(imageResult!.mediaUrl!, size: Int(IMAGE_DIMENSION_MAX), dimension: dimension))
+			self.imageButton.setImageWithUrl(url!)  // Downloads and pushes into photoImage
 		}
 		
 		Reporting.track("Set Photo", properties: ["target":self.photoSchema!])

@@ -82,57 +82,64 @@ class AirImageButton: UIButton {
             }
             return
         }
-        
-        let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory)
-        
-        if photoUrl.absoluteString.isEmpty {
-            let error = NSError(domain: "Photo error", code: 0, userInfo: [NSLocalizedDescriptionKey:"Photo has invalid source: \(photo.source!)"])
-            self.imageCompletion(nil, error: error, cacheType: nil, url: nil, animate: animate)
-            return
-        }
-        
-        self.linkedPhotoUrl = photoUrl
-        
-        if progressAuto {
-            startProgress()
-        }
 		
-		let options: SDWebImageOptions = [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload]
+		if self.progressAuto {
+			self.startProgress()
+		}
 		
-        self.sd_setImageWithURL(photoUrl,
-            forState:UIControlState.Normal,
-            placeholderImage: nil,
-            options: options,
-            completed: { [weak self] image, error, cacheType, url in
-                self?.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
-            }
-        )
+		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+			
+			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory)
+			
+			if photoUrl.absoluteString.isEmpty {
+				let error = NSError(domain: "Photo error", code: 0, userInfo: [NSLocalizedDescriptionKey:"Photo has invalid source: \(photo.source!)"])
+				dispatch_async(dispatch_get_main_queue()) {
+					self.imageCompletion(nil, error: error, cacheType: nil, url: nil, animate: animate)
+				}
+				return
+			}
+			
+			self.linkedPhotoUrl = photoUrl
+			
+			let options: SDWebImageOptions = [.RetryFailed, .LowPriority, .AvoidAutoSetImage, /* .ProgressiveDownload */]
+			
+			self.sd_setImageWithURL(photoUrl,
+			                        forState:UIControlState.Normal,
+			                        placeholderImage: nil,
+			                        options: options,
+			                        completed: { [weak self] image, error, cacheType, url in
+										dispatch_async(dispatch_get_main_queue()) {
+											self?.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
+										}
+				}
+			)
+		}
     }
-    
-    func setImageWithImageResult(imageResult: ImageResult, animate: Bool = true) {
-        
-        if self.progressAuto {
-            startProgress()
-        }
-        /*
-         * Request image via resizer so size is capped. We don't use imgix because it only uses
-		 * known image sources that we setup like our buckets on s3.
-         */
-        let dimension = imageResult.width >= imageResult.height ? ResizeDimension.width : ResizeDimension.height
-        let url = NSURL(string: GooglePlusProxy.convert(imageResult.mediaUrl!, size: Int(IMAGE_DIMENSION_MAX), dimension: dimension))
-        
-        self.linkedPhotoUrl = url
+
+	func setImageWithUrl(url: NSURL, animate: Bool = true) {
+
+		if self.progressAuto {
+			startProgress()
+		}
 		
-        self.sd_setImageWithURL(url,
-            forState:UIControlState.Normal,
-            placeholderImage: nil,
-            options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload],
-            completed: { [weak self] image, error, cacheType, url in
-                self?.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
-            }
-        )
-    }
-    
+		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+			
+			/* Stash the url we are loading so we can check for a match later when download is completed. */
+			self.linkedPhotoUrl = url
+			let options: SDWebImageOptions = [.RetryFailed, .LowPriority, .AvoidAutoSetImage, /* .ProgressiveDownload */]
+			
+			self.sd_setImageWithURL(url
+				, forState:UIControlState.Normal
+				, placeholderImage: nil
+				, options: options) {
+				[weak self] image, error, cacheType, url in
+					dispatch_async(dispatch_get_main_queue()) {
+						self?.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
+					}
+				}
+		}
+	}
+
     func imageCompletion(image: UIImage?, error: NSError?, cacheType: SDImageCacheType?, url: NSURL?, animate: Bool = true) -> Void {
         
         if self.progressAuto {

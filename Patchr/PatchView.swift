@@ -188,8 +188,8 @@ class PatchView: BaseView {
 		self.setNeedsLayout()
 	}
 	
-	func bindPhoto(photoUrl: NSURL?, name: String?) {
-		let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
+	private func bindPhoto(photoUrl: NSURL?, name: String?) {
+		let options: SDWebImageOptions = [.RetryFailed, .LowPriority,/* .ProgressiveDownload */]
 		self.photo.image = nil
 		if photoUrl != nil {
 			self.photo.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)

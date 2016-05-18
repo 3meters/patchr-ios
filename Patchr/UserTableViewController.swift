@@ -54,6 +54,15 @@ class UserTableViewController: BaseTableViewController {
             case .MessageLikers:
                 Reporting.screen("UserListMessageLikers")
         }
+		
+		if let bar = self.tabBarController as? MainTabBarController {
+			bar.setActionDelegate(self)
+			bar.centerButton.imageInsets = UIEdgeInsetsMake(10, 10, 10, 10)
+			bar.centerButton.showBackground = false
+			bar.centerButton.setNeedsLayout()
+			bar.centerButton.imageView.image = UIImage(named: "imgRefreshLight")	// Default
+			bar.centerButton.imageView.fadeIn(0.3)
+		}
     }
 	
 	override func viewDidAppear(animated: Bool) {
@@ -152,6 +161,18 @@ class UserTableViewController: BaseTableViewController {
 /*--------------------------------------------------------------------------------------------
  * Extensions
  *--------------------------------------------------------------------------------------------*/
+
+extension UserTableViewController: ActionDelegate {
+	
+	func actionItemTapped(type: String) -> Bool {
+		return true
+	}
+	
+	func actionButtonTapped(button: AirRadialMenu) -> Bool {
+		beginRefreshingTableView()
+		return true
+	}
+}
 
 extension UserTableViewController {
 	/*

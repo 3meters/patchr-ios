@@ -72,7 +72,7 @@ class CaptionView: IDMCaptionView {
 		self.createdDate.numberOfLines = 1
 		self.createdDate.textColor = Theme.colorTextSecondary
 		self.createdDate.textAlignment = .Right
-		self.createdDate.text = self.displayPhoto.createdDate
+		self.createdDate.text = self.displayPhoto.createdDateLabel
 		
 		self.likeButton.imageView!.tintColor = Theme.colorTint
 		self.likeButton.bounds.size = CGSizeMake(48, 48)

@@ -86,6 +86,15 @@ class PatchTableViewController: BaseTableViewController {
             case .Owns:
                 Reporting.screen("OwnsList")
         }
+		
+		if let bar = self.tabBarController as? MainTabBarController {
+			bar.setActionDelegate(self)
+			bar.centerButton.imageInsets = UIEdgeInsetsMake(10, 10, 10, 10)
+			bar.centerButton.showBackground = true
+			bar.centerButton.setNeedsLayout()
+			bar.centerButton.imageView.image = UIImage(named: "imgAddLight")	// Default
+			bar.centerButton.imageView.fadeIn(0.3)
+		}
     }
 
     override func viewDidAppear(animated: Bool) {
@@ -121,6 +130,7 @@ class PatchTableViewController: BaseTableViewController {
 
     override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
+		
         if self.filter == .Nearby {
 			deactivateNearby()
         }
@@ -149,6 +159,15 @@ class PatchTableViewController: BaseTableViewController {
         controller.fetchRequest = self.fetchedResultsController.fetchRequest
         self.navigationController?.pushViewController(controller, animated: true)
     }
+	
+	func addAction(type: String) {
+		let controller = PatchEditViewController()
+		let navController = UINavigationController()
+		controller.inputState = .Creating
+		controller.inputType = type
+		navController.viewControllers = [controller]
+		self.presentViewController(navController, animated: true, completion: nil)
+	}
 
 	func presentPermissionAction(sender: AnyObject?) {
 		/* Returns true if ok to proceed */
@@ -496,6 +515,24 @@ class PatchTableViewController: BaseTableViewController {
 /*--------------------------------------------------------------------------------------------
  * Extensions
  *--------------------------------------------------------------------------------------------*/
+
+extension PatchTableViewController: ActionDelegate {
+	
+	func actionItemTapped(type: String) -> Bool {
+		addAction(type)
+		return true
+	}
+	
+	func actionButtonTapped(button: AirRadialMenu) -> Bool {
+		if !button.menuIsExpanded {
+			button.toggleOn()
+		}
+		else {
+			button.toggleOff()
+		}
+		return false
+	}
+}
 
 extension PatchTableViewController {
 	/*

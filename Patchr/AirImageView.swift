@@ -159,17 +159,16 @@ class AirImageView: UIImageView {
 			
 			/* Stash the url we are loading so we can check for a match later when download is completed. */
 			self.linkedPhotoUrl = photoUrl
+			let options: SDWebImageOptions = [.RetryFailed, .LowPriority, .AvoidAutoSetImage, /* .ProgressiveDownload */]
 			
 			self.sd_setImageWithURL(photoUrl,
 				placeholderImage: nil,
-				options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload],
-				completed: { [weak self] image, error, cacheType, url in
-					
+				options: options) {
+					[weak self] image, error, cacheType, url in
 					dispatch_async(dispatch_get_main_queue()) {
 						self?.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
 					}
-				}
-			)
+			}
 		}
 		
 		dispatch_async(dispatch_get_main_queue()) {
@@ -177,40 +176,19 @@ class AirImageView: UIImageView {
 		}
     }
 	
-    func setImageWithThumbnail(thumbnail: Thumbnail, animate: Bool = true) {
-        
-        let url = NSURL(string: thumbnail.mediaUrl!)
-        
+	func setImageWithUrl(url: NSURL, animate: Bool = true) {
+
 		/* Stash the url we are loading so we can check for a match later when download is completed. */
-        self.linkedPhotoUrl = url
-        
-        self.sd_setImageWithURL(url,
-            placeholderImage: nil,
-            options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage],
-            completed: { [weak self] image, error, cacheType, url in
-                self?.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
-            }
-        )
-    }
-    
-    func setImageWithImageResult(imageResult: ImageResult, animate: Bool = true) {
-        
-        startActivity()
-        
-        let url = NSURL(string: imageResult.mediaUrl!)
-        
-		/* Stash the url we are loading so we can check for a match later when download is completed. */
-        self.linkedPhotoUrl = url
-        
-        self.sd_setImageWithURL(url,
-            placeholderImage: nil,
-            options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload],
-            completed: {
+		self.linkedPhotoUrl = url
+		let options: SDWebImageOptions = [.RetryFailed, .LowPriority, .AvoidAutoSetImage, /* .ProgressiveDownload */]
+
+		self.sd_setImageWithURL(url
+			, placeholderImage: nil
+			, options: options) {
 				[weak self] image, error, cacheType, url in
 				self?.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
-            }
-        )
-    }
+			}
+	}
 
     func imageCompletion(image: UIImage?, error: NSError?, cacheType: SDImageCacheType?, url: NSURL?, animate: Bool = true) -> Void {
         

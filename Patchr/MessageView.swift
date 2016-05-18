@@ -90,13 +90,13 @@ class MessageView: BaseView {
 			bottomView = self.description_
 			self.description_?.bounds.size.width = columnWidth
 			self.description_?.sizeToFit()
-			self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: self.description_!.height())
+			self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 0, height: self.description_!.height())
 		}
 		
 		if self.entity?.description_ != nil && self.entity?.photo != nil {
 			self.description_?.bounds.size.width = columnWidth
 			self.description_?.sizeToFit()
-			self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: self.description_!.height())
+			self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 0, height: self.description_!.height())
 			self.photo?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: photoHeight)
 		}
 		else if self.entity?.photo != nil {
@@ -254,7 +254,7 @@ class MessageView: BaseView {
 		
 		if let photo = entity.photo {
 			self.photo?.hidden = false
-			let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
+			let options: SDWebImageOptions = [.RetryFailed, .LowPriority, /* .ProgressiveDownload */]
 			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.standard)
 			self.photo?.sd_setImageWithURL(photoUrl, forState: UIControlState.Normal, placeholderImage: nil, options: options)
 		}

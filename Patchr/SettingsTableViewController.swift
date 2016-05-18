@@ -178,7 +178,7 @@ extension SettingsTableViewController {
             self.navigationController?.pushViewController(controller, animated: true)
         }
         else if selectedCell == self.sendFeedbackCell {
-            let email = "feedback@3meters.com"
+            let email = "feedback@patchr.com"
             let subject = "Feedback for Patchr iOS"
             if MFMailComposeViewController.canSendMail() {
 				MailComposer!.view.accessibilityIdentifier = View.Feedback

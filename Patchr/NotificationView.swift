@@ -84,7 +84,7 @@ class NotificationView: BaseView {
 			self.description_?.attributedText = attributed
 		}
 		
-		let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
+		let options: SDWebImageOptions = [.RetryFailed, .LowPriority,/* .ProgressiveDownload */]
 		
 		if let photo = notification.photoBig {
 			self.photo?.hidden = false

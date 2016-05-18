@@ -37,6 +37,13 @@ class BaseViewController: UIViewController {
 		super.viewWillLayoutSubviews()
 		self.emptyLabel.anchorInCenterWithWidth(160, height: 160)
 	}
+	
+	override func viewWillDisappear(animated: Bool) {
+		super.viewWillDisappear(animated)
+		if let bar = self.tabBarController as? MainTabBarController {
+			bar.setActionDelegate(nil)
+		}
+	}
 		
 	deinit {
 		NSNotificationCenter.defaultCenter().removeObserver(self)

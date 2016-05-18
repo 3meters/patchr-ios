@@ -20,4 +20,15 @@ struct Animation {
 			view!.pop_addAnimation(springAnimation, forKey: "springAnimation")
 		}
 	}
+	
+	static func spin(view: UIView?, to: Double) {
+		if view != nil {
+			view!.layer.pop_removeAllAnimations()
+			let spin = POPSpringAnimation(propertyNamed: kPOPLayerRotation)
+			spin.velocity = NSValue(CGPoint: CGPointMake(10, 10))
+			spin.springBounciness = 20.0
+			spin.toValue = NSNumber(double: to)
+			view!.layer.pop_addAnimation(spin, forKey: "spinAnimation")
+		}
+	}
 }

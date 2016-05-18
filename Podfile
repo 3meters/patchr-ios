@@ -34,6 +34,7 @@ def core_pods
 	pod 'MBProgressHUD',			'~> 0.9.1'
 	pod 'DLRadioButton'
 	pod 'DynamicButton',			'~> 2.1.0'
+	pod 'NHBalancedFlowLayout',		'~> 0.2'	
 	pod 'UIDevice-Hardware'								# Convenience for determining system version and model identifier
 	pod 'pop', '~> 1.0'									# Animation library
 	pod 'IDMPhotoBrowser',			:path => '~/code/IDMPhotoBrowser'

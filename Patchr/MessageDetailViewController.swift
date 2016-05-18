@@ -251,16 +251,27 @@ class MessageDetailViewController: BaseViewController {
 			self.scrollView.hidden = true
 		}
 		
+		if let bar = self.tabBarController as? MainTabBarController {
+			bar.setActionDelegate(self)
+			bar.centerButton.imageInsets = UIEdgeInsetsMake(18, 14, 14, 14)
+			bar.centerButton.showBackground = false
+			bar.centerButton.setNeedsLayout()
+			bar.centerButton.imageView.image = UIImage(named: "imgHeartLight")	// Default
+			bar.centerButton.imageView.fadeIn(0.2)
+		}
+		
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MessageDetailViewController.likeDidChange(_:)), name: Events.LikeDidChange, object: nil)
 	}
 	
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
+		
 		fetch()
 	}
 	
     override func viewDidDisappear(animated: Bool) {
 		super.viewDidDisappear(animated)
+		
 		self.activity.stopAnimating()
 		NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.LikeDidChange, object: nil)
     }
@@ -290,7 +301,7 @@ class MessageDetailViewController: BaseViewController {
 
 	func reportAction(sender: AnyObject) {
 		
-		let email = "report@3meters.com"
+		let email = "report@patchr.com"
 		let subject = "Report on Patchr content"
 		let body = "Report on message id: \(self.inputMessage!.id_)\n\nPlease add some detail on why you are reporting this message.\n"
 		
@@ -312,13 +323,17 @@ class MessageDetailViewController: BaseViewController {
 		}
 	}
 	
-	func likesAction(sender: AnyObject) {
+	func likesAction(sender: AnyObject?) {
 		let controller = UserTableViewController()
 		controller.message = self.inputMessage
 		controller.filter = .MessageLikers
 		self.navigationController?.pushViewController(controller, animated: true)
 	}
-
+	
+	func likeAction(sender: AnyObject) {
+		likeButton.onClick(self)
+	}
+	
     func shareBrowseAction(sender: AnyObject){
 		if let button = sender as? AirButton {
 			button.borderColor = Colors.brandColor
@@ -800,6 +815,15 @@ class MessageDetailViewController: BaseViewController {
 			}
         }
     }
+}
+
+extension MessageDetailViewController: ActionDelegate {
+	
+	func actionButtonTapped(button: AirRadialMenu) -> Bool {
+		Animation.bounce(button)
+		likeAction(self)
+		return true
+	}
 }
 
 extension MessageDetailViewController: TTTAttributedLabelDelegate {

@@ -87,6 +87,7 @@ struct Table {
 
 struct Collection {
     static let Photos               = "photo_collection"
+	static let Gallery              = "gallery_collection"
 }
 
 struct View {

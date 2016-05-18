@@ -10,11 +10,16 @@ import UIKit
 import SDWebImage
 import DynamicButton
 
+@objc protocol ActionDelegate {
+	optional func actionButtonTapped(button: AirRadialMenu) -> Bool
+	optional func actionItemTapped(type: String) -> Bool
+}
+
 class MainTabBarController: UITabBarController {
     
     var messageBar		= UILabel()
-	var centerButton	: DynamicButton!
-	var actionDelegate	: ActionDelegate?
+	var centerButton	: AirRadialMenu!
+	var _actionDelegate	: ActionDelegate?
 	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -47,22 +52,7 @@ class MainTabBarController: UITabBarController {
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
-		let heightDifference = self.centerButton!.frame.size.height - self.tabBar.frame.size.height
-		if (heightDifference < 0) {
-			self.centerButton!.center = self.tabBar.center;
-		}
-		else {
-			var center = self.tabBar.center;
-			center.y = (center.y - heightDifference / 2.0) - 4
-			self.centerButton!.center = center;
-		}
-		
-		self.centerButton.layer.masksToBounds = false
-		self.centerButton.layer.shadowOffset = CGSizeMake(0.0, 2.0)
-		self.centerButton.layer.shadowRadius = 2.0
-		self.centerButton.layer.shadowOpacity = 0.3
-		let path: UIBezierPath = UIBezierPath(roundedRect: self.centerButton.bounds, cornerRadius: CGFloat(self.centerButton.layer.cornerRadius))
-		self.centerButton.layer.shadowPath = path.CGPath
+		self.centerButton.anchorBottomCenterWithBottomPadding(6, width: self.centerButton.width(), height: self.centerButton.height())
 		
 		if ReachabilityManager.instance.isReachable() {
 			self.messageBar.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 0)
@@ -86,24 +76,19 @@ class MainTabBarController: UITabBarController {
         }
     }
 	
-	func addAction(sender: AnyObject) {
-		if self.actionDelegate != nil {
-			self.actionDelegate!.actionPressed!()
+	func actionButtonTapped(gester: UIGestureRecognizer) {
+		
+		if !UserController.instance.authenticated {
+			UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to create patches and more.")
+			return
 		}
-		else {
-			if !UserController.instance.authenticated {
-				UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to create patches and more.")
-				return
-			}
-			
-			let controller = PatchEditViewController()
-			let navController = UINavigationController()
-			controller.inputState = .Creating
-			navController.viewControllers = [controller]
-			self.presentViewController(navController, animated: true, completion: nil)
+		
+		if self._actionDelegate != nil {
+			self._actionDelegate!.actionButtonTapped!(self.centerButton)
 		}
+		Animation.bounce(self.centerButton)
 	}
-    
+	
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
@@ -155,16 +140,25 @@ class MainTabBarController: UITabBarController {
 		self.viewControllers = [patches, notifications, blank, search, user]
 		
 		/* Center button */
-		let button = DynamicButton(style: DynamicButtonStylePlus.self)
-		button.frame = CGRectMake(0, 0, 60, 60)
-		button.contentEdgeInsets = UIEdgeInsets(top: 22, left: 22, bottom: 22, right: 22)
+		let button = AirRadialMenu(attachedToView: self.view)
+		button.bounds.size = CGSizeMake(56, 56)
 		button.autoresizingMask = [.FlexibleRightMargin, .FlexibleLeftMargin, .FlexibleBottomMargin, .FlexibleTopMargin]
-		button.layer.cornerRadius = button.bounds.width / 2
-		button.backgroundColor = Colors.accentColor
-		button.strokeColor = Colors.white
+		button.delegate = self
+		button.centerView.gestureRecognizers?.forEach(button.centerView.removeGestureRecognizer) /* Remove default tap regcognizer */
+		let tap = UITapGestureRecognizer(target: self, action: #selector(actionButtonTapped(_:)))
+		button.centerView.addGestureRecognizer(tap)
+		
+		/* Stash popouts */
+		button.addPopoutView(button.makePopupView(UIImage(named: "imgTripLight")!, color: Colors.brandColor, size: 48), withIndentifier: "trip")
+		button.addPopoutView(button.makePopupView(UIImage(named: "imgLocation2Light")!, color: Colors.brandColor, size: 48), withIndentifier: "place")
+		button.addPopoutView(button.makePopupView(UIImage(named: "imgEventLight")!, color: Colors.brandColor, size: 48), withIndentifier: "event")
+		button.addPopoutView(button.makePopupView(UIImage(named: "imgGroupLight")!, color: Colors.brandColor, size: 48), withIndentifier: "group")
+		button.startAngle = 295
+		button.distanceFromCenter = 100
+		button.distanceBetweenPopouts = 43
+		
 		self.view.addSubview(button)
 		self.centerButton = button
-		button.addTarget(self, action: #selector(MainTabBarController.addAction(_:)), forControlEvents: .TouchUpInside)
 		
 		/* Message bar */
 		self.messageBar.font = Theme.fontTextDisplay
@@ -176,6 +170,13 @@ class MainTabBarController: UITabBarController {
 		self.messageBar.alpha = 0.85
 		self.messageBar.bounds.size = CGSizeMake(self.tabBar.width(), 40)
 		self.view.addSubview(self.messageBar)
+	}
+	
+	func setActionDelegate(delegate: ActionDelegate?) {
+		self._actionDelegate = delegate
+		if delegate == nil {
+			self.centerButton.imageView.fadeOut(0.1)
+		}
 	}
 	
     func showMessageBar() {
@@ -205,8 +206,14 @@ class MainTabBarController: UITabBarController {
     }
 }
 
-@objc protocol ActionDelegate {
-	optional func actionPressed() -> Void
+extension MainTabBarController: CKRadialMenuDelegate {
+	
+	func radialMenu(radialMenu: CKRadialMenu!, didSelectPopoutWithIndentifier identifier: String!) {
+		if self._actionDelegate != nil {
+			self._actionDelegate!.actionItemTapped!(identifier!)
+		}
+		self.centerButton.toggleOff()
+	}
 }
 
 extension MainTabBarController: UITabBarControllerDelegate {
@@ -232,12 +239,34 @@ extension MainTabBarController: UITabBarControllerDelegate {
 			}
         }
 		
-        /* A little animation sugar */
+		/* Scroll to top if staying on same tab */
 		
         if (self.selectedViewController == nil || viewController == self.selectedViewController) {
+			if let navigationController = viewController as? UINavigationController,
+				let controller = navigationController.topViewController as? BaseTableViewController {
+					controller.scrollToFirstRow()
+			}
+			else if let controller = viewController as? BaseTableViewController {
+				controller.scrollToFirstRow()
+			}
             return true;
         }
-        
+		
+		/* Reset to top if leaving a list */
+		
+		if (self.selectedViewController != nil) {
+			if let navigationController = self.selectedViewController as? UINavigationController,
+				let controller = navigationController.topViewController as? BaseTableViewController {
+				controller.scrollToFirstRow(false)
+			}
+			else if let controller = self.selectedViewController as? BaseTableViewController {
+				controller.scrollToFirstRow(false)
+			}
+			return true;
+		}
+		
+		/* A little animation sugar */
+		
         let fromView = self.selectedViewController?.view
         let toView = viewController.view
         

@@ -417,7 +417,7 @@ extension PhotoPickerViewController {
 			if let thumbCell = cell as? ThumbnailCollectionViewCell {
 				if let imageView = thumbCell.thumbnail {
 					thumbCell.imageResult = imageResult
-					imageView.setImageWithThumbnail(imageResult.thumbnail!, animate: false)
+					imageView.setImageWithUrl(NSURL(string: imageResult.thumbnail!.mediaUrl!)!, animate: false)
 				}
 			}			
 		}
