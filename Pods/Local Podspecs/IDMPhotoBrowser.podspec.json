@@ -31,8 +31,8 @@
   ],
   "requires_arc": true,
   "dependencies": {
-    "AFNetworking": [
-      "~> 2.6"
+    "SDWebImage": [
+
     ],
     "DACircularProgress": [
 
