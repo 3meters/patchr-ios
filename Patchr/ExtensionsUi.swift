@@ -59,19 +59,53 @@ extension UIView {
 	
     func fadeIn(duration: NSTimeInterval = 0.3, delay: NSTimeInterval = 0.0, alpha: CGFloat = 1.0, completion: ((Bool) -> Void) = {(finished: Bool) -> Void in}) {
         if self.alpha != alpha {
-            UIView.animateWithDuration(duration, delay: delay, options: UIViewAnimationOptions.CurveEaseIn, animations: {
-                self.alpha = alpha
-                }, completion: completion)
+            UIView.animateWithDuration(duration
+				, delay: delay
+				, options: [.CurveEaseIn]
+				, animations: {
+					self.alpha = alpha
+                }
+				, completion: completion)
         }
     }
     
     func fadeOut(duration: NSTimeInterval = 0.3, delay: NSTimeInterval = 0.0, alpha: CGFloat = 0.0, completion: (Bool) -> Void = {(finished: Bool) -> Void in}) {
         if self.alpha != alpha {
-            UIView.animateWithDuration(duration, delay: delay, options: UIViewAnimationOptions.CurveEaseIn, animations: {
-                self.alpha = alpha
-                }, completion: completion)
+            UIView.animateWithDuration(duration
+				, delay: delay
+				, options: [.CurveEaseIn]
+				, animations: {
+					self.alpha = alpha
+                }
+				, completion: completion)
         }
     }
+	
+	func scaleOut(duration: NSTimeInterval = 0.2, delay: NSTimeInterval = 0.0, completion: (Bool) -> Void = {(finished: Bool) -> Void in}) {
+		UIView.animateWithDuration(duration
+			, delay: delay
+			, options: [.CurveEaseOut]
+			, animations: {
+				/* Setting to zero seems to cancel the animation and to straight to gone */
+				self.transform = CGAffineTransformMakeScale(CGFloat(0.0001), CGFloat(0.0001))
+			}
+			, completion: completion)
+	}
+	
+	func scaleIn(duration: NSTimeInterval = 0.3, delay: NSTimeInterval = 0.0, completion: (Bool) -> Void = {(finished: Bool) -> Void in}) {
+		UIView.animateWithDuration(duration
+			, delay: delay
+			, usingSpringWithDamping: 0.8
+			, initialSpringVelocity: 0.3
+			, options: [.CurveEaseIn]
+			, animations: {
+				/* Resets to original state */
+				self.transform = CGAffineTransformIdentity
+			}
+			, completion: nil)
+	}
+	
+
 	
 	func showShadow(rounded: Bool = false, cornerRadius: CGFloat = 0) {
 		self.layer.masksToBounds = false

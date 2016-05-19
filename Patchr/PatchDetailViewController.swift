@@ -19,7 +19,11 @@ class PatchDetailViewController: BaseDetailViewController {
 	private var originalRect			: CGRect?
     private var originalScrollTop		= CGFloat(-64.0)
 	
+	var lastContentOffset		= CGFloat(0)
 	var processing				= false
+	
+	var actionButton			: AirRadialMenu!
+	var tabBar					: MainTabBarController!
 	
 	var inputReferrerName		: String?
 	var inputReferrerPhotoUrl	: String?
@@ -66,19 +70,13 @@ class PatchDetailViewController: BaseDetailViewController {
 		else {
 			fetch(strategy: .UseCacheAndVerify , resetList: self.firstAppearance)
 		}
-		
-		if let bar = self.tabBarController as? MainTabBarController {
-			bar.setActionDelegate(self)
-			bar.centerButton.imageInsets = UIEdgeInsetsMake(14, 14, 14, 14)
-			bar.centerButton.showBackground = false
-			bar.centerButton.setNeedsLayout()
-			bar.centerButton.imageView.image = UIImage(named: "imgEdit2Light")	// Default
-			bar.centerButton.imageView.fadeIn(0.2)
-		}
 	}
 	
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)	// Clears firstAppearance
+		
+		self.tabBar.setActionButton(self.actionButton)
+		self.tabBar.showActionButton()
 		
 		if self.autoWatchOnAppear {
 			self.autoWatchOnAppear = false
@@ -94,6 +92,7 @@ class PatchDetailViewController: BaseDetailViewController {
 	
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
+		self.tabBar.setActionButton(nil)
 	}
 	
 	/*--------------------------------------------------------------------------------------------
@@ -504,6 +503,9 @@ class PatchDetailViewController: BaseDetailViewController {
 		
 		self.header = PatchDetailView()
 		self.tableView = AirTableView(frame: self.tableView.frame, style: .Plain)
+		self.tabBar = self.tabBarController as! MainTabBarController
+		
+		configureActionButton()
 		
 		let header = self.header as! PatchDetailView
 		
@@ -585,6 +587,20 @@ class PatchDetailViewController: BaseDetailViewController {
 		else {
 			self.navigationItem.setRightBarButtonItems([shareButton], animated: true)
 		}
+	}
+	
+	func configureActionButton() {
+		
+		/* Action button */
+		self.actionButton = AirRadialMenu(attachedToView: self.tabBar.view)
+		self.actionButton.bounds.size = CGSizeMake(56, 56)
+		self.actionButton.autoresizingMask = [.FlexibleRightMargin, .FlexibleLeftMargin, .FlexibleBottomMargin, .FlexibleTopMargin]
+		self.actionButton.centerView.gestureRecognizers?.forEach(self.actionButton.centerView.removeGestureRecognizer) /* Remove default tap regcognizer */
+		self.actionButton.imageInsets = UIEdgeInsetsMake(14, 14, 14, 14)
+		self.actionButton.imageView.image = UIImage(named: "imgEdit2Light")	// Default
+		self.actionButton.showBackground = false
+		
+		self.actionButton.centerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(actionButtonTapped(_:))))
 	}
 	
 	func bindContextView() {
@@ -735,6 +751,11 @@ class PatchDetailViewController: BaseDetailViewController {
 		}
 	}
 	
+	func actionButtonTapped(gester: UIGestureRecognizer) {
+		addAction()
+		Animation.bounce(self.actionButton)
+	}
+	
 	func showPhotos() {
 		
 		/* Cherry pick display photos */
@@ -875,15 +896,6 @@ class PatchDetailViewController: BaseDetailViewController {
     }
 }
 
-extension PatchDetailViewController: ActionDelegate {
-	
-	func actionButtonTapped(button: AirRadialMenu) -> Bool {
-		Animation.bounce(button)
-		addAction()
-		return true
-	}
-}
-
 extension PatchDetailViewController: MapViewDelegate {
     
     func locationForMap() -> CLLocation? {
@@ -939,6 +951,23 @@ extension PatchDetailViewController {
 			return
 		}
 		
+		if scrollView.contentSize.height > scrollView.height() {
+			if(self.lastContentOffset > scrollView.contentOffset.y)
+				&& self.lastContentOffset < (scrollView.contentSize.height - scrollView.frame.height) {
+				if !self.tabBar.actionButtonVisible {
+					self.tabBar.showActionButton()
+				}
+			}
+			else if (self.lastContentOffset < scrollView.contentOffset.y
+				&& scrollView.contentOffset.y > 0) {
+				if self.tabBar.actionButtonVisible {
+					self.tabBar.hideActionButton()
+				}
+			}
+		}
+		
+		self.lastContentOffset = scrollView.contentOffset.y
+		
 		let header = self.header as! PatchDetailView
 		
 		/* Parallax effect when user scrolls down */
@@ -956,7 +985,7 @@ extension PatchDetailViewController {
 				header.photo.frame.size.width = self.originalRect!.size.width + movement
 				header.photo.frame.size.height = self.originalRect!.size.height + movement
 			}
-		}
+		}		
     }
 	
 	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

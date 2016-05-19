@@ -18,7 +18,10 @@ class PatchTableViewController: BaseTableViewController {
 	var greetingDidPlay				= false
 	var locationDialogShot			= false		// Has dialog been shown at least once
 	var selectedCell				: WrapperTableViewCell?
-    
+	var lastContentOffset			= CGFloat(0)
+	var tabBar						: MainTabBarController!
+	var actionButton				: AirRadialMenu!
+	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
@@ -68,6 +71,8 @@ class PatchTableViewController: BaseTableViewController {
 		}
 		
 		self.tableView.accessibilityIdentifier = Table.Patches
+		self.tabBar = self.tabBarController as! MainTabBarController
+		configureActionButton()
 		
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchTableViewController.didReceiveRemoteNotification(_:)), name: Events.DidReceiveRemoteNotification, object: nil)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchTableViewController.applicationDidBecomeActive(_:)), name: UIApplicationDidBecomeActiveNotification, object: nil)
@@ -76,6 +81,7 @@ class PatchTableViewController: BaseTableViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
 
+		Log.d("\(self): viewWillAppear")
         switch self.filter! {
             case .Nearby:
                 Reporting.screen("NearbyList")
@@ -86,19 +92,15 @@ class PatchTableViewController: BaseTableViewController {
             case .Owns:
                 Reporting.screen("OwnsList")
         }
-		
-		if let bar = self.tabBarController as? MainTabBarController {
-			bar.setActionDelegate(self)
-			bar.centerButton.imageInsets = UIEdgeInsetsMake(10, 10, 10, 10)
-			bar.centerButton.showBackground = true
-			bar.centerButton.setNeedsLayout()
-			bar.centerButton.imageView.image = UIImage(named: "imgAddLight")	// Default
-			bar.centerButton.imageView.fadeIn(0.3)
-		}
     }
 
     override func viewDidAppear(animated: Bool) {
 
+		Log.d("\(self): viewDidAppear")
+		
+		self.tabBar.setActionButton(self.actionButton)
+		self.tabBar.showActionButton()
+		
         if self.filter == .Nearby {
 			
 			/* Refresh data and ui to catch changes while gone */
@@ -134,11 +136,12 @@ class PatchTableViewController: BaseTableViewController {
         if self.filter == .Nearby {
 			deactivateNearby()
         }
+		self.tabBar.setActionButton(nil)
     }
 
     /*--------------------------------------------------------------------------------------------
     * Events
-    *--------------------------------------------------------------------------------------------*/
+    *--------------------------------------------------------------------------------------------*/	
 
 	override func pullToRefreshAction(sender: AnyObject?) -> Void {
 		
@@ -168,7 +171,24 @@ class PatchTableViewController: BaseTableViewController {
 		navController.viewControllers = [controller]
 		self.presentViewController(navController, animated: true, completion: nil)
 	}
-
+	
+	func actionButtonTapped(gester: UIGestureRecognizer) {
+		
+		if !UserController.instance.authenticated {
+			UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to create patches and more.")
+			return
+		}
+		
+		if !self.actionButton.menuIsExpanded {
+			self.actionButton.toggleOn()
+		}
+		else {
+			self.actionButton.toggleOff()
+		}
+		
+		Animation.bounce(self.actionButton)
+	}
+	
 	func presentPermissionAction(sender: AnyObject?) {
 		/* Returns true if ok to proceed */
 		if presentLocationPermission(Force: true) {
@@ -247,6 +267,9 @@ class PatchTableViewController: BaseTableViewController {
 	func applicationDidBecomeActive(sender: NSNotification) {
 		
 		/* User either switched to patchr or turned their screen back on. */
+		self.tabBar.showActionButton()
+
+		Log.d("\(self) applicationDidBecomeActive")
 		if self.tabBarController?.selectedViewController == self.navigationController
 			&& self.navigationController?.topViewController == self
 			&& self.filter == .Nearby
@@ -255,7 +278,7 @@ class PatchTableViewController: BaseTableViewController {
 				* This view controller is currently visible. viewDidAppear does not
 				* fire on its own when returning from Location settings so we do it.
 				*/
-				Log.d("Nearby became active")
+				Log.d("\(self): Calling viewDidAppear from applicationDidBecomeActive")
 				viewDidAppear(true)
 		}
 	}
@@ -276,6 +299,49 @@ class PatchTableViewController: BaseTableViewController {
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
+	
+	func configureActionButton() {
+		
+		/* Action button */
+		self.actionButton = AirRadialMenu(attachedToView: self.tabBar.view)
+		self.actionButton.bounds.size = CGSizeMake(56, 56)
+		self.actionButton.autoresizingMask = [.FlexibleRightMargin, .FlexibleLeftMargin, .FlexibleBottomMargin, .FlexibleTopMargin]
+		self.actionButton.centerView.gestureRecognizers?.forEach(self.actionButton.centerView.removeGestureRecognizer) /* Remove default tap regcognizer */
+		self.actionButton.imageInsets = UIEdgeInsetsMake(10, 10, 10, 10)
+		self.actionButton.imageView.image = UIImage(named: "imgAddLight")	// Default
+		self.actionButton.showBackground = true
+		
+		self.actionButton.delegate = self		// For popout item callbacks
+		self.actionButton.centerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(actionButtonTapped(_:))))
+		
+		/* Stash popouts */
+		self.actionButton.addPopoutView(makePopupView(UIImage(named: "imgTripLight")!, color: Colors.brandColor, size: 48), withIndentifier: "trip")
+		self.actionButton.addPopoutView(makePopupView(UIImage(named: "imgLocation2Light")!, color: Colors.brandColor, size: 48), withIndentifier: "place")
+		self.actionButton.addPopoutView(makePopupView(UIImage(named: "imgEventLight")!, color: Colors.brandColor, size: 48), withIndentifier: "event")
+		self.actionButton.addPopoutView(makePopupView(UIImage(named: "imgGroupLight")!, color: Colors.brandColor, size: 48), withIndentifier: "group")
+		self.actionButton.startAngle = 270
+		self.actionButton.distanceFromCenter = 120
+		self.actionButton.distanceBetweenPopouts = 30
+	}
+	
+	func makePopupView(image: UIImage, color: UIColor, size: Int) -> UIView {
+		
+		let imageView = UIImageView(image: image)
+		imageView.tintColor = Colors.white
+		
+		let view = UIView(frame: CGRectMake(0, 0, CGFloat(size), CGFloat(size)))
+		view.addSubview(imageView)
+		imageView.fillSuperviewWithLeftPadding(8, rightPadding: 8, topPadding: 8, bottomPadding: 8)
+		
+		view.layer.cornerRadius = view.frame.size.width/2;
+		view.backgroundColor = color;
+		view.layer.shadowColor = Colors.black.CGColor;
+		view.layer.shadowOpacity = 0.4;
+		view.layer.shadowRadius = 3.0;
+		view.layer.shadowOffset = CGSizeMake(0, 3);
+		
+		return view;
+	}
 	
 	func presentLocationPermission(Force force: Bool = false) -> Bool {
 		
@@ -516,21 +582,12 @@ class PatchTableViewController: BaseTableViewController {
  * Extensions
  *--------------------------------------------------------------------------------------------*/
 
-extension PatchTableViewController: ActionDelegate {
+
+extension PatchTableViewController: CKRadialMenuDelegate {
 	
-	func actionItemTapped(type: String) -> Bool {
-		addAction(type)
-		return true
-	}
-	
-	func actionButtonTapped(button: AirRadialMenu) -> Bool {
-		if !button.menuIsExpanded {
-			button.toggleOn()
-		}
-		else {
-			button.toggleOff()
-		}
-		return false
+	func radialMenu(radialMenu: CKRadialMenu!, didSelectPopoutWithIndentifier identifier: String!) {
+		self.addAction(identifier)
+		self.actionButton.toggleOff()
 	}
 }
 
@@ -562,14 +619,36 @@ extension PatchTableViewController {
 		
 		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
 			let patch = queryResult.object as? Patch {
-				let controller = PatchDetailViewController()
-				controller.entityId = patch.id_
-				self.navigationController?.pushViewController(controller, animated: true)
+			
+			let controller = PatchDetailViewController()
+			controller.entityId = patch.id_
+			self.navigationController?.pushViewController(controller, animated: true)
 		}
 	}
 	
 	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
 		return 136
+	}
+}
+
+extension PatchTableViewController {
+	
+	override func scrollViewDidScroll(scrollView: UIScrollView) {
+		
+		if(self.lastContentOffset > scrollView.contentOffset.y)
+			&& self.lastContentOffset < (scrollView.contentSize.height - scrollView.frame.height) {
+			if !self.tabBar.actionButtonVisible {
+				self.tabBar.showActionButton()
+			}
+		}
+		else if (self.lastContentOffset < scrollView.contentOffset.y
+			&& scrollView.contentOffset.y > 0) {
+			if self.tabBar.actionButtonVisible {
+				self.tabBar.hideActionButton()				
+			}
+		}
+		
+		self.lastContentOffset = scrollView.contentOffset.y
 	}
 }
 

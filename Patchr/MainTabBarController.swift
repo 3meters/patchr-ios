@@ -10,16 +10,12 @@ import UIKit
 import SDWebImage
 import DynamicButton
 
-@objc protocol ActionDelegate {
-	optional func actionButtonTapped(button: AirRadialMenu) -> Bool
-	optional func actionItemTapped(type: String) -> Bool
-}
-
 class MainTabBarController: UITabBarController {
     
-    var messageBar		= UILabel()
-	var centerButton	: AirRadialMenu!
-	var _actionDelegate	: ActionDelegate?
+    var messageBar			= UILabel()
+	var actionButton		: AirRadialMenu!
+	var actionButtonVisible = true
+	var actionButtonCenter	: CGPoint!
 	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -52,8 +48,6 @@ class MainTabBarController: UITabBarController {
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
-		self.centerButton.anchorBottomCenterWithBottomPadding(6, width: self.centerButton.width(), height: self.centerButton.height())
-		
 		if ReachabilityManager.instance.isReachable() {
 			self.messageBar.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 0)
 		}
@@ -75,19 +69,6 @@ class MainTabBarController: UITabBarController {
             showMessageBar()
         }
     }
-	
-	func actionButtonTapped(gester: UIGestureRecognizer) {
-		
-		if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to create patches and more.")
-			return
-		}
-		
-		if self._actionDelegate != nil {
-			self._actionDelegate!.actionButtonTapped!(self.centerButton)
-		}
-		Animation.bounce(self.centerButton)
-	}
 	
     /*--------------------------------------------------------------------------------------------
     * Methods
@@ -135,30 +116,7 @@ class MainTabBarController: UITabBarController {
 		let userController = UserDetailViewController()
 		user.viewControllers = [userController]
 		
-		let blank = UINavigationController()
-		
-		self.viewControllers = [patches, notifications, blank, search, user]
-		
-		/* Center button */
-		let button = AirRadialMenu(attachedToView: self.view)
-		button.bounds.size = CGSizeMake(56, 56)
-		button.autoresizingMask = [.FlexibleRightMargin, .FlexibleLeftMargin, .FlexibleBottomMargin, .FlexibleTopMargin]
-		button.delegate = self
-		button.centerView.gestureRecognizers?.forEach(button.centerView.removeGestureRecognizer) /* Remove default tap regcognizer */
-		let tap = UITapGestureRecognizer(target: self, action: #selector(actionButtonTapped(_:)))
-		button.centerView.addGestureRecognizer(tap)
-		
-		/* Stash popouts */
-		button.addPopoutView(button.makePopupView(UIImage(named: "imgTripLight")!, color: Colors.brandColor, size: 48), withIndentifier: "trip")
-		button.addPopoutView(button.makePopupView(UIImage(named: "imgLocation2Light")!, color: Colors.brandColor, size: 48), withIndentifier: "place")
-		button.addPopoutView(button.makePopupView(UIImage(named: "imgEventLight")!, color: Colors.brandColor, size: 48), withIndentifier: "event")
-		button.addPopoutView(button.makePopupView(UIImage(named: "imgGroupLight")!, color: Colors.brandColor, size: 48), withIndentifier: "group")
-		button.startAngle = 295
-		button.distanceFromCenter = 100
-		button.distanceBetweenPopouts = 43
-		
-		self.view.addSubview(button)
-		self.centerButton = button
+		self.viewControllers = [patches, notifications, search, user]
 		
 		/* Message bar */
 		self.messageBar.font = Theme.fontTextDisplay
@@ -172,10 +130,36 @@ class MainTabBarController: UITabBarController {
 		self.view.addSubview(self.messageBar)
 	}
 	
-	func setActionDelegate(delegate: ActionDelegate?) {
-		self._actionDelegate = delegate
-		if delegate == nil {
-			self.centerButton.imageView.fadeOut(0.1)
+	func setActionButton(button: AirRadialMenu?, startHidden: Bool = true) {
+		
+		if self.actionButton != nil {
+			self.actionButton.removeFromSuperview()
+		}
+		
+		self.actionButton = button
+		
+		if self.actionButton != nil {
+			self.view.insertSubview(self.actionButton, atIndex: self.view.subviews.count)
+			self.actionButton.anchorBottomRightWithRightPadding(16, bottomPadding: self.tabBar.bounds.size.height + 16, width: self.actionButton.width(), height: self.actionButton.height())
+			self.actionButtonCenter = self.actionButton.center
+			if startHidden {
+				self.actionButton.transform = CGAffineTransformMakeScale(CGFloat(0.0001), CGFloat(0.0001)) // Hide by scaling
+				self.actionButtonVisible = false
+			}
+		}
+	}
+	
+	func hideActionButton() {
+		if self.actionButtonVisible && self.actionButton != nil {
+			self.actionButtonVisible = false
+			self.actionButton.scaleOut()
+		}
+	}
+	
+	func showActionButton() {
+		if !self.actionButtonVisible && self.actionButton != nil {
+			self.actionButtonVisible = true
+			self.actionButton.scaleIn()
 		}
 	}
 	
@@ -188,6 +172,8 @@ class MainTabBarController: UITabBarController {
 			animations: {
 				self.messageBar.alpha = 1
 				self.messageBar.frame.origin.y = y
+				// If we need to start moving the action button out of the way
+				//self.actionButton.center.y = y - 44
 			}) {_ in
 			Animation.bounce(self.messageBar)
 		}
@@ -199,21 +185,13 @@ class MainTabBarController: UITabBarController {
 			options: UIViewAnimationOptions.CurveEaseOut,
 			animations: {
 				self.messageBar.alpha = 0
+				// If we need to start moving the action button out of the way
+				//self.actionButton.center.y = self.tabBar.frame.origin.y - 44
 			}) { _ in
 			self.messageBar.frame.origin.y = self.tabBar.frame.origin.y
 			self.messageBar.frame.size.height = 0
 		}
     }
-}
-
-extension MainTabBarController: CKRadialMenuDelegate {
-	
-	func radialMenu(radialMenu: CKRadialMenu!, didSelectPopoutWithIndentifier identifier: String!) {
-		if self._actionDelegate != nil {
-			self._actionDelegate!.actionItemTapped!(identifier!)
-		}
-		self.centerButton.toggleOff()
-	}
 }
 
 extension MainTabBarController: UITabBarControllerDelegate {

@@ -58,15 +58,6 @@ class SearchViewController: UITableViewController {
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
 		loadRecents() // In case there is something new while we were away
-		
-		if let bar = self.tabBarController as? MainTabBarController {
-			bar.setActionDelegate(self)
-			bar.centerButton.imageInsets = UIEdgeInsetsMake(10, 10, 10, 10)
-			bar.centerButton.showBackground = false
-			bar.centerButton.setNeedsLayout()
-			bar.centerButton.imageView.image = UIImage(named: "imgPatchLight")	// Default
-			bar.centerButton.imageView.fadeIn(0.3)
-		}
 	}
 
     override func viewDidAppear(animated: Bool) {
@@ -237,17 +228,6 @@ class SearchViewController: UITableViewController {
     func dismissKeyboard() {
         self.searchField.endEditing(true)
     }
-}
-
-extension SearchViewController: ActionDelegate {
-	
-	func actionItemTapped(type: String) -> Bool {
-		return true
-	}
-	
-	func actionButtonTapped(button: AirRadialMenu) -> Bool {
-		return true
-	}
 }
 
 extension SearchViewController: UITextFieldDelegate {

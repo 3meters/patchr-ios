@@ -251,15 +251,6 @@ class MessageDetailViewController: BaseViewController {
 			self.scrollView.hidden = true
 		}
 		
-		if let bar = self.tabBarController as? MainTabBarController {
-			bar.setActionDelegate(self)
-			bar.centerButton.imageInsets = UIEdgeInsetsMake(18, 14, 14, 14)
-			bar.centerButton.showBackground = false
-			bar.centerButton.setNeedsLayout()
-			bar.centerButton.imageView.image = UIImage(named: "imgHeartLight")	// Default
-			bar.centerButton.imageView.fadeIn(0.2)
-		}
-		
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MessageDetailViewController.likeDidChange(_:)), name: Events.LikeDidChange, object: nil)
 	}
 	
@@ -815,15 +806,6 @@ class MessageDetailViewController: BaseViewController {
 			}
         }
     }
-}
-
-extension MessageDetailViewController: ActionDelegate {
-	
-	func actionButtonTapped(button: AirRadialMenu) -> Bool {
-		Animation.bounce(button)
-		likeAction(self)
-		return true
-	}
 }
 
 extension MessageDetailViewController: TTTAttributedLabelDelegate {

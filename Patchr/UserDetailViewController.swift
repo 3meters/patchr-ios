@@ -56,15 +56,6 @@ class UserDetailViewController: BaseDetailViewController {
 		else {
 			fetch(strategy: .UseCacheAndVerify)
 		}
-		
-		if let bar = self.tabBarController as? MainTabBarController {
-			bar.setActionDelegate(self)
-			bar.centerButton.imageInsets = UIEdgeInsetsMake(10, 10, 10, 10)
-			bar.centerButton.showBackground = false
-			bar.centerButton.setNeedsLayout()
-			bar.centerButton.imageView.image = UIImage(named: "imgRefreshLight")	// Default
-			bar.centerButton.imageView.fadeIn(0.3)
-		}
 	}
     
 	override func viewWillDisappear(animated: Bool) {
@@ -168,18 +159,6 @@ class UserDetailViewController: BaseDetailViewController {
 				self.navigationItem.title = "Me"
 			}
 		}
-	}
-}
-
-extension UserDetailViewController: ActionDelegate {
-	
-	func actionItemTapped(type: String) -> Bool {
-		return true
-	}
-	
-	func actionButtonTapped(button: AirRadialMenu) -> Bool {
-		beginRefreshingTableView()
-		return true
 	}
 }
 

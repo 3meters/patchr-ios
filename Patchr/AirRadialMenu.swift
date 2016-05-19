@@ -155,26 +155,7 @@ class AirRadialMenu: CKRadialMenu  {
 			self.contentView.removeFromSuperview()
 		}
 	}
-	
-	func makePopupView(image: UIImage, color: UIColor, size: Int) -> UIView {
 		
-		let imageView = UIImageView(image: image)
-		imageView.tintColor = Colors.white
-		
-		let view = UIView(frame: CGRectMake(0, 0, CGFloat(size), CGFloat(size)))
-		view.addSubview(imageView)
-		imageView.fillSuperviewWithLeftPadding(8, rightPadding: 8, topPadding: 8, bottomPadding: 8)
-		
-		view.layer.cornerRadius = view.frame.size.width/2;
-		view.backgroundColor = color;
-		view.layer.shadowColor = Colors.black.CGColor;
-		view.layer.shadowOpacity = 0.4;
-		view.layer.shadowRadius = 3.0;
-		view.layer.shadowOffset = CGSizeMake(0, 3);
-		
-		return view;
-	}
-	
 	private func degreesToRadians(degrees: CGFloat) -> CGFloat {
 		return degrees / 180.0 * CGFloat(M_PI)
 	}

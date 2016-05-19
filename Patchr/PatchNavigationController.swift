@@ -10,8 +10,8 @@ import UIKit
 
 class PatchNavigationController: UINavigationController {
     
-    var segmentsController: SegmentsController!
-    var segmentedControl: UISegmentedControl!
+    var segmentsController	: SegmentsController!
+    var segmentedControl	: UISegmentedControl!
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -38,6 +38,20 @@ class PatchNavigationController: UINavigationController {
         self.segmentsController.indexDidChangeForSegmentedControl(self.segmentedControl)
     }
 	
+	override func viewWillAppear(animated: Bool) {
+		super.viewWillAppear(animated)
+		Log.d("\(self): viewWillAppear")
+	}
+	
+	override func viewDidAppear(animated: Bool) {
+		super.viewDidAppear(animated)
+		Log.d("\(self): viewDidAppear")
+	}
+	
+	override func viewWillDisappear(animated: Bool) {
+		super.viewWillDisappear(animated)
+	}
+	
 	deinit {
 		NSNotificationCenter.defaultCenter().removeObserver(self)		
 	}
@@ -45,7 +59,11 @@ class PatchNavigationController: UINavigationController {
     /*--------------------------------------------------------------------------------------------
     * Events
     *--------------------------------------------------------------------------------------------*/
-    
+	
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+	}
+	
 	/*--------------------------------------------------------------------------------------------
 	* Notifications
 	*--------------------------------------------------------------------------------------------*/
@@ -70,11 +88,11 @@ class PatchNavigationController: UINavigationController {
 			self.segmentsController.viewControllers.insert(watching, atIndex: 1)
 		}
 	}
-    
+	
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
-    
+	
     func segmentViewControllers() -> [UIViewController] {
 		
 		if !UserController.instance.authenticated {

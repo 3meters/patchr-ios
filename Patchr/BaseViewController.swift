@@ -40,9 +40,6 @@ class BaseViewController: UIViewController {
 	
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
-		if let bar = self.tabBarController as? MainTabBarController {
-			bar.setActionDelegate(nil)
-		}
 	}
 		
 	deinit {
