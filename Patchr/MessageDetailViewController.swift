@@ -10,6 +10,7 @@ import UIKit
 import MessageUI
 import Branch
 
+
 class MessageDetailViewController: BaseViewController {
 
 	var inputMessage			: Message?
@@ -390,7 +391,7 @@ class MessageDetailViewController: BaseViewController {
 	func editAction() {
         /* Has its own nav because we segue modally and it needs its own stack */
 		let controller = MessageEditViewController()
-		let navController = UINavigationController()
+		let navController = AirNavigationController()
 		controller.inputEntity = self.inputMessage
 		controller.inputState = .Editing
 		navController.viewControllers = [controller]
@@ -772,7 +773,7 @@ class MessageDetailViewController: BaseViewController {
         if route == .Patchr {
 			
 			let controller = MessageEditViewController()
-			let navController = UINavigationController()
+			let navController = AirNavigationController()
 			controller.inputShareEntity = self.inputMessage
 			controller.inputShareSchema = Schema.ENTITY_MESSAGE
 			controller.inputShareId = self.inputMessage?.id_ ?? self.inputMessageId!

@@ -28,8 +28,16 @@ class SegmentsController: NSObject {
         incomingViewController.navigationItem.titleView = segmentedControl
 		
 		if let controller = incomingViewController as? PatchTableViewController {
-			let mapButton = UIBarButtonItem(title: "Map", style: UIBarButtonItemStyle.Plain, target: incomingViewController, action: #selector(controller.mapAction(_:)))
-			incomingViewController.navigationItem.leftBarButtonItem = mapButton
+			
+			let button = UIButton(type: .Custom)
+			button.frame = CGRectMake(0, 0, 48, 48)
+			button.addTarget(incomingViewController, action: #selector(controller.mapAction(_:)), forControlEvents: .TouchUpInside)
+			button.showsTouchWhenHighlighted = true
+			button.setImage(UIImage(named: "imgMapLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
+			button.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+
+			let mapButton = UIBarButtonItem(customView: button)
+			incomingViewController.navigationItem.rightBarButtonItem = mapButton
 		}
     }
 }

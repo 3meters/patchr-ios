@@ -9,6 +9,7 @@
 import Foundation
 import MapKit
 
+
 @objc protocol MapViewDelegate: NSObjectProtocol, UIGestureRecognizerDelegate {
 	
     optional var locationTitle: String? { get }

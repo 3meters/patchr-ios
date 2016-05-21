@@ -9,6 +9,7 @@
 import UIKit
 import MapKit
 
+
 class PatchTableMapViewController: UIViewController {
 
 	var mapView: MKMapView!

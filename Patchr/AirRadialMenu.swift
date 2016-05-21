@@ -79,7 +79,7 @@ class AirRadialMenu: CKRadialMenu  {
 		self.blurVisualEffect = UIVisualEffectView(effect: UIBlurEffect(style: .ExtraLight))
 		self.blurVisualEffect.frame = self.contentView.frame
 		
-		self.title.text = "Getting together? Make a patch so everyone can share photos, messages and stay connected."
+		self.title.text = "Getting together? Make a patch to share photos, messages and stay connected."
 		self.title.numberOfLines = 0
 		self.title.textAlignment = .Center
 		

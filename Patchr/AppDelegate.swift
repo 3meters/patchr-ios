@@ -290,7 +290,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 		UINavigationBar.appearance().tintColor = Theme.colorTint
 		UITabBar.appearance().tintColor = Theme.colorTabBarTint
 		UISwitch.appearance().onTintColor = Theme.colorTint
-		
 	}
 	
 	func initUser() {
@@ -314,7 +313,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 		}
 		else {
 			let controller = LobbyViewController()
-			let navController = UINavigationController()
+			let navController = AirNavigationController()
 			navController.viewControllers = [controller]
 			self.window?.setRootViewController(navController, animated: true)
 		}
@@ -344,7 +343,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 				}
 				let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: #selector(controller.cancelAction(_:)))
 				controller.navigationItem.leftBarButtonItems = [cancelButton]
-				let navController = UINavigationController()
+				let navController = AirNavigationController()
 				navController.viewControllers = [controller]
 				UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
 			}
@@ -367,7 +366,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 				/* Navigation bar buttons */
 				let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: #selector(controller.dismissAction(_:)))
 				controller.navigationItem.leftBarButtonItems = [doneButton]
-				let navController = UINavigationController()
+				let navController = AirNavigationController()
 				navController.viewControllers = [controller]
 				UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
 			}
@@ -387,7 +386,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 				/* Navigation bar buttons */
 				let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: #selector(controller.dismissAction(_:)))
 				controller.navigationItem.leftBarButtonItems = [doneButton]
-				let navController = UINavigationController()
+				let navController = AirNavigationController()
 				navController.viewControllers = [controller]
 				UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
 			}
@@ -490,7 +489,7 @@ extension AppDelegate {
 		LocationController.instance.clearLastLocationAccepted()
 		
 		if !(UIViewController.topMostViewController() is LobbyViewController) {
-			let navController = UINavigationController()
+			let navController = AirNavigationController()
 			navController.viewControllers = [LobbyViewController()]
 			self.window!.setRootViewController(navController, animated: true)
 		}

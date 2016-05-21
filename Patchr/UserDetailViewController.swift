@@ -8,6 +8,7 @@
 
 import UIKit
 
+
 class UserDetailViewController: BaseDetailViewController {
 	
 	var profileMode = true
@@ -87,7 +88,7 @@ class UserDetailViewController: BaseDetailViewController {
 
 	func editAction() {
 		let controller = ProfileEditViewController()
-		let navController = UINavigationController()
+		let navController = AirNavigationController()
 		controller.inputUser = self.entity as? User
 		navController.viewControllers = [controller]
 		self.navigationController?.presentViewController(navController, animated: true, completion: nil)

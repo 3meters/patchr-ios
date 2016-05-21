@@ -8,6 +8,7 @@
 
 import UIKit
 
+
 class NotificationSettingsViewController: UITableViewController {    
     
     let userDefaults = { NSUserDefaults.standardUserDefaults() }()

@@ -10,6 +10,7 @@ import UIKit
 import FBSDKCoreKit
 import Branch
 
+
 class InviteViewController: BaseViewController {
 	
 	var message					= AirLabelTitle()
@@ -112,7 +113,7 @@ class InviteViewController: BaseViewController {
 		if route == .Patchr {
 			
 			let controller = MessageEditViewController()
-			let navController = UINavigationController()
+			let navController = AirNavigationController()
 			controller.inputShareEntity = self.inputEntity
 			controller.inputShareSchema = Schema.ENTITY_PATCH
 			controller.inputShareId = self.inputEntity.id_!

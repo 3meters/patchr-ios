@@ -11,6 +11,7 @@ import Foundation
 import UIKit
 import MobileCoreServices
 
+
 // PhotoChooserUI
 //
 // This class manages the sequence of events that take place when a user needs to select an image for use
@@ -106,7 +107,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 
 	private func searchForPhoto() {
         chosenPhotoFunction = .SearchPhoto
-		let navController = UINavigationController()
+		let navController = AirNavigationController()
 		let layout = UICollectionViewFlowLayout()
 		let controller = PhotoPickerViewController(collectionViewLayout: layout)
 		controller.pickerDelegate = self

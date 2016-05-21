@@ -9,6 +9,7 @@
 import UIKit
 import AVFoundation
 
+
 class PatchTableViewController: BaseTableViewController {
 
     var user						: User!
@@ -81,7 +82,6 @@ class PatchTableViewController: BaseTableViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
 
-		Log.d("\(self): viewWillAppear")
         switch self.filter! {
             case .Nearby:
                 Reporting.screen("NearbyList")
@@ -95,8 +95,6 @@ class PatchTableViewController: BaseTableViewController {
     }
 
     override func viewDidAppear(animated: Bool) {
-
-		Log.d("\(self): viewDidAppear")
 		
 		self.tabBar.setActionButton(self.actionButton)
 		self.tabBar.showActionButton()
@@ -165,7 +163,7 @@ class PatchTableViewController: BaseTableViewController {
 	
 	func addAction(type: String) {
 		let controller = PatchEditViewController()
-		let navController = UINavigationController()
+		let navController = AirNavigationController()
 		controller.inputState = .Creating
 		controller.inputType = type
 		navController.viewControllers = [controller]
@@ -269,7 +267,6 @@ class PatchTableViewController: BaseTableViewController {
 		/* User either switched to patchr or turned their screen back on. */
 		self.tabBar.showActionButton()
 
-		Log.d("\(self) applicationDidBecomeActive")
 		if self.tabBarController?.selectedViewController == self.navigationController
 			&& self.navigationController?.topViewController == self
 			&& self.filter == .Nearby
@@ -278,7 +275,6 @@ class PatchTableViewController: BaseTableViewController {
 				* This view controller is currently visible. viewDidAppear does not
 				* fire on its own when returning from Location settings so we do it.
 				*/
-				Log.d("\(self): Calling viewDidAppear from applicationDidBecomeActive")
 				viewDidAppear(true)
 		}
 	}
@@ -317,11 +313,12 @@ class PatchTableViewController: BaseTableViewController {
 		/* Stash popouts */
 		self.actionButton.addPopoutView(makePopupView(UIImage(named: "imgTripLight")!, color: Colors.brandColor, size: 48), withIndentifier: "trip")
 		self.actionButton.addPopoutView(makePopupView(UIImage(named: "imgLocation2Light")!, color: Colors.brandColor, size: 48), withIndentifier: "place")
-		self.actionButton.addPopoutView(makePopupView(UIImage(named: "imgEventLight")!, color: Colors.brandColor, size: 48), withIndentifier: "event")
+		self.actionButton.addPopoutView(makePopupView(UIImage(named: "imgEvent3Light")!, color: Colors.brandColor, size: 48), withIndentifier: "event")
 		self.actionButton.addPopoutView(makePopupView(UIImage(named: "imgGroupLight")!, color: Colors.brandColor, size: 48), withIndentifier: "group")
-		self.actionButton.startAngle = 270
-		self.actionButton.distanceFromCenter = 120
-		self.actionButton.distanceBetweenPopouts = 30
+		
+		self.actionButton.startAngle = SCREEN_NARROW ? 245 : 270
+		self.actionButton.distanceFromCenter = SCREEN_NARROW ? 80 : 120
+		self.actionButton.distanceBetweenPopouts = SCREEN_NARROW ? 40 : 30
 	}
 	
 	func makePopupView(image: UIImage, color: UIColor, size: Int) -> UIView {
@@ -537,7 +534,7 @@ class PatchTableViewController: BaseTableViewController {
 							
 							/* User credentials probably need to be refreshed */
 							if error.code == ServerStatusCode.UNAUTHORIZED {								
-								let navController = UINavigationController()
+								let navController = AirNavigationController()
 								navController.viewControllers = [LobbyViewController()]
 								AppDelegate.appDelegate().window!.setRootViewController(navController, animated: true)
 							}
@@ -637,15 +634,11 @@ extension PatchTableViewController {
 		
 		if(self.lastContentOffset > scrollView.contentOffset.y)
 			&& self.lastContentOffset < (scrollView.contentSize.height - scrollView.frame.height) {
-			if !self.tabBar.actionButtonVisible {
-				self.tabBar.showActionButton()
-			}
+			self.tabBar.showActionButton()
 		}
 		else if (self.lastContentOffset < scrollView.contentOffset.y
 			&& scrollView.contentOffset.y > 0) {
-			if self.tabBar.actionButtonVisible {
-				self.tabBar.hideActionButton()				
-			}
+			self.tabBar.hideActionButton()
 		}
 		
 		self.lastContentOffset = scrollView.contentOffset.y

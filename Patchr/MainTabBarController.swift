@@ -10,12 +10,13 @@ import UIKit
 import SDWebImage
 import DynamicButton
 
+
 class MainTabBarController: UITabBarController {
     
-    var messageBar			= UILabel()
-	var actionButton		: AirRadialMenu!
-	var actionButtonVisible = true
-	var actionButtonCenter	: CGPoint!
+    var messageBar				= UILabel()
+	var actionButton			: AirRadialMenu?
+	var actionButtonCenter		: CGPoint!
+	var actionButtonAnimating	= false
 	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -48,12 +49,9 @@ class MainTabBarController: UITabBarController {
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
-		if ReachabilityManager.instance.isReachable() {
-			self.messageBar.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 0)
-		}
-		else {
-			self.messageBar.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: self.tabBar.height(), height: 40)
-		}
+		self.actionButton?.center = self.actionButtonCenter
+		let bottomPadding = ReachabilityManager.instance.isReachable() ? 0 : self.tabBar.height()
+		self.messageBar.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: bottomPadding, height: 40)
 	}
     
 	func applicationWillEnterForeground(sender: NSNotification) {
@@ -89,7 +87,7 @@ class MainTabBarController: UITabBarController {
 		tabBarItem.accessibilityIdentifier = Tab.Patches
 		tabBarItem.tag = 1
 		
-		let notifications = UINavigationController()
+		let notifications = AirNavigationController()
 		notifications.tabBarItem = UITabBarItem(title: "Notifications", image: UIImage(named: "tabBarNotifications24"), selectedImage: nil)
 		tabBarItem = notifications.tabBarItem
 		tabBarItem.accessibilityIdentifier = Tab.Notifications
@@ -98,7 +96,7 @@ class MainTabBarController: UITabBarController {
 		let notificationsController = NotificationsTableViewController()
 		notifications.viewControllers = [notificationsController]
 		
-		let search = UINavigationController()
+		let search = AirNavigationController()
 		search.tabBarItem = UITabBarItem(title: "Search", image: UIImage(named: "tabBarSearch24"), selectedImage: nil)
 		tabBarItem = search.tabBarItem
 		tabBarItem.accessibilityIdentifier = Tab.Search
@@ -107,7 +105,7 @@ class MainTabBarController: UITabBarController {
 		let controller = SearchViewController()
 		search.viewControllers = [controller]
 		
-		let user = UINavigationController()
+		let user = AirNavigationController()
 		user.tabBarItem = UITabBarItem(title: "Me", image: UIImage(named: "tabBarUser24"), selectedImage: nil)
 		tabBarItem = user.tabBarItem
 		tabBarItem.accessibilityIdentifier = Tab.Profile
@@ -132,34 +130,40 @@ class MainTabBarController: UITabBarController {
 	
 	func setActionButton(button: AirRadialMenu?, startHidden: Bool = true) {
 		
-		if self.actionButton != nil {
-			self.actionButton.removeFromSuperview()
-		}
+		self.actionButton?.removeFromSuperview()
 		
 		self.actionButton = button
 		
 		if self.actionButton != nil {
-			self.view.insertSubview(self.actionButton, atIndex: self.view.subviews.count)
-			self.actionButton.anchorBottomRightWithRightPadding(16, bottomPadding: self.tabBar.bounds.size.height + 16, width: self.actionButton.width(), height: self.actionButton.height())
-			self.actionButtonCenter = self.actionButton.center
+			self.view.insertSubview(self.actionButton!, atIndex: self.view.subviews.count)
+			self.actionButton!.bounds = CGRectMake(0, 0, 56, 56)
+			self.actionButton!.transform = CGAffineTransformIdentity
+			self.actionButton!.anchorBottomRightWithRightPadding(16, bottomPadding: self.tabBar.bounds.size.height + 16, width: self.actionButton!.width(), height: self.actionButton!.height())
+			self.actionButtonCenter = self.actionButton!.center
 			if startHidden {
-				self.actionButton.transform = CGAffineTransformMakeScale(CGFloat(0.0001), CGFloat(0.0001)) // Hide by scaling
-				self.actionButtonVisible = false
+				self.actionButton!.transform = CGAffineTransformMakeScale(CGFloat(0.0001), CGFloat(0.0001)) // Hide by scaling
+				self.actionButtonAnimating = false
 			}
 		}
 	}
 	
 	func hideActionButton() {
-		if self.actionButtonVisible && self.actionButton != nil {
-			self.actionButtonVisible = false
-			self.actionButton.scaleOut()
+		if !self.actionButtonAnimating && self.actionButton != nil {
+			self.actionButtonAnimating = true
+			self.actionButton!.scaleOut() {
+				finished in
+				self.actionButtonAnimating = false
+			}
 		}
 	}
 	
 	func showActionButton() {
-		if !self.actionButtonVisible && self.actionButton != nil {
-			self.actionButtonVisible = true
-			self.actionButton.scaleIn()
+		if !self.actionButtonAnimating && self.actionButton != nil {
+			self.actionButtonAnimating = true
+			self.actionButton!.scaleIn() {
+				finished in
+				self.actionButtonAnimating = false
+			}
 		}
 	}
 	

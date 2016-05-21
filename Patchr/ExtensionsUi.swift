@@ -7,6 +7,7 @@
 //
 import MBProgressHUD
 
+
 extension UITextField {
     var isEmpty: Bool {
         return self.text == nil || self.text!.isEmpty
@@ -102,7 +103,7 @@ extension UIView {
 				/* Resets to original state */
 				self.transform = CGAffineTransformIdentity
 			}
-			, completion: nil)
+			, completion: completion)
 	}
 	
 
@@ -290,7 +291,7 @@ extension UIViewController {
              */
             LocationController.instance.clearLastLocationAccepted()
 			
-			let navController = UINavigationController()
+			let navController = AirNavigationController()
 			navController.viewControllers = [LobbyViewController()]
 			AppDelegate.appDelegate().window!.setRootViewController(navController, animated: true)
         }

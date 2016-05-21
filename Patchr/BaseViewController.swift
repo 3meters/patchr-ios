@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RZTransitions
 
 class BaseViewController: UIViewController {
 	
@@ -81,7 +82,12 @@ class BaseViewController: UIViewController {
 	func performBack(animated: Bool = true) {
 		/* Override in subclasses for control of dismiss/pop process */
 		if isModal {
-			self.dismissViewControllerAnimated(animated, completion: nil)
+			if self.navigationController != nil {
+				self.navigationController!.dismissViewControllerAnimated(animated, completion: nil)
+			}
+			else {
+				self.dismissViewControllerAnimated(animated, completion: nil)
+			}
 		}
 		else {
 			self.navigationController?.popViewControllerAnimated(true)

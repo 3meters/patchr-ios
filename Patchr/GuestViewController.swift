@@ -8,6 +8,7 @@
 
 import UIKit
 
+
 class GuestViewController: BaseViewController {
 	
 	var appName			= AirLabelBanner()
@@ -47,7 +48,7 @@ class GuestViewController: BaseViewController {
     
 	func loginAction(sender: AnyObject?) {
 		let controller = LoginViewController()
-		let navController = UINavigationController()
+		let navController = AirNavigationController()
 		navController.viewControllers = [controller]
 		controller.onboardMode = OnboardMode.Login
 		controller.source = "Guard"
@@ -60,7 +61,7 @@ class GuestViewController: BaseViewController {
 	
 	func signupAction(sender: AnyObject?) {
 		let controller = LoginViewController()
-		let navController = UINavigationController()
+		let navController = AirNavigationController()
 		navController.viewControllers = [controller]
 		controller.onboardMode = OnboardMode.Signup
 		controller.source = "Guard"

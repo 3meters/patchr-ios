@@ -12,6 +12,7 @@ import MessageUI
 import MBProgressHUD
 import PBWebViewController
 
+
 class SettingsTableViewController: UITableViewController {
 	
 	var progress: AirProgress?

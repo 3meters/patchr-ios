@@ -26,7 +26,6 @@ class PatchDetailView: BaseDetailView {
 	var lockImage			= AirImageView(frame: CGRectZero)
 	
 	var buttonGroup			= UIView()
-	var mapButton			= AirToolButton()
 	var watchersButton		= AirLinkButton()
 	var photosButton		= AirLinkButton()
 	var soundButton			= AirMuteButton()
@@ -94,7 +93,6 @@ class PatchDetailView: BaseDetailView {
 		self.bannerGroup.fillSuperview()
 		
 		self.buttonGroup.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 48)
-		self.mapButton.anchorCenterLeftWithLeftPadding(0, width: self.mapButton.width(), height: self.mapButton.height())
 		self.moreButton.anchorCenterRightWithRightPadding(0, width: self.moreButton.width(), height: self.moreButton.height())
 		self.soundButton.alignToTheLeftOf(self.moreButton, matchingCenterWithRightPadding: 0, width: self.soundButton.width(), height: self.soundButton.height())
 		
@@ -183,7 +181,6 @@ class PatchDetailView: BaseDetailView {
 		self.titleGroup.addSubview(self.visibility)
 		self.titleGroup.addSubview(self.lockImage)
 		
-		self.buttonGroup.addSubview(self.mapButton)
 		self.buttonGroup.addSubview(self.soundButton)
 		self.buttonGroup.addSubview(self.moreButton)
 		
@@ -277,10 +274,6 @@ class PatchDetailView: BaseDetailView {
 		self.infoLockImage.image = Utils.imageLock
 		self.infoLockImage.tintColor = Colors.accentOnLight
 		
-		self.mapButton.setImage(UIImage(named: "imgMapLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
-		self.mapButton.bounds.size = CGSizeMake(48, 48)
-		self.mapButton.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
-		
 		self.moreButton.setImage(UIImage(named: "imgOverflowLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
 		self.moreButton.bounds.size = CGSizeMake(48, 48)
 		self.moreButton.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
@@ -290,7 +283,7 @@ class PatchDetailView: BaseDetailView {
 		self.infoMoreButton.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
 		
 		self.photosButton.setTitle("Gallery", forState: .Normal)
-		self.photosButton.setImage(UIImage(named: "imgGalleryLight"), forState: .Normal)
+		self.photosButton.setImage(UIImage(named: "imgGallery2Light"), forState: .Normal)
 		self.photosButton.imageView!.contentMode = UIViewContentMode.ScaleAspectFit
 		self.photosButton.imageView?.tintColor = Colors.brandColorDark
 		self.photosButton.imageEdgeInsets = UIEdgeInsetsMake(10, 4, 10, 24)
@@ -339,9 +332,6 @@ class PatchDetailView: BaseDetailView {
 			self.infoLockImage.hidden = (entity.visibility == "public")
 			self.visibility.hidden = (entity.visibility == "public")
 			self.infoVisibility.hidden = (entity.visibility == "public")
-			
-			/* Map button */
-			self.mapButton.hidden = (entity.location == nil)
 			
 			/* Watching button */
 			

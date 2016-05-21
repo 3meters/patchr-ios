@@ -13,6 +13,7 @@ import FBSDKCoreKit
 import PBWebViewController
 import MBProgressHUD
 
+
 class ProfileEditViewController: BaseEditViewController {
 	
 	var processing: Bool = false
@@ -654,7 +655,7 @@ class ProfileEditViewController: BaseEditViewController {
 					
 					LocationController.instance.clearLastLocationAccepted()
 					
-					let navController = UINavigationController()
+					let navController = AirNavigationController()
 					navController.viewControllers = [LobbyViewController()]
 					AppDelegate.appDelegate().window!.setRootViewController(navController, animated: true)
 					Reporting.track("Deleted User", properties: ["id":self.inputUser!.id_, "name": userName, "email": self.inputUser!.email])

@@ -8,7 +8,8 @@
 
 import UIKit
 
-class PatchNavigationController: UINavigationController {
+
+class PatchNavigationController: AirNavigationController {
     
     var segmentsController	: SegmentsController!
     var segmentedControl	: UISegmentedControl!
@@ -37,16 +38,6 @@ class PatchNavigationController: UINavigationController {
 		self.segmentedControl.tintAdjustmentMode = .Normal
         self.segmentsController.indexDidChangeForSegmentedControl(self.segmentedControl)
     }
-	
-	override func viewWillAppear(animated: Bool) {
-		super.viewWillAppear(animated)
-		Log.d("\(self): viewWillAppear")
-	}
-	
-	override func viewDidAppear(animated: Bool) {
-		super.viewDidAppear(animated)
-		Log.d("\(self): viewDidAppear")
-	}
 	
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)

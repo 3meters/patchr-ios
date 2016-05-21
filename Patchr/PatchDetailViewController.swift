@@ -13,6 +13,11 @@ import iRate
 import IDMPhotoBrowser
 import NHBalancedFlowLayout
 
+
+let UIActivityTypeGmail = "com.google.Gmail.ShareExtension"
+let UIActivityTypeOutlook = "com.microsoft.Office.Outlook.compose-shareextension"
+let UIActivityTypePatchr = "com.3meters.patchr.ios.PatchrShare"
+
 class PatchDetailViewController: BaseDetailViewController {
 
     private var contextAction			: ContextAction = .SharePatch
@@ -172,21 +177,27 @@ class PatchDetailViewController: BaseDetailViewController {
 		}
 		
         /* Has its own nav because we segue modally and it needs its own stack */
+		
 		let controller = MessageEditViewController()
-		let navController = UINavigationController()
 		controller.inputToString = self.entity!.name
 		controller.inputPatchId = self.entityId
 		controller.inputState = .Creating
+		
+		let navController = AirNavigationController()
 		navController.viewControllers = [controller]
-		self.navigationController?.presentViewController(navController, animated: true, completion: nil)
+		
+		self.presentViewController(navController, animated: true, completion: nil)
     }
     
     func editAction() {
+		
 		let controller = PatchEditViewController()
-		let navController = UINavigationController()
 		controller.inputPatch = self.entity as? Patch
+		
+		let navController = AirNavigationController()
 		navController.viewControllers = [controller]
-		self.navigationController?.presentViewController(navController, animated: true, completion: nil)
+		
+		self.presentViewController(navController, animated: true, completion: nil)
     }
 	
 	func watchAction() {
@@ -378,6 +389,13 @@ class PatchDetailViewController: BaseDetailViewController {
 			
 			let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
 			
+			if isUserOwner() {
+				let edit = UIAlertAction(title: "Edit patch", style: .Default) { action in
+					self.editAction()
+				}
+				sheet.addAction(edit)
+			}
+			
 			if let patch = self.entity as? Patch {
 				if patch.userWatchStatusValue == .Member {
 					let leave = UIAlertAction(title: "Leave patch", style: .Destructive) { action in
@@ -393,9 +411,11 @@ class PatchDetailViewController: BaseDetailViewController {
 			let report = UIAlertAction(title: "Report patch", style: .Default) { action in
 				self.reportAction(self)
 			}
+			
 			let cancel = UIAlertAction(title: "Cancel", style: .Cancel) { action in
 				sheet.dismissViewControllerAnimated(true, completion: nil)
 			}
+			
 			sheet.addAction(report)
 			sheet.addAction(cancel)
 			
@@ -423,7 +443,7 @@ class PatchDetailViewController: BaseDetailViewController {
 	
 	func loginAction(sender: AnyObject?) {
 		let controller = LoginViewController()
-		let navController = UINavigationController()
+		let navController = AirNavigationController()
 		navController.viewControllers = [controller]
 		controller.onboardMode = OnboardMode.Login
 		controller.inputRouteToMain = false
@@ -433,7 +453,7 @@ class PatchDetailViewController: BaseDetailViewController {
 	
 	func signupAction(sender: AnyObject?) {
 		let controller = LoginViewController()
-		let navController = UINavigationController()
+		let navController = AirNavigationController()
 		navController.viewControllers = [controller]
 		controller.onboardMode = OnboardMode.Signup
 		controller.inputRouteToMain = false
@@ -509,7 +529,6 @@ class PatchDetailViewController: BaseDetailViewController {
 		
 		let header = self.header as! PatchDetailView
 		
-		header.mapButton.addTarget(self, action: #selector(PatchDetailViewController.mapAction(_:)), forControlEvents: .TouchUpInside)
 		header.watchersButton.addTarget(self, action: #selector(PatchDetailViewController.watchersAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
 		header.photosButton.addTarget(self, action: #selector(PatchDetailViewController.photosAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
 		header.moreButton.addTarget(self, action: #selector(PatchDetailViewController.moreAction(_:)), forControlEvents: .TouchUpInside)
@@ -579,10 +598,20 @@ class PatchDetailViewController: BaseDetailViewController {
 	override func drawButtons() {
 		
 		let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: #selector(PatchDetailViewController.shareAction(_:)))
-		let editButton = UIBarButtonItem(title: "Edit", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(PatchDetailViewController.editAction))
 		
-		if isUserOwner() {
-			self.navigationItem.setRightBarButtonItems([shareButton, Utils.spacer, editButton], animated: true)
+		/* Map button */
+		if self.entity?.location != nil {
+			
+			let button = UIButton(type: .Custom)
+			button.frame = CGRectMake(0, 0, 48, 48)
+			button.addTarget(self, action: #selector(PatchDetailViewController.mapAction(_:)), forControlEvents: .TouchUpInside)
+			button.showsTouchWhenHighlighted = true
+			button.setImage(UIImage(named: "imgMapLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
+			button.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+			
+			let mapButton = UIBarButtonItem(customView: button)
+			
+			self.navigationItem.setRightBarButtonItems([shareButton, Utils.spacer, mapButton], animated: true)
 		}
 		else {
 			self.navigationItem.setRightBarButtonItems([shareButton], animated: true)
@@ -597,7 +626,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		self.actionButton.autoresizingMask = [.FlexibleRightMargin, .FlexibleLeftMargin, .FlexibleBottomMargin, .FlexibleTopMargin]
 		self.actionButton.centerView.gestureRecognizers?.forEach(self.actionButton.centerView.removeGestureRecognizer) /* Remove default tap regcognizer */
 		self.actionButton.imageInsets = UIEdgeInsetsMake(14, 14, 14, 14)
-		self.actionButton.imageView.image = UIImage(named: "imgEdit2Light")	// Default
+		self.actionButton.imageView.image = UIImage(named: "imgAddLight")	// Default
 		self.actionButton.showBackground = false
 		
 		self.actionButton.centerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(actionButtonTapped(_:))))
@@ -770,7 +799,7 @@ class PatchDetailViewController: BaseDetailViewController {
 			}
 		}
 
-		let navController = UINavigationController()
+		let navController = AirNavigationController()
 		let layout = NHBalancedFlowLayout()
 		let controller = GalleryGridViewController(collectionViewLayout: layout)
 		controller.displayPhotos = displayPhotos
@@ -783,7 +812,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		if route == .Patchr {
 			
 			let controller = MessageEditViewController()
-			let navController = UINavigationController()
+			let navController = AirNavigationController()
 			controller.inputShareEntity = self.entity
 			controller.inputShareSchema = Schema.ENTITY_PATCH
 			controller.inputShareId = self.entityId!
@@ -954,15 +983,11 @@ extension PatchDetailViewController {
 		if scrollView.contentSize.height > scrollView.height() {
 			if(self.lastContentOffset > scrollView.contentOffset.y)
 				&& self.lastContentOffset < (scrollView.contentSize.height - scrollView.frame.height) {
-				if !self.tabBar.actionButtonVisible {
-					self.tabBar.showActionButton()
-				}
+				self.tabBar.showActionButton()
 			}
 			else if (self.lastContentOffset < scrollView.contentOffset.y
 				&& scrollView.contentOffset.y > 0) {
-				if self.tabBar.actionButtonVisible {
-					self.tabBar.hideActionButton()
-				}
+				self.tabBar.hideActionButton()
 			}
 		}
 		
@@ -1017,10 +1042,6 @@ extension PatchDetailViewController: MFMailComposeViewControllerDelegate {
 		}
 	}
 }
-
-let UIActivityTypeGmail = "com.google.Gmail.ShareExtension"
-let UIActivityTypeOutlook = "com.microsoft.Office.Outlook.compose-shareextension"
-let UIActivityTypePatchr = "com.3meters.patchr.ios.PatchrShare"
 
 class PatchItem: NSObject, UIActivityItemSource {
 	

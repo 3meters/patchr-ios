@@ -11,6 +11,7 @@ import Lockbox
 import Branch
 import Analytics
 
+
 class UserController: NSObject {
 	
 	static let instance = UserController()
@@ -213,7 +214,7 @@ class UserController: NSObject {
 				Reporting.track("Logged Out")
 				Log.i("User logged out")
 				
-				let navController = UINavigationController()
+				let navController = AirNavigationController()
 				navController.viewControllers = [LobbyViewController()]
 				AppDelegate.appDelegate().window!.setRootViewController(navController, animated: true)
 			}
