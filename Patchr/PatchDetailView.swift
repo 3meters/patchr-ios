@@ -22,6 +22,7 @@ class PatchDetailView: BaseDetailView {
 	var titleGroup			= UIView()
 	var name				= AirLabelDisplay()
 	var type				= AirLabelDisplay()
+	var settings			= AirLabelDisplay()
 	var visibility			= AirLabelDisplay()
 	var lockImage			= AirImageView(frame: CGRectZero)
 	var mutedImage			= AirImageView(frame: CGRectZero)
@@ -37,6 +38,7 @@ class PatchDetailView: BaseDetailView {
 	var infoTitleGroup		= UIView()
 	var infoName			= AirLabelDisplay()
 	var infoType			= AirLabelDisplay()
+	var infoSettings		= AirLabelDisplay()
 	var infoVisibility		= AirLabelDisplay()
 	var infoLockImage		= AirImageView(frame: CGRectZero)
 	var infoDescription		= TTTAttributedLabel(frame: CGRectZero)
@@ -90,6 +92,7 @@ class PatchDetailView: BaseDetailView {
 		self.bannerGroup.fillSuperview()
 		
 		self.titleGroup.anchorBottomLeftWithLeftPadding(68, bottomPadding: 16, width: viewWidth - 68, height: 72)
+		
 		self.name.bounds.size.width = self.titleGroup.width()
 		self.name.sizeToFit()
 		self.name.anchorBottomLeftWithLeftPadding(0, bottomPadding: 0, width: self.name.width(), height: self.name.height())
@@ -124,7 +127,11 @@ class PatchDetailView: BaseDetailView {
 		self.infoName.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: self.infoName.width(), height: self.infoName.height())
 		
 		self.infoType.sizeToFit()
+		self.infoSettings.sizeToFit()
+		
 		self.infoType.alignUnder(self.infoName, withLeftPadding: 0, topPadding: 0, width: self.infoType.width(), height: self.infoType.height())
+		self.infoSettings.alignUnder(self.infoType, withLeftPadding: 0, topPadding: 0, width: self.infoSettings.width(), height: self.infoSettings.height())
+		
 		self.infoLockImage.alignToTheRightOf(self.infoType, matchingCenterWithLeftPadding: 4, width: 16, height: 16)
 		self.infoVisibility.sizeToFit()
 		self.infoVisibility.alignToTheRightOf(self.infoLockImage, matchingCenterWithLeftPadding: 4, width: self.infoVisibility.width(), height: self.infoVisibility.height())
@@ -133,7 +140,7 @@ class PatchDetailView: BaseDetailView {
 		
 		self.infoDescription.bounds.size.width = viewWidth - 32
 		self.infoDescription.sizeToFit()
-		self.infoDescription.alignUnder(self.infoType, matchingLeftAndFillingWidthWithRightPadding: 16, topPadding: 8, height: self.infoDescription.height())
+		self.infoDescription.alignUnder(self.infoSettings, matchingLeftAndFillingWidthWithRightPadding: 16, topPadding: 8, height: self.infoDescription.height())
 		
 		self.infoButtonGroup.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 48)
 		self.infoOwnerLabel.sizeToFit()
@@ -165,6 +172,7 @@ class PatchDetailView: BaseDetailView {
 		
 		self.titleGroup.addSubview(self.name)
 		self.titleGroup.addSubview(self.type)
+		self.titleGroup.addSubview(self.settings)
 		self.titleGroup.addSubview(self.visibility)
 		self.titleGroup.addSubview(self.lockImage)
 		self.titleGroup.addSubview(self.mutedImage)
@@ -174,6 +182,7 @@ class PatchDetailView: BaseDetailView {
 		
 		self.infoTitleGroup.addSubview(self.infoName)
 		self.infoTitleGroup.addSubview(self.infoType)
+		self.infoTitleGroup.addSubview(self.infoSettings)
 		self.infoTitleGroup.addSubview(self.infoVisibility)
 		self.infoTitleGroup.addSubview(self.infoLockImage)
 		self.infoTitleGroup.addSubview(self.infoDescription)
@@ -227,12 +236,18 @@ class PatchDetailView: BaseDetailView {
 		self.type.font = Theme.fontTextDisplay
 		self.type.textColor = Colors.white
 		
+		self.settings.font = Theme.fontTextDisplay
+		self.settings.textColor = Colors.white
+		
 		self.infoName.font = UIFont(name: "HelveticaNeue-Light", size: 28)!
 		self.infoName.textColor = Theme.colorTextTitle
 		self.infoName.numberOfLines = 2
 		
 		self.infoType.font = Theme.fontTextDisplay
 		self.infoType.textColor = Theme.colorTextSecondary
+		
+		self.infoSettings.font = Theme.fontTextDisplay
+		self.infoSettings.textColor = Colors.accentOnLight
 		
 		self.infoVisibility.font = Theme.fontTextDisplay
 		self.infoVisibility.textColor = Theme.colorTextSecondary
@@ -287,6 +302,7 @@ class PatchDetailView: BaseDetailView {
 			
 			self.name.text = entity.name
 			self.type.text = entity.type == nil ? "PATCH" : entity.type.uppercaseString + " PATCH"
+			self.settings.text = entity.lockedValue ? "Only owners can post" : nil
 			
 			if entity.photo != nil {
 				self.photo.setImageWithPhoto(entity.photo, animate: false)
@@ -296,14 +312,13 @@ class PatchDetailView: BaseDetailView {
 				self.photo.backgroundColor = Utils.randomColor(seed)
 			}
 			
-			/* Privacy */
+			/* Indicators */
 			
 			self.lockImage.hidden = (entity.visibility == "public")
-			self.infoLockImage.hidden = (entity.visibility == "public")
 			self.visibility.hidden = (entity.visibility == "public")
-			self.infoVisibility.hidden = (entity.visibility == "public")
+			self.mutedImage.hidden = !entity.userWatchMutedValue
 			
-			/* Watching button */
+			/* Members button */
 			
 			if entity.countWatchingValue == 0 {
 				if self.membersButton.alpha != 0 {
@@ -318,15 +333,18 @@ class PatchDetailView: BaseDetailView {
 				}
 			}
 			
-			/* Mute button */
-			
-			self.mutedImage.hidden = !entity.userWatchMutedValue
-			
 			/* Info view */
 			self.infoName.text = entity.name
+			
 			if entity.type != nil {
 				self.infoType.text = entity.type.uppercaseString + " PATCH"
 			}
+			
+			/* Info indicators */
+			self.infoLockImage.hidden = (entity.visibility == "public")
+			self.infoVisibility.hidden = (entity.visibility == "public")
+			self.infoSettings.text = entity.lockedValue ? "Only owners can post" : nil
+			
 			self.infoDescription.text = entity.description_
 			self.infoOwner.text = entity.creator?.name ?? "Deleted"
 		}

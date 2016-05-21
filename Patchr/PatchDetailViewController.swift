@@ -80,8 +80,10 @@ class PatchDetailViewController: BaseDetailViewController {
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)	// Clears firstAppearance
 		
-		self.tabBar.setActionButton(self.actionButton)
-		self.tabBar.showActionButton()
+		if self.actionButton != nil && self.entity != nil && (!self.entity!.lockedValue || isUserOwner()) {
+			self.tabBar.setActionButton(self.actionButton)
+			self.tabBar.showActionButton()
+		}
 		
 		if self.autoWatchOnAppear {
 			self.autoWatchOnAppear = false
@@ -443,7 +445,7 @@ class PatchDetailViewController: BaseDetailViewController {
 			
 			if let patch = self.entity as? Patch {
 				if patch.userWatchStatusValue == .Member {
-					let leave = UIAlertAction(title: "Leave patch", style: .Destructive) { action in
+					let leave = UIAlertAction(title: "Leave patch", style: .Default) { action in
 						self.watchAction()
 						Utils.delay(1.0) {
 							UIShared.Toast("You have left this patch", controller: self, addToWindow: false)
@@ -516,6 +518,9 @@ class PatchDetailViewController: BaseDetailViewController {
 		 * just before this notification.
 		 */
 		if ((notification.userInfo?["deleted"]) == nil) {
+			if self.entity!.lockedValue {
+				self.tabBar.setActionButton(nil)
+			}
 			bindContextView()
 		}
 	}
