@@ -20,42 +20,48 @@ class PatchEditViewController: BaseEditViewController {
 	
 	var schema = Schema.ENTITY_PATCH
 	
-	var imageUploadRequest	 : AWSS3TransferManagerUploadRequest?
-	var entityPostRequest	 : NSURLSessionTask?
+	var imageUploadRequest	: AWSS3TransferManagerUploadRequest?
+	var entityPostRequest	: NSURLSessionTask?
 	
-	var inputState			 : State?	= State.Editing
-	var inputPatch			 : Patch?
-	var inputType			 : String?
+	var inputState			: State?	= State.Editing
+	var inputPatch			: Patch?
+	var inputType			: String?
+	
+	var settings			: PatchSettings!
 
-	var photoView            = PhotoEditView()
-	var nameField            = AirTextField()
-	var descriptionField     = AirTextView()
+	var photoView           = PhotoEditView()
+	var nameField           = AirTextField()
+	var descriptionField    = AirTextView()
 	
-	var visibilityGroup		 = AirRuleView()
-	var visibilitySwitch	 = UISwitch()
-	var visibilityLabel		 = AirLabelDisplay()
+	var visibilityGroup		= AirRuleView()
+	var visibilitySwitch	= UISwitch()
+	var visibilityLabel		= AirLabelDisplay()
 	
-	var locationGroup		 = AirRuleView()
-	var locationLabel		 = AirLabelDisplay()
-	var locationAddress		 = AirLinkButton()
-	var locationValue		 : CLLocation? = nil
+	var settingsGroup		= AirRuleView()
+	var settingsLabel		= AirLabelDisplay()
+	var settingsImage		= UIImageView(frame: CGRectZero)
+	
+	var locationGroup		= AirRuleView()
+	var locationLabel		= AirLabelDisplay()
+	var locationAddress		= AirLinkButton()
+	var locationValue		: CLLocation? = nil
 	
 	var doneButton			= AirFeaturedButton()
 	var banner     			= AirLabelTitle()
 	var message     		= AirLabelDisplay()
 
-	var typeGroup			 = UIView()
-	var typeLabel			 = AirLabelDisplay()
-	var typeButtonGroup		 = AirRadioButton()
-	var typeButtonPlace		 = AirRadioButton()
-	var typeButtonEvent		 = AirRadioButton()
-	var typeButtonTrip		 = AirRadioButton()
+	var typeGroup			= AirRuleView()
+	var typeLabel			= AirLabelDisplay()
+	var typeButtonGroup		= AirRadioButton()
+	var typeButtonPlace		= AirRadioButton()
+	var typeButtonEvent		= AirRadioButton()
+	var typeButtonTrip		= AirRadioButton()
 	
-	var typeValue			 : String? = nil
-	var visibilityValue		 = "public"
+	var typeValue			: String? = nil
+	var visibilityValue		= "public"
 
-	var progress			 : AirProgress?
-	var insertedEntity		 : Entity?
+	var progress			: AirProgress?
+	var insertedEntity		: Entity?
 	
 	/*--------------------------------------------------------------------------------------------
 	* Lifecycle
@@ -85,6 +91,7 @@ class PatchEditViewController: BaseEditViewController {
 		let descriptionSize = self.descriptionField.sizeThatFits(CGSizeMake(288, CGFloat.max))
 		
 		self.locationLabel.sizeToFit()
+		self.settingsLabel.sizeToFit()
 		self.locationAddress.sizeToFit()
 		self.visibilityLabel.sizeToFit()
 		self.typeLabel.sizeToFit()
@@ -96,13 +103,17 @@ class PatchEditViewController: BaseEditViewController {
 		self.photoView.alignUnder(self.descriptionField, matchingCenterWithTopPadding: 16, width: 288, height: 288 * 0.56)
 		self.visibilityGroup.alignUnder(self.photoView, matchingCenterWithTopPadding: 8, width: 288, height: 48)
 		self.locationGroup.alignUnder(self.visibilityGroup, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-		self.typeGroup.alignUnder(self.locationGroup, matchingCenterWithTopPadding: 8, width: 288, height: 96)
+		self.typeGroup.alignUnder(self.locationGroup, matchingCenterWithTopPadding: 8, width: 288, height: 84)
+		self.settingsGroup.alignUnder(self.typeGroup, matchingCenterWithTopPadding: 8, width: 288, height: 48)
 		
 		self.visibilityLabel.anchorCenterLeftWithLeftPadding(0, width: 144, height: self.visibilityLabel.height())
 		self.visibilitySwitch.anchorCenterRightWithRightPadding(0, width: self.visibilitySwitch.width(), height: self.visibilitySwitch.height())
 		
 		self.locationLabel.anchorCenterLeftWithLeftPadding(0, width: self.locationLabel.width(), height: self.locationLabel.height())
 		self.locationAddress.anchorCenterRightWithRightPadding(0, width: min(288 - self.locationLabel.width() + 8, self.locationAddress.width()), height: self.locationAddress.height())
+		
+		self.settingsLabel.anchorCenterLeftWithLeftPadding(0, width: self.settingsLabel.width(), height: self.settingsLabel.height())
+		self.settingsImage.anchorCenterRightWithRightPadding(0, width: 16, height: 16)
 		
 		self.typeLabel.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 96, height: 48)
 		self.typeButtonEvent.alignToTheRightOf(self.typeLabel, matchingCenterWithLeftPadding: 8, width: 88, height: 24)
@@ -173,6 +184,12 @@ class PatchEditViewController: BaseEditViewController {
 		controller.locationDelegate = self
 		self.navigationController?.pushViewController(controller, animated: true)
 	}
+
+	func settingsAction(sender: AnyObject) {
+		let controller = PatchSettingsController()
+		controller.inputSettings = self.settings
+		self.navigationController?.pushViewController(controller, animated: true)
+	}
 	
 	func deleteAction(sender: AnyObject) {
 		
@@ -240,7 +257,6 @@ class PatchEditViewController: BaseEditViewController {
 		self.nameField.keyboardType = UIKeyboardType.Default
 		self.nameField.returnKeyType = UIReturnKeyType.Next
 		
-		self.descriptionField = AirTextView()
 		self.descriptionField.placeholderLabel.text = "Tell people about your patch"
 		self.descriptionField.initialize()
 		self.descriptionField.delegate = self
@@ -264,6 +280,10 @@ class PatchEditViewController: BaseEditViewController {
 		self.typeButtonPlace.addTarget(self, action: #selector(PatchEditViewController.typeSelected(_:)), forControlEvents: .TouchUpInside)
 		self.typeButtonTrip.addTarget(self, action: #selector(PatchEditViewController.typeSelected(_:)), forControlEvents: .TouchUpInside)
 		
+		self.settingsLabel.text = "Advanced Settings"
+		self.settingsImage.image = UIImage(named: "imgArrowRightLight")
+		self.settingsGroup.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(settingsAction(_:))))
+		
 		self.visibilityGroup.addSubview(self.visibilityLabel)
 		self.visibilityGroup.addSubview(self.visibilitySwitch)
 		
@@ -276,6 +296,9 @@ class PatchEditViewController: BaseEditViewController {
 		self.typeGroup.addSubview(self.typeButtonPlace)
 		self.typeGroup.addSubview(self.typeButtonTrip)
 		
+		self.settingsGroup.addSubview(self.settingsLabel)
+		self.settingsGroup.addSubview(self.settingsImage)
+		
 		self.contentHolder.addSubview(self.banner)
 		self.contentHolder.addSubview(self.message)
 		self.contentHolder.addSubview(self.nameField)
@@ -283,6 +306,7 @@ class PatchEditViewController: BaseEditViewController {
 		self.contentHolder.addSubview(self.photoView)
 		self.contentHolder.addSubview(self.visibilityGroup)
 		self.contentHolder.addSubview(self.locationGroup)
+		self.contentHolder.addSubview(self.settingsGroup)
 		
 		if self.inputState == State.Creating {
 			
@@ -330,8 +354,11 @@ class PatchEditViewController: BaseEditViewController {
 	}
 	
     func bind() {
+		/* Only called once: onViewLoad */
 		
 		if self.inputState == State.Editing {
+			
+			self.settings = PatchSettings(patch: self.inputPatch)
 			
 			self.nameField.text = self.inputPatch?.name
 			self.descriptionField.text = self.inputPatch?.description_
@@ -549,6 +576,7 @@ class PatchEditViewController: BaseEditViewController {
 			parameters["visibility"] = nilToNull(self.visibilityValue)
 			parameters["location"] = nilToNull(self.locationValue)
 			parameters["type"] = nilToNull(self.typeValue)
+			parameters["locked"] = nilToNull(self.settings.locked)
 		}
 		else {
 			if self.nameField.text != self.inputPatch?.name  {
@@ -567,6 +595,7 @@ class PatchEditViewController: BaseEditViewController {
 				parameters["type"] = nilToNull(self.typeValue)
 			}
 			parameters["location"] = nilToNull(self.locationValue)
+			parameters["locked"] = nilToNull(self.settings.locked)
 		}
 		
         return parameters
@@ -622,6 +651,9 @@ class PatchEditViewController: BaseEditViewController {
 				}
 			}
 			if self.typeValue != self.inputPatch?.type {
+				return true
+			}
+			if self.settings.locked != self.inputPatch?.lockedValue {
 				return true
 			}
 		}
@@ -711,6 +743,17 @@ extension PatchEditViewController: UITextViewDelegate {
 		if let textView = textView as? AirTextView {
 			textView.placeholderLabel.hidden = !self.descriptionField.text.isEmpty
 			self.viewWillLayoutSubviews()
+		}
+	}
+}
+
+class PatchSettings: NSObject {
+	
+	var locked	: Bool = false
+	
+	init(patch: Patch? = nil) {
+		if patch != nil {
+			self.locked = patch!.lockedValue
 		}
 	}
 }

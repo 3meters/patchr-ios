@@ -31,6 +31,7 @@ struct Utils {
 	static var imagePatch: UIImage = { return UIImage(named: "imgPatchLight") }()!
 	static var imageRemove: UIImage = { return UIImage(named: "imgRemoveLight") }()!
 	static var imageLock: UIImage = { return UIImage(named: "imgLockLight") }()!
+	static var imageMuted: UIImage = { return UIImage(named: "imgSoundOff3Light") }()!
 	
 	static var spacer: UIBarButtonItem = {
 		let spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)

@@ -12,6 +12,7 @@ extern const struct EntityAttributes {
 	__unsafe_unretained NSString *countWatching;
 	__unsafe_unretained NSString *description_;
 	__unsafe_unretained NSString *linkCounts;
+	__unsafe_unretained NSString *locked;
 	__unsafe_unretained NSString *patchId;
 	__unsafe_unretained NSString *reason;
 	__unsafe_unretained NSString *score;
@@ -81,6 +82,14 @@ extern const struct EntityUserInfo {
 @property (nonatomic, strong) NSDictionary* linkCounts;
 
 //- (BOOL)validateLinkCounts:(id*)value_ error:(NSError**)error_;
+
+@property (nonatomic, strong) NSNumber* locked;
+
+@property (atomic) BOOL lockedValue;
+- (BOOL)lockedValue;
+- (void)setLockedValue:(BOOL)value_;
+
+//- (BOOL)validateLocked:(id*)value_ error:(NSError**)error_;
 
 @property (nonatomic, strong) NSString* patchId;
 
@@ -185,6 +194,12 @@ extern const struct EntityUserInfo {
 
 - (NSDictionary*)primitiveLinkCounts;
 - (void)setPrimitiveLinkCounts:(NSDictionary*)value;
+
+- (NSNumber*)primitiveLocked;
+- (void)setPrimitiveLocked:(NSNumber*)value;
+
+- (BOOL)primitiveLockedValue;
+- (void)setPrimitiveLockedValue:(BOOL)value_;
 
 - (NSString*)primitivePatchId;
 - (void)setPrimitivePatchId:(NSString*)value;

@@ -79,7 +79,7 @@ class InviteViewController: BaseViewController {
 		
 		self.provider = FacebookProvider(controller: self)
 		
-		self.message.text = "Invite friends to your new patch."
+		self.message.text = "Invite people to your new patch."
 		self.message.textAlignment = NSTextAlignment.Center
 		self.message.numberOfLines = 0
 		/*

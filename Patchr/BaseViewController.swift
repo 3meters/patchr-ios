@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import RZTransitions
 
 class BaseViewController: UIViewController {
 	

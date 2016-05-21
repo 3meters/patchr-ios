@@ -34,7 +34,7 @@ class SegmentsController: NSObject {
 			button.addTarget(incomingViewController, action: #selector(controller.mapAction(_:)), forControlEvents: .TouchUpInside)
 			button.showsTouchWhenHighlighted = true
 			button.setImage(UIImage(named: "imgMapLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
-			button.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+			button.imageEdgeInsets = UIEdgeInsetsMake(11, 11, 11, 11);
 
 			let mapButton = UIBarButtonItem(customView: button)
 			incomingViewController.navigationItem.rightBarButtonItem = mapButton

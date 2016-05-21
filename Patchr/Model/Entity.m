@@ -72,6 +72,7 @@
     entity.reason = dictionary[@"reason"];
     entity.score = dictionary[@"score"];
     entity.visibility = dictionary[@"visibility"];
+	entity.locked = dictionary[@"locked"];
     
     if (dictionary[@"link"]) {
 		/* 
