@@ -118,7 +118,8 @@ class MessageView: BaseView {
 			self.likeButton.anchorCenterLeftWithLeftPadding(0, width: self.likeButton.width(), height: self.likeButton.height())
 			self.likeButton.frame.origin.x -= 12
 			self.likes.sizeToFit()
-			self.likes.anchorCenterRightWithRightPadding(0, width: 72, height: self.likes.height())
+			self.likes.alignToTheRightOf(self.likeButton, matchingCenterWithLeftPadding: 0, width: self.likes.width(), height: self.likes.height())
+			self.likes.frame.origin.x -= 4
 		}
 	}
 
@@ -132,16 +133,16 @@ class MessageView: BaseView {
 					self.likeButton.bindEntity(message)
 
 					self.likes.text = nil
+					
 					if message.countLikes != nil {
 						if message.countLikes?.integerValue != 0 {
-							let likesTitle = message.countLikes?.integerValue == 1
-								? "\(message.countLikes) like"
-								: "\(message.countLikes ?? 0) likes"
-							self.likes.text = likesTitle
+							self.likes.text = String(message.countLikes.integerValue)
 							self.likes.sizeToFit()
-							self.likes.anchorCenterRightWithRightPadding(0, width: 72, height: self.likes.height())
+							self.likes.alignToTheRightOf(self.likeButton, matchingCenterWithLeftPadding: 0, width: self.likes.width(), height: self.likes.height())
+							self.likes.frame.origin.x -= 4
 						}
 					}
+					self.likes.textColor = message.userLikesValue ? Colors.brandColor : Theme.colorText
 				}
 		}
 	}
@@ -222,9 +223,9 @@ class MessageView: BaseView {
 		self.likeButton.bounds.size = CGSizeMake(48, 48)
 		self.likeButton.imageEdgeInsets = UIEdgeInsetsMake(14, 12, 14, 12)
 
-		self.likes.font = Theme.fontComment
+		self.likes.font = Theme.fontText
 		self.likes.numberOfLines = 1
-		self.likes.textColor = Theme.colorTextTitle
+		self.likes.textColor = Theme.colorText
 		self.likes.textAlignment = .Right
 		
 		self.toolbar.addSubview(self.likeButton)
@@ -292,12 +293,10 @@ class MessageView: BaseView {
 				self.likes.text = nil
 				if message.countLikes != nil {
 					if message.countLikes?.integerValue != 0 {
-						let likesTitle = message.countLikes?.integerValue == 1
-							? "\(message.countLikes) like"
-							: "\(message.countLikes ?? 0) likes"
-						self.likes.text = likesTitle
+						self.likes.text = String(message.countLikes.integerValue)
 					}
 				}
+				self.likes.textColor = message.userLikesValue ? Colors.brandColor : Theme.colorText
 			}
 		}
 		

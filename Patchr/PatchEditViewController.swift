@@ -102,9 +102,9 @@ class PatchEditViewController: BaseEditViewController {
 		self.descriptionField.alignUnder(self.nameField, matchingCenterWithTopPadding: 8, width: 288, height: max(48, descriptionSize.height))
 		self.photoView.alignUnder(self.descriptionField, matchingCenterWithTopPadding: 16, width: 288, height: 288 * 0.56)
 		self.visibilityGroup.alignUnder(self.photoView, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-		self.locationGroup.alignUnder(self.visibilityGroup, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-		self.typeGroup.alignUnder(self.locationGroup, matchingCenterWithTopPadding: 8, width: 288, height: 84)
-		self.settingsGroup.alignUnder(self.typeGroup, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+		self.locationGroup.alignUnder(self.visibilityGroup, matchingCenterWithTopPadding: 0, width: 288, height: 48)
+		self.typeGroup.alignUnder(self.locationGroup, matchingCenterWithTopPadding: 0, width: 288, height: !self.typeGroup.hidden ? 84 : 0)
+		self.settingsGroup.alignUnder(self.typeGroup, matchingCenterWithTopPadding: 0, width: 288, height: 48)
 		
 		self.visibilityLabel.anchorCenterLeftWithLeftPadding(0, width: 144, height: self.visibilityLabel.height())
 		self.visibilitySwitch.anchorCenterRightWithRightPadding(0, width: self.visibilitySwitch.width(), height: self.visibilitySwitch.height())
@@ -269,7 +269,7 @@ class PatchEditViewController: BaseEditViewController {
 		self.locationAddress.addTarget(self, action: #selector(PatchEditViewController.locationAction(_:)), forControlEvents: .TouchUpInside)
 		
 		self.typeLabel.text = "Patch Type"
-		self.typeButtonEvent.setTitle("Event", forState: .Normal)		
+		self.typeButtonEvent.setTitle("Event", forState: .Normal)
 		self.typeButtonGroup.setTitle("Group", forState: .Normal)
 		self.typeButtonPlace.setTitle("Place", forState: .Normal)
 		self.typeButtonTrip.setTitle("Trip", forState: .Normal)
@@ -306,7 +306,12 @@ class PatchEditViewController: BaseEditViewController {
 		self.contentHolder.addSubview(self.photoView)
 		self.contentHolder.addSubview(self.visibilityGroup)
 		self.contentHolder.addSubview(self.locationGroup)
+		self.contentHolder.addSubview(self.typeGroup)
 		self.contentHolder.addSubview(self.settingsGroup)
+		
+		if self.inputState == State.Creating {
+			self.typeGroup.hidden = true
+		}
 		
 		if self.inputState == State.Creating {
 			
@@ -334,15 +339,14 @@ class PatchEditViewController: BaseEditViewController {
 			self.navigationItem.leftBarButtonItems = [cancelButton]
 			self.navigationItem.rightBarButtonItems = [nextButton]
 		}
-		else {
+		else if self.inputState == State.Editing  {
+			
 			Reporting.screen("PatchEdit")
 			self.banner.text = "Patch"
 			self.progressStartLabel = "Updating"
 			self.progressFinishLabel = "Updated"
 			self.cancelledLabel = "Update cancelled"
 			self.doneButton.hidden = true
-			
-			self.contentHolder.addSubview(self.typeGroup)
 			
 			/* Navigation bar buttons */
 			let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: #selector(PatchEditViewController.cancelAction(_:)))
@@ -394,6 +398,8 @@ class PatchEditViewController: BaseEditViewController {
 			}
 		}
 		else {
+			
+			self.settings = PatchSettings(patch: nil)
 			
 			/* Use location managers last location fix */
 			if let lastLocation = LocationController.instance.mostRecentAvailableLocation() {

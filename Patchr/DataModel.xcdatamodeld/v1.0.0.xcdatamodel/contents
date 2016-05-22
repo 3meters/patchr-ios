@@ -10,7 +10,7 @@
                 <entry key="attributeValueClassName" value="NSDictionary"/>
             </userInfo>
         </attribute>
-        <attribute name="locked" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="locked" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="patchId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="reason" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="score" optional="YES" attributeType="Integer 64" defaultValueString="0.0" syncable="YES"/>

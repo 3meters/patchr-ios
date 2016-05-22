@@ -164,7 +164,7 @@ public struct Colors {
 	
 	static let brandColorTextLight = brandColor
 	static let brandColorTextDark = brandColor
-	static let brandColorFill = brandColorLight
+	static let brandColorFill = brandColor
 	static let brandColorRule = brandColor
 	
 	static let facebookColor = UIColor(hexString: "#3B5998ff")

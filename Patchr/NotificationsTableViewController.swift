@@ -310,13 +310,13 @@ class NotificationsTableViewController: BaseTableViewController {
             if targetId.hasPrefix("me.") {
 				let controller = MessageDetailViewController()
 				controller.inputMessageId = targetId
-				controller.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: #selector(controller.dismissAction(_:)))
+				controller.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: #selector(controller.dismissAction(_:)))
 				UIViewController.topMostViewController()?.presentViewController(UINavigationController(rootViewController: controller), animated: true, completion: nil)
             }
             else if targetId.hasPrefix("pa.") {
 				let controller = PatchDetailViewController()
 				controller.entityId = targetId
-				controller.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: #selector(controller.dismissAction(_:)))
+				controller.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: #selector(controller.dismissAction(_:)))
 				UIViewController.topMostViewController()?.presentViewController(UINavigationController(rootViewController: controller), animated: true, completion: nil)
             }
         }

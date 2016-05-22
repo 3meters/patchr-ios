@@ -341,8 +341,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 						controller.inputUserPhoto = userPhoto
 					}
 				}
+				
 				let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: #selector(controller.cancelAction(_:)))
-				controller.navigationItem.leftBarButtonItems = [cancelButton]
+				controller.navigationItem.rightBarButtonItems = [cancelButton]
 				let navController = AirNavigationController()
 				navController.viewControllers = [controller]
 				UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)

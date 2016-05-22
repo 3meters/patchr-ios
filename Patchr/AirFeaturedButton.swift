@@ -30,6 +30,12 @@ class AirFeaturedButton: UIButton {
 		self.borderColor = Theme.colorButtonBorderFeatured
 		self.borderWidth = Theme.dimenButtonBorderWidth
 		self.cornerRadius = Int(Theme.dimenButtonCornerRadius)
+		
+		self.layer.masksToBounds = false
+		self.layer.shadowColor = Colors.black.CGColor
+		self.layer.shadowOffset = CGSizeMake(0, 1)
+		self.layer.shadowOpacity = 0.4
+		self.layer.shadowRadius = 1
 	}
 	
 	override func layoutSubviews() {

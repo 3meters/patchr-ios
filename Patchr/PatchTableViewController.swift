@@ -330,12 +330,10 @@ class PatchTableViewController: BaseTableViewController {
 		view.addSubview(imageView)
 		imageView.fillSuperviewWithLeftPadding(8, rightPadding: 8, topPadding: 8, bottomPadding: 8)
 		
-		view.layer.cornerRadius = view.frame.size.width/2;
-		view.backgroundColor = color;
-		view.layer.shadowColor = Colors.black.CGColor;
-		view.layer.shadowOpacity = 0.4;
-		view.layer.shadowRadius = 3.0;
-		view.layer.shadowOffset = CGSizeMake(0, 3);
+		view.backgroundColor = color
+		
+		view.layer.cornerRadius = view.frame.size.width / 2	// Round
+		view.showShadow(true, cornerRadius: view.layer.cornerRadius)
 		
 		return view;
 	}

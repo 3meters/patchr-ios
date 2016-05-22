@@ -62,7 +62,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		
 		let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
 		let header = self.header as! PatchDetailView
-		let viewHeight = (viewWidth * 0.625) + header.contextGroup.height()
+		let viewHeight = (viewWidth * 0.625) + header.buttonGroup.height()
 		self.tableView.tableHeaderView?.bounds.size = CGSizeMake(viewWidth, viewHeight)	// Triggers layoutSubviews on header
 	}
 	
@@ -582,7 +582,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		header.membersButton.addTarget(self, action: #selector(PatchDetailViewController.watchersAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
 		header.photosButton.addTarget(self, action: #selector(PatchDetailViewController.photosAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
 		
-		if let contextButton = header.contextView as? AirFeaturedButton {
+		if let contextButton = header.contextButton as? AirFeaturedButton {
 			contextButton.addTarget(self, action: #selector(PatchDetailViewController.contextButtonAction(_:)), forControlEvents: .TouchUpInside)
 			contextButton.setTitle("", forState: .Normal)
 		}
@@ -646,9 +646,16 @@ class PatchDetailViewController: BaseDetailViewController {
 
 	override func drawButtons() {
 		
-		let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: #selector(PatchDetailViewController.shareAction(_:)))
+		var button = UIButton(type: .Custom)
+		button.frame = CGRectMake(0, 0, 36, 36)
+		button.addTarget(self, action: #selector(PatchDetailViewController.shareAction(_:)), forControlEvents: .TouchUpInside)
+		button.showsTouchWhenHighlighted = true
+		button.setImage(UIImage(named: "imgInvite2Light"), forState: .Normal)
+		button.imageEdgeInsets = UIEdgeInsetsMake(2, 2, 2, 2);
 		
-		let button = UIButton(type: .Custom)
+		let shareButton = UIBarButtonItem(customView: button)
+		
+		button = UIButton(type: .Custom)
 		button.frame = CGRectMake(0, 0, 36, 36)
 		button.addTarget(self, action: #selector(PatchDetailViewController.moreAction(_:)), forControlEvents: .TouchUpInside)
 		button.showsTouchWhenHighlighted = true
@@ -660,7 +667,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		/* Map button */
 		if self.entity?.location != nil {
 			
-			let button = UIButton(type: .Custom)
+			button = UIButton(type: .Custom)
 			button.frame = CGRectMake(0, 0, 48, 48)
 			button.addTarget(self, action: #selector(PatchDetailViewController.mapAction(_:)), forControlEvents: .TouchUpInside)
 			button.showsTouchWhenHighlighted = true
@@ -701,14 +708,14 @@ class PatchDetailViewController: BaseDetailViewController {
 			/* Do we have an active invite and a non-member? */
 			if self.inviteActive  {
 					
-				if !(header.contextView is UserInviteView) {
-					header.contextView.removeFromSuperview()
+				if !(header.contextButton is UserInviteView) {
+					header.contextButton.removeFromSuperview()
 					let url = self.inputReferrerPhotoUrl != nil ? NSURL(string: self.inputReferrerPhotoUrl!) : nil
 					let inviteView = UserInviteView()
 					inviteView.bind("\(self.inputReferrerName!) has invited you to join this patch.", photoUrl: url, name: self.inputReferrerName)
 					self.inviteView = inviteView
-					header.contextView = inviteView
-					header.contextGroup.addSubview(header.contextView)
+					header.contextButton = inviteView
+					header.buttonGroup.addSubview(header.contextButton)
 					
 				}
 
@@ -747,14 +754,14 @@ class PatchDetailViewController: BaseDetailViewController {
 				return
 			}
 			
-			if !(header.contextView is UIButton) {
-				header.contextView.removeFromSuperview()
-				header.contextView = AirFeaturedButton()
-				header.contextGroup.addSubview(header.contextView)
+			if !(header.contextButton is UIButton) {
+				header.contextButton.removeFromSuperview()
+				header.contextButton = AirFeaturedButton()
+				header.buttonGroup.addSubview(header.contextButton)
 				self.inviteView = nil
 			}
 			
-			if let button = header.contextView as? UIButton {
+			if let button = header.contextButton as? UIButton {
 				self.contextAction = .None
 				if isUserOwner() {
 					if patch.countPendingValue > 0 {

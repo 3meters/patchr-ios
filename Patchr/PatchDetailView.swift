@@ -26,12 +26,11 @@ class PatchDetailView: BaseDetailView {
 	var visibility			= AirLabelDisplay()
 	var lockImage			= AirImageView(frame: CGRectZero)
 	var mutedImage			= AirImageView(frame: CGRectZero)
-	
-	var membersButton 		= AirLinkButton()
-	var photosButton  		= AirLinkButton()
-	
-	var contextGroup		= AirRuleView()
-	var contextView			: UIView = AirFeaturedButton()
+
+	var buttonGroup         = AirRuleView()
+	var membersButton       = AirLinkButton()
+	var photosButton        = AirLinkButton()
+	var contextButton		: UIView = AirFeaturedButton()
 	
 	var infoGroup			= AirRuleView()
 	
@@ -65,7 +64,7 @@ class PatchDetailView: BaseDetailView {
 	
 	init(contextView: UIView!) {
 		super.init(frame: CGRectZero)
-		self.contextView = contextView
+		self.contextButton = contextView
 		initialize()
 	}
 	
@@ -104,18 +103,18 @@ class PatchDetailView: BaseDetailView {
 		let gradientHeight = self.bannerGroup.width() * 0.35
 		self.gradient.frame = CGRectMake(0, self.bannerGroup.height() - gradientHeight, self.bannerGroup.width(), gradientHeight)
 		
-		self.photosButton.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: (viewWidth / 2) - 1, height: 48)
-		self.membersButton.anchorTopRightWithRightPadding(0, topPadding: 0, width: viewWidth / 2, height: 48)
+		self.photosButton.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: (viewWidth / 2) - 1, height: 40)
+		self.membersButton.anchorTopRightWithRightPadding(0, topPadding: 0, width: viewWidth / 2, height: 40)
 
 		/* Context Group */
-		if self.contextView is UIButton {
-			self.contextGroup.alignUnder(self.bannerGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: !self.contextView.hidden ? 96 : 48)
-			self.contextView.anchorBottomCenterWithBottomPadding(0, width: viewWidth, height: !self.contextView.hidden ? 48 : 0)
+		if self.contextButton is UIButton {
+			self.buttonGroup.alignUnder(self.bannerGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: !self.contextButton.hidden ? 96 : 40)
+			self.contextButton.anchorBottomCenterWithBottomPadding(6, width: viewWidth - 12, height: !self.contextButton.hidden ? 44 : 0)
 		}
-		else if self.contextView is UserInviteView {
-			self.contextView.resizeToFitSubviews()
-			self.contextGroup.alignUnder(self.bannerGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: self.contextView.height() + 32 + 48)
-			self.contextView.anchorBottomCenterWithBottomPadding(16, width: viewWidth - 32, height: self.contextView.height() + 32)
+		else if self.contextButton is UserInviteView {
+			self.contextButton.resizeToFitSubviews()
+			self.buttonGroup.alignUnder(self.bannerGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: self.contextButton.height() + 32 + 48)
+			self.contextButton.anchorBottomCenterWithBottomPadding(16, width: viewWidth - 32, height: self.contextButton.height() + 32)
 		}
 		
 		/* Info Group */
@@ -196,12 +195,12 @@ class PatchDetailView: BaseDetailView {
 		self.contentGroup.addSubview(self.bannerGroup)
 		self.contentGroup.addSubview(self.infoGroup)
 		
-		self.contextGroup.addSubview(self.photosButton)
-		self.contextGroup.addSubview(self.membersButton)
-		self.contextGroup.addSubview(self.contextView)
+		self.buttonGroup.addSubview(self.photosButton)
+		self.buttonGroup.addSubview(self.membersButton)
+		self.buttonGroup.addSubview(self.contextButton)
 		
 		self.addSubview(contentGroup)
-		self.addSubview(contextGroup)
+		self.addSubview(buttonGroup)
 		
 		self.clipsToBounds = false
 		self.backgroundColor = Theme.colorBackgroundForm
@@ -286,8 +285,7 @@ class PatchDetailView: BaseDetailView {
 		self.membersButton.contentHorizontalAlignment = .Center
 		self.membersButton.backgroundColor = Colors.gray95pcntColor
 		
-		self.contextView.layer.cornerRadius = 0
-		self.contextView.hidden = true
+		self.contextButton.hidden = true
 
 		self.bannerGroup.clipsToBounds = true
 	}
@@ -302,7 +300,7 @@ class PatchDetailView: BaseDetailView {
 			
 			self.name.text = entity.name
 			self.type.text = entity.type == nil ? "PATCH" : entity.type.uppercaseString + " PATCH"
-			self.settings.text = entity.lockedValue ? "Only owners can post" : nil
+			self.settings.text = entity.lockedValue ? "Only owners can post messages" : nil
 			
 			if entity.photo != nil {
 				self.photo.setImageWithPhoto(entity.photo, animate: false)
@@ -343,7 +341,7 @@ class PatchDetailView: BaseDetailView {
 			/* Info indicators */
 			self.infoLockImage.hidden = (entity.visibility == "public")
 			self.infoVisibility.hidden = (entity.visibility == "public")
-			self.infoSettings.text = entity.lockedValue ? "Only owners can post" : nil
+			self.infoSettings.text = entity.lockedValue ? "Only owners can post messages" : nil
 			
 			self.infoDescription.text = entity.description_
 			self.infoOwner.text = entity.creator?.name ?? "Deleted"

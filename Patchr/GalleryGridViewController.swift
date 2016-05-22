@@ -121,9 +121,9 @@ class GalleryGridViewController: UICollectionViewController {
 		self.activity?.accessibilityIdentifier = "activity_view"
 		
 		/* Navigation bar buttons */
-		let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: #selector(PhotoPickerViewController.cancelAction(_:)))
+		let cancelButton = UIBarButtonItem(title: "Close", style: .Plain, target: self, action: #selector(PhotoPickerViewController.cancelAction(_:)))
 		cancelButton.accessibilityIdentifier = "nav_cancel_button"
-		self.navigationItem.leftBarButtonItems = [cancelButton]
+		self.navigationItem.rightBarButtonItems = [cancelButton]
 	}
 	
 	func loadPhotos() {
