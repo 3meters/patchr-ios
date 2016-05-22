@@ -624,7 +624,7 @@ class MessageDetailViewController: BaseViewController {
         /* Photo */
 
 		if inputMessage!.photo != nil {
-            if !self.photo.isLinkedToPhoto(self.inputMessage!.photo) {
+            if !self.photo.linkedToPhoto(self.inputMessage!.photo) {
                 self.photo.setImageWithPhoto(self.inputMessage!.photo)
             }
 		}

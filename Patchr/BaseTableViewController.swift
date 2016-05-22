@@ -212,11 +212,21 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 			}
 		}
 		
+		if let recognizer = sender as? UITapGestureRecognizer,
+			let control = recognizer.view as? AirImageView,
+			let container = control.superview as? BaseView {
+			if control.image != nil {
+				UIShared.showPhoto(control.image, animateFromView: control, viewController: self, entity: container.entity)
+			}
+		}
+		
 		if let control = sender as? UIButton, let container = sender?.superview as? BaseView {
 			if control.imageView!.image != nil {
 				UIShared.showPhoto(control.imageView!.image, animateFromView: control, viewController: self, entity: container.entity)
 			}
 		}
+		
+		
 	}
 	
 	func willFetchQuery(notification: NSNotification) {
@@ -456,7 +466,8 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 				let label = view.description_ as! TTTAttributedLabel
 				label.delegate = self
 			}
-			view.photo?.addTarget(self, action: #selector(BaseTableViewController.photoAction(_:)), forControlEvents: .TouchUpInside)
+			view.photo?.userInteractionEnabled = true
+			view.photo?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(photoAction(_:))))
 			return cell
 		}
 		else if self.listType == .Patches {

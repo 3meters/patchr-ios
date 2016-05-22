@@ -189,10 +189,18 @@ class PatchView: BaseView {
 	}
 	
 	private func bindPhoto(photoUrl: NSURL?, name: String?) {
-		let options: SDWebImageOptions = [.RetryFailed, .LowPriority,/* .ProgressiveDownload */]
+		
+		if self.photo.image != nil
+			&& self.photo.linkedPhotoUrl != nil
+			&& photoUrl != nil
+			&& self.photo.linkedPhotoUrl?.absoluteString == photoUrl?.absoluteString {
+			return
+		}
+
 		self.photo.image = nil
+		
 		if photoUrl != nil {
-			self.photo.sd_setImageWithURL(photoUrl, placeholderImage: nil, options: options)
+			self.photo.setImageWithUrl(photoUrl!, animate: false)
 			self.photo.showGradient = true
 		}
 		else if name != nil {

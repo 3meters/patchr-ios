@@ -14,7 +14,7 @@ class MessageView: BaseView {
 	var showPatchName	= true
 	
 	var description_	: UILabel?
-	var photo			: UIButton?
+	var photo			: AirImageView?
 	var isShare			= false
 	
 	var patchName		= AirLabelDisplay()
@@ -173,13 +173,16 @@ class MessageView: BaseView {
 
 		self.addSubview(self.description_!)
 		
-		/* Photo */
-		self.photo = UIButton(frame: CGRectZero)
-		self.photo!.imageView!.contentMode = UIViewContentMode.ScaleAspectFill
+		/* Photo: give initial size in case the image displays before call to layoutSubviews		 */
+		let columnLeft = CGFloat(48 + 8)
+		let columnWidth = min(CONTENT_WIDTH_MAX, UIScreen.mainScreen().bounds.size.width) - columnLeft
+		let photoHeight = columnWidth * 0.5625		// 16:9 aspect ratio
+		
+		self.photo = AirImageView(frame: CGRectMake(0, 0, columnWidth, photoHeight))
+		self.photo!.clipsToBounds = true
 		self.photo!.contentMode = .ScaleAspectFill
-		self.photo!.contentHorizontalAlignment = .Fill
-		self.photo!.contentVerticalAlignment = .Fill
 		self.photo!.backgroundColor = Theme.colorBackgroundImage
+		
 		self.addSubview(self.photo!)
 		
 		/* Patch name */
@@ -255,9 +258,8 @@ class MessageView: BaseView {
 		
 		if let photo = entity.photo {
 			self.photo?.hidden = false
-			let options: SDWebImageOptions = [.RetryFailed, .LowPriority, /* .ProgressiveDownload */]
 			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.standard)
-			self.photo?.sd_setImageWithURL(photoUrl, forState: UIControlState.Normal, placeholderImage: nil, options: options)
+			bindPhoto(photoUrl)
 		}
 		
 		self.userName.text = entity.creator?.name ?? "Deleted"
@@ -301,5 +303,17 @@ class MessageView: BaseView {
 		}
 		
 		self.setNeedsLayout()	// Needed because binding can change the layout
+	}
+	
+	private func bindPhoto(photoUrl: NSURL) {
+		
+		if self.photo?.image != nil
+			&& self.photo!.linkedPhotoUrl != nil
+			&& self.photo!.linkedPhotoUrl?.absoluteString == photoUrl.absoluteString {
+			return
+		}
+		
+		self.photo?.image = nil
+		self.photo!.setImageWithUrl(photoUrl, animate: true)
 	}
 }

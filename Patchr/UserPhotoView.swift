@@ -89,40 +89,37 @@ class UserPhotoView: UIControl {
 		
 		if photoUrl != nil {
 			
-			dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-				
-				let options: SDWebImageOptions = [.RetryFailed, .LowPriority, .AvoidAutoSetImage,/* .ProgressiveDownload*/]
-				
-				self.photo.sd_setImageWithURL(photoUrl
-					, placeholderImage: nil
-					, options: options
-					, completed: { [weak self] image, error, cacheType, url in
-												
-						if self != nil && error == nil {
+			let options: SDWebImageOptions = [.RetryFailed, .LowPriority, .AvoidAutoSetImage,/* .ProgressiveDownload*/]
+			
+			self.photo.sd_setImageWithURL(photoUrl
+				, placeholderImage: nil
+				, options: options
+				, completed: { [weak self] image, error, cacheType, url in
+											
+					if self != nil && error == nil {
+						
+						dispatch_async(dispatch_get_main_queue()) {
 							
-							dispatch_async(dispatch_get_main_queue()) {
-								
-								self?.photo.linkedPhotoUrl = photoUrl
-								self?.name.hidden = true
-								self?.photo.hidden = false
-								
-								if animate && self != nil {
-									UIView.transitionWithView(self!,
-										duration: 0.4,
-										options: UIViewAnimationOptions.TransitionCrossDissolve,
-										animations: {
-											self?.photo.image = image
-										},
-										completion: nil)
-								}
-								else {
-									self?.photo.image = image
-								}
+							self?.photo.linkedPhotoUrl = photoUrl
+							self?.name.hidden = true
+							self?.photo.hidden = false
+							
+							if animate && self != nil {
+								UIView.transitionWithView(self!,
+									duration: 0.4,
+									options: UIViewAnimationOptions.TransitionCrossDissolve,
+									animations: {
+										self?.photo.image = image
+									},
+									completion: nil)
+							}
+							else {
+								self?.photo.image = image
 							}
 						}
 					}
-				)
-			}
+				}
+			)
 		}
 		else if name != nil {
 			self.name.text = Utils.initialsFromName(name!).uppercaseString

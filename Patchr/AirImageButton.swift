@@ -56,13 +56,13 @@ class AirImageButton: UIButton {
 		self.progress.anchorInCenterWithWidth(self.progressSize, height: self.progressSize)
 	}
 	
-    func isLinkedToPhoto(photo: Photo) -> Bool {
+    func linkedToPhoto(photo: Photo) -> Bool {
         if self.linkedPhotoUrl == nil {
             return false
         }
         
         let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory)
-        return (linkedPhotoUrl!.absoluteString == photoUrl.absoluteString)
+        return (self.linkedPhotoUrl!.absoluteString == photoUrl.absoluteString)
     }
     
     func setImageWithPhoto(photo: Photo, animate: Bool = true) {

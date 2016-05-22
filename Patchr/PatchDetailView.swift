@@ -103,12 +103,12 @@ class PatchDetailView: BaseDetailView {
 		let gradientHeight = self.bannerGroup.width() * 0.35
 		self.gradient.frame = CGRectMake(0, self.bannerGroup.height() - gradientHeight, self.bannerGroup.width(), gradientHeight)
 		
-		self.photosButton.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: (viewWidth / 2) - 1, height: 40)
-		self.membersButton.anchorTopRightWithRightPadding(0, topPadding: 0, width: viewWidth / 2, height: 40)
+		self.photosButton.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: (viewWidth / 2) - 1, height: 44)
+		self.membersButton.anchorTopRightWithRightPadding(0, topPadding: 0, width: viewWidth / 2, height: 44)
 
 		/* Context Group */
 		if self.contextButton is UIButton {
-			self.buttonGroup.alignUnder(self.bannerGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: !self.contextButton.hidden ? 96 : 40)
+			self.buttonGroup.alignUnder(self.bannerGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: !self.contextButton.hidden ? 100 : 44)
 			self.contextButton.anchorBottomCenterWithBottomPadding(6, width: viewWidth - 12, height: !self.contextButton.hidden ? 44 : 0)
 		}
 		else if self.contextButton is UserInviteView {

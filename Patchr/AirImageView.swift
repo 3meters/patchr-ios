@@ -97,12 +97,12 @@ class AirImageView: UIImageView {
     }
 	
     func linkedToPhoto(photo: Photo) -> Bool {
-        if linkedPhotoUrl == nil {
+        if self.linkedPhotoUrl == nil {
             return false
         }
         
         let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory)
-        return (linkedPhotoUrl!.absoluteString == photoUrl.absoluteString)
+        return (self.linkedPhotoUrl!.absoluteString == photoUrl.absoluteString)
     }
     
     func setImageWithPhoto(photo: Photo, animate: Bool = true) {
@@ -195,8 +195,12 @@ class AirImageView: UIImageView {
         stopActivity()
 		
         if error != nil {
+			
 			Log.w("Image fetch failed: " + error!.localizedDescription)
 			Log.w("Failed url: \(url?.absoluteString)")
+			
+			self.linkedPhotoUrl = nil
+
 			if error!.code == HTTPStatusCode.NotFound.rawValue {
 				NSNotificationCenter.defaultCenter().postNotificationName(Events.ImageNotFound, object: self)
 				UIShared.Toast("Image not found")
@@ -205,6 +209,7 @@ class AirImageView: UIImageView {
 				NSNotificationCenter.defaultCenter().postNotificationName(Events.ImageNotFound, object: self)
 				UIShared.Toast("Image format not supported")
 			}
+			
 			return
         }
         else {

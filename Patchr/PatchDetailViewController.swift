@@ -651,7 +651,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		button.addTarget(self, action: #selector(PatchDetailViewController.shareAction(_:)), forControlEvents: .TouchUpInside)
 		button.showsTouchWhenHighlighted = true
 		button.setImage(UIImage(named: "imgInvite2Light"), forState: .Normal)
-		button.imageEdgeInsets = UIEdgeInsetsMake(2, 2, 2, 2);
+		button.imageEdgeInsets = UIEdgeInsetsMake(3, 3, 3, 3);
 		
 		let shareButton = UIBarButtonItem(customView: button)
 		
@@ -834,10 +834,8 @@ class PatchDetailViewController: BaseDetailViewController {
 						
 						if self.tableView.tableHeaderView != nil {
 							let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
-							let viewHeight = (viewWidth * 0.625) + (self.contextAction == .None ? 48 : 96)
-							self.tableView.beginUpdates()
+							let viewHeight = (viewWidth * 0.625) + (self.contextAction == .None ? 44 : 100)
 							self.tableView.tableHeaderView!.frame = CGRectMake(0, 0, viewWidth, viewHeight)
-							self.tableView.endUpdates()
 						}
 					}
 				}
