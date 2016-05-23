@@ -52,7 +52,7 @@ class NotificationView: BaseView {
 			self.description_?.sizeToFit()
 			self.description_?.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: self.description_!.height())
 		}
-		else if self.entity?.description_ == nil { // Photo only
+		else if self.description_?.attributedText == nil { // Photo only
 			self.photo?.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: photoHeight)
 		}
 		else { // Text and photo
