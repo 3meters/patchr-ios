@@ -1,4 +1,3 @@
-
 /*
  * DataStore
  *
@@ -29,7 +28,12 @@ class DataController: NSObject {
 	static let proxibase = Proxibase()
 
 	var coreDataStack: CoreDataStack!
-
+	
+	/*
+	 * Replaced whenever CoreDataStack is allocated. Allocation on init and 
+	 * when reset is called. reset is called by UserController.clearStore.
+	 * clearStore is called when user is deleted or logged out.
+	 */
 	var mainContext: NSManagedObjectContext!
 	
     var activityDateInsertDeletePatch	: Int64
@@ -248,7 +252,7 @@ class DataController: NSObject {
 		/* 
 		 * Called on background thread 
 		 */
-		let query = self.mainContext.objectWithID(queryId) as! Query
+		let query = self.mainContext.objectWithID(queryId) as! Query // Always returns object, throws accessing property and doesn't exist
 		
         if query.name == DataStoreQueryName.NotificationsForCurrentUser.rawValue && !UserController.instance.authenticated {
             completion(queryItems: [], query: query, error: nil)
