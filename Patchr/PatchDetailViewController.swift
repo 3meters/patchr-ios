@@ -28,7 +28,7 @@ class PatchDetailViewController: BaseDetailViewController {
 	var processing				= false
 	
 	var actionButton			: AirRadialMenu!
-	var tabBar					: MainTabBarController!
+	var tabBar					: MainTabBarController?
 	
 	var inputReferrerName		: String?
 	var inputReferrerPhotoUrl	: String?
@@ -80,9 +80,11 @@ class PatchDetailViewController: BaseDetailViewController {
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)	// Clears firstAppearance
 		
-		if self.actionButton != nil && self.entity != nil && (!self.entity!.lockedValue || isUserOwner()) {
-			self.tabBar.setActionButton(self.actionButton)
-			self.tabBar.showActionButton()
+		if self.tabBar != nil {
+			if self.actionButton != nil && self.entity != nil && (!self.entity!.lockedValue || isUserOwner()) {
+				self.tabBar?.setActionButton(self.actionButton)
+				self.tabBar?.showActionButton()
+			}
 		}
 		
 		if self.autoWatchOnAppear {
@@ -99,7 +101,9 @@ class PatchDetailViewController: BaseDetailViewController {
 	
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
-		self.tabBar.setActionButton(nil)
+		if self.tabBar != nil {
+			self.tabBar?.setActionButton(nil)
+		}
 	}
 	
 	/*--------------------------------------------------------------------------------------------
@@ -519,7 +523,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		 */
 		if ((notification.userInfo?["deleted"]) == nil) {
 			if self.entity!.lockedValue {
-				self.tabBar.setActionButton(nil)
+				self.tabBar?.setActionButton(nil)
 			}
 			bindContextView()
 		}
@@ -566,6 +570,7 @@ class PatchDetailViewController: BaseDetailViewController {
 	func initialize() {
 		
 		Reporting.screen("PatchDetail")
+		
 		self.view.accessibilityIdentifier = View.PatchDetail
 
 		self.queryName = DataStoreQueryName.MessagesForPatch.rawValue
@@ -573,9 +578,10 @@ class PatchDetailViewController: BaseDetailViewController {
 		
 		self.header = PatchDetailView()
 		self.tableView = AirTableView(frame: self.tableView.frame, style: .Plain)
-		self.tabBar = self.tabBarController as! MainTabBarController
-		
-		configureActionButton()
+		self.tabBar = self.tabBarController as? MainTabBarController
+		if self.tabBar != nil {
+			configureActionButton()
+		}
 		
 		let header = self.header as! PatchDetailView
 		
@@ -686,7 +692,7 @@ class PatchDetailViewController: BaseDetailViewController {
 	func configureActionButton() {
 		
 		/* Action button */
-		self.actionButton = AirRadialMenu(attachedToView: self.tabBar.view)
+		self.actionButton = AirRadialMenu(attachedToView: self.tabBar!.view)
 		self.actionButton.bounds.size = CGSizeMake(56, 56)
 		self.actionButton.autoresizingMask = [.FlexibleRightMargin, .FlexibleLeftMargin, .FlexibleBottomMargin, .FlexibleTopMargin]
 		self.actionButton.centerView.gestureRecognizers?.forEach(self.actionButton.centerView.removeGestureRecognizer) /* Remove default tap regcognizer */
@@ -1048,11 +1054,11 @@ extension PatchDetailViewController {
 		if scrollView.contentSize.height > scrollView.height() {
 			if(self.lastContentOffset > scrollView.contentOffset.y)
 				&& self.lastContentOffset < (scrollView.contentSize.height - scrollView.frame.height) {
-				self.tabBar.showActionButton()
+				self.tabBar?.showActionButton()
 			}
 			else if (self.lastContentOffset < scrollView.contentOffset.y
 				&& scrollView.contentOffset.y > 0) {
-				self.tabBar.hideActionButton()
+				self.tabBar?.hideActionButton()
 			}
 		}
 		

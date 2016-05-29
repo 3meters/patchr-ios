@@ -114,7 +114,7 @@ class PatchDetailView: BaseDetailView {
 		else if self.contextButton is UserInviteView {
 			self.contextButton.resizeToFitSubviews()
 			self.buttonGroup.alignUnder(self.bannerGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: self.contextButton.height() + 32 + 48)
-			self.contextButton.anchorBottomCenterWithBottomPadding(16, width: viewWidth - 32, height: self.contextButton.height() + 32)
+			self.contextButton.anchorBottomCenterWithBottomPadding(16, width: viewWidth - 32, height: self.contextButton.height())
 		}
 		
 		/* Info Group */

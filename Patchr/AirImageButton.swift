@@ -122,22 +122,19 @@ class AirImageButton: UIButton {
 			startProgress()
 		}
 		
-		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-			
-			/* Stash the url we are loading so we can check for a match later when download is completed. */
-			self.linkedPhotoUrl = url
-			let options: SDWebImageOptions = [.RetryFailed, .LowPriority, .AvoidAutoSetImage, /* .ProgressiveDownload */]
-			
-			self.sd_setImageWithURL(url
-				, forState:UIControlState.Normal
-				, placeholderImage: nil
-				, options: options) {
-				[weak self] image, error, cacheType, url in
-					dispatch_async(dispatch_get_main_queue()) {
-						self?.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
-					}
+		/* Stash the url we are loading so we can check for a match later when download is completed. */
+		self.linkedPhotoUrl = url
+		let options: SDWebImageOptions = [.RetryFailed, .LowPriority, .AvoidAutoSetImage, /* .ProgressiveDownload */]
+		
+		self.sd_setImageWithURL(url
+			, forState:UIControlState.Normal
+			, placeholderImage: nil
+			, options: options) {
+			[weak self] image, error, cacheType, url in
+				dispatch_async(dispatch_get_main_queue()) {
+					self?.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
 				}
-		}
+			}
 	}
 
     func imageCompletion(image: UIImage?, error: NSError?, cacheType: SDImageCacheType?, url: NSURL?, animate: Bool = true) -> Void {

@@ -176,9 +176,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
-//		if let bar = self.tabBarController as? MainTabBarController {
-//			bar.setActionDelegate(nil)
-//		}
 	}
 
     override func viewDidDisappear(animated: Bool) {
