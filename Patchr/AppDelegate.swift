@@ -123,7 +123,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
         AFNetworkActivityIndicatorManager.sharedManager().enabled = true
 		
         /* Default config for AWS */
-        // let credProvider = AWSCognitoCredentialsProvider(regionType: CognitoRegionType, identityPoolId: COGNITO_POOLID)
         let credProvider  = AWSStaticCredentialsProvider(accessKey: keys.awsS3Key(), secretKey: keys.awsS3Secret())
         let serviceConfig = AWSServiceConfiguration(region: AWSRegionType(rawValue: 3/*'us-west-2'*/)!, credentialsProvider: credProvider)
         AWSServiceManager.defaultServiceManager().defaultServiceConfiguration = serviceConfig
@@ -144,6 +143,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 		FBSDKProfile.enableUpdatesOnAccessTokenChange(true)
 		
 		/* Initialize Branch: The deepLinkHandler gets called every time the app opens. */
+		Branch.getInstance().setDebug()
 		Branch.getInstance().initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
 			if error == nil {
 				/* A hit could mean a deferred link match */
@@ -190,12 +190,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 			return true
 		}
 		
-		/* See if Facebook claims it as part of interaction with native Facebook client and Facebook dialogs */
-		if FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation) {
-			Log.d("Url passed to openUrl was intended for Facebook: \(url.absoluteString)", breadcrumb: true)
-			return true
-		}
-		
 		/* If the Branch or Facebook did not handle the incoming URL, check it for app link data */
 		let parsedUrl: BFURL = BFURL(inboundURL: url, sourceApplication: sourceApplication)
 		if (parsedUrl.appLinkData != nil) {
@@ -203,6 +197,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 				Log.d("Facebook detected a deep link in openUrl: \(url.absoluteString)", breadcrumb: true)
 				routeDeepLink(params, error: nil)
 			}
+			return true
+		}
+		
+		/* See if Facebook claims it as part of interaction with native Facebook client and Facebook dialogs */
+		if FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation) {
+			Log.d("Url passed to openUrl was intended for Facebook: \(url.absoluteString)", breadcrumb: true)
 			return true
 		}
 		
@@ -251,11 +251,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 	
 	func application(application: UIApplication, continueUserActivity userActivity: NSUserActivity, restorationHandler: ([AnyObject]?) -> Void) -> Bool {
 		/* 
-		 * This is the initial entry point for universal links. 
-		 * Pass the url to the branch deep link handler we registered in didFinishLaunchingWithOptions.
+		 * This is the initial entry point for universal links vs openURL for old school uri schemes.
 		 */
-		Branch.getInstance().continueUserActivity(userActivity)
-		return true
+		return Branch.getInstance().continueUserActivity(userActivity) // Returns true if call was caused by a branch universal link
 	}
 	
 	func applicationWillEnterForeground(application: UIApplication) {
