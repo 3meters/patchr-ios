@@ -143,7 +143,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 		FBSDKProfile.enableUpdatesOnAccessTokenChange(true)
 		
 		/* Initialize Branch: The deepLinkHandler gets called every time the app opens. */
-		Branch.getInstance().setDebug()
 		Branch.getInstance().initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
 			if error == nil {
 				/* A hit could mean a deferred link match */
