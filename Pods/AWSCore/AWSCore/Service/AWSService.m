@@ -21,79 +21,43 @@
 #import "AWSLogging.h"
 #import "AWSCategory.h"
 
-NSString *const AWSiOSSDKVersion = @"2.3.5";
+NSString *const AWSiOSSDKVersion = @"2.4.7";
+NSString *const AWSServiceErrorDomain = @"com.amazonaws.AWSServiceErrorDomain";
+
 static NSString *const AWSServiceConfigurationUnknown = @"Unknown";
 
 #pragma mark - AWSService
 
 @implementation AWSService
 
-+ (void)initializeIfNeededWithDefaultRegionType:(AWSRegionType)defaultRegionType
-                      cognitoIdentityRegionType:(AWSRegionType)cognitoIdentityRegionType
-                          cognitoIdentityPoolId:(NSString *)cognitoIdentityPoolId {
++ (NSDictionary<NSString *, NSNumber *> *)errorCodeDictionary {
+    static NSDictionary *_errorCodeDictionary = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        // Performs some basic configuration check.
-        if (cognitoIdentityPoolId
-            && defaultRegionType != AWSRegionUnknown
-            && cognitoIdentityRegionType != AWSRegionUnknown) {
-            // Sets up the AWS Mobile SDK.
-            AWSCognitoCredentialsProvider *credentialsProvider = [[AWSCognitoCredentialsProvider alloc] initWithRegionType:cognitoIdentityRegionType
-                                                                                                            identityPoolId:cognitoIdentityPoolId];
-            AWSServiceConfiguration *configuration = [[AWSServiceConfiguration alloc] initWithRegion:defaultRegionType
-                                                                                 credentialsProvider:credentialsProvider];
-            [configuration addUserAgentProductToken:@"fabric"];
-            AWSServiceManager.defaultServiceManager.defaultServiceConfiguration = configuration;
-            AWSLogInfo(@"The default Cognito credentials provider and service configuration were successfully initialized.");
-        } else {
-            // The configuration values from info.plist seem invalid.
-            AWSLogWarn(@"Could not find valid 'AWSDefaultRegionType', 'AWSCognitoRegionType', and 'AWSCognitoIdentityPoolId' values in info.plist. Unable to set the default Cognito credentials provider and service configuration. Please follow the instructions on this website and manually set up the AWS Mobile SDK for iOS. http://docs.aws.amazon.com/mobile/sdkforios/developerguide/setup.html");
-        }
+        _errorCodeDictionary = @{
+                                @"RequestTimeTooSkewed" : @(AWSServiceErrorRequestTimeTooSkewed),
+                                @"InvalidSignatureException" : @(AWSServiceErrorInvalidSignatureException),
+                                @"RequestExpired" : @(AWSServiceErrorRequestExpired),
+                                @"SignatureDoesNotMatch" : @(AWSServiceErrorSignatureDoesNotMatch),
+                                @"AuthFailure" : @(AWSServiceErrorAuthFailure),
+                                @"AccessDeniedException" : @(AWSServiceErrorAccessDeniedException),
+                                @"UnrecognizedClientException" : @(AWSServiceErrorUnrecognizedClientException),
+                                @"IncompleteSignature" : @(AWSServiceErrorIncompleteSignature),
+                                @"InvalidClientTokenId" : @(AWSServiceErrorInvalidClientTokenId),
+                                @"MissingAuthenticationToken" : @(AWSServiceErrorMissingAuthenticationToken),
+                                @"AccessDenied" : @(AWSServiceErrorAccessDenied),
+                                @"ExpiredToken" : @(AWSServiceErrorExpiredToken),
+                                @"InvalidAccessKeyId" : @(AWSServiceErrorInvalidAccessKeyId),
+                                @"InvalidToken" : @(AWSServiceErrorInvalidToken),
+                                @"TokenRefreshRequired" : @(AWSServiceErrorTokenRefreshRequired),
+                                @"AccessFailure" : @(AWSServiceErrorAccessFailure),
+                                @"AuthMissingFailure" : @(AWSServiceErrorAuthMissingFailure),
+                                @"Throttling" : @(AWSServiceErrorThrottling),
+                                @"ThrottlingException" : @(AWSServiceErrorThrottlingException),
+                                };
     });
-}
 
-/**
- Converts a region string to AWSRegionType.
- */
-+ (AWSRegionType)regionTypeFromString:(NSString *)regionTypeString {
-    if ([regionTypeString isEqualToString:@"AWSRegionUSEast1"]) {
-        return AWSRegionUSEast1;
-    }
-    if ([regionTypeString isEqualToString:@"AWSRegionUSWest1"]) {
-        return AWSRegionUSWest1;
-    }
-    if ([regionTypeString isEqualToString:@"AWSRegionUSWest2"]) {
-        return AWSRegionUSWest2;
-    }
-    if ([regionTypeString isEqualToString:@"AWSRegionEUWest1"]) {
-        return AWSRegionEUWest1;
-    }
-    if ([regionTypeString isEqualToString:@"AWSRegionEUCentral1"]) {
-        return AWSRegionEUCentral1;
-    }
-    if ([regionTypeString isEqualToString:@"AWSRegionAPSoutheast1"]) {
-        return AWSRegionAPSoutheast1;
-    }
-    if ([regionTypeString isEqualToString:@"AWSRegionAPNortheast1"]) {
-        return AWSRegionAPNortheast1;
-    }
-    if ([regionTypeString isEqualToString:@"AWSRegionAPNortheast2"]) {
-        return AWSRegionAPNortheast2;
-    }
-    if ([regionTypeString isEqualToString:@"AWSRegionAPSoutheast2"]) {
-        return AWSRegionAPSoutheast2;
-    }
-    if ([regionTypeString isEqualToString:@"AWSRegionSAEast1"]) {
-        return AWSRegionSAEast1;
-    }
-    /*
-     Amazon Cognito Identity is not support in the China region.
-     if ([regionTypeString isEqualToString:@"AWSRegionCNNorth1"]) {
-     return AWSRegionCNNorth1;
-     }
-     */
-
-    return AWSRegionUnknown;
+    return _errorCodeDictionary;
 }
 
 @end
@@ -132,18 +96,6 @@ static NSString *const AWSServiceConfigurationUnknown = @"Unknown";
     });
 }
 
-- (id)serviceForKey:(id)key {
-    return [self.dictionary objectForKey:key];
-}
-
-- (void)setService:(id)service forKey:(id)key {
-    [self.dictionary setObject:service forKey:key];
-}
-
-- (void)removeServiceForKey:(id)key {
-    [self.dictionary removeObjectForKey:key];
-}
-
 @end
 
 #pragma mark - AWSServiceConfiguration
@@ -173,13 +125,6 @@ static NSString *const AWSServiceConfigurationUnknown = @"Unknown";
     }
 
     return self;
-}
-
-+ (instancetype)configurationWithRegion:(AWSRegionType)regionType
-                    credentialsProvider:(id<AWSCredentialsProvider>)credentialsProvider {
-    AWSServiceConfiguration *configuration = [[AWSServiceConfiguration alloc] initWithRegion:regionType
-                                                                         credentialsProvider:credentialsProvider];
-    return configuration;
 }
 
 + (NSString *)baseUserAgent {
@@ -269,6 +214,7 @@ static NSString *const AWSRegionNameAPSoutheast1 = @"ap-southeast-1";
 static NSString *const AWSRegionNameAPNortheast1 = @"ap-northeast-1";
 static NSString *const AWSRegionNameAPNortheast2 = @"ap-northeast-2";
 static NSString *const AWSRegionNameAPSoutheast2 = @"ap-southeast-2";
+static NSString *const AWSRegionNameAPSouth1 = @"ap-south-1";
 static NSString *const AWSRegionNameSAEast1 = @"sa-east-1";
 static NSString *const AWSRegionNameCNNorth1 = @"cn-north-1";
 static NSString *const AWSRegionNameUSGovWest1 = @"us-gov-west-1";
@@ -277,6 +223,7 @@ static NSString *const AWSServiceNameAPIGateway = @"execute-api";
 static NSString *const AWSServiceNameAutoScaling = @"autoscaling";
 static NSString *const AWSServiceNameCloudWatch = @"monitoring";
 static NSString *const AWSServiceNameCognitoIdentity = @"cognito-identity";
+static NSString *const AWSServiceNameCognitoIdentityProvider = @"cognito-idp";
 static NSString *const AWSServiceNameCognitoSync = @"cognito-sync";
 static NSString *const AWSServiceNameDynamoDB = @"dynamodb";
 static NSString *const AWSServiceNameEC2 = @"ec2";
@@ -369,6 +316,8 @@ static NSString *const AWSServiceNameSTS = @"sts";
             return AWSRegionNameAPNortheast1;
         case AWSRegionAPNortheast2:
             return AWSRegionNameAPNortheast2;
+        case AWSRegionAPSouth1:
+            return AWSRegionNameAPSouth1;
         case AWSRegionSAEast1:
             return AWSRegionNameSAEast1;
         case AWSRegionCNNorth1:
@@ -390,6 +339,8 @@ static NSString *const AWSServiceNameSTS = @"sts";
             return AWSServiceNameCloudWatch;
         case AWSServiceCognitoIdentity:
             return AWSServiceNameCognitoIdentity;
+        case AWSServiceCognitoIdentityProvider:
+            return AWSServiceNameCognitoIdentityProvider;
         case AWSServiceCognitoSync:
             return AWSServiceNameCognitoSync;
         case AWSServiceDynamoDB:
@@ -446,6 +397,7 @@ static NSString *const AWSServiceNameSTS = @"sts";
             || regionType == AWSRegionAPNortheast1
             || regionType == AWSRegionAPNortheast2
             || regionType == AWSRegionAPSoutheast2
+            || regionType == AWSRegionAPSouth1
             || regionType == AWSRegionSAEast1
             || regionType == AWSRegionUSGovWest1)) {
             separator = @"-";

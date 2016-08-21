@@ -14,10 +14,10 @@ import AFNetworkActivityLogger
 import AWSCore
 import FBSDKCoreKit
 import Branch
-import Analytics
 import CocoaLumberjack
 import iRate
 import Bugsnag
+//import Google
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
@@ -53,13 +53,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 		/* Initialize Bugsnag */
 		Bugsnag.startBugsnagWithApiKey(keys.bugsnagKey())
 		
-		/* Initialize Segment */
-		let configuration = SEGAnalyticsConfiguration(writeKey: keys.segmentKey())
-		configuration.flushAt = 20
+		/* Initialize Analytics here */
+		var configureError: NSError?
+		GGLContext.sharedInstance().configureWithError(&configureError)
+		assert(configureError == nil, "Error configuring Google services: \(configureError)")
+		
+		/* Verbose logging for debug builds */
 		#if DEBUG
-			configuration.flushAt = 1
+			GAI.sharedInstance().logger.logLevel = .Warning
 		#endif
-		SEGAnalytics.setupWithConfiguration(configuration)
 
 		/* Instance the data controller */
 		DataController.instance

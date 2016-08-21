@@ -8,7 +8,6 @@
 
 import Foundation
 import ObjectiveC
-import Analytics
 import Bugsnag
 
 struct Reporting {
@@ -48,25 +47,34 @@ struct Reporting {
     }
 	
     static func updateUser(user: User?) {
+		let tracker = GAI.sharedInstance().defaultTracker
         if user != nil {
-			SEGAnalytics.sharedAnalytics().alias(user!.id_)
-			SEGAnalytics.sharedAnalytics().identify(user!.id_, traits: ["name":user!.name, "email":user!.email])
+			tracker.set(kGAIUserId, value: user!.id_)
 			BranchProvider.setIdentity(user!.id_)
 			Bugsnag.configuration().setUser(user!.id_, withName: user!.name, andEmail: user!.email)
         }
         else {
-			SEGAnalytics.sharedAnalytics().flush()	// Trigger upload of all queued events before clearing identity
-			SEGAnalytics.sharedAnalytics().reset()	// Clears user id being used by segmentio
+			tracker.set(kGAIUserId, value: nil)
 			BranchProvider.logout()
 			Bugsnag.configuration().setUser(nil, withName: nil, andEmail: nil)
         }
     }
 	
-	static func track(event: String, properties: [String:AnyObject]? = nil) {
-		SEGAnalytics.sharedAnalytics().track(event, properties: properties)
+	static func track(event: String, properties: [String : AnyObject]? = nil) {
+		let tracker = GAI.sharedInstance().defaultTracker
+		let builder = GAIDictionaryBuilder.createEventWithCategory("Action", action: event, label: nil, value: nil)
+		if properties != nil {
+			builder.set(Array(properties!.keys).first, forKey: kGAIEventLabel)
+			builder.set(Array(properties!.values).first as! String, forKey: kGAIEventValue)
+		}
+		let event = builder.build()
+		tracker.send(event as [NSObject : AnyObject])
 	}
 	
 	static func screen(name: String) {
-		SEGAnalytics.sharedAnalytics().screen(name)
+		let tracker = GAI.sharedInstance().defaultTracker
+		tracker.set(kGAIScreenName, value: name)
+		let builder = GAIDictionaryBuilder.createScreenView()
+		tracker.send(builder.build() as [NSObject : AnyObject])
 	}
 }

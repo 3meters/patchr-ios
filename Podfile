@@ -27,7 +27,7 @@ use_frameworks!
 def core_pods
 	pod 'SDWebImage',				'~> 3.7.2'
 	pod 'Lockbox'										# Used to protect secrets and install info
-	pod 'AWSS3'
+	pod 'AWSS3', 					'~> 2.4'
 	pod 'AFNetworking',				'~> 2.6'
 	pod 'AFNetworkActivityLogger',	'~> 2.0'
 	pod 'PBWebViewController',		'~> 0.5'			# Used to show show web content for terms/policy/licensing
@@ -49,6 +49,7 @@ def core_pods
 	pod 'iRate'
 	pod 'CocoaLumberjack/Swift'
 	pod 'Analytics',				'~> 3.0'			# Segment pipeline
+	pod 'Google/Analytics'
 	pod 'Branch'										# Url routing and deep linking
 	pod 'Bugsnag'										# Crash reporting
 end
@@ -59,7 +60,7 @@ end
 
 target 'PatchrTests' do
 	core_pods
-	pod 'Quick',					'~> 0.9.0'
+	pod 'Quick',					'~> 0.9.2'
 	pod 'Nimble'
 	pod 'KIF/IdentifierTests',		'~> 3.0', :configurations => ['Debug']
 end
