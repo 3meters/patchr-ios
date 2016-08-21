@@ -449,7 +449,7 @@ public class Proxibase {
 			"installId": UserController.instance.installId
 		]
 		
-		sessionManager.POST("user/changepw", parameters: addSessionParameters(parameters: parameters),
+		sessionManager.POST("user/pw/change", parameters: addSessionParameters(parameters: parameters),
 			success: {
 				dataTask, response in
 				UserController.instance.handlePasswordChange(response)
