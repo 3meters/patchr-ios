@@ -461,13 +461,13 @@ class ProfileEditViewController: BaseEditViewController {
 		
 		processing = true
 		
-		let progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+		let progress = AirProgress.showHUDAddedTo(self.view.window!, animated: true)
 		progress.mode = MBProgressHUDMode.Indeterminate
 		progress.styleAs(.ActivityWithText)
-		progress.labelText = self.progressStartLabel
+		progress.label.text = self.progressStartLabel!
 		progress.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileEditViewController.progressWasCancelled(_:))))
 		progress.removeFromSuperViewOnHide = true
-		progress.show(true)
+		progress.showAnimated(true)
 		
 		let parameters = self.gather(NSMutableDictionary())
 		var cancelled = false
@@ -475,7 +475,7 @@ class ProfileEditViewController: BaseEditViewController {
 		let queue = TaskQueue()
 		
 		Utils.delay(5.0) {
-			progress?.detailsLabelText = "Tap to cancel"
+			progress.detailsLabel.text = "Tap to cancel"
 		}
 		
 		/* Process image if any */
@@ -548,7 +548,7 @@ class ProfileEditViewController: BaseEditViewController {
 				self.entityPostRequest = DataController.proxibase.postEntity(endpoint, parameters: parameters) {
 					response, error in
 					if error == nil {
-						progress!.progress = 1.0
+						progress.progress = 1.0
 					}
 					else if error!.code == NSURLErrorCancelled {
 						cancelled = true
@@ -568,7 +568,7 @@ class ProfileEditViewController: BaseEditViewController {
 				return
 			}
 			
-			progress?.hide(true)
+			progress.hideAnimated(true)
 			
 			if let result: Result = queue.lastResult as? Result {
 				if var error = ServerError(result.error) {
@@ -748,7 +748,7 @@ class ProfileEditViewController: BaseEditViewController {
 	func progressWasCancelled(sender: AnyObject) {
 		if let gesture = sender as? UIGestureRecognizer, let hud = gesture.view as? MBProgressHUD {
 			hud.animationType = MBProgressHUDAnimation.ZoomIn
-			hud.hide(true)
+			hud.hideAnimated(true)
 			self.imageUploadRequest?.cancel() // Should do nothing if upload already complete or isn't any
 			self.entityPostRequest?.cancel()
 		}

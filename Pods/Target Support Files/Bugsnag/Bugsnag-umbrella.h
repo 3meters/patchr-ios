@@ -4,6 +4,7 @@
 #import "Bugsnag.h"
 #import "BugsnagBreadcrumb.h"
 #import "BugsnagConfiguration.h"
+#import "BugsnagCrashReport.h"
 #import "BugsnagMetaData.h"
 
 FOUNDATION_EXPORT double BugsnagVersionNumber;

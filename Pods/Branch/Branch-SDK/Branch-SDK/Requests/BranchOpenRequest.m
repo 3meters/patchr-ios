@@ -12,6 +12,7 @@
 #import "BranchConstants.h"
 #import "BNCEncodingUtils.h"
 #import "BranchViewHandler.h"
+#import "BNCFabricAnswers.h"
 
 @interface BranchOpenRequest ()
 
@@ -43,7 +44,6 @@
     }
     
     params[BRANCH_REQUEST_KEY_BRANCH_IDENTITY] = preferenceHelper.identityID;
-    params[BRANCH_REQUEST_KEY_IS_REFERRABLE] = @(preferenceHelper.isReferrable);
     params[BRANCH_REQUEST_KEY_DEBUG] = @(preferenceHelper.isDebug);
     
     [self safeSetValue:[BNCSystemObserver getBundleID] forKey:BRANCH_REQUEST_KEY_BUNDLE_ID onDict:params];
@@ -51,6 +51,7 @@
     [self safeSetValue:[BNCSystemObserver getAppVersion] forKey:BRANCH_REQUEST_KEY_APP_VERSION onDict:params];        
     [self safeSetValue:[BNCSystemObserver getDefaultUriScheme] forKey:BRANCH_REQUEST_KEY_URI_SCHEME onDict:params];
     [self safeSetValue:[BNCSystemObserver getUpdateState] forKey:BRANCH_REQUEST_KEY_UPDATE onDict:params];
+    [self safeSetValue:[NSNumber numberWithBool:preferenceHelper.checkedFacebookAppLinks] forKey:BRANCH_REQUEST_KEY_CHECKED_FACEBOOK_APPLINKS onDict:params];
     [self safeSetValue:preferenceHelper.linkClickIdentifier forKey:BRANCH_REQUEST_KEY_LINK_IDENTIFIER onDict:params];
     [self safeSetValue:preferenceHelper.spotlightIdentifier forKey:BRANCH_REQUEST_KEY_SPOTLIGHT_IDENTIFIER onDict:params];
     [self safeSetValue:preferenceHelper.universalLinkUrl forKey:BRANCH_REQUEST_KEY_UNIVERSAL_LINK_URL onDict:params];
@@ -79,25 +80,24 @@
     preferenceHelper.userUrl = data[BRANCH_RESPONSE_KEY_USER_URL];
     preferenceHelper.userIdentity = userIdentity;
     preferenceHelper.sessionID = data[BRANCH_RESPONSE_KEY_SESSION_ID];
-    
     [BNCSystemObserver setUpdateState];
     
     NSString *sessionData = data[BRANCH_RESPONSE_KEY_SESSION_DATA];
     
     // Update session params
     preferenceHelper.sessionParams = sessionData;
-    
+
     // Scenarios:
     // If no data, data isn't from a link click, or isReferrable is false, don't set, period.
     // Otherwise,
     // * On Install: set.
     // * On Open and installParams set: don't set.
     // * On Open and stored installParams are empty: set.
-    if (sessionData.length && preferenceHelper.isReferrable) {
+    if (sessionData.length) {
         NSDictionary *sessionDataDict = [BNCEncodingUtils decodeJsonStringToDictionary:sessionData];
         BOOL dataIsFromALinkClick = [sessionDataDict[BRANCH_RESPONSE_KEY_CLICKED_BRANCH_LINK] isEqual:@1];
-        
         BOOL storedParamsAreEmpty = YES;
+        
         if ([preferenceHelper.installParams isKindOfClass:[NSString class]]) {
             storedParamsAreEmpty = !preferenceHelper.installParams.length;
         }
@@ -105,9 +105,14 @@
         if (dataIsFromALinkClick && (self.isInstall || storedParamsAreEmpty)) {
             preferenceHelper.installParams = sessionData;
         }
+        
+        if (dataIsFromALinkClick) {
+            [BNCFabricAnswers sendEventWithName:[@"Branch " stringByAppendingString:[[self getActionName] capitalizedString]] andAttributes:sessionDataDict];
+        }
     }
     
     // Clear link identifiers so they don't get reused on the next open
+    preferenceHelper.checkedFacebookAppLinks = NO;
     preferenceHelper.linkClickIdentifier = nil;
     preferenceHelper.spotlightIdentifier = nil;
     preferenceHelper.universalLinkUrl = nil;

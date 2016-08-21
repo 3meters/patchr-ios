@@ -135,16 +135,16 @@ class PatchEditViewController: BaseEditViewController {
 		guard isValid() else { return }
 		guard !self.processing else { return }
 		
-		self.progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+		self.progress = AirProgress.showHUDAddedTo(self.view.window!, animated: true)
 		self.progress!.mode = MBProgressHUDMode.Indeterminate
 		self.progress!.styleAs(.ActivityWithText)
-		self.progress!.labelText = self.progressStartLabel
+		self.progress!.label.text = self.progressStartLabel!
 		self.progress!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(PatchEditViewController.userCancelTaskAction(_:))))
 		self.progress!.removeFromSuperViewOnHide = true
-		self.progress!.show(true)
+		self.progress!.showAnimated(true)
 
 		Utils.delay(5.0) {
-			self.progress?.detailsLabelText = "Tap to cancel"
+			self.progress?.detailsLabel.text = "Tap to cancel"
 		}
 		
 		let parameters = self.gather(NSMutableDictionary())
@@ -156,7 +156,7 @@ class PatchEditViewController: BaseEditViewController {
 	func userCancelTaskAction(sender: AnyObject) {
 		if let gesture = sender as? UIGestureRecognizer, let hud = gesture.view as? MBProgressHUD {
 			hud.animationType = MBProgressHUDAnimation.ZoomIn
-			hud.hide(true)
+			hud.hideAnimated(true)
 			self.imageUploadRequest?.cancel() // Should do nothing if upload already complete or isn't any
 			self.entityPostRequest?.cancel()
 		}
@@ -509,7 +509,7 @@ class PatchEditViewController: BaseEditViewController {
 				return
 			}
 			
-			self.progress?.hide(true)
+			self.progress?.hideAnimated(true)
 			
 			if let result: Result = queue.lastResult as? Result {
 				if let error = ServerError(result.error) {

@@ -17,7 +17,7 @@ import Branch
 import CocoaLumberjack
 import iRate
 import Bugsnag
-//import Google
+import MBProgressHUD
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {

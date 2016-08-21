@@ -25,33 +25,32 @@ inhibit_all_warnings!
 use_frameworks!
 
 def core_pods
-  pod 'SDWebImage',                 '~> 3.7.2'
-  pod 'Lockbox'										# Used to protect secrets and install info
-  pod 'AWSS3', 					    '~> 2.4'
-  pod 'AFNetworking',				'~> 2.6'
-  pod 'AFNetworkActivityLogger',	'~> 2.0'
-  pod 'PBWebViewController',		'~> 0.5'			# Used to show show web content for terms/policy/licensing
-  pod 'MBProgressHUD',			    '~> 0.9.1'
-  pod 'DLRadioButton'
-  pod 'DynamicButton',			    '~> 2.1.0'
-  pod 'NHBalancedFlowLayout',		'~> 0.2'
-  pod 'UIDevice-Hardware'								# Convenience for determining system version and model identifier
-  pod 'pop', '~> 1.0'									# Animation library
-  pod 'IDMPhotoBrowser',			:path => '~/code/IDMPhotoBrowser'
-  pod 'TWMessageBarManager',		'~> 1.8'			# In-app notifications
-  pod 'Facade'										# Convenience methods for frame based layout
-  pod 'THContactPicker',			'~> 1.2'			# Used in message edit
-  pod 'FBSDKCoreKit',				'~> 4.11.0'
-  pod 'FBSDKLoginKit',			    '~> 4.11.0'
-  pod 'FBSDKShareKit',			    '~> 4.11.0'
-  pod 'DateTools'
-  pod 'Parse'											# Push notifications
-  pod 'iRate'
-  pod 'CocoaLumberjack/Swift'
-  pod 'Analytics',				    '~> 3.0'			# Segment pipeline
-  pod 'Google/Analytics'
-  pod 'Branch'										# Url routing and deep linking
-  pod 'Bugsnag'										# Crash reporting
+    pod 'IDMPhotoBrowser', :path => '~/code/IDMPhotoBrowser'
+    pod 'SDWebImage',               '~> 3.8.1'
+    pod 'Lockbox',                  '~> 3.0.1'		# Used to protect secrets and install info
+    pod 'AWSS3', 					'~> 2.4'
+    pod 'AFNetworking',				'~> 2.6'
+    pod 'AFNetworkActivityLogger',	'~> 2.0'
+    pod 'PBWebViewController',		'~> 0.5'		# Used to show show web content for terms/policy/licensing
+    pod 'MBProgressHUD',			'~> 1.0.0'
+    pod 'DLRadioButton',            '~> 1.4.9'
+    pod 'DynamicButton',			'~> 2.1.0'
+    pod 'NHBalancedFlowLayout',		'~> 0.2'
+    pod 'UIDevice-Hardware',        '~> 0.1.7'		# Convenience for determining system version and model identifier
+    pod 'pop',                      '~> 1.0'		# Animation library
+    pod 'TWMessageBarManager',		'~> 1.8'		# In-app notifications
+    pod 'Facade',                   '~> 1.1.1'	    # Convenience methods for frame based layout
+    pod 'THContactPicker',			'~> 1.2'		# Used in message edit
+    pod 'FBSDKCoreKit',				'~> 4.14.0'
+    pod 'FBSDKLoginKit',			'~> 4.14.0'
+    pod 'FBSDKShareKit',			'~> 4.14.0'
+    pod 'DateTools',                '~> 1.7.0'
+    pod 'Parse',                    '~> 1.13.0'	    # Push notifications
+    pod 'iRate',                    '~> 1.11.6'
+    pod 'CocoaLumberjack/Swift',    '~> 2.3.0'
+    pod 'Google/Analytics'
+    pod 'Branch',                   '~> 0.12.5'     # Url routing and deep linking
+    pod 'Bugsnag',                  '~> 5.4.2'      # Crash reporting
 end
 
 target 'Patchr' do
@@ -60,18 +59,18 @@ end
 
 target 'PatchrTests' do
   core_pods
-  pod 'Quick',					    '~> 0.9.1'
-  pod 'Nimble'
-  pod 'KIF/IdentifierTests',		'~> 3.0', :configurations => ['Debug']
+  pod 'Quick',					    '~> 0.9.3'
+  pod 'Nimble',                     '~> 4.1.0'
+  pod 'KIF/IdentifierTests',		'~> 3.3.2', :configurations => ['Debug']
 end
 
 target 'PatchrShare' do
-  pod 'SDWebImage',				    '~> 3.7.2'
-  pod 'AWSS3'
-  pod 'Lockbox'										# Used to protect secrets and install info
-  pod 'Facade'										# Convenience methods for frame based layout
-  pod 'CocoaLumberjack/Swift'
-  pod 'Bugsnag'
+  pod 'SDWebImage',				    '~> 3.8.1'
+  pod 'AWSS3', 					    '~> 2.4'
+  pod 'Lockbox',                    '~> 3.0.1'		# Used to protect secrets and install info
+  pod 'Facade',                     '~> 1.1.1'	    # Convenience methods for frame based layout
+  pod 'CocoaLumberjack/Swift',      '~> 2.3.0'
+  pod 'Bugsnag',                    '~> 5.4.2'      # Crash reporting
 end
 
 plugin 'cocoapods-no-dev-schemes'

@@ -765,7 +765,7 @@ public class LinkSpec {
     public var links:        [LinkSpec]?
     public var linkCount:    [LinkSpec]?
 	public var refs:		 [NSObject:AnyObject]?
-
+	
 	init(to: LinkDestination, type: LinkType, enabled: Bool? = nil, limit: UInt? = nil, count: Bool? = nil,
 		 fields: AnyObject? = nil, filter: [NSObject:AnyObject]? = nil,
 		 linkFields: AnyObject? = nil, linkedFilter: [NSObject:AnyObject]? = nil,

@@ -112,10 +112,10 @@ struct UIShared {
 		let progress = AirProgress.showHUDAddedTo(targetView, animated: true)
 		progress.mode = MBProgressHUDMode.Text
 		progress.styleAs(.ToastLight)
-		progress.labelText = message
+		progress.label.text = message
 		progress.accessibilityIdentifier = "toast"
-		progress.detailsLabelText = "Tap to dismiss"
-		progress.yOffset = Float((UIScreen.mainScreen().bounds.size.height / 2) - 200)
+		progress.detailsLabel.text = "Tap to dismiss"
+		progress.offset.x = CGFloat((UIScreen.mainScreen().bounds.size.height / 2) - 200)
 		progress.shadow = true
 		progress.removeFromSuperViewOnHide = false
 		progress.userInteractionEnabled = true
@@ -140,13 +140,13 @@ struct UIShared {
         progress = AirProgress.showHUDAddedTo(targetView, animated: true)
         progress.mode = MBProgressHUDMode.Text
         progress.styleAs(.ToastLight)
-        progress.labelText = message
+        progress.label.text = message
 		progress.accessibilityIdentifier = identifier ?? "toast"
-        progress.yOffset = Float((UIScreen.mainScreen().bounds.size.height / 2) - 200)
+        progress.offset.x = CGFloat((UIScreen.mainScreen().bounds.size.height / 2) - 200)
         progress.shadow = true
         progress.removeFromSuperViewOnHide = true
         progress.userInteractionEnabled = false
-        progress.hide(true, afterDelay: duration)
+        progress.hideAnimated(true, afterDelay: duration)
         
         return progress
     }

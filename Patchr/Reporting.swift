@@ -51,12 +51,12 @@ struct Reporting {
         if user != nil {
 			tracker.set(kGAIUserId, value: user!.id_)
 			BranchProvider.setIdentity(user!.id_)
-			Bugsnag.configuration().setUser(user!.id_, withName: user!.name, andEmail: user!.email)
+			Bugsnag.configuration()!.setUser(user!.id_, withName: user!.name, andEmail: user!.email)
         }
         else {
 			tracker.set(kGAIUserId, value: nil)
 			BranchProvider.logout()
-			Bugsnag.configuration().setUser(nil, withName: nil, andEmail: nil)
+			Bugsnag.configuration()!.setUser(nil, withName: nil, andEmail: nil)
         }
     }
 	

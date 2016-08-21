@@ -13,13 +13,8 @@ class AirProgress: MBProgressHUD {
     
     var shadow: Bool = false
 	
-	override init!(view: UIView!) {
+	override init(view: UIView) {
 		super.init(view: view)
-		initialize()
-	}
-	
-	override init!(window: UIWindow!) {
-		super.init(window: window)
 		initialize()
 	}
 	
@@ -41,7 +36,7 @@ class AirProgress: MBProgressHUD {
 		self.isAccessibilityElement = true
 	}
 	
-	static func addedTo(view: UIView!) -> AirProgress {
+	static func addedTo(view: UIView) -> AirProgress {
 		let hud = AirProgress(view: view)
 		hud.removeFromSuperViewOnHide = true
 		view.addSubview(hud)
@@ -52,15 +47,15 @@ class AirProgress: MBProgressHUD {
         super.layoutSubviews()
         if shadow {
             if let parent = self.superview {
-                let x = CGFloat(parent.bounds.size.width - self.size.width) * 0.5
-                let y = CGFloat(parent.bounds.size.height - self.size.height) * 0.5
+                let x = CGFloat(parent.bounds.size.width - self.bezelView.frame.size.width) * 0.5
+                let y = CGFloat(parent.bounds.size.height - self.bezelView.frame.size.height) * 0.5
                 
                 self.layer.masksToBounds = false
                 self.layer.shadowOffset = CGSizeMake(2, 4)
                 self.layer.shadowRadius = 3
                 self.layer.shadowOpacity = 0.3
-                let rect: CGRect = CGRectMake(x + CGFloat(self.xOffset), y + CGFloat(self.yOffset), self.size.width, self.size.height)
-                let path: UIBezierPath = UIBezierPath(roundedRect: rect, cornerRadius: CGFloat(self.cornerRadius))
+                let rect: CGRect = CGRectMake(x + CGFloat(self.offset.x), y + CGFloat(self.offset.y), self.bezelView.frame.size.width, self.bezelView.frame.size.height)
+                let path: UIBezierPath = UIBezierPath(roundedRect: rect, cornerRadius: CGFloat(self.bezelView.layer.cornerRadius))
                 self.layer.shadowPath = path.CGPath
             }
         }
@@ -72,36 +67,34 @@ class AirProgress: MBProgressHUD {
     
     func styleAs(progressStyle: ProgressStyle) {
         
-        self.labelFont = Theme.fontComment
-        self.detailsLabelFont = Theme.fontCommentSmall
-        
+        self.label.font = Theme.fontComment
+        self.detailsLabel.font = Theme.fontCommentSmall
+		self.activityIndicatorColor = Theme.colorActivityIndicator
+		
         if progressStyle == .ActivityWithText {
             self.animationType = MBProgressHUDAnimation.Zoom
             self.margin = 16
-            self.cornerRadius = 8
-            self.color = Theme.colorBackgroundActivity
-            self.labelColor = Theme.colorTextActivity
-            self.detailsLabelColor = Theme.colorTextActivity
-            self.activityIndicatorColor = Theme.colorActivityIndicator
+            self.bezelView.layer.cornerRadius = 8
+            self.bezelView.color = Theme.colorBackgroundActivity
+            self.label.textColor = Theme.colorTextActivity
+            self.detailsLabel.textColor = Theme.colorTextActivity
             self.shadow = true
             self.square = true
         }
         else if progressStyle == .ToastLight {
             self.animationType = MBProgressHUDAnimation.Fade
             self.margin = 16.0
-            self.cornerRadius = 24.0
-            self.opacity = 0.7
-            self.color = Theme.colorBackgroundToast
-            self.labelColor = Theme.colorTextToast
-            self.detailsLabelColor = Theme.colorTextToast
-            self.activityIndicatorColor = Theme.colorActivityIndicator
+            self.bezelView.layer.cornerRadius = 24.0
+            self.bezelView.alpha = 0.7
+            self.bezelView.color = Theme.colorBackgroundToast
+            self.label.textColor = Theme.colorTextToast
+            self.detailsLabel.textColor = Theme.colorTextToast
             self.shadow = true
         }
         else if progressStyle == .ActivityOnly {
             self.animationType = MBProgressHUDAnimation.Fade
-            self.opacity = 0.0
-            self.color = Theme.colorBackgroundActivityOnly
-            self.activityIndicatorColor = Theme.colorActivityIndicator
+            self.bezelView.alpha = 0.0
+            self.bezelView.color = Theme.colorBackgroundActivityOnly
             self.shadow = false
             self.square = true
         }

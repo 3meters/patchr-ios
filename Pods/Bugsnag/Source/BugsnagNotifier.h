@@ -29,32 +29,68 @@
 #import "BugsnagConfiguration.h"
 #import "BugsnagMetaData.h"
 
-
 @interface BugsnagNotifier : NSObject <BugsnagMetaDataDelegate>
 
-@property(nonatomic,readwrite,retain) BugsnagConfiguration* configuration;
-@property(nonatomic,readwrite,retain) BugsnagMetaData* state;
-@property(nonatomic,readwrite,retain) NSDictionary *details;
-@property(nonatomic,readwrite,retain) NSLock *metaDataLock;
+@property(nonatomic, readwrite, retain)
+    BugsnagConfiguration *_Nullable configuration;
+@property(nonatomic, readwrite, retain) BugsnagMetaData *_Nonnull state;
+@property(nonatomic, readwrite, retain) NSDictionary *_Nonnull details;
+@property(nonatomic, readwrite, retain) NSLock *_Nonnull metaDataLock;
 
-- (id) initWithConfiguration:(BugsnagConfiguration*) configuration;
-- (void) start;
-
-/** Notify bugsnag of an exception.
- *
- * @param exception  The NSException
- *
- * @param metaData  Any metaData to include in the report
- *
- * @param severity  The severity (default BugsnagSeverityWarning)
- *
- * @param depth  How many stack frames to remove from the report.
- */
-- (void) notify:(NSException *)exception withData:(NSDictionary*)metaData atSeverity:(NSString*)severity atDepth:(NSUInteger) depth;
+- (instancetype _Nonnull)initWithConfiguration:
+    (BugsnagConfiguration *_Nonnull)configuration;
+- (void)start;
 
 /**
- *  Write breadcrumbs to the cached metadata for error reports
+ *  Notify Bugsnag of an error
+ *
+ *  @param erroName Name or class of the error
+ *  @param message  Message of or reason for the error
+ *  @param block    Configuration block with information for this report
  */
-- (void) serializeBreadcrumbs;
+- (void)notify:(NSString *_Nonnull)errorName
+       message:(NSString *_Nonnull)message
+         block:(BugsnagNotifyBlock _Nullable)block;
 
+/**
+ *  Notify Bugsnag of an exception
+ *
+ *  @param exception the exception
+ *  @param block     Configuration block for adding additional report information
+ */
+- (void)notifyException:(NSException *_Nonnull)exception
+                  block:(BugsnagNotifyBlock _Nullable)block;
+
+/**
+ *  Notify Bugsnag of an error
+ *
+ *  @param error the error
+ *  @param block Configuration block for adding additional report information
+ */
+- (void)notifyError:(NSError *_Nonnull)error
+              block:(BugsnagNotifyBlock _Nullable)block;
+
+/**
+ *  Add a breadcrumb
+ *
+ *  @param block configuration block
+ */
+- (void)addBreadcrumbWithBlock:(void(^ _Nonnull)(BugsnagBreadcrumb *_Nonnull))block;
+
+/**
+ * Clear all stored breadcrumbs.
+ */
+- (void)clearBreadcrumbs;
+
+/**
+ *  Listen for notifications and attach breadcrumbs when received
+ *
+ *  @param notificationName name of the notification
+ */
+- (void)crumbleNotification:(NSString *_Nonnull)notificationName;
+
+/**
+ *  Enable or disable automatic breadcrumb collection based on configuration
+ */
+- (void)updateAutomaticBreadcrumbDetectionSettings;
 @end

@@ -58,31 +58,31 @@ class SettingsTableViewController: UITableViewController {
 	
 	func logoutAction(sender: AnyObject) {
 		
-		self.progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+		self.progress = AirProgress.showHUDAddedTo(self.view.window!, animated: true)
 		self.progress!.mode = MBProgressHUDMode.Indeterminate
 		self.progress!.styleAs(.ActivityWithText)
 		self.progress!.minShowTime = 0.5
-		self.progress!.labelText = "Logging out..."
+		self.progress!.label.text = "Logging out..."
 		self.progress!.removeFromSuperViewOnHide = true
-		self.progress!.show(true)
+		self.progress!.showAnimated(true)
 		
 		UserController.instance.signout()	// Blocks until finished
 	}
 	
 	func clearHistoryAction(sender: AnyObject) {
 		
-		self.progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+		self.progress = AirProgress.showHUDAddedTo(self.view.window!, animated: true)
 		self.progress!.mode = MBProgressHUDMode.Indeterminate
 		self.progress!.styleAs(.ActivityWithText)
 		self.progress!.minShowTime = 0.5
-		self.progress!.labelText = "Clearing..."
+		self.progress!.label.text = "Clearing..."
 		self.progress!.removeFromSuperViewOnHide = true
-		self.progress!.show(true)
+		self.progress!.showAnimated(true)
 		
 		Utils.clearHistory()
 		Reporting.track("Cleared History")
 		
-		self.progress!.hide(true)
+		self.progress!.hideAnimated(true)
 	}
 	
     /*--------------------------------------------------------------------------------------------

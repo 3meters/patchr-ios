@@ -22,6 +22,8 @@
 // THE SOFTWARE.
 //
 
+#import <Foundation/Foundation.h>
+
 #include "KSCrashSentry_CPPException.h"
 #include "KSCrashSentry_Private.h"
 #include "KSMach.h"
@@ -75,22 +77,26 @@ static KSCrash_SentryContext* g_context;
 
 typedef void (*cxa_throw_type)(void*, std::type_info*, void (*)(void*));
 
-extern "C" void __cxa_throw(void* thrown_exception, std::type_info* tinfo, void (*dest)(void*))
+extern "C"
 {
-    if(g_captureNextStackTrace)
-    {
-        g_stackTraceCount = backtrace((void**)g_stackTrace, sizeof(g_stackTrace) / sizeof(*g_stackTrace));
-    }
+    void __cxa_throw(void* thrown_exception, std::type_info* tinfo, void (*dest)(void*)) __attribute__ ((weak));
 
-    static cxa_throw_type orig_cxa_throw = NULL;
-    unlikely_if(orig_cxa_throw == NULL)
+    void __cxa_throw(void* thrown_exception, std::type_info* tinfo, void (*dest)(void*))
     {
-        orig_cxa_throw = (cxa_throw_type) dlsym(RTLD_NEXT, "__cxa_throw");
+        if(g_captureNextStackTrace)
+        {
+            g_stackTraceCount = backtrace((void**)g_stackTrace, sizeof(g_stackTrace) / sizeof(*g_stackTrace));
+        }
+        
+        static cxa_throw_type orig_cxa_throw = NULL;
+        unlikely_if(orig_cxa_throw == NULL)
+        {
+            orig_cxa_throw = (cxa_throw_type) dlsym(RTLD_NEXT, "__cxa_throw");
+        }
+        orig_cxa_throw(thrown_exception, tinfo, dest);
+        __builtin_unreachable();
     }
-    orig_cxa_throw(thrown_exception, tinfo, dest);
-    __builtin_unreachable();
 }
-
 
 static void CPPExceptionTerminate(void)
 {
@@ -145,7 +151,6 @@ catch(TYPE value)\
     CATCH_VALUE(double,               f)
     CATCH_VALUE(long double,         Lf)
     CATCH_VALUE(char*,                s)
-    CATCH_VALUE(const char*,          s)
     catch(...)
     {
         description = NULL;

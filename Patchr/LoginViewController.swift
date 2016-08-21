@@ -63,13 +63,13 @@ class LoginViewController: BaseEditViewController {
 				
 				self.passwordField.resignFirstResponder()
 				
-				self.progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+				self.progress = AirProgress.showHUDAddedTo(self.view.window!, animated: true)
 				self.progress.mode = MBProgressHUDMode.Indeterminate
 				self.progress.styleAs(.ActivityWithText)
 				self.progress.minShowTime = 0.5
-				self.progress.labelText = "Verifying..."
+				self.progress.label.text = "Verifying..."
 				self.progress.removeFromSuperViewOnHide = true
-				self.progress.show(true)
+				self.progress.showAnimated(true)
 				
 				validateEmail()
 			}
@@ -77,13 +77,13 @@ class LoginViewController: BaseEditViewController {
 				
 				self.passwordField.resignFirstResponder()
 				
-				self.progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+				self.progress = AirProgress.showHUDAddedTo(self.view.window!, animated: true)
 				self.progress.mode = MBProgressHUDMode.Indeterminate
 				self.progress.styleAs(.ActivityWithText)
 				self.progress.minShowTime = 0.5
-				self.progress.labelText = "Logging in..."
+				self.progress.label.text = "Logging in..."
 				self.progress.removeFromSuperViewOnHide = true
-				self.progress.show(true)
+				self.progress.showAnimated(true)
 
 				login()
 			}
@@ -207,7 +207,7 @@ class LoginViewController: BaseEditViewController {
 			NSOperationQueue.mainQueue().addOperationWithBlock {
 				self.processing = false
 				
-				self.progress?.hide(true)
+				self.progress?.hideAnimated(true)
 				
 				if let error = ServerError(error) {
 					self.handleError(error)
@@ -244,7 +244,7 @@ class LoginViewController: BaseEditViewController {
 			NSOperationQueue.mainQueue().addOperationWithBlock {
 				self.processing = false
 				
-				self.progress?.hide(true)
+				self.progress?.hideAnimated(true)
 				
 				if var error = ServerError(error) {
 					if error.code == .UNAUTHORIZED_CREDENTIALS {

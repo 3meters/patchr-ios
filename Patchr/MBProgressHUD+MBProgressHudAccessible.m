@@ -19,11 +19,11 @@
 
 - (NSString *) accessibilityLabel {
 	NSMutableString *buffer = [[NSMutableString alloc] init];
-	if(self.labelText) {
-		[buffer appendString:self.labelText];
+	if(self.label.text) {
+		[buffer appendString:self.label.text];
 	}
-	if(self.detailsLabelText) {
-		[buffer appendFormat:@",%@", self.detailsLabelText, nil];
+	if(self.detailsLabel.text) {
+		[buffer appendFormat:@",%@", self.detailsLabel.text, nil];
 	}
 
 	return [NSString stringWithString:buffer];

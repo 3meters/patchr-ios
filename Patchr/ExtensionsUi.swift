@@ -258,7 +258,7 @@ extension UIViewController {
 	func dismissToast(sender: AnyObject) {
 		if let gesture = sender as? UIGestureRecognizer, let hud = gesture.view as? MBProgressHUD {
 			hud.animationType = MBProgressHUDAnimation.ZoomIn
-			hud.hide(true)
+			hud.hideAnimated(true)
 		}
 	}
     
