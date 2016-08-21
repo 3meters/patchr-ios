@@ -763,13 +763,13 @@ public class LinkSpec {
 	public var linkedFilter: [NSObject:AnyObject]?
 	public var linked:       [LinkSpec]?
     public var links:        [LinkSpec]?
-    public var linkCount:    [LinkSpec]?
+    public var linkCounts:   [LinkSpec]?
 	public var refs:		 [NSObject:AnyObject]?
 	
 	init(to: LinkDestination, type: LinkType, enabled: Bool? = nil, limit: UInt? = nil, count: Bool? = nil,
 		 fields: AnyObject? = nil, filter: [NSObject:AnyObject]? = nil,
 		 linkFields: AnyObject? = nil, linkedFilter: [NSObject:AnyObject]? = nil,
-		linked: [LinkSpec]? = nil, links: [LinkSpec]? = nil, linkCount: [LinkSpec]? = nil, refs: [NSObject:AnyObject]? = nil) {
+		linked: [LinkSpec]? = nil, links: [LinkSpec]? = nil, linkCounts: [LinkSpec]? = nil, refs: [NSObject:AnyObject]? = nil) {
 		self.to = to
 		self.type = type
 		self.enabled = enabled
@@ -781,14 +781,14 @@ public class LinkSpec {
 		self.linkedFilter = linkedFilter
 		self.linked = linked
         self.links = links
-        self.linkCount = linkCount
+        self.linkCounts = linkCounts
 		self.refs = refs
 	}
 
 	init(from: LinkDestination, type: LinkType, enabled: Bool? = nil, limit: UInt? = nil, count: Bool? = nil,
 		 fields: AnyObject? = nil, filter: [NSObject:AnyObject]? = nil,
 		 linkFields: AnyObject? = nil, linkedFilter: [NSObject:AnyObject]? = nil,
-         linked: [LinkSpec]? = nil, links: [LinkSpec]? = nil, linkCount: [LinkSpec]? = nil, refs: [NSObject:AnyObject]? = nil) {
+         linked: [LinkSpec]? = nil, links: [LinkSpec]? = nil, linkCounts: [LinkSpec]? = nil, refs: [NSObject:AnyObject]? = nil) {
 		self.from = from
 		self.type = type
 		self.enabled = enabled
@@ -800,7 +800,7 @@ public class LinkSpec {
 		self.linkedFilter = linkedFilter
         self.linked = linked
         self.links = links
-        self.linkCount = linkCount
+        self.linkCounts = linkCounts
 		self.refs = refs
 	}
 
@@ -846,8 +846,8 @@ public class LinkSpec {
                 $0.toDictionary()
             }
         }        
-        if linkCount != nil {
-            dictionary["linkCount"] = linkCount!.map {
+        if linkCounts != nil {
+            dictionary["linkCounts"] = linkCounts!.map {
                 $0.toDictionary()
             }
         }

@@ -55,8 +55,8 @@ extension Patch {
         if let linked = Patch.linked() {
             parameters["linked"] = linked
         }
-        if let linkCount = Patch.linkCount() {
-            parameters["linkCount"] = linkCount
+        if let linkCounts = Patch.linkCounts() {
+            parameters["linkCounts"] = linkCounts
         }
 		
 		parameters["refs"] = ["_creator":"_id,name,photo,schema,type"]
@@ -88,7 +88,7 @@ extension Patch {
 		return nil
     }
     
-    static func linkCount() -> [[String:AnyObject]]? {
+    static func linkCounts() -> [[String:AnyObject]]? {
         
         let links = [
             LinkSpec(from: .Messages, type: .Content),				// Count of messages linked to the patch
@@ -113,8 +113,8 @@ extension Message {
         if let linked = Message.linked() {
             parameters["linked"] = linked
         }
-        if let linkCount = Message.linkCount() {
-            parameters["linkCount"] = linkCount
+        if let linkCounts = Message.linkCounts() {
+            parameters["linkCounts"] = linkCounts
         }
 		
 		parameters["refs"] = ["_creator":"_id,name,photo,schema,type"]
@@ -141,7 +141,7 @@ extension Message {
     static func linked() -> [[String:AnyObject]]? {
         
         /* Used to get count of messages and users watching a shared patch */
-        let linkCount = [
+        let linkCounts = [
             LinkSpec(from: .Users, type: .Watch, enabled: true),	// Count of users that are watching the patch
             LinkSpec(from: .Messages, type: .Content)				// Count of message to the patch
         ]
@@ -152,7 +152,7 @@ extension Message {
         let links = [
             LinkSpec(to: .Patches, type: .Content, fields: "_id,name,photo,schema,type", limit: 1), // Patch the message is linked to
             LinkSpec(to: .Messages, type: .Share, limit: 1, refs: refs),							// Message this message is sharing
-            LinkSpec(to: .Patches, type: .Share, limit: 1, linkCount: linkCount),                   // Patch this message is sharing
+            LinkSpec(to: .Patches, type: .Share, limit: 1, linkCounts: linkCounts),                   // Patch this message is sharing
             LinkSpec(to: .Users, type: .Share, limit: 5)                                            // Users this message is shared with
         ]
         
@@ -163,7 +163,7 @@ extension Message {
         return array
     }
     
-    static func linkCount() -> [[String:AnyObject]]? {
+    static func linkCounts() -> [[String:AnyObject]]? {
         
         let links = [
             LinkSpec(from: .Users, type: .Like)
@@ -186,8 +186,8 @@ extension User {
         if let linked = User.linked() {
             parameters["linked"] = linked
         }
-        if let linkCount = User.linkCount() {
-            parameters["linkCount"] = linkCount
+        if let linkCounts = User.linkCounts() {
+            parameters["linkCounts"] = linkCounts
         }
         return parameters
     }
@@ -200,7 +200,7 @@ extension User {
         return nil
     }
     
-    static func linkCount() -> [[String:AnyObject]]? {
+    static func linkCounts() -> [[String:AnyObject]]? {
         
         let links = [
             LinkSpec(to: .Patches, type: .Create),					// Count of patches the user created
