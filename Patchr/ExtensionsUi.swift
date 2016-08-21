@@ -271,7 +271,6 @@ extension UIViewController {
         
         if errorActionType == .AUTO || errorActionType == .TOAST {
 			UIShared.Toast(alertMessage, controller: self, addToWindow: false)
-			//toast.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("dismissToast:")))
             if error.code == .UNAUTHORIZED_SESSION_EXPIRED || error.code == .UNAUTHORIZED_CREDENTIALS {
                 errAction = .SIGNOUT
             }
@@ -454,11 +453,15 @@ extension NSDate: Comparable { }
 extension String {
 	
 	func isEmail() -> Bool {
-		let regex = try! NSRegularExpression(pattern: "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$",
-			options: [.CaseInsensitive])
+		if self.isEmpty {
+			return false
+		}
 		
-		return regex.firstMatchInString(self, options:[],
-			range: NSMakeRange(0, utf16.count)) != nil
+		guard let regex = try? NSRegularExpression(pattern: "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$", options: [.CaseInsensitive]) else {
+			return false
+		}
+		
+		return regex.numberOfMatchesInString(self, options: [], range: NSMakeRange(0, utf16.count)) == 1
 	}
 	
     var md5: String! {

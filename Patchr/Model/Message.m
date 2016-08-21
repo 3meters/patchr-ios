@@ -64,7 +64,7 @@
 					}
 					shortcut.id_ = entityId;
 					shortcut = [Shortcut setPropertiesFromDictionary:linkMap onObject:shortcut];
-					shortcut.recipientFor = message;
+					shortcut.recipientFor = message;	// Makes this part of message.recipients
 				}
 			}
 		}

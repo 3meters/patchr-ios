@@ -12,8 +12,6 @@
 
 @implementation Entity
 
-
-
 + (Entity *)setPropertiesFromDictionary:(NSDictionary *)dictionary
                                onObject:(Entity *)entity {
     

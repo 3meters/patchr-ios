@@ -840,8 +840,8 @@
 				E26B0C8D1B45783700706F4A /* TextFieldChangeObserver.swift */,
 				E26B0C8B1B4577D000706F4A /* TextViewChangeObserver.swift */,
 				E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */,
-				E2F85C761C32E55100FC2364 /* DeviceUID.m */,
 				E2F85C781C32E5A000FC2364 /* DeviceUID.h */,
+				E2F85C761C32E55100FC2364 /* DeviceUID.m */,
 			);
 			name = Components;
 			sourceTree = "<group>";

@@ -442,7 +442,13 @@ public class Proxibase {
 	}
 	
 	public func updatePassword(userId: NSString, password: NSString, passwordNew: NSString, completion: CompletionBlock) {
-		let parameters = ["userId": userId, "oldPassword": password, "newPassword": passwordNew, "installId": UserController.instance.installId]
+		let parameters = [
+			"userId": userId,
+			"oldPassword": password,
+			"newPassword": passwordNew,
+			"installId": UserController.instance.installId
+		]
+		
 		sessionManager.POST("user/changepw", parameters: addSessionParameters(parameters: parameters),
 			success: {
 				dataTask, response in
@@ -601,56 +607,6 @@ public class Proxibase {
 							  })
 	}
 
-	/*--------------------------------------------------------------------------------------------
-	 * Link profiles
-	 *--------------------------------------------------------------------------------------------*/
-
-	private func standardPatchLinks() -> [LinkSpec] {
-
-		var links = [
-				LinkSpec(from: .Messages, type: .Content, count: true), // Count of messages linked to the patch
-				LinkSpec(from: .Users, type: .Like, count: true), // Count of users that like the patch
-				LinkSpec(from: .Users, type: .Watch, count: true) // Count of users that are watching the patch
-		]
-
-		let userDefaults = NSUserDefaults.standardUserDefaults()
-
-		if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
-			links.append(LinkSpec(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId]))
-			links.append(LinkSpec(from: .Users, type: .Watch, fields: "_id,type,enabled,schema", filter: ["_from": userId]))
-			links.append(LinkSpec(from: .Messages, type: .Content, limit: 1, fields: "_id,type,schema", filter: ["_creator": userId]))
-		}
-
-		return links
-	}
-
-	private func standardMessageLinks() -> [LinkSpec] {
-
-		var links = [
-				LinkSpec(from: .Users, type: .Like, count: true), // Count of users that like this message
-				LinkSpec(to: .Patches, type: .Content, limit: 1), // Patch the message is linked to
-				LinkSpec(to: .Messages, type: .Share, limit: 1), // Message this message is sharing
-				LinkSpec(to: .Patches, type: .Share, limit: 1), // Patch this message is sharing
-				LinkSpec(to: .Users, type: .Share, limit: 5)   // Users this message is shared with
-		]
-
-		let userDefaults = NSUserDefaults.standardUserDefaults()
-
-		if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
-			links.append(LinkSpec(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId]))
-		}
-
-		return links
-	}
-
-	private func standardUserLinks() -> [LinkSpec] {
-
-		return [
-				LinkSpec(to: .Patches, type: .Create, count: true), // Count of patches the user created
-				LinkSpec(to: .Patches, type: .Watch, count: true), // Count of patches the user is watching
-		]
-	}
-    
 	/*--------------------------------------------------------------------------------------------
 	 * Helpers
 	 *--------------------------------------------------------------------------------------------*/

@@ -12,6 +12,7 @@
                              onObject:(User *)user {
     
     user = (User *)[Entity setPropertiesFromDictionary:dictionary onObject:user];
+	
     user.area = dictionary[@"area"];
     user.email = dictionary[@"email"];
     user.role = dictionary[@"role"];

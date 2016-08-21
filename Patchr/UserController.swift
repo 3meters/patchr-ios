@@ -11,7 +11,6 @@ import Lockbox
 import Branch
 import Analytics
 
-
 class UserController: NSObject {
 	
 	static let instance = UserController()

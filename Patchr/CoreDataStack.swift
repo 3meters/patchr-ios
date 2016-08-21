@@ -91,6 +91,8 @@ class CoreDataStack: NSObject {
 			* although it may be useful during development.
 			*/
 			NSLog("Unresolved error \(wrappedError), \(wrappedError.userInfo)")
+			Log.e("There was an error creating or loading the application's saved data.", breadcrumb: true)
+			Log.e((error as NSError).localizedDescription, breadcrumb: true)
 			abort()
 		}
 	}
