@@ -75,7 +75,6 @@ class PatchTableViewController: BaseTableViewController {
 		self.tabBar = self.tabBarController as! MainTabBarController
 		configureActionButton()
 		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchTableViewController.didReceiveRemoteNotification(_:)), name: Events.DidReceiveRemoteNotification, object: nil)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchTableViewController.applicationDidBecomeActive(_:)), name: UIApplicationDidBecomeActiveNotification, object: nil)
 	}
 	
@@ -219,7 +218,7 @@ class PatchTableViewController: BaseTableViewController {
 		let loc = notification.userInfo!["location"] as! CLLocation
 		
 		/*  Update location associated with this install */
-		if UserController.instance.authenticated {
+		if UserController.instance.authenticated && NotificationController.instance.installId != nil {
 			DataController.proxibase.updateProximity(loc){
 				response, error in
 				NSOperationQueue.mainQueue().addOperationWithBlock {
@@ -276,19 +275,6 @@ class PatchTableViewController: BaseTableViewController {
 				* fire on its own when returning from Location settings so we do it.
 				*/
 				viewDidAppear(true)
-		}
-	}
-	
-	func didReceiveRemoteNotification(sender: NSNotification) {
-		
-		if self.filter == .Nearby {
-			if let userInfo = sender.userInfo {
-				if let trigger = userInfo["trigger"] as? String where trigger == "nearby" {
-					if self.isViewLoaded() {
-						self.pullToRefreshAction(self.refreshControl)
-					}
-				}
-			}
 		}
 	}
 	

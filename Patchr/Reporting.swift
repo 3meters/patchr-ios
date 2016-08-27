@@ -30,15 +30,16 @@ struct Reporting {
         }
 
         /* Identifies device/install combo */
-		Bugsnag.addAttribute("patchr_install_id", withValue: UserController.instance.installId, toTabWithName: "device")
+        if let installId = NotificationController.instance.installId {
+            Bugsnag.addAttribute("patchr_install_id", withValue: installId, toTabWithName: "device")
+        }
 		
         /* Location info */
-        let location: CLLocation? = LocationController.instance.lastLocationAccepted()
-        if location != nil {
+        if let location: CLLocation? = LocationController.instance.lastLocationAccepted() {
             let eventDate = location!.timestamp
             let howRecent = abs(trunc(eventDate.timeIntervalSinceNow * 100) / 100)
-			Bugsnag.addAttribute("accuracy", withValue: location!.horizontalAccuracy, toTabWithName: "location")
-			Bugsnag.addAttribute("age", withValue: howRecent, toTabWithName: "location")
+            Bugsnag.addAttribute("accuracy", withValue: location!.horizontalAccuracy, toTabWithName: "location")
+            Bugsnag.addAttribute("age", withValue: howRecent, toTabWithName: "location")
         }
         else {
 			Bugsnag.addAttribute("accuracy", withValue: nil, toTabWithName: "location")

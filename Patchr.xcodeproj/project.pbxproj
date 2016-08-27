@@ -20,8 +20,7 @@
 		7D3F26D31A76F77E0015F8E8 /* _Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D3F26CC1A76F77E0015F8E8 /* _Location.m */; };
 		7D3F26D41A76F77E0015F8E8 /* _Photo.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D3F26CE1A76F77E0015F8E8 /* _Photo.m */; };
 		7D3F26D51A76F77E0015F8E8 /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D3F26D01A76F77E0015F8E8 /* Location.m */; };
-		7D3F26DB1A7706610015F8E8 /* _Notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D3F26D81A7706610015F8E8 /* _Notification.m */; };
-		7D3F26DC1A7706610015F8E8 /* Notification.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D3F26DA1A7706610015F8E8 /* Notification.m */; };
+		7D3F26DC1A7706610015F8E8 /* FeedItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D3F26DA1A7706610015F8E8 /* FeedItem.m */; };
 		7D40B9401A7816C400F9954C /* ServiceData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D40B93F1A7816C400F9954C /* ServiceData.m */; };
 		7D40B9421A7864A000F9954C /* NotificationsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D40B9411A7864A000F9954C /* NotificationsTableViewController.swift */; };
 		7D6E26471A7AB93F000128A7 /* UserDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D6E26461A7AB93F000128A7 /* UserDetailViewController.swift */; };
@@ -71,6 +70,7 @@
 		E20C3A831BDEBBB9008CCED1 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A821BDEBBB9008CCED1 /* CoreDataStack.swift */; };
 		E20C3A851BE04BBC008CCED1 /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */; };
 		E20C3A861BE08887008CCED1 /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */; };
+		E21FE56D1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E21FE56C1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift */; };
 		E224C3501B6ED27F00879775 /* PatchrShare.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E238BAE41B51D3290094AF41 /* PatchrShare.storyboard */; };
 		E224C3551B6EDBBE00879775 /* PatchTargetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */; };
 		E227294B1CEA743600913041 /* GalleryGridViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E227294A1CEA743600913041 /* GalleryGridViewController.swift */; };
@@ -157,6 +157,7 @@
 		E29F65531B61A9450000BEF4 /* PatchSearchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29F65521B61A9450000BEF4 /* PatchSearchCell.swift */; };
 		E2A28E6D1B49D88900B3A2FE /* AirLikeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A28E6C1B49D88800B3A2FE /* AirLikeButton.swift */; };
 		E2A28E6F1B4A602200B3A2FE /* AirToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */; };
+		E2A4368C1D6E01C3009FFD4C /* _FeedItem.m in Sources */ = {isa = PBXBuildFile; fileRef = E2A4368B1D6E01C3009FFD4C /* _FeedItem.m */; };
 		E2A5A8801B6FCE98006D6E81 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */; };
 		E2A5A8811B6FDF5C006D6E81 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */; };
 		E2A5A8851B703B9B006D6E81 /* PhotoEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A5A8841B703B9B006D6E81 /* PhotoEditView.swift */; };
@@ -280,10 +281,8 @@
 		7D3F26CF1A76F77E0015F8E8 /* Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Location.h; path = Model/Location.h; sourceTree = "<group>"; };
 		7D3F26D01A76F77E0015F8E8 /* Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Location.m; path = Model/Location.m; sourceTree = "<group>"; };
 		7D3F26D11A76F77E0015F8E8 /* Photo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Photo.h; path = Model/Photo.h; sourceTree = "<group>"; };
-		7D3F26D71A7706610015F8E8 /* _Notification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _Notification.h; path = Model/_Notification.h; sourceTree = "<group>"; };
-		7D3F26D81A7706610015F8E8 /* _Notification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _Notification.m; path = Model/_Notification.m; sourceTree = "<group>"; };
-		7D3F26D91A7706610015F8E8 /* Notification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Notification.h; path = Model/Notification.h; sourceTree = "<group>"; };
-		7D3F26DA1A7706610015F8E8 /* Notification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Notification.m; path = Model/Notification.m; sourceTree = "<group>"; };
+		7D3F26D91A7706610015F8E8 /* FeedItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FeedItem.h; path = Model/FeedItem.h; sourceTree = "<group>"; };
+		7D3F26DA1A7706610015F8E8 /* FeedItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FeedItem.m; path = Model/FeedItem.m; sourceTree = "<group>"; };
 		7D40B93E1A7816C400F9954C /* ServiceData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ServiceData.h; path = Model/ServiceData.h; sourceTree = "<group>"; };
 		7D40B93F1A7816C400F9954C /* ServiceData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ServiceData.m; path = Model/ServiceData.m; sourceTree = "<group>"; };
 		7D40B9411A7864A000F9954C /* NotificationsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = NotificationsTableViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -355,6 +354,7 @@
 		E20C3A801BDC1D57008CCED1 /* BaseDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseDetailView.swift; sourceTree = "<group>"; };
 		E20C3A821BDEBBB9008CCED1 /* CoreDataStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CoreDataStack.swift; path = Patchr/CoreDataStack.swift; sourceTree = "<group>"; };
 		E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stopwatch.swift; sourceTree = "<group>"; };
+		E21FE56C1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationSettingsSimpleViewController.swift; sourceTree = "<group>"; };
 		E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTargetViewController.swift; sourceTree = "<group>"; };
 		E227294A1CEA743600913041 /* GalleryGridViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryGridViewController.swift; sourceTree = "<group>"; };
 		E227294C1CEA7D0600913041 /* GalleryViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryViewCell.swift; sourceTree = "<group>"; };
@@ -444,6 +444,8 @@
 		E29F65521B61A9450000BEF4 /* PatchSearchCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchSearchCell.swift; sourceTree = "<group>"; };
 		E2A28E6C1B49D88800B3A2FE /* AirLikeButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirLikeButton.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirToggleButton.swift; sourceTree = "<group>"; };
+		E2A4368A1D6E01C3009FFD4C /* _FeedItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _FeedItem.h; path = Model/_FeedItem.h; sourceTree = "<group>"; };
+		E2A4368B1D6E01C3009FFD4C /* _FeedItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _FeedItem.m; path = Model/_FeedItem.m; sourceTree = "<group>"; };
 		E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E2A5A8841B703B9B006D6E81 /* PhotoEditView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PhotoEditView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2A603231CD97B7A00FBD55B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -620,6 +622,8 @@
 				E2F6C9371B1E76740067D959 /* Internal */,
 				7DA7307D1A71ACC9008C25FA /* Entity.h */,
 				7DA7307E1A71ACC9008C25FA /* Entity.m */,
+				7D3F26D91A7706610015F8E8 /* FeedItem.h */,
+				7D3F26DA1A7706610015F8E8 /* FeedItem.m */,
 				E2C7C5CA1B2CF2F80045038A /* ImageResult.swift */,
 				E23C010E1CE4D73B009C56B2 /* DisplayPhoto.swift */,
 				7DC1763C1ACDFF010051BA6C /* Link.h */,
@@ -629,8 +633,6 @@
 				7D3F26D01A76F77E0015F8E8 /* Location.m */,
 				7DB6E0F61A8174E90017A42F /* Message.h */,
 				7DB6E0F71A8174E90017A42F /* Message.m */,
-				7D3F26D91A7706610015F8E8 /* Notification.h */,
-				7D3F26DA1A7706610015F8E8 /* Notification.m */,
 				7DA7307F1A71ACC9008C25FA /* Patch.h */,
 				7DA730801A71ACC9008C25FA /* Patch.m */,
 				7D3F26D11A76F77E0015F8E8 /* Photo.h */,
@@ -959,6 +961,7 @@
 				7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */,
 				9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */,
 				E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */,
+				E21FE56C1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift */,
 				E2E9AAA81CF0AC250057698F /* PatchSettingsController.swift */,
 				E26B58501C8B3F6B00467B51 /* PermissionsViewController.swift */,
 				E26B0C8F1B45C07D00706F4A /* PhotoBrowser.swift */,
@@ -1015,6 +1018,8 @@
 		E2F6C9371B1E76740067D959 /* Internal */ = {
 			isa = PBXGroup;
 			children = (
+				E2A4368A1D6E01C3009FFD4C /* _FeedItem.h */,
+				E2A4368B1D6E01C3009FFD4C /* _FeedItem.m */,
 				7DA730711A71ACC9008C25FA /* _Entity.h */,
 				7DA730721A71ACC9008C25FA /* _Entity.m */,
 				E2F6C92E1B1E546F0067D959 /* _Link.h */,
@@ -1023,8 +1028,6 @@
 				7D3F26CC1A76F77E0015F8E8 /* _Location.m */,
 				7DB6E0F41A8174E90017A42F /* _Message.h */,
 				7DB6E0F51A8174E90017A42F /* _Message.m */,
-				7D3F26D71A7706610015F8E8 /* _Notification.h */,
-				7D3F26D81A7706610015F8E8 /* _Notification.m */,
 				7DA730731A71ACC9008C25FA /* _Patch.h */,
 				7DA730741A71ACC9008C25FA /* _Patch.m */,
 				7D3F26CD1A76F77E0015F8E8 /* _Photo.h */,
@@ -1538,6 +1541,7 @@
 				7D9C9E3D1A9BAFCE0069E332 /* PatchDetailViewController.swift in Sources */,
 				E297305E1C136E8300B9433B /* AirRadioButton.swift in Sources */,
 				7DB6E0F91A8174E90017A42F /* Message.m in Sources */,
+				E2A4368C1D6E01C3009FFD4C /* _FeedItem.m in Sources */,
 				E256B4281BD3DDC900EBF894 /* AirTableViewCell.swift in Sources */,
 				E24199001C18ACAF00DDA549 /* AirContactPicker.swift in Sources */,
 				7D40B9421A7864A000F9954C /* NotificationsTableViewController.swift in Sources */,
@@ -1575,6 +1579,7 @@
 				7D3F26D51A76F77E0015F8E8 /* Location.m in Sources */,
 				E2C0D9381B6D2CC700E28CE9 /* PatchNavigationController.swift in Sources */,
 				E2F618D61AFFACF00055D09C /* LocationController.swift in Sources */,
+				E21FE56D1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift in Sources */,
 				7DC1763F1ACDFF010051BA6C /* Link.m in Sources */,
 				7D3F26D41A76F77E0015F8E8 /* _Photo.m in Sources */,
 				E26B58511C8B3F6B00467B51 /* PermissionsViewController.swift in Sources */,
@@ -1614,7 +1619,7 @@
 				E25327D51B14CA9800990A81 /* NGAParallaxMotion.m in Sources */,
 				E24D74541BBAED5F0061F339 /* TaskQueue.swift in Sources */,
 				E2E9AAA71CEF86470057698F /* AirNavigationController.swift in Sources */,
-				7D3F26DC1A7706610015F8E8 /* Notification.m in Sources */,
+				7D3F26DC1A7706610015F8E8 /* FeedItem.m in Sources */,
 				E2D12A731C08DC4900DE507E /* AirTextField.swift in Sources */,
 				E2A28E6D1B49D88900B3A2FE /* AirLikeButton.swift in Sources */,
 				E23C010D1CE243F2009C56B2 /* Keys.md in Sources */,
@@ -1623,7 +1628,6 @@
 				E2D12A771C08F9CE00DE507E /* AirFeaturedButton.swift in Sources */,
 				E2D25DC81B23892000E51461 /* UserController.swift in Sources */,
 				E26B0C8E1B45783700706F4A /* TextFieldChangeObserver.swift in Sources */,
-				7D3F26DB1A7706610015F8E8 /* _Notification.m in Sources */,
 				E256B4261BD2C9E200EBF894 /* PatchView.swift in Sources */,
 				E2B471DA1C2612AD00374F1F /* AirToolButton.swift in Sources */,
 				E29730661C16295300B9433B /* InviteViewController.swift in Sources */,

@@ -464,10 +464,10 @@ class ProfileEditViewController: BaseEditViewController {
 		let progress = AirProgress.showHUDAddedTo(self.view.window!, animated: true)
 		progress.mode = MBProgressHUDMode.Indeterminate
 		progress.styleAs(.ActivityWithText)
-		progress.label.text = self.progressStartLabel!
+		progress.labelText = self.progressStartLabel!
 		progress.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ProfileEditViewController.progressWasCancelled(_:))))
 		progress.removeFromSuperViewOnHide = true
-		progress.showAnimated(true)
+		progress.show(true)
 		
 		let parameters = self.gather(NSMutableDictionary())
 		var cancelled = false
@@ -475,7 +475,7 @@ class ProfileEditViewController: BaseEditViewController {
 		let queue = TaskQueue()
 		
 		Utils.delay(5.0) {
-			progress.detailsLabel.text = "Tap to cancel"
+			progress.detailsLabelText = "Tap to cancel"
 		}
 		
 		/* Process image if any */
@@ -524,11 +524,14 @@ class ProfileEditViewController: BaseEditViewController {
 			
 			if self.inputState == .Onboarding {
 				let secret = PatchrKeys().proxibaseSecret()	// Obfuscated but highly insecure
-				let createParameters: NSDictionary = [
+				let createParameters: NSMutableDictionary = [
 					"data": parameters,
-					"secret": secret,
-					"installId": UserController.instance.installId
+					"secret": secret
 				]
+                
+                if let installId = NotificationController.instance.installId {
+                    createParameters["installId"] = installId
+                }
 				
 				self.entityPostRequest = DataController.proxibase.postEntity("user/create", parameters: createParameters) {
 					response, error in
@@ -538,7 +541,6 @@ class ProfileEditViewController: BaseEditViewController {
 					if error == nil {
 						/* Remember email address for easy data entry */
 						NSUserDefaults.standardUserDefaults().setObject(self.emailField.text, forKey: PatchrUserDefaultKey("userEmail"))
-						NSUserDefaults.standardUserDefaults().synchronize()
 					}
 					next(Result(response: response, error: error))
 				}
@@ -568,7 +570,7 @@ class ProfileEditViewController: BaseEditViewController {
 				return
 			}
 			
-			progress.hideAnimated(true)
+			progress.hide(true)
 			
 			if let result: Result = queue.lastResult as? Result {
 				if var error = ServerError(result.error) {
@@ -651,7 +653,6 @@ class ProfileEditViewController: BaseEditViewController {
 					BranchProvider.logout()
 					UserController.instance.clearStore()
 					NSUserDefaults.standardUserDefaults().setObject(nil, forKey: PatchrUserDefaultKey("userEmail"))
-					NSUserDefaults.standardUserDefaults().synchronize()
 					
 					LocationController.instance.clearLastLocationAccepted()
 					
@@ -748,7 +749,7 @@ class ProfileEditViewController: BaseEditViewController {
 	func progressWasCancelled(sender: AnyObject) {
 		if let gesture = sender as? UIGestureRecognizer, let hud = gesture.view as? MBProgressHUD {
 			hud.animationType = MBProgressHUDAnimation.ZoomIn
-			hud.hideAnimated(true)
+			hud.hide(true)
 			self.imageUploadRequest?.cancel() // Should do nothing if upload already complete or isn't any
 			self.entityPostRequest?.cancel()
 		}

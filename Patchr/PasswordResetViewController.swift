@@ -209,9 +209,9 @@ class PasswordResetViewController: BaseEditViewController {
 		self.progress.mode = MBProgressHUDMode.Indeterminate
 		self.progress.styleAs(.ActivityWithText)
 		self.progress.minShowTime = 0.5
-		self.progress.label.text = "Verifying..."
+		self.progress.labelText = "Verifying..."
 		self.progress.removeFromSuperViewOnHide = true
-		self.progress.showAnimated(true)
+		self.progress.show(true)
 		
 		/*
 		* Successful login will also update the install record so the authenticated user
@@ -223,7 +223,7 @@ class PasswordResetViewController: BaseEditViewController {
 			NSOperationQueue.mainQueue().addOperationWithBlock {
 				self.processing = false
 				
-				self.progress?.hideAnimated(true)
+				self.progress?.hide(true)
 				
 				if let error = ServerError(error) {
 					self.handleError(error)
@@ -258,9 +258,9 @@ class PasswordResetViewController: BaseEditViewController {
 		let progress = AirProgress.addedTo(self.view.window!)
 		progress.mode = MBProgressHUDMode.Indeterminate
 		progress.styleAs(.ActivityWithText)
-		progress.label.text = "Sending email..."
+		progress.labelText = "Sending email..."
 		progress.minShowTime = 1.0
-		progress.showAnimated(true)
+		progress.show(true)
 		progress.userInteractionEnabled = true
 		
 		DataController.proxibase.requestPasswordReset(self.emailField.text!) {
@@ -269,7 +269,7 @@ class PasswordResetViewController: BaseEditViewController {
 			NSOperationQueue.mainQueue().addOperationWithBlock {
 				self.processing = false
 				
-				progress.hideAnimated(true)
+				progress.hide(true)
 				
 				if let error = ServerError(error) {
 					self.handleError(error)
@@ -299,9 +299,9 @@ class PasswordResetViewController: BaseEditViewController {
 		let progress = AirProgress.addedTo(self.view.window!)
 		progress.mode = MBProgressHUDMode.Indeterminate
 		progress.styleAs(.ActivityWithText)
-		progress.label.text = "Resetting..."
+		progress.labelText = "Resetting..."
 		progress.minShowTime = 1.0
-		progress.showAnimated(true)
+		progress.show(true)
 		progress.userInteractionEnabled = true
 		
 		DataController.proxibase.resetPassword(self.passwordField.text!, token: self.inputToken!) {
@@ -310,7 +310,7 @@ class PasswordResetViewController: BaseEditViewController {
 			NSOperationQueue.mainQueue().addOperationWithBlock {
 				self.processing = false
 				
-				progress.hideAnimated(true)
+				progress.hide(true)
 				if let error = ServerError(error) {
 					if error.code == .UNAUTHORIZED_CREDENTIALS {
 						self.Alert("Password reset has expired or is invalid. Request password reset again.", onDismiss: {

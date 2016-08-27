@@ -21,7 +21,7 @@
 #import "Query.h"
 #import "QueryItem.h"
 #import "ServiceData.h"
-#import "Notification.h"
+#import "FeedItem.h"
 #import "Entity.h"
 #import "ServiceBase.h"
 #import "Location.h"
@@ -33,6 +33,7 @@
 
 #import <CommonCrypto/CommonCrypto.h>
 #import <Google/Analytics.h>
+#import <OneSignal/OneSignal.h>
 
 #import <AdobeCreativeSDKCore/AdobeUXAuthManager.h>
 #import <AdobeCreativeSDKImage/AdobeUXImageEditorViewController.h>

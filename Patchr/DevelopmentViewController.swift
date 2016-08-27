@@ -37,13 +37,13 @@ class DevelopmentViewController: UIViewController {
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
 
-		self.userDefaults.setObject(serverUriField.text, forKey: PatchrUserDefaultKey("serverURI"))
+		self.userDefaults.setObject(serverUriField.text, forKey: PatchrUserDefaultKey("serverUri"))
 		self.observerObject?.stopObserving()
 
 		/* If the URI changed and we were signed in then sign out */
 		if self.uriAtStart != self.serverUriField.text {
 			if UserController.instance.authenticated {
-				UserController.instance.signout()
+				UserController.instance.logout()
 			}
 		}
 	}

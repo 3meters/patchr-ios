@@ -33,7 +33,7 @@ struct UIShared {
 						else {
 							Log.w("Incompatible version: Declined so signout and jump to lobby")
 							Reporting.track("Declined to Update Incompatible Version")
-							UserController.instance.signout()
+							UserController.instance.logout()
 						}
 				}
 			}
@@ -112,10 +112,10 @@ struct UIShared {
 		let progress = AirProgress.showHUDAddedTo(targetView, animated: true)
 		progress.mode = MBProgressHUDMode.Text
 		progress.styleAs(.ToastLight)
-		progress.label.text = message
+		progress.labelText = message
 		progress.accessibilityIdentifier = "toast"
-		progress.detailsLabel.text = "Tap to dismiss"
-		progress.offset.x = CGFloat((UIScreen.mainScreen().bounds.size.height / 2) - 200)
+		progress.detailsLabelText = "Tap to dismiss"
+		progress.xOffset = Float((UIScreen.mainScreen().bounds.size.height / 2) - 200)
 		progress.shadow = true
 		progress.removeFromSuperViewOnHide = false
 		progress.userInteractionEnabled = true
@@ -140,13 +140,13 @@ struct UIShared {
         progress = AirProgress.showHUDAddedTo(targetView, animated: true)
         progress.mode = MBProgressHUDMode.Text
         progress.styleAs(.ToastLight)
-        progress.label.text = message
+        progress.labelText = message
 		progress.accessibilityIdentifier = identifier ?? "toast"
-        progress.offset.x = CGFloat((UIScreen.mainScreen().bounds.size.height / 2) - 200)
+        progress.yOffset = Float((UIScreen.mainScreen().bounds.size.height / 2) - 200)
         progress.shadow = true
         progress.removeFromSuperViewOnHide = true
         progress.userInteractionEnabled = false
-        progress.hideAnimated(true, afterDelay: duration)
+        progress.hide(true, afterDelay: duration)
         
         return progress
     }

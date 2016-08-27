@@ -542,19 +542,15 @@ class PatchDetailViewController: BaseDetailViewController {
 	}
 	
 	func didReceiveRemoteNotification(notification: NSNotification) {
-		
-		if let userInfo = notification.userInfo {
-			let parentId = userInfo["parentId"] as? String
-			let targetId = userInfo["targetId"] as? String
-			
-			let impactedByNotification = self.entityId == parentId || self.entityId == targetId
-			
-			// Only refresh notifications if view has already been loaded
-			// and the notification is related to this Patch
-			if self.isViewLoaded() && impactedByNotification {
-				self.pullToRefreshAction(self.refreshControl)
-			}
-		}
+        let data = notification.userInfo!
+        if self.isViewLoaded() {
+            if let parentId = data["parentId"] as? String where parentId == self.entityId {
+                self.pullToRefreshAction(self.refreshControl)
+            }
+            else if let targetId = data["targetId"] as? String where targetId == self.entityId {
+                self.pullToRefreshAction(self.refreshControl)
+            }
+        }
 	}
 	
 	func applicationDidEnterBackground(sender: NSNotification) {

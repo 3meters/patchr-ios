@@ -8,150 +8,181 @@
 
 import UIKit
 import Foundation
-import Parse
 import AudioToolbox
+import RxSwift
 
-class NotificationController {
-    
+class NotificationController: NSObject {
+
     static let instance = NotificationController()
     
+    var installId: String?
     var activityDate: Int64!
     
-    private init() {
+    private var _badgeNumber = Variable(0)
+    var badgeNumber: Observable<Int> {
+        return _badgeNumber.asObservable()
+    }
+
+    private override init() {
         self.activityDate = Utils.now()
     }
-	
-	/*--------------------------------------------------------------------------------------------
-	* Notifications
-	*--------------------------------------------------------------------------------------------*/
-    
+
+    func initWithLaunchOptions(launchOptions: [NSObject:AnyObject]!) {
+        
+        /* We delay asking for notification permissions until they join a patch */
+        OneSignal.initWithLaunchOptions(
+                launchOptions,
+                appId: "f43fe789-3392-4f2b-bf52-950d0c78fffe",
+                handleNotificationAction: nil,
+                settings: [kOSSettingsKeyAutoPrompt: false, kOSSettingsKeyInAppAlerts: false])
+        
+        #if DEBUG
+            OneSignal.setLogLevel(.LL_DEBUG, visualLevel: .LL_NONE)
+        #endif
+    }
+
+    /*--------------------------------------------------------------------------------------------
+    * Events
+    *--------------------------------------------------------------------------------------------*/
+
+    /*--------------------------------------------------------------------------------------------
+    * Notifications
+    *--------------------------------------------------------------------------------------------*/
+
     func didReceiveLocalNotification(application: UIApplication, notification: UILocalNotification) {
         didReceiveRemoteNotification(application, notification: notification.userInfo!, fetchCompletionHandler: nil)
     }
-    
-    func didReceiveRemoteNotification(application: UIApplication, notification: [NSObject : AnyObject], fetchCompletionHandler completionHandler: ((UIBackgroundFetchResult) -> Void)? ) {
-        
+
+    func didReceiveRemoteNotification(application: UIApplication, notification: [NSObject:AnyObject], fetchCompletionHandler completionHandler: ((UIBackgroundFetchResult) -> Void)?) {
+        /*
+         * The remote notification has already been displayed to the user and now we
+         * have a chance to do any processing that should accompany the notification. Even
+         * if the user has turned off remote notifications, we still get this call.
+         */
         Log.d("Notification received...")
-		/*
-		 * Notifications targeting iOS do not come with "_id" set to a unique identifier. 
-		 */
-        let state = application.applicationState
-        if let stateString: String = state == .Background ? "background" : state == .Active ? "active" : "inactive" {
-            Log.d("App state: \(stateString)")
-        }
-        Log.d(String(format: "%@", notification))
-        
-        /* Tickle the activityDate so consumers know that something has happened */
-		self.activityDate = Utils.now()
+        Log.d("App state: \(application.applicationState == .Background ? "background" : application.applicationState == .Active ? "active" : "inactive")")
 
-        /* Special capture for nearby notifications */
-        if let trigger = notification["trigger"] as? String where trigger == "nearby" {
-            var nearby = notification
-            let aps = nearby["aps"] as! NSDictionary
-            nearby["summary"] = aps["alert"]
-            nearby["sentDate"] = NSNumber(longLong: Utils.now()) // Only way to store Int64 as AnyObject
-            nearby["createdDate"] = nearby["sentDate"]
-            nearby["sortDate"] = nearby["sentDate"]
-            nearby["type"] = "nearby"
-            nearby["schema"] = "notification"
-			if nearby["id"] == nil {	// Service is planning change to start including a service generated id
-				nearby["id"] = "no.\(nearby["targetId"]!.substringFromIndex(2))"
-			}
-            nearby.removeValueForKey("aps")
-            Utils.updateNearbys(nearby)
-        }
+        let json: JSON = JSON(notification)
+        let data = json["custom"]["a"].dictionaryObject!
         /*
-         * Inactive always means that the user tapped on remote notification.
-         * Active = notification received while app is active (foreground)
+         * Inactive:    Always means that the user tapped on remote notification.
+         * Active:      Notification received while app is active (foreground).
+         * Background:  Notification received while app is not active (background or dead)
          */
-        if state == .Inactive || state == .Active {
-            let augmentedUserInfo = NSMutableDictionary(dictionary: notification)
-            augmentedUserInfo["receivedInApplicationState"] = application.applicationState.rawValue // active, inactive, background
-            NSNotificationCenter.defaultCenter().postNotificationName(Events.DidReceiveRemoteNotification, object: self, userInfo: augmentedUserInfo as [NSObject : AnyObject])
+        if application.applicationState == .Inactive {
+            deepLink(data["targetId"] as! String)
         }
-        /*
-         * Background = notification received while app is not active (background or dead)
+        else {
+            self._badgeNumber.value += 1
+            self.activityDate = Utils.now() // So we check if our notification list is stale
+            if application.applicationState == .Active {
+                NSNotificationCenter.defaultCenter().postNotificationName(Events.DidReceiveRemoteNotification, object: self, userInfo: data as [NSObject:AnyObject])
+            }
+        }
+        /* 
+         * We have thirty seconds to process and call the completion handler before being
+         * terminated if the app was woken to process the notification.
          */
-        else if state == .Background {
-            /*
-             * If alert/sound/badge properties are set then they will get handled 
-			 * by the os as a remote notification. Muted (low priority) notifications will badge
-			 * but to not include alert or sound settings that would be handled by the os.
-             */
-			let notificationDate = NSNumber(longLong: Utils.now()) // Only way to store Int64 as AnyObject
-			NSUserDefaults.standardUserDefaults().setObject(notificationDate, forKey: PatchrUserDefaultKey("notificationDate"))
-			NSUserDefaults.standardUserDefaults().synchronize()
-			Log.d("App was system launched so stashed notification date")
-			
-			if let settings =  UIApplication.sharedApplication().currentUserNotificationSettings() {
-				/*
-				 * If allowed, we play a sound even if the user has disabled notifications.
-				 */
-				if settings.types == .None {
-					let json:JSON = JSON(notification)
-					
-					/* Only chirp if sounds turned on in app and not muted for the related patch */
-					if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundForNotifications")) {
-						if let priority = json["priority"].int {
-							if priority == 2 {
-								return
-							}
-						}
-						AudioServicesPlaySystemSound(AudioController.chirpSound)
-					}
-				}
-			}
+        if (completionHandler != nil) {
+            completionHandler!(.NoData)
         }
-		
-		if (completionHandler != nil) {
-			completionHandler!(.NoData)
-		}
     }
-	
+
     func didRegisterForRemoteNotificationsWithDeviceToken(application: UIApplication, deviceToken: NSData) {
-        let parseInstallation = PFInstallation.currentInstallation()
-        parseInstallation.setDeviceTokenFromData(deviceToken)
-        parseInstallation.saveInBackgroundWithBlock(nil)
+        Log.d("Success registering for remote notifications")
+    }
+
+    func didFailToRegisterForRemoteNotificationsWithError(application: UIApplication, error: NSError) {
+        Log.w("Failed to register for remote notifications: \(error)")
+    }
+
+    /*--------------------------------------------------------------------------------------------
+    * Methods
+    *--------------------------------------------------------------------------------------------*/
+    
+    func deepLink(targetId: String) {
+        
+        let topController = UIViewController.topMostViewController()
+        
+        if targetId.hasPrefix("pa.") {
+            let controller = PatchDetailViewController()
+            let navController = AirNavigationController()
+            navController.viewControllers = [controller]
+            controller.entityId = targetId
+            let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: #selector(controller.dismissAction(_:)))
+            controller.navigationItem.leftBarButtonItems = [doneButton]
+            topController!.presentViewController(navController, animated: true, completion: nil)
+        }
+        else if targetId.hasPrefix("me.") {
+            let controller = MessageDetailViewController()
+            let navController = AirNavigationController()
+            navController.viewControllers = [controller]
+            controller.inputMessageId = targetId
+            let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: #selector(controller.dismissAction(_:)))
+            controller.navigationItem.leftBarButtonItems = [doneButton]
+            topController!.presentViewController(navController, animated: true, completion: nil)
+        }
     }
     
-    func didFailToRegisterForRemoteNotificationsWithError(application: UIApplication, error: NSError) {
-        Log.w("failed to register for remote notifications: \(error)")
+    func activateUser() {
+        
+        guard UserController.instance.userId != nil else {
+            fatalError("Activating user for notifications requires a current user")
+        }
+        
+        OneSignal.syncHashedEmail(UserController.instance.userId)
+        
+        OneSignal.IdsAvailable() {
+            userId, pushToken in
+            
+            NotificationController.instance.installId = userId
+            
+            if userId != nil {
+                DataController.proxibase.registerInstall() {
+                    response, error in
+                    NSOperationQueue.mainQueue().addOperationWithBlock {
+                        if let error = ServerError(error) {
+                            Log.w("Error during registerInstall: \(error)")
+                        }
+                        else {
+                            Log.i("Install registered or updated: \(NotificationController.instance.installId!)")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func clearBadgeNumber() {
+        self._badgeNumber.value = 0
     }
 
-	/*--------------------------------------------------------------------------------------------
-	* Methods
-	*--------------------------------------------------------------------------------------------*/
+    func guardedRegisterForRemoteNotifications(message: String?) {
 
-	func guardedRegisterForRemoteNotifications(message: String?) {
-		
-		let message = message ?? "Would you like to alerted when messages are posted to this patch?"
-		
-		if let controller = UIViewController.topMostViewController() {
-			
-			let alert = UIAlertController(title: "Joining Patch", message: message, preferredStyle: UIAlertControllerStyle.Alert)
-			let submit = UIAlertAction(title: "Notify me", style: .Default) { action in
-				self.registerForRemoteNotifications()
-				Reporting.track("Selected Notifications for Patch")
-			}
-			let cancel = UIAlertAction(title: "No thanks", style: .Cancel) { action in
-				Log.d("Remote notifications declined")
-				alert.dismissViewControllerAnimated(true, completion: nil)
-				Reporting.track("Declined Notifications for Patch")
-			}
-			
-			alert.addAction(cancel)
-			alert.addAction(submit)
-			
-			controller.presentViewController(alert, animated: true, completion: nil)
-		}
-	}
-	
+        let message = message ?? "Would you like to alerted when messages are posted to this patch?"
+
+        if let controller = UIViewController.topMostViewController() {
+            let alert = UIAlertController(title: "Joining Patch", message: message, preferredStyle: UIAlertControllerStyle.Alert)
+            let submit = UIAlertAction(title: "Notify me", style: .Default) {
+                action in
+                self.registerForRemoteNotifications()
+                Reporting.track("Selected Notifications for Patch")
+            }
+            let cancel = UIAlertAction(title: "No thanks", style: .Cancel) {
+                action in
+                Log.d("Remote notifications declined")
+                alert.dismissViewControllerAnimated(true, completion: nil)
+                Reporting.track("Declined Notifications for Patch")
+            }
+
+            alert.addAction(cancel)
+            alert.addAction(submit)
+
+            controller.presentViewController(alert, animated: true, completion: nil)
+        }
+    }
+
     func registerForRemoteNotifications() {
-		/* Only called from UserController or self */
-        let application = UIApplication.sharedApplication()
-		let settings: UIUserNotificationSettings = UIUserNotificationSettings(forTypes: [.Alert, .Badge, .Sound], categories: nil)
-		application.registerUserNotificationSettings(settings)	// Triggers notification permission UI to the user
-		application.registerForRemoteNotifications()
-		Log.d("Registered for remote notifications")
+        OneSignal.registerForPushNotifications()
     }
 }

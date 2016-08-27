@@ -112,7 +112,7 @@ class NotificationView: BaseView {
 	
 	override func bindToEntity(entity: AnyObject, location: CLLocation?) {
 		
-		let notification = entity as! Notification
+		let notification = entity as! FeedItem
 		
 		self.entity = notification
 		self.hasPhoto = (notification.photoBig != nil)

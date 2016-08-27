@@ -148,13 +148,13 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 		self.progress = AirProgress.showHUDAddedTo(self.view.window!, animated: true)
 		self.progress!.mode = MBProgressHUDMode.Indeterminate
 		self.progress!.styleAs(.ActivityWithText)
-		self.progress!.label.text = self.progressStartLabel!
+		self.progress!.labelText = self.progressStartLabel!
 		self.progress!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(MessageEditViewController.userCancelTaskAction(_:))))
 		self.progress!.removeFromSuperViewOnHide = true
-		self.progress!.showAnimated(true)
+		self.progress!.show(true)
 
 		Utils.delay(5.0) {
-			self.progress?.detailsLabel.text = "Tap to cancel"
+			self.progress?.detailsLabelText = "Tap to cancel"
 		}
 		
 		let parameters = self.gather(NSMutableDictionary())
@@ -198,7 +198,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 	func userCancelTaskAction(sender: AnyObject) {
 		if let gesture = sender as? UIGestureRecognizer, let hud = gesture.view as? MBProgressHUD {
 			hud.animationType = MBProgressHUDAnimation.ZoomIn
-			hud.hideAnimated(true)
+			hud.hide(true)
 			self.imageUploadRequest?.cancel() // Should do nothing if upload already complete or isn't any
 			self.entityPostRequest?.cancel()
 		}
@@ -459,7 +459,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 				return
 			}
 			
-			self.progress?.hideAnimated(true)
+			self.progress?.hide(true)
 			
 			if let result: Result = queue.lastResult as? Result {
 				if let error = ServerError(result.error) {
@@ -558,7 +558,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 		
 		Log.d("Suggest call: \(searchString)")
 		
-		let endpoint: String = "https://api.aircandi.com/v1/suggest"
+		let endpoint: String = "\(DataController.proxibase.serviceUri)suggest"
 		let request = NSMutableURLRequest(URL: NSURL(string: endpoint)!)
 		let session = NSURLSession.sharedSession()
 		request.HTTPMethod = "POST"

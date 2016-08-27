@@ -157,7 +157,7 @@ class SearchViewController: UITableViewController {
 		
         Log.d("Suggest call: \(searchString!)")
 		
-        let endpoint: String = "https://api.aircandi.com/v1/suggest"
+        let endpoint: String = "\(DataController.proxibase.serviceUri)suggest"
         let request = NSMutableURLRequest(URL: NSURL(string: endpoint)!)
         let session = NSURLSession.sharedSession()
         request.HTTPMethod = "POST"

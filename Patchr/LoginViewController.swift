@@ -67,9 +67,9 @@ class LoginViewController: BaseEditViewController {
 				self.progress.mode = MBProgressHUDMode.Indeterminate
 				self.progress.styleAs(.ActivityWithText)
 				self.progress.minShowTime = 0.5
-				self.progress.label.text = "Verifying..."
+				self.progress.labelText = "Verifying..."
 				self.progress.removeFromSuperViewOnHide = true
-				self.progress.showAnimated(true)
+				self.progress.show(true)
 				
 				validateEmail()
 			}
@@ -81,9 +81,9 @@ class LoginViewController: BaseEditViewController {
 				self.progress.mode = MBProgressHUDMode.Indeterminate
 				self.progress.styleAs(.ActivityWithText)
 				self.progress.minShowTime = 0.5
-				self.progress.label.text = "Logging in..."
+				self.progress.labelText = "Logging in..."
 				self.progress.removeFromSuperViewOnHide = true
-				self.progress.showAnimated(true)
+				self.progress.show(true)
 
 				login()
 			}
@@ -207,7 +207,7 @@ class LoginViewController: BaseEditViewController {
 			NSOperationQueue.mainQueue().addOperationWithBlock {
 				self.processing = false
 				
-				self.progress?.hideAnimated(true)
+				self.progress?.hide(true)
 				
 				if let error = ServerError(error) {
 					self.handleError(error)
@@ -244,7 +244,7 @@ class LoginViewController: BaseEditViewController {
 			NSOperationQueue.mainQueue().addOperationWithBlock {
 				self.processing = false
 				
-				self.progress?.hideAnimated(true)
+				self.progress?.hide(true)
 				
 				if var error = ServerError(error) {
 					if error.code == .UNAUTHORIZED_CREDENTIALS {
@@ -259,7 +259,6 @@ class LoginViewController: BaseEditViewController {
 					/* Remember last email address for easy data entry */
 					if self.provider == AuthProvider.PROXIBASE {
 						NSUserDefaults.standardUserDefaults().setObject(self.emailField.text, forKey: PatchrUserDefaultKey("userEmail"))
-						NSUserDefaults.standardUserDefaults().synchronize()
 						self.passwordField.text = nil
 					}
 					Reporting.track("Logged In", properties: ["source":self.source])

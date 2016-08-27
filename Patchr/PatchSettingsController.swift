@@ -66,7 +66,7 @@ class PatchSettingsController: UITableViewController {
     func makeSwitch(settingType: SettingType, state: Bool = false) -> UISwitch {
         let switchView = UISwitch()
         switchView.tag = settingType.rawValue
-        switchView.addTarget(self, action: #selector(NotificationSettingsViewController.toggleAction(_:)), forControlEvents: UIControlEvents.ValueChanged)
+        switchView.addTarget(self, action: #selector(PatchSettingsController.toggleAction(_:)), forControlEvents: UIControlEvents.ValueChanged)
         switchView.on = state
         return switchView
     }

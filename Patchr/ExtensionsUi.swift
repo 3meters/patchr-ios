@@ -106,8 +106,6 @@ extension UIView {
 			, completion: completion)
 	}
 	
-
-	
 	func showShadow(rounded: Bool = false, cornerRadius: CGFloat = 0) {
 		
 		self.layer.masksToBounds = false
@@ -258,7 +256,7 @@ extension UIViewController {
 	func dismissToast(sender: AnyObject) {
 		if let gesture = sender as? UIGestureRecognizer, let hud = gesture.view as? MBProgressHUD {
 			hud.animationType = MBProgressHUDAnimation.ZoomIn
-			hud.hideAnimated(true)
+			hud.hide(true)
 		}
 	}
     
@@ -285,7 +283,7 @@ extension UIViewController {
             /*
              * Error requires that the user signs in again.
              */
-			UserController.instance.signout()
+			UserController.instance.logout()
         }
         else if errAction == .LOBBY {
             /* 

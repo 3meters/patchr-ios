@@ -61,7 +61,7 @@ class UserDetailViewController: BaseDetailViewController {
     
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
-		self.progress?.hideAnimated(true)
+		self.progress?.hide(true)
 	}
 
 	override func viewDidDisappear(animated: Bool) {

@@ -143,10 +143,10 @@ class PasswordEditViewController: BaseEditViewController {
 		let progress = AirProgress.addedTo(self.view.window!)
 		progress.mode = MBProgressHUDMode.Indeterminate
 		progress.styleAs(.ActivityWithText)
-		progress.label.text = "Updating..."
+		progress.labelText = "Updating..."
 		progress.graceTime = 2.0
 		progress.minShowTime = 1.0
-		progress.showAnimated(true)
+		progress.show(true)
 		progress.userInteractionEnabled = true
 		
         DataController.proxibase.updatePassword(UserController.instance.currentUser.id_,
@@ -156,7 +156,7 @@ class PasswordEditViewController: BaseEditViewController {
 			NSOperationQueue.mainQueue().addOperationWithBlock {
 				self.processing = false
 				
-				progress.hideAnimated(true)
+				progress.hide(true)
 				if var error = ServerError(error) {	// Doesn't show in debugger correctly but is getting set
 					if error.code == .UNAUTHORIZED_CREDENTIALS {
 						error.message = "The old password is not correct."

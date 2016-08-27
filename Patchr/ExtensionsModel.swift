@@ -267,8 +267,8 @@ extension NSManagedObjectContext {
 				try save()
 			}
 		}
-		catch let error as NSError {
-			fatalError("Fetch failed: \(error.localizedDescription)")
+		catch _ as NSError {
+            //fatalError("Fetch failed: \(error.localizedDescription): \(error.userInfo)")
 		}
 	}
 }
