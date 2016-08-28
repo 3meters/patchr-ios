@@ -73,7 +73,11 @@ class NotificationController: NSObject {
             deepLink(data["targetId"] as! String)
         }
         else {
-            self._badgeNumber.value += 1
+            let topController = UIViewController.topMostViewController()
+            if !(topController is NotificationsTableViewController) {
+                self._badgeNumber.value += 1
+            }
+
             self.activityDate = Utils.now() // So we check if our notification list is stale
             if application.applicationState == .Active {
                 NSNotificationCenter.defaultCenter().postNotificationName(Events.DidReceiveRemoteNotification, object: self, userInfo: data as [NSObject:AnyObject])

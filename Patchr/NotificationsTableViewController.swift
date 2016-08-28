@@ -113,11 +113,7 @@ class NotificationsTableViewController: BaseTableViewController {
 		self.tableView.accessibilityIdentifier = Table.Notifications
         
         _ = NotificationController.instance.badgeNumber.subscribe(onNext: { [unowned self] (badgeNumber) in
-            if self.tabBarController?.selectedViewController != self.navigationController
-                || self.navigationController?.topViewController != self {
-                /* This view controller is not currently visible. Badge it! */
-                self.navigationController?.tabBarItem.badgeValue = badgeNumber > 0 ? String(badgeNumber) : nil
-            }
+            self.navigationController?.tabBarItem.badgeValue = badgeNumber > 0 ? String(badgeNumber) : nil
         })
 	}
 	
