@@ -14,10 +14,6 @@ class UserDetailViewController: BaseDetailViewController {
 	var profileMode = true
 	var progress: AirProgress?
 	
-	private var isGuest: Bool {
-		return self.entityId == nil
-	}
-
 	private var isCurrentUser: Bool {
 		return (UserController.instance.authenticated
 			&& UserController.instance.currentUser != nil

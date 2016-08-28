@@ -42,11 +42,6 @@ class AirMuteButton: AirToggleButton {
             return
         }
         
-        if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(controller: nil, message: nil)
-            return
-        }
-        
         self.enabled = false
         self.startProgress()
         self.imageView?.alpha = 0.0

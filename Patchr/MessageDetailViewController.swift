@@ -351,11 +351,6 @@ class MessageDetailViewController: BaseViewController {
     
 	func shareAction(sender: AnyObject?) {
 		
-		if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to share messages and more.")
-			return
-		}
-		
         if self.inputMessage != nil {
 			
 			let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)

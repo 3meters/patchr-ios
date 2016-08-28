@@ -217,7 +217,6 @@
 		E2F6C9291B1DF5500067D959 /* Notes.md in Resources */ = {isa = PBXBuildFile; fileRef = E2F6C9281B1DF5500067D959 /* Notes.md */; };
 		E2F6C9341B1E546F0067D959 /* _Link.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F6C92F1B1E546F0067D959 /* _Link.m */; };
 		E2F85C6C1C302F3400FC2364 /* PatchDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C6B1C302F3400FC2364 /* PatchDetailView.swift */; };
-		E2F85C6E1C31A9EA00FC2364 /* GuestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C6D1C31A9EA00FC2364 /* GuestViewController.swift */; };
 		E2F85C741C31F0D700FC2364 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C731C31F0D700FC2364 /* UIImage+ImageEffects.m */; };
 		E2F85C771C32E55100FC2364 /* DeviceUID.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C761C32E55100FC2364 /* DeviceUID.m */; };
 		E2F85C7A1C342B8600FC2364 /* UserPhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C791C342B8600FC2364 /* UserPhotoView.swift */; };
@@ -515,7 +514,6 @@
 		E2F6C92F1B1E546F0067D959 /* _Link.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _Link.m; path = Model/_Link.m; sourceTree = "<group>"; };
 		E2F6C9381B1E924B0067D959 /* PAEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PAEnums.h; path = Model/PAEnums.h; sourceTree = "<group>"; };
 		E2F85C6B1C302F3400FC2364 /* PatchDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PatchDetailView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		E2F85C6D1C31A9EA00FC2364 /* GuestViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = GuestViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2F85C721C31F0D700FC2364 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
 		E2F85C731C31F0D700FC2364 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
 		E2F85C761C32E55100FC2364 /* DeviceUID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceUID.m; sourceTree = "<group>"; };
@@ -955,7 +953,6 @@
 				E2D12A7A1C091C4D00DE507E /* BaseViewController.swift */,
 				844D6E341AA4D01200EE71ED /* DevelopmentViewController.swift */,
 				E2BFB7F01CE6189500F4B962 /* GalleryBrowser.swift */,
-				E2F85C6D1C31A9EA00FC2364 /* GuestViewController.swift */,
 				E29730651C16295300B9433B /* InviteViewController.swift */,
 				E2D12A801C0A52D700DE507E /* LobbyViewController.swift */,
 				7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */,
@@ -1529,7 +1526,6 @@
 				E25327E01B1A282D00990A81 /* FXBlurView.m in Sources */,
 				E2D569C01C05F9D6001CCE58 /* FacebookProvider.swift in Sources */,
 				E2DBD4F01B0F65580006575C /* ExtensionsModel.swift in Sources */,
-				E2F85C6E1C31A9EA00FC2364 /* GuestViewController.swift in Sources */,
 				E29A4CDA1BD077520059D5B9 /* MessageView.swift in Sources */,
 				E2A28E6F1B4A602200B3A2FE /* AirToggleButton.swift in Sources */,
 				E2064BF51BC18A66009C7B6A /* AirProgress.swift in Sources */,

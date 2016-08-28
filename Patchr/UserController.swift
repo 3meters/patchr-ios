@@ -219,15 +219,4 @@ class UserController: NSObject {
     func clearStore() {
         DataController.instance.reset()
     }
-
-    func showGuestGuard(controller inController: UIViewController?, message: String?) {
-        var controller = inController
-        let guestController = GuestViewController()
-        guestController.inputMessage = message
-        guestController.modalPresentationStyle = .OverFullScreen
-        if controller == nil {
-            controller = UIViewController.topMostViewController()!
-        }
-        controller!.presentViewController(guestController, animated: true, completion: nil)
-    }
 }

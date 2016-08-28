@@ -171,11 +171,6 @@ class PatchTableViewController: BaseTableViewController {
 	
 	func actionButtonTapped(gester: UIGestureRecognizer) {
 		
-		if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to create patches and more.")
-			return
-		}
-		
 		if !self.actionButton.menuIsExpanded {
 			self.actionButton.toggleOn()
 		}

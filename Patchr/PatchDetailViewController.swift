@@ -129,10 +129,6 @@ class PatchDetailViewController: BaseDetailViewController {
 	func contextButtonAction(sender: UIButton) {
 		
         if self.contextAction == .CreateMessage {
-            if !UserController.instance.authenticated {
-				UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to post messages and more.")
-                return
-            }
             addAction()
         }
         else if self.contextAction == .SharePatch {
@@ -142,10 +138,6 @@ class PatchDetailViewController: BaseDetailViewController {
 			watchAction()
         }
         else if self.contextAction == .SubmitJoinRequest || self.contextAction == .JoinPatch {
-            if !UserController.instance.authenticated {
-				UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to join patches and more.")
-                return
-            }
 			watchAction()
         }
         else if self.contextAction == .BrowseUsersWatching {
@@ -170,11 +162,6 @@ class PatchDetailViewController: BaseDetailViewController {
     }
 	
     func addAction() {
-        if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to post messages and more.")
-            return
-        }
-		
 		if let patch = self.entity as? Patch {
 			if patch.visibility != nil && patch.visibility == "private" && patch.userWatchStatusValue != .Member {
 				Alert("Join the patch to post messages.", message: nil, cancelButtonTitle: "OK")
@@ -209,11 +196,6 @@ class PatchDetailViewController: BaseDetailViewController {
 	func watchAction() {
 		
 		if self.entity == nil {
-			return
-		}
-		
-		if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to join patches and more!")
 			return
 		}
 		
@@ -321,11 +303,6 @@ class PatchDetailViewController: BaseDetailViewController {
 			return
 		}
 		
-		if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(controller: nil, message: nil)
-			return
-		}
-		
 		let muted = !self.entity!.userWatchMutedValue
 		
 		DataController.proxibase.muteLinkById(self.entity!.userWatchId!, muted: muted, completion: {
@@ -355,10 +332,6 @@ class PatchDetailViewController: BaseDetailViewController {
 	}
 	
 	func shareAction(sender: AnyObject?) {
-		if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(controller: nil, message: "Sign up for a free account to invite people to patches and more.")
-			return
-		}
 		
         if self.entity != nil {
 			

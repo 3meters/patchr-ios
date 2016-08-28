@@ -65,13 +65,6 @@ class AirLikeButton: AirToggleButton {
             return
         }
         
-        if !UserController.instance.authenticated {
-            if self.entity is Message {
-				UserController.instance.showGuestGuard(controller: nil, message: Utils.LocalizedString("GUARD_LIKE"))
-            }
-            return
-        }
-        
         self.enabled = false
         self.startProgress()
         self.imageView?.alpha = 0.0
