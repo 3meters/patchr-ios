@@ -131,20 +131,13 @@ public class Proxibase {
         performPOSTRequestFor("user/getNotifications", parameters: parameters, completion: completion)
     }
 
-    public func fetchInterestingPatches(location: CLLocationCoordinate2D?, skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
+    public func fetchInterestingPatches(skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
 
         var parameters: [String:AnyObject] = [
                 "limit": pageSizeExplore,
                 "skip": skip,
                 "more": true,
         ]
-
-        if let loc = location as CLLocationCoordinate2D! {
-            parameters["location"] = [
-                "lat": loc.latitude,
-                "lng": loc.longitude
-            ]
-        }
 
         Patch.extras(&parameters)
         performPOSTRequestFor("patches/interesting", parameters: parameters, completion: completion)
@@ -283,14 +276,14 @@ public class Proxibase {
      * PUBLIC: Modify
      *--------------------------------------------------------------------------------------------*/
 
-    public func postEntity(path: String, parameters: NSDictionary, addLocation: Bool = true, completion: CompletionBlock) -> NSURLSessionTask {
+    public func postEntity(path: String, parameters: NSDictionary, completion: CompletionBlock) -> NSURLSessionTask {
 
         var parametersCopy = parameters.mutableCopy() as! NSMutableDictionary
         convertLocationProperties(parametersCopy)
         if parametersCopy["data"] == nil {
             parametersCopy = ["data": parametersCopy]
         }
-        let request: NSURLSessionTask = self.performPOSTRequestFor(path, parameters: parametersCopy, addLocation: addLocation, completion: completion)
+        let request: NSURLSessionTask = self.performPOSTRequestFor(path, parameters: parametersCopy, completion: completion)
         return request
     }
 
@@ -550,21 +543,6 @@ public class Proxibase {
         performPOSTRequestFor("do/registerInstall", parameters: parameters, completion: completion)
     }
 
-    public func updateProximity(location: CLLocation, completion: (response:AnyObject?, error:NSError?) -> Void) {
-        let parameters: NSDictionary = [
-            "installId": NotificationController.instance.installId!,
-            "location": [
-                "accuracy": location.horizontalAccuracy,
-                "geometry": [
-                    location.coordinate.longitude,
-                    location.coordinate.latitude],
-                "lat": location.coordinate.latitude,
-                "lng": location.coordinate.longitude
-            ]
-        ]
-        performPOSTRequestFor("do/updateProximity", parameters: parameters, completion: completion)
-    }
-
     private func addSessionParameters(parameters inParameters: NSDictionary) -> NSDictionary {
         /* Skip if already includes a sessionKey */
         var parameters = inParameters
@@ -584,29 +562,10 @@ public class Proxibase {
      * Rest
      *--------------------------------------------------------------------------------------------*/
 
-    private func performPOSTRequestFor(path: NSString, parameters inParameters: NSDictionary, addLocation: Bool = false, completion: CompletionBlock) -> NSURLSessionTask {
+    private func performPOSTRequestFor(path: NSString, parameters inParameters: NSDictionary, completion: CompletionBlock) -> NSURLSessionTask {
 
         var parameters = inParameters
         parameters = addSessionParameters(parameters: parameters)
-
-        if addLocation {
-            if let location = LocationController.instance.lastLocationAccepted() {
-                let locDict = [
-                    "accuracy": location.horizontalAccuracy,
-                    "geometry": [
-                        location.coordinate.longitude,
-                        location.coordinate.latitude],
-                    "lat": location.coordinate.latitude,
-                    "lng": location.coordinate.longitude
-                ]
-                
-                if let installId = NotificationController.instance.installId {
-                    parameters.setValue(installId, forKey: "installId")
-                }
-
-                parameters.setValue(locDict, forKey: "location")
-            }
-        }
 
         let request: NSURLSessionTask = sessionManager.POST(path as String, parameters: parameters,
                             success: {

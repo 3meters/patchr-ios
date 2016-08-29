@@ -37,16 +37,13 @@ class PatchTargetViewController: UITableViewController {
     
     var headerView: UIView!
     
-	let searchItems: NSMutableArray = []
-	let recentItems: NSMutableArray = []
-	var currentItems: NSMutableArray = []
-	
+    let searchItems: NSMutableArray = []
+    let recentItems: NSMutableArray = []
+    var currentItems: NSMutableArray = []
+
     var searchInProgress = false
     var searchTimer: NSTimer?
     var searchEditing = false
-    
-    var locationCurrent : CLLocation?
-    var manager: OneShotLocationManager?
     
     class func defaultPatch() -> String{
         return "None"
@@ -57,21 +54,21 @@ class PatchTargetViewController: UITableViewController {
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
-	
-	override func loadView() {
-		super.loadView()
-		initialize()
-	}
-	
-	override func viewWillLayoutSubviews() {
-		super.viewWillLayoutSubviews()
-	}
+
+    override func loadView() {
+        super.loadView()
+        initialize()
+    }
+
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+    }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-		self.tableView.reloadData()
+        self.tableView.reloadData()
     }
-	
+
     /*--------------------------------------------------------------------------------------------
     * Events
     *--------------------------------------------------------------------------------------------*/
@@ -96,79 +93,64 @@ class PatchTargetViewController: UITableViewController {
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
-	
-	func initialize() {
-		/* If already authorized then grab the location */
-		if CLLocationManager.authorizationStatus() == .AuthorizedAlways
-			|| CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
-				
-				self.manager = OneShotLocationManager()
-				self.manager!.fetchWithCompletion {
-					location, error in
-					
-					if let loc = location {
-						Log.d("One shot location received")
-						self.locationCurrent = loc
-					}
-					self.manager = nil
-				}
-		}
-		
-		self.title = "Choose Patch"
-		
-		let imageView = UIImageView(frame: CGRectMake(8, 0, 20, 20))
-		imageView.image = UIImage(named: "imgSearchLight")
-		
-		let searchView = UIView(frame: CGRectMake(0, 0, 40, 40))
-		searchView.alpha = 0.5
-		searchView.addSubview(imageView)
-		imageView.anchorInCenterWithWidth(24, height: 24)
-		
-		self.searchField.font = Theme.fontText
-		self.searchField.textColor = Theme.colorText
-		self.searchField.layer.cornerRadius = CGFloat(Theme.dimenButtonCornerRadius)
-		self.searchField.layer.masksToBounds = true
-		self.searchField.layer.borderColor = Theme.colorButtonBorder.CGColor
-		self.searchField.layer.borderWidth = Theme.dimenButtonBorderWidth
-		self.searchField.leftViewMode = UITextFieldViewMode.Always
-		self.searchField.leftView = searchView
-		self.searchField.clearButtonMode = UITextFieldViewMode.WhileEditing
-		
-		self.searchField.placeholder = "Search for patches"
-		self.searchField.delegate = self
-		self.searchField.addTarget(self, action: #selector(PatchTargetViewController.textFieldDidChange(_:)), forControlEvents: UIControlEvents.EditingChanged)
-		
-		// Recents
-		self.currentItems = recentItems
-		if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
-			self.userId = groupDefaults.stringForKey(PatchrUserDefaultKey("userId"))
-			let lockbox = Lockbox(keyPrefix: KEYCHAIN_GROUP)
-			self.sessionKey = lockbox.unarchiveObjectForKey("sessionKey") as? String
-			if let recentPatches = groupDefaults.arrayForKey(PatchrUserDefaultKey("recent.patches")) as? [[String:AnyObject]] {
-				for recent in recentPatches {
-					self.recentItems.addObject(recent)
-				}
-			}
-		}
-	}
-	
+
+    func initialize() {
+
+        self.title = "Choose Patch"
+
+        let imageView = UIImageView(frame: CGRectMake(8, 0, 20, 20))
+        imageView.image = UIImage(named: "imgSearchLight")
+
+        let searchView = UIView(frame: CGRectMake(0, 0, 40, 40))
+        searchView.alpha = 0.5
+        searchView.addSubview(imageView)
+        imageView.anchorInCenterWithWidth(24, height: 24)
+
+        self.searchField.font = Theme.fontText
+        self.searchField.textColor = Theme.colorText
+        self.searchField.layer.cornerRadius = CGFloat(Theme.dimenButtonCornerRadius)
+        self.searchField.layer.masksToBounds = true
+        self.searchField.layer.borderColor = Theme.colorButtonBorder.CGColor
+        self.searchField.layer.borderWidth = Theme.dimenButtonBorderWidth
+        self.searchField.leftViewMode = UITextFieldViewMode.Always
+        self.searchField.leftView = searchView
+        self.searchField.clearButtonMode = UITextFieldViewMode.WhileEditing
+
+        self.searchField.placeholder = "Search for patches"
+        self.searchField.delegate = self
+        self.searchField.addTarget(self, action: #selector(PatchTargetViewController.textFieldDidChange(_:)), forControlEvents: UIControlEvents.EditingChanged)
+
+        // Recents
+        self.currentItems = recentItems
+        if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
+            self.userId = groupDefaults.stringForKey(PatchrUserDefaultKey("userId"))
+            let lockbox = Lockbox(keyPrefix: KEYCHAIN_GROUP)
+            self.sessionKey = lockbox.unarchiveObjectForKey("sessionKey") as? String
+            if let recentPatches = groupDefaults.arrayForKey(PatchrUserDefaultKey("recent.patches")) as? [[String:AnyObject]] {
+                for recent in recentPatches {
+                    self.recentItems.addObject(recent)
+                }
+            }
+        }
+    }
+
     func suggest() {
-		
+
         if self.searchInProgress {
             return
         }
-		
+
         self.searchInProgress = true
         let searchString = self.searchField.text
-		
+
         Log.d("Suggest call: \(searchString)")
-		
+
         let endpoint: String = "https://api.aircandi.com/v1/suggest"
         let request = NSMutableURLRequest(URL: NSURL(string: endpoint)!)
         let session = NSURLSession.sharedSession()
         request.HTTPMethod = "POST"
         
-		var body: [String: AnyObject] = [
+        var body: [String: AnyObject] = [
             "patches": true,
             "input": searchString!.lowercaseString,
             "provider": "google",
@@ -176,16 +158,6 @@ class PatchTargetViewController: UITableViewController {
         
         if self.userId != nil {
             body["_user"] = self.userId!
-        }
-        
-        if self.locationCurrent != nil {
-            let coordinate = self.locationCurrent!.coordinate
-			let location: [String: AnyObject] = [
-                "lat":coordinate.latitude,
-                "lng":coordinate.longitude]
-            body["location"] = location
-            body["radius"] = 80000  // ~50 miles
-            body["timeout"] = 2000  // two seconds
         }
         
         do {
@@ -222,15 +194,15 @@ class PatchTargetViewController: UITableViewController {
 }
 
 extension PatchTargetViewController: UITextFieldDelegate {
-	
-	func textFieldDidEndEditing(textField: UITextField) {
-		self.searchField.resignFirstResponder()
-	}
-	
-	func textFieldShouldClear(textField: UITextField) -> Bool {
-		self.searchField.resignFirstResponder()
-		return true
-	}
+
+    func textFieldDidEndEditing(textField: UITextField) {
+        self.searchField.resignFirstResponder()
+    }
+
+    func textFieldShouldClear(textField: UITextField) -> Bool {
+        self.searchField.resignFirstResponder()
+        return true
+    }
 }
 
 extension PatchTargetViewController {
@@ -254,12 +226,12 @@ extension PatchTargetViewController {
             let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.thumbnail)
             cell!.photo.sd_setImageWithURL(photoUrl)
         }
-		else if patch["name"] != nil {
-			let seed = Utils.numberFromName(patch["name"].string!)
-			cell!.photo.backgroundColor = Utils.randomColor(seed)
-			cell!.photo.updateConstraints()
-		}
-		
+        else if patch["name"] != nil {
+            let seed = Utils.numberFromName(patch["name"].string!)
+            cell!.photo.backgroundColor = Utils.randomColor(seed)
+            cell!.photo.updateConstraints()
+        }
+
         return cell!
     }
     
@@ -271,7 +243,7 @@ extension PatchTargetViewController {
     }
     
     override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-		return self.currentItems.count == 0 ? 0 : 40
+        return self.currentItems.count == 0 ? 0 : 40
     }
     
     override func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {

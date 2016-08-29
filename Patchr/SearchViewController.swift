@@ -20,63 +20,60 @@ class SearchViewController: UITableViewController {
     
     let searchItems			: NSMutableArray = []
     let recentItems			: NSMutableArray = []
-	var currentItems		: NSMutableArray = []
+    var currentItems		: NSMutableArray = []
     
     var searchInProgress	= false
     var searchTimer			: NSTimer?
     var searchEditing		= false
-	
-	var inputState			: State? = State.Searching
-	
-    var locationCurrent		: CLLocation?
-    var manager				: OneShotLocationManager?
-    
+
+    var inputState			: State? = State.Searching
+
     class func defaultPatch() -> String{
         return "None"
     }
     
     var searchField		= AirSearchField()
-	var header			= UIView(frame: CGRectMake(0, 0, 0, 64))
+    var header			= UIView(frame: CGRectMake(0, 0, 0, 64))
     
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
-	
-	override func loadView() {
-		super.loadView()
-		initialize()
-	}
-	
-	override func viewWillLayoutSubviews() {
-		super.viewWillLayoutSubviews()
-		let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.bounds.size.width)
-		self.tableView.bounds.size.width = viewWidth
-		self.header.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 64)
-		self.searchField.fillSuperviewWithLeftPadding(8, rightPadding: 8, topPadding: 8, bottomPadding: 8)
-	}
-	
-	override func viewWillAppear(animated: Bool) {
-		super.viewWillAppear(animated)
-		loadRecents() // In case there is something new while we were away
-	}
+
+    override func loadView() {
+        super.loadView()
+        initialize()
+    }
+
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.bounds.size.width)
+        self.tableView.bounds.size.width = viewWidth
+        self.header.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 64)
+        self.searchField.fillSuperviewWithLeftPadding(8, rightPadding: 8, topPadding: 8, bottomPadding: 8)
+    }
+
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        loadRecents() // In case there is something new while we were away
+    }
 
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-		self.tableView.reloadData()
+        self.tableView.reloadData()
     }
     
     /*--------------------------------------------------------------------------------------------
     * Events
     *--------------------------------------------------------------------------------------------*/
-	
+
     func textFieldDidChange(textField: UITextField) {
         
-		if let timer = self.searchTimer {
-			timer.invalidate()
-		}
-		
+        if let timer = self.searchTimer {
+            timer.invalidate()
+        }
+
         self.searchEditing = (textField.text!.length > 0)
-		
+
         if !self.searchEditing {
             self.currentItems = self.recentItems
             self.tableView.reloadData()             // To reshow recents
@@ -91,108 +88,80 @@ class SearchViewController: UITableViewController {
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
-	
-	func initialize() {
-		
-		Reporting.screen("PatchSearch")
-		self.navigationItem.title = "Search Patchr"
-		
-		self.view.accessibilityIdentifier = View.Search
-		self.tableView!.accessibilityIdentifier = Table.Search
 
-		/* If already authorized then grab the location */
-		let authorized = (CLLocationManager.authorizationStatus() == .AuthorizedAlways
-			|| CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse)
-		
-		if authorized {
-			self.manager = OneShotLocationManager()
-			self.manager!.fetchWithCompletion {
-				location, error in
-				
-				if let loc = location {
-					Log.d("One shot location received")
-					self.locationCurrent = loc
-				}
-				self.manager = nil
-			}
-		}
-		
-		self.currentItems = self.recentItems
-		
-		self.searchField.placeholder = "Search for patches"
-		self.searchField.addTarget(self, action: #selector(SearchViewController.textFieldDidChange(_:)), forControlEvents: UIControlEvents.EditingChanged)
-		self.searchField.delegate = self		
-		self.header.addSubview(self.searchField)
-		
-		self.tableView.tableHeaderView = self.header
-		self.tableView.backgroundColor = UIColor.whiteColor()
-		self.tableView.tableFooterView = UIView()   // Triggers data binding
-		
-		let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(SearchViewController.dismissKeyboard))
-		gestureRecognizer.cancelsTouchesInView = false
-		self.tableView.addGestureRecognizer(gestureRecognizer)
-	}
-	
-	func loadRecents() {
-		self.recentItems.removeAllObjects()
-		if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
-			self.userId = groupDefaults.stringForKey(PatchrUserDefaultKey("userId"))
-			self.sessionKey = UserController.instance.lockbox.unarchiveObjectForKey("sessionKey") as? String
-			if let recentPatches = groupDefaults.arrayForKey(PatchrUserDefaultKey("recent.patches")) as? [[String:AnyObject]] {
-				for recent in recentPatches {
-					self.recentItems.addObject(recent)
-				}
-			}
-		}
-	}
-	
+    func initialize() {
+
+        Reporting.screen("PatchSearch")
+        self.navigationItem.title = "Search Patchr"
+
+        self.view.accessibilityIdentifier = View.Search
+        self.tableView!.accessibilityIdentifier = Table.Search
+
+        self.currentItems = self.recentItems
+
+        self.searchField.placeholder = "Search for patches"
+        self.searchField.addTarget(self, action: #selector(SearchViewController.textFieldDidChange(_:)), forControlEvents: UIControlEvents.EditingChanged)
+        self.searchField.delegate = self
+        self.header.addSubview(self.searchField)
+
+        self.tableView.tableHeaderView = self.header
+        self.tableView.backgroundColor = UIColor.whiteColor()
+        self.tableView.tableFooterView = UIView()   // Triggers data binding
+
+        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(SearchViewController.dismissKeyboard))
+        gestureRecognizer.cancelsTouchesInView = false
+        self.tableView.addGestureRecognizer(gestureRecognizer)
+    }
+
+    func loadRecents() {
+        self.recentItems.removeAllObjects()
+        if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
+            self.userId = groupDefaults.stringForKey(PatchrUserDefaultKey("userId"))
+            self.sessionKey = UserController.instance.lockbox.unarchiveObjectForKey("sessionKey") as? String
+            if let recentPatches = groupDefaults.arrayForKey(PatchrUserDefaultKey("recent.patches")) as? [[String:AnyObject]] {
+                for recent in recentPatches {
+                    self.recentItems.addObject(recent)
+                }
+            }
+        }
+    }
+
     func suggest() {
-		
+
         if self.searchInProgress {
             return
         }
-		
+
         self.searchInProgress = true
         let searchString = self.searchField.text
-		
+
         Log.d("Suggest call: \(searchString!)")
-		
+
         let endpoint: String = "\(DataController.proxibase.serviceUri)suggest"
         let request = NSMutableURLRequest(URL: NSURL(string: endpoint)!)
         let session = NSURLSession.sharedSession()
         request.HTTPMethod = "POST"
-		
-		var body: [String:AnyObject]?
-		
-		if self.inputState == .Searching {
-			body = [
-				"patches": true,
-				"input": searchString!.lowercaseString,
-				"provider": "google",
-				"limit": 10 ] as [String:AnyObject]
-			
-			if self.userId != nil {
-				body!["_user"] = self.userId!
-			}
-			
-			if self.locationCurrent != nil {
-				let coordinate = self.locationCurrent!.coordinate
-				let location = [
-					"lat":coordinate.latitude,
-					"lng":coordinate.longitude
-					] as [String:AnyObject]
-				body!["location"] = location
-				body!["radius"] = 80000  // ~50 miles
-				body!["timeout"] = 2000  // two seconds
-			}
-		}
-		else {
-			body = [
-				"users": true,
-				"input": searchString!.lowercaseString,
-				"limit":10 ] as [String:AnyObject]
-		}
-		
+
+        var body: [String:AnyObject]?
+
+        if self.inputState == .Searching {
+            body = [
+                "patches": true,
+                "input": searchString!.lowercaseString,
+                "provider": "google",
+                "limit": 10 ] as [String:AnyObject]
+
+            if self.userId != nil {
+                body!["_user"] = self.userId!
+            }
+        }
+        else {
+            body = [
+                "users": true,
+                "input": searchString!.lowercaseString,
+                "limit":10 ] as [String:AnyObject]
+        }
+
         do {
             request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(body!, options: [])
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -231,11 +200,11 @@ class SearchViewController: UITableViewController {
 }
 
 extension SearchViewController: UITextFieldDelegate {
-	
+
     func textFieldDidEndEditing(textField: UITextField) {
         self.searchField.resignFirstResponder()
     }
-	
+
     func textFieldShouldClear(textField: UITextField) -> Bool {
         self.searchField.resignFirstResponder()
         return true
@@ -249,7 +218,7 @@ extension SearchViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         var cell = tableView.dequeueReusableCellWithIdentifier(CELL_IDENTIFIER) as? PatchSearchCell
-		
+
         if cell == nil {
             let nib:Array = NSBundle.mainBundle().loadNibNamed("PatchSearchCell", owner: self, options: nil)
             cell = nib[0] as? PatchSearchCell
@@ -264,28 +233,28 @@ extension SearchViewController {
             let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.thumbnail)
             cell!.photo.sd_setImageWithURL(photoUrl)
         }
-		else if patch["name"] != nil {
-			let seed = Utils.numberFromName(patch["name"].string!)
-			cell!.photo.backgroundColor = Utils.randomColor(seed)
-			cell!.photo.updateConstraints()
-		}
-		
+        else if patch["name"] != nil {
+            let seed = Utils.numberFromName(patch["name"].string!)
+            cell!.photo.backgroundColor = Utils.randomColor(seed)
+            cell!.photo.updateConstraints()
+        }
+
         return cell!
     }
     
-	override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-		return 1
-	}
-	
-	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return self.currentItems.count
-	}
-	
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return 1
+    }
+
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.currentItems.count
+    }
+
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-		
+
         var patchJson: JSON = JSON(self.currentItems[indexPath.row])
         if let patch = patchJson.dictionaryObject {
-			let controller = PatchDetailViewController()
+            let controller = PatchDetailViewController()
             if let patchId = patch["id_"] as? String {
                 controller.entityId = patchId
             }
@@ -299,7 +268,7 @@ extension SearchViewController {
     }
     
     override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-		return self.currentItems.count == 0 ? 0 : 40
+        return self.currentItems.count == 0 ? 0 : 40
     }
     
     override func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {

@@ -383,7 +383,7 @@ class DataController: NSObject {
                 DataController.proxibase.fetchNotifications(skip, completion: refreshCompletion)
             
             case DataStoreQueryName.ExplorePatches.rawValue:
-                DataController.proxibase.fetchInterestingPatches(coordinate, skip: skip, completion: refreshCompletion)
+                DataController.proxibase.fetchInterestingPatches(skip, completion: refreshCompletion)
             
             case DataStoreQueryName.MessagesByUser.rawValue:
                 DataController.proxibase.fetchMessagesOwnedByUser(entityId, criteria: criteria, skip: skip, completion: refreshCompletion)

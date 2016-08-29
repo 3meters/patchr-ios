@@ -138,8 +138,6 @@
             </dict>
 		</dict>
 	</dict>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>We use your location to discover nearby patches and alert you when there is nearby patch activity.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We use your location to discover nearby patches.</string>
 	<key>UIBackgroundModes</key>

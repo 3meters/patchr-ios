@@ -37,8 +37,6 @@ class OneShotLocationManager: NSObject, CLLocationManagerDelegate {
     func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
         
         switch status {
-			case .AuthorizedAlways:
-				self.locationManager!.startUpdatingLocation()
             case .AuthorizedWhenInUse:
                 self.locationManager!.startUpdatingLocation()
             case .Denied:

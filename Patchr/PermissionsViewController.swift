@@ -53,7 +53,7 @@ class PermissionsViewController: BaseViewController {
 	func allowAction(sender: AnyObject?) {
 		
 		if self.locationNeeded {
-			LocationController.instance.requestAlwaysAuthorization()
+			LocationController.instance.requestWhenInUseAuthorization()
 		}
 		else if self.notificationNeeded {
 			NotificationController.instance.registerForRemoteNotifications()

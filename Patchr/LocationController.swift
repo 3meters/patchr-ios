@@ -47,8 +47,7 @@ class LocationController: NSObject {
     }
 
     func mostRecentAvailableLocation() -> CLLocation?  {
-        if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse
-            || CLLocationManager.authorizationStatus() == .AuthorizedAlways {
+        if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
             return self._lastLocationAccepted ?? self.locationManager.location ?? lastLocationFromSettings() ?? nil
         }
         return nil
@@ -69,28 +68,19 @@ class LocationController: NSObject {
         locationManager(self.locationManager, didUpdateLocations: [location])
     }
 
-    private func requestWhenInUseAuthorization() {
+    func requestWhenInUseAuthorization() {
         self.locationManager.requestWhenInUseAuthorization()
-    }
-
-    func requestAlwaysAuthorization() {
-        self.locationManager.requestAlwaysAuthorization()
     }
 
     func guardedRequestAuthorization(message: String?) {
 
-        let message = message ?? "This lets you discover nearby patches and new patch activity."
+        let message = message ?? "This lets you discover nearby patches."
 
         if let controller = UIViewController.topMostViewController() {
 
             let alert = UIAlertController(title: "Let Patchr use your location?", message: message, preferredStyle: UIAlertControllerStyle.Alert)
 
-            let always = UIAlertAction(title: "Nearby and new patches", style: .Default) { action in
-                Log.d("Guarded always location authorization accepted")
-                Reporting.track("Selected Always Location Authorization")
-                self.requestAlwaysAuthorization()
-            }
-            let nearby = UIAlertAction(title: "Nearby patches only", style: .Default) { action in
+            let nearby = UIAlertAction(title: "Nearby patches", style: .Default) { action in
                 Log.d("Guarded when in use location authorization accepted")
                 Reporting.track("Selected When In Use Location Authorization")
                 self.requestWhenInUseAuthorization()
@@ -102,12 +92,11 @@ class LocationController: NSObject {
                 alert.dismissViewControllerAnimated(true, completion: nil)
             }
 
-            alert.addAction(always)
             alert.addAction(nearby)
             alert.addAction(cancel)
 
             if #available(iOS 9.0, *) {
-                alert.preferredAction = always
+                alert.preferredAction = nearby
             }
 
             controller.presentViewController(alert, animated: true, completion: nil)
@@ -119,8 +108,7 @@ class LocationController: NSObject {
         /* Exit if not force and updates are already active */
         if self.updatesActive && !force { return }
 
-        if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse
-            || CLLocationManager.authorizationStatus() == .AuthorizedAlways {
+        if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
             if self.locationManager != nil {
                 if force {
                     self.locationManager.stopUpdatingLocation()	// Supposed to ensure that we will get at least one location update.
@@ -158,29 +146,11 @@ class LocationController: NSObject {
     func stopUpdates(){		
         guard self.updatesActive else { return }
 
-        if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse
-            || CLLocationManager.authorizationStatus() == .AuthorizedAlways {
+        if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
             if self.locationManager != nil {
                 Log.d("***** Location updates stopped *****")
                 self.locationManager.stopUpdatingLocation()
                 self.updatesActive = false
-            }
-        }
-    }
-
-    func startSignificantChangeUpdates(){
-        /* Ignores desired distance and accuracy */
-        if CLLocationManager.authorizationStatus() == .AuthorizedAlways {
-            if self.locationManager != nil {
-                self.locationManager.startMonitoringSignificantLocationChanges()
-            }
-        }
-    }
-    
-    func stopSignificantChangeUpdates(){
-        if CLLocationManager.authorizationStatus() == .AuthorizedAlways {
-            if self.locationManager != nil {
-                self.locationManager.stopMonitoringSignificantLocationChanges()
             }
         }
     }
@@ -227,35 +197,6 @@ class LocationController: NSObject {
         return nil
     }
 
-    private func sendBackgroundLocation(locations: [String:CLLocation]) {
-
-        if let loc = locations["location"] {
-            
-            self.bgTask = UIApplication.sharedApplication().beginBackgroundTaskWithExpirationHandler() {
-                UIApplication.sharedApplication().endBackgroundTask(self.bgTask!)
-            }
-
-            if self.bgTask != UIBackgroundTaskInvalid && NotificationController.instance.installId != nil {
-
-                /*  Update location associated with this install */
-                DataController.proxibase.updateProximity(loc) { response, error in
-                    NSOperationQueue.mainQueue().addOperationWithBlock {
-                        if let _ = ServerError(error) {
-                            Log.w("Error during updateProximity")
-                        }
-                        else {
-                            Log.d("Install proximity updated because of accepted background location")
-                        }
-                        if self.bgTask != UIBackgroundTaskInvalid {
-                            UIApplication.sharedApplication().endBackgroundTask(self.bgTask!)
-                            self.bgTask = UIBackgroundTaskInvalid
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     private func isValidLocation(newLocation: CLLocation!, oldLocation: CLLocation?) -> Bool {
 
         /* filter out nil locations */
@@ -290,10 +231,6 @@ extension LocationController: CLLocationManagerDelegate {
         
         if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
             Log.d("Location service authorized when in use for Patchr")
-            NSNotificationCenter.defaultCenter().postNotificationName(Events.LocationWasAllowed, object: nil, userInfo: nil)
-        }
-        else if CLLocationManager.authorizationStatus() == .AuthorizedAlways {
-            Log.d("Location service authorized always for Patchr")
             NSNotificationCenter.defaultCenter().postNotificationName(Events.LocationWasAllowed, object: nil, userInfo: nil)
         }
         else if status == CLAuthorizationStatus.Denied {
@@ -365,19 +302,10 @@ extension LocationController: CLLocationManagerDelegate {
             /* Every accepted location results in a nearby query o\if nearby list is active */
             self._lastLocationAccepted = location
 
-            if isInBackground {
-                if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("enableDevModeAction")) {
-                    UIShared.Toast("Background location accepted ***: lat: \(lat), lng: \(lng), acc: \(location.horizontalAccuracy)m, age: \(age)s, moved: \(movedString)m")
-                    AudioController.instance.play(Sound.pop.rawValue)
-                }
-                if UserController.instance.authenticated {
-                    sendBackgroundLocation(["location": location])
-                }
-            }
-            else {
-                let message = "Location accepted ***: lat: \(lat), lng: \(lng), acc: \(location.horizontalAccuracy)m, age: \(age)s, moved: \(movedString)m"
-                Log.i(message)
+            let message = "Location accepted ***: lat: \(lat), lng: \(lng), acc: \(location.horizontalAccuracy)m, age: \(age)s, moved: \(movedString)m"
+            Log.i(message)
 
+            if !isInBackground {
                 if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("enableDevModeAction")) {
                     UIShared.Toast(message)
                     AudioController.instance.play(Sound.pop.rawValue)
