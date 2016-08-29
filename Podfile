@@ -8,6 +8,7 @@ plugin 'cocoapods-keys', {
     "BugsnagKey",
     "SegmentKey",
     "BingAccessKey",
+    "BingSubscriptionKey",
     "CreativeSdkClientId",
     "CreativeSdkClientSecret",
     "AwsS3Key",
@@ -16,7 +17,7 @@ plugin 'cocoapods-keys', {
     "ParseApplicationKey",
     "BranchKey",
     "ProxibaseSecret",
-  "FacebookToken"
+    "FacebookToken"
   ]
 }
 

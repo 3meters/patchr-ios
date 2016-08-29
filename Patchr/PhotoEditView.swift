@@ -158,7 +158,7 @@ class PhotoEditView: UIView {
 			 * known image sources that we setup like our buckets on s3.
 			 */
 			let dimension = imageResult!.width >= imageResult!.height ? ResizeDimension.width : ResizeDimension.height
-			let url = NSURL(string: GooglePlusProxy.convert(imageResult!.mediaUrl!, size: Int(IMAGE_DIMENSION_MAX), dimension: dimension))
+			let url = NSURL(string: GooglePlusProxy.convert(imageResult!.contentUrl!, size: Int(IMAGE_DIMENSION_MAX), dimension: dimension))
 			self.imageButton.setImageWithUrl(url!)  // Downloads and pushes into photoImage
 		}
 		

@@ -433,7 +433,7 @@ class ProfileEditViewController: BaseEditViewController {
 			/* Photo */
 			if self.inputPhotoUrl != nil {		// We have a facebook profile photo
 				let imageResult = ImageResult()
-				imageResult.mediaUrl = self.inputPhotoUrl?.absoluteString
+				imageResult.contentUrl = self.inputPhotoUrl?.absoluteString
 				imageResult.width = 200
 				imageResult.height = 200
 				/*
@@ -441,7 +441,7 @@ class ProfileEditViewController: BaseEditViewController {
 				 * known image sources that we setup like our buckets on s3.
 				 */
 				let dimension = imageResult.width >= imageResult.height ? ResizeDimension.width : ResizeDimension.height
-				let url = NSURL(string: GooglePlusProxy.convert(imageResult.mediaUrl!, size: Int(IMAGE_DIMENSION_MAX), dimension: dimension))
+				let url = NSURL(string: GooglePlusProxy.convert(imageResult.contentUrl!, size: Int(IMAGE_DIMENSION_MAX), dimension: dimension))
 
 				self.photoView.imageButton.setImageWithUrl(url!)
 				self.photoView.configureTo(.Photo)

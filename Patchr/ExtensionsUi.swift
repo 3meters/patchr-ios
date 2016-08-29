@@ -480,6 +480,14 @@ extension String {
         
         return String(format: hash as String)
     }
+    
+    var numbersOnly: String! {
+        let str = self.stringByReplacingOccurrencesOfString("[^0-9]"
+            , withString: ""
+            , options: NSStringCompareOptions.RegularExpressionSearch
+            , range:nil).stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+        return str
+    }
 }
 
 extension Dictionary {

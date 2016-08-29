@@ -351,24 +351,24 @@ public class Proxibase {
     * PUBLIC: Bing
     *--------------------------------------------------------------------------------------------*/
 
-    public func loadSearchImages(query: String, limit: Int64 = 50, offset: Int64 = 0, maxImageSize: Int = 500000, maxDimen: Int = Int(IMAGE_DIMENSION_MAX), completion: CompletionBlock) {
+    public func loadSearchImages(query: String, count: Int64 = 50, offset: Int64 = 0, completion: CompletionBlock) {
+        
+        Log.d("Image search count: \(count), offset: \(offset) ")
 
         if let bingSessionManager: AFHTTPSessionManager = AFHTTPSessionManager(baseURL: NSURL(string: URI_PROXIBASE_SEARCH_IMAGES)) {
 
             let keys = PatchrKeys()
             let requestSerializer: AFJSONRequestSerializer = AFJSONRequestSerializer()
 
-            requestSerializer.setAuthorizationHeaderFieldWithUsername("", password: keys.bingAccessKey())
+            requestSerializer.setValue(keys.bingSubscriptionKey(), forHTTPHeaderField: "Ocp-Apim-Subscription-Key")
             bingSessionManager.requestSerializer = requestSerializer
             bingSessionManager.responseSerializer = JSONResponseSerializerWithData()
 
-            let queryEncoded: String
-                        = query.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
-            let bingUrl = "Image?Query=%27" + queryEncoded + "%27"
-                    + "&Market=%27en-US%27&Adult=%27Strict%27&ImageFilters=%27size%3alarge%27"
-                    + "&$top=\(limit + 1)"
-                    + "&$skip=\(offset)"
-                    + "&$format=Json"
+            let queryEncoded: String = query.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+            let bingUrl = "images/search?q=%27" + queryEncoded + "%27"
+                    + "&mkt=en-us&safeSearch=strict&size=large"
+                    + "&count=\(count + 1)"
+                    + "&offset=\(offset)"
 
             bingSessionManager.GET(bingUrl, parameters: nil,
                                    success: {

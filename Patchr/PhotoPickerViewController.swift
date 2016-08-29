@@ -16,6 +16,8 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
     var searchBarBoundsY: CGFloat?
 	var threshold = 0
 	var processing = false
+    var offset = 0
+    var more = false
     
     var searchBar				: UISearchBar!
     var pickerDelegate			: PhotoBrowseControllerDelegate?
@@ -56,9 +58,9 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
     private var sectionInsets: UIEdgeInsets?
     private var thumbnailWidth: CGFloat?
     private var availableWidth: CGFloat?
-    private let pageSize = 49
-    private var maxSize = 500
-	private var virtualSize = 49
+    private let pageSize = 30
+    private var maxSize = 100
+	private var virtualSize = 30
     private let maxImageSize: Int = 500000
     private let maxDimen: Int = Int(IMAGE_DIMENSION_MAX)
     
@@ -168,9 +170,7 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 			return
 		}
         
-        var offset = 0
 		self.processing = true
-		
 		self.activity?.startAnimating()
 		
         if !paging {
@@ -179,73 +179,99 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 			let topOffset = CGPointMake(0, -(self.collectionView?.contentInset.top ?? 0))
 			self.collectionView?.setContentOffset(topOffset, animated: true)
         }
-        else {
-            offset = Int(ceil(Float(self.imageResults.count) / Float(self.pageSize)) * Float(self.pageSize))
-        }
 		
 		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
 			
-			DataController.proxibase.loadSearchImages(self.searchBar!.text!, limit: Int64(self.pageSize), offset: Int64(offset)) {
+			DataController.proxibase.loadSearchImages(self.searchBar!.text!, count: Int64(self.pageSize), offset: Int64(self.offset)) {
 				response, error in
-				
+                
 				NSOperationQueue.mainQueue().addOperationWithBlock {
 					
 					self.activity?.stopAnimating()
-					var userInfo: [NSObject:AnyObject] = ["error": (error != nil)]
+					var userInfo: [NSObject: AnyObject] = ["error": (error != nil)]
 					
 					if let error = ServerError(error) {
 						self.handleError(error)
 					}
 					else {
-						if let
-							dictionary = response as? NSDictionary,
-							data = dictionary["d"] as? NSDictionary,
-							results = data["results"] as? NSMutableArray {
-								
-								Utils.updateSearches(self.searchBar!.text!)
-								self.loadSearches()
-								
-								let resultsCopy = results.mutableCopy() as! NSMutableArray
-								let more: Bool = (resultsCopy.count > self.pageSize)
-								if more {
-									resultsCopy.removeLastObject()
-								}
-								
-								let beginCount = self.imageResults.count
-								
-								for imageResultDict in resultsCopy {
-									
-									let imageResult = ImageResult.setPropertiesFromDictionary(imageResultDict as! NSDictionary, onObject: ImageResult())
-									var usable = (imageResult.thumbnail != nil && imageResult.thumbnail!.mediaUrl != nil);
-									
-									if (usable) {
-										/* Make sure we don't already have it */
-										for tempImageResult in self.imageResults {
-											if tempImageResult.thumbnail!.mediaUrl == imageResult.thumbnail!.mediaUrl {
-												usable = false
-												break
-											}
-										}
-									}
-									
-									if (usable) {
-										self.imageResults.append(imageResult)
-									}
-								}
-								
-								if self.imageResults.count == beginCount {
-									self.virtualSize = self.imageResults.count
-									self.threshold = 1000
-								}
-								else {
-									self.threshold = self.imageResults.count - 20
-									self.virtualSize = self.imageResults.count + 49
-								}
-								userInfo["count"] = self.imageResults.count
-						}
+                        let json = JSON(response!)
+                        var imagesFiltered: [ImageResult] = [ImageResult]()
+                        let offsetAddCount = json["nextOffsetAddCount"].int
+                        let totalEstimatedMatches = json["totalEstimatedMatches"].int
+                        let more = (self.pageSize + self.offset + offsetAddCount! < totalEstimatedMatches)
+                        
+                        if let data = json["value"].arrayObject {
+                            
+                            Utils.updateSearches(self.searchBar!.text!)
+                            self.loadSearches()
+                            
+                            let beginCount = self.imageResults.count
+                            
+                            Log.d("Images returned: \(data.count)")
+                            
+                            for imageResultDict in data {
+                                let imageResult = ImageResult.setPropertiesFromDictionary(imageResultDict as! NSDictionary, onObject: ImageResult())
+                                var usable = (imageResult.contentSize <= self.maxImageSize)
+                                
+                                //Log.v("Image size: \(imageResult.contentSize!), width: \(imageResult.width!), height: \(imageResult.height!)")
+                                
+                                if !usable {
+                                    //Log.w("Image rejected: download size > \(self.maxImageSize)")
+                                }
+                                
+                                if usable {
+                                    usable = imageResult.height <= self.maxDimen && imageResult.width <= self.maxDimen
+                                    if !usable {
+                                        //Log.w("Image rejected: dimension > \(self.maxDimen)")
+                                    }
+                                }
+                                
+                                if usable {
+                                    usable = imageResult.thumbnailUrl != nil
+                                    if !usable {
+                                        //Log.w("Image rejected: missing thumbnail")
+                                    }
+                                }
+                                
+                                if (usable) {
+                                    imagesFiltered.append(imageResult)
+                                }
+                            }
+                            self.imageResults.appendContentsOf(imagesFiltered)
+                            
+                            if self.imageResults.count == beginCount {
+                                self.virtualSize = self.imageResults.count
+                                self.threshold = 1000
+                            }
+                            else {
+                                self.threshold = self.imageResults.count - 20
+                                self.virtualSize = self.imageResults.count + 30
+                            }
+
+                            userInfo["count"] = self.imageResults.count
+                        }
+                        else {
+                            userInfo["count"] = 0
+                        }
+                        
+                        if more && self.imageResults.count < self.maxSize {
+                            self.offset += (self.pageSize + offsetAddCount!)
+                            if (self.imageResults.count < 60) {
+                                self.processing = false
+                                self.loadData(true)
+                            }
+                        }
+                        else {
+                            /* Disables scroll triggered fetches */
+                            self.threshold = 1000
+                            self.virtualSize = self.imageResults.count
+                            Log.d("No more search images available")
+                        }
 						
 						self.collectionView?.reloadData()
 					}
+                    
+                    /* Triggers ui handling of empty, etc. */
 					NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetchQuery, object: self, userInfo: userInfo)
 					self.processing = false
 				}
@@ -304,8 +330,10 @@ extension PhotoPickerViewController: UISearchBarDelegate {
     }
     
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
-        self.loadData(false)
+        self.offset = 0
         searchBar.resignFirstResponder()
+        self.loadData(false)
+        self.autocompleteList.hidden = true
     }
 }
 
@@ -340,6 +368,7 @@ extension PhotoPickerViewController {
 		
 		if let search = self.autocompleteData[indexPath.row] as? String {
 			self.searchBar!.text = search
+            self.offset = 0
 			self.autocompleteList.hidden = true
 			self.loadData(false)
 			searchBar.resignFirstResponder()
@@ -417,7 +446,7 @@ extension PhotoPickerViewController {
 			if let thumbCell = cell as? ThumbnailCollectionViewCell {
 				if let imageView = thumbCell.thumbnail {
 					thumbCell.imageResult = imageResult
-					imageView.setImageWithUrl(NSURL(string: imageResult.thumbnail!.mediaUrl!)!, animate: false)
+					imageView.setImageWithUrl(NSURL(string: imageResult.thumbnailUrl!)!, animate: false)
 				}
 			}			
 		}
