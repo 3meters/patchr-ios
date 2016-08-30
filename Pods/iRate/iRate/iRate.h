@@ -1,7 +1,7 @@
 //
 //  iRate.h
 //
-//  Version 1.11.4
+//  Version 1.11.6
 //
 //  Created by Nick Lockwood on 26/01/2011.
 //  Copyright 2011 Charcoal Design
@@ -30,7 +30,6 @@
 //  3. This notice may not be removed or altered from any source distribution.
 //
 
-
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wobjc-missing-property-synthesis"
 
@@ -54,6 +53,12 @@
 #define IRATE_EXTERN APPKIT_EXTERN
 #endif
 
+
+//! Project version number for iRate.
+FOUNDATION_EXPORT double iRateVersionNumber;
+
+//! Project version string for iRate.
+FOUNDATION_EXPORT const unsigned char iRateVersionString[];
 
 IRATE_EXTERN NSUInteger const iRateAppStoreGameGenreID;
 IRATE_EXTERN NSString *const iRateErrorDomain;
@@ -162,6 +167,7 @@ typedef NS_ENUM(NSUInteger, iRateErrorCode)
 - (void)promptIfAllCriteriaMet;
 - (void)openRatingsPageInAppStore;
 - (void)logEvent:(BOOL)deferPrompt;
+- (void)remindLater;
 
 @end
 

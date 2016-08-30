@@ -13,7 +13,7 @@ class AirSearchField: UITextField {
 	var overlayButton: AirLinkButton {
 		let overlayButton = AirLinkButton(frame: CGRectMake(0, 0, 96, 40))
 		overlayButton.setTitle("Cancel", forState: .Normal)
-		overlayButton.addTarget(self, action: Selector("cancelEditingAction:"), forControlEvents: .TouchUpInside)
+		overlayButton.addTarget(self, action: #selector(AirSearchField.cancelEditingAction(_:)), forControlEvents: .TouchUpInside)
 		return overlayButton
 	}
 	

@@ -10,6 +10,7 @@ import UIKit
 import MessageUI
 import Branch
 
+
 class MessageDetailViewController: BaseViewController {
 
 	var inputMessage			: Message?
@@ -251,16 +252,18 @@ class MessageDetailViewController: BaseViewController {
 			self.scrollView.hidden = true
 		}
 		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "likeDidChange:", name: Events.LikeDidChange, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MessageDetailViewController.likeDidChange(_:)), name: Events.LikeDidChange, object: nil)
 	}
 	
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
+		
 		fetch()
 	}
 	
     override func viewDidDisappear(animated: Bool) {
 		super.viewDidDisappear(animated)
+		
 		self.activity.stopAnimating()
 		NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.LikeDidChange, object: nil)
     }
@@ -285,13 +288,12 @@ class MessageDetailViewController: BaseViewController {
 	}
 
 	func photoAction(sender: AnyObject) {
-        let browser = UIShared.showPhotoBrowser(self.photo.imageForState(.Normal), animateFromView: sender as! UIView, viewController: self, entity: self.inputMessage)
-        browser.target = self
+        UIShared.showPhoto(self.photo.imageForState(.Normal), animateFromView: sender as! UIView, viewController: self, entity: self.inputMessage)
 	}
 
 	func reportAction(sender: AnyObject) {
 		
-		let email = "report@3meters.com"
+		let email = "report@patchr.com"
 		let subject = "Report on Patchr content"
 		let body = "Report on message id: \(self.inputMessage!.id_)\n\nPlease add some detail on why you are reporting this message.\n"
 		
@@ -313,13 +315,17 @@ class MessageDetailViewController: BaseViewController {
 		}
 	}
 	
-	func likesAction(sender: AnyObject) {
+	func likesAction(sender: AnyObject?) {
 		let controller = UserTableViewController()
 		controller.message = self.inputMessage
 		controller.filter = .MessageLikers
 		self.navigationController?.pushViewController(controller, animated: true)
 	}
-
+	
+	func likeAction(sender: AnyObject) {
+		likeButton.onClick(self)
+	}
+	
     func shareBrowseAction(sender: AnyObject){
 		if let button = sender as? AirButton {
 			button.borderColor = Colors.brandColor
@@ -344,11 +350,6 @@ class MessageDetailViewController: BaseViewController {
     }
     
 	func shareAction(sender: AnyObject?) {
-		
-		if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to share messages and more.")
-			return
-		}
 		
         if self.inputMessage != nil {
 			
@@ -385,7 +386,7 @@ class MessageDetailViewController: BaseViewController {
 	func editAction() {
         /* Has its own nav because we segue modally and it needs its own stack */
 		let controller = MessageEditViewController()
-		let navController = UINavigationController()
+		let navController = AirNavigationController()
 		controller.inputEntity = self.inputMessage
 		controller.inputState = .Editing
 		navController.viewControllers = [controller]
@@ -453,7 +454,7 @@ class MessageDetailViewController: BaseViewController {
 	override func initialize() {
 		super.initialize()
 		
-		setScreenName("MessageDetail")
+		Reporting.screen("MessageDetail")
 		self.view.accessibilityIdentifier = View.MessageDetail
 		
 		/* Ui tweaks */
@@ -487,16 +488,17 @@ class MessageDetailViewController: BaseViewController {
 		self.likeButton.imageEdgeInsets = UIEdgeInsetsMake(14, 12, 14, 12)
 		
 		self.reportButton.setTitle("Report", forState: .Normal)
-		self.reportButton.addTarget(self, action: Selector("reportAction:"), forControlEvents: UIControlEvents.TouchUpInside)
-		self.likesButton.addTarget(self, action: Selector("likesAction:"), forControlEvents: UIControlEvents.TouchUpInside)
-		self.userName.addTarget(self, action: Selector("userAction:"), forControlEvents: UIControlEvents.TouchUpInside)
-		self.patchName.addTarget(self, action: Selector("patchAction:"), forControlEvents: UIControlEvents.TouchUpInside)
-		self.patchPhoto.addTarget(self, action: Selector("patchAction:"), forControlEvents: UIControlEvents.TouchUpInside)
-		self.photo.addTarget(self, action: Selector("photoAction:"), forControlEvents: UIControlEvents.TouchUpInside)
+		self.reportButton.addTarget(self, action: #selector(MessageDetailViewController.reportAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+		self.likesButton.addTarget(self, action: #selector(MessageDetailViewController.likesAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+		self.userName.addTarget(self, action: #selector(MessageDetailViewController.userAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+		self.patchName.addTarget(self, action: #selector(MessageDetailViewController.patchAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+		self.patchPhoto.addTarget(self, action: #selector(MessageDetailViewController.patchAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+		self.photo.addTarget(self, action: #selector(MessageDetailViewController.photoAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
 		
-		self.recipients.textColor = Theme.colorTextTitle
 		self.recipientsLabel.text = "To:"
 		self.recipientsLabel.textColor = Theme.colorTextSecondary
+		self.recipients.textColor = Theme.colorTextTitle
+		self.recipients.numberOfLines = 0
 		
 		self.view.addSubview(self.activity)
 		
@@ -523,7 +525,7 @@ class MessageDetailViewController: BaseViewController {
 		self.contentHolder.addSubview(self.toolbarGroup)
 		self.contentHolder.addSubview(self.shareGroup)
 		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground:", name: UIApplicationDidEnterBackgroundNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidEnterBackground(_:)), name: UIApplicationDidEnterBackgroundNotification, object: nil)
 	}
 	
 	func bind() {
@@ -534,15 +536,8 @@ class MessageDetailViewController: BaseViewController {
 			
 			if self.inputMessage!.message != nil {
 				
-				var cellType: CellType = .TextAndPhoto
-				if self.inputMessage!.message!.photo == nil {
-					cellType = .Text
-				}
-				else if self.inputMessage!.message!.description_ == nil {
-					cellType = .Photo
-				}
-				
-				self.messageView = MessageView(cellType: cellType, entity: self.inputMessage!.message!)
+				self.messageView = MessageView()
+				self.messageView?.bindToEntity(self.inputMessage!.message!, location: nil)
 				
 				/* Resize once here because sizing in viewWillLayoutSubviews causes recursion */
 				let viewWidth = min(CONTENT_WIDTH_MAX, self.view.bounds.size.width)
@@ -551,8 +546,8 @@ class MessageDetailViewController: BaseViewController {
 				self.messageView!.sizeToFit()
 				self.messageView?.clipsToBounds = false
 				self.shareFrame.addSubview(self.messageView!)
-				self.shareFrame.addTarget(self, action: Selector("shareBrowseAction:"), forControlEvents: UIControlEvents.TouchUpInside)
-				self.shareFrame.addTarget(self, action: Selector("buttonTouchDownAction:"), forControlEvents: UIControlEvents.TouchDown)
+				self.shareFrame.addTarget(self, action: #selector(MessageDetailViewController.shareBrowseAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+				self.shareFrame.addTarget(self, action: #selector(MessageDetailViewController.buttonTouchDownAction(_:)), forControlEvents: UIControlEvents.TouchDown)
 				UIView.disableAllSubviewsOf(self.shareFrame)
 			}
 			else if self.inputMessage!.patch != nil {
@@ -562,8 +557,8 @@ class MessageDetailViewController: BaseViewController {
 				self.patchView!.shadow.hidden = true
 				self.patchView?.name.textColor = Colors.brandColor
 				self.shareFrame.addSubview(self.patchView!)
-				self.shareFrame.addTarget(self, action: Selector("shareBrowseAction:"), forControlEvents: UIControlEvents.TouchUpInside)
-				self.shareFrame.addTarget(self, action: Selector("buttonTouchDownAction:"), forControlEvents: UIControlEvents.TouchDown)
+				self.shareFrame.addTarget(self, action: #selector(MessageDetailViewController.shareBrowseAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+				self.shareFrame.addTarget(self, action: #selector(MessageDetailViewController.buttonTouchDownAction(_:)), forControlEvents: UIControlEvents.TouchDown)
 				UIView.disableAllSubviewsOf(self.shareFrame)
 			}
 			else {
@@ -658,10 +653,10 @@ class MessageDetailViewController: BaseViewController {
 
 	func drawNavButtons(animated: Bool = false) {
 		
-		let shareButton  = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction:"))
-		let editButton   = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
-		let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: Selector("deleteAction"))
-		let removeButton   = UIBarButtonItem(image: Utils.imageRemove, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("removeAction"))
+		let shareButton  = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: #selector(MessageDetailViewController.shareAction(_:)))
+		let editButton   = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(MessageDetailViewController.editAction))
+		let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: #selector(MessageDetailViewController.deleteAction))
+		let removeButton   = UIBarButtonItem(image: Utils.imageRemove, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(MessageDetailViewController.removeAction))
 		
 		if self.isShare && self.isOwner {
 			self.navigationItem.setRightBarButtonItems([deleteButton], animated: animated)
@@ -741,6 +736,7 @@ class MessageDetailViewController: BaseViewController {
 				else {
 					DataController.instance.mainContext.deleteObject(self.inputMessage!)
 					DataController.instance.saveContext(BLOCKING)
+					Reporting.track("Deleted Message")
 					self.navigationController?.popViewControllerAnimated(true)
 				}
 			}
@@ -772,7 +768,7 @@ class MessageDetailViewController: BaseViewController {
         if route == .Patchr {
 			
 			let controller = MessageEditViewController()
-			let navController = UINavigationController()
+			let navController = AirNavigationController()
 			controller.inputShareEntity = self.inputMessage
 			controller.inputShareSchema = Schema.ENTITY_MESSAGE
 			controller.inputShareId = self.inputMessage?.id_ ?? self.inputMessageId!
@@ -825,6 +821,7 @@ extension MessageDetailViewController: MFMailComposeViewControllerDelegate {
 			case MFMailComposeResultSaved.rawValue:		// 1
 				UIShared.Toast("Report saved", controller: self, addToWindow: false)
 			case MFMailComposeResultSent.rawValue:		// 2
+				Reporting.track("Sent Report", properties: ["target":"Message"])
 				UIShared.Toast("Report sent", controller: self, addToWindow: false)
 			case MFMailComposeResultFailed.rawValue:	// 3
 				UIShared.Toast("Report send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)

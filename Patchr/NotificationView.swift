@@ -11,23 +11,14 @@ import SDWebImage
 
 class NotificationView: BaseView {
 	
-	var cellType: CellType = .TextAndPhoto
-	
-	var description_:	TTTAttributedLabel?
-	var photo:			UIButton?
+	var description_	: TTTAttributedLabel?
+	var photo			: AirImageView?
+	var hasPhoto		= false
 	
 	var userPhoto		= UserPhotoView()
 	var iconImageView	= UIImageView(frame: CGRectZero)
 	var ageDot			= UIView()
 	var createdDate		= AirLabelDisplay()
-	
-	init(cellType: CellType?) {
-		super.init(frame: CGRectZero)
-		if cellType != nil {
-			self.cellType = cellType!
-		}
-		initialize()
-	}
 	
 	override init(frame: CGRect) {
 		/* Called when instantiated from code */
@@ -41,28 +32,67 @@ class NotificationView: BaseView {
 		initialize()
 	}
 	
+	/*--------------------------------------------------------------------------------------------
+	* Events
+	*--------------------------------------------------------------------------------------------*/
+	
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		
+		let columnLeft = CGFloat(48 + 8)
+		let columnWidth = self.bounds.size.width - columnLeft
+		let photoHeight = columnWidth * 0.5625		// 16:9 aspect ratio
+		
+		self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 48, height: 48)
+		
+		var bottomView: UIView? = self.photo
+		if !self.hasPhoto {	// Text only
+			bottomView = self.description_
+			self.description_?.bounds.size.width = columnWidth
+			self.description_?.sizeToFit()
+			self.description_?.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: self.description_!.height())
+		}
+		else if self.description_?.attributedText == nil { // Photo only
+			self.photo?.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: photoHeight)
+		}
+		else { // Text and photo
+			self.description_?.bounds.size.width = columnWidth
+			self.description_?.sizeToFit()
+			self.description_?.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: self.description_!.height())
+			self.photo?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 12, height: photoHeight)
+		}
+		
+		self.createdDate.sizeToFit()
+		self.iconImageView.alignUnder(bottomView!, matchingLeftWithTopPadding: 8, width: self.iconImageView.width(), height: self.iconImageView.height())
+		self.createdDate.alignToTheRightOf(self.iconImageView, matchingCenterWithLeftPadding: 8, width: self.createdDate.width(), height: self.createdDate.height())
+		self.ageDot.alignUnder(bottomView!, matchingRightWithTopPadding: 8, width: 12, height: 12)
+	}
+	
+	/*--------------------------------------------------------------------------------------------
+	* Methods
+	*--------------------------------------------------------------------------------------------*/
+	
 	func initialize() {
 		
 		self.clipsToBounds = false
 		
 		/* Description */
-		if self.cellType != .Photo {
-			self.description_ = TTTAttributedLabel(frame: CGRectZero)
-			self.description_!.numberOfLines = 5
-			self.description_!.font = Theme.fontTextList
-			self.addSubview(self.description_!)
-		}
+		self.description_ = TTTAttributedLabel(frame: CGRectZero)
+		self.description_!.numberOfLines = 5
+		self.description_!.font = Theme.fontTextList
+		self.addSubview(self.description_!)
 		
-		/* Photo */
-		if self.cellType != .Text {
-			self.photo = AirImageButton(frame: CGRectZero)
-			self.photo!.imageView!.contentMode = UIViewContentMode.ScaleAspectFill
-			self.photo!.contentMode = .ScaleAspectFill
-			self.photo!.contentHorizontalAlignment = .Fill
-			self.photo!.contentVerticalAlignment = .Fill
-			self.photo!.backgroundColor = Theme.colorBackgroundImage
-			self.addSubview(self.photo!)
-		}
+		/* Photo: give initial size in case the image displays before call to layoutSubviews		 */
+		let columnLeft = CGFloat(48 + 8)
+		let columnWidth = self.bounds.size.width - columnLeft
+		let photoHeight = columnWidth * 0.5625		// 16:9 aspect ratio
+		
+		self.photo = AirImageView(frame: CGRectMake(0, 0, columnWidth, photoHeight))
+		self.photo!.clipsToBounds = true
+		self.photo!.contentMode = .ScaleAspectFill
+		self.photo!.backgroundColor = Theme.colorBackgroundImage
+		
+		self.addSubview(self.photo!)
 		
 		/* User photo */
 		self.addSubview(self.userPhoto)
@@ -80,11 +110,12 @@ class NotificationView: BaseView {
 		self.addSubview(self.ageDot)
 	}
 	
-	func bindToEntity(entity: AnyObject) {
+	override func bindToEntity(entity: AnyObject, location: CLLocation?) {
 		
-		let notification = entity as! Notification
+		let notification = entity as! FeedItem
 		
 		self.entity = notification
+		self.hasPhoto = (notification.photoBig != nil)
 		
 		let linkColor = Theme.colorTint
 		let linkActiveColor = Theme.colorTint
@@ -98,11 +129,13 @@ class NotificationView: BaseView {
 			self.description_?.attributedText = attributed
 		}
 		
-		let options: SDWebImageOptions = [.RetryFailed, .LowPriority,  .ProgressiveDownload]
-		
 		if let photo = notification.photoBig {
+			self.photo?.hidden = false
 			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.standard)
-			self.photo?.sd_setImageWithURL(photoUrl, forState: UIControlState.Normal, placeholderImage: nil, options: options)
+			bindPhoto(photoUrl)
+		}
+		else {
+			self.photo?.hidden = true
 		}
 		
 		/* User photo */
@@ -155,35 +188,15 @@ class NotificationView: BaseView {
 		self.setNeedsLayout()	// Needed because binding can change the layout
 	}
 	
-	override func layoutSubviews() {
-		super.layoutSubviews()
+	private func bindPhoto(photoUrl: NSURL) {
 		
-		let columnLeft = CGFloat(48 + 8)
-		let columnWidth = self.bounds.size.width - columnLeft
-		let photoHeight = columnWidth * 0.5625		// 16:9 aspect ratio
-		
-		self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 48, height: 48)
-		
-		var bottomView: UIView? = self.photo
-		if self.cellType == .Text {
-			bottomView = self.description_
-			self.description_?.bounds.size.width = columnWidth
-			self.description_?.sizeToFit()
-			self.description_?.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: self.description_!.height())
-		}
-		else if self.cellType == .TextAndPhoto {
-			self.description_?.bounds.size.width = columnWidth
-			self.description_?.sizeToFit()
-			self.description_?.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: self.description_!.height())
-			self.photo?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 12, height: photoHeight)
-		}
-		else if self.cellType == .Photo {
-			self.photo?.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: photoHeight)
+		if self.photo?.image != nil
+			&& self.photo!.linkedPhotoUrl != nil
+			&& self.photo!.linkedPhotoUrl?.absoluteString == photoUrl.absoluteString {
+			return
 		}
 		
-		self.createdDate.sizeToFit()
-		self.iconImageView.alignUnder(bottomView!, matchingLeftWithTopPadding: 8, width: self.iconImageView.width(), height: self.iconImageView.height())
-		self.createdDate.alignToTheRightOf(self.iconImageView, matchingCenterWithLeftPadding: 8, width: self.createdDate.width(), height: self.createdDate.height())
-		self.ageDot.alignUnder(bottomView!, matchingRightWithTopPadding: 8, width: 12, height: 12)
-	}
+		self.photo?.image = nil
+		self.photo!.setImageWithUrl(photoUrl, animate: false)
+	}	
 }

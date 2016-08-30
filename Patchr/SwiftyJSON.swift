@@ -384,14 +384,17 @@ public struct JSONGenerator : GeneratorType {
         switch self.type {
         case .Array:
             if let o = self.arrayGenerate!.next() {
-                return (String(self.arrayIndex++), JSON(o))
+				let indexString = String(self.arrayIndex)
+				self.arrayIndex += 1
+                return (indexString, JSON(o))
             } else {
                 return nil
             }
         case .Dictionary:
             if let (k, v): (String, AnyObject) = self.dictionayGenerate!.next() {
                 return (k, JSON(v))
-            } else {
+            }
+			else {
                 return nil
             }
         default:

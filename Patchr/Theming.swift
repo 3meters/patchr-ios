@@ -54,6 +54,7 @@ class Snow {
 	let colorBackgroundEmptyBubble  = Colors.gray97pcntColor
 	let colorBackgroundAgeDot       = Colors.accentColorFill
 	let colorBackgroundContactSelected 	= Colors.accentColorFill
+	let colorBackgroundSelected		= Colors.gray90pcntColor
 
 	let colorRule                   = Colors.gray75pcntColor
 	let colorRuleActive             = Colors.accentColorRule
@@ -66,7 +67,6 @@ class Snow {
 	let colorScrimLighten           = UIColor(red: CGFloat(1), green: CGFloat(1), blue: CGFloat(1), alpha: CGFloat(0.75))
 	let colorActionOn               = Colors.brandColorTextDark
 	let colorActionOff              = Colors.brandColorTextDark
-	let colorActionPending          = Colors.accentColorTextDark
 	let colorActivityIndicator      = Colors.brandColor
 	let colorActivityIndicatorImage = Colors.brandColor
 
@@ -85,23 +85,24 @@ class Snow {
 	
 	let fontSize				= 18
 
-	let fontBanner				= UIFont(name: "HelveticaNeue-Thin", size: 48)!
-	let fontTitleLarge			= UIFont(name: "HelveticaNeue-Thin", size: 30)!
-	let fontTitle				= UIFont(name: "HelveticaNeue-Light", size: 22)!
-	let fontHeading				= UIFont(name: "HelveticaNeue-Light", size: 20)!
+	let fontBanner				: UIFont! = UIFont(name: "HelveticaNeue-Thin", size: 48)
+	let fontTitleLarge			: UIFont! = UIFont(name: "HelveticaNeue-Thin", size: 30)
+	let fontTitle				: UIFont! = UIFont(name: "HelveticaNeue-Light", size: 22)
+	let fontHeading				: UIFont! = UIFont(name: "HelveticaNeue-Light", size: 20)
 
-	let fontText				= UIFont(name: "HelveticaNeue-Light", size: 18)!
-	let fontTextBold			= UIFont(name: "HelveticaNeue-Medium", size: 18)!
-	let fontTextDisplay			= UIFont(name: "HelveticaNeue-Light", size: 18)!
-	let fontTextList			= UIFont(name: "HelveticaNeue-Light", size: 17)!
-	let fontComment				= UIFont(name: "HelveticaNeue-Light", size: 16)!
-	let fontCommentSmall		= UIFont(name: "HelveticaNeue-Light", size: 14)!
-	let fontCommentExtraSmall	= UIFont(name: "HelveticaNeue-Light", size: 12)!
-	let fontButtonTitle			= UIFont(name: "HelveticaNeue", size: 16)!
-	let fontButtonRadioTitle	= UIFont(name: "HelveticaNeue-Light", size: 18)!
-	let fontLinkText			= UIFont(name: "HelveticaNeue", size: 18)!
-	let fontBarText				= UIFont(name: "HelveticaNeue", size: 18)!
-	let fontNumberFeatured		= UIFont(name: "HelveticaNeue-Light", size: 30)!
+	let fontText				: UIFont! = UIFont(name: "HelveticaNeue-Light", size: 18)
+	let fontTextBold			: UIFont! = UIFont(name: "HelveticaNeue-Medium", size: 18)
+	let fontTextDisplay			: UIFont! = UIFont(name: "HelveticaNeue-Light", size: 18)
+	let fontTextList			: UIFont! = UIFont(name: "HelveticaNeue-Light", size: 17)
+	let fontTextListBold		: UIFont! = UIFont(name: "HelveticaNeue", size: 17)
+	let fontComment				: UIFont! = UIFont(name: "HelveticaNeue-Light", size: 16)
+	let fontCommentSmall		: UIFont! = UIFont(name: "HelveticaNeue-Light", size: 14)
+	let fontCommentExtraSmall	: UIFont! = UIFont(name: "HelveticaNeue-Light", size: 12)
+	let fontButtonTitle			: UIFont! = UIFont(name: "HelveticaNeue", size: 16)
+	let fontButtonRadioTitle	: UIFont! = UIFont(name: "HelveticaNeue-Light", size: 18)
+	let fontLinkText			: UIFont! = UIFont(name: "HelveticaNeue", size: 18)
+	let fontBarText				: UIFont! = UIFont(name: "HelveticaNeue", size: 18)
+	let fontNumberFeatured		: UIFont! = UIFont(name: "HelveticaNeue-Light", size: 30)
 	
 	let colorLogVerbose			= Colors.gray50pcntColor
 	let colorLogDebug			= Colors.accentColorDarker
@@ -163,7 +164,7 @@ public struct Colors {
 	
 	static let brandColorTextLight = brandColor
 	static let brandColorTextDark = brandColor
-	static let brandColorFill = brandColorLight
+	static let brandColorFill = brandColor
 	static let brandColorRule = brandColor
 	
 	static let facebookColor = UIColor(hexString: "#3B5998ff")

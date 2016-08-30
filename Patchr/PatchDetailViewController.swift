@@ -10,12 +10,25 @@ import UIKit
 import Branch
 import MessageUI
 import iRate
+import IDMPhotoBrowser
+import NHBalancedFlowLayout
+
+
+let UIActivityTypeGmail = "com.google.Gmail.ShareExtension"
+let UIActivityTypeOutlook = "com.microsoft.Office.Outlook.compose-shareextension"
+let UIActivityTypePatchr = "com.3meters.patchr.ios.PatchrShare"
 
 class PatchDetailViewController: BaseDetailViewController {
 
-    private var contextAction			: ContextAction = .SharePatch
+    private var contextAction			: ContextAction = .None
 	private var originalRect			: CGRect?
     private var originalScrollTop		= CGFloat(-64.0)
+	
+	var lastContentOffset		= CGFloat(0)
+	var processing				= false
+	
+	var actionButton			: AirRadialMenu!
+	var tabBar					: MainTabBarController?
 	
 	var inputReferrerName		: String?
 	var inputReferrerPhotoUrl	: String?
@@ -23,6 +36,7 @@ class PatchDetailViewController: BaseDetailViewController {
 	var inviteActive			= false
 	
 	var autoWatchOnAppear		= false
+	var provider				: FacebookProvider!
 
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
@@ -48,7 +62,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		
 		let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
 		let header = self.header as! PatchDetailView
-		let viewHeight = (viewWidth * 0.625) + header.contextGroup.height()
+		let viewHeight = (viewWidth * 0.625) + header.buttonGroup.height()
 		self.tableView.tableHeaderView?.bounds.size = CGSizeMake(viewWidth, viewHeight)	// Triggers layoutSubviews on header
 	}
 	
@@ -66,10 +80,16 @@ class PatchDetailViewController: BaseDetailViewController {
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)	// Clears firstAppearance
 		
+		if self.tabBar != nil {
+			if self.actionButton != nil && self.entity != nil && (!self.entity!.lockedValue || isUserOwner()) {
+				self.tabBar?.setActionButton(self.actionButton)
+				self.tabBar?.showActionButton()
+			}
+		}
+		
 		if self.autoWatchOnAppear {
 			self.autoWatchOnAppear = false
-			let header = self.header as! PatchDetailView
-			header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+			watchAction()
 			Utils.delay(1.0) {
 				UIShared.Toast("You are now a member of this patch", controller: self, addToWindow: false)
 			}
@@ -81,42 +101,44 @@ class PatchDetailViewController: BaseDetailViewController {
 	
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
+		if self.tabBar != nil {
+			self.tabBar?.setActionButton(nil)
+		}
 	}
 	
 	/*--------------------------------------------------------------------------------------------
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
     
+	override func photoAction(sender: AnyObject?) {
+		super.photoAction(sender)
+		/* Stub to handle processing if we unify gallery browsing */
+	}
+	
 	func watchersAction(sender: AnyObject) {
 		let controller = UserTableViewController()
 		controller.patch = self.entity as! Patch
 		controller.filter = .PatchWatchers
 		self.navigationController?.pushViewController(controller, animated: true)
 	}
-
+	
+	func photosAction(sender: AnyObject) {
+		showPhotos()
+	}
+	
 	func contextButtonAction(sender: UIButton) {
 		
-		let header = self.header as! PatchDetailView
-		
         if self.contextAction == .CreateMessage {
-            if !UserController.instance.authenticated {
-				UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to post messages and more.")
-                return
-            }
             addAction()
         }
         else if self.contextAction == .SharePatch {
             shareAction(sender)
         }
         else if self.contextAction == .CancelJoinRequest {
-            header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+			watchAction()
         }
         else if self.contextAction == .SubmitJoinRequest || self.contextAction == .JoinPatch {
-            if !UserController.instance.authenticated {
-				UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to join patches and more.")
-                return
-            }
-            header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+			watchAction()
         }
         else if self.contextAction == .BrowseUsersWatching {
             watchersAction(self)
@@ -140,11 +162,6 @@ class PatchDetailViewController: BaseDetailViewController {
     }
 	
     func addAction() {
-        if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to post messages and more.")
-            return
-        }
-		
 		if let patch = self.entity as? Patch {
 			if patch.visibility != nil && patch.visibility == "private" && patch.userWatchStatusValue != .Member {
 				Alert("Join the patch to post messages.", message: nil, cancelButtonTitle: "OK")
@@ -153,29 +170,168 @@ class PatchDetailViewController: BaseDetailViewController {
 		}
 		
         /* Has its own nav because we segue modally and it needs its own stack */
+		
 		let controller = MessageEditViewController()
-		let navController = UINavigationController()
 		controller.inputToString = self.entity!.name
 		controller.inputPatchId = self.entityId
 		controller.inputState = .Creating
+		
+		let navController = AirNavigationController()
 		navController.viewControllers = [controller]
-		self.navigationController?.presentViewController(navController, animated: true, completion: nil)
+		
+		self.presentViewController(navController, animated: true, completion: nil)
     }
     
     func editAction() {
-		let controller = PatchEditViewController()
-		let navController = UINavigationController()
-		controller.inputPatch = self.entity as? Patch
-		navController.viewControllers = [controller]
-		self.navigationController?.presentViewController(navController, animated: true, completion: nil)
-    }
-    
-	func shareAction(sender: AnyObject?) {
 		
-		if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to invite people to patches and more.")
+		let controller = PatchEditViewController()
+		controller.inputPatch = self.entity as? Patch
+		
+		let navController = AirNavigationController()
+		navController.viewControllers = [controller]
+		
+		self.presentViewController(navController, animated: true, completion: nil)
+    }
+	
+	func watchAction() {
+		
+		if self.entity == nil {
 			return
 		}
+		
+		let patch = self.entity as? Patch
+		
+		if patch!.userWatchStatusValue == .Member {
+			
+			DataController.proxibase.deleteLinkById(patch!.userWatchId!) {
+				response, error in
+				
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					if let error = ServerError(error) {
+						UIViewController.topMostViewController()!.handleError(error)
+					}
+					else {
+						if DataController.instance.dataWrapperForResponse(response!) != nil {
+							patch!.userWatchId = nil
+							patch!.userWatchStatusValue = .NonMember
+							patch!.countWatchingValue -= 1
+							DataController.instance.activityDateWatching = Utils.now()
+						}
+						Reporting.track("Left Patch")
+						Log.d("Resetting patch and messages because watch status changed")
+						if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundEffects")) {
+							AudioController.instance.play(Sound.pop.rawValue)
+						}
+						self.fetch(strategy: .IgnoreCache, resetList: true)
+					}
+				}
+			}
+		}
+		else if patch!.userWatchStatusValue == .Pending {
+			
+			DataController.proxibase.deleteLinkById(patch!.userWatchId!) {
+				response, error in
+				
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					if let error = ServerError(error) {
+						UIViewController.topMostViewController()!.handleError(error)
+					}
+					else {
+						if DataController.instance.dataWrapperForResponse(response!) != nil {
+							patch!.userWatchId = nil
+							patch!.userWatchStatusValue = .NonMember
+						}
+						Reporting.track("Canceled Member Request")
+						Log.d("Resetting patch and messages because watch status changed")
+						if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundEffects")) {
+							AudioController.instance.play(Sound.pop.rawValue)
+						}
+						self.fetch(strategy: .IgnoreCache, resetList: true)
+					}
+				}
+			}
+		}
+		else if patch!.userWatchStatusValue == .NonMember {
+			
+			/* Service automatically sets enabled = false if user is not the patch owner */
+			DataController.proxibase.insertLink(UserController.instance.userId! as String, toID: patch!.id_, linkType: .Watch) {
+				response, error in
+				
+				NSOperationQueue.mainQueue().addOperationWithBlock {
+					if let error = ServerError(error) {
+						UIViewController.topMostViewController()!.handleError(error)
+					}
+					else {
+						if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
+							if serviceData.countValue == 1 {
+								if let entityDictionaries = serviceData.data as? [[String:NSObject]] {
+									let map = entityDictionaries[0]
+									patch!.userWatchId = map["_id"] as! String
+									if let enabled = map["enabled"] as? Bool {
+										if enabled {
+											patch!.userWatchStatusValue = .Member
+											patch!.countWatchingValue += 1
+											DataController.instance.activityDateWatching = Utils.now()
+											Reporting.track("Joined Patch")
+										}
+										else {
+											patch!.userWatchStatusValue = .Pending
+											Reporting.track("Requested to Join Patch")
+										}
+									}
+								}
+							}
+						}
+						Log.d("Resetting patch and messages because watch status changed")
+						if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundEffects")) {
+							AudioController.instance.play(Sound.pop.rawValue)
+						}
+						self.fetch(strategy: .IgnoreCache, resetList: true)
+						
+						if !UIApplication.sharedApplication().isRegisteredForRemoteNotifications() {
+							NotificationController.instance.guardedRegisterForRemoteNotifications("Would you like to be alerted when messages are posted to this patch?")
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	func muteAction() {
+		
+		if self.entity == nil {
+			return
+		}
+		
+		let muted = !self.entity!.userWatchMutedValue
+		
+		DataController.proxibase.muteLinkById(self.entity!.userWatchId!, muted: muted, completion: {
+			response, error in
+			
+			NSOperationQueue.mainQueue().addOperationWithBlock {
+				
+				if let error = ServerError(error) {
+					UIViewController.topMostViewController()!.handleError(error)
+				}
+				else {
+					self.entity!.userWatchMutedValue = muted
+					let header = self.header as! PatchDetailView
+					header.bindToEntity(self.entity)
+					Reporting.track(muted ? "Muted Patch" : "Unmuted Patch")
+					
+					if muted {
+						UIShared.Toast("Notifications muted")
+					}
+					
+					if !muted {
+						UIShared.Toast("Notifications active")
+					}
+				}
+			}
+		})
+	}
+	
+	func shareAction(sender: AnyObject?) {
 		
         if self.entity != nil {
 			
@@ -219,7 +375,7 @@ class PatchDetailViewController: BaseDetailViewController {
 	
 	func reportAction(sender: AnyObject?) {
 		
-		let email = "report@3meters.com"
+		let email = "report@patchr.com"
 		let subject = "Report on Patchr content"
 		let body = "Report on patch id: \(self.entityId!)\n\nPlease add some detail on why you are reporting this patch.\n"
 		
@@ -251,11 +407,23 @@ class PatchDetailViewController: BaseDetailViewController {
 			
 			let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
 			
+			if isUserOwner() {
+				let edit = UIAlertAction(title: "Edit patch", style: .Default) { action in
+					self.editAction()
+				}
+				sheet.addAction(edit)
+			}
+			
+			let mute = UIAlertAction(title: self.entity!.userWatchMutedValue ? "Unmute patch" : "Mute patch", style: .Default) { action in
+				self.muteAction()
+			}
+			
+			sheet.addAction(mute)
+			
 			if let patch = self.entity as? Patch {
 				if patch.userWatchStatusValue == .Member {
-					let leave = UIAlertAction(title: "Leave patch", style: .Destructive) { action in
-						let header = self.header as! PatchDetailView
-						header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside)
+					let leave = UIAlertAction(title: "Leave patch", style: .Default) { action in
+						self.watchAction()
 						Utils.delay(1.0) {
 							UIShared.Toast("You have left this patch", controller: self, addToWindow: false)
 						}
@@ -267,9 +435,11 @@ class PatchDetailViewController: BaseDetailViewController {
 			let report = UIAlertAction(title: "Report patch", style: .Default) { action in
 				self.reportAction(self)
 			}
+			
 			let cancel = UIAlertAction(title: "Cancel", style: .Cancel) { action in
 				sheet.dismissViewControllerAnimated(true, completion: nil)
 			}
+			
 			sheet.addAction(report)
 			sheet.addAction(cancel)
 			
@@ -288,32 +458,30 @@ class PatchDetailViewController: BaseDetailViewController {
 	}
 	
 	func joinAction(sender: AnyObject?) {
-		let header = self.header as! PatchDetailView
-		header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside) // Should trigger fetch via watch notification
-		AudioController.instance.play(Sound.pop.rawValue)
+		watchAction() // Should trigger fetch via watch notification
 	}
 	
 	func cancelRequestAction(sender: AnyObject?) {
-		let header = self.header as! PatchDetailView
-		header.watchButton.sendActionsForControlEvents(UIControlEvents.TouchUpInside) // Should trigger fetch via watch notification
-		AudioController.instance.play(Sound.pop.rawValue)
+		watchAction() // Should trigger fetch via watch notification
 	}
 	
 	func loginAction(sender: AnyObject?) {
 		let controller = LoginViewController()
-		let navController = UINavigationController()
+		let navController = AirNavigationController()
 		navController.viewControllers = [controller]
 		controller.onboardMode = OnboardMode.Login
 		controller.inputRouteToMain = false
+		controller.source = "Invite"
 		self.presentViewController(navController, animated: true) {}
 	}
 	
 	func signupAction(sender: AnyObject?) {
 		let controller = LoginViewController()
-		let navController = UINavigationController()
+		let navController = AirNavigationController()
 		navController.viewControllers = [controller]
 		controller.onboardMode = OnboardMode.Signup
 		controller.inputRouteToMain = false
+		controller.source = "Invite"
 		self.presentViewController(navController, animated: true) {}
 	}
 
@@ -326,7 +494,16 @@ class PatchDetailViewController: BaseDetailViewController {
 		 * Called after fetch is complete for form entity. bind() is called
 		 * just before this notification.
 		 */
-		bindContextView()
+		if ((notification.userInfo?["deleted"]) == nil) {
+			if self.entity!.lockedValue {
+				self.tabBar?.setActionButton(nil)
+			}
+			bindContextView()
+		}
+	}
+	
+	override func didFetchQuery(notification: NSNotification) {
+		super.didFetchQuery(notification)
 	}
 	
 	func didInsertMessage(sender: NSNotification) {
@@ -338,24 +515,15 @@ class PatchDetailViewController: BaseDetailViewController {
 	}
 	
 	func didReceiveRemoteNotification(notification: NSNotification) {
-		
-		if let userInfo = notification.userInfo {
-			let parentId = userInfo["parentId"] as? String
-			let targetId = userInfo["targetId"] as? String
-			
-			let impactedByNotification = self.entityId == parentId || self.entityId == targetId
-			
-			// Only refresh notifications if view has already been loaded
-			// and the notification is related to this Patch
-			if self.isViewLoaded() && impactedByNotification {
-				self.pullToRefreshAction(self.refreshControl)
-			}
-		}
-	}
-	
-	func watchDidChange(sender: NSNotification) {
-		Log.d("Resetting patch and messages because watch status changed")
-		fetch(strategy: .IgnoreCache, resetList: true)
+        let data = notification.userInfo!
+        if self.isViewLoaded() {
+            if let parentId = data["parentId"] as? String where parentId == self.entityId {
+                self.pullToRefreshAction(self.refreshControl)
+            }
+            else if let targetId = data["targetId"] as? String where targetId == self.entityId {
+                self.pullToRefreshAction(self.refreshControl)
+            }
+        }
 	}
 	
 	func applicationDidEnterBackground(sender: NSNotification) {
@@ -370,33 +538,34 @@ class PatchDetailViewController: BaseDetailViewController {
 	
 	func initialize() {
 		
-		setScreenName("PatchDetail")
+		Reporting.screen("PatchDetail")
+		
 		self.view.accessibilityIdentifier = View.PatchDetail
 
 		self.queryName = DataStoreQueryName.MessagesForPatch.rawValue
+		self.provider = FacebookProvider(controller: self)
 		
 		self.header = PatchDetailView()
 		self.tableView = AirTableView(frame: self.tableView.frame, style: .Plain)
-		self.tableView.estimatedRowHeight = 0	// Zero turns off estimates
-		self.tableView.rowHeight = 0			// Actual height is handled in heightForRowAtIndexPath
+		self.tabBar = self.tabBarController as? MainTabBarController
+		if self.tabBar != nil {
+			configureActionButton()
+		}
 		
 		let header = self.header as! PatchDetailView
 		
-		header.mapButton.addTarget(self, action: Selector("mapAction:"), forControlEvents: .TouchUpInside)
-		header.watchersButton.addTarget(self, action: Selector("watchersAction:"), forControlEvents: UIControlEvents.TouchUpInside)
-		header.moreButton.addTarget(self, action: Selector("moreAction:"), forControlEvents: .TouchUpInside)
-		header.infoMoreButton.addTarget(self, action: Selector("moreAction:"), forControlEvents: .TouchUpInside)
+		header.membersButton.addTarget(self, action: #selector(PatchDetailViewController.watchersAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+		header.photosButton.addTarget(self, action: #selector(PatchDetailViewController.photosAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
 		
-		if let contextButton = header.contextView as? AirFeaturedButton {
-			contextButton.addTarget(self, action: Selector("contextButtonAction:"), forControlEvents: .TouchUpInside)
+		if let contextButton = header.contextButton as? AirFeaturedButton {
+			contextButton.addTarget(self, action: #selector(PatchDetailViewController.contextButtonAction(_:)), forControlEvents: .TouchUpInside)
 			contextButton.setTitle("", forState: .Normal)
 		}
 
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didReceiveRemoteNotification:", name: Events.DidReceiveRemoteNotification, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didFetch:", name: Events.DidFetch, object: self)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "watchDidChange:", name: Events.WatchDidChange, object: header.watchButton)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didInsertMessage:", name: Events.DidInsertMessage, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "applicationDidEnterBackground:", name: UIApplicationDidEnterBackgroundNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchDetailViewController.didReceiveRemoteNotification(_:)), name: Events.DidReceiveRemoteNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchDetailViewController.didFetch(_:)), name: Events.DidFetch, object: self)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchDetailViewController.didInsertMessage(_:)), name: Events.DidInsertMessage, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidEnterBackground(_:)), name: UIApplicationDidEnterBackgroundNotification, object: nil)
 		
 		self.showEmptyLabel = true
 		self.showProgress = true
@@ -422,19 +591,8 @@ class PatchDetailViewController: BaseDetailViewController {
 			self.disableCells = (patch.visibility == "private" && !patch.userIsMember())
 			
 			let header = self.header as! PatchDetailView
-
-			header.bindToEntity(patch)
-			bindContextView()
 			
-			if patch.userWatchStatusValue == .Member {
-				self.emptyMessage = "Be the first to post a message to this patch"
-			}
-			else {
-				self.emptyMessage = (patch.visibility == "private") ? "Only members can see messages" : "Be the first to post a message to this patch"
-			}
-
-			self.emptyLabel.setTitle(self.emptyMessage, forState: .Normal)
-			
+			/* We do this here so we have tableView sizing */
 			if self.tableView.tableHeaderView == nil {
 				let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
 				let viewHeight = (viewWidth * 0.625) + 48
@@ -446,24 +604,77 @@ class PatchDetailViewController: BaseDetailViewController {
 				self.tableView.tableHeaderView = self.header
 				self.tableView.reloadData()
 			}
+
+			bindContextView()
+			header.bindToEntity(patch)
+			
+			if patch.userWatchStatusValue == .Member {
+				self.emptyMessage = "Be the first to post a message to this patch"
+			}
+			else {
+				self.emptyMessage = (patch.visibility == "private") ? "Only members can see messages" : "Be the first to post a message to this patch"
+			}
+
+			self.emptyLabel.setTitle(self.emptyMessage, forState: .Normal)
         }
 	}
 
 	override func drawButtons() {
 		
-		let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: Selector("shareAction:"))
-		let addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: Selector("addAction"))
-		let editButton = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: Selector("editAction"))
+		var button = UIButton(type: .Custom)
+		button.frame = CGRectMake(0, 0, 36, 36)
+		button.addTarget(self, action: #selector(PatchDetailViewController.shareAction(_:)), forControlEvents: .TouchUpInside)
+		button.showsTouchWhenHighlighted = true
+		button.setImage(UIImage(named: "imgInvite2Light"), forState: .Normal)
+		button.imageEdgeInsets = UIEdgeInsetsMake(3, 3, 3, 3);
 		
-		if isUserOwner() {
-			self.navigationItem.setRightBarButtonItems([addButton, Utils.spacer, shareButton, Utils.spacer, editButton], animated: true)
+		let shareButton = UIBarButtonItem(customView: button)
+		
+		button = UIButton(type: .Custom)
+		button.frame = CGRectMake(0, 0, 36, 36)
+		button.addTarget(self, action: #selector(PatchDetailViewController.moreAction(_:)), forControlEvents: .TouchUpInside)
+		button.showsTouchWhenHighlighted = true
+		button.setImage(UIImage(named: "imgOverflowLight"), forState: .Normal)
+		button.imageEdgeInsets = UIEdgeInsetsMake(8, 8, 8, 8);
+		
+		let moreButton = UIBarButtonItem(customView: button)
+		
+		/* Map button */
+		if self.entity?.location != nil {
+			
+			button = UIButton(type: .Custom)
+			button.frame = CGRectMake(0, 0, 48, 48)
+			button.addTarget(self, action: #selector(PatchDetailViewController.mapAction(_:)), forControlEvents: .TouchUpInside)
+			button.showsTouchWhenHighlighted = true
+			button.setImage(UIImage(named: "imgMapLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
+			button.imageEdgeInsets = UIEdgeInsetsMake(11, 11, 11, 11);
+			
+			let mapButton = UIBarButtonItem(customView: button)
+			
+			self.navigationItem.setRightBarButtonItems([moreButton, Utils.spacer, shareButton, Utils.spacer, mapButton], animated: true)
 		}
 		else {
-			self.navigationItem.setRightBarButtonItems([addButton, Utils.spacer, shareButton], animated: true)
+			self.navigationItem.setRightBarButtonItems([moreButton, Utils.spacer, shareButton], animated: true)
 		}
 	}
 	
+	func configureActionButton() {
+		
+		/* Action button */
+		self.actionButton = AirRadialMenu(attachedToView: self.tabBar!.view)
+		self.actionButton.bounds.size = CGSizeMake(56, 56)
+		self.actionButton.autoresizingMask = [.FlexibleRightMargin, .FlexibleLeftMargin, .FlexibleBottomMargin, .FlexibleTopMargin]
+		self.actionButton.centerView.gestureRecognizers?.forEach(self.actionButton.centerView.removeGestureRecognizer) /* Remove default tap regcognizer */
+		self.actionButton.imageInsets = UIEdgeInsetsMake(14, 14, 14, 14)
+		self.actionButton.imageView.image = UIImage(named: "imgAddLight")	// Default
+		self.actionButton.showBackground = false
+		
+		self.actionButton.centerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(actionButtonTapped(_:))))
+	}
+	
 	func bindContextView() {
+		
+		let originalContextAction = self.contextAction
 		
 		if let patch = self.entity as? Patch {
 			
@@ -472,14 +683,14 @@ class PatchDetailViewController: BaseDetailViewController {
 			/* Do we have an active invite and a non-member? */
 			if self.inviteActive  {
 					
-				if !(header.contextView is UserInviteView) {
-					header.contextView.removeFromSuperview()
+				if !(header.contextButton is UserInviteView) {
+					header.contextButton.removeFromSuperview()
 					let url = self.inputReferrerPhotoUrl != nil ? NSURL(string: self.inputReferrerPhotoUrl!) : nil
 					let inviteView = UserInviteView()
 					inviteView.bind("\(self.inputReferrerName!) has invited you to join this patch.", photoUrl: url, name: self.inputReferrerName)
 					self.inviteView = inviteView
-					header.contextView = inviteView
-					header.contextGroup.addSubview(header.contextView)
+					header.contextButton = inviteView
+					header.buttonGroup.addSubview(header.contextButton)
 					
 				}
 
@@ -495,20 +706,20 @@ class PatchDetailViewController: BaseDetailViewController {
 					self.inviteView!.joinButton.hidden = false
 					self.inviteView!.joinButton.setTitle("Requested".uppercaseString, forState: .Normal)
 					self.inviteView!.joinButton.removeTarget(nil, action: nil, forControlEvents: .TouchUpInside)
-					self.inviteView!.joinButton.addTarget(self, action: Selector("cancelRequestAction:"), forControlEvents: .TouchUpInside)
+					self.inviteView!.joinButton.addTarget(self, action: #selector(PatchDetailViewController.cancelRequestAction(_:)), forControlEvents: .TouchUpInside)
 				}
 				else {
 					if UserController.instance.authenticated {
 						self.inviteView!.joinButton.hidden = false
 						self.inviteView!.joinButton.setTitle("Join".uppercaseString, forState: .Normal)
 						self.inviteView!.joinButton.removeTarget(nil, action: nil, forControlEvents: .TouchUpInside)
-						self.inviteView!.joinButton.addTarget(self, action: Selector("joinAction:"), forControlEvents: .TouchUpInside)
+						self.inviteView!.joinButton.addTarget(self, action: #selector(PatchDetailViewController.joinAction(_:)), forControlEvents: .TouchUpInside)
 					}
 					else {
 						self.inviteView!.loginButton.hidden = false
 						self.inviteView!.signupButton.hidden = false
-						self.inviteView!.loginButton.addTarget(self, action: Selector("loginAction:"), forControlEvents: .TouchUpInside)
-						self.inviteView!.signupButton.addTarget(self, action: Selector("signupAction:"), forControlEvents: .TouchUpInside)
+						self.inviteView!.loginButton.addTarget(self, action: #selector(PatchDetailViewController.loginAction(_:)), forControlEvents: .TouchUpInside)
+						self.inviteView!.signupButton.addTarget(self, action: #selector(PatchDetailViewController.signupAction(_:)), forControlEvents: .TouchUpInside)
 					}
 				}
 
@@ -518,14 +729,15 @@ class PatchDetailViewController: BaseDetailViewController {
 				return
 			}
 			
-			if !(header.contextView is UIButton) {
-				header.contextView.removeFromSuperview()
-				header.contextView = AirFeaturedButton()
-				header.contextGroup.addSubview(header.contextView)
+			if !(header.contextButton is UIButton) {
+				header.contextButton.removeFromSuperview()
+				header.contextButton = AirFeaturedButton()
+				header.buttonGroup.addSubview(header.contextButton)
 				self.inviteView = nil
 			}
 			
-			if let button = header.contextView as? UIButton {
+			if let button = header.contextButton as? UIButton {
+				self.contextAction = .None
 				if isUserOwner() {
 					if patch.countPendingValue > 0 {
 						if patch.countPendingValue == 1 {
@@ -541,29 +753,19 @@ class PatchDetailViewController: BaseDetailViewController {
 						self.contextAction = .SubmitJoinRequest
 					}
 					else {
-						button.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
+						button.setTitle("Invite people to this patch".uppercaseString, forState: .Normal)
 						self.contextAction = .SharePatch
 					}
 				}
 				else {
 					if !UserController.instance.authenticated {
-						if patch.visibility == "public" {
-							button.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
-							self.contextAction = .SharePatch
-						}
-						else {
-							button.setTitle("Join".uppercaseString, forState: .Normal)
-							self.contextAction = .SubmitJoinRequest
-						}
+						button.setTitle("Join".uppercaseString, forState: .Normal)
+						self.contextAction = .SubmitJoinRequest
 					}
 					else {
 						if patch.visibility == "public" {
 							if patch.userWatchStatusValue == .Member {
-								if patch.userHasMessagedValue {
-									button.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
-									self.contextAction = .SharePatch
-								}
-								else {
+								if !patch.userHasMessagedValue {
 									button.setTitle("Post your first message".uppercaseString, forState: .Normal)
 									self.contextAction = .CreateMessage
 								}
@@ -575,11 +777,7 @@ class PatchDetailViewController: BaseDetailViewController {
 						}
 						else {
 							if patch.userWatchStatusValue == .Member {
-								if patch.userHasMessagedValue {
-									button.setTitle("Invite friends to this patch".uppercaseString, forState: .Normal)
-									self.contextAction = .SharePatch
-								}
-								else {
+								if !patch.userHasMessagedValue {
 									button.setTitle("Post your first message".uppercaseString, forState: .Normal)
 									self.contextAction = .CreateMessage
 								}
@@ -594,15 +792,25 @@ class PatchDetailViewController: BaseDetailViewController {
 							}
 							
 							if patch.userWatchJustApprovedValue {
-								if patch.userHasMessagedValue {
-									button.setTitle("Approved! Invite your friends".uppercaseString, forState: .Normal)
-									self.contextAction = .SharePatch
-								}
-								else {
+								if !patch.userHasMessagedValue {
 									button.setTitle("Approved! Post your first message".uppercaseString, forState: .Normal)
 									self.contextAction = .CreateMessage
 								}
 							}
+						}
+					}
+				}
+				
+				if self.contextAction != originalContextAction {
+					
+					if (self.contextAction == .None || originalContextAction == .None) {
+						
+						button.hidden = (self.contextAction == .None)
+						
+						if self.tableView.tableHeaderView != nil {
+							let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
+							let viewHeight = (viewWidth * 0.625) + (self.contextAction == .None ? 44 : 100)
+							self.tableView.tableHeaderView!.frame = CGRectMake(0, 0, viewWidth, viewHeight)
 						}
 					}
 				}
@@ -611,12 +819,40 @@ class PatchDetailViewController: BaseDetailViewController {
 		}
 	}
 	
+	func actionButtonTapped(gester: UIGestureRecognizer) {
+		addAction()
+		Animation.bounce(self.actionButton)
+	}
+	
+	func showPhotos() {
+		
+		/* Cherry pick display photos */
+		var displayPhotos = [String: DisplayPhoto]()
+
+		for item in self.query.queryItems {
+			let queryItem = item as! QueryItem
+			let entity = queryItem.object as! Entity
+			if entity.photo != nil {
+				let displayPhoto = DisplayPhoto.fromEntity(entity)
+				displayPhotos[displayPhoto.entityId!] = displayPhoto
+			}
+		}
+
+		let navController = AirNavigationController()
+		let layout = NHBalancedFlowLayout()
+		layout.preferredRowSize = 200
+		let controller = GalleryGridViewController(collectionViewLayout: layout)
+		controller.displayPhotos = displayPhotos
+		navController.viewControllers = [controller]
+		self.navigationController!.presentViewController(navController, animated: true, completion: nil)
+	}
+	
 	func shareUsing(route: ShareRoute) {
 		
 		if route == .Patchr {
 			
 			let controller = MessageEditViewController()
-			let navController = UINavigationController()
+			let navController = AirNavigationController()
 			controller.inputShareEntity = self.entity
 			controller.inputShareSchema = Schema.ENTITY_PATCH
 			controller.inputShareId = self.entityId!
@@ -627,8 +863,7 @@ class PatchDetailViewController: BaseDetailViewController {
 		}
 		else if route == .Facebook {
 			
-			let provider = FacebookProvider()
-			provider.invite(self.entity!)
+			self.provider.invite(self.entity!)
 		}
 		else if route == .AirDrop {
 			
@@ -660,6 +895,13 @@ class PatchDetailViewController: BaseDetailViewController {
 						activityItems: [patch, NSURL.init(string: patch.shareUrl, relativeToURL: nil)!],
 						applicationActivities: nil)
 					
+					activityViewController.completionWithItemsHandler = {
+						activityType, completed, items, activityError in
+						if completed && activityType != nil {
+							Reporting.track("Sent Patch Invitation", properties: ["network": activityType!])
+						}
+					}
+					
 					activityViewController.excludedActivityTypes = excluded
 					
 					if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
@@ -689,6 +931,13 @@ class PatchDetailViewController: BaseDetailViewController {
 					let activityViewController = UIActivityViewController(
 						activityItems: [patch, NSURL.init(string: patch.shareUrl, relativeToURL: nil)!],
 						applicationActivities: nil)
+					
+					activityViewController.completionWithItemsHandler = {
+						activityType, completed, items, activityError in
+						if completed && activityType != nil {
+							Reporting.track("Sent Patch Invitation", properties: ["network": activityType!])
+						}
+					}
 					
 					activityViewController.excludedActivityTypes = excluded
 					
@@ -771,6 +1020,19 @@ extension PatchDetailViewController {
 			return
 		}
 		
+		if scrollView.contentSize.height > scrollView.height() {
+			if(self.lastContentOffset > scrollView.contentOffset.y)
+				&& self.lastContentOffset < (scrollView.contentSize.height - scrollView.frame.height) {
+				self.tabBar?.showActionButton()
+			}
+			else if (self.lastContentOffset < scrollView.contentOffset.y
+				&& scrollView.contentOffset.y > 0) {
+				self.tabBar?.hideActionButton()
+			}
+		}
+		
+		self.lastContentOffset = scrollView.contentOffset.y
+		
 		let header = self.header as! PatchDetailView
 		
 		/* Parallax effect when user scrolls down */
@@ -788,7 +1050,7 @@ extension PatchDetailViewController {
 				header.photo.frame.size.width = self.originalRect!.size.width + movement
 				header.photo.frame.size.height = self.originalRect!.size.height + movement
 			}
-		}
+		}		
     }
 	
 	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -806,6 +1068,7 @@ extension PatchDetailViewController: MFMailComposeViewControllerDelegate {
 		case MFMailComposeResultSaved.rawValue:		// 1
 			UIShared.Toast("Report saved", controller: self, addToWindow: false)
 		case MFMailComposeResultSent.rawValue:		// 2
+			Reporting.track("Sent Report", properties: ["target":"Patch"])
 			UIShared.Toast("Report sent", controller: self, addToWindow: false)
 		case MFMailComposeResultFailed.rawValue:	// 3
 			UIShared.Toast("Report send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
@@ -819,10 +1082,6 @@ extension PatchDetailViewController: MFMailComposeViewControllerDelegate {
 		}
 	}
 }
-
-let UIActivityTypeGmail = "com.google.Gmail.ShareExtension"
-let UIActivityTypeOutlook = "com.microsoft.Office.Outlook.compose-shareextension"
-let UIActivityTypePatchr = "com.3meters.patchr.ios.PatchrShare"
 
 class PatchItem: NSObject, UIActivityItemSource {
 	
@@ -884,6 +1143,7 @@ enum ShareRoute {
 }
 
 enum ContextAction: UInt {
+	case None
 	case BrowseUsersWatching
 	case SharePatch
 	case CreateMessage

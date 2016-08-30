@@ -15,6 +15,7 @@ class LoginViewController: BaseEditViewController {
 	var provider				= AuthProvider.PROXIBASE
 	var onboardMode				= OnboardMode.Login
 	var progress				: AirProgress!
+	var source					= "Lobby"
 
     var emailField				= AirTextField()
     var passwordField			= AirTextField()
@@ -62,7 +63,7 @@ class LoginViewController: BaseEditViewController {
 				
 				self.passwordField.resignFirstResponder()
 				
-				self.progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+				self.progress = AirProgress.showHUDAddedTo(self.view.window!, animated: true)
 				self.progress.mode = MBProgressHUDMode.Indeterminate
 				self.progress.styleAs(.ActivityWithText)
 				self.progress.minShowTime = 0.5
@@ -76,7 +77,7 @@ class LoginViewController: BaseEditViewController {
 				
 				self.passwordField.resignFirstResponder()
 				
-				self.progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+				self.progress = AirProgress.showHUDAddedTo(self.view.window!, animated: true)
 				self.progress.mode = MBProgressHUDMode.Indeterminate
 				self.progress.styleAs(.ActivityWithText)
 				self.progress.minShowTime = 0.5
@@ -151,7 +152,7 @@ class LoginViewController: BaseEditViewController {
 		
 		self.hideShowButton.bounds.size = CGSizeMake(48, 48)
 		self.hideShowButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
-		self.hideShowButton.addTarget(self, action: Selector("hideShowPasswordAction:"), forControlEvents: .TouchUpInside)
+		self.hideShowButton.addTarget(self, action: #selector(LoginViewController.hideShowPasswordAction(_:)), forControlEvents: .TouchUpInside)
 		
 		self.forgotPasswordButton.setTitle("Forgot password?", forState: .Normal)
 		self.forgotPasswordButton.accessibilityIdentifier = Button.ForgotPassword
@@ -161,14 +162,14 @@ class LoginViewController: BaseEditViewController {
 		self.doneButton.accessibilityIdentifier = Button.Submit
 		self.contentHolder.addSubview(self.doneButton)
 		
-		self.forgotPasswordButton.addTarget(self, action: Selector("passwordResetAction:"), forControlEvents: .TouchUpInside)
-		self.doneButton.addTarget(self, action: Selector("doneAction:"), forControlEvents: .TouchUpInside)
+		self.forgotPasswordButton.addTarget(self, action: #selector(LoginViewController.passwordResetAction(_:)), forControlEvents: .TouchUpInside)
+		self.doneButton.addTarget(self, action: #selector(LoginViewController.doneAction(_:)), forControlEvents: .TouchUpInside)
 		
-		setScreenName(onboardMode == OnboardMode.Signup ? "Signup" : "Login")
+		Reporting.screen(onboardMode == OnboardMode.Signup ? "Signup" : "Login")
 		
 		/* Navigation bar buttons */
-		let doneButton   = UIBarButtonItem(title: "Log in", style: UIBarButtonItemStyle.Plain, target: self, action: "doneAction:")
-		let cancelButton   = UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.Plain, target: self, action: "cancelAction:")
+		let doneButton   = UIBarButtonItem(title: "Log in", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(LoginViewController.doneAction(_:)))
+		let cancelButton   = UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(LoginViewController.cancelAction(_:)))
 		
 		cancelButton.accessibilityIdentifier = Nav.Cancel
 		doneButton.accessibilityIdentifier = Nav.Submit
@@ -258,9 +259,9 @@ class LoginViewController: BaseEditViewController {
 					/* Remember last email address for easy data entry */
 					if self.provider == AuthProvider.PROXIBASE {
 						NSUserDefaults.standardUserDefaults().setObject(self.emailField.text, forKey: PatchrUserDefaultKey("userEmail"))
-						NSUserDefaults.standardUserDefaults().synchronize()
 						self.passwordField.text = nil
 					}
+					Reporting.track("Logged In", properties: ["source":self.source])
 					self.didLogin()
 				}
 			}
@@ -293,6 +294,7 @@ class LoginViewController: BaseEditViewController {
 		controller.inputEmail = self.emailField.text
 		controller.inputPassword = self.passwordField.text
 		controller.inputRouteToMain = self.inputRouteToMain
+		controller.source = self.source
 		self.navigationController?.pushViewController(controller, animated: true)
 	}
 	

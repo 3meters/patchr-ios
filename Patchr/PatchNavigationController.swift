@@ -8,10 +8,11 @@
 
 import UIKit
 
-class PatchNavigationController: UINavigationController {
+
+class PatchNavigationController: AirNavigationController {
     
-    var segmentsController: SegmentsController!
-    var segmentedControl: UISegmentedControl!
+    var segmentsController	: SegmentsController!
+    var segmentedControl	: UISegmentedControl!
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -22,7 +23,7 @@ class PatchNavigationController: UINavigationController {
 		
 		self.view.accessibilityIdentifier = View.Patches
 		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "userDidLogin:", name: Events.UserDidLogin, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchNavigationController.userDidLogin(_:)), name: Events.UserDidLogin, object: nil)
 		
 		let segItems = UserController.instance.authenticated
 			? ["Nearby", "Member", "Own", "Explore"]
@@ -32,11 +33,15 @@ class PatchNavigationController: UINavigationController {
         
         self.segmentedControl = UISegmentedControl(items: segItems)
         self.segmentedControl.sizeToFit()
-        self.segmentedControl.addTarget(self.segmentsController, action: Selector("indexDidChangeForSegmentedControl:"), forControlEvents: .ValueChanged)
+		self.segmentedControl.addTarget(self.segmentsController, action:  #selector(self.segmentsController.indexDidChangeForSegmentedControl(_:)), forControlEvents: .ValueChanged)
         self.segmentedControl.selectedSegmentIndex = 0
 		self.segmentedControl.tintAdjustmentMode = .Normal
         self.segmentsController.indexDidChangeForSegmentedControl(self.segmentedControl)
     }
+	
+	override func viewWillDisappear(animated: Bool) {
+		super.viewWillDisappear(animated)
+	}
 	
 	deinit {
 		NSNotificationCenter.defaultCenter().removeObserver(self)		
@@ -45,19 +50,10 @@ class PatchNavigationController: UINavigationController {
     /*--------------------------------------------------------------------------------------------
     * Events
     *--------------------------------------------------------------------------------------------*/
-    
-    func addAction(sender: AnyObject?) {
-        if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(nil, message: "Sign up for a free account to create patches and more.")
-            return
-        }
-		
-		let controller = PatchEditViewController()
-		let navController = UINavigationController()
-		controller.inputState = .Creating
-		navController.viewControllers = [controller]
-        self.presentViewController(navController, animated: true, completion: nil)
-    }
+	
+	override func viewWillLayoutSubviews() {
+		super.viewWillLayoutSubviews()
+	}
 	
 	/*--------------------------------------------------------------------------------------------
 	* Notifications
@@ -83,11 +79,11 @@ class PatchNavigationController: UINavigationController {
 			self.segmentsController.viewControllers.insert(watching, atIndex: 1)
 		}
 	}
-    
+	
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
-    
+	
     func segmentViewControllers() -> [UIViewController] {
 		
 		if !UserController.instance.authenticated {

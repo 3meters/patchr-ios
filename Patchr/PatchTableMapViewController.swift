@@ -9,6 +9,7 @@
 import UIKit
 import MapKit
 
+
 class PatchTableMapViewController: UIViewController {
 
 	var mapView: MKMapView!
@@ -61,7 +62,7 @@ class PatchTableMapViewController: UIViewController {
 	*--------------------------------------------------------------------------------------------*/
 	
 	func initialize() {
-		setScreenName("PatchMapList")
+		Reporting.screen("PatchMapList")
 		
 		self.mapView = MKMapView()
 		self.mapView.delegate = self

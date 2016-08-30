@@ -152,10 +152,17 @@ class PhotoEditView: UIView {
 		if image != nil {
 			self.imageButton.setImage(image, forState: .Normal)
 		}
-		else {
-			self.imageButton.setImageWithImageResult(imageResult!)  // Downloads and pushes into photoImage
+		else if imageResult != nil {
+			/*
+			 * Request image via resizer so size is capped. We don't use imgix because it only uses
+			 * known image sources that we setup like our buckets on s3.
+			 */
+			let dimension = imageResult!.width >= imageResult!.height ? ResizeDimension.width : ResizeDimension.height
+			let url = NSURL(string: GooglePlusProxy.convert(imageResult!.contentUrl!, size: Int(IMAGE_DIMENSION_MAX), dimension: dimension))
+			self.imageButton.setImageWithUrl(url!)  // Downloads and pushes into photoImage
 		}
 		
+		Reporting.track("Set Photo", properties: ["target":self.photoSchema!])
 		self.usingPhotoDefault = false
 		
 		self.photoDirty = true
@@ -174,7 +181,7 @@ class PhotoEditView: UIView {
 	func initialize() {
 		
 		let notificationCenter = NSNotificationCenter.defaultCenter()
-		notificationCenter.addObserver(self, selector: "imageNotFoundAction:", name: Events.ImageNotFound, object: self.imageButton)
+		notificationCenter.addObserver(self, selector: #selector(PhotoEditView.imageNotFoundAction(_:)), name: Events.ImageNotFound, object: self.imageButton)
 		
 		self.backgroundColor = Colors.clear
 		
@@ -225,9 +232,9 @@ class PhotoEditView: UIView {
 		self.setPhotoButton.alpha = 0
 		self.addSubview(self.setPhotoButton)
 		
-		self.editPhotoButton.addTarget(self, action: Selector("editPhotoAction:"), forControlEvents: .TouchUpInside)
-		self.clearPhotoButton.addTarget(self, action: Selector("clearPhotoAction:"), forControlEvents: .TouchUpInside)
-		self.setPhotoButton.addTarget(self, action: Selector("setPhotoAction:"), forControlEvents: .TouchUpInside)
+		self.editPhotoButton.addTarget(self, action: #selector(PhotoEditView.editPhotoAction(_:)), forControlEvents: .TouchUpInside)
+		self.clearPhotoButton.addTarget(self, action: #selector(PhotoEditView.clearPhotoAction(_:)), forControlEvents: .TouchUpInside)
+		self.setPhotoButton.addTarget(self, action: #selector(PhotoEditView.setPhotoAction(_:)), forControlEvents: .TouchUpInside)
 	}
 	
 	func bindPhoto(photo: Photo?) {
@@ -286,6 +293,7 @@ extension PhotoEditView: AdobeUXImageEditorViewControllerDelegate {
 	
 	func photoEditor(editor: AdobeUXImageEditorViewController, finishedWithImage image: UIImage?) {
 		self.photoChosen(image, imageResult: nil)
+		Reporting.track("Edited Photo")
 		self.controller!.dismissViewControllerAnimated(true, completion: nil)
 	}
 	

@@ -31,6 +31,7 @@ struct Utils {
 	static var imagePatch: UIImage = { return UIImage(named: "imgPatchLight") }()!
 	static var imageRemove: UIImage = { return UIImage(named: "imgRemoveLight") }()!
 	static var imageLock: UIImage = { return UIImage(named: "imgLockLight") }()!
+	static var imageMuted: UIImage = { return UIImage(named: "imgSoundOff3Light") }()!
 	
 	static var spacer: UIBarButtonItem = {
 		let spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
@@ -48,10 +49,10 @@ struct Utils {
 	
 	static func convertText(inputText: String, font: UIFont?) -> NSAttributedString {
 		let baseFont = font ?? Theme.fontText
-		let boldFont = UIFont(name: "HelveticaNeue", size: baseFont.pointSize)!
+		let boldFont = UIFont(name: "HelveticaNeue", size: baseFont!.pointSize)!
 		let style = NSMutableParagraphStyle()
-		style.maximumLineHeight = CGFloat(baseFont.pointSize + 3)
-		let attributes = [NSFontAttributeName: baseFont, NSParagraphStyleAttributeName: style]
+		style.maximumLineHeight = CGFloat(baseFont!.pointSize + 3)
+		let attributes = [NSFontAttributeName: baseFont!, NSParagraphStyleAttributeName: style]
 		
 		let attrString = NSMutableAttributedString(string: inputText, attributes: attributes )
 		
@@ -185,7 +186,8 @@ struct Utils {
         return nil
     }
     
-    static func prepareImage(var image: UIImage) -> UIImage {
+    static func prepareImage(image inImage: UIImage) -> UIImage {
+		var image = inImage;
         let scalingNeeded: Bool = (image.size.width > IMAGE_DIMENSION_MAX || image.size.height > IMAGE_DIMENSION_MAX)
         if (scalingNeeded) {
             let rect: CGRect = AVMakeRectWithAspectRatioInsideRect(image.size, CGRectMake(0, 0, IMAGE_DIMENSION_MAX, IMAGE_DIMENSION_MAX))
@@ -220,7 +222,7 @@ struct Utils {
                         found = true
                         break
                     }
-                    index++
+                    index += 1
                 }
                 
                 if !found {
@@ -262,7 +264,7 @@ struct Utils {
 					found = true
 					break
 				}
-				index++
+				index += 1
 			}
 			
 			if !found {
@@ -341,6 +343,6 @@ extension String {
 	}
 	
 	subscript (r: Range<Int>) -> String {
-		return substringWithRange(Range(start: startIndex.advancedBy(r.startIndex), end: startIndex.advancedBy(r.endIndex)))
+		return substringWithRange(startIndex.advancedBy(r.startIndex)..<startIndex.advancedBy(r.endIndex))
 	}
 }

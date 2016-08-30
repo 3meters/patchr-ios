@@ -80,7 +80,7 @@ class PasswordEditViewController: BaseEditViewController {
 	override func initialize() {
 		super.initialize()
 		
-		setScreenName("PasswordEdit")
+		Reporting.screen("PasswordEdit")
 		self.view.accessibilityIdentifier = View.PasswordEdit
 		
 		self.message.text = "Change password"
@@ -110,20 +110,20 @@ class PasswordEditViewController: BaseEditViewController {
 		
 		self.hideShowButton.bounds.size = CGSizeMake(48, 48)
 		self.hideShowButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
-		self.hideShowButton.addTarget(self, action: Selector("hideShowPasswordAction:"), forControlEvents: .TouchUpInside)
+		self.hideShowButton.addTarget(self, action: #selector(PasswordEditViewController.hideShowPasswordAction(_:)), forControlEvents: .TouchUpInside)
 		
 		self.hideShowNewButton.bounds.size = CGSizeMake(48, 48)
 		self.hideShowNewButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
-		self.hideShowNewButton.addTarget(self, action: Selector("hideShowNewPasswordAction:"), forControlEvents: .TouchUpInside)
+		self.hideShowNewButton.addTarget(self, action: #selector(PasswordEditViewController.hideShowNewPasswordAction(_:)), forControlEvents: .TouchUpInside)
 		
 		self.submitButton.setTitle("CHANGE", forState: .Normal)
 		self.submitButton.accessibilityIdentifier = Button.Submit
-		self.submitButton.addTarget(self, action: Selector("submitAction:"), forControlEvents: .TouchUpInside)
+		self.submitButton.addTarget(self, action: #selector(PasswordEditViewController.submitAction(_:)), forControlEvents: .TouchUpInside)
 		self.contentHolder.addSubview(self.submitButton)
 		
 		/* Navigation bar buttons */
-		let submitBarButton   = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.Plain, target: self, action: "submitAction:")
-		let cancelBarButton   = UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.Plain, target: self, action: "cancelAction:")
+		let submitBarButton   = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(PasswordEditViewController.submitAction(_:)))
+		let cancelBarButton   = UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(PasswordEditViewController.cancelAction(_:)))
 		
 		submitBarButton.accessibilityIdentifier = Nav.Submit
 		cancelBarButton.accessibilityIdentifier = Nav.Cancel
@@ -140,14 +140,13 @@ class PasswordEditViewController: BaseEditViewController {
         
         processing = true
 		
-		let progress = AirProgress.addedTo(self.view.window)
+		let progress = AirProgress.addedTo(self.view.window!)
 		progress.mode = MBProgressHUDMode.Indeterminate
 		progress.styleAs(.ActivityWithText)
 		progress.labelText = "Updating..."
 		progress.graceTime = 2.0
 		progress.minShowTime = 1.0
 		progress.show(true)
-		progress.taskInProgress = true
 		progress.userInteractionEnabled = true
 		
         DataController.proxibase.updatePassword(UserController.instance.currentUser.id_,
@@ -156,8 +155,7 @@ class PasswordEditViewController: BaseEditViewController {
                 
 			NSOperationQueue.mainQueue().addOperationWithBlock {
 				self.processing = false
-				progress.taskInProgress = false
-					
+				
 				progress.hide(true)
 				if var error = ServerError(error) {	// Doesn't show in debugger correctly but is getting set
 					if error.code == .UNAUTHORIZED_CREDENTIALS {
@@ -175,6 +173,7 @@ class PasswordEditViewController: BaseEditViewController {
 				else {
 					/* Password change has already been handled with UserController */
 					self.navigationController?.popViewControllerAnimated(true)	// Back to profile edit
+					Reporting.track("Changed Password")
 					UIShared.Toast("Password changed")
 				}
 			}

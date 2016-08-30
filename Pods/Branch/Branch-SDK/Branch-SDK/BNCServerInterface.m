@@ -10,6 +10,14 @@
 #import "BNCConfig.h"
 #import "BNCEncodingUtils.h"
 #import "BNCError.h"
+#import "BranchConstants.h"
+#import "BNCDeviceInfo.h"
+
+NSDate *startTime;
+NSString *requestEndpoint;
+
+void (^NSURLSessionCompletionHandler) (NSData *data, NSURLResponse *response, NSError *error);
+void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *responseData, NSError *error);
 
 @implementation BNCServerInterface
 
@@ -52,7 +60,12 @@
 }
 
 - (void)postRequest:(NSDictionary *)post url:(NSString *)url retryNumber:(NSInteger)retryNumber key:(NSString *)key log:(BOOL)log callback:(BNCServerCallback)callback {
-    NSURLRequest *request = [self preparePostRequest:post url:url key:key retryNumber:retryNumber log:log];
+    NSDictionary *extendedParams = [self updateDeviceInfoToParams:post];
+    NSURLRequest *request = [self preparePostRequest:extendedParams url:url key:key retryNumber:retryNumber log:log];
+    
+    // Instrumentation metrics
+    requestEndpoint = [self.preferenceHelper getEndpointFromURL:url];
+    startTime = [NSDate date];
 
     [self genericHTTPRequest:request retryNumber:retryNumber log:log callback:callback retryHandler:^NSURLRequest *(NSInteger lastRetryNumber) {
         return [self preparePostRequest:post url:url key:key retryNumber:++lastRetryNumber log:log];
@@ -60,7 +73,8 @@
 }
 
 - (BNCServerResponse *)postRequest:(NSDictionary *)post url:(NSString *)url key:(NSString *)key log:(BOOL)log {
-    NSURLRequest *request = [self preparePostRequest:post url:url key:key retryNumber:0 log:log];
+    NSDictionary *extendedParams = [self updateDeviceInfoToParams:post];
+    NSURLRequest *request = [self preparePostRequest:extendedParams url:url key:key retryNumber:0 log:log];
     return [self genericHTTPRequest:request log:log];
 }
 
@@ -74,15 +88,17 @@
 }
 
 - (void)genericHTTPRequest:(NSURLRequest *)request retryNumber:(NSInteger)retryNumber log:(BOOL)log callback:(BNCServerCallback)callback retryHandler:(NSURLRequest *(^)(NSInteger))retryHandler {
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-    NSURLSessionDataTask *task = [session dataTaskWithRequest:request.copy completionHandler:^(NSData * _Nullable responseData, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-#else
-    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *responseData, NSError *error) {
-#endif
-        BNCServerResponse *serverResponse = [self processServerResponse:response data:responseData error:error log:log];
+    // This method uses NSURLConnection for iOS 6 and NSURLSession for iOS 7 and above
+    // Assigning completion handlers blocks to variables eliminates redundancy 
+    // Defining both completion handlers before the request methods otherwise they won't be called
+    NSURLSessionCompletionHandler = ^void(NSData *data, NSURLResponse *response, NSError *error) {
+        BNCServerResponse *serverResponse = [self processServerResponse:response data:data error:error log:log];
         NSInteger status = [serverResponse.statusCode integerValue];
-        BOOL isRetryableStatusCode = status >= 500;
+        // If the phone is in a poor network condition,
+        // iOS will return statuses such as -1001, -1003, -1200, -9806
+        // indicating various parts of the HTTP post failed.
+        // We should retry in those conditions in addition to the case where the server returns a 500
+        BOOL isRetryableStatusCode = status >= 500 || status < 0;
         
         // Retry the request if appropriate
         if (retryNumber < self.preferenceHelper.retryCount && isRetryableStatusCode) {
@@ -96,6 +112,9 @@
                 NSURLRequest *retryRequest = retryHandler(retryNumber);
                 [self genericHTTPRequest:retryRequest retryNumber:(retryNumber + 1) log:log callback:callback retryHandler:retryHandler];
             });
+            
+            // Do not continue on if retrying, else the callback will be called incorrectly
+            return;
         }
         else if (callback) {
             // Wrap up bad statuses w/ specific error messages
@@ -106,7 +125,11 @@
                 error = [NSError errorWithDomain:BNCErrorDomain code:BNCDuplicateResourceError userInfo:@{ NSLocalizedDescriptionKey: @"A resource with this identifier already exists" }];
             }
             else if (status >= 400) {
-                NSString *errorString = [serverResponse.data objectForKey:@"error"] ?: @"The request was invalid.";
+                NSString *errorString = @"The request was invalid.";
+                
+                if ([serverResponse.data objectForKey:@"error"] && [[serverResponse.data objectForKey:@"error"] isKindOfClass:[NSString class]]) {
+                    errorString = [serverResponse.data objectForKey:@"error"];
+                }
                 
                 error = [NSError errorWithDomain:BNCErrorDomain code:BNCBadRequestError userInfo:@{ NSLocalizedDescriptionKey: errorString }];
             }
@@ -114,19 +137,28 @@
             if (error && log) {
                 [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"An error prevented request to %@ from completing: %@", request.URL.absoluteString, error.localizedDescription];
             }
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-            dispatch_async(dispatch_get_main_queue(), ^{
+            
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (callback)
                 callback(serverResponse, error);
-            });
-        }
-    }];
-    [task resume];
-    [session finishTasksAndInvalidate];
-#else
-            callback(serverResponse, error);
-        }
-    }];
-#endif
+        });
+    };
+    
+    NSURLConnectionCompletionHandler = ^void(NSURLResponse *response, NSData *responseData, NSError *error) {
+        // NSURLConnection and NSURLSession expect the same arguments for completion handlers but in different order
+        NSURLSessionCompletionHandler(responseData, response, error);
+    };
+    
+    // NSURLSession is available in iOS 7 and above
+    if (NSFoundationVersionNumber >= NSFoundationVersionNumber_iOS_7_0) {
+        NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+        NSURLSessionDataTask *task = [session dataTaskWithRequest:request.copy completionHandler:NSURLSessionCompletionHandler];
+        [task resume];
+        [session finishTasksAndInvalidate];
+    } else {
+        [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:NSURLConnectionCompletionHandler];
+    }
 }
 
 - (BNCServerResponse *)genericHTTPRequest:(NSURLRequest *)request log:(BOOL)log {
@@ -134,21 +166,22 @@
     __block NSError *_error = nil;
     __block NSData *_respData = nil;
     
-#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 90000
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-    NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable urlResp, NSError * _Nullable error) {
-        _response = urlResp;
-        _error = error;
-        _respData = data;
-        dispatch_semaphore_signal(semaphore);
-    }];
-    [task resume];
-    [session finishTasksAndInvalidate];
-    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-#else
-    _respData = [NSURLConnection sendSynchronousRequest:request returningResponse:&_response error:&_error];
-#endif
+    //NSURLSession is available in iOS 7 and above
+    if (NSFoundationVersionNumber >= NSFoundationVersionNumber_iOS_7_0) {
+        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+        NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+        NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable urlResp, NSError * _Nullable error) {
+            _response = urlResp;
+            _error = error;
+            _respData = data;
+            dispatch_semaphore_signal(semaphore);
+        }];
+        [task resume];
+        [session finishTasksAndInvalidate];
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    } else {
+        _respData = [NSURLConnection sendSynchronousRequest:request returningResponse:&_response error:&_error];
+    }
     return [self processServerResponse:_response data:_respData error:_error log:log];
 }
 
@@ -198,14 +231,16 @@
     [fullParamDict addEntriesFromDictionary:params];
     fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", SDK_VERSION];
     fullParamDict[@"retryNumber"] = @(retryNumber);
-    
-    if ([key hasPrefix:@"key_"]) {
-        fullParamDict[@"branch_key"] = key;
+    fullParamDict[@"branch_key"] = key;
+
+    NSMutableDictionary *metadata = [[NSMutableDictionary alloc] init];
+    [metadata addEntriesFromDictionary:self.preferenceHelper.requestMetadataDictionary];
+    [metadata addEntriesFromDictionary:fullParamDict[BRANCH_REQUEST_KEY_STATE]];
+    fullParamDict[BRANCH_REQUEST_KEY_STATE] = metadata;
+    if (self.preferenceHelper.instrumentationDictionary.count) {
+        fullParamDict[BRANCH_REQUEST_KEY_INSTRUMENTATION] = self.preferenceHelper.instrumentationDictionary;
     }
-    else {
-        fullParamDict[@"app_id"] = key;
-    }
-    
+   
     return fullParamDict;
 }
 
@@ -225,7 +260,52 @@
         [self.preferenceHelper log:FILE_NAME line:LINE_NUM message:@"returned = %@", serverResponse];
     }
     
+    [self collectInstrumentationMetrics];
     return serverResponse;
 }
+
+- (void) collectInstrumentationMetrics {
+    // multiplying by negative because startTime happened in the past
+    NSTimeInterval elapsedTime = [startTime timeIntervalSinceNow] * -1000.0;
+    NSString *lastRoundTripTime = [[NSNumber numberWithDouble:floor(elapsedTime)] stringValue];
+    NSString * brttKey = [NSString stringWithFormat:@"%@-brtt", requestEndpoint];
+    [self.preferenceHelper clearInstrumentationDictionary];
+    [self.preferenceHelper addInstrumentationDictionaryKey:brttKey value:lastRoundTripTime];
+}
+- (void)updateDeviceInfoToMutableDictionary:(NSMutableDictionary *)dict {
+    BNCDeviceInfo *deviceInfo  = [BNCDeviceInfo getInstance];
+   
+    if (deviceInfo.hardwareId) {
+        dict[BRANCH_REQUEST_KEY_HARDWARE_ID] = deviceInfo.hardwareId;
+        dict[BRANCH_REQUEST_KEY_HARDWARE_ID_TYPE] = deviceInfo.hardwareIdType;
+        dict[BRANCH_REQUEST_KEY_IS_HARDWARE_ID_REAL] = @(deviceInfo.isRealHardwareId);
+    }
+    
+    [self safeSetValue:deviceInfo.vendorId forKey:BRANCH_REQUEST_KEY_IOS_VENDOR_ID onDict:dict];
+    [self safeSetValue:deviceInfo.brandName forKey:BRANCH_REQUEST_KEY_BRAND onDict:dict];
+    [self safeSetValue:deviceInfo.modelName forKey:BRANCH_REQUEST_KEY_MODEL onDict:dict];
+    [self safeSetValue:deviceInfo.osName forKey:BRANCH_REQUEST_KEY_OS onDict:dict];
+    [self safeSetValue:deviceInfo.osVersion forKey:BRANCH_REQUEST_KEY_OS_VERSION onDict:dict];
+    [self safeSetValue:deviceInfo.screenWidth forKey:BRANCH_REQUEST_KEY_SCREEN_WIDTH onDict:dict];
+    [self safeSetValue:deviceInfo.screenHeight forKey:BRANCH_REQUEST_KEY_SCREEN_HEIGHT onDict:dict];
+    
+    dict[BRANCH_REQUEST_KEY_AD_TRACKING_ENABLED] = @(deviceInfo.isAdTrackingEnabled);
+    
+}
+
+- (NSDictionary*)updateDeviceInfoToParams:(NSDictionary *)params {
+    NSMutableDictionary *extendedParams=[[NSMutableDictionary alloc] init];
+    [extendedParams addEntriesFromDictionary:params];
+    [self updateDeviceInfoToMutableDictionary:extendedParams];
+    return extendedParams;
+}
+
+- (void)safeSetValue:(NSObject *)value forKey:(NSString *)key onDict:(NSMutableDictionary *)dict {
+    if (value) {
+        dict[key] = value;
+    }
+}
+
+
 
 @end

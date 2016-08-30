@@ -10,9 +10,9 @@ import UIKit
 
 class WrapperTableViewCell: UITableViewCell {
 	
-	var view: BaseView?
-	var separator = UIView()
-	var padding = UIEdgeInsetsZero
+	var view				: BaseView?
+	var separator			= UIView()
+	var padding				= UIEdgeInsetsZero
 	
 	init(view: UIView, padding: UIEdgeInsets, reuseIdentifier: String?) {
 		super.init(style: .Default, reuseIdentifier: reuseIdentifier)
@@ -40,6 +40,7 @@ class WrapperTableViewCell: UITableViewCell {
 			topPadding: self.padding.top,
 			bottomPadding: self.padding.bottom + 1)
 		
+		self.selectedBackgroundView?.fillSuperview()
 		self.separator.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 1)
 	}
 	

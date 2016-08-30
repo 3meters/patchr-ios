@@ -8,7 +8,6 @@
 
 import Foundation
 import ObjectiveC
-import Google
 import Bugsnag
 
 struct Reporting {
@@ -31,15 +30,16 @@ struct Reporting {
         }
 
         /* Identifies device/install combo */
-		Bugsnag.addAttribute("patchr_install_id", withValue: UserController.instance.installId, toTabWithName: "device")
+        if let installId = NotificationController.instance.installId {
+            Bugsnag.addAttribute("patchr_install_id", withValue: installId, toTabWithName: "device")
+        }
 		
         /* Location info */
-        let location: CLLocation? = LocationController.instance.lastLocationAccepted()
-        if location != nil {
+        if let location: CLLocation? = LocationController.instance.lastLocationAccepted() {
             let eventDate = location!.timestamp
             let howRecent = abs(trunc(eventDate.timeIntervalSinceNow * 100) / 100)
-			Bugsnag.addAttribute("accuracy", withValue: location!.horizontalAccuracy, toTabWithName: "location")
-			Bugsnag.addAttribute("age", withValue: howRecent, toTabWithName: "location")
+            Bugsnag.addAttribute("accuracy", withValue: location!.horizontalAccuracy, toTabWithName: "location")
+            Bugsnag.addAttribute("age", withValue: howRecent, toTabWithName: "location")
         }
         else {
 			Bugsnag.addAttribute("accuracy", withValue: nil, toTabWithName: "location")
@@ -47,40 +47,35 @@ struct Reporting {
         }
     }
 	
-	static func breadcrumb(message: String!) {
-		Bugsnag.leaveBreadcrumbWithMessage(message);
-	}
-    
-    static func updateCrashUser(user: User?) {
+    static func updateUser(user: User?) {
+		let tracker = GAI.sharedInstance().defaultTracker
         if user != nil {
-			Bugsnag.configuration().setUser(user!.id_, withName: user!.name, andEmail: user!.email)
+			tracker.set(kGAIUserId, value: user!.id_)
+			BranchProvider.setIdentity(user!.id_)
+			Bugsnag.configuration()!.setUser(user!.id_, withName: user!.name, andEmail: user!.email)
         }
         else {
-			Bugsnag.configuration().setUser(nil, withName: nil, andEmail: nil)
+			tracker.set(kGAIUserId, value: nil)
+			BranchProvider.logout()
+			Bugsnag.configuration()!.setUser(nil, withName: nil, andEmail: nil)
         }
     }
-}
-
-extension UIViewController {
 	
-	func setScreenName(name: String) {
-		self.sendScreenView(name)
+	static func track(event: String, properties: [String : AnyObject]? = nil) {
+		let tracker = GAI.sharedInstance().defaultTracker
+		let builder = GAIDictionaryBuilder.createEventWithCategory("Action", action: event, label: nil, value: nil)
+		if properties != nil {
+			builder.set(Array(properties!.keys).first, forKey: kGAIEventLabel)
+			builder.set(Array(properties!.values).first as! String, forKey: kGAIEventValue)
+		}
+		let event = builder.build()
+		tracker.send(event as [NSObject : AnyObject])
 	}
 	
-	func sendScreenView(name: String) {
-		if let tracker = GAI.sharedInstance().defaultTracker {
-			tracker.set(kGAIScreenName, value: name)
-			tracker.send(GAIDictionaryBuilder.createScreenView().build() as NSDictionary as [NSObject : AnyObject])
-		}
-	}
-	
-	func trackEvent(category: String, action: String, label: String, value: NSNumber?) {
-		/*
-		* Not used yet.
-		*/
-		if let tracker = GAI.sharedInstance().defaultTracker {
-			let trackDictionary = GAIDictionaryBuilder.createEventWithCategory(category, action: action, label: label, value: value).build()
-			tracker.send(trackDictionary as [NSObject : AnyObject])
-		}
+	static func screen(name: String) {
+		let tracker = GAI.sharedInstance().defaultTracker
+		tracker.set(kGAIScreenName, value: name)
+		let builder = GAIDictionaryBuilder.createScreenView()
+		tracker.send(builder.build() as [NSObject : AnyObject])
 	}
 }

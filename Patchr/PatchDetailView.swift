@@ -22,24 +22,22 @@ class PatchDetailView: BaseDetailView {
 	var titleGroup			= UIView()
 	var name				= AirLabelDisplay()
 	var type				= AirLabelDisplay()
+	var settings			= AirLabelDisplay()
 	var visibility			= AirLabelDisplay()
 	var lockImage			= AirImageView(frame: CGRectZero)
-	
-	var buttonGroup			= UIView()
-	var mapButton			= AirToolButton()
-	var watchersButton		= AirLinkButton()
-	var soundButton			= AirMuteButton()
-	var watchButton			= AirWatchButton()
-	var moreButton			= AirToolButton()
-	
-	var contextGroup		= AirRuleView()
-	var contextView			: UIView = AirFeaturedButton()
+	var mutedImage			= AirImageView(frame: CGRectZero)
+
+	var buttonGroup         = AirRuleView()
+	var membersButton       = AirLinkButton()
+	var photosButton        = AirLinkButton()
+	var contextButton		: UIView = AirFeaturedButton()
 	
 	var infoGroup			= AirRuleView()
 	
 	var infoTitleGroup		= UIView()
 	var infoName			= AirLabelDisplay()
 	var infoType			= AirLabelDisplay()
+	var infoSettings		= AirLabelDisplay()
 	var infoVisibility		= AirLabelDisplay()
 	var infoLockImage		= AirImageView(frame: CGRectZero)
 	var infoDescription		= TTTAttributedLabel(frame: CGRectZero)
@@ -47,7 +45,6 @@ class PatchDetailView: BaseDetailView {
 	var infoButtonGroup		= UIView()
 	var infoOwnerLabel		= AirLabelDisplay()
 	var infoOwner			= AirLabelDisplay()
-	var infoMoreButton		= AirToolButton()
 	var gradient			= CAGradientLayer()
 	
 	/*--------------------------------------------------------------------------------------------
@@ -67,7 +64,7 @@ class PatchDetailView: BaseDetailView {
 	
 	init(contextView: UIView!) {
 		super.init(frame: CGRectZero)
-		self.contextView = contextView
+		self.contextButton = contextView
 		initialize()
 	}
 	
@@ -89,38 +86,35 @@ class PatchDetailView: BaseDetailView {
 		self.bannerGroup.hidden = false
 		let viewWidth = self.bounds.size.width
 		let viewHeight = viewWidth * 0.625
-		
+
 		self.contentGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: viewHeight) // 16:10
 		self.bannerGroup.fillSuperview()
 		
-		self.buttonGroup.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 48)
-		self.mapButton.anchorCenterLeftWithLeftPadding(0, width: self.mapButton.width(), height: self.mapButton.height())
-		self.moreButton.anchorCenterRightWithRightPadding(0, width: self.moreButton.width(), height: self.moreButton.height())
-		self.watchButton.alignToTheLeftOf(self.soundButton, matchingCenterWithRightPadding: 0, width: self.watchButton.width(), height: self.watchButton.height())
-		self.soundButton.alignToTheLeftOf(self.moreButton, matchingCenterWithRightPadding: 0, width: self.soundButton.width(), height: self.soundButton.height())
-		self.watchersButton.sizeToFit()
-		self.watchersButton.anchorCenterLeftFillingHeightWithTopPadding(0, bottomPadding: 0, leftPadding: 68, width: 112)
+		self.titleGroup.anchorBottomLeftWithLeftPadding(68, bottomPadding: 16, width: viewWidth - 68, height: 72)
 		
-		self.titleGroup.alignAbove(self.buttonGroup, withLeftPadding: 68, bottomPadding: 0, width: viewWidth - 68, height: 72)
 		self.name.bounds.size.width = self.titleGroup.width()
 		self.name.sizeToFit()
 		self.name.anchorBottomLeftWithLeftPadding(0, bottomPadding: 0, width: self.name.width(), height: self.name.height())
 		self.type.sizeToFit()
 		self.type.alignAbove(self.name, withLeftPadding: 0, bottomPadding: 0, width: self.type.width(), height: self.type.height())
-		self.lockImage.alignToTheRightOf(self.type, matchingCenterWithLeftPadding: 4, width: 16, height: 16)
+		self.lockImage.alignToTheRightOf(self.type, matchingCenterWithLeftPadding: 4, width: !self.lockImage.hidden ? 16: 0, height: !self.lockImage.hidden ? 16: 0)
+		self.mutedImage.alignToTheRightOf(self.lockImage, matchingCenterWithLeftPadding: 4, width: !self.mutedImage.hidden ? 20: 0, height: !self.mutedImage.hidden ? 20: 0)
 		
 		let gradientHeight = self.bannerGroup.width() * 0.35
 		self.gradient.frame = CGRectMake(0, self.bannerGroup.height() - gradientHeight, self.bannerGroup.width(), gradientHeight)
 		
+		self.photosButton.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: (viewWidth / 2) - 1, height: 44)
+		self.membersButton.anchorTopRightWithRightPadding(0, topPadding: 0, width: viewWidth / 2, height: 44)
+
 		/* Context Group */
-		if self.contextView is UIButton {
-			self.contextGroup.alignUnder(self.bannerGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 48)
-			self.contextView.fillSuperview()
+		if self.contextButton is UIButton {
+			self.buttonGroup.alignUnder(self.bannerGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: !self.contextButton.hidden ? 100 : 44)
+			self.contextButton.anchorBottomCenterWithBottomPadding(6, width: viewWidth - 12, height: !self.contextButton.hidden ? 44 : 0)
 		}
-		else if self.contextView is UserInviteView {
-			self.contextView.resizeToFitSubviews()
-			self.contextGroup.alignUnder(self.bannerGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: self.contextView.height() + 32)
-			self.contextView.fillSuperviewWithLeftPadding(16, rightPadding: 16, topPadding: 16, bottomPadding: 16)
+		else if self.contextButton is UserInviteView {
+			self.contextButton.resizeToFitSubviews()
+			self.buttonGroup.alignUnder(self.bannerGroup, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: self.contextButton.height() + 32 + 48)
+			self.contextButton.anchorBottomCenterWithBottomPadding(16, width: viewWidth - 32, height: self.contextButton.height())
 		}
 		
 		/* Info Group */
@@ -132,7 +126,11 @@ class PatchDetailView: BaseDetailView {
 		self.infoName.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: self.infoName.width(), height: self.infoName.height())
 		
 		self.infoType.sizeToFit()
+		self.infoSettings.sizeToFit()
+		
 		self.infoType.alignUnder(self.infoName, withLeftPadding: 0, topPadding: 0, width: self.infoType.width(), height: self.infoType.height())
+		self.infoSettings.alignUnder(self.infoType, withLeftPadding: 0, topPadding: 0, width: self.infoSettings.width(), height: self.infoSettings.height())
+		
 		self.infoLockImage.alignToTheRightOf(self.infoType, matchingCenterWithLeftPadding: 4, width: 16, height: 16)
 		self.infoVisibility.sizeToFit()
 		self.infoVisibility.alignToTheRightOf(self.infoLockImage, matchingCenterWithLeftPadding: 4, width: self.infoVisibility.width(), height: self.infoVisibility.height())
@@ -141,34 +139,27 @@ class PatchDetailView: BaseDetailView {
 		
 		self.infoDescription.bounds.size.width = viewWidth - 32
 		self.infoDescription.sizeToFit()
-		self.infoDescription.alignUnder(self.infoType, matchingLeftAndFillingWidthWithRightPadding: 16, topPadding: 8, height: self.infoDescription.height())
+		self.infoDescription.alignUnder(self.infoSettings, matchingLeftAndFillingWidthWithRightPadding: 16, topPadding: 8, height: self.infoDescription.height())
 		
 		self.infoButtonGroup.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 48)
 		self.infoOwnerLabel.sizeToFit()
 		self.infoOwner.sizeToFit()
 		self.infoOwnerLabel.anchorCenterLeftFillingHeightWithTopPadding(0, bottomPadding: 0, leftPadding: 16, width: self.infoOwnerLabel.width())
 		self.infoOwner.alignToTheRightOf(self.infoOwnerLabel, matchingCenterWithLeftPadding: 4, width: self.infoOwner.width(), height: self.infoOwner.height())
-		self.infoMoreButton.anchorCenterRightFillingHeightWithTopPadding(0, bottomPadding: 0, rightPadding: 0, width: self.infoMoreButton.width())
 	}
 	
 	func watchDidChange(sender: NSNotification) {
 		if self.entity?.countWatchingValue == 0 {
-			if self.watchersButton.alpha != 0 {
-				self.watchersButton.fadeOut()
+			if self.membersButton.alpha != 0 {
+				self.membersButton.fadeOut()
 			}
 		}
 		else {
-			let watchersTitle = "\(self.entity?.countWatching ?? 0) members"
-			self.watchersButton.setTitle(watchersTitle, forState: UIControlState.Normal)
-			if self.watchersButton.alpha == 0 {
-				self.watchersButton.fadeIn()
+			let watchersTitle = "\(self.entity?.countWatching ?? 0) MEMBERS"
+			self.membersButton.setTitle(watchersTitle, forState: UIControlState.Normal)
+			if self.membersButton.alpha == 0 {
+				self.membersButton.fadeIn()
 			}
-		}
-		if (self.entity?.userWatchStatusValue == .Member) {
-			self.soundButton.fadeIn(alpha: 1.0)
-		}
-		else {
-			self.soundButton.fadeOut(alpha: 0.0)
 		}
 	}
 	
@@ -180,38 +171,36 @@ class PatchDetailView: BaseDetailView {
 		
 		self.titleGroup.addSubview(self.name)
 		self.titleGroup.addSubview(self.type)
+		self.titleGroup.addSubview(self.settings)
 		self.titleGroup.addSubview(self.visibility)
 		self.titleGroup.addSubview(self.lockImage)
-		
-		self.buttonGroup.addSubview(self.mapButton)
-		self.buttonGroup.addSubview(self.watchersButton)
-		self.buttonGroup.addSubview(self.soundButton)
-		self.buttonGroup.addSubview(self.watchButton)
-		self.buttonGroup.addSubview(self.moreButton)
+		self.titleGroup.addSubview(self.mutedImage)
 		
 		self.bannerGroup.addSubview(self.photo)
 		self.bannerGroup.addSubview(self.titleGroup)
-		self.bannerGroup.addSubview(self.buttonGroup)
 		
 		self.infoTitleGroup.addSubview(self.infoName)
 		self.infoTitleGroup.addSubview(self.infoType)
+		self.infoTitleGroup.addSubview(self.infoSettings)
 		self.infoTitleGroup.addSubview(self.infoVisibility)
 		self.infoTitleGroup.addSubview(self.infoLockImage)
 		self.infoTitleGroup.addSubview(self.infoDescription)
 		
 		self.infoButtonGroup.addSubview(self.infoOwnerLabel)
 		self.infoButtonGroup.addSubview(self.infoOwner)
-		self.infoButtonGroup.addSubview(self.infoMoreButton)
 		
 		self.infoGroup.addSubview(self.infoTitleGroup)
 		self.infoGroup.addSubview(self.infoButtonGroup)
 		
 		self.contentGroup.addSubview(self.bannerGroup)
 		self.contentGroup.addSubview(self.infoGroup)
-		self.contextGroup.addSubview(self.contextView)
+		
+		self.buttonGroup.addSubview(self.photosButton)
+		self.buttonGroup.addSubview(self.membersButton)
+		self.buttonGroup.addSubview(self.contextButton)
 		
 		self.addSubview(contentGroup)
-		self.addSubview(contextGroup)
+		self.addSubview(buttonGroup)
 		
 		self.clipsToBounds = false
 		self.backgroundColor = Theme.colorBackgroundForm
@@ -222,9 +211,9 @@ class PatchDetailView: BaseDetailView {
 		self.photo.contentMode = UIViewContentMode.ScaleAspectFill
 		self.photo.backgroundColor = Theme.colorBackgroundImage
 		
-		let bannerTapGestureRecognizer = UITapGestureRecognizer(target: self, action: "flipToInfo:")
+		let bannerTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(PatchDetailView.flipToInfo(_:)))
 		self.bannerGroup.addGestureRecognizer(bannerTapGestureRecognizer)
-		let infoTapGestureRecognizer = UITapGestureRecognizer(target: self, action: "flipToBanner:")
+		let infoTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(PatchDetailView.flipToBanner(_:)))
 		self.infoGroup.addGestureRecognizer(infoTapGestureRecognizer)
 		
 		/* Apply gradient to banner */
@@ -246,12 +235,18 @@ class PatchDetailView: BaseDetailView {
 		self.type.font = Theme.fontTextDisplay
 		self.type.textColor = Colors.white
 		
+		self.settings.font = Theme.fontTextDisplay
+		self.settings.textColor = Colors.white
+		
 		self.infoName.font = UIFont(name: "HelveticaNeue-Light", size: 28)!
 		self.infoName.textColor = Theme.colorTextTitle
 		self.infoName.numberOfLines = 2
 		
 		self.infoType.font = Theme.fontTextDisplay
 		self.infoType.textColor = Theme.colorTextSecondary
+		
+		self.infoSettings.font = Theme.fontTextDisplay
+		self.infoSettings.textColor = Colors.accentOnLight
 		
 		self.infoVisibility.font = Theme.fontTextDisplay
 		self.infoVisibility.textColor = Theme.colorTextSecondary
@@ -273,48 +268,26 @@ class PatchDetailView: BaseDetailView {
 		self.lockImage.image = Utils.imageLock
 		self.lockImage.tintColor = Colors.white
 		
+		self.mutedImage.image = Utils.imageMuted
+		self.mutedImage.tintColor = Colors.white
+		
 		self.infoLockImage.image = Utils.imageLock
 		self.infoLockImage.tintColor = Colors.accentOnLight
 		
-		self.mapButton.setImage(UIImage(named: "imgMapLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
-		self.mapButton.bounds.size = CGSizeMake(48, 48)
-		self.mapButton.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
+		self.photosButton.setTitle("Gallery", forState: .Normal)
+		self.photosButton.setImage(UIImage(named: "imgGallery2Light"), forState: .Normal)
+		self.photosButton.imageView!.contentMode = UIViewContentMode.ScaleAspectFit
+		self.photosButton.imageView?.tintColor = Colors.brandColorDark
+		self.photosButton.imageEdgeInsets = UIEdgeInsetsMake(10, 4, 10, 24)
+		self.photosButton.contentHorizontalAlignment = .Center
+		self.photosButton.backgroundColor = Colors.gray95pcntColor
 		
-		self.moreButton.setImage(UIImage(named: "imgOverflowLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
-		self.moreButton.bounds.size = CGSizeMake(48, 48)
-		self.moreButton.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
+		self.membersButton.contentHorizontalAlignment = .Center
+		self.membersButton.backgroundColor = Colors.gray95pcntColor
 		
-		self.infoMoreButton.setImage(UIImage(named: "imgOverflowLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
-		self.infoMoreButton.bounds.size = CGSizeMake(48, 48)
-		self.infoMoreButton.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
-		
-		self.watchersButton.alpha = 0.0
-		self.watchersButton.contentHorizontalAlignment = .Left
-		
-		self.watchButton.tintOff = Theme.colorActionOff
-		self.watchButton.tintOn = Theme.colorActionOn
-		self.watchButton.tintPending = Colors.accentColor
-		self.watchButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
-		self.watchButton.bounds.size = CGSizeMake(48, 48)
-		self.watchButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
-		self.watchButton.alpha = 0.0
-		
-		self.soundButton.tintOff = Theme.colorActionOff
-		self.soundButton.tintOn = Theme.colorActionOn
-		self.soundButton.setProgressStyle(UIActivityIndicatorViewStyle.White)
-		self.soundButton.imageOn = UIImage(named: "imgSoundOn2Light")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
-		self.soundButton.imageOff = UIImage(named: "imgSoundOff2Light")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
-		self.soundButton.messageOn = "Notifications active"
-		self.soundButton.messageOff = "Notifications muted"
-		self.soundButton.bounds.size = CGSizeMake(48, 48)
-		self.soundButton.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10)
-		self.soundButton.alpha = 0.0
-		
-		self.contextView.layer.cornerRadius = 0
+		self.contextButton.hidden = true
 
 		self.bannerGroup.clipsToBounds = true
-		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "watchDidChange:", name: Events.WatchDidChange, object: self.watchButton)
 	}
 	
 	func bindToEntity(entity: Entity!) {
@@ -327,6 +300,7 @@ class PatchDetailView: BaseDetailView {
 			
 			self.name.text = entity.name
 			self.type.text = entity.type == nil ? "PATCH" : entity.type.uppercaseString + " PATCH"
+			self.settings.text = entity.lockedValue ? "Only owners can post messages" : nil
 			
 			if entity.photo != nil {
 				self.photo.setImageWithPhoto(entity.photo, animate: false)
@@ -336,50 +310,39 @@ class PatchDetailView: BaseDetailView {
 				self.photo.backgroundColor = Utils.randomColor(seed)
 			}
 			
-			/* Privacy */
+			/* Indicators */
 			
 			self.lockImage.hidden = (entity.visibility == "public")
-			self.infoLockImage.hidden = (entity.visibility == "public")
 			self.visibility.hidden = (entity.visibility == "public")
-			self.infoVisibility.hidden = (entity.visibility == "public")
+			self.mutedImage.hidden = !entity.userWatchMutedValue
 			
-			/* Map button */
-			self.mapButton.hidden = (entity.location == nil)
-			
-			/* Watching button */
+			/* Members button */
 			
 			if entity.countWatchingValue == 0 {
-				if self.watchersButton.alpha != 0 {
-					self.watchersButton.fadeOut()
+				if self.membersButton.alpha != 0 {
+					self.membersButton.fadeOut()
 				}
 			}
 			else {
-				let watchersTitle = "\(entity.countWatching ?? 0) \(entity.countWatchingValue == 1 ? "member": "members")"
-				self.watchersButton.setTitle(watchersTitle, forState: UIControlState.Normal)
-				if self.watchersButton.alpha == 0 {
-					self.watchersButton.fadeIn()
+				let watchersTitle = "\(entity.countWatching ?? 0) \(entity.countWatchingValue == 1 ? "Member": "Members")"
+				self.membersButton.setTitle(watchersTitle, forState: UIControlState.Normal)
+				if self.membersButton.alpha == 0 {
+					self.membersButton.fadeIn()
 				}
-			}
-			
-			/* Watch button */
-			
-			self.watchButton.bindEntity(entity)
-			
-			/* Mute button */
-			
-			self.soundButton.bindEntity(entity)
-			if (entity.userWatchStatusValue == .Member) {
-				self.soundButton.fadeIn(alpha: 1.0)
-			}
-			else {
-				self.soundButton.fadeOut(alpha: 0.0)
 			}
 			
 			/* Info view */
 			self.infoName.text = entity.name
+			
 			if entity.type != nil {
 				self.infoType.text = entity.type.uppercaseString + " PATCH"
 			}
+			
+			/* Info indicators */
+			self.infoLockImage.hidden = (entity.visibility == "public")
+			self.infoVisibility.hidden = (entity.visibility == "public")
+			self.infoSettings.text = entity.lockedValue ? "Only owners can post messages" : nil
+			
 			self.infoDescription.text = entity.description_
 			self.infoOwner.text = entity.creator?.name ?? "Deleted"
 		}

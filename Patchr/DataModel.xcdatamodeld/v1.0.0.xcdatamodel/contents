@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9525" systemVersion="15A284" minimumToolsVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="10174" systemVersion="15D21" minimumToolsVersion="Automatic">
     <entity name="Entity" representedClassName="Entity" isAbstract="YES" parentEntity="ServiceBase" syncable="YES">
         <attribute name="countLikes" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="countPending" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
@@ -10,6 +10,7 @@
                 <entry key="attributeValueClassName" value="NSDictionary"/>
             </userInfo>
         </attribute>
+        <attribute name="locked" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="patchId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="reason" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="score" optional="YES" attributeType="Integer 64" defaultValueString="0.0" syncable="YES"/>
@@ -31,6 +32,18 @@
         <userInfo>
             <entry key="additionalHeaderFileName" value="PAEnums.h"/>
         </userInfo>
+    </entity>
+    <entity name="FeedItem" representedClassName="FeedItem" parentEntity="Entity" syncable="YES">
+        <attribute name="event" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="parentId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="priority" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="sentDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="summary" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="targetId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="ticker" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="trigger" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userId" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="photoBig" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Photo" inverseName="photoBigFor" inverseEntity="Photo" syncable="YES"/>
     </entity>
     <entity name="Link" representedClassName="Link" parentEntity="ServiceObject" syncable="YES">
         <attribute name="enabled" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
@@ -58,18 +71,6 @@
         <relationship name="patch" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Shortcut" inverseName="patchFor" inverseEntity="Shortcut" syncable="YES"/>
         <relationship name="recipients" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Shortcut" inverseName="recipientFor" inverseEntity="Shortcut" syncable="YES"/>
     </entity>
-    <entity name="Notification" representedClassName="Notification" parentEntity="Entity" syncable="YES">
-        <attribute name="event" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="parentId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="priority" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
-        <attribute name="sentDate" optional="YES" attributeType="Date" syncable="YES"/>
-        <attribute name="summary" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="targetId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="ticker" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="trigger" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="userId" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="photoBig" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Photo" inverseName="photoBigFor" inverseEntity="Photo" syncable="YES"/>
-    </entity>
     <entity name="Patch" representedClassName="Patch" parentEntity="Entity" syncable="YES">
         <attribute name="countMessages" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="userHasMessaged" optional="YES" attributeType="Boolean" defaultValueString="0" syncable="YES"/>
@@ -80,7 +81,7 @@
         <attribute name="prefix" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="source" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="width" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
-        <relationship name="photoBigFor" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Notification" inverseName="photoBig" inverseEntity="Notification" syncable="YES"/>
+        <relationship name="photoBigFor" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="FeedItem" inverseName="photoBig" inverseEntity="FeedItem" syncable="YES"/>
         <relationship name="photoFor" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Entity" inverseName="photo" inverseEntity="Entity" syncable="YES"/>
     </entity>
     <entity name="Query" representedClassName="Query" syncable="YES">
@@ -151,18 +152,18 @@
         <attribute name="role" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Entity" positionX="-99" positionY="-154" width="128" height="330"/>
-        <element name="Link" positionX="-288" positionY="-243" width="128" height="180"/>
-        <element name="Location" positionX="-495" positionY="-153" width="128" height="165"/>
-        <element name="Message" positionX="279" positionY="-36" width="128" height="90"/>
-        <element name="Notification" positionX="279" positionY="95" width="128" height="195"/>
-        <element name="Patch" positionX="81" positionY="-243" width="128" height="75"/>
-        <element name="Photo" positionX="-693" positionY="90" width="128" height="150"/>
-        <element name="Query" positionX="-216" positionY="117" width="128" height="225"/>
-        <element name="QueryItem" positionX="-495" positionY="-99" width="128" height="135"/>
-        <element name="ServiceBase" positionX="-450" positionY="-243" width="128" height="330"/>
-        <element name="ServiceObject" positionX="-695" positionY="-45" width="128" height="45"/>
-        <element name="Shortcut" positionX="-486" positionY="-90" width="128" height="165"/>
-        <element name="User" positionX="81" positionY="-108" width="128" height="150"/>
+        <element name="Entity" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="FeedItem" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Link" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Location" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Message" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Patch" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Photo" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Query" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="QueryItem" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="ServiceBase" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="ServiceObject" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Shortcut" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="User" positionX="0" positionY="0" width="0" height="0"/>
     </elements>
 </model>

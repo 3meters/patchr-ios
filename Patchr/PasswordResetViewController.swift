@@ -126,7 +126,7 @@ class PasswordResetViewController: BaseEditViewController {
 			self.resetActive = true
 		}
 		
-		setScreenName("PasswordReset")
+		Reporting.screen("PasswordReset")
 		self.view.accessibilityIdentifier = View.PasswordReset
 		
 		self.message.text = "Find your account"
@@ -137,7 +137,7 @@ class PasswordResetViewController: BaseEditViewController {
 		self.submitButton.setTitle("RESET", forState: .Normal)
 		self.submitButton.accessibilityIdentifier = Button.Submit
 		self.contentHolder.addSubview(self.submitButton)
-		self.submitButton.addTarget(self, action: Selector("submitAction:"), forControlEvents: .TouchUpInside)
+		self.submitButton.addTarget(self, action: #selector(PasswordResetViewController.submitAction(_:)), forControlEvents: .TouchUpInside)
 		
 		if !self.resetActive {
 			
@@ -176,7 +176,7 @@ class PasswordResetViewController: BaseEditViewController {
 			
 			self.hideShowButton.bounds.size = CGSizeMake(48, 48)
 			self.hideShowButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
-			self.hideShowButton.addTarget(self, action: Selector("hideShowPasswordAction:"), forControlEvents: .TouchUpInside)
+			self.hideShowButton.addTarget(self, action: #selector(PasswordResetViewController.hideShowPasswordAction(_:)), forControlEvents: .TouchUpInside)
 			
 			self.submitButton.setTitle("RESET", forState: .Normal)
 		}
@@ -205,7 +205,7 @@ class PasswordResetViewController: BaseEditViewController {
 		
 		self.emailField.resignFirstResponder()
 		
-		self.progress = AirProgress.showHUDAddedTo(self.view.window, animated: true)
+		self.progress = AirProgress.showHUDAddedTo(self.view.window!, animated: true)
 		self.progress.mode = MBProgressHUDMode.Indeterminate
 		self.progress.styleAs(.ActivityWithText)
 		self.progress.minShowTime = 0.5
@@ -255,7 +255,7 @@ class PasswordResetViewController: BaseEditViewController {
 		
 		self.processing = true
 		
-		let progress = AirProgress.addedTo(self.view.window)
+		let progress = AirProgress.addedTo(self.view.window!)
 		progress.mode = MBProgressHUDMode.Indeterminate
 		progress.styleAs(.ActivityWithText)
 		progress.labelText = "Sending email..."
@@ -296,7 +296,7 @@ class PasswordResetViewController: BaseEditViewController {
 		
 		self.passwordField.resignFirstResponder()
 		
-		let progress = AirProgress.addedTo(self.view.window)
+		let progress = AirProgress.addedTo(self.view.window!)
 		progress.mode = MBProgressHUDMode.Indeterminate
 		progress.styleAs(.ActivityWithText)
 		progress.labelText = "Resetting..."
@@ -322,6 +322,7 @@ class PasswordResetViewController: BaseEditViewController {
 					}
 				}
 				else {
+					Reporting.track("Reset Password and Logged In")
 					self.navigateToMain()
 				}
 			}
@@ -332,7 +333,7 @@ class PasswordResetViewController: BaseEditViewController {
 		
 		if !self.resetActive {
 			if emailField.isEmpty {
-				Alert("Enter an email address you have used before on this device.")
+				Alert("Enter the email address associated with your account.")
 				return false
 			}
 			

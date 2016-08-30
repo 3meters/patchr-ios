@@ -19,7 +19,7 @@ struct Log {
         #endif
 		if breadcrumb {
 			if let message = message as? String {
-				Bugsnag.leaveBreadcrumbWithMessage(message);
+				Log.breadcrumb(message);
 			}
 		}
     }
@@ -32,7 +32,7 @@ struct Log {
         #endif
 		if breadcrumb {
 			if let message = message as? String {
-				Bugsnag.leaveBreadcrumbWithMessage(message);
+				Log.breadcrumb(message);
 			}
 		}
     }
@@ -43,7 +43,7 @@ struct Log {
 		}
 		if breadcrumb {
 			if let message = message as? String {
-				Bugsnag.leaveBreadcrumbWithMessage(message);
+				Log.breadcrumb(message);
 			}
 		}
     }
@@ -54,7 +54,7 @@ struct Log {
 		}
 		if breadcrumb {
 			if let message = message as? String {
-				Bugsnag.leaveBreadcrumbWithMessage(message);
+				Log.breadcrumb(message);
 			}
 		}
     }
@@ -65,8 +65,15 @@ struct Log {
 		}
 		if breadcrumb {
 			if let message = message as? String {
-				Bugsnag.leaveBreadcrumbWithMessage(message);
+				Log.breadcrumb(message);
 			}
+		}
+	}
+	
+	static func breadcrumb(message: String!) {
+		/* Requited to call on the main thread */
+		NSOperationQueue.mainQueue().addOperationWithBlock {
+			Bugsnag.leaveBreadcrumbWithMessage(message);
 		}
 	}
 }

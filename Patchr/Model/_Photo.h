@@ -17,7 +17,7 @@ extern const struct PhotoRelationships {
 	__unsafe_unretained NSString *photoFor;
 } PhotoRelationships;
 
-@class Notification;
+@class FeedItem;
 @class Entity;
 
 @interface PhotoID : ServiceObjectID {}
@@ -57,7 +57,7 @@ extern const struct PhotoRelationships {
 
 //- (BOOL)validateWidth:(id*)value_ error:(NSError**)error_;
 
-@property (nonatomic, strong) Notification *photoBigFor;
+@property (nonatomic, strong) FeedItem *photoBigFor;
 
 //- (BOOL)validatePhotoBigFor:(id*)value_ error:(NSError**)error_;
 
@@ -90,8 +90,8 @@ extern const struct PhotoRelationships {
 - (int32_t)primitiveWidthValue;
 - (void)setPrimitiveWidthValue:(int32_t)value_;
 
-- (Notification*)primitivePhotoBigFor;
-- (void)setPrimitivePhotoBigFor:(Notification*)value;
+- (FeedItem*)primitivePhotoBigFor;
+- (void)setPrimitivePhotoBigFor:(FeedItem*)value;
 
 - (Entity*)primitivePhotoFor;
 - (void)setPrimitivePhotoFor:(Entity*)value;

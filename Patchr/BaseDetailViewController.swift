@@ -24,16 +24,24 @@ class BaseDetailViewController: BaseTableViewController {
 	
     override func viewDidLoad() {
 		self.listType = .Messages
+		let template = MessageView()
+		template.showPatchName = self.patchNameVisible
+		self.itemTemplate = template
+		self.itemPadding = UIEdgeInsetsMake(12, 12, 0, 12)
+		
         super.viewDidLoad()
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "userDidLogin:", name: Events.UserDidLogin, object: nil)
+
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(BaseDetailViewController.userDidLogin(_:)), name: Events.UserDidLogin, object: nil)
     }
 	
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
 		let navHeight = self.navigationController?.navigationBar.height() ?? 0
+		let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+
 		self.emptyLabel.anchorInCenterWithWidth(160, height: 160)
-		self.emptyLabel.frame.origin.y -= CGFloat(UIShared.statusHeight + navHeight)
+		self.emptyLabel.frame.origin.y -= CGFloat(statusHeight + navHeight)
 		self.emptyLabel.frame.origin.y += self.header.height() / 2
 	}
 
@@ -94,57 +102,60 @@ class BaseDetailViewController: BaseTableViewController {
 						
 						var userInfo: [NSObject:AnyObject] = ["error": (error != nil)]
 						self?.refreshControl?.endRefreshing()
-
-						if error == nil {
-							if objectId != nil {
-								
-								/* entity has already been saved by DataController */
-								let entity = DataController.instance.mainContext.objectWithID(objectId!) as! Entity
-								self?.entity = entity
-								self?.entityId = entity.id_
-								
-								if let patch = entity as? Patch {
-									self?.disableCells = (patch.visibility == "private" && !patch.userIsMember())
-								}
-								
-								/*
-								 * Refresh list too if context entity was updated or reset = true. 
-								 * We need reset because a real list refresh is needed even if the activityDate
-								 * hasn't changed because that is the only way to pickup link based message 
-								 * state changes such as likes.
-								 */
-								if resetList || self?.getActivityDate() != self?.query.activityDateValue {
-									self?.fetchQueryItems(force: true, paging: !resetList, queryDate: self?.getActivityDate())	// Only place we cascade the refresh to the list otherwise a pullToRefresh is required
-								}
-								else {
-									if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
-										userInfo["count"] = fetchedObjects.count
-									}
-									if self != nil {
-										NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetchQuery, object: self!, userInfo: userInfo)
-									}
-								}
-								
-								if let patch = entity as? Patch {
-									DataController.instance.currentPatch = patch    // Used for context for messages
-								}
-								self?.drawButtons()	// Refresh so owner only commands can be displayed
-								self?.bind()
-								if self != nil {
-									NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetch, object: self!)
-								}
-							}
-							else {
-								UIShared.Toast("Item has been deleted")
-								Utils.delay(2.0) {
-									() -> () in
-									self?.navigationController?.popViewControllerAnimated(true)
-									if self != nil {
-										NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetch, object: self!, userInfo: ["deleted":true])
-									}
-								}
-							}
-						}
+                        
+                        if let error = ServerError(error) {
+                            self!.handleError(error)
+                        }
+                        else {
+                            if objectId != nil {
+                                
+                                /* entity has already been saved by DataController */
+                                let entity = DataController.instance.mainContext.objectWithID(objectId!) as! Entity
+                                self?.entity = entity
+                                self?.entityId = entity.id_
+                                
+                                if let patch = entity as? Patch {
+                                    self?.disableCells = (patch.visibility == "private" && !patch.userIsMember())
+                                }
+                                
+                                /*
+                                 * Refresh list too if context entity was updated or reset = true.
+                                 * We need reset because a real list refresh is needed even if the activityDate
+                                 * hasn't changed because that is the only way to pickup link based message
+                                 * state changes such as likes.
+                                 */
+                                if resetList || self?.getActivityDate() != self?.query.activityDateValue {
+                                    self?.fetchQueryItems(force: true, paging: !resetList, queryDate: self?.getActivityDate())	// Only place we cascade the refresh to the list otherwise a pullToRefresh is required
+                                }
+                                else {
+                                    if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
+                                        userInfo["count"] = fetchedObjects.count
+                                    }
+                                    if self != nil {
+                                        NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetchQuery, object: self!, userInfo: userInfo)
+                                    }
+                                }
+                                
+                                if let patch = entity as? Patch {
+                                    DataController.instance.currentPatch = patch    // Used for context for messages
+                                }
+                                self?.drawButtons()	// Refresh so owner only commands can be displayed
+                                self?.bind()
+                                if self != nil {
+                                    NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetch, object: self!)
+                                }
+                            }
+                            else {
+                                UIShared.Toast("Item has been deleted")
+                                Utils.delay(2.0) {
+                                    () -> () in
+                                    self?.navigationController?.popViewControllerAnimated(true)
+                                    if self != nil {
+                                        NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetch, object: self!, userInfo: ["deleted":true])
+                                    }
+                                }
+                            }
+                        }
 					}
 				}
 			}
@@ -158,7 +169,7 @@ class BaseDetailViewController: BaseTableViewController {
     }
 	
     func bind() {
-        assert(false, "This method must be overridden in subclass")
+        precondition(false, "This method must be overridden in subclass")
     }
     
     func drawButtons() { /* Optional */ }
@@ -200,31 +211,18 @@ class BaseDetailViewController: BaseTableViewController {
 		let id = self.entity?.id_ ?? self.entityId
 		return "query.\(self.queryName!.lowercaseString).\(id!)"
 	}
-}
 
-extension BaseDetailViewController: TTTAttributedLabelDelegate {
-    
-    func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
-        UIApplication.sharedApplication().openURL(url)
-    }
+	override func makeCell() -> WrapperTableViewCell {
+		let cell = super.makeCell()
+		if let view = cell.view as? MessageView {
+			view.showPatchName = self.patchNameVisible
+			view.patchName.hidden = !self.patchNameVisible
+		}
+		return cell
+	}
 }
 
 extension BaseDetailViewController {
-	/*
-	 * Cells
-	 */
-	override func bindCellToEntity(cell: WrapperTableViewCell, entity: AnyObject, location: CLLocation?) {
-		
-		super.bindCellToEntity(cell, entity: entity, location: location)
-		
-		if let view = cell.view as? MessageView {
-			/* Hookup up delegates */
-			view.description_?.delegate = self
-			view.showPatchName = self.patchNameVisible
-			view.patchName.hidden = !self.patchNameVisible
-			view.photo?.addTarget(self, action: Selector("photoAction:"), forControlEvents: .TouchUpInside)
-		}
-	}
     /*
      * UITableViewDelegate 
      * These are shared by patch and user detail views.
@@ -238,54 +236,5 @@ extension BaseDetailViewController {
 			self.navigationController?.pushViewController(controller, animated: true)
         }
     }
-	
-	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-		/*
-		* Using an estimate significantly improves table view load time but we can get
-		* small scrolling glitches if actual height ends up different than estimated height.
-		* So we try to provide the best estimate we can and still deliver it quickly.
-		*
-		* Note: Called once only for each row in fetchResultController when FRC is making a data pass in
-		* response to managedContext.save.
-		*/
-		if self.disableCells {
-			return 0
-		}
-		
-		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
-			let entity = queryResult.object as? Message {
-				
-				if entity.id_ != nil {
-					if let cachedHeight = self.rowHeights.objectForKey(entity.id_) as? CGFloat {
-						return cachedHeight
-					}
-				}
-				
-				var cellType: CellType = .TextAndPhoto
-				if entity.type != nil && entity.type == "share" {
-					cellType = .Share
-				}
-				else if entity.photo == nil {
-					cellType = .Text
-				}
-				else if entity.description_ == nil {
-					cellType = .Photo
-				}
-				
-				let view = MessageView(cellType: cellType, entity: nil)
-				view.showPatchName = self.patchNameVisible
-				view.bindToEntity(entity)
-				
-				let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
-				let viewHeight = view.sizeThatFits(CGSizeMake(viewWidth - 24, CGFloat.max)).height + 24 + 1 // Add one for row separator
-				
-				if entity.id_ != nil {
-					self.rowHeights[entity.id_] = viewHeight
-				}
-				
-				return viewHeight
-		}
-		return 0
-	}
 }
 

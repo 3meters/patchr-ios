@@ -26,7 +26,7 @@ class AirContactPicker: THContactPickerView {
 	}
 	
 	func initialize() {
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "editingBegin:", name: UITextFieldTextDidBeginEditingNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AirContactPicker.editingBegin(_:)), name: UITextFieldTextDidBeginEditingNotification, object: nil)
 		self.rule.backgroundColor = Theme.colorRule
 		self.font = Theme.fontText
 		self.setPromptLabelTextColor(Theme.colorTextPlaceholder)

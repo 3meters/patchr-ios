@@ -7,11 +7,9 @@
 //
 import MBProgressHUD
 import DateTools
-import AirPhotoBrowser
+import IDMPhotoBrowser
 
 struct UIShared {
-	
-	static let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
 	
 	static func compatibilityUpgrade() {
 		
@@ -26,6 +24,7 @@ struct UIShared {
 						doIt in
 						if doIt {
 							Log.w("Incompatible version: Update selected")
+							Reporting.track("Selected to Update Incompatible Version")
 							let appStoreURL = "itms-apps://itunes.apple.com/app/id\(APPLE_APP_ID)"
 							if let url = NSURL(string: appStoreURL) {
 								UIApplication.sharedApplication().openURL(url)
@@ -33,7 +32,8 @@ struct UIShared {
 						}
 						else {
 							Log.w("Incompatible version: Declined so signout and jump to lobby")
-							UserController.instance.signout()
+							Reporting.track("Declined to Update Incompatible Version")
+							UserController.instance.logout()
 						}
 				}
 			}
@@ -58,6 +58,7 @@ struct UIShared {
 						doIt in
 						if doIt {
 							Log.w("Prompt to enable location: Go to settings option selected")
+							Reporting.track("Selected to View Location Settings")
 							let settingsURL = UIApplicationOpenSettingsURLString
 							if let url = NSURL(string: settingsURL) {
 								UIApplication.sharedApplication().openURL(url)
@@ -65,13 +66,14 @@ struct UIShared {
 						}
 						else {
 							Log.w("Prompt to enable location: Declined")
+							Reporting.track("Declined to View Location Settings")
 						}
 				}
 			}
 		}
 	}
 
-    static func showPhotoBrowser(image: UIImage!, animateFromView: UIView!, viewController: UIViewController!, entity: Entity?) -> PhotoBrowser {
+    static func showPhoto(image: UIImage!, animateFromView: UIView!, viewController: UIViewController!, entity: Entity?) -> PhotoBrowser {
         /*
         * Create browser (must be done each time photo browser is displayed. Photo
         * browser objects cannot be re-used)
@@ -83,11 +85,10 @@ struct UIShared {
         browser.usePopAnimation = true
         browser.scaleImage = image  // Used because final image might have different aspect ratio than initially
         browser.useWhiteBackgroundColor = true
-        browser.forceHideStatusBar = true
         browser.disableVerticalSwipe = false
 		
         if entity != nil {
-            browser.linkedEntity = entity
+            browser.bindEntity(entity)
         }
         
         viewController.navigationController!.presentViewController(browser, animated:true, completion:nil)
@@ -114,7 +115,7 @@ struct UIShared {
 		progress.labelText = message
 		progress.accessibilityIdentifier = "toast"
 		progress.detailsLabelText = "Tap to dismiss"
-		progress.yOffset = Float((UIScreen.mainScreen().bounds.size.height / 2) - 200)
+		progress.xOffset = Float((UIScreen.mainScreen().bounds.size.height / 2) - 200)
 		progress.shadow = true
 		progress.removeFromSuperViewOnHide = false
 		progress.userInteractionEnabled = true

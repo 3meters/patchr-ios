@@ -9,6 +9,7 @@
 import Foundation
 import MapKit
 
+
 @objc protocol MapViewDelegate: NSObjectProtocol, UIGestureRecognizerDelegate {
 	
     optional var locationTitle: String? { get }
@@ -56,10 +57,11 @@ class PatchMapViewController: UIViewController {
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		self.mapView.fillSuperview()
-		if self.locationDelegate.locationEditable() {
+		if self.locationDelegate.locationEditable() {			
 			let messageSize = self.messageBar.sizeThatFits(CGSizeMake(self.view.width(), CGFloat.max))
 			let navHeight = self.navigationController?.navigationBar.height() ?? 0
-			self.messageBar.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: (UIShared.statusHeight + navHeight), height: max(messageSize.height + 16, 48))
+			let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+			self.messageBar.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: (statusHeight + navHeight), height: max(messageSize.height + 16, 48))
 		}
 	}
     
@@ -80,7 +82,7 @@ class PatchMapViewController: UIViewController {
 	*--------------------------------------------------------------------------------------------*/
 	
 	func initialize() {
-		setScreenName("PatchMap")
+		Reporting.screen("PatchMap")
 		
 		self.mapView = MKMapView()
 		self.mapView.delegate = self
@@ -98,7 +100,7 @@ class PatchMapViewController: UIViewController {
 			title: self.locationDelegate.locationTitle ?? nil,
 			subtitle: self.locationDelegate.locationSubtitle ?? nil)
 		
-		let press = UILongPressGestureRecognizer(target: self, action: "longPress:");
+		let press = UILongPressGestureRecognizer(target: self, action: #selector(PatchMapViewController.longPress(_:)));
 		self.view.addGestureRecognizer(press)
 		
 		self.mapView.addAnnotation(self.annotation)

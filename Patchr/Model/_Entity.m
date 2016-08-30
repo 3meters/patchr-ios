@@ -9,6 +9,7 @@ const struct EntityAttributes EntityAttributes = {
 	.countWatching = @"countWatching",
 	.description_ = @"description_",
 	.linkCounts = @"linkCounts",
+	.locked = @"locked",
 	.patchId = @"patchId",
 	.reason = @"reason",
 	.score = @"score",
@@ -70,6 +71,11 @@ const struct EntityUserInfo EntityUserInfo = {
 	}
 	if ([key isEqualToString:@"countWatchingValue"]) {
 		NSSet *affectingKey = [NSSet setWithObject:@"countWatching"];
+		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+		return keyPaths;
+	}
+	if ([key isEqualToString:@"lockedValue"]) {
+		NSSet *affectingKey = [NSSet setWithObject:@"locked"];
 		keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
 		return keyPaths;
 	}
@@ -165,6 +171,26 @@ const struct EntityUserInfo EntityUserInfo = {
 @dynamic description_;
 
 @dynamic linkCounts;
+
+@dynamic locked;
+
+- (BOOL)lockedValue {
+	NSNumber *result = [self locked];
+	return [result boolValue];
+}
+
+- (void)setLockedValue:(BOOL)value_ {
+	[self setLocked:@(value_)];
+}
+
+- (BOOL)primitiveLockedValue {
+	NSNumber *result = [self primitiveLocked];
+	return [result boolValue];
+}
+
+- (void)setPrimitiveLockedValue:(BOOL)value_ {
+	[self setPrimitiveLocked:@(value_)];
+}
 
 @dynamic patchId;
 

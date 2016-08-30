@@ -27,7 +27,7 @@ class BaseViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		
-		let tap = UITapGestureRecognizer(target: self, action: "dismissKeyboard:");
+		let tap = UITapGestureRecognizer(target: self, action: #selector(BaseViewController.dismissKeyboard(_:)));
 		tap.delegate = self
 		tap.cancelsTouchesInView = false
 		self.view.addGestureRecognizer(tap)
@@ -36,6 +36,10 @@ class BaseViewController: UIViewController {
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		self.emptyLabel.anchorInCenterWithWidth(160, height: 160)
+	}
+	
+	override func viewWillDisappear(animated: Bool) {
+		super.viewWillDisappear(animated)
 	}
 		
 	deinit {
@@ -77,7 +81,12 @@ class BaseViewController: UIViewController {
 	func performBack(animated: Bool = true) {
 		/* Override in subclasses for control of dismiss/pop process */
 		if isModal {
-			self.dismissViewControllerAnimated(animated, completion: nil)
+			if self.navigationController != nil {
+				self.navigationController!.dismissViewControllerAnimated(animated, completion: nil)
+			}
+			else {
+				self.dismissViewControllerAnimated(animated, completion: nil)
+			}
 		}
 		else {
 			self.navigationController?.popViewControllerAnimated(true)

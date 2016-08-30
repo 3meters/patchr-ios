@@ -32,18 +32,13 @@ class AirMuteButton: AirToggleButton {
 	func bindEntity(entity: Entity?) {
 		self.entity = entity
         if let patch = self.entity as? Patch {
-            toggleOn(!patch.userWatchMutedValue)
+            toggleOn(!patch.userWatchMutedValue, animate: false)
         }
 	}
 
-    func onClick(sender: AnyObject) {
+    override func onClick(sender: AnyObject) {
     
         if self.entity == nil {
-            return
-        }
-        
-        if !UserController.instance.authenticated {
-			UserController.instance.showGuestGuard(nil, message: nil)
             return
         }
         
@@ -64,6 +59,7 @@ class AirMuteButton: AirToggleButton {
 				else {
 					self.entity!.userWatchMutedValue = muted
 					self.toggleOn(!muted)
+					Reporting.track(muted ? "Muted Patch" : "Unmuted Patch")
 					
 					if muted && self.messageOff != nil {
 						UIShared.Toast(self.messageOff)

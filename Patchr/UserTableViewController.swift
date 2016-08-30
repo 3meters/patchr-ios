@@ -20,6 +20,8 @@ class UserTableViewController: BaseTableViewController {
     *--------------------------------------------------------------------------------------------*/
 
 	override func viewDidLoad() {
+		self.itemPadding = UIEdgeInsetsMake(8, 8, 8, 8)
+		
 		super.viewDidLoad()
 		
 		guard self.patch != nil || self.message != nil else {
@@ -39,9 +41,6 @@ class UserTableViewController: BaseTableViewController {
 				self.navigationItem.title = "Liked by"
 		}
 		
-		self.tableView.estimatedRowHeight = 97
-		self.tableView.rowHeight = 97
-		
 		self.view.accessibilityIdentifier = View.Users
 		self.tableView!.accessibilityIdentifier = Table.Users
 	}
@@ -51,9 +50,9 @@ class UserTableViewController: BaseTableViewController {
         
         switch self.filter {
             case .PatchWatchers:
-                setScreenName("UserListPatchWatchers")
+                Reporting.screen("UserListPatchWatchers")
             case .MessageLikers:
-                setScreenName("UserListMessageLikers")
+                Reporting.screen("UserListMessageLikers")
         }
     }
 	
@@ -186,6 +185,10 @@ extension UserTableViewController {
 			view.delegate = self
 		}
 	}
+	
+	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+		return 97
+	}
 }
 
 extension UserTableViewController: UserApprovalViewDelegate {
@@ -207,6 +210,7 @@ extension UserTableViewController: UserApprovalViewDelegate {
 								self.handleError(error, errorActionType: .ALERT)
 							}
 							else {
+								Reporting.track(linkEnabled ? "Approved Member" : "Unapproved Member")
 								user.link.enabledValue = linkEnabled
 								DataController.instance.saveContext(BLOCKING)
 							}
@@ -244,6 +248,7 @@ extension UserTableViewController: UserApprovalViewDelegate {
 								self.handleError(error, errorActionType: .ALERT)
 							}
 							else {
+								Reporting.track("Removed Member Request")
 								DataController.instance.mainContext.deleteObject(user.link)
 								DataController.instance.mainContext.deleteObject(queryResult)
 								DataController.instance.saveContext(BLOCKING)

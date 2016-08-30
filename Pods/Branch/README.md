@@ -1,16 +1,56 @@
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/hyperium/hyper/master/LICENSE)
+
 # Branch Metrics iOS SDK Reference
 
 This is a repository of our open source iOS SDK, and the information presented here serves as a reference manual for our iOS SDK. See the table of contents below for a complete list of the content featured in this document.
 
+___
+
+## iOS Reference
+
+1. External resources
+  + [Full integration guide](https://dev.branch.io/getting-started/sdk-integration-guide/guide/ios/)
+  + [Change log](https://github.com/BranchMetrics/ios-branch-deep-linking/blob/master/ChangeLog.md)
+  + [Testing resources](https://dev.branch.io/getting-started/integration-testing/guide/ios/)
+  + [Support portal](http://support.branch.io)
+  + [Test app resources](#get-the-demo-app)
+
+2. Getting started
+  + [Library installation](#installation)
+  + [Register for Branch key](#register-your-app)
+  + [Add your Branch key](#add-your-branch-key-to-your-project)
+  + [Register a URI scheme](#register-a-uri-scheme-direct-deep-linking-optional-but-recommended)
+  + [Support Universal Links](#support-universal-linking-ios-9)
+
+3. Branch general methods
+  + [Get a Branch singleton](#get-a-singleton-branch-instance)
+  + [Initialize Branch and register deep link router](#init-branch-session-and-deep-link-routing-function)
+  + [Register view controller for auto deep linking](#register-a-deep-link-controller)
+  + [Retrieve latest deep linking params](#retrieve-session-install-or-open-parameters)
+  + [Retrieve the user's first deep linking params](#retrieve-install-install-only-parameters)
+  + [Setting the user id for tracking influencers](#persistent-identities)
+  + [Logging a user out](#logout)
+  + [Tracking custom events](#register-custom-events)
+
+4. Branch Universal Objects
+  + [Instantiate a Branch Universal Object](#branch-universal-object)
+  + [Register views for content analytics](#register-views-for-content-analytics)
+  + [List content on Spotlight](#list-content-on-spotlight)
+  + [Configuring link properties](link-properties-parameters)
+  + [Creating a short link referencing the object](#shortened-links)
+  + [Triggering a share sheet to share a link](#uiactivityview-share-sheet)
+
+5. Referral rewards methods
+  + [Get reward balance](#get-reward-balance)
+  + [Redeem rewards](#redeem-all-or-some-of-the-reward-balance-store-state)
+  + [Get credit history](#get-credit-history)
+
+___
+
 ## Get the Demo App
 
 There's a full demo app embedded in this repository, but you can also check out our live demo: [Branch Monster Factory](https://itunes.apple.com/us/app/id917737838). We've [open sourced the Branchster's app](https://github.com/BranchMetrics/Branchster-iOS) as well if you're ready to dig in.
-
-## Additional Resources
-- [Integration guide](https://dev.branch.io/recipes/add_the_sdk/ios/) *Start Here*
-- [Changelog](https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK/blob/master/ChangeLog.md)
-- [Testing](https://dev.branch.io/recipes/testing_your_integration/ios/)
-- [Support portal, FAQ](http://support.branch.io)
 
 ## Installation
 
@@ -22,6 +62,13 @@ Branch is available through [CocoaPods](http://cocoapods.org). To install it, si
 
 ```objc
 pod "Branch"
+```
+### Carthage
+
+To integrate Branch into your project using Carthage add the following to your `Cartfile`:
+
+```ruby
+github "BranchMetrics/iOS-Deferred-Deep-Linking-SDK"
 ```
 
 ### Download the Raw Files
@@ -82,8 +129,8 @@ With iOS 9, Apple has added the ability to allow http links to directly open you
 1. Select the "Capabilities" tab.
 1. Expand the "Associated Domains" tab.
 1. Enable the setting (toggle the switch).
-1. Add "applinks:bnc.lt" to the list.
-1. Add any additional custom domains you have (e.g. applinks:vng.io)
+1. Add `applinks:xxxx.app.link` and `applinks:xxxx-alternate.app.link` to the list. Make sure `xxxx` matches the 4 character subdomain for your app (you can find it on the [dashboard here](https://dashboard.branch.io/#/settings/link)). If you use a custom subdomain, use that in place of the x's (eg `imgur.app.link` and `imgur-alternate.app.link`).
+1. Add any additional custom domains you have (e.g. `applinks:vng.io`)
 
 ![Xcode Enable UL](docs/images/xcode-ul-enable.png)
 
@@ -148,7 +195,7 @@ To deep link, Branch must initialize a session to check if the user originated f
 ```objc
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     Branch *branch = [Branch getInstance];
-    [branch initSessionWithLaunchOptions:launchOptions isReferrable:YES andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+    [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
     	// route the user based on what's in params
     }];
     return YES;
@@ -176,13 +223,13 @@ To deep link, Branch must initialize a session to check if the user originated f
 ```swift
 func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
     let branch: Branch = Branch.getInstance()
-    branch.initSessionWithLaunchOptions(launchOptions, true, andRegisterDeepLinkHandler: { params, error in
+    branch.initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: { params, error in
     	// route the user based on what's in params
     })
     return true
 }
 
-func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
+func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
     if (!Branch.getInstance().handleDeepLink(url)) {
         // do other deep link routing for the Facebook SDK, Pinterest SDK, etc
     }
@@ -466,7 +513,7 @@ branchUniversalObject.imageUrl = @"https://example.com/mycontent-12345.png";
 ###### Swift
 
 ```swift
-let branchUniversalObject: BranchUniversalObject = BranchUniversalObject(String: "item/12345")
+let branchUniversalObject: BranchUniversalObject = BranchUniversalObject(canonicalIdentifier: "item/12345")
 branchUniversalObject.title = "My Content Title"
 branchUniversalObject.contentDescription = "My Content Description"
 branchUniversalObject.imageUrl = "https://example.com/mycontent-12345.png"
@@ -586,7 +633,7 @@ You can do custom redirection by inserting the following _optional keys in the d
 
 | Key | Value
 | --- | ---
-| "$fallback_url" | Where to send the user for all platforms when app is not installed.
+| "$fallback_url" | Where to send the user for all platforms when app is not installed. Note that Branch will forward all robots to this URL, overriding any OG tags entered in the link.
 | "$desktop_url" | Where to send the user on a desktop or laptop. By default it is the Branch-hosted text-me service.
 | "$android_url" | The replacement URL for the Play Store to send the user if they don't have the app. _Only necessary if you want a mobile web splash_.
 | "$ios_url" | The replacement URL for the App Store to send the user if they don't have the app. _Only necessary if you want a mobile web splash_.
@@ -623,7 +670,7 @@ UIActivityView is the standard way of allowing users to share content from your 
 
 **Sample UIActivityView Share Sheet**
 
-![UIActivityView Share Sheet](https://dev.branch.io/img/ingredients/sdk_links/ios_share_sheet.jpg)
+![UIActivityView Share Sheet](https://dev.branch.io/img/pages/getting-started/branch-universal-object/ios_share_sheet.png)
 
 The Branch iOS SDK includes a wrapper on the UIActivityViewController, that will generate a Branch short URL and automatically tag it with the channel the user selects (Facebook, Twitter, etc.).
 
@@ -646,7 +693,7 @@ linkProperties.feature = @"sharing";
 [branchUniversalObject showShareSheetWithLinkProperties:linkProperties
                                            andShareText:@"Super amazing thing I want to share!"
                                      fromViewController:self 
-                                            andCallback:^{
+                                             completion:^(NSString *activityType, BOOL completed){
     NSLog(@"finished presenting");
 }];
 ```
@@ -664,7 +711,7 @@ linkProperties.addControlParam("$ios_url", withValue: "http://example.com/ios")
 branchUniversalObject.showShareSheetWithLinkProperties(linkProperties, 
                                         andShareText: "Super amazing thing I want to share!",
                                         fromViewController: self,
-                                        andCallback: { () -> Void in
+                                        completion: { () -> Void in
     NSLog("done showing share sheet!")
 })
 ```
@@ -677,7 +724,7 @@ branchUniversalObject.showShareSheetWithLinkProperties(linkProperties,
 
 **fromViewController**: 
 
-**andCallback**: 
+**completion**: 
 
 #### Returns
 

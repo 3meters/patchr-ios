@@ -16,7 +16,6 @@ class LobbyViewController: BaseViewController {
 	var imageLogo		= AirImageView(frame: CGRectZero)
 	var buttonLogin		= AirButton()
 	var buttonSignup	= AirButton()
-	var buttonGuest		= AirLinkButton()
 	var buttonGroup		= UIView()
 	var firstLaunch		= true
 	
@@ -36,13 +35,12 @@ class LobbyViewController: BaseViewController {
 		self.buttonGroup.anchorInCenterWithWidth(228, height: 96)
 		self.buttonLogin.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 44)
 		self.buttonSignup.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 44)
-		self.buttonGuest.alignUnder(self.buttonGroup, matchingCenterWithTopPadding: 120, width: 228, height: 44)
 		self.appName.alignAbove(self.buttonGroup, matchingCenterWithBottomPadding: 20, width: 228, height: 48)
 	}
 	
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
-		setScreenName("Lobby")
+		Reporting.screen("Lobby")
 		
 		self.view.endEditing(true)
 		self.navigationController?.setNavigationBarHidden(true, animated: animated)
@@ -65,7 +63,6 @@ class LobbyViewController: BaseViewController {
 				
 				self.appName.fadeIn(0.5)
 				self.buttonGroup.fadeIn(1.0)
-				self.buttonGuest.fadeIn(1.5)
 			}
 			
 			Animation.bounce(self.imageLogo)
@@ -106,18 +103,6 @@ class LobbyViewController: BaseViewController {
 		let controller = LoginViewController()
 		controller.onboardMode = OnboardMode.Signup
 		self.navigationController?.pushViewController(controller, animated: true)
-	}
-	
-	func guestAction(sender: UIButton) {
-
-		guard DataController.proxibase.versionIsValid else {
-			UIShared.compatibilityUpgrade()
-			return
-		}
-		
-		let controller = MainTabBarController()
-		controller.selectedIndex = 0
-		AppDelegate.appDelegate().window!.setRootViewController(controller, animated: true)
 	}
 	
     /*--------------------------------------------------------------------------------------------
@@ -161,21 +146,12 @@ class LobbyViewController: BaseViewController {
 		self.buttonGroup.addSubview(self.buttonSignup)
 		self.view.addSubview(self.buttonGroup)
 		
-		self.buttonGuest.setTitle("skip", forState: .Normal)
-		self.buttonGuest.accessibilityIdentifier = "guest_button"
-		self.buttonGuest.setTitleColor(Colors.white, forState: .Normal)
-		self.buttonGuest.setTitleColor(Theme.colorTint, forState: .Highlighted)
-		self.buttonGuest.titleLabel?.font = Theme.fontLinkText
-		self.view.addSubview(self.buttonGuest)
-		
-		self.buttonLogin.addTarget(self, action: Selector("loginAction:"), forControlEvents: .TouchUpInside)
-		self.buttonSignup.addTarget(self, action: Selector("signupAction:"), forControlEvents: .TouchUpInside)
-		self.buttonGuest.addTarget(self, action: Selector("guestAction:"), forControlEvents: .TouchUpInside)
+		self.buttonLogin.addTarget(self, action: #selector(LobbyViewController.loginAction(_:)), forControlEvents: .TouchUpInside)
+		self.buttonSignup.addTarget(self, action: #selector(LobbyViewController.signupAction(_:)), forControlEvents: .TouchUpInside)
 		
 		if self.firstLaunch {
 			self.appName.alpha = 0.0
 			self.buttonGroup.alpha = 0.0
-			self.buttonGuest.alpha = 0.0
 		}
 	}
 	

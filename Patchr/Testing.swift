@@ -87,6 +87,7 @@ struct Table {
 
 struct Collection {
     static let Photos               = "photo_collection"
+	static let Gallery              = "gallery_collection"
 }
 
 struct View {
@@ -110,6 +111,7 @@ struct View {
     static let Settings             = "settings_view"
 	static let WebBrowser			= "web_browser_view"
     static let NotificationSettings = "notification_settings_view"
+	static let PatchSettings		= "patch_settings_view"
     static let Invite               = "invite_view"
 	static let Permissions          = "permissions_view"
     static let Main                 = "main_view"

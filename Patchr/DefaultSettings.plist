@@ -4,17 +4,11 @@
 <dict>
 	<key>com.3meters.patchr.ios.SoundForNotifications</key>
 	<true/>
+	<key>com.3meters.patchr.ios.VibrateForNotifications</key>
+	<true/>
 	<key>com.3meters.patchr.ios.SoundEffects</key>
 	<true/>
-	<key>com.3meters.patchr.ios.PatchesCreatedNearby</key>
-	<true/>
-	<key>com.3meters.patchr.ios.MessagesForPatchesWatching</key>
-	<true/>
-	<key>com.3meters.patchr.ios.MessagesSharing</key>
-	<true/>
-	<key>com.3meters.patchr.ios.LikePatch</key>
-	<true/>
-	<key>com.3meters.patchr.ios.LikeMessage</key>
-	<true/>
+	<key>com.3meters.patchr.ios.NotificationType</key>
+	<string>all</string>
 </dict>
 </plist>

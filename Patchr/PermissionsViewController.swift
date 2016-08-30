@@ -53,16 +53,18 @@ class PermissionsViewController: BaseViewController {
 	func allowAction(sender: AnyObject?) {
 		
 		if self.locationNeeded {
-			LocationController.instance.requestAlwaysAuthorization()
+			LocationController.instance.requestWhenInUseAuthorization()
 		}
 		else if self.notificationNeeded {
 			NotificationController.instance.registerForRemoteNotifications()
 			routeToMain()
 		}
+		Reporting.track("Selected Full Permissions")
 	}
 	
 	func cancelAction(sender: AnyObject?) {
 		routeToMain()
+		Reporting.track("Selected Limited Permissions")
 	}
 	
 	/*--------------------------------------------------------------------------------------------
@@ -90,7 +92,7 @@ class PermissionsViewController: BaseViewController {
 	override func initialize() {
 		super.initialize()
 		
-		setScreenName("Permissions")
+		Reporting.screen("Permissions")
 		self.view.accessibilityIdentifier = View.Permissions
 		
 		if CLLocationManager.authorizationStatus() != .NotDetermined {
@@ -116,8 +118,8 @@ class PermissionsViewController: BaseViewController {
 		self.allowButton.setTitle("Nearby and invitations".uppercaseString, forState: .Normal)
 		self.cancelButton.setTitle("Limited".uppercaseString, forState: .Normal)
 		
-		self.allowButton.addTarget(self, action: Selector("allowAction:"), forControlEvents: .TouchUpInside)
-		self.cancelButton.addTarget(self, action: Selector("cancelAction:"), forControlEvents: .TouchUpInside)
+		self.allowButton.addTarget(self, action: #selector(PermissionsViewController.allowAction(_:)), forControlEvents: .TouchUpInside)
+		self.cancelButton.addTarget(self, action: #selector(PermissionsViewController.cancelAction(_:)), forControlEvents: .TouchUpInside)
 		
 		self.contentHolder.addSubview(self.heading)
 		self.contentHolder.addSubview(self.message)
@@ -130,8 +132,8 @@ class PermissionsViewController: BaseViewController {
 		self.navigationItem.hidesBackButton = true
 		self.navigationItem.rightBarButtonItems = []
 		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "locationWasDenied:", name: Events.LocationWasDenied, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "locationWasAllowed:", name: Events.LocationWasAllowed, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PermissionsViewController.locationWasDenied(_:)), name: Events.LocationWasDenied, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PermissionsViewController.locationWasAllowed(_:)), name: Events.LocationWasAllowed, object: nil)
 	}
 	
 	func routeToMain() {

@@ -13,13 +13,8 @@ class AirProgress: MBProgressHUD {
     
     var shadow: Bool = false
 	
-	override init!(view: UIView!) {
+	override init(view: UIView) {
 		super.init(view: view)
-		initialize()
-	}
-	
-	override init!(window: UIWindow!) {
-		super.init(window: window)
 		initialize()
 	}
 	
@@ -41,7 +36,7 @@ class AirProgress: MBProgressHUD {
 		self.isAccessibilityElement = true
 	}
 	
-	static func addedTo(view: UIView!) -> AirProgress {
+	static func addedTo(view: UIView) -> AirProgress {
 		let hud = AirProgress(view: view)
 		hud.removeFromSuperViewOnHide = true
 		view.addSubview(hud)
@@ -74,7 +69,8 @@ class AirProgress: MBProgressHUD {
         
         self.labelFont = Theme.fontComment
         self.detailsLabelFont = Theme.fontCommentSmall
-        
+		self.activityIndicatorColor = Theme.colorActivityIndicator
+		
         if progressStyle == .ActivityWithText {
             self.animationType = MBProgressHUDAnimation.Zoom
             self.margin = 16
@@ -82,7 +78,6 @@ class AirProgress: MBProgressHUD {
             self.color = Theme.colorBackgroundActivity
             self.labelColor = Theme.colorTextActivity
             self.detailsLabelColor = Theme.colorTextActivity
-            self.activityIndicatorColor = Theme.colorActivityIndicator
             self.shadow = true
             self.square = true
         }
@@ -94,14 +89,12 @@ class AirProgress: MBProgressHUD {
             self.color = Theme.colorBackgroundToast
             self.labelColor = Theme.colorTextToast
             self.detailsLabelColor = Theme.colorTextToast
-            self.activityIndicatorColor = Theme.colorActivityIndicator
             self.shadow = true
         }
         else if progressStyle == .ActivityOnly {
             self.animationType = MBProgressHUDAnimation.Fade
             self.opacity = 0.0
             self.color = Theme.colorBackgroundActivityOnly
-            self.activityIndicatorColor = Theme.colorActivityIndicator
             self.shadow = false
             self.square = true
         }

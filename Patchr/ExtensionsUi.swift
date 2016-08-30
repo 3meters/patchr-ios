@@ -7,6 +7,7 @@
 //
 import MBProgressHUD
 
+
 extension UITextField {
     var isEmpty: Bool {
         return self.text == nil || self.text!.isEmpty
@@ -59,25 +60,60 @@ extension UIView {
 	
     func fadeIn(duration: NSTimeInterval = 0.3, delay: NSTimeInterval = 0.0, alpha: CGFloat = 1.0, completion: ((Bool) -> Void) = {(finished: Bool) -> Void in}) {
         if self.alpha != alpha {
-            UIView.animateWithDuration(duration, delay: delay, options: UIViewAnimationOptions.CurveEaseIn, animations: {
-                self.alpha = alpha
-                }, completion: completion)
+            UIView.animateWithDuration(duration
+				, delay: delay
+				, options: [.CurveEaseIn]
+				, animations: {
+					self.alpha = alpha
+                }
+				, completion: completion)
         }
     }
     
     func fadeOut(duration: NSTimeInterval = 0.3, delay: NSTimeInterval = 0.0, alpha: CGFloat = 0.0, completion: (Bool) -> Void = {(finished: Bool) -> Void in}) {
         if self.alpha != alpha {
-            UIView.animateWithDuration(duration, delay: delay, options: UIViewAnimationOptions.CurveEaseIn, animations: {
-                self.alpha = alpha
-                }, completion: completion)
+            UIView.animateWithDuration(duration
+				, delay: delay
+				, options: [.CurveEaseIn]
+				, animations: {
+					self.alpha = alpha
+                }
+				, completion: completion)
         }
     }
 	
+	func scaleOut(duration: NSTimeInterval = 0.2, delay: NSTimeInterval = 0.0, completion: (Bool) -> Void = {(finished: Bool) -> Void in}) {
+		UIView.animateWithDuration(duration
+			, delay: delay
+			, options: [.CurveEaseOut]
+			, animations: {
+				/* Setting to zero seems to cancel the animation and to straight to gone */
+				self.transform = CGAffineTransformMakeScale(CGFloat(0.0001), CGFloat(0.0001))
+			}
+			, completion: completion)
+	}
+	
+	func scaleIn(duration: NSTimeInterval = 0.3, delay: NSTimeInterval = 0.0, completion: (Bool) -> Void = {(finished: Bool) -> Void in}) {
+		UIView.animateWithDuration(duration
+			, delay: delay
+			, usingSpringWithDamping: 0.8
+			, initialSpringVelocity: 0.3
+			, options: [.CurveEaseIn]
+			, animations: {
+				/* Resets to original state */
+				self.transform = CGAffineTransformIdentity
+			}
+			, completion: completion)
+	}
+	
 	func showShadow(rounded: Bool = false, cornerRadius: CGFloat = 0) {
+		
 		self.layer.masksToBounds = false
-		self.layer.shadowOffset = CGSizeMake(2, 4)
-		self.layer.shadowRadius = 3
-		self.layer.shadowOpacity = 0.3
+		self.layer.shadowColor = Colors.black.CGColor
+		self.layer.shadowOffset = CGSizeMake(0, 3)
+		self.layer.shadowOpacity = 0.4
+		self.layer.shadowRadius = 3.0
+		
 		if rounded {
 			self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: cornerRadius).CGPath
 		}
@@ -85,21 +121,6 @@ extension UIView {
 			self.layer.shadowPath = UIBezierPath(rect: self.bounds).CGPath
 		}
 	}
-
-    func showSubviews(level: Int = 0) {
-        /*
-         * Utility to show some information about subview frames.
-         */
-        var indent = ""
-        for _ in 0 ..< level {
-            indent += "  "
-        }
-        var count = 0
-        for subview in self.subviews {
-            Log.d("\(indent)\(count++). \(subview.frame)")
-            subview.showSubviews(level + 1)
-        }
-    }
 
 	func snapshot() -> UIImage {
 		UIGraphicsBeginImageContextWithOptions(bounds.size, false, UIScreen.mainScreen().scale)
@@ -239,16 +260,17 @@ extension UIViewController {
 		}
 	}
     
-    func handleError(error: ServerError, errorActionType: ErrorActionType = .AUTO, var errorAction: ErrorAction = .NONE ) {
+    func handleError(error: ServerError, errorActionType: ErrorActionType = .AUTO, errorAction: ErrorAction = .NONE ) {
         
         /* Show any required ui */
         let alertMessage: String = (error.message != nil ? error.message : error.description != nil ? error.description : "Unknown error")!
+		
+		var errAction = errorAction
         
         if errorActionType == .AUTO || errorActionType == .TOAST {
 			UIShared.Toast(alertMessage, controller: self, addToWindow: false)
-			//toast.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("dismissToast:")))
             if error.code == .UNAUTHORIZED_SESSION_EXPIRED || error.code == .UNAUTHORIZED_CREDENTIALS {
-                errorAction = .SIGNOUT
+                errAction = .SIGNOUT
             }
         }
         else if errorActionType == .ALERT {
@@ -257,19 +279,19 @@ extension UIViewController {
         
         /* Perform any follow-up actions */
         
-        if errorAction == .SIGNOUT {
+        if errAction == .SIGNOUT {
             /*
              * Error requires that the user signs in again.
              */
-			UserController.instance.signout()
+			UserController.instance.logout()
         }
-        else if errorAction == .LOBBY {
+        else if errAction == .LOBBY {
             /* 
              * Mostly because a more current client version is required. 
              */
             LocationController.instance.clearLastLocationAccepted()
 			
-			let navController = UINavigationController()
+			let navController = AirNavigationController()
 			navController.viewControllers = [LobbyViewController()]
 			AppDelegate.appDelegate().window!.setRootViewController(navController, animated: true)
         }
@@ -280,12 +302,6 @@ extension UIViewController {
         Log.w(error.description)
     }
     
-//    func Alert(title: String?, message: String? = nil, cancelButtonTitle: String = "OK") {
-//		let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-//		alert.addAction(UIAlertAction(title: cancelButtonTitle, style: .Cancel, handler: nil))
-//		self.presentViewController(alert, animated: true) {}
-//    }
-	
 	func Alert(title: String?, message: String? = nil, cancelButtonTitle: String = "OK", onDismiss: (() -> Void)? = nil) {
 		let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
 		let okAction = UIAlertAction(title: cancelButtonTitle, style: .Cancel, handler: { _ in onDismiss?() })
@@ -330,12 +346,20 @@ extension UIViewController {
 			alert.addTextFieldWithConfigurationHandler() {
 				textField in
 				textField.accessibilityIdentifier = Field.ConfirmDelete
-				textField.addTarget(delegate, action: Selector("alertTextFieldDidChange:"), forControlEvents: .EditingChanged)
+				textField.addTarget(delegate, action: #selector(UIViewController.alertTextFieldDidChange(_:)), forControlEvents: .EditingChanged)
 			}
 			okAction.enabled = false
 		}
 		self.presentViewController(alert, animated: true, completion: nil)
     }
+	
+	func alertTextFieldDidChange(sender: AnyObject) {
+		if let alertController: UIAlertController = self.presentedViewController as? UIAlertController {
+			let confirm = alertController.textFields![0]
+			let okAction = alertController.actions[0]
+			okAction.enabled = confirm.text == "YES"
+		}
+	}
 
 	func addActivityIndicatorTo(view: UIView, offsetY: Float = 0, style: UIActivityIndicatorViewStyle = .WhiteLarge) -> UIActivityIndicatorView {
 		/*
@@ -427,11 +451,15 @@ extension NSDate: Comparable { }
 extension String {
 	
 	func isEmail() -> Bool {
-		let regex = try! NSRegularExpression(pattern: "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$",
-			options: [.CaseInsensitive])
+		if self.isEmpty {
+			return false
+		}
 		
-		return regex.firstMatchInString(self, options:[],
-			range: NSMakeRange(0, utf16.count)) != nil
+		guard let regex = try? NSRegularExpression(pattern: "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$", options: [.CaseInsensitive]) else {
+			return false
+		}
+		
+		return regex.numberOfMatchesInString(self, options: [], range: NSMakeRange(0, utf16.count)) == 1
 	}
 	
     var md5: String! {
@@ -451,6 +479,14 @@ extension String {
         result.dealloc(digestLen)
         
         return String(format: hash as String)
+    }
+    
+    var numbersOnly: String! {
+        let str = self.stringByReplacingOccurrencesOfString("[^0-9]"
+            , withString: ""
+            , options: NSStringCompareOptions.RegularExpressionSearch
+            , range:nil).stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+        return str
     }
 }
 

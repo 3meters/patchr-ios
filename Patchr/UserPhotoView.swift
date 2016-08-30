@@ -89,12 +89,15 @@ class UserPhotoView: UIControl {
 		
 		if photoUrl != nil {
 			
-			self.photo.sd_setImageWithURL(photoUrl,
-				placeholderImage: nil,
-				options: [.RetryFailed, .LowPriority, .AvoidAutoSetImage, .ProgressiveDownload],
-				completed: { [weak self] image, error, cacheType, url in
-					
+			let options: SDWebImageOptions = [.RetryFailed, .LowPriority, .AvoidAutoSetImage,/* .ProgressiveDownload*/]
+			
+			self.photo.sd_setImageWithURL(photoUrl
+				, placeholderImage: nil
+				, options: options
+				, completed: { [weak self] image, error, cacheType, url in
+											
 					if self != nil && error == nil {
+						
 						dispatch_async(dispatch_get_main_queue()) {
 							
 							self?.photo.linkedPhotoUrl = photoUrl
