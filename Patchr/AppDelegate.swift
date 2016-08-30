@@ -535,10 +535,7 @@ extension UIApplication {
         return false
 #else
         let receiptURL = NSBundle.mainBundle().appStoreReceiptURL
-        if receiptURL?.path?.rangeOfString("sandboxReceipt") == nil {
-            return true
-        }
-        return false
+        return (receiptURL?.path?.rangeOfString("sandboxReceipt") == nil)
 #endif
     }
 }

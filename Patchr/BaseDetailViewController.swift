@@ -102,57 +102,60 @@ class BaseDetailViewController: BaseTableViewController {
 						
 						var userInfo: [NSObject:AnyObject] = ["error": (error != nil)]
 						self?.refreshControl?.endRefreshing()
-
-						if error == nil {
-							if objectId != nil {
-								
-								/* entity has already been saved by DataController */
-								let entity = DataController.instance.mainContext.objectWithID(objectId!) as! Entity
-								self?.entity = entity
-								self?.entityId = entity.id_
-								
-								if let patch = entity as? Patch {
-									self?.disableCells = (patch.visibility == "private" && !patch.userIsMember())
-								}
-								
-								/*
-								 * Refresh list too if context entity was updated or reset = true. 
-								 * We need reset because a real list refresh is needed even if the activityDate
-								 * hasn't changed because that is the only way to pickup link based message 
-								 * state changes such as likes.
-								 */
-								if resetList || self?.getActivityDate() != self?.query.activityDateValue {
-									self?.fetchQueryItems(force: true, paging: !resetList, queryDate: self?.getActivityDate())	// Only place we cascade the refresh to the list otherwise a pullToRefresh is required
-								}
-								else {
-									if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
-										userInfo["count"] = fetchedObjects.count
-									}
-									if self != nil {
-										NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetchQuery, object: self!, userInfo: userInfo)
-									}
-								}
-								
-								if let patch = entity as? Patch {
-									DataController.instance.currentPatch = patch    // Used for context for messages
-								}
-								self?.drawButtons()	// Refresh so owner only commands can be displayed
-								self?.bind()
-								if self != nil {
-									NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetch, object: self!)
-								}
-							}
-							else {
-								UIShared.Toast("Item has been deleted")
-								Utils.delay(2.0) {
-									() -> () in
-									self?.navigationController?.popViewControllerAnimated(true)
-									if self != nil {
-										NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetch, object: self!, userInfo: ["deleted":true])
-									}
-								}
-							}
-						}
+                        
+                        if let error = ServerError(error) {
+                            self!.handleError(error)
+                        }
+                        else {
+                            if objectId != nil {
+                                
+                                /* entity has already been saved by DataController */
+                                let entity = DataController.instance.mainContext.objectWithID(objectId!) as! Entity
+                                self?.entity = entity
+                                self?.entityId = entity.id_
+                                
+                                if let patch = entity as? Patch {
+                                    self?.disableCells = (patch.visibility == "private" && !patch.userIsMember())
+                                }
+                                
+                                /*
+                                 * Refresh list too if context entity was updated or reset = true.
+                                 * We need reset because a real list refresh is needed even if the activityDate
+                                 * hasn't changed because that is the only way to pickup link based message
+                                 * state changes such as likes.
+                                 */
+                                if resetList || self?.getActivityDate() != self?.query.activityDateValue {
+                                    self?.fetchQueryItems(force: true, paging: !resetList, queryDate: self?.getActivityDate())	// Only place we cascade the refresh to the list otherwise a pullToRefresh is required
+                                }
+                                else {
+                                    if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
+                                        userInfo["count"] = fetchedObjects.count
+                                    }
+                                    if self != nil {
+                                        NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetchQuery, object: self!, userInfo: userInfo)
+                                    }
+                                }
+                                
+                                if let patch = entity as? Patch {
+                                    DataController.instance.currentPatch = patch    // Used for context for messages
+                                }
+                                self?.drawButtons()	// Refresh so owner only commands can be displayed
+                                self?.bind()
+                                if self != nil {
+                                    NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetch, object: self!)
+                                }
+                            }
+                            else {
+                                UIShared.Toast("Item has been deleted")
+                                Utils.delay(2.0) {
+                                    () -> () in
+                                    self?.navigationController?.popViewControllerAnimated(true)
+                                    if self != nil {
+                                        NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetch, object: self!, userInfo: ["deleted":true])
+                                    }
+                                }
+                            }
+                        }
 					}
 				}
 			}

@@ -8,7 +8,6 @@
 import AdSupport
 import Lockbox
 import Branch
-import Analytics
 
 class UserController: NSObject {
 

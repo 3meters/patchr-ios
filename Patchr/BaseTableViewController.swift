@@ -335,49 +335,51 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 						var userInfo: [NSObject:AnyObject] = ["error": (error != nil)]
 						
 						let query = DataController.instance.mainContext.objectWithID(queryObjectId) as! Query
-						
-						if error == nil {
-							
-							query.executedValue = true
-							if queryDate != nil {
-								query.activityDateValue = queryDate!
-							}
-							if self?.fetchedResultsController.delegate != nil {	// Delegate is unset when view controller disappears
-								if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
-									query.offsetValue = Int32(fetchedObjects.count)
-									userInfo["count"] = fetchedObjects.count
-								}
-							}
-							/* Find oldest (smallest) date in the set */
-							var oldestDate = NSDate()
-							for item in query.queryItems {
-								if let queryItem = item as? QueryItem,
-									let entity = queryItem.object as? Entity,
-									let sortDate = entity.sortDate {
-									if sortDate < oldestDate {
-										oldestDate = sortDate
-									}
-								}
-							}
-							query.offsetDate = oldestDate
-							/*
-							 * Saving commits changes to the data model and the fetch controller notices
-							 * if that changes the results it has associated with it's fetch request.
-							 * The fetched results delegate is informed of any changes that should
-							 * cause an update to the table view.
-							 */
-							DataController.instance.saveContext(BLOCKING)
-							self?.tableView.reloadData()		// Update cells to show any changes
-							if paging {
-								Reporting.track("Paged List")
-							}
-							
-							dispatch_async(dispatch_get_main_queue(), { () -> Void in
-								if self != nil {
-									NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetchQuery, object: self!, userInfo: userInfo)
-								}								
-							})
-						}
+                        
+                        if let error = ServerError(error) {
+                            self!.handleError(error)
+                        }
+                        else {
+                            query.executedValue = true
+                            if queryDate != nil {
+                                query.activityDateValue = queryDate!
+                            }
+                            if self?.fetchedResultsController.delegate != nil {	// Delegate is unset when view controller disappears
+                                if let fetchedObjects = self?.fetchedResultsController.fetchedObjects as [AnyObject]? {
+                                    query.offsetValue = Int32(fetchedObjects.count)
+                                    userInfo["count"] = fetchedObjects.count
+                                }
+                            }
+                            /* Find oldest (smallest) date in the set */
+                            var oldestDate = NSDate()
+                            for item in query.queryItems {
+                                if let queryItem = item as? QueryItem,
+                                    let entity = queryItem.object as? Entity,
+                                    let sortDate = entity.sortDate {
+                                    if sortDate < oldestDate {
+                                        oldestDate = sortDate
+                                    }
+                                }
+                            }
+                            query.offsetDate = oldestDate
+                            /*
+                             * Saving commits changes to the data model and the fetch controller notices
+                             * if that changes the results it has associated with it's fetch request.
+                             * The fetched results delegate is informed of any changes that should
+                             * cause an update to the table view.
+                             */
+                            DataController.instance.saveContext(BLOCKING)
+                            self?.tableView.reloadData()		// Update cells to show any changes
+                            if paging {
+                                Reporting.track("Paged List")
+                            }
+                            
+                            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                                if self != nil {
+                                    NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetchQuery, object: self!, userInfo: userInfo)
+                                }								
+                            })
+                        }
 						
 						return
 					}

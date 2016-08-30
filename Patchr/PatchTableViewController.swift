@@ -479,18 +479,11 @@ class PatchTableViewController: BaseTableViewController {
                         self?.processingQuery = false
                         self?.activity.stopAnimating()
                         var userInfo: [NSObject:AnyObject] = ["error": (error != nil)]
-
+                        
                         if let error = ServerError(error) {
-
                             /* Always reset location after a network error */
                             LocationController.instance.clearLastLocationAccepted()
-
-                            /* User credentials probably need to be refreshed */
-                            if error.code == ServerStatusCode.UNAUTHORIZED {
-                                let navController = AirNavigationController()
-                                navController.viewControllers = [LobbyViewController()]
-                                AppDelegate.appDelegate().window!.setRootViewController(navController, animated: true)
-                            }
+                            self!.handleError(error)
                             return
                         }
 
