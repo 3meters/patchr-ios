@@ -81,7 +81,7 @@
 		<key>004E04487A9B83A51B1940339A66C2E8</key>
 		<dict>
 			<key>fileRef</key>
-			<string>4A2CC9ABCA126EE155E2E2FA19A40B46</string>
+			<string>FA774B246C3B39915A9E742743E42316</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 			<key>settings</key>
@@ -3508,19 +3508,6 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>118AE92E5D71902E0BCA7594B52F29E5</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.objc</string>
-			<key>path</key>
-			<string>IDMCaptionView.m</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
 		<key>11909C39EDE7C592F2E7E481E7D787BD</key>
 		<dict>
 			<key>includeInIndex</key>
@@ -3816,7 +3803,7 @@
 		<key>128B79A6B95DA0CE627711CB4E62E6AC</key>
 		<dict>
 			<key>fileRef</key>
-			<string>CC06510955291B0D477747E2C82F08C1</string>
+			<string>DCC6E1BB8DD59F4B90E0AE143E540B80</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 			<key>settings</key>
@@ -4066,19 +4053,6 @@
 			<string>KSCrashSentry_Deadlock.h</string>
 			<key>path</key>
 			<string>Source/KSCrash/Recording/Sentry/KSCrashSentry_Deadlock.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>140BB255C586D22BCFFD3F56BD044F3F</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.plug-in</string>
-			<key>path</key>
-			<string>IDMPhotoBrowser.bundle</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -5425,7 +5399,7 @@
 		<key>191651AD6CD604D50147F2E47EDB805C</key>
 		<dict>
 			<key>baseConfigurationReference</key>
-			<string>E459DCC5E324EC519F8D47944DFDAA60</string>
+			<string>35A1D1F76050EB557DACBBCFEE6E55CC</string>
 			<key>buildSettings</key>
 			<dict>
 				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
@@ -6149,6 +6123,19 @@
 			<key>runOnlyForDeploymentPostprocessing</key>
 			<string>0</string>
 		</dict>
+		<key>1C037469CCB7967A871CC9D6F1DC3951</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.xml</string>
+			<key>path</key>
+			<string>Info.plist</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
 		<key>1C12834993ACDFF9A8C29B898E8C2966</key>
 		<dict>
 			<key>fileRef</key>
@@ -6614,7 +6601,7 @@
 		<key>1DBB1B08183144999A906B1D07D5F1FE</key>
 		<dict>
 			<key>fileRef</key>
-			<string>9839EA7B6D02D2C6CBBD30AD2C19AF94</string>
+			<string>9198F760F83483C78E9C66D77638BC88</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
@@ -6674,19 +6661,6 @@
 				<key>COMPILER_FLAGS</key>
 				<string>-w -Xanalyzer -analyzer-disable-all-checks</string>
 			</dict>
-		</dict>
-		<key>1E0509F0C8F57D9C044726F4795E437D</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.objc</string>
-			<key>path</key>
-			<string>IDMPhotoBrowser-dummy.m</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
 		</dict>
 		<key>1E148048D97E404C4D4D3561F4264F21</key>
 		<dict>
@@ -7307,19 +7281,6 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>212A42C11FF0857E83C61E84B14E5C0E</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>path</key>
-			<string>IDMPhotoBrowser.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
 		<key>213C7AE1229A3FB2A95E636A15B84B4A</key>
 		<dict>
 			<key>fileRef</key>
@@ -7675,7 +7636,7 @@
 		<key>22D1BF4641921D261CC68ED76850C6BC</key>
 		<dict>
 			<key>fileRef</key>
-			<string>4268660BF051CBECD447CB58DC76418A</string>
+			<string>F61C8AC0A8E492B55DC4CCEE103355A1</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 			<key>settings</key>
@@ -7808,6 +7769,19 @@
 			<string>DDDispatchQueueLogFormatter.h</string>
 			<key>path</key>
 			<string>Classes/Extensions/DDDispatchQueueLogFormatter.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>2380D5BE8244171F23C3B83E12B7636D</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>IDMPhotoBrowser.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -8162,19 +8136,6 @@
 			<string>AddRef.swift</string>
 			<key>path</key>
 			<string>RxSwift/Observables/Implementations/AddRef.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>2530F03C2F4CC139DEE0B73CF78D12D0</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.objc</string>
-			<key>path</key>
-			<string>IDMPhoto.m</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -8594,19 +8555,6 @@
 			<string>FBSDKShareVideoContent.h</string>
 			<key>path</key>
 			<string>FBSDKShareKit/FBSDKShareKit/FBSDKShareVideoContent.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>273A5FCDF57A6E05832ACA27BBF8E2EE</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>path</key>
-			<string>IDMPhotoProtocol.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -10652,7 +10600,7 @@
 		<key>303BE4EFA7333F14F4A4FDF3932F7281</key>
 		<dict>
 			<key>fileRef</key>
-			<string>34EC40F71CDF3A8A6B15F17C499D3E0F</string>
+			<string>E6DEF4408AA875731CA891AD8172F8D1</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 			<key>settings</key>
@@ -11382,19 +11330,6 @@
 				<string>-DOS_OBJECT_USE_OBJC=0 -w -Xanalyzer -analyzer-disable-all-checks</string>
 			</dict>
 		</dict>
-		<key>34EC40F71CDF3A8A6B15F17C499D3E0F</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>path</key>
-			<string>IDMCaptionView.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
 		<key>34ED15254B146A347F358B942B884286</key>
 		<dict>
 			<key>includeInIndex</key>
@@ -11547,19 +11482,6 @@
 				</array>
 			</dict>
 		</dict>
-		<key>358F542202EE75C91FCE762ECA787521</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>path</key>
-			<string>IDMPBConstants.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
 		<key>359A772D121C929F4812CB9BE72B14B4</key>
 		<dict>
 			<key>fileRef</key>
@@ -11573,6 +11495,19 @@
 					<string>Public</string>
 				</array>
 			</dict>
+		</dict>
+		<key>35A1D1F76050EB557DACBBCFEE6E55CC</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>path</key>
+			<string>IDMPhotoBrowser.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
 		</dict>
 		<key>35B03A873B9D0C66579E75390418427C</key>
 		<dict>
@@ -11643,7 +11578,7 @@
 		<key>3632C488E27B5F54C0BD5B8B957D7C8F</key>
 		<dict>
 			<key>fileRef</key>
-			<string>358F542202EE75C91FCE762ECA787521</string>
+			<string>6B77AB18FC4A68B175747A7B0A489A97</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 			<key>settings</key>
@@ -12245,7 +12180,7 @@
 		<key>38B2EA0AE01C2D9BD5E1F1B60F37F6DC</key>
 		<dict>
 			<key>fileRef</key>
-			<string>212A42C11FF0857E83C61E84B14E5C0E</string>
+			<string>2380D5BE8244171F23C3B83E12B7636D</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 			<key>settings</key>
@@ -12709,7 +12644,7 @@
 		<key>3A8A20F213AAF6AA0A5B755B03F0D138</key>
 		<dict>
 			<key>fileRef</key>
-			<string>74540EB9DBBDE30B207351A97D6E2327</string>
+			<string>4F1898512754C6CA154CA8598335C7C4</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 			<key>settings</key>
@@ -14066,6 +14001,19 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
+		<key>40FC59C7FDF3771312E7B4B6E1BDF034</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.plug-in</string>
+			<key>path</key>
+			<string>IDMPhotoBrowser.bundle</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
 		<key>4114583AC4E1F75F78A2FD625CDD522D</key>
 		<dict>
 			<key>includeInIndex</key>
@@ -14080,7 +14028,7 @@
 		<key>4114E3E353D33D9EF910289BCB9F997C</key>
 		<dict>
 			<key>fileRef</key>
-			<string>925BF4669BCBC230DD0F6101BC9163DB</string>
+			<string>B849573B59335AF26B5BB5075822F62F</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 			<key>settings</key>
@@ -14327,19 +14275,6 @@
 			<key>targetProxy</key>
 			<string>716FC9C15E6C132B68363F2AF50660FF</string>
 		</dict>
-		<key>4268660BF051CBECD447CB58DC76418A</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>path</key>
-			<string>IDMZoomingScrollView.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
 		<key>426C2B80973E3F0CD9C7201D318E3BB0</key>
 		<dict>
 			<key>includeInIndex</key>
@@ -14515,7 +14450,7 @@
 		<key>4380EC9EF272C5B6D1F0225627035DC8</key>
 		<dict>
 			<key>fileRef</key>
-			<string>118AE92E5D71902E0BCA7594B52F29E5</string>
+			<string>8CA92192CB1BCC9748E11BD70B09C95D</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 			<key>settings</key>
@@ -15772,19 +15707,6 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>4A2CC9ABCA126EE155E2E2FA19A40B46</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.objc</string>
-			<key>path</key>
-			<string>IDMPhotoBrowser.m</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
 		<key>4A7BE985CB26EDBF6A8526D538AA9161</key>
 		<dict>
 			<key>includeInIndex</key>
@@ -16689,6 +16611,19 @@
 			<string>AWSTaskCompletionSource.h</string>
 			<key>path</key>
 			<string>AWSCore/Bolts/AWSTaskCompletionSource.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>4F1898512754C6CA154CA8598335C7C4</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>IDMTapDetectingImageView.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -18210,6 +18145,19 @@
 				<string>-w -Xanalyzer -analyzer-disable-all-checks</string>
 			</dict>
 		</dict>
+		<key>563242421075B03B025B3C9C644C5DB7</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>IDMPhotoBrowser-dummy.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
 		<key>5636A89AA31A533F8BC55E7A105443EB</key>
 		<dict>
 			<key>fileRef</key>
@@ -18372,7 +18320,7 @@
 		<key>56C9C5EB77817225FCB40B6062DA2E63</key>
 		<dict>
 			<key>fileRef</key>
-			<string>273A5FCDF57A6E05832ACA27BBF8E2EE</string>
+			<string>85399394632D254607878925F3CB91EB</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 			<key>settings</key>
@@ -20071,7 +20019,7 @@
 		<key>5CF0717176E855A96E51313BD4DCE1B6</key>
 		<dict>
 			<key>fileRef</key>
-			<string>85DE750AB59AFD7147400AFB8719BCB6</string>
+			<string>BF0A44E026858AB8D4A3478882736B6B</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 			<key>settings</key>
@@ -21335,19 +21283,16 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>632DF5BAB17E5B0229F6AB145E4D68BE</key>
+		<key>6328D772D5D4809EC780BD9342640AE2</key>
 		<dict>
-			<key>children</key>
-			<array>
-				<string>9839EA7B6D02D2C6CBBD30AD2C19AF94</string>
-				<string>140BB255C586D22BCFFD3F56BD044F3F</string>
-			</array>
+			<key>includeInIndex</key>
+			<string>1</string>
 			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Classes</string>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
 			<key>path</key>
-			<string>Classes</string>
+			<string>IDMZoomingScrollView.m</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -22772,19 +22717,6 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>6A29A5AC289F2AF8B3F0096874883639</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.objc</string>
-			<key>path</key>
-			<string>IDMZoomingScrollView.m</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
 		<key>6A2FFB2A401F74591966E4BCFEB1BB90</key>
 		<dict>
 			<key>fileRef</key>
@@ -23158,6 +23090,19 @@
 			<string>5673E148C8FBC6B0450D747326379267</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
+		</dict>
+		<key>6B77AB18FC4A68B175747A7B0A489A97</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>IDMPBConstants.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
 		</dict>
 		<key>6B86803A819F65B45842EFAC53118CE5</key>
 		<dict>
@@ -24586,7 +24531,7 @@
 		<key>726C6EC92376FD918170A4BE9D1E0758</key>
 		<dict>
 			<key>fileRef</key>
-			<string>BABC6D8C1B62EDA999B02F9C2250D7EE</string>
+			<string>B4903D4483E67A7F44254E2016F6A71B</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 			<key>settings</key>
@@ -25073,19 +25018,6 @@
 				<string>-w -Xanalyzer -analyzer-disable-all-checks</string>
 			</dict>
 		</dict>
-		<key>74540EB9DBBDE30B207351A97D6E2327</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>path</key>
-			<string>IDMTapDetectingImageView.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
 		<key>7456805F70A002DA375EA658044B48AD</key>
 		<dict>
 			<key>includeInIndex</key>
@@ -25145,6 +25077,26 @@
 			<string>FBSDKGraphRequestConnection.h</string>
 			<key>path</key>
 			<string>FBSDKCoreKit/FBSDKCoreKit/FBSDKGraphRequestConnection.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>74F1FC9E3A1A7749ED9DA175813A1494</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>E476E106EA36050B2D68EEB7F90C7D01</string>
+				<string>35A1D1F76050EB557DACBBCFEE6E55CC</string>
+				<string>563242421075B03B025B3C9C644C5DB7</string>
+				<string>DCA85C2BCDE9DFDA1C3A8F2022D9B853</string>
+				<string>C12BE528DE6EC025E04AD640A7C83010</string>
+				<string>1C037469CCB7967A871CC9D6F1DC3951</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Support Files</string>
+			<key>path</key>
+			<string>../../Code/Patchr-ios-next/Pods/Target Support Files/IDMPhotoBrowser</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -26138,6 +26090,19 @@
 			<string>FBSDKProfile.h</string>
 			<key>path</key>
 			<string>FBSDKCoreKit/FBSDKCoreKit/FBSDKProfile.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>78B2B08EBB2EE4998BF071D5618432B9</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>IDMPhoto.m</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -27869,7 +27834,7 @@
 		<key>8264E2FFABECB3D6CAC7167AD87BCD56</key>
 		<dict>
 			<key>fileRef</key>
-			<string>6A29A5AC289F2AF8B3F0096874883639</string>
+			<string>6328D772D5D4809EC780BD9342640AE2</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 			<key>settings</key>
@@ -28563,6 +28528,19 @@
 				</array>
 			</dict>
 		</dict>
+		<key>85399394632D254607878925F3CB91EB</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>IDMPhotoProtocol.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
 		<key>853F3F35EFB64C397C60760FA0EEE8AC</key>
 		<dict>
 			<key>includeInIndex</key>
@@ -28775,19 +28753,6 @@
 			<string>POP.h</string>
 			<key>path</key>
 			<string>pop/POP.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>85DE750AB59AFD7147400AFB8719BCB6</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.objc</string>
-			<key>path</key>
-			<string>IDMTapDetectingImageView.m</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -29886,26 +29851,6 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>89FFBFB0F4CCB4C300B7644AF6C7D43D</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>F96713A64EEBDDF4C11F3BEBC7C92F11</string>
-				<string>E459DCC5E324EC519F8D47944DFDAA60</string>
-				<string>1E0509F0C8F57D9C044726F4795E437D</string>
-				<string>E053C230BB9A07A502DEE32F2536A626</string>
-				<string>979151E6814C84A7F91D2D48C2C8A106</string>
-				<string>9E0824A7E4A7F32D43C86357356D45EF</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Support Files</string>
-			<key>path</key>
-			<string>../../Code/Patchr-ios/Pods/Target Support Files/IDMPhotoBrowser</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
 		<key>8A21304A228B3257DE3730D9BB7E8DB4</key>
 		<dict>
 			<key>fileRef</key>
@@ -30267,6 +30212,19 @@
 			<string>KIFUITestActor-IdentifierTests.h</string>
 			<key>path</key>
 			<string>IdentifierTests/KIFUITestActor-IdentifierTests.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>8CA92192CB1BCC9748E11BD70B09C95D</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>IDMCaptionView.m</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -31096,6 +31054,19 @@
 				<string>-DOS_OBJECT_USE_OBJC=0 -w -Xanalyzer -analyzer-disable-all-checks</string>
 			</dict>
 		</dict>
+		<key>9198F760F83483C78E9C66D77638BC88</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.plug-in</string>
+			<key>path</key>
+			<string>IDMPBLocalizations.bundle</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
 		<key>91D8E6DA542B7EA5790767D419DE8BD2</key>
 		<dict>
 			<key>includeInIndex</key>
@@ -31207,19 +31178,6 @@
 			<string>BFMeasurementEvent.h</string>
 			<key>path</key>
 			<string>Bolts/iOS/BFMeasurementEvent.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>925BF4669BCBC230DD0F6101BC9163DB</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>path</key>
-			<string>IDMTapDetectingView.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -32254,19 +32212,6 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>979151E6814C84A7F91D2D48C2C8A106</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>path</key>
-			<string>IDMPhotoBrowser-umbrella.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
 		<key>97BD47479E7F29CB2171DA1A4A09F636</key>
 		<dict>
 			<key>includeInIndex</key>
@@ -32392,19 +32337,6 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>9839EA7B6D02D2C6CBBD30AD2C19AF94</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.plug-in</string>
-			<key>path</key>
-			<string>IDMPBLocalizations.bundle</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
 		<key>983B9895AA1422777D96D02D01D4CB1C</key>
 		<dict>
 			<key>baseConfigurationReference</key>
@@ -32519,7 +32451,7 @@
 		<key>988AB4BE5D439635FB8E9D3289D3FD81</key>
 		<dict>
 			<key>fileRef</key>
-			<string>2530F03C2F4CC139DEE0B73CF78D12D0</string>
+			<string>78B2B08EBB2EE4998BF071D5618432B9</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 			<key>settings</key>
@@ -33943,19 +33875,6 @@
 				<key>COMPILER_FLAGS</key>
 				<string>-w -Xanalyzer -analyzer-disable-all-checks</string>
 			</dict>
-		</dict>
-		<key>9E0824A7E4A7F32D43C86357356D45EF</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.plist.xml</string>
-			<key>path</key>
-			<string>Info.plist</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
 		</dict>
 		<key>9E1320D371BA50DF43F16368B9EF003D</key>
 		<dict>
@@ -37024,34 +36943,6 @@
 				<string>-w -Xanalyzer -analyzer-disable-all-checks</string>
 			</dict>
 		</dict>
-		<key>ACC21F3A63562D8DBC5559BCD599F82D</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>34EC40F71CDF3A8A6B15F17C499D3E0F</string>
-				<string>118AE92E5D71902E0BCA7594B52F29E5</string>
-				<string>358F542202EE75C91FCE762ECA787521</string>
-				<string>CC06510955291B0D477747E2C82F08C1</string>
-				<string>2530F03C2F4CC139DEE0B73CF78D12D0</string>
-				<string>212A42C11FF0857E83C61E84B14E5C0E</string>
-				<string>4A2CC9ABCA126EE155E2E2FA19A40B46</string>
-				<string>273A5FCDF57A6E05832ACA27BBF8E2EE</string>
-				<string>74540EB9DBBDE30B207351A97D6E2327</string>
-				<string>85DE750AB59AFD7147400AFB8719BCB6</string>
-				<string>925BF4669BCBC230DD0F6101BC9163DB</string>
-				<string>BABC6D8C1B62EDA999B02F9C2250D7EE</string>
-				<string>4268660BF051CBECD447CB58DC76418A</string>
-				<string>6A29A5AC289F2AF8B3F0096874883639</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Classes</string>
-			<key>path</key>
-			<string>Classes</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
 		<key>AD1B9AA27B2291A79F603E890531517A</key>
 		<dict>
 			<key>includeInIndex</key>
@@ -38121,7 +38012,7 @@
 		<key>B282ED3A574A579752DE8E9C69C28006</key>
 		<dict>
 			<key>fileRef</key>
-			<string>140BB255C586D22BCFFD3F56BD044F3F</string>
+			<string>40FC59C7FDF3771312E7B4B6E1BDF034</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
@@ -38354,6 +38245,19 @@
 			<string>6564AFD62EAFAB1AD8ABD6990CBE297E</string>
 			<key>targetProxy</key>
 			<string>FFE7D49E2D0016477341319059DF1AB6</string>
+		</dict>
+		<key>B4903D4483E67A7F44254E2016F6A71B</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>IDMTapDetectingView.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
 		</dict>
 		<key>B4F4DFEB947FFB1E57582E3EEA90F84E</key>
 		<dict>
@@ -38816,6 +38720,19 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
+		<key>B849573B59335AF26B5BB5075822F62F</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>IDMTapDetectingView.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
 		<key>B852FB3165EB952EE2D3EE38BBCD09CC</key>
 		<dict>
 			<key>includeInIndex</key>
@@ -38967,6 +38884,34 @@
 			<string>FBSDKShareDialog.h</string>
 			<key>path</key>
 			<string>FBSDKShareKit/FBSDKShareKit/FBSDKShareDialog.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>B8A5C7215930CD0CC39CD55F9B8E59B3</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>E6DEF4408AA875731CA891AD8172F8D1</string>
+				<string>8CA92192CB1BCC9748E11BD70B09C95D</string>
+				<string>6B77AB18FC4A68B175747A7B0A489A97</string>
+				<string>DCC6E1BB8DD59F4B90E0AE143E540B80</string>
+				<string>78B2B08EBB2EE4998BF071D5618432B9</string>
+				<string>2380D5BE8244171F23C3B83E12B7636D</string>
+				<string>FA774B246C3B39915A9E742743E42316</string>
+				<string>85399394632D254607878925F3CB91EB</string>
+				<string>4F1898512754C6CA154CA8598335C7C4</string>
+				<string>BF0A44E026858AB8D4A3478882736B6B</string>
+				<string>B849573B59335AF26B5BB5075822F62F</string>
+				<string>B4903D4483E67A7F44254E2016F6A71B</string>
+				<string>F61C8AC0A8E492B55DC4CCEE103355A1</string>
+				<string>6328D772D5D4809EC780BD9342640AE2</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Classes</string>
+			<key>path</key>
+			<string>Classes</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -39561,19 +39506,6 @@
 			<string>String+FileName.swift</string>
 			<key>path</key>
 			<string>Sources/Quick/String+FileName.swift</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>BABC6D8C1B62EDA999B02F9C2250D7EE</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.objc</string>
-			<key>path</key>
-			<string>IDMTapDetectingView.m</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -40459,6 +40391,19 @@
 				<string>-DOS_OBJECT_USE_OBJC=0 -w -Xanalyzer -analyzer-disable-all-checks</string>
 			</dict>
 		</dict>
+		<key>BF0A44E026858AB8D4A3478882736B6B</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>IDMTapDetectingImageView.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
 		<key>BF0B0F5643809952ADBC9A22D5FBBD8E</key>
 		<dict>
 			<key>includeInIndex</key>
@@ -40987,6 +40932,19 @@
 				<key>COMPILER_FLAGS</key>
 				<string>-w -Xanalyzer -analyzer-disable-all-checks</string>
 			</dict>
+		</dict>
+		<key>C12BE528DE6EC025E04AD640A7C83010</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>IDMPhotoBrowser-umbrella.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
 		</dict>
 		<key>C12C01B8B51005CF01FBE0D66653A099</key>
 		<dict>
@@ -42645,6 +42603,19 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
+		<key>C9C62AA79A53E59282F68D72F453ADAD</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>DD9498372394FBB2E46941C7ABD4CDCC</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Resources</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
 		<key>C9E0987E0B2B3430689361EE37D61D65</key>
 		<dict>
 			<key>includeInIndex</key>
@@ -42675,7 +42646,7 @@
 		<key>CA53CE0C1710B14A7F8F19DA791EEB7C</key>
 		<dict>
 			<key>baseConfigurationReference</key>
-			<string>E459DCC5E324EC519F8D47944DFDAA60</string>
+			<string>35A1D1F76050EB557DACBBCFEE6E55CC</string>
 			<key>buildSettings</key>
 			<dict>
 				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
@@ -43051,19 +43022,6 @@
 				<key>COMPILER_FLAGS</key>
 				<string>-w -Xanalyzer -analyzer-disable-all-checks</string>
 			</dict>
-		</dict>
-		<key>CC06510955291B0D477747E2C82F08C1</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>path</key>
-			<string>IDMPhoto.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
 		</dict>
 		<key>CC0A69C2B4ABDF2EC772F3E94146BF05</key>
 		<dict>
@@ -44994,7 +44952,7 @@
 		<key>D481CE58A46260EE757205D6A9B581DD</key>
 		<dict>
 			<key>fileRef</key>
-			<string>1E0509F0C8F57D9C044726F4795E437D</string>
+			<string>563242421075B03B025B3C9C644C5DB7</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
@@ -45121,19 +45079,6 @@
 			<string>AWSXMLDictionary.h</string>
 			<key>path</key>
 			<string>AWSCore/XMLDictionary/AWSXMLDictionary.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>D54005206EF62F609C772958A2BB3AB1</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>632DF5BAB17E5B0229F6AB145E4D68BE</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Resources</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -45986,7 +45931,7 @@
 		<dict>
 			<key>children</key>
 			<array>
-				<string>ECD5F3B2BD0F5C318C422DC49A942631</string>
+				<string>DE70FB05CB120379CC936C5FA34A4292</string>
 				<string>14A0D2C8C3E0053299B04452A9F4D28D</string>
 			</array>
 			<key>isa</key>
@@ -46376,6 +46321,19 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
+		<key>DCA85C2BCDE9DFDA1C3A8F2022D9B853</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>IDMPhotoBrowser-prefix.pch</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
 		<key>DCA976A88DD4847E3EB0C71BE4F268F0</key>
 		<dict>
 			<key>fileRef</key>
@@ -46428,6 +46386,19 @@
 			<string>CF1187A31300989399BD786909A21F98</string>
 			<key>targetProxy</key>
 			<string>4CF4F197C7E8244FFBEF4783357FC08D</string>
+		</dict>
+		<key>DCC6E1BB8DD59F4B90E0AE143E540B80</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>IDMPhoto.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
 		</dict>
 		<key>DCCD71F734895DD7FB87B1604A7B13A7</key>
 		<dict>
@@ -46625,6 +46596,22 @@
 				<string>-w -Xanalyzer -analyzer-disable-all-checks</string>
 			</dict>
 		</dict>
+		<key>DD9498372394FBB2E46941C7ABD4CDCC</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>9198F760F83483C78E9C66D77638BC88</string>
+				<string>40FC59C7FDF3771312E7B4B6E1BDF034</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Classes</string>
+			<key>path</key>
+			<string>Classes</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
 		<key>DDE547B30F4BF3F6F153E70AB06E264A</key>
 		<dict>
 			<key>fileRef</key>
@@ -46732,6 +46719,23 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
+		<key>DE70FB05CB120379CC936C5FA34A4292</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>B8A5C7215930CD0CC39CD55F9B8E59B3</string>
+				<string>C9C62AA79A53E59282F68D72F453ADAD</string>
+				<string>74F1FC9E3A1A7749ED9DA175813A1494</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>IDMPhotoBrowser</string>
+			<key>path</key>
+			<string>/Users/jaymassena/code/IDMPhotoBrowser</string>
+			<key>sourceTree</key>
+			<string>&lt;absolute&gt;</string>
+		</dict>
 		<key>DE7CB05FB9A349FA1A4E3AB39FCDD5F7</key>
 		<dict>
 			<key>includeInIndex</key>
@@ -46808,7 +46812,7 @@
 		<key>DEC1B1FA637F290DFB849DDEA91FFAD6</key>
 		<dict>
 			<key>fileRef</key>
-			<string>979151E6814C84A7F91D2D48C2C8A106</string>
+			<string>C12BE528DE6EC025E04AD640A7C83010</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 			<key>settings</key>
@@ -47127,19 +47131,6 @@
 			<string>BFURL.m</string>
 			<key>path</key>
 			<string>Bolts/iOS/BFURL.m</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>E053C230BB9A07A502DEE32F2536A626</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>path</key>
-			<string>IDMPhotoBrowser-prefix.pch</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -47969,19 +47960,6 @@
 				</array>
 			</dict>
 		</dict>
-		<key>E459DCC5E324EC519F8D47944DFDAA60</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.xcconfig</string>
-			<key>path</key>
-			<string>IDMPhotoBrowser.xcconfig</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
 		<key>E474DB43F2DC4E3E85B2151EE758874D</key>
 		<dict>
 			<key>children</key>
@@ -47999,6 +47977,17 @@
 			<string>Support Files</string>
 			<key>path</key>
 			<string>../Target Support Files/FBSDKShareKit</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>E476E106EA36050B2D68EEB7F90C7D01</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>IDMPhotoBrowser.modulemap</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -48557,6 +48546,19 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
+		<key>E6DEF4408AA875731CA891AD8172F8D1</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>IDMCaptionView.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
 		<key>E6EE943C555CF9ADE9A61408B2D25B37</key>
 		<dict>
 			<key>includeInIndex</key>
@@ -48956,7 +48958,7 @@
 		<key>E8C05A48DBAF0AEB33027F9E7841777E</key>
 		<dict>
 			<key>baseConfigurationReference</key>
-			<string>E459DCC5E324EC519F8D47944DFDAA60</string>
+			<string>35A1D1F76050EB557DACBBCFEE6E55CC</string>
 			<key>buildSettings</key>
 			<dict>
 				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
@@ -49845,23 +49847,6 @@
 				<key>COMPILER_FLAGS</key>
 				<string>-w -Xanalyzer -analyzer-disable-all-checks</string>
 			</dict>
-		</dict>
-		<key>ECD5F3B2BD0F5C318C422DC49A942631</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>ACC21F3A63562D8DBC5559BCD599F82D</string>
-				<string>D54005206EF62F609C772958A2BB3AB1</string>
-				<string>89FFBFB0F4CCB4C300B7644AF6C7D43D</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>IDMPhotoBrowser</string>
-			<key>path</key>
-			<string>/Users/jaymassena/code/IDMPhotoBrowser</string>
-			<key>sourceTree</key>
-			<string>&lt;absolute&gt;</string>
 		</dict>
 		<key>ECEB6AFEB7BD9200BB3C6E291CA36226</key>
 		<dict>
@@ -51529,6 +51514,19 @@
 				<string>-w -Xanalyzer -analyzer-disable-all-checks</string>
 			</dict>
 		</dict>
+		<key>F61C8AC0A8E492B55DC4CCEE103355A1</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>IDMZoomingScrollView.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
 		<key>F62A213935F709FD2BD8FE6E544999CA</key>
 		<dict>
 			<key>fileRef</key>
@@ -52155,17 +52153,6 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>F96713A64EEBDDF4C11F3BEBC7C92F11</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>path</key>
-			<string>IDMPhotoBrowser.modulemap</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
 		<key>F968A14C5D2228CA6A536A398346B3E0</key>
 		<dict>
 			<key>includeInIndex</key>
@@ -52450,6 +52437,19 @@
 			<string>sourcecode.c.h</string>
 			<key>path</key>
 			<string>Pods-PatchrTests-umbrella.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>FA774B246C3B39915A9E742743E42316</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>IDMPhotoBrowser.m</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>

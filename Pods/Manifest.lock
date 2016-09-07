@@ -97,9 +97,9 @@ PODS:
   - pop (1.0.9)
   - Quick (0.9.3)
   - RxSwift (2.6.0)
-  - SDWebImage (3.8.1):
-    - SDWebImage/Core (= 3.8.1)
-  - SDWebImage/Core (3.8.1)
+  - SDWebImage (3.8.2):
+    - SDWebImage/Core (= 3.8.2)
+  - SDWebImage/Core (3.8.2)
   - THContactPicker (1.2)
   - TWMessageBarManager (1.8.1)
   - UIDevice-Hardware (0.1.7)
@@ -181,7 +181,7 @@ SPEC CHECKSUMS:
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
   Quick: 13a2a2b19a5d8e3ed4fd0c36ee46597fd77ebf71
   RxSwift: 77f3a0b15324baa7a1c9bfa9f199648a82424e26
-  SDWebImage: 35f9627a3e44b4f292a8a8ce6a531fa488239b91
+  SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   THContactPicker: e723f7c6ab6e1d6d10d59d618322ab8bfcb00365
   TWMessageBarManager: fd84e7948ba7968a2b5d9454859135761214ec56
   UIDevice-Hardware: de848ac4b53de555f70ff1a32877454d221c71d1
