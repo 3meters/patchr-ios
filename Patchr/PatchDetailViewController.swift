@@ -46,10 +46,6 @@ class PatchDetailViewController: BaseDetailViewController {
         if self.showEmptyLabel {
             self.emptyLabel.layer.borderWidth = 0
         }
-        if let revealController = self.revealViewController() {
-            revealController.panGestureRecognizer()
-            revealController.tapGestureRecognizer()
-        }
     }
 
     override func viewWillLayoutSubviews() {
@@ -120,7 +116,7 @@ class PatchDetailViewController: BaseDetailViewController {
     }
 
     func toggleAction(sender: AnyObject) {
-        self.revealViewController().revealToggle(sender)
+        self.slideMenuController()?.openLeft()
     }
 
     func addAction() {
@@ -387,7 +383,7 @@ class PatchDetailViewController: BaseDetailViewController {
     }
 
     func sideMenuAction(sender: AnyObject?) {
-        self.revealViewController().rightRevealToggle(sender)
+        self.slideMenuController()?.openRight()
     }
 
     func joinAction(sender: AnyObject?) {
@@ -637,10 +633,10 @@ class PatchDetailViewController: BaseDetailViewController {
 
         /* Navigation button */
         button = UIButton(type: .Custom)
-        button.frame = CGRectMake(0, 0, 48, 48)
+        button.frame = CGRectMake(0, 0, 36, 36)
         button.addTarget(self, action: #selector(PatchDetailViewController.toggleAction(_:)), forControlEvents: .TouchUpInside)
         button.showsTouchWhenHighlighted = true
-        button.setImage(UIImage(named: "imgLogo2"), forState: .Normal)
+        button.setImage(UIImage(named: "imgNavigationLight"), forState: .Normal)
         button.imageEdgeInsets = UIEdgeInsetsMake(8, 0, 8, 16);
 
         let navButton = UIBarButtonItem(customView: button)
@@ -963,30 +959,6 @@ extension PatchDetailViewController {
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return super.tableView(tableView, numberOfRowsInSection: section)
-    }
-}
-
-extension PatchDetailViewController: MFMailComposeViewControllerDelegate {
-    func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
-
-        switch result.rawValue {
-            case MFMailComposeResultCancelled.rawValue:    // 0
-                UIShared.Toast("Report cancelled", controller: self, addToWindow: false)
-            case MFMailComposeResultSaved.rawValue:        // 1
-                UIShared.Toast("Report saved", controller: self, addToWindow: false)
-            case MFMailComposeResultSent.rawValue:        // 2
-                Reporting.track("Sent Report", properties: ["target": "Patch"])
-                UIShared.Toast("Report sent", controller: self, addToWindow: false)
-            case MFMailComposeResultFailed.rawValue:    // 3
-                UIShared.Toast("Report send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
-            default:
-                break
-        }
-
-        self.dismissViewControllerAnimated(true) {
-            MailComposer = nil
-            MailComposer = MFMailComposeViewController()
-        }
     }
 }
 

@@ -17,10 +17,10 @@ import CocoaLumberjack
 import iRate
 import Bugsnag
 import MBProgressHUD
-import SWRevealViewController
+import SlideMenuControllerSwift
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate, SWRevealViewControllerDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 
     var window: UIWindow?
     var firstLaunch: Bool = false
@@ -322,21 +322,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate, SWRevealVi
 
         /* If we have an authenticated user then start at the usual spot, otherwise start at the lobby scene. */
         if UserController.instance.authenticated {
-            let sideController = SideMenuViewController()
-            let rearController = PatchTableViewController()
-            rearController.filter = PatchListFilter.Watching
-            rearController.user = UserController.instance.currentUser
-            let frontController = PatchDetailViewController()
-            frontController.entityId = "pa.150820.00499.464.259239"
-            let frontNavController = AirNavigationController(rootViewController: frontController)
-            let revealController = SWRevealViewController(rearViewController: rearController, frontViewController: frontNavController)
-            revealController.delegate = self
-            revealController.rearViewRevealWidth = NAVIGATION_DRAWER_WIDTH
-            revealController.rightViewController = sideController
-            revealController.rightViewRevealWidth = SIDE_MENU_WIDTH
-            revealController.rightViewRevealDisplacement = SIDE_MENU_WIDTH
-            revealController.rightViewRevealOverdraw = 0
-            self.window?.setRootViewController(revealController, animated: true)
+            
+            SlideMenuOptions.leftViewWidth = NAVIGATION_DRAWER_WIDTH
+            SlideMenuOptions.rightViewWidth = SIDE_MENU_WIDTH
+            SlideMenuOptions.animationDuration = CGFloat(0.2)
+            SlideMenuOptions.simultaneousGestureRecognizers = false
+            
+            let menuController = SideMenuViewController()
+            
+            let navigationController = NavigationController()
+            navigationController.filter = PatchListFilter.Watching
+            navigationController.user = UserController.instance.currentUser
+            
+            let mainController = PatchDetailViewController()
+            mainController.entityId = "pa.150820.00499.464.259239"
+            let mainNavController = AirNavigationController(rootViewController: mainController)
+            
+            let slideController = SlideMenuController(mainViewController: mainNavController, leftMenuViewController: navigationController, rightMenuViewController: menuController)
+            self.window?.setRootViewController(slideController, animated: true)
         }
         else {
             let controller = LobbyViewController()

@@ -14,7 +14,6 @@ class ChannelView: BaseView {
 
     var visibility		= UILabel()
 	var name			= UILabel()
-	var photo			= AirImageView(frame: CGRectZero)
 	
 	override init(frame: CGRect) {
 		/* Called when instantiated from code */
@@ -30,83 +29,34 @@ class ChannelView: BaseView {
 	
 	func initialize() {
 		
-		self.clipsToBounds = true
-		
-		self.layer.backgroundColor = Theme.colorBackgroundTile.CGColor
-		
-		/* Patch photo */
-		self.photo.contentMode = UIViewContentMode.ScaleAspectFill
-		self.photo.clipsToBounds = true
-		self.photo.userInteractionEnabled = true
-		self.photo.backgroundColor = Colors.gray80pcntColor
-		self.photo.sizeCategory = SizeCategory.thumbnail
-		self.addSubview(self.photo)
-		
 		/* Patch name */
 		self.name.font = Theme.fontText
+        self.name.textColor = Theme.colorTextSecondary
 		self.name.numberOfLines = 1
 		self.addSubview(self.name)
 		
 		/* Patch visibility */
         self.visibility.font = UIFont.fontAwesomeOfSize(16)
+        self.visibility.textColor = Theme.colorTextSecondary
 		self.addSubview(self.visibility)
 	}
 	
 	override func bindToEntity(entity: AnyObject, location: CLLocation?) {
 		
-		let entity = entity as! Entity
-		
-		self.entity = entity
-		
-		self.name.text = entity.name.lowercaseString.stringByReplacingOccurrencesOfString(" ", withString: "-")
-		
 		if let patch = entity as? Patch {
+            self.entity = patch
+            self.name.text = patch.name.lowercaseString.stringByReplacingOccurrencesOfString(" ", withString: "-")
             self.visibility.text = (patch.visibility != nil && patch.visibility == "public") ? String.fontAwesomeIconWithName(.Hashtag) : String.fontAwesomeIconWithName(.Lock)
-		}
-				
-		self.photo.backgroundColor = Colors.gray80pcntColor
-
-		if entity.photo != nil {
-			let photoUrl = PhotoUtils.url(entity.photo!.prefix!, source: entity.photo!.source!, category: SizeCategory.profile)
-			bindPhoto(photoUrl, name: entity.name)
-		}
-		else {
-			bindPhoto(nil, name: entity.name)
 		}
 
 		self.setNeedsLayout()
 	}
 	
-	private func bindPhoto(photoUrl: NSURL?, name: String?) {
-		
-		if self.photo.image != nil
-			&& self.photo.linkedPhotoUrl != nil
-			&& photoUrl != nil
-			&& self.photo.linkedPhotoUrl?.absoluteString == photoUrl?.absoluteString {
-			return
-		}
-
-		self.photo.image = nil
-		
-		if photoUrl != nil {
-			self.photo.setImageWithUrl(photoUrl!, animate: false)
-			self.photo.showGradient = true
-		}
-		else if name != nil {
-			let seed = Utils.numberFromName(name!)
-			self.photo.backgroundColor = Utils.randomColor(seed)
-			self.photo.showGradient = true
-		}
-	}
-
 	override func layoutSubviews() {
 		super.layoutSubviews()
 				
-		let columnWidth = self.width() - (36 + 64 + 8)
-		let nameSize = self.name.sizeThatFits(CGSizeMake(columnWidth, CGFloat.max))
-		
-        self.visibility.anchorCenterLeftWithLeftPadding(16, width: 20, height: 20)
-		self.name.alignToTheRightOf(self.visibility, matchingCenterWithLeftPadding: 0, width: 200, height: nameSize.height)
-        self.photo.anchorCenterRightWithRightPadding(68, width: 64, height: 40)
+		let columnWidth = NAVIGATION_DRAWER_WIDTH - (24 + 20 + 8 + 24)
+        self.visibility.anchorCenterLeftWithLeftPadding(24, width: 20, height: 20)
+        self.name.alignToTheRightOf(self.visibility, withLeftPadding: 0, topPadding: 6, width: columnWidth, height: 24)
 	}
 }
