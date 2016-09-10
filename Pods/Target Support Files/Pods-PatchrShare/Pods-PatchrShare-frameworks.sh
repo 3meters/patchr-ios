@@ -105,7 +105,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "Pods-PatchrShare/Lockbox.framework"
   install_framework "Pods-PatchrShare/SDWebImage.framework"
 fi
-if [[ "$CONFIGURATION" == "AdHoc" ]]; then
+if [[ "$CONFIGURATION" == "Adhoc" ]]; then
   install_framework "Pods-PatchrShare/AWSCore.framework"
   install_framework "Pods-PatchrShare/AWSS3.framework"
   install_framework "Pods-PatchrShare/Bugsnag.framework"

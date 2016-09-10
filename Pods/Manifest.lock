@@ -63,6 +63,7 @@ PODS:
     - GoogleSymbolUtilities (~> 1.1)
     - GoogleUtilities (~> 1.2)
   - FirebaseInstanceID (1.0.8)
+  - FontAwesome.swift (0.8.0)
   - Google/Analytics (3.0.3):
     - Google/Core
     - GoogleAnalytics (~> 3.12)
@@ -100,6 +101,7 @@ PODS:
   - SDWebImage (3.8.2):
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
+  - SWRevealViewController (2.4.0)
   - THContactPicker (1.2)
   - TWMessageBarManager (1.8.1)
   - UIDevice-Hardware (0.1.7)
@@ -118,6 +120,7 @@ DEPENDENCIES:
   - FBSDKCoreKit (~> 4.14.0)
   - FBSDKLoginKit (~> 4.14.0)
   - FBSDKShareKit (~> 4.14.0)
+  - FontAwesome.swift
   - Google/Analytics
   - IDMPhotoBrowser (from `~/code/IDMPhotoBrowser`)
   - iRate (~> 1.11.6)
@@ -133,6 +136,8 @@ DEPENDENCIES:
   - Quick (~> 0.9.3)
   - RxSwift (~> 2.6.0)
   - SDWebImage (~> 3.8.1)
+  - SWRevealViewController (from `https://github.com/John-Lluch/SWRevealViewController.git`,
+    tag `v2.4.0`)
   - THContactPicker (~> 1.2)
   - TWMessageBarManager (~> 1.8)
   - UIDevice-Hardware (~> 0.1.7)
@@ -142,6 +147,14 @@ EXTERNAL SOURCES:
     :path: ~/code/IDMPhotoBrowser
   Keys:
     :path: Pods/CocoaPodsKeys
+  SWRevealViewController:
+    :git: https://github.com/John-Lluch/SWRevealViewController.git
+    :tag: v2.4.0
+
+CHECKOUT OPTIONS:
+  SWRevealViewController:
+    :git: https://github.com/John-Lluch/SWRevealViewController.git
+    :tag: v2.4.0
 
 SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
@@ -162,6 +175,7 @@ SPEC CHECKSUMS:
   FBSDKShareKit: e8e5d4ccef69b41132fe33acda26db1e33143e33
   FirebaseAnalytics: 228be2991cb28efb96cdafc4d62f64680e615c69
   FirebaseInstanceID: ba1e640935235e5fac39dfa816fe7660e72e1a8a
+  FontAwesome.swift: f8c6cc5c42cbe93bdc04371363bc7b371fb3d3a1
   Google: 813c467362eabc11385f5a5cc9ad0cb651a58f4e
   GoogleAnalytics: 3de986b2fa29012c69fa415566006a9c9cf25320
   GoogleInterchangeUtilities: def8415a862effc67d549d5b5b0b9c7a2f97d4de
@@ -182,6 +196,7 @@ SPEC CHECKSUMS:
   Quick: 13a2a2b19a5d8e3ed4fd0c36ee46597fd77ebf71
   RxSwift: 77f3a0b15324baa7a1c9bfa9f199648a82424e26
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
+  SWRevealViewController: b653f339865208c97be99a24876545f5be0cc4bb
   THContactPicker: e723f7c6ab6e1d6d10d59d618322ab8bfcb00365
   TWMessageBarManager: fd84e7948ba7968a2b5d9454859135761214ec56
   UIDevice-Hardware: de848ac4b53de555f70ff1a32877454d221c71d1
