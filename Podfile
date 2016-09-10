@@ -49,7 +49,7 @@ def core_pods
   pod 'Bugsnag',                  '~> 5.4.2'      # Crash reporting
   pod 'OneSignal',                '~> 2.0.10'
   pod 'RxSwift',                  '~> 2.6.0'
-  pod 'SWRevealViewController',   :git => 'https://github.com/John-Lluch/SWRevealViewController.git', :tag => 'v2.4.0'
+  pod 'SlideMenuControllerSwift', '~> 2.2.2'
   pod 'FontAwesome.swift'
 end
 
