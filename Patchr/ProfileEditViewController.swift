@@ -688,11 +688,9 @@ class ProfileEditViewController: BaseEditViewController {
                 }
         }
         else {
-            let controller = MainTabBarController()
-            controller.selectedIndex = 0
-            AppDelegate.appDelegate().window!.setRootViewController(controller, animated: true)
+            AppDelegate.appDelegate().routeForRoot()
             if UserController.instance.userName != nil {
-                UIShared.Toast("Logged in as \(UserController.instance.userName!)", controller: controller, addToWindow: false)
+                UIShared.Toast("Logged in as \(UserController.instance.userName!)")
             }
         }
     }

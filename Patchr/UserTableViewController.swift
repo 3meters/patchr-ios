@@ -13,7 +13,6 @@ class UserTableViewController: BaseTableViewController {
 	var patch:          Patch!
     var message:        Message!
 	var filter:         UserTableFilter = .PatchWatchers
-	var showOwnerUI		= false
 	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -34,9 +33,6 @@ class UserTableViewController: BaseTableViewController {
 		switch self.filter {
 			case .PatchWatchers:
 				self.navigationItem.title = "Members"
-                if watchListForOwner() {
-					self.showOwnerUI = true
-                }
 			case .MessageLikers:
 				self.navigationItem.title = "Liked by"
 		}
@@ -136,17 +132,6 @@ class UserTableViewController: BaseTableViewController {
 			}
 		}
 	}
-	
-    func watchListForOwner() -> Bool {
-        if self.filter == .PatchWatchers && self.patch.visibility == "private" {
-            if let currentUser = UserController.instance.currentUser {
-                if currentUser.id_ == self.patch.ownerId {
-                    return true
-                }
-            }
-        }
-        return false
-    }
 }
 
 /*--------------------------------------------------------------------------------------------
@@ -164,100 +149,15 @@ extension UserTableViewController {
 		if let view = cell.view as? UserView {
 			
 			let user = entity as! User
-			if self.filter == .PatchWatchers {
-				if self.patch != nil {
-					view.owner.hidden = !(user.id_ == self.patch.ownerId)
-				}
-				
-				if self.showOwnerUI {
-					if let currentUser = UserController.instance.currentUser {
-						if user.id_ != currentUser.id_ {
-							view.approvedSwitch.on = false
-							if (user.link != nil && user.link.type == "watch") {
-								view.approvedSwitch.on = user.link.enabledValue
-							}
-							view.showOwnerUI()
-						}
-					}
-				}
+			if self.filter == .PatchWatchers && self.patch != nil {
+				view.owner.hidden = !(user.id_ == self.patch.ownerId)
 			}
 			view.cell = cell
-			view.delegate = self
 		}
 	}
 	
 	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
 		return 97
-	}
-}
-
-extension UserTableViewController: UserApprovalViewDelegate {
-    
-	func userView(userView: UserView, approvalSwitchValueChanged approvalSwitch: UISwitch) {
-        
-		if let indexPath = self.tableView.indexPathForCell(userView.cell!) {
-			if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
-				if let user = queryResult.object as? User {
-					approvalSwitch.enabled = false
-					let linkEnabled = approvalSwitch.on
-					
-					DataController.proxibase.enableLinkById(user.link.id_, enabled: linkEnabled, completion: {
-						response, error in
-                        
-						NSOperationQueue.mainQueue().addOperationWithBlock {
-							if let error = ServerError(error) {
-								approvalSwitch.on = !linkEnabled
-								self.handleError(error, errorActionType: .ALERT)
-							}
-							else {
-								Reporting.track(linkEnabled ? "Approved Member" : "Unapproved Member")
-								user.link.enabledValue = linkEnabled
-								DataController.instance.saveContext(BLOCKING)
-							}
-							approvalSwitch.enabled = true
-						}
-					})
-				}
-			}
-		}
-	}
-
-	func userView(userView: UserView, removeButtonTapped removeButton: UIButton) {
-		
-		self.DeleteConfirmationAlert(
-			"Confirm Remove",
-			message: "Do you want to remove the request to join your patch?",
-			actionTitle: "Remove", cancelTitle: "Cancel", delegate: self) {
-				doIt in
-				if doIt {
-					self.removeWatchRequest(userView)
-				}
-		}
-	}
-	
-	func removeWatchRequest(userView: UserView) {
-		if let indexPath = self.tableView.indexPathForCell(userView.cell!) {
-			if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem {
-				if let user = queryResult.object as? User {
-					
-					DataController.proxibase.deleteLinkById(user.link.id_, completion: {
-						response, error in
-						
-						NSOperationQueue.mainQueue().addOperationWithBlock {
-							if let error = ServerError(error) {
-								self.handleError(error, errorActionType: .ALERT)
-							}
-							else {
-								Reporting.track("Removed Member Request")
-								DataController.instance.mainContext.deleteObject(user.link)
-								DataController.instance.mainContext.deleteObject(queryResult)
-								DataController.instance.saveContext(BLOCKING)
-							}
-						}
-					})
-				}
-			}
-		}
 	}
 }
 

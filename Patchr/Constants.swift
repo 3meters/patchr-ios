@@ -31,6 +31,8 @@ let BLOCKING						= false
 
 let IMAGE_DIMENSION_MAX				= CGFloat(1600)
 let CONTENT_WIDTH_MAX				= CGFloat(462)
+let SIDE_MENU_WIDTH                 = CGFloat(260)
+let NAVIGATION_DRAWER_WIDTH         = CGFloat(UIScreen.mainScreen().bounds.size.width - 80)
 
 let URI_PROXIBASE_SEARCH_IMAGES		= "https://api.cognitive.microsoft.com/bing/v5.0"
 let NAMESPACE						= "com.3meters.patchr.ios."

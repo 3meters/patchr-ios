@@ -9,19 +9,17 @@
 import UIKit
 import AVFoundation
 
-
 class PatchTableViewController: BaseTableViewController {
 
-    var user						: User!
-    var filter						: PatchListFilter!
-    var cachedLocation				: CLLocation?
-    var locationServicesDisabled	= false
-    var greetingDidPlay				= false
-    var locationDialogShot			= false		// Has dialog been shown at least once
-    var selectedCell				: WrapperTableViewCell?
-    var lastContentOffset			= CGFloat(0)
-    var tabBar						: MainTabBarController!
-    var actionButton				: AirRadialMenu!
+    var user: User!
+    var filter: PatchListFilter!
+    var cachedLocation: CLLocation?
+    var locationServicesDisabled = false
+    var greetingDidPlay = false
+    // Has dialog been shown at least once
+    var locationDialogShot = false
+    var selectedCell: WrapperTableViewCell?
+    var lastContentOffset = CGFloat(0)
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -42,38 +40,36 @@ class PatchTableViewController: BaseTableViewController {
         self.listType = .Patches
 
         switch self.filter! {
-        case .Nearby:
-            self.emptyMessage = "No patches nearby"
-        case .Explore:
-            self.emptyMessage = "Discover popular patches here"
-        case .Watching:
-            self.emptyMessage = "Join patches and browse them here"
-        case .Owns:
-            self.emptyMessage = "Make patches and browse them here"
+            case .Nearby:
+                self.emptyMessage = "No patches nearby"
+            case .Explore:
+                self.emptyMessage = "Discover popular patches here"
+            case .Watching:
+                self.emptyMessage = "Join patches and browse them here"
+            case .Owns:
+                self.emptyMessage = "Make patches and browse them here"
         }
 
-        self.itemPadding = UIEdgeInsetsMake(8, 8, 0, 8)
+        self.itemPadding = UIEdgeInsetsZero
 
         super.viewDidLoad()
 
         switch self.filter! {
-        case .Nearby:
-            self.navigationItem.title = "Nearby"
-            self.view.accessibilityIdentifier = View.PatchesNearby
-        case .Explore:
-            self.navigationItem.title = "Explore"
-            self.view.accessibilityIdentifier = View.PatchesExplore
-        case .Watching:
-            self.navigationItem.title = "Member of"
-            self.view.accessibilityIdentifier = View.PatchesWatching
-        case .Owns:
-            self.navigationItem.title = "Owner of"
-            self.view.accessibilityIdentifier = View.PatchesOwn
+            case .Nearby:
+                self.navigationItem.title = "Nearby"
+                self.view.accessibilityIdentifier = View.PatchesNearby
+            case .Explore:
+                self.navigationItem.title = "Explore"
+                self.view.accessibilityIdentifier = View.PatchesExplore
+            case .Watching:
+                self.navigationItem.title = "Member of"
+                self.view.accessibilityIdentifier = View.PatchesWatching
+            case .Owns:
+                self.navigationItem.title = "Owner of"
+                self.view.accessibilityIdentifier = View.PatchesOwn
         }
 
         self.tableView.accessibilityIdentifier = Table.Patches
-        self.tabBar = self.tabBarController as! MainTabBarController
-        configureActionButton()
 
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchTableViewController.applicationDidBecomeActive(_:)), name: UIApplicationDidBecomeActiveNotification, object: nil)
     }
@@ -95,11 +91,7 @@ class PatchTableViewController: BaseTableViewController {
 
     override func viewDidAppear(animated: Bool) {
 
-        self.tabBar.setActionButton(self.actionButton)
-        self.tabBar.showActionButton()
-
         if self.filter == .Nearby {
-
             /* Refresh data and ui to catch changes while gone */
             try! self.fetchedResultsController.performFetch()
             self.tableView.reloadData()
@@ -130,12 +122,11 @@ class PatchTableViewController: BaseTableViewController {
         if self.filter == .Nearby {
             deactivateNearby()
         }
-        self.tabBar.setActionButton(nil)
     }
 
     /*--------------------------------------------------------------------------------------------
     * Events
-    *--------------------------------------------------------------------------------------------*/	
+    *--------------------------------------------------------------------------------------------*/
 
     override func pullToRefreshAction(sender: AnyObject?) -> Void {
 
@@ -164,18 +155,6 @@ class PatchTableViewController: BaseTableViewController {
         controller.inputType = type
         navController.viewControllers = [controller]
         self.presentViewController(navController, animated: true, completion: nil)
-    }
-
-    func actionButtonTapped(gester: UIGestureRecognizer) {
-
-        if !self.actionButton.menuIsExpanded {
-            self.actionButton.toggleOn()
-        }
-        else {
-            self.actionButton.toggleOff()
-        }
-
-        Animation.bounce(self.actionButton)
     }
 
     func presentPermissionAction(sender: AnyObject?) {
@@ -238,48 +217,21 @@ class PatchTableViewController: BaseTableViewController {
     func applicationDidBecomeActive(sender: NSNotification) {
 
         /* User either switched to patchr or turned their screen back on. */
-        self.tabBar.showActionButton()
-
         if self.tabBarController?.selectedViewController == self.navigationController
-            && self.navigationController?.topViewController == self
-            && self.filter == .Nearby
-            && !self.firstAppearance {
-                /*
-                * This view controller is currently visible. viewDidAppear does not
-                * fire on its own when returning from Location settings so we do it.
-                */
-                viewDidAppear(true)
+                && self.navigationController?.topViewController == self
+                && self.filter == .Nearby
+                && !self.firstAppearance {
+            /*
+            * This view controller is currently visible. viewDidAppear does not
+            * fire on its own when returning from Location settings so we do it.
+            */
+            viewDidAppear(true)
         }
     }
 
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
-
-    func configureActionButton() {
-
-        /* Action button */
-        self.actionButton = AirRadialMenu(attachedToView: self.tabBar.view)
-        self.actionButton.bounds.size = CGSizeMake(56, 56)
-        self.actionButton.autoresizingMask = [.FlexibleRightMargin, .FlexibleLeftMargin, .FlexibleBottomMargin, .FlexibleTopMargin]
-        self.actionButton.centerView.gestureRecognizers?.forEach(self.actionButton.centerView.removeGestureRecognizer) /* Remove default tap regcognizer */
-        self.actionButton.imageInsets = UIEdgeInsetsMake(10, 10, 10, 10)
-        self.actionButton.imageView.image = UIImage(named: "imgAddLight")	// Default
-        self.actionButton.showBackground = true
-
-        self.actionButton.delegate = self		// For popout item callbacks
-        self.actionButton.centerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(actionButtonTapped(_:))))
-
-        /* Stash popouts */
-        self.actionButton.addPopoutView(makePopupView(UIImage(named: "imgTripLight")!, color: Colors.brandColor, size: 48), withIndentifier: "trip")
-        self.actionButton.addPopoutView(makePopupView(UIImage(named: "imgLocation2Light")!, color: Colors.brandColor, size: 48), withIndentifier: "place")
-        self.actionButton.addPopoutView(makePopupView(UIImage(named: "imgEvent3Light")!, color: Colors.brandColor, size: 48), withIndentifier: "event")
-        self.actionButton.addPopoutView(makePopupView(UIImage(named: "imgGroupLight")!, color: Colors.brandColor, size: 48), withIndentifier: "group")
-
-        self.actionButton.startAngle = SCREEN_NARROW ? 245 : 270
-        self.actionButton.distanceFromCenter = SCREEN_NARROW ? 80 : 120
-        self.actionButton.distanceBetweenPopouts = SCREEN_NARROW ? 40 : 30
-    }
 
     func makePopupView(image: UIImage, color: UIColor, size: Int) -> UIView {
 
@@ -292,7 +244,7 @@ class PatchTableViewController: BaseTableViewController {
 
         view.backgroundColor = color
 
-        view.layer.cornerRadius = view.frame.size.width / 2	// Round
+        view.layer.cornerRadius = view.frame.size.width / 2    // Round
         view.showShadow(true, cornerRadius: view.layer.cornerRadius)
 
         return view;
@@ -301,7 +253,7 @@ class PatchTableViewController: BaseTableViewController {
     func presentLocationPermission(Force force: Bool = false) -> Bool {
 
         if CLLocationManager.authorizationStatus() == .Denied {
-            locationWasDenied(nil)	// Configure UI
+            locationWasDenied(nil)    // Configure UI
             if force || !self.locationDialogShot {
                 UIShared.askToEnableLocationService()
                 self.locationDialogShot = true
@@ -320,7 +272,7 @@ class PatchTableViewController: BaseTableViewController {
     func activateNearby(Level level: Level) {
 
         if CLLocationManager.authorizationStatus() == .Denied {
-            locationWasDenied(nil)	// Configure UI
+            locationWasDenied(nil)    // Configure UI
             return
         }
         else if CLLocationManager.authorizationStatus() == .NotDetermined {
@@ -347,7 +299,6 @@ class PatchTableViewController: BaseTableViewController {
 
             /* We want a fresh location fix */
             if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
-
                 LocationController.instance.startUpdates(force: true)
                 if self.refreshControl == nil || !self.refreshControl!.refreshing {
                     if self.showProgress {
@@ -387,14 +338,14 @@ class PatchTableViewController: BaseTableViewController {
 
     override func getActivityDate() -> Int64 {
         switch self.filter! {
-        case .Nearby:
-            return DataController.instance.activityDateInsertDeletePatch
-        case .Explore:
-            return 1  	// Causes one update only
-        case .Watching:
-            return DataController.instance.activityDateWatching
-        case .Owns:
-            return DataController.instance.activityDateInsertDeletePatch
+            case .Nearby:
+                return DataController.instance.activityDateInsertDeletePatch
+            case .Explore:
+                return 1    // Causes one update only
+            case .Watching:
+                return DataController.instance.activityDateWatching
+            case .Owns:
+                return DataController.instance.activityDateInsertDeletePatch
         }
     }
 
@@ -407,20 +358,20 @@ class PatchTableViewController: BaseTableViewController {
             query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
 
             switch self.filter! {
-            case .Nearby:
-                query!.name = DataStoreQueryName.NearbyPatches.rawValue
-                query!.pageSize = DataController.proxibase.pageSizeNearby
-            case .Explore:
-                query!.name = DataStoreQueryName.ExplorePatches.rawValue
-                query!.pageSize = DataController.proxibase.pageSizeExplore
-            case .Watching:
-                query!.name = DataStoreQueryName.PatchesUserIsWatching.rawValue
-                query!.pageSize = DataController.proxibase.pageSizeDefault
-                query!.contextEntity = self.user
-            case .Owns:
-                query!.name = DataStoreQueryName.PatchesByUser.rawValue
-                query!.pageSize = DataController.proxibase.pageSizeDefault
-                query!.contextEntity = self.user
+                case .Nearby:
+                    query!.name = DataStoreQueryName.NearbyPatches.rawValue
+                    query!.pageSize = DataController.proxibase.pageSizeNearby
+                case .Explore:
+                    query!.name = DataStoreQueryName.ExplorePatches.rawValue
+                    query!.pageSize = DataController.proxibase.pageSizeExplore
+                case .Watching:
+                    query!.name = DataStoreQueryName.PatchesUserIsWatching.rawValue
+                    query!.pageSize = DataController.proxibase.pageSizeDefault
+                    query!.contextEntity = self.user
+                case .Owns:
+                    query!.name = DataStoreQueryName.PatchesByUser.rawValue
+                    query!.pageSize = DataController.proxibase.pageSizeDefault
+                    query!.contextEntity = self.user
             }
 
             DataController.instance.saveContext(true)
@@ -451,11 +402,11 @@ class PatchTableViewController: BaseTableViewController {
     }
 
     func refreshForLocation() {
-        
+
         guard !self.processingQuery else {
             return
         }
-        
+
         self.processingQuery = true
 
         NSNotificationCenter.defaultCenter().postNotificationName(Events.WillFetchQuery, object: self, userInfo: nil)
@@ -471,15 +422,13 @@ class PatchTableViewController: BaseTableViewController {
                  * Called on main thread
                  */
                 NSOperationQueue.mainQueue().addOperationWithBlock {
-
                     self?.refreshControl?.endRefreshing()
 
                     Utils.delay(0.5) {
-
                         self?.processingQuery = false
                         self?.activity.stopAnimating()
                         var userInfo: [NSObject:AnyObject] = ["error": (error != nil)]
-                        
+
                         if let error = ServerError(error) {
                             /* Always reset location after a network error */
                             LocationController.instance.clearLastLocationAccepted()
@@ -495,7 +444,7 @@ class PatchTableViewController: BaseTableViewController {
                         query.executedValue = true
                         query.activityDateValue = (self?.getActivityDate())!
 
-                        DataController.instance.saveContext(BLOCKING)	// Enough to trigger table update
+                        DataController.instance.saveContext(BLOCKING)    // Enough to trigger table update
 
                         if self != nil {
                             NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetchQuery, object: self!, userInfo: userInfo)
@@ -514,7 +463,7 @@ class PatchTableViewController: BaseTableViewController {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchTableViewController.locationWasUpdated(_:)), name: Events.LocationWasUpdated, object: nil)
     }
 
-    func unregisterForLocationNotifications(){
+    func unregisterForLocationNotifications() {
         NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.LocationWasDenied, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.LocationWasAllowed, object: nil)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.LocationWasUpdated, object: nil)
@@ -525,12 +474,9 @@ class PatchTableViewController: BaseTableViewController {
  * Extensions
  *--------------------------------------------------------------------------------------------*/
 
-
 extension PatchTableViewController: CKRadialMenuDelegate {
-
     func radialMenu(radialMenu: CKRadialMenu!, didSelectPopoutWithIndentifier identifier: String!) {
         self.addAction(identifier)
-        self.actionButton.toggleOff()
     }
 }
 
@@ -560,8 +506,7 @@ extension PatchTableViewController {
         }
 
         if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
-            let patch = queryResult.object as? Patch {
-
+        let patch = queryResult.object as? Patch {
             let controller = PatchDetailViewController()
             controller.entityId = patch.id_
             self.navigationController?.pushViewController(controller, animated: true)
@@ -569,24 +514,7 @@ extension PatchTableViewController {
     }
 
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return 136
-    }
-}
-
-extension PatchTableViewController {
-
-    override func scrollViewDidScroll(scrollView: UIScrollView) {
-
-        if(self.lastContentOffset > scrollView.contentOffset.y)
-            && self.lastContentOffset < (scrollView.contentSize.height - scrollView.frame.height) {
-            self.tabBar.showActionButton()
-        }
-        else if (self.lastContentOffset < scrollView.contentOffset.y
-            && scrollView.contentOffset.y > 0) {
-            self.tabBar.hideActionButton()
-        }
-
-        self.lastContentOffset = scrollView.contentOffset.y
+        return 44
     }
 }
 

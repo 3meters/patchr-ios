@@ -82,6 +82,7 @@ struct Table {
     static let Messages             = "messages_table"
     static let Notifications        = "notifications_table"
     static let Search               = "search_table"
+    static let Navigation           = "navigation_table"
 	static let Settings				= "settings_table"
 }
 
@@ -121,6 +122,7 @@ struct View {
     static let PatchMap             = "patch_map_view"
     static let PatchesMap           = "patches_map_view"
     static let Search               = "search_view"
+    static let Navigation           = "navigation_view"
     static let Notifications        = "nofications_view"
     static let Users                = "users_view"
     static let PhotoSearch          = "photo_search_view"

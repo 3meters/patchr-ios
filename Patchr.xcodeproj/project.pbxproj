@@ -10,7 +10,6 @@
 		7D01FA361A7024E200DD6DFA /* JSONResponseSerializerWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */; };
 		7D021ABE1A9409450047DAAE /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D021ABD1A9409450047DAAE /* LoginViewController.swift */; };
 		7D021AC21A9423080047DAAE /* TextZoomController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D021AC11A9423080047DAAE /* TextZoomController.swift */; };
-		7D0BAD4C1A96CEB0002E602D /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */; };
 		7D39D3C51ABA21B200275759 /* CALayer+XibConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D39D3C41ABA21B200275759 /* CALayer+XibConfiguration.m */; };
 		7D3D39CF1A6F086F00A44CB2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3D39CE1A6F086F00A44CB2 /* AppDelegate.swift */; };
 		7D3D39D61A6F086F00A44CB2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D3D39D51A6F086F00A44CB2 /* Images.xcassets */; };
@@ -219,6 +218,10 @@
 		E2F85C741C31F0D700FC2364 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C731C31F0D700FC2364 /* UIImage+ImageEffects.m */; };
 		E2F85C771C32E55100FC2364 /* DeviceUID.m in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C761C32E55100FC2364 /* DeviceUID.m */; };
 		E2F85C7A1C342B8600FC2364 /* UserPhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F85C791C342B8600FC2364 /* UserPhotoView.swift */; };
+		E2FA13381D81B0C70057F287 /* NavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FA13371D81B0C70057F287 /* NavigationViewController.swift */; };
+		E2FA133A1D81FC8A0057F287 /* SideMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FA13391D81FC8A0057F287 /* SideMenuViewController.swift */; };
+		E2FA133E1D8220DD0057F287 /* MenuItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FA133D1D8220DD0057F287 /* MenuItemView.swift */; };
+		E2FA13401D8323030057F287 /* ChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FA133F1D8323030057F287 /* ChannelView.swift */; };
 		EF64100A37085335CC584331 /* Pods_Patchr.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D30E8FDD5C6EDBD3A27024C3 /* Pods_Patchr.framework */; };
 /* End PBXBuildFile section */
 
@@ -266,7 +269,6 @@
 		7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyJSON.swift; sourceTree = "<group>"; };
 		7D021ABD1A9409450047DAAE /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = LoginViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		7D021AC11A9423080047DAAE /* TextZoomController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = TextZoomController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = MainTabBarController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		7D39D3C31ABA21B200275759 /* CALayer+XibConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CALayer+XibConfiguration.h"; sourceTree = "<group>"; };
 		7D39D3C41ABA21B200275759 /* CALayer+XibConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CALayer+XibConfiguration.m"; sourceTree = "<group>"; };
 		7D3D39C91A6F086F00A44CB2 /* Patchr.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Patchr.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -520,6 +522,10 @@
 		E2F85C761C32E55100FC2364 /* DeviceUID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceUID.m; sourceTree = "<group>"; };
 		E2F85C781C32E5A000FC2364 /* DeviceUID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceUID.h; sourceTree = "<group>"; };
 		E2F85C791C342B8600FC2364 /* UserPhotoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPhotoView.swift; sourceTree = "<group>"; };
+		E2FA13371D81B0C70057F287 /* NavigationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationViewController.swift; sourceTree = "<group>"; };
+		E2FA13391D81FC8A0057F287 /* SideMenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SideMenuViewController.swift; sourceTree = "<group>"; };
+		E2FA133D1D8220DD0057F287 /* MenuItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuItemView.swift; sourceTree = "<group>"; };
+		E2FA133F1D8323030057F287 /* ChannelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelView.swift; sourceTree = "<group>"; };
 		E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKCore.framework; path = Frameworks/AdobeCreativeSDKCore.framework; sourceTree = "<group>"; };
 		F9D6032D29A2083B5F3A57FF /* Pods-PatchrTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrTests/Pods-PatchrTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -743,10 +749,12 @@
 				E20C3A7A1BD6A717008CCED1 /* BaseView.swift */,
 				E20C3A801BDC1D57008CCED1 /* BaseDetailView.swift */,
 				E23C01101CE4F771009C56B2 /* CaptionView.swift */,
+				E2FA133D1D8220DD0057F287 /* MenuItemView.swift */,
 				E29A4CD91BD077520059D5B9 /* MessageView.swift */,
 				E29A4CD71BCF25220059D5B9 /* NotificationView.swift */,
 				E2F85C6B1C302F3400FC2364 /* PatchDetailView.swift */,
 				E256B4251BD2C9E200EBF894 /* PatchView.swift */,
+				E2FA133F1D8323030057F287 /* ChannelView.swift */,
 				E2A5A8841B703B9B006D6E81 /* PhotoEditView.swift */,
 				E20C3A7E1BDC0EB0008CCED1 /* UserDetailView.swift */,
 				E2F0E3781C78E0180012BF90 /* UserInviteView.swift */,
@@ -761,6 +769,7 @@
 			children = (
 				7DA730951A71B962008C25FA /* BaseTableViewController.swift */,
 				E227294A1CEA743600913041 /* GalleryGridViewController.swift */,
+				E2FA13371D81B0C70057F287 /* NavigationViewController.swift */,
 				7D40B9411A7864A000F9954C /* NotificationsTableViewController.swift */,
 				7D9651931AAFBD02000C5718 /* PatchTableViewController.swift */,
 				9FDCC06A84126B197626CEB2 /* PhotoPickerViewController.swift */,
@@ -970,7 +979,6 @@
 				E2BFB7F01CE6189500F4B962 /* GalleryBrowser.swift */,
 				E29730651C16295300B9433B /* InviteViewController.swift */,
 				E2D12A801C0A52D700DE507E /* LobbyViewController.swift */,
-				7D0BAD4B1A96CEB0002E602D /* MainTabBarController.swift */,
 				9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */,
 				E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */,
 				E21FE56C1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift */,
@@ -980,6 +988,7 @@
 				E273B5351B488F2000888E73 /* PhotoPreview.swift */,
 				844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */,
 				7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */,
+				E2FA13391D81FC8A0057F287 /* SideMenuViewController.swift */,
 				7D021AC11A9423080047DAAE /* TextZoomController.swift */,
 				E2F618DE1B02667A0055D09C /* Edit */,
 				E24D744F1BB2F4030061F339 /* TableForms */,
@@ -1522,6 +1531,7 @@
 				E26B0C8C1B4577D000706F4A /* TextViewChangeObserver.swift in Sources */,
 				E2B8A4B61CE7875400A28D3A /* AirRadialMenu.swift in Sources */,
 				7D01FA361A7024E200DD6DFA /* JSONResponseSerializerWithData.m in Sources */,
+				E2FA13401D8323030057F287 /* ChannelView.swift in Sources */,
 				E25327E01B1A282D00990A81 /* FXBlurView.m in Sources */,
 				E2D569C01C05F9D6001CCE58 /* FacebookProvider.swift in Sources */,
 				E2DBD4F01B0F65580006575C /* ExtensionsModel.swift in Sources */,
@@ -1532,6 +1542,7 @@
 				7DA730931A71ACC9008C25FA /* ServiceBase.m in Sources */,
 				E2D12A7F1C0A090200DE507E /* Theming.swift in Sources */,
 				E2B2CAB21C553A8900CAE183 /* BaseEditViewController.swift in Sources */,
+				E2FA133E1D8220DD0057F287 /* MenuItemView.swift in Sources */,
 				7DA7308C1A71ACC9008C25FA /* _Query.m in Sources */,
 				7D9C9E3D1A9BAFCE0069E332 /* PatchDetailViewController.swift in Sources */,
 				E297305E1C136E8300B9433B /* AirRadioButton.swift in Sources */,
@@ -1555,6 +1566,7 @@
 				E2C7C5C21B2A0B730045038A /* NotificationSettingsViewController.swift in Sources */,
 				7DA730941A71ACC9008C25FA /* ServiceObject.m in Sources */,
 				E20C3A7D1BD70DD2008CCED1 /* AirTableView.swift in Sources */,
+				E2FA13381D81B0C70057F287 /* NavigationViewController.swift in Sources */,
 				E229CD121C1337A700F5BDAC /* AirLabelBase.swift in Sources */,
 				7DA730901A71ACC9008C25FA /* Patch.m in Sources */,
 				7DA7308A1A71ACC9008C25FA /* _Patch.m in Sources */,
@@ -1591,6 +1603,7 @@
 				E2C7C5CB1B2CF2F80045038A /* ImageResult.swift in Sources */,
 				E20C3A831BDEBBB9008CCED1 /* CoreDataStack.swift in Sources */,
 				844D6E351AA4D01200EE71ED /* DevelopmentViewController.swift in Sources */,
+				E2FA133A1D81FC8A0057F287 /* SideMenuViewController.swift in Sources */,
 				E2F85C741C31F0D700FC2364 /* UIImage+ImageEffects.m in Sources */,
 				7DA7308B1A71ACC9008C25FA /* _Place.m in Sources */,
 				E26C80921C3AE246001514B3 /* Animation.swift in Sources */,
@@ -1599,7 +1612,6 @@
 				7D021ABE1A9409450047DAAE /* LoginViewController.swift in Sources */,
 				7D9651941AAFBD02000C5718 /* PatchTableViewController.swift in Sources */,
 				7D3D39F01A6F116E00A44CB2 /* Proxibase.swift in Sources */,
-				7D0BAD4C1A96CEB0002E602D /* MainTabBarController.swift in Sources */,
 				E24199021C18C1F200DDA549 /* UserSearchViewCell.swift in Sources */,
 				E2D569BE1C052A30001CCE58 /* ProfileEditViewController.swift in Sources */,
 				E2BFB7F11CE6189500F4B962 /* GalleryBrowser.swift in Sources */,
@@ -1739,6 +1751,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon2;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -1772,6 +1785,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_SWIFT_FLAGS = "-D DEBUG";
+				PRODUCT_NAME = Patchr2;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VALID_ARCHS = "arm64 armv7 armv7s";
@@ -1782,6 +1796,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -1809,6 +1824,7 @@
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = Patchr;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = "arm64 armv7 armv7s";
@@ -1820,9 +1836,7 @@
 			baseConfigurationReference = 1264C20AA9703A7ABFBC0768 /* Pods-Patchr.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				BUNDLE_DISPLAY_NAME_SUFFIX = "";
-				BUNDLE_ID_SUFFIX = "";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon2;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_MODULE_DEBUGGING = YES;
 				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
@@ -1879,7 +1893,7 @@
 					"-framework",
 					"\"UIKit\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr2.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
@@ -1893,9 +1907,7 @@
 			baseConfigurationReference = B3FC77727BC4064BC3BF9096 /* Pods-Patchr.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				BUNDLE_DISPLAY_NAME_SUFFIX = "";
-				BUNDLE_ID_SUFFIX = "";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon2;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
 				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
@@ -1957,118 +1969,12 @@
 			};
 			name = Release;
 		};
-		7D9C9E3E1A9BD3290069E332 /* AdHoc */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COMPRESS_PNG_FILES = NO;
-				COPY_PHASE_STRIP = YES;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
-				ENABLE_BITCODE = NO;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				ONLY_ACTIVE_ARCH = NO;
-				SDKROOT = iphoneos;
-				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = "arm64 armv7 armv7s";
-			};
-			name = AdHoc;
-		};
-		7D9C9E3F1A9BD3290069E332 /* AdHoc */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 660E55CB7AC448A9C2105775 /* Pods-Patchr.adhoc.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				BUNDLE_DISPLAY_NAME_SUFFIX = "";
-				BUNDLE_ID_SUFFIX = "";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_MODULE_DEBUGGING = NO;
-				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				ENABLE_BITCODE = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Frameworks",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				INFOPLIST_FILE = Patchr/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PODS_ROOT)",
-				);
-				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-ObjC",
-					"-all_load",
-					"-O3",
-					"-l\"c++\"",
-					"-l\"sqlite3\"",
-					"-l\"z\"",
-					"-framework",
-					"\"CoreData\"",
-					"-framework",
-					"\"CoreGraphics\"",
-					"-framework",
-					"\"CoreTelephony\"",
-					"-framework",
-					"\"Foundation\"",
-					"-framework",
-					"\"ImageIO\"",
-					"-framework",
-					"\"MessageUI\"",
-					"-framework",
-					"\"MobileCoreServices\"",
-					"-framework",
-					"\"QuartzCore\"",
-					"-framework",
-					"\"Security\"",
-					"-framework",
-					"\"SystemConfiguration\"",
-					"-framework",
-					"\"UIKit\"",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
-				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
-			};
-			name = AdHoc;
-		};
 		E238BAEA1B51D3290094AF41 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 007F708837EFB192609C083C /* Pods-PatchrShare.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon2;
 				CLANG_ENABLE_MODULES = NO;
 				CODE_SIGN_ENTITLEMENTS = PatchrShare/PatchrShare.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -2098,7 +2004,7 @@
 					"-framework",
 					"\"UIKit\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.3meters.patchr.ios.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.3meters.patchr2.ios.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
@@ -2113,7 +2019,7 @@
 			baseConfigurationReference = 5D9C19F8DE4D794DFBEC0B2D /* Pods-PatchrShare.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon2;
 				CLANG_ENABLE_MODULES = NO;
 				CODE_SIGN_ENTITLEMENTS = PatchrShare/PatchrShare.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
@@ -2139,7 +2045,7 @@
 					"-framework",
 					"\"UIKit\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.3meters.patchr.ios.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.3meters.patchr2.ios.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
@@ -2149,12 +2055,118 @@
 			};
 			name = Release;
 		};
-		E238BAEC1B51D3290094AF41 /* AdHoc */ = {
+		E253C2E61D80A4AC00F8B7AB /* Adhoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon2;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COMPRESS_PNG_FILES = NO;
+				COPY_PHASE_STRIP = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				ENABLE_BITCODE = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = Patchr2;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = "arm64 armv7 armv7s";
+			};
+			name = Adhoc;
+		};
+		E253C2E71D80A4AC00F8B7AB /* Adhoc */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 660E55CB7AC448A9C2105775 /* Pods-Patchr.adhoc.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon2;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_MODULE_DEBUGGING = NO;
+				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				INFOPLIST_FILE = Patchr/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PODS_ROOT)",
+				);
+				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-all_load",
+					"-O3",
+					"-l\"c++\"",
+					"-l\"sqlite3\"",
+					"-l\"z\"",
+					"-framework",
+					"\"CoreData\"",
+					"-framework",
+					"\"CoreGraphics\"",
+					"-framework",
+					"\"CoreTelephony\"",
+					"-framework",
+					"\"Foundation\"",
+					"-framework",
+					"\"ImageIO\"",
+					"-framework",
+					"\"MessageUI\"",
+					"-framework",
+					"\"MobileCoreServices\"",
+					"-framework",
+					"\"QuartzCore\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"-framework",
+					"\"UIKit\"",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr2.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
+			};
+			name = Adhoc;
+		};
+		E253C2E81D80A4AC00F8B7AB /* Adhoc */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = ADE2188DACE04783600753A3 /* Pods-PatchrShare.adhoc.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon2;
 				CLANG_ENABLE_MODULES = NO;
 				CODE_SIGN_ENTITLEMENTS = PatchrShare/PatchrShare.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
@@ -2188,7 +2200,28 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
 			};
-			name = AdHoc;
+			name = Adhoc;
+		};
+		E253C2E91D80A4AC00F8B7AB /* Adhoc */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D38B3620D85CCE006BA1D00A /* Pods-PatchrTests.adhoc.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = PatchrTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.PatchrTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "PatchrTests/PatchrTests-Bridging-Header.h";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Patchr.app/Patchr";
+				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
+			};
+			name = Adhoc;
 		};
 		E2CA0C431C50335600E2F380 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -2233,27 +2266,6 @@
 			};
 			name = Release;
 		};
-		E2CA0C451C50335600E2F380 /* AdHoc */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = D38B3620D85CCE006BA1D00A /* Pods-PatchrTests.adhoc.xcconfig */;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = PatchrTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.PatchrTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "PatchrTests/PatchrTests-Bridging-Header.h";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Patchr.app/Patchr";
-				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
-			};
-			name = AdHoc;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2262,7 +2274,7 @@
 			buildConfigurations = (
 				7D3D39E61A6F087000A44CB2 /* Debug */,
 				7D3D39E71A6F087000A44CB2 /* Release */,
-				7D9C9E3E1A9BD3290069E332 /* AdHoc */,
+				E253C2E61D80A4AC00F8B7AB /* Adhoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -2272,7 +2284,7 @@
 			buildConfigurations = (
 				7D3D39E91A6F087000A44CB2 /* Debug */,
 				7D3D39EA1A6F087000A44CB2 /* Release */,
-				7D9C9E3F1A9BD3290069E332 /* AdHoc */,
+				E253C2E71D80A4AC00F8B7AB /* Adhoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -2282,7 +2294,7 @@
 			buildConfigurations = (
 				E238BAEA1B51D3290094AF41 /* Debug */,
 				E238BAEB1B51D3290094AF41 /* Release */,
-				E238BAEC1B51D3290094AF41 /* AdHoc */,
+				E253C2E81D80A4AC00F8B7AB /* Adhoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -2292,7 +2304,7 @@
 			buildConfigurations = (
 				E2CA0C431C50335600E2F380 /* Debug */,
 				E2CA0C441C50335600E2F380 /* Release */,
-				E2CA0C451C50335600E2F380 /* AdHoc */,
+				E253C2E91D80A4AC00F8B7AB /* Adhoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

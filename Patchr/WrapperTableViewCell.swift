@@ -10,13 +10,13 @@ import UIKit
 
 class WrapperTableViewCell: UITableViewCell {
 	
-	var view				: BaseView?
+	var view				: UIView?
 	var separator			= UIView()
 	var padding				= UIEdgeInsetsZero
 	
 	init(view: UIView, padding: UIEdgeInsets, reuseIdentifier: String?) {
 		super.init(style: .Default, reuseIdentifier: reuseIdentifier)
-		self.view = view as? BaseView
+		self.view = view
 		self.padding = padding
 		initialize()
 	}
@@ -46,6 +46,6 @@ class WrapperTableViewCell: UITableViewCell {
 	
 	func addSeparator() {
 		self.separator.layer.backgroundColor = Theme.colorSeparator.CGColor
-		self.contentView.addSubview(self.separator)
+        self.contentView.addSubview(self.separator)
 	}
 }

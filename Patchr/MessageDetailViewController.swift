@@ -340,11 +340,6 @@ class MessageDetailViewController: BaseViewController {
         else if self.inputMessage?.patch != nil {
 			let controller = PatchDetailViewController()
             controller.entityId = self.inputMessage!.patch!.entityId
-			controller.inputReferrerName = self.inputMessage!.creator.name
-			if let photo = self.inputMessage!.creator.photo {
-				let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile)
-				controller.inputReferrerPhotoUrl = photoUrl.absoluteString
-			}
             self.navigationController?.pushViewController(controller, animated: true)
         }
     }

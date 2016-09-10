@@ -470,11 +470,9 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 			return cell
 		}
 		else if self.listType == .Patches {
-			let view = PatchView(frame: CGRectMake(0, 0, self.view.width(), 136))
-			view.cornerRadius = 6
+			let view = ChannelView(frame: CGRectMake(0, 0, self.view.width(), 40))
 			let cell = WrapperTableViewCell(view: view, padding: self.itemPadding, reuseIdentifier: "cell")
-			cell.separator.backgroundColor = Colors.clear
-			cell.backgroundColor = Theme.colorBackgroundTileList
+            cell.separator.removeFromSuperview()
 			return cell
 		}
 		else if self.listType == .Users {
@@ -506,7 +504,7 @@ extension BaseTableViewController {
 		}
 		
 		if self.listType == .Patches {
-			let patchView = cell.view! as! PatchView
+			let patchView = cell.view! as! ChannelView
 			patchView.bindToEntity(entity, location: location)
 		}
 		

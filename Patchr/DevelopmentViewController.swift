@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 import SDWebImage
 
-
 class DevelopmentViewController: UIViewController {
     
     var uriAtStart: String = ""

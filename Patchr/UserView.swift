@@ -16,13 +16,6 @@ class UserView: BaseView {
 	var area			= UILabel()
 	var owner			= UILabel()
 	
-	var ownerGroup		= AirRuleView()
-	var approved		= UILabel()
-	var approvedSwitch	= UISwitch()
-	var removeButton	= AirLinkButton()
-
-	weak var delegate:  UserApprovalViewDelegate?
-	
 	init() {
 		super.init(frame: CGRectZero)
 		initialize()
@@ -64,26 +57,6 @@ class UserView: BaseView {
 		self.owner.textColor = Colors.accentOnLight
 		self.titleGroup.addSubview(self.owner)
 		
-		self.ownerGroup.ruleBottom.hidden = true
-		self.ownerGroup.ruleLeft.hidden = false
-		self.ownerGroup.ruleLeft.backgroundColor = Colors.gray90pcntColor
-		
-		/* Remove button */
-		self.removeButton.setImage(UIImage(named:"imgRemoveLight") , forState: UIControlState.Normal)
-		self.removeButton.imageView?.contentMode = UIViewContentMode.Center
-		self.removeButton.addTarget(self, action: #selector(UserView.removeButtonTouchUpInsideAction(_:)), forControlEvents: .TouchUpInside)
-		self.titleGroup.addSubview(self.removeButton)
-		
-		/* Approved label */
-		self.approved.text = "Approved"
-		self.approved.font = Theme.fontComment
-		self.approved.textColor = Theme.colorTextSecondary
-		self.ownerGroup.addSubview(self.approved)
-		
-		/* Approval switch */
-		self.approvedSwitch.addTarget(self, action: #selector(UserView.approvedSwitchValueChangedAction(_:)), forControlEvents: .TouchUpInside)
-		self.ownerGroup.addSubview(self.approvedSwitch)
-		self.addSubview(self.ownerGroup)
 		self.addSubview(self.titleGroup)
 	}
 	
@@ -96,9 +69,7 @@ class UserView: BaseView {
 		self.name.setTitle(entity.name, forState: .Normal)
 		self.photo.bindToEntity(entity)
 		
-		self.ownerGroup.hidden = true
 		self.owner.hidden = true
-		self.removeButton.hidden = true
 		self.area.hidden = true
 		
 		if let user = entity as? User where user.area != nil {
@@ -108,21 +79,12 @@ class UserView: BaseView {
 		
 		self.setNeedsLayout()	// Needed because elements can have changed dimensions
 	}
-	
-	func showOwnerUI() {
-		self.ownerGroup.hidden = false
-		self.removeButton.hidden = false
-		self.setNeedsLayout()
-	}
-	
+		
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		
-		let ownerWidth = CGFloat(SCREEN_320 ? 96 : 112)
-		
 		let columnLeft = CGFloat(72 + 8)
-		let columnRight = CGFloat(self.ownerGroup.hidden ? 0 : ownerWidth)
-		let columnWidth = self.width() - (columnLeft + columnRight)
+		let columnWidth = self.width() - columnLeft
 		
 		self.photo.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 72, height: 72)
 		self.titleGroup.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 6, width: columnWidth, height: 72)
@@ -139,25 +101,6 @@ class UserView: BaseView {
 			self.owner.sizeToFit()
 			self.owner.alignUnder(self.area.hidden ? self.name : self.area, matchingLeftWithTopPadding: 2, width: columnWidth, height: self.owner.height())
 		}
-		
-		if !self.removeButton.hidden {
-			if SCREEN_320 {
-				self.removeButton.anchorBottomLeftWithLeftPadding(0, bottomPadding: 0, width: 24, height: 24)
-			}
-			else {
-				self.name.bounds.size.width = columnWidth - (8 + 24 + 8)
-				self.name.sizeToFit()
-				self.name.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: columnWidth - (8 + 24 + 8), height: self.name.height() - 4)
-				self.removeButton.alignToTheRightOf(self.name, matchingCenterWithLeftPadding: 8, width: 24, height: 24)
-			}
-		}
-		
-		if !self.ownerGroup.hidden {
-			self.ownerGroup.anchorCenterRightFillingHeightWithTopPadding(0, bottomPadding: 0, rightPadding: 0, width: ownerWidth)
-			self.approved.sizeToFit()
-			self.approvedSwitch.anchorTopCenterWithTopPadding(16, width: self.approvedSwitch.width(), height: self.approvedSwitch.height())
-			self.approved.alignUnder(self.approvedSwitch, matchingCenterWithTopPadding: 4, width: self.approved.width(), height: self.approved.height())
-		}
 	}
 	
 	func browseUser(sender: AnyObject) {
@@ -169,17 +112,4 @@ class UserView: BaseView {
 			hostController.navigationController?.pushViewController(controller, animated: true)
 		}
 	}
-	
-	func approvedSwitchValueChangedAction(sender: UISwitch) {
-		self.delegate?.userView(self, approvalSwitchValueChanged: self.approvedSwitch)
-	}
-	
-	func removeButtonTouchUpInsideAction(sender: UIButton) {
-		self.delegate?.userView(self, removeButtonTapped: self.removeButton)
-	}
-}
-
-@objc protocol UserApprovalViewDelegate {
-	func userView(userView: UserView, approvalSwitchValueChanged approvalSwitch: UISwitch)
-	func userView(userView: UserView, removeButtonTapped removeButton: UIButton)
 }

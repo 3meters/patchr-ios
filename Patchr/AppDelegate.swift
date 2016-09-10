@@ -17,12 +17,13 @@ import CocoaLumberjack
 import iRate
 import Bugsnag
 import MBProgressHUD
+import SWRevealViewController
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate, SWRevealViewControllerDelegate {
 
-    var window:                             UIWindow?
-    var firstLaunch:                        Bool = false
+    var window: UIWindow?
+    var firstLaunch: Bool = false
     var backgroundSessionCompletionHandler: (() -> Void)?
 
     class func appDelegate() -> AppDelegate {
@@ -58,9 +59,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
         assert(configureError == nil, "Error configuring Google services: \(configureError)")
 
         /* Verbose logging for debug builds */
-        #if DEBUG
-            GAI.sharedInstance().logger.logLevel = .Warning
-        #endif
+#if DEBUG
+        GAI.sharedInstance().logger.logLevel = .Warning
+#endif
 
         /* Instance the data controller */
         DataController.instance
@@ -69,10 +70,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 
         self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
 
-        #if DEBUG
-            AFNetworkActivityLogger.sharedLogger().startLogging()
-            AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelFatal
-        #endif
+#if DEBUG
+        AFNetworkActivityLogger.sharedLogger().startLogging()
+        AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelFatal
+#endif
 
         /* Flag first launch for special treatment */
         if !NSUserDefaults.standardUserDefaults().boolForKey("firstLaunch") {
@@ -123,13 +124,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
         AFNetworkActivityIndicatorManager.sharedManager().enabled = true
 
         /* Default config for AWS */
-        let credProvider  = AWSStaticCredentialsProvider(accessKey: keys.awsS3Key(), secretKey: keys.awsS3Secret())
+        let credProvider = AWSStaticCredentialsProvider(accessKey: keys.awsS3Key(), secretKey: keys.awsS3Secret())
         let serviceConfig = AWSServiceConfiguration(region: AWSRegionType(rawValue: 3/*'us-west-2'*/)!, credentialsProvider: credProvider)
         AWSServiceManager.defaultServiceManager().defaultServiceConfiguration = serviceConfig
 
         /* Load setting defaults */
-        let defaultSettingsFile: NSString     = NSBundle.mainBundle().pathForResource("DefaultSettings", ofType: "plist")!
-        let settingsDictionary:  NSDictionary = NSDictionary(contentsOfFile: defaultSettingsFile as String)!
+        let defaultSettingsFile: NSString = NSBundle.mainBundle().pathForResource("DefaultSettings", ofType: "plist")!
+        let settingsDictionary: NSDictionary = NSDictionary(contentsOfFile: defaultSettingsFile as String)!
         NSUserDefaults.standardUserDefaults().registerDefaults(settingsDictionary as! [String:AnyObject])
 
         /* Notifications */
@@ -165,14 +166,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
         }
 
         initUser()
-        
+
         initUI()
-        
+
         if UserController.instance.authenticated {
-            
             DataController.proxibase.preflight() {
                 response, error in
-                
+
                 if let error = ServerError(error) {
                     if error.code == .UNAUTHORIZED_SESSION_EXPIRED || error.code == .UNAUTHORIZED_CREDENTIALS {
                         UserController.instance.logout()
@@ -312,7 +312,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
         UITabBar.appearance().tintColor = Theme.colorTabBarTint
         UISwitch.appearance().onTintColor = Theme.colorTint
     }
-    
+
     func initUser() {
         /* Get the latest on the authenticated user if we have one */
         UserController.instance.loginAuto()
@@ -322,12 +322,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 
         /* If we have an authenticated user then start at the usual spot, otherwise start at the lobby scene. */
         if UserController.instance.authenticated {
-            let controller = MainTabBarController()
-            controller.selectedIndex = 0
-            self.window?.setRootViewController(controller, animated: true)
+            let sideController = SideMenuViewController()
+            let rearController = PatchTableViewController()
+            rearController.filter = PatchListFilter.Watching
+            rearController.user = UserController.instance.currentUser
+            let frontController = PatchDetailViewController()
+            frontController.entityId = "pa.150820.00499.464.259239"
+            let frontNavController = AirNavigationController(rootViewController: frontController)
+            let revealController = SWRevealViewController(rearViewController: rearController, frontViewController: frontNavController)
+            revealController.delegate = self
+            revealController.rearViewRevealWidth = NAVIGATION_DRAWER_WIDTH
+            revealController.rightViewController = sideController
+            revealController.rightViewRevealWidth = SIDE_MENU_WIDTH
+            revealController.rightViewRevealDisplacement = SIDE_MENU_WIDTH
+            revealController.rightViewRevealOverdraw = 0
+            self.window?.setRootViewController(revealController, animated: true)
         }
         else {
-            let controller    = LobbyViewController()
+            let controller = LobbyViewController()
             let navController = AirNavigationController()
             navController.viewControllers = [controller]
             self.window?.setRootViewController(navController, animated: true)
@@ -358,46 +370,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 
                 let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: #selector(controller.cancelAction(_:)))
                 controller.navigationItem.rightBarButtonItems = [cancelButton]
-                let navController = AirNavigationController()
-                navController.viewControllers = [controller]
-                UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
-            }
-        }
-
-        if let entityId = params!["entityId"] as? String, entitySchema = params!["entitySchema"] as? String {
-            if entitySchema == "patch" {
-                let controller = PatchDetailViewController()
-                controller.entityId = entityId
-
-                if let referrerName = params!["referrerName"] as? String {
-                    controller.inputReferrerName = referrerName.stringByReplacingOccurrencesOfString("+", withString: " ")
-                }
-                if let referrerPhotoUrl = params!["referrerPhotoUrl"] as? String {
-                    controller.inputReferrerPhotoUrl = referrerPhotoUrl
-                }
-
-                /* Navigation bar buttons */
-                let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: #selector(controller.dismissAction(_:)))
-                controller.navigationItem.leftBarButtonItems = [doneButton]
-                let navController = AirNavigationController()
-                navController.viewControllers = [controller]
-                UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
-            }
-            else if entitySchema == "message" {
-                let controller = MessageDetailViewController()
-                controller.inputMessageId = entityId
-                controller.shareActive = true
-
-                if let referrerName = params!["referrerName"] as? String {
-                    controller.inputReferrerName = referrerName.stringByReplacingOccurrencesOfString("+", withString: " ")
-                }
-                if let referrerPhotoUrl = params!["referrerPhotoUrl"] as? String {
-                    controller.inputReferrerPhotoUrl = referrerPhotoUrl
-                }
-
-                /* Navigation bar buttons */
-                let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: #selector(controller.dismissAction(_:)))
-                controller.navigationItem.leftBarButtonItems = [doneButton]
                 let navController = AirNavigationController()
                 navController.viewControllers = [controller]
                 UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
@@ -506,15 +478,7 @@ extension AppDelegate {
     }
 
     func resetToMain() {
-
-        if let controller = UIViewController.getTabBarController() {
-            controller.selectedIndex = 0    // Patches
-        }
-        else {
-            let controller = MainTabBarController()
-            controller.selectedIndex = 0
-            self.window?.setRootViewController(controller, animated: true)
-        }
+        routeForRoot()
     }
 
     func disableAnimations(state: Bool) {

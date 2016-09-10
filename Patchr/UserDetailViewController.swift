@@ -126,7 +126,7 @@ class UserDetailViewController: BaseDetailViewController {
 		self.loadMoreMessage = "LOAD MORE MESSAGES"
 		
 		/* Navigation bar buttons */
-		drawButtons()
+		drawNavBarButtons()
 	}
 	
 	override func bind() {
@@ -143,7 +143,7 @@ class UserDetailViewController: BaseDetailViewController {
 		}
 	}
 	
-	override func drawButtons() {
+	override func drawNavBarButtons() {
 		if self.profileMode {
 			if self.isCurrentUser {
 				let editButton = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(UserDetailViewController.editAction))
