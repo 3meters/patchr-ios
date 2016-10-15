@@ -38,19 +38,20 @@ def core_pods
   pod 'TWMessageBarManager',      '~> 1.8'		# In-app notifications
   pod 'Facade',                   '~> 1.1.1'	    # Convenience methods for frame based layout
   pod 'THContactPicker',          '~> 1.2'		# Used in message edit
-  pod 'FBSDKCoreKit',             '~> 4.14.0'
-  pod 'FBSDKLoginKit',            '~> 4.14.0'
-  pod 'FBSDKShareKit',            '~> 4.14.0'
   pod 'DateTools',                '~> 1.7.0'
   pod 'iRate',                    '~> 1.11.6'
   pod 'CocoaLumberjack/Swift',    '~> 2.3.0'
-  pod 'Google/Analytics'
   pod 'Branch',                   '~> 0.12.5'     # Url routing and deep linking
   pod 'Bugsnag',                  '~> 5.4.2'      # Crash reporting
   pod 'OneSignal',                '~> 2.0.10'
   pod 'RxSwift',                  '~> 2.6.0'
   pod 'SlideMenuControllerSwift', '~> 2.2.2'
   pod 'FontAwesome.swift'
+  pod 'Firebase/RemoteConfig'
+  pod 'Firebase/Core'
+  pod 'Firebase/Crash'
+  pod 'Firebase/Auth'
+  pod 'Firebase/Database'
 end
 
 target 'Patchr' do
@@ -71,6 +72,7 @@ target 'PatchrShare' do
   pod 'Facade',                   '~> 1.1.1'	    # Convenience methods for frame based layout
   pod 'CocoaLumberjack/Swift',    '~> 2.3.0'
   pod 'Bugsnag',                  '~> 5.4.2'      # Crash reporting
+  pod 'Firebase/RemoteConfig'
 end
 
 plugin 'cocoapods-no-dev-schemes'
