@@ -8,6 +8,8 @@
 
 import UIKit
 import MBProgressHUD
+import FirebaseAuth
+import Firebase
 
 class LoginViewController: BaseEditViewController {
 
@@ -96,8 +98,21 @@ class LoginViewController: BaseEditViewController {
     }
 
     func passwordResetAction(sender: AnyObject) {
-        let controller = PasswordResetViewController()
-        self.navigationController?.pushViewController(controller, animated: true)
+        if emailField.isEmpty {
+            Alert("Enter an email address.")
+            return
+        }
+        
+        if !emailField.text!.isEmail() {
+            Alert("Enter a valid email address.")
+            return
+        }
+        
+        FIRAuth.auth()?.sendPasswordResetWithEmail(emailField.text!) { error in
+            if error == nil {
+                self.Alert("A password reset email has been sent to your email address.")
+            }
+        }
     }
 
     func cancelAction(sender: AnyObject) {
@@ -231,37 +246,24 @@ class LoginViewController: BaseEditViewController {
         }
 
         processing = true
-
-        /*
-         * Successful login will also update the install record so the authenticated user
-         * is associated with the install. Logging out clears the associated user.
-         */
-        DataController.proxibase.login(self.emailField.text!, password: self.passwordField.text!) {
-            response, error in
-
-            NSOperationQueue.mainQueue().addOperationWithBlock {
-                self.processing = false
-
-                self.progress?.hide(true)
-
-                if var error = ServerError(error) {
-                    if error.code == .UNAUTHORIZED_CREDENTIALS {
-                        error.message = "Wrong email and password combination."
-                        self.handleError(error, errorActionType: .ALERT)
-                    }
-                    else {
-                        self.handleError(error)
-                    }
+        
+        FIRAuth.auth()?.signInWithEmail(self.emailField.text!, password: self.passwordField.text!) { (user, error) in
+            self.processing = false
+            self.progress?.hide(true)
+            if error != nil {
+                if error!.code == FIRAuthErrorCode.ErrorCodeEmailAlreadyInUse.rawValue {
+                    self.Alert("Email already used")
                 }
-                else {
-                    /* Remember last email address for easy data entry */
-                    if self.provider == AuthProvider.PROXIBASE {
-                        NSUserDefaults.standardUserDefaults().setObject(self.emailField.text, forKey: PatchrUserDefaultKey("userEmail"))
-                        self.passwordField.text = nil
-                    }
-                    Reporting.track("Logged In", properties: ["source": self.source])
-                    self.didLogin()
+                else if error!.code == FIRAuthErrorCode.ErrorCodeInvalidEmail.rawValue {
+                    self.Alert("Email address is not valid")
                 }
+                else if error!.code == FIRAuthErrorCode.ErrorCodeWrongPassword.rawValue {
+                    self.Alert("Wrong email and password combination")
+                }
+            }
+            else {
+                Reporting.track("Logged In", properties: ["source": self.source])
+                self.didLogin()
             }
         }
     }

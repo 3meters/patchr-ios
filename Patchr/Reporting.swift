@@ -8,6 +8,7 @@
 
 import Foundation
 import ObjectiveC
+import Firebase
 import Bugsnag
 
 struct Reporting {
@@ -17,6 +18,7 @@ struct Reporting {
         let reachability: Reachability = Reachability.reachabilityForInternetConnection()
         let networkStatus: Int = reachability.currentReachabilityStatus().rawValue
         if networkStatus == 0 {
+            
 			Bugsnag.addAttribute("connected", withValue: false, toTabWithName: "network")
         }
         else {
@@ -48,34 +50,27 @@ struct Reporting {
     }
 	
     static func updateUser(user: User?) {
-		let tracker = GAI.sharedInstance().defaultTracker
+        
+        FIRAnalytics.setUserID(user?.id_)
+        FIRAnalytics.setUserPropertyString(user?.name, forName: "name")
+        FIRAnalytics.setUserPropertyString(user?.email, forName: "email")
+        
+        Bugsnag.configuration()!.setUser(user?.id_, withName: user?.name, andEmail: user?.email)
+        
         if user != nil {
-			tracker.set(kGAIUserId, value: user!.id_)
 			BranchProvider.setIdentity(user!.id_)
-			Bugsnag.configuration()!.setUser(user!.id_, withName: user!.name, andEmail: user!.email)
         }
         else {
-			tracker.set(kGAIUserId, value: nil)
 			BranchProvider.logout()
-			Bugsnag.configuration()!.setUser(nil, withName: nil, andEmail: nil)
         }
     }
 	
 	static func track(event: String, properties: [String : AnyObject]? = nil) {
-		let tracker = GAI.sharedInstance().defaultTracker
-		let builder = GAIDictionaryBuilder.createEventWithCategory("Action", action: event, label: nil, value: nil)
-		if properties != nil {
-			builder.set(Array(properties!.keys).first, forKey: kGAIEventLabel)
-			builder.set(Array(properties!.values).first as! String, forKey: kGAIEventValue)
-		}
-		let event = builder.build()
-		tracker.send(event as [NSObject : AnyObject])
+        let event = event.lowercaseString.stringByReplacingOccurrencesOfString(" ", withString: "_")
+        FIRAnalytics.logEventWithName(event, parameters: nil)
 	}
 	
 	static func screen(name: String) {
-		let tracker = GAI.sharedInstance().defaultTracker
-		tracker.set(kGAIScreenName, value: name)
-		let builder = GAIDictionaryBuilder.createScreenView()
-		tracker.send(builder.build() as [NSObject : AnyObject])
+        FIRAnalytics.logEventWithName(name, parameters: nil)
 	}
 }

@@ -17,7 +17,7 @@ class UserDetailViewController: BaseDetailViewController {
 	private var isCurrentUser: Bool {
 		return (UserController.instance.authenticated
 			&& UserController.instance.currentUser != nil
-			&& self.entityId == UserController.instance.currentUser.id_)
+			&& self.entityId == UserController.instance.userId)
 	}
 	
 	/*--------------------------------------------------------------------------------------------
@@ -108,11 +108,6 @@ class UserDetailViewController: BaseDetailViewController {
 
 		self.header = UserDetailView()
 		self.tableView = AirTableView(frame: self.tableView.frame, style: .Plain)
-		
-		let header = self.header as! UserDetailView
-		
-		header.watchingButton.addTarget(self, action: #selector(UserDetailViewController.browseWatchingAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
-		header.ownsButton.addTarget(self, action: #selector(UserDetailViewController.browseOwnedAction(_:)), forControlEvents: UIControlEvents.TouchUpInside)
 		
 		self.showEmptyLabel = false
 		if self.profileMode {

@@ -27,7 +27,6 @@ class PatchDetailViewController: BaseDetailViewController {
 
     var lastContentOffset = CGFloat(0)
     var processing = false
-    var provider: FacebookProvider!
 
     /*--------------------------------------------------------------------------------------------
      * Lifecycle
@@ -326,10 +325,6 @@ class PatchDetailViewController: BaseDetailViewController {
 
     func moreAction(sender: AnyObject?) {
 
-        if !UserController.instance.authenticated {
-            return
-        }
-
         if self.entity != nil {
             let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.ActionSheet)
 
@@ -483,7 +478,6 @@ class PatchDetailViewController: BaseDetailViewController {
         self.view.accessibilityIdentifier = View.PatchDetail
 
         self.queryName = DataStoreQueryName.MessagesForPatch.rawValue
-        self.provider = FacebookProvider(controller: self)
 
         self.header = PatchDetailView()
         self.tableView = AirTableView(frame: self.tableView.frame, style: .Plain)
@@ -737,9 +731,6 @@ class PatchDetailViewController: BaseDetailViewController {
             controller.inputState = .Sharing
             navController.viewControllers = [controller]
             self.presentViewController(navController, animated: true, completion: nil)
-        }
-        else if route == .Facebook {
-            self.provider.invite(self.entity!)
         }
         else if route == .AirDrop {
             BranchProvider.invite(self.entity as! Patch, referrer: UserController.instance.currentUser) {

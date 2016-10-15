@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import FBSDKCoreKit
 import Branch
 
 
@@ -20,7 +19,6 @@ class InviteViewController: BaseViewController {
 	var doneButton				= AirFeaturedButton()
 	
 	var inputEntity				: Patch!
-	var provider				: FacebookProvider!
 	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -77,8 +75,6 @@ class InviteViewController: BaseViewController {
 		Reporting.screen("PatchInvite")
 		self.view.accessibilityIdentifier = View.Invite
 		
-		self.provider = FacebookProvider(controller: self)
-		
 		self.message.text = "Invite people to your new patch."
 		self.message.textAlignment = NSTextAlignment.Center
 		self.message.numberOfLines = 0
@@ -121,10 +117,6 @@ class InviteViewController: BaseViewController {
 			controller.inputState = .Sharing
 			navController.viewControllers = [controller]
 			self.presentViewController(navController, animated: true, completion: nil)
-		}
-		else if route == .Facebook {
-			
-			self.provider.invite(self.inputEntity)
 		}
 		else if route == .Actions {
 			

@@ -150,6 +150,10 @@
 		E29730661C16295300B9433B /* InviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29730651C16295300B9433B /* InviteViewController.swift */; };
 		E29A4CD81BCF25220059D5B9 /* NotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A4CD71BCF25220059D5B9 /* NotificationView.swift */; };
 		E29A4CDA1BD077520059D5B9 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A4CD91BD077520059D5B9 /* MessageView.swift */; };
+		E29A921A1DB1859E00B27093 /* UserHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A92191DB1859E00B27093 /* UserHeaderView.swift */; };
+		E29A921C1DB1988A00B27093 /* FireUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A921B1DB1988A00B27093 /* FireUser.swift */; };
+		E29A921E1DB19A2600B27093 /* FireProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A921D1DB19A2600B27093 /* FireProfile.swift */; };
+		E29A92201DB19A3C00B27093 /* FirePhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A921F1DB19A3C00B27093 /* FirePhoto.swift */; };
 		E29F654F1B61A0780000BEF4 /* OneShotLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E281776B1B5AB2D400D65AC1 /* OneShotLocationManager.swift */; };
 		E29F65511B61A9280000BEF4 /* PatchSearchCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E29F65501B61A9280000BEF4 /* PatchSearchCell.xib */; };
 		E29F65531B61A9450000BEF4 /* PatchSearchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29F65521B61A9450000BEF4 /* PatchSearchCell.swift */; };
@@ -189,6 +193,7 @@
 		E2CC15A11C2C897800316356 /* WrapperTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CC15A01C2C897800316356 /* WrapperTableViewCell.swift */; };
 		E2CCAAE01B67CC0E0071170C /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CCAADF1B67CC0E0071170C /* NotificationController.swift */; };
 		E2CCAAE21B67EE2C0071170C /* chirp.caf in Resources */ = {isa = PBXBuildFile; fileRef = E2CCAAE11B67EE2C0071170C /* chirp.caf */; };
+		E2CF51331DAEF39100515506 /* ServiceAccount.json in Resources */ = {isa = PBXBuildFile; fileRef = E2CF51321DAEF39100515506 /* ServiceAccount.json */; };
 		E2D10E5C1C87AA760099EA6E /* AirHideShowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D10E5B1C87AA760099EA6E /* AirHideShowButton.swift */; };
 		E2D12A711C0778C100DE507E /* AirScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A701C0778C100DE507E /* AirScrollView.swift */; };
 		E2D12A731C08DC4900DE507E /* AirTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D12A721C08DC4900DE507E /* AirTextField.swift */; };
@@ -205,7 +210,6 @@
 		E2D569AF1BF3F45C001CCE58 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D569AE1BF3F45C001CCE58 /* Location.swift */; };
 		E2D569BC1C038C1B001CCE58 /* Photo.m in Sources */ = {isa = PBXBuildFile; fileRef = E2D569BB1C038C1B001CCE58 /* Photo.m */; };
 		E2D569BE1C052A30001CCE58 /* ProfileEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D569BD1C052A30001CCE58 /* ProfileEditViewController.swift */; };
-		E2D569C01C05F9D6001CCE58 /* FacebookProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D569BF1C05F9D6001CCE58 /* FacebookProvider.swift */; };
 		E2DBD4F01B0F65580006575C /* ExtensionsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DBD4EF1B0F65580006575C /* ExtensionsModel.swift */; };
 		E2E271291C5D1ED600E36804 /* BranchProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E271281C5D1ED600E36804 /* BranchProvider.swift */; };
 		E2E9AAA71CEF86470057698F /* AirNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E9AAA61CEF86470057698F /* AirNavigationController.swift */; };
@@ -444,6 +448,10 @@
 		E29730651C16295300B9433B /* InviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = InviteViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E29A4CD71BCF25220059D5B9 /* NotificationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = NotificationView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E29A4CD91BD077520059D5B9 /* MessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = MessageView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		E29A92191DB1859E00B27093 /* UserHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserHeaderView.swift; sourceTree = "<group>"; };
+		E29A921B1DB1988A00B27093 /* FireUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireUser.swift; sourceTree = "<group>"; };
+		E29A921D1DB19A2600B27093 /* FireProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireProfile.swift; sourceTree = "<group>"; };
+		E29A921F1DB19A3C00B27093 /* FirePhoto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirePhoto.swift; sourceTree = "<group>"; };
 		E29F65501B61A9280000BEF4 /* PatchSearchCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PatchSearchCell.xib; sourceTree = "<group>"; };
 		E29F65521B61A9450000BEF4 /* PatchSearchCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchSearchCell.swift; sourceTree = "<group>"; };
 		E2A28E6C1B49D88800B3A2FE /* AirLikeButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirLikeButton.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -487,6 +495,7 @@
 		E2CC15A01C2C897800316356 /* WrapperTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WrapperTableViewCell.swift; sourceTree = "<group>"; };
 		E2CCAADF1B67CC0E0071170C /* NotificationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NotificationController.swift; path = Patchr/NotificationController.swift; sourceTree = "<group>"; };
 		E2CCAAE11B67EE2C0071170C /* chirp.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = chirp.caf; sourceTree = "<group>"; };
+		E2CF51321DAEF39100515506 /* ServiceAccount.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ServiceAccount.json; sourceTree = "<group>"; };
 		E2D10E5B1C87AA760099EA6E /* AirHideShowButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirHideShowButton.swift; sourceTree = "<group>"; };
 		E2D12A701C0778C100DE507E /* AirScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirScrollView.swift; sourceTree = "<group>"; };
 		E2D12A721C08DC4900DE507E /* AirTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirTextField.swift; sourceTree = "<group>"; };
@@ -503,7 +512,6 @@
 		E2D569AE1BF3F45C001CCE58 /* Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		E2D569BB1C038C1B001CCE58 /* Photo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Photo.m; path = Model/Photo.m; sourceTree = "<group>"; };
 		E2D569BD1C052A30001CCE58 /* ProfileEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ProfileEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		E2D569BF1C05F9D6001CCE58 /* FacebookProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FacebookProvider.swift; sourceTree = "<group>"; };
 		E2DBD4EF1B0F65580006575C /* ExtensionsModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionsModel.swift; sourceTree = "<group>"; };
 		E2E271281C5D1ED600E36804 /* BranchProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BranchProvider.swift; sourceTree = "<group>"; };
 		E2E9AAA61CEF86470057698F /* AirNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirNavigationController.swift; sourceTree = "<group>"; };
@@ -652,6 +660,9 @@
 				7DC1763C1ACDFF010051BA6C /* Link.h */,
 				7DC1763D1ACDFF010051BA6C /* Link.m */,
 				E2D569AE1BF3F45C001CCE58 /* Location.swift */,
+				E29A921B1DB1988A00B27093 /* FireUser.swift */,
+				E29A921D1DB19A2600B27093 /* FireProfile.swift */,
+				E29A921F1DB19A3C00B27093 /* FirePhoto.swift */,
 				7D3F26CF1A76F77E0015F8E8 /* Location.h */,
 				7D3F26D01A76F77E0015F8E8 /* Location.m */,
 				7DB6E0F61A8174E90017A42F /* Message.h */,
@@ -763,6 +774,7 @@
 				E256B4251BD2C9E200EBF894 /* PatchView.swift */,
 				E2A5A8841B703B9B006D6E81 /* PhotoEditView.swift */,
 				E20C3A7E1BDC0EB0008CCED1 /* UserDetailView.swift */,
+				E29A92191DB1859E00B27093 /* UserHeaderView.swift */,
 				E2F0E3781C78E0180012BF90 /* UserInviteView.swift */,
 				E2F85C791C342B8600FC2364 /* UserPhotoView.swift */,
 				E256B4291BD3F32A00EBF894 /* UserView.swift */,
@@ -1008,7 +1020,6 @@
 		E2E271271C5D1EAC00E36804 /* Providers */ = {
 			isa = PBXGroup;
 			children = (
-				E2D569BF1C05F9D6001CCE58 /* FacebookProvider.swift */,
 				E2E271281C5D1ED600E36804 /* BranchProvider.swift */,
 			);
 			name = Providers;
@@ -1080,6 +1091,7 @@
 		E2F85C751C32610E00FC2364 /* Support */ = {
 			isa = PBXGroup;
 			children = (
+				E2CF51321DAEF39100515506 /* ServiceAccount.json */,
 				E2A603221CD97B7A00FBD55B /* InfoPlist.strings */,
 				7D3D39EE1A6F09CC00A44CB2 /* BridgingHeader.h */,
 				E2A5A87F1B6FCE98006D6E81 /* GoogleService-Info.plist */,
@@ -1106,6 +1118,7 @@
 				0323771184558D5A9D967346 /* Upload Bugsnag dSYM */,
 				6A2395C9C07F8D87E8817EDC /* Embed Pods Frameworks */,
 				17E3FADD91D1F23A97034409 /* Copy Pods Resources */,
+				E2CF512F1D9C71CF00515506 /* Upload Symbol Files for Firebase */,
 			);
 			buildRules = (
 			);
@@ -1243,6 +1256,7 @@
 				7D3D39D61A6F086F00A44CB2 /* Images.xcassets in Resources */,
 				E26B0C921B46D01E00706F4A /* ThumbnailCollectionViewCell.xib in Resources */,
 				E29F65511B61A9280000BEF4 /* PatchSearchCell.xib in Resources */,
+				E2CF51331DAEF39100515506 /* ServiceAccount.json in Resources */,
 				E28915931C5AD528005D7AA0 /* LaunchScreen.storyboard in Resources */,
 				E2064BF31BC0212B009C7B6A /* silence.caf in Resources */,
 				E2CA0C351C4FFEAF00E2F380 /* build.sh in Resources */,
@@ -1500,6 +1514,20 @@
 			shellPath = /bin/sh;
 			shellScript = "echo $CONFIGURATION\nif [ $CONFIGURATION == \"Release\" ]; then\necho \"Bumping share extension build number...\"\nplist=${PROJECT_DIR}/${TARGET_NAME}/${INFOPLIST_FILE}\n\n# increment the build number\nbuildnum=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${plist}\")\nif [[ \"${buildnum}\" == \"\" ]]; then\necho \"No build number in share extension $plist\"\nexit 2\nfi\n\nbuildnum=$(expr $buildnum + 1)\n/usr/libexec/Plistbuddy -c \"Set CFBundleVersion $buildnum\" \"${plist}\"\necho \"Bumped build number to $buildnum\"\n\nelse\necho $CONFIGURATION \" build - Not bumping build number.\"\nfi";
 		};
+		E2CF512F1D9C71CF00515506 /* Upload Symbol Files for Firebase */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Upload Symbol Files for Firebase";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "GOOGLE_APP_ID=1:486989499957:ios:b62b1047b75b4f5e\n\"${PODS_ROOT}\"/FirebaseCrash/upload-sym \"${SRCROOT}/Patchr/ServiceAccount.json\"";
+		};
 		E36CD7115AE42F1EEBC3773F /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1538,8 +1566,8 @@
 				E2B8A4B61CE7875400A28D3A /* AirRadialMenu.swift in Sources */,
 				7D01FA361A7024E200DD6DFA /* JSONResponseSerializerWithData.m in Sources */,
 				E2FA13401D8323030057F287 /* ChannelView.swift in Sources */,
+				E29A921A1DB1859E00B27093 /* UserHeaderView.swift in Sources */,
 				E25327E01B1A282D00990A81 /* FXBlurView.m in Sources */,
-				E2D569C01C05F9D6001CCE58 /* FacebookProvider.swift in Sources */,
 				E2DBD4F01B0F65580006575C /* ExtensionsModel.swift in Sources */,
 				E29A4CDA1BD077520059D5B9 /* MessageView.swift in Sources */,
 				E2A28E6F1B4A602200B3A2FE /* AirToggleButton.swift in Sources */,
@@ -1584,6 +1612,7 @@
 				7DA730921A71ACC9008C25FA /* Query.m in Sources */,
 				7DB6E0F81A8174E90017A42F /* _Message.m in Sources */,
 				E2CCAAE01B67CC0E0071170C /* NotificationController.swift in Sources */,
+				E29A921E1DB19A2600B27093 /* FireProfile.swift in Sources */,
 				E2B471D71C2231B700374F1F /* DataModel.xcdatamodeld in Sources */,
 				7D39D3C51ABA21B200275759 /* CALayer+XibConfiguration.m in Sources */,
 				E25327C11B13942D00990A81 /* UIShared.swift in Sources */,
@@ -1642,12 +1671,14 @@
 				E26B0C8E1B45783700706F4A /* TextFieldChangeObserver.swift in Sources */,
 				E256B4261BD2C9E200EBF894 /* PatchView.swift in Sources */,
 				E2B756A91D84600E00C102EC /* NavHeaderView.swift in Sources */,
+				E29A921C1DB1988A00B27093 /* FireUser.swift in Sources */,
 				E2B471DA1C2612AD00374F1F /* AirToolButton.swift in Sources */,
 				E29730661C16295300B9433B /* InviteViewController.swift in Sources */,
 				E2C720BD1B4C260200714B53 /* Reachability.m in Sources */,
 				E2D12A7B1C091C4D00DE507E /* BaseViewController.swift in Sources */,
 				E29A4CD81BCF25220059D5B9 /* NotificationView.swift in Sources */,
 				E25327B21B0FCE9C00990A81 /* Constants.swift in Sources */,
+				E29A92201DB19A3C00B27093 /* FirePhoto.swift in Sources */,
 				84EF12AC1AA904700043EBBA /* Utils.swift in Sources */,
 				E23C01111CE4F771009C56B2 /* CaptionView.swift in Sources */,
 				E29F654F1B61A0780000BEF4 /* OneShotLocationManager.swift in Sources */,
@@ -1793,7 +1824,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_SWIFT_FLAGS = "-D DEBUG";
-				PRODUCT_NAME = Patchr2;
+				PRODUCT_NAME = Patchr;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VALID_ARCHS = "arm64 armv7 armv7s";
@@ -1901,7 +1932,7 @@
 					"-framework",
 					"\"UIKit\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr2.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
@@ -2012,7 +2043,7 @@
 					"-framework",
 					"\"UIKit\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.3meters.patchr2.ios.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios.PatchrShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
@@ -2053,7 +2084,7 @@
 					"-framework",
 					"\"UIKit\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.3meters.patchr2.ios.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios.PatchrShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
@@ -2095,7 +2126,7 @@
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_NAME = Patchr2;
+				PRODUCT_NAME = Patchr;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = "arm64 armv7 armv7s";
@@ -2160,7 +2191,7 @@
 					"-framework",
 					"\"UIKit\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr2.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
@@ -2200,7 +2231,7 @@
 					"-framework",
 					"\"UIKit\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.3meters.patchr.ios.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios.PatchrShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;

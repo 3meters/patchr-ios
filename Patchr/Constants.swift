@@ -19,6 +19,7 @@ let APPLE_APP_ID                    = "983436323"
 let GOOGLE_ANALYTICS_ID             = "UA-33660954-6"
 let BUNDLE_ID                       = "com.3meters.patchr.ios"
 let KEYCHAIN_GROUP                  = "7542324V6B.\(BUNDLE_ID)"// Team id + bundle id
+let BUGSNAG_KEY                     = "d1313b8d5fc14d937419406f33fd4c01"
 
 let SCREEN_NARROW                   = (UIScreen.mainScreen().bounds.size.width == 320)
 let SCREEN_320                      = (UIScreen.mainScreen().bounds.size.width == 320)// iphone 4s

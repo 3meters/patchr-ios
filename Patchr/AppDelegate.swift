@@ -11,13 +11,16 @@ import Keys
 import AFNetworking
 import AFNetworkActivityLogger
 import AWSCore
-import FBSDKCoreKit
 import Branch
 import CocoaLumberjack
 import iRate
-import Bugsnag
 import MBProgressHUD
 import SlideMenuControllerSwift
+import Bugsnag
+import FirebaseRemoteConfig
+import Firebase
+import FirebaseAuth
+import FirebaseDatabase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
@@ -31,7 +34,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
     }
 
     override class func initialize() -> Void {
-
         iRate.sharedInstance().verboseLogging = false
         iRate.sharedInstance().daysUntilPrompt = 7
         iRate.sharedInstance().usesUntilPrompt = 10
@@ -47,22 +49,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
     *--------------------------------------------------------------------------------------------*/
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject:AnyObject]?) -> Bool {
-
-        let keys = PatchrKeys()
-
+        
+        /* Initialize Firebase */
+        FIRApp.configure()
+        
+        /* Remote config */
+        FIRRemoteConfig.remoteConfig().fetchWithCompletionHandler { status, error in
+            if (status == FIRRemoteConfigFetchStatus.Success) {
+                
+                if FIRRemoteConfig.remoteConfig().activateFetched() {
+                    Log.d("Remote config activated", breadcrumb: true)
+                }
+                
+                /* Default config for AWS */
+                let access = FIRRemoteConfig.remoteConfig().configValueForKey("aws_access_key").stringValue!
+                let secret = FIRRemoteConfig.remoteConfig().configValueForKey("aws_secret_key").stringValue!
+                let credProvider = AWSStaticCredentialsProvider(accessKey: access, secretKey: secret)
+                let serviceConfig = AWSServiceConfiguration(region: AWSRegionType(rawValue: 3/*'us-west-2'*/)!, credentialsProvider: credProvider)
+                AWSServiceManager.defaultServiceManager().defaultServiceConfiguration = serviceConfig
+            }
+            else {
+                Log.d("Remote config not fetched", breadcrumb: true)
+                Log.d("Error \(error!.localizedDescription)", breadcrumb: true)
+            }
+        }
+        
         /* Initialize Bugsnag */
-        Bugsnag.startBugsnagWithApiKey(keys.bugsnagKey())
-
-        /* Initialize Analytics here */
-        var configureError: NSError?
-        GGLContext.sharedInstance().configureWithError(&configureError)
-        assert(configureError == nil, "Error configuring Google services: \(configureError)")
-
-        /* Verbose logging for debug builds */
-#if DEBUG
-        GAI.sharedInstance().logger.logLevel = .Warning
-#endif
-
+        Bugsnag.startBugsnagWithApiKey(BUGSNAG_KEY)
+        
         /* Instance the data controller */
         DataController.instance
 
@@ -70,36 +84,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 
         self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
 
-#if DEBUG
+        #if DEBUG
         AFNetworkActivityLogger.sharedLogger().startLogging()
         AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelFatal
-#endif
+        #endif
 
         /* Flag first launch for special treatment */
         if !NSUserDefaults.standardUserDefaults().boolForKey("firstLaunch") {
             NSUserDefaults.standardUserDefaults().setBool(true, forKey: "firstLaunch")
             self.firstLaunch = true
             Reporting.track("Launched for First Time")
-        }
-        /*
-        * Init location controller. If this is done in the init of the nearby patch list
-        * controller, we don't get properly hooked up when onboarding a new user. I could not
-        * figure out exactly what causes the problem. Init does not require or trigger the
-        * location permission request.
-        */
-        LocationController.instance
-        /*
-        * We might have been launched because of a location change. We have
-        * about ten seconds to call updateProximity with the new location.
-        */
-        if launchOptions?[UIApplicationLaunchOptionsLocationKey] != nil {
-            Log.d("Launching with location key", breadcrumb: true)
-            if let locationManager = LocationController.instance.locationManager {
-                if let last = LocationController.instance.mostRecentAvailableLocation() {
-                    LocationController.instance.locationManager(locationManager, didUpdateLocations: [last])
-                }
-            }
-            return true
         }
 
         /* Logging */
@@ -123,11 +117,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
         /* Turn on network activity indicator */
         AFNetworkActivityIndicatorManager.sharedManager().enabled = true
 
-        /* Default config for AWS */
-        let credProvider = AWSStaticCredentialsProvider(accessKey: keys.awsS3Key(), secretKey: keys.awsS3Secret())
-        let serviceConfig = AWSServiceConfiguration(region: AWSRegionType(rawValue: 3/*'us-west-2'*/)!, credentialsProvider: credProvider)
-        AWSServiceManager.defaultServiceManager().defaultServiceConfiguration = serviceConfig
-
         /* Load setting defaults */
         let defaultSettingsFile: NSString = NSBundle.mainBundle().pathForResource("DefaultSettings", ofType: "plist")!
         let settingsDictionary: NSDictionary = NSDictionary(contentsOfFile: defaultSettingsFile as String)!
@@ -138,56 +127,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 
         /* Instance the reachability manager */
         ReachabilityManager.instance
-
-        /* Facebook */
-        FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
-        FBSDKProfile.enableUpdatesOnAccessTokenChange(true)
-
-        /* Initialize Branch: The deepLinkHandler gets called every time the app opens. */
-        Branch.getInstance().initSessionWithLaunchOptions(launchOptions, andRegisterDeepLinkHandler: {
-            params, error in
-            if error == nil {
-                /* A hit could mean a deferred link match */
-                if let clickedBranchLink = params["+clicked_branch_link"] as? Bool where clickedBranchLink {
-                    Log.d("Deep link routing based on clicked branch link", breadcrumb: true)
-                    self.routeDeepLink(params, error: error)    /* Presents modally on top of main tab controller. */
-                }
-            }
-        })
-
-        /* We might have been launched because of a deferred facebook deep link. */
-        if launchOptions?[UIApplicationLaunchOptionsURLKey] == nil && self.firstLaunch {
-            FBSDKAppLinkUtility.fetchDeferredAppInvite() {
-                url in
-                if url != nil {
-                    Log.d("Deep link routing for deferred facebook app invite", breadcrumb: true)
-                }
-            }
-        }
-
-        initUser()
+        
+        /* Start listening for auth changes */
+        UserController.instance
 
         initUI()
 
-        if UserController.instance.authenticated {
-            DataController.proxibase.preflight() {
-                response, error in
-
-                if let error = ServerError(error) {
-                    if error.code == .UNAUTHORIZED_SESSION_EXPIRED || error.code == .UNAUTHORIZED_CREDENTIALS {
-                        UserController.instance.logout()
-                    }
-                }
-                else if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
-                    if !UIShared.versionIsValid(Int(serviceData.minBuildValue)) {
-                        UIShared.compatibilityUpgrade()
-                    }
-                    else {
-                        NotificationController.instance.activateUser()
-                    }
+        let ref = FIRDatabase.database().reference()
+        ref.child("clients").child("ios").observeSingleEventOfType(.Value, withBlock: {
+            snapshot in
+            if let minVersion = snapshot.value as? Int {
+                if !UIShared.versionIsValid(Int(minVersion)) {
+                    UIShared.compatibilityUpgrade()
                 }
             }
-        }
+        })
 
         routeForRoot()
 
@@ -212,49 +166,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
             return true
         }
 
-        /* If the Branch or Facebook did not handle the incoming URL, check it for app link data */
-        let parsedUrl: BFURL = BFURL(inboundURL: url, sourceApplication: sourceApplication)
-        if (parsedUrl.appLinkData != nil) {
-            if let params = parsedUrl.targetQueryParameters {
-                Log.d("Facebook detected a deep link in openUrl: \(url.absoluteString)", breadcrumb: true)
-                routeDeepLink(params, error: nil)
-            }
-            return true
-        }
-
-        /* See if Facebook claims it as part of interaction with native Facebook client and Facebook dialogs */
-        if FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation) {
-            Log.d("Url passed to openUrl was intended for Facebook: \(url.absoluteString)", breadcrumb: true)
-            return true
-        }
-
         return false
     }
 
     func applicationDidBecomeActive(application: UIApplication) {
-
-        /* UIApplicationWillEnterForegroundNotification fires before this is called. */
-        FBSDKAppEvents.activateApp()
-
-        /*
-        * Check to see if Facebook has a deferred deep link. Should only be
-        * called after any launching url is processed. The facebook code
-        * makes a graph call. It looks at appId/activities endpoint. The
-        * advertisingId and the time the link was clicked in Facebook are key elements
-        * in the matching process. They append fb_click_time_utc param to url.
-        */
-        FBSDKAppLinkUtility.fetchDeferredAppLink {
-            url, error in
-            if url != nil && UIApplication.sharedApplication().canOpenURL(url) {
-                Log.d("Facebook has detected a deferred app link, calling openUrl: \(url!.absoluteString)", breadcrumb: true)
-                UIApplication.sharedApplication().openURL(url)
-            }
-        }
-
         /* Guard against becoming active without any UI */
         if self.window?.rootViewController == nil {
             Log.w("Patchr is becoming active without a root view controller, resetting to launch routing", breadcrumb: true)
-            initUser()
             initUI()
             routeForRoot()
         }
@@ -313,15 +231,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
         UISwitch.appearance().onTintColor = Theme.colorTint
     }
 
-    func initUser() {
-        /* Get the latest on the authenticated user if we have one */
-        UserController.instance.loginAuto()
-    }
-
     func routeForRoot() {
 
         /* If we have an authenticated user then start at the usual spot, otherwise start at the lobby scene. */
-        if UserController.instance.authenticated {
+        if (FIRAuth.auth()?.currentUser) != nil {
             
             SlideMenuOptions.leftViewWidth = NAVIGATION_DRAWER_WIDTH
             SlideMenuOptions.rightViewWidth = SIDE_MENU_WIDTH
@@ -332,7 +245,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
             
             let navigationController = NavigationController()
             navigationController.filter = PatchListFilter.Watching
-            navigationController.user = UserController.instance.currentUser
             
             let mainController = PatchDetailViewController()
             mainController.entityId = "pa.150820.00499.464.259239"
@@ -463,11 +375,9 @@ extension AppDelegate {
          * The service will still send notifications to the install based on the signed in user.
          * We assume that if no authenticated user then we are at correct initial state.
          */
-        if UserController.instance.authenticated {
-            UserController.instance.discardCredentials()
-            Reporting.updateUser(nil)
-            BranchProvider.logout()
-        }
+        UserController.instance.discardCredentials()
+        Reporting.updateUser(nil)
+        BranchProvider.logout()
 
         NSUserDefaults.standardUserDefaults().setObject(nil, forKey: PatchrUserDefaultKey("userEmail"))
         UserController.instance.clearStore()

@@ -32,7 +32,6 @@
 #import "Shortcut.h"
 
 #import <CommonCrypto/CommonCrypto.h>
-#import <Google/Analytics.h>
 #import <OneSignal/OneSignal.h>
 
 #import <AdobeCreativeSDKCore/AdobeUXAuthManager.h>

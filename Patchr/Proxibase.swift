@@ -25,6 +25,8 @@ import UIKit
 import AFNetworking
 import Keys
 import UIDevice_Hardware
+import FirebaseRemoteConfig
+import Firebase
 
 /*
  * Access control is set to public because that is the only way that
@@ -350,10 +352,10 @@ public class Proxibase {
 
         if let bingSessionManager: AFHTTPSessionManager = AFHTTPSessionManager(baseURL: NSURL(string: URI_PROXIBASE_SEARCH_IMAGES)) {
 
-            let keys = PatchrKeys()
             let requestSerializer: AFJSONRequestSerializer = AFJSONRequestSerializer()
+            let bingKey = FIRRemoteConfig.remoteConfig().configValueForKey("bing_subscription_key").stringValue!
 
-            requestSerializer.setValue(keys.bingSubscriptionKey(), forHTTPHeaderField: "Ocp-Apim-Subscription-Key")
+            requestSerializer.setValue(bingKey, forHTTPHeaderField: "Ocp-Apim-Subscription-Key")
             bingSessionManager.requestSerializer = requestSerializer
             bingSessionManager.responseSerializer = JSONResponseSerializerWithData()
 
@@ -424,17 +426,9 @@ public class Proxibase {
         * Discard credentials whether or not the server thinks we are signed out.
         * The completion closure is always performed asynchronously.
         */
-        if UserController.instance.authenticated {
-            performGETRequestFor("auth/signout", parameters: [:]) {
-                response, error in
-                completion(response: response, error: error)
-            }
-        }
-        else {
-            dispatch_async(dispatch_get_main_queue(), {
-                () -> Void in
-                completion(response: nil, error: nil)
-            })
+        performGETRequestFor("auth/signout", parameters: [:]) {
+            response, error in
+            completion(response: response, error: error)
         }
     }
 
@@ -547,13 +541,11 @@ public class Proxibase {
         /* Skip if already includes a sessionKey */
         var parameters = inParameters
         if parameters["session"] == nil {
-            if UserController.instance.authenticated {
-                let userId         = UserController.instance.userId as NSString?
-                let sessionKey     = UserController.instance.sessionKey as NSString?
-                let authParameters = NSMutableDictionary(dictionary: ["user": userId! as NSString, "session": sessionKey! as NSString])
-                authParameters.addEntriesFromDictionary(parameters as [NSObject:AnyObject])
-                parameters = authParameters
-            }
+            let userId         = UserController.instance.userId as NSString?
+            let sessionKey     = UserController.instance.sessionKey as NSString?
+            let authParameters = NSMutableDictionary(dictionary: ["user": userId! as NSString, "session": sessionKey! as NSString])
+            authParameters.addEntriesFromDictionary(parameters as [NSObject:AnyObject])
+            parameters = authParameters
         }
         return parameters
     }

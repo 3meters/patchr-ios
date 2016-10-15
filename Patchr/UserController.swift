@@ -8,6 +8,8 @@
 import AdSupport
 import Lockbox
 import Branch
+import Firebase
+import FirebaseAuth
 
 class UserController: NSObject {
 
@@ -106,7 +108,7 @@ class UserController: NSObject {
         NotificationController.instance.activateUser()
 
         writeCredentialsToUserDefaults()
-        fetchCurrentUser(nil) // Includes making sure the user is in the store
+        fetchCurrentUser() // Includes making sure the user is in the store
 
         NSNotificationCenter.defaultCenter().postNotificationName(Events.UserDidLogin, object: nil, userInfo: nil)
     }
@@ -135,7 +137,7 @@ class UserController: NSObject {
         }
     }
 
-    func fetchCurrentUser(completion: CompletionBlock?) {
+    func fetchCurrentUser() {
         DataController.instance.withEntityId(self.userId!, strategy: .UseCacheAndVerify, completion: { objectId, error in
             if error == nil && objectId != nil {
                 let user = DataController.instance.mainContext.objectWithID(objectId!) as! User
@@ -143,30 +145,7 @@ class UserController: NSObject {
                     self.initUserState(user)
                 }
             }
-            if completion != nil {
-                completion!(response: self.currentUser, error: error)
-            }
         })
-    }
-
-    func loginAuto() {
-        /*
-         * Gets called on app create.
-         */
-        if UserController.instance.authenticated {
-            if let userAsData = self.jsonUser?.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false) {
-                
-                let userAsJson = JSON(data: userAsData)
-                let userAsMap: NSDictionary = userAsJson.dictionaryObject!
-                
-                let user: User = User.fetchOrInsertOneById(userAsJson["_id"].string, inManagedObjectContext: DataController.instance.mainContext)
-                User.setPropertiesFromDictionary(userAsMap as [NSObject : AnyObject], onObject: user)
-                user.activityDate = NSDate(timeIntervalSince1970: 0) // Ensures that the user will be freshed from the service
-                
-                self.initUserState(user)
-                Log.i("User auto logged in: \(self.userName!) (\(self.userId!))")
-            }
-        }
     }
 
     func logout() {

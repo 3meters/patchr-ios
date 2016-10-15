@@ -6,8 +6,6 @@
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
 
-import FBSDKLoginKit
-import FBSDKShareKit
 import Keys
 import Branch
 
@@ -20,6 +18,8 @@ class BranchProvider: NSObject {
 	static func setIdentity(identity: String) {
 		Branch.getInstance().setIdentity(identity)
 	}
+    
+    typealias CompletionBlock = (response:AnyObject?, error:NSError?) -> Void
 	
 	static func invite(entity: Patch, referrer: User, completion: CompletionBlock) {
 		

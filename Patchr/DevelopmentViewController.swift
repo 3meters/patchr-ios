@@ -41,9 +41,7 @@ class DevelopmentViewController: UIViewController {
 
 		/* If the URI changed and we were signed in then sign out */
 		if self.uriAtStart != self.serverUriField.text {
-			if UserController.instance.authenticated {
-				UserController.instance.logout()
-			}
+			UserController.instance.logout()
 		}
 	}
     

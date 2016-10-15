@@ -254,11 +254,6 @@ class DataController: NSObject {
          */
         let query = self.mainContext.objectWithID(queryId) as! Query // Always returns object, throws accessing property and doesn't exist
 
-        if query.name == DataStoreQueryName.NotificationsForCurrentUser.rawValue && !UserController.instance.authenticated {
-            completion(queryItems: [], query: query, error: nil)
-            return
-        }
-
         /* Should not be nil if this is for nearby patches */
         let coordinate = LocationController.instance.lastLocationAccepted()?.coordinate
 
@@ -490,7 +485,7 @@ class DataController: NSObject {
                         entityType.setPropertiesFromDictionary(entityDictionary, onObject: entity)
 
                         /* A tiny bit of fixup */
-                        if let user = entity as? User where UserController.instance.authenticated {
+                        if let user = entity as? User {
                             if user.email == nil && user.id_ == UserController.instance.currentUser.id_ {
                                 user.email = UserController.instance.currentUser.email
                             }

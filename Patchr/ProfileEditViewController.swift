@@ -8,11 +8,10 @@
 
 import UIKit
 import AWSS3
-import Keys
-import FBSDKCoreKit
 import PBWebViewController
 import MBProgressHUD
-
+import FirebaseRemoteConfig
+import Firebase
 
 class ProfileEditViewController: BaseEditViewController {
 
@@ -30,7 +29,8 @@ class ProfileEditViewController: BaseEditViewController {
     var inputProvider		: String? = AuthProvider.PROXIBASE
     var inputState			: State? = State.Editing
     var inputUser			: User?
-    var inputName			: String?
+    var inputFirstName		: String?
+    var inputLastName		: String?
     var inputEmail			: String?
     var inputPassword		: String?
     var inputUserId			: String?
@@ -38,23 +38,13 @@ class ProfileEditViewController: BaseEditViewController {
     var source				= "Lobby"
 
     var photoView            = PhotoEditView()
-    var nameField            = AirTextField()
+    var firstNameField       = AirTextField()
+    var lastNameField        = AirTextField()
     var emailField           = AirTextField()
-    var areaField            = AirTextField()
     var changePasswordButton = AirButton()
     var joinButton           = AirFeaturedButton()
     var termsButton          = AirLinkButton()
-    var comment				 = AirLabel()
     var message				 = AirLabelTitle()
-
-    var facebookOnGroup		 = UIView()
-    var facebookOffGroup	 = UIView()
-    var facebookButton		 = AirButton()
-    var facebookName		 = AirLabel()
-    var facebookDisconnect	 = AirLinkButton()
-    var facebookPhoto		 = AirImageView(frame: CGRectZero)
-    var facebookActivity	 = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
-    var provider			 : FacebookProvider!
 
     var progress			 : AirProgress?
 
@@ -79,46 +69,22 @@ class ProfileEditViewController: BaseEditViewController {
         let messageSize = self.message.sizeThatFits(CGSizeMake(288, CGFloat.max))
         self.message.anchorTopCenterWithTopPadding(0, width: 288, height: messageSize.height)
         self.photoView.alignUnder(self.message, matchingCenterWithTopPadding: 16, width: 150, height: 150)
-        self.nameField.alignUnder(self.photoView, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+        self.firstNameField.alignUnder(self.photoView, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+        self.lastNameField.alignUnder(self.firstNameField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
 
         if self.inputState == State.Onboarding {
-            self.emailField.alignUnder(self.nameField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+            self.emailField.alignUnder(self.lastNameField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
             self.joinButton.alignUnder(self.emailField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
             self.termsButton.alignUnder(self.joinButton, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-            self.facebookButton.alignUnder(self.termsButton, matchingLeftWithTopPadding: 24, width: 288, height: 48)
         }
         else {
-            self.areaField.alignUnder(self.nameField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-            self.emailField.alignUnder(self.areaField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+            self.emailField.alignUnder(self.lastNameField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
             self.changePasswordButton.alignUnder(self.emailField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-
-            self.facebookPhoto.anchorTopCenterWithTopPadding(0, width: 72, height: 72)
-            self.facebookName.alignUnder(self.facebookPhoto, matchingCenterWithTopPadding: 8, width: 288, height: 24)
-            self.facebookDisconnect.alignUnder(self.facebookName, matchingCenterWithTopPadding: 0, width: 288, height: 24)
-            self.facebookActivity.alignUnder(self.facebookName, matchingCenterWithTopPadding: 0, width: 288, height: 24)
-            self.facebookOnGroup.alignUnder(self.changePasswordButton, matchingCenterWithTopPadding: 16, width: 288, height: 136)
-
-            self.facebookButton.anchorTopCenterWithTopPadding(0, width: 288, height: 48)
-            self.comment.alignUnder(self.facebookButton, matchingLeftWithTopPadding: 8, width: 288, height: 48)
-            self.facebookOffGroup.alignUnder(self.changePasswordButton, matchingCenterWithTopPadding: 8, width: 288, height: 104)
         }
 
         self.contentHolder.resizeToFitSubviews()
         self.scrollView.contentSize = CGSizeMake(self.contentHolder.frame.size.width, self.contentHolder.frame.size.height + CGFloat(32))
         self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 24, height: self.contentHolder.frame.size.height)
-    }
-
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        let notificationCenter = NSNotificationCenter.defaultCenter()
-        notificationCenter.addObserver(self, selector: #selector(ProfileEditViewController.providerConnectionChanged(_:)), name: FBSDKAccessTokenDidChangeNotification, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(ProfileEditViewController.draw), name: FBSDKProfileDidChangeNotification, object: nil)
-    }
-
-    override func viewDidDisappear(animated: Bool) {
-        super.viewDidDisappear(animated)
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: FBSDKAccessTokenDidChangeNotification, object: nil)
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: FBSDKProfileDidChangeNotification, object: nil)
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -144,70 +110,6 @@ class ProfileEditViewController: BaseEditViewController {
                 if doIt {
                     self.performBack(true)
                 }
-        }
-    }
-
-    func facebookDisconnectAction(sender: AnyObject) {
-        /*
-         * User stays logged in with proxibase. Any features that use Facebook
-         * like app invites will fallback to a different provider.
-         */
-        self.facebookDisconnect.fadeOut()
-        self.facebookActivity.fadeIn()
-        self.facebookActivity.hidesWhenStopped = true
-        self.facebookActivity.startAnimating()
-        if FBSDKAccessToken.currentAccessToken() != nil {
-            self.provider.deauthorize { response, error in
-                self.facebookActivity.stopAnimating()
-                self.facebookDisconnect.fadeIn()
-                if error == nil {
-                    self.facebookOffGroup.fadeIn()
-                    self.facebookOnGroup.fadeOut()
-                }
-            }
-        }
-    }
-
-    func facebookConnectAction(sender: AnyObject) {
-        /*
-        * User stays logged in with proxibase. Any features that use Google
-        * like app invites will fallback to a different provider.
-        */
-        if FBSDKAccessToken.currentAccessToken() == nil {
-            self.provider.authorize { response, error in
-                if FBSDKAccessToken.currentAccessToken() != nil {
-                    if self.inputState == .Onboarding {
-                        self.provider.profile {
-                            response, error in
-                            if let profile = response as? ServiceUserProfile where error == nil {
-                                self.inputName = profile.name
-                                self.inputEmail = profile.email
-                                self.inputUserId = profile.userId
-                                self.inputPhotoUrl = profile.photoUrl
-                                self.bind()
-                            }
-                        }
-                    }
-                    else {
-                        self.facebookOffGroup.fadeOut()
-                        self.facebookOnGroup.fadeIn()
-                    }
-                }
-            }
-        }
-        else {
-            if self.inputState == .Onboarding {
-                provider.profile {
-                    response, error in
-                    if let profile = response as? ServiceUserProfile where error == nil {
-                        self.inputName = profile.name
-                        self.inputEmail = profile.email
-                        self.inputUserId = profile.userId
-                        self.inputPhotoUrl = profile.photoUrl
-                        self.bind()
-                    }
-                }
-            }
         }
     }
 
@@ -239,12 +141,6 @@ class ProfileEditViewController: BaseEditViewController {
         }
     }
 
-    func providerConnectionChanged(notification: NSNotification) {
-        if notification.userInfo![FBSDKAccessTokenDidChangeUserID] != nil {
-            draw()
-        }
-    }
-
     /*--------------------------------------------------------------------------------------------
      * Methods
      *--------------------------------------------------------------------------------------------*/
@@ -261,9 +157,6 @@ class ProfileEditViewController: BaseEditViewController {
             self.message.text = "Profile"
         }
 
-        self.facebookActivity.accessibilityIdentifier = "activity_facebook"
-        self.provider = FacebookProvider(controller: self)
-
         self.message.textColor = Theme.colorTextTitle
         self.message.numberOfLines = 0
         self.message.textAlignment = .Center
@@ -273,22 +166,31 @@ class ProfileEditViewController: BaseEditViewController {
         self.photoView.setHostController(self)
         self.contentHolder.addSubview(self.photoView)
 
-        self.nameField.placeholder = "Full name"
-        self.nameField.accessibilityIdentifier = "name_field"
-        self.nameField.delegate = self
-        self.nameField.autocapitalizationType = .Words
-        self.nameField.autocorrectionType = .No
-        self.nameField.keyboardType = UIKeyboardType.Default
-        self.nameField.returnKeyType = UIReturnKeyType.Next
-        self.contentHolder.addSubview(self.nameField)
+        self.firstNameField.placeholder = "First name"
+        self.firstNameField.accessibilityIdentifier = "first_name_field"
+        self.firstNameField.delegate = self
+        self.firstNameField.autocapitalizationType = .Words
+        self.firstNameField.autocorrectionType = .No
+        self.firstNameField.keyboardType = UIKeyboardType.Default
+        self.firstNameField.returnKeyType = UIReturnKeyType.Next
+        self.contentHolder.addSubview(self.firstNameField)
 
+        self.lastNameField.placeholder = "Last name"
+        self.lastNameField.accessibilityIdentifier = "last_name_field"
+        self.lastNameField.delegate = self
+        self.lastNameField.autocapitalizationType = .Words
+        self.lastNameField.autocorrectionType = .No
+        self.lastNameField.keyboardType = UIKeyboardType.Default
+        self.lastNameField.returnKeyType = UIReturnKeyType.Next
+        self.contentHolder.addSubview(self.lastNameField)
+        
         self.emailField.placeholder = "Email"
         self.emailField.accessibilityIdentifier = "email_field"
         self.emailField.delegate = self
         self.emailField.autocapitalizationType = .None
         self.emailField.autocorrectionType = .No
         self.emailField.keyboardType = UIKeyboardType.EmailAddress
-        self.nameField.returnKeyType = UIReturnKeyType.Done
+        self.lastNameField.returnKeyType = UIReturnKeyType.Done
         self.contentHolder.addSubview(self.emailField)
 
         if self.inputState == State.Onboarding {
@@ -316,11 +218,6 @@ class ProfileEditViewController: BaseEditViewController {
             self.termsButton.titleLabel!.textAlignment = NSTextAlignment.Center
             self.contentHolder.addSubview(self.termsButton)
 
-            self.facebookButton = AirButton()
-            self.facebookButton.setTitle("AUTO FILL USING FACEBOOK", forState: .Normal)
-            self.facebookButton.accessibilityIdentifier = "facebook_button"
-            self.contentHolder.addSubview(self.facebookButton)
-
             /* Navigation bar buttons */
             let doneButton   = UIBarButtonItem(title: "Join", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(ProfileEditViewController.doneAction(_:)))
             doneButton.accessibilityIdentifier = "nav_submit_button"
@@ -330,7 +227,6 @@ class ProfileEditViewController: BaseEditViewController {
 
             self.joinButton.addTarget(self, action: #selector(ProfileEditViewController.doneAction(_:)), forControlEvents: .TouchUpInside)
             self.termsButton.addTarget(self, action: #selector(ProfileEditViewController.termsAction(_:)), forControlEvents: .TouchUpInside)
-            self.facebookButton.addTarget(self, action: #selector(ProfileEditViewController.facebookConnectAction(_:)), forControlEvents: .TouchUpInside)
         }
         else {
 
@@ -344,54 +240,9 @@ class ProfileEditViewController: BaseEditViewController {
 
             self.photoView.configureTo(self.inputUser?.photo != nil ? .Photo : .Placeholder)
 
-            self.areaField.placeholder = "Location"
-            self.areaField.accessibilityIdentifier = "area_field"
-            self.areaField.delegate = self
-            self.areaField.keyboardType = UIKeyboardType.Default
-            self.areaField.returnKeyType = UIReturnKeyType.Done
-            self.contentHolder.addSubview(self.areaField)
-
             self.changePasswordButton.setTitle("CHANGE PASSWORD", forState: .Normal)
             self.changePasswordButton.accessibilityIdentifier = "change_password_button"
             self.contentHolder.addSubview(self.changePasswordButton)
-
-            self.facebookOnGroup.alpha = 0
-
-            self.facebookButton.setTitle("CONNECT WITH FACEBOOK", forState: .Normal)
-            self.facebookButton.accessibilityIdentifier = "facebook_button"
-            self.facebookButton.addTarget(self, action: #selector(ProfileEditViewController.facebookConnectAction(_:)), forControlEvents: .TouchUpInside)
-            self.facebookOffGroup.addSubview(self.facebookButton)
-
-            self.comment.text = "Don't worry, we won't post without your permission."
-            self.comment.textColor = Theme.colorTextSecondary
-            self.comment.numberOfLines = 2
-            self.comment.textAlignment = NSTextAlignment.Center
-            self.facebookOffGroup.addSubview(self.comment)
-            self.contentHolder.addSubview(self.facebookOffGroup)
-
-            self.facebookPhoto.contentMode = UIViewContentMode.ScaleAspectFill
-            self.facebookPhoto.clipsToBounds = true
-            self.facebookPhoto.layer.cornerRadius = 36
-            self.facebookPhoto.layer.backgroundColor = Theme.colorBackgroundImage.CGColor
-            self.facebookOnGroup.addSubview(self.facebookPhoto)
-
-            self.facebookName.textAlignment = .Center
-            self.facebookOnGroup.addSubview(self.facebookName)
-
-            self.facebookDisconnect.setTitle("Disconnect from Facebook", forState: .Normal)
-            self.facebookDisconnect.accessibilityIdentifier = "facebook_disconnect_button"
-            self.facebookOnGroup.addSubview(self.facebookDisconnect)
-
-            self.facebookActivity.hidden = true
-            self.facebookOnGroup.addSubview(self.facebookActivity)
-            self.contentHolder.addSubview(self.facebookOnGroup)
-
-            self.facebookOnGroup.alpha = 0
-            self.facebookOffGroup.alpha = 1
-            if FBSDKAccessToken.currentAccessToken() != nil {
-                self.facebookOnGroup.alpha = 1
-                self.facebookOffGroup.alpha = 0
-            }
 
             /* Navigation bar buttons */
             let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: #selector(ProfileEditViewController.cancelAction(_:)))
@@ -406,29 +257,17 @@ class ProfileEditViewController: BaseEditViewController {
             self.navigationItem.rightBarButtonItems = [doneButton, Utils.spacer, deleteButton]
 
             self.changePasswordButton.addTarget(self, action: #selector(ProfileEditViewController.changePasswordAction(_:)), forControlEvents: .TouchUpInside)
-            self.facebookButton.addTarget(self, action: #selector(ProfileEditViewController.facebookConnectAction(_:)), forControlEvents: .TouchUpInside)
-            self.facebookDisconnect.addTarget(self, action: #selector(ProfileEditViewController.facebookDisconnectAction(_:)), forControlEvents: .TouchUpInside)
         }
     }
 
-    func draw() {
-        if self.inputState != .Onboarding {
-            if FBSDKAccessToken.currentAccessToken() != nil {
-                if FBSDKProfile.currentProfile() != nil {
-                    self.facebookName.text = FBSDKProfile.currentProfile().name
-                    let userId = FBSDKProfile.currentProfile().userID
-                    let url = NSURL(string: "https://graph.facebook.com/\(userId!)/picture?type=large")
-                    self.facebookPhoto.sd_setImageWithURL(url, placeholderImage: nil, options: [.RetryFailed, .LowPriority])
-                }
-            }
-        }
-    }
+    func draw() {}
 
     func bind() {
 
         if self.inputState == State.Onboarding {
             self.emailField.text = self.inputEmail
-            self.nameField.text = self.inputName
+            self.firstNameField.text = self.inputFirstName
+            self.lastNameField.text = self.inputLastName
 
             /* Photo */
             if self.inputPhotoUrl != nil {		// We have a facebook profile photo
@@ -448,9 +287,9 @@ class ProfileEditViewController: BaseEditViewController {
             }
         }
         else {
-            self.nameField.text = self.inputUser?.name
+            self.firstNameField.text = self.inputUser?.name
+            self.lastNameField.text = self.inputUser?.name
             self.emailField.text = self.inputUser?.email
-            self.areaField.text = self.inputUser?.area
             self.photoView.bindPhoto(self.inputUser?.photo)
         }
     }
@@ -523,7 +362,7 @@ class ProfileEditViewController: BaseEditViewController {
         queue.tasks +=~ { _, next in
 
             if self.inputState == .Onboarding {
-                let secret = PatchrKeys().proxibaseSecret()	// Obfuscated but highly insecure
+                let secret = FIRRemoteConfig.remoteConfig().configValueForKey("proxibase_secret").stringValue!
                 let createParameters: NSMutableDictionary = [
                     "data": parameters,
                     "secret": secret
@@ -667,10 +506,9 @@ class ProfileEditViewController: BaseEditViewController {
     }
 
     func gather(parameters: NSMutableDictionary) -> NSMutableDictionary {
-        parameters["name"] = nilToNull(self.nameField.text)
+        parameters["name"] = nilToNull(self.firstNameField.text)
         parameters["photo"] = nilToNull(self.photoView.imageButton.imageForState(.Normal))
         parameters["email"] = nilToNull(self.emailField.text)
-        parameters["area"] = nilToNull(self.areaField.text)
         if self.inputState == .Onboarding && self.inputProvider == AuthProvider.PROXIBASE {
             parameters["password"] = nilToNull(self.inputPassword)
         }
@@ -698,7 +536,7 @@ class ProfileEditViewController: BaseEditViewController {
     func isDirty() -> Bool {
 
         if self.inputState == .Onboarding {
-            if self.nameField.text != self.inputName {
+            if self.firstNameField.text != self.inputFirstName {
                 return true
             }
             if self.emailField.text != self.inputEmail {
@@ -706,13 +544,10 @@ class ProfileEditViewController: BaseEditViewController {
             }
         }
         else {
-            if !stringsAreEqual(self.nameField.text, string2: self.inputUser!.name) {
+            if !stringsAreEqual(self.firstNameField.text, string2: self.inputUser!.name) {
                 return true
             }
             if !stringsAreEqual(self.emailField.text, string2: self.inputUser!.email) {
-                return true
-            }
-            if !stringsAreEqual(self.areaField.text, string2: self.inputUser!.area) {
                 return true
             }
         }
@@ -726,7 +561,7 @@ class ProfileEditViewController: BaseEditViewController {
 
     func isValid() -> Bool {
 
-        if nameField.isEmpty {
+        if firstNameField.isEmpty {
             Alert("Enter a name.", message: nil, cancelButtonTitle: "OK")
             return false
         }
@@ -756,14 +591,14 @@ class ProfileEditViewController: BaseEditViewController {
     override func textFieldShouldReturn(textField: UITextField) -> Bool {
 
         if self.inputState == .Onboarding {
-            if textField == self.nameField {
+            if textField == self.firstNameField {
                 self.doneAction(textField)
                 textField.resignFirstResponder()
                 return false
             }
         }
         else {
-            if textField == self.nameField {
+            if textField == self.firstNameField {
                 self.emailField.becomeFirstResponder()
                 return false
             }

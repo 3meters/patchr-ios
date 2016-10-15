@@ -10,6 +10,8 @@ import UIKit
 import MessageUI
 import MBProgressHUD
 import PBWebViewController
+import Firebase
+import FirebaseAuth
 
 class SettingsTableViewController: UITableViewController {
 
@@ -29,6 +31,12 @@ class SettingsTableViewController: UITableViewController {
     var buildInfoLabel = AirLabelDisplay()
     var logoutButton = AirLinkButton()
     var clearHistoryButton = AirLinkButton()
+    
+    var isModal: Bool {
+        return self.presentingViewController?.presentedViewController == self
+            || (self.navigationController != nil && self.navigationController?.presentingViewController?.presentedViewController == self.navigationController)
+            || self.tabBarController?.presentingViewController is UITabBarController
+    }
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -69,8 +77,15 @@ class SettingsTableViewController: UITableViewController {
         self.progress!.labelText = "Logging out..."
         self.progress!.removeFromSuperViewOnHide = true
         self.progress!.show(true)
-
-        UserController.instance.logout()    // Blocks until finished
+        
+        try! FIRAuth.auth()!.signOut()
+        
+        Reporting.track("Logged Out")
+        Log.i("User logged out")
+        
+        let navController = AirNavigationController()
+        navController.viewControllers = [LobbyViewController()]
+        AppDelegate.appDelegate().window!.setRootViewController(navController, animated: true)
     }
 
     func clearHistoryAction(sender: AnyObject) {
@@ -87,6 +102,15 @@ class SettingsTableViewController: UITableViewController {
         Reporting.track("Cleared History")
 
         self.progress!.hide(true)
+    }
+    
+    func cancelAction(sender: AnyObject?){
+        if self.isModal {
+            self.dismissViewControllerAnimated(true, completion: nil)
+        }
+        else {
+            self.navigationController?.popViewControllerAnimated(true)
+        }
     }
 
     /*--------------------------------------------------------------------------------------------

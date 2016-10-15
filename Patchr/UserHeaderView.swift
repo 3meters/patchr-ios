@@ -8,7 +8,7 @@
 
 import UIKit
 
-class UserDetailView: BaseDetailView {
+class UserHeaderView: BaseDetailView {
 
 	var name           = AirLabelTitle()
 	var photo          = UserPhotoView()
@@ -39,11 +39,14 @@ class UserDetailView: BaseDetailView {
 		/* User friendly name */
 		self.name.lineBreakMode = .ByTruncatingMiddle
 		self.name.font = Theme.fontTitleLarge
+        self.name.textAlignment = NSTextAlignment.Center
+
 		
         /* Username */
         self.username.lineBreakMode = .ByTruncatingMiddle
         self.username.font = Theme.fontTextDisplay
         self.username.textColor = Theme.colorTextSecondary
+        self.username.textAlignment = NSTextAlignment.Center
         
 		/* Rule */
 		self.rule.backgroundColor = Theme.colorSeparator
@@ -57,23 +60,31 @@ class UserDetailView: BaseDetailView {
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		
-		self.userGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 112)
-		self.photo.anchorTopLeftWithLeftPadding(8, topPadding: 8, width: 96, height: 96)
-		self.name.alignToTheRightOf(self.photo, fillingWidthWithLeftAndRightPadding: 12, topPadding: 12, height: 36)
-		self.username.alignUnder(self.name, matchingLeftAndFillingWidthWithRightPadding: 12, topPadding: 0, height: 24)
+        
+        let contentWidth = self.bounds.size.width - 32
+
+        self.name.sizeToFit()
+        self.username.sizeToFit()
+
+		self.userGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 192)
+		self.photo.anchorTopCenterWithTopPadding(16, width: 96, height: 96)
+		self.name.alignUnder(self.photo, matchingCenterWithTopPadding: 8, width: contentWidth, height: 36)
+        self.username.alignUnder(self.name, matchingCenterWithTopPadding: 0, width: contentWidth, height: 24)
 		self.rule.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 1)
 	}
 	
-	func bindToEntity(entity: Entity!) {
-		
-		self.name.text?.removeAll(keepCapacity: false)
-		self.username.text?.removeAll(keepCapacity: false)
-		
-		if let user = entity as? User {
-			self.name.text = user.name
-			self.username.text = user.email
-			self.photo.bindToEntity(user)
-		}
+	func bindToUser(user: FireUser!) {
+        self.name.text?.removeAll(keepCapacity: false)
+        self.username.text?.removeAll(keepCapacity: false)
+        
+        self.username.text = "@\(user.username!)"
+        if let profile = user.profile {
+            self.name.text = profile.fullName!
+            var photoUrl: NSURL? = nil
+            if let photo = profile.photo {
+                photoUrl = PhotoUtils.url(photo.filename!, source: photo.source!, category: SizeCategory.profile)
+            }
+            self.photo.bindPhoto(photoUrl, name: profile.fullName!)
+        }
 	}
 }

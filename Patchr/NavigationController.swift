@@ -9,7 +9,6 @@ import AVFoundation
 
 class NavigationController: BaseTableViewController, UISearchBarDelegate {
 
-    var user: User!
     var filter: PatchListFilter!
     var selectedCell: WrapperTableViewCell?
     var lastContentOffset = CGFloat(0)
@@ -24,10 +23,6 @@ class NavigationController: BaseTableViewController, UISearchBarDelegate {
 
         guard self.filter != nil else {
             fatalError("Filter must be set on NavigationController")
-        }
-
-        if self.user == nil {
-            self.user = UserController.instance.currentUser
         }
 
         /* Strings */
@@ -59,14 +54,14 @@ class NavigationController: BaseTableViewController, UISearchBarDelegate {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)	// calls bind
-        bind()
+        //bind()
     }
 
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        if getActivityDate() != self.query.activityDateValue {
-            fetchQueryItems(force: true, paging: false, queryDate: getActivityDate())
-        }
+//        if getActivityDate() != self.query.activityDateValue {
+//            fetchQueryItems(force: true, paging: false, queryDate: getActivityDate())
+//        }
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -139,7 +134,6 @@ class NavigationController: BaseTableViewController, UISearchBarDelegate {
             query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
             query!.name = DataStoreQueryName.PatchesUserIsWatching.rawValue
             query!.pageSize = DataController.proxibase.pageSizeDefault
-            query!.contextEntity = self.user
             DataController.instance.saveContext(true)
         }
 
@@ -147,7 +141,8 @@ class NavigationController: BaseTableViewController, UISearchBarDelegate {
     }
 
     func queryId() -> String {
-        return "query.\(DataStoreQueryName.PatchesUserIsWatching.rawValue.lowercaseString).\(self.user.id_)"
+        //        return "query.\(DataStoreQueryName.PatchesUserIsWatching.rawValue.lowercaseString).\(UserController.instance.userFire?.uid)"
+        return "query.\(DataStoreQueryName.PatchesUserIsWatching.rawValue.lowercaseString).grbits"
     }
 }
 

@@ -25,9 +25,7 @@ class PatchNavigationController: AirNavigationController {
 		
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchNavigationController.userDidLogin(_:)), name: Events.UserDidLogin, object: nil)
 		
-		let segItems = UserController.instance.authenticated
-			? ["Nearby", "Member", "Own", "Explore"]
-			: ["Nearby", "Explore"]
+		let segItems = ["Nearby", "Member", "Own", "Explore"]
 			
         self.segmentsController = SegmentsController(navigationController: self, viewControllers: segmentViewControllers())
         

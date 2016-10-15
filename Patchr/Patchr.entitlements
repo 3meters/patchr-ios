@@ -10,7 +10,6 @@
 	<key>com.apple.security.application-groups</key>
 	<array>
 		<string>group.com.3meters.patchr.ios</string>
-		<string>group.com.3meters.patchr2.ios</string>
 	</array>
 	<key>keychain-access-groups</key>
 	<array>
