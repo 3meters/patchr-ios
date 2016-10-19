@@ -1192,7 +1192,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		0323771184558D5A9D967346 /* Upload Bugsnag dSYM */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			files = (
 			);
 			inputPaths = (
@@ -1338,7 +1338,7 @@
 		};
 		E2CF512F1D9C71CF00515506 /* Upload Symbol Files for Firebase */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			files = (
 			);
 			inputPaths = (
