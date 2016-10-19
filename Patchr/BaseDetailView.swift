@@ -12,7 +12,7 @@ class BaseDetailView: UIView {
 
 	var entity: Entity?
 	
-	override func sizeThatFits(size: CGSize) -> CGSize {
+	override func sizeThatFits(_ size: CGSize) -> CGSize {
 		
 		var w = CGFloat(0)
 		var h = CGFloat(0)
@@ -24,6 +24,6 @@ class BaseDetailView: UIView {
 			h = max(fh, h)
 		}
 		
-		return CGSizeMake(w, h)
+        return CGSize(width: w, height: h)
 	}
 }

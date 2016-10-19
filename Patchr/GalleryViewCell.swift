@@ -11,7 +11,7 @@ import UIKit
 class GalleryViewCell: UICollectionViewCell {
 	
 	var displayPhoto		: DisplayPhoto?
-	var displayImageView	= AirImageView(frame: CGRectZero)
+	var displayImageView	= AirImageView(frame: CGRect.zero)
 	
 	override init(frame: CGRect) {
 		super.init(frame: frame)
@@ -30,7 +30,7 @@ class GalleryViewCell: UICollectionViewCell {
 
 	
 	override var layoutMargins: UIEdgeInsets {
-		get { return UIEdgeInsetsZero }
+		get { return UIEdgeInsets.zero }
 		set (newVal) {}
 	}
 	

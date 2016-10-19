@@ -15,24 +15,24 @@ class AirTextView: UITextView {
 	
 	func initialize() {
 		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AirTextView.editingBegin(_:)), name: UITextFieldTextDidBeginEditingNotification, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AirTextView.editingBegin(_:)), name: UITextViewTextDidBeginEditingNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(AirTextView.editingBegin(notification:)), name: NSNotification.Name.UITextFieldTextDidBeginEditing, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(AirTextView.editingBegin(notification:)), name: NSNotification.Name.UITextViewTextDidBeginEditing, object: nil)
 		
 		self.textColor = Theme.colorText
 		self.font = Theme.fontText
 		
 		self.placeholderLabel.textColor = Theme.colorTextPlaceholder
 		self.placeholderLabel.font = Theme.fontText
-		self.placeholderLabel.hidden = !self.text.isEmpty
+		self.placeholderLabel.isHidden = !self.text.isEmpty
 		self.addSubview(self.placeholderLabel)
 		
-		self.scrollEnabled = false
+		self.isScrollEnabled = false
 		self.textContainer.lineFragmentPadding = 0
 		self.textContainerInset = UIEdgeInsetsMake(12, 0, 12, 0)
-		self.autocapitalizationType = .Sentences
-		self.autocorrectionType = .Yes
-		self.keyboardType = UIKeyboardType.Default
-		self.returnKeyType = UIReturnKeyType.Default
+		self.autocapitalizationType = .sentences
+		self.autocorrectionType = .yes
+		self.keyboardType = UIKeyboardType.default
+		self.returnKeyType = UIReturnKeyType.default
 		
 		self.rule.backgroundColor = Theme.colorRule
 		self.addSubview(self.rule)
@@ -40,8 +40,8 @@ class AirTextView: UITextView {
 		
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		self.placeholderLabel.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 48)
-		self.rule.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: Theme.dimenRuleThickness)
+		self.placeholderLabel.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 48)
+		self.rule.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: Theme.dimenRuleThickness)
 	}
 	
 	func editingBegin(notification: NSNotification) {

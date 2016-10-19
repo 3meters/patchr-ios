@@ -27,7 +27,7 @@ class MessageView: BaseView {
 	var recipients		= AirLabelDisplay()
 	
 	var toolbar			= UIView()
-	var likeButton		= AirLikeButton(frame: CGRectZero)
+	var likeButton		= AirLikeButton(frame: CGRect.zero)
 	var likes			= AirLabelDisplay()
 	
 	override init(frame: CGRect) {
@@ -43,7 +43,7 @@ class MessageView: BaseView {
 	}
 	
 	deinit {
-		NSNotificationCenter.defaultCenter().removeObserver(self)
+		NotificationCenter.default.removeObserver(self)
 	}
 	
 	/*--------------------------------------------------------------------------------------------
@@ -69,19 +69,19 @@ class MessageView: BaseView {
 		
 		if self.showPatchName && self.patchName.text != nil {
 			self.patchName.sizeToFit()
-			self.patchName.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 0, width: columnWidth, height: self.patchName.height())
-			self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: self.patchName.height() + 8, width: 48, height: 48)
+			self.patchName.anchorTopLeft(withLeftPadding: columnLeft, topPadding: 0, width: columnWidth, height: self.patchName.height())
+			self.userPhoto.anchorTopLeft(withLeftPadding: 0, topPadding: self.patchName.height() + 8, width: 48, height: 48)
 		}
 		else {
-			self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 48, height: 48)
+			self.userPhoto.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: 48, height: 48)
 		}
 		
 		/* Header */
 		
 		self.createdDate.sizeToFit()
 		self.userName.sizeToFit()
-		self.userName.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth - (self.createdDate.width() + 8), height: self.userName.height())
-		self.createdDate.alignToTheRightOf(self.userName, matchingCenterAndFillingWidthWithLeftAndRightPadding: 0, height: self.createdDate.height())
+		self.userName.align(toTheRightOf: self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth - (self.createdDate.width() + 8), height: self.userName.height())
+		self.createdDate.align(toTheRightOf: self.userName, matchingCenterAndFillingWidthWithLeftAndRightPadding: 0, height: self.createdDate.height())
 		
 		/* Body */
 		
@@ -109,16 +109,16 @@ class MessageView: BaseView {
 			self.recipientsLabel.sizeToFit()
 			self.recipients.bounds.size.width = columnWidth - (self.recipientsLabel.width() + 12)
 			self.recipients.sizeToFit()
-			self.recipientsLabel.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: self.recipientsLabel.width(), height: self.recipientsLabel.height())
-			self.recipients.alignToTheRightOf(self.recipientsLabel, matchingTopWithLeftPadding: 12, width: self.recipients.width(), height: self.recipients.height())
+			self.recipientsLabel.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: self.recipientsLabel.width(), height: self.recipientsLabel.height())
+			self.recipients.align(toTheRightOf: self.recipientsLabel, matchingTopWithLeftPadding: 12, width: self.recipients.width(), height: self.recipients.height())
 			self.recipientsGroup.alignUnder(bottomView!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: self.recipients.height() + 12)
 		}
 		else {
 			self.toolbar.alignUnder(bottomView!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 0, height: 48)
-			self.likeButton.anchorCenterLeftWithLeftPadding(0, width: self.likeButton.width(), height: self.likeButton.height())
+			self.likeButton.anchorCenterLeft(withLeftPadding: 0, width: self.likeButton.width(), height: self.likeButton.height())
 			self.likeButton.frame.origin.x -= 12
 			self.likes.sizeToFit()
-			self.likes.alignToTheRightOf(self.likeButton, matchingCenterWithLeftPadding: 0, width: self.likes.width(), height: self.likes.height())
+			self.likes.align(toTheRightOf: self.likeButton, matchingCenterWithLeftPadding: 0, width: self.likes.width(), height: self.likes.height())
 			self.likes.frame.origin.x -= 4
 		}
 	}
@@ -127,18 +127,18 @@ class MessageView: BaseView {
 		
 		if let userInfo = notification.userInfo,
 			let entityId = userInfo["entityId"] as? String {
-				if let message = self.entity as? Message where message.id_ != nil && entityId == message.id_ {
+				if let message = self.entity as? Message, message.id_ != nil && entityId == message.id_ {
 					
 					/* Likes button */
-					self.likeButton.bindEntity(message)
+					self.likeButton.bindEntity(entity: message)
 
 					self.likes.text = nil
 					
 					if message.countLikes != nil {
-						if message.countLikes?.integerValue != 0 {
-							self.likes.text = String(message.countLikes.integerValue)
+						if message.countLikes?.intValue != 0 {
+							self.likes.text = String(message.countLikes.intValue)
 							self.likes.sizeToFit()
-							self.likes.alignToTheRightOf(self.likeButton, matchingCenterWithLeftPadding: 0, width: self.likes.width(), height: self.likes.height())
+							self.likes.align(toTheRightOf: self.likeButton, matchingCenterWithLeftPadding: 0, width: self.likes.width(), height: self.likes.height())
 							self.likes.frame.origin.x -= 4
 						}
 					}
@@ -158,29 +158,29 @@ class MessageView: BaseView {
 		 */
 		
 		/* Description */
-		self.description_ = TTTAttributedLabel(frame: CGRectZero)
+		self.description_ = TTTAttributedLabel(frame: CGRect.zero)
 		self.description_!.numberOfLines = 5
 		self.description_!.font = Theme.fontTextList
 		
-		if self.description_ != nil && self.description_!.isKindOfClass(TTTAttributedLabel) {
+		if self.description_ != nil && !(self.description_ is TTTAttributedLabel) {
 			let linkColor = Theme.colorTint
 			let linkActiveColor = Theme.colorTint
 			let label = self.description_ as! TTTAttributedLabel
-			label.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
-			label.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
-			label.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
+			label.linkAttributes = [kCTForegroundColorAttributeName as AnyHashable : linkColor]
+			label.activeLinkAttributes = [kCTForegroundColorAttributeName as AnyHashable : linkActiveColor]
+			label.enabledTextCheckingTypes = NSTextCheckingResult.CheckingType.link.rawValue|NSTextCheckingResult.CheckingType.address.rawValue
 		}
 
 		self.addSubview(self.description_!)
 		
 		/* Photo: give initial size in case the image displays before call to layoutSubviews		 */
 		let columnLeft = CGFloat(48 + 8)
-		let columnWidth = min(CONTENT_WIDTH_MAX, UIScreen.mainScreen().bounds.size.width) - columnLeft
+		let columnWidth = min(CONTENT_WIDTH_MAX, UIScreen.main.bounds.size.width) - columnLeft
 		let photoHeight = columnWidth * 0.5625		// 16:9 aspect ratio
 		
-		self.photo = AirImageView(frame: CGRectMake(0, 0, columnWidth, photoHeight))
+        self.photo = AirImageView(frame: CGRect(x:0, y:0, width:columnWidth, height:photoHeight))
 		self.photo!.clipsToBounds = true
-		self.photo!.contentMode = .ScaleAspectFill
+		self.photo!.contentMode = .scaleAspectFill
 		self.photo!.backgroundColor = Theme.colorBackgroundImage
 		
 		self.addSubview(self.photo!)
@@ -189,7 +189,7 @@ class MessageView: BaseView {
 		self.patchName.font = Theme.fontComment
 		self.patchName.textColor = Theme.colorTextSecondary
 		self.patchName.numberOfLines = 1
-		self.patchName.lineBreakMode = .ByTruncatingMiddle
+		self.patchName.lineBreakMode = .byTruncatingMiddle
 		self.addSubview(self.patchName)
 		
 		/* User photo */
@@ -198,12 +198,12 @@ class MessageView: BaseView {
 		/* Header */
 		self.userName.font = Theme.fontTextBold
 		self.userName.numberOfLines = 1
-		self.userName.lineBreakMode = .ByTruncatingMiddle
+		self.userName.lineBreakMode = .byTruncatingMiddle
 		
 		self.createdDate.font = Theme.fontComment
 		self.createdDate.numberOfLines = 1
 		self.createdDate.textColor = Theme.colorTextSecondary
-		self.createdDate.textAlignment = .Right
+		self.createdDate.textAlignment = .right
 		
 		self.addSubview(self.userName)
 		self.addSubview(self.createdDate)
@@ -223,19 +223,19 @@ class MessageView: BaseView {
 		self.addSubview(self.recipientsGroup)
 		
 		self.likeButton.imageView!.tintColor = Theme.colorTint
-		self.likeButton.bounds.size = CGSizeMake(48, 48)
+        self.likeButton.bounds.size = CGSize(width:48, height:48)
 		self.likeButton.imageEdgeInsets = UIEdgeInsetsMake(14, 12, 14, 12)
 
 		self.likes.font = Theme.fontText
 		self.likes.numberOfLines = 1
 		self.likes.textColor = Theme.colorText
-		self.likes.textAlignment = .Right
+		self.likes.textAlignment = .right
 		
 		self.toolbar.addSubview(self.likeButton)
 		self.toolbar.addSubview(self.likes)
 		self.addSubview(self.toolbar)
 		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MessageView.likeDidChange(_:)), name: Events.LikeDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(MessageView.likeDidChange(notification:)), name: NSNotification.Name(rawValue: Events.LikeDidChange), object: nil)
 	}
 	
 	override func bindToEntity(entity: AnyObject, location: CLLocation?) {
@@ -245,32 +245,32 @@ class MessageView: BaseView {
 		self.entity = entity
 		self.isShare = (self.entity?.type != nil && self.entity?.type == "share")
 		
-		self.description_?.hidden = true
-		self.photo?.hidden = true
-		self.patchName.hidden = true
-		self.toolbar.hidden = true
-		self.recipientsGroup.hidden = true
+		self.description_?.isHidden = true
+		self.photo?.isHidden = true
+		self.patchName.isHidden = true
+		self.toolbar.isHidden = true
+		self.recipientsGroup.isHidden = true
 		
 		if let description = entity.description_ {
-			self.description_?.hidden = false
+			self.description_?.isHidden = false
 			self.description_?.text = description
 		}
 		
 		if let photo = entity.photo {
-			self.photo?.hidden = false
-			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.standard)
-			bindPhoto(photoUrl)
+			self.photo?.isHidden = false
+			let photoUrl = PhotoUtils.url(prefix: photo.prefix!, source: photo.source!, category: SizeCategory.standard)
+			bindPhoto(photoUrl: photoUrl)
 		}
 		
 		self.userName.text = entity.creator?.name ?? "Deleted"
-		self.userPhoto.bindToEntity(entity.creator)
-		self.createdDate.text = UIShared.timeAgoShort(entity.createdDate)
+		self.userPhoto.bindToEntity(entity: entity.creator)
+		self.createdDate.text = UIShared.timeAgoShort(date: entity.createdDate as NSDate)
 		
 		if let message = entity as? Message {
 			
 			/* Patch */
 			if self.showPatchName {
-				self.patchName.hidden = false
+				self.patchName.isHidden = false
 				if message.patch != nil {
 					self.patchName.text = message.patch.name
 				}
@@ -280,22 +280,22 @@ class MessageView: BaseView {
 			}
 			
 			if self.isShare {
-				self.recipientsGroup.hidden = false
+				self.recipientsGroup.isHidden = false
 				self.recipients.text = ""
 				if message.recipients != nil {
 					for recipient in message.recipients as! Set<Shortcut> {
-						self.recipients.text!.appendContentsOf("\(recipient.name), ")
+						self.recipients.text!.append("\(recipient.name), ")
 					}
 					self.recipients.text = String(self.recipients.text!.characters.dropLast(2))
 				}
 			}
 			else {
-				self.toolbar.hidden = false
-				self.likeButton.bindEntity(message)
+				self.toolbar.isHidden = false
+				self.likeButton.bindEntity(entity: message)
 				self.likes.text = nil
 				if message.countLikes != nil {
-					if message.countLikes?.integerValue != 0 {
-						self.likes.text = String(message.countLikes.integerValue)
+					if message.countLikes?.intValue != 0 {
+						self.likes.text = String(message.countLikes.intValue)
 					}
 				}
 				self.likes.textColor = message.userLikesValue ? Colors.brandColor : Theme.colorText
@@ -305,7 +305,7 @@ class MessageView: BaseView {
 		self.setNeedsLayout()	// Needed because binding can change the layout
 	}
 	
-	private func bindPhoto(photoUrl: NSURL) {
+	private func bindPhoto(photoUrl: URL) {
 		
 		if self.photo?.image != nil
 			&& self.photo!.linkedPhotoUrl != nil
@@ -314,6 +314,6 @@ class MessageView: BaseView {
 		}
 		
 		self.photo?.image = nil
-		self.photo!.setImageWithUrl(photoUrl, animate: true)
+		self.photo!.setImageWithUrl(url: photoUrl, animate: true)
 	}
 }

@@ -106,9 +106,9 @@ class Snow {
 	
 	let colorLogVerbose			= Colors.gray50pcntColor
 	let colorLogDebug			= Colors.accentColorDarker
-	let colorLogInfo			= UIColor.purpleColor()
-	let colorLogWarning			= UIColor.orangeColor()
-	let colorLogError			= UIColor.redColor()
+	let colorLogInfo			= UIColor.purple
+	let colorLogWarning			= UIColor.orange
+	let colorLogError			= UIColor.red
 	
 	let dimenButtonCornerRadius = 4
 	let dimenButtonBorderWidth = CGFloat(0.5)
@@ -136,9 +136,9 @@ public struct Colors {
 	static let opacity90pcntBlack: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.90))
 	
 	static let lightGray: UIColor = gray66pcntColor
-	static let white: UIColor = UIColor.whiteColor()
-	static let black: UIColor = UIColor.blackColor()
-	static let clear: UIColor = UIColor.clearColor()
+	static let white: UIColor = UIColor.white
+	static let black: UIColor = UIColor.black
+	static let clear: UIColor = UIColor.clear
 	
 	static let brandColor = UIColor(hexString: "#FF7600FF")
 	static let brandColorLight = UIColor(hexString: "#FF9439FF")

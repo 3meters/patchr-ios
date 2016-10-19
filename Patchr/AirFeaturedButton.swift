@@ -24,16 +24,16 @@ class AirFeaturedButton: UIButton {
 	
 	func initialize() {
 		self.titleLabel!.font = Theme.fontButtonTitle
-		self.setTitleColor(Theme.colorButtonTitleFeatured, forState: .Normal)
-		self.setTitleColor(Theme.colorButtonTitleFeaturedHighlighted, forState: .Highlighted)
+		self.setTitleColor(Theme.colorButtonTitleFeatured, for: .normal)
+		self.setTitleColor(Theme.colorButtonTitleFeaturedHighlighted, for: .highlighted)
 		self.backgroundColor = Theme.colorButtonFillFeatured
 		self.borderColor = Theme.colorButtonBorderFeatured
 		self.borderWidth = Theme.dimenButtonBorderWidth
 		self.cornerRadius = Int(Theme.dimenButtonCornerRadius)
 		
 		self.layer.masksToBounds = false
-		self.layer.shadowColor = Colors.black.CGColor
-		self.layer.shadowOffset = CGSizeMake(0, 1)
+		self.layer.shadowColor = Colors.black.cgColor
+        self.layer.shadowOffset = CGSize(width:0, height:1)
 		self.layer.shadowOpacity = 0.4
 		self.layer.shadowRadius = 1
 	}

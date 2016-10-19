@@ -16,7 +16,7 @@ class NotificationView: BaseView {
 	var hasPhoto		= false
 	
 	var userPhoto		= UserPhotoView()
-	var iconImageView	= UIImageView(frame: CGRectZero)
+	var iconImageView	= UIImageView(frame: CGRect.zero)
 	var ageDot			= UIView()
 	var createdDate		= AirLabelDisplay()
 	
@@ -43,28 +43,28 @@ class NotificationView: BaseView {
 		let columnWidth = self.bounds.size.width - columnLeft
 		let photoHeight = columnWidth * 0.5625		// 16:9 aspect ratio
 		
-		self.userPhoto.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 48, height: 48)
+		self.userPhoto.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: 48, height: 48)
 		
 		var bottomView: UIView? = self.photo
 		if !self.hasPhoto {	// Text only
 			bottomView = self.description_
 			self.description_?.bounds.size.width = columnWidth
 			self.description_?.sizeToFit()
-			self.description_?.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: self.description_!.height())
+			self.description_?.align(toTheRightOf: self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: self.description_!.height())
 		}
 		else if self.description_?.attributedText == nil { // Photo only
-			self.photo?.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: photoHeight)
+			self.photo?.align(toTheRightOf: self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: photoHeight)
 		}
 		else { // Text and photo
 			self.description_?.bounds.size.width = columnWidth
 			self.description_?.sizeToFit()
-			self.description_?.alignToTheRightOf(self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: self.description_!.height())
+			self.description_?.align(toTheRightOf: self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth, height: self.description_!.height())
 			self.photo?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 12, height: photoHeight)
 		}
 		
 		self.createdDate.sizeToFit()
 		self.iconImageView.alignUnder(bottomView!, matchingLeftWithTopPadding: 8, width: self.iconImageView.width(), height: self.iconImageView.height())
-		self.createdDate.alignToTheRightOf(self.iconImageView, matchingCenterWithLeftPadding: 8, width: self.createdDate.width(), height: self.createdDate.height())
+		self.createdDate.align(toTheRightOf: self.iconImageView, matchingCenterWithLeftPadding: 8, width: self.createdDate.width(), height: self.createdDate.height())
 		self.ageDot.alignUnder(bottomView!, matchingRightWithTopPadding: 8, width: 12, height: 12)
 	}
 	
@@ -77,7 +77,7 @@ class NotificationView: BaseView {
 		self.clipsToBounds = false
 		
 		/* Description */
-		self.description_ = TTTAttributedLabel(frame: CGRectZero)
+		self.description_ = TTTAttributedLabel(frame: CGRect.zero)
 		self.description_!.numberOfLines = 5
 		self.description_!.font = Theme.fontTextList
 		self.addSubview(self.description_!)
@@ -87,9 +87,9 @@ class NotificationView: BaseView {
 		let columnWidth = self.bounds.size.width - columnLeft
 		let photoHeight = columnWidth * 0.5625		// 16:9 aspect ratio
 		
-		self.photo = AirImageView(frame: CGRectMake(0, 0, columnWidth, photoHeight))
+        self.photo = AirImageView(frame: CGRect(x:0, y:0, width:columnWidth, height:photoHeight))
 		self.photo!.clipsToBounds = true
-		self.photo!.contentMode = .ScaleAspectFill
+		self.photo!.contentMode = .scaleAspectFill
 		self.photo!.backgroundColor = Theme.colorBackgroundImage
 		
 		self.addSubview(self.photo!)
@@ -100,7 +100,7 @@ class NotificationView: BaseView {
 		/* Footer */
 		self.createdDate.font = Theme.fontComment
 		self.createdDate.textColor = Theme.colorTextSecondary
-		self.iconImageView.bounds.size = CGSizeMake(20, 20)
+        self.iconImageView.bounds.size = CGSize(width:20, height:20)
 		self.iconImageView.tintColor = Colors.accentColorFill
 		
 		self.ageDot.layer.cornerRadius = 6
@@ -120,36 +120,36 @@ class NotificationView: BaseView {
 		let linkColor = Theme.colorTint
 		let linkActiveColor = Theme.colorTint
 		
-		self.description_?.linkAttributes = [kCTForegroundColorAttributeName : linkColor]
-		self.description_?.activeLinkAttributes = [kCTForegroundColorAttributeName : linkActiveColor]
-		self.description_?.enabledTextCheckingTypes = NSTextCheckingType.Link.rawValue|NSTextCheckingType.Address.rawValue
+		self.description_?.linkAttributes = [kCTForegroundColorAttributeName as AnyHashable : linkColor]
+		self.description_?.activeLinkAttributes = [kCTForegroundColorAttributeName as AnyHashable : linkActiveColor]
+		self.description_?.enabledTextCheckingTypes = NSTextCheckingResult.CheckingType.link.rawValue|NSTextCheckingResult.CheckingType.address.rawValue
 		
 		if let description = notification.summary {
-			let attributed = Utils.convertText(description, font: UIFont(name: "HelveticaNeue-Light", size: 16)!)
+			let attributed = Utils.convertText(inputText: description, font: UIFont(name: "HelveticaNeue-Light", size: 16)!)
 			self.description_?.attributedText = attributed
 		}
 		
 		if let photo = notification.photoBig {
-			self.photo?.hidden = false
-			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.standard)
-			bindPhoto(photoUrl)
+			self.photo?.isHidden = false
+			let photoUrl = PhotoUtils.url(prefix: photo.prefix!, source: photo.source!, category: SizeCategory.standard)
+			bindPhoto(photoUrl: photoUrl)
 		}
 		else {
-			self.photo?.hidden = true
+			self.photo?.isHidden = true
 		}
 		
 		/* User photo */
 		
-		self.userPhoto.bindToEntity(notification)
+		self.userPhoto.bindToEntity(entity: notification)
 		
-		self.createdDate.text = UIShared.timeAgoMedium(notification.sortDate)
+		self.createdDate.text = UIShared.timeAgoMedium(date: notification.sortDate as NSDate)
 		
 		/* Age indicator */
-		self.ageDot.layer.backgroundColor = Theme.colorBackgroundAgeDot.CGColor
+		self.ageDot.layer.backgroundColor = Theme.colorBackgroundAgeDot.cgColor
 		let now = NSDate()
 		
 		/* Age of notification in hours */
-		let interval = Int(now.timeIntervalSinceDate(NSDate(timeIntervalSince1970: notification.createdDate.timeIntervalSince1970)) / 3600)
+		let interval = Int(now.timeIntervalSince(NSDate(timeIntervalSince1970: notification.createdDate.timeIntervalSince1970) as Date) / 3600)
 		if interval > 12 {
 			self.ageDot.alpha = 0.0
 		}
@@ -188,7 +188,7 @@ class NotificationView: BaseView {
 		self.setNeedsLayout()	// Needed because binding can change the layout
 	}
 	
-	private func bindPhoto(photoUrl: NSURL) {
+	private func bindPhoto(photoUrl: URL) {
 		
 		if self.photo?.image != nil
 			&& self.photo!.linkedPhotoUrl != nil
@@ -197,6 +197,6 @@ class NotificationView: BaseView {
 		}
 		
 		self.photo?.image = nil
-		self.photo!.setImageWithUrl(photoUrl, animate: false)
+		self.photo!.setImageWithUrl(url: photoUrl, animate: false)
 	}	
 }

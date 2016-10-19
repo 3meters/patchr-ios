@@ -16,6 +16,8 @@
 			<key>FooterText</key>
 			<string>The AWS Mobile SDK for iOS is generally licensed under the Apache 2.0 License, with the Amazon Cognito Identity Provider and Amazon Cognito Sync subcomponents being licensed under the Amazon Software License.
 </string>
+			<key>License</key>
+			<string>Apache License, Version 2.0</string>
 			<key>Title</key>
 			<string>AWSCore</string>
 			<key>Type</key>
@@ -25,6 +27,8 @@
 			<key>FooterText</key>
 			<string>The AWS Mobile SDK for iOS is generally licensed under the Apache 2.0 License, with the Amazon Cognito Identity Provider and Amazon Cognito Sync subcomponents being licensed under the Amazon Software License.
 </string>
+			<key>License</key>
+			<string>Apache License, Version 2.0</string>
 			<key>Title</key>
 			<string>AWSS3</string>
 			<key>Type</key>
@@ -51,6 +55,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
 THE SOFTWARE.</string>
+			<key>License</key>
+			<string>MIT</string>
 			<key>Title</key>
 			<string>Bugsnag</string>
 			<key>Type</key>
@@ -76,6 +82,8 @@ with or without modification, are permitted provided that the following conditio
   written permission of Deusty, LLC.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</string>
+			<key>License</key>
+			<string>BSD</string>
 			<key>Title</key>
 			<string>CocoaLumberjack</string>
 			<key>Type</key>
@@ -105,6 +113,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 </string>
+			<key>License</key>
+			<string>MIT</string>
 			<key>Title</key>
 			<string>Facade</string>
 			<key>Type</key>
@@ -113,6 +123,8 @@ THE SOFTWARE.
 		<dict>
 			<key>FooterText</key>
 			<string>Copyright 2016 Google</string>
+			<key>License</key>
+			<string>Copyright</string>
 			<key>Title</key>
 			<string>Firebase</string>
 			<key>Type</key>
@@ -121,6 +133,8 @@ THE SOFTWARE.
 		<dict>
 			<key>FooterText</key>
 			<string>Copyright 2016 Google</string>
+			<key>License</key>
+			<string>Copyright</string>
 			<key>Title</key>
 			<string>FirebaseAnalytics</string>
 			<key>Type</key>
@@ -129,6 +143,8 @@ THE SOFTWARE.
 		<dict>
 			<key>FooterText</key>
 			<string>Copyright 2016 Google</string>
+			<key>License</key>
+			<string>Copyright</string>
 			<key>Title</key>
 			<string>FirebaseCore</string>
 			<key>Type</key>
@@ -137,6 +153,8 @@ THE SOFTWARE.
 		<dict>
 			<key>FooterText</key>
 			<string>Copyright 2016 Google</string>
+			<key>License</key>
+			<string>Copyright</string>
 			<key>Title</key>
 			<string>FirebaseInstanceID</string>
 			<key>Type</key>
@@ -145,6 +163,8 @@ THE SOFTWARE.
 		<dict>
 			<key>FooterText</key>
 			<string>Copyright 2016 Google</string>
+			<key>License</key>
+			<string>Copyright</string>
 			<key>Title</key>
 			<string>FirebaseRemoteConfig</string>
 			<key>Type</key>
@@ -153,6 +173,8 @@ THE SOFTWARE.
 		<dict>
 			<key>FooterText</key>
 			<string>Copyright 2015 Google Inc.</string>
+			<key>License</key>
+			<string>Copyright</string>
 			<key>Title</key>
 			<string>GoogleIPhoneUtilities</string>
 			<key>Type</key>
@@ -161,6 +183,8 @@ THE SOFTWARE.
 		<dict>
 			<key>FooterText</key>
 			<string>Copyright 2016 Google</string>
+			<key>License</key>
+			<string>Copyright</string>
 			<key>Title</key>
 			<string>GoogleInterchangeUtilities</string>
 			<key>Type</key>
@@ -169,6 +193,8 @@ THE SOFTWARE.
 		<dict>
 			<key>FooterText</key>
 			<string>Copyright 2016 Google</string>
+			<key>License</key>
+			<string>Copyright</string>
 			<key>Title</key>
 			<string>GoogleSymbolUtilities</string>
 			<key>Type</key>
@@ -177,6 +203,8 @@ THE SOFTWARE.
 		<dict>
 			<key>FooterText</key>
 			<string>Copyright 2016 Google</string>
+			<key>License</key>
+			<string>Copyright</string>
 			<key>Title</key>
 			<string>GoogleUtilities</string>
 			<key>Type</key>
@@ -192,6 +220,8 @@ The above copyright notice and this permission notice shall be included in the d
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 </string>
+			<key>License</key>
+			<string>KSCrash license agreement</string>
 			<key>Title</key>
 			<string>KSCrash</string>
 			<key>Type</key>
@@ -200,6 +230,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 		<dict>
 			<key>FooterText</key>
 			<string>MIT LICENSE Found in the repo</string>
+			<key>License</key>
+			<string>MIT</string>
 			<key>Title</key>
 			<string>Keys</string>
 			<key>Type</key>
@@ -227,6 +259,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 </string>
+			<key>License</key>
+			<string>MIT</string>
 			<key>Title</key>
 			<string>Lockbox</string>
 			<key>Type</key>
@@ -255,6 +289,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 </string>
+			<key>License</key>
+			<string>MIT</string>
 			<key>Title</key>
 			<string>SDWebImage</string>
 			<key>Type</key>
@@ -262,7 +298,7 @@ THE SOFTWARE.
 		</dict>
 		<dict>
 			<key>FooterText</key>
-			<string>Generated by CocoaPods - http://cocoapods.org</string>
+			<string>Generated by CocoaPods - https://cocoapods.org</string>
 			<key>Title</key>
 			<string></string>
 			<key>Type</key>

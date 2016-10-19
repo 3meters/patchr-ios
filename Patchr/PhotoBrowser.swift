@@ -40,13 +40,13 @@ class PhotoBrowser: IDMPhotoBrowser {
         
         let toolbar: UIToolbar = super.toolbar
         
-        let flexSpacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)
-        let fixedSpacer = UIBarButtonItem(barButtonSystemItem: .FixedSpace, target: self, action: nil)
-		let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Action, target: self, action: #selector(IDMPhotoBrowser.actionButtonPressed(_:)))    // Handled by IDMPhotoBrowser
+        let flexSpacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
+        let fixedSpacer = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: self, action: nil)
+		let shareButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.action, target: self, action: #selector(IDMPhotoBrowser.actionButtonPressed(_:)))    // Handled by IDMPhotoBrowser
         
-        self.likeButton.frame = CGRectMake(0, 0, 44, 44)
+        self.likeButton.frame = CGRect(x:0, y:0, width:44, height:44)
         self.likeButton.imageEdgeInsets = UIEdgeInsets(top: 10, left: 8, bottom: 10, right:8)
-		self.likeButton.hidden = (self.entity == nil)
+		self.likeButton.isHidden = (self.entity == nil)
         
         fixedSpacer.width = 16
         
@@ -65,7 +65,7 @@ class PhotoBrowser: IDMPhotoBrowser {
 	
 	func bindEntity(entity: Entity?) {
 		self.entity = entity
-		self.likeButton.bindEntity(entity)
-		self.likeButton.hidden = (entity == nil)
+		self.likeButton.bindEntity(entity: entity)
+		self.likeButton.isHidden = (entity == nil)
 	}
 }

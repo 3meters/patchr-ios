@@ -7,25 +7,25 @@
 //
 
 import Foundation
-import AWSCore
 import AWSS3
+import AWSCore
 import Keys
 import Firebase
 import FirebaseRemoteConfig
 
 public class S3: NSObject {
-    public typealias S3UploadCompletionBlock = (AWSTask) -> Void
+    public typealias S3UploadCompletionBlock = (AWSTask<AnyObject>) -> Void
 
     let poolId      = "us-east-1:ff1976dc-9c27-4046-a59f-7dd43355869b"
     let imageBucket = "aircandi-images"
     let imageSource = "aircandi.images"
 
-    private var uploads: [NSURLSessionTask:UploadInfo] = [:]
+    fileprivate var uploads: [URLSessionTask:UploadInfo] = [:]
 
     // Swift doesn't support static properties yet, so have to use structs to achieve the same thing.
 
     struct Static {
-        static var session: NSURLSession?
+        static var session: URLSession?
         static var awss3:   AWSS3?
     }
 
@@ -37,50 +37,47 @@ public class S3: NSObject {
 
         return Singleton.instance
     }
-
+    
     override init() {
         super.init()
 
         // Note: There are probably safer ways to store the AWS credentials.
-        let access = FIRRemoteConfig.remoteConfig().configValueForKey("aws_access_key").stringValue!
-        let secret = FIRRemoteConfig.remoteConfig().configValueForKey("aws_secret_key").stringValue!
+        let access = FIRRemoteConfig.remoteConfig().configValue(forKey: "aws_access_key").stringValue!
+        let secret = FIRRemoteConfig.remoteConfig().configValue(forKey: "aws_secret_key").stringValue!
         let credProvider = AWSStaticCredentialsProvider(accessKey: access, secretKey: secret)
         let serviceConfig = AWSServiceConfiguration(region: AWSRegionType(rawValue: 3/*'us-west-2'*/)!, credentialsProvider: credProvider)
-        AWSServiceManager.defaultServiceManager().defaultServiceConfiguration = serviceConfig
+        AWSServiceManager.default().defaultServiceConfiguration = serviceConfig
 
         if Static.session == nil {
             let configIdentifier = "group.com.3meters.patchr.ios.image"
 
             /* PatchrShare only runs on >= iOS8 */
-            let config           = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(configIdentifier)
+            let config = URLSessionConfiguration.background(withIdentifier: configIdentifier)
             config.sharedContainerIdentifier = "group.com.3meters.patchr.ios"
 
             // NSURLSession background sessions *need* to have a delegate.
-            Static.session = NSURLSession(configuration: config, delegate: self, delegateQueue: NSOperationQueue.mainQueue())
+            Static.session = Foundation.URLSession(configuration: config, delegate: self, delegateQueue: OperationQueue.main)
         }
 
         if Static.awss3 == nil {
-            Static.awss3 = AWSS3.defaultS3()
+            Static.awss3 = AWSS3.default()
         }
     }
 
-    func uploadImageToS3(image: UIImage, imageKey: String, completion: S3UploadCompletionBlock) -> AWSS3TransferManagerUploadRequest? {
+    func uploadImageToS3(image: UIImage, imageKey: String, completion: @escaping S3UploadCompletionBlock) -> AWSS3TransferManagerUploadRequest? {
         /*
         * It is expected that this will be called on a background thread.
         */
 
         /* Store image to file as NSData */
-        if let imageURL = Utils.TemporaryFileURLForImage(image, name: NSUUID().UUIDString) {
+        if let imageURL = Utils.TemporaryFileURLForImage(image: image, name: NSUUID().uuidString) {
             // Saves as compressed jpeg
 
             /* Construct request */
-            let uploadRequest
-            = S3.sharedService.buildUploadRequest(imageURL, contentType: "image/jpeg", bucket: self.imageBucket, key: imageKey)
+            let uploadRequest = S3.sharedService.buildUploadRequest(fileURL: imageURL, contentType: "image/jpeg", bucket: self.imageBucket, key: imageKey)
 
             /* Upload */
-            AWSS3TransferManager.defaultS3TransferManager().upload(uploadRequest).continueWithBlock {
-                task -> AnyObject! in
-
+            AWSS3TransferManager.default().upload(uploadRequest).continue ({(task:AWSTask) in
                 if let error = task.error {
                     Log.w("S3 image upload failed: [\(error)]")
                 }
@@ -89,14 +86,14 @@ public class S3: NSObject {
                 }
 
                 do {
-                    try NSFileManager.defaultManager().removeItemAtURL(imageURL)
+                    try FileManager.default.removeItem(at: imageURL as URL)
                 } catch let error as NSError {
                     print("Error removing image file: \(error.localizedDescription)")
                 }
 
                 completion(task)
                 return nil
-            }
+            })
 
             return uploadRequest
         }
@@ -110,10 +107,10 @@ public class S3: NSObject {
         let image = Utils.prepareImage(image: inImage)   // resizing
 
         /* We need to stash the image as a file in the shared container in NSData format. */
-        let uuid  = NSUUID().UUIDString
-        if let imageURL = Utils.TemporaryFileURLForImage(image, name: uuid, shared: shared) {
+        let uuid  = NSUUID().uuidString
+        if let imageURL = Utils.TemporaryFileURLForImage(image: image, name: uuid, shared: shared) {
             // Saves as compressed jpeg
-            uploadTaskToS3(imageURL, contentType: "image/jpeg", bucket: imageBucket, key: key)
+            uploadTaskToS3(fileUrl: imageURL, contentType: "image/jpeg", bucket: imageBucket, key: key)
         }
     }
 
@@ -124,33 +121,33 @@ public class S3: NSObject {
         preSignedReq.bucket = bucket
         preSignedReq.key = key
         preSignedReq.contentType = contentType                       // required
-        preSignedReq.HTTPMethod = AWSHTTPMethod.PUT                   // required
-        preSignedReq.expires = NSDate(timeIntervalSinceNow: 3600)    // required
+        preSignedReq.httpMethod = AWSHTTPMethod.PUT                   // required
+        preSignedReq.expires = NSDate(timeIntervalSinceNow: 3600) as Date    // required
 
         /* The defaultS3PreSignedURLBuilder uses the global config, as specified in the init method. */
-        let urlBuilder = AWSS3PreSignedURLBuilder.defaultS3PreSignedURLBuilder()
+        let urlBuilder = AWSS3PreSignedURLBuilder.default()
 
         /* The new AWS SDK uses AWSTasks to chain requests together. */
-        urlBuilder.getPreSignedURL(preSignedReq).continueWithBlock {
-            (task) -> AnyObject! in
+        urlBuilder.getPreSignedURL(preSignedReq).continue({
+            (task:AWSTask) -> AnyObject! in
 
             if task.error != nil {
-                Log.w(String(format: "getPreSignedURL error: %@", task.error!))
+                Log.w(String(format: "getPreSignedURL error: %@", (task.error?.localizedDescription)!))
                 return nil
             }
 
-            let preSignedUrl = task.result as! NSURL
-            Log.d(String(format: "S3 upload pre-signedUrl: %@", preSignedUrl))
+            let preSignedUrl = task.result
+            Log.d(String(format: "S3 upload pre-signedUrl: %@", preSignedUrl!))
 
-            let request = NSMutableURLRequest(URL: preSignedUrl)
-            request.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringLocalCacheData
+            let request = NSMutableURLRequest(url: preSignedUrl as! URL)
+            request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringLocalCacheData
 
             /* Make sure the content-type and http method are the same as in preSignedReq */
-            request.HTTPMethod = "PUT"
+            request.httpMethod = "PUT"
             request.setValue(preSignedReq.contentType, forHTTPHeaderField: "Content-Type")
 
             /* NSURLSession background session does *not* support completionHandler, so don't set it. */
-            let uploadTask = Static.session?.uploadTaskWithRequest(request, fromFile: fileUrl)
+            let uploadTask = Static.session?.uploadTask(with: request as URLRequest, fromFile: fileUrl as URL)
 
             /* Tracking */
             let uploadInfo = UploadInfo(key: key, bucket: bucket, fileUrl: fileUrl)
@@ -160,19 +157,19 @@ public class S3: NSObject {
             uploadTask?.resume()
 
             return nil
-        }
+        })
     }
 
     func buildUploadRequest(fileURL: NSURL, contentType: String, bucket: String, key: String) -> AWSS3TransferManagerUploadRequest {
         let uploadRequest = AWSS3TransferManagerUploadRequest()
 
-        uploadRequest.bucket = bucket
-        uploadRequest.key = key
-        uploadRequest.body = fileURL
-        uploadRequest.ACL = AWSS3ObjectCannedACL(rawValue: 2/*AWSS3ObjectCannedACLPublicRead*/)!
-        uploadRequest.contentType = contentType
+        uploadRequest?.bucket = bucket
+        uploadRequest?.key = key
+        uploadRequest?.body = fileURL as URL!
+        uploadRequest?.acl = AWSS3ObjectCannedACL(rawValue: 2/*AWSS3ObjectCannedACLPublicRead*/)!
+        uploadRequest?.contentType = contentType
 
-        return uploadRequest
+        return uploadRequest!
     }
 }
 
@@ -188,19 +185,20 @@ class UploadInfo {
     }
 }
 
-extension S3: NSURLSessionDelegate {
-    func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
-        Log.d(String(format: "Did receive data: %@", NSString(data: data, encoding: NSUTF8StringEncoding)!))
+extension S3: URLSessionDelegate {
+    
+    func URLSession(session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        Log.d(String(format: "Did receive data: %@", NSString(data: data as Data, encoding: String.Encoding.utf8.rawValue)!))
     }
 
-    func URLSession(session: NSURLSession, uploadTask: NSURLSessionTask, didCompleteWithError error: NSError?) {
+    func URLSession(session: URLSession, uploadTask: URLSessionTask, didCompleteWithError error: NSError?) {
 
-        if let uploadInfo = uploads[uploadTask as! NSURLSessionUploadTask] {
-            self.uploads.removeValueForKey(uploadTask)
+        if let uploadInfo = uploads[uploadTask as! URLSessionUploadTask] {
+            self.uploads.removeValue(forKey: uploadTask)
 
-            if NSFileManager.defaultManager().isDeletableFileAtPath(uploadInfo.fileUrl.path!) {
+            if FileManager.default.isDeletableFile(atPath: uploadInfo.fileUrl.path!) {
                 do {
-                    try NSFileManager.defaultManager().removeItemAtPath(uploadInfo.fileUrl.path!)
+                    try FileManager.default.removeItem(atPath: uploadInfo.fileUrl.path!)
                 } catch let error as NSError {
                     print("Error removing image file: \(error.localizedDescription)")
                 }
@@ -214,14 +212,14 @@ extension S3: NSURLSessionDelegate {
 
                 /* AWS signed requests do not support ACL yet so it has to be set in a separate call. */
                 let aclRequest = AWSS3PutObjectAclRequest()
-                aclRequest.bucket = uploadInfo.bucket
-                aclRequest.key = uploadInfo.key
-                aclRequest.ACL = AWSS3ObjectCannedACL.PublicRead
+                aclRequest?.bucket = uploadInfo.bucket
+                aclRequest?.key = uploadInfo.key
+                aclRequest?.acl = AWSS3ObjectCannedACL.publicRead
 
-                Static.awss3!.putObjectAcl(aclRequest).continueWithBlock() {
-                    (task) -> AnyObject! in
+                Static.awss3!.putObjectAcl(aclRequest!).continue({
+                    (task:AWSTask) -> AnyObject! in
 
-                    dispatch_async(dispatch_get_main_queue()) {
+                    DispatchQueue.main.async {
                         if task.error != nil {
                             Log.w(String(format: "Error putObjectAcl: %@", task.error!.localizedDescription))
                         }
@@ -230,7 +228,7 @@ extension S3: NSURLSessionDelegate {
                         }
                     }
                     return nil
-                }
+                })
             }
         }
     }

@@ -22,7 +22,7 @@ class FireProfile: NSObject {
         profile.lastName = dictionary["last_name"] as? String
         profile.fullName = dictionary["full_name"] as? String
         if let photoMap = dictionary["photo"] as? NSDictionary {
-            profile.photo = FirePhoto.setPropertiesFromDictionary(photoMap, onObject: FirePhoto())
+            profile.photo = FirePhoto.setPropertiesFromDictionary(dictionary: photoMap, onObject: FirePhoto())
         }
         return profile
     }

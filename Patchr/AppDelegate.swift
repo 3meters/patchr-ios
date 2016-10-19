@@ -30,7 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
     var backgroundSessionCompletionHandler: (() -> Void)?
 
     class func appDelegate() -> AppDelegate {
-        return UIApplication.sharedApplication().delegate as! AppDelegate
+        return UIApplication.shared.delegate as! AppDelegate
     }
 
     override class func initialize() -> Void {
@@ -47,26 +47,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
     /*--------------------------------------------------------------------------------------------
     * Delegate methods
     *--------------------------------------------------------------------------------------------*/
-
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject:AnyObject]?) -> Bool {
+    
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
         
         /* Initialize Firebase */
         FIRApp.configure()
         
         /* Remote config */
-        FIRRemoteConfig.remoteConfig().fetchWithCompletionHandler { status, error in
-            if (status == FIRRemoteConfigFetchStatus.Success) {
+        FIRRemoteConfig.remoteConfig().fetch { status, error in
+            if (status == FIRRemoteConfigFetchStatus.success) {
                 
                 if FIRRemoteConfig.remoteConfig().activateFetched() {
                     Log.d("Remote config activated", breadcrumb: true)
                 }
                 
                 /* Default config for AWS */
-                let access = FIRRemoteConfig.remoteConfig().configValueForKey("aws_access_key").stringValue!
-                let secret = FIRRemoteConfig.remoteConfig().configValueForKey("aws_secret_key").stringValue!
+                let access = FIRRemoteConfig.remoteConfig().configValue(forKey: "aws_access_key").stringValue!
+                let secret = FIRRemoteConfig.remoteConfig().configValue(forKey: "aws_secret_key").stringValue!
                 let credProvider = AWSStaticCredentialsProvider(accessKey: access, secretKey: secret)
                 let serviceConfig = AWSServiceConfiguration(region: AWSRegionType(rawValue: 3/*'us-west-2'*/)!, credentialsProvider: credProvider)
-                AWSServiceManager.defaultServiceManager().defaultServiceConfiguration = serviceConfig
+                AWSServiceManager.default().defaultServiceConfiguration = serviceConfig
             }
             else {
                 Log.d("Remote config not fetched", breadcrumb: true)
@@ -75,69 +75,69 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
         }
         
         /* Initialize Bugsnag */
-        Bugsnag.startBugsnagWithApiKey(BUGSNAG_KEY)
+        Bugsnag.start(withApiKey: BUGSNAG_KEY)
         
         /* Instance the data controller */
-        DataController.instance
+        DataController.instance.warmup()
 
         iRate.sharedInstance().delegate = self
 
-        self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
+        self.window = UIWindow(frame: UIScreen.main.bounds)
 
         #if DEBUG
-        AFNetworkActivityLogger.sharedLogger().startLogging()
-        AFNetworkActivityLogger.sharedLogger().level = AFHTTPRequestLoggerLevel.AFLoggerLevelFatal
+        AFNetworkActivityLogger.shared().startLogging()
+        AFNetworkActivityLogger.shared().level = AFHTTPRequestLoggerLevel.AFLoggerLevelFatal
         #endif
 
         /* Flag first launch for special treatment */
-        if !NSUserDefaults.standardUserDefaults().boolForKey("firstLaunch") {
-            NSUserDefaults.standardUserDefaults().setBool(true, forKey: "firstLaunch")
+        if !UserDefaults.standard.bool(forKey: "firstLaunch") {
+            UserDefaults.standard.set(true, forKey: "firstLaunch")
             self.firstLaunch = true
             Reporting.track("Launched for First Time")
         }
 
         /* Logging */
-        DDLog.addLogger(DDTTYLogger.sharedInstance()) // TTY = Xcode console
-        DDLog.addLogger(DDASLLogger.sharedInstance()) // ASL = Apple System Logs
+        DDLog.add(DDTTYLogger.sharedInstance()) // TTY = Xcode console
+        DDLog.add(DDASLLogger.sharedInstance()) // ASL = Apple System Logs
 
         DDTTYLogger.sharedInstance().colorsEnabled = true
-        DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogVerbose, backgroundColor: nil, forFlag: DDLogFlag.Verbose)
-        DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogDebug, backgroundColor: nil, forFlag: DDLogFlag.Debug)
-        DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogInfo, backgroundColor: nil, forFlag: DDLogFlag.Info)
-        DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogWarning, backgroundColor: nil, forFlag: DDLogFlag.Warning)
-        DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogError, backgroundColor: nil, forFlag: DDLogFlag.Error)
+        DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogVerbose, backgroundColor: nil, for: DDLogFlag.verbose)
+        DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogDebug, backgroundColor: nil, for: DDLogFlag.debug)
+        DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogInfo, backgroundColor: nil, for: DDLogFlag.info)
+        DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogWarning, backgroundColor: nil, for: DDLogFlag.warning)
+        DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogError, backgroundColor: nil, for: DDLogFlag.error)
 
         let fileLogger: DDFileLogger = DDFileLogger() // File Logger
         fileLogger.rollingFrequency = 60 * 60 * 24  // 24 hours
         fileLogger.logFileManager.maximumNumberOfLogFiles = 7
-        DDLog.addLogger(fileLogger)
+        DDLog.add(fileLogger)
 
         Log.i("Patchr launching...")
 
         /* Turn on network activity indicator */
-        AFNetworkActivityIndicatorManager.sharedManager().enabled = true
+        AFNetworkActivityIndicatorManager.shared().isEnabled = true
 
         /* Load setting defaults */
-        let defaultSettingsFile: NSString = NSBundle.mainBundle().pathForResource("DefaultSettings", ofType: "plist")!
+        let defaultSettingsFile: NSString = Bundle.main.path(forResource: "DefaultSettings", ofType: "plist")! as NSString
         let settingsDictionary: NSDictionary = NSDictionary(contentsOfFile: defaultSettingsFile as String)!
-        NSUserDefaults.standardUserDefaults().registerDefaults(settingsDictionary as! [String:AnyObject])
+        UserDefaults.standard.register(defaults: settingsDictionary as! [String:AnyObject])
 
         /* Notifications */
-        NotificationController.instance.initWithLaunchOptions(launchOptions)
+        NotificationController.instance.initWithLaunchOptions(launchOptions: launchOptions as [NSObject : AnyObject]!)
 
         /* Instance the reachability manager */
-        ReachabilityManager.instance
+        ReachabilityManager.instance.warmup()
         
         /* Start listening for auth changes */
-        UserController.instance
+        UserController.instance.warmup()
 
         initUI()
 
         let ref = FIRDatabase.database().reference()
-        ref.child("clients").child("ios").observeSingleEventOfType(.Value, withBlock: {
+        ref.child("clients").child("ios").observeSingleEvent(of: .value, with: {
             snapshot in
             if let minVersion = snapshot.value as? Int {
-                if !UIShared.versionIsValid(Int(minVersion)) {
+                if !UIShared.versionIsValid(versionMin: Int(minVersion)) {
                     UIShared.compatibilityUpgrade()
                 }
             }
@@ -149,19 +149,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
     }
 
     @available(iOS 9.0, *)
-    func application(application: UIApplication, openURL url: NSURL, options: [String:AnyObject]) -> Bool {
-        let sourceApplication: String? = options[UIApplicationOpenURLOptionsSourceApplicationKey] as? String
-        return openUrl(application, openURL: url, sourceApplication: sourceApplication, annotation: nil)
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        let sourceApplication = options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String
+        return openUrl(application: app, openURL: url as NSURL, sourceApplication: sourceApplication, annotation: nil)
     }
 
-    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
-        return openUrl(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation)
+    func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
+        return openUrl(application: application, openURL: url as NSURL, sourceApplication: sourceApplication, annotation: annotation as AnyObject?)
     }
 
     func openUrl(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
 
         /* First see if Branch claims it as a deep link. Calls handler registered in onLaunch. */
-        if Branch.getInstance().handleDeepLink(url) {
+        if Branch.getInstance().handleDeepLink(url as URL!) {
             Log.d("Branch detected a deep link in openUrl: \(url.absoluteString)", breadcrumb: true)
             return true
         }
@@ -169,7 +169,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
         return false
     }
 
-    func applicationDidBecomeActive(application: UIApplication) {
+    func applicationDidBecomeActive(_ application: UIApplication) {
         /* Guard against becoming active without any UI */
         if self.window?.rootViewController == nil {
             Log.w("Patchr is becoming active without a root view controller, resetting to launch routing", breadcrumb: true)
@@ -178,34 +178,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
         }
     }
 
-    func application(application: UIApplication, supportedInterfaceOrientationsForWindow window: UIWindow?) -> UIInterfaceOrientationMask {
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         if let controller = UIViewController.topMostViewController() {
             if controller is PhotoBrowser || controller is PhotoPreview {
-                return UIInterfaceOrientationMask.All;
+                return UIInterfaceOrientationMask.all;
             }
             else {
-                return UIInterfaceOrientationMask.Portrait;
+                return UIInterfaceOrientationMask.portrait;
             }
         }
-        return UIInterfaceOrientationMask.Portrait;
+        return UIInterfaceOrientationMask.portrait;
     }
 
-    func application(application: UIApplication, continueUserActivity userActivity: NSUserActivity, restorationHandler: ([AnyObject]?) -> Void) -> Bool {
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
         /*
          * This is the initial entry point for universal links vs openURL for old school uri schemes.
          */
-        return Branch.getInstance().continueUserActivity(userActivity) // Returns true if call was caused by a branch universal link
+        return Branch.getInstance().continue(userActivity) // Returns true if call was caused by a branch universal link
     }
 
-    func applicationWillEnterForeground(application: UIApplication) {
+    func applicationWillEnterForeground(_ application: UIApplication) {
         Log.d("Application will enter foreground", breadcrumb: true)
     }
 
-    func applicationWillResignActive(application: UIApplication) {
+    func applicationWillResignActive(_ application: UIApplication) {
         Log.d("Application will resign active", breadcrumb: true)
     }
 
-    func applicationDidEnterBackground(application: UIApplication) {
+    func applicationDidEnterBackground(_ application: UIApplication) {
         Log.d("Application did enter background", breadcrumb: true)
     }
 
@@ -216,14 +216,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
     func initUI() {
 
         /* Initialize Creative sdk: 25% of method time */
-        AdobeUXAuthManager.sharedManager().setAuthenticationParametersWithClientID(PatchrKeys().creativeSdkClientId(), clientSecret: PatchrKeys().creativeSdkClientSecret(), enableSignUp: false)
+        AdobeUXAuthManager.shared().setAuthenticationParametersWithClientID(PatchrKeys().creativeSdkClientId(), clientSecret: PatchrKeys().creativeSdkClientSecret(), enableSignUp: false)
 
         /* Turn on status bar */
-        let statusBarHidden = NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("statusBarHidden"))    // Default = false, set in dev settings
-        UIApplication.sharedApplication().setStatusBarHidden(statusBarHidden, withAnimation: UIStatusBarAnimation.Slide)
+        let statusBarHidden = UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "statusBarHidden"))    // Default = false, set in dev settings
+        UIApplication.shared.setStatusBarHidden(statusBarHidden, with: UIStatusBarAnimation.slide)
 
         /* Global UI tweaks */
-        UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: Theme.fontBarText], forState: UIControlState.Normal)
+        UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: Theme.fontBarText], for: UIControlState.normal)
         self.window?.backgroundColor = Theme.colorBackgroundWindow
         self.window?.tintColor = Theme.colorTint
         UINavigationBar.appearance().tintColor = Theme.colorTint
@@ -251,13 +251,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
             let mainNavController = AirNavigationController(rootViewController: mainController)
             
             let slideController = SlideMenuController(mainViewController: mainNavController, leftMenuViewController: navigationController, rightMenuViewController: menuController)
-            self.window?.setRootViewController(slideController, animated: true)
+            self.window?.setRootViewController(rootViewController: slideController, animated: true)
         }
         else {
             let controller = LobbyViewController()
             let navController = AirNavigationController()
             navController.viewControllers = [controller]
-            self.window?.setRootViewController(navController, animated: true)
+            self.window?.setRootViewController(rootViewController: navController, animated: true)
         }
 
         self.window?.makeKeyAndVisible()
@@ -265,7 +265,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 
     func routeDeepLink(params: NSDictionary?, error: NSError?) {
 
-        if let feature = params!["~feature"] as? String where feature == "reset_password" {
+        if let feature = params!["~feature"] as? String, feature == "reset_password" {
             if let token = params!["token"] as? String {
                 /* Skip if we are already showing the reset screen */
                 if let topController = UIViewController.topMostViewController() as? PasswordResetViewController {
@@ -277,17 +277,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
                 let controller = PasswordResetViewController()
                 controller.inputToken = token
                 if let userName = params!["userName"] as? String {
-                    controller.inputUserName = userName.stringByReplacingOccurrencesOfString("+", withString: " ")
+                    controller.inputUserName = userName.replacingOccurrences(of: "+", with: " ")
                     if let userPhoto = params!["userPhoto"] as? String {
                         controller.inputUserPhoto = userPhoto
                     }
                 }
 
-                let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: #selector(controller.cancelAction(_:)))
+                let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: controller, action: #selector(controller.cancelAction(sender:)))
                 controller.navigationItem.rightBarButtonItems = [cancelButton]
                 let navController = AirNavigationController()
                 navController.viewControllers = [controller]
-                UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
+                UIViewController.topMostViewController()?.present(navController, animated: true, completion: nil)
             }
         }
     }
@@ -295,16 +295,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
     /*--------------------------------------------------------------------------------------------
     * Notifications
     *--------------------------------------------------------------------------------------------*/
-
-    func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
-        NotificationController.instance.didRegisterForRemoteNotificationsWithDeviceToken(application, deviceToken: deviceToken)
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        NotificationController.instance.didRegisterForRemoteNotificationsWithDeviceToken(application: application, deviceToken: deviceToken as NSData)
     }
 
-    func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
-        NotificationController.instance.didFailToRegisterForRemoteNotificationsWithError(application, error: error)
-    }
+    //    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+    //        NotificationController.instance.didFailToRegisterForRemoteNotificationsWithError(application: application, error: error)
+    //}
 
-    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject:AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         /*
          * This delegate method offers an opportunity for applications with the "remote-notification"
          * background mode to fetch appropriate new data in response to an incoming remote notification.
@@ -319,20 +319,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
          * If app is in the background, this is called if the user taps on the notification in the
          * pulldown tray.
          */
-        NotificationController.instance.didReceiveRemoteNotification(application, notification: userInfo, fetchCompletionHandler: completionHandler)
+        NotificationController.instance.didReceiveRemoteNotification(application: application, notification: userInfo as [NSObject : AnyObject], fetchCompletionHandler: completionHandler)
     }
-
-    func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
-        NotificationController.instance.didReceiveLocalNotification(application, notification: notification)
+    
+    func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
+        NotificationController.instance.didReceiveLocalNotification(application: application, notification: notification)
     }
 
     /*--------------------------------------------------------------------------------------------
     * Background Sessions
     *--------------------------------------------------------------------------------------------*/
-
-    func application(application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: () -> Void) {
+    
+    func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
         /*
-         * Applications using an NSURLSession with a background configuration may be launched or resumed in the background in order to handle the
+         * Applications using an NSURLSession with a background configuration may be launched or resumed in the b@escaping @escaping ackground in order to handle the
          * completion of tasks in that session, or to handle authentication. This method will be called with the identifier of the session needing
          * attention. Once a session has been created from a configuration object with that identifier, the session's delegate will begin receiving
          * callbacks. If such a session has already been created (if the app is being resumed, for instance), then the delegate will start receiving
@@ -343,7 +343,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
          */
         self.backgroundSessionCompletionHandler = completionHandler
         Log.d("handleEventsForBackgroundURLSession called")
-        UIShared.Toast("Message Posted!")
+        UIShared.Toast(message: "Message Posted!")
     }
 }
 
@@ -376,17 +376,17 @@ extension AppDelegate {
          * We assume that if no authenticated user then we are at correct initial state.
          */
         UserController.instance.discardCredentials()
-        Reporting.updateUser(nil)
+        Reporting.updateUser(user: nil)
         BranchProvider.logout()
 
-        NSUserDefaults.standardUserDefaults().setObject(nil, forKey: PatchrUserDefaultKey("userEmail"))
+        UserDefaults.standard.set(nil, forKey: PatchrUserDefaultKey(subKey: "userEmail"))
         UserController.instance.clearStore()
         LocationController.instance.clearLastLocationAccepted()
 
         if !(UIViewController.topMostViewController() is LobbyViewController) {
             let navController = AirNavigationController()
             navController.viewControllers = [LobbyViewController()]
-            self.window!.setRootViewController(navController, animated: true)
+            self.window!.setRootViewController(rootViewController: navController, animated: true)
         }
     }
 
@@ -396,24 +396,10 @@ extension AppDelegate {
 
     func disableAnimations(state: Bool) {
         UIView.setAnimationsEnabled(!state)
-        UIApplication.sharedApplication().keyWindow!.layer.speed = state ? 100.0 : 1.0
+        UIApplication.shared.keyWindow!.layer.speed = state ? 100.0 : 1.0
     }
 
     func logLevel(level: DDLogLevel) {
         LOG_LEVEL = level
     }
 }
-
-extension UIApplication {
-    func isInstalledViaAppStore() -> Bool {
-
-#if (arch(i386) || arch(x86_64)) && os(iOS)
-        // Simulator http://stackoverflow.com/a/24869607/2247399
-        return false
-#else
-        let receiptURL = NSBundle.mainBundle().appStoreReceiptURL
-        return (receiptURL?.path?.rangeOfString("sandboxReceipt") == nil)
-#endif
-    }
-}
-

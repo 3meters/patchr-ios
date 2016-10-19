@@ -30,10 +30,10 @@ class AirRuleView: UIView {
 	}
 	
 	func initialize() {
-		self.ruleBottom.hidden = false
-		self.ruleTop.hidden = true
-		self.ruleLeft.hidden = true
-		self.ruleRight.hidden = true
+		self.ruleBottom.isHidden = false
+		self.ruleTop.isHidden = true
+		self.ruleLeft.isHidden = true
+		self.ruleRight.isHidden = true
 		
 		self.ruleBottom.backgroundColor = Theme.colorRule
 		self.ruleTop.backgroundColor = Theme.colorRule
@@ -48,9 +48,9 @@ class AirRuleView: UIView {
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		self.ruleBottom.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: self.thickness)
-		self.ruleTop.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: self.thickness)
-		self.ruleLeft.anchorCenterLeftFillingHeightWithTopPadding(0, bottomPadding: 0, leftPadding: 0, width: self.thickness)
-		self.ruleRight.anchorCenterRightFillingHeightWithTopPadding(0, bottomPadding: 0, rightPadding: 0, width: self.thickness)
+		self.ruleBottom.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: self.thickness)
+		self.ruleTop.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: self.thickness)
+		self.ruleLeft.anchorCenterLeftFillingHeight(withTopPadding: 0, bottomPadding: 0, leftPadding: 0, width: self.thickness)
+		self.ruleRight.anchorCenterRightFillingHeight(withTopPadding: 0, bottomPadding: 0, rightPadding: 0, width: self.thickness)
 	}
 }

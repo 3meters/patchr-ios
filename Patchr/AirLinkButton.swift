@@ -24,8 +24,8 @@ class AirLinkButton: UIButton {
 	
 	func initialize() {
 		self.titleLabel!.font = Theme.fontButtonTitle
-		self.setTitleColor(Theme.colorButtonTitle, forState: .Normal)
-		self.setTitleColor(Theme.colorButtonTitleHighlighted, forState: .Highlighted)
+		self.setTitleColor(Theme.colorButtonTitle, for: .normal)
+		self.setTitleColor(Theme.colorButtonTitleHighlighted, for: .highlighted)
 		self.backgroundColor = Theme.colorButtonFill
 	}
 	

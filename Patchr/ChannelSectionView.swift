@@ -8,7 +8,6 @@
 
 import UIKit
 import SDWebImage
-import FontAwesome_swift
 
 class ChannelSectionView: BaseView {
 
@@ -35,7 +34,7 @@ class ChannelSectionView: BaseView {
 		self.name.numberOfLines = 1
 		self.addSubview(self.name)
         
-        self.addButton.setImage(UIImage(named: "imgAddLight"), forState: .Normal)
+        self.addButton.setImage(UIImage(named: "imgAddLight"), for: .normal)
         self.addButton.backgroundColor = Theme.colorScrimLighten
         self.addButton.cornerRadius = 18
         self.addSubview(self.addButton)
@@ -45,7 +44,7 @@ class ChannelSectionView: BaseView {
 		super.layoutSubviews()
 				
 		let columnWidth = NAVIGATION_DRAWER_WIDTH - (24 + 8 + 36 + 24)
-        self.name.anchorCenterLeftWithLeftPadding(24, width: columnWidth, height: 20)
-        self.addButton.anchorCenterRightWithRightPadding(8, width: 36, height: 36)
+        self.name.anchorCenterLeft(withLeftPadding: 24, width: columnWidth, height: 20)
+        self.addButton.anchorCenterRight(withRightPadding: 8, width: 36, height: 36)
 	}
 }

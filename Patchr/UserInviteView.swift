@@ -20,7 +20,7 @@ class UserInviteView: BaseDetailView {
 	var patch				: Patch?
 	
 	init() {
-		super.init(frame: CGRectZero)
+		super.init(frame: CGRect.zero)
 		initialize()
 	}
 	
@@ -37,23 +37,23 @@ class UserInviteView: BaseDetailView {
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		
-		let messageSize = self.message.sizeThatFits(CGSizeMake(self.width(), CGFloat.max))
+        let messageSize = self.message.sizeThatFits(CGSize(width:self.width(), height:CGFloat.greatestFiniteMagnitude))
 		
-		self.photo.anchorTopCenterWithTopPadding(0, width: 64, height: 64)
+		self.photo.anchorTopCenter(withTopPadding: 0, width: 64, height: 64)
 		self.message.alignUnder(self.photo, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 8, height: messageSize.height)
 		
-		if !self.member.hidden {
+		if !self.member.isHidden {
 			self.buttonGroup.alignUnder(self.message, matchingLeftAndRightWithTopPadding: 8, height: 32)
 			self.member.fillSuperview()
 		}
-		else if !self.joinButton.hidden {
+		else if !self.joinButton.isHidden {
 			self.buttonGroup.alignUnder(self.message, matchingLeftAndRightWithTopPadding: 8, height: 32)
-			self.joinButton.anchorInCenterWithWidth(192, height: 32)
+			self.joinButton.anchorInCenter(withWidth: 192, height: 32)
 		}
-		else if !self.loginButton.hidden && !self.signupButton.hidden {
+		else if !self.loginButton.isHidden && !self.signupButton.isHidden {
 			self.buttonGroup.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 200, height: 32)
-			self.loginButton.anchorCenterLeftWithLeftPadding(0, width: 96, height: 32)
-			self.signupButton.alignToTheRightOf(self.loginButton, matchingCenterWithLeftPadding: 8, width: 96, height: 32)
+			self.loginButton.anchorCenterLeft(withLeftPadding: 0, width: 96, height: 32)
+			self.signupButton.align(toTheRightOf: self.loginButton, matchingCenterWithLeftPadding: 8, width: 96, height: 32)
 		}
 	}
 	
@@ -65,20 +65,20 @@ class UserInviteView: BaseDetailView {
 		
 		/* message */
 		self.message.numberOfLines = 3
-		self.message.lineBreakMode = .ByTruncatingTail
-		self.message.textAlignment = .Center
+		self.message.lineBreakMode = .byTruncatingTail
+		self.message.textAlignment = .center
 		
 		self.addSubview(self.photo)
 		self.addSubview(self.message)
 		
 		self.member.text = "You are a member of this patch!"
 		self.member.textColor = Colors.accentColorDarker
-		self.member.textAlignment = .Center
+		self.member.textAlignment = .center
 		self.member.numberOfLines = 1
 		
-		self.joinButton.setTitle("JOIN", forState: .Normal)
-		self.loginButton.setTitle("LOG IN", forState: .Normal)
-		self.signupButton.setTitle("SIGN UP", forState: .Normal)
+		self.joinButton.setTitle("JOIN", for: .normal)
+		self.loginButton.setTitle("LOG IN", for: .normal)
+		self.signupButton.setTitle("SIGN UP", for: .normal)
 		
 		self.buttonGroup.addSubview(self.joinButton)
 		self.buttonGroup.addSubview(self.loginButton)
@@ -88,11 +88,11 @@ class UserInviteView: BaseDetailView {
 		self.addSubview(buttonGroup)
 	}
 	
-	func bind(message: String!, photoUrl: NSURL?, name: String!) {
+	func bind(message: String!, photoUrl: URL?, name: String!) {
 		
-		self.message.text?.removeAll(keepCapacity: false)
+		self.message.text?.removeAll(keepingCapacity: false)
 		self.message.text = message
-		self.photo.bindPhoto(photoUrl, name: name)
+		self.photo.bindPhoto(photoUrl: photoUrl, name: name)
 		self.setNeedsLayout()
 	}
 }

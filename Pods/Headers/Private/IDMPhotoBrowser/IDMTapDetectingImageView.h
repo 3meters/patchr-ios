@@ -1,1 +1,0 @@
-../../../../../../code/IDMPhotoBrowser/Classes/IDMTapDetectingImageView.h

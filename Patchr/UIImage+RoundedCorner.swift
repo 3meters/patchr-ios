@@ -34,7 +34,7 @@ public extension UIImage {
         // Create a clipping path with rounded corners
         CGContextBeginPath(context)
         self.addRoundedRectToPath(
-            CGRectMake(
+            CGRect(x:
                 CGFloat(borderSize),
                 CGFloat(borderSize),
                 image.size.width - CGFloat(borderSize) * 2,
@@ -48,7 +48,7 @@ public extension UIImage {
         
         // Draw the image to the context; the clipping path will make anything outside the rounded rect transparent
         CGContextDrawImage(context,
-            CGRectMake(0, 0, image.size.width, image.size.height),
+            CGRect(x:0, 0, image.size.width, image.size.height),
             image.CGImage)
         
         // Create a CGImage from the context

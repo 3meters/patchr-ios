@@ -25,7 +25,20 @@
 #pragma mark Initalizer
 
 -(id)initWithCoder:(NSCoder *)aDecoder{
-  self = [self initWithFrame:CGRectZero];
+  self = [super initWithFrame:CGRectZero];
+    if (self) {
+        self.popoutViews = [NSMutableArray new];
+        self.poputIDs = [NSMutableDictionary new];
+        self.menuIsExpanded = false;
+        self.centerView = [self makeDefaultCenterView];
+        self.centerView.frame = self.bounds;
+        self.startAngle = -75;
+        self.distanceBetweenPopouts = 50;
+        self.distanceFromCenter = 61;
+        self.stagger = 0.06;
+        self.animationDuration = 0.4;
+        [self addSubview:self.centerView];
+    }
   return self;
 }
 
@@ -35,8 +48,7 @@
 }
 
 
-- (id)initWithFrame:(CGRect)frame
-{
+- (id)initWithFrame:(CGRect)frame {
   self = [super initWithFrame:frame];
   if (self) {
     self.popoutViews = [NSMutableArray new];

@@ -118,6 +118,8 @@
 
 @synthesize path = _path;
 @synthesize bundleName = _bundleName;
+@synthesize demangleSwift = _demangleSwift;
+@synthesize demangleCPP = _demangleCPP;
 
 
 #pragma mark Construction
@@ -133,6 +135,8 @@
     {
         self.path = path;
         self.bundleName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"];
+        self.demangleCPP = YES;
+        self.demangleSwift = YES;
     }
     return self;
 }
@@ -313,7 +317,20 @@
     NSString* lastPath = fieldPath[fieldPath.count - 1];
     [self performOnFields:fieldPath inReport:report operation:^(NSMutableDictionary* parent, NSString* field)
     {
-        parent[lastPath] = [field demangledSymbol];
+        NSString* processedField = nil;
+        if(self.demangleCPP)
+        {
+            processedField = [field demangledAsCPP];
+        }
+        if(processedField == nil && self.demangleSwift)
+        {
+            processedField = [field demangledAsSwift];
+        }
+        if(processedField == nil)
+        {
+            processedField = field;
+        }
+        parent[lastPath] = processedField;
     } okIfNotFound:isOkIfNotFound];
 }
 

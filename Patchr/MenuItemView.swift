@@ -11,15 +11,15 @@ import UIKit
 class MenuItemView: BaseView {
 
 	var name    = AirLabel()
-    var photo   = AirImageView(frame: CGRectZero)
+    var photo   = AirImageView(frame: CGRect.zero)
     
 	init() {
-		super.init(frame: CGRectZero)
+		super.init(frame: CGRect.zero)
 		initialize()
 	}
     
     init(title: String, image: UIImage) {
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         initialize()
         self.photo.image = image
         self.name.text = title
@@ -52,8 +52,8 @@ class MenuItemView: BaseView {
 	override func layoutSubviews() {
 		super.layoutSubviews()
 				
-		self.photo.anchorCenterLeftWithLeftPadding(32, width: 24, height: 24)
+		self.photo.anchorCenterLeft(withLeftPadding: 32, width: 24, height: 24)
 		self.name.sizeToFit()
-		self.name.alignToTheRightOf(self.photo, matchingCenterAndFillingWidthWithLeftAndRightPadding: 16, height: 64)
+		self.name.align(toTheRightOf: self.photo, matchingCenterAndFillingWidthWithLeftAndRightPadding: 16, height: 64)
 	}
 }

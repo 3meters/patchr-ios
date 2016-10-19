@@ -13,7 +13,7 @@ class BaseView: UIView {
 	var cell: UITableViewCell?
 	var entity: Entity?
 	
-	override func sizeThatFits(size: CGSize) -> CGSize {
+	override func sizeThatFits(_ size: CGSize) -> CGSize {
 		self.bounds.size.width = size.width
 		self.setNeedsLayout()
 		self.layoutIfNeeded()

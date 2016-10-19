@@ -12,10 +12,10 @@ import SDWebImage
 class UserPhotoView: UIControl {
 
 	var name		= AirLabelDisplay()
-	var photo		= AirImageView(frame: CGRectZero)
+	var photo		= AirImageView(frame: CGRect.zero)
 	
 	init() {
-		super.init(frame: CGRectZero)
+		super.init(frame: CGRect.zero)
 		initialize()
 	}
 	
@@ -32,15 +32,15 @@ class UserPhotoView: UIControl {
 	func initialize() {
 		
 		self.clipsToBounds = true
-		self.layer.backgroundColor = Theme.colorBackgroundImage.CGColor
+		self.layer.backgroundColor = Theme.colorBackgroundImage.cgColor
 		
 		/* User photo */
-		self.photo.contentMode = .ScaleAspectFill
+		self.photo.contentMode = .scaleAspectFill
 		
 		/* User name */
 		self.name.font = Theme.fontHeading
 		self.name.textColor = Colors.white
-		self.name.textAlignment = .Center
+		self.name.textAlignment = .center
 
 		self.addSubview(self.photo)
 		self.addSubview(self.name)
@@ -57,19 +57,19 @@ class UserPhotoView: UIControl {
 	func bindToEntity(entity: Entity!) {
 		if entity != nil {
 			if entity.photo != nil {
-				let photoUrl = PhotoUtils.url(entity.photo!.prefix!, source: entity.photo!.source!, category: SizeCategory.profile)
-				bindPhoto(photoUrl, name: entity.name)
+				let photoUrl = PhotoUtils.url(prefix: entity.photo!.prefix!, source: entity.photo!.source!, category: SizeCategory.profile)
+				bindPhoto(photoUrl: photoUrl, name: entity.name)
 			}
 			else {
-				bindPhoto(nil, name: entity.name)
+				bindPhoto(photoUrl: nil, name: entity.name)
 			}
 		}
 		else {
-			bindPhoto(nil, name: nil)
+			bindPhoto(photoUrl: nil, name: nil)
 		}
 	}
 	
-	func bindPhoto(photoUrl: NSURL?, name: String?) {
+	func bindPhoto(photoUrl: URL?, name: String?) {
 		
 		if self.photo.image != nil
 			&& self.photo.linkedPhotoUrl != nil
@@ -80,34 +80,34 @@ class UserPhotoView: UIControl {
 		
 		let animate = true
 		
-		self.photo.hidden = true
+		self.photo.isHidden = true
 		self.photo.image = nil
 		self.name.text = nil
-		self.name.hidden = false
+		self.name.isHidden = false
 		
 		self.backgroundColor = Colors.gray80pcntColor
 		
 		if photoUrl != nil {
 			
-			let options: SDWebImageOptions = [.RetryFailed, .LowPriority, .AvoidAutoSetImage,/* .ProgressiveDownload*/]
+			let options: SDWebImageOptions = [.retryFailed, .lowPriority, .avoidAutoSetImage,/* .ProgressiveDownload*/]
 			
-			self.photo.sd_setImageWithURL(photoUrl
+			self.photo.sd_setImage(with: photoUrl as URL!
 				, placeholderImage: nil
 				, options: options
 				, completed: { [weak self] image, error, cacheType, url in
 											
 					if self != nil && error == nil {
 						
-						dispatch_async(dispatch_get_main_queue()) {
+						DispatchQueue.main.async() {
 							
 							self?.photo.linkedPhotoUrl = photoUrl
-							self?.name.hidden = true
-							self?.photo.hidden = false
+							self?.name.isHidden = true
+							self?.photo.isHidden = false
 							
 							if animate && self != nil {
-								UIView.transitionWithView(self!,
+								UIView.transition(with: self!,
 									duration: 0.4,
-									options: UIViewAnimationOptions.TransitionCrossDissolve,
+									options: UIViewAnimationOptions.transitionCrossDissolve,
 									animations: {
 										self?.photo.image = image
 									},
@@ -122,9 +122,9 @@ class UserPhotoView: UIControl {
 			)
 		}
 		else if name != nil {
-			self.name.text = Utils.initialsFromName(name!).uppercaseString
-			let seed = Utils.numberFromName(name!)
-			self.backgroundColor = Utils.randomColor(seed)
+			self.name.text = Utils.initialsFromName(fullname: name!).uppercased()
+			let seed = Utils.numberFromName(fullname: name!)
+			self.backgroundColor = Utils.randomColor(seed: seed)
 		}
 	}
 }

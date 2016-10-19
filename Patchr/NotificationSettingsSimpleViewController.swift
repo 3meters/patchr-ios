@@ -11,7 +11,7 @@ import UIKit
 class NotificationSettingsSimpleViewController: UITableViewController {
 
     let userDefaults = {
-        NSUserDefaults.standardUserDefaults()
+        UserDefaults.standard
     }()
 
     /* Notifications */
@@ -28,9 +28,9 @@ class NotificationSettingsSimpleViewController: UITableViewController {
         initialize()
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         if let indexPath = self.tableView.indexPathForSelectedRow {
-            self.tableView.deselectRowAtIndexPath(indexPath, animated: animated)
+            self.tableView.deselectRow(at: indexPath, animated: animated)
         }
     }
     
@@ -52,9 +52,8 @@ class NotificationSettingsSimpleViewController: UITableViewController {
         Reporting.screen("NotificationSettings")
 
         self.navigationItem.title = "Notifications"
-        self.view.accessibilityIdentifier = View.NotificationSettings
 
-        self.tableView = UITableView(frame: self.tableView.frame, style: .Grouped)
+        self.tableView = UITableView(frame: self.tableView.frame, style: .grouped)
         self.tableView.rowHeight = 48
         self.tableView.tableFooterView = UIView()
         self.tableView.backgroundColor = Colors.gray95pcntColor
@@ -63,13 +62,13 @@ class NotificationSettingsSimpleViewController: UITableViewController {
         self.notificationSettingsCell.textLabel?.text = "Notification settings"
         self.soundEffectsCell.textLabel!.text = "Play sound effects"
         
-        self.soundEffectsCell.accessoryView = makeSwitch(.SoundEffects, state: userDefaults.boolForKey(PatchrUserDefaultKey("SoundEffects")))
+        self.soundEffectsCell.accessoryView = makeSwitch(notificationType: .SoundEffects, state: userDefaults.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")))
     }
 
     func toggleAction(sender: AnyObject?) {
         if let switcher = sender as? UISwitch {
             if switcher.tag == Setting.SoundEffects.rawValue {
-                userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("SoundEffects"))
+                userDefaults.set(switcher.isOn, forKey: PatchrUserDefaultKey(subKey: "SoundEffects"))
             }
         }
     }
@@ -77,29 +76,29 @@ class NotificationSettingsSimpleViewController: UITableViewController {
     func makeSwitch(notificationType: Setting, state: Bool = false) -> UISwitch {
         let switchView = UISwitch()
         switchView.tag = notificationType.rawValue
-        switchView.addTarget(self, action: #selector(NotificationSettingsSimpleViewController.toggleAction(_:)), forControlEvents: UIControlEvents.ValueChanged)
-        switchView.on = state
+        switchView.addTarget(self, action: #selector(NotificationSettingsSimpleViewController.toggleAction(sender:)), for: UIControlEvents.valueChanged)
+        switchView.isOn = state
         return switchView
     }
 }
 
 extension NotificationSettingsSimpleViewController {
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let selectedCell = tableView.cellForRowAtIndexPath(indexPath)
+        let selectedCell = tableView.cellForRow(at: indexPath)
         
         if selectedCell == self.notificationSettingsCell {
-            UIApplication.sharedApplication().openURL(NSURL(string:UIApplicationOpenSettingsURLString)!)
-            self.tableView.deselectRowAtIndexPath(indexPath, animated: true)
+            UIApplication.shared.openURL(NSURL(string:UIApplicationOpenSettingsURLString)! as URL)
+            self.tableView.deselectRow(at: indexPath, animated: true)
         }
     }
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in: UITableView) -> Int {
         return 2
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
             case 0: return 1
             case 1: return 1
@@ -107,7 +106,7 @@ extension NotificationSettingsSimpleViewController {
         }
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch (indexPath.section) {
             case 0:
                 return self.notificationSettingsCell
@@ -117,15 +116,15 @@ extension NotificationSettingsSimpleViewController {
         }
     }
 
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch (section) {
-            case 0: return "Notifications".uppercaseString
-            case 1: return "Sound".uppercaseString
+            case 0: return "Notifications".uppercased()
+            case 1: return "Sound".uppercased()
             default: fatalError("Unknown section")
         }
     }
 
-    override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 48
     }
 }

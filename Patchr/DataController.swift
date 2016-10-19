@@ -42,9 +42,9 @@ class DataController: NSObject {
 
     var currentPatch:         Patch?    // Currently used for message context
 
-    let backgroundOperationQueue = NSOperationQueue()
-    let imageOperationQueue = NSOperationQueue()
-    let backgroundDispatch: dispatch_queue_t
+    let backgroundOperationQueue = OperationQueue()
+    let imageOperationQueue = OperationQueue()
+    let backgroundDispatch: DispatchQueue
 
     lazy var schemaDictionary: [String: ServiceBase.Type] = {
         return [
@@ -64,7 +64,7 @@ class DataController: NSObject {
 
         self.backgroundOperationQueue.name = "Background queue"
         self.imageOperationQueue.name = "Image processing queue"
-        self.backgroundDispatch = dispatch_queue_create("background_queue", nil)
+        self.backgroundDispatch = DispatchQueue(label: "background_queue")
 
         super.init()
 
@@ -73,16 +73,16 @@ class DataController: NSObject {
     }
 
     func saveContext(wait: Bool) {
-        self.coreDataStack.saveContext(self.mainContext, wait: wait)
+        self.coreDataStack.saveContext(context: self.mainContext, wait: wait)
     }
 
     func saveContext(context: NSManagedObjectContext, wait: Bool) {
-        self.coreDataStack.saveContext(context, wait: wait)
+        self.coreDataStack.saveContext(context: context, wait: wait)
     }
 
     func reset() {
         let coreDataStack = self.coreDataStack
-        coreDataStack.reset()
+        coreDataStack?.reset()
         self.coreDataStack = CoreDataStack()
         self.mainContext = self.coreDataStack.stackMainContext
     }
@@ -91,107 +91,107 @@ class DataController: NSObject {
      * Singles
      *--------------------------------------------------------------------------------------------*/
 
-    func withEntityId(entityId: String, strategy: FetchStrategy, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
+    func withEntityId(entityId: String, strategy: FetchStrategy, completion: @escaping (NSManagedObjectID?, _ error: NSError?) -> Void) {
         /*
         * Used by notifications which only have an entity id to work with.
         */
         switch entityId {
         case _ where entityId.hasPrefix("pa."):
-            withPatchId(entityId, strategy:	strategy, completion: completion)
+            withPatchId(patchId: entityId, strategy:	strategy, completion: completion)
 
         case _ where entityId.hasPrefix("us."):
-            withUserId(entityId, strategy: strategy, completion: completion)
+            withUserId(userId: entityId, strategy: strategy, completion: completion)
 
         case _ where entityId.hasPrefix("me."):
-            withMessageId(entityId, strategy:strategy, completion: completion)
+            withMessageId(messageId: entityId, strategy:strategy, completion: completion)
 
         default:
             Log.w("WARNING: withEntity not currently implemented for id of form \(entityId)")
-            completion(nil, error: nil)
+            completion(nil, nil)
         }
     }
 
-    private func withPatchId(patchId: String, strategy: FetchStrategy, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
+    private func withPatchId(patchId: String, strategy: FetchStrategy, completion: @escaping (NSManagedObjectID?, _ error: NSError?) -> Void) {
         /*
         * - Load a patch for the patch form
         * - Show a patch by id for a notification.
         */
-        withEntityType(Patch.self, entityId: patchId, strategy:	strategy) {
+        withEntityType(entityType: Patch.self, entityId: patchId, strategy:	strategy) {
             objectId, error in
-            completion(objectId, error: error)
+            completion(objectId, error)
         }
     }
 
-    private func withMessageId(messageId: String, strategy: FetchStrategy, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
+    private func withMessageId(messageId: String, strategy: FetchStrategy, completion: @escaping (NSManagedObjectID?, _ error: NSError?) -> Void) {
         /*
         * Load a message for the message form.
         */
-        withEntityType(Message.self, entityId: messageId, strategy:	strategy) {
+        withEntityType(entityType: Message.self, entityId: messageId, strategy:	strategy) {
             objectId, error in
-            completion(objectId, error: error)
+            completion(objectId, error)
         }
     }
 
-    private func withUserId(userId: String, strategy: FetchStrategy, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
+    private func withUserId(userId: String, strategy: FetchStrategy, completion: @escaping (NSManagedObjectID?, _ error: NSError?) -> Void) {
         /*
         * - Load users for items in user lists
         * - Load user by id for a notification.
         */
-        withEntityType(User.self, entityId: userId, strategy: strategy) {
+        withEntityType(entityType: User.self, entityId: userId, strategy: strategy) {
             objectId, error in
-            completion(objectId, error: error)
+            completion(objectId, error)
         }
     }
 
-    private func withEntityType(entityType: ServiceBase.Type, entityId: String, strategy: FetchStrategy, completion: (NSManagedObjectID?, error: NSError?) -> Void) {
+    private func withEntityType(entityType: ServiceBase.Type, entityId: String, strategy: FetchStrategy, completion: @escaping (NSManagedObjectID?, _ error: NSError?) -> Void) {
 
         /* Pull from data model if available */
-        let modelEntity = entityType.fetchOneById(entityId, inManagedObjectContext: mainContext) as ServiceBase!
+        let modelEntity = entityType.fetchOne(byId: entityId, in: mainContext) as ServiceBase!
 
         /* If not in data model or caller wants the freshest available then call service */
-        if strategy == .UseCacheAndVerify || strategy == .IgnoreCache || modelEntity == nil || self.objectHasBeenDeleted(modelEntity) {
+        if strategy == .UseCacheAndVerify || strategy == .IgnoreCache || modelEntity == nil || self.objectHasBeenDeleted(object: modelEntity!) {
 
             var criteria: [String: AnyObject] = [:]
             var objectId: NSManagedObjectID?
             if modelEntity != nil {
-                objectId = modelEntity.objectID
+                objectId = modelEntity?.objectID
                 if strategy != .IgnoreCache {
-                    criteria = modelEntity.criteria()
+                    criteria = modelEntity!.criteria() as [String : AnyObject]
                 }
             }
 
             let stopwatch = Stopwatch()
 
-            stopwatch.start("Entity", message: "\(entityType)")
+            stopwatch.start(name: "Entity", message: "\(entityType)")
 
-            fetchByEntityType(entityType, withId: entityId, criteria: criteria, completion: {
+            fetchByEntityType(type: entityType, withId: entityId, criteria: criteria, completion: {
                 response, error in
 
                 /* Returns on background thread */
                 if modelEntity != nil {
-                    guard !self.objectHasBeenDeleted(modelEntity) else {
+                    guard !self.objectHasBeenDeleted(object: modelEntity!) else {
                         return
                     }
                 }
 
                 if let _ = ServerError(error) {
-                    completion(nil, error: error)
+                    completion(nil, error)
                 }
                 else {
-                    let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
-                    privateContext.parentContext = DataController.instance.mainContext
-                    privateContext.performBlock {
+                    let privateContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+                    privateContext.parent = DataController.instance.mainContext
+                    privateContext.perform {
 
-                        stopwatch.segmentTime("\(entityType): network call finished")
+                        stopwatch.segmentTime(message: "\(entityType): network call finished")
 
                         /* Turn maps and arrays into objects */
                         if let dictionary = response as? [NSObject:AnyObject] {
 
                             let dataWrapper = ServiceData()
-                            ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper)
-                            stopwatch.segmentNote("\(entityType): service time: \(dataWrapper.time)ms")
+                            ServiceData.setPropertiesFrom(dictionary, onObject: dataWrapper)
+                            stopwatch.segmentNote(message: "\(entityType): service time: \(dataWrapper.time)ms")
 
-                            if !UIShared.versionIsValid(Int(dataWrapper.minBuildValue)) {
+                            if !UIShared.versionIsValid(versionMin: Int(dataWrapper.minBuildValue)) {
                                 UIShared.compatibilityUpgrade()
                                 return
                             }
@@ -200,8 +200,8 @@ class DataController: NSObject {
                                 if let entityDictionaries = dataWrapper.data as? [[NSObject:AnyObject]] {
                                     if entityDictionaries.count == 1 {
 
-                                        let entity = entityType.fetchOrInsertOneById(entityId, inManagedObjectContext: privateContext)
-                                        entityType.setPropertiesFromDictionary(entityDictionaries[0], onObject: entity!)
+                                        let entity = entityType.fetchOrInsertOne(byId: entityId, in: privateContext)
+                                        entityType.setPropertiesFrom(entityDictionaries[0], onObject: entity!)
                                         objectId = entity?.objectID
                                         if strategy == .IgnoreCache {
                                             entity!.decoratedValue = true
@@ -210,37 +210,37 @@ class DataController: NSObject {
                                         /* Poke each impacted queryItem to trigger NSFetchedResultsController callbacks */
                                         for queryItem in entity!.queryItems {
                                             if let result = queryItem as? QueryItem {
-                                                result.modifiedDate = NSDate()
+                                                result.modifiedDate = NSDate() as Date!
                                             }
                                         }
                                     }
                                 }
 
                                 /* Persist the changes and triggers notifications to observers */
-                                DataController.instance.saveContext(privateContext, wait: true)
-                                DataController.instance.saveContext(BLOCKING)				// Main context
+                                DataController.instance.saveContext(context: privateContext, wait: true)
+                                DataController.instance.saveContext(wait: BLOCKING)				// Main context
                             }
                         }
-                        completion(objectId, error: nil)
-                        stopwatch.stop("\(entityType)")
+                        completion(objectId, nil)
+                        stopwatch.stop(message: "\(entityType)")
                     }
                 }
             })
         }
         else {
-            completion(modelEntity.objectID, error: nil)
+            completion(modelEntity?.objectID, nil)
         }
     }
 
-    private func fetchByEntityType(type: ServiceBase.Type, withId id: String, criteria: Dictionary<String,AnyObject> = [:], completion: (response: AnyObject?, error: NSError?) -> Void) {
+    private func fetchByEntityType(type: ServiceBase.Type, withId id: String, criteria: [String:Any] = [:], completion: @escaping Proxibase.CompletionBlock) {
         if let _ = type as? Patch.Type {
-            DataController.proxibase.fetchPatchById(id, criteria:criteria, completion: completion)
+            DataController.proxibase.fetchPatchById(entityId: id, criteria: criteria, completion: completion)
         }
         else if let _ = type as? Message.Type {
-            DataController.proxibase.fetchMessageById(id, criteria:criteria, completion: completion)
+            DataController.proxibase.fetchMessageById(messageId: id, criteria: criteria, completion: completion)
         }
         else if let _ = type as? User.Type {
-            DataController.proxibase.fetchUserById(id, criteria:criteria, completion: completion)
+            DataController.proxibase.fetchUserById(userId: id, criteria: criteria, completion: completion)
         }
     }
     
@@ -248,11 +248,11 @@ class DataController: NSObject {
      * Collections
      *--------------------------------------------------------------------------------------------*/
     
-    func refreshItemsFor(queryId: NSManagedObjectID, force: Bool = false, paging: Bool = false, completion: (queryItems: [QueryItem], query: Query, error: NSError?) -> Void) {
+    func refreshItemsFor(queryId: NSManagedObjectID, force: Bool = false, paging: Bool = false, completion: @escaping (_ queryItems: [QueryItem], _ query: Query, _ error: NSError?) -> Void) {
         /*
          * Called on background thread
          */
-        let query = self.mainContext.objectWithID(queryId) as! Query // Always returns object, throws accessing property and doesn't exist
+        let query = self.mainContext.object(with: queryId) as! Query // Always returns object, throws accessing property and doesn't exist
 
         /* Should not be nil if this is for nearby patches */
         let coordinate = LocationController.instance.lastLocationAccepted()?.coordinate
@@ -285,43 +285,43 @@ class DataController: NSObject {
             skip = Int(ceil(Float(query.offsetValue) / Float(query.pageSizeValue)) * Float(query.pageSizeValue))
         }
         
-        var criteria: [String: AnyObject] = [:]
+        var criteria: [String: Any] = [:]
         if !force && query.executedValue && entity != nil && !paging {
-            criteria = entity!.criteria(true)
+            criteria = entity!.criteria(activityOnly: true)
         }
 
         let stopwatch = Stopwatch()
-        stopwatch.start("List", message: "\(query.name)")
+        stopwatch.start(name: "List", message: "\(query.name)")
 
         /*--------------------------------------------------------------------------------------------
         * Callback
         *--------------------------------------------------------------------------------------------*/
 
-        func refreshCompletion(response: AnyObject?, error: NSError?) -> Void {
+        func refreshCompletion(response: Any?, error: NSError?) -> Void {
             /*
             * Returns on background thread
             */
-            guard !objectHasBeenDeleted(query) else {
+            guard !objectHasBeenDeleted(object: query) else {
                 return
             }
 
             guard error == nil else {
-                let query = self.mainContext.objectWithID(queryId) as! Query
-                completion(queryItems: [], query: query, error: error)
+                let query = self.mainContext.object(with: queryId) as! Query
+                completion([], query, error)
                 return
             }
 
             /* Use a private context */
 
-            let privateContext = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
-            privateContext.parentContext = DataController.instance.mainContext
-            privateContext.performBlock {
+            let privateContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+            privateContext.parent = DataController.instance.mainContext
+            privateContext.perform {
 
-                let query = privateContext.objectWithID(queryId) as! Query
-                stopwatch.segmentTime("\(query.name): network call finished")
+                let query = privateContext.object(with: queryId) as! Query
+                stopwatch.segmentTime(message: "\(query.name): network call finished")
 
                 /* Turn response entities into managed entities */
-                let returnValue = self.handleServiceDataResponseForQuery(query, response: response!, stopwatch: stopwatch, context: privateContext)
+                let returnValue = self.handleServiceDataResponseForQuery(query: query, response: response!, stopwatch: stopwatch, context: privateContext)
 
                 /* Check for version problem */
                 if returnValue == nil {
@@ -330,7 +330,7 @@ class DataController: NSObject {
 
                 /* If service query completed as a noop then bail */
                 if (returnValue!.serviceData.noopValue) {
-                    completion(queryItems: [], query: query, error: error)
+                    completion([], query, error)
                     return
                 }
 
@@ -352,54 +352,54 @@ class DataController: NSObject {
                     for item in query.queryItems {
                         if let existingQueryItem = item as? QueryItem {
                             if !queryItemSet.contains(existingQueryItem) {
-                                privateContext.deleteObject(existingQueryItem) // Does not throw
+                                privateContext.delete(existingQueryItem) // Does not throw
                             }
                         }
                     }
                 }
 
                 /* Persist the changes and triggers notifications to observers */
-                DataController.instance.saveContext(privateContext, wait: true)
-                DataController.instance.saveContext(BLOCKING)						// Main context
-                stopwatch.segmentTime("\(query.name): context saved")
+                DataController.instance.saveContext(context: privateContext, wait: true)
+                DataController.instance.saveContext(wait: BLOCKING)						// Main context
+                stopwatch.segmentTime(message: "\(query.name): context saved")
 
                 /* Sets query.executed and query.offsetDate but doesn't do anything with queryItems */
-                completion(queryItems: queryItems, query: query, error: error)
-                stopwatch.stop("\(query.name)")
+                completion(queryItems, query, error)
+                stopwatch.stop(message: "\(query.name)")
 
             }
         }
 
         switch query.name {
             case DataStoreQueryName.NearbyPatches.rawValue:
-                DataController.proxibase.fetchNearbyPatches(coordinate, skip: skip, completion: refreshCompletion)
+                DataController.proxibase.fetchNearbyPatches(location: coordinate, skip: skip, completion: refreshCompletion)
 
-            case DataStoreQueryName.NotificationsForCurrentUser.rawValue:
-                DataController.proxibase.fetchNotifications(skip, completion: refreshCompletion)
+                //            case DataStoreQueryName.NotificationsForCurrentUser.rawValue:
+            //DataController.proxibase.fetchNotifications(skip: skip, completion: refreshCompletion)
             
             case DataStoreQueryName.ExplorePatches.rawValue:
-                DataController.proxibase.fetchInterestingPatches(skip, completion: refreshCompletion)
+                DataController.proxibase.fetchInterestingPatches(skip: skip, completion: refreshCompletion)
             
             case DataStoreQueryName.MessagesByUser.rawValue:
-                DataController.proxibase.fetchMessagesOwnedByUser(entityId, criteria: criteria, skip: skip, completion: refreshCompletion)
+                DataController.proxibase.fetchMessagesOwnedByUser(userId: entityId, criteria: criteria, skip: skip, completion: refreshCompletion)
 
             case DataStoreQueryName.MessagesForPatch.rawValue:
-                DataController.proxibase.fetchMessagesForPatch(entityId, criteria: criteria, skip: skip, completion: refreshCompletion)
+                DataController.proxibase.fetchMessagesForPatch(patchId: entityId, criteria: criteria, skip: skip, completion: refreshCompletion)
 
             case DataStoreQueryName.WatchersForPatch.rawValue:
-                DataController.proxibase.fetchUsersThatWatchPatch(entityId, isOwner: isOwner, criteria: criteria, skip: skip, completion: refreshCompletion)
+                DataController.proxibase.fetchUsersThatWatchPatch(patchId: entityId, isOwner: isOwner, criteria: criteria, skip: skip, completion: refreshCompletion)
 
             case DataStoreQueryName.LikersForMessage.rawValue:
-                DataController.proxibase.fetchUsersThatLikeMessage(entityId, criteria: criteria, skip: skip, completion: refreshCompletion)
+                DataController.proxibase.fetchUsersThatLikeMessage(messageId: entityId, criteria: criteria, skip: skip, completion: refreshCompletion)
             
             case DataStoreQueryName.PatchesByUser.rawValue:
-                DataController.proxibase.fetchPatchesOwnedByUser(entityId, criteria: criteria, skip: skip, completion: refreshCompletion)
+                DataController.proxibase.fetchPatchesOwnedByUser(userId: entityId, criteria: criteria, skip: skip, completion: refreshCompletion)
             
             case DataStoreQueryName.PatchesUserIsWatching.rawValue:
-                DataController.proxibase.fetchPatchesUserIsWatching(entityId, criteria: criteria, skip: skip, completion: refreshCompletion)
+                DataController.proxibase.fetchPatchesUserIsWatching(userId: entityId, criteria: criteria, skip: skip, completion: refreshCompletion)
             
             case DataStoreQueryName.FavoritePatches.rawValue:
-                DataController.proxibase.fetchUsersFavoritePatches(entityId, criteria: criteria, skip: skip, completion: refreshCompletion)
+                DataController.proxibase.fetchUsersFavoritePatches(userId: entityId, criteria: criteria, skip: skip, completion: refreshCompletion)
             
             default:
                 precondition(false, "No refreshResultsFor implementation for query name \(query.name)")
@@ -410,16 +410,16 @@ class DataController: NSObject {
      * Methods
      *--------------------------------------------------------------------------------------------*/
 
-    private func handleServiceDataResponseForQuery(query: Query, response: AnyObject, stopwatch: Stopwatch, context: NSManagedObjectContext) -> (serviceData:ServiceData, queryItems:[QueryItem])? {
+    private func handleServiceDataResponseForQuery(query: Query, response: Any, stopwatch: Stopwatch, context: NSManagedObjectContext) -> (serviceData:ServiceData, queryItems:[QueryItem])? {
 
         var queryItems: [QueryItem] = []
         let dataWrapper = ServiceData()
-        if let dictionary = response as? [NSObject:AnyObject] {
+        if let dictionary = response as? [String: Any] {
 
-            ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper)
-            stopwatch.segmentNote("\(query.name): service time: \(dataWrapper.time)ms")
+            ServiceData.setPropertiesFrom(dictionary, onObject: dataWrapper)
+            stopwatch.segmentNote(message: "\(query.name): service time: \(dataWrapper.time)ms")
 
-            if !UIShared.versionIsValid(Int(dataWrapper.minBuildValue)) {
+            if !UIShared.versionIsValid(versionMin: Int(dataWrapper.minBuildValue)) {
                 UIShared.compatibilityUpgrade()
                 return nil
             }
@@ -428,17 +428,17 @@ class DataController: NSObject {
                 return (dataWrapper, [])
             }
             
-            if var entityDictionaries = dataWrapper.data as? [[NSObject: AnyObject]] {
+            if var entityDictionaries = dataWrapper.data as? [[String: Any]] {
                 
                 /* Append the sidecar maps if any */
-                if let sidecar = query.sidecar as? [[NSObject: AnyObject]] where sidecar.count > 0 {
+                if let sidecar = query.sidecar as? [[String: Any]] , sidecar.count > 0 {
 
                     /* Find date brackets in current set */
-                    var startDate = NSDate(timeIntervalSince1970: 0)
-                    var endDate = NSDate()
+                    var startDate = Date(timeIntervalSince1970: 0)
+                    var endDate = Date()
                     for entityDictionary in entityDictionaries {
                         if let itemDateValue = entityDictionary["sortDate"] as? Int {
-                            let itemDate = NSDate(timeIntervalSince1970: NSTimeInterval(itemDateValue / 1000))
+                            let itemDate = Date(timeIntervalSince1970: TimeInterval(itemDateValue / 1000))
                             if itemDate < endDate {
                                 endDate = itemDate
                             }
@@ -451,7 +451,7 @@ class DataController: NSObject {
                     /* Fold in sidecar items that fall inside bracketed date range */
                     for sidecarDictionary in sidecar {
                         if let itemDateValue = sidecarDictionary["sortDate"] as? Int {
-                            let itemDate = NSDate(timeIntervalSince1970: NSTimeInterval(itemDateValue / 1000))
+                            let itemDate = Date(timeIntervalSince1970: TimeInterval(itemDateValue / 1000))
                             if query.offsetValue == 0 {
                                 if itemDate >= endDate {
                                     entityDictionaries.append(sidecarDictionary)
@@ -464,7 +464,7 @@ class DataController: NSObject {
                             }
                         }
                     }
-                    stopwatch.segmentTime("\(query.name): sidecar processed")
+                    stopwatch.segmentTime(message: "\(query.name): sidecar processed")
                 }
 
                 var itemPosition = 0 + query.offsetValue
@@ -479,10 +479,10 @@ class DataController: NSObject {
                          * entity retaining any other properties including local ones.
                          */
                         let entityId = ((entityDictionary["_id"] != nil) ? entityDictionary["_id"] : entityDictionary["id"]) as! String // Notifications use "id", everything else from service is "_id"
-                        let entity = entityType.fetchOrInsertOneById(entityId, inManagedObjectContext: context) as! Entity
+                        let entity = entityType.fetchOrInsertOne(byId: entityId, in: context) as! Entity
 
                         /* Transfer the properties: Updates the object if it was already in the model */
-                        entityType.setPropertiesFromDictionary(entityDictionary, onObject: entity)
+                        entityType.setPropertiesFrom(entityDictionary, onObject: entity)
 
                         /* A tiny bit of fixup */
                         if let user = entity as? User {
@@ -502,7 +502,7 @@ class DataController: NSObject {
                         
                         /* Add if new */
                         if queryItem == nil {
-                            queryItem = QueryItem.insertInManagedObjectContext(context) as! QueryItem
+                            queryItem = QueryItem.insert(in: context) as! QueryItem
                         }
 
                         /* Set properties */
@@ -524,7 +524,7 @@ class DataController: NSObject {
                         precondition(false, "Missing or unknown schema for object \(entityDictionary)")
                     }
                 }
-                stopwatch.segmentTime("\(query.name): list items processed")
+                stopwatch.segmentTime(message: "\(query.name): list items processed")
 
             }
         }
@@ -532,14 +532,14 @@ class DataController: NSObject {
     }
 
     func objectHasBeenDeleted(object: NSManagedObject) -> Bool {
-        if object.deleted {
+        if object.isDeleted {
             return true
         }
         if object.managedObjectContext == nil {
             return true
         }
         do {
-            try self.mainContext.existingObjectWithID(object.objectID)
+            try self.mainContext.existingObject(with: object.objectID)
         }
         catch {
             return true
@@ -547,16 +547,18 @@ class DataController: NSObject {
         return false
     }
 
-    func dataWrapperForResponse(response: AnyObject) -> ServiceData? {
+    func dataWrapperForResponse(response: Any) -> ServiceData? {
 
-        if let dictionary = response as? [NSObject:AnyObject] {
+        if let dictionary = response as? [String: Any] {
             let dataWrapper = ServiceData()
-            ServiceData.setPropertiesFromDictionary(dictionary, onObject: dataWrapper)
+            ServiceData.setPropertiesFrom(dictionary, onObject: dataWrapper)
             Log.d("Service response time: \(dataWrapper.time)")
             return dataWrapper
         }
         return nil
     }
+    
+    func warmup() {}
 }
 
 enum FetchStrategy: Int {

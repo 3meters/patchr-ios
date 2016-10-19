@@ -38,7 +38,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
     var firstAppearance		= true
 
     var imageUploadRequest	: AWSS3TransferManagerUploadRequest?
-    var entityPostRequest	: NSURLSessionTask?
+    var entityPostRequest	: URLSessionTask?
 
     var descriptionDefault	: String!
 
@@ -47,7 +47,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
     var contactList			: UITableView?
 
     var searchInProgress    = false
-    var searchTimer			: NSTimer?
+    var searchTimer			: Timer?
     var searchEditing       = false
     var searchText			: String = ""
 
@@ -86,19 +86,19 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
         self.view.bounds.size.width = viewWidth
         self.contentHolder.bounds.size.width = viewWidth
 
-        let descriptionSize = self.descriptionField.sizeThatFits(CGSizeMake(contentWidth, CGFloat.max))
+        let descriptionSize = self.descriptionField.sizeThatFits(CGSize(width:contentWidth, height:CGFloat.greatestFiniteMagnitude))
         let navHeight = self.navigationController?.navigationBar.height() ?? 0
-        let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+        let statusHeight = UIApplication.shared.statusBarFrame.size.height
 
         if self.inputState == .Sharing {
 
-            self.userPhoto.anchorTopLeftWithLeftPadding(16, topPadding: 8, width: 48, height: 48)
+            self.userPhoto.anchorTopLeft(withLeftPadding: 16, topPadding: 8, width: 48, height: 48)
             self.addressField.setNeedsLayout()
             self.addressField.layoutIfNeeded()
-            self.addressField.anchorTopLeftWithLeftPadding(72, topPadding: 12, width: contentWidth - 56, height: self.addressField.height())
+            self.addressField.anchorTopLeft(withLeftPadding: 72, topPadding: 12, width: contentWidth - 56, height: self.addressField.height())
             self.contactList!.alignUnder(self.addressField, matchingLeftAndRightWithTopPadding: 0, height: CGFloat(self.contactModels.count * 52))
-            self.addressGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: CGFloat(statusHeight + navHeight), height: self.contactList!.height() + self.addressField.height() + 24)
-            self.descriptionField.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: contentWidth, height: max(96, descriptionSize.height))
+            self.addressGroup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: CGFloat(statusHeight + navHeight), height: self.contactList!.height() + self.addressField.height() + 24)
+            self.descriptionField.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: contentWidth, height: max(96, descriptionSize.height))
 
             if self.inputShareSchema == Schema.ENTITY_PATCH {
                 self.patchView!.alignUnder(self.descriptionField, matchingLeftAndRightWithTopPadding: 8, height: 128)
@@ -108,20 +108,20 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
             }
         }
         else {
-            self.addressGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: CGFloat(statusHeight + navHeight), height: 64)
-            self.userPhoto.anchorCenterLeftWithLeftPadding(16, width: 48, height: 48)
-            self.addressLabel.fillSuperviewWithLeftPadding(72, rightPadding: 8, topPadding: 0, bottomPadding: 0)
-            self.descriptionField.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: contentWidth, height: max(96, descriptionSize.height))
+            self.addressGroup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: CGFloat(statusHeight + navHeight), height: 64)
+            self.userPhoto.anchorCenterLeft(withLeftPadding: 16, width: 48, height: 48)
+            self.addressLabel.fillSuperview(withLeftPadding: 72, rightPadding: 8, topPadding: 0, bottomPadding: 0)
+            self.descriptionField.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: contentWidth, height: max(96, descriptionSize.height))
             self.photoView.alignUnder(self.descriptionField, matchingLeftAndRightWithTopPadding: 8, height: self.photoView.photoMode == .Empty ? 48 : contentWidth * 0.75)
         }
 
         self.contentHolder.resizeToFitSubviews()
-        self.scrollView.contentSize = CGSizeMake(self.contentHolder.width(), self.contentHolder.height() + CGFloat(32))
+        self.scrollView.contentSize = CGSize(width:self.contentHolder.width(), height: self.contentHolder.height() + CGFloat(32))
         self.scrollView.alignUnder(self.addressGroup, centeredFillingWidthAndHeightWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
-        self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 8, height: self.contentHolder.height() + 32)
+        self.contentHolder.anchorTopCenterFillingWidth(withLeftAndRightPadding: 16, topPadding: 8, height: self.contentHolder.height() + 32)
     }
 
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if self.inputState == State.Sharing {
             self.addressField.becomeFirstResponder()
@@ -131,7 +131,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
         }
     }
 
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.firstAppearance = false
     }
@@ -145,11 +145,11 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
         guard isValid() else { return }
         guard !self.processing else { return }
 
-        self.progress = AirProgress.showHUDAddedTo(self.view.window!, animated: true)
-        self.progress!.mode = MBProgressHUDMode.Indeterminate
-        self.progress!.styleAs(.ActivityWithText)
+        self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
+        self.progress!.mode = MBProgressHUDMode.indeterminate
+        self.progress!.styleAs(progressStyle: .ActivityWithText)
         self.progress!.labelText = self.progressStartLabel!
-        self.progress!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(MessageEditViewController.userCancelTaskAction(_:))))
+        self.progress!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(MessageEditViewController.userCancelTaskAction(sender:))))
         self.progress!.removeFromSuperViewOnHide = true
         self.progress!.show(true)
 
@@ -157,25 +157,23 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
             self.progress?.detailsLabelText = "Tap to cancel"
         }
 
-        let parameters = self.gather(NSMutableDictionary())
-
-        post(parameters)
-
+        let parameters = self.gather()
+        post(parameters: parameters)
     }
 
     func cancelAction(sender: AnyObject){
 
         if !isDirty() {
-            self.performBack(true)
+            self.performBack(animated: true)
             return
         }
 
         DeleteConfirmationAlert(
-            "Do you want to discard your editing changes?",
+            title: "Do you want to discard your editing changes?",
             actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
                 doIt in
                 if doIt {
-                    self.performBack(true)
+                    self.performBack(animated: true)
                 }
         }
     }
@@ -185,7 +183,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
         guard !self.processing else { return }
 
         DeleteConfirmationAlert(
-            "Confirm Delete",
+            title: "Confirm Delete",
             message: "Are you sure you want to delete this?",
             actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
                 doIt in
@@ -197,9 +195,9 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 
     func userCancelTaskAction(sender: AnyObject) {
         if let gesture = sender as? UIGestureRecognizer, let hud = gesture.view as? MBProgressHUD {
-            hud.animationType = MBProgressHUDAnimation.ZoomIn
+            hud.animationType = MBProgressHUDAnimation.zoomIn
             hud.hide(true)
-            self.imageUploadRequest?.cancel() // Should do nothing if upload already complete or isn't any
+            let _ = self.imageUploadRequest?.cancel() // Should do nothing if upload already complete or isn't any
             self.entityPostRequest?.cancel()
         }
     }
@@ -210,20 +208,19 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 
     override func initialize() {
 
-        self.view.accessibilityIdentifier = View.MessageEdit
         self.view.backgroundColor = Theme.colorBackgroundForm
 
         let viewWidth = min(CONTENT_WIDTH_MAX, self.view.bounds.size.width)
 
-        let fullScreenRect = UIScreen.mainScreen().applicationFrame
+        let fullScreenRect = UIScreen.main.applicationFrame
         self.scrollView.frame = fullScreenRect
         self.scrollView.backgroundColor = Theme.colorBackgroundForm
         self.scrollView.bounces = true
         self.scrollView.alwaysBounceVertical = true
 
         self.photoView.photoSchema = Schema.ENTITY_MESSAGE
-        self.photoView.setHostController(self)
-        self.photoView.configureTo(self.inputEntity?.photo != nil ? .Photo : .Empty)
+        self.photoView.setHostController(controller: self)
+        self.photoView.configureTo(photoMode: self.inputEntity?.photo != nil ? .Photo : .Empty)
 
         self.descriptionField = AirTextView()
         self.descriptionField.placeholderLabel.text = "What\'s happening?"
@@ -231,7 +228,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
         self.descriptionField.initialize()
         self.descriptionField.delegate = self
 
-        self.userPhoto.contentMode = UIViewContentMode.ScaleAspectFill
+        self.userPhoto.contentMode = UIViewContentMode.scaleAspectFill
         self.userPhoto.clipsToBounds = true
         self.userPhoto.layer.cornerRadius = 24
 
@@ -251,14 +248,14 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 
         if self.inputState == State.Sharing {
 
-            self.photoView.hidden = true
-            self.addressLabel.hidden = true
+            self.photoView.isHidden = true
+            self.addressLabel.isHidden = true
 
             self.addressField.setPlaceholderLabelText("Who would you like to invite?")
             self.addressField.setPromptLabelText("To: ")
             self.addressField.delegate = self
 
-            self.contactList = UITableView(frame: CGRectZero, style: .Plain)
+            self.contactList = UITableView(frame: CGRect.zero, style: .plain)
             self.contactList!.delegate = self;
             self.contactList!.dataSource = self;
             self.contactList!.rowHeight = 52
@@ -273,7 +270,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
                 self.progressFinishLabel = "Invites sent"
                 self.cancelledLabel = "Invites cancelled"
 
-                self.patchView = PatchView(frame: CGRectMake(0, 0, viewWidth, 136))
+                self.patchView = PatchView(frame: CGRect(x:0, y:0, width:viewWidth, height:136))
                 self.patchView!.borderColor = Theme.colorButtonBorder
                 self.patchView!.borderWidth = Theme.dimenButtonBorderWidth
                 self.patchView!.cornerRadius = 6
@@ -298,7 +295,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
                 self.contentHolder.addSubview(self.messageView!)
 
                 self.descriptionField.placeholderLabel.text = "Add a message..."
-                self.navigationItem.title = Utils.LocalizedString("Share posted message")
+                self.navigationItem.title = Utils.LocalizedString(str: "Share posted message")
                 if let message = self.inputShareEntity as? Message {
                     if message.patch != nil {
                         self.descriptionDefault = "\(UserController.instance.currentUser.name) shared \(message.creator.name!)\'s message posted to the \'\(message.patch.name)\' patch."
@@ -310,14 +307,14 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
             }
 
             /* Navigation bar buttons */
-            let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: #selector(MessageEditViewController.cancelAction(_:)))
-            let doneButton = UIBarButtonItem(title: "Send", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(MessageEditViewController.doneAction(_:)))
+            let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: self, action: #selector(MessageEditViewController.cancelAction(sender:)))
+            let doneButton = UIBarButtonItem(title: "Send", style: UIBarButtonItemStyle.plain, target: self, action: #selector(MessageEditViewController.doneAction(sender:)))
             self.navigationItem.leftBarButtonItems = [cancelButton]
             self.navigationItem.rightBarButtonItems = [doneButton]
         }
         else {
 
-            self.addressField.hidden = true
+            self.addressField.isHidden = true
 
             self.descriptionField.placeholderLabel.text = "What\'s happening?"
 
@@ -328,8 +325,8 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
                 self.cancelledLabel = "Post cancelled"
 
                 /* Navigation bar buttons */
-                let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: #selector(MessageEditViewController.cancelAction(_:)))
-                let doneButton = UIBarButtonItem(title: "Post", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(MessageEditViewController.doneAction(_:)))
+                let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: self, action: #selector(MessageEditViewController.cancelAction(sender:)))
+                let doneButton = UIBarButtonItem(title: "Post", style: UIBarButtonItemStyle.plain, target: self, action: #selector(MessageEditViewController.doneAction(sender:)))
                 self.navigationItem.leftBarButtonItems = [cancelButton]
                 self.navigationItem.rightBarButtonItems = [doneButton]
             }
@@ -339,13 +336,13 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
                 self.progressFinishLabel = "Updated"
                 self.cancelledLabel = "Update cancelled"
 
-                self.doneButton.hidden = true
+                self.doneButton.isHidden = true
 
                 /* Navigation bar buttons */
                 self.navigationItem.title = "Edit message"
-                let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: #selector(MessageEditViewController.cancelAction(_:)))
-                let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: #selector(MessageEditViewController.deleteAction(_:)))
-                let doneButton = UIBarButtonItem(title: "Save", style: .Plain, target: self, action: #selector(MessageEditViewController.doneAction(_:)))
+                let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: self, action: #selector(MessageEditViewController.cancelAction(sender:)))
+                let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.trash, target: self, action: #selector(MessageEditViewController.deleteAction(sender:)))
+                let doneButton = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(MessageEditViewController.doneAction(sender:)))
                 self.navigationItem.leftBarButtonItems = [cancelButton]
                 self.navigationItem.rightBarButtonItems = [doneButton, Utils.spacer, deleteButton]
             }
@@ -355,18 +352,18 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
     func bind() {
 
         if let message = self.inputEntity as? Message {
-            self.userPhoto.bindToEntity(message.creator)
+            self.userPhoto.bindToEntity(entity: message.creator)
             self.userName.text = message.creator.name
         }
         else if let user = UserController.instance.currentUser {
-            self.userPhoto.bindToEntity(user)
+            self.userPhoto.bindToEntity(entity: user)
             self.userName.text = user.name
         }
 
         if self.inputState == .Editing {
             self.addressLabel.text = (self.inputEntity as! Message).patch?.name
             self.descriptionField.text = self.inputEntity!.description_
-            self.photoView.bindPhoto(self.inputEntity!.photo)
+            self.photoView.bindPhoto(photo: self.inputEntity!.photo)
             textViewDidChange(self.descriptionField)
         }
         else if self.inputState == .Creating {
@@ -374,25 +371,25 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
         }
         else if self.inputState == .Sharing {
             if self.inputShareSchema == Schema.ENTITY_PATCH {
-                self.patchView!.bindToEntity(self.inputShareEntity!, location: nil)
+                self.patchView!.bindToEntity(entity: self.inputShareEntity!, location: nil)
             }
             else {
-                self.messageView!.bindToEntity(self.inputShareEntity!, location: nil)
+                self.messageView!.bindToEntity(entity: self.inputShareEntity!, location: nil)
                 self.messageView!.setNeedsLayout()
                 self.messageView!.layoutIfNeeded()
             }
         }
     }
 
-    func post(parameters: NSMutableDictionary) -> TaskQueue {
+    @discardableResult func post(parameters: [String: Any]) -> TaskQueue {
         /*
          * Has external dependencies: progress, tasks, processing flag.
          */
-
         self.processing = true
         var cancelled = false
         let queue = TaskQueue()
-
+        var parameters = parameters
+        
         /* Process image if any */
 
         if var image = parameters["photo"] as? UIImage {
@@ -405,19 +402,15 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
                 let imageKey = "\(Utils.genImageKey()).jpg"
 
                 /* Upload */
-                self.imageUploadRequest = S3.sharedService.uploadImageToS3(image, imageKey: imageKey) {
+                self.imageUploadRequest = S3.sharedService.uploadImageToS3(image: image, imageKey: imageKey) {
                     task in
 
-                    if let error = task.error {
-                        if error.domain == AWSS3TransferManagerErrorDomain as String {
-                            if let errorCode = AWSS3TransferManagerErrorType(rawValue: error.code) {
-                                if errorCode == .Cancelled {
-                                    cancelled = true
-                                }
-                            }
+                    if let err = task.error {
+                        if task.isCancelled {
+                            cancelled = true
                         }
                         queue.skip()
-                        next(Result(response: nil, error: error))
+                        next(Result(response: nil, error: err as NSError?))
                     }
                     else {
                         let photo = [
@@ -425,7 +418,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
                             "height": Int(image.size.height),
                             "source": S3.sharedService.imageSource,
                             "prefix": imageKey
-                        ]
+                        ] as [String : Any]
                         parameters["photo"] = photo
                         next(nil)
                     }
@@ -437,7 +430,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 
         queue.tasks +=~ { _, next in
             let endpoint = self.inputEntity == nil ? "data/messages" : "data/messages/\(self.inputEntity!.id_!)"
-            self.entityPostRequest = DataController.proxibase.postEntity(endpoint, parameters: parameters) {
+            self.entityPostRequest = DataController.proxibase.postEntity(path: endpoint, parameters: parameters) {
                 response, error in
                 if error == nil {
                     self.progress!.progress = 1.0
@@ -445,7 +438,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
                 else if error!.code == NSURLErrorCancelled {
                     cancelled = true
                 }
-                next(Result(response: response, error: error))
+                next(Result(response: response as AnyObject?, error: error))
             }
         }
 
@@ -455,7 +448,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
             self.processing = false
 
             if cancelled {
-                UIShared.Toast(self.cancelledLabel)
+                UIShared.Toast(message: self.cancelledLabel)
                 return
             }
 
@@ -473,14 +466,14 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
                         if self.inputState == .Creating {
                             if let patch = DataController.instance.currentPatch {
                                 var recent: [String:AnyObject] = [
-                                    "id_":patch.id_,
-                                    "name":patch.name,
-                                    "recentDate": NSNumber(longLong: Utils.now()) // Only way to store Int64 as AnyObject
+                                    "id_":patch.id_ as AnyObject,
+                                    "name":patch.name as AnyObject,
+                                    "recentDate": NSNumber(value: Utils.now()) // Only way to store Int64 as AnyObject
                                 ]
                                 if patch.photo != nil {
-                                    recent["photo"] = patch.photo.asMap()
+                                    recent["photo"] = patch.photo.asMap() as AnyObject?
                                 }
-                                Utils.updateRecents(recent)
+                                Utils.updateRecents(recent: recent)
                             }
                         }
 
@@ -492,15 +485,15 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 
                         if self.inputState == .Creating {
                             /* Used to trigger call to action UI */
-                            NSNotificationCenter.defaultCenter().postNotificationName(Events.DidInsertMessage, object: self)
-                            Reporting.track("Created Message", properties: ["target": "Patch"])
+                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.DidInsertMessage), object: self)
+                            Reporting.track("Created Message", properties: ["target": "Patch" as AnyObject])
                         }
                         else {
                             if self.inputShareSchema == Schema.ENTITY_PATCH {
-                                Reporting.track("Sent Patch Invitation", properties: ["network": "Patchr"])
+                                Reporting.track("Sent Patch Invitation", properties: ["network": "Patchr" as AnyObject])
                             }
                             else if self.inputShareSchema == Schema.ENTITY_MESSAGE {
-                                Reporting.track("Shared Message", properties: ["network": "Patchr"])
+                                Reporting.track("Shared Message", properties: ["network": "Patchr" as AnyObject])
                             }
                         }
                     }
@@ -511,8 +504,8 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
                 }
             }
 
-            self.performBack(true)
-            UIShared.Toast(self.progressFinishLabel)
+            self.performBack(animated: true)
+            UIShared.Toast(message: self.progressFinishLabel)
         }
 
         /* Start tasks */
@@ -527,18 +520,18 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 
         let entityPath = "data/messages/\((self.inputEntity!.id_)!)"
 
-        DataController.proxibase.deleteObject(entityPath) {
+        DataController.proxibase.deleteObject(path: entityPath) {
             response, error in
 
-            NSOperationQueue.mainQueue().addOperationWithBlock {
+            OperationQueue.main.addOperation {
                 self.processing = false
 
                 if let error = ServerError(error) {
                     self.handleError(error)
                 }
                 else {
-                    DataController.instance.mainContext.deleteObject(self.inputEntity!)
-                    DataController.instance.saveContext(BLOCKING)
+                    DataController.instance.mainContext.delete(self.inputEntity!)
+                    DataController.instance.saveContext(wait: BLOCKING)
                     DataController.instance.activityDateInsertDeleteMessage = Utils.now()
                     Reporting.track("Deleted Message")
                     self.performBack()
@@ -559,21 +552,21 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
         Log.d("Suggest call: \(searchString)")
 
         let endpoint: String = "\(DataController.proxibase.serviceUri)suggest"
-        let request = NSMutableURLRequest(URL: NSURL(string: endpoint)!)
-        let session = NSURLSession.sharedSession()
-        request.HTTPMethod = "POST"
+        let request = NSMutableURLRequest(url: NSURL(string: endpoint)! as URL)
+        let session = URLSession.shared
+        request.httpMethod = "POST"
 
         let body = [
             "users": true,
-            "input": searchString.lowercaseString,
-            "limit":10 ] as [String:AnyObject]
+            "input": searchString.lowercased(),
+            "limit":10] as [String:Any]
 
         do {
-            request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(body, options: [])
+            request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
             request.addValue("application/json", forHTTPHeaderField: "Accept")
 
-            let task = session.dataTaskWithRequest(request, completionHandler: {
+            let task = session.dataTask(with: request as URLRequest, completionHandler: {
                 data, response, error -> Void in
 
                 self.searchInProgress = false
@@ -586,19 +579,19 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
                     for (index: _, subJson) in results {
                         let model = SuggestionModel()
                         model.contactTitle = subJson["name"].string
-                        model.entityId = (subJson["_id"] != nil) ? subJson["_id"].string : subJson["id_"].string
+                        model.entityId = (subJson["_id"] != JSON.null) ? subJson["_id"].string : subJson["id_"].string
 
-                        if subJson["photo"] != nil {
+                        if subJson["photo"] != JSON.null {
 
                             let prefix = subJson["photo"]["prefix"].string
                             let source = subJson["photo"]["source"].string
-                            let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.profile)
+                            let photoUrl = PhotoUtils.url(prefix: prefix!, source: source!, category: SizeCategory.profile)
                             model.contactImageUrl = photoUrl
                         }
-                        self.contactModels.addObject(model)
+                        self.contactModels.add(model)
                     }
 
-                    dispatch_async(dispatch_get_main_queue(), {
+                    DispatchQueue.main.async(execute: {
                         self.viewWillLayoutSubviews()
                         self.contactList?.reloadData()
                     })
@@ -612,30 +605,32 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
         }
     }
 
-    func gather(parameters: NSMutableDictionary) -> NSMutableDictionary {
+    func gather() -> [String: Any] {
 
+        var parameters: [String: Any] = [:]
+        
         if self.inputState == State.Creating {
 
-            parameters["description"] = nilToNull(self.descriptionField.text)
-            parameters["photo"] = nilToNull(self.photoView.imageButton.imageForState(.Normal))
+            parameters["description"] = nilToNull(value: self.descriptionField.text as AnyObject?)
+            parameters["photo"] = nilToNull(value: self.photoView.imageButton.image(for: .normal))
             parameters["links"] = [["type": "content", "_to": self.inputPatchId!]]
         }
         else if self.inputState == State.Editing {
 
             if self.descriptionField.text != self.inputEntity!.description_  {
-                parameters["description"] = nilToNull(self.descriptionField.text)
+                parameters["description"] = nilToNull(value: self.descriptionField.text as AnyObject?)
             }
             if self.photoView.photoDirty {
-                parameters["photo"] = nilToNull(self.photoView.imageButton.imageForState(.Normal))
+                parameters["photo"] = nilToNull(value: self.photoView.imageButton.image(for: .normal))
             }
         }
         else if self.inputState == .Sharing {
 
             let links = NSMutableArray()
-            links.addObject(["type": "share", "_to": self.inputShareEntity!.id_!])
+            links.add(["type": "share", "_to": self.inputShareEntity!.id_!])
             for contact in self.contactsSelected {
                 if let contact = contact as? SuggestionModel {
-                    links.addObject(["type": "share", "_to": contact.entityId])
+                    links.add(["type": "share", "_to": contact.entityId])
                 }
             }
             parameters["links"] = links
@@ -668,7 +663,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
             }
         }
         else if self.inputState == .Editing {
-            if !stringsAreEqual(self.descriptionField.text, string2: self.inputEntity?.description_) {
+            if !stringsAreEqual(string1: self.descriptionField.text, string2: self.inputEntity?.description_) {
                 return true
             }
             if self.photoView.photoDirty {
@@ -683,14 +678,14 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
         /* Share */
         if self.inputState == .Sharing {
             if self.contactsSelected.count == 0 {
-                Alert("Please add recipient(s)", message: nil, cancelButtonTitle: "OK")
+                Alert(title: "Please add recipient(s)", message: nil, cancelButtonTitle: "OK")
                 return false
             }
         }
         else {
             if ((self.descriptionField.text == nil || self.descriptionField.text!.isEmpty)
-                && self.photoView.imageButton.imageForState(.Normal) == nil) {
-                    Alert("Add message or photo", message: nil, cancelButtonTitle: "OK")
+                && self.photoView.imageButton.image(for: .normal) == nil) {
+                    Alert(title: "Add message or photo", message: nil, cancelButtonTitle: "OK")
                     return false
             }
         }
@@ -700,21 +695,21 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 
 extension MessageEditViewController: UITextViewDelegate {
 
-    func textViewDidBeginEditing(textView: UITextView) {
+    func textViewDidBeginEditing(_ textView: UITextView) {
         if let textView = textView as? AirTextView {
             self.activeTextField = textView
         }
     }
 
-    func textViewDidEndEditing(textView: UITextView) {
+    func textViewDidEndEditing(_ textView: UITextView) {
         if self.activeTextField == textView {
             self.activeTextField = nil
         }
     }
 
-    func textViewDidChange(textView: UITextView) {
+    func textViewDidChange(_ textView: UITextView) {
         if let textView = textView as? AirTextView {
-            textView.placeholderLabel.hidden = !self.descriptionField.text.isEmpty
+            textView.placeholderLabel.isHidden = !self.descriptionField.text.isEmpty
             self.viewWillLayoutSubviews()
         }
     }
@@ -724,17 +719,17 @@ extension MessageEditViewController {
     /*
     * UITableViewDelegate
     */
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    @objc(tableView:cellForRowAtIndexPath:) func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        var cell = tableView.dequeueReusableCellWithIdentifier(CELL_IDENTIFIER) as? UserSearchViewCell
+        var cell = tableView.dequeueReusableCell(withIdentifier: CELL_IDENTIFIER) as? UserSearchViewCell
 
         if cell == nil {
-            cell = UserSearchViewCell(style: .Default, reuseIdentifier: CELL_IDENTIFIER)
+            cell = UserSearchViewCell(style: .default, reuseIdentifier: CELL_IDENTIFIER)
         }
 
         if let model = self.contactModels[indexPath.row] as? SuggestionModel {
             cell!.title.text = model.contactTitle
-            cell!.photo.bindPhoto(model.contactImageUrl, name: model.contactTitle)
+            cell!.photo.bindPhoto(photoUrl: model.contactImageUrl, name: model.contactTitle)
         }
         return cell!
     }
@@ -743,18 +738,18 @@ extension MessageEditViewController {
         return 1
     }
 
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.contactModels.count
     }
 
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    @objc(tableView:didSelectRowAtIndexPath:) func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
         if let model = self.contactModels[indexPath.row] as? SuggestionModel {
-            if !self.contactsSelected.containsObject(model) {
+            if !self.contactsSelected.contains(model) {
                 let style = THContactViewStyle(textColor: Theme.colorTextTitle, backgroundColor: Colors.white, cornerRadiusFactor: 6)
                 let styleSelected = THContactViewStyle(textColor: Colors.white, backgroundColor: Theme.colorBackgroundContactSelected, cornerRadiusFactor: 6)
-                self.contactsSelected.addObject(model)
-                self.addressField.addContact(model, withName: model.contactTitle, withStyle: style, andSelectedStyle: styleSelected )
+                self.contactsSelected.add(model)
+                self.addressField.addContact(model, withName: model.contactTitle, with: style, andSelectedStyle: styleSelected )
             }
         }
         self.contactModels.removeAllObjects()
@@ -766,20 +761,20 @@ extension MessageEditViewController {
 
 extension MessageEditViewController: THContactPickerDelegate {
 
-    func contactPickerDidRemoveContact(contact: AnyObject!) {
-        self.contactsSelected.removeObject(contact)
+    func contactPickerDidRemoveContact(_ contact: Any!) {
+        self.contactsSelected.remove(contact)
     }
 
-    func contactPickerDidResize(contactPickerView: THContactPickerView!) {
+    func contactPickerDidResize(_ contactPickerView: THContactPickerView!) {
         self.viewWillLayoutSubviews()
     }
 
-    func contactPickerTextFieldShouldReturn(textField: UITextField!) -> Bool {
+    func contactPickerTextFieldShouldReturn(_ textField: UITextField!) -> Bool {
         return true
     }
 
-    func contactPickerTextViewDidChange(textViewText: String!) {
-        let text = textViewText.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+    func contactPickerTextViewDidChange(_ textViewText: String!) {
+        let text = textViewText.trimmingCharacters(in: NSCharacterSet.whitespaces)
         Log.d("contactPicker: entry text did change: \(text)")
         self.searchEditing = (text.length > 0)
 
@@ -789,8 +784,8 @@ extension MessageEditViewController: THContactPickerDelegate {
             if let timer = self.searchTimer {
                 timer.invalidate()
             }
-            self.searchTimer = NSTimer(timeInterval:0.2, target:self, selector:#selector(MessageEditViewController.suggest), userInfo:nil, repeats:false)
-            NSRunLoop.currentRunLoop().addTimer(self.searchTimer!, forMode: "NSDefaultRunLoopMode")
+            self.searchTimer = Timer(timeInterval:0.2, target:self, selector:#selector(MessageEditViewController.suggest), userInfo:nil, repeats:false)
+            RunLoop.current.add(self.searchTimer!, forMode: RunLoopMode(rawValue: "NSDefaultRunLoopMode"))
         }
         else {
             if self.contactModels.count > 0 {
@@ -806,5 +801,5 @@ class SuggestionModel {
     var entityId: String!
     var contactTitle: String?
     var contactSubtitle: String?
-    var contactImageUrl: NSURL?
+    var contactImageUrl: URL?
 }

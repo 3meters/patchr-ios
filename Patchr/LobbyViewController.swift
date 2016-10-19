@@ -12,8 +12,8 @@ import pop
 class LobbyViewController: BaseViewController {
 	
 	var appName			= AirLabelBanner()
-	var imageBackground = AirImageView(frame: CGRectZero)
-	var imageLogo		= AirImageView(frame: CGRectZero)
+	var imageBackground = AirImageView(frame: CGRect.zero)
+	var imageLogo		= AirImageView(frame: CGRect.zero)
 	var buttonLogin		= AirButton()
 	var buttonSignup	= AirButton()
 	var buttonGroup		= UIView()
@@ -32,13 +32,13 @@ class LobbyViewController: BaseViewController {
 		super.viewWillLayoutSubviews()
 		
 		self.imageBackground.fillSuperview()
-		self.buttonGroup.anchorInCenterWithWidth(228, height: 96)
-		self.buttonLogin.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 44)
-		self.buttonSignup.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 44)
-		self.appName.alignAbove(self.buttonGroup, matchingCenterWithBottomPadding: 20, width: 228, height: 48)
+		self.buttonGroup.anchorInCenter(withWidth: 228, height: 96)
+		self.buttonLogin.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 44)
+		self.buttonSignup.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 44)
+		self.appName.align(above: self.buttonGroup, matchingCenterWithBottomPadding: 20, width: 228, height: 48)
 	}
 	
-	override func viewWillAppear(animated: Bool) {
+	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		Reporting.screen("Lobby")
 		
@@ -46,32 +46,32 @@ class LobbyViewController: BaseViewController {
 		self.navigationController?.setNavigationBarHidden(true, animated: animated)
 		self.setNeedsStatusBarAppearanceUpdate()
 		if self.firstLaunch {
-			self.imageLogo.anchorInCenterWithWidth(72, height: 72)
+			self.imageLogo.anchorInCenter(withWidth: 72, height: 72)
 		}
 	}
 	
-	override func viewDidAppear(animated: Bool) {
+	override func viewDidAppear(_ animated: Bool) {
 		
 		if self.firstLaunch {
 			
 			Utils.delay(0.5){
 				let spring = POPSpringAnimation(propertyNamed: kPOPViewFrame)
-				spring.toValue = NSValue(CGRect: self.imageLogo.frame.offsetBy(dx: 0, dy: -156))
-				spring.springBounciness = 10
-				spring.springSpeed = 8
-				self.imageLogo.pop_addAnimation(spring, forKey: "moveUp")
+				spring?.toValue = NSValue(cgRect: self.imageLogo.frame.offsetBy(dx: 0, dy: -156))
+				spring?.springBounciness = 10
+				spring?.springSpeed = 8
+				self.imageLogo.pop_add(spring, forKey: "moveUp")
 				
-				self.appName.fadeIn(0.5)
-				self.buttonGroup.fadeIn(1.0)
+				self.appName.fadeIn(duration: 0.5)
+				self.buttonGroup.fadeIn(duration: 1.0)
 			}
 			
-			Animation.bounce(self.imageLogo)
+			Animation.bounce(view: self.imageLogo)
 			
 			self.firstLaunch = false
 		}
 	}
 	
-	override func viewWillDisappear(animated: Bool) {
+	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 		self.navigationController?.setNavigationBarHidden(false, animated: animated)
 		self.setNeedsStatusBarAppearanceUpdate()
@@ -112,32 +112,28 @@ class LobbyViewController: BaseViewController {
 	override func initialize() {
 		super.initialize()
 		
-		self.view.accessibilityIdentifier = View.Lobby
-		
 		self.imageBackground.image = UIImage(named: "imgLobbyBackground")
-		self.imageBackground.contentMode = UIViewContentMode.ScaleToFill
+		self.imageBackground.contentMode = UIViewContentMode.scaleToFill
 		self.view.addSubview(self.imageBackground)
 		
 		self.imageLogo.image = UIImage(named: "imgPatchrWhite")
-		self.imageLogo.contentMode = UIViewContentMode.ScaleAspectFill
+		self.imageLogo.contentMode = UIViewContentMode.scaleAspectFill
 		self.view.addSubview(self.imageLogo)
 		
 		self.appName.text = "Patchr"
-		self.appName.textAlignment = NSTextAlignment.Center
+		self.appName.textAlignment = NSTextAlignment.center
 		self.view.addSubview(self.appName)
 		
-		self.buttonLogin.setTitle("LOG IN", forState: .Normal)
-		self.buttonLogin.accessibilityIdentifier = "login_button"
-		self.buttonLogin.setTitleColor(Colors.white, forState: .Normal)
-		self.buttonLogin.setTitleColor(Theme.colorTint, forState: .Highlighted)
+		self.buttonLogin.setTitle("LOG IN", for: .normal)
+		self.buttonLogin.setTitleColor(Colors.white, for: .normal)
+		self.buttonLogin.setTitleColor(Theme.colorTint, for: .highlighted)
 		self.buttonLogin.borderColor = Colors.white
 		self.buttonLogin.borderWidth = Theme.dimenButtonBorderWidth
 		self.buttonLogin.cornerRadius = Theme.dimenButtonCornerRadius
 		
-		self.buttonSignup.setTitle("SIGN UP", forState: .Normal)
-		self.buttonSignup.accessibilityIdentifier = "signup_button"
-		self.buttonSignup.setTitleColor(Colors.white, forState: .Normal)
-		self.buttonSignup.setTitleColor(Theme.colorTint, forState: .Highlighted)
+		self.buttonSignup.setTitle("SIGN UP", for: .normal)
+		self.buttonSignup.setTitleColor(Colors.white, for: .normal)
+		self.buttonSignup.setTitleColor(Theme.colorTint, for: .highlighted)
 		self.buttonSignup.borderColor = Colors.white
 		self.buttonSignup.borderWidth = Theme.dimenButtonBorderWidth
 		self.buttonSignup.cornerRadius = Theme.dimenButtonCornerRadius
@@ -146,17 +142,17 @@ class LobbyViewController: BaseViewController {
 		self.buttonGroup.addSubview(self.buttonSignup)
 		self.view.addSubview(self.buttonGroup)
 		
-		self.buttonLogin.addTarget(self, action: #selector(LobbyViewController.loginAction(_:)), forControlEvents: .TouchUpInside)
-		self.buttonSignup.addTarget(self, action: #selector(LobbyViewController.signupAction(_:)), forControlEvents: .TouchUpInside)
+		self.buttonLogin.addTarget(self, action: #selector(LobbyViewController.loginAction(sender:)), for: .touchUpInside)
+		self.buttonSignup.addTarget(self, action: #selector(LobbyViewController.signupAction(sender:)), for: .touchUpInside)
 		
 		if self.firstLaunch {
 			self.appName.alpha = 0.0
 			self.buttonGroup.alpha = 0.0
 		}
 	}
-	
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return UIStatusBarStyle.LightContent
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return UIStatusBarStyle.lightContent
     }
 }
 

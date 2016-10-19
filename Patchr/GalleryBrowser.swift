@@ -21,10 +21,10 @@ class GalleryBrowser: PhotoBrowser {
     
     override func initialize() {
 		super.initialize()
-		self.likeButton.hidden = false
+		self.likeButton.isHidden = false
     }
 	
 	override func bindEntity(entity: Entity?) {
-		super.bindEntity(entity)
+		super.bindEntity(entity: entity)
 	}
 }

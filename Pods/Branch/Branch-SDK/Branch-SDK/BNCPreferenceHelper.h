@@ -35,6 +35,8 @@
 @property (assign, nonatomic) NSTimeInterval retryInterval;
 @property (assign, nonatomic) NSTimeInterval timeout;
 @property (strong, nonatomic) NSString *externalIntentURI;
+@property (strong, nonatomic) NSMutableDictionary *savedAnalyticsData;
+@property (assign, nonatomic) NSInteger installRequestDelay;
 
 + (BNCPreferenceHelper *)preferenceHelper;
 
@@ -68,4 +70,10 @@
 
 - (void)log:(NSString *)filename line:(int)line message:(NSString *)format, ...;
 - (void)logWarning:(NSString *)message;
+
+- (void)saveBranchAnalyticsData:(NSDictionary *)analyticsData;
+- (void)clearBranchAnalyticsData;
+- (NSMutableDictionary *)getBranchAnalyticsData;
+- (NSDictionary *)getContentAnalyticsManifest;
+- (void)saveContentAnalyticsManifest:(NSDictionary *)cdManifest;
 @end

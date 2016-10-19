@@ -11,69 +11,59 @@ import CocoaLumberjack
 import Bugsnag
 
 struct Log {
-	static func v(message: AnyObject?, breadcrumb: Bool = false) {
+	static func v(_ message: String, breadcrumb: Bool = false) {
         #if DEBUG
-			if let message = message as? String where LOG_LEVEL.rawValue >= DDLogLevel.Verbose.rawValue {
+			if LOG_LEVEL.rawValue >= DDLogLevel.verbose.rawValue {
 				DDLogVerbose(message)
 			}
         #endif
 		if breadcrumb {
-			if let message = message as? String {
-				Log.breadcrumb(message);
-			}
+			Log.breadcrumb(message: message);
 		}
     }
 	
-    static func d(message: AnyObject?, breadcrumb: Bool = false) {
+    static func d(_ message: String, breadcrumb: Bool = false) {
         #if DEBUG
-			if let message = message as? String where LOG_LEVEL.rawValue >= DDLogLevel.Debug.rawValue {
+			if LOG_LEVEL.rawValue >= DDLogLevel.debug.rawValue {
 				DDLogDebug(message)
 			}
         #endif
 		if breadcrumb {
-			if let message = message as? String {
-				Log.breadcrumb(message);
-			}
+			Log.breadcrumb(message: message);
 		}
     }
 	
-    static func i(message: AnyObject?, breadcrumb: Bool = false) {
-		if let message = message as? String where LOG_LEVEL.rawValue >= DDLogLevel.Info.rawValue {
+    static func i(_ message: String, breadcrumb: Bool = false) {
+		if LOG_LEVEL.rawValue >= DDLogLevel.info.rawValue {
 			DDLogInfo(message)
 		}
 		if breadcrumb {
-			if let message = message as? String {
-				Log.breadcrumb(message);
-			}
+			Log.breadcrumb(message: message);
 		}
     }
 	
-    static func w(message: AnyObject?, breadcrumb: Bool = false) {
-		if let message = message as? String where LOG_LEVEL.rawValue >= DDLogLevel.Warning.rawValue {
+    static func w(_ message: String, breadcrumb: Bool = false) {
+		if LOG_LEVEL.rawValue >= DDLogLevel.warning.rawValue {
 			DDLogWarn(message)
 		}
 		if breadcrumb {
-			if let message = message as? String {
-				Log.breadcrumb(message);
-			}
+			Log.breadcrumb(message: message);
 		}
     }
 	
-	static func e(message: AnyObject?, breadcrumb: Bool = false) {
-		if let message = message as? String where LOG_LEVEL.rawValue >= DDLogLevel.Error.rawValue {
+	static func e(_ message: String, breadcrumb: Bool = false) {
+		if LOG_LEVEL.rawValue >= DDLogLevel.error.rawValue {
 			DDLogError(message)
 		}
 		if breadcrumb {
-			if let message = message as? String {
-				Log.breadcrumb(message);
-			}
+			Log.breadcrumb(message: message);
 		}
 	}
 	
 	static func breadcrumb(message: String!) {
 		/* Requited to call on the main thread */
-		NSOperationQueue.mainQueue().addOperationWithBlock {
-			Bugsnag.leaveBreadcrumbWithMessage(message);
+		OperationQueue.main.addOperation {
+			Bugsnag.leaveBreadcrumb(withMessage: message);
 		}
 	}
 }

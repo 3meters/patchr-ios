@@ -10,9 +10,10 @@ import Foundation
 
 extension ServiceBase {
     
-    func criteria(activityOnly: Bool = false) -> [String: AnyObject] {
+    func criteria(activityOnly: Bool = false) -> [String: Any] {
         if activityOnly {
-            return self.activityDate == nil ? [:] : ["activityDate":["$gt":(self.activityDate.timeIntervalSince1970 * 1000)]]
+            
+            return (self.activityDate == nil) ? [:] : ["activityDate":["$gt":(self.activityDate.timeIntervalSince1970 * 1000)]]
         }
         else {
             if self.activityDate == nil {
@@ -34,9 +35,9 @@ extension Entity {
         if fromLocation == nil {
             fromLocation = LocationController.instance.mostRecentAvailableLocation()
         }
-        if let location = self.location where fromLocation != nil {
+        if let location = self.location , fromLocation != nil {
             let entityLocation = location.cllocation
-            return Float(fromLocation!.distanceFromLocation(entityLocation))
+            return Float(fromLocation!.distance(from: entityLocation!))
         }
         return nil
     }	
@@ -45,10 +46,10 @@ extension Entity {
 extension Patch {
 
     func userIsMember() -> Bool {
-        return (self.userWatchStatusValue == .Member)
+        return (self.userWatchStatusValue == .member)
     }
         
-    static func extras(inout parameters: [String:AnyObject]) -> [String:AnyObject] {
+    static func extras(parameters: inout [String: Any]) {
         if let links = Patch.links() {
             parameters["links"] = links
         }
@@ -60,14 +61,13 @@ extension Patch {
         }
 		
 		parameters["refs"] = ["_creator":"_id,name,photo,schema,type"]
-        return parameters
     }
     
-    static func links() -> [[String:AnyObject]]? {
+    static func links() -> [[String: Any]]? {
         
-        let userDefaults = NSUserDefaults.standardUserDefaults()
+        let userDefaults = UserDefaults.standard
         
-        if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
+        if let userId = userDefaults.string(forKey: PatchrUserDefaultKey(subKey: "userId")) {
             let links = [
 				/* Like, watch and message count state for current user */
                 LinkSpec(from: .Users, type: .Watch, fields: "_id,type,enabled,mute,schema", filter: ["_from": userId]),
@@ -84,11 +84,11 @@ extension Patch {
         return nil
     }
     
-    static func linked() -> [[String:AnyObject]]? {
+    static func linked() -> [[String: Any]]? {
 		return nil
     }
     
-    static func linkCounts() -> [[String:AnyObject]]? {
+    static func linkCounts() -> [[String: Any]]? {
         
         let links = [
             LinkSpec(from: .Messages, type: .Content),				// Count of messages linked to the patch
@@ -106,7 +106,7 @@ extension Patch {
 
 extension Message {
 	
-    static func extras(inout parameters: [String:AnyObject]) -> [String:AnyObject] {
+    static func extras( parameters: inout [String: Any]) {
         if let links = Message.links() {
             parameters["links"] = links
         }
@@ -118,14 +118,13 @@ extension Message {
         }
 		
 		parameters["refs"] = ["_creator":"_id,name,photo,schema,type"]
-        return parameters
     }
 
-    static func links() -> [[String:AnyObject]]? {
+    static func links() -> [[String: Any]]? {
         
-        let userDefaults = NSUserDefaults.standardUserDefaults()
+        let userDefaults = UserDefaults.standard
         
-        if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
+        if let userId = userDefaults.string(forKey: PatchrUserDefaultKey(subKey: "userId")) {
             let links = [
 				LinkSpec(from: .Users, type: .Like, fields: "_id,type,schema", filter: ["_from": userId])	// Has the current user liked the message
             ]
@@ -138,7 +137,7 @@ extension Message {
         return nil
     }
     
-    static func linked() -> [[String:AnyObject]]? {
+    static func linked() -> [[String: Any]]? {
         
         /* Used to get count of messages and users watching a shared patch */
         let linkCounts = [
@@ -150,7 +149,7 @@ extension Message {
 		let refs = ["_creator": "_id,name,photo,schema,type"]
 		
         let links = [
-            LinkSpec(to: .Patches, type: .Content, fields: "_id,name,photo,schema,type", limit: 1), // Patch the message is linked to
+            LinkSpec(to: .Patches, type: .Content, limit: 1, fields: "_id,name,photo,schema,type"), // Patch the message is linked to
             LinkSpec(to: .Messages, type: .Share, limit: 1, refs: refs),							// Message this message is sharing
             LinkSpec(to: .Patches, type: .Share, limit: 1, linkCounts: linkCounts),                   // Patch this message is sharing
             LinkSpec(to: .Users, type: .Share, limit: 5)                                            // Users this message is shared with
@@ -163,7 +162,7 @@ extension Message {
         return array
     }
     
-    static func linkCounts() -> [[String:AnyObject]]? {
+    static func linkCounts() -> [[String: Any]]? {
         
         let links = [
             LinkSpec(from: .Users, type: .Like)
@@ -179,7 +178,7 @@ extension Message {
 
 extension User {
     
-    static func extras(inout parameters: [String:AnyObject]) -> [String:AnyObject] {
+    static func extras( parameters: inout [String: Any]) {
         if let links = User.links() {
             parameters["links"] = links
         }
@@ -189,18 +188,17 @@ extension User {
         if let linkCounts = User.linkCounts() {
             parameters["linkCounts"] = linkCounts
         }
-        return parameters
     }
     
-    static func links() -> [[String:AnyObject]]? {
+    static func links() -> [[String:Any]]? {
         return nil
     }
     
-    static func linked() -> [[String:AnyObject]]? {
+    static func linked() -> [[String:Any]]? {
         return nil
     }
     
-    static func linkCounts() -> [[String:AnyObject]]? {
+    static func linkCounts() -> [[String:Any]]? {
         
         let links = [
             LinkSpec(to: .Patches, type: .Create),					// Count of patches the user created
@@ -218,7 +216,7 @@ extension User {
 extension Shortcut {
     
     static func decorateId(entityId: String) -> String {
-        if entityId.rangeOfString("sh.") == nil {
+        if entityId.range(of: "sh.") == nil {
             return "sh." + entityId
         }
         return entityId
@@ -227,8 +225,8 @@ extension Shortcut {
 
 extension Photo {
     
-    func asMap() -> [String:AnyObject] {
-        let photo: [String:AnyObject] = [
+    func asMap() -> [String: Any] {
+        let photo: [String: Any] = [
             "prefix":self.prefix,
             "source":self.source,
             "width":Int(self.widthValue),
@@ -241,28 +239,28 @@ extension NSManagedObjectContext {
 	
 	convenience init(parentContext parent: NSManagedObjectContext, concurrencyType: NSManagedObjectContextConcurrencyType) {
 		self.init(concurrencyType: concurrencyType)
-		parentContext = parent
+		self.parent = parent
 	}
 	
 	func deleteAllObjects() {		
 		if let entitiesByName = self.persistentStoreCoordinator?.managedObjectModel.entitiesByName {
 			for (_, entityDescription) in entitiesByName {
-				deleteAllObjectsForEntity(entityDescription)
+				deleteAllObjectsForEntity(entity: entityDescription)
 			}
 		}
 	}
 	
 	func deleteAllObjectsForEntity(entity: NSEntityDescription) {
 		
-		let fetchRequest = NSFetchRequest()
+		let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
 		fetchRequest.entity = entity
 		fetchRequest.includesPropertyValues = false
 		
 		do {
-			let fetchResults = try executeFetchRequest(fetchRequest)
+			let fetchResults = try fetch(fetchRequest)
 			if let managedObjects = fetchResults as? [NSManagedObject] {
 				for object in managedObjects {
-					deleteObject(object)
+					delete(object)
 				}
 				try save()
 			}

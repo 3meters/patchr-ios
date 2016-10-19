@@ -29,11 +29,11 @@ class SegmentsController: NSObject {
 		
 		if let controller = incomingViewController as? PatchTableViewController {
 			
-			let button = UIButton(type: .Custom)
-			button.frame = CGRectMake(0, 0, 48, 48)
-			button.addTarget(incomingViewController, action: #selector(controller.mapAction(_:)), forControlEvents: .TouchUpInside)
+			let button = UIButton(type: .custom)
+            button.frame = CGRect(x:0, y:0, width:48, height:48)
+			button.addTarget(incomingViewController, action: #selector(controller.mapAction(sender:)), for: .touchUpInside)
 			button.showsTouchWhenHighlighted = true
-			button.setImage(UIImage(named: "imgMapLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate), forState: .Normal)
+			button.setImage(UIImage(named: "imgMapLight")!.withRenderingMode(UIImageRenderingMode.alwaysTemplate), for: .normal)
 			button.imageEdgeInsets = UIEdgeInsetsMake(11, 11, 11, 11);
 
 			let mapButton = UIBarButtonItem(customView: button)
@@ -44,6 +44,6 @@ class SegmentsController: NSObject {
 
 extension SegmentsController: UIToolbarDelegate {
     func positionForBar(bar: UIBarPositioning) -> UIBarPosition {
-        return UIBarPosition.TopAttached
+        return UIBarPosition.topAttached
     }
 }

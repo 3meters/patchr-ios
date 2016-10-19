@@ -24,23 +24,24 @@ class OneShotLocationManager: NSObject, CLLocationManagerDelegate {
         locationManager = nil
     }
     
-    typealias LocationClosure = ((location: CLLocation?, error: NSError?)->())
+    typealias LocationClosure = ((_ location: CLLocation?, _ error: Error?)->())
+    
     private var didComplete: LocationClosure?
     
-    private func _didComplete(location: CLLocation?, error: NSError?) {
+    private func _didComplete(location: CLLocation?, error: Error?) {
         locationManager?.stopUpdatingLocation()
-        didComplete?(location: location, error: error)
+        didComplete?(location, error)
         locationManager?.delegate = nil
         locationManager = nil
     }
     
-    func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+    public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         
         switch status {
-            case .AuthorizedWhenInUse:
+            case .authorizedWhenInUse:
                 self.locationManager!.startUpdatingLocation()
-            case .Denied:
-                _didComplete(nil, error: NSError(domain: self.classForCoder.description(),
+            case .denied:
+                _didComplete(location: nil, error: NSError(domain: self.classForCoder.description(),
                     code: OneShotLocationManagerErrors.AuthorizationDenied.rawValue,
                     userInfo: nil))
             default:
@@ -48,20 +49,20 @@ class OneShotLocationManager: NSObject, CLLocationManagerDelegate {
         }
     }
     
-    internal func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
-        _didComplete(nil, error: error)
+    public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        _didComplete(location: nil, error: error)
     }
     
-    internal func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    internal func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         let location = locations[0]
-        _didComplete(location, error: nil)
+        _didComplete(location: location, error: nil)
     }
     
     /* 
      * We assume that if we are called then needed location permissions are in place.
      * Fetch one location and return. We accept it regardless of accuracy.
      */
-    func fetchWithCompletion(completion: LocationClosure) {
+    func fetchWithCompletion(completion: @escaping LocationClosure) {
         
         //store the completion closure
         didComplete = completion

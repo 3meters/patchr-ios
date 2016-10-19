@@ -36,12 +36,9 @@ class UserTableViewController: BaseTableViewController {
 			case .MessageLikers:
 				self.navigationItem.title = "Liked by"
 		}
-		
-		self.view.accessibilityIdentifier = View.Users
-		self.tableView!.accessibilityIdentifier = Table.Users
 	}
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         switch self.filter {
@@ -52,7 +49,7 @@ class UserTableViewController: BaseTableViewController {
         }
     }
 	
-	override func viewDidAppear(animated: Bool) {
+	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		
 		if getActivityDate() != self.query.activityDateValue {
@@ -76,24 +73,24 @@ class UserTableViewController: BaseTableViewController {
     override func loadQuery() -> Query {
 
 		let id = queryId()
-		var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
+		var query: Query? = Query.fetchOne(byId: id, in: DataController.instance.mainContext)
 
 		if query == nil {
-			query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
+			query = Query.fetchOrInsertOne(byId: id, in: DataController.instance.mainContext) as Query
 
 			switch self.filter {
 				case .PatchWatchers:
 					query!.name = DataStoreQueryName.WatchersForPatch.rawValue
-					query!.pageSize = DataController.proxibase.pageSizeDefault
+					query!.pageSize = DataController.proxibase.pageSizeDefault as NSNumber!
 					query!.contextEntity = self.patch
 
 				case .MessageLikers:
 					query!.name = DataStoreQueryName.LikersForMessage.rawValue
-					query!.pageSize = DataController.proxibase.pageSizeDefault
+					query!.pageSize = DataController.proxibase.pageSizeDefault as NSNumber!
 					query!.contextEntity = self.message
 			}
 
-			DataController.instance.saveContext(BLOCKING)
+			DataController.instance.saveContext(wait: BLOCKING)
 		}
 
         return query!
@@ -104,9 +101,9 @@ class UserTableViewController: BaseTableViewController {
 		var queryId: String!
 		switch self.filter {
 			case .PatchWatchers:
-				queryId = "query.\(DataStoreQueryName.WatchersForPatch.rawValue.lowercaseString).\(self.patch.id_)"
+				queryId = "query.\(DataStoreQueryName.WatchersForPatch.rawValue.lowercased()).\(self.patch.id_)"
 			case .MessageLikers:
-				queryId = "query.\(DataStoreQueryName.LikersForMessage.rawValue.lowercaseString).\(self.message.id_)"
+				queryId = "query.\(DataStoreQueryName.LikersForMessage.rawValue.lowercased()).\(self.message.id_)"
 		}
 		
 		guard queryId != nil else {
@@ -144,19 +141,19 @@ extension UserTableViewController {
 	 */
 	override func bindCellToEntity(cell: WrapperTableViewCell, entity: AnyObject, location: CLLocation?) {
 		
-		super.bindCellToEntity(cell, entity: entity, location: location)
+		super.bindCellToEntity(cell: cell, entity: entity, location: location)
 		
 		if let view = cell.view as? UserView {
 			
 			let user = entity as! User
 			if self.filter == .PatchWatchers && self.patch != nil {
-				view.owner.hidden = !(user.id_ == self.patch.ownerId)
+				view.owner.isHidden = !(user.id_ == self.patch.ownerId)
 			}
 			view.cell = cell
 		}
 	}
 	
-	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		return 97
 	}
 }

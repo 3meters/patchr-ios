@@ -1,4 +1,6 @@
+#ifdef __OBJC__
 #import <UIKit/UIKit.h>
+#endif
 
 #import "BNCCallbacks.h"
 #import "BNCConfig.h"
@@ -18,6 +20,9 @@
 #import "Branch.h"
 #import "BranchActivityItemProvider.h"
 #import "BranchConstants.h"
+#import "BranchContentDiscoverer.h"
+#import "BranchContentDiscoveryManifest.h"
+#import "BranchContentPathProperties.h"
 #import "BranchCSSearchableItemAttributeSet.h"
 #import "BranchDeepLinkingController.h"
 #import "BranchLinkProperties.h"
@@ -57,6 +62,9 @@
 #import "Branch.h"
 #import "BranchActivityItemProvider.h"
 #import "BranchConstants.h"
+#import "BranchContentDiscoverer.h"
+#import "BranchContentDiscoveryManifest.h"
+#import "BranchContentPathProperties.h"
 #import "BranchCSSearchableItemAttributeSet.h"
 #import "BranchDeepLinkingController.h"
 #import "BranchLinkProperties.h"

@@ -1,1 +1,0 @@
-../../../../../../code/IDMPhotoBrowser/Classes/IDMCaptionView.h

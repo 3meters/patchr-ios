@@ -31,7 +31,7 @@ class FireUser: NSObject {
         user.modifiedAt = dictionary["modified_at"] as? Int
         user.username = dictionary["username"] as? String
         if let profileMap = dictionary["profile"] as? NSDictionary {
-            user.profile = FireProfile.setPropertiesFromDictionary(profileMap, onObject: FireProfile())
+            user.profile = FireProfile.setPropertiesFromDictionary(dictionary: profileMap, onObject: FireProfile())
         }
         return user
     }

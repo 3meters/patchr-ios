@@ -10,7 +10,7 @@ import UIKit
 import CocoaLumberjack
 import MessageUI
 
-let Device                          = UIDevice.currentDevice()
+let Device                          = UIDevice.current
 let iosVersion                      = NSString(string: Device.systemVersion).doubleValue
 let IOS9                            = iosVersion >= 9
 let IOS8                            = iosVersion >= 8
@@ -21,10 +21,10 @@ let BUNDLE_ID                       = "com.3meters.patchr.ios"
 let KEYCHAIN_GROUP                  = "7542324V6B.\(BUNDLE_ID)"// Team id + bundle id
 let BUGSNAG_KEY                     = "d1313b8d5fc14d937419406f33fd4c01"
 
-let SCREEN_NARROW                   = (UIScreen.mainScreen().bounds.size.width == 320)
-let SCREEN_320                      = (UIScreen.mainScreen().bounds.size.width == 320)// iphone 4s
-let SCREEN_375                      = (UIScreen.mainScreen().bounds.size.width == 375)// iphone 6
-let PIXEL_SCALE						= CGFloat(UIScreen.mainScreen().scale)
+let SCREEN_NARROW                   = (UIScreen.main.bounds.size.width == 320)
+let SCREEN_320                      = (UIScreen.main.bounds.size.width == 320)// iphone 4s
+let SCREEN_375                      = (UIScreen.main.bounds.size.width == 375)// iphone 6
+let PIXEL_SCALE						= CGFloat(UIScreen.main.scale)
 let THIRD_PARTY_AUTH_ENABLED		= false
 
 let TIMEOUT_REQUEST					: Int = 10	// Seconds
@@ -33,14 +33,14 @@ let BLOCKING						= false
 let IMAGE_DIMENSION_MAX				= CGFloat(1600)
 let CONTENT_WIDTH_MAX				= CGFloat(462)
 let SIDE_MENU_WIDTH                 = CGFloat(260)
-let NAVIGATION_DRAWER_WIDTH         = CGFloat(UIScreen.mainScreen().bounds.size.width - 80)
+let NAVIGATION_DRAWER_WIDTH         = CGFloat(UIScreen.main.bounds.size.width - 80)
 
 let URI_PROXIBASE_SEARCH_IMAGES		= "https://api.cognitive.microsoft.com/bing/v5.0"
 let NAMESPACE						= "com.3meters.patchr.ios."
 let CELL_IDENTIFIER                 = "cell"
 let COGNITO_POOLID                  = "us-east-1:ff1976dc-9c27-4046-a59f-7dd43355869b"
 
-var LOG_LEVEL                       = DDLogLevel.All
+var LOG_LEVEL                       = DDLogLevel.all
 var LOG_TIMERS						= false
 var MailComposer					: MFMailComposeViewController? = MFMailComposeViewController()
 

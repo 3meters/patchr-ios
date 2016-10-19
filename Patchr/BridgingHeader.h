@@ -13,7 +13,6 @@
 #import "NGAParallaxMotion.h"
 #import "GCPlaceholderTextView.h"
 #import "UIView+BorderLayer.h"
-#import "Reachability.h"
 #import "TTTAttributedLabel.h"
 #import "CKRadialMenu.h"
 

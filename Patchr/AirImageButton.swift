@@ -11,12 +11,12 @@ import SDWebImage
 
 class AirImageButton: UIButton {
 
-    var progress		: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
-    var linkedPhotoUrl	: NSURL?
+    var progress		: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
+    var linkedPhotoUrl	: URL?
     var sizeCategory	= SizeCategory.thumbnail
     var progressAuto	= true
     
-    private var progressStyle: UIActivityIndicatorViewStyle = .Gray
+    private var progressStyle: UIActivityIndicatorViewStyle = .gray
     private var progressSize: CGFloat = 12
     
     required init(coder aDecoder: NSCoder) {
@@ -31,7 +31,6 @@ class AirImageButton: UIButton {
     
     func initialize(){
 		self.progress.hidesWhenStopped = true
-		self.progress.accessibilityIdentifier = "activity_image"
 		addSubview(self.progress)
     }
 	
@@ -53,7 +52,7 @@ class AirImageButton: UIButton {
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		self.progress.anchorInCenterWithWidth(self.progressSize, height: self.progressSize)
+		self.progress.anchorInCenter(withWidth: self.progressSize, height: self.progressSize)
 	}
 	
     func linkedToPhoto(photo: Photo) -> Bool {
@@ -61,7 +60,7 @@ class AirImageButton: UIButton {
             return false
         }
         
-        let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory)
+        let photoUrl = PhotoUtils.url(prefix: photo.prefix!, source: photo.source!, category: self.sizeCategory)
         return (self.linkedPhotoUrl!.absoluteString == photoUrl.absoluteString)
     }
     
@@ -69,16 +68,16 @@ class AirImageButton: UIButton {
         
         if photo.source == PhotoSource.resource {
             if animate {
-                UIView.transitionWithView(self,
+                UIView.transition(with: self,
                     duration: 0.5,
-                    options: UIViewAnimationOptions.TransitionCrossDissolve,
+                    options: UIViewAnimationOptions.transitionCrossDissolve,
                     animations: {
-                        self.setImage(UIImage(named: photo.prefix), forState:UIControlState.Normal)
+                        self.setImage(UIImage(named: photo.prefix), for:UIControlState.normal)
                     },
                     completion: nil)
             }
             else {
-                self.setImage(UIImage(named: photo.prefix), forState:UIControlState.Normal)
+                self.setImage(UIImage(named: photo.prefix), for:UIControlState.normal)
             }
             return
         }
@@ -86,37 +85,39 @@ class AirImageButton: UIButton {
 		if self.progressAuto {
 			self.startProgress()
 		}
-		
-		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+        
+        DispatchQueue.global().async {
 			
-			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory)
+			let photoUrl = PhotoUtils.url(prefix: photo.prefix!, source: photo.source!, category: self.sizeCategory)
 			
 			if photoUrl.absoluteString.isEmpty {
 				let error = NSError(domain: "Photo error", code: 0, userInfo: [NSLocalizedDescriptionKey:"Photo has invalid source: \(photo.source!)"])
-				dispatch_async(dispatch_get_main_queue()) {
-					self.imageCompletion(nil, error: error, cacheType: nil, url: nil, animate: animate)
+				DispatchQueue.main.async() {
+					self.imageCompletion(image: nil, error: error, cacheType: nil, url: nil, animate: animate)
 				}
 				return
 			}
 			
 			self.linkedPhotoUrl = photoUrl
 			
-			let options: SDWebImageOptions = [.RetryFailed, .LowPriority, .AvoidAutoSetImage, /* .ProgressiveDownload */]
+			let options: SDWebImageOptions = [.retryFailed, .lowPriority, .avoidAutoSetImage, /* .ProgressiveDownload */]
 			
-			self.sd_setImageWithURL(photoUrl,
-			                        forState:UIControlState.Normal,
-			                        placeholderImage: nil,
-			                        options: options,
-			                        completed: { [weak self] image, error, cacheType, url in
-										dispatch_async(dispatch_get_main_queue()) {
-											self?.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
-										}
+            self.sd_setImage(with: photoUrl,
+                for:UIControlState.normal,
+                placeholderImage: nil,
+                options: options,
+                completed: { [weak self] image, error, cacheType, url in
+                    if (self != nil) {
+                        DispatchQueue.main.async() {
+                            self!.imageCompletion(image: image, error: error, cacheType: cacheType, url: url, animate: animate)
+                        }
+                    }
 				}
 			)
 		}
     }
 
-	func setImageWithUrl(url: NSURL, animate: Bool = true) {
+	func setImageWithUrl(url: URL, animate: Bool = true) {
 
 		if self.progressAuto {
 			startProgress()
@@ -124,20 +125,23 @@ class AirImageButton: UIButton {
 		
 		/* Stash the url we are loading so we can check for a match later when download is completed. */
 		self.linkedPhotoUrl = url
-		let options: SDWebImageOptions = [.RetryFailed, .LowPriority, .AvoidAutoSetImage, /* .ProgressiveDownload */]
+		let options: SDWebImageOptions = [.retryFailed, .lowPriority, .avoidAutoSetImage, /* .ProgressiveDownload */]
 		
-		self.sd_setImageWithURL(url
-			, forState:UIControlState.Normal
-			, placeholderImage: nil
-			, options: options) {
-			[weak self] image, error, cacheType, url in
-				dispatch_async(dispatch_get_main_queue()) {
-					self?.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
-				}
-			}
+        self.sd_setImage(with: url,
+                         for: UIControlState.normal,
+                         placeholderImage: nil,
+                         options: options,
+                         completed: {
+                            [weak self] image, error, cacheType, url in
+                            if self != nil {
+                                DispatchQueue.main.async() {
+                                    self!.imageCompletion(image: image, error: error, cacheType: cacheType, url: url, animate: animate)
+                                }
+                            }
+        })
 	}
 
-    func imageCompletion(image: UIImage?, error: NSError?, cacheType: SDImageCacheType?, url: NSURL?, animate: Bool = true) -> Void {
+    func imageCompletion(image: UIImage?, error: Error?, cacheType: SDImageCacheType?, url: URL?, animate: Bool = true) -> Void {
         
         if self.progressAuto {
             stopProgress()
@@ -145,23 +149,22 @@ class AirImageButton: UIButton {
         
         if error != nil {
             Log.w("Image fetch failed: " + error!.localizedDescription)
-			if url != nil {
-				Log.w("Failed url: \(url!.absoluteString)", breadcrumb: true)
-			}
-			if error!.code == HTTPStatusCode.NotFound.rawValue
-				|| error!.code == HTTPStatusCode.BadGateway.rawValue
-				|| error!.code == HTTPStatusCode.Forbidden.rawValue {
-				NSNotificationCenter.defaultCenter().postNotificationName(Events.ImageNotFound, object: self)
-				UIShared.Toast("Image not available")
-			}
-			else if error!.code == HTTPStatusCode.UnsupportedMediaType.rawValue {
-				NSNotificationCenter.defaultCenter().postNotificationName(Events.ImageNotFound, object: self)
-				UIShared.Toast("Image format not supported")
-			}
+            Log.w("Failed url: \(url?.absoluteString)")
+            
+            self.linkedPhotoUrl = nil
+            
+            if error!._code == HTTPStatusCode.NotFound.rawValue {
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.ImageNotFound), object: self)
+                UIShared.Toast(message: "Image not found")
+            }
+            else if error!._code == HTTPStatusCode.UnsupportedMediaType.rawValue {
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.ImageNotFound), object: self)
+                UIShared.Toast(message: "Image format not supported")
+            }
             return
         }
         else {
-            self.contentMode = UIViewContentMode.ScaleAspectFill
+            self.contentMode = UIViewContentMode.scaleAspectFill
         }
         
         /* Image returned is not the one we want anymore */
@@ -170,16 +173,16 @@ class AirImageButton: UIButton {
         }
 		
 		if animate /*|| cacheType == SDImageCacheType.None || cacheType == SDImageCacheType.Disk*/ {
-			UIView.transitionWithView(self,
+			UIView.transition(with: self,
 				duration: 0.4,
-				options: UIViewAnimationOptions.TransitionCrossDissolve,
+				options: UIViewAnimationOptions.transitionCrossDissolve,
 				animations: {
-					self.setImage(image, forState:UIControlState.Normal)
+					self.setImage(image, for:UIControlState.normal)
 				},
 				completion: nil)
 		}
 		else {
-			self.setImage(image, forState:UIControlState.Normal)
+			self.setImage(image, for:UIControlState.normal)
 		}
     }
 }

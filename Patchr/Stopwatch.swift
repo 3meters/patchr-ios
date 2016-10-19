@@ -10,11 +10,11 @@ import Foundation
 
 class Stopwatch: NSObject {
 	
-	private var lastThreshold: NSTimeInterval	= 0
+	private var lastThreshold: TimeInterval	= 0
 	private var log: NSMutableArray				= []
 	
 	var name: String?
-	var totalTime: NSTimeInterval				= 0
+	var totalTime: TimeInterval				= 0
 	
 	func totalTimeMills() -> Int {
 		return Int(self.totalTime / 1000)
@@ -23,15 +23,15 @@ class Stopwatch: NSObject {
 	/*
 	 * Returns last lap time, process statistic.
 	 */
-	func segmentTime(message: String)  -> NSTimeInterval {
-		return processSegmentTime(message)
+	@discardableResult func segmentTime(message: String)  -> TimeInterval {
+		return processSegmentTime(message: message)
 	}
 	
 	func segmentNote(message: String) {
-		log.addObject("\(self.name!): *** Note    ***: \(message)")
+		log.add("\(self.name!): *** Note    ***: \(message)")
 	}
 	
-	func processSegmentTime(message: String?, prefixIncluded: Bool = false) -> NSTimeInterval {
+	@discardableResult func processSegmentTime(message: String?, prefixIncluded: Bool = false) -> TimeInterval {
 		if lastThreshold == 0 {
 			return 0
 		}
@@ -44,11 +44,11 @@ class Stopwatch: NSObject {
 		if message != nil {
 			if prefixIncluded {
 				let message = "\(self.name!): \(message!): \(stats)"
-				log.addObject(message)
+				log.add(message)
 			}
 			else {
 				let message = "\(self.name!): *** Segment ***: \(message!): \(stats)"
-				log.addObject(message)
+				log.add(message)
 			}
 		}
 		return lapTime
@@ -61,14 +61,14 @@ class Stopwatch: NSObject {
 		self.name = name
 		self.totalTime = 0
 		self.lastThreshold = NSDate().timeIntervalSince1970
-		log.addObject("\(name): *** Started ***: \(message)")
+		log.add("\(name): *** Started ***: \(message)")
 	}
 	
 	/*
 	 * Suspends time watching, returns last lap time.
 	 */
-	func stop(message: String) -> NSTimeInterval {
-		let lapTime = processSegmentTime("*** Stopped ***: \(message)", prefixIncluded: true)
+	@discardableResult func stop(message: String) -> TimeInterval {
+		let lapTime = processSegmentTime(message: "*** Stopped ***: \(message)", prefixIncluded: true)
 		self.lastThreshold = 0
 		if LOG_TIMERS {
 			Log.v("*** Timer log ***")

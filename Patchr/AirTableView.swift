@@ -29,15 +29,15 @@ class AirTableView: UITableView {
 		self.delaysContentTouches = false
 	}
 	
-	override func scrollToNearestSelectedRowAtScrollPosition(scrollPosition: UITableViewScrollPosition, animated: Bool) {
+	override func scrollToNearestSelectedRow(at scrollPosition: UITableViewScrollPosition, animated: Bool) {
+		return
+	}
+    
+    override func scrollToRow(at indexPath: IndexPath, at scrollPosition: UITableViewScrollPosition, animated: Bool) {
 		return
 	}
 	
-	override func scrollToRowAtIndexPath(indexPath: NSIndexPath, atScrollPosition scrollPosition: UITableViewScrollPosition, animated: Bool) {
-		return
-	}
-	
-	override func touchesShouldCancelInContentView(view: UIView) -> Bool {
+	override func touchesShouldCancel(in view: UIView) -> Bool {
 		return true
 	}
 }

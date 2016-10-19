@@ -8,6 +8,7 @@
 
 import Foundation
 
+
 class Proxibase: NSObject {
     
     class var sharedService: Proxibase {
@@ -24,18 +25,18 @@ class Proxibase: NSObject {
         
         self.patch = patch
         
-        let config = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier("com.3meters.patchr.ios.message")
+        let config = URLSessionConfiguration.background(withIdentifier: "com.3meters.patchr.ios.message")
         config.sharedContainerIdentifier = "group.com.3meters.patchr.ios"
-        let session = NSURLSession(configuration: config, delegate: self, delegateQueue: NSOperationQueue.mainQueue())
-        let request = NSMutableURLRequest(URL: NSURL(string: "https://api.aircandi.com/v1/data/messages")!)
-        request.HTTPMethod = "POST"
+        let session = Foundation.URLSession(configuration: config, delegate: self, delegateQueue: OperationQueue.main)
+        let request = NSMutableURLRequest(url: NSURL(string: "https://api.aircandi.com/v1/data/messages")! as URL)
+        request.httpMethod = "POST"
         
         do {
-            request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(message, options: [])
+            request.httpBody = try JSONSerialization.data(withJSONObject: message, options: [])
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
             request.addValue("application/json", forHTTPHeaderField: "Accept")
             
-            let task = session.dataTaskWithRequest(request)
+            let task = session.dataTask(with: request as URLRequest)
             task.resume()
         }
         catch let error as NSError {
@@ -44,28 +45,28 @@ class Proxibase: NSObject {
     }
 }
 
-extension Proxibase: NSURLSessionDelegate {
-    func URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession) {
+extension Proxibase: URLSessionDelegate {
+    func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
         Log.d("Session finished")
     }
 }
 
-extension Proxibase: NSURLSessionTaskDelegate {
+extension Proxibase: URLSessionTaskDelegate {
     
-    func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if task.error != nil {
             Log.w("Session error while posting message: \(task.error!.localizedDescription)")
         }
         else {
             Log.d("Message posted!")
             let patchId: String = ((patch["_id"] != nil) ? patch["_id"] : patch["id_"]) as! String
-            var recent: [String:AnyObject] = ["id_": patchId, "name":self.patch["name"]!]
-            recent["recentDate"] = NSNumber(longLong: Utils.now()) // Only way to store Int64 as AnyObject
+            var recent: [String:AnyObject] = ["id_": patchId as AnyObject, "name":self.patch["name"]!]
+            recent["recentDate"] = NSNumber(value: Utils.now()) // Only way to store Int64 as AnyObject
             if self.patch["photo"] != nil {
                 recent["photo"] = self.patch["photo"]
             }
             
-            Utils.updateRecents(recent)                
+            Utils.updateRecents(recent: recent)
         }
     }
 }

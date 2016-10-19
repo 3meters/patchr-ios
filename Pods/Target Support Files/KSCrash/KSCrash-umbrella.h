@@ -1,4 +1,6 @@
+#ifdef __OBJC__
 #import <UIKit/UIKit.h>
+#endif
 
 #import "KSCrash.h"
 #import "KSCrashC.h"
@@ -13,13 +15,15 @@
 #import "KSJSONCodecObjC.h"
 #import "NSError+SimpleConstructor.h"
 #import "KSCrashReportFilter.h"
+#import "KSCrashReportFilterCompletion.h"
 #import "RFC3339DateTool.h"
 #import "KSCrashAdvanced.h"
 #import "KSCrashDoctor.h"
 #import "KSCrashReportFields.h"
 #import "KSCrashReportStore.h"
 #import "KSSystemInfoC.h"
-#import "KSZombie.h"
+#import "KSCrashReportFilter.h"
+#import "KSCrashReportFilterCompletion.h"
 
 FOUNDATION_EXPORT double KSCrashVersionNumber;
 FOUNDATION_EXPORT const unsigned char KSCrashVersionString[];

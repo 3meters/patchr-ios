@@ -11,7 +11,7 @@ import UIKit
 
 class PhotoUtils {
     
-    static func url(prefix: String, source: String, category: String) -> NSURL {
+    static func url(prefix: String, source: String, category: String) -> URL {
 		
         var path: String = ""
         var quality: Int = 75
@@ -33,7 +33,7 @@ class PhotoUtils {
         }
         else if source == PhotoSource.google {
             let width: CGFloat = CGFloat(IMAGE_DIMENSION_MAX) * PIXEL_SCALE
-            if (prefix.rangeOfString("?") != nil) {
+            if (prefix.range(of: "?") != nil) {
                 path = "\(prefix)&maxwidth=\(width)"
             }
             else {
@@ -45,7 +45,7 @@ class PhotoUtils {
             path = "\(prefix)&s=\(width)"
         }
 		
-        return NSURL(string: path)!
+        return URL(string: path)!
     }
 }
 
@@ -63,7 +63,7 @@ class GooglePlusProxy {
     */
     static func convert(uri: String, size: Int, dimension: ResizeDimension!) -> String {
         
-        let queryString = (CFURLCreateStringByAddingPercentEscapes(nil, uri as NSString, nil, ":/?@!$&'()*+,;=" as NSString, CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)) as NSString) as String
+        let queryString = (CFURLCreateStringByAddingPercentEscapes(nil, uri as NSString, nil, ":/?@!$&'()*+,;=" as NSString, CFStringConvertNSStringEncodingToEncoding(String.Encoding.utf8.rawValue)) as NSString) as String
         if dimension == ResizeDimension.width {
             let converted = "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url=\(queryString)&container=focus&resize_w=\(size)&no_expand=1&refresh=3600"
             return converted

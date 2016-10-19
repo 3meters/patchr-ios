@@ -15,7 +15,7 @@ class ThumbnailCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var thumbnail: AirImageView!
     
     override var layoutMargins: UIEdgeInsets {
-        get { return UIEdgeInsetsZero }
+        get { return UIEdgeInsets.zero }
         set (newVal) {}
     }
     

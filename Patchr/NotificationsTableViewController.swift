@@ -22,8 +22,8 @@ class NotificationsTableViewController: BaseTableViewController {
 	convenience init() {
 		self.init(nibName: nil, bundle: nil)
 	}
-	
-	override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
 		super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
 		initialize()
 	}
@@ -46,20 +46,20 @@ class NotificationsTableViewController: BaseTableViewController {
 		super.viewDidLoad()
 	}
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         Reporting.screen("NotificationList")
     }
     
-	override func viewDidAppear(animated: Bool) {
+	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 
 		/*
 		 * A stashed notification date means a notification came in while
 		 * the app was closed.
 		 */
-		if let _ = NSUserDefaults.standardUserDefaults().valueForKey(PatchrUserDefaultKey("notificationDate")) {
-			NSUserDefaults.standardUserDefaults().setObject(nil, forKey: PatchrUserDefaultKey("notificationDate"))
+		if let _ = UserDefaults.standard.value(forKey: PatchrUserDefaultKey(subKey: "notificationDate")) {
+			UserDefaults.standard.set(nil, forKey: PatchrUserDefaultKey(subKey: "notificationDate"))
 		}
 		
 		if getActivityDate() != self.query.activityDateValue {
@@ -70,7 +70,7 @@ class NotificationsTableViewController: BaseTableViewController {
 	}
 	
 	deinit {
-		NSNotificationCenter.defaultCenter().removeObserver(self)
+		NotificationCenter.default.removeObserver(self)
 	}
 	
     /*--------------------------------------------------------------------------------------------
@@ -82,11 +82,11 @@ class NotificationsTableViewController: BaseTableViewController {
      *--------------------------------------------------------------------------------------------*/
     
     func didReceiveRemoteNotification(notification: NSNotification) {
-        if self.isViewLoaded() {
+        if self.isViewLoaded {
             if self.tabBarController?.selectedViewController == self.navigationController
                 && self.navigationController?.topViewController == self {
                 if getActivityDate() != self.query.activityDateValue {
-                    self.pullToRefreshAction(self.refreshControl)
+                    self.pullToRefreshAction(sender: self.refreshControl)
                 }
             }
         }
@@ -107,10 +107,8 @@ class NotificationsTableViewController: BaseTableViewController {
     *--------------------------------------------------------------------------------------------*/
 	
 	func initialize() {
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(NotificationsTableViewController.didReceiveRemoteNotification(_:)), name: Events.DidReceiveRemoteNotification, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(NotificationsTableViewController.applicationDidBecomeActive(_:)), name: UIApplicationDidBecomeActiveNotification, object: nil)
-		self.view.accessibilityIdentifier = View.Notifications
-		self.tableView.accessibilityIdentifier = Table.Notifications
+		NotificationCenter.default.addObserver(self, selector: #selector(NotificationsTableViewController.didReceiveRemoteNotification(notification:)), name: NSNotification.Name(rawValue: Events.DidReceiveRemoteNotification), object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(NotificationsTableViewController.applicationDidBecomeActive(sender:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
         
         _ = NotificationController.instance.badgeNumber.subscribe(onNext: { [unowned self] (badgeNumber) in
             self.navigationController?.tabBarItem.badgeValue = badgeNumber > 0 ? String(badgeNumber) : nil
@@ -124,26 +122,26 @@ class NotificationsTableViewController: BaseTableViewController {
     override func loadQuery() -> Query {
 		
         let id = queryId()
-        var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
+        var query: Query? = Query.fetchOne(byId: id, in: DataController.instance.mainContext)
 
         if query == nil {
-            query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
+            query = Query.fetchOrInsertOne(byId: id, in: DataController.instance.mainContext) as Query
             query!.name = DataStoreQueryName.NotificationsForCurrentUser.rawValue
-            query!.pageSize = DataController.proxibase.pageSizeNotifications
-            DataController.instance.saveContext(true)	// Blocks until finished
+            query!.pageSize = DataController.proxibase.pageSizeNotifications as NSNumber!
+            DataController.instance.saveContext(wait: true)	// Blocks until finished
         }
 			
         return query!
     }
 	
 	func queryId() -> String {
-		return "query.\(DataStoreQueryName.NotificationsForCurrentUser.rawValue.lowercaseString)"
+		return "query.\(DataStoreQueryName.NotificationsForCurrentUser.rawValue.lowercased())"
 	}
 
-	override func fetchQueryItems(force force: Bool, paging: Bool, queryDate: Int64?) {
+	override func fetchQueryItems(force: Bool, paging: Bool, queryDate: Int64?) {
         /* Always make sure we have the freshest sidecar data before a query */
-        if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
-            if let storedNearbys = groupDefaults.arrayForKey(PatchrUserDefaultKey("nearby.patches")) as? [[NSObject:AnyObject]] {
+        if let groupDefaults = UserDefaults(suiteName: "group.com.3meters.patchr.ios") {
+            if let storedNearbys = groupDefaults.array(forKey: PatchrUserDefaultKey(subKey: "nearby.patches")) as? [[NSObject:AnyObject]] {
                 self.nearbys = storedNearbys
             }
         }
@@ -158,44 +156,44 @@ class NotificationsTableViewController: BaseTableViewController {
         
         TWMessageBarManager.sharedInstance().styleSheet = AirStylesheet(image: image)
 		
-        TWMessageBarManager.sharedInstance().showMessageWithTitle(title,
+        TWMessageBarManager.sharedInstance().showMessage(withTitle: title,
             description: description,
-            type: TWMessageBarMessageType.Info,
+            type: TWMessageBarMessageType.info,
             duration: duration) {
                 
             if targetId.hasPrefix("me.") {
 				let controller = MessageDetailViewController()
 				controller.inputMessageId = targetId
-				controller.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: #selector(controller.dismissAction(_:)))
-				UIViewController.topMostViewController()?.presentViewController(UINavigationController(rootViewController: controller), animated: true, completion: nil)
+				controller.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: controller, action: #selector(controller.dismissAction(sender:)))
+				UIViewController.topMostViewController()?.present(UINavigationController(rootViewController: controller), animated: true, completion: nil)
             }
             else if targetId.hasPrefix("pa.") {
 				let controller = PatchDetailViewController()
 				controller.entityId = targetId
-				controller.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: #selector(controller.dismissAction(_:)))
-				UIViewController.topMostViewController()?.presentViewController(UINavigationController(rootViewController: controller), animated: true, completion: nil)
+				controller.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: controller, action: #selector(controller.dismissAction(sender:)))
+				UIViewController.topMostViewController()?.present(UINavigationController(rootViewController: controller), animated: true, completion: nil)
             }
         }
     }
 	
     func notificationEnabledFor(trigger: String, description: String) -> Bool {
         if trigger == "nearby" {
-            return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("PatchesCreatedNearby"))
+            return UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "PatchesCreatedNearby"))
         }
         else if trigger == "watch_to" {
-            return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("MessagesForPatchesWatching"))
+            return UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "MessagesForPatchesWatching"))
         }
         else if trigger == "own_to" {
             /* Super hack to differentiate likes from favorites */
-            if (description.rangeOfString("like") != nil) {
-                return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("LikeMessage"))
+            if description.contains("like") {
+                return UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "LikeMessage"))
             }
-            else if (description.rangeOfString("favorite") != nil) {
-                return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("LikePatch"))
+            else if description.contains("favorite") {
+                return UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "LikePatch"))
             }
         }
         else if trigger == "share" {
-            return NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("MessagesSharing"))
+            return UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "MessagesSharing"))
         }
         return true
     }
@@ -215,25 +213,25 @@ class AirStylesheet: NSObject, TWMessageBarStyleSheet {
         }
     }
 	
-	@objc func titleColorForMessageType(type: TWMessageBarMessageType) -> UIColor {
+	@objc func titleColor(for type: TWMessageBarMessageType) -> UIColor {
 		return Colors.white
 	}
 	
-	@objc func descriptionColorForMessageType(type: TWMessageBarMessageType) -> UIColor {
+	@objc func descriptionColor(for type: TWMessageBarMessageType) -> UIColor {
 		return Colors.white
 	}
 	
-    @objc func backgroundColorForMessageType(type: TWMessageBarMessageType) -> UIColor {
+    @objc func backgroundColor(for type: TWMessageBarMessageType) -> UIColor {
         return Theme.colorBackgroundNotification
     }
     
-    @objc func strokeColorForMessageType(type: TWMessageBarMessageType) -> UIColor {
+    @objc func strokeColor(for type: TWMessageBarMessageType) -> UIColor {
         return Theme.colorBackgroundNotification
     }
     
-    @objc func iconImageForMessageType(type: TWMessageBarMessageType) -> UIImage {
+    @objc func iconImage(for type: TWMessageBarMessageType) -> UIImage {
         let image = self.image ?? UIImage(named: "imgMessageDark")
-        return image!.imageWithRenderingMode(UIImageRenderingMode.AlwaysOriginal)
+        return image!.withRenderingMode(UIImageRenderingMode.alwaysOriginal)
     }
 }
 
@@ -242,26 +240,25 @@ extension NotificationsTableViewController {
 	* UITableViewDelegate
 	*/
 	override func bindCellToEntity(cell: WrapperTableViewCell, entity: AnyObject, location: CLLocation?) {
-		super.bindCellToEntity(cell, entity: entity, location: location)
+		super.bindCellToEntity(cell: cell, entity: entity, location: location)
 		if let view = cell.view as? NotificationView {
 			view.description_?.delegate = self
 		}
 	}
 	
-	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		
-		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
-			let entity = queryResult.object as? FeedItem {
-				if entity.targetId!.hasPrefix("pa.") {
-					let controller = PatchDetailViewController()
-					controller.entityId = entity.targetId
-					self.navigationController?.pushViewController(controller, animated: true)
-				}
-				else if entity.targetId!.hasPrefix("me.") {
-					let controller = MessageDetailViewController()
-					controller.inputMessageId = entity.targetId
-					self.navigationController?.pushViewController(controller, animated: true)
-				}
-		}
+		let queryResult = self.fetchedResultsController.object(at: indexPath)
+        let entity = queryResult.object as? FeedItem
+        if (entity?.targetId!.hasPrefix("pa."))! {
+            let controller = PatchDetailViewController()
+            controller.entityId = entity?.targetId
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
+        else if (entity?.targetId!.hasPrefix("me."))! {
+            let controller = MessageDetailViewController()
+            controller.inputMessageId = entity?.targetId
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
 	}
 }

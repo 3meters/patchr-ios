@@ -36,21 +36,21 @@ class AirTextField: UITextField {
 	}
 	
 	deinit {
-		NSNotificationCenter.defaultCenter().removeObserver(self)
+		NotificationCenter.default.removeObserver(self)
 	}
 	
 	func initialize() {
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AirTextField.editingBegin(_:)), name: UITextFieldTextDidBeginEditingNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(AirTextField.editingBegin(notification:)), name: NSNotification.Name.UITextFieldTextDidBeginEditing, object: nil)
 		self.rule.backgroundColor = Theme.colorRule
 		self.font = Theme.fontText
 		self.textColor = Theme.colorText
-		self.clearButtonMode = UITextFieldViewMode.WhileEditing
+		self.clearButtonMode = UITextFieldViewMode.whileEditing
 		self.addSubview(self.rule)
 	}
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		self.rule.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: Theme.dimenRuleThickness)
+		self.rule.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: Theme.dimenRuleThickness)
 	}
 	
 	func editingBegin(notification: NSNotification) {

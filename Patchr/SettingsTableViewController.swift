@@ -47,9 +47,9 @@ class SettingsTableViewController: UITableViewController {
         initialize()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         if let indexPath = self.tableView.indexPathForSelectedRow {
-            self.tableView.deselectRowAtIndexPath(indexPath, animated: animated)
+            self.tableView.deselectRow(at: indexPath, animated: animated)
         }
     }
 
@@ -70,9 +70,9 @@ class SettingsTableViewController: UITableViewController {
 
     func logoutAction(sender: AnyObject) {
 
-        self.progress = AirProgress.showHUDAddedTo(self.view.window!, animated: true)
-        self.progress!.mode = MBProgressHUDMode.Indeterminate
-        self.progress!.styleAs(.ActivityWithText)
+        self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
+        self.progress!.mode = MBProgressHUDMode.indeterminate
+        self.progress!.styleAs(progressStyle: .ActivityWithText)
         self.progress!.minShowTime = 0.5
         self.progress!.labelText = "Logging out..."
         self.progress!.removeFromSuperViewOnHide = true
@@ -85,14 +85,14 @@ class SettingsTableViewController: UITableViewController {
         
         let navController = AirNavigationController()
         navController.viewControllers = [LobbyViewController()]
-        AppDelegate.appDelegate().window!.setRootViewController(navController, animated: true)
+        AppDelegate.appDelegate().window!.setRootViewController(rootViewController: navController, animated: true)
     }
 
     func clearHistoryAction(sender: AnyObject) {
 
-        self.progress = AirProgress.showHUDAddedTo(self.view.window!, animated: true)
-        self.progress!.mode = MBProgressHUDMode.Indeterminate
-        self.progress!.styleAs(.ActivityWithText)
+        self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
+        self.progress!.mode = MBProgressHUDMode.indeterminate
+        self.progress!.styleAs(progressStyle: .ActivityWithText)
         self.progress!.minShowTime = 0.5
         self.progress!.labelText = "Clearing..."
         self.progress!.removeFromSuperViewOnHide = true
@@ -106,10 +106,10 @@ class SettingsTableViewController: UITableViewController {
     
     func cancelAction(sender: AnyObject?){
         if self.isModal {
-            self.dismissViewControllerAnimated(true, completion: nil)
+            self.dismiss(animated: true, completion: nil)
         }
         else {
-            self.navigationController?.popViewControllerAnimated(true)
+            let _ = self.navigationController?.popViewController(animated: true)
         }
     }
 
@@ -122,10 +122,8 @@ class SettingsTableViewController: UITableViewController {
         Reporting.screen("Settings")
 
         self.navigationItem.title = "Settings"
-        self.view.accessibilityIdentifier = View.Settings
 
-        self.tableView = UITableView(frame: self.tableView.frame, style: .Grouped)
-        self.tableView.accessibilityIdentifier = Table.Settings
+        self.tableView = UITableView(frame: self.tableView.frame, style: .grouped)
         self.tableView.rowHeight = 48
         self.tableView.tableFooterView = UIView()
         self.tableView.backgroundColor = Colors.gray95pcntColor
@@ -134,21 +132,21 @@ class SettingsTableViewController: UITableViewController {
         self.clearHistoryCell.contentView.addSubview(self.clearHistoryButton)
         self.logoutCell.contentView.addSubview(self.logoutButton)
         self.buildInfoCell.contentView.addSubview(self.buildInfoLabel)
-        self.clearHistoryCell.accessoryType = .None
-        self.logoutCell.accessoryType = .None
-        self.buildInfoCell.accessoryType = .None
+        self.clearHistoryCell.accessoryType = .none
+        self.logoutCell.accessoryType = .none
+        self.buildInfoCell.accessoryType = .none
 
-        let components = NSCalendar.currentCalendar().components([.Year, .Month, .Day], fromDate: NSDate())
+        let components = NSCalendar.current.dateComponents([.year, .month, .day], from: Date())
         self.buildInfoLabel.text = "©\(components.year) 3meters LLC\nVersion \(appVersion()) (\(build()))"
         self.buildInfoLabel.textColor = Theme.colorTextTitle
         self.buildInfoLabel.font = Theme.fontTextDisplay
         self.buildInfoLabel.numberOfLines = 2
-        self.buildInfoLabel.textAlignment = .Center
-        self.buildInfoCell.userInteractionEnabled = false
+        self.buildInfoLabel.textAlignment = .center
+        self.buildInfoCell.isUserInteractionEnabled = false
 
         if let user = UserController.instance.currentUser {
             if user.developerValue {
-                developmentCell.hidden = false
+                developmentCell.isHidden = false
                 developmentCell.frame.size.height = 0
             }
         }
@@ -161,34 +159,24 @@ class SettingsTableViewController: UITableViewController {
         self.softwareLicensesCell.textLabel!.text = "Software Licenses"
         self.developmentCell.textLabel!.text = "Developer"
         
-        self.notificationsCell.accessibilityIdentifier = Button.Notifications
-        self.sendFeedbackCell.accessibilityIdentifier = Button.SendFeedback
-        self.rateCell.accessibilityIdentifier = Button.RateApp
-        self.termsOfServiceCell.accessibilityIdentifier = Button.TermsOfService
-        self.privacyPolicyCell.accessibilityIdentifier = Button.PrivacyPolicy
-        self.softwareLicensesCell.accessibilityIdentifier = Button.Licensing
-        self.logoutCell.accessibilityIdentifier = Button.Logout
-        self.clearHistoryCell.accessibilityIdentifier = Button.ClearHistory
+        self.clearHistoryButton.setTitle("Clear search history".uppercased(), for: .normal)
+        self.logoutButton.setTitle("Log out".uppercased(), for: .normal)
 
-        self.clearHistoryButton.setTitle("Clear search history".uppercaseString, forState: .Normal)
-        self.logoutButton.setTitle("Log out".uppercaseString, forState: .Normal)
-
-        self.logoutButton.addTarget(self, action: #selector(SettingsTableViewController.logoutAction(_:)), forControlEvents: .TouchUpInside)
-        self.clearHistoryButton.addTarget(self, action: #selector(SettingsTableViewController.clearHistoryAction(_:)), forControlEvents: .TouchUpInside)
+        self.logoutButton.addTarget(self, action: #selector(SettingsTableViewController.logoutAction(sender:)), for: .touchUpInside)
+        self.clearHistoryButton.addTarget(self, action: #selector(SettingsTableViewController.clearHistoryAction(sender:)), for: .touchUpInside)
     }
     
     func appVersion() -> String {
-        return NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleShortVersionString") as? String ?? "Unknown"
+        return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "Unknown"
     }
 
     func build() -> String {
-        return NSBundle.mainBundle().objectForInfoDictionaryKey(kCFBundleVersionKey as String) as? String ?? "Unknown"
+        return Bundle.main.object(forInfoDictionaryKey: kCFBundleVersionKey as String) as? String ?? "Unknown"
     }
 
-    func pushWebViewController(url: NSURL?, identifier: String?) -> Void {
+    func pushWebViewController(url: URL?) -> Void {
         let webViewController = PBWebViewController()
-        webViewController.view.accessibilityIdentifier = identifier
-        webViewController.URL = url
+        webViewController.url = url
         webViewController.showsNavigationToolbar = false
         self.navigationController?.pushViewController(webViewController, animated: true)
     }
@@ -198,9 +186,9 @@ extension SettingsTableViewController {
     /*
     * UITableViewDelegate
     */
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
-        let selectedCell = tableView.cellForRowAtIndexPath(indexPath)
+        let selectedCell = tableView.cellForRow(at: indexPath)
 
         if selectedCell == self.notificationsCell {
             let controller = NotificationSettingsSimpleViewController()
@@ -210,41 +198,40 @@ extension SettingsTableViewController {
             let email = "feedback@patchr.com"
             let subject = "Feedback for Patchr iOS"
             if MFMailComposeViewController.canSendMail() {
-                MailComposer!.view.accessibilityIdentifier = View.Feedback
                 MailComposer!.mailComposeDelegate = self
                 MailComposer!.setToRecipients([email])
                 MailComposer!.setSubject(subject)
-                self.presentViewController(MailComposer!, animated: true, completion: nil)
+                self.present(MailComposer!, animated: true, completion: nil)
             }
             else {
                 var emailURL = "mailto:\(email)"
-                emailURL = emailURL.stringByAddingPercentEncodingWithAllowedCharacters(NSMutableCharacterSet.URLQueryAllowedCharacterSet()) ?? emailURL
+                emailURL = emailURL.addingPercentEncoding(withAllowedCharacters: NSMutableCharacterSet.urlQueryAllowed) ?? emailURL
                 if let url = NSURL(string: emailURL) {
-                    self.tableView.deselectRowAtIndexPath(indexPath, animated: true)
-                    UIApplication.sharedApplication().openURL(url)
+                    self.tableView.deselectRow(at: indexPath, animated: true)
+                    UIApplication.shared.openURL(url as URL)
                 }
             }
         }
         else if selectedCell == self.rateCell {
             let appStoreURL = "itms-apps://itunes.apple.com/app/id\(APPLE_APP_ID)"
             if let url = NSURL(string: appStoreURL) {
-                UIApplication.sharedApplication().openURL(url)
+                UIApplication.shared.openURL(url as URL)
             }
-            self.tableView.deselectRowAtIndexPath(indexPath, animated: true)
+            self.tableView.deselectRow(at: indexPath, animated: true)
         }
         else if selectedCell == self.termsOfServiceCell {
             let termsURLString = "http://patchr.com/terms"
-            self.pushWebViewController(NSURL(string: termsURLString), identifier: View.TermsOfService)
+            self.pushWebViewController(url: NSURL(string: termsURLString) as URL?)
             Reporting.track("Viewed Terms of Service")
         }
         else if selectedCell == self.privacyPolicyCell {
             let privacyPolicyURLString = "http://patchr.com/privacy"
-            self.pushWebViewController(NSURL(string: privacyPolicyURLString), identifier: View.PrivacyPolicy)
+            self.pushWebViewController(url: NSURL(string: privacyPolicyURLString) as URL?)
             Reporting.track("Viewed Privacy Policy")
         }
         else if selectedCell == self.softwareLicensesCell {
             let softwareLicensesURLString = "http://patchr.com/ios"
-            self.pushWebViewController(NSURL(string: softwareLicensesURLString), identifier: View.Licensing)
+            self.pushWebViewController(url: NSURL(string: softwareLicensesURLString) as URL?)
             Reporting.track("Viewed Software Licenses")
         }
         else if selectedCell == self.developmentCell {
@@ -253,12 +240,12 @@ extension SettingsTableViewController {
         }
     }
 
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
         if indexPath.section == 0 && indexPath.row == 6 {
             if let user = UserController.instance.currentUser {
                 if !user.developerValue {
-                    developmentCell.hidden = true
+                    developmentCell.isHidden = true
                     return CGFloat(0)
                 }
             }
@@ -269,7 +256,7 @@ extension SettingsTableViewController {
         return CGFloat(44)
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch (indexPath.section) {
             case 0:
                 switch (indexPath.row) {
@@ -297,19 +284,19 @@ extension SettingsTableViewController {
         }
     }
 
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return section == 0 ? "General".uppercaseString : nil
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return section == 0 ? "General".uppercased() : nil
     }
 
-    override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return section == 0 ? 48 : 24
     }
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 3
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
             case 0: return 7
             case 1: return 2
@@ -320,23 +307,22 @@ extension SettingsTableViewController {
 }
 
 extension SettingsTableViewController: MFMailComposeViewControllerDelegate {
-    func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
 
-        switch result.rawValue {
-            case MFMailComposeResultCancelled.rawValue:    // 0
-                UIShared.Toast("Feedback cancelled", controller: self, addToWindow: false)
-            case MFMailComposeResultSaved.rawValue:        // 1
-                UIShared.Toast("Feedback saved", controller: self, addToWindow: false)
-            case MFMailComposeResultSent.rawValue:        // 2
+        switch result {
+            case MFMailComposeResult.cancelled:    // 0
+                UIShared.Toast(message: "Feedback cancelled", controller: self, addToWindow: false)
+            case MFMailComposeResult.saved:        // 1
+                UIShared.Toast(message: "Feedback saved", controller: self, addToWindow: false)
+            case MFMailComposeResult.sent:        // 2
                 Reporting.track("Sent Feedback")
-                UIShared.Toast("Feedback sent", controller: self, addToWindow: false)
-            case MFMailComposeResultFailed.rawValue:    // 3
-                UIShared.Toast("Feedback send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
-            default:
+                UIShared.Toast(message: "Feedback sent", controller: self, addToWindow: false)
+            case MFMailComposeResult.failed:    // 3
+                UIShared.Toast(message: "Feedback send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
                 break
         }
 
-        self.dismissViewControllerAnimated(true) {
+        self.dismiss(animated: true) {
             MailComposer = nil
             MailComposer = MFMailComposeViewController()
         }

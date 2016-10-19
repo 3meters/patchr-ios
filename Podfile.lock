@@ -23,27 +23,26 @@ PODS:
   - AFNetworking/UIKit (2.6.3):
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
-  - AWSCore (2.4.7)
-  - AWSS3 (2.4.7):
-    - AWSCore (= 2.4.7)
-  - Branch (0.12.5):
-    - Branch/Core (= 0.12.5)
-    - Branch/without-IDFA (= 0.12.5)
-  - Branch/Core (0.12.5)
-  - Branch/without-IDFA (0.12.5)
-  - Bugsnag (5.4.2):
-    - KSCrash/RecordingAdvanced (~> 1.6.4)
-  - CocoaLumberjack/Core (2.3.0)
-  - CocoaLumberjack/Default (2.3.0):
+  - AWSCore (2.4.9)
+  - AWSS3 (2.4.9):
+    - AWSCore (= 2.4.9)
+  - Branch (0.12.12):
+    - Branch/Core (= 0.12.12)
+    - Branch/without-IDFA (= 0.12.12)
+  - Branch/Core (0.12.12)
+  - Branch/without-IDFA (0.12.12)
+  - Bugsnag (5.6.2):
+    - KSCrash/RecordingAdvanced (= 1.8.13)
+  - CocoaLumberjack/Core (3.0.0)
+  - CocoaLumberjack/Default (3.0.0):
     - CocoaLumberjack/Core
-  - CocoaLumberjack/Extensions (2.3.0):
+  - CocoaLumberjack/Extensions (3.0.0):
     - CocoaLumberjack/Default
-  - CocoaLumberjack/Swift (2.3.0):
+  - CocoaLumberjack/Swift (3.0.0):
     - CocoaLumberjack/Extensions
   - DACircularProgress (2.3.1)
   - DateTools (1.7.0)
   - DLRadioButton (1.4.9)
-  - DynamicButton (2.1.0)
   - Facade (1.1.1)
   - Firebase/Auth (3.7.1):
     - Firebase/Core
@@ -88,7 +87,7 @@ PODS:
     - GoogleIPhoneUtilities (~> 1.2)
     - GoogleSymbolUtilities (~> 1.1)
     - GoogleUtilities (~> 1.2)
-  - FontAwesome.swift (0.8.0)
+  - FontAwesome.swift (0.11.1)
   - GoogleInterchangeUtilities (1.2.2):
     - GoogleSymbolUtilities (~> 1.1)
   - GoogleIPhoneUtilities (1.2.1):
@@ -105,85 +104,85 @@ PODS:
     - SDWebImage
   - iRate (1.11.6)
   - Keys (1.0.0)
-  - KIF/Core (3.3.2)
-  - KIF/IdentifierTests (3.3.2):
-    - KIF/Core
-  - KSCrash/no-arc (1.6.4)
-  - KSCrash/Recording (1.6.4):
-    - KSCrash/no-arc
-  - KSCrash/RecordingAdvanced (1.6.4):
+  - KSCrash/Recording (1.8.13)
+  - KSCrash/RecordingAdvanced (1.8.13):
     - KSCrash/Recording
-  - Lockbox (3.0.1)
+  - Lockbox (3.0.2)
   - MBProgressHUD (0.9.2)
   - NHBalancedFlowLayout (0.2)
-  - Nimble (4.1.0)
-  - OneSignal (2.0.10)
+  - OneSignal (2.0.11)
   - PBWebViewController (0.5.0)
   - pop (1.0.9)
-  - Quick (0.9.3)
-  - RxSwift (2.6.0)
+  - ReachabilitySwift (3)
+  - RxCocoa (3.0.0-beta.2):
+    - RxSwift (~> 3.0.0-beta.2)
+  - RxSwift (3.0.0-beta.2)
   - SDWebImage (3.8.2):
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
-  - SlideMenuControllerSwift (2.2.2)
+  - SlideMenuControllerSwift (3.0.0)
   - THContactPicker (1.2)
   - TWMessageBarManager (1.8.1)
-  - UIDevice-Hardware (0.1.7)
+  - UIDevice-Hardware (0.1.8)
 
 DEPENDENCIES:
   - AFNetworkActivityLogger (~> 2.0)
   - AFNetworking (~> 2.6)
-  - AWSS3 (~> 2.4)
+  - AWSS3 (= 2.4.9)
   - Branch (~> 0.12.5)
-  - Bugsnag (~> 5.4.2)
-  - CocoaLumberjack/Swift (~> 2.3.0)
+  - Bugsnag
+  - CocoaLumberjack/Swift
   - DateTools (~> 1.7.0)
   - DLRadioButton (~> 1.4.9)
-  - DynamicButton (~> 2.1.0)
   - Facade (~> 1.1.1)
   - Firebase/Auth
   - Firebase/Core
   - Firebase/Crash
   - Firebase/Database
   - Firebase/RemoteConfig
-  - FontAwesome.swift
+  - FontAwesome.swift (from `https://github.com/thii/FontAwesome.swift.git`)
   - IDMPhotoBrowser (from `~/code/IDMPhotoBrowser`)
   - iRate (~> 1.11.6)
   - Keys (from `Pods/CocoaPodsKeys`)
-  - KIF/IdentifierTests (~> 3.3.2)
   - Lockbox (~> 3.0.1)
   - MBProgressHUD (~> 0.9.1)
   - NHBalancedFlowLayout (~> 0.2)
-  - Nimble (~> 4.1.0)
   - OneSignal (~> 2.0.10)
   - PBWebViewController (~> 0.5)
   - pop (~> 1.0)
-  - Quick (~> 0.9.3)
-  - RxSwift (~> 2.6.0)
+  - ReachabilitySwift (~> 3)
+  - RxCocoa (= 3.0.0-beta.2)
+  - RxSwift (= 3.0.0-beta.2)
   - SDWebImage (~> 3.8.1)
-  - SlideMenuControllerSwift (~> 2.2.2)
+  - SlideMenuControllerSwift
   - THContactPicker (~> 1.2)
   - TWMessageBarManager (~> 1.8)
   - UIDevice-Hardware (~> 0.1.7)
 
 EXTERNAL SOURCES:
+  FontAwesome.swift:
+    :git: https://github.com/thii/FontAwesome.swift.git
   IDMPhotoBrowser:
     :path: ~/code/IDMPhotoBrowser
   Keys:
     :path: Pods/CocoaPodsKeys
 
+CHECKOUT OPTIONS:
+  FontAwesome.swift:
+    :commit: b03d71746f277690d1ff7df0c539641c4ba57d4d
+    :git: https://github.com/thii/FontAwesome.swift.git
+
 SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
   AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
-  AWSCore: 9a729a3c0050a51ece3547d546c327acdac7838a
-  AWSS3: 0f3c8ed11e04cd78cf86ed396c06330ab142db7a
-  Branch: 42307809efa9f23a55f40d8375ef8193bfe62b7c
-  Bugsnag: 87219d1fea14c78f7fc63aa6d12b06530b273a19
-  CocoaLumberjack: 97fab7ee5f507fe54445cca7ea80f926729cfd15
+  AWSCore: 175208358b95492e0ebe0337df2ab415300bddac
+  AWSS3: e4959b48db48d5f3dcd5cdf9e24a07f60a313611
+  Branch: 714cc02afc4676902f14f949157cdbf8c73f64f4
+  Bugsnag: c20663a316811b425fd58f7ea9a1375f4cc8bc9d
+  CocoaLumberjack: c823149bccc5519a9447aeb433be7b1212a7d6a5
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   DateTools: 53288ee8b905fdc75897a1e6b5cc0144b14cba60
   DLRadioButton: 7bb8a6e3768b572469ace553391ab4d2af6f9c19
-  DynamicButton: 08c809fdee3c4feb34a20beeba64c069a529d176
   Facade: 3c5c6fb1ba042d20885cfe5a290050f5b9351ca2
   Firebase: be473484f0d515e72ffd04acf22f981773c23e58
   FirebaseAnalytics: 0533a00b681e08fd0b2cd0444b7ddf0ef9fd7a1a
@@ -193,7 +192,7 @@ SPEC CHECKSUMS:
   FirebaseDatabase: 750a4a0fe18ef114318876fd654b2d9c671e0992
   FirebaseInstanceID: ba1e640935235e5fac39dfa816fe7660e72e1a8a
   FirebaseRemoteConfig: 981f45d4278281cfefa8f48a6f5c566f2c95ac5a
-  FontAwesome.swift: f8c6cc5c42cbe93bdc04371363bc7b371fb3d3a1
+  FontAwesome.swift: 9879cd6a1462bf160662d519f7b7474d73bdd1c3
   GoogleInterchangeUtilities: d5bc4d88d5b661ab72f9d70c58d02ca8c27ad1f7
   GoogleIPhoneUtilities: 63f25e93a3ddcb66884d182aab3a660d98f1479b
   GoogleNetworkingUtilities: 3edd3a8161347494f2da60ea0deddc8a472d94cb
@@ -201,22 +200,23 @@ SPEC CHECKSUMS:
   GoogleUtilities: 8bbc733218aad26306f9d4a253823986110e3358
   IDMPhotoBrowser: bcd6cbc9ccaf7e945c3a5a065ffa1a4dee81b722
   iRate: 61e558919c4a7fde63b3c22ebbd6c114a1eee658
-  Keys: 7d2ff6ff42f6903358267ce56e9392f83c31acfe
-  KIF: 9de83fa627adaf65d28ace31e40f19d830bc255c
-  KSCrash: d8e5ad6724d26a48e8ca483028c65e33d92e7834
-  Lockbox: 7f0e84c534179c7b0edf6bf5b191028ea6ad5469
+  Keys: 9c35bf00f612ee1d48556f4a4b9b4551e224e90f
+  KSCrash: 4c3a83f133b60f4bd57e05235ebf8d46e36d378d
+  Lockbox: bfc91deef886f9c0302e809a4d11e171c92c341b
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
   NHBalancedFlowLayout: fd253023c6754e605acdb180d50123e582cc62bb
-  Nimble: 97a0a4cae5124c117115634b2d055d8c97d0af19
-  OneSignal: 03037a9bbba8dfb70265d57e69bd337a44122f61
+  OneSignal: 2ac92fa759f2316038bd59cc34487cdd1e605212
   PBWebViewController: 6537990155ca850fb8d0563efbc12becebc953ef
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
-  Quick: 13a2a2b19a5d8e3ed4fd0c36ee46597fd77ebf71
-  RxSwift: 77f3a0b15324baa7a1c9bfa9f199648a82424e26
+  ReachabilitySwift: f5b9bb30a0777fac8f09ce8b067e32faeb29bb64
+  RxCocoa: 1dd105d8a4e18034ccd7bd6d136445363ce67c8e
+  RxSwift: 0ea939d7d97cb70657190ffde8dc2a9b455778fc
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
-  SlideMenuControllerSwift: e257221100c39d49edccaaeb0238b55a0c67953a
+  SlideMenuControllerSwift: 9c0a84f9a3fba51681debd7be77617094562ebcc
   THContactPicker: e723f7c6ab6e1d6d10d59d618322ab8bfcb00365
   TWMessageBarManager: fd84e7948ba7968a2b5d9454859135761214ec56
-  UIDevice-Hardware: de848ac4b53de555f70ff1a32877454d221c71d1
+  UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: f411766872dc18894e834aae8b7894b2555c8eac
+
+COCOAPODS: 1.1.0.rc.3

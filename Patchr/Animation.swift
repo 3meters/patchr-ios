@@ -14,10 +14,10 @@ struct Animation {
 		if view != nil {
 			view!.pop_removeAllAnimations()
 			let animation = POPSpringAnimation(propertyNamed: kPOPViewScaleXY)
-			animation.velocity = NSValue(CGPoint: CGPointMake(5, 5))
-			animation.springBounciness = 20.0
-			animation.toValue = NSValue(CGPoint: CGPointMake(1, 1))
-			view!.pop_addAnimation(animation, forKey: "bounce")
+            animation?.velocity = NSValue(cgPoint: CGPoint(x:5, y:5))
+			animation?.springBounciness = 20.0
+            animation?.toValue = NSValue(cgPoint: CGPoint(x:1, y:1))
+			view!.pop_add(animation, forKey: "bounce")
 		}
 	}
 	
@@ -25,10 +25,10 @@ struct Animation {
 		if view != nil {
 			view!.pop_removeAllAnimations()
 			let animation = POPSpringAnimation(propertyNamed: kPOPViewScaleXY)
-			animation.velocity = NSValue(CGPoint: CGPointMake(5, 5))
-			animation.springBounciness = 15.0
-			animation.toValue = NSValue(CGPoint: CGPointMake(1, 1))
-			view!.pop_addAnimation(animation, forKey: "bounceIn")
+            animation?.velocity = NSValue(cgPoint: CGPoint(x:5, y:5))
+			animation?.springBounciness = 15.0
+			animation?.toValue = NSValue(cgPoint: CGPoint(x:1, y:1))
+			view!.pop_add(animation, forKey: "bounceIn")
 		}
 	}
 	
@@ -36,10 +36,10 @@ struct Animation {
 		if view != nil {
 			view!.pop_removeAllAnimations()
 			let animation = POPSpringAnimation(propertyNamed: kPOPViewScaleXY)
-			animation.velocity = NSValue(CGPoint: CGPointMake(10, 10))
-			animation.springBounciness = 4.0
-			animation.toValue = NSValue(CGPoint: CGPointMake(0.001, 0.001))
-			view!.pop_addAnimation(animation, forKey: "bounceOut")
+			animation?.velocity = NSValue(cgPoint: CGPoint(x:10, y:10))
+			animation?.springBounciness = 4.0
+			animation?.toValue = NSValue(cgPoint: CGPoint(x:0.001, y:0.001))
+			view!.pop_add(animation, forKey: "bounceOut")
 		}
 	}
 	
@@ -47,10 +47,10 @@ struct Animation {
 		if view != nil {
 			view!.layer.pop_removeAllAnimations()
 			let animation = POPSpringAnimation(propertyNamed: kPOPLayerRotation)
-			animation.velocity = NSValue(CGPoint: CGPointMake(10, 10))
-			animation.springBounciness = 20.0
-			animation.toValue = NSNumber(double: to)
-			view!.layer.pop_addAnimation(animation, forKey: "spin")
+			animation?.velocity = NSValue(cgPoint: CGPoint(x:10, y:10))
+			animation?.springBounciness = 20.0
+			animation?.toValue = NSNumber(value: to)
+			view!.layer.pop_add(animation, forKey: "spin")
 		}
 	}
 }

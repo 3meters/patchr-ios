@@ -18,12 +18,12 @@ class SearchViewController: UITableViewController {
     
     var headerView			: UIView!
     
-    let searchItems			: NSMutableArray = []
-    let recentItems			: NSMutableArray = []
-    var currentItems		: NSMutableArray = []
+    var searchItems			= [Any]()
+    var recentItems			= [Any]()
+    var currentItems		= [Any]()
     
     var searchInProgress	= false
-    var searchTimer			: NSTimer?
+    var searchTimer			: Timer?
     var searchEditing		= false
 
     var inputState			: State? = State.Searching
@@ -33,7 +33,7 @@ class SearchViewController: UITableViewController {
     }
     
     var searchField		= AirSearchField()
-    var header			= UIView(frame: CGRectMake(0, 0, 0, 64))
+    var header			= UIView(frame: CGRect(x:0, y:0, width:0, height:64))
     
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -48,16 +48,16 @@ class SearchViewController: UITableViewController {
         super.viewWillLayoutSubviews()
         let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.bounds.size.width)
         self.tableView.bounds.size.width = viewWidth
-        self.header.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 64)
-        self.searchField.fillSuperviewWithLeftPadding(8, rightPadding: 8, topPadding: 8, bottomPadding: 8)
+        self.header.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 64)
+        self.searchField.fillSuperview(withLeftPadding: 8, rightPadding: 8, topPadding: 8, bottomPadding: 8)
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         loadRecents() // In case there is something new while we were away
     }
 
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.tableView.reloadData()
     }
@@ -66,7 +66,7 @@ class SearchViewController: UITableViewController {
     * Events
     *--------------------------------------------------------------------------------------------*/
 
-    func textFieldDidChange(textField: UITextField) {
+    func textFieldDidChange(_ textField: UITextField) {
         
         if let timer = self.searchTimer {
             timer.invalidate()
@@ -80,8 +80,8 @@ class SearchViewController: UITableViewController {
         }
         else if textField.text!.length >= 2 {
             /* To limit network activity, reload half a second after last key press. */
-            self.searchTimer = NSTimer(timeInterval:0.5, target:self, selector:#selector(SearchViewController.suggest), userInfo:nil, repeats:false)
-            NSRunLoop.currentRunLoop().addTimer(self.searchTimer!, forMode: "NSDefaultRunLoopMode")
+            self.searchTimer = Timer(timeInterval:0.5, target:self, selector:#selector(SearchViewController.suggest), userInfo:nil, repeats:false)
+            RunLoop.current.add(self.searchTimer!, forMode: RunLoopMode(rawValue: "NSDefaultRunLoopMode"))
         }
     }
     
@@ -94,18 +94,15 @@ class SearchViewController: UITableViewController {
         Reporting.screen("PatchSearch")
         self.navigationItem.title = "Search Patchr"
 
-        self.view.accessibilityIdentifier = View.Search
-        self.tableView!.accessibilityIdentifier = Table.Search
-
         self.currentItems = self.recentItems
 
         self.searchField.placeholder = "Search for patches"
-        self.searchField.addTarget(self, action: #selector(SearchViewController.textFieldDidChange(_:)), forControlEvents: UIControlEvents.EditingChanged)
+        self.searchField.addTarget(self, action: #selector(SearchViewController.textFieldDidChange(_:)), for: UIControlEvents.editingChanged)
         self.searchField.delegate = self
         self.header.addSubview(self.searchField)
 
         self.tableView.tableHeaderView = self.header
-        self.tableView.backgroundColor = UIColor.whiteColor()
+        self.tableView.backgroundColor = UIColor.white
         self.tableView.tableFooterView = UIView()   // Triggers data binding
 
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(SearchViewController.dismissKeyboard))
@@ -114,13 +111,13 @@ class SearchViewController: UITableViewController {
     }
 
     func loadRecents() {
-        self.recentItems.removeAllObjects()
-        if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
-            self.userId = groupDefaults.stringForKey(PatchrUserDefaultKey("userId"))
-            self.sessionKey = UserController.instance.lockbox.unarchiveObjectForKey("sessionKey") as? String
-            if let recentPatches = groupDefaults.arrayForKey(PatchrUserDefaultKey("recent.patches")) as? [[String:AnyObject]] {
+        self.recentItems.removeAll()
+        if let groupDefaults = UserDefaults(suiteName: "group.com.3meters.patchr.ios") {
+            self.userId = groupDefaults.string(forKey: PatchrUserDefaultKey(subKey: "userId"))
+            self.sessionKey = UserController.instance.lockbox!.unarchiveObject(forKey: "sessionKey") as? String
+            if let recentPatches = groupDefaults.array(forKey: PatchrUserDefaultKey(subKey: "recent.patches")) as? [[String:Any]] {
                 for recent in recentPatches {
-                    self.recentItems.addObject(recent)
+                    self.recentItems.append(recent)
                 }
             }
         }
@@ -138,18 +135,18 @@ class SearchViewController: UITableViewController {
         Log.d("Suggest call: \(searchString!)")
 
         let endpoint: String = "\(DataController.proxibase.serviceUri)suggest"
-        let request = NSMutableURLRequest(URL: NSURL(string: endpoint)!)
-        let session = NSURLSession.sharedSession()
-        request.HTTPMethod = "POST"
+        var request = URLRequest(url: URL(string: endpoint)!)
+        let session = URLSession.shared
+        request.httpMethod = "POST"
 
-        var body: [String:AnyObject]?
+        var body: [String:Any]?
 
         if self.inputState == .Searching {
             body = [
                 "patches": true,
-                "input": searchString!.lowercaseString,
+                "input": searchString!.lowercased(),
                 "provider": "google",
-                "limit": 10 ] as [String:AnyObject]
+                "limit": 10 ] as [String:Any]
 
             if self.userId != nil {
                 body!["_user"] = self.userId!
@@ -158,30 +155,30 @@ class SearchViewController: UITableViewController {
         else {
             body = [
                 "users": true,
-                "input": searchString!.lowercaseString,
-                "limit":10 ] as [String:AnyObject]
+                "input": searchString!.lowercased(),
+                "limit":10 ] as [String:Any]
         }
 
         do {
-            request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(body!, options: [])
+            request.httpBody = try JSONSerialization.data(withJSONObject: body!, options: [])
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
             request.addValue("application/json", forHTTPHeaderField: "Accept")
             
-            let task = session.dataTaskWithRequest(request, completionHandler: {
+            let task = session.dataTask(with: request, completionHandler: {
                 data, response, error -> Void in
                 
                 self.searchInProgress = false
-                self.searchItems.removeAllObjects()
+                self.searchItems.removeAll()
                 
                 if error == nil {
                     let json:JSON = JSON(data: data!)
                     let results = json["data"]
                     for (index: _, subJson) in results {
-                        let patch: AnyObject = subJson.object
-                        self.searchItems.addObject(patch)
+                        let patch: Any = subJson.object
+                        self.searchItems.append(patch)
                     }
                     self.currentItems = self.searchItems
-                    dispatch_async(dispatch_get_main_queue(),{
+                    DispatchQueue.main.async(execute: {
                         self.tableView?.reloadData()
                     })
                 }
@@ -201,11 +198,11 @@ class SearchViewController: UITableViewController {
 
 extension SearchViewController: UITextFieldDelegate {
 
-    func textFieldDidEndEditing(textField: UITextField) {
+    func textFieldDidEndEditing(_ textField: UITextField) {
         self.searchField.resignFirstResponder()
     }
 
-    func textFieldShouldClear(textField: UITextField) -> Bool {
+    func textFieldShouldClear(_ textField: UITextField) -> Bool {
         self.searchField.resignFirstResponder()
         return true
     }
@@ -215,42 +212,41 @@ extension SearchViewController {
     /*
     * UITableViewDelegate
     */
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        var cell = tableView.dequeueReusableCellWithIdentifier(CELL_IDENTIFIER) as? PatchSearchCell
+        var cell: PatchSearchCell? = tableView.dequeueReusableCell(withIdentifier: (CELL_IDENTIFIER)) as? PatchSearchCell
 
         if cell == nil {
-            let nib:Array = NSBundle.mainBundle().loadNibNamed("PatchSearchCell", owner: self, options: nil)
-            cell = nib[0] as? PatchSearchCell
+            cell = Bundle.main.loadNibNamed("PatchSearchCell", owner: self, options: nil)?[0] as! PatchSearchCell?
         }
         
         var patch: JSON = JSON(self.currentItems[indexPath.row])
         cell!.name.text = patch["name"].string
         
-        if patch["photo"] != nil {            
+        if patch["photo"] != JSON.null {
             let prefix = patch["photo"]["prefix"].string
             let source = patch["photo"]["source"].string
-            let photoUrl = PhotoUtils.url(prefix!, source: source!, category: SizeCategory.thumbnail)
-            cell!.photo.sd_setImageWithURL(photoUrl)
+            let photoUrl = PhotoUtils.url(prefix: prefix!, source: source!, category: SizeCategory.thumbnail)
+            cell!.photo.sd_setImage(with: photoUrl)
         }
-        else if patch["name"] != nil {
-            let seed = Utils.numberFromName(patch["name"].string!)
-            cell!.photo.backgroundColor = Utils.randomColor(seed)
+        else if patch["name"] != JSON.null {
+            let seed = Utils.numberFromName(fullname: patch["name"].string!)
+            cell!.photo.backgroundColor = Utils.randomColor(seed: seed)
             cell!.photo.updateConstraints()
         }
 
         return cell!
     }
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.currentItems.count
     }
 
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
         var patchJson: JSON = JSON(self.currentItems[indexPath.row])
         if let patch = patchJson.dictionaryObject {
@@ -267,11 +263,11 @@ extension SearchViewController {
         }
     }
     
-    override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return self.currentItems.count == 0 ? 0 : 40
     }
     
-    override func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let view = UILabel(frame: CGRect(x: 10, y: 0, width: 100, height: 20))
         
         if section == 0 {
@@ -280,11 +276,11 @@ extension SearchViewController {
             style.firstLineHeadIndent = 16.0
             
             let attributes = [
-                NSFontAttributeName : UIFont.preferredFontForTextStyle(UIFontTextStyleSubheadline),
+                NSFontAttributeName : UIFont.preferredFont(forTextStyle: UIFontTextStyle.subheadline),
                 NSUnderlineStyleAttributeName : 1,
                 NSParagraphStyleAttributeName : style,
                 NSForegroundColorAttributeName : UIColor(white: 0.50, alpha: 1.0),
-                NSBaselineOffsetAttributeName : -4.0]
+                NSBaselineOffsetAttributeName : -4.0] as [String : Any]
             
             let label = self.searchEditing ? "SUGGESTIONS" : "RECENTS"
             
@@ -295,7 +291,7 @@ extension SearchViewController {
         return view
     }
     
-    override func scrollViewDidScroll(scrollView: UIScrollView) {
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
         if offsetY > 0 {
             let alpha = min(1, 1 - ((40 - offsetY) / 40))

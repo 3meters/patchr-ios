@@ -36,11 +36,11 @@ class UserController: NSObject {
     private override init() {
         super.init()
 
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        self.userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId"))
-        self.jsonUser = userDefaults.stringForKey(PatchrUserDefaultKey("user"))
-        self.jsonSession = self.lockbox.unarchiveObjectForKey("session") as? String
-        self.sessionKey = self.lockbox.unarchiveObjectForKey("sessionKey") as? String
+        let userDefaults = UserDefaults.standard
+        self.userId = userDefaults.string(forKey: PatchrUserDefaultKey(subKey: "userId"))
+        self.jsonUser = userDefaults.string(forKey: PatchrUserDefaultKey(subKey: "user"))
+        self.jsonSession = self.lockbox?.unarchiveObject(forKey: "session") as? String
+        self.sessionKey = self.lockbox?.unarchiveObject(forKey: "sessionKey") as? String
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ class UserController: NSObject {
         writeCredentialsToUserDefaults()
     }
 
-    func handlePasswordChange(response: AnyObject) {
+    func handlePasswordChange(response: Any) {
         /*
          * Capture and update the session
          */
@@ -72,17 +72,18 @@ class UserController: NSObject {
 
         Log.i("User changed password: \(self.userName!) (\(self.userId!))")
 
-        let success = self.lockbox.archiveObject((self.sessionKey != nil ? self.sessionKey! : nil), forKey: "sessionKey", accessibility: kSecAttrAccessibleAfterFirstUnlock)
-        if success {
-            self.lockbox.archiveObject((self.jsonSession != nil ? self.jsonSession! : nil), forKey: "session", accessibility: kSecAttrAccessibleAfterFirstUnlock)
+        let success = self.lockbox?.archiveObject(self.sessionKey as NSSecureCoding!, forKey: "sessionKey", accessibility: kSecAttrAccessibleAfterFirstUnlock)
+        if success! {
+            self.lockbox?.archiveObject(self.jsonSession as NSSecureCoding!, forKey: "session", accessibility: kSecAttrAccessibleAfterFirstUnlock)
         }
 
-        if !success {
+        if !success! {
             Log.w("Failed to store session in keychain")
         }
+        
     }
 
-    func handleSuccessfulLoginResponse(response: AnyObject) {
+    func handleSuccessfulLoginResponse(response: Any) {
         /*
          * Called everytime we have a new authenticated user. The store can
          * contain entities that are missing state that is tied to the current
@@ -110,39 +111,39 @@ class UserController: NSObject {
         writeCredentialsToUserDefaults()
         fetchCurrentUser() // Includes making sure the user is in the store
 
-        NSNotificationCenter.defaultCenter().postNotificationName(Events.UserDidLogin, object: nil, userInfo: nil)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UserDidLogin), object: nil)
     }
 
     private func writeCredentialsToUserDefaults() {
 
-        let userDefaults = NSUserDefaults.standardUserDefaults()
+        let userDefaults = UserDefaults.standard
 
-        userDefaults.setObject(self.jsonUser, forKey: PatchrUserDefaultKey("user"))
-        userDefaults.setObject(self.userId, forKey: PatchrUserDefaultKey("userId"))
+        userDefaults.set(self.jsonUser, forKey: PatchrUserDefaultKey(subKey: "user"))
+        userDefaults.set(self.userId, forKey: PatchrUserDefaultKey(subKey: "userId"))
 
         /* This is only place where we push to the keychain */
         var success = false
-        success = self.lockbox.archiveObject((self.sessionKey != nil ? self.sessionKey! : nil), forKey: "sessionKey", accessibility: kSecAttrAccessibleAfterFirstUnlock)
+        success = (self.lockbox?.archiveObject(self.sessionKey as NSSecureCoding!, forKey: "sessionKey", accessibility: kSecAttrAccessibleAfterFirstUnlock))!
         if success {
-            self.lockbox.archiveObject((self.jsonSession != nil ? self.jsonSession! : nil), forKey: "session", accessibility: kSecAttrAccessibleAfterFirstUnlock)
+            self.lockbox?.archiveObject(self.jsonSession as NSSecureCoding!, forKey: "session", accessibility: kSecAttrAccessibleAfterFirstUnlock)
         }
 
         if !success {
             Log.w("Failed to store session in keychain")
         }
 
-        if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
-            groupDefaults.setObject(self.jsonUser, forKey: PatchrUserDefaultKey("user"))
-            groupDefaults.setObject(self.userId, forKey: PatchrUserDefaultKey("userId"))
+        if let groupDefaults = UserDefaults(suiteName: "group.com.3meters.patchr.ios") {
+            groupDefaults.set(self.jsonUser, forKey: PatchrUserDefaultKey(subKey: "user"))
+            groupDefaults.set(self.userId, forKey: PatchrUserDefaultKey(subKey: "userId"))
         }
     }
 
     func fetchCurrentUser() {
-        DataController.instance.withEntityId(self.userId!, strategy: .UseCacheAndVerify, completion: { objectId, error in
+        DataController.instance.withEntityId(entityId: self.userId!, strategy: .UseCacheAndVerify, completion: { objectId, error in
             if error == nil && objectId != nil {
-                let user = DataController.instance.mainContext.objectWithID(objectId!) as! User
+                let user = DataController.instance.mainContext.object(with: objectId!) as! User
                 if user.id_ != nil {
-                    self.initUserState(user)
+                    self.initUserState(user: user)
                 }
             }
         })
@@ -155,7 +156,7 @@ class UserController: NSObject {
         DataController.proxibase.logout {
             response, error in
 
-            NSOperationQueue.mainQueue().addOperationWithBlock {	// In case we are not called back on main thread
+            OperationQueue.main.addOperation {	// In case we are not called back on main thread
 
                 if error != nil {
                     Log.w("Error during logout \(error)")
@@ -167,7 +168,7 @@ class UserController: NSObject {
 
                 let navController = AirNavigationController()
                 navController.viewControllers = [LobbyViewController()]
-                AppDelegate.appDelegate().window!.setRootViewController(navController, animated: true)
+                AppDelegate.appDelegate().window!.setRootViewController(rootViewController: navController, animated: true)
             }
         }
     }
@@ -179,22 +180,24 @@ class UserController: NSObject {
         self.discardCredentials()
         self.clearStore()		// Clear the core data store and create new data stack, blocks until done
         LocationController.instance.clearLastLocationAccepted()  // Triggers fresh location processing
-        Reporting.updateUser(nil)
+        Reporting.updateUser(user: nil)
     }
 
     func initUserState(user: User!) {
         self.currentUser = user
         self.userName = user.name
         self.userId = user.id_
-        Reporting.updateUser(user)
+        Reporting.updateUser(user: user)
 
         /* Need to seed these because sign-in with previous version might not have included them */
-        if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
-            groupDefaults.setObject(user.id_, forKey: PatchrUserDefaultKey("userId"))
+        if let groupDefaults = UserDefaults(suiteName: "group.com.3meters.patchr.ios") {
+            groupDefaults.set(user.id_, forKey: PatchrUserDefaultKey(subKey: "userId"))
         }
     }
 
     func clearStore() {
         DataController.instance.reset()
     }
+    
+    func warmup() {}
 }

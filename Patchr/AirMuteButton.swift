@@ -23,8 +23,8 @@ class AirMuteButton: AirToggleButton {
     }
     
     override func initialize(){
-        self.imageOff = UIImage(named: "imgSoundOff2Light")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
-        self.imageOn = UIImage(named: "imgSoundOn2Light")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+        self.imageOff = UIImage(named: "imgSoundOff2Light")!.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
+        self.imageOn = UIImage(named: "imgSoundOn2Light")!.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
         
         super.initialize()
     }
@@ -32,7 +32,7 @@ class AirMuteButton: AirToggleButton {
 	func bindEntity(entity: Entity?) {
 		self.entity = entity
         if let patch = self.entity as? Patch {
-            toggleOn(!patch.userWatchMutedValue, animate: false)
+            toggleOn(on: !patch.userWatchMutedValue, animate: false)
         }
 	}
 
@@ -42,34 +42,34 @@ class AirMuteButton: AirToggleButton {
             return
         }
         
-        self.enabled = false
+        self.isEnabled = false
         self.startProgress()
         self.imageView?.alpha = 0.0
         
         let muted = !self.entity!.userWatchMutedValue
         
-        DataController.proxibase.muteLinkById(self.entity!.userWatchId!, muted: muted, completion: {
+        DataController.proxibase.muteLinkById(linkId: self.entity!.userWatchId!, muted: muted, completion: {
             response, error in
 			
-			NSOperationQueue.mainQueue().addOperationWithBlock {
+			OperationQueue.main.addOperation {
 				self.stopProgress()
 				if let error = ServerError(error) {
 					UIViewController.topMostViewController()!.handleError(error)
 				}
 				else {
 					self.entity!.userWatchMutedValue = muted
-					self.toggleOn(!muted)
+					self.toggleOn(on: !muted)
 					Reporting.track(muted ? "Muted Patch" : "Unmuted Patch")
 					
 					if muted && self.messageOff != nil {
-						UIShared.Toast(self.messageOff)
+						UIShared.Toast(message: self.messageOff)
 					}
 					
 					if !muted && self.messageOn != nil {
-						UIShared.Toast(self.messageOn)
+						UIShared.Toast(message: self.messageOn)
 					}
 				}				
-				self.enabled = true
+				self.isEnabled = true
 			}
         })
     }

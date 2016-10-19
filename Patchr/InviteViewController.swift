@@ -32,17 +32,17 @@ class InviteViewController: BaseViewController {
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
-		let messageSize = self.message.sizeThatFits(CGSizeMake(228, CGFloat.max))
+        let messageSize = self.message.sizeThatFits(CGSize(width:228, height:CGFloat.greatestFiniteMagnitude))
 		
-		self.message.anchorTopCenterWithTopPadding(0, width: 228, height: messageSize.height)
+		self.message.anchorTopCenter(withTopPadding: 0, width: 228, height: messageSize.height)
 		self.invitePatchrButton.alignUnder(self.message, matchingCenterWithTopPadding: 24, width: 228, height: 44)
 		self.inviteFacebookButton.alignUnder(self.invitePatchrButton, matchingCenterWithTopPadding: 8, width: 228, height: 44)
 		self.inviteViaButton.alignUnder(self.inviteFacebookButton, matchingCenterWithTopPadding: 8, width: 228, height: 44)
 		self.doneButton.alignUnder(self.inviteViaButton, matchingCenterWithTopPadding: 8, width: 228, height: 44)
 		
 		self.contentHolder.resizeToFitSubviews()
-		self.scrollView.contentSize = CGSizeMake(self.contentHolder.frame.size.width, self.contentHolder.frame.size.height + CGFloat(32))
-		self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 16, height: self.contentHolder.frame.size.height)
+        self.scrollView.contentSize = CGSize(width:self.contentHolder.frame.size.width, height:self.contentHolder.frame.size.height + CGFloat(32))
+        self.contentHolder.anchorTopCenterFillingWidth(withLeftAndRightPadding: 16, topPadding: 16, height: self.contentHolder.frame.size.height)
 	}
 	
     /*--------------------------------------------------------------------------------------------
@@ -50,19 +50,19 @@ class InviteViewController: BaseViewController {
     *--------------------------------------------------------------------------------------------*/
     
 	func invitePatchrAction(sender: AnyObject?) {
-		shareUsing(.Patchr)
+		shareUsing(route: .Patchr)
 	}
 	
 	func inviteFacebookAction(sender: AnyObject?) {
-		shareUsing(.Facebook)
+		shareUsing(route: .Facebook)
 	}
 	
 	func inviteViaAction(sender: AnyObject?) {
-		shareUsing(.Actions)
+		shareUsing(route: .Actions)
 	}
 	
 	func doneAction(sender: AnyObject?) {
-		self.dismissViewControllerAnimated(true, completion: nil)
+		self.dismiss(animated: true, completion: nil)
 	}
 	
     /*--------------------------------------------------------------------------------------------
@@ -73,23 +73,22 @@ class InviteViewController: BaseViewController {
 		super.initialize()
 		
 		Reporting.screen("PatchInvite")
-		self.view.accessibilityIdentifier = View.Invite
 		
 		self.message.text = "Invite people to your new patch."
-		self.message.textAlignment = NSTextAlignment.Center
+		self.message.textAlignment = NSTextAlignment.center
 		self.message.numberOfLines = 0
 		/*
 		 * Invite dialog doesn't show if user is already a member or pending.
 		 */
-		self.invitePatchrButton.setTitle("PATCHR FRIENDS", forState: .Normal)
-		self.inviteFacebookButton.setTitle("FACEBOOK FRIENDS", forState: .Normal)
-		self.inviteViaButton.setTitle("MORE", forState: .Normal)
-		self.doneButton.setTitle("FINISHED", forState: .Normal)
+		self.invitePatchrButton.setTitle("PATCHR FRIENDS", for: .normal)
+		self.inviteFacebookButton.setTitle("FACEBOOK FRIENDS", for: .normal)
+		self.inviteViaButton.setTitle("MORE", for: .normal)
+		self.doneButton.setTitle("FINISHED", for: .normal)
 		
-		self.invitePatchrButton.addTarget(self, action: #selector(InviteViewController.invitePatchrAction(_:)), forControlEvents: .TouchUpInside)
-		self.inviteFacebookButton.addTarget(self, action: #selector(InviteViewController.inviteFacebookAction(_:)), forControlEvents: .TouchUpInside)
-		self.inviteViaButton.addTarget(self, action: #selector(InviteViewController.inviteViaAction(_:)), forControlEvents: .TouchUpInside)
-		self.doneButton.addTarget(self, action: #selector(InviteViewController.doneAction(_:)), forControlEvents: .TouchUpInside)
+		self.invitePatchrButton.addTarget(self, action: #selector(InviteViewController.invitePatchrAction(sender:)), for: .touchUpInside)
+		self.inviteFacebookButton.addTarget(self, action: #selector(InviteViewController.inviteFacebookAction(sender:)), for: .touchUpInside)
+		self.inviteViaButton.addTarget(self, action: #selector(InviteViewController.inviteViaAction(sender:)), for: .touchUpInside)
+		self.doneButton.addTarget(self, action: #selector(InviteViewController.doneAction(sender:)), for: .touchUpInside)
 		
 		self.contentHolder.addSubview(self.message)
 		self.contentHolder.addSubview(self.invitePatchrButton)
@@ -98,7 +97,7 @@ class InviteViewController: BaseViewController {
 		self.contentHolder.addSubview(self.doneButton)
 		
 		/* Navigation bar buttons */
-		let submitButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: #selector(InviteViewController.doneAction(_:)))
+		let submitButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(InviteViewController.doneAction(sender:)))
 		self.navigationItem.leftBarButtonItems = []
 		self.navigationItem.hidesBackButton = true
 		self.navigationItem.rightBarButtonItems = [submitButton]
@@ -116,11 +115,11 @@ class InviteViewController: BaseViewController {
 			controller.inputMessageType = .Share
 			controller.inputState = .Sharing
 			navController.viewControllers = [controller]
-			self.presentViewController(navController, animated: true, completion: nil)
+			self.present(navController, animated: true, completion: nil)
 		}
 		else if route == .Actions {
 			
-			BranchProvider.invite(self.inputEntity!, referrer: UserController.instance.currentUser) {
+			BranchProvider.invite(entity: self.inputEntity!, referrer: UserController.instance.currentUser) {
 				response, error in
 				
 				if let error = ServerError(error) {
@@ -132,12 +131,12 @@ class InviteViewController: BaseViewController {
 						activityItems: [patch],
 						applicationActivities: nil)
 					
-					if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-						self.presentViewController(activityViewController, animated: true, completion: nil)
+					if UIDevice.current.userInterfaceIdiom == .phone {
+						self.present(activityViewController, animated: true, completion: nil)
 					}
 					else {
 						let popup: UIPopoverController = UIPopoverController(contentViewController: activityViewController)
-						popup.presentPopoverFromRect(CGRectMake(self.view.frame.size.width/2, self.view.frame.size.height/4, 0, 0), inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
+                        popup.present(from: CGRect(x:self.view.frame.size.width/2, y:self.view.frame.size.height/4, width:0, height:0), in: self.view, permittedArrowDirections: UIPopoverArrowDirection.any, animated: true)
 					}
 				}
 			}

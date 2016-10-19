@@ -29,15 +29,12 @@
 #import "Demangle.h"
 #include <cxxabi.h>
 
-/**
- * Demangle a Swift symbol.
- *
- * @param symbol The symbol to demangle.
- * @return The demangled string or nil if it can't be demangled as Swift.
- */
-static NSString* demangleSwift(NSString* symbol)
+@implementation NSString (Demangle)
+
+- (NSString*) demangledAsSwift
 {
-    std::string demangled = swift::Demangle::demangleSymbolAsString(symbol.UTF8String);
+    swift::Demangle::DemangleOptions options = swift::Demangle::DemangleOptions::SimplifiedUIDemangleOptions();
+    std::string demangled = swift::Demangle::demangleSymbolAsString(self.UTF8String, options);
     if(demangled.length() == 0)
     {
         return nil;
@@ -45,17 +42,11 @@ static NSString* demangleSwift(NSString* symbol)
     return [NSString stringWithUTF8String:demangled.c_str()];
 }
 
-/**
- * Demangle a C++ symbol.
- *
- * @param symbol The symbol to demangle.
- * @return The demangled string or nil if it can't be demangled as C++.
- */
-static NSString* demangleCPP(NSString* symbol)
+- (NSString*) demangledAsCPP
 {
     NSString* result = nil;
     int status = 0;
-    char* demangled = __cxxabiv1::__cxa_demangle(symbol.UTF8String, NULL, NULL, &status);
+    char* demangled = __cxxabiv1::__cxa_demangle(self.UTF8String, NULL, NULL, &status);
 
     if(status == 0 && demangled != NULL)
     {
@@ -68,25 +59,6 @@ static NSString* demangleCPP(NSString* symbol)
     }
 
     return result;
-}
-
-@implementation NSString (Demangle)
-
-- (NSString*) demangledSymbol
-{
-    NSString* demangled = demangleCPP(self);
-    if(demangled != nil)
-    {
-        return demangled;
-    }
-
-    demangled = demangleSwift(self);
-    if(demangled != nil)
-    {
-        return demangled;
-    }
-
-    return self;
 }
 
 @end

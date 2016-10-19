@@ -19,9 +19,9 @@ class BranchProvider: NSObject {
 		Branch.getInstance().setIdentity(identity)
 	}
     
-    typealias CompletionBlock = (response:AnyObject?, error:NSError?) -> Void
+    typealias CompletionBlock = (_ response:AnyObject?, _ error: NSError?) -> Void
 	
-	static func invite(entity: Patch, referrer: User, completion: CompletionBlock) {
+	static func invite(entity: Patch, referrer: User, completion: @escaping CompletionBlock) {
 		
 		let patchName = entity.name!
 		let referrerName = referrer.name!
@@ -30,16 +30,16 @@ class BranchProvider: NSObject {
 		let path = "patch/\(entity.id_!)"
 		
 		let applink = BranchUniversalObject(canonicalIdentifier: path)
-		applink.metadata["entityId"] = entity.id_!
-		applink.metadata["entitySchema"] = "patch"
-		applink.metadata["referrerName"] = referrerName
-		applink.metadata["referrerId"] = referrerId
-		applink.metadata["ownerName"] = ownerName
-		applink.metadata["patchName"] = patchName
+		applink.metadata?["entityId"] = entity.id_!
+		applink.metadata?["entitySchema"] = "patch"
+		applink.metadata?["referrerName"] = referrerName
+		applink.metadata?["referrerId"] = referrerId
+		applink.metadata?["ownerName"] = ownerName
+		applink.metadata?["patchName"] = patchName
 		
 		if let photo = UserController.instance.currentUser.photo {
-			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile)
-			applink.metadata["referrerPhotoUrl"] = photoUrl
+			let photoUrl = PhotoUtils.url(prefix: photo.prefix!, source: photo.source!, category: SizeCategory.profile)
+			applink.metadata?["referrerPhotoUrl"] = photoUrl
 		}
 		
 		/* $og_title */
@@ -61,19 +61,19 @@ class BranchProvider: NSObject {
 		linkProperties.channel = "patchr-ios"
 		linkProperties.feature = BRANCH_FEATURE_TAG_INVITE
 		
-		applink.getShortUrlWithLinkProperties(linkProperties, andCallback: { url, error in
+		applink.getShortUrl(with: linkProperties, andCallback: { url, error in
 			if error != nil {
-				completion(response: nil, error: error)
+				completion(nil, error as NSError?)
 			}
 			else {
-				Log.d("Branch invite link created: \(url!)", breadcrumb: true)
-				let patch: PatchItem = PatchItem(entity: entity, shareUrl: url!)
-				completion(response: patch, error: nil)
+				Log.d("Branch invite link created: \(url)", breadcrumb: true)
+				let patch: PatchItem = PatchItem(entity: entity, shareUrl: url)
+				completion(patch, nil)
 			}
 		})
 	}
 	
-	static func share(entity: Message, referrer: User, completion: CompletionBlock) {
+	static func share(entity: Message, referrer: User, completion: @escaping CompletionBlock) {
 		
 		let patchName = entity.patch?.name!
 		let referrerName = referrer.name!
@@ -82,19 +82,19 @@ class BranchProvider: NSObject {
 		let path = "message/\(entity.id_!)"
 		
 		let applink = BranchUniversalObject(canonicalIdentifier: path)
-		applink.metadata["entityId"] = entity.id_!
-		applink.metadata["entitySchema"] = "message"
-		applink.metadata["referrerName"] = referrerName
-		applink.metadata["referrerId"] = referrerId
-		applink.metadata["ownerName"] = ownerName
+		applink.metadata?["entityId"] = entity.id_!
+		applink.metadata?["entitySchema"] = "message"
+		applink.metadata?["referrerName"] = referrerName
+		applink.metadata?["referrerId"] = referrerId
+		applink.metadata?["ownerName"] = ownerName
 		
 		if patchName != nil {
-			applink.metadata["patchName"] = patchName
+			applink.metadata?["patchName"] = patchName
 		}
 		
 		if let photo = UserController.instance.currentUser.photo {
-			let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: SizeCategory.profile)
-			applink.metadata["referrerPhotoUrl"] = photoUrl
+			let photoUrl = PhotoUtils.url(prefix: photo.prefix!, source: photo.source!, category: SizeCategory.profile)
+			applink.metadata?["referrerPhotoUrl"] = photoUrl
 		}
 		
 		/* $og_title */
@@ -123,14 +123,14 @@ class BranchProvider: NSObject {
 		linkProperties.channel = "patchr-ios"
 		linkProperties.feature = BRANCH_FEATURE_TAG_SHARE
 		
-		applink.getShortUrlWithLinkProperties(linkProperties, andCallback: { url, error in
+		applink.getShortUrl(with: linkProperties, andCallback: { url, error in
 			if error != nil {
-				completion(response: nil, error: error)
+				completion(nil, error as NSError?)
 			}
 			else {
-				Log.d("Branch share link created: \(url!)", breadcrumb: true)
-				let message: MessageItem = MessageItem(entity: entity, shareUrl: url!)
-				completion(response: message, error: nil)
+				Log.d("Branch share link created: \(url)", breadcrumb: true)
+				let message: MessageItem = MessageItem(entity: entity, shareUrl: url)
+				completion(message, nil)
 			}
 		})
 	}

@@ -19,12 +19,12 @@ public extension UIImage {
     }
     
     public func thumbnailImage(thumbnailSize: Int, transparentBorder borderSize:Int, cornerRadius:Int, interpolationQuality quality:CGInterpolationQuality) -> UIImage {
-        let resizedImage = self.resizedImageWithContentMode(.ScaleAspectFill, bounds: CGSizeMake(CGFloat(thumbnailSize), CGFloat(thumbnailSize)), interpolationQuality: quality)
+        let resizedImage = self.resizedImageWithContentMode(.ScaleAspectFill, bounds: CGSize(width:CGFloat(thumbnailSize), CGFloat(thumbnailSize)), interpolationQuality: quality)
  
         // Crop out any part of the image that's larger than the thumbnail size
         // The cropped rect must be centered on the resized image
         // Round the origin points so that the size isn't altered when CGRectIntegral is later invoked
-        let cropRect = CGRectMake(
+        let cropRect = CGRect(x:
             round((resizedImage.size.width - CGFloat(thumbnailSize))/2),
             round((resizedImage.size.height - CGFloat(thumbnailSize))/2),
             CGFloat(thumbnailSize),
@@ -82,7 +82,7 @@ public extension UIImage {
             height = contextSize.width
         }
         
-        let rect: CGRect = CGRectMake(posX, posY, width, height)
+        let rect: CGRect = CGRect(x:posX, posY, width, height)
         
         // Create bitmap image from context using the rect
         let imageRef: CGImageRef = CGImageCreateWithImageInRect(contextImage.CGImage, rect)
@@ -107,7 +107,7 @@ public extension UIImage {
                 fatalError("Unsupported content mode \(contentMode)")
         }
 
-        let newSize: CGSize = CGSizeMake(self.size.width * ratio, self.size.height * ratio)
+        let newSize: CGSize = CGSize(width:self.size.width * ratio, self.size.height * ratio)
         return self.resizedImage(newSize, interpolationQuality: quality)
     }
     
@@ -130,8 +130,8 @@ public extension UIImage {
     }
     
     private func resizedImage(newSize: CGSize, transform: CGAffineTransform, drawTransposed transpose: Bool, interpolationQuality quality: CGInterpolationQuality) -> UIImage {
-        let newRect = CGRectIntegral(CGRectMake(0, 0, newSize.width, newSize.height))
-        let transposedRect = CGRectMake(0, 0, newRect.size.height, newRect.size.width)
+        let newRect = CGRectIntegral(CGRect(x:0, 0, newSize.width, newSize.height))
+        let transposedRect = CGRect(x:0, 0, newRect.size.height, newRect.size.width)
         let imageRef: CGImageRef = self.CGImage
 
         // Build a context that's the same dimensions as the new size

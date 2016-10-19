@@ -27,8 +27,8 @@ class AirLikeButton: AirToggleButton {
     }
     
     override func initialize(){
-        self.imageOff = Utils.imageHeartOff.imageWithRenderingMode(.AlwaysTemplate)
-        self.imageOn = Utils.imageHeartOn.imageWithRenderingMode(.AlwaysTemplate)
+        self.imageOff = Utils.imageHeartOff.withRenderingMode(.alwaysTemplate)
+        self.imageOn = Utils.imageHeartOn.withRenderingMode(.alwaysTemplate)
         
         super.initialize()
     }
@@ -39,10 +39,10 @@ class AirLikeButton: AirToggleButton {
 			self.entityId = self.entity!.id_
 			self.userLikes = self.entity!.userLikesValue
 			self.userLikesId = self.entity!.userLikesId
-            toggleOn(self.userLikes, animate: false)
+            toggleOn(on: self.userLikes, animate: false)
         }
         else {
-            toggleOn(false, animate: false)
+            toggleOn(on: false, animate: false)
         }
 	}
 	
@@ -52,11 +52,11 @@ class AirLikeButton: AirToggleButton {
 		self.userLikes = displayPhoto.userLikes
 		self.userLikesId = displayPhoto.userLikesId
 		
-		if let message: Message? = Message.fetchOneById(self.entityId!, inManagedObjectContext: DataController.instance.mainContext) {
+		if let message: Message? = Message.fetchOne(byId: self.entityId!, in: DataController.instance.mainContext) {
 			self.entity = message
 		}
 
-		toggleOn(self.userLikes, animate: false)
+		toggleOn(on: self.userLikes, animate: false)
 	}
 
     override func onClick(sender: AnyObject) {
@@ -65,23 +65,23 @@ class AirLikeButton: AirToggleButton {
             return
         }
         
-        self.enabled = false
+        self.isEnabled = false
         self.startProgress()
         self.imageView?.alpha = 0.0
         
         if self.userLikes {
             
-            DataController.proxibase.deleteLinkById(self.userLikesId!) {
+            DataController.proxibase.deleteLinkById(linkID: self.userLikesId!) {
                 response, error in
 				
-				NSOperationQueue.mainQueue().addOperationWithBlock {
+				OperationQueue.main.addOperation {
 					self.stopProgress()
 					if let error = ServerError(error) {
 						UIViewController.topMostViewController()!.handleError(error)
 					}
 					else {
 						Reporting.track("Unliked Message")
-						if DataController.instance.dataWrapperForResponse(response!) != nil {
+						if DataController.instance.dataWrapperForResponse(response: response!) != nil {
 							if self.entity != nil {
 								self.entity!.userLikesId = nil
 								self.entity!.userLikesValue = false
@@ -97,27 +97,26 @@ class AirLikeButton: AirToggleButton {
 					}
 					
 					if self.messageOff != nil {
-						UIShared.Toast(self.messageOff)
+						UIShared.Toast(message: self.messageOff)
 					}
-					
-					NSNotificationCenter.defaultCenter().postNotificationName(Events.LikeDidChange, object: self, userInfo: ["entityId":self.entityId!])
-					self.toggleOn(false)
-					self.enabled = true
+					NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.LikeDidChange), object: self, userInfo: ["entityId":self.entityId!])
+					self.toggleOn(on: false)
+					self.isEnabled = true
 				}				
             }
         }
         else {
 			
-            DataController.proxibase.insertLink(UserController.instance.userId! as String, toID: self.entityId!, linkType: .Like) {
+            DataController.proxibase.insertLink(fromID: UserController.instance.userId! as String, toID: self.entityId!, linkType: .Like) {
                 response, error in
 
-				NSOperationQueue.mainQueue().addOperationWithBlock {
+				OperationQueue.main.addOperation {
 					self.stopProgress()
 					if let error = ServerError(error) {
 						UIViewController.topMostViewController()!.handleError(error)
 					}
 					else {
-						if let serviceData = DataController.instance.dataWrapperForResponse(response!) {
+						if let serviceData = DataController.instance.dataWrapperForResponse(response: response!) {
 							if serviceData.countValue == 1 {
 								Reporting.track("Liked Message")
 								if let entityDictionaries = serviceData.data as? [[String:NSObject]] {
@@ -139,12 +138,12 @@ class AirLikeButton: AirToggleButton {
 					}
 					
 					if self.messageOn != nil {
-						UIShared.Toast(self.messageOn)
+						UIShared.Toast(message: self.messageOn)
 					}
 					
-					NSNotificationCenter.defaultCenter().postNotificationName(Events.LikeDidChange, object: self, userInfo: ["entityId":self.entityId!])
-					self.toggleOn(true)
-					self.enabled = true
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.LikeDidChange), object: self, userInfo: ["entityId":self.entityId!])
+					self.toggleOn(on: true)
+					self.isEnabled = true
 				}
             }
         }

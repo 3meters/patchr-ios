@@ -8,16 +8,17 @@
 import MBProgressHUD
 import DateTools
 import IDMPhotoBrowser
+import ReachabilitySwift
 
 struct UIShared {
 	
 	static func compatibilityUpgrade() {
 		
-		NSOperationQueue.mainQueue().addOperationWithBlock {
+		OperationQueue.main.addOperation {
 			
 			if let controller = UIViewController.topMostViewController() {
 				controller.UpdateConfirmationAlert(
-					"Update required",
+					title: "Update required",
 					message: "Your version of Patchr is not compatible with the Patchr service. Please update to a newer version.",
 					actionTitle: "Update",
 					cancelTitle: "Later") {
@@ -27,7 +28,7 @@ struct UIShared {
 							Reporting.track("Selected to Update Incompatible Version")
 							let appStoreURL = "itms-apps://itunes.apple.com/app/id\(APPLE_APP_ID)"
 							if let url = NSURL(string: appStoreURL) {
-								UIApplication.sharedApplication().openURL(url)
+								UIApplication.shared.openURL(url as URL)
 							}
 						}
 						else {
@@ -41,17 +42,17 @@ struct UIShared {
 	}
 	
 	static func versionIsValid(versionMin: Int) -> Bool {
-		let clientVersionCode = Int(NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleVersion") as! String)!
+		let clientVersionCode = Int(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String)!
 		DataController.proxibase.versionIsValid = (clientVersionCode >= versionMin)	// Sticks until the app is terminated
 		return (clientVersionCode >= versionMin)
 	}
 	
 	static func askToEnableLocationService() {
-		NSOperationQueue.mainQueue().addOperationWithBlock {
+		OperationQueue.main.addOperation {
 			
 			if let controller = UIViewController.topMostViewController() {
 				controller.LocationSettingsAlert(
-					"Location Services is disabled",
+					title: "Location Services is disabled",
 					message: "Patchr uses your location to discover nearby patches. Please turn on Location Services in your device settings.",
 					actionTitle: "Settings",
 					cancelTitle: "No Thanks") {
@@ -61,7 +62,7 @@ struct UIShared {
 							Reporting.track("Selected to View Location Settings")
 							let settingsURL = UIApplicationOpenSettingsURLString
 							if let url = NSURL(string: settingsURL) {
-								UIApplication.sharedApplication().openURL(url)
+								UIApplication.shared.openURL(url as URL)
 							}
 						}
 						else {
@@ -73,32 +74,32 @@ struct UIShared {
 		}
 	}
 
-    static func showPhoto(image: UIImage!, animateFromView: UIView!, viewController: UIViewController!, entity: Entity?) -> PhotoBrowser {
+    @discardableResult static func showPhoto(image: UIImage!, animateFromView: UIView!, viewController: UIViewController!, entity: Entity?) -> PhotoBrowser {
         /*
         * Create browser (must be done each time photo browser is displayed. Photo
         * browser objects cannot be re-used)
         */
         let photo = IDMPhoto(image:image)
         let photos = Array([photo])
-        let browser = PhotoBrowser(photos:photos as [AnyObject], animatedFromView: animateFromView)
+        let browser = PhotoBrowser(photos:photos as [Any], animatedFrom: animateFromView)
         
-        browser.usePopAnimation = true
-        browser.scaleImage = image  // Used because final image might have different aspect ratio than initially
-        browser.useWhiteBackgroundColor = true
-        browser.disableVerticalSwipe = false
+        browser?.usePopAnimation = true
+        browser?.scaleImage = image  // Used because final image might have different aspect ratio than initially
+        browser?.useWhiteBackgroundColor = true
+        browser?.disableVerticalSwipe = false
 		
         if entity != nil {
-            browser.bindEntity(entity)
+            browser?.bindEntity(entity: entity)
         }
         
-        viewController.navigationController!.presentViewController(browser, animated:true, completion:nil)
+        viewController.navigationController!.present(browser!, animated:true, completion:nil)
         
-        return browser
+        return browser!
     }
 	
-	static func StickyToast(message: String?, controller: UIViewController? = nil, addToWindow: Bool = true) -> AirProgress {
+	@discardableResult static func StickyToast(message: String?, controller: UIViewController? = nil, addToWindow: Bool = true) -> AirProgress {
 		
-		var targetView: UIView = UIApplication.sharedApplication().windows.last!
+		var targetView: UIView = UIApplication.shared.windows.last!
 		
 		if !addToWindow {
 			if controller == nil  {
@@ -109,23 +110,22 @@ struct UIShared {
 			}
 		}
 		
-		let progress = AirProgress.showHUDAddedTo(targetView, animated: true)
-		progress.mode = MBProgressHUDMode.Text
-		progress.styleAs(.ToastLight)
-		progress.labelText = message
-		progress.accessibilityIdentifier = "toast"
-		progress.detailsLabelText = "Tap to dismiss"
-		progress.xOffset = Float((UIScreen.mainScreen().bounds.size.height / 2) - 200)
-		progress.shadow = true
-		progress.removeFromSuperViewOnHide = false
-		progress.userInteractionEnabled = true
+		let progress = AirProgress.showAdded(to: targetView, animated: true)
+		progress?.mode = MBProgressHUDMode.text
+		progress?.styleAs(progressStyle: .ToastLight)
+		progress?.labelText = message
+		progress?.detailsLabelText = "Tap to dismiss"
+		progress?.xOffset = Float((UIScreen.main.bounds.size.height / 2) - 200)
+		progress?.shadow = true
+		progress?.removeFromSuperViewOnHide = false
+		progress?.isUserInteractionEnabled = true
 		
-		return progress
+		return progress!
 	}
 	
-	static func Toast(message: String?, duration: NSTimeInterval = 3.0, controller: UIViewController? = nil, addToWindow: Bool = true, identifier: String? = nil) -> AirProgress {
+	@discardableResult static func Toast(message: String?, duration: TimeInterval = 3.0, controller: UIViewController? = nil, addToWindow: Bool = true, identifier: String? = nil) -> AirProgress {
 		
-        var targetView: UIView = UIApplication.sharedApplication().windows.last!
+        var targetView: UIView = UIApplication.shared.windows.last!
         
         if !addToWindow {
             if controller == nil  {
@@ -137,29 +137,30 @@ struct UIShared {
         }
         
         var progress: AirProgress
-        progress = AirProgress.showHUDAddedTo(targetView, animated: true)
-        progress.mode = MBProgressHUDMode.Text
-        progress.styleAs(.ToastLight)
+        progress = AirProgress.showAdded(to: targetView, animated: true)
+        progress.mode = MBProgressHUDMode.text
+        progress.styleAs(progressStyle: .ToastLight)
         progress.labelText = message
-		progress.accessibilityIdentifier = identifier ?? "toast"
-        progress.yOffset = Float((UIScreen.mainScreen().bounds.size.height / 2) - 200)
+        progress.yOffset = Float((UIScreen.main.bounds.size.height / 2) - 200)
         progress.shadow = true
         progress.removeFromSuperViewOnHide = true
-        progress.userInteractionEnabled = false
+        progress.isUserInteractionEnabled = false
         progress.hide(true, afterDelay: duration)
         
         return progress
     }
 	
     static func hasConnectivity() -> Bool {
-        let reachability: Reachability = Reachability.reachabilityForInternetConnection()
-        let networkStatus: Int = reachability.currentReachabilityStatus().rawValue
-        return networkStatus != 0
+        let reachability: Reachability? = Reachability()
+        let networkStatus: Reachability.NetworkStatus = (reachability?.currentReachabilityStatus)!
+        return (networkStatus != .notReachable)
     }
 	
 	static func timeAgoMedium(date: NSDate) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .short
 		if date.monthsAgo() >= 1 {
-			return date.formattedDateWithStyle(.ShortStyle)
+			return dateFormatter.string(from: date as Date)
 		}
 		else {
 			return date.timeAgoSinceNow()
@@ -167,8 +168,10 @@ struct UIShared {
 	}
 	
 	static func timeAgoShort(date: NSDate) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .short
 		if date.monthsAgo() >= 1 {
-			return date.formattedDateWithStyle(.ShortStyle)
+            return dateFormatter.string(from: date as Date)
 		}
 		else {
 			return date.shortTimeAgoSinceNow()

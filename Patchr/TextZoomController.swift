@@ -32,10 +32,10 @@ class TextZoomController: BaseViewController {
 		self.description_.sizeToFit()
 		
 		let holderHeight = min(self.view.height() - 96, self.description_.height() + 56)
-		self.messageHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(24, topPadding: 72, height: holderHeight)
-		self.description_.fillSuperviewWithLeftPadding(24, rightPadding: 24, topPadding: 32, bottomPadding: 24)
-		self.description_.setContentOffset(CGPointZero, animated: false)
-		self.buttonCancel.anchorTopRightWithRightPadding(0, topPadding: 0, width: 48, height: 48)
+		self.messageHolder.anchorTopCenterFillingWidth(withLeftAndRightPadding: 24, topPadding: 72, height: holderHeight)
+		self.description_.fillSuperview(withLeftPadding: 24, rightPadding: 24, topPadding: 32, bottomPadding: 24)
+		self.description_.setContentOffset(CGPoint.zero, animated: false)
+		self.buttonCancel.anchorTopRight(withRightPadding: 0, topPadding: 0, width: 48, height: 48)
 	}
 	
     /*--------------------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ class TextZoomController: BaseViewController {
     *--------------------------------------------------------------------------------------------*/
     
 	func cancelAction(sender: AnyObject?) {
-		self.dismissViewControllerAnimated(true, completion: nil)
+		self.dismiss(animated: true, completion: nil)
 	}
 	
     /*--------------------------------------------------------------------------------------------
@@ -54,7 +54,6 @@ class TextZoomController: BaseViewController {
 		super.initialize()
 		
 		Reporting.screen("TextZoom")
-		self.view.accessibilityIdentifier = View.TextZoom
 		
 		self.view.backgroundColor = Colors.clear
 		self.scrollView.backgroundColor = Colors.opacity50pcntBlack
@@ -64,18 +63,18 @@ class TextZoomController: BaseViewController {
 		self.messageHolder.cornerRadius = 8
 		
 		self.description_.text = self.inputMessage!
-		self.description_.editable = false
+		self.description_.isEditable = false
 		self.description_.font = Theme.fontTextDisplay
-		self.description_.contentMode = .Top
-		self.description_.scrollEnabled = true
+		self.description_.contentMode = .top
+		self.description_.isScrollEnabled = true
 		
-		self.buttonCancel.setImage(UIImage(named: "imgCancelDark"), forState: .Normal)
+		self.buttonCancel.setImage(UIImage(named: "imgCancelDark"), for: .normal)
 		self.buttonCancel.tintColor = Theme.colorTint
 		
 		self.messageHolder.addSubview(self.description_)
 		self.messageHolder.addSubview(self.buttonCancel)
 
-		self.buttonCancel.addTarget(self, action: #selector(TextZoomController.cancelAction(_:)), forControlEvents: .TouchUpInside)
+		self.buttonCancel.addTarget(self, action: #selector(TextZoomController.cancelAction(sender:)), for: .touchUpInside)
 	}
 }
 

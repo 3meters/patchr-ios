@@ -45,7 +45,7 @@ class ChannelView: BaseView {
 		
 		if let patch = entity as? Patch {
             self.entity = patch
-            self.name.text = patch.name.lowercaseString.stringByReplacingOccurrencesOfString(" ", withString: "-")
+            self.name.text = patch.name.lowercased().replacingOccurrences(of: " ", with: "-")
             self.visibility.text = (patch.visibility != nil && patch.visibility == "public") ? String.fontAwesomeIconWithName(.Hashtag) : String.fontAwesomeIconWithName(.Lock)
 		}
 
@@ -56,7 +56,7 @@ class ChannelView: BaseView {
 		super.layoutSubviews()
 				
 		let columnWidth = NAVIGATION_DRAWER_WIDTH - (24 + 20 + 8 + 24)
-        self.visibility.anchorCenterLeftWithLeftPadding(24, width: 20, height: 20)
-        self.name.alignToTheRightOf(self.visibility, withLeftPadding: 0, topPadding: 6, width: columnWidth, height: 24)
+        self.visibility.anchorCenterLeft(withLeftPadding: 24, width: 20, height: 20)
+        self.name.align(toTheRightOf: self.visibility, withLeftPadding: 0, topPadding: 6, width: columnWidth, height: 24)
 	}
 }

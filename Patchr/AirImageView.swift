@@ -11,7 +11,7 @@ import SDWebImage
 
 class AirImageView: UIImageView {
 
-    var activity: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
+    var activity: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
 	
 	var showGradient: Bool = false {
 		didSet {
@@ -20,16 +20,16 @@ class AirImageView: UIImageView {
 					self.gradient = CAGradientLayer()
 					let startColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.2))  // Bottom
 					let endColor:   UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0))    // Top
-					self.gradient!.colors = [endColor.CGColor, startColor.CGColor]
+					self.gradient!.colors = [endColor.cgColor, startColor.cgColor]
 					self.gradient!.startPoint = CGPoint(x: 0.5, y: 0.5)
 					self.gradient!.endPoint = CGPoint(x: 0.5, y: 1)
 					self.gradient!.zPosition = 1
 					self.gradient!.shouldRasterize = true
-					self.gradient!.rasterizationScale = UIScreen.mainScreen().scale
+					self.gradient!.rasterizationScale = UIScreen.main.scale
 				}
 			
 				self.layer.addSublayer(self.gradient!)
-				self.gradient!.frame = CGRectMake(0, 0, self.bounds.size.width + 10, self.bounds.size.height + 10)
+                self.gradient!.frame = CGRect(x:0, y:0, width:self.bounds.size.width + 10, height:self.bounds.size.height + 10)
 			}
 			else {
 				if self.gradient != nil {
@@ -40,7 +40,7 @@ class AirImageView: UIImageView {
 	}
 	
     var gradient: CAGradientLayer?
-    var linkedPhotoUrl: NSURL?
+    var linkedPhotoUrl: URL?
     var sizeCategory: String = SizeCategory.thumbnail
     
     required init(coder aDecoder: NSCoder) {
@@ -55,14 +55,13 @@ class AirImageView: UIImageView {
     
     func initialize(){
 		self.activity.hidesWhenStopped = true
-		self.activity.accessibilityIdentifier = "activity_image"
         addSubview(self.activity)
     }
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		
-		self.activity.anchorInCenterWithWidth(20, height: 20)
+		self.activity.anchorInCenter(withWidth: 20, height: 20)
 		
 		/* Gradient */
 		if self.showGradient {
@@ -71,15 +70,15 @@ class AirImageView: UIImageView {
 				self.layer.addSublayer(self.gradient!)
 				let startColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.2))  // Bottom
 				let endColor:   UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0))    // Top
-				self.gradient!.colors = [endColor.CGColor, startColor.CGColor]
+				self.gradient!.colors = [endColor.cgColor, startColor.cgColor]
 				self.gradient!.startPoint = CGPoint(x: 0.5, y: 0.5)
 				self.gradient!.endPoint = CGPoint(x: 0.5, y: 1)
 				self.gradient!.zPosition = 1
 				self.gradient!.shouldRasterize = true
-				self.gradient!.rasterizationScale = UIScreen.mainScreen().scale
+				self.gradient!.rasterizationScale = UIScreen.main.scale
 			}
 			
-			self.gradient!.frame = CGRectMake(0, 0, self.bounds.size.width + 10, self.bounds.size.height + 10)
+            self.gradient!.frame = CGRect(x:0, y:0, width:self.bounds.size.width + 10, height:self.bounds.size.height + 10)
 		}
 		else {
 			if self.gradient != nil {
@@ -101,13 +100,13 @@ class AirImageView: UIImageView {
             return false
         }
         
-        let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory)
+        let photoUrl = PhotoUtils.url(prefix: photo.prefix!, source: photo.source!, category: self.sizeCategory)
         return (self.linkedPhotoUrl!.absoluteString == photoUrl.absoluteString)
     }
     
     func setImageWithPhoto(photo: Photo, animate: Bool = true) {
         
-		let photoUrl = PhotoUtils.url(photo.prefix!, source: photo.source!, category: self.sizeCategory)
+		let photoUrl = PhotoUtils.url(prefix: photo.prefix!, source: photo.source!, category: self.sizeCategory)
 		
 		guard photoUrl.absoluteString != self.linkedPhotoUrl?.absoluteString else {
 			return
@@ -115,9 +114,9 @@ class AirImageView: UIImageView {
 		
         if photo.source == PhotoSource.resource {
             if animate {
-                UIView.transitionWithView(self,
+                UIView.transition(with: self,
                     duration: 0.5,
-                    options: UIViewAnimationOptions.TransitionCrossDissolve,
+                    options: UIViewAnimationOptions.transitionCrossDissolve,
                     animations: {
 						/* Optimization to skip decoding from file */
 						if photo.prefix == "imgDefaultPatch" {
@@ -146,51 +145,55 @@ class AirImageView: UIImageView {
             }
             return
         }
-		
-		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-			
+        
+        DispatchQueue.global().async {
 			if photoUrl.absoluteString.isEmpty {
 				let error = NSError(domain: "Photo error", code: 0, userInfo: [NSLocalizedDescriptionKey:"Photo has invalid source: \(photo.source!)"])
-				dispatch_async(dispatch_get_main_queue()) {
-					self.imageCompletion(nil, error: error, cacheType: nil, url: nil, animate: animate)
+				DispatchQueue.main.async() {
+					self.imageCompletion(image: nil, error: error, cacheType: nil, url: nil, animate: animate)
 				}
 				return
 			}
 			
 			/* Stash the url we are loading so we can check for a match later when download is completed. */
 			self.linkedPhotoUrl = photoUrl
-			let options: SDWebImageOptions = [.RetryFailed, .LowPriority, .AvoidAutoSetImage, /* .ProgressiveDownload */]
+			let options: SDWebImageOptions = [.retryFailed, .lowPriority, .avoidAutoSetImage, /* .ProgressiveDownload */]
 			
-			self.sd_setImageWithURL(photoUrl,
+            self.sd_setImage(with: photoUrl,
 				placeholderImage: nil,
-				options: options) {
-					[weak self] image, error, cacheType, url in
-					dispatch_async(dispatch_get_main_queue()) {
-						self?.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
-					}
-			}
+				options: options,
+				completed: {
+                    [weak self] image, error, cacheType, url in
+                    if (self != nil) {
+                        DispatchQueue.main.async() {
+                            self!.imageCompletion(image: image, error: error, cacheType: cacheType, url: url, animate: animate)
+                        }
+                    }
+            })
 		}
-		
-		dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
 			self.startActivity()
 		}
     }
 	
-	func setImageWithUrl(url: NSURL, animate: Bool = true) {
+	func setImageWithUrl(url: URL, animate: Bool = true) {
 
 		/* Stash the url we are loading so we can check for a match later when download is completed. */
 		self.linkedPhotoUrl = url
-		let options: SDWebImageOptions = [.RetryFailed, .LowPriority, .AvoidAutoSetImage, /* .ProgressiveDownload */]
+		let options: SDWebImageOptions = [.retryFailed, .lowPriority, .avoidAutoSetImage, /* .ProgressiveDownload */]
 
-		self.sd_setImageWithURL(url
-			, placeholderImage: nil
-			, options: options) {
-				[weak self] image, error, cacheType, url in
-				self?.imageCompletion(image, error: error, cacheType: cacheType, url: url, animate: animate)
-			}
+		self.sd_setImage(with: url,
+            placeholderImage: nil,
+            options: options,
+            completed: {
+                [weak self] image, error, cacheType, url in
+                if (self != nil) {
+                    self!.imageCompletion(image: image, error: error, cacheType: cacheType, url: url, animate: animate)
+                }
+            })
 	}
 
-    func imageCompletion(image: UIImage?, error: NSError?, cacheType: SDImageCacheType?, url: NSURL?, animate: Bool = true) -> Void {
+    func imageCompletion(image: UIImage?, error: Error?, cacheType: SDImageCacheType?, url: URL?, animate: Bool = true) -> Void {
         
         stopActivity()
 		
@@ -201,19 +204,19 @@ class AirImageView: UIImageView {
 			
 			self.linkedPhotoUrl = nil
 
-			if error!.code == HTTPStatusCode.NotFound.rawValue {
-				NSNotificationCenter.defaultCenter().postNotificationName(Events.ImageNotFound, object: self)
-				UIShared.Toast("Image not found")
+			if error!._code == HTTPStatusCode.NotFound.rawValue {
+				NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.ImageNotFound), object: self)
+				UIShared.Toast(message: "Image not found")
 			}
-			else if error!.code == HTTPStatusCode.UnsupportedMediaType.rawValue {
-				NSNotificationCenter.defaultCenter().postNotificationName(Events.ImageNotFound, object: self)
-				UIShared.Toast("Image format not supported")
+			else if error!._code == HTTPStatusCode.UnsupportedMediaType.rawValue {
+				NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.ImageNotFound), object: self)
+				UIShared.Toast(message: "Image format not supported")
 			}
 			
 			return
         }
         else {
-            self.contentMode = UIViewContentMode.ScaleAspectFill
+            self.contentMode = UIViewContentMode.scaleAspectFill
         }
         
         /* Image returned is not the one we want anymore */
@@ -222,9 +225,9 @@ class AirImageView: UIImageView {
         }
         		
 		if animate /*|| cacheType == SDImageCacheType.None || cacheType == SDImageCacheType.Disk*/ {
-			UIView.transitionWithView(self,
+			UIView.transition(with: self,
 				duration: 0.4,
-				options: UIViewAnimationOptions.TransitionCrossDissolve,
+				options: UIViewAnimationOptions.transitionCrossDissolve,
 				animations: {
 					self.image = image
 				},

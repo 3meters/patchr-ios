@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import ReachabilitySwift
 
 class ReachabilityManager: NSObject {
 
@@ -17,40 +18,42 @@ class ReachabilityManager: NSObject {
     override init(){
         super.init()
 
-        self.reach = Reachability(hostName: "clients3.google.com")  // Google uses this to test for captive portals
+        self.reach = Reachability(hostname: "clients3.google.com")  // Google uses this to test for captive portals
 
         /*
         * Called on a background thread.
         */
-        self.reach!.reachableBlock = { (let reach: Reachability!) -> Void in
+        self.reach!.whenReachable = { reachability in
             self.reachable = true
-            dispatch_async(dispatch_get_main_queue()) {
-                Log.d("Network is reachable: \(reach)", breadcrumb: true)
+            DispatchQueue.main.async() {
+                Log.d("Network is reachable: \(self.reach!)", breadcrumb: true)
             }
         }
 
-        self.reach!.unreachableBlock = { (let reach: Reachability!) -> Void in
+        self.reach!.whenUnreachable = { reachability in
             self.reachable = false
-            Log.d("Network is unreachable: \(reach)", breadcrumb: true)
+            Log.d("Network is unreachable: \(self.reach!)", breadcrumb: true)
         }
-
-        self.reach.startNotifier()
-        Log.d("Network flags: \(reach)")
+        
+        try! self.reach!.startNotifier()
+        Log.d("Network flags: \(self.reach!)")
     }
 
     func isReachable() -> Bool {
-        return self.reach.isReachable()
+        return self.reach.isReachable
     }
 
     func isUnreachable() -> Bool {
-        return !self.reach.isReachable()
+        return !self.reach.isReachable
     }
 
     func isReachableViaWWAN() -> Bool {
-        return self.reach.isReachableViaWWAN()
+        return self.reach.isReachableViaWWAN
     }
 
     func isReachableViaWiFi() -> Bool {
-        return self.reach.isReachableViaWiFi()
+        return self.reach.isReachableViaWiFi
     }
+    
+    func warmup() {}
 }

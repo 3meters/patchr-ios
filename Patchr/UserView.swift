@@ -17,7 +17,7 @@ class UserView: BaseView {
 	var owner			= UILabel()
 	
 	init() {
-		super.init(frame: CGRectZero)
+		super.init(frame: CGRect.zero)
 		initialize()
 	}
 	
@@ -42,8 +42,8 @@ class UserView: BaseView {
 
 		/* User name */
 		self.name.titleLabel?.font = Theme.fontTextDisplay
-		self.name.contentHorizontalAlignment = .Left
-		self.name.addTarget(self, action: #selector(UserView.browseUser(_:)), forControlEvents: .TouchUpInside)
+		self.name.contentHorizontalAlignment = .left
+		self.name.addTarget(self, action: #selector(UserView.browseUser(sender:)), for: .touchUpInside)
 		self.titleGroup.addSubview(self.name)
 		
 		/* User area */
@@ -66,15 +66,15 @@ class UserView: BaseView {
 		
 		self.entity = entity
 		
-		self.name.setTitle(entity.name, forState: .Normal)
-		self.photo.bindToEntity(entity)
+		self.name.setTitle(entity.name, for: .normal)
+		self.photo.bindToEntity(entity: entity)
 		
-		self.owner.hidden = true
-		self.area.hidden = true
+		self.owner.isHidden = true
+		self.area.isHidden = true
 		
-		if let user = entity as? User where user.area != nil {
-			self.area.text = user.area.uppercaseString
-			self.area.hidden = false
+		if let user = entity as? User , user.area != nil {
+			self.area.text = user.area.uppercased()
+			self.area.isHidden = false
 		}
 		
 		self.setNeedsLayout()	// Needed because elements can have changed dimensions
@@ -86,20 +86,20 @@ class UserView: BaseView {
 		let columnLeft = CGFloat(72 + 8)
 		let columnWidth = self.width() - columnLeft
 		
-		self.photo.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 72, height: 72)
-		self.titleGroup.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 6, width: columnWidth, height: 72)
+		self.photo.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: 72, height: 72)
+		self.titleGroup.anchorTopLeft(withLeftPadding: columnLeft, topPadding: 6, width: columnWidth, height: 72)
 		self.name.sizeToFit()
-		self.name.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: self.name.width(), height: self.name.height() - 4)
+		self.name.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: self.name.width(), height: self.name.height() - 4)
 		
-		if !self.area.hidden {
+		if !self.area.isHidden {
 			self.area.bounds.size.width = self.titleGroup.width()
 			self.area.sizeToFit()
 			self.area.alignUnder(self.name, matchingLeftWithTopPadding: -2, width: columnWidth, height: self.area.height())
 		}
 		
-		if !self.owner.hidden {
+		if !self.owner.isHidden {
 			self.owner.sizeToFit()
-			self.owner.alignUnder(self.area.hidden ? self.name : self.area, matchingLeftWithTopPadding: 2, width: columnWidth, height: self.owner.height())
+			self.owner.alignUnder(self.area.isHidden ? self.name : self.area, matchingLeftWithTopPadding: 2, width: columnWidth, height: self.owner.height())
 		}
 	}
 	

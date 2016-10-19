@@ -22,10 +22,10 @@ class ShareViewController: SLComposeServiceViewController {
     
     lazy var patchConfigurationItem: SLComposeSheetConfigurationItem = {
         let item = SLComposeSheetConfigurationItem()
-        item.title = "Patch"
-        item.value = PatchTargetViewController.defaultPatch()
-        item.tapHandler = self.showPatchPicker
-        return item
+        item?.title = "Patch"
+        item?.value = PatchTargetViewController.defaultPatch()
+        item?.tapHandler = self.showPatchPicker
+        return item!
     }()
     
     /*--------------------------------------------------------------------------------------------
@@ -34,10 +34,10 @@ class ShareViewController: SLComposeServiceViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
+        if let groupDefaults = UserDefaults(suiteName: "group.com.3meters.patchr.ios") {
 			let lockbox = Lockbox(keyPrefix: KEYCHAIN_GROUP)
-            self.userId = groupDefaults.stringForKey(PatchrUserDefaultKey("userId"))
-			self.sessionKey = lockbox.unarchiveObjectForKey("sessionKey") as? String
+            self.userId = groupDefaults.string(forKey: PatchrUserDefaultKey(subKey: "userId"))
+			self.sessionKey = lockbox?.unarchiveObject(forKey: "sessionKey") as? String
         }
         /*
         * ISSUE: User info won't be there if the user uses is not currently signed into Patchr.
@@ -46,12 +46,12 @@ class ShareViewController: SLComposeServiceViewController {
         if self.userId == nil {
             let alert = UIAlertController(title: "Patchr sign in",
                 message: "To share messages and photos to Patchr, you need to be signed in.",
-                preferredStyle: .Alert)
-            let action = UIAlertAction(title: "OK", style: .Cancel) { _ in
+                preferredStyle: .alert)
+            let action = UIAlertAction(title: "OK", style: .cancel) { _ in
                 self.cancel()
             }
             alert.addAction(action)
-            self.presentViewController(alert, animated: true, completion: nil)
+            self.present(alert, animated: true, completion: nil)
         }
     }
     
@@ -61,7 +61,7 @@ class ShareViewController: SLComposeServiceViewController {
         Log.d("Presenting patchr extension")
         placeholder = "Your comments"
         
-        for item: AnyObject in self.extensionContext!.inputItems {
+        for item: Any in self.extensionContext!.inputItems {
             
             let inputItem = item as! NSExtensionItem
             for provider in inputItem.attachments as! [NSItemProvider] {
@@ -75,8 +75,8 @@ class ShareViewController: SLComposeServiceViewController {
                     || provider.hasItemConformingToTypeIdentifier("public.image") {
                     
                     hasImage = true
-                    let dispatchQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
-                    dispatch_async(dispatchQueue, {[weak self] in
+                    let dispatchQueue = DispatchQueue.global()
+                    dispatchQueue.async(execute: {[weak self] in
                         
                         let strongSelf = self!
                         
@@ -85,7 +85,7 @@ class ShareViewController: SLComposeServiceViewController {
                             identifier = kUTTypeImage as String
                         }
                         
-                        provider.loadItemForTypeIdentifier(identifier, options: nil) {
+                        provider.loadItem(forTypeIdentifier: identifier, options: nil) {
                             content, error in
                             Log.d("Processing image")
                             Log.d("Content: \(content)")
@@ -93,36 +93,36 @@ class ShareViewController: SLComposeServiceViewController {
                             if error == nil {
                                 if let url = content as? NSURL {
                                     Log.d("As NSURL...")
-                                    if let data = NSData(contentsOfURL: url) {
-                                        dispatch_async(dispatch_get_main_queue(), {
-                                            strongSelf.image = UIImage(data: data)
+                                    if let data = NSData(contentsOf: url as URL) {
+                                        DispatchQueue.main.async(execute: {
+                                            strongSelf.image = UIImage(data: data as Data)
                                             strongSelf.validateContent()
                                         })
                                     }
                                 }
                                 else if let data = content as? NSData {
                                     Log.d("As NSData...")
-                                    dispatch_async(dispatch_get_main_queue(), {
-                                        strongSelf.image = UIImage(data: data)
+                                    DispatchQueue.main.async(execute: {
+                                        strongSelf.image = UIImage(data: data as Data)
                                         strongSelf.validateContent()
                                     })
                                 }
                                 else if let image = content as? UIImage {
                                     Log.d("As UIImage...")
-                                    dispatch_async(dispatch_get_main_queue(), {
+                                    DispatchQueue.main.async(execute: {
                                         strongSelf.image = image
                                         strongSelf.validateContent()
                                     })
                                 }
                             }
                             else {
-                                let alert = UIAlertController(title: "Error", message: "Error loading image", preferredStyle: .Alert)
-                                let action = UIAlertAction(title: "Error", style: .Cancel) { _ in
-                                    strongSelf.dismissViewControllerAnimated(true, completion: nil)
+                                let alert = UIAlertController(title: "Error", message: "Error loading image", preferredStyle: .alert)
+                                let action = UIAlertAction(title: "Error", style: .cancel) { _ in
+                                    strongSelf.dismiss(animated: true, completion: nil)
                                 }
                                 
                                 alert.addAction(action)
-                                strongSelf.presentViewController(alert, animated: true, completion: nil)
+                                strongSelf.present(alert, animated: true, completion: nil)
                             }
                         }
                     })
@@ -132,12 +132,12 @@ class ShareViewController: SLComposeServiceViewController {
                 
                 if !hasImage {
                     if provider.hasItemConformingToTypeIdentifier("public.url") {
-                        let dispatchQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
-                        dispatch_async(dispatchQueue, {[weak self] in
+                        let dispatchQueue = DispatchQueue.global()
+                        dispatchQueue.async(execute: {[weak self] in
                             
                             let strongSelf = self!
                             
-                            provider.loadItemForTypeIdentifier("public.url", options: nil) {
+                            provider.loadItem(forTypeIdentifier: "public.url", options: nil) {
                                 content, error in
                                 Log.d("Processing url")
                                 
@@ -148,7 +148,7 @@ class ShareViewController: SLComposeServiceViewController {
                                          * When sharing url from chrome, the textView is set to the page
                                          * title so is not empty.
                                          */
-                                        dispatch_async(dispatch_get_main_queue()) {
+                                        DispatchQueue.main.async() {
                                             strongSelf.placeholder = nil
                                             strongSelf.url = url
                                             if strongSelf.textView.text.isEmpty {
@@ -174,12 +174,12 @@ class ShareViewController: SLComposeServiceViewController {
 
     override func didSelectPost() {
         let imageKey = "\(Utils.genImageKey()).jpg"
-        let message = buildMessage(imageKey)
-        Proxibase.sharedService.postMessage(message, patch: self.patch!)
+        let message = buildMessage(imageKey: imageKey)
+        Proxibase.sharedService.postMessage(message: message, patch: self.patch!)
         if self.image != nil {
             S3.sharedService.uploadImage(image: self.image!, key: imageKey, bucket: S3.sharedService.imageBucket, shared: true)
         }
-        self.extensionContext?.completeRequestReturningItems([], completionHandler: nil)
+        self.extensionContext?.completeRequest(returningItems: [], completionHandler: nil)
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -195,48 +195,48 @@ class ShareViewController: SLComposeServiceViewController {
     
     func showPatchPicker(){
         
-        let storyboard = UIStoryboard(name: "PatchrShare", bundle: NSBundle.mainBundle())
-        if let controller = storyboard.instantiateViewControllerWithIdentifier("PatchTargetViewController") as? PatchTargetViewController {
+        let storyboard = UIStoryboard(name: "PatchrShare", bundle: Bundle.main)
+        if let controller = storyboard.instantiateViewController(withIdentifier: "PatchTargetViewController") as? PatchTargetViewController {
             controller.patch = patchConfigurationItem.value
             controller.delegate = self
-            controller.preferredContentSize = CGSizeMake(300, 300)
+            controller.preferredContentSize = CGSize(width: 300, height: 300)
             pushConfigurationViewController(controller)
         }
     }
     
     func buildMessage(imageKey: String) -> [String:AnyObject] {
         
-        let links = Array(arrayLiteral: [
-            "type": "content",
-            "_to": self.patchId
-            ]) as [[String:AnyObject]]
+        let links = [[
+            "type": "content" as AnyObject,
+            "_to": self.patchId as AnyObject
+            ]] as [[String:AnyObject]]
         
         let description = self.contentText
         
-        var message = [
-            "description": description,
-            "links": links
-            ] as [String:AnyObject]
+        var message: [String:AnyObject] = [
+            "description": description as AnyObject,
+            "links": links as AnyObject
+            ]
         
         if self.image != nil {
             let photo = [
                 "width": Int(self.image!.size.width), // width/height are in points...should be pixels?
                 "height": Int(self.image!.size.height),
                 "source": "aircandi.images",
-                "prefix": imageKey]
-            message["photo"] = photo
+                "prefix": imageKey] as [String : Any]
+            message["photo"] = photo as AnyObject?
         }
         
         let body = [
-            "user": self.userId!,
-            "session": self.sessionKey!,
-            "data": message
+            "user": self.userId! as AnyObject,
+            "session": self.sessionKey! as AnyObject,
+            "data": message as AnyObject
             ] as [String:AnyObject]
         
         return body
     }
     
-    override func configurationItems() -> [AnyObject]! {
+    override func configurationItems() -> [Any]! {
         return [patchConfigurationItem]
     }
 }

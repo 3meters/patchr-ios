@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0720"
+   LastUpgradeVersion = "0800"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "NO"
@@ -28,20 +28,6 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "NO">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E2CA0C3A1C50335500E2F380"
-               BuildableName = "PatchrTests.xctest"
-               BlueprintName = "PatchrTests"
-               ReferencedContainer = "container:Patchr.xcodeproj">
-            </BuildableReference>
-            <LocationScenarioReference
-               identifier = "com.apple.dt.IDEFoundation.CurrentLocationScenarioIdentifier"
-               referenceType = "1">
-            </LocationScenarioReference>
-         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference

@@ -4,9 +4,9 @@ import IDMPhotoBrowser
 class DisplayPhoto: IDMPhoto {
 	
     var createdDateLabel	: String?
-	var createdDateValue	: NSDate?
+	var createdDateValue	: Date?
 	var creatorName			: String?
-	var creatorUrl			: NSURL?
+	var creatorUrl			: URL?
 	var entityId			: String?
 	var userLikes			= false
 	var userLikesId			: String?
@@ -24,19 +24,19 @@ class DisplayPhoto: IDMPhoto {
 		displayPhoto.entityId = entity.id_
 		
 		if let photo = entity.photo {
-			displayPhoto.photoURL = PhotoUtils.url(photo.prefix, source: photo.source, category: SizeCategory.standard)
+			displayPhoto.photoURL = PhotoUtils.url(prefix: photo.prefix, source: photo.source, category: SizeCategory.standard) as URL!
 			if photo.width != nil && photo.height != nil {
-				displayPhoto.size = CGSizeMake(CGFloat(photo.widthValue), CGFloat(photo.heightValue))
+                displayPhoto.size = CGSize(width: CGFloat(photo.widthValue), height: CGFloat(photo.heightValue))
 			}
 		}
 		
 		displayPhoto.createdDateValue = entity.createdDate
-		displayPhoto.createdDateLabel = UIShared.timeAgoShort(entity.createdDate)
+		displayPhoto.createdDateLabel = UIShared.timeAgoShort(date: entity.createdDate as NSDate)
 		
 		if let creator = entity.creator {
 			displayPhoto.creatorName = creator.name
 			if let userPhoto = creator.photo{
-				displayPhoto.creatorUrl = PhotoUtils.url(userPhoto.prefix, source: userPhoto.source, category: SizeCategory.profile)
+				displayPhoto.creatorUrl = PhotoUtils.url(prefix: userPhoto.prefix, source: userPhoto.source, category: SizeCategory.profile) as URL
 			}
 		}
 		
@@ -54,24 +54,24 @@ class DisplayPhoto: IDMPhoto {
 		displayPhoto.entityId = map["_id"] as? String
 		
 		if let photoMap = map["photo"] as? [String: AnyObject] {
-			displayPhoto.photoURL = PhotoUtils.url(photoMap["prefix"] as! String, source: photoMap["source"] as! String, category: SizeCategory.standard)
+			displayPhoto.photoURL = PhotoUtils.url(prefix: photoMap["prefix"] as! String, source: photoMap["source"] as! String, category: SizeCategory.standard) as URL!
 		}
 		
 		if let createdDate = map["createdDate"] as? Int {
-			displayPhoto.createdDateValue = NSDate(timeIntervalSince1970: NSTimeInterval(createdDate / 1000))
-			displayPhoto.createdDateLabel = UIShared.timeAgoShort(displayPhoto.createdDateValue!)
+			displayPhoto.createdDateValue = NSDate(timeIntervalSince1970: TimeInterval(createdDate / 1000)) as Date
+			displayPhoto.createdDateLabel = UIShared.timeAgoShort(date: displayPhoto.createdDateValue! as NSDate)
 		}		
 		
 		if let creatorMap = map["creator"] as? [String: AnyObject] {
 			displayPhoto.creatorName = creatorMap["name"] as? String
 			if let userPhotoMap = creatorMap["photo"] as? [String: AnyObject] {
-				displayPhoto.creatorUrl = PhotoUtils.url(userPhotoMap["prefix"] as! String, source: userPhotoMap["source"] as! String, category: SizeCategory.profile)
+				displayPhoto.creatorUrl = PhotoUtils.url(prefix: userPhotoMap["prefix"] as! String, source: userPhotoMap["source"] as! String, category: SizeCategory.profile) as URL
 			}
 		}
 		
-		if let linksArray = map["links"] as? [[String: AnyObject]] where linksArray.count > 0 {
+		if let linksArray = map["links"] as? [[String: AnyObject]] , linksArray.count > 0 {
 			var linkMap = linksArray[0]
-			if let type = linkMap["type"] as? String where type == "like" {
+			if let type = linkMap["type"] as? String , type == "like" {
 			}
 		}
 		

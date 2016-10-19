@@ -18,7 +18,7 @@ enum PhotoMode: Int {
 class PhotoEditView: UIView {
 	
 	override var layoutMargins: UIEdgeInsets {
-		get { return UIEdgeInsetsZero }
+		get { return UIEdgeInsets.zero }
 		set (newVal) {}
 	}
 	
@@ -40,9 +40,9 @@ class PhotoEditView: UIView {
     var editPhotoButton		= UIButton()
     var clearPhotoButton	= UIButton()
 	
-	var clearButtonAlignment: NSTextAlignment = NSTextAlignment.Left
-	var editButtonAlignment: NSTextAlignment = NSTextAlignment.Right
-	var setButtonAlignment: NSTextAlignment = NSTextAlignment.Center
+	var clearButtonAlignment: NSTextAlignment = NSTextAlignment.left
+	var editButtonAlignment: NSTextAlignment = NSTextAlignment.right
+	var setButtonAlignment: NSTextAlignment = NSTextAlignment.center
 	
 	/*--------------------------------------------------------------------------------------------
 	* Lifecycle
@@ -69,39 +69,39 @@ class PhotoEditView: UIView {
 		
 		self.photoGroup.fillSuperview()
 		self.imageButton.fillSuperview()
-		self.scrimGroup.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 48)
+		self.scrimGroup.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 48)
 		
-		if self.editButtonAlignment == .Right {
-			self.editPhotoButton.anchorCenterRightWithRightPadding(6, width: 36, height: 36)
+		if self.editButtonAlignment == .right {
+			self.editPhotoButton.anchorCenterRight(withRightPadding: 6, width: 36, height: 36)
 		}
-		else if self.editButtonAlignment == .Left {
-			self.editPhotoButton.anchorCenterLeftWithLeftPadding(6, width: 36, height: 36)
+		else if self.editButtonAlignment == .left {
+			self.editPhotoButton.anchorCenterLeft(withLeftPadding: 6, width: 36, height: 36)
 		}
 		
-		if self.clearButtonAlignment == .Right {
-			self.clearPhotoButton.anchorCenterRightWithRightPadding(6, width: 36, height: 36)
+		if self.clearButtonAlignment == .right {
+			self.clearPhotoButton.anchorCenterRight(withRightPadding: 6, width: 36, height: 36)
 		}
-		else if self.clearButtonAlignment == .Left {
-			self.clearPhotoButton.anchorCenterLeftWithLeftPadding(6, width: 36, height: 36)
+		else if self.clearButtonAlignment == .left {
+			self.clearPhotoButton.anchorCenterLeft(withLeftPadding: 6, width: 36, height: 36)
 		}
 		
 		if self.photoMode == .Placeholder {
-			self.setPhotoButton.anchorInCenterWithWidth(48, height: 48)
+			self.setPhotoButton.anchorInCenter(withWidth: 48, height: 48)
 		}
 		else {
-			self.setPhotoButton.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 48)
+			self.setPhotoButton.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 48)
 		}
 	}
 	
 	func imageNotFoundAction(sender: AnyObject) {
 		if self.photoSchema == Schema.ENTITY_MESSAGE {
-			self.imageButton.setImage(nil, forState: .Normal)
-			configureTo(.Empty)
+			self.imageButton.setImage(nil, for: .normal)
+			configureTo(photoMode: .Empty)
 		}
 		else {
-			self.imageButton.setImage(nil, forState: .Normal)
+			self.imageButton.setImage(nil, for: .normal)
 			self.usingPhotoDefault = true
-			configureTo(.Placeholder)
+			configureTo(photoMode: .Placeholder)
 		}
 		
 		self.photoActive = false
@@ -109,40 +109,40 @@ class PhotoEditView: UIView {
 	
 	func editPhotoAction(sender: AnyObject){
 		if self.controller != nil {
-			NSNotificationCenter.defaultCenter().postNotificationName(Events.PhotoViewHasFocus, object: nil)
-			let controller = AdobeUXImageEditorViewController(image: self.imageButton.imageForState(.Normal)!)
+			NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoViewHasFocus), object: nil)
+			let controller = AdobeUXImageEditorViewController(image: self.imageButton.image(for: .normal)!)
 			controller.delegate = self
-			self.controller!.presentViewController(controller, animated: true, completion: nil)
+			self.controller!.present(controller, animated: true, completion: nil)
 		}
 	}
 	
 	func clearPhotoAction(sender: AnyObject) {
 		
-		NSNotificationCenter.defaultCenter().postNotificationName(Events.PhotoViewHasFocus, object: nil)
+		NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoViewHasFocus), object: nil)
 		
 		if self.photoSchema == Schema.ENTITY_MESSAGE {
-			self.imageButton.setImage(nil, forState: .Normal)
-			configureTo(.Empty)
+			self.imageButton.setImage(nil, for: .normal)
+			configureTo(photoMode: .Empty)
 		}
 		else {
-			self.imageButton.setImage(nil, forState: .Normal)
+			self.imageButton.setImage(nil, for: .normal)
 			self.usingPhotoDefault = true
-			configureTo(.Placeholder)
+			configureTo(photoMode: .Placeholder)
 		}
 		
 		self.photoActive = false
 		self.photoDirty = true
 		
-		NSNotificationCenter.defaultCenter().postNotificationName(Events.PhotoDidChange, object: nil)
+		NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
 	}
 	
 	func setPhotoAction(sender: AnyObject) {
-		NSNotificationCenter.defaultCenter().postNotificationName(Events.PhotoViewHasFocus, object: nil)
-		self.photoChooser?.choosePhoto(sender) {
+		NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoViewHasFocus), object: nil)
+		self.photoChooser?.choosePhoto(sender: sender) {
 			[weak self] image, imageResult, cancelled in
 			
 			if !cancelled {
-				self?.photoChosen(image, imageResult: imageResult)
+                self?.photoChosen(image: image, imageResult: imageResult)
 			}
 		}
 	}
@@ -150,28 +150,28 @@ class PhotoEditView: UIView {
 	func photoChosen(image: UIImage?, imageResult: ImageResult?) -> Void {
 		
 		if image != nil {
-			self.imageButton.setImage(image, forState: .Normal)
+			self.imageButton.setImage(image, for: .normal)
 		}
 		else if imageResult != nil {
 			/*
 			 * Request image via resizer so size is capped. We don't use imgix because it only uses
 			 * known image sources that we setup like our buckets on s3.
 			 */
-			let dimension = imageResult!.width >= imageResult!.height ? ResizeDimension.width : ResizeDimension.height
-			let url = NSURL(string: GooglePlusProxy.convert(imageResult!.contentUrl!, size: Int(IMAGE_DIMENSION_MAX), dimension: dimension))
-			self.imageButton.setImageWithUrl(url!)  // Downloads and pushes into photoImage
+			let dimension = imageResult!.width! >= imageResult!.height! ? ResizeDimension.width : ResizeDimension.height
+			let url = URL(string: GooglePlusProxy.convert(uri: imageResult!.contentUrl!, size: Int(IMAGE_DIMENSION_MAX), dimension: dimension))
+			self.imageButton.setImageWithUrl(url: url!)  // Downloads and pushes into photoImage
 		}
 		
-		Reporting.track("Set Photo", properties: ["target":self.photoSchema!])
+		Reporting.track("Set Photo", properties: ["target":self.photoSchema! as AnyObject])
 		self.usingPhotoDefault = false
 		
 		self.photoDirty = true
 		self.photoActive = true
 		self.photoChosen = true
 		
-		configureTo(.Photo)
+		configureTo(photoMode: .Photo)
 		
-		NSNotificationCenter.defaultCenter().postNotificationName(Events.PhotoDidChange, object: nil)
+		NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
 	}
 	
 	/*--------------------------------------------------------------------------------------------
@@ -180,8 +180,8 @@ class PhotoEditView: UIView {
 
 	func initialize() {
 		
-		let notificationCenter = NSNotificationCenter.defaultCenter()
-		notificationCenter.addObserver(self, selector: #selector(PhotoEditView.imageNotFoundAction(_:)), name: Events.ImageNotFound, object: self.imageButton)
+		let notificationCenter = NotificationCenter.default
+		notificationCenter.addObserver(self, selector: #selector(PhotoEditView.imageNotFoundAction(sender:)), name: NSNotification.Name(rawValue: Events.ImageNotFound), object: self.imageButton)
 		
 		self.backgroundColor = Colors.clear
 		
@@ -191,31 +191,28 @@ class PhotoEditView: UIView {
 		self.photoGroup.clipsToBounds = true
 		self.addSubview(self.photoGroup)
 		
-		self.imageButton.imageView?.contentMode = UIViewContentMode.ScaleAspectFill
-		self.imageButton.contentMode = .ScaleAspectFill
-		self.imageButton.contentVerticalAlignment = UIControlContentVerticalAlignment.Fill
-		self.imageButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Fill
+		self.imageButton.imageView?.contentMode = UIViewContentMode.scaleAspectFill
+		self.imageButton.contentMode = .scaleAspectFill
+		self.imageButton.contentVerticalAlignment = UIControlContentVerticalAlignment.fill
+		self.imageButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.fill
 		self.imageButton.sizeCategory = SizeCategory.standard
 		self.photoGroup.addSubview(self.imageButton)
 		
 		self.photoGroup.addSubview(self.scrimGroup)
 		
-		self.editPhotoButton.setImage(UIImage(named: "imgEdit2Light"), forState: .Normal)
-		self.editPhotoButton.accessibilityIdentifier = "photo_edit_button"
+		self.editPhotoButton.setImage(UIImage(named: "imgEdit2Light"), for: .normal)
 		self.editPhotoButton.backgroundColor = Theme.colorScrimLighten
 		self.editPhotoButton.cornerRadius = 18
 		self.editPhotoButton.alpha = 0
 		self.scrimGroup.addSubview(self.editPhotoButton)
 		
-		self.clearPhotoButton.setImage(UIImage(named: "imgCancelDark"), forState: .Normal)
-		self.clearPhotoButton.accessibilityIdentifier = "photo_clear_button"
+		self.clearPhotoButton.setImage(UIImage(named: "imgCancelDark"), for: .normal)
 		self.clearPhotoButton.backgroundColor = Theme.colorScrimLighten
 		self.clearPhotoButton.cornerRadius = 18
 		self.clearPhotoButton.alpha = 0
 		self.scrimGroup.addSubview(self.clearPhotoButton)
 		
-		self.setPhotoButton.setImage(UIImage(named: "UIButtonCamera"), forState: .Normal)
-		self.setPhotoButton.accessibilityIdentifier = "photo_set_button"
+		self.setPhotoButton.setImage(UIImage(named: "UIButtonCamera"), for: .normal)
 		self.setPhotoButton.borderWidth = Theme.dimenButtonBorderWidth
 		
 		if photoMode == .Placeholder {
@@ -232,14 +229,14 @@ class PhotoEditView: UIView {
 		self.setPhotoButton.alpha = 0
 		self.addSubview(self.setPhotoButton)
 		
-		self.editPhotoButton.addTarget(self, action: #selector(PhotoEditView.editPhotoAction(_:)), forControlEvents: .TouchUpInside)
-		self.clearPhotoButton.addTarget(self, action: #selector(PhotoEditView.clearPhotoAction(_:)), forControlEvents: .TouchUpInside)
-		self.setPhotoButton.addTarget(self, action: #selector(PhotoEditView.setPhotoAction(_:)), forControlEvents: .TouchUpInside)
+		self.editPhotoButton.addTarget(self, action: #selector(PhotoEditView.editPhotoAction(sender:)), for: .touchUpInside)
+		self.clearPhotoButton.addTarget(self, action: #selector(PhotoEditView.clearPhotoAction(sender:)), for: .touchUpInside)
+		self.setPhotoButton.addTarget(self, action: #selector(PhotoEditView.setPhotoAction(sender:)), for: .touchUpInside)
 	}
 	
 	func bindPhoto(photo: Photo?) {
 		if photo != nil {
-			self.imageButton.setImageWithPhoto(photo!)
+			self.imageButton.setImageWithPhoto(photo: photo!)
 			self.usingPhotoDefault = false
 			self.photoActive = true
 		}
@@ -291,14 +288,14 @@ class PhotoEditView: UIView {
 
 extension PhotoEditView: AdobeUXImageEditorViewControllerDelegate {
 	
-	func photoEditor(editor: AdobeUXImageEditorViewController, finishedWithImage image: UIImage?) {
-		self.photoChosen(image, imageResult: nil)
+	func photoEditor(_ editor: AdobeUXImageEditorViewController, finishedWith image: UIImage?) {
+        self.photoChosen(image: image, imageResult: nil)
 		Reporting.track("Edited Photo")
-		self.controller!.dismissViewControllerAnimated(true, completion: nil)
+		self.controller!.dismiss(animated: true, completion: nil)
 	}
 	
-	func photoEditorCanceled(editor: AdobeUXImageEditorViewController) {
-		self.controller!.dismissViewControllerAnimated(true, completion: nil)
+	func photoEditorCanceled(_ editor: AdobeUXImageEditorViewController) {
+		self.controller!.dismiss(animated: true, completion: nil)
 	}
 }
 

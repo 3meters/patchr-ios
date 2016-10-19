@@ -20,22 +20,22 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate {
         super.viewDidLoad()
     }
 	
-	override func viewWillAppear(animated: Bool) {
+	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		
-		let notificationCenter = NSNotificationCenter.defaultCenter()
-		notificationCenter.addObserver(self, selector: #selector(BaseEditViewController.photoDidChange(_:)), name: Events.PhotoDidChange, object: nil)
-		notificationCenter.addObserver(self, selector: #selector(BaseEditViewController.photoViewHasFocus(_:)), name: Events.PhotoViewHasFocus, object: nil)
-		notificationCenter.addObserver(self, selector: #selector(BaseEditViewController.keyboardWillBeShown(_:)), name: UIKeyboardWillShowNotification, object: nil)
-		notificationCenter.addObserver(self, selector: #selector(BaseEditViewController.keyboardWillBeHidden(_:)), name: UIKeyboardWillHideNotification, object: nil)
+		let notificationCenter = NotificationCenter.default
+		notificationCenter.addObserver(self, selector: #selector(BaseEditViewController.photoDidChange(sender:)), name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
+		notificationCenter.addObserver(self, selector: #selector(BaseEditViewController.photoViewHasFocus(sender:)), name: NSNotification.Name(rawValue: Events.PhotoViewHasFocus), object: nil)
+		notificationCenter.addObserver(self, selector: #selector(BaseEditViewController.keyboardWillBeShown(sender:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+		notificationCenter.addObserver(self, selector: #selector(BaseEditViewController.keyboardWillBeHidden(sender:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
 	}
 	
-	override func viewDidDisappear(animated: Bool) {
+	override func viewDidDisappear(_ animated: Bool) {
 		super.viewDidDisappear(animated)
 		
-		let notificationCenter = NSNotificationCenter.defaultCenter()
-		notificationCenter.removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
-		notificationCenter.removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+		let notificationCenter = NotificationCenter.default
+		notificationCenter.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+		notificationCenter.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
 	}
 
 	/*--------------------------------------------------------------------------------------------
@@ -62,9 +62,9 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate {
 		/*
 		* Called when the UIKeyboardDidShowNotification is sent.
 		*/
-		let info: NSDictionary = sender.userInfo!
-		let value = info.valueForKey(UIKeyboardFrameBeginUserInfoKey) as! NSValue
-		let keyboardSize = value.CGRectValue().size
+		let info: NSDictionary = sender.userInfo! as NSDictionary
+		let value = info.value(forKey: UIKeyboardFrameBeginUserInfoKey) as! NSValue
+		let keyboardSize = value.cgRectValue.size
 		
 		self.scrollView.contentInset = UIEdgeInsetsMake(self.scrollView.contentInset.top, 0, keyboardSize.height, 0)
 		self.scrollView.scrollIndicatorInsets = scrollView.contentInset
@@ -79,7 +79,7 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate {
 			let activeTextFieldRect = self.activeTextField?.frame
 			let activeTextFieldOrigin = activeTextFieldRect?.origin
 			
-			if (!CGRectContainsPoint(visibleRect, activeTextFieldOrigin!)) {
+			if (!visibleRect.contains(activeTextFieldOrigin!)) {
 				self.scrollView.scrollRectToVisible(activeTextFieldRect!, animated:true)
 			}
 		}

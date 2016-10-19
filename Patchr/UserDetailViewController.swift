@@ -37,10 +37,10 @@ class UserDetailViewController: BaseDetailViewController {
 		
 		let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
 		let viewHeight = CGFloat(208)
-		self.tableView.tableHeaderView?.bounds.size = CGSizeMake(viewWidth, viewHeight)	// Triggers layoutSubviews on header
+        self.tableView.tableHeaderView?.bounds.size = CGSize(width:viewWidth, height:viewHeight)	// Triggers layoutSubviews on header
 	}
 	
-	override func viewWillAppear(animated: Bool) {
+	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)	// calls bind
 		
 		if self.invalidated {
@@ -55,12 +55,12 @@ class UserDetailViewController: BaseDetailViewController {
 		}
 	}
     
-	override func viewWillDisappear(animated: Bool) {
+	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 		self.progress?.hide(true)
 	}
 
-	override func viewDidDisappear(animated: Bool) {
+	override func viewDidDisappear(_ animated: Bool) {
 		self.activity.stopAnimating()
 	}
 	
@@ -87,7 +87,7 @@ class UserDetailViewController: BaseDetailViewController {
 		let navController = AirNavigationController()
 		controller.inputUser = self.entity as? User
 		navController.viewControllers = [controller]
-		self.navigationController?.presentViewController(navController, animated: true, completion: nil)
+		self.navigationController?.present(navController, animated: true, completion: nil)
 	}
 
 	func settingsAction() {
@@ -102,18 +102,17 @@ class UserDetailViewController: BaseDetailViewController {
 	func initialize() {
 		
 		Reporting.screen(self.profileMode ? "UserProfile" : "UserDetail")
-		self.view.accessibilityIdentifier = View.UserDetail
 
 		self.queryName = DataStoreQueryName.MessagesByUser.rawValue
 
 		self.header = UserDetailView()
-		self.tableView = AirTableView(frame: self.tableView.frame, style: .Plain)
+		self.tableView = AirTableView(frame: self.tableView.frame, style: .plain)
 		
 		self.showEmptyLabel = false
 		if self.profileMode {
 			self.showEmptyLabel = true
 			self.emptyMessage = "Browse your posted messages here"
-			self.emptyLabel.setTitle(self.emptyMessage, forState: .Normal)
+			self.emptyLabel.setTitle(self.emptyMessage, for: .normal)
 		}
 		
 		self.showProgress = true
@@ -127,9 +126,9 @@ class UserDetailViewController: BaseDetailViewController {
 	override func bind() {
 		if let user = self.entity as? User {
 			let header = self.header as! UserDetailView
-			header.bindToEntity(user)
+			header.bindToEntity(entity: user)
 			if self.tableView.tableHeaderView == nil {
-				header.frame = CGRectMake(0, 0, self.tableView.width(), CGFloat(208))
+                header.frame = CGRect(x:0, y:0, width:self.tableView.width(), height:CGFloat(208))
 				header.setNeedsLayout()
 				header.layoutIfNeeded()
 				self.tableView.tableHeaderView = header	// Triggers table binding
@@ -141,11 +140,8 @@ class UserDetailViewController: BaseDetailViewController {
 	override func drawNavBarButtons() {
 		if self.profileMode {
 			if self.isCurrentUser {
-				let editButton = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.Plain, target: self, action: #selector(UserDetailViewController.editAction))
-				let settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(UserDetailViewController.settingsAction))
-				
-				editButton.accessibilityIdentifier = "nav_edit_button"
-				settingsButton.accessibilityIdentifier = "nav_settings_button"
+				let editButton = UIBarButtonItem(image: Utils.imageEdit, style: UIBarButtonItemStyle.plain, target: self, action: #selector(UserDetailViewController.editAction))
+				let settingsButton = UIBarButtonItem(title: "Settings", style: UIBarButtonItemStyle.plain, target: self, action: #selector(UserDetailViewController.settingsAction))
 				
 				self.navigationItem.rightBarButtonItems = [settingsButton, Utils.spacer, editButton]
 				self.navigationItem.title = "Me"
@@ -158,11 +154,11 @@ extension UserDetailViewController {
 	/*
 	* UITableViewDataSource
 	*/
-	override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+	override func numberOfSections(in: UITableView) -> Int {
 		return self.entityId == nil ? 0 : 1
 	}
 	
-	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return self.entityId == nil ? 0 : self.fetchedResultsController.sections?[section].numberOfObjects ?? 0
 	}
 }

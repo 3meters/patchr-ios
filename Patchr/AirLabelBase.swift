@@ -10,7 +10,7 @@ import UIKit
 
 class AirLabelBase: UILabel {
 	
-	var insets = UIEdgeInsetsZero
+	var insets = UIEdgeInsets.zero
     
 	required init(coder aDecoder: NSCoder) {
 		/* Called when instantiated from XIB or Storyboard */
@@ -24,8 +24,8 @@ class AirLabelBase: UILabel {
 		initialize()
 	}
 	
-	override func drawTextInRect(rect: CGRect) -> Void {
-		super.drawTextInRect(UIEdgeInsetsInsetRect(rect, self.insets))
+	override func drawText(in rect: CGRect) -> Void {
+		super.drawText(in: UIEdgeInsetsInsetRect(rect, self.insets))
 	}
 	
 	func initialize() {	}

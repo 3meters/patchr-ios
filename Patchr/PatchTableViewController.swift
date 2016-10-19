@@ -50,31 +50,14 @@ class PatchTableViewController: BaseTableViewController {
                 self.emptyMessage = "Make patches and browse them here"
         }
 
-        self.itemPadding = UIEdgeInsetsZero
+        self.itemPadding = UIEdgeInsets.zero
 
         super.viewDidLoad()
 
-        switch self.filter! {
-            case .Nearby:
-                self.navigationItem.title = "Nearby"
-                self.view.accessibilityIdentifier = View.PatchesNearby
-            case .Explore:
-                self.navigationItem.title = "Explore"
-                self.view.accessibilityIdentifier = View.PatchesExplore
-            case .Watching:
-                self.navigationItem.title = "Member of"
-                self.view.accessibilityIdentifier = View.PatchesWatching
-            case .Owns:
-                self.navigationItem.title = "Owner of"
-                self.view.accessibilityIdentifier = View.PatchesOwn
-        }
-
-        self.tableView.accessibilityIdentifier = Table.Patches
-
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchTableViewController.applicationDidBecomeActive(_:)), name: UIApplicationDidBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PatchTableViewController.applicationDidBecomeActive(sender:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         switch self.filter! {
@@ -89,7 +72,7 @@ class PatchTableViewController: BaseTableViewController {
         }
     }
 
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
 
         if self.filter == .Nearby {
             /* Refresh data and ui to catch changes while gone */
@@ -116,7 +99,7 @@ class PatchTableViewController: BaseTableViewController {
         }
     }
 
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         if self.filter == .Nearby {
@@ -137,7 +120,7 @@ class PatchTableViewController: BaseTableViewController {
             }
         }
         else {
-            super.pullToRefreshAction(sender)
+            super.pullToRefreshAction(sender: sender)
         }
     }
 
@@ -154,7 +137,7 @@ class PatchTableViewController: BaseTableViewController {
         controller.inputState = .Creating
         controller.inputType = type
         navController.viewControllers = [controller]
-        self.presentViewController(navController, animated: true, completion: nil)
+        self.present(navController, animated: true, completion: nil)
     }
 
     func presentPermissionAction(sender: AnyObject?) {
@@ -169,13 +152,13 @@ class PatchTableViewController: BaseTableViewController {
     *--------------------------------------------------------------------------------------------*/
 
     override func didFetchQuery(notification: NSNotification) {
-        super.didFetchQuery(notification)
+        super.didFetchQuery(notification: notification)
 
         if self.filter == .Nearby {
             if let userInfo = notification.userInfo {
-                if NSUserDefaults.standardUserDefaults().boolForKey(PatchrUserDefaultKey("SoundEffects")) {
+                if UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")) {
                     if !self.greetingDidPlay && userInfo["count"] != nil && userInfo["count"] as! Int > 0 {
-                        AudioController.instance.play(Sound.greeting.rawValue)
+                        AudioController.instance.play(sound: Sound.greeting.rawValue)
                         Log.d("Play some sparkle!")
                         self.greetingDidPlay = true
                     }
@@ -190,15 +173,15 @@ class PatchTableViewController: BaseTableViewController {
 
     func locationWasDenied(sender: NSNotification?) {
 
-        self.emptyLabel.setTitle("Location Services disabled for Patchr", forState: .Normal)
+        self.emptyLabel.setTitle("Location Services disabled for Patchr", for: .normal)
 
         if !CLLocationManager.locationServicesEnabled() {
-            self.emptyLabel.setTitle("Location Services turned off", forState: .Normal)
+            self.emptyLabel.setTitle("Location Services turned off", for: .normal)
             self.locationServicesDisabled = true
         }
         else {
-            self.emptyLabel.setTitleColor(Theme.colorButtonTitle, forState: .Normal)
-            self.emptyLabel.addTarget(self, action: #selector(PatchTableViewController.presentPermissionAction(_:)), forControlEvents: .TouchUpInside)
+            self.emptyLabel.setTitleColor(Theme.colorButtonTitle, for: .normal)
+            self.emptyLabel.addTarget(self, action: #selector(PatchTableViewController.presentPermissionAction(sender:)), for: .touchUpInside)
         }
 
         clearQueryItems()
@@ -210,7 +193,7 @@ class PatchTableViewController: BaseTableViewController {
     }
 
     func locationWasAllowed(sender: NSNotification) {
-        self.emptyLabel.setTitle(self.emptyMessage, forState: .Normal)
+        self.emptyLabel.setTitle(self.emptyMessage, for: .normal)
         LocationController.instance.startUpdates(force: true)
     }
 
@@ -238,31 +221,31 @@ class PatchTableViewController: BaseTableViewController {
         let imageView = UIImageView(image: image)
         imageView.tintColor = Colors.white
 
-        let view = UIView(frame: CGRectMake(0, 0, CGFloat(size), CGFloat(size)))
+        let view = UIView(frame: CGRect(x:0, y:0, width:CGFloat(size), height: CGFloat(size)))
         view.addSubview(imageView)
-        imageView.fillSuperviewWithLeftPadding(8, rightPadding: 8, topPadding: 8, bottomPadding: 8)
+        imageView.fillSuperview(withLeftPadding: 8, rightPadding: 8, topPadding: 8, bottomPadding: 8)
 
         view.backgroundColor = color
 
         view.layer.cornerRadius = view.frame.size.width / 2    // Round
-        view.showShadow(true, cornerRadius: view.layer.cornerRadius)
+        view.showShadow(rounded: true, cornerRadius: view.layer.cornerRadius)
 
         return view;
     }
 
     func presentLocationPermission(Force force: Bool = false) -> Bool {
 
-        if CLLocationManager.authorizationStatus() == .Denied {
-            locationWasDenied(nil)    // Configure UI
+        if CLLocationManager.authorizationStatus() == .denied {
+            locationWasDenied(sender: nil)    // Configure UI
             if force || !self.locationDialogShot {
                 UIShared.askToEnableLocationService()
                 self.locationDialogShot = true
             }
             return false
         }
-        else if CLLocationManager.authorizationStatus() == .NotDetermined {
+        else if CLLocationManager.authorizationStatus() == .notDetermined {
             if force || !self.locationDialogShot {
-                LocationController.instance.guardedRequestAuthorization(nil)
+                LocationController.instance.guardedRequestAuthorization(message: nil)
             }
             self.locationDialogShot = true
         }
@@ -271,12 +254,12 @@ class PatchTableViewController: BaseTableViewController {
 
     func activateNearby(Level level: Level) {
 
-        if CLLocationManager.authorizationStatus() == .Denied {
-            locationWasDenied(nil)    // Configure UI
+        if CLLocationManager.authorizationStatus() == .denied {
+            locationWasDenied(sender: nil)    // Configure UI
             return
         }
-        else if CLLocationManager.authorizationStatus() == .NotDetermined {
-            locationWasDenied(nil)
+        else if CLLocationManager.authorizationStatus() == .notDetermined {
+            locationWasDenied(sender: nil)
         }
         /*
         * Be more aggressive about refreshing the nearby list. Always true on first load
@@ -291,16 +274,16 @@ class PatchTableViewController: BaseTableViewController {
             * - Undetermined: User has not chosen anything yet. Could be fresh install
             *   or they may done a device wide reset on privacy and locations.
             */
-            if CLLocationManager.authorizationStatus() == .Restricted {
+            if CLLocationManager.authorizationStatus() == .restricted {
                 self.refreshControl?.endRefreshing()
-                UIShared.Toast("Waiting for location...")
+                UIShared.Toast(message: "Waiting for location...")
                 return
             }
 
             /* We want a fresh location fix */
-            if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+            if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
                 LocationController.instance.startUpdates(force: true)
-                if self.refreshControl == nil || !self.refreshControl!.refreshing {
+                if self.refreshControl == nil || !self.refreshControl!.isRefreshing {
                     if self.showProgress {
                         self.activity.startAnimating()
                     }
@@ -315,17 +298,17 @@ class PatchTableViewController: BaseTableViewController {
             }
         }
 
-        if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+        if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
             LocationController.instance.startUpdates(force: false)
         }
 
         /* Cleanup fallback in case we never get a location. */
         Utils.delay(10) {
-            if self.refreshControl == nil || self.refreshControl!.refreshing {
+            if self.refreshControl == nil || self.refreshControl!.isRefreshing {
                 self.refreshControl?.endRefreshing()
             }
             /* Wacky activity control for body */
-            if self.activity.isAnimating() {
+            if self.activity.isAnimating {
                 self.activity.stopAnimating()
             }
         }
@@ -352,29 +335,29 @@ class PatchTableViewController: BaseTableViewController {
     override func loadQuery() -> Query {
 
         let id = queryId()
-        var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
+        var query: Query? = Query.fetchOne(byId: id, in: DataController.instance.mainContext)
 
         if query == nil {
-            query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
+            query = Query.fetchOrInsertOne(byId: id, in: DataController.instance.mainContext) as Query
 
             switch self.filter! {
                 case .Nearby:
                     query!.name = DataStoreQueryName.NearbyPatches.rawValue
-                    query!.pageSize = DataController.proxibase.pageSizeNearby
+                    query!.pageSize = DataController.proxibase.pageSizeNearby as NSNumber!
                 case .Explore:
                     query!.name = DataStoreQueryName.ExplorePatches.rawValue
-                    query!.pageSize = DataController.proxibase.pageSizeExplore
+                    query!.pageSize = DataController.proxibase.pageSizeExplore as NSNumber!
                 case .Watching:
                     query!.name = DataStoreQueryName.PatchesUserIsWatching.rawValue
-                    query!.pageSize = DataController.proxibase.pageSizeDefault
+                    query!.pageSize = DataController.proxibase.pageSizeDefault as NSNumber!
                     query!.contextEntity = self.user
                 case .Owns:
                     query!.name = DataStoreQueryName.PatchesByUser.rawValue
-                    query!.pageSize = DataController.proxibase.pageSizeDefault
+                    query!.pageSize = DataController.proxibase.pageSizeDefault as NSNumber!
                     query!.contextEntity = self.user
             }
 
-            DataController.instance.saveContext(true)
+            DataController.instance.saveContext(wait: true)
         }
 
         return query!
@@ -385,13 +368,13 @@ class PatchTableViewController: BaseTableViewController {
         var queryId: String!
         switch self.filter! {
             case .Nearby:
-                queryId = "query.\(DataStoreQueryName.NearbyPatches.rawValue.lowercaseString)"
+                queryId = "query.\(DataStoreQueryName.NearbyPatches.rawValue.lowercased())"
             case .Explore:
-                queryId = "query.\(DataStoreQueryName.ExplorePatches.rawValue.lowercaseString)"
+                queryId = "query.\(DataStoreQueryName.ExplorePatches.rawValue.lowercased())"
             case .Watching:
-                queryId = "query.\(DataStoreQueryName.PatchesUserIsWatching.rawValue.lowercaseString).\(self.user.id_)"
+                queryId = "query.\(DataStoreQueryName.PatchesUserIsWatching.rawValue.lowercased()).\(self.user.id_)"
             case .Owns:
-                queryId = "query.\(DataStoreQueryName.PatchesByUser.rawValue.lowercaseString).\(self.user.id_)"
+                queryId = "query.\(DataStoreQueryName.PatchesByUser.rawValue.lowercased()).\(self.user.id_)"
         }
 
         guard queryId != nil else {
@@ -409,25 +392,25 @@ class PatchTableViewController: BaseTableViewController {
 
         self.processingQuery = true
 
-        NSNotificationCenter.defaultCenter().postNotificationName(Events.WillFetchQuery, object: self, userInfo: nil)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.WillFetchQuery), object: self)
 
         let queryId = self.query.objectID
 
-        DataController.instance.backgroundOperationQueue.addOperationWithBlock {
+        DataController.instance.backgroundOperationQueue.addOperation {
             Reporting.updateCrashKeys()
 
-            DataController.instance.refreshItemsFor(queryId, force: false, paging: false, completion: {
+            DataController.instance.refreshItemsFor(queryId: queryId!, force: false, paging: false, completion: {
                 [weak self] results, query, error in
                 /*
                  * Called on main thread
                  */
-                NSOperationQueue.mainQueue().addOperationWithBlock {
+                OperationQueue.main.addOperation {
                     self?.refreshControl?.endRefreshing()
 
                     Utils.delay(0.5) {
                         self?.processingQuery = false
                         self?.activity.stopAnimating()
-                        var userInfo: [NSObject:AnyObject] = ["error": (error != nil)]
+                        var userInfo: [AnyHashable: Any] = ["error": (error != nil)]
 
                         if let error = ServerError(error) {
                             /* Always reset location after a network error */
@@ -440,14 +423,14 @@ class PatchTableViewController: BaseTableViewController {
                             userInfo["count"] = fetchedObjects.count
                         }
 
-                        let query = DataController.instance.mainContext.objectWithID(queryId) as! Query
+                        let query = DataController.instance.mainContext.object(with: queryId!) as! Query
                         query.executedValue = true
                         query.activityDateValue = (self?.getActivityDate())!
 
-                        DataController.instance.saveContext(BLOCKING)    // Enough to trigger table update
+                        DataController.instance.saveContext(wait: BLOCKING)    // Enough to trigger table update
 
                         if self != nil {
-                            NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetchQuery, object: self!, userInfo: userInfo)
+                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.DidFetchQuery), object: self!, userInfo: userInfo)
                         }
 
                         return
@@ -458,15 +441,15 @@ class PatchTableViewController: BaseTableViewController {
     }
 
     func registerForLocationNotifications() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchTableViewController.locationWasDenied(_:)), name: Events.LocationWasDenied, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchTableViewController.locationWasAllowed(_:)), name: Events.LocationWasAllowed, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchTableViewController.locationWasUpdated(_:)), name: Events.LocationWasUpdated, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PatchTableViewController.locationWasDenied(sender:)), name: NSNotification.Name(rawValue: Events.LocationWasDenied), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PatchTableViewController.locationWasAllowed(sender:)), name: NSNotification.Name(rawValue: Events.LocationWasAllowed), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PatchTableViewController.locationWasUpdated(notification:)), name: NSNotification.Name(rawValue: Events.LocationWasUpdated), object: nil)
     }
 
     func unregisterForLocationNotifications() {
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.LocationWasDenied, object: nil)
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.LocationWasAllowed, object: nil)
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: Events.LocationWasUpdated, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.LocationWasDenied), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.LocationWasAllowed), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.LocationWasUpdated), object: nil)
     }
 }
 
@@ -475,8 +458,8 @@ class PatchTableViewController: BaseTableViewController {
  *--------------------------------------------------------------------------------------------*/
 
 extension PatchTableViewController: CKRadialMenuDelegate {
-    func radialMenu(radialMenu: CKRadialMenu!, didSelectPopoutWithIndentifier identifier: String!) {
-        self.addAction(identifier)
+    func radialMenu(_ radialMenu: CKRadialMenu!, didSelectPopoutWithIndentifier identifier: String!) {
+        self.addAction(type: identifier)
     }
 }
 
@@ -488,32 +471,31 @@ extension PatchTableViewController {
 
         var location = self.cachedLocation
         if self.filter == .Nearby || location == nil {
-            if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+            if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
                 location = LocationController.instance.mostRecentAvailableLocation()
             }
         }
 
-        super.bindCellToEntity(cell, entity: entity, location: location)
+        super.bindCellToEntity(cell: cell, entity: entity, location: location)
     }
 
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
         /* Cell won't show highlighting when navigating back to table view */
-        if let cell = self.tableView.cellForRowAtIndexPath(indexPath) {
+        if let cell = self.tableView.cellForRow(at: indexPath) {
             self.selectedCell = cell as? WrapperTableViewCell
             cell.setHighlighted(false, animated: false)
             cell.setSelected(false, animated: false)
         }
 
-        if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
-        let patch = queryResult.object as? Patch {
-            let controller = PatchDetailViewController()
-            controller.entityId = patch.id_
-            self.navigationController?.pushViewController(controller, animated: true)
-        }
+        let queryResult = self.fetchedResultsController.object(at: indexPath)
+        let patch = queryResult.object as? Patch
+        let controller = PatchDetailViewController()
+        controller.entityId = patch?.id_
+        self.navigationController?.pushViewController(controller, animated: true)
     }
 
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 44
     }
 }

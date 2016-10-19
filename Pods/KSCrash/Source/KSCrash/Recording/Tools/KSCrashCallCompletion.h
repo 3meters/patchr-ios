@@ -24,7 +24,7 @@
 // THE SOFTWARE.
 //
 
-#import "KSCrashReportFilter.h"
+#import "KSCrashReportFilterCompletion.h"
 
 /** Conditionally call a completion method if it's not nil.
  *

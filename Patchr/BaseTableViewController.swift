@@ -21,13 +21,13 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	 */
 	var firstAppearance		= true
 
-	var activity			= UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
+	var activity			= UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
 	var footerView			= UIView()
-	var loadMoreButton		= UIButton(type: UIButtonType.RoundedRect)
-	var loadMoreActivity	= UIActivityIndicatorView(activityIndicatorStyle: .White)
+	var loadMoreButton		= UIButton(type: UIButtonType.roundedRect)
+	var loadMoreActivity	= UIActivityIndicatorView(activityIndicatorStyle: .white)
 	var loadMoreMessage		= "LOAD MORE"
 	
-	var emptyLabel			= AirLinkButton(frame: CGRectZero)
+	var emptyLabel			= AirLinkButton(frame: CGRect.zero)
 	var emptyMessage		: String?
     var showEmptyLabel		= true
     var showProgress		= true
@@ -38,7 +38,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	/* Only used for row sizing */
 	var rowHeights			: NSMutableDictionary = [:]
 	var itemTemplate		: BaseView?
-	var itemPadding			= UIEdgeInsetsZero
+	var itemPadding			= UIEdgeInsets.zero
 	
     /*--------------------------------------------------------------------------------------------
     * MARK:- Lifecycle
@@ -49,13 +49,11 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 
         /* Hookup refresh control */
 		self.refreshControl = UIRefreshControl()
-		self.refreshControl?.accessibilityIdentifier = "refresh_control"
 		self.refreshControl!.tintColor = Theme.colorActivityIndicator
-		self.refreshControl?.addTarget(self, action: #selector(BaseTableViewController.pullToRefreshAction(_:)), forControlEvents: UIControlEvents.ValueChanged)
+		self.refreshControl?.addTarget(self, action: #selector(BaseTableViewController.pullToRefreshAction(sender:)), for: UIControlEvents.valueChanged)
 		self.refreshControl?.endRefreshing()
 
 		/* Simple activity indicator (frame sizing) */
-		self.activity.accessibilityIdentifier = "activity_view"
 		self.activity.color = Theme.colorActivityIndicator
 		self.activity.hidesWhenStopped = true
 		self.view.addSubview(activity)
@@ -64,14 +62,13 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.loadMoreButton.tag = 1
 		self.loadMoreButton.backgroundColor = Theme.colorBackgroundTile
 		self.loadMoreButton.layer.cornerRadius = 8
-		self.loadMoreButton.addTarget(self, action: #selector(BaseTableViewController.loadMore(_:)), forControlEvents: UIControlEvents.TouchUpInside)
-		self.loadMoreButton.setTitle(self.loadMoreMessage, forState: .Normal)
+		self.loadMoreButton.addTarget(self, action: #selector(BaseTableViewController.loadMore(sender:)), for: UIControlEvents.touchUpInside)
+		self.loadMoreButton.setTitle(self.loadMoreMessage, for: .normal)
 		self.footerView.addSubview(self.loadMoreButton)
 
 		self.loadMoreActivity.tag = 2
-		self.loadMoreActivity.accessibilityIdentifier = "activity_more"
 		self.loadMoreActivity.color = Theme.colorActivityIndicator
-		self.loadMoreActivity.hidden = true
+		self.loadMoreActivity.isHidden = true
 
 		self.footerView.frame.size.height = CGFloat(48 + 16)
 		self.footerView.addSubview(self.loadMoreActivity)
@@ -81,15 +78,15 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
         if self.showEmptyLabel {
             self.emptyLabel.alpha = 0
             self.emptyLabel.layer.borderWidth = 1
-            self.emptyLabel.layer.borderColor = Theme.colorRule.CGColor
-			self.emptyLabel.layer.backgroundColor = Theme.colorBackgroundEmptyBubble.CGColor
+            self.emptyLabel.layer.borderColor = Theme.colorRule.cgColor
+			self.emptyLabel.layer.backgroundColor = Theme.colorBackgroundEmptyBubble.cgColor
 			self.emptyLabel.layer.cornerRadius = 80
             self.emptyLabel.titleLabel!.font = Theme.fontTextDisplay
             self.emptyLabel.titleLabel!.numberOfLines = 0
-			self.emptyLabel.titleLabel!.textAlignment = NSTextAlignment.Center
+			self.emptyLabel.titleLabel!.textAlignment = NSTextAlignment.center
 			self.emptyLabel.titleEdgeInsets = UIEdgeInsetsMake(16, 16, 16, 16)
-			self.emptyLabel.setTitle(self.emptyMessage, forState: .Normal)
-			self.emptyLabel.setTitleColor(Theme.colorTextPlaceholder, forState: .Normal)
+			self.emptyLabel.setTitle(self.emptyMessage, for: .normal)
+			self.emptyLabel.setTitleColor(Theme.colorTextPlaceholder, for: .normal)
 
             self.tableView.addSubview(self.emptyLabel)
         }
@@ -98,16 +95,15 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.tableView.rowHeight = UITableViewAutomaticDimension	// Actual height is handled in heightForRowAtIndexPath
 
         /* A bit of UI tweaking */
-		self.tableView.accessibilityIdentifier = "table"
         self.tableView.backgroundColor = Theme.colorBackgroundTable
-        self.tableView.separatorStyle = UITableViewCellSeparatorStyle.None;
-        self.tableView.separatorInset = UIEdgeInsetsZero
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyle.none;
+        self.tableView.separatorInset = UIEdgeInsets.zero
 
 		/* Hookup query */
 		self.query = loadQuery()
 
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(BaseTableViewController.willFetchQuery(_:)), name: Events.WillFetchQuery, object: self)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(BaseTableViewController.didFetchQuery(_:)), name: Events.DidFetchQuery, object: self)
+		NotificationCenter.default.addObserver(self, selector: #selector(BaseTableViewController.willFetchQuery(notification:)), name: NSNotification.Name(rawValue: Events.WillFetchQuery), object: self)
+		NotificationCenter.default.addObserver(self, selector: #selector(BaseTableViewController.didFetchQuery(notification:)), name: NSNotification.Name(rawValue: Events.DidFetchQuery), object: self)
 	}
 	
 	override func viewWillLayoutSubviews() {
@@ -121,27 +117,27 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.tableView.bounds.size.width = viewWidth
 		
 		self.footerView.frame.size.height = CGFloat(48 + 16)
-		self.loadMoreButton.anchorTopCenterFillingWidthWithLeftAndRightPadding(8, topPadding: 8, height: 48)
-		self.loadMoreActivity.anchorTopCenterWithTopPadding(8, width: 48, height: 48)
+		self.loadMoreButton.anchorTopCenterFillingWidth(withLeftAndRightPadding: 8, topPadding: 8, height: 48)
+		self.loadMoreActivity.anchorTopCenter(withTopPadding: 8, width: 48, height: 48)
 		
-		self.activity.anchorInCenterWithWidth(20, height: 20)
+		self.activity.anchorInCenter(withWidth: 20, height: 20)
 		self.activity.frame.origin.y += CGFloat(self.progressOffsetY)
 		self.activity.frame.origin.x += CGFloat(self.progressOffsetX)
 		
 		let navHeight = self.navigationController?.navigationBar.height() ?? 0
-		let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+		let statusHeight = UIApplication.shared.statusBarFrame.size.height
 
-		self.emptyLabel.anchorInCenterWithWidth(160, height: 160)
+		self.emptyLabel.anchorInCenter(withWidth: 160, height: 160)
 		self.emptyLabel.frame.origin.y -= (statusHeight + navHeight)
 	}
 	
-	override func viewWillAppear(animated: Bool) {
+	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated) // Base implementation does nothing
 		
 		try! self.fetchedResultsController.performFetch()
 	}
 	
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 		
 		if self.query.executedValue {
@@ -154,9 +150,9 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 					self.tableView.tableFooterView = self.footerView
 				}
 				if let button = self.footerView.viewWithTag(1) as? UIButton,
-					spinner = self.footerView.viewWithTag(2) as? UIActivityIndicatorView {
-						button.hidden = false
-						spinner.hidden = true
+					let spinner = self.footerView.viewWithTag(2) as? UIActivityIndicatorView {
+						button.isHidden = false
+						spinner.isHidden = true
 						spinner.stopAnimating()
 				}
 			}
@@ -174,11 +170,11 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		self.firstAppearance = false
     }
 	
-	override func viewWillDisappear(animated: Bool) {
+	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 	}
 
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
 		/*
 		 * Called when switching between patch view controllers.
 		 */
@@ -188,7 +184,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
     }
 	
 	deinit {
-		NSNotificationCenter.defaultCenter().removeObserver(self)
+		NotificationCenter.default.removeObserver(self)
 	}
 
     /*--------------------------------------------------------------------------------------------
@@ -205,7 +201,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		
 		if let control = sender as? AirImageView, let container = sender?.superview as? BaseView {
 			if control.image != nil {
-				UIShared.showPhoto(control.image, animateFromView: control, viewController: self, entity: container.entity)
+				UIShared.showPhoto(image: control.image, animateFromView: control, viewController: self, entity: container.entity)
 			}
 		}
 		
@@ -213,13 +209,13 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 			let control = recognizer.view as? AirImageView,
 			let container = control.superview as? BaseView {
 			if control.image != nil {
-				UIShared.showPhoto(control.image, animateFromView: control, viewController: self, entity: container.entity)
+				UIShared.showPhoto(image: control.image, animateFromView: control, viewController: self, entity: container.entity)
 			}
 		}
 		
 		if let control = sender as? UIButton, let container = sender?.superview as? BaseView {
 			if control.imageView!.image != nil {
-				UIShared.showPhoto(control.imageView!.image, animateFromView: control, viewController: self, entity: container.entity)
+				UIShared.showPhoto(image: control.imageView!.image, animateFromView: control, viewController: self, entity: container.entity)
 			}
 		}
 		
@@ -227,7 +223,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	}
 	
 	func willFetchQuery(notification: NSNotification) {
-		if (self.refreshControl == nil || !self.refreshControl!.refreshing) && !self.query.executedValue {
+		if (self.refreshControl == nil || !self.refreshControl!.isRefreshing) && !self.query.executedValue {
 			/* Wacky activity control for body */
 			if self.showProgress {
 				self.activity.startAnimating()
@@ -242,7 +238,7 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	func didFetchQuery(notification: NSNotification) {
 		self.activity.stopAnimating()
 		var empty = false
-		if let userInfo = notification.userInfo where userInfo["count"] != nil {
+		if let userInfo = notification.userInfo , userInfo["count"] != nil {
 			if self.showEmptyLabel && userInfo["count"] as! Int == 0 {
 				empty = true
 			}
@@ -264,9 +260,9 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 				self.tableView.tableFooterView = self.footerView
 			}
 			if let button = self.footerView.viewWithTag(1) as? UIButton,
-				spinner = self.footerView.viewWithTag(2) as? UIActivityIndicatorView {
-					button.hidden = false
-					spinner.hidden = true
+				let spinner = self.footerView.viewWithTag(2) as? UIActivityIndicatorView {
+					button.isHidden = false
+					spinner.isHidden = true
 					spinner.stopAnimating()
 			}
 		}
@@ -286,9 +282,9 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	func loadMore(sender: AnyObject?) {
 		
 		if let button = self.footerView.viewWithTag(1) as? UIButton,
-			spinner = self.footerView.viewWithTag(2) as? UIActivityIndicatorView {
-				button.hidden = true
-				spinner.hidden = false
+			let spinner = self.footerView.viewWithTag(2) as? UIActivityIndicatorView {
+				button.isHidden = true
+				spinner.isHidden = false
 				spinner.startAnimating()
 		}
 		
@@ -297,34 +293,34 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	
 	func beginRefreshingTableView() {
 		self.refreshControl?.beginRefreshing()
-		self.tableView.setContentOffset(CGPointMake(0, self.tableView.contentOffset.y - (self.refreshControl?.height())!), animated: true)
-		pullToRefreshAction(nil)
+        self.tableView.setContentOffset(CGPoint(x:0, y:self.tableView.contentOffset.y - (self.refreshControl?.height())!), animated: true)
+		pullToRefreshAction(sender: nil)
 	}
 
-	func fetchQueryItems(force force: Bool, paging: Bool, queryDate: Int64?) {
+	func fetchQueryItems(force: Bool, paging: Bool, queryDate: Int64?) {
         
         guard !self.processingQuery else { return }
-		guard !self.query.deleted else { return }
+		guard !self.query.isDeleted else { return }
         
 		self.processingQuery = true
 		
-		NSNotificationCenter.defaultCenter().postNotificationName(Events.WillFetchQuery, object: self, userInfo: nil)
+		NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.WillFetchQuery), object: self)
         /*
          * Check to see of any subclass wants to inject using the sidecar. Currently
          * used to add locally cached nearby notifications.
          */
         if !paging {
-            populateSidecar(self.query)
+            populateSidecar(query: self.query)
         }
 		
 		let queryObjectId = self.query.objectID
 		
-		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
+		DataController.instance.backgroundOperationQueue.addOperation {
 			
-			DataController.instance.refreshItemsFor(queryObjectId, force: force, paging: paging, completion: {
+			DataController.instance.refreshItemsFor(queryId: queryObjectId!, force: force, paging: paging, completion: {
 				[weak self] results, query, error in
 				
-				NSOperationQueue.mainQueue().addOperationWithBlock {
+				OperationQueue.main.addOperation {
 					
 					self?.refreshControl?.endRefreshing()
 					
@@ -332,9 +328,9 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 					Utils.delay(0.5) {
 						
 						self?.processingQuery = false
-						var userInfo: [NSObject:AnyObject] = ["error": (error != nil)]
+						var userInfo: [AnyHashable: Any] = ["error": (error != nil)]
 						
-						let query = DataController.instance.mainContext.objectWithID(queryObjectId) as! Query
+						let query = DataController.instance.mainContext.object(with: queryObjectId!) as! Query
                         
                         if let error = ServerError(error) {
                             self!.handleError(error)
@@ -351,12 +347,12 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
                                 }
                             }
                             /* Find oldest (smallest) date in the set */
-                            var oldestDate = NSDate()
+                            var oldestDate = Date()
                             for item in query.queryItems {
                                 if let queryItem = item as? QueryItem,
                                     let entity = queryItem.object as? Entity,
                                     let sortDate = entity.sortDate {
-                                    if sortDate < oldestDate {
+                                    if sortDate < oldestDate as Date {
                                         oldestDate = sortDate
                                     }
                                 }
@@ -368,15 +364,15 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
                              * The fetched results delegate is informed of any changes that should
                              * cause an update to the table view.
                              */
-                            DataController.instance.saveContext(BLOCKING)
+                            DataController.instance.saveContext(wait: BLOCKING)
                             self?.tableView.reloadData()		// Update cells to show any changes
                             if paging {
                                 Reporting.track("Paged List")
                             }
                             
-                            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            DispatchQueue.main.async(execute: { () -> Void in
                                 if self != nil {
-                                    NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetchQuery, object: self!, userInfo: userInfo)
+                                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.DidFetchQuery), object: self!, userInfo: userInfo)
                                 }								
                             })
                         }
@@ -412,11 +408,11 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 	* MARK:- Properties
 	*--------------------------------------------------------------------------------------------*/
 	
-    internal lazy var fetchedResultsController: NSFetchedResultsController = {
+    internal lazy var fetchedResultsController: NSFetchedResultsController<QueryItem> = {
 		/*
 		* Creates controller instance first time the field is accessed.
 		*/
-        let fetchRequest = NSFetchRequest(entityName: QueryItem.entityName())
+        let fetchRequest = NSFetchRequest<QueryItem>(entityName: QueryItem.entityName())
 		
         if self.query.name == DataStoreQueryName.NearbyPatches.rawValue {
             fetchRequest.sortDescriptors = [
@@ -461,24 +457,24 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 		else if self.listType == .Messages {
 			let view = MessageView()
 			let cell = WrapperTableViewCell(view: view, padding: self.itemPadding, reuseIdentifier: "cell")
-			if view.description_ != nil && view.description_!.isKindOfClass(TTTAttributedLabel) {
+			if view.description_ != nil && !(view.description_ is TTTAttributedLabel) {
 				let label = view.description_ as! TTTAttributedLabel
 				label.delegate = self
 			}
-			view.photo?.userInteractionEnabled = true
-			view.photo?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(photoAction(_:))))
+			view.photo?.isUserInteractionEnabled = true
+			view.photo?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(photoAction(sender:))))
 			return cell
 		}
 		else if self.listType == .Patches {
-			let view = ChannelView(frame: CGRectMake(0, 0, self.view.width(), 40))
+            let view = ChannelView(frame: CGRect(x:0, y:0, width:self.view.width(), height:40))
 			let cell = WrapperTableViewCell(view: view, padding: self.itemPadding, reuseIdentifier: "cell")
             cell.separator.removeFromSuperview()
 			return cell
 		}
 		else if self.listType == .Users {
-			let view = UserView(frame: CGRectMake(0, 0, self.view.width(), 97))
+            let view = UserView(frame: CGRect(x:0, y:0, width:self.view.width(), height:97))
 			let cell = WrapperTableViewCell(view: view, padding: self.itemPadding, reuseIdentifier: "cell")
-			cell.selectionStyle = .None
+			cell.selectionStyle = .none
 			return cell
 		}
 		else {
@@ -495,46 +491,46 @@ extension BaseTableViewController {
 		
 		if self.listType == .Notifications {
 			let notificationView = cell.view! as! NotificationView
-			notificationView.bindToEntity(entity, location: nil)
+			notificationView.bindToEntity(entity: entity, location: nil)
 		}
 		
 		if self.listType == .Messages {
 			let messageView = cell.view! as! MessageView
-			messageView.bindToEntity(entity, location: nil)
+			messageView.bindToEntity(entity: entity, location: nil)
 		}
 		
 		if self.listType == .Patches {
 			let patchView = cell.view! as! ChannelView
-			patchView.bindToEntity(entity, location: location)
+			patchView.bindToEntity(entity: entity, location: location)
 		}
 		
 		if self.listType == .Users {
 			let userView = cell.view! as! UserView
-			userView.bindToEntity(entity, location: nil)
+			userView.bindToEntity(entity: entity, location: nil)
 		}
 	}
 	/*
 	 * UITableViewDataSource
 	 */
-	override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
 		return 1
 	}
 	
-	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		let numberOfObjects = self.fetchedResultsController.sections?[section].numberOfObjects ?? 0
 		return numberOfObjects
 	}
-	
-	override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		
 		/* Bind the cell to the entity */
-		let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem
-		let entity = queryResult!.object as? Entity
-		var cell = self.tableView.dequeueReusableCellWithIdentifier("cell") as! WrapperTableViewCell?
+		let queryResult = self.fetchedResultsController.object(at: indexPath)
+		let entity = queryResult.object as? Entity
+		var cell = self.tableView.dequeueReusableCell(withIdentifier: "cell") as! WrapperTableViewCell?
 		
 		if cell == nil {
 			cell = makeCell()
-			cell!.selectionStyle = .Default
+			cell!.selectionStyle = .default
 			let backgroundView = UIView()
 			backgroundView.backgroundColor = Theme.colorBackgroundSelected
 			cell!.selectedBackgroundView = backgroundView
@@ -544,12 +540,12 @@ extension BaseTableViewController {
 			fatalError("Cannot bind to nil cell or entity")
 		}
 		
-		bindCellToEntity(cell!, entity: entity!, location: nil)
+		bindCellToEntity(cell: cell!, entity: entity!, location: nil)
 		
 		return cell!
 	}
 	
-	override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		/*
 		* Using an estimate significantly improves table view load time but we can get
 		* small scrolling glitches if actual height ends up different than estimated height.
@@ -562,58 +558,55 @@ extension BaseTableViewController {
 			return 0
 		}
 		
-		if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
-			let entity = queryResult.object as? Entity {
-			
-			if entity.id_ != nil {
-				if let cachedHeight = self.rowHeights.objectForKey(entity.id_) as? CGFloat {
-					return cachedHeight
-				}
-			}
-			
-			let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
-			self.itemTemplate!.bindToEntity(entity, location: nil)
-			self.itemTemplate!.bounds.size.width = viewWidth - (self.itemPadding.left + self.itemPadding.right)
-			self.itemTemplate!.sizeToFit()
-			let viewHeight = self.itemTemplate!.height() + (self.itemPadding.top + self.itemPadding.bottom + 1)
-			
-			if entity.id_ != nil {
-				self.rowHeights[entity.id_] = viewHeight
-			}
-			
-			return viewHeight
-		}
-		return 0
+		let queryResult = self.fetchedResultsController.object(at: indexPath) 
+        let entity = queryResult.object as? Entity
+        
+        if entity?.id_ != nil {
+            if let cachedHeight = self.rowHeights.object(forKey: entity?.id_) as? CGFloat {
+                return cachedHeight
+            }
+        }
+        
+        let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
+        self.itemTemplate!.bindToEntity(entity: entity!, location: nil)
+        self.itemTemplate!.bounds.size.width = viewWidth - (self.itemPadding.left + self.itemPadding.right)
+        self.itemTemplate!.sizeToFit()
+        let viewHeight = self.itemTemplate!.height() + (self.itemPadding.top + self.itemPadding.bottom + 1)
+        
+        if entity?.id_ != nil {
+            self.rowHeights[entity?.id_] = viewHeight
+        }
+        
+        return viewHeight
 	}
-
 }
 
 extension BaseTableViewController {
 	/*
 	 * NSFetchedResultsControllerDelegate
 	 */
-	func controllerWillChangeContent(controller: NSFetchedResultsController) {
+	func controllerWillChangeContent(controller: NSFetchedResultsController<QueryItem>) {
 		self.tableView.beginUpdates()
 	}
 	
-	func controllerDidChangeContent(controller: NSFetchedResultsController) {
+	func controllerDidChangeContent(controller: NSFetchedResultsController<QueryItem>) {
 		self.tableView.endUpdates()
 	}
 	
-	func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType) {
+	func controller(controller: NSFetchedResultsController<QueryItem>, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType) {
 		switch type {
-		case .Insert:
-			self.tableView.insertSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Fade)
+		case .insert:
+			self.tableView.insertSections(NSIndexSet(index: sectionIndex) as IndexSet, with: .fade)
 			
-		case .Delete:
-			self.tableView.deleteSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Fade)
+		case .delete:
+			self.tableView.deleteSections(NSIndexSet(index: sectionIndex) as IndexSet, with: .fade)
 			
 		default:
 			return
 		}
 	}
 	
-	func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+	func controller(controller: NSFetchedResultsController<QueryItem>, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
 		/*
 		 * http://stackoverflow.com/a/32978387
 		 * iOS 9 introduced a bug where didChangeObject can be called with an
@@ -624,29 +617,26 @@ extension BaseTableViewController {
 		}
 		
 		switch type {
-			case .Insert:	// 1
-				self.tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Automatic)
+			case .insert:	// 1
+				self.tableView.insertRows(at: [newIndexPath! as IndexPath], with: .automatic)
 			
-			case .Delete:	// 2
-				self.tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
+			case .delete:	// 2
+				self.tableView.deleteRows(at: [indexPath! as IndexPath], with: .fade)
 				
-			case .Move:		// 3
-				self.tableView.moveRowAtIndexPath(indexPath!, toIndexPath: newIndexPath!)
+			case .move:		// 3
+				self.tableView.moveRow(at: indexPath! as IndexPath, to: newIndexPath! as IndexPath)
 
-			case .Update:	// 4
-				self.tableView.reloadRowsAtIndexPaths([indexPath!], withRowAnimation: .None)
+			case .update:	// 4
+				self.tableView.reloadRows(at: [indexPath! as IndexPath], with: .none)
 		}
 	}
 }
 
 extension BaseTableViewController: TTTAttributedLabelDelegate {
-	
-	func attributedLabel(label: TTTAttributedLabel!, didSelectLinkWithURL url: NSURL!) {
-		UIApplication.sharedApplication().openURL(url)
+    func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
+		UIApplication.shared.openURL(url)
 	}
 }
-
-
 
 enum ItemClass {
 	case Messages

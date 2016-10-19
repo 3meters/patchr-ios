@@ -31,21 +31,21 @@ class AirToggleButton: AirImageButton {
 		
     override func initialize(){
         super.initialize()
-        toggleOn(false, animate: false)
+        toggleOn(on: false, animate: false)
         self.progressAuto = false
-        self.addTarget(self, action: #selector(AirToggleButton.onClick(_:)), forControlEvents: UIControlEvents.TouchUpInside)
+        self.addTarget(self, action: #selector(AirToggleButton.onClick(sender:)), for: UIControlEvents.touchUpInside)
     }
     
     func toggleOn(on: Bool, animate: Bool = true) {
         if on {
-            self.setImage(imageOn, forState: .Normal)
+            self.setImage(imageOn, for: .normal)
         }
         else {
-            self.setImage(imageOff, forState: .Normal)
+            self.setImage(imageOff, for: .normal)
         }
         self.toggledOn = on
 		if animate {
-			Animation.bounce(self)
+			Animation.bounce(view: self)
 		}
     }
 }

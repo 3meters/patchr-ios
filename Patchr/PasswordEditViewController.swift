@@ -32,18 +32,18 @@ class PasswordEditViewController: BaseEditViewController {
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
 		
-		let messageSize = self.message.sizeThatFits(CGSizeMake(288, CGFloat.max))
-		self.message.anchorTopCenterWithTopPadding(0, width: 288, height: messageSize.height)
+        let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
+		self.message.anchorTopCenter(withTopPadding: 0, width: 288, height: messageSize.height)
 		self.passwordField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
 		self.passwordNewField.alignUnder(self.passwordField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
 		self.submitButton.alignUnder(self.passwordNewField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
 		
 		self.contentHolder.resizeToFitSubviews()
-		self.scrollView.contentSize = CGSizeMake(self.contentHolder.frame.size.width, self.contentHolder.frame.size.height + CGFloat(32))
-		self.contentHolder.anchorTopCenterFillingWidthWithLeftAndRightPadding(16, topPadding: 16, height: self.contentHolder.frame.size.height)
+        self.scrollView.contentSize = CGSize(width:self.contentHolder.frame.size.width, height:self.contentHolder.frame.size.height + CGFloat(32))
+		self.contentHolder.anchorTopCenterFillingWidth(withLeftAndRightPadding: 16, topPadding: 16, height: self.contentHolder.frame.size.height)
 	}
 	
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
         self.passwordField.becomeFirstResponder()
     }
@@ -61,15 +61,15 @@ class PasswordEditViewController: BaseEditViewController {
 	
 	func hideShowPasswordAction(sender: AnyObject?) {
 		if let button = sender as? AirHideShowButton {
-			button.toggleOn(!button.toggledOn)
-			self.passwordField.secureTextEntry = !button.toggledOn
+			button.toggleOn(on: !button.toggledOn)
+			self.passwordField.isSecureTextEntry = !button.toggledOn
 		}
 	}
 
 	func hideShowNewPasswordAction(sender: AnyObject?) {
 		if let button = sender as? AirHideShowButton {
-			button.toggleOn(!button.toggledOn)
-			self.passwordNewField.secureTextEntry = !button.toggledOn
+			button.toggleOn(on: !button.toggledOn)
+			self.passwordNewField.isSecureTextEntry = !button.toggledOn
 		}
 	}
 
@@ -81,52 +81,45 @@ class PasswordEditViewController: BaseEditViewController {
 		super.initialize()
 		
 		Reporting.screen("PasswordEdit")
-		self.view.accessibilityIdentifier = View.PasswordEdit
 		
 		self.message.text = "Change password"
 		self.message.numberOfLines = 0
-		self.message.textAlignment = .Center
+		self.message.textAlignment = .center
 		self.contentHolder.addSubview(self.message)
 		
 		self.passwordField.placeholder = "Current password"
-		self.passwordField.accessibilityIdentifier = Field.Password
 		self.passwordField.delegate = self
-		self.passwordField.secureTextEntry = true
-		self.passwordField.keyboardType = UIKeyboardType.Default
-		self.passwordField.returnKeyType = UIReturnKeyType.Next
+		self.passwordField.isSecureTextEntry = true
+		self.passwordField.keyboardType = UIKeyboardType.default
+		self.passwordField.returnKeyType = UIReturnKeyType.next
 		self.passwordField.rightView = self.hideShowButton
-		self.passwordField.rightViewMode = .Always
+		self.passwordField.rightViewMode = .always
 		self.contentHolder.addSubview(self.passwordField)
 
 		self.passwordNewField.placeholder = "New password"
-		self.passwordNewField.accessibilityIdentifier = Field.NewPassword
 		self.passwordNewField.delegate = self
-		self.passwordNewField.secureTextEntry = true
-		self.passwordNewField.keyboardType = UIKeyboardType.Default
-		self.passwordNewField.returnKeyType = UIReturnKeyType.Done
+		self.passwordNewField.isSecureTextEntry = true
+		self.passwordNewField.keyboardType = UIKeyboardType.default
+		self.passwordNewField.returnKeyType = UIReturnKeyType.done
 		self.passwordNewField.rightView = self.hideShowNewButton
-		self.passwordNewField.rightViewMode = .Always
+		self.passwordNewField.rightViewMode = .always
 		self.contentHolder.addSubview(self.passwordNewField)
 		
-		self.hideShowButton.bounds.size = CGSizeMake(48, 48)
-		self.hideShowButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
-		self.hideShowButton.addTarget(self, action: #selector(PasswordEditViewController.hideShowPasswordAction(_:)), forControlEvents: .TouchUpInside)
+        self.hideShowButton.bounds.size = CGSize(width:48, height:48)
+        self.hideShowButton.imageEdgeInsets = UIEdgeInsets(top:8, left:10, bottom:8, right:10)
+		self.hideShowButton.addTarget(self, action: #selector(PasswordEditViewController.hideShowPasswordAction(sender:)), for: .touchUpInside)
 		
-		self.hideShowNewButton.bounds.size = CGSizeMake(48, 48)
-		self.hideShowNewButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
-		self.hideShowNewButton.addTarget(self, action: #selector(PasswordEditViewController.hideShowNewPasswordAction(_:)), forControlEvents: .TouchUpInside)
+        self.hideShowNewButton.bounds.size = CGSize(width:48, height:48)
+        self.hideShowNewButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
+		self.hideShowNewButton.addTarget(self, action: #selector(PasswordEditViewController.hideShowNewPasswordAction(sender:)), for: .touchUpInside)
 		
-		self.submitButton.setTitle("CHANGE", forState: .Normal)
-		self.submitButton.accessibilityIdentifier = Button.Submit
-		self.submitButton.addTarget(self, action: #selector(PasswordEditViewController.submitAction(_:)), forControlEvents: .TouchUpInside)
+		self.submitButton.setTitle("CHANGE", for: .normal)
+		self.submitButton.addTarget(self, action: #selector(PasswordEditViewController.submitAction(sender:)), for: .touchUpInside)
 		self.contentHolder.addSubview(self.submitButton)
 		
 		/* Navigation bar buttons */
-		let submitBarButton   = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(PasswordEditViewController.submitAction(_:)))
-		let cancelBarButton   = UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(PasswordEditViewController.cancelAction(_:)))
-		
-		submitBarButton.accessibilityIdentifier = Nav.Submit
-		cancelBarButton.accessibilityIdentifier = Nav.Cancel
+		let submitBarButton   = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(PasswordEditViewController.submitAction(sender:)))
+		let cancelBarButton   = UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.plain, target: self, action: #selector(PasswordEditViewController.cancelAction(sender:)))
 		
 		self.navigationItem.rightBarButtonItems = [submitBarButton]
 		self.navigationItem.leftBarButtonItems = [cancelBarButton]
@@ -140,20 +133,20 @@ class PasswordEditViewController: BaseEditViewController {
         
         processing = true
 		
-		let progress = AirProgress.addedTo(self.view.window!)
-		progress.mode = MBProgressHUDMode.Indeterminate
-		progress.styleAs(.ActivityWithText)
+		let progress = AirProgress.addedTo(view: self.view.window!)
+		progress.mode = MBProgressHUDMode.indeterminate
+		progress.styleAs(progressStyle: .ActivityWithText)
 		progress.labelText = "Updating..."
 		progress.graceTime = 2.0
 		progress.minShowTime = 1.0
 		progress.show(true)
-		progress.userInteractionEnabled = true
+		progress.isUserInteractionEnabled = true
 		
-        DataController.proxibase.updatePassword(UserController.instance.currentUser.id_,
+        DataController.proxibase.updatePassword(userId: UserController.instance.currentUser.id_,
             password: passwordField.text!,
             passwordNew: passwordNewField.text!) { response, error in
                 
-			NSOperationQueue.mainQueue().addOperationWithBlock {
+			OperationQueue.main.addOperation {
 				self.processing = false
 				
 				progress.hide(true)
@@ -172,27 +165,27 @@ class PasswordEditViewController: BaseEditViewController {
 				}
 				else {
 					/* Password change has already been handled with UserController */
-					self.navigationController?.popViewControllerAnimated(true)	// Back to profile edit
+					let _ = self.navigationController?.popViewController(animated: true)	// Back to profile edit
 					Reporting.track("Changed Password")
-					UIShared.Toast("Password changed")
+					UIShared.Toast(message: "Password changed")
 				}
 			}
         }
     }
     
     func cancelAction(sender: AnyObject){
-        self.navigationController?.popViewControllerAnimated(true)
+        let _ = self.navigationController?.popViewController(animated: true)
     }
     
     func isValid() -> Bool {
 		
 		if (self.passwordField.text!.isEmpty) {
-			Alert("Enter your current password.")
+			Alert(title: "Enter your current password.")
 			return false
 		}
 		
         if (passwordNewField.text!.utf16.count < 6) {
-            Alert("Enter a new password with six characters or more.")
+            Alert(title: "Enter a new password with six characters or more.")
             return false
         }
         return true
@@ -203,7 +196,7 @@ class PasswordEditViewController: BaseEditViewController {
 			self.passwordNewField.becomeFirstResponder()
 			return false
 		} else if textField == self.passwordNewField {
-			self.submitAction(textField)
+			self.submitAction(sender: textField)
 			textField.resignFirstResponder()
 			return false
 		}

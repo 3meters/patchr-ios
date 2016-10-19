@@ -17,7 +17,7 @@ class AudioController: NSObject {
 
     func play(sound: String) {
         do {
-            player = try AVAudioPlayer(contentsOfURL: self.uriForFile(sound), fileTypeHint: nil)
+            player = try AVAudioPlayer(contentsOf: self.uriForFile(fileName: sound) as URL, fileTypeHint: nil)
             player.prepareToPlay()
             player.play()
         } catch {
@@ -26,7 +26,7 @@ class AudioController: NSObject {
     }
 
     private func uriForFile(fileName: String) -> NSURL {
-        let path           = NSBundle.mainBundle().pathForResource(fileName, ofType: "aac")
+        let path           = Bundle.main.path(forResource: fileName, ofType: "aac")
         let fileUri: NSURL = NSURL(fileURLWithPath: path!)
         return fileUri
     }
@@ -34,13 +34,13 @@ class AudioController: NSObject {
 
 func createChirpSound() -> SystemSoundID {
     var soundID: SystemSoundID = 0
-    let soundURL               = CFBundleCopyResourceURL(CFBundleGetMainBundle(), "chirp", "caf", nil)
-    AudioServicesCreateSystemSoundID(soundURL, &soundID)
+    let soundURL               = CFBundleCopyResourceURL(CFBundleGetMainBundle(), "chirp" as CFString!, "caf" as CFString!, nil)
+    AudioServicesCreateSystemSoundID(soundURL!, &soundID)
     return soundID
 }
 
 extension AudioController: AVAudioPlayerDelegate {
-    func audioPlayerDidFinishPlaying(player: AVAudioPlayer, successfully flag: Bool) {
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         self.player = nil
     }
 }

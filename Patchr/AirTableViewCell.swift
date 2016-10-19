@@ -11,7 +11,7 @@ import UIKit
 class AirTableViewCell: UITableViewCell {
 	
 	init () {
-		super.init(style: .Default, reuseIdentifier: nil)
+		super.init(style: .default, reuseIdentifier: nil)
 		initialize()
 	}
 	
@@ -26,7 +26,7 @@ class AirTableViewCell: UITableViewCell {
 	}
 	
 	func initialize() {
-		self.accessoryType = .DisclosureIndicator
+		self.accessoryType = .disclosureIndicator
 		self.textLabel!.font = Theme.fontTextDisplay
 		self.textLabel!.textColor = Theme.colorText
 	}

@@ -10,23 +10,23 @@ import Foundation
 import ObjectiveC
 import Firebase
 import Bugsnag
+import ReachabilitySwift
 
 struct Reporting {
     
     static func updateCrashKeys() {
         
-        let reachability: Reachability = Reachability.reachabilityForInternetConnection()
-        let networkStatus: Int = reachability.currentReachabilityStatus().rawValue
-        if networkStatus == 0 {
-            
+        let reachability: Reachability? = Reachability()
+        let networkStatus: Reachability.NetworkStatus = (reachability?.currentReachabilityStatus)!
+        if networkStatus != .notReachable {
 			Bugsnag.addAttribute("connected", withValue: false, toTabWithName: "network")
         }
         else {
 			Bugsnag.addAttribute("connected", withValue: true, toTabWithName: "network")
-            if networkStatus == 1 {
+            if networkStatus == .reachableViaWiFi {
 				Bugsnag.addAttribute("network_type", withValue: "wifi", toTabWithName: "network")
             }
-            else if networkStatus == 2 {
+            else if networkStatus == .reachableViaWWAN {
 				Bugsnag.addAttribute("network_type", withValue: "wwan", toTabWithName: "network")
             }
         }
@@ -37,10 +37,10 @@ struct Reporting {
         }
 		
         /* Location info */
-        if let location: CLLocation? = LocationController.instance.lastLocationAccepted() {
-            let eventDate = location!.timestamp
+        if let location: CLLocation = LocationController.instance.lastLocationAccepted() {
+            let eventDate = location.timestamp
             let howRecent = abs(trunc(eventDate.timeIntervalSinceNow * 100) / 100)
-            Bugsnag.addAttribute("accuracy", withValue: location!.horizontalAccuracy, toTabWithName: "location")
+            Bugsnag.addAttribute("accuracy", withValue: location.horizontalAccuracy, toTabWithName: "location")
             Bugsnag.addAttribute("age", withValue: howRecent, toTabWithName: "location")
         }
         else {
@@ -58,19 +58,19 @@ struct Reporting {
         Bugsnag.configuration()!.setUser(user?.id_, withName: user?.name, andEmail: user?.email)
         
         if user != nil {
-			BranchProvider.setIdentity(user!.id_)
+			BranchProvider.setIdentity(identity: user!.id_)
         }
         else {
 			BranchProvider.logout()
         }
     }
 	
-	static func track(event: String, properties: [String : AnyObject]? = nil) {
-        let event = event.lowercaseString.stringByReplacingOccurrencesOfString(" ", withString: "_")
-        FIRAnalytics.logEventWithName(event, parameters: nil)
+	static func track(_ event: String, properties: [String : Any]? = nil) {
+        let event = event.lowercased().replacingOccurrences(of: " ", with: "_")
+        FIRAnalytics.logEvent(withName: event, parameters: nil)
 	}
 	
-	static func screen(name: String) {
-        FIRAnalytics.logEventWithName(name, parameters: nil)
+	static func screen(_ name: String) {
+        FIRAnalytics.logEvent(withName: name, parameters: nil)
 	}
 }

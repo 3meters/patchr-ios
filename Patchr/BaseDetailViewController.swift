@@ -32,33 +32,33 @@ class BaseDetailViewController: BaseTableViewController {
 
         super.viewDidLoad()
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(BaseDetailViewController.userDidLogin(_:)), name: Events.UserDidLogin, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(BaseDetailViewController.userDidLogin(sender:)), name: NSNotification.Name(rawValue: Events.UserDidLogin), object: nil)
     }
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 
         let navHeight = self.navigationController?.navigationBar.height() ?? 0
-        let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+        let statusHeight = UIApplication.shared.statusBarFrame.size.height
 
-        self.emptyLabel.anchorInCenterWithWidth(160, height: 160)
+        self.emptyLabel.anchorInCenter(withWidth: 160, height: 160)
         self.emptyLabel.frame.origin.y -= CGFloat(statusHeight + navHeight)
         self.emptyLabel.frame.origin.y += self.header.height() / 2
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
 
         if self.entity != nil {
             /* Entity could have been deleted while we were away so check it. */
-            let item = ServiceBase.fetchOneById(self.entityId!, inManagedObjectContext: DataController.instance.mainContext)
+            let item = ServiceBase.fetchOne(byId: self.entityId!, in: DataController.instance.mainContext)
             if item == nil {
-                self.navigationController?.popViewControllerAnimated(false)
+                let _ = self.navigationController?.popViewController(animated: false)
                 return
             }
         }
         else {
             /* Use cached entity if available in the data model */
-            if let entity: Entity? = Entity.fetchOneById(self.entityId!, inManagedObjectContext: DataController.instance.mainContext) {
+            if let entity: Entity? = Entity.fetchOne(byId: self.entityId!, in: DataController.instance.mainContext) {
                 self.entity = entity
             }
         }
@@ -73,18 +73,18 @@ class BaseDetailViewController: BaseTableViewController {
         }
     }
 
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         Log.w("Patchr received memory warning: clearing memory image cache")
-        SDImageCache.sharedImageCache().clearMemory()
+        SDImageCache.shared().clearMemory()
     }
 
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -100,16 +100,16 @@ class BaseDetailViewController: BaseTableViewController {
     * Methods
     *--------------------------------------------------------------------------------------------*/
 
-    func fetch(strategy strategy: FetchStrategy, resetList: Bool = false) {
+    func fetch(strategy: FetchStrategy, resetList: Bool = false) {
 
         /* Refreshes the top object but not the message list */
-        DataController.instance.backgroundOperationQueue.addOperationWithBlock {
-            DataController.instance.withEntityId(self.entityId!, strategy: strategy) {
+        DataController.instance.backgroundOperationQueue.addOperation {
+            DataController.instance.withEntityId(entityId: self.entityId!, strategy: strategy) {
                 [weak self] objectId, error in
 
                 if self != nil {
-                    NSOperationQueue.mainQueue().addOperationWithBlock {
-                        var userInfo: [NSObject:AnyObject] = ["error": (error != nil)]
+                    OperationQueue.main.addOperation {
+                        var userInfo: [AnyHashable:Any] = ["error": (error != nil)]
                         self?.refreshControl?.endRefreshing()
 
                         if let error = ServerError(error) {
@@ -118,7 +118,7 @@ class BaseDetailViewController: BaseTableViewController {
                         else {
                             if objectId != nil {
                                 /* entity has already been saved by DataController */
-                                let entity = DataController.instance.mainContext.objectWithID(objectId!) as! Entity
+                                let entity = DataController.instance.mainContext.object(with: objectId!) as! Entity
                                 self?.entity = entity
                                 self?.entityId = entity.id_
 
@@ -140,7 +140,7 @@ class BaseDetailViewController: BaseTableViewController {
                                         userInfo["count"] = fetchedObjects.count
                                     }
                                     if self != nil {
-                                        NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetchQuery, object: self!, userInfo: userInfo)
+                                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.DidFetchQuery), object: self!, userInfo: userInfo)
                                     }
                                 }
 
@@ -150,16 +150,16 @@ class BaseDetailViewController: BaseTableViewController {
                                 self?.drawNavBarButtons()    // Refresh so owner only commands can be displayed
                                 self?.bind()
                                 if self != nil {
-                                    NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetch, object: self!)
+                                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.DidFetch), object: self!)
                                 }
                             }
                             else {
-                                UIShared.Toast("Item has been deleted")
+                                UIShared.Toast(message: "Item has been deleted")
                                 Utils.delay(2.0) {
                                     () -> () in
-                                    self?.navigationController?.popViewControllerAnimated(true)
+                                    let _ = self?.navigationController?.popViewController(animated: true)
                                     if self != nil {
-                                        NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetch, object: self!, userInfo: ["deleted": true])
+                                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.DidFetch), object: self!, userInfo: ["deleted": true])
                                     }
                                 }
                             }
@@ -170,7 +170,7 @@ class BaseDetailViewController: BaseTableViewController {
         }
     }
 
-    override func fetchQueryItems(force force: Bool = false, paging: Bool = false, queryDate: Int64?) {
+    override func fetchQueryItems(force: Bool = false, paging: Bool = false, queryDate: Int64?) {
         if force || !self.query.executedValue || paging {
             super.fetchQueryItems(force: force, paging: paging, queryDate: queryDate)
         }
@@ -195,12 +195,12 @@ class BaseDetailViewController: BaseTableViewController {
     override func loadQuery() -> Query {
 
         let id = queryId()
-        var query: Query? = Query.fetchOneById(id, inManagedObjectContext: DataController.instance.mainContext)
+        var query: Query? = Query.fetchOne(byId: id, in: DataController.instance.mainContext)
 
         if query == nil {
-            query = Query.fetchOrInsertOneById(id, inManagedObjectContext: DataController.instance.mainContext) as Query
+            query = Query.fetchOrInsertOne(byId: id, in: DataController.instance.mainContext) as Query
             query!.name = self.queryName
-            query!.pageSize = DataController.proxibase.pageSizeDefault
+            query!.pageSize = DataController.proxibase.pageSizeDefault as NSNumber!
             query!.contextEntity = nil
 
             if self.entity != nil {
@@ -210,7 +210,7 @@ class BaseDetailViewController: BaseTableViewController {
                 query!.entityId = self.entityId
             }
 
-            DataController.instance.saveContext(BLOCKING)
+            DataController.instance.saveContext(wait: BLOCKING)
         }
 
         return query!
@@ -218,14 +218,14 @@ class BaseDetailViewController: BaseTableViewController {
 
     func queryId() -> String {
         let id = self.entity?.id_ ?? self.entityId
-        return "query.\(self.queryName!.lowercaseString).\(id!)"
+        return "query.\(self.queryName!.lowercased()).\(id!)"
     }
 
     override func makeCell() -> WrapperTableViewCell {
         let cell = super.makeCell()
         if let view = cell.view as? MessageView {
             view.showPatchName = self.patchNameVisible
-            view.patchName.hidden = !self.patchNameVisible
+            view.patchName.isHidden = !self.patchNameVisible
         }
         return cell
     }
@@ -236,14 +236,12 @@ extension BaseDetailViewController {
      * UITableViewDelegate 
      * These are shared by patch and user detail views.
      */
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-
-        if let queryResult = self.fetchedResultsController.objectAtIndexPath(indexPath) as? QueryItem,
-        let entity = queryResult.object as? Message {
-            let controller = MessageDetailViewController()
-            controller.inputMessage = entity
-            self.navigationController?.pushViewController(controller, animated: true)
-        }
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let queryResult = self.fetchedResultsController.object(at: indexPath)
+        let entity = queryResult.object as? Message
+        let controller = MessageDetailViewController()
+        controller.inputMessage = entity
+        self.navigationController?.pushViewController(controller, animated: true)
     }
 }
 

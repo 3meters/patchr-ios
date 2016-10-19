@@ -26,7 +26,7 @@ class AirContactPicker: THContactPickerView {
 	}
 	
 	func initialize() {
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AirContactPicker.editingBegin(_:)), name: UITextFieldTextDidBeginEditingNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(AirContactPicker.editingBegin(notification:)), name: NSNotification.Name.UITextFieldTextDidBeginEditing, object: nil)
 		self.rule.backgroundColor = Theme.colorRule
 		self.font = Theme.fontText
 		self.setPromptLabelTextColor(Theme.colorTextPlaceholder)
@@ -35,7 +35,7 @@ class AirContactPicker: THContactPickerView {
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		self.rule.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: Theme.dimenRuleThickness)
+		self.rule.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: Theme.dimenRuleThickness)
 	}
 	
 	func editingBegin(notification: NSNotification) {

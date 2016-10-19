@@ -12,7 +12,7 @@ import SDWebImage
 class PatchView: BaseView {
 
 	var name			= UILabel()
-	var photo			= AirImageView(frame: CGRectZero)
+	var photo			= AirImageView(frame: CGRect.zero)
 	var type			= UILabel()
 	var visibility		= UIImageView()
 	var status			= UILabel()
@@ -42,12 +42,12 @@ class PatchView: BaseView {
 		
 		self.clipsToBounds = true
 		
-		self.layer.backgroundColor = Theme.colorBackgroundTile.CGColor
+		self.layer.backgroundColor = Theme.colorBackgroundTile.cgColor
 		
 		/* Patch photo */
-		self.photo.contentMode = UIViewContentMode.ScaleAspectFill
+		self.photo.contentMode = UIViewContentMode.scaleAspectFill
 		self.photo.clipsToBounds = true
-		self.photo.userInteractionEnabled = true
+		self.photo.isUserInteractionEnabled = true
 		self.photo.backgroundColor = Colors.gray80pcntColor
 		self.photo.sizeCategory = SizeCategory.thumbnail
 		self.addSubview(self.photo)
@@ -64,43 +64,43 @@ class PatchView: BaseView {
 		
 		/* Patch visibility */
 		self.visibility.image = UIImage(named: "imgLockLight")
-		self.visibility.contentMode = UIViewContentMode.ScaleToFill
+		self.visibility.contentMode = UIViewContentMode.scaleToFill
 		self.visibility.clipsToBounds = true
 		self.visibility.tintColor = Colors.accentColorFill
-		self.visibility.hidden = true
+		self.visibility.isHidden = true
 		self.addSubview(self.visibility)
 		
 		/* Patch status */
 		self.status.text = "REQUESTED"
-		self.status.hidden = true
+		self.status.isHidden = true
 		self.status.font = Theme.fontCommentSmall
 		self.status.textColor = Theme.colorTint
 		self.addSubview(self.status)
 		
 		/* Message count */
-		self.messageCount.textAlignment = .Center
-		self.messageCount.lineBreakMode = .ByTruncatingMiddle
+		self.messageCount.textAlignment = .center
+		self.messageCount.lineBreakMode = .byTruncatingMiddle
 		self.messageCount.font = Theme.fontNumberFeatured
 		self.messageCount.textColor = Theme.colorNumberFeatured
 		self.messagesGroup.addSubview(self.messageCount)
 		
 		/* Message label */
 		self.messageLabel.text = "MESSAGES"
-		self.messageLabel.textAlignment = .Center
+		self.messageLabel.textAlignment = .center
 		self.messageLabel.font = Theme.fontCommentExtraSmall
 		self.messageLabel.textColor = Theme.colorTextSecondary
 		self.messagesGroup.addSubview(self.messageLabel)
 		self.addSubview(self.messagesGroup)
 		
 		/* Watching count */
-		self.watchingCount.textAlignment = .Center
+		self.watchingCount.textAlignment = .center
 		self.watchingCount.font = Theme.fontNumberFeatured
 		self.watchingCount.textColor = Theme.colorNumberFeatured
 		self.watchingGroup.addSubview(self.watchingCount)
 		
 		/* Watching label */
 		self.watchingLabel.text = "MEMBERS"
-		self.watchingLabel.textAlignment = .Center
+		self.watchingLabel.textAlignment = .center
 		self.watchingLabel.font = Theme.fontCommentExtraSmall
 		self.watchingLabel.textColor = Theme.colorTextSecondary
 		self.watchingGroup.addSubview(self.watchingLabel)
@@ -112,11 +112,11 @@ class PatchView: BaseView {
 		self.addSubview(self.distance)
 		
 		/* Rule */
-		self.rule.layer.backgroundColor = Theme.colorRule.CGColor
+		self.rule.layer.backgroundColor = Theme.colorRule.cgColor
 		self.addSubview(self.rule)
 		
 		/* Shadow */
-		self.shadow.layer.backgroundColor = Theme.colorShadow.CGColor
+		self.shadow.layer.backgroundColor = Theme.colorShadow.cgColor
 		self.addSubview(self.shadow)
 	}
 	
@@ -128,19 +128,19 @@ class PatchView: BaseView {
 		
 		self.name.text = entity.name
 		if entity.type != nil {
-			self.type.text = entity.type.uppercaseString + " PATCH"
+			self.type.text = entity.type.uppercased() + " PATCH"
 		}
 		
 		if let patch = entity as? Patch {
 			
-			self.messagesGroup.hidden = false
-			self.watchingGroup.hidden = false
-			self.rule.hidden = false
+			self.messagesGroup.isHidden = false
+			self.watchingGroup.isHidden = false
+			self.rule.isHidden = false
 			
-			self.visibility.hidden = (patch.visibility != nil && patch.visibility == "public")
-			self.status.hidden = true
-			if (patch.userWatchStatusValue == .Pending && !SCREEN_NARROW) {
-				self.status.hidden = false
+			self.visibility.isHidden = (patch.visibility != nil && patch.visibility == "public")
+			self.status.isHidden = true
+			if (patch.userWatchStatusValue == .pending && !SCREEN_NARROW) {
+				self.status.isHidden = false
 			}
 			
 			self.messageCount.text = "--"
@@ -156,39 +156,39 @@ class PatchView: BaseView {
 		}
 		else {
 			/* This is a shortcut with a subset of the info */
-			self.messagesGroup.hidden = true
-			self.watchingGroup.hidden = true
-			self.rule.hidden = true
+			self.messagesGroup.isHidden = true
+			self.watchingGroup.isHidden = true
+			self.rule.isHidden = true
 		}
 		
 		/* Distance */
 		if location == nil {
-			self.distance.hidden = true
+			self.distance.isHidden = true
 		}
 		else {
-			self.distance.hidden = false
+			self.distance.isHidden = false
 			self.distance.text = "--"
 			if let loc = entity.location {
 				let patchLocation = CLLocation(latitude: loc.latValue, longitude: loc.lngValue)
-				let dist = Float(location!.distanceFromLocation(patchLocation))  // in meters
-				self.distance.text = LocationController.instance.distancePretty(dist)
+				let dist = Float(location!.distance(from: patchLocation))  // in meters
+				self.distance.text = LocationController.instance.distancePretty(meters: dist)
 			}
 		}
 		
 		self.photo.backgroundColor = Colors.gray80pcntColor
 
 		if entity.photo != nil {
-			let photoUrl = PhotoUtils.url(entity.photo!.prefix!, source: entity.photo!.source!, category: SizeCategory.profile)
-			bindPhoto(photoUrl, name: entity.name)
+			let photoUrl = PhotoUtils.url(prefix: entity.photo!.prefix!, source: entity.photo!.source!, category: SizeCategory.profile)
+			bindPhoto(photoUrl: photoUrl, name: entity.name)
 		}
 		else {
-			bindPhoto(nil, name: entity.name)
+			bindPhoto(photoUrl: nil, name: entity.name)
 		}
 
 		self.setNeedsLayout()
 	}
 	
-	private func bindPhoto(photoUrl: NSURL?, name: String?) {
+	private func bindPhoto(photoUrl: URL?, name: String?) {
 		
 		if self.photo.image != nil
 			&& self.photo.linkedPhotoUrl != nil
@@ -200,12 +200,12 @@ class PatchView: BaseView {
 		self.photo.image = nil
 		
 		if photoUrl != nil {
-			self.photo.setImageWithUrl(photoUrl!, animate: false)
+			self.photo.setImageWithUrl(url: photoUrl!, animate: false)
 			self.photo.showGradient = true
 		}
 		else if name != nil {
-			let seed = Utils.numberFromName(name!)
-			self.photo.backgroundColor = Utils.randomColor(seed)
+			let seed = Utils.numberFromName(fullname: name!)
+			self.photo.backgroundColor = Utils.randomColor(seed: seed)
 			self.photo.showGradient = true
 		}
 	}
@@ -213,40 +213,40 @@ class PatchView: BaseView {
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		
-		self.shadow.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 1)
+		self.shadow.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 1)
 		
 		let columnLeft = CGFloat(128 + 8)
 		let columnWidth = self.width() - columnLeft
-		let nameSize = self.name.sizeThatFits(CGSizeMake(columnWidth, CGFloat.max))
+        let nameSize = self.name.sizeThatFits(CGSize(width: columnWidth, height: CGFloat.greatestFiniteMagnitude))
 		
-		self.photo.anchorTopLeftWithLeftPadding(0, topPadding: 0, width: 128, height: 128)
-		self.name.anchorTopLeftWithLeftPadding(columnLeft, topPadding: 6, width: columnWidth, height: nameSize.height)
+		self.photo.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: 128, height: 128)
+		self.name.anchorTopLeft(withLeftPadding: columnLeft, topPadding: 6, width: columnWidth, height: nameSize.height)
 		
 		self.type.sizeToFit()
 		self.type.alignUnder(self.name, matchingLeftWithTopPadding: 0, width: self.type.width(), height: 16)
-		if !self.visibility.hidden {
-			self.visibility.alignToTheRightOf(self.type, matchingCenterWithLeftPadding: 8, width: 16, height: 16)
-			if !self.status.hidden {
+		if !self.visibility.isHidden {
+			self.visibility.align(toTheRightOf: self.type, matchingCenterWithLeftPadding: 8, width: 16, height: 16)
+			if !self.status.isHidden {
 				self.status.sizeToFit()
-				self.status.alignToTheRightOf(self.visibility, matchingCenterWithLeftPadding: 8, width: columnWidth - (self.status.width() + self.visibility.width() + 16), height: self.status.height())
+				self.status.align(toTheRightOf: self.visibility, matchingCenterWithLeftPadding: 8, width: columnWidth - (self.status.width() + self.visibility.width() + 16), height: self.status.height())
 			}
 		}
-		else if !self.status.hidden {
+		else if !self.status.isHidden {
 			self.status.sizeToFit()
-			self.status.alignToTheRightOf(self.type, matchingCenterWithLeftPadding: 8, width: columnWidth - (self.status.width() + 8), height: self.status.height())
+			self.status.align(toTheRightOf: self.type, matchingCenterWithLeftPadding: 8, width: columnWidth - (self.status.width() + 8), height: self.status.height())
 		}
 		
-		self.messagesGroup.anchorBottomLeftWithLeftPadding(columnLeft, bottomPadding: 8, width: 72, height: 48)
-		self.rule.alignToTheRightOf(self.messagesGroup, matchingBottomWithLeftPadding: 8, width: 1, height: 40)
-		self.watchingGroup.alignToTheRightOf(self.rule, matchingBottomWithLeftPadding: 8, width: 72, height: 48)
+		self.messagesGroup.anchorBottomLeft(withLeftPadding: columnLeft, bottomPadding: 8, width: 72, height: 48)
+		self.rule.align(toTheRightOf: self.messagesGroup, matchingBottomWithLeftPadding: 8, width: 1, height: 40)
+		self.watchingGroup.align(toTheRightOf: self.rule, matchingBottomWithLeftPadding: 8, width: 72, height: 48)
 		
-		self.messageLabel.anchorBottomCenterFillingWidthWithLeftAndRightPadding(4, bottomPadding: 0, height: 15)
-		self.messageCount.alignAbove(self.messageLabel, fillingWidthWithLeftAndRightPadding: 0, bottomPadding: 0, height: 32)
-		self.watchingLabel.anchorBottomCenterFillingWidthWithLeftAndRightPadding(4, bottomPadding: 0, height: 15)
-		self.watchingCount.alignAbove(self.watchingLabel, fillingWidthWithLeftAndRightPadding: 0, bottomPadding: 0, height: 32)
+		self.messageLabel.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 4, bottomPadding: 0, height: 15)
+		self.messageCount.align(above: self.messageLabel, fillingWidthWithLeftAndRightPadding: 0, bottomPadding: 0, height: 32)
+		self.watchingLabel.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 4, bottomPadding: 0, height: 15)
+		self.watchingCount.align(above: self.watchingLabel, fillingWidthWithLeftAndRightPadding: 0, bottomPadding: 0, height: 32)
 		
 		if self.distance.text != nil {
-			self.distance.anchorBottomLeftWithLeftPadding(8, bottomPadding: 8, width: 112, height: 16)
+			self.distance.anchorBottomLeft(withLeftPadding: 8, bottomPadding: 8, width: 112, height: 16)
 		}
 	}
 }

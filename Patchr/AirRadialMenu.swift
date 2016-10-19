@@ -31,7 +31,7 @@ class AirRadialMenu: CKRadialMenu  {
 	}
 	
 	internal init(attachedToView view: UIView) {
-		super.init(frame: CGRectZero)
+		super.init(frame: CGRect.zero)
 		self.parentView = view
 		initialize()
 	}
@@ -43,17 +43,17 @@ class AirRadialMenu: CKRadialMenu  {
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		
-		let titleSize = self.title.sizeThatFits(CGSizeMake(288, CGFloat.max))
-		let messageSize = self.message.sizeThatFits(CGSizeMake(288, CGFloat.max))
+        let titleSize = self.title.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
+        let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
 		let availableHeight = self.parentView.height() - 144
 		let contentHeight = titleSize.height + messageSize.height + 12
 		let topLayoutGuide = (availableHeight - contentHeight) / 2
 		
-		self.title.anchorTopCenterWithTopPadding(topLayoutGuide, width: 288, height: titleSize.height)
+		self.title.anchorTopCenter(withTopPadding: topLayoutGuide, width: 288, height: titleSize.height)
 		self.message.alignUnder(self.title, matchingCenterWithTopPadding: 12, width: 288, height: messageSize.height)
 		
 		self.centerView.layer.cornerRadius = self.bounds.width / 2
-		self.imageView.fillSuperviewWithLeftPadding(self.imageInsets.left
+		self.imageView.fillSuperview(withLeftPadding: self.imageInsets.left
 			, rightPadding: self.imageInsets.right
 			, topPadding: self.imageInsets.top
 			, bottomPadding: self.imageInsets.bottom)
@@ -76,19 +76,19 @@ class AirRadialMenu: CKRadialMenu  {
 		self.clipsToBounds = false
 		
 		self.contentView = UIView(frame: self.parentView.bounds)
-		self.blurVisualEffect = UIVisualEffectView(effect: UIBlurEffect(style: .ExtraLight))
+		self.blurVisualEffect = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
 		self.blurVisualEffect.frame = self.contentView.frame
 		
 		self.title.text = "Getting together? Make a patch to share photos, messages and stay connected."
 		self.title.numberOfLines = 0
-		self.title.textAlignment = .Center
+		self.title.textAlignment = .center
 		
 		self.message.text = "Patches are perfect for any event, place, trip or interest.\n\nMasterpiece or experiment, patches are always easy to update or delete. Select a patch type below and get started!"
 		self.message.numberOfLines = 0
-		self.message.textAlignment = .Center
+		self.message.textAlignment = .center
 		
-		let titleSize = self.title.sizeThatFits(CGSizeMake(288, CGFloat.max))
-		let messageSize = self.message.sizeThatFits(CGSizeMake(288, CGFloat.max))
+        let titleSize = self.title.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
+        let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
 		let availableHeight = self.parentView.height() - 144
 		let contentHeight = titleSize.height + messageSize.height + 12
 		let topLayoutGuide = (availableHeight - contentHeight) / 2
@@ -101,7 +101,7 @@ class AirRadialMenu: CKRadialMenu  {
 		self.blurVisualEffect.contentView.addSubview(self.title)
 		self.blurVisualEffect.contentView.addSubview(self.message)
 		
-		let tap = UITapGestureRecognizer(target: self, action: #selector(backgroundTapped(_:)))
+		let tap = UITapGestureRecognizer(target: self, action: #selector(backgroundTapped(gester:)))
 		self.contentView.addGestureRecognizer(tap)
 	}
 	
@@ -112,13 +112,13 @@ class AirRadialMenu: CKRadialMenu  {
 			if self.showBackground {
 				showBlur()
 			}
-			UIView.animateWithDuration(0.5
+			UIView.animate(withDuration: 0.5
 				, delay: 0
 				, usingSpringWithDamping: 0.55
 				, initialSpringVelocity: 0.3
-				, options: [.CurveEaseInOut]
+				, options: [.curveEaseInOut]
 				, animations: {
-					self.imageView.layer.transform = CATransform3DMakeRotation(self.degreesToRadians(135), CGFloat(0.01), CGFloat(0.01), CGFloat(1.0))
+					self.imageView.layer.transform = CATransform3DMakeRotation(self.degreesToRadians(degrees: 135), CGFloat(0.01), CGFloat(0.01), CGFloat(1.0))
 				}, completion: nil)
 		}
 	}
@@ -130,13 +130,13 @@ class AirRadialMenu: CKRadialMenu  {
 			if self.showBackground {
 				self.hideBlur()
 			}
-			UIView.animateWithDuration(0.5
+			UIView.animate(withDuration: 0.5
 				, delay: 0
 				, usingSpringWithDamping: 0.6
 				, initialSpringVelocity: 0.8
 				, options: []
 				, animations: {
-					self.imageView.layer.transform = CATransform3DMakeRotation(self.degreesToRadians(0), CGFloat(0.01), CGFloat(0.01), CGFloat(1.0))
+					self.imageView.layer.transform = CATransform3DMakeRotation(self.degreesToRadians(degrees: 0), CGFloat(0.01), CGFloat(0.01), CGFloat(1.0))
 			}) {
 				completed in
 			}

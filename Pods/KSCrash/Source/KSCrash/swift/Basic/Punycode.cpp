@@ -10,6 +10,8 @@
 //
 //===----------------------------------------------------------------------===//
 
+//#include "swift/Basic/LLVM.h"
+//#include "swift/Basic/Punycode.h"
 #include "LLVM.h"
 #include "Punycode.h"
 #include <vector>
@@ -87,7 +89,7 @@ bool Punycode::decodePunycode(StringRef InputPunycode,
       // fail on any non-basic code point
       if (static_cast<unsigned char>(c) > 0x7f)
         return true;
-      OutCodePoints.push_back((unsigned)c);
+      OutCodePoints.push_back((uint32_t)c);
     }
     // if more than zero code points were consumed then consume one more
     //  (which will be the last delimiter)
@@ -118,7 +120,7 @@ bool Punycode::decodePunycode(StringRef InputPunycode,
       w = w * (base - t);
     }
     bias = adapt(i - oldi, (int)OutCodePoints.size() + 1, oldi == 0);
-    n = n + (unsigned)i / (OutCodePoints.size() + 1);
+    n = n + (uint32_t)i / (OutCodePoints.size() + 1);
     i = i % ((int)OutCodePoints.size() + 1);
     // if n is a basic code point then fail
     if (n < 0x80)
@@ -167,7 +169,7 @@ bool Punycode::encodePunycode(const std::vector<uint32_t> &InputCodePoints,
         m = codePoint;
     }
     
-    delta = delta + (int)((m - n) * (h + 1));
+    delta = delta + (int)(m - n) * (int)(h + 1);
     n = m;
     for (auto c : InputCodePoints) {
       if (c < n) ++delta;
@@ -218,7 +220,7 @@ static bool encodeToUTF8(const std::vector<uint32_t> &Scalars,
     case 2: {
       uint8_t Byte2 = (S | 0x80) & 0xBF;
       S >>= 6;
-      uint8_t Byte1 = (uint8_t)(S | 0xC0);
+      uint8_t Byte1 = (uint8_t)S | 0xC0;
       OutUTF8.push_back((char)Byte1);
       OutUTF8.push_back((char)Byte2);
       break;
@@ -228,7 +230,7 @@ static bool encodeToUTF8(const std::vector<uint32_t> &Scalars,
       S >>= 6;
       uint8_t Byte2 = (S | 0x80) & 0xBF;
       S >>= 6;
-      uint8_t Byte1 = (uint8_t)(S | 0xE0);
+      uint8_t Byte1 = (uint8_t)S | 0xE0;
       OutUTF8.push_back((char)Byte1);
       OutUTF8.push_back((char)Byte2);
       OutUTF8.push_back((char)Byte3);
@@ -241,7 +243,7 @@ static bool encodeToUTF8(const std::vector<uint32_t> &Scalars,
       S >>= 6;
       uint8_t Byte2 = (S | 0x80) & 0xBF;
       S >>= 6;
-      uint8_t Byte1 = (uint8_t)(S | 0xF0);
+      uint8_t Byte1 = (uint8_t)S | 0xF0;
       OutUTF8.push_back((char)Byte1);
       OutUTF8.push_back((char)Byte2);
       OutUTF8.push_back((char)Byte3);

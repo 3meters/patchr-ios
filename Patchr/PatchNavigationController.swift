@@ -20,10 +20,8 @@ class PatchNavigationController: AirNavigationController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-		
-		self.view.accessibilityIdentifier = View.Patches
-		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(PatchNavigationController.userDidLogin(_:)), name: Events.UserDidLogin, object: nil)
+				
+		NotificationCenter.default.addObserver(self, selector: #selector(PatchNavigationController.userDidLogin(sender:)), name: NSNotification.Name(rawValue: Events.UserDidLogin), object: nil)
 		
 		let segItems = ["Nearby", "Member", "Own", "Explore"]
 			
@@ -31,18 +29,18 @@ class PatchNavigationController: AirNavigationController {
         
         self.segmentedControl = UISegmentedControl(items: segItems)
         self.segmentedControl.sizeToFit()
-		self.segmentedControl.addTarget(self.segmentsController, action:  #selector(self.segmentsController.indexDidChangeForSegmentedControl(_:)), forControlEvents: .ValueChanged)
+		self.segmentedControl.addTarget(self.segmentsController, action:  #selector(self.segmentsController.indexDidChangeForSegmentedControl(segmentedControl:)), for: .valueChanged)
         self.segmentedControl.selectedSegmentIndex = 0
-		self.segmentedControl.tintAdjustmentMode = .Normal
-        self.segmentsController.indexDidChangeForSegmentedControl(self.segmentedControl)
+		self.segmentedControl.tintAdjustmentMode = .normal
+        self.segmentsController.indexDidChangeForSegmentedControl(segmentedControl: self.segmentedControl)
     }
 	
-	override func viewWillDisappear(animated: Bool) {
+	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 	}
 	
 	deinit {
-		NSNotificationCenter.defaultCenter().removeObserver(self)		
+		NotificationCenter.default.removeObserver(self)		
 	}
 
     /*--------------------------------------------------------------------------------------------
@@ -60,10 +58,10 @@ class PatchNavigationController: AirNavigationController {
 	func userDidLogin(sender: NSNotification) {
 		
 		/* Can be called from a background thread */
-		NSOperationQueue.mainQueue().addOperationWithBlock {
+		OperationQueue.main.addOperation {
 			
-			self.segmentedControl.insertSegmentWithTitle("Own", atIndex: 1, animated: true)
-			self.segmentedControl.insertSegmentWithTitle("Member", atIndex: 1, animated: true)
+			self.segmentedControl.insertSegment(withTitle: "Own", at: 1, animated: true)
+			self.segmentedControl.insertSegment(withTitle: "Member", at: 1, animated: true)
 			
 			let owns = PatchTableViewController()
 			let watching = PatchTableViewController()
@@ -73,8 +71,8 @@ class PatchNavigationController: AirNavigationController {
 			watching.filter = PatchListFilter.Watching
 			watching.user = UserController.instance.currentUser
 			
-			self.segmentsController.viewControllers.insert(owns, atIndex: 1)
-			self.segmentsController.viewControllers.insert(watching, atIndex: 1)
+			self.segmentsController.viewControllers.insert(owns, at: 1)
+			self.segmentsController.viewControllers.insert(watching, at: 1)
 		}
 	}
 	

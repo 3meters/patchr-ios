@@ -11,7 +11,7 @@ import UIKit
 class NotificationSettingsViewController: UITableViewController {
 
     let userDefaults = {
-        NSUserDefaults.standardUserDefaults()
+        UserDefaults.standard
     }()
 
     /* Notifications */
@@ -52,9 +52,8 @@ class NotificationSettingsViewController: UITableViewController {
         Reporting.screen("NotificationSettings")
 
         self.navigationItem.title = "Notifications"
-        self.view.accessibilityIdentifier = View.NotificationSettings
 
-        self.tableView = UITableView(frame: self.tableView.frame, style: .Grouped)
+        self.tableView = UITableView(frame: self.tableView.frame, style: .grouped)
         self.tableView.rowHeight = 48
         self.tableView.tableFooterView = UIView()
         self.tableView.backgroundColor = Colors.gray95pcntColor
@@ -67,29 +66,29 @@ class NotificationSettingsViewController: UITableViewController {
         self.vibrateCell.textLabel?.text = "Vibrate"
         self.soundEffectsCell.textLabel!.text = "Play sound effects"
         
-        self.typeAllCell.selectionStyle = .None
-        self.typeMessagesOnlyCell.selectionStyle = .None
-        self.typeNoneCell.selectionStyle = .None
+        self.typeAllCell.selectionStyle = .none
+        self.typeMessagesOnlyCell.selectionStyle = .none
+        self.typeNoneCell.selectionStyle = .none
 
-        let notificationType = userDefaults.stringForKey(PatchrUserDefaultKey("NotificationType"))
-        self.typeAllCell.accessoryType = notificationType == "all" ? .Checkmark : .None
-        self.typeMessagesOnlyCell.accessoryType = notificationType == "messages_only" ? .Checkmark : .None
-        self.typeNoneCell.accessoryType = notificationType == "none" ? .Checkmark : .None
-        self.soundCell.accessoryView = makeSwitch(.SoundForNotifications, state: userDefaults.boolForKey(PatchrUserDefaultKey("SoundForNotifications")))
-        self.vibrateCell.accessoryView = makeSwitch(.VibrateForNotifications, state: userDefaults.boolForKey(PatchrUserDefaultKey("VibrateForNotifications")))
-        self.soundEffectsCell.accessoryView = makeSwitch(.SoundEffects, state: userDefaults.boolForKey(PatchrUserDefaultKey("SoundEffects")))
+        let notificationType = userDefaults.string(forKey: PatchrUserDefaultKey(subKey: "NotificationType"))
+        self.typeAllCell.accessoryType = notificationType == "all" ? .checkmark : .none
+        self.typeMessagesOnlyCell.accessoryType = notificationType == "messages_only" ? .checkmark : .none
+        self.typeNoneCell.accessoryType = notificationType == "none" ? .checkmark : .none
+        self.soundCell.accessoryView = makeSwitch(notificationType: .SoundForNotifications, state: userDefaults.bool(forKey: PatchrUserDefaultKey(subKey: "SoundForNotifications")))
+        self.vibrateCell.accessoryView = makeSwitch(notificationType: .VibrateForNotifications, state: userDefaults.bool(forKey: PatchrUserDefaultKey(subKey: "VibrateForNotifications")))
+        self.soundEffectsCell.accessoryView = makeSwitch(notificationType: .SoundEffects, state: userDefaults.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")))
     }
 
     func toggleAction(sender: AnyObject?) {
         if let switcher = sender as? UISwitch {
             if switcher.tag == Setting.SoundForNotifications.rawValue {
-                userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("SoundForNotifications"))
+                userDefaults.set(switcher.isOn, forKey: PatchrUserDefaultKey(subKey: "SoundForNotifications"))
             }
             else if switcher.tag == Setting.VibrateForNotifications.rawValue {
-                userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("VibrateForNotifications"))
+                userDefaults.set(switcher.isOn, forKey: PatchrUserDefaultKey(subKey: "VibrateForNotifications"))
             }
             else if switcher.tag == Setting.SoundEffects.rawValue {
-                userDefaults.setBool(switcher.on, forKey: PatchrUserDefaultKey("SoundEffects"))
+                userDefaults.set(switcher.isOn, forKey: PatchrUserDefaultKey(subKey: "SoundEffects"))
             }
         }
     }
@@ -97,39 +96,39 @@ class NotificationSettingsViewController: UITableViewController {
     func makeSwitch(notificationType: Setting, state: Bool = false) -> UISwitch {
         let switchView = UISwitch()
         switchView.tag = notificationType.rawValue
-        switchView.addTarget(self, action: #selector(NotificationSettingsViewController.toggleAction(_:)), forControlEvents: UIControlEvents.ValueChanged)
-        switchView.on = state
+        switchView.addTarget(self, action: #selector(NotificationSettingsViewController.toggleAction(sender:)), for: UIControlEvents.valueChanged)
+        switchView.isOn = state
         return switchView
     }
 }
 
 extension NotificationSettingsViewController {
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let selectedCell = tableView.cellForRowAtIndexPath(indexPath)
+        let selectedCell = tableView.cellForRow(at: indexPath)
         
-        self.typeAllCell.accessoryType = .None
-        self.typeMessagesOnlyCell.accessoryType = .None
-        self.typeNoneCell.accessoryType = .None
-        selectedCell!.accessoryType = .Checkmark
+        self.typeAllCell.accessoryType = .none
+        self.typeMessagesOnlyCell.accessoryType = .none
+        self.typeNoneCell.accessoryType = .none
+        selectedCell!.accessoryType = .checkmark
         
         if selectedCell == self.typeAllCell {
-            userDefaults.setObject("all", forKey: PatchrUserDefaultKey("NotificationType"))
+            userDefaults.set("all", forKey: PatchrUserDefaultKey(subKey: "NotificationType"))
         }
         else if selectedCell == self.typeMessagesOnlyCell {
-            userDefaults.setObject("messages_only", forKey: PatchrUserDefaultKey("NotificationType"))
+            userDefaults.set("messages_only", forKey: PatchrUserDefaultKey(subKey: "NotificationType"))
         }
         else if selectedCell == self.typeNoneCell {
-            userDefaults.setObject("none", forKey: PatchrUserDefaultKey("NotificationType"))
+            userDefaults.set("none", forKey: PatchrUserDefaultKey(subKey: "NotificationType"))
         }
     }
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in: UITableView) -> Int {
         return 3
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
             case 0: return 3
             case 1: return 2
@@ -138,7 +137,7 @@ extension NotificationSettingsViewController {
         }
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch (indexPath.section) {
             case 0:
                 switch (indexPath.row) {
@@ -159,16 +158,16 @@ extension NotificationSettingsViewController {
         }
     }
 
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch (section) {
-            case 0: return "Send me push notifications for".uppercaseString
-            case 1: return "Notification type".uppercaseString
-            case 2: return "Sound".uppercaseString
+            case 0: return "Send me push notifications for".uppercased()
+            case 1: return "Notification type".uppercased()
+            case 2: return "Sound".uppercased()
             default: fatalError("Unknown section")
         }
     }
 
-    override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 48
     }
 }

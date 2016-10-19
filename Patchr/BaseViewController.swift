@@ -12,7 +12,7 @@ class BaseViewController: UIViewController {
 	
 	var scrollView		= AirScrollView()
 	var contentHolder	= UIView()
-	var emptyLabel		= AirLabel(frame: CGRectZero)
+	var emptyLabel		= AirLabel(frame: CGRect.zero)
 	
 	var isModal: Bool {
 		return self.presentingViewController?.presentedViewController == self
@@ -27,7 +27,7 @@ class BaseViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		
-		let tap = UITapGestureRecognizer(target: self, action: #selector(BaseViewController.dismissKeyboard(_:)));
+		let tap = UITapGestureRecognizer(target: self, action: #selector(BaseViewController.dismissKeyboard(sender:)));
 		tap.delegate = self
 		tap.cancelsTouchesInView = false
 		self.view.addGestureRecognizer(tap)
@@ -35,15 +35,15 @@ class BaseViewController: UIViewController {
 	
 	override func viewWillLayoutSubviews() {
 		super.viewWillLayoutSubviews()
-		self.emptyLabel.anchorInCenterWithWidth(160, height: 160)
+		self.emptyLabel.anchorInCenter(withWidth: 160, height: 160)
 	}
 	
-	override func viewWillDisappear(animated: Bool) {
+	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 	}
 		
 	deinit {
-		NSNotificationCenter.defaultCenter().removeObserver(self)
+		NotificationCenter.default.removeObserver(self)
 	}
 	
 	/*--------------------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ class BaseViewController: UIViewController {
 	func initialize() {
 		self.view.backgroundColor = Theme.colorBackgroundForm
 		
-		self.scrollView.frame = UIScreen.mainScreen().applicationFrame
+		self.scrollView.frame = UIScreen.main.applicationFrame
 		self.scrollView.backgroundColor = Theme.colorBackgroundForm
 		self.scrollView.bounces = true
 		self.scrollView.alwaysBounceVertical = true
@@ -67,13 +67,13 @@ class BaseViewController: UIViewController {
 		/* Empty label */
 		self.emptyLabel.alpha = 0
 		self.emptyLabel.layer.borderWidth = 1
-		self.emptyLabel.layer.borderColor = Theme.colorRule.CGColor
-		self.emptyLabel.layer.backgroundColor = Theme.colorBackgroundEmptyBubble.CGColor
+		self.emptyLabel.layer.borderColor = Theme.colorRule.cgColor
+		self.emptyLabel.layer.backgroundColor = Theme.colorBackgroundEmptyBubble.cgColor
 		self.emptyLabel.layer.cornerRadius = 80
 		self.emptyLabel.font = Theme.fontTextDisplay
 		self.emptyLabel.numberOfLines = 0
 		self.emptyLabel.insets = UIEdgeInsetsMake(16, 16, 16, 16)
-		self.emptyLabel.textAlignment = NSTextAlignment.Center
+		self.emptyLabel.textAlignment = NSTextAlignment.center
 		self.emptyLabel.textColor = Theme.colorTextPlaceholder
 		self.view.addSubview(self.emptyLabel)
 	}
@@ -82,14 +82,14 @@ class BaseViewController: UIViewController {
 		/* Override in subclasses for control of dismiss/pop process */
 		if isModal {
 			if self.navigationController != nil {
-				self.navigationController!.dismissViewControllerAnimated(animated, completion: nil)
+				self.navigationController!.dismiss(animated: animated, completion: nil)
 			}
 			else {
-				self.dismissViewControllerAnimated(animated, completion: nil)
+				self.dismiss(animated: animated, completion: nil)
 			}
 		}
 		else {
-			self.navigationController?.popViewControllerAnimated(true)
+			let _ = self.navigationController?.popViewController(animated: true)
 		}
 	}
 	
@@ -114,11 +114,11 @@ class BaseViewController: UIViewController {
 	}
 	
 	func stringsAreEqual(string1: String?, string2: String?) -> Bool {
-		if isEmptyString(string1) != isEmptyString(string2) {
+		if isEmptyString(value: string1) != isEmptyString(value: string2) {
 			/* We know one is empty and one is not */
 			return false
 		}
-		else if !isEmptyString(string1) {
+		else if !isEmptyString(value: string1) {
 			/* Both have a value */
 			return string1 == string2
 		}
@@ -131,8 +131,7 @@ class BaseViewController: UIViewController {
 }
 
 extension BaseViewController: UIGestureRecognizerDelegate {
-	
-	func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool    {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
 		if (touch.view is UIButton) {
 			return false
 		}

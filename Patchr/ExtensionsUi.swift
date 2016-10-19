@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
 import MBProgressHUD
-
+import Photos
 
 extension UITextField {
     var isEmpty: Bool {
@@ -22,20 +22,20 @@ extension UIImage {
         let scale: CGFloat = 1.0 // Automatically use scale factor of main screen
         
         UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
-        self.drawInRect(CGRect(origin: CGPointZero, size: size))
+        self.draw(in: CGRect(origin: CGPoint.zero, size: size))
         let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
-        return scaledImage
+        return scaledImage!
     }
     
     func normalizedImage() -> UIImage {
-        if self.imageOrientation == UIImageOrientation.Up {
+        if self.imageOrientation == UIImageOrientation.up {
             return self
         }
         UIGraphicsBeginImageContextWithOptions(self.size, true, self.scale)
-        self.drawInRect(CGRect(origin: CGPoint(x: 0, y: 0), size: self.size))
-        let normalizedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext();
+        self.draw(in: CGRect(origin: CGPoint(x: 0, y: 0), size: self.size))
+        let normalizedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!;
         UIGraphicsEndImageContext();
         return normalizedImage;
     }
@@ -47,22 +47,22 @@ extension UIAlertController {
 	* Fix for iOS 9 bug that produces infinite recursion loop looking for
 	* supportInterfaceOrientations.
 	*/
-	public override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-		return UIInterfaceOrientationMask.Portrait
+    override open var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+		return UIInterfaceOrientationMask.portrait
 	}
 	
-	public override func shouldAutorotate() -> Bool {
+    override open var shouldAutorotate: Bool {
 		return false
 	}
 }
 
 extension UIView {
 	
-    func fadeIn(duration: NSTimeInterval = 0.3, delay: NSTimeInterval = 0.0, alpha: CGFloat = 1.0, completion: ((Bool) -> Void) = {(finished: Bool) -> Void in}) {
+    func fadeIn(duration: TimeInterval = 0.3, delay: TimeInterval = 0.0, alpha: CGFloat = 1.0, completion: @escaping ((Bool) -> Void) = {(finished: Bool) -> Void in}) {
         if self.alpha != alpha {
-            UIView.animateWithDuration(duration
+            UIView.animate(withDuration: duration
 				, delay: delay
-				, options: [.CurveEaseIn]
+				, options: [.curveEaseIn]
 				, animations: {
 					self.alpha = alpha
                 }
@@ -70,11 +70,11 @@ extension UIView {
         }
     }
     
-    func fadeOut(duration: NSTimeInterval = 0.3, delay: NSTimeInterval = 0.0, alpha: CGFloat = 0.0, completion: (Bool) -> Void = {(finished: Bool) -> Void in}) {
+    func fadeOut(duration: TimeInterval = 0.3, delay: TimeInterval = 0.0, alpha: CGFloat = 0.0, completion: @escaping (Bool) -> Void = {(finished: Bool) -> Void in}) {
         if self.alpha != alpha {
-            UIView.animateWithDuration(duration
+            UIView.animate(withDuration: duration
 				, delay: delay
-				, options: [.CurveEaseIn]
+				, options: [.curveEaseIn]
 				, animations: {
 					self.alpha = alpha
                 }
@@ -82,26 +82,26 @@ extension UIView {
         }
     }
 	
-	func scaleOut(duration: NSTimeInterval = 0.2, delay: NSTimeInterval = 0.0, completion: (Bool) -> Void = {(finished: Bool) -> Void in}) {
-		UIView.animateWithDuration(duration
+	func scaleOut(duration: TimeInterval = 0.2, delay: TimeInterval = 0.0, completion: @escaping (Bool) -> Void = {(finished: Bool) -> Void in}) {
+		UIView.animate(withDuration: duration
 			, delay: delay
-			, options: [.CurveEaseOut]
+			, options: [.curveEaseOut]
 			, animations: {
 				/* Setting to zero seems to cancel the animation and to straight to gone */
-				self.transform = CGAffineTransformMakeScale(CGFloat(0.0001), CGFloat(0.0001))
+				self.transform = CGAffineTransform(scaleX: CGFloat(0.0001), y: CGFloat(0.0001))
 			}
 			, completion: completion)
 	}
 	
-	func scaleIn(duration: NSTimeInterval = 0.3, delay: NSTimeInterval = 0.0, completion: (Bool) -> Void = {(finished: Bool) -> Void in}) {
-		UIView.animateWithDuration(duration
+	func scaleIn(duration: TimeInterval = 0.3, delay: TimeInterval = 0.0, completion: @escaping (Bool) -> Void = {(finished: Bool) -> Void in}) {
+		UIView.animate(withDuration: duration
 			, delay: delay
 			, usingSpringWithDamping: 0.8
 			, initialSpringVelocity: 0.3
-			, options: [.CurveEaseIn]
+			, options: [.curveEaseIn]
 			, animations: {
 				/* Resets to original state */
-				self.transform = CGAffineTransformIdentity
+				self.transform = CGAffineTransform.identity
 			}
 			, completion: completion)
 	}
@@ -109,25 +109,25 @@ extension UIView {
 	func showShadow(rounded: Bool = false, cornerRadius: CGFloat = 0) {
 		
 		self.layer.masksToBounds = false
-		self.layer.shadowColor = Colors.black.CGColor
-		self.layer.shadowOffset = CGSizeMake(0, 3)
+		self.layer.shadowColor = Colors.black.cgColor
+        self.layer.shadowOffset = CGSize(width:0, height:3)
 		self.layer.shadowOpacity = 0.4
 		self.layer.shadowRadius = 3.0
 		
 		if rounded {
-			self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: cornerRadius).CGPath
+			self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: cornerRadius).cgPath
 		}
 		else {
-			self.layer.shadowPath = UIBezierPath(rect: self.bounds).CGPath
+			self.layer.shadowPath = UIBezierPath(rect: self.bounds).cgPath
 		}
 	}
 
 	func snapshot() -> UIImage {
-		UIGraphicsBeginImageContextWithOptions(bounds.size, false, UIScreen.mainScreen().scale)
-		drawViewHierarchyInRect(self.bounds, afterScreenUpdates: true)
+		UIGraphicsBeginImageContextWithOptions(bounds.size, false, UIScreen.main.scale)
+		drawHierarchy(in: self.bounds, afterScreenUpdates: true)
 		let image = UIGraphicsGetImageFromCurrentImageContext()
 		UIGraphicsEndImageContext()
-		return image
+		return image!
 	}
 	
 	func resizeToFitSubviews() {
@@ -135,7 +135,7 @@ extension UIView {
 		var h: CGFloat = 0
 		
 		for subview in subviews {
-			if !subview.hidden {
+			if !subview.isHidden {
 				let fw = subview.frame.origin.x + subview.frame.size.width
 				let fh = subview.frame.origin.y + subview.frame.size.height
 				w = max(fw, w)
@@ -143,7 +143,7 @@ extension UIView {
 			}
 		}
 		
-		self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, w, h)
+        self.frame = CGRect(x:self.frame.origin.x, y:self.frame.origin.y, width:w, height:h)
 	}
 	
 	func sizeThatFitsSubviews() -> CGSize {
@@ -151,7 +151,7 @@ extension UIView {
 		var h: CGFloat = 0
 		
 		for subview in subviews {
-			if !subview.hidden {
+			if !subview.isHidden {
 				let fw = subview.frame.origin.x + subview.frame.size.width
 				let fh = subview.frame.origin.y + subview.frame.size.height
 				w = max(fw, w)
@@ -159,19 +159,19 @@ extension UIView {
 			}
 		}
 		
-		return CGSizeMake(w, h)
+        return CGSize(width:w, height:h)
 	}
 	
 	class func disableRecursivelyAllSubviews(view: UIView) {
-		view.userInteractionEnabled = false
+		view.isUserInteractionEnabled = false
 		for subview in view.subviews {
-			self.disableRecursivelyAllSubviews(subview)
+			self.disableRecursivelyAllSubviews(view: subview)
 		}
 	}
 	
 	class func disableAllSubviewsOf(view: UIView) {
 		for subview in view.subviews {
-			self.disableRecursivelyAllSubviews(subview)
+			self.disableRecursivelyAllSubviews(view: subview)
 		}
 	}
 }
@@ -185,15 +185,15 @@ extension UIWindow {
             return
         }
         
-        UIView.transitionWithView(self,
+        UIView.transition(with: self,
             duration: 0.65,
-            options: UIViewAnimationOptions.TransitionCrossDissolve,
+            options: UIViewAnimationOptions.transitionCrossDissolve,
             animations: {				
                 /*
 				 * The animation enabling/disabling are to address a status bar issue 
 				 * on the destination view controller: http://stackoverflow.com/a/8505364/2247399
 				 */
-                let oldState = UIView.areAnimationsEnabled()
+                let oldState = UIView.areAnimationsEnabled
                 UIView.setAnimationsEnabled(false)
                 self.rootViewController = rootViewController
                 UIView.setAnimationsEnabled(oldState)
@@ -220,7 +220,7 @@ extension UIViewController {
         }
         
         // Otherwise, we must get the root UIViewController and iterate through presented views
-        if let rootController = UIApplication.sharedApplication().keyWindow?.rootViewController {
+        if let rootController = UIApplication.shared.keyWindow?.rootViewController {
             
             var currentController: UIViewController! = rootController
             
@@ -238,7 +238,7 @@ extension UIViewController {
     // Returns the navigation controller if it exists
     class func getNavigationController() -> UINavigationController? {
         
-        if let navigationController = UIApplication.sharedApplication().keyWindow?.rootViewController  {
+        if let navigationController = UIApplication.shared.keyWindow?.rootViewController  {
             return navigationController as? UINavigationController
         }
         return nil
@@ -247,7 +247,7 @@ extension UIViewController {
     // Returns the navigation controller if it exists
     class func getTabBarController() -> UITabBarController? {
         
-        if let controller = UIApplication.sharedApplication().keyWindow?.rootViewController  {
+        if let controller = UIApplication.shared.keyWindow?.rootViewController  {
             return controller as? UITabBarController
         }
         return nil
@@ -255,12 +255,12 @@ extension UIViewController {
 	
 	func dismissToast(sender: AnyObject) {
 		if let gesture = sender as? UIGestureRecognizer, let hud = gesture.view as? MBProgressHUD {
-			hud.animationType = MBProgressHUDAnimation.ZoomIn
+			hud.animationType = MBProgressHUDAnimation.zoomIn
 			hud.hide(true)
 		}
 	}
     
-    func handleError(error: ServerError, errorActionType: ErrorActionType = .AUTO, errorAction: ErrorAction = .NONE ) {
+    func handleError(_ error: ServerError, errorActionType: ErrorActionType = .AUTO, errorAction: ErrorAction = .NONE ) {
         
         /* Show any required ui */
         let alertMessage: String = (error.message != nil ? error.message : error.description != nil ? error.description : "Unknown error")!
@@ -268,13 +268,13 @@ extension UIViewController {
 		var errAction = errorAction
         
         if errorActionType == .AUTO || errorActionType == .TOAST {
-			UIShared.Toast(alertMessage, controller: self, addToWindow: false)
+			UIShared.Toast(message: alertMessage, controller: self, addToWindow: false)
             if error.code == .UNAUTHORIZED_SESSION_EXPIRED || error.code == .UNAUTHORIZED_CREDENTIALS {
                 errAction = .SIGNOUT
             }
         }
         else if errorActionType == .ALERT {
-            self.Alert(alertMessage)
+            self.Alert(title: alertMessage)
         }
         
         /* Perform any follow-up actions */
@@ -293,75 +293,75 @@ extension UIViewController {
 			
 			let navController = AirNavigationController()
 			navController.viewControllers = [LobbyViewController()]
-			AppDelegate.appDelegate().window!.setRootViewController(navController, animated: true)
+			AppDelegate.appDelegate().window!.setRootViewController(rootViewController: navController, animated: true)
         }
         
         Log.w("Network Error Summary")
-        Log.w(error.message)
+        if error.message != nil {
+            Log.w(error.message!)
+        }
         Log.w(error.code.rawValue.description)
-        Log.w(error.description)
+        Log.w(error.description!)
     }
     
 	func Alert(title: String?, message: String? = nil, cancelButtonTitle: String = "OK", onDismiss: (() -> Void)? = nil) {
-		let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-		let okAction = UIAlertAction(title: cancelButtonTitle, style: .Cancel, handler: { _ in onDismiss?() })
+		let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+		let okAction = UIAlertAction(title: cancelButtonTitle, style: .cancel, handler: { _ in onDismiss?() })
 		alert.addAction(okAction)
-		self.presentViewController(alert, animated: true) {}
+		self.present(alert, animated: true) {}
 	}
 	
 	func LocationSettingsAlert(title: String? = nil, message: String? = nil,
 		actionTitle: String, cancelTitle: String,
-		delegate: AnyObject? = nil, onDismiss: (Bool) -> Void) {
+		delegate: AnyObject? = nil, onDismiss: @escaping (Bool) -> Void) {
 			
-			let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-			let okAction = UIAlertAction(title: actionTitle, style: .Default, handler: { _ in onDismiss(true) })
-			let cancelAction = UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) })
+			let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+			let okAction = UIAlertAction(title: actionTitle, style: .default, handler: { _ in onDismiss(true) })
+			let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel, handler: { _ in onDismiss(false) })
 			alert.addAction(okAction)
 			alert.addAction(cancelAction)
-			self.presentViewController(alert, animated: true, completion: nil)
+			self.present(alert, animated: true, completion: nil)
 	}
 	
 	func UpdateConfirmationAlert(title: String? = nil, message: String? = nil,
 		actionTitle: String, cancelTitle: String,
-		delegate: AnyObject? = nil, onDismiss: (Bool) -> Void) {
+		delegate: Any? = nil, onDismiss: @escaping (Bool) -> Void) {
 			
-			let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-			let okAction = UIAlertAction(title: actionTitle, style: .Default, handler: { _ in onDismiss(true) })
-			let cancelAction = UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) })
+			let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+			let okAction = UIAlertAction(title: actionTitle, style: .default, handler: { _ in onDismiss(true) })
+			let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel, handler: { _ in onDismiss(false) })
 			alert.addAction(okAction)
 			alert.addAction(cancelAction)
-			self.presentViewController(alert, animated: true, completion: nil)
+			self.present(alert, animated: true, completion: nil)
 	}
 	
     func DeleteConfirmationAlert(title: String? = nil, message: String? = nil,
 								 actionTitle: String, cancelTitle: String, destructConfirmation: Bool = false,
-								 delegate: AnyObject? = nil, onDismiss: (Bool) -> Void) {
+								 delegate: Any? = nil, onDismiss: @escaping (Bool) -> Void) {
             
-		let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
-		let okAction = UIAlertAction(title: actionTitle, style: .Destructive, handler: { _ in onDismiss(true) })
-		let cancelAction = UIAlertAction(title: cancelTitle, style: .Cancel, handler: { _ in onDismiss(false) })
+		let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+		let okAction = UIAlertAction(title: actionTitle, style: .destructive, handler: { _ in onDismiss(true) })
+		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel, handler: { _ in onDismiss(false) })
 		alert.addAction(okAction)
 		alert.addAction(cancelAction)
 		if destructConfirmation {
-			alert.addTextFieldWithConfigurationHandler() {
-				textField in
-				textField.accessibilityIdentifier = Field.ConfirmDelete
-				textField.addTarget(delegate, action: #selector(UIViewController.alertTextFieldDidChange(_:)), forControlEvents: .EditingChanged)
+			alert.addTextField() { textField in
+				textField.addTarget(delegate, action: #selector(UIViewController.alertTextFieldDidChange(sender:)), for: .editingChanged)
 			}
-			okAction.enabled = false
+			okAction.isEnabled = false
 		}
-		self.presentViewController(alert, animated: true, completion: nil)
+		self.present(alert, animated: true, completion: nil)
     }
 	
 	func alertTextFieldDidChange(sender: AnyObject) {
 		if let alertController: UIAlertController = self.presentedViewController as? UIAlertController {
 			let confirm = alertController.textFields![0]
 			let okAction = alertController.actions[0]
-			okAction.enabled = confirm.text == "YES"
+			okAction.isEnabled = confirm.text == "YES"
 		}
 	}
 
-	func addActivityIndicatorTo(view: UIView, offsetY: Float = 0, style: UIActivityIndicatorViewStyle = .WhiteLarge) -> UIActivityIndicatorView {
+	func addActivityIndicatorTo(view: UIView, offsetY: Float = 0, style: UIActivityIndicatorViewStyle = .whiteLarge) -> UIActivityIndicatorView {
 		/*
 		 * Currently only called by PhotoPicker.
 		 */
@@ -369,7 +369,7 @@ extension UIViewController {
 		activity.color = Theme.colorTint
 		activity.hidesWhenStopped = true
 		view.addSubview(activity)
-		activity.anchorInCenterWithWidth(20, height: 20)
+		activity.anchorInCenter(withWidth: 20, height: 20)
 		
 		return activity
 	}
@@ -377,35 +377,35 @@ extension UIViewController {
 
 extension UINavigationController {
     
-    override public func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
+    override open var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         if visibleViewController != nil {
-            return visibleViewController!.supportedInterfaceOrientations()
+            return visibleViewController!.supportedInterfaceOrientations
         }
-        return super.supportedInterfaceOrientations()
+        return super.supportedInterfaceOrientations
     }
     
-    public override func shouldAutorotate() -> Bool {
+    override open var shouldAutorotate: Bool {
         if visibleViewController != nil {
-            return visibleViewController!.shouldAutorotate()
+            return visibleViewController!.shouldAutorotate
         }
-        return super.shouldAutorotate()
+        return super.shouldAutorotate
     }
 }
 
 extension UITabBarController {
     
-    public override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
+    override open var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         if let selected = selectedViewController {
-            return selected.supportedInterfaceOrientations()
+            return selected.supportedInterfaceOrientations
         }
-        return super.supportedInterfaceOrientations()
+        return super.supportedInterfaceOrientations
     }
     
-    public override func shouldAutorotate() -> Bool {
+    override open var shouldAutorotate: Bool {
         if let selected = selectedViewController {
-            return selected.shouldAutorotate()
+            return selected.shouldAutorotate
         }
-        return super.shouldAutorotate()
+        return super.shouldAutorotate
     }
 }
 
@@ -415,14 +415,14 @@ extension UIColor {
 		let r, g, b, a: CGFloat
 		
 		if hexString.hasPrefix("#") {
-			let start = hexString.startIndex.advancedBy(1)
-			let hexColor = hexString.substringFromIndex(start)
+			let start = hexString.index(hexString.startIndex, offsetBy: 1)
+            let hexColor = hexString.substring(from: start)
 			
 			if hexColor.characters.count == 8 {
-				let scanner = NSScanner(string: hexColor)
+				let scanner = Scanner(string: hexColor)
 				var hexNumber: UInt64 = 0
 				
-				if scanner.scanHexLongLong(&hexNumber) {
+				if scanner.scanHexInt64(&hexNumber) {
 					r = CGFloat((hexNumber & 0xff000000) >> 24) / 255
 					g = CGFloat((hexNumber & 0x00ff0000) >> 16) / 255
 					b = CGFloat((hexNumber & 0x0000ff00) >> 8) / 255
@@ -439,11 +439,11 @@ extension UIColor {
 }
 
 public func ==(lhs: NSDate, rhs: NSDate) -> Bool {
-	return lhs === rhs || lhs.compare(rhs) == .OrderedSame
+	return lhs === rhs || lhs.compare(rhs as Date) == .orderedSame
 }
 
 public func <(lhs: NSDate, rhs: NSDate) -> Bool {
-	return lhs.compare(rhs) == .OrderedAscending
+	return lhs.compare(rhs as Date) == .orderedAscending
 }
 
 extension NSDate: Comparable { }
@@ -455,19 +455,19 @@ extension String {
 			return false
 		}
 		
-		guard let regex = try? NSRegularExpression(pattern: "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$", options: [.CaseInsensitive]) else {
+		guard let regex = try? NSRegularExpression(pattern: "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$", options: [.caseInsensitive]) else {
 			return false
 		}
 		
-		return regex.numberOfMatchesInString(self, options: [], range: NSMakeRange(0, utf16.count)) == 1
+		return regex.numberOfMatches(in: self, options: [], range: NSMakeRange(0, utf16.count)) == 1
 	}
 	
     var md5: String! {
 		
-        let str = self.cStringUsingEncoding(NSUTF8StringEncoding)
-        let strLen = CC_LONG(self.lengthOfBytesUsingEncoding(NSUTF8StringEncoding))
+        let str = self.cString(using: String.Encoding.utf8)
+        let strLen = CC_LONG(self.lengthOfBytes(using: String.Encoding.utf8))
         let digestLen = Int(CC_MD5_DIGEST_LENGTH)
-        let result = UnsafeMutablePointer<CUnsignedChar>.alloc(digestLen)
+        let result = UnsafeMutablePointer<CUnsignedChar>.allocate(capacity: digestLen)
 		
         CC_MD5(str!, strLen, result)
         
@@ -476,17 +476,14 @@ extension String {
             hash.appendFormat("%02x", result[i])
         }
         
-        result.dealloc(digestLen)
+        result.deallocate(capacity: digestLen)
         
         return String(format: hash as String)
     }
     
     var numbersOnly: String! {
-        let str = self.stringByReplacingOccurrencesOfString("[^0-9]"
-            , withString: ""
-            , options: NSStringCompareOptions.RegularExpressionSearch
-            , range:nil).stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
-        return str
+        let str = self.replacingOccurrences(of: "[^0-9]", with: "", options: String.CompareOptions.regularExpression, range: nil)
+        return str.trimmingCharacters(in: NSCharacterSet.whitespaces)
     }
 }
 
@@ -498,7 +495,7 @@ extension Dictionary {
     }
 }
 
-func += <KeyType, ValueType> (inout left: Dictionary<KeyType, ValueType>, right: Dictionary<KeyType, ValueType>) {
+func += <KeyType, ValueType> ( left: inout Dictionary<KeyType, ValueType>, right: Dictionary<KeyType, ValueType>) {
     for (k, v) in right {
         left.updateValue(v, forKey: k)
     }
@@ -522,7 +519,7 @@ enum ErrorAction: Int {
 	UnableToScanHexValue:      "Scan hex error"
 	MismatchedHexStringLength: "Invalid RGB string, number of characters after '#' should be either 3, 4, 6 or 8"
 */
-public enum UIColorInputError : ErrorType {
+public enum UIColorInputError : Error {
 	case MissingHashMarkAsPrefix,
 	UnableToScanHexValue,
 	MismatchedHexStringLength

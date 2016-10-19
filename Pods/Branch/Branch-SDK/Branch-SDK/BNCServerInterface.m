@@ -13,13 +13,13 @@
 #import "BranchConstants.h"
 #import "BNCDeviceInfo.h"
 
-NSDate *startTime;
-NSString *requestEndpoint;
-
 void (^NSURLSessionCompletionHandler) (NSData *data, NSURLResponse *response, NSError *error);
 void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *responseData, NSError *error);
 
 @implementation BNCServerInterface
+
+NSDate *startTime;
+NSString *requestEndpoint;
 
 #pragma mark - GET methods
 
@@ -65,10 +65,9 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
     
     // Instrumentation metrics
     requestEndpoint = [self.preferenceHelper getEndpointFromURL:url];
-    startTime = [NSDate date];
 
     [self genericHTTPRequest:request retryNumber:retryNumber log:log callback:callback retryHandler:^NSURLRequest *(NSInteger lastRetryNumber) {
-        return [self preparePostRequest:post url:url key:key retryNumber:++lastRetryNumber log:log];
+        return [self preparePostRequest:extendedParams url:url key:key retryNumber:++lastRetryNumber log:log];
     }];
 }
 
@@ -150,6 +149,9 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
         NSURLSessionCompletionHandler(responseData, response, error);
     };
     
+    // start the reqeust timer here. This will account for retries.
+    startTime = [NSDate date];
+
     // NSURLSession is available in iOS 7 and above
     if (NSFoundationVersionNumber >= NSFoundationVersionNumber_iOS_7_0) {
         NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
@@ -189,7 +191,7 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
 #pragma mark - Internals
 
 - (NSURLRequest *)prepareGetRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key retryNumber:(NSInteger)retryNumber log:(BOOL)log {
-    NSDictionary *preparedParams = [self prepareParamDict:params key:key retryNumber:retryNumber];
+    NSDictionary *preparedParams = [self prepareParamDict:params key:key retryNumber:retryNumber requestType:@"GET"];
     
     NSString *requestUrlString = [NSString stringWithFormat:@"%@%@", url, [BNCEncodingUtils encodeDictionaryToQueryString:preparedParams]];
     
@@ -206,7 +208,7 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
 }
 
 - (NSURLRequest *)preparePostRequest:(NSDictionary *)params url:(NSString *)url key:(NSString *)key retryNumber:(NSInteger)retryNumber log:(BOOL)log {
-    NSDictionary *preparedParams = [self prepareParamDict:params key:key retryNumber:retryNumber];
+    NSDictionary *preparedParams = [self prepareParamDict:params key:key retryNumber:retryNumber requestType:@"POST"];
 
     NSData *postData = [BNCEncodingUtils encodeDictionaryToJsonData:preparedParams];
     NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
@@ -226,18 +228,26 @@ void (^NSURLConnectionCompletionHandler) (NSURLResponse *response, NSData *respo
     return request;
 }
 
-- (NSDictionary *)prepareParamDict:(NSDictionary *)params key:(NSString *)key retryNumber:(NSInteger)retryNumber {
+- (NSDictionary *)prepareParamDict:(NSDictionary *)params key:(NSString *)key retryNumber:(NSInteger)retryNumber requestType:(NSString *)reqType {
     NSMutableDictionary *fullParamDict = [[NSMutableDictionary alloc] init];
     [fullParamDict addEntriesFromDictionary:params];
     fullParamDict[@"sdk"] = [NSString stringWithFormat:@"ios%@", SDK_VERSION];
+    
+    // using rangeOfString instead of containsString to support devices running pre iOS 8
+    if ([[[NSBundle mainBundle] executablePath] rangeOfString:@".appex/"].location != NSNotFound) {
+        fullParamDict[@"ios_extension"] = @(1);
+    }
     fullParamDict[@"retryNumber"] = @(retryNumber);
     fullParamDict[@"branch_key"] = key;
 
     NSMutableDictionary *metadata = [[NSMutableDictionary alloc] init];
     [metadata addEntriesFromDictionary:self.preferenceHelper.requestMetadataDictionary];
     [metadata addEntriesFromDictionary:fullParamDict[BRANCH_REQUEST_KEY_STATE]];
-    fullParamDict[BRANCH_REQUEST_KEY_STATE] = metadata;
-    if (self.preferenceHelper.instrumentationDictionary.count) {
+    if (metadata.count) {
+        fullParamDict[BRANCH_REQUEST_KEY_STATE] = metadata;
+    }
+    // we only send instrumentation info in the POST body request
+    if (self.preferenceHelper.instrumentationDictionary.count && [reqType isEqualToString:@"POST"]) {
         fullParamDict[BRANCH_REQUEST_KEY_INSTRUMENTATION] = self.preferenceHelper.instrumentationDictionary;
     }
    

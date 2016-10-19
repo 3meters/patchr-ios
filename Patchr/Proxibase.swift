@@ -34,7 +34,7 @@ import Firebase
  */
 public class Proxibase {
 
-    public typealias CompletionBlock = (response:AnyObject?, error:NSError?) -> Void
+    public typealias CompletionBlock = (_ response: Any?, _ error: NSError?) -> Void
 
     let StagingURI		= "http://api.ariseditions.com:8080/v1/"
     let ProductionURI	= "https://api.aircandi.com/v1/"
@@ -51,17 +51,17 @@ public class Proxibase {
 
     required public init() {
 
-        var serviceUri = NSUserDefaults.standardUserDefaults().stringForKey(PatchrUserDefaultKey("serverUri"))
+        var serviceUri = UserDefaults.standard.string(forKey: PatchrUserDefaultKey(subKey: "serverUri"))
         if serviceUri == nil {
             serviceUri = ProductionURI
-            NSUserDefaults.standardUserDefaults().setObject(serviceUri, forKey: PatchrUserDefaultKey("serverUri"))
+            UserDefaults.standard.set(serviceUri, forKey: PatchrUserDefaultKey(subKey: "serverUri"))
         }
         
         self.serviceUri = serviceUri
 
-        sessionManager = AFHTTPSessionManager(baseURL: NSURL(string: serviceUri!))
+        sessionManager = AFHTTPSessionManager(baseURL: NSURL(string: serviceUri!) as URL? as URL?)
         sessionManager.requestSerializer = AFJSONRequestSerializer()
-        sessionManager.requestSerializer.timeoutInterval = NSTimeInterval(TIMEOUT_REQUEST)
+        sessionManager.requestSerializer.timeoutInterval = TimeInterval(TIMEOUT_REQUEST)
         sessionManager.responseSerializer = JSONResponseSerializerWithData()
         sessionManager.completionQueue = DataController.instance.backgroundDispatch
     }
@@ -70,109 +70,110 @@ public class Proxibase {
      * PUBLIC: Fetch one
      *--------------------------------------------------------------------------------------------*/
 
-    public func fetchPatchById(entityId: String, criteria: [String:AnyObject], completion: CompletionBlock) {
+    public func fetchPatchById(entityId: String, criteria: [String:Any], completion: @escaping CompletionBlock) {
 
-        var parameters: [String:AnyObject] = [:]
-        Patch.extras(&parameters)
+        var parameters: [String:Any] = [:]
+        Patch.extras(parameters: &parameters)
         if !criteria.isEmpty {
-            parameters["query"] = criteria
+            parameters["query"] = criteria as AnyObject?
         }
-        performPOSTRequestFor("find/patches/\(entityId)", parameters: parameters, completion: completion)
+        performPOSTRequestFor(path: "find/patches/\(entityId)", parameters: parameters, completion: completion)
     }
 
-    public func fetchMessageById(messageId: String, criteria: [String:AnyObject], completion: CompletionBlock) {
+    public func fetchMessageById(messageId: String, criteria: [String:Any], completion: @escaping CompletionBlock) {
 
-        var parameters: [String:AnyObject] = [:]
-        Message.extras(&parameters)
+        var parameters: [String:Any] = [:]
+        Message.extras(parameters: &parameters)
         if !criteria.isEmpty {
-            parameters["query"] = criteria
+            parameters["query"] = criteria as AnyObject?
         }
-        performPOSTRequestFor("find/messages/\(messageId)", parameters: parameters, completion: completion)
+        performPOSTRequestFor(path: "find/messages/\(messageId)", parameters: parameters, completion: completion)
     }
 
-    public func fetchUserById(userId: String, criteria: [String:AnyObject], completion: CompletionBlock) {
+    public func fetchUserById(userId: String, criteria: [String:Any], completion: @escaping CompletionBlock) {
 
-        var parameters: [String:AnyObject] = [:]
-        User.extras(&parameters)
+        var parameters: [String:Any] = [:]
+        User.extras(parameters: &parameters)
         if !criteria.isEmpty {
-            parameters["query"] = criteria
+            parameters["query"] = criteria as AnyObject?
         }
-        performPOSTRequestFor("find/users/\(userId)", parameters: parameters, completion: completion)
+        performPOSTRequestFor(path: "find/users/\(userId)", parameters: parameters, completion: completion)
     }
 
     /*--------------------------------------------------------------------------------------------
     * PUBLIC: Fetch collection
     *--------------------------------------------------------------------------------------------*/
 
-    public func fetchNearbyPatches(location: CLLocationCoordinate2D?, radius: UInt = 10000, skip: Int = 0, completion: CompletionBlock) {
+    public func fetchNearbyPatches(location: CLLocationCoordinate2D?, radius: UInt = 10000, skip: Int = 0, completion: @escaping CompletionBlock) {
 
         if let loc = location as CLLocationCoordinate2D! {
-            var parameters: [String:AnyObject] = [
-                    "location": [
-                            "lat": loc.latitude,
-                            "lng": loc.longitude
-                    ],
-                    "radius": radius,
-                    "limit": pageSizeNearby,
-                    "skip": skip,
-                    "more": false,
-                    "rest": true,
+            var parameters: [String:Any] = [
+                "location": [
+                        "lat": loc.latitude,
+                        "lng": loc.longitude
+                ],
+                "radius": radius,
+                "limit": pageSizeNearby,
+                "skip": skip,
+                "more": false,
+                "rest": true,
             ]
-            Patch.extras(&parameters)
-            performPOSTRequestFor("patches/near", parameters: parameters, completion: completion)
+            Patch.extras(parameters: &parameters)
+            performPOSTRequestFor(path: "patches/near", parameters: parameters, completion: completion)
         }
     }
 
-    public func fetchNotifications(skip: Int = 0, completion: CompletionBlock) {
+    public func fetchNotifications(skip: Int = 0, completion: @escaping CompletionBlock) {
 
-        let parameters = [
-                "limit": pageSizeNotifications,
-                "skip": skip,
-                "more": true,
+        let parameters: [String : Any] = [
+            "limit": pageSizeNotifications,
+            "skip": skip,
+            "more": true,
         ]
-        performPOSTRequestFor("user/getNotifications", parameters: parameters, completion: completion)
+        performPOSTRequestFor(path: "user/getNotifications", parameters: parameters, completion: completion)
     }
 
-    public func fetchInterestingPatches(skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
+    public func fetchInterestingPatches(skip: Int = 0, completion: @escaping CompletionBlock) {
 
-        var parameters: [String:AnyObject] = [
-                "limit": pageSizeExplore,
-                "skip": skip,
-                "more": true,
+        var parameters: [String:Any] = [
+            "limit": pageSizeExplore,
+            "skip": skip,
+            "more": true,
         ]
 
-        Patch.extras(&parameters)
-        performPOSTRequestFor("patches/interesting", parameters: parameters, completion: completion)
+        Patch.extras(parameters: &parameters)
+        performPOSTRequestFor(path: "patches/interesting", parameters: parameters, completion: completion)
     }
 
-    public func fetchMessagesOwnedByUser(userId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
+    public func fetchMessagesOwnedByUser(userId: String, criteria: [String:Any] = [:], skip: Int = 0, completion: @escaping CompletionBlock) {
 
-        var linked:     [String:AnyObject] = ["to": "messages", "type": "create", "limit": pageSizeDefault, "skip": skip, "more": true]
-        var parameters: [String:AnyObject] = [
-                "linked": Message.extras(&linked),
+        var linked: [String:Any] = ["to": "messages", "type": "create", "limit": pageSizeDefault, "skip": skip, "more": true]
+        Message.extras(parameters: &linked)
+        var parameters: [String:Any] = [
+                "linked": linked,
                 "promote": "linked",
         ]
         if !criteria.isEmpty {
-            parameters["query"] = criteria
+            parameters["query"] = criteria as AnyObject?
         }
-        performPOSTRequestFor("find/users/\(userId)", parameters: parameters, completion: completion)
+        performPOSTRequestFor(path: "find/users/\(userId)", parameters: parameters, completion: completion)
     }
 
-    public func fetchPhotosForPatch(patchId: String, criteria: [String:AnyObject] = [:], limit: Int, skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
+    public func fetchPhotosForPatch(patchId: String, criteria: [String:Any] = [:], limit: Int, skip: Int = 0, completion: @escaping CompletionBlock) {
 
-        var linked: [String:AnyObject] = [
-            "from": "messages",
-            "limit": limit,
+        var linked: [String:Any] = [
+            "from": "messages" as Any,
+            "limit": limit as Any,
             "linkedFilter": ["photo":["$exists": true]],
             "more": true,
             "refs": ["_creator":"_id,name,photo,schema,type"],
             "skip": skip,
             "type": "content",
             "fields": "createdDate,description,photo,_creator"
-            ]
+        ]
 
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        if let userId = userDefaults.stringForKey(PatchrUserDefaultKey("userId")) {
+        let userDefaults = UserDefaults.standard
+        if let userId = userDefaults.string(forKey: PatchrUserDefaultKey(subKey: "userId")) {
             let links = [
                 LinkSpec(from: .Users, type: .Like, fields: "_id,type", filter: ["_from": userId])	// Has the current user liked the message
             ]
@@ -182,148 +183,154 @@ public class Proxibase {
             linked["links"] = array
         }
 
-        let parameters: [String:AnyObject] = [
+        let parameters: [String:Any] = [
             "linked": linked,
             "promote": "linked",
-            ]
-
-        performPOSTRequestFor("find/patches/\(patchId)", parameters: parameters, completion: completion)
-    }
-
-    public func fetchMessagesForPatch(patchId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
-
-        var linked:     [String:AnyObject] = ["from": "messages", "type": "content", "limit": pageSizeDefault, "skip": skip, "more": true]
-        var parameters: [String:AnyObject] = [
-                "linked": Message.extras(&linked),
-                "promote": "linked",
         ]
-        if !criteria.isEmpty {
-            parameters["query"] = criteria
-        }
-        performPOSTRequestFor("find/patches/\(patchId)", parameters: parameters, completion: completion)
+
+        performPOSTRequestFor(path: "find/patches/\(patchId)", parameters: parameters, completion: completion)
     }
 
-    public func fetchPatchesOwnedByUser(userId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
+    public func fetchMessagesForPatch(patchId: String, criteria: [String:Any] = [:], skip: Int = 0, completion: @escaping CompletionBlock) {
 
-        var linked:     [String:AnyObject] = ["to": "patches", "type": "create", "limit": pageSizeDefault, "skip": skip, "more": true]
-        var parameters: [String:AnyObject] = [
-                "linked": Patch.extras(&linked),
-                "promote": "linked",
-        ]
-        if !criteria.isEmpty {
-            parameters["query"] = criteria
-        }
-        performPOSTRequestFor("find/users/\(userId)", parameters: parameters, completion: completion)
-    }
-
-    public func fetchPatchesUserIsWatching(userId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
-
-        var linked:     [String:AnyObject] = ["to": "patches", "type": "watch", "limit": pageSizeDefault, "skip": skip, "more": true, "linkFields": "type,enabled"]
-        var parameters: [String:AnyObject] = [
-                "linked": Patch.extras(&linked),
-                "promote": "linked",
-        ]
-        if !criteria.isEmpty {
-            parameters["query"] = criteria
-        }
-        performPOSTRequestFor("find/users/\(userId)", parameters: parameters, completion: completion)
-    }
-
-    public func fetchUsersFavoritePatches(userId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
-
-        var linked:     [String:AnyObject] = ["to": "patches", "type": "like", "limit": pageSizeDefault, "skip": skip, "more": true]
-        var parameters: [String:AnyObject] = [
-            "linked": Patch.extras(&linked),
+        var linked:     [String: Any] = ["from": "messages", "type": "content", "limit": pageSizeDefault, "skip": skip, "more": true]
+        Message.extras(parameters: &linked)
+        var parameters: [String: Any] = [
+            "linked": linked,
             "promote": "linked",
         ]
         if !criteria.isEmpty {
             parameters["query"] = criteria
         }
-        performPOSTRequestFor("find/users/\(userId)", parameters: parameters, completion: completion)
+        performPOSTRequestFor(path: "find/patches/\(patchId)", parameters: parameters, completion: completion)
     }
 
-    public func fetchUsersThatWatchPatch(patchId: String, isOwner: Bool = false, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
+    public func fetchPatchesOwnedByUser(userId: String, criteria: [String:Any] = [:], skip: Int = 0, completion: @escaping CompletionBlock) {
+
+        var linked:     [String:Any] = ["to": "patches", "type": "create", "limit": pageSizeDefault, "skip": skip, "more": true]
+        Patch.extras(parameters: &linked)
+        var parameters: [String:Any] = [
+            "linked": linked,
+            "promote": "linked",
+        ]
+        if !criteria.isEmpty {
+            parameters["query"] = criteria
+        }
+        performPOSTRequestFor(path: "find/users/\(userId)", parameters: parameters, completion: completion)
+    }
+
+    public func fetchPatchesUserIsWatching(userId: String, criteria: [String:Any] = [:], skip: Int = 0, completion: @escaping CompletionBlock) {
+
+        var linked:     [String:Any] = ["to": "patches", "type": "watch", "limit": pageSizeDefault, "skip": skip, "more": true, "linkFields": "type,enabled"]
+        Patch.extras(parameters: &linked)
+        var parameters: [String:Any] = [
+            "linked": linked,
+            "promote": "linked",
+        ]
+        if !criteria.isEmpty {
+            parameters["query"] = criteria
+        }
+        performPOSTRequestFor(path: "find/users/\(userId)", parameters: parameters, completion: completion)
+    }
+
+    public func fetchUsersFavoritePatches(userId: String, criteria: [String:Any] = [:], skip: Int = 0, completion: @escaping CompletionBlock) {
+
+        var linked:     [String:Any] = ["to": "patches", "type": "like", "limit": pageSizeDefault, "skip": skip, "more": true]
+        Patch.extras(parameters: &linked)
+        var parameters: [String:Any] = [
+            "linked": linked,
+            "promote": "linked",
+        ]
+        if !criteria.isEmpty {
+            parameters["query"] = criteria
+        }
+        performPOSTRequestFor(path: "find/users/\(userId)", parameters: parameters, completion: completion)
+    }
+
+    public func fetchUsersThatWatchPatch(patchId: String, isOwner: Bool = false, criteria: [String:Any] = [:], skip: Int = 0, completion: @escaping CompletionBlock) {
 
         /* Used to show a list of users that are watching a patch or have a pending watch request for the patch. */
-        var linked: [String:AnyObject] = ["from": "users", "type": "watch", "limit": pageSizeDefault, "skip": skip, "more": true, "linkFields": "type,enabled"]
+        var linked: [String:Any] = ["from": "users", "type": "watch", "limit": pageSizeDefault, "skip": skip, "more": true, "linkFields": "type,enabled"]
         if !isOwner {
             linked["filter"] = ["enabled": true]
         }
-        var parameters: [String:AnyObject] = [
-                "linked": User.extras(&linked),
-                "promote": "linked",
+        User.extras(parameters: &linked)
+        var parameters: [String:Any] = [
+            "linked": linked,
+            "promote": "linked",
         ]
         if !criteria.isEmpty {
             parameters["query"] = criteria
         }
-        performPOSTRequestFor("find/patches/\(patchId)", parameters: parameters, completion: completion)
+        performPOSTRequestFor(path: "find/patches/\(patchId)", parameters: parameters, completion: completion)
     }
 
-    public func fetchUsersThatLikeMessage(messageId: String, criteria: [String:AnyObject] = [:], skip: Int = 0, completion: (response:AnyObject?, error:NSError?) -> Void) {
+    public func fetchUsersThatLikeMessage(messageId: String, criteria: [String:Any] = [:], skip: Int = 0, completion: @escaping CompletionBlock) {
 
         /* Used to show a list of users that currently like a message. */
-        var linked:     [String:AnyObject]
-                                           = ["from": "users", "type": "like", "limit": pageSizeDefault, "skip": skip, "more": true]
-        var parameters: [String:AnyObject] = [
-                "linked": User.extras(&linked),
-                "promote": "linked",
+        var linked:     [String:Any] = ["from": "users", "type": "like", "limit": pageSizeDefault, "skip": skip, "more": true]
+        User.extras(parameters: &linked)
+        var parameters: [String:Any] = [
+            "linked": linked,
+            "promote": "linked",
         ]
         if !criteria.isEmpty {
             parameters["query"] = criteria
         }
-        performPOSTRequestFor("find/messages/\(messageId)", parameters: parameters, completion: completion)
+        performPOSTRequestFor(path: "find/messages/\(messageId)", parameters: parameters, completion: completion)
     }
 
     /*--------------------------------------------------------------------------------------------
      * PUBLIC: Modify
      *--------------------------------------------------------------------------------------------*/
 
-    public func postEntity(path: String, parameters: NSDictionary, completion: CompletionBlock) -> NSURLSessionTask {
+    public func postEntity(path: String, parameters: [String:Any], completion: @escaping CompletionBlock) -> URLSessionTask {
 
-        var parametersCopy = parameters.mutableCopy() as! NSMutableDictionary
-        convertLocationProperties(parametersCopy)
-        if parametersCopy["data"] == nil {
-            parametersCopy = ["data": parametersCopy]
+        var parameters = parameters
+        convertLocationProperties(properties: &parameters)
+        if parameters["data"] == nil {
+            parameters = ["data": parameters]
         }
-        let request: NSURLSessionTask = self.performPOSTRequestFor(path, parameters: parametersCopy, completion: completion)
+        let request: URLSessionTask = self.performPOSTRequestFor(path: path, parameters: parameters, completion: completion)
         return request
     }
 
-    public func deleteObject(path: String, completion: CompletionBlock) {
-        performDELETERequestFor(path, parameters: NSDictionary(), completion: completion)
+    public func deleteObject(path: String, completion: @escaping CompletionBlock) {
+        performDELETERequestFor(path: path, parameters: [:] as [String : Any], completion: completion)
     }
 
-    public func insertLink(fromID: String, toID: String, linkType: LinkType, completion: CompletionBlock) {
-        let linkParameters: NSDictionary = [
-                "_from": fromID,
-                "_to": toID,
-                "type": linkType.rawValue
+    public func insertLink(fromID: String, toID: String, linkType: LinkType, completion: @escaping CompletionBlock) {
+        
+        let linkParameters: [String:Any] = [
+            "_from": fromID,
+            "_to": toID,
+            "type": linkType.rawValue
         ]
 
         let postParameters = ["data": linkParameters]
 
-        performPOSTRequestFor("data/links", parameters: postParameters) {
+        performPOSTRequestFor(path: "data/links", parameters: postParameters) {
             response, error in
-            completion(response: response, error: error)
+            completion(response, error)
         }
     }
 
-    public func enableLinkById(linkId: String, enabled: Bool, completion: CompletionBlock) {
+    public func enableLinkById(linkId: String, enabled: Bool, completion: @escaping CompletionBlock) {
         let parameters = ["data": ["enabled": enabled]]
-        performPOSTRequestFor("data/links/\(linkId)", parameters: parameters, completion: completion)
+        performPOSTRequestFor(path: "data/links/\(linkId)", parameters: parameters, completion: completion)
     }
 
-    public func muteLinkById(linkId: String, muted: Bool, completion: CompletionBlock) {
+    public func muteLinkById(linkId: String, muted: Bool, completion: @escaping CompletionBlock) {
         let parameters = ["data": ["mute": muted]]
-        performPOSTRequestFor("data/links/\(linkId)", parameters: parameters, completion: completion)
+        performPOSTRequestFor(path: "data/links/\(linkId)", parameters: parameters, completion: completion)
     }
 
     public func deleteLinkById(linkID: String, completion: CompletionBlock? = nil) {
         let linkPath = "data/links/\(linkID)"
-        performDELETERequestFor(linkPath, parameters: NSDictionary()) {
+        performDELETERequestFor(path: linkPath, parameters: [:] as [String : Any]) {
             response, error in
             if let completionBlock = completion {
-                completionBlock(response: response, error: error)
+                completionBlock(response, error)
             }
         }
     }
@@ -334,10 +341,10 @@ public class Proxibase {
         let queryString = "query[_to]=\(toId)&query[_from]=\(fromId)&query[type]=\(linkType.rawValue)"
         let linkPath = "data/links?\(queryString)"
 
-        performDELETERequestFor(linkPath, parameters: NSDictionary()) {
+        performDELETERequestFor(path: linkPath, parameters: [:] as [String : Any]) {
             response, error in
             if let completionBlock = completion {
-                completionBlock(response: response, error: error)
+                completionBlock(response, error)
             }
         }
     }
@@ -346,95 +353,93 @@ public class Proxibase {
     * PUBLIC: Bing
     *--------------------------------------------------------------------------------------------*/
 
-    public func loadSearchImages(query: String, count: Int64 = 50, offset: Int64 = 0, completion: CompletionBlock) {
+    public func loadSearchImages(query: String, count: Int64 = 50, offset: Int64 = 0, completion: @escaping CompletionBlock) {
         
         Log.d("Image search count: \(count), offset: \(offset) ")
 
-        if let bingSessionManager: AFHTTPSessionManager = AFHTTPSessionManager(baseURL: NSURL(string: URI_PROXIBASE_SEARCH_IMAGES)) {
+        let bingSessionManager: AFHTTPSessionManager = AFHTTPSessionManager(baseURL: NSURL(string: URI_PROXIBASE_SEARCH_IMAGES) as URL?)
+        let requestSerializer: AFJSONRequestSerializer = AFJSONRequestSerializer()
+        let bingKey = FIRRemoteConfig.remoteConfig().configValue(forKey: "bing_subscription_key").stringValue!
 
-            let requestSerializer: AFJSONRequestSerializer = AFJSONRequestSerializer()
-            let bingKey = FIRRemoteConfig.remoteConfig().configValueForKey("bing_subscription_key").stringValue!
+        requestSerializer.setValue(bingKey, forHTTPHeaderField: "Ocp-Apim-Subscription-Key")
+        bingSessionManager.requestSerializer = requestSerializer
+        bingSessionManager.responseSerializer = JSONResponseSerializerWithData()
 
-            requestSerializer.setValue(bingKey, forHTTPHeaderField: "Ocp-Apim-Subscription-Key")
-            bingSessionManager.requestSerializer = requestSerializer
-            bingSessionManager.responseSerializer = JSONResponseSerializerWithData()
+        let queryEncoded: String = query.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed)!
+        let bingUrl = "images/search?q=%27" + queryEncoded + "%27"
+                + "&mkt=en-us&safeSearch=strict&size=large"
+                + "&count=\(count + 1)"
+                + "&offset=\(offset)"
 
-            let queryEncoded: String = query.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
-            let bingUrl = "images/search?q=%27" + queryEncoded + "%27"
-                    + "&mkt=en-us&safeSearch=strict&size=large"
-                    + "&count=\(count + 1)"
-                    + "&offset=\(offset)"
-
-            bingSessionManager.GET(bingUrl, parameters: nil,
-                                   success: {
-                                       dataTask, response in
-                                       completion(response: response, error: nil)
-                                   },
-                                   failure: {
-                                       dataTask, error in
-                                       completion(response: nil, error: error)
-                                   })
-        }
+        bingSessionManager.get(bingUrl, parameters: nil,
+                               success: {
+                                   dataTask, response in
+                                   completion(response, nil)
+                               },
+                               failure: {
+                                dataTask, error in
+                                   completion(nil, error as NSError)
+                               })
     }
 
     /*--------------------------------------------------------------------------------------------
      * User and install
      *--------------------------------------------------------------------------------------------*/
 
-    public func validEmail(email: String, completion: CompletionBlock) {
+    public func validEmail(email: String, completion: @escaping CompletionBlock) {
 
-        let emailString = (CFURLCreateStringByAddingPercentEscapes(nil, email as NSString, nil, ":/?@!$&'()*+,;=" as NSString, CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)) as NSString) as String
+        let emailString = (CFURLCreateStringByAddingPercentEscapes(nil, email as NSString, nil, ":/?@!$&'()*+,;=" as NSString, CFStringConvertNSStringEncodingToEncoding(String.Encoding.utf8.rawValue)) as NSString) as String
 
-        sessionManager.GET("find/users?q[email]=\(emailString)", parameters: nil,
+        sessionManager.get("find/users?q[email]=\(emailString)", parameters: nil,
             success: {
                 dataTask, response in
-                completion(response: response, error: nil)
+                completion(response, nil)
             },
             failure: {
                 dataTask, error in
-                completion(response: ServerError(error)?.response, error: error)
+                completion(nil, error as NSError)
         })
     }
 
-    public func login(email: String, password: String, completion: CompletionBlock) {
+    public func login(email: String, password: String, completion: @escaping CompletionBlock) {
         /*
         * Send an auth/signin message to the server with the user's email address and password.
         * The completion block will be called asynchronously in either case.
         * If signin is successful, then the credentials from the server will be written to user defaults
         */
-        let parameters: NSMutableDictionary = ["email": email, "password": password]
+        var parameters: [String: Any] = ["email": email, "password": password]
         if let installId = NotificationController.instance.installId {
             parameters["installId"] = installId
         }
 
-        sessionManager.POST("auth/signin", parameters: parameters,
+        sessionManager.post("auth/signin", parameters: parameters,
             success: {
                 dataTask, response in
-                UserController.instance.handleSuccessfulLoginResponse(response)
-                completion(response: response, error: nil)
+                UserController.instance.handleSuccessfulLoginResponse(response: response)
+                completion(response, nil)
             },
             failure: {
                 dataTask, error in
-                completion(response: nil, error: error)
+                completion(nil, error as NSError)
         })
     }
 
-    public func logout(completion: (response:AnyObject?, error:NSError?) -> Void) {
+    public func logout(completion: @escaping CompletionBlock) {
         /*
         * Send an auth/signout message.
         *
         * Discard credentials whether or not the server thinks we are signed out.
         * The completion closure is always performed asynchronously.
         */
-        performGETRequestFor("auth/signout", parameters: [:]) {
-            response, error in
-            completion(response: response, error: error)
+        performGETRequestFor(path: "auth/signout", parameters: [:]) {
+            (response: Any?, error: NSError?) in
+            completion(response, error)
         }
     }
 
-    public func updatePassword(userId: NSString, password: NSString, passwordNew: NSString, completion: CompletionBlock) {
+    public func updatePassword(userId: String, password: String, passwordNew: String, completion: @escaping CompletionBlock) {
         
-        let parameters: NSMutableDictionary = [
+        var parameters: [String:Any] = [
             "userId": userId,
             "oldPassword": password,
             "newPassword": passwordNew
@@ -444,82 +449,82 @@ public class Proxibase {
             parameters["installId"] = installId
         }
 
-        sessionManager.POST("user/pw/change", parameters: addSessionParameters(parameters: parameters),
+        sessionManager.post("user/pw/change", parameters: addSessionParameters(parameters: parameters),
             success: {
                 dataTask, response in
-                UserController.instance.handlePasswordChange(response)
-                completion(response: response, error: nil)
+                UserController.instance.handlePasswordChange(response: response)
+                completion(response, nil)
             },
             failure: {
                 dataTask, error in
-                completion(response: nil, error: error)
+                completion(nil, error as NSError)
         })
     }
 
-    public func requestPasswordReset(email: NSString, completion: CompletionBlock) {
+    public func requestPasswordReset(email: NSString, completion: @escaping CompletionBlock) {
         
-        let parameters: NSMutableDictionary = ["email": email]
-        
-        if let installId = NotificationController.instance.installId {
-            parameters["installId"] = installId
-        }
-
-        sessionManager.POST("user/pw/reqreset", parameters: parameters,
-            success: {
-                dataTask, response in
-                completion(response: response, error: nil)
-            },
-            failure: {
-                dataTask, error in
-                completion(response: nil, error: error)
-        })
-    }
-
-    public func resetPassword(password: NSString, token: NSString, completion: CompletionBlock) {
-        
-        let parameters: NSMutableDictionary = ["token": token, "password": password]
+        var parameters: [String: Any] = ["email": email]
         
         if let installId = NotificationController.instance.installId {
             parameters["installId"] = installId
         }
 
-        sessionManager.POST("user/pw/reset", parameters: parameters,
+        sessionManager.post("user/pw/reqreset", parameters: parameters,
             success: {
                 dataTask, response in
-                UserController.instance.handleSuccessfulLoginResponse(response)
-                completion(response: response, error: nil)
+                completion(response, nil)
             },
             failure: {
                 dataTask, error in
-                completion(response: nil, error: error)
+                completion(nil, error as NSError)
         })
     }
 
-    public func preflight(completion: CompletionBlock) {
-        let parameters: NSDictionary = [:]
-        sessionManager.GET("client", parameters: addSessionParameters(parameters: parameters),
+    public func resetPassword(password: NSString, token: NSString, completion: @escaping CompletionBlock) {
+        
+        var parameters: [String: Any] = ["token": token, "password": password]
+        
+        if let installId = NotificationController.instance.installId {
+            parameters["installId"] = installId
+        }
+
+        sessionManager.post("user/pw/reset", parameters: parameters,
             success: {
                 dataTask, response in
-                completion(response: response, error: nil)
+                UserController.instance.handleSuccessfulLoginResponse(response: response)
+                completion(response, nil)
             },
             failure: {
                 dataTask, error in
-                completion(response: ServerError(error)?.response, error: error)
+                completion(nil, error as NSError)
         })
     }
 
-    public func registerInstall(completion: (response:AnyObject?, error:NSError?) -> Void) {
+    public func preflight(completion: @escaping CompletionBlock) {
+        let parameters: [String: Any] = [:]
+        sessionManager.get("client", parameters: addSessionParameters(parameters: parameters),
+            success: {
+                dataTask, response in
+                completion(response, nil)
+            },
+            failure: {
+                dataTask, error in
+                completion(nil, error as NSError)
+        })
+    }
+
+    public func registerInstall(completion: @escaping CompletionBlock) {
         /*
          * These properties will be updated if the install already exists.
          */
         let installId         = NotificationController.instance.installId!
         let pushInstallId     = NotificationController.instance.installId!
-        let clientVersionName = NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleShortVersionString") as! String
-        let clientVersionCode = Int(NSBundle.mainBundle().objectForInfoDictionaryKey("CFBundleVersion") as! String)!
-        let clientPackageName = NSBundle.mainBundle().bundleIdentifier!
-        let deviceName        = UIDevice.currentDevice().modelIdentifier()
+        let clientVersionName = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
+        let clientVersionCode = Int(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String)!
+        let clientPackageName = Bundle.main.bundleIdentifier!
+        let deviceName        = UIDevice.current.modelIdentifier()
         let deviceType        = "ios"
-        let deviceVersionName = UIDevice.currentDevice().systemVersion
+        let deviceVersionName = UIDevice.current.systemVersion
 
         let parameters: NSDictionary = [
             "install":
@@ -534,18 +539,15 @@ public class Proxibase {
                     "deviceVersionName": deviceVersionName
             ]
         ]
-        performPOSTRequestFor("do/registerInstall", parameters: parameters, completion: completion)
+        performPOSTRequestFor(path: "do/registerInstall", parameters: parameters as! [String : Any], completion: completion)
     }
 
-    private func addSessionParameters(parameters inParameters: NSDictionary) -> NSDictionary {
+    private func addSessionParameters(parameters inParameters: [String:Any]) -> [String:Any] {
         /* Skip if already includes a sessionKey */
         var parameters = inParameters
         if parameters["session"] == nil {
-            let userId         = UserController.instance.userId as NSString?
-            let sessionKey     = UserController.instance.sessionKey as NSString?
-            let authParameters = NSMutableDictionary(dictionary: ["user": userId! as NSString, "session": sessionKey! as NSString])
-            authParameters.addEntriesFromDictionary(parameters as [NSObject:AnyObject])
-            parameters = authParameters
+            parameters["session"] = UserController.instance.sessionKey
+            parameters["user"] = UserController.instance.userId
         }
         return parameters
     }
@@ -553,45 +555,45 @@ public class Proxibase {
     /*--------------------------------------------------------------------------------------------
      * Rest
      *--------------------------------------------------------------------------------------------*/
-
-    private func performPOSTRequestFor(path: NSString, parameters inParameters: NSDictionary, completion: CompletionBlock) -> NSURLSessionTask {
+    
+    @discardableResult private func performPOSTRequestFor(path: String, parameters inParameters: [String:Any], completion: @escaping CompletionBlock) -> URLSessionTask {
 
         var parameters = inParameters
         parameters = addSessionParameters(parameters: parameters)
 
-        let request: NSURLSessionTask = sessionManager.POST(path as String, parameters: parameters,
+        let request: URLSessionTask = sessionManager.post(path, parameters: parameters,
                             success: {
                                 dataTask, response in
-                                completion(response: response, error: nil)
+                                completion(response, nil)
                             },
                             failure: {
                                 dataTask, error in
-                                completion(response: nil, error: error)
+                                completion(nil, error as NSError)
                             })!
         return request
     }
 
-    private func performGETRequestFor(path: NSString, parameters: NSDictionary, completion: CompletionBlock) {
-        sessionManager.GET(path as String, parameters: addSessionParameters(parameters: parameters),
+    private func performGETRequestFor(path: String, parameters: [String:Any], completion: @escaping CompletionBlock) {
+        sessionManager.get(path, parameters: addSessionParameters(parameters: parameters),
                            success: {
                                dataTask, response in
-                               completion(response: response, error: nil)
+                               completion(response, nil)
                            },
                            failure: {
                                dataTask, error in
-                               completion(response: nil, error: error)
+                               completion(nil, error as NSError)
                            })
     }
 
-    private func performDELETERequestFor(path: NSString, parameters: NSDictionary, completion: CompletionBlock) {
-        sessionManager.DELETE(path as String, parameters: addSessionParameters(parameters: parameters),
+    private func performDELETERequestFor(path: String, parameters: [String:Any], completion: @escaping CompletionBlock) {
+        sessionManager.delete(path, parameters: addSessionParameters(parameters: parameters),
                               success: {
                                   dataTask, response in
-                                  completion(response: response, error: nil)
+                                  completion(response, nil)
                               },
                               failure: {
                                   dataTask, error in
-                                  completion(response: nil, error: error)
+                                  completion(nil, error as NSError)
                               })
     }
 
@@ -599,7 +601,7 @@ public class Proxibase {
      * Helpers
      *--------------------------------------------------------------------------------------------*/
 
-    private func convertLocationProperties(properties: NSMutableDictionary) {
+    private func convertLocationProperties( properties: inout [String:Any]) {
         if let location = properties["location"] as? CLLocation {
             properties["location"] = [
                     "accuracy": location.horizontalAccuracy,
@@ -724,7 +726,7 @@ struct ServerResponse {
 
     init(_ responseObject: AnyObject?) {
         responseDictionary = responseObject as! NSDictionary
-        resultCount = (responseDictionary["count"] as! NSNumber).integerValue
+        resultCount = (responseDictionary["count"] as! NSNumber).intValue
     }
 
     /*
@@ -745,19 +747,20 @@ public class LinkSpec {
     public var enabled:      Bool?
     public var limit:        UInt?
     public var count:        Bool?
-    public var filter:       [NSObject:AnyObject]?
-    public var fields:       AnyObject?
-    public var linkFields:   AnyObject?
-    public var linkedFilter: [NSObject:AnyObject]?
+    public var filter:       [String:Any]?
+    public var fields:       Any?
+    public var linkFields:   Any?
+    public var linkedFilter: [String:Any]?
     public var linked:       [LinkSpec]?
     public var links:        [LinkSpec]?
     public var linkCounts:   [LinkSpec]?
-    public var refs:		 [NSObject:AnyObject]?
+    public var refs:		 [String:Any]?
 
     init(to: LinkDestination, type: LinkType, enabled: Bool? = nil, limit: UInt? = nil, count: Bool? = nil,
-         fields: AnyObject? = nil, filter: [NSObject:AnyObject]? = nil,
-         linkFields: AnyObject? = nil, linkedFilter: [NSObject:AnyObject]? = nil,
-        linked: [LinkSpec]? = nil, links: [LinkSpec]? = nil, linkCounts: [LinkSpec]? = nil, refs: [NSObject:AnyObject]? = nil) {
+         fields: Any? = nil, filter: [String:Any]? = nil,
+         linkFields: Any? = nil, linkedFilter: [String:Any]? = nil,
+         linked: [LinkSpec]? = nil, links: [LinkSpec]? = nil, linkCounts: [LinkSpec]? = nil, refs: [String:Any]? = nil) {
+        
         self.to = to
         self.type = type
         self.enabled = enabled
@@ -774,9 +777,10 @@ public class LinkSpec {
     }
 
     init(from: LinkDestination, type: LinkType, enabled: Bool? = nil, limit: UInt? = nil, count: Bool? = nil,
-         fields: AnyObject? = nil, filter: [NSObject:AnyObject]? = nil,
-         linkFields: AnyObject? = nil, linkedFilter: [NSObject:AnyObject]? = nil,
-         linked: [LinkSpec]? = nil, links: [LinkSpec]? = nil, linkCounts: [LinkSpec]? = nil, refs: [NSObject:AnyObject]? = nil) {
+         fields: Any? = nil, filter: [String:Any]? = nil,
+         linkFields: Any? = nil, linkedFilter: [String:Any]? = nil,
+         linked: [LinkSpec]? = nil, links: [LinkSpec]? = nil, linkCounts: [LinkSpec]? = nil, refs: [String:Any]? = nil) {
+        
         self.from = from
         self.type = type
         self.enabled = enabled
@@ -792,8 +796,8 @@ public class LinkSpec {
         self.refs = refs
     }
 
-    func toDictionary() -> Dictionary<String, AnyObject> {
-        var dictionary = Dictionary<String, AnyObject>()
+    func toDictionary() -> Dictionary<String, Any> {
+        var dictionary = Dictionary<String, Any>()
         if to != nil {
             dictionary["to"] = to!.rawValue
         }
@@ -985,23 +989,23 @@ enum HTTPStatusCode: Int {
 extension HTTPStatusCode {
     /// Informational - Request received, continuing process.
     var isInformational: Bool {
-        return inRange(100 ... 200)
+        return inRange(range: Range(uncheckedBounds: (lower: 100, upper: 199)))
     }
     /// Success - The action was successfully received, understood, and accepted.
     var isSuccess: Bool {
-        return inRange(200 ... 299)
+        return inRange(range: Range(uncheckedBounds: (lower: 200, upper: 299)))
     }
     /// Redirection - Further action must be taken in order to complete the request.
     var isRedirection: Bool {
-        return inRange(300 ... 399)
+        return inRange(range: Range(uncheckedBounds: (lower: 300, upper: 399)))
     }
     /// Client Error - The request contains bad syntax or cannot be fulfilled.
     var isClientError: Bool {
-        return inRange(400 ... 499)
+        return inRange(range: Range(uncheckedBounds: (lower: 400, upper: 499)))
     }
     /// Server Error - The server failed to fulfill an apparently valid request.
     var isServerError: Bool {
-        return inRange(500 ... 599)
+        return inRange(range: Range(uncheckedBounds: (lower: 500, upper: 599)))
     }
 
     /// :returns: true if the status code is in the provided range, false otherwise.
@@ -1012,7 +1016,7 @@ extension HTTPStatusCode {
 
 extension HTTPStatusCode {
     var localizedReasonPhrase: String {
-        return NSHTTPURLResponse.localizedStringForStatusCode(rawValue)
+        return HTTPURLResponse.localizedString(forStatusCode: rawValue)
     }
 }
 
@@ -1031,7 +1035,7 @@ extension HTTPStatusCode: CustomDebugStringConvertible, CustomStringConvertible 
 
 extension HTTPStatusCode {
     /// Obtains a possible status code from an optional HTTP URL response.
-    init?(HTTPResponse: NSHTTPURLResponse?) {
+    init?(HTTPResponse: HTTPURLResponse?) {
         if let value = HTTPResponse?.statusCode {
             self.init(rawValue: value)
         }
@@ -1041,14 +1045,14 @@ extension HTTPStatusCode {
     }
 }
 
-extension NSHTTPURLResponse {
+extension HTTPURLResponse {
     var statusCodeValue: HTTPStatusCode? {
         return HTTPStatusCode(HTTPResponse: self)
     }
 
-    @available(iOS, introduced = 7.0)
-    convenience init?(URL url: NSURL, statusCode: HTTPStatusCode, HTTPVersion: String?, headerFields: [String: String]?) {
-        self.init(URL: url, statusCode: statusCode.rawValue, HTTPVersion: HTTPVersion, headerFields: headerFields)
-    }
+    //    @available(iOS, introduced : 7.0)
+    //convenience init?(URL url: NSURL, statusCode: HTTPStatusCode, HTTPVersion: String?, headerFields: [String: String]?) {
+    //        self(url: url as URL, statusCode: statusCode.rawValue, httpVersion: HTTPVersion, headerFields: headerFields)
+    //}
 }
 

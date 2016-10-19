@@ -34,9 +34,9 @@ class PhotoPreview: PhotoBrowser {
         
         let toolbar: UIToolbar = super.toolbar
         
-        let selectButton = UIBarButtonItem(title: "Use photo", style: UIBarButtonItemStyle.Plain, target: self.target, action: #selector(PhotoPreview.selectAction))
-        let flexSpacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)
-        let fixedSpacer = UIBarButtonItem(barButtonSystemItem: .FixedSpace, target: self, action: nil)
+        let selectButton = UIBarButtonItem(title: "Use photo", style: UIBarButtonItemStyle.plain, target: self.target, action: #selector(PhotoPreview.selectAction))
+        let flexSpacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
+        let fixedSpacer = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: self, action: nil)
 		
 		selectButton.tintColor = Theme.colorTint
         

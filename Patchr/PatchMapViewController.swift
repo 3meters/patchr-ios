@@ -12,9 +12,9 @@ import MapKit
 
 @objc protocol MapViewDelegate: NSObjectProtocol, UIGestureRecognizerDelegate {
 	
-    optional var locationTitle: String? { get }
-    optional var locationSubtitle: String? { get }
-    optional var locationPhoto: AnyObject? { get }
+    @objc optional var locationTitle: String? { get }
+    @objc optional var locationSubtitle: String? { get }
+    @objc optional var locationPhoto: AnyObject? { get }
 	
     func locationForMap() -> CLLocation?
     func locationChangedTo(location: CLLocation) -> Void
@@ -38,7 +38,7 @@ class PatchMapViewController: UIViewController {
 		initialize()
 	}
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.mapView.removeAnnotation(self.annotation)
     }
@@ -58,19 +58,19 @@ class PatchMapViewController: UIViewController {
 		super.viewWillLayoutSubviews()
 		self.mapView.fillSuperview()
 		if self.locationDelegate.locationEditable() {			
-			let messageSize = self.messageBar.sizeThatFits(CGSizeMake(self.view.width(), CGFloat.max))
+            let messageSize = self.messageBar.sizeThatFits(CGSize(width:self.view.width(), height:CGFloat.greatestFiniteMagnitude))
 			let navHeight = self.navigationController?.navigationBar.height() ?? 0
-			let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
-			self.messageBar.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: (statusHeight + navHeight), height: max(messageSize.height + 16, 48))
+			let statusHeight = UIApplication.shared.statusBarFrame.size.height
+			self.messageBar.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: (statusHeight + navHeight), height: max(messageSize.height + 16, 48))
 		}
 	}
     
     func longPress(gesture: UILongPressGestureRecognizer) {
         if self.locationDelegate.locationEditable() {
-            if gesture.state == .Began {
-                let coordinate = self.mapView?.convertPoint(gesture.locationInView(mapView), toCoordinateFromView: self.mapView)
+            if gesture.state == .began {
+                let coordinate = self.mapView?.convert(gesture.location(in: mapView), toCoordinateFrom: self.mapView)
                 self.mapView!.removeAnnotation(self.annotation)
-                self.locationDelegate?.locationChangedTo(CLLocation(latitude: coordinate!.latitude, longitude: coordinate!.longitude)) // Passes to calling controller via delegate
+                self.locationDelegate?.locationChangedTo(location: CLLocation(latitude: coordinate!.latitude, longitude: coordinate!.longitude)) // Passes to calling controller via delegate
                 self.annotation.coordinate = self.locationDelegate.locationForMap()!.coordinate
                 self.mapView!.addAnnotation(self.annotation)
             }
@@ -87,10 +87,7 @@ class PatchMapViewController: UIViewController {
 		self.mapView = MKMapView()
 		self.mapView.delegate = self
 		self.mapView.showsUserLocation = true
-		self.mapView.mapType = .Standard
-		
-		self.view.accessibilityIdentifier = View.PatchMap
-		self.mapView!.accessibilityIdentifier = Map.Patch
+		self.mapView.mapType = .standard
 		
 		let currentRegion = MKCoordinateRegionMakeWithDistance(self.locationDelegate.locationForMap()!.coordinate, 2000, 2000)
 		self.mapView.setRegion(currentRegion, animated: false)
@@ -100,7 +97,7 @@ class PatchMapViewController: UIViewController {
 			title: self.locationDelegate.locationTitle ?? nil,
 			subtitle: self.locationDelegate.locationSubtitle ?? nil)
 		
-		let press = UILongPressGestureRecognizer(target: self, action: #selector(PatchMapViewController.longPress(_:)));
+		let press = UILongPressGestureRecognizer(target: self, action: #selector(PatchMapViewController.longPress(gesture:)));
 		self.view.addGestureRecognizer(press)
 		
 		self.mapView.addAnnotation(self.annotation)
@@ -112,9 +109,9 @@ class PatchMapViewController: UIViewController {
 			self.messageBar.font = Theme.fontTextDisplay
 			self.messageBar.text = "Tap and hold to set the location for the patch."
 			self.messageBar.numberOfLines = 0
-			self.messageBar.textAlignment = NSTextAlignment.Center
+			self.messageBar.textAlignment = NSTextAlignment.center
 			self.messageBar.textColor = Colors.white
-			self.messageBar.layer.backgroundColor = Colors.accentColorFill.CGColor
+			self.messageBar.layer.backgroundColor = Colors.accentColorFill.cgColor
 			self.messageBar.alpha = 0.90
 			self.view.addSubview(self.messageBar)
 		}
@@ -123,9 +120,9 @@ class PatchMapViewController: UIViewController {
 
 extension PatchMapViewController: MKMapViewDelegate {
     
-    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         
-		if annotation.isKindOfClass(MKUserLocation) {
+		if annotation is MKUserLocation {
 			return nil; // Keep default "blue dot" view for current location
 		}
 		
@@ -136,29 +133,29 @@ extension PatchMapViewController: MKMapViewDelegate {
 		let photo = self.locationDelegate.locationPhoto ?? nil
 		
         if photo != nil {
-            let imageView = AirImageView(frame: CGRectMake(0, 0, 40, 40))
+            let imageView = AirImageView(frame: CGRect(x:0, y:0, width:40, height:40))
             annotationView.leftCalloutAccessoryView = imageView
-            imageView.contentMode = UIViewContentMode.ScaleAspectFill
+            imageView.contentMode = UIViewContentMode.scaleAspectFill
         }
 		else {
-			let imageView = AirImageView(frame: CGRectMake(0, 0, 40, 40))
+            let imageView = AirImageView(frame: CGRect(x:0, y:0, width:40, height:40))
 			imageView.image = Utils.imagePatch
 			imageView.tintColor = Theme.colorTint
 			annotationView.leftCalloutAccessoryView = imageView
-			imageView.contentMode = UIViewContentMode.ScaleAspectFill
+			imageView.contentMode = UIViewContentMode.scaleAspectFill
 		}
 
         return annotationView
     }
     
-    func mapView(mapView: MKMapView, didAddAnnotationViews views: [MKAnnotationView]) {
+    func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
         mapView.selectAnnotation(self.annotation, animated: true)
     }
     
-    func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         if let imageView = view.leftCalloutAccessoryView as? AirImageView {
             if let locationPhoto = self.locationDelegate.locationPhoto as? Photo {
-                imageView.setImageWithPhoto(locationPhoto, animate: true)
+                imageView.setImageWithPhoto(photo: locationPhoto, animate: true)
             }
             else if let locationPhoto = self.locationDelegate.locationPhoto as? UIImage {
                 imageView.image = locationPhoto

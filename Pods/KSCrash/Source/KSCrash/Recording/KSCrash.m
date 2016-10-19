@@ -113,6 +113,26 @@
 #pragma mark - Lifecycle -
 // ============================================================================
 
+- (void) setDemangleLanguages:(KSCrashDemangleLanguage)demangleLanguages
+{
+    self.crashReportStore.demangleCPP = (demangleLanguages & KSCrashDemangleLanguageCPlusPlus) != 0;
+    self.crashReportStore.demangleSwift = (demangleLanguages & KSCrashDemangleLanguageSwift) != 0;
+}
+
+- (KSCrashDemangleLanguage) demangleLanguages
+{
+    KSCrashDemangleLanguage languages = 0;
+    if(self.crashReportStore.demangleCPP)
+    {
+        languages |= KSCrashDemangleLanguageCPlusPlus;
+    }
+    if(self.crashReportStore.demangleSwift)
+    {
+        languages |= KSCrashDemangleLanguageSwift;
+    }
+    return languages;
+}
+
 IMPLEMENT_EXCLUSIVE_SHARED_INSTANCE(KSCrash)
 
 - (id) init
@@ -355,20 +375,21 @@ failed:
     const char* cReason = [reason cStringUsingEncoding:NSUTF8StringEncoding];
     const char* cLanguage = [language cStringUsingEncoding:NSUTF8StringEncoding];
     const char* cLineOfCode = [lineOfCode cStringUsingEncoding:NSUTF8StringEncoding];
-    size_t cStackTraceCount = [stackTrace count];
-    const char** cStackTrace = malloc(sizeof(*cStackTrace) * cStackTraceCount);
-
-    for(size_t i = 0; i < cStackTraceCount; i++)
+    NSError* error = nil;
+    NSData* jsonData = [KSJSONCodec encode:stackTrace options:0 error:&error];
+    if(jsonData == nil || error != nil)
     {
-        cStackTrace[i] = [[stackTrace objectAtIndex:i] cStringUsingEncoding:NSUTF8StringEncoding];
+        KSLOG_ERROR(@"Error encoding stack trace to JSON: %@", error);
+        // Don't return, since we can still record other useful information.
     }
+    NSString* jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    const char* cStackTrace = [jsonString cStringUsingEncoding:NSUTF8StringEncoding];
 
     kscrash_reportUserException(cName,
                                 cReason,
                                 cLanguage,
                                 cLineOfCode,
                                 cStackTrace,
-                                cStackTraceCount,
                                 terminateProgram);
 
     // If kscrash_reportUserException() returns, we did not terminate.
@@ -380,8 +401,6 @@ failed:
                       [self.recrashReportPath UTF8String],
                       [self.stateFilePath UTF8String],
                       [self.nextCrashID UTF8String]);
-
-    free((void*)cStackTrace);
 }
 
 // ============================================================================
@@ -534,7 +553,7 @@ SYNTHESIZE_CRASH_STATE_PROPERTY(BOOL, crashedLastLaunch)
 
 
 //! Project version number for KSCrashFramework.
-const double KSCrashFrameworkVersionNumber = 1.64;
+const double KSCrashFrameworkVersionNumber = 1.813;
 
 //! Project version string for KSCrashFramework.
-const unsigned char KSCrashFrameworkVersionString[] = "1.6.4";
+const unsigned char KSCrashFrameworkVersionString[] = "1.8.13";

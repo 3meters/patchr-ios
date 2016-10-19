@@ -25,14 +25,14 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 	var footerView				: UIView!
 	var loadMoreMessage			: String = "LOAD MORE"
 	var autocompleteList		= AirTableView()
-	var autocompleteData		: NSMutableArray = NSMutableArray()
-	var searches				: NSMutableArray = NSMutableArray()
+	var autocompleteData		: [String] = [String]()
+	var searches				: [String] = [String]()
 	
-	var queue = NSOperationQueue()
+	var queue = OperationQueue()
 	
-    var largePhotoIndexPath : NSIndexPath? {
+    var largePhotoIndexPath : IndexPath? {
         didSet {
-            var indexPaths = [NSIndexPath]()
+            var indexPaths = [IndexPath]()
             if largePhotoIndexPath != nil {
                 indexPaths.append(largePhotoIndexPath!)
             }
@@ -41,28 +41,28 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
             }
             
             collectionView?.performBatchUpdates({
-                self.collectionView?.reloadItemsAtIndexPaths(indexPaths)
+                self.collectionView?.reloadItems(at: indexPaths)
                 return }) {
                 completed in
                 if self.largePhotoIndexPath != nil {
-                    self.collectionView?.scrollToItemAtIndexPath(
-                        self.largePhotoIndexPath!,
-                        atScrollPosition: .CenteredVertically,
+                    self.collectionView?.scrollToItem(
+                        at: self.largePhotoIndexPath!,
+                        at: .centeredVertically,
                         animated: true)
                 }
             }
         }
     }
     
-    private let reuseIdentifier = "ThumbnailCell"
-    private var sectionInsets: UIEdgeInsets?
-    private var thumbnailWidth: CGFloat?
-    private var availableWidth: CGFloat?
-    private let pageSize = 30
-    private var maxSize = 100
-	private var virtualSize = 30
-    private let maxImageSize: Int = 500000
-    private let maxDimen: Int = Int(IMAGE_DIMENSION_MAX)
+    fileprivate let reuseIdentifier = "ThumbnailCell"
+    fileprivate var sectionInsets: UIEdgeInsets?
+    fileprivate var thumbnailWidth: CGFloat?
+    fileprivate var availableWidth: CGFloat?
+    fileprivate let pageSize = 30
+    fileprivate var maxSize = 100
+	fileprivate var virtualSize = 30
+    fileprivate let maxImageSize: Int = 500000
+    fileprivate let maxDimen: Int = Int(IMAGE_DIMENSION_MAX)
     
 	/*--------------------------------------------------------------------------------------------
 	 * Lifecycle
@@ -71,10 +71,7 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		self.view.accessibilityIdentifier = View.PhotoSearch
-		self.collectionView!.accessibilityIdentifier = Collection.Photos
-		
-        self.collectionView!.registerNib(UINib(nibName: "ThumbnailCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: reuseIdentifier)
+        self.collectionView!.register(UINib(nibName: "ThumbnailCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: reuseIdentifier)
 		self.collectionView?.backgroundColor = Theme.colorBackgroundForm
 		if let layout = self.collectionViewLayout as? UICollectionViewFlowLayout {
 			layout.minimumLineSpacing = 4
@@ -83,16 +80,15 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 		self.queue.name = "Image loading queue"
 		
 		/* Simple activity indicator */
-		self.activity = addActivityIndicatorTo(self.view)
-		self.activity?.accessibilityIdentifier = "activity_view"
+		self.activity = addActivityIndicatorTo(view: self.view)
 		
 		/* Auto complete table view */
 		self.autocompleteList.delegate = self
 		self.autocompleteList.dataSource = self
-		self.autocompleteList.scrollEnabled = true
-		self.autocompleteList.hidden = true
+		self.autocompleteList.isScrollEnabled = true
+		self.autocompleteList.isHidden = true
 		self.autocompleteList.rowHeight = 40
-		self.autocompleteList.separatorInset = UIEdgeInsetsZero
+		self.autocompleteList.separatorInset = UIEdgeInsets.zero
 
 		self.view.addSubview(self.autocompleteList)
 		
@@ -100,24 +96,22 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 		loadSearches()
 		
 		/* Navigation bar buttons */
-		let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: #selector(PhotoPickerViewController.cancelAction(_:)))
-		cancelButton.accessibilityIdentifier = "nav_cancel_button"
+		let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: self, action: #selector(PhotoPickerViewController.cancelAction(sender:)))
 		self.navigationItem.rightBarButtonItems = [cancelButton]
 	}
 
-	override func viewWillAppear(animated: Bool) {
+	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
         
         Reporting.screen("PhotoPicker")
 		
         if self.searchBar == nil {
 			let navHeight = self.navigationController?.navigationBar.height() ?? 0
-			let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+			let statusHeight = UIApplication.shared.statusBarFrame.size.height
 
             self.searchBarBoundsY = navHeight + statusHeight
-            self.searchBar = UISearchBar(frame: CGRectMake(0, self.searchBarBoundsY!, UIScreen.mainScreen().bounds.size.width, 44))
-			self.searchBar!.accessibilityIdentifier = "search_field"
-            self.searchBar!.searchBarStyle = UISearchBarStyle.Prominent
+            self.searchBar = UISearchBar(frame: CGRect(x:0, y:self.searchBarBoundsY!, width:UIScreen.main.bounds.size.width, height:44))
+            self.searchBar!.searchBarStyle = UISearchBarStyle.prominent
             self.searchBar!.delegate = self
             self.searchBar!.placeholder = "Search for photos"
         }
@@ -125,12 +119,12 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 		/* Scroll inset */
 		self.sectionInsets = UIEdgeInsets(top: self.searchBar!.frame.size.height + 4, left: 4, bottom: 4, right: 4)
 		
-        if !self.searchBar!.isDescendantOfView(self.view) {
+        if !self.searchBar!.isDescendant(of: self.view) {
             self.view.addSubview(self.searchBar!)
         }
 		
 		/* Calculate thumbnail width */
-		availableWidth = UIScreen.mainScreen().bounds.size.width - (sectionInsets!.left + sectionInsets!.right)
+		availableWidth = UIScreen.main.bounds.size.width - (sectionInsets!.left + sectionInsets!.right)
 		let requestedColumnWidth: CGFloat = 100
 		let numColumns: CGFloat = floor(CGFloat(availableWidth!) / CGFloat(requestedColumnWidth))
 		let spaceLeftOver = availableWidth! - (numColumns * requestedColumnWidth) - ((numColumns - 1) * 4)
@@ -142,7 +136,7 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 		super.viewDidLayoutSubviews()
 	}
 
-	override func viewDidAppear(animated: Bool) {
+	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
         self.searchBar?.becomeFirstResponder()
 	}
@@ -153,14 +147,14 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
     
     func cancelAction(sender: AnyObject){
         self.pickerDelegate!.photoBrowseControllerDidCancel!()
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
     
 	/*--------------------------------------------------------------------------------------------
 	* Methods
 	*--------------------------------------------------------------------------------------------*/
 
-    private func loadData(paging: Bool = false) {
+    fileprivate func loadData(paging: Bool = false) {
 		
 		guard !self.processing else {
 			return
@@ -176,19 +170,19 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
         if !paging {
             self.imageResults.removeAll()
 			self.virtualSize = self.pageSize
-			let topOffset = CGPointMake(0, -(self.collectionView?.contentInset.top ?? 0))
+            let topOffset = CGPoint(x:0, y:-(self.collectionView?.contentInset.top ?? 0))
 			self.collectionView?.setContentOffset(topOffset, animated: true)
         }
 		
-		DataController.instance.backgroundOperationQueue.addOperationWithBlock {
+		DataController.instance.backgroundOperationQueue.addOperation {
 			
-			DataController.proxibase.loadSearchImages(self.searchBar!.text!, count: Int64(self.pageSize), offset: Int64(self.offset)) {
+			DataController.proxibase.loadSearchImages(query: self.searchBar!.text!, count: Int64(self.pageSize), offset: Int64(self.offset)) {
 				response, error in
                 
-				NSOperationQueue.mainQueue().addOperationWithBlock {
+				OperationQueue.main.addOperation {
 					
 					self.activity?.stopAnimating()
-					var userInfo: [NSObject: AnyObject] = ["error": (error != nil)]
+					var userInfo: [AnyHashable: Any] = ["error": (error != nil)]
 					
 					if let error = ServerError(error) {
 						self.handleError(error)
@@ -198,11 +192,11 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
                         var imagesFiltered: [ImageResult] = [ImageResult]()
                         let offsetAddCount = json["nextOffsetAddCount"].int
                         let totalEstimatedMatches = json["totalEstimatedMatches"].int
-                        let more = (self.pageSize + self.offset + offsetAddCount! < totalEstimatedMatches)
+                        let more = (self.pageSize + self.offset + offsetAddCount! < totalEstimatedMatches!)
                         
                         if let data = json["value"].arrayObject {
                             
-                            Utils.updateSearches(self.searchBar!.text!)
+                            Utils.updateSearches(search: self.searchBar!.text!)
                             self.loadSearches()
                             
                             let beginCount = self.imageResults.count
@@ -210,8 +204,8 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
                             Log.d("Images returned: \(data.count)")
                             
                             for imageResultDict in data {
-                                let imageResult = ImageResult.setPropertiesFromDictionary(imageResultDict as! NSDictionary, onObject: ImageResult())
-                                var usable = (imageResult.contentSize <= self.maxImageSize)
+                                let imageResult = ImageResult.setPropertiesFromDictionary(dictionary: imageResultDict as! NSDictionary, onObject: ImageResult())
+                                var usable = (imageResult.contentSize! <= self.maxImageSize)
                                 
                                 //Log.v("Image size: \(imageResult.contentSize!), width: \(imageResult.width!), height: \(imageResult.height!)")
                                 
@@ -220,7 +214,7 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
                                 }
                                 
                                 if usable {
-                                    usable = imageResult.height <= self.maxDimen && imageResult.width <= self.maxDimen
+                                    usable = imageResult.height! <= self.maxDimen && imageResult.width! <= self.maxDimen
                                     if !usable {
                                         //Log.w("Image rejected: dimension > \(self.maxDimen)")
                                     }
@@ -237,7 +231,7 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
                                     imagesFiltered.append(imageResult)
                                 }
                             }
-                            self.imageResults.appendContentsOf(imagesFiltered)
+                            self.imageResults.append(contentsOf: imagesFiltered)
                             
                             if self.imageResults.count == beginCount {
                                 self.virtualSize = self.imageResults.count
@@ -258,7 +252,7 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
                             self.offset += (self.pageSize + offsetAddCount!)
                             if (self.imageResults.count < 60) {
                                 self.processing = false
-                                self.loadData(true)
+                                self.loadData(paging: true)
                             }
                         }
                         else {
@@ -272,7 +266,7 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 					}
                     
                     /* Triggers ui handling of empty, etc. */
-					NSNotificationCenter.defaultCenter().postNotificationName(Events.DidFetchQuery, object: self, userInfo: userInfo)
+					NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.DidFetchQuery), object: self, userInfo: userInfo)
 					self.processing = false
 				}
 			}
@@ -280,10 +274,10 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
     }
 	
 	func loadSearches() {
-		self.searches.removeAllObjects()
-		if let searches = NSUserDefaults.standardUserDefaults().arrayForKey(PatchrUserDefaultKey("recent.searches")) as? [String] {
+		self.searches.removeAll()
+		if let searches = UserDefaults.standard.array(forKey: PatchrUserDefaultKey(subKey: "recent.searches")) as? [String] {
 			for search in searches {
-				self.searches.addObject(search)
+				self.searches.append(search)
 			}
 		}
 	}
@@ -296,15 +290,14 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
     }
 	
 	func filterSearchesWithSubstring(substring: String) {
-		self.autocompleteData.removeAllObjects()
+		self.autocompleteData.removeAll()
 		for search in self.searches {
-			let substringRange = search.rangeOfString(substring)
-			if substringRange.location == 0 {
-				self.autocompleteData.addObject(search)
-			}
+            if search.contains(substring) {
+                self.autocompleteData.append(search)
+            }
 		}
 
-		self.autocompleteList.hidden = (self.autocompleteData.count == 0)
+		self.autocompleteList.isHidden = (self.autocompleteData.count == 0)
 		self.autocompleteList.alignUnder(self.searchBar, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: CGFloat(self.autocompleteData.count * 40))
 		self.autocompleteList.reloadData()
 	}
@@ -312,28 +305,28 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 
 extension PhotoPickerViewController: UISearchBarDelegate {
 	
-	func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
-		filterSearchesWithSubstring(searchText)
+	func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+		filterSearchesWithSubstring(substring: searchText)
 	}
     
-    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         self.searchBar!.setShowsCancelButton(true, animated: true)
     }
     
-    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         self.searchBar!.setShowsCancelButton(false, animated: false)
     }
     
-    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         self.searchBar!.resignFirstResponder()
         self.searchBar!.text = nil
     }
     
-    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         self.offset = 0
         searchBar.resignFirstResponder()
-        self.loadData(false)
-        self.autocompleteList.hidden = true
+        self.loadData(paging: false)
+        self.autocompleteList.isHidden = true
     }
 }
 
@@ -341,38 +334,36 @@ extension PhotoPickerViewController {
 	/*
 	* UITableViewDelegate
 	*/
-	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+	@objc(tableView:cellForRowAtIndexPath:) func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		
-		var cell = tableView.dequeueReusableCellWithIdentifier(CELL_IDENTIFIER)
+		var cell = tableView.dequeueReusableCell(withIdentifier: CELL_IDENTIFIER)
 		
 		if cell == nil {
-			cell = UITableViewCell(style: .Default, reuseIdentifier: CELL_IDENTIFIER)
+			cell = UITableViewCell(style: .default, reuseIdentifier: CELL_IDENTIFIER)
 		}
 		
-		if let search = self.autocompleteData[indexPath.row] as? String {
-			cell?.textLabel?.text = search
-			cell?.textLabel?.font = Theme.fontComment
-		}
+		let search = self.autocompleteData[indexPath.row]
+        cell?.textLabel?.text = search
+        cell?.textLabel?.font = Theme.fontComment
 		return cell!
 	}
-	
-	func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    
+    @objc(numberOfSectionsInTableView:) func numberOfSections(in tableView: UITableView) -> Int {
 		return 1
 	}
-	
-	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    
+	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return self.autocompleteData.count
 	}
 	
-	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+	@objc(tableView:didSelectRowAtIndexPath:) func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		
-		if let search = self.autocompleteData[indexPath.row] as? String {
-			self.searchBar!.text = search
-            self.offset = 0
-			self.autocompleteList.hidden = true
-			self.loadData(false)
-			searchBar.resignFirstResponder()
-		}
+		let search = self.autocompleteData[indexPath.row]
+        self.searchBar!.text = search
+        self.offset = 0
+        self.autocompleteList.isHidden = true
+        self.loadData(paging: false)
+        searchBar.resignFirstResponder()
 	}
 }
 
@@ -380,13 +371,13 @@ extension PhotoPickerViewController {
     /*
      * UICollectionViewDelegate
      */
-	override func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
+	override func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
 		
 		if !self.processing {
-			if let indexPaths = self.collectionView?.indexPathsForVisibleItems() {
+			if let indexPaths = self.collectionView?.indexPathsForVisibleItems {
 				for indexPath in indexPaths {
 					if indexPath.row > self.threshold {
-						loadData(true)
+						loadData(paging: true)
 						return
 					}
 				}
@@ -394,37 +385,36 @@ extension PhotoPickerViewController {
 		}
 	}
 	
-	override func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+	override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
 		
 		if !self.processing {
-			if let indexPaths = self.collectionView?.indexPathsForVisibleItems() {
+			if let indexPaths = self.collectionView?.indexPathsForVisibleItems {
 				for indexPath in indexPaths {
 					if indexPath.row > self.threshold {
-						loadData(true)
+						loadData(paging: true)
 						return
 					}
 				}
 			}
 		}
 	}
-	
-    override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) -> Void {
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        if let cell = collectionView.cellForItemAtIndexPath(indexPath) as? ThumbnailCollectionViewCell {
-            
+        if let cell = collectionView.cellForItem(at: indexPath) as? ThumbnailCollectionViewCell {
             let photo = IDMPhoto(image:cell.thumbnail.image)
             let photos = Array([photo])
-            let browser = PhotoPreview(photos:photos as [AnyObject], animatedFromView: cell.thumbnail)
+            let browser = PhotoPreview(photos:photos as [Any], animatedFrom: cell.thumbnail)
             
-            browser.usePopAnimation = true
-            browser.scaleImage = cell.thumbnail.image  // Used because final image might have different aspect ratio than initially
-            browser.useWhiteBackgroundColor = true
-            browser.disableVerticalSwipe = false
+            browser?.usePopAnimation = true
+            browser?.scaleImage = cell.thumbnail.image  // Used because final image might have different aspect ratio than initially
+            browser?.useWhiteBackgroundColor = true
+            browser?.disableVerticalSwipe = false
             
-            browser.browseDelegate = self.pickerDelegate  // Pass delegate through
-            browser.imageResult = self.imageForIndexPath(indexPath)
+            browser?.browseDelegate = self.pickerDelegate  // Pass delegate through
+            browser?.imageResult = self.imageForIndexPath(indexPath: indexPath as NSIndexPath)
             
-            presentViewController(browser, animated:true, completion:nil)
+            present(browser!, animated:true, completion:nil)
         }
     }
 }
@@ -433,20 +423,20 @@ extension PhotoPickerViewController {
     /*
      * UICollectionViewDataSource
      */
-    override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.virtualSize
     }
     
-    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(self.reuseIdentifier, forIndexPath: indexPath) 
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.reuseIdentifier, for: indexPath) 
         cell.backgroundColor = Theme.colorBackgroundImage
 		
-		if let imageResult = self.imageForIndexPath(indexPath) {
+		if let imageResult = self.imageForIndexPath(indexPath: indexPath as NSIndexPath) {
 			if let thumbCell = cell as? ThumbnailCollectionViewCell {
 				if let imageView = thumbCell.thumbnail {
 					thumbCell.imageResult = imageResult
-					imageView.setImageWithUrl(NSURL(string: imageResult.thumbnailUrl!)!, animate: false)
+					imageView.setImageWithUrl(url: URL(string: imageResult.thumbnailUrl!)!, animate: false)
 				}
 			}			
 		}
@@ -457,9 +447,9 @@ extension PhotoPickerViewController {
 
 extension PhotoPickerViewController : UICollectionViewDelegateFlowLayout {
     
-    func collectionView(collectionView: UICollectionView,
+    func collectionView(_ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
-        sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        sizeForItemAt indexPath: IndexPath) -> CGSize {
             
             if indexPath == self.largePhotoIndexPath {
                 return CGSize(width: self.availableWidth! - 100, height: self.availableWidth! - 100)
@@ -468,9 +458,9 @@ extension PhotoPickerViewController : UICollectionViewDelegateFlowLayout {
             return CGSize(width: self.thumbnailWidth!, height: self.thumbnailWidth!)
     }
     
-    func collectionView(collectionView: UICollectionView,
+    func collectionView(_ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
-        insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+        insetForSectionAt section: Int) -> UIEdgeInsets {
             
             return sectionInsets!
     }

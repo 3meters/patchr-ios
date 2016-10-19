@@ -22,20 +22,20 @@ extension UIImage {
         let scale: CGFloat = 1.0 // Automatically use scale factor of main screen
         
         UIGraphicsBeginImageContextWithOptions(size, !hasAlpha, scale)
-        self.drawInRect(CGRect(origin: CGPointZero, size: size))
+        self.draw(in: CGRect(origin: CGPoint.zero, size: size))
         let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
-        return scaledImage
+        return scaledImage!
     }
     
     func normalizedImage() -> UIImage {
-        if self.imageOrientation == UIImageOrientation.Up {
+        if self.imageOrientation == UIImageOrientation.up {
             return self
         }
         UIGraphicsBeginImageContextWithOptions(self.size, true, self.scale)
-        self.drawInRect(CGRect(origin: CGPoint(x: 0, y: 0), size: self.size))
-        let normalizedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext();
+        self.draw(in: CGRect(origin: CGPoint(x: 0, y: 0), size: self.size))
+        let normalizedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!;
         UIGraphicsEndImageContext();
         return normalizedImage;
     }
@@ -47,28 +47,28 @@ extension UIAlertController {
 	* Fix for iOS 9 bug that produces infinite recursion loop looking for
 	* supportInterfaceOrientations.
 	*/
-	public override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-		return UIInterfaceOrientationMask.Portrait
+    override open var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+		return UIInterfaceOrientationMask.portrait
 	}
 
-	public override func shouldAutorotate() -> Bool {
+    override open var shouldAutorotate: Bool {
 		return false
 	}
 }
 
 extension UIView {
     
-    func fadeIn(duration: NSTimeInterval = 0.3, delay: NSTimeInterval = 0.0, alpha: CGFloat = 1.0, completion: ((Bool) -> Void) = {(finished: Bool) -> Void in}) {
+    func fadeIn(duration: TimeInterval = 0.3, delay: TimeInterval = 0.0, alpha: CGFloat = 1.0, completion: @escaping ((Bool) -> Void) = {(finished: Bool) -> Void in}) {
         if self.alpha != alpha {
-            UIView.animateWithDuration(duration, delay: delay, options: UIViewAnimationOptions.CurveEaseIn, animations: {
+            UIView.animate(withDuration: duration, delay: delay, options: UIViewAnimationOptions.curveEaseIn, animations: {
                 self.alpha = alpha
                 }, completion: completion)
         }
     }
     
-    func fadeOut(duration: NSTimeInterval = 0.3, delay: NSTimeInterval = 0.0, alpha: CGFloat = 0.0, completion: (Bool) -> Void = {(finished: Bool) -> Void in}) {
+    func fadeOut(duration: TimeInterval = 0.3, delay: TimeInterval = 0.0, alpha: CGFloat = 0.0, completion: @escaping (Bool) -> Void = {(finished: Bool) -> Void in}) {
         if self.alpha != alpha {
-            UIView.animateWithDuration(duration, delay: delay, options: UIViewAnimationOptions.CurveEaseIn, animations: {
+            UIView.animate(withDuration: duration, delay: delay, options: UIViewAnimationOptions.curveEaseIn, animations: {
                 self.alpha = alpha
                 }, completion: completion)
         }
@@ -81,14 +81,14 @@ extension UIColor {
 		let r, g, b, a: CGFloat
 		
 		if hexString.hasPrefix("#") {
-			let start = hexString.startIndex.advancedBy(1)
-			let hexColor = hexString.substringFromIndex(start)
+			let start = hexString.index(hexString.startIndex, offsetBy: 1)
+			let hexColor = hexString.substring(from: start)
 			
 			if hexColor.characters.count == 8 {
-				let scanner = NSScanner(string: hexColor)
+				let scanner = Scanner(string: hexColor)
 				var hexNumber: UInt64 = 0
 				
-				if scanner.scanHexLongLong(&hexNumber) {
+				if scanner.scanHexInt64(&hexNumber) {
 					r = CGFloat((hexNumber & 0xff000000) >> 24) / 255
 					g = CGFloat((hexNumber & 0x00ff0000) >> 16) / 255
 					b = CGFloat((hexNumber & 0x0000ff00) >> 8) / 255

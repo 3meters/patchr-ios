@@ -18,7 +18,7 @@ class NavHeaderView: BaseDetailView {
     var searchBar      = UISearchBar()
 	
 	init() {
-		super.init(frame: CGRectZero)
+		super.init(frame: CGRect.zero)
 		initialize()
 	}
 	
@@ -41,7 +41,7 @@ class NavHeaderView: BaseDetailView {
         let startColor = Colors.brandColor
         let endColor = Colors.accentColor
         
-        self.gradient.colors = [startColor.CGColor, endColor.CGColor]
+        self.gradient.colors = [startColor.cgColor, endColor.cgColor]
         self.gradient.locations = [0.0, 1.0]
         
         /* Travels from left to right */
@@ -50,11 +50,11 @@ class NavHeaderView: BaseDetailView {
         self.userGroup.layer.addSublayer(self.gradient)
 		
 		/* Name */
-		self.name.lineBreakMode = .ByTruncatingMiddle
+		self.name.lineBreakMode = .byTruncatingMiddle
 		self.name.font = Theme.fontTextBold
         self.name.textColor = Colors.white
         
-        self.switchButton.setImage(UIImage(named: "imgSwitchLight"), forState: .Normal)
+        self.switchButton.setImage(UIImage(named: "imgSwitchLight"), for: .normal)
         self.switchButton.imageEdgeInsets = UIEdgeInsetsMake(4, 4, 4, 4)
         self.switchButton.imageView?.tintColor = Colors.white
         
@@ -71,18 +71,18 @@ class NavHeaderView: BaseDetailView {
 	override func layoutSubviews() {
 		super.layoutSubviews()
         
-        self.gradient.frame = CGRectMake(0, 0, self.bounds.size.width + 10, self.bounds.size.height + 10)
+        self.gradient.frame = CGRect(x:0, y:0, width:self.bounds.size.width + 10, height:self.bounds.size.height + 10)
 		
-		self.userGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 64)
-		self.photo.anchorCenterLeftWithLeftPadding(16, width: 48, height: 48)
-		self.name.alignToTheRightOf(self.photo, matchingCenterWithLeftPadding: 12, width: 200, height: 24)
-        self.switchButton.anchorCenterRightWithRightPadding(8, width: 36, height: 36)
+		self.userGroup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 64)
+		self.photo.anchorCenterLeft(withLeftPadding: 16, width: 48, height: 48)
+		self.name.align(toTheRightOf: self.photo, matchingCenterWithLeftPadding: 12, width: 200, height: 24)
+        self.switchButton.anchorCenterRight(withRightPadding: 8, width: 36, height: 36)
         self.searchBar.alignUnder(self.userGroup, matchingLeftAndRightWithTopPadding: 0, height: 48)
 	}
 	
 	func bindToEntity(entity: Entity!) {
-		self.name.text?.removeAll(keepCapacity: false)
+		self.name.text?.removeAll(keepingCapacity: false)
 		self.name.text = entity.name
-		self.photo.bindToEntity(entity)
+		self.photo.bindToEntity(entity: entity)
 	}
 }

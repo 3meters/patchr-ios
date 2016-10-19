@@ -21,7 +21,7 @@
 #import "AWSLogging.h"
 #import "AWSCategory.h"
 
-NSString *const AWSiOSSDKVersion = @"2.4.7";
+NSString *const AWSiOSSDKVersion = @"2.4.9";
 NSString *const AWSServiceErrorDomain = @"com.amazonaws.AWSServiceErrorDomain";
 
 static NSString *const AWSServiceConfigurationUnknown = @"Unknown";
@@ -85,6 +85,7 @@ static NSString *const AWSServiceConfigurationUnknown = @"Unknown";
 - (instancetype)init {
     if ( self = [super init]) {
         _dictionary = [AWSSynchronizedMutableDictionary new];
+        
     }
     return self;
 }
@@ -124,6 +125,16 @@ static NSString *const AWSServiceConfigurationUnknown = @"Unknown";
         _credentialsProvider = credentialsProvider;
     }
 
+    return self;
+}
+
+- (instancetype)initWithRegion:(AWSRegionType)regionType
+                      endpoint:(AWSEndpoint *)endpoint
+           credentialsProvider:(id<AWSCredentialsProvider>)credentialsProvider{
+    if(self = [self initWithRegion:regionType credentialsProvider:credentialsProvider]){
+        _endpoint = endpoint;
+    }
+    
     return self;
 }
 
@@ -197,6 +208,7 @@ static NSMutableArray *_globalUserAgentPrefixes = nil;
     configuration.regionType = self.regionType;
     configuration.credentialsProvider = self.credentialsProvider;
     configuration.userAgentProductTokens = self.userAgentProductTokens;
+    configuration.endpoint = self.endpoint;
     
     return configuration;
 }
@@ -241,6 +253,13 @@ static NSString *const AWSServiceNameSimpleDB = @"sdb";
 static NSString *const AWSServiceNameSNS = @"sns";
 static NSString *const AWSServiceNameSQS = @"sqs";
 static NSString *const AWSServiceNameSTS = @"sts";
+
+@interface AWSEndpoint()
+
+- (void) setRegion:(AWSRegionType)regionType service:(AWSServiceType)serviceType;
+
+@end
+
 
 @implementation AWSEndpoint
 
@@ -294,6 +313,30 @@ static NSString *const AWSServiceNameSTS = @"sts";
     }
 
     return self;
+}
+
+- (instancetype)initWithURL:(NSURL *)URL{
+    if (self = [super init]) {
+        _URL = URL;
+        _hostName = [_URL host];
+        if ([[_URL scheme].lowercaseString isEqualToString:@"https"]) {
+            _useUnsafeURL = NO;
+        }else{
+            _useUnsafeURL = YES;
+        }
+    }
+    return self;
+}
+
+- (instancetype)initWithURLString:(NSString *)URLString{
+    return [self initWithURL:[[NSURL alloc] initWithString:URLString]];
+}
+
+- (void) setRegion:(AWSRegionType)regionType service:(AWSServiceType)serviceType{
+    _regionType = regionType;
+    _serviceType = serviceType;
+    _regionName = [self regionNameFromType:regionType];
+    _serviceName = [self serviceNameFromType:serviceType];
 }
 
 - (NSString *)regionNameFromType:(AWSRegionType)regionType {

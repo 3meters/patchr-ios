@@ -12,10 +12,10 @@ class WrapperTableViewCell: UITableViewCell {
 	
 	var view				: UIView?
 	var separator			= UIView()
-	var padding				= UIEdgeInsetsZero
+	var padding				= UIEdgeInsets.zero
 	
 	init(view: UIView, padding: UIEdgeInsets, reuseIdentifier: String?) {
-		super.init(style: .Default, reuseIdentifier: reuseIdentifier)
+		super.init(style: .default, reuseIdentifier: reuseIdentifier)
 		self.view = view
 		self.padding = padding
 		initialize()
@@ -35,17 +35,17 @@ class WrapperTableViewCell: UITableViewCell {
 	override func layoutSubviews() {
 		
 		/* Fill contentView with injected view */
-		self.view?.fillSuperviewWithLeftPadding(self.padding.left,
+		self.view?.fillSuperview(withLeftPadding: self.padding.left,
 			rightPadding: self.padding.right,
 			topPadding: self.padding.top,
 			bottomPadding: self.padding.bottom + 1)
 		
 		self.selectedBackgroundView?.fillSuperview()
-		self.separator.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 1)
+		self.separator.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 1)
 	}
 	
 	func addSeparator() {
-		self.separator.layer.backgroundColor = Theme.colorSeparator.CGColor
+		self.separator.layer.backgroundColor = Theme.colorSeparator.cgColor
         self.contentView.addSubview(self.separator)
 	}
 }

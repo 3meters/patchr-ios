@@ -34,15 +34,15 @@ struct Utils {
 	static var imageMuted: UIImage = { return UIImage(named: "imgSoundOff3Light") }()!
 	
 	static var spacer: UIBarButtonItem = {
-		let spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FixedSpace, target: nil, action: nil)
+		let spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.fixedSpace, target: nil, action: nil)
 		spacer.width = 12
 		return spacer
 	}()
 
-    static var messageDateFormatter: NSDateFormatter = {
-        let dateFormatter = NSDateFormatter()
-        dateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        dateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
+    static var messageDateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = DateFormatter.Style.short
+        dateFormatter.timeStyle = DateFormatter.Style.short
         dateFormatter.doesRelativeDateFormatting = true
         return dateFormatter
     }()
@@ -56,27 +56,27 @@ struct Utils {
 		
 		let attrString = NSMutableAttributedString(string: inputText, attributes: attributes )
 		
-		var r1 = (attrString.string as NSString).rangeOfString("<b>")
+		var r1 = (attrString.string as NSString).range(of: "<b>")
 		
 		while r1.location != NSNotFound {
-			let r2 = (attrString.string as NSString).rangeOfString("</b>")
+			let r2 = (attrString.string as NSString).range(of: "</b>")
 			if r2.location != NSNotFound  && r2.location > r1.location {
 				let r3 = NSMakeRange(r1.location + r1.length, r2.location - r1.location - r1.length)
 				attrString.addAttribute(NSFontAttributeName, value: boldFont, range: r3)
-				attrString.replaceCharactersInRange(r2, withString: "")
-				attrString.replaceCharactersInRange(r1, withString: "")
+				attrString.replaceCharacters(in: r2, with: "")
+				attrString.replaceCharacters(in: r1, with: "")
 			}
 			else {
 				break
 			}
-			r1 = (attrString.string as NSString).rangeOfString("<b>")
+			r1 = (attrString.string as NSString).range(of: "<b>")
 		}
 		
 		return attrString
 	}
 	
 	static func encodeForUrlQuery(target: String) -> String {
-		return target.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+		return target.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed)!
 	}
 	
 	static func synced(lock: AnyObject, closure: () -> ()) {
@@ -86,7 +86,7 @@ struct Utils {
 	}
 	
 	static func LocalizedString(str: String) -> String {
-		return LocalizedString(str, comment: str)
+		return LocalizedString(str: str, comment: str)
 	}
 	
     static func LocalizedString(str: String, comment: String) -> String {
@@ -94,11 +94,12 @@ struct Utils {
     }
     
     static func DateTimeTag() -> String! {
-        let date = NSDate()     			// Initialized to current date
-		let calendar = NSCalendar.currentCalendar() // System caches currentCalendar as of iOS 7
-        let components = calendar.components([.Year, .Month, .Day, .Hour, .Minute, .Second, .Nanosecond], fromDate: date)
-        let milliSeconds = components.nanosecond / 1_000_000
-        let dateTimeTag = String(format: "%04d%02d%02d_%02d%02d%02d_%04d", components.year, components.month, components.day, components.hour, components.minute, components.second, milliSeconds)
+        let date = Date()     			// Initialized to current date
+		let calendar = Calendar.current // System caches currentCalendar as of iOS 7
+        let calComponents: Set<Calendar.Component> = Set([.year, .month, .day, .hour, .minute, .second, .nanosecond])
+        let components = calendar.dateComponents(calComponents, from: date)
+        let milliSeconds = components.nanosecond! / 1_000_000
+        let dateTimeTag = String(format: "%04d%02d%02d_%02d%02d%02d_%04d", components.year!, components.month!, components.day!, components.hour!, components.minute!, components.second!, milliSeconds)
         return dateTimeTag
     }
 
@@ -114,33 +115,33 @@ struct Utils {
     }
 	
 	static func initialsFromName(fullname: String) -> String {
-		let words = fullname.componentsSeparatedByString(" ")
+        let words: [String] = fullname.components(separatedBy: " ")
 		var initials = ""
 		for word in words {
 			if !word.isEmpty {
-				initials.append(word.uppercaseString[0])
+                let initial = String(word.characters.prefix(1)).uppercased()
+				initials.append(initial)
 			}
 		}
 		return initials.length > 2 ? initials[0...1] : initials
 	}
 	
-	static func numberFromName(fullname: String) -> UInt32 {
-		var accum: UInt32 = 0
-		for character in fullname.characters {
-			let s = (String(character).unicodeScalars)
-			accum += s[s.startIndex].value
-		}
-		return accum
+	static func numberFromName(fullname: String) -> Int {
+        var total: Int = 0
+        for u in fullname.unicodeScalars {
+            total += Int(UInt32(u))
+        }
+        return total
 	}
 	
-	static func randomColor(seed: UInt32?) -> UIColor {
-		if seed != nil {
-			srand(seed!)
-			let hue = CGFloat(Double(rand() % 256) / 256.0) // 0.0 to 1.0
-			let saturation = CGFloat(Double(rand() % 128) / 266.0 + 0.5) // 0.5 to 1.0, away from white
-			let brightness = CGFloat(Double(rand() % 128) / 256.0 + 0.5) // 0.5 to 1.0, away from black
-			return UIColor(hue: hue, saturation: saturation, brightness: brightness, alpha: 1.0)
-		}
+	static func randomColor(seed: Int?) -> UIColor {
+        if seed != nil {
+            srand48(seed!)
+            let hue = CGFloat(Double(drand48().truncatingRemainder(dividingBy: 256)) / 256.0) // 0.0 to 1.0
+            let saturation = CGFloat(Double(drand48().truncatingRemainder(dividingBy: 128)) / 266.0 + 0.5) // 0.5 to 1.0, away from white
+            let brightness = CGFloat(Double(drand48().truncatingRemainder(dividingBy: 128)) / 256.0 + 0.5) // 0.5 to 1.0, away from black
+            return UIColor(hue: hue, saturation: saturation, brightness: brightness, alpha: 1.0)
+        }
 		else {
 			let hue = CGFloat(Double(arc4random() % 256) / 256.0) // 0.0 to 1.0
 			let saturation = CGFloat(Double(arc4random() % 128) / 266.0 + 0.5) // 0.5 to 1.0, away from white
@@ -148,28 +149,40 @@ struct Utils {
 			return UIColor(hue: hue, saturation: saturation, brightness: brightness, alpha: 1.0)
 		}
 	}
+    
+    static func convertUInt32toUInt8Array(input: UInt32) -> [UInt8] {
+        var bigEndian = input.bigEndian
+        let count = MemoryLayout<UInt32>.size
+        let bytePtr = withUnsafePointer(to: &bigEndian) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: count) {
+                UnsafeBufferPointer(start: $0, count: count)
+            }
+        }
+        let byteArray = Array(bytePtr)
+        return byteArray
+    }
 
     static func TemporaryFileURLForImage(image: UIImage, name: String, shared: Bool = false) -> NSURL? {
         
         var imageDirectoryURL: NSURL!
         
         if shared {
-            if let containerURL = NSFileManager.defaultManager().containerURLForSecurityApplicationGroupIdentifier("group.com.3meters.patchr.ios") {
+            if let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.3meters.patchr.ios") {
                 
                 do {
-                    let containerURLWithName = containerURL.URLByAppendingPathComponent(name)
-                    if !NSFileManager.defaultManager().fileExistsAtPath(containerURLWithName.path!) {
-                        let pathString = containerURL.path!
-                        try NSFileManager.defaultManager().createDirectoryAtPath(pathString, withIntermediateDirectories: false, attributes: nil)
+                    let containerURLWithName = containerURL.appendingPathComponent(name)
+                    if !FileManager.default.fileExists(atPath: containerURLWithName.path) {
+                        let pathString = containerURL.path
+                        try FileManager.default.createDirectory(atPath: pathString, withIntermediateDirectories: false, attributes: nil)
                     }
                 }
                 catch let error as NSError {
                     Log.d("\(error.localizedDescription)")
                 }
                 
-                imageDirectoryURL = containerURL
-                imageDirectoryURL = imageDirectoryURL.URLByAppendingPathComponent(name)
-                imageDirectoryURL = imageDirectoryURL.URLByAppendingPathExtension("jpg")
+                imageDirectoryURL = containerURL as NSURL!
+                imageDirectoryURL = imageDirectoryURL.appendingPathComponent(name) as NSURL!
+                imageDirectoryURL = imageDirectoryURL.appendingPathExtension("jpg") as NSURL!
             }
         }
         else {
@@ -177,8 +190,8 @@ struct Utils {
             imageDirectoryURL = NSURL(fileURLWithPath: temporaryFilePath)
         }
         
-        if let imageData: NSData = UIImageJPEGRepresentation(image, /*compressionQuality*/0.70) {
-            if imageData.writeToFile(imageDirectoryURL.path!, atomically: true) {
+        if let imageData: NSData = UIImageJPEGRepresentation(image, /*compressionQuality*/0.70) as NSData? {
+            if imageData.write(toFile: imageDirectoryURL.path!, atomically: true) {
                 return imageDirectoryURL
             }
         }
@@ -190,8 +203,8 @@ struct Utils {
 		var image = inImage;
         let scalingNeeded: Bool = (image.size.width > IMAGE_DIMENSION_MAX || image.size.height > IMAGE_DIMENSION_MAX)
         if (scalingNeeded) {
-            let rect: CGRect = AVMakeRectWithAspectRatioInsideRect(image.size, CGRectMake(0, 0, IMAGE_DIMENSION_MAX, IMAGE_DIMENSION_MAX))
-            image = image.resizeTo(rect.size)
+            let rect: CGRect = AVMakeRect(aspectRatio: image.size, insideRect: CGRect(x:0, y:0, width: IMAGE_DIMENSION_MAX, height: IMAGE_DIMENSION_MAX))
+            image = image.resizeTo(size: rect.size)
         }
         else {
             image = image.normalizedImage()
@@ -200,18 +213,18 @@ struct Utils {
     }
 	
 	static func clearHistory() {
-		let defaults = NSUserDefaults.standardUserDefaults()
-		defaults.setObject(nil, forKey:PatchrUserDefaultKey("recent.searches"))
-		if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
-			groupDefaults.setObject(nil, forKey:PatchrUserDefaultKey("recent.patches"))
-			groupDefaults.setObject(nil, forKey:PatchrUserDefaultKey("nearby.patches"))
+		let defaults = UserDefaults.standard
+		defaults.set(nil, forKey:PatchrUserDefaultKey(subKey: "recent.searches"))
+		if let groupDefaults = UserDefaults(suiteName: "group.com.3meters.patchr.ios") {
+			groupDefaults.set(nil, forKey:PatchrUserDefaultKey(subKey: "recent.patches"))
+			groupDefaults.set(nil, forKey:PatchrUserDefaultKey(subKey: "nearby.patches"))
 		}
 	}
     
     static func updateRecents(recent: [String:AnyObject]) {
         
-        if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
-            if var recentPatches = groupDefaults.arrayForKey(PatchrUserDefaultKey("recent.patches")) as? [[String:AnyObject]] {
+        if let groupDefaults = UserDefaults(suiteName: "group.com.3meters.patchr.ios") {
+            if var recentPatches = groupDefaults.array(forKey: PatchrUserDefaultKey(subKey: "recent.patches")) as? [[String:AnyObject]] {
         
                 /* Replace if found else append */
                 var index = 0
@@ -230,10 +243,10 @@ struct Utils {
                 }
                 
                 /* Sort descending */
-                recentPatches.sortInPlace {
+                recentPatches.sort {
                     item1, item2 in
-                    let date1: Int64 = (item1["recentDate"] as! NSNumber).longLongValue
-                    let date2: Int64 = (item2["recentDate"] as! NSNumber).longLongValue
+                    let date1: Int64 = (item1["recentDate"] as! NSNumber).int64Value
+                    let date2: Int64 = (item2["recentDate"] as! NSNumber).int64Value
                     return date1 > date2 // > descending, < for ascending
                 }
                 
@@ -242,18 +255,18 @@ struct Utils {
                     recentPatches = Array(recentPatches[0..<10])
                 }
                 
-                groupDefaults.setObject(recentPatches, forKey:PatchrUserDefaultKey("recent.patches"))
+                groupDefaults.set(recentPatches, forKey:PatchrUserDefaultKey(subKey: "recent.patches"))
             }
             else {
-                groupDefaults.setObject([recent], forKey:PatchrUserDefaultKey("recent.patches"))
+                groupDefaults.set([recent], forKey:PatchrUserDefaultKey(subKey: "recent.patches"))
             }
         }
     }
 	
 	static func updateSearches(search: String) {
 		
-		let defaults = NSUserDefaults.standardUserDefaults()
-		if var searches = defaults.arrayForKey(PatchrUserDefaultKey("recent.searches")) as? [String] {
+		let defaults = UserDefaults.standard
+		if var searches = defaults.array(forKey: PatchrUserDefaultKey(subKey: "recent.searches")) as? [String] {
 			
 			/* Replace if found else append */
 			var index = 0
@@ -271,10 +284,10 @@ struct Utils {
 				searches.append(search)
 			}
 			
-			defaults.setObject(searches, forKey:PatchrUserDefaultKey("recent.searches"))
+			defaults.set(searches, forKey:PatchrUserDefaultKey(subKey: "recent.searches"))
 		}
 		else {
-			defaults.setObject([search], forKey:PatchrUserDefaultKey("recent.searches"))
+			defaults.set([search], forKey:PatchrUserDefaultKey(subKey: "recent.searches"))
 		}
 	}
 	
@@ -282,16 +295,15 @@ struct Utils {
 		
         let nearbys: [[NSObject:AnyObject]] = [nearby]
 		
-        if let groupDefaults = NSUserDefaults(suiteName: "group.com.3meters.patchr.ios") {
-            if var storedNearbys = groupDefaults.arrayForKey(PatchrUserDefaultKey("nearby.patches")) as? [[NSObject:AnyObject]] {
+        if let groupDefaults = UserDefaults(suiteName: "group.com.3meters.patchr.ios") {
+            if var storedNearbys = groupDefaults.array(forKey: PatchrUserDefaultKey(subKey: "nearby.patches")) as? [[NSObject:AnyObject]] {
 				
                 storedNearbys.append(nearby)
 				
                 /* Sort descending */
-                storedNearbys.sortInPlace {
-                    item1, item2 in
-                    let date1: Int64 = (item1["sentDate"] as! NSNumber).longLongValue
-                    let date2: Int64 = (item2["sentDate"] as! NSNumber).longLongValue
+                storedNearbys.sort {(item1:[NSObject:AnyObject], item2:[NSObject:AnyObject]) in
+                    let date1: Int64 = (item1["sentDate" as NSString] as! NSNumber).int64Value
+                    let date2: Int64 = (item2["sentDate" as NSString] as! NSNumber).int64Value
                     return date1 > date2 // > descending, < for ascending
                 }
                 
@@ -300,21 +312,20 @@ struct Utils {
                     storedNearbys = Array(storedNearbys[0..<10])
                 }
                 
-                groupDefaults.setObject(storedNearbys, forKey:PatchrUserDefaultKey("nearby.patches"))
+                groupDefaults.set(storedNearbys, forKey:PatchrUserDefaultKey(subKey: "nearby.patches"))
                 return storedNearbys
             }
             else {
-                groupDefaults.setObject(nearbys, forKey:PatchrUserDefaultKey("nearby.patches"))
+                groupDefaults.set(nearbys, forKey:PatchrUserDefaultKey(subKey: "nearby.patches"))
             }
         }
         return nearbys
     }
     
-    static func delay(delay: Double, closure: () -> ()) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW
-            , Int64(delay * Double(NSEC_PER_SEC)))
-            , dispatch_get_main_queue()
-            , closure)
+    static func delay(_ delay: Double, closure: @escaping () -> ()) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            closure()
+        }
     }
 
 	static func now() -> Int64 {
@@ -328,6 +339,12 @@ extension NSDate {
 	}
 }
 
+extension Date {
+    var milliseconds: Int64 {
+        return Int64(self.timeIntervalSince1970 * 1000)
+    }
+}
+
 extension String {
 	
 	var length: Int {
@@ -335,14 +352,22 @@ extension String {
 	}
 		
 	subscript (i: Int) -> Character {
-		return self[self.startIndex.advancedBy(i)]
+		return self[self.characters.index(self.startIndex, offsetBy: i)]
 	}
 	
 	subscript (i: Int) -> String {
 		return String(self[i] as Character)
 	}
 	
-	subscript (r: Range<Int>) -> String {
-		return substringWithRange(startIndex.advancedBy(r.startIndex)..<startIndex.advancedBy(r.endIndex))
-	}
+    subscript (r: Range<Int>) -> String {
+        let start = characters.index(startIndex, offsetBy: r.lowerBound)
+        let end = characters.index(start, offsetBy: r.upperBound - r.lowerBound)
+        return self[(start ..< end)]
+    }
+    
+    subscript (r: CountableClosedRange<Int>) -> String {
+        let start = characters.index(startIndex, offsetBy: r.lowerBound)
+        let end = characters.index(start, offsetBy: r.upperBound - r.lowerBound)
+        return self[(start ... end)]
+    }
 }

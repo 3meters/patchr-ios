@@ -39,6 +39,7 @@
     
     self.realTextColor = self.textColor;
     self.placeholderColor = [UIColor lightGrayColor];
+    [super awakeFromNib];
 }
 
 #pragma mark -

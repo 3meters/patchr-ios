@@ -11,9 +11,9 @@ import UIKit
 class AirSearchField: UITextField {
 	
 	var overlayButton: AirLinkButton {
-		let overlayButton = AirLinkButton(frame: CGRectMake(0, 0, 96, 40))
-		overlayButton.setTitle("Cancel", forState: .Normal)
-		overlayButton.addTarget(self, action: #selector(AirSearchField.cancelEditingAction(_:)), forControlEvents: .TouchUpInside)
+        let overlayButton = AirLinkButton(frame: CGRect(x:0, y:0, width:96, height:40))
+		overlayButton.setTitle("Cancel", for: .normal)
+		overlayButton.addTarget(self, action: #selector(AirSearchField.cancelEditingAction(sender:)), for: .touchUpInside)
 		return overlayButton
 	}
 	
@@ -31,31 +31,31 @@ class AirSearchField: UITextField {
 	
 	func initialize() {
 		
-		let imageView = UIImageView(frame: CGRectMake(8, 0, 20, 20))
+        let imageView = UIImageView(frame: CGRect(x:8, y:0, width:20, height:20))
 		imageView.image = UIImage(named: "imgSearchLight")
 		imageView.tintColor = Colors.accentColorDarker
 		
-		let searchView = UIView(frame: CGRectMake(0, 0, 40, 40))
+        let searchView = UIView(frame: CGRect(x:0, y:0, width:40, height:40))
 		searchView.alpha = 0.5
 		searchView.addSubview(imageView)
-		imageView.anchorInCenterWithWidth(24, height: 24)
+		imageView.anchorInCenter(withWidth: 24, height: 24)
 		
 		self.font = Theme.fontText
 		self.textColor = Theme.colorText
 		self.layer.cornerRadius = CGFloat(Theme.dimenButtonCornerRadius)
 		self.layer.masksToBounds = true
-		self.layer.borderColor = Theme.colorButtonBorder.CGColor
+		self.layer.borderColor = Theme.colorButtonBorder.cgColor
 		self.layer.borderWidth = Theme.dimenButtonBorderWidth
-		self.leftViewMode = UITextFieldViewMode.Always
+		self.leftViewMode = UITextFieldViewMode.always
 		self.leftView = searchView
 		self.rightView = self.overlayButton
-		self.rightViewMode = UITextFieldViewMode.WhileEditing
-		self.clearButtonMode = UITextFieldViewMode.WhileEditing
+		self.rightViewMode = UITextFieldViewMode.whileEditing
+		self.clearButtonMode = UITextFieldViewMode.whileEditing
 	}
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		self.overlayButton.anchorCenterRightWithRightPadding(8, width: 96, height: 48)
+		self.overlayButton.anchorCenterRight(withRightPadding: 8, width: 96, height: 48)
 	}
 	
 	func cancelEditingAction(sender: AnyObject) {

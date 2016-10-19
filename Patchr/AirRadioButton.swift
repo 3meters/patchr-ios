@@ -25,12 +25,12 @@ class AirRadioButton: DLRadioButton {
 	
 	func initialize() {
 		self.titleLabel!.font = Theme.fontButtonRadioTitle
-		self.setTitleColor(Theme.colorButtonRadioTitle, forState: .Normal)
-		self.setTitleColor(Theme.colorButtonTitleHighlighted, forState: .Highlighted)
+		self.setTitleColor(Theme.colorButtonRadioTitle, for: .normal)
+		self.setTitleColor(Theme.colorButtonTitleHighlighted, for: .highlighted)
 		self.iconColor = Theme.colorButtonRadioIcon
 		self.indicatorColor = Theme.colorButtonRadioIndicator
-		self.contentHorizontalAlignment = .Left
-		self.iconOnRight = false
+		self.contentHorizontalAlignment = .left
+		self.isIconOnRight = false
 		self.iconSize = 20
 		self.iconStrokeWidth = self.iconSize / self.iconSize
 		self.indicatorSize = self.iconSize * 0.6

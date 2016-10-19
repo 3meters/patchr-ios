@@ -13,8 +13,7 @@ import SDWebImage
 class DevelopmentViewController: UIViewController {
     
     var uriAtStart: String = ""
-    var observerObject: TextFieldChangeObserver?
-    let userDefaults = { NSUserDefaults.standardUserDefaults() }()
+    let userDefaults = { UserDefaults.standard }()
 	
 	var enableDevModeLabel		= AirLabelDisplay()
 	var enableDevModeSwitch		= UISwitch()
@@ -33,11 +32,10 @@ class DevelopmentViewController: UIViewController {
 		initialize()
 	}
 	
-	override func viewWillDisappear(animated: Bool) {
+	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 
-		self.userDefaults.setObject(serverUriField.text, forKey: PatchrUserDefaultKey("serverUri"))
-		self.observerObject?.stopObserving()
+		self.userDefaults.set(serverUriField.text, forKey: PatchrUserDefaultKey(subKey: "serverUri"))
 
 		/* If the URI changed and we were signed in then sign out */
 		if self.uriAtStart != self.serverUriField.text {
@@ -54,15 +52,15 @@ class DevelopmentViewController: UIViewController {
 		
 		let contentWidth = self.view.width() - 32
 		let navHeight = self.navigationController?.navigationBar.height() ?? 0
-		let statusHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+		let statusHeight = UIApplication.shared.statusBarFrame.size.height
 
 		self.enableDevModeLabel.sizeToFit()
-		self.enableDevModeLabel.anchorTopLeftWithLeftPadding(16, topPadding: statusHeight + navHeight + 24, width: contentWidth - (self.enableDevModeSwitch.width() + 8), height: self.enableDevModeLabel.height())
-		self.enableDevModeSwitch.alignToTheRightOf(self.enableDevModeLabel, matchingCenterWithLeftPadding: 8, width: self.enableDevModeSwitch.width(), height: self.enableDevModeSwitch.height())
+		self.enableDevModeLabel.anchorTopLeft(withLeftPadding: 16, topPadding: statusHeight + navHeight + 24, width: contentWidth - (self.enableDevModeSwitch.width() + 8), height: self.enableDevModeLabel.height())
+		self.enableDevModeSwitch.align(toTheRightOf: self.enableDevModeLabel, matchingCenterWithLeftPadding: 8, width: self.enableDevModeSwitch.width(), height: self.enableDevModeSwitch.height())
 		
 		self.statusBarHiddenLabel.sizeToFit()
 		self.statusBarHiddenLabel.alignUnder(self.enableDevModeLabel, matchingLeftWithTopPadding: 24, width: contentWidth - (self.statusBarHiddenSwitch.width() + 8), height: self.statusBarHiddenLabel.height())
-		self.statusBarHiddenSwitch.alignToTheRightOf(self.statusBarHiddenLabel, matchingCenterWithLeftPadding: 8, width: self.statusBarHiddenSwitch.width(), height: self.statusBarHiddenSwitch.height())
+		self.statusBarHiddenSwitch.align(toTheRightOf: self.statusBarHiddenLabel, matchingCenterWithLeftPadding: 8, width: self.statusBarHiddenSwitch.width(), height: self.statusBarHiddenSwitch.height())
 		
 		self.serverUriField.alignUnder(self.statusBarHiddenLabel, matchingLeftWithTopPadding: 8, width: contentWidth, height: 48)
 		self.serverAddressOption.alignUnder(self.serverUriField, matchingCenterWithTopPadding: 8, width: 200, height: 32)
@@ -70,15 +68,15 @@ class DevelopmentViewController: UIViewController {
 	}
     
     func enableDevModeAction(sender: AnyObject) {
-        self.userDefaults.setBool(enableDevModeSwitch.on, forKey: PatchrUserDefaultKey("enableDevModeAction"))
-        if self.enableDevModeSwitch.on {
-            AudioController.instance.play(Sound.pop.rawValue)
+        self.userDefaults.set(enableDevModeSwitch.isOn, forKey: PatchrUserDefaultKey(subKey: "enableDevModeAction"))
+        if self.enableDevModeSwitch.isOn {
+            AudioController.instance.play(sound: Sound.pop.rawValue)
         }
     }
 
 	func statusBarHiddenAction(sender: AnyObject) {
-		self.userDefaults.setBool(statusBarHiddenSwitch.on, forKey: PatchrUserDefaultKey("statusBarHidden"))
-		UIApplication.sharedApplication().setStatusBarHidden(statusBarHiddenSwitch.on, withAnimation: UIStatusBarAnimation.Slide)
+		self.userDefaults.set(statusBarHiddenSwitch.isOn, forKey: PatchrUserDefaultKey(subKey: "statusBarHidden"))
+		UIApplication.shared.setStatusBarHidden(statusBarHiddenSwitch.isOn, with: UIStatusBarAnimation.slide)
 		self.view.setNeedsLayout()
 	}
 	
@@ -92,11 +90,11 @@ class DevelopmentViewController: UIViewController {
 	}
     
     func clearImageCacheAction(sender: AnyObject) {
-        let imageCache = SDImageCache.sharedImageCache()
-        imageCache.clearDisk()
-        imageCache.clearMemory()
-        UIShared.Toast("Image cache cleared")
-        AudioController.instance.play(Sound.pop.rawValue)        
+        let imageCache = SDImageCache.shared()
+        imageCache?.clearDisk()
+        imageCache?.clearMemory()
+        UIShared.Toast(message: "Image cache cleared")
+        AudioController.instance.play(sound: Sound.pop.rawValue)        
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -108,13 +106,13 @@ class DevelopmentViewController: UIViewController {
 		Reporting.screen("DevelopmentSettings")
 		self.view.backgroundColor = Theme.colorBackgroundForm
 		
-		self.enableDevModeSwitch.on = userDefaults.boolForKey(PatchrUserDefaultKey("enableDevModeAction"))
-		self.statusBarHiddenSwitch.on = userDefaults.boolForKey(PatchrUserDefaultKey("statusBarHidden"))
-		self.serverUriField.text = userDefaults.stringForKey(PatchrUserDefaultKey("serverUri"))
+		self.enableDevModeSwitch.isOn = userDefaults.bool(forKey: PatchrUserDefaultKey(subKey: "enableDevModeAction"))
+		self.statusBarHiddenSwitch.isOn = userDefaults.bool(forKey: PatchrUserDefaultKey(subKey: "statusBarHidden"))
+		self.serverUriField.text = userDefaults.string(forKey: PatchrUserDefaultKey(subKey: "serverUri"))
 		
 		self.enableDevModeLabel.text = "Enable development mode:"
 		self.statusBarHiddenLabel.text = "Status bar hidden:"
-		self.clearImageCacheButton.setTitle("Clear image cache".uppercaseString, forState: .Normal)
+		self.clearImageCacheButton.setTitle("Clear image cache".uppercased(), for: .normal)
 		self.serverUriField.placeholder = "Server address"
 		self.serverAddressOption = UISegmentedControl(items: ["Production", "Staging"])
 
@@ -128,15 +126,11 @@ class DevelopmentViewController: UIViewController {
 		self.view.addSubview(self.statusBarHiddenLabel)
 		self.view.addSubview(self.statusBarHiddenSwitch)
 		
-		self.enableDevModeSwitch.addTarget(self, action: #selector(DevelopmentViewController.enableDevModeAction(_:)), forControlEvents: .TouchUpInside)
-		self.statusBarHiddenSwitch.addTarget(self, action: #selector(DevelopmentViewController.statusBarHiddenAction(_:)), forControlEvents: .TouchUpInside)
-		self.serverAddressOption.addTarget(self, action: #selector(DevelopmentViewController.serverAddressOptionAction(_:)), forControlEvents: .ValueChanged)
-		self.clearImageCacheButton.addTarget(self, action: #selector(DevelopmentViewController.clearImageCacheAction(_:)), forControlEvents: .TouchUpInside)
+		self.enableDevModeSwitch.addTarget(self, action: #selector(DevelopmentViewController.enableDevModeAction(sender:)), for: .touchUpInside)
+		self.statusBarHiddenSwitch.addTarget(self, action: #selector(DevelopmentViewController.statusBarHiddenAction(sender:)), for: .touchUpInside)
+		self.serverAddressOption.addTarget(self, action: #selector(DevelopmentViewController.serverAddressOptionAction(sender:)), for: .valueChanged)
+		self.clearImageCacheButton.addTarget(self, action: #selector(DevelopmentViewController.clearImageCacheAction(sender:)), for: .touchUpInside)
 		
-		self.observerObject = TextFieldChangeObserver(self.serverUriField) {
-			[unowned self] in
-			self.updateSegmentControl()
-		}
 		uriAtStart = self.serverUriField.text!
 	}
 	

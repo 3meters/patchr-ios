@@ -19,7 +19,7 @@ class AirProgress: MBProgressHUD {
 	}
 	
 	init() {
-		super.init(frame: CGRectZero)
+		super.init(frame: CGRect.zero)
 		initialize()
 	}
 	
@@ -51,17 +51,17 @@ class AirProgress: MBProgressHUD {
                 let y = CGFloat(parent.bounds.size.height - self.size.height) * 0.5
                 
                 self.layer.masksToBounds = false
-                self.layer.shadowOffset = CGSizeMake(2, 4)
+                self.layer.shadowOffset = CGSize(width:2, height:4)
                 self.layer.shadowRadius = 3
                 self.layer.shadowOpacity = 0.3
-                let rect: CGRect = CGRectMake(x + CGFloat(self.xOffset), y + CGFloat(self.yOffset), self.size.width, self.size.height)
+                let rect: CGRect = CGRect(x:x + CGFloat(self.xOffset), y:y + CGFloat(self.yOffset), width:self.size.width, height:self.size.height)
                 let path: UIBezierPath = UIBezierPath(roundedRect: rect, cornerRadius: CGFloat(self.cornerRadius))
-                self.layer.shadowPath = path.CGPath
+                self.layer.shadowPath = path.cgPath
             }
         }
     }
 	
-	override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+	override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
 		return false
 	}
     
@@ -72,17 +72,17 @@ class AirProgress: MBProgressHUD {
 		self.activityIndicatorColor = Theme.colorActivityIndicator
 		
         if progressStyle == .ActivityWithText {
-            self.animationType = MBProgressHUDAnimation.Zoom
+            self.animationType = MBProgressHUDAnimation.zoom
             self.margin = 16
             self.cornerRadius = 8
             self.color = Theme.colorBackgroundActivity
             self.labelColor = Theme.colorTextActivity
             self.detailsLabelColor = Theme.colorTextActivity
             self.shadow = true
-            self.square = true
+            self.isSquare = true
         }
         else if progressStyle == .ToastLight {
-            self.animationType = MBProgressHUDAnimation.Fade
+            self.animationType = MBProgressHUDAnimation.fade
             self.margin = 16.0
             self.cornerRadius = 24.0
             self.opacity = 0.7
@@ -92,11 +92,11 @@ class AirProgress: MBProgressHUD {
             self.shadow = true
         }
         else if progressStyle == .ActivityOnly {
-            self.animationType = MBProgressHUDAnimation.Fade
+            self.animationType = MBProgressHUDAnimation.fade
             self.opacity = 0.0
             self.color = Theme.colorBackgroundActivityOnly
             self.shadow = false
-            self.square = true
+            self.isSquare = true
         }
     }
 }

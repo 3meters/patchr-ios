@@ -17,7 +17,7 @@ class UserHeaderView: BaseDetailView {
 	var userGroup      = UIView()
 	
 	init() {
-		super.init(frame: CGRectZero)
+		super.init(frame: CGRect.zero)
 		initialize()
 	}
 	
@@ -37,16 +37,16 @@ class UserHeaderView: BaseDetailView {
 		self.backgroundColor = Theme.colorBackgroundForm
 		
 		/* User friendly name */
-		self.name.lineBreakMode = .ByTruncatingMiddle
+		self.name.lineBreakMode = .byTruncatingMiddle
 		self.name.font = Theme.fontTitleLarge
-        self.name.textAlignment = NSTextAlignment.Center
+        self.name.textAlignment = NSTextAlignment.center
 
 		
         /* Username */
-        self.username.lineBreakMode = .ByTruncatingMiddle
+        self.username.lineBreakMode = .byTruncatingMiddle
         self.username.font = Theme.fontTextDisplay
         self.username.textColor = Theme.colorTextSecondary
-        self.username.textAlignment = NSTextAlignment.Center
+        self.username.textAlignment = NSTextAlignment.center
         
 		/* Rule */
 		self.rule.backgroundColor = Theme.colorSeparator
@@ -66,25 +66,25 @@ class UserHeaderView: BaseDetailView {
         self.name.sizeToFit()
         self.username.sizeToFit()
 
-		self.userGroup.anchorTopCenterFillingWidthWithLeftAndRightPadding(0, topPadding: 0, height: 192)
-		self.photo.anchorTopCenterWithTopPadding(16, width: 96, height: 96)
+		self.userGroup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 192)
+		self.photo.anchorTopCenter(withTopPadding: 16, width: 96, height: 96)
 		self.name.alignUnder(self.photo, matchingCenterWithTopPadding: 8, width: contentWidth, height: 36)
         self.username.alignUnder(self.name, matchingCenterWithTopPadding: 0, width: contentWidth, height: 24)
-		self.rule.anchorBottomCenterFillingWidthWithLeftAndRightPadding(0, bottomPadding: 0, height: 1)
+		self.rule.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 1)
 	}
 	
 	func bindToUser(user: FireUser!) {
-        self.name.text?.removeAll(keepCapacity: false)
-        self.username.text?.removeAll(keepCapacity: false)
+        self.name.text?.removeAll(keepingCapacity: false)
+        self.username.text?.removeAll(keepingCapacity: false)
         
         self.username.text = "@\(user.username!)"
         if let profile = user.profile {
             self.name.text = profile.fullName!
-            var photoUrl: NSURL? = nil
+            var photoUrl: URL? = nil
             if let photo = profile.photo {
-                photoUrl = PhotoUtils.url(photo.filename!, source: photo.source!, category: SizeCategory.profile)
+                photoUrl = PhotoUtils.url(prefix: photo.filename!, source: photo.source!, category: SizeCategory.profile)
             }
-            self.photo.bindPhoto(photoUrl, name: profile.fullName!)
+            self.photo.bindPhoto(photoUrl: photoUrl, name: profile.fullName!)
         }
 	}
 }

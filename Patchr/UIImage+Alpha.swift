@@ -40,7 +40,7 @@ public extension UIImage {
         )
         
         // Draw the image into the context and retrieve the new image, which will now have an alpha layer
-        CGContextDrawImage(offscreenContext, CGRectMake(0, 0, CGFloat(width), CGFloat(height)), imageRef)
+        CGContextDrawImage(offscreenContext, CGRect(x:0, 0, CGFloat(width), CGFloat(height)), imageRef)
         let imageRefWithAlpha:CGImageRef = CGBitmapContextCreateImage(offscreenContext)
         
         return UIImage(CGImage: imageRefWithAlpha)
@@ -49,7 +49,7 @@ public extension UIImage {
     public func transparentBorderImage(borderSize: Int) -> UIImage {
         let image = self.imageWithAlpha()
         
-        let newRect = CGRectMake(
+        let newRect = CGRect(x:
             0, 0,
             image.size.width + CGFloat(borderSize) * 2,
             image.size.height + CGFloat(borderSize) * 2
@@ -66,7 +66,7 @@ public extension UIImage {
         )
         
         // Draw the image in the center of the context, leaving a gap around the edges
-        let imageLocation = CGRectMake(CGFloat(borderSize), CGFloat(borderSize), image.size.width, image.size.height)
+        let imageLocation = CGRect(x:CGFloat(borderSize), CGFloat(borderSize), image.size.width, image.size.height)
         CGContextDrawImage(bitmap, imageLocation, self.CGImage)
         let borderImageRef: CGImageRef = CGBitmapContextCreateImage(bitmap)
         
@@ -91,11 +91,11 @@ public extension UIImage {
         
         // Start with a mask that's entirely transparent
         CGContextSetFillColorWithColor(maskContext, UIColor.blackColor().CGColor)
-        CGContextFillRect(maskContext, CGRectMake(0, 0, size.width, size.height))
+        CGContextFillRect(maskContext, CGRect(x:0, 0, size.width, size.height))
         
         // Make the inner part (within the border) opaque
         CGContextSetFillColorWithColor(maskContext, UIColor.whiteColor().CGColor)
-        CGContextFillRect(maskContext, CGRectMake(
+        CGContextFillRect(maskContext, CGRect(x:
             CGFloat(borderSize),
             CGFloat(borderSize),
             size.width - CGFloat(borderSize) * 2,

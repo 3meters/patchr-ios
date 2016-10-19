@@ -31,11 +31,11 @@ class SideMenuViewController: UITableViewController {
         initialize()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
     
@@ -52,7 +52,7 @@ class SideMenuViewController: UITableViewController {
         let controller = ProfileEditViewController()
         let navController = AirNavigationController()
         navController.viewControllers = [controller]
-        self.navigationController?.presentViewController(navController, animated: true, completion: nil)
+        self.navigationController?.present(navController, animated: true, completion: nil)
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -63,32 +63,31 @@ class SideMenuViewController: UITableViewController {
 
         Reporting.screen("SideMenu")
 
-        self.tableView = UITableView(frame: self.tableView.frame, style: .Plain)
-        self.tableView.accessibilityIdentifier = Table.Settings
+        self.tableView = UITableView(frame: self.tableView.frame, style: .plain)
         self.tableView.rowHeight = 64
         self.tableView.tableFooterView = UIView()
         self.tableView.backgroundColor = Colors.gray95pcntColor
         self.tableView.sectionFooterHeight = 0
-        self.tableView.separatorInset = UIEdgeInsetsZero
-        self.tableView.separatorStyle = .None
+        self.tableView.separatorInset = UIEdgeInsets.zero
+        self.tableView.separatorStyle = .none
         
         self.menuHeader = UserHeaderView()
-        let headerTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(SideMenuViewController.editProfileAction(_:)))
+        let headerTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(SideMenuViewController.editProfileAction(sender:)))
         self.menuHeader.userGroup.addGestureRecognizer(headerTapGestureRecognizer)
-        self.menuHeader.frame = CGRectMake(0, 0, self.tableView.width(), CGFloat(208))
+        self.menuHeader.frame = CGRect(x:0, y:0, width:self.tableView.width(), height:CGFloat(208))
         self.menuHeader.setNeedsLayout()
         self.menuHeader.layoutIfNeeded()
         
         self.tableView.tableHeaderView = menuHeader	// Triggers table binding
 
-        self.inviteCell = WrapperTableViewCell(view: MenuItemView(title: "Invite", image: UIImage(named: "imgInvite2Light")!), padding: UIEdgeInsetsZero, reuseIdentifier: nil)
-        self.membersCell = WrapperTableViewCell(view: MenuItemView(title: "Patch members", image: UIImage(named: "imgUsersLight")!), padding: UIEdgeInsetsZero, reuseIdentifier: nil)
-        self.settingsCell = WrapperTableViewCell(view: MenuItemView(title: "Settings", image: UIImage(named: "imgSettingsLight")!), padding: UIEdgeInsetsZero, reuseIdentifier: nil)
-        self.switchCell = WrapperTableViewCell(view: MenuItemView(title: "Switch patches", image: UIImage(named: "imgSwitchLight")!), padding: UIEdgeInsetsZero, reuseIdentifier: nil)
+        self.inviteCell = WrapperTableViewCell(view: MenuItemView(title: "Invite", image: UIImage(named: "imgInvite2Light")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
+        self.membersCell = WrapperTableViewCell(view: MenuItemView(title: "Patch members", image: UIImage(named: "imgUsersLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
+        self.settingsCell = WrapperTableViewCell(view: MenuItemView(title: "Settings", image: UIImage(named: "imgSettingsLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
+        self.switchCell = WrapperTableViewCell(view: MenuItemView(title: "Switch patches", image: UIImage(named: "imgSwitchLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         
-        FIRAuth.auth()?.addAuthStateDidChangeListener { auth, user in
+        FIRAuth.auth()?.addStateDidChangeListener { auth, user in
             if user != nil {
-                self.bind(user!)
+                self.bind(authUser: user!)
             }
         }
         
@@ -96,10 +95,10 @@ class SideMenuViewController: UITableViewController {
     
     func bind(authUser: FIRUser) {
         let ref = FIRDatabase.database().reference()
-        ref.child("users/\(authUser.uid)").observeEventType(.Value, withBlock: { snapshot in
+        ref.child("users/\(authUser.uid)").observe(.value, with: { snapshot in
             if let userMap = snapshot.value as? NSDictionary {
-                let fireUser = FireUser.setPropertiesFromDictionary(userMap, onObject: FireUser(id: authUser.uid))
-                self.menuHeader.bindToUser(fireUser)
+                let fireUser = FireUser.setPropertiesFromDictionary(dictionary: userMap, onObject: FireUser(id: authUser.uid))
+                self.menuHeader.bindToUser(user: fireUser)
                 self.menuHeader.setNeedsLayout()
                 self.menuHeader.layoutIfNeeded()
             }
@@ -111,28 +110,28 @@ extension SideMenuViewController {
     /*
     * UITableViewDelegate
     */
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
-        let selectedCell = tableView.cellForRowAtIndexPath(indexPath)
+        let selectedCell = tableView.cellForRow(at: indexPath)
 
         if selectedCell == self.inviteCell {
             /* Do something! */
         }
         else if selectedCell == self.settingsCell {
             let controller = SettingsTableViewController()
-            let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: controller, action: #selector(controller.cancelAction(_:)))
+            let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: controller, action: #selector(controller.cancelAction(sender:)))
             controller.navigationItem.rightBarButtonItems = [cancelButton]
             let navController = AirNavigationController()
             navController.viewControllers = [controller]
-            UIViewController.topMostViewController()?.presentViewController(navController, animated: true, completion: nil)
+            UIViewController.topMostViewController()?.present(navController, animated: true, completion: nil)
         }
     }
 
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return CGFloat(64)
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
             return self.membersCell!
         }
@@ -144,12 +143,12 @@ extension SideMenuViewController {
         }
         return self.switchCell!
     }
-
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 4
     }
 }

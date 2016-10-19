@@ -23,9 +23,9 @@ class AirHideShowButton: AirToggleButton {
     }
     
     override func initialize(){
-        self.imageOff = UIImage(named: "imgWatch2Light")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
-        self.imageOn = UIImage(named: "imgWatch2FilledLight")!.imageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
-		self.imageView?.contentMode = UIViewContentMode.ScaleToFill
-		toggleOn(false)
+        self.imageOff = UIImage(named: "imgWatch2Light")!.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
+        self.imageOn = UIImage(named: "imgWatch2FilledLight")!.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
+		self.imageView?.contentMode = UIViewContentMode.scaleToFill
+		toggleOn(on: false)
     }
 }

@@ -50,7 +50,7 @@ class NotificationController: NSObject {
     *--------------------------------------------------------------------------------------------*/
 
     func didReceiveLocalNotification(application: UIApplication, notification: UILocalNotification) {
-        didReceiveRemoteNotification(application, notification: notification.userInfo!, fetchCompletionHandler: nil)
+        didReceiveRemoteNotification(application: application, notification: notification.userInfo! as [NSObject : AnyObject], fetchCompletionHandler: nil)
     }
 
     func didReceiveRemoteNotification(application: UIApplication, notification: [NSObject:AnyObject], fetchCompletionHandler completionHandler: ((UIBackgroundFetchResult) -> Void)?) {
@@ -60,7 +60,7 @@ class NotificationController: NSObject {
          * if the user has turned off remote notifications, we still get this call.
          */
         Log.d("Notification received...")
-        Log.d("App state: \(application.applicationState == .Background ? "background" : application.applicationState == .Active ? "active" : "inactive")")
+        Log.d("App state: \(application.applicationState == .background ? "background" : application.applicationState == .active ? "active" : "inactive")")
 
         let json: JSON = JSON(notification)
         let data = json["custom"]["a"].dictionaryObject!
@@ -69,8 +69,8 @@ class NotificationController: NSObject {
          * Active:      Notification received while app is active (foreground).
          * Background:  Notification received while app is not active (background or dead)
          */
-        if application.applicationState == .Inactive {
-            deepLink(data["targetId"] as! String)
+        if application.applicationState == .inactive {
+            deepLink(targetId: data["targetId"] as! String)
         }
         else {
             let topController = UIViewController.topMostViewController()
@@ -79,8 +79,8 @@ class NotificationController: NSObject {
             }
 
             self.activityDate = Utils.now() // So we check if our notification list is stale
-            if application.applicationState == .Active {
-                NSNotificationCenter.defaultCenter().postNotificationName(Events.DidReceiveRemoteNotification, object: self, userInfo: data as [NSObject:AnyObject])
+            if application.applicationState == .active {
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.DidReceiveRemoteNotification), object: self, userInfo: data as [AnyHashable:Any])
             }
         }
         /* 
@@ -88,7 +88,7 @@ class NotificationController: NSObject {
          * terminated if the app was woken to process the notification.
          */
         if (completionHandler != nil) {
-            completionHandler!(.NoData)
+            completionHandler!(.noData)
         }
     }
 
@@ -113,18 +113,18 @@ class NotificationController: NSObject {
             let navController = AirNavigationController()
             navController.viewControllers = [controller]
             controller.entityId = targetId
-            let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: #selector(controller.dismissAction(_:)))
+            let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: controller, action: #selector(controller.dismissAction(sender:)))
             controller.navigationItem.leftBarButtonItems = [doneButton]
-            topController!.presentViewController(navController, animated: true, completion: nil)
+            topController!.present(navController, animated: true, completion: nil)
         }
         else if targetId.hasPrefix("me.") {
             let controller = MessageDetailViewController()
             let navController = AirNavigationController()
             navController.viewControllers = [controller]
             controller.inputMessageId = targetId
-            let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: controller, action: #selector(controller.dismissAction(_:)))
+            let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: controller, action: #selector(controller.dismissAction(sender:)))
             controller.navigationItem.leftBarButtonItems = [doneButton]
-            topController!.presentViewController(navController, animated: true, completion: nil)
+            topController!.present(navController, animated: true, completion: nil)
         }
     }
     
@@ -136,7 +136,7 @@ class NotificationController: NSObject {
         
         OneSignal.syncHashedEmail(UserController.instance.userId)
         
-        OneSignal.IdsAvailable() {
+        OneSignal.idsAvailable() {
             userId, pushToken in
             
             NotificationController.instance.installId = userId
@@ -144,7 +144,7 @@ class NotificationController: NSObject {
             if userId != nil {
                 DataController.proxibase.registerInstall() {
                     response, error in
-                    NSOperationQueue.mainQueue().addOperationWithBlock {
+                    OperationQueue.main.addOperation {
                         if let error = ServerError(error) {
                             Log.w("Error during registerInstall: \(error)")
                         }
@@ -166,23 +166,23 @@ class NotificationController: NSObject {
         let message = message ?? "Would you like to alerted when messages are posted to this patch?"
 
         if let controller = UIViewController.topMostViewController() {
-            let alert = UIAlertController(title: "Joining Patch", message: message, preferredStyle: UIAlertControllerStyle.Alert)
-            let submit = UIAlertAction(title: "Notify me", style: .Default) {
+            let alert = UIAlertController(title: "Joining Patch", message: message, preferredStyle: UIAlertControllerStyle.alert)
+            let submit = UIAlertAction(title: "Notify me", style: .default) {
                 action in
                 self.registerForRemoteNotifications()
                 Reporting.track("Selected Notifications for Patch")
             }
-            let cancel = UIAlertAction(title: "No thanks", style: .Cancel) {
+            let cancel = UIAlertAction(title: "No thanks", style: .cancel) {
                 action in
                 Log.d("Remote notifications declined")
-                alert.dismissViewControllerAnimated(true, completion: nil)
+                alert.dismiss(animated: true, completion: nil)
                 Reporting.track("Declined Notifications for Patch")
             }
 
             alert.addAction(cancel)
             alert.addAction(submit)
 
-            controller.presentViewController(alert, animated: true, completion: nil)
+            controller.present(alert, animated: true, completion: nil)
         }
     }
 

@@ -42,9 +42,8 @@ class PatchSettingsController: UITableViewController {
 		Reporting.screen("PatchSettings")
 		
 		self.navigationItem.title = "Patch settings"
-		self.view.accessibilityIdentifier = View.PatchSettings
 		
-		self.tableView = UITableView(frame: self.tableView.frame, style: .Grouped)
+		self.tableView = UITableView(frame: self.tableView.frame, style: .grouped)
 		self.tableView.rowHeight = 48
 		self.tableView.tableFooterView = UIView()
 		self.tableView.backgroundColor = Colors.gray95pcntColor
@@ -52,13 +51,13 @@ class PatchSettingsController: UITableViewController {
 		
 		self.lockedCell.textLabel?.text = "Only owners can post messages"
 		
-		self.lockedCell.accessoryView = makeSwitch(.Locked, state: self.inputSettings.locked)
+		self.lockedCell.accessoryView = makeSwitch(settingType: .Locked, state: self.inputSettings.locked)
 	}
 	
     func toggleAction(sender: AnyObject?) {
         if let switcher = sender as? UISwitch {
             if switcher.tag == SettingType.Locked.rawValue {
-				self.inputSettings.locked = switcher.on
+				self.inputSettings.locked = switcher.isOn
             }
         }
     }
@@ -66,26 +65,26 @@ class PatchSettingsController: UITableViewController {
     func makeSwitch(settingType: SettingType, state: Bool = false) -> UISwitch {
         let switchView = UISwitch()
         switchView.tag = settingType.rawValue
-        switchView.addTarget(self, action: #selector(PatchSettingsController.toggleAction(_:)), forControlEvents: UIControlEvents.ValueChanged)
-        switchView.on = state
+        switchView.addTarget(self, action: #selector(PatchSettingsController.toggleAction(sender:)), for: UIControlEvents.valueChanged)
+        switchView.isOn = state
         return switchView
     }
 }
 
 extension PatchSettingsController {
 	
-	override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+	override func numberOfSections(in: UITableView) -> Int {
 		return 1
 	}
 	
-	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		switch(section) {
 			case 0: return 1
 			default: fatalError("Unknown number of sections")
 		}
 	}
 	
-	override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		switch(indexPath.section) {
 			case 0:
 				switch(indexPath.row) {
@@ -96,14 +95,14 @@ extension PatchSettingsController {
 		}
 	}
 	
-	override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
 		switch(section) {
-			case 0: return "Post Permissions".uppercaseString
+			case 0: return "Post Permissions".uppercased()
 			default: fatalError("Unknown section")
 		}
 	}
 	
-	override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		return 48
 	}
 }
