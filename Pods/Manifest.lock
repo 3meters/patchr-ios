@@ -87,6 +87,8 @@ PODS:
     - GoogleIPhoneUtilities (~> 1.2)
     - GoogleSymbolUtilities (~> 1.1)
     - GoogleUtilities (~> 1.2)
+  - FirebaseUI/Database (0.6.1):
+    - Firebase/Database
   - FontAwesome.swift (0.11.1)
   - GoogleInterchangeUtilities (1.2.2):
     - GoogleSymbolUtilities (~> 1.1)
@@ -108,6 +110,7 @@ PODS:
   - KSCrash/RecordingAdvanced (1.8.13):
     - KSCrash/Recording
   - Lockbox (3.0.2)
+  - Material (2.1.2)
   - MBProgressHUD (0.9.2)
   - NHBalancedFlowLayout (0.2)
   - OneSignal (2.0.11)
@@ -140,11 +143,13 @@ DEPENDENCIES:
   - Firebase/Crash
   - Firebase/Database
   - Firebase/RemoteConfig
+  - FirebaseUI/Database (~> 0.6)
   - FontAwesome.swift (from `https://github.com/thii/FontAwesome.swift.git`)
   - IDMPhotoBrowser (from `~/code/IDMPhotoBrowser`)
   - iRate (~> 1.11.6)
   - Keys (from `Pods/CocoaPodsKeys`)
   - Lockbox (~> 3.0.1)
+  - Material (~> 2.0)
   - MBProgressHUD (~> 0.9.1)
   - NHBalancedFlowLayout (~> 0.2)
   - OneSignal (~> 2.0.10)
@@ -192,6 +197,7 @@ SPEC CHECKSUMS:
   FirebaseDatabase: 750a4a0fe18ef114318876fd654b2d9c671e0992
   FirebaseInstanceID: ba1e640935235e5fac39dfa816fe7660e72e1a8a
   FirebaseRemoteConfig: 981f45d4278281cfefa8f48a6f5c566f2c95ac5a
+  FirebaseUI: cfe7b83264b9fbdd7e4c9804327a397471e2643b
   FontAwesome.swift: 9879cd6a1462bf160662d519f7b7474d73bdd1c3
   GoogleInterchangeUtilities: d5bc4d88d5b661ab72f9d70c58d02ca8c27ad1f7
   GoogleIPhoneUtilities: 63f25e93a3ddcb66884d182aab3a660d98f1479b
@@ -203,6 +209,7 @@ SPEC CHECKSUMS:
   Keys: 9c35bf00f612ee1d48556f4a4b9b4551e224e90f
   KSCrash: 4c3a83f133b60f4bd57e05235ebf8d46e36d378d
   Lockbox: bfc91deef886f9c0302e809a4d11e171c92c341b
+  Material: e27257b2efea0ea145150b141da22e1d68bef552
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
   NHBalancedFlowLayout: fd253023c6754e605acdb180d50123e582cc62bb
   OneSignal: 2ac92fa759f2316038bd59cc34487cdd1e605212
@@ -217,6 +224,6 @@ SPEC CHECKSUMS:
   TWMessageBarManager: fd84e7948ba7968a2b5d9454859135761214ec56
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
 
-PODFILE CHECKSUM: f411766872dc18894e834aae8b7894b2555c8eac
+PODFILE CHECKSUM: 10436189600c52be55696139b7fd4fc70c46d8b4
 
 COCOAPODS: 1.1.0.rc.3
