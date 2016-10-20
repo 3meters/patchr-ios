@@ -37,13 +37,15 @@ class LocationController: NSObject {
     }
 
     func initialize() {
-        Log.d("***** Location controller initialized *****")
-        locationManager = CLLocationManager()
-        locationManager.pausesLocationUpdatesAutomatically = true       // Location manager will pause to save battery when location is unlikely to change
-        locationManager.desiredAccuracy = Double(ACCURACY_PREFERRED)
-        locationManager.activityType = CLActivityType.fitness           // Pedestrian activity vs moving transportation (car, plane, train, etc)
-        locationManager.distanceFilter = CLLocationDistance.abs(Double(MIN_DISPLACEMENT))
-        locationManager.delegate = self
+        DispatchQueue.main.async {
+            Log.d("***** Location controller initialized *****")
+            self.locationManager = CLLocationManager()
+            self.locationManager.pausesLocationUpdatesAutomatically = true       // Location manager will pause to save battery when location is unlikely to change
+            self.locationManager.desiredAccuracy = Double(self.ACCURACY_PREFERRED)
+            self.locationManager.activityType = CLActivityType.fitness           // Pedestrian activity vs moving transportation (car, plane, train, etc)
+            self.locationManager.distanceFilter = CLLocationDistance.abs(Double(self.MIN_DISPLACEMENT))
+            self.locationManager.delegate = self
+        }
     }
 
     func mostRecentAvailableLocation() -> CLLocation?  {
@@ -264,7 +266,6 @@ extension LocationController: CLLocationManagerDelegate {
             }
         }
     }
-    
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
 

@@ -495,8 +495,8 @@ class PatchDetailViewController: BaseDetailViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(PatchDetailViewController.didFetch(notification:)), name: NSNotification.Name(rawValue: Events.DidFetch), object: self)
         NotificationCenter.default.addObserver(self, selector: #selector(PatchDetailViewController.didInsertMessage(sender:)), name: NSNotification.Name(rawValue: Events.DidInsertMessage), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PatchDetailViewController.reachabilityChanged), name: ReachabilityChangedNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidEnterBackground(_:)), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(UIApplicationDelegate.applicationWillEnterForeground(_:)), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PatchDetailViewController.applicationDidEnterBackground(sender:)), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PatchDetailViewController.applicationWillEnterForeground(sender:)), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
 
         self.showEmptyLabel = true
         self.showProgress = true

@@ -6,6 +6,8 @@
 
 import UIKit
 import AVFoundation
+import Firebase
+import FirebaseAuth
 
 class NavigationController: BaseTableViewController, UISearchBarDelegate {
 
@@ -38,6 +40,14 @@ class NavigationController: BaseTableViewController, UISearchBarDelegate {
         self.tableView = AirTableView(frame: self.tableView.frame, style: .grouped)
         
         self.header.searchBar.placeholder = "Filter"
+        
+        let userId = FIRAuth.auth()?.currentUser?.uid
+        
+        FireController.instance.observe(path: "member-channels/\(userId!)", eventType: .childAdded, with: { snap in
+            if let map = snap.value as? NSDictionary {
+                _ = FireUser.setPropertiesFromDictionary(dictionary: map, onObject: FireUser(id: userId!))
+            }
+        })
 
         super.viewDidLoad()
     }
@@ -52,14 +62,10 @@ class NavigationController: BaseTableViewController, UISearchBarDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)	// calls bind
-        //bind()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-//        if getActivityDate() != self.query.activityDateValue {
-//            fetchQueryItems(force: true, paging: false, queryDate: getActivityDate())
-//        }
     }
 
     /*--------------------------------------------------------------------------------------------
