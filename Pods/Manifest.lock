@@ -33,13 +33,6 @@ PODS:
   - Branch/without-IDFA (0.12.12)
   - Bugsnag (5.6.2):
     - KSCrash/RecordingAdvanced (= 1.8.13)
-  - CocoaLumberjack/Core (3.0.0)
-  - CocoaLumberjack/Default (3.0.0):
-    - CocoaLumberjack/Core
-  - CocoaLumberjack/Extensions (3.0.0):
-    - CocoaLumberjack/Default
-  - CocoaLumberjack/Swift (3.0.0):
-    - CocoaLumberjack/Extensions
   - DACircularProgress (2.3.1)
   - DateTools (1.7.0)
   - DLRadioButton (1.4.9)
@@ -124,6 +117,7 @@ PODS:
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
   - SlideMenuControllerSwift (3.0.0)
+  - SwiftyBeaver (1.0.3)
   - THContactPicker (1.2)
   - TWMessageBarManager (1.8.1)
   - UIDevice-Hardware (0.1.8)
@@ -134,7 +128,6 @@ DEPENDENCIES:
   - AWSS3 (= 2.4.9)
   - Branch (~> 0.12.5)
   - Bugsnag
-  - CocoaLumberjack/Swift
   - DateTools (~> 1.7.0)
   - DLRadioButton (~> 1.4.9)
   - Facade (~> 1.1.1)
@@ -160,6 +153,7 @@ DEPENDENCIES:
   - RxSwift (= 3.0.0-beta.2)
   - SDWebImage (~> 3.8.1)
   - SlideMenuControllerSwift
+  - SwiftyBeaver
   - THContactPicker (~> 1.2)
   - TWMessageBarManager (~> 1.8)
   - UIDevice-Hardware (~> 0.1.7)
@@ -184,7 +178,6 @@ SPEC CHECKSUMS:
   AWSS3: e4959b48db48d5f3dcd5cdf9e24a07f60a313611
   Branch: 714cc02afc4676902f14f949157cdbf8c73f64f4
   Bugsnag: c20663a316811b425fd58f7ea9a1375f4cc8bc9d
-  CocoaLumberjack: c823149bccc5519a9447aeb433be7b1212a7d6a5
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   DateTools: 53288ee8b905fdc75897a1e6b5cc0144b14cba60
   DLRadioButton: 7bb8a6e3768b572469ace553391ab4d2af6f9c19
@@ -220,10 +213,11 @@ SPEC CHECKSUMS:
   RxSwift: 0ea939d7d97cb70657190ffde8dc2a9b455778fc
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   SlideMenuControllerSwift: 9c0a84f9a3fba51681debd7be77617094562ebcc
+  SwiftyBeaver: e42a664ffbdb5ec68ce968ffd3c54f619c92e0d7
   THContactPicker: e723f7c6ab6e1d6d10d59d618322ab8bfcb00365
   TWMessageBarManager: fd84e7948ba7968a2b5d9454859135761214ec56
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
 
-PODFILE CHECKSUM: 10436189600c52be55696139b7fd4fc70c46d8b4
+PODFILE CHECKSUM: d356f79d28bb6188937348b854a5e9075659800a
 
 COCOAPODS: 1.1.0.rc.3
