@@ -223,7 +223,7 @@ class PhotoEditView: UIView {
 		else {
 			self.setPhotoButton.backgroundColor = Theme.colorButtonFill
 			self.setPhotoButton.borderColor = Theme.colorButtonBorder
-			self.setPhotoButton.cornerRadius = Theme.dimenButtonCornerRadius
+			self.setPhotoButton.cornerRadius = Int(Theme.dimenButtonCornerRadius)
 		}
 		
 		self.setPhotoButton.alpha = 0
@@ -276,7 +276,7 @@ class PhotoEditView: UIView {
         else if photoMode == .Empty {
 			self.setPhotoButton.backgroundColor = Theme.colorButtonFill
 			self.setPhotoButton.borderColor = Theme.colorButtonBorder
-			self.setPhotoButton.cornerRadius = Theme.dimenButtonCornerRadius
+			self.setPhotoButton.cornerRadius = Int(Theme.dimenButtonCornerRadius)
 			
             self.setPhotoButton.fadeIn()
 			self.photoGroup.fadeOut()

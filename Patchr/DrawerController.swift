@@ -9,12 +9,12 @@ import AVFoundation
 import Firebase
 import FirebaseAuth
 
-class NavigationController: BaseTableViewController, UISearchBarDelegate {
+class DrawerController: BaseTableViewController, UISearchBarDelegate {
 
     var filter: PatchListFilter!
     var selectedCell: WrapperTableViewCell?
     var lastContentOffset = CGFloat(0)
-    var header: NavHeaderView!
+    var header: MainDrawerHeaderView!
     var searchActive = false
 
     /*--------------------------------------------------------------------------------------------
@@ -33,9 +33,9 @@ class NavigationController: BaseTableViewController, UISearchBarDelegate {
         self.emptyMessage = "No channels yet"
         self.itemPadding = UIEdgeInsets.zero
         
-        self.header = NavHeaderView()
+        self.header = MainDrawerHeaderView()
         self.header.searchBar.delegate = self
-        self.header.switchButton.addTarget(self, action: #selector(NavigationController.switchAction(sender:)), for: .touchUpInside)
+        self.header.switchButton.addTarget(self, action: #selector(DrawerController.switchAction(sender:)), for: .touchUpInside)
 
         self.tableView = AirTableView(frame: self.tableView.frame, style: .grouped)
         
@@ -44,9 +44,6 @@ class NavigationController: BaseTableViewController, UISearchBarDelegate {
         let userId = FIRAuth.auth()?.currentUser?.uid
         
         FireController.instance.observe(path: "member-channels/\(userId!)", eventType: .childAdded, with: { snap in
-            if let map = snap.value as? NSDictionary {
-                _ = FireUser.setPropertiesFromDictionary(dictionary: map, onObject: FireUser(id: userId!))
-            }
         })
 
         super.viewDidLoad()
@@ -154,7 +151,7 @@ class NavigationController: BaseTableViewController, UISearchBarDelegate {
  * Extensions
  *--------------------------------------------------------------------------------------------*/
 
-extension NavigationController {
+extension DrawerController {
     /*
     * UITableViewDelegate
     */
@@ -164,7 +161,7 @@ extension NavigationController {
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let header = ChannelSectionView()
         header.name.text = "Channels"
-        header.addButton.addTarget(self, action: #selector(NavigationController.addAction(sender:)), for: .touchUpInside)
+        header.addButton.addTarget(self, action: #selector(DrawerController.addAction(sender:)), for: .touchUpInside)
         return header
     }
     

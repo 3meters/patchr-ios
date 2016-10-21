@@ -8,7 +8,7 @@
 
 import UIKit
 
-class NavHeaderView: BaseDetailView {
+class MainDrawerHeaderView: BaseDetailView {
 
 	var name           = AirLabelTitle()
 	var photo          = UserPhotoView()

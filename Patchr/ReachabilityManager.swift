@@ -26,17 +26,16 @@ class ReachabilityManager: NSObject {
         self.reach!.whenReachable = { reachability in
             self.reachable = true
             DispatchQueue.main.async() {
-                Log.d("Network is reachable: \(self.reach!)", breadcrumb: true)
+                Log.d("Network is reachable: \(self.reach.description)", breadcrumb: true)
             }
         }
 
         self.reach!.whenUnreachable = { reachability in
             self.reachable = false
-            Log.d("Network is unreachable: \(self.reach!)", breadcrumb: true)
+            Log.d("Network is unreachable: \(self.reach.description)", breadcrumb: true)
         }
         
         try! self.reach!.startNotifier()
-        Log.d("Network flags: \(self.reach!)")
     }
 
     func isReachable() -> Bool {

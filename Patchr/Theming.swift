@@ -110,7 +110,7 @@ class Snow {
 	let colorLogWarning			= UIColor.orange
 	let colorLogError			= UIColor.red
 	
-	let dimenButtonCornerRadius = 4
+	let dimenButtonCornerRadius = CGFloat(4)
 	let dimenButtonBorderWidth = CGFloat(0.5)
 	let dimenRuleThickness = CGFloat(1.0)
 }

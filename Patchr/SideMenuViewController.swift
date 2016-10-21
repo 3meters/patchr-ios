@@ -94,9 +94,8 @@ class SideMenuViewController: UITableViewController {
     
     func bind(authUser: FIRUser) {
         FireController.instance.observe(path: "users/\(authUser.uid)", eventType: .value, with:{ snap in
-            if let userMap = snap.value as? NSDictionary {
-                let fireUser = FireUser.setPropertiesFromDictionary(dictionary: userMap, onObject: FireUser(id: authUser.uid))
-                self.menuHeader.bindToUser(user: fireUser)
+            if let user = FireUser(dict: snap.value as! [String: Any], id: authUser.uid) {
+                self.menuHeader.bindToUser(user: user)
                 self.menuHeader.setNeedsLayout()
                 self.menuHeader.layoutIfNeeded()
             }

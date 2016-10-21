@@ -12,7 +12,6 @@ import AFNetworking
 import AFNetworkActivityLogger
 import AWSCore
 import Branch
-import CocoaLumberjack
 import iRate
 import MBProgressHUD
 import SlideMenuControllerSwift
@@ -21,6 +20,7 @@ import FirebaseRemoteConfig
 import Firebase
 import FirebaseAuth
 import FirebaseDatabase
+import SwiftyBeaver
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
@@ -77,12 +77,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
         /* Initialize Bugsnag */
         Bugsnag.start(withApiKey: BUGSNAG_KEY)
         
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        
         /* Instance the data controller */
         DataController.instance.warmup()
 
         iRate.sharedInstance().delegate = self
-
-        self.window = UIWindow(frame: UIScreen.main.bounds)
 
         #if DEBUG
         AFNetworkActivityLogger.shared().startLogging()
@@ -95,15 +95,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
             self.firstLaunch = true
             Reporting.track("Launched for First Time")
         }
-
-        /* Logging */
-        DDLog.add(DDTTYLogger.sharedInstance()) // TTY = Xcode console
-        DDLog.add(DDASLLogger.sharedInstance()) // ASL = Apple System Logs
-
-        let fileLogger: DDFileLogger = DDFileLogger() // File Logger
-        fileLogger.rollingFrequency = 60 * 60 * 24  // 24 hours
-        fileLogger.logFileManager.maximumNumberOfLogFiles = 7
-        DDLog.add(fileLogger)
+        
+        let log = SwiftyBeaver.self
+        let console = ConsoleDestination()
+        log.addDestination(console)
 
         Log.i("Patchr launching...")
 
@@ -228,23 +223,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 
         /* If we have an authenticated user then start at the usual spot, otherwise start at the lobby scene. */
         if (FIRAuth.auth()?.currentUser) != nil {
-            
             SlideMenuOptions.leftViewWidth = NAVIGATION_DRAWER_WIDTH
             SlideMenuOptions.rightViewWidth = SIDE_MENU_WIDTH
             SlideMenuOptions.animationDuration = CGFloat(0.2)
             SlideMenuOptions.simultaneousGestureRecognizers = false
             
             let menuController = SideMenuViewController()
-            
-            let navigationController = NavigationController()
+            let navigationController = DrawerController()
             navigationController.filter = PatchListFilter.Watching
-            
             let mainController = PatchDetailViewController()
             mainController.entityId = "pa.150820.00499.464.259239"
             let mainNavController = AirNavigationController(rootViewController: mainController)
             
-            let slideController = SlideMenuController(mainViewController: mainNavController, leftMenuViewController: navigationController, rightMenuViewController: menuController)
-            self.window?.setRootViewController(rootViewController: slideController, animated: true)
+            let drawerController = SlideMenuController(mainViewController: mainNavController, leftMenuViewController: navigationController, rightMenuViewController: menuController)
+            //let drawerController = NavigationDrawerController(rootViewController: mainNavController, leftViewController: navigationController, rightViewController: menuController)
+            self.window?.setRootViewController(rootViewController: drawerController, animated: true)
         }
         else {
             let controller = LobbyViewController()
@@ -293,9 +286,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
         NotificationController.instance.didRegisterForRemoteNotificationsWithDeviceToken(application: application, deviceToken: deviceToken as NSData)
     }
 
-    //    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-    //        NotificationController.instance.didFailToRegisterForRemoteNotificationsWithError(application: application, error: error)
-    //}
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        NotificationController.instance.didFailToRegisterForRemoteNotificationsWithError(application: application, error: error)
+    }
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         /*
@@ -390,9 +383,5 @@ extension AppDelegate {
     func disableAnimations(state: Bool) {
         UIView.setAnimationsEnabled(!state)
         UIApplication.shared.keyWindow!.layer.speed = state ? 100.0 : 1.0
-    }
-
-    func logLevel(level: DDLogLevel) {
-        LOG_LEVEL = level
     }
 }

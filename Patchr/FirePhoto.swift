@@ -8,7 +8,7 @@
 
 import Foundation
 
-class FirePhoto: NSObject {
+class FirePhoto: NSObject, DictionaryConvertible {
     
     var filename: String?
     var width: Int?
@@ -16,12 +16,22 @@ class FirePhoto: NSObject {
     var source: String?
     var takenAt: Int?
     
-    static func setPropertiesFromDictionary(dictionary: NSDictionary, onObject photo: FirePhoto) -> FirePhoto {
-        photo.filename = dictionary["filename"] as? String
-        photo.source = dictionary["source"] as? String
-        photo.width = dictionary["width"] as? Int
-        photo.height = dictionary["height"] as? Int
-        photo.takenAt = dictionary["taken_at"] as? Int        
-        return photo
+    required convenience init?(dict: [String: Any], id: String?) {
+        self.init()
+        self.filename = dict["filename"] as? String
+        self.source = dict["source"] as? String
+        self.width = dict["width"] as? Int
+        self.height = dict["height"] as? Int
+        self.takenAt = dict["taken_at"] as? Int
+    }
+    
+    internal var dict: [String : Any] {
+        return [
+            "filename": self.filename,
+            "source": self.source,
+            "width": self.width,
+            "height": self.height,
+            "taken_at": self.takenAt
+        ]
     }
 }

@@ -51,8 +51,11 @@
 		8468F81F1A9D09D1007D6EE6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8468F8211A9D09D1007D6EE6 /* Localizable.strings */; };
 		84EF12AC1AA904700043EBBA /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84EF12AB1AA904700043EBBA /* Utils.swift */; };
 		8C35A717698E7A0B909FC6A7 /* Pods_PatchrShare.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8F2D0B82E3F8D83CE211D2E /* Pods_PatchrShare.framework */; };
+		9FDCC0B1FBF9425A99BD2185 /* FireChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCDE61C162E20DE3909AC /* FireChannel.swift */; };
 		9FDCC4E31D09C35191FA3624 /* PatchTableMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC5A08BC6B04C7EC67536 /* PatchTableMapViewController.swift */; };
+		9FDCC775425D3AEFD715E7C3 /* FireMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC985C0388C8C96A207CE /* FireMessage.swift */; };
 		9FDCC8F9EEEF77DEBE173AFA /* PhotoPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC06A84126B197626CEB2 /* PhotoPickerViewController.swift */; };
+		9FDCC8FD0E124B99BA23D71A /* FirePatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCC96E81DE7C49C64D3D9C /* FirePatch.swift */; };
 		9FDCCCC0113B14385C08DA41 /* MessageDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */; };
 		E20004DF1B094ACA00425694 /* PasswordEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */; };
 		E20004E11B099CBD00425694 /* PasswordResetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004E01B099CBD00425694 /* PasswordResetViewController.swift */; };
@@ -165,8 +168,8 @@
 		E2B471D21C22304300374F1F /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B471D11C22304300374F1F /* SearchViewController.swift */; };
 		E2B471D71C2231B700374F1F /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E2B471D31C22312A00374F1F /* DataModel.xcdatamodeld */; };
 		E2B471DA1C2612AD00374F1F /* AirToolButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B471D91C2612AD00374F1F /* AirToolButton.swift */; };
-		E2B756A51D84566000C102EC /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B756A41D84565F00C102EC /* NavigationController.swift */; };
-		E2B756A91D84600E00C102EC /* NavHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B756A81D84600E00C102EC /* NavHeaderView.swift */; };
+		E2B756A51D84566000C102EC /* DrawerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B756A41D84565F00C102EC /* DrawerController.swift */; };
+		E2B756A91D84600E00C102EC /* MainDrawerHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B756A81D84600E00C102EC /* MainDrawerHeaderView.swift */; };
 		E2B756AB1D8482EB00C102EC /* ChannelSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B756AA1D8482EB00C102EC /* ChannelSectionView.swift */; };
 		E2B8A4B41CE7818B00A28D3A /* CKRadialMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = E2B8A4B21CE7818B00A28D3A /* CKRadialMenu.m */; };
 		E2B8A4B61CE7875400A28D3A /* AirRadialMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8A4B51CE7875400A28D3A /* AirRadialMenu.swift */; };
@@ -183,6 +186,7 @@
 		E2CA0C351C4FFEAF00E2F380 /* build.sh in Resources */ = {isa = PBXBuildFile; fileRef = E2CA0C331C4FFEAF00E2F380 /* build.sh */; };
 		E2CA0C361C4FFEAF00E2F380 /* test.sh in Resources */ = {isa = PBXBuildFile; fileRef = E2CA0C341C4FFEAF00E2F380 /* test.sh */; };
 		E2CA16FD1DB8016500F99E1D /* FireController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CA16FC1DB8016500F99E1D /* FireController.swift */; };
+		E2CA16FF1DB95DDB00F99E1D /* FireAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CA16FE1DB95DDB00F99E1D /* FireAttachment.swift */; };
 		E2CC15A11C2C897800316356 /* WrapperTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CC15A01C2C897800316356 /* WrapperTableViewCell.swift */; };
 		E2CCAAE01B67CC0E0071170C /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CCAADF1B67CC0E0071170C /* NotificationController.swift */; };
 		E2CCAAE21B67EE2C0071170C /* chirp.caf in Resources */ = {isa = PBXBuildFile; fileRef = E2CCAAE11B67EE2C0071170C /* chirp.caf */; };
@@ -326,8 +330,11 @@
 		9FDCC06A84126B197626CEB2 /* PhotoPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PhotoPickerViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		9FDCC5A08BC6B04C7EC67536 /* PatchTableMapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PatchTableMapViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		9FDCC67342555A8E88594481 /* PatchrShare-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PatchrShare-Bridging-Header.h"; sourceTree = "<group>"; };
+		9FDCC96E81DE7C49C64D3D9C /* FirePatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirePatch.swift; sourceTree = "<group>"; };
+		9FDCC985C0388C8C96A207CE /* FireMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireMessage.swift; sourceTree = "<group>"; };
 		9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = MessageDetailViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		9FDCCD65EB714D83C5A818FE /* PatchrShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = file.entitlements; path = PatchrShare.entitlements; sourceTree = "<group>"; };
+		9FDCCDE61C162E20DE3909AC /* FireChannel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireChannel.swift; sourceTree = "<group>"; };
 		A1F9EE0FA6DBB46F1B1D440D /* Pods-PatchrShare.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PatchrShare.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PatchrShare/Pods-PatchrShare.debug.xcconfig"; sourceTree = "<group>"; };
 		E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PasswordEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E20004E01B099CBD00425694 /* PasswordResetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PasswordResetViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -442,8 +449,8 @@
 		E2B471D41C22312A00374F1F /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		E2B471D51C22312A00374F1F /* v1.0.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = v1.0.0.xcdatamodel; sourceTree = "<group>"; };
 		E2B471D91C2612AD00374F1F /* AirToolButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirToolButton.swift; sourceTree = "<group>"; };
-		E2B756A41D84565F00C102EC /* NavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
-		E2B756A81D84600E00C102EC /* NavHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = NavHeaderView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		E2B756A41D84565F00C102EC /* DrawerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawerController.swift; sourceTree = "<group>"; };
+		E2B756A81D84600E00C102EC /* MainDrawerHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = MainDrawerHeaderView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2B756AA1D8482EB00C102EC /* ChannelSectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelSectionView.swift; sourceTree = "<group>"; };
 		E2B8A4B21CE7818B00A28D3A /* CKRadialMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CKRadialMenu.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		E2B8A4B31CE7818B00A28D3A /* CKRadialMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CKRadialMenu.h; sourceTree = "<group>"; };
@@ -461,6 +468,7 @@
 		E2CA0C331C4FFEAF00E2F380 /* build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = SOURCE_ROOT; };
 		E2CA0C341C4FFEAF00E2F380 /* test.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test.sh; sourceTree = SOURCE_ROOT; };
 		E2CA16FC1DB8016500F99E1D /* FireController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireController.swift; sourceTree = "<group>"; };
+		E2CA16FE1DB95DDB00F99E1D /* FireAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireAttachment.swift; sourceTree = "<group>"; };
 		E2CC15A01C2C897800316356 /* WrapperTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WrapperTableViewCell.swift; sourceTree = "<group>"; };
 		E2CCAADF1B67CC0E0071170C /* NotificationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NotificationController.swift; path = Patchr/NotificationController.swift; sourceTree = "<group>"; };
 		E2CCAAE11B67EE2C0071170C /* chirp.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = chirp.caf; sourceTree = "<group>"; };
@@ -606,9 +614,13 @@
 				7DC1763C1ACDFF010051BA6C /* Link.h */,
 				7DC1763D1ACDFF010051BA6C /* Link.m */,
 				E2D569AE1BF3F45C001CCE58 /* Location.swift */,
-				E29A921B1DB1988A00B27093 /* FireUser.swift */,
-				E29A921D1DB19A2600B27093 /* FireProfile.swift */,
+				E2CA16FE1DB95DDB00F99E1D /* FireAttachment.swift */,
+				9FDCCDE61C162E20DE3909AC /* FireChannel.swift */,
+				9FDCC985C0388C8C96A207CE /* FireMessage.swift */,
+				9FDCC96E81DE7C49C64D3D9C /* FirePatch.swift */,
 				E29A921F1DB19A3C00B27093 /* FirePhoto.swift */,
+				E29A921D1DB19A2600B27093 /* FireProfile.swift */,
+				E29A921B1DB1988A00B27093 /* FireUser.swift */,
 				7D3F26CF1A76F77E0015F8E8 /* Location.h */,
 				7D3F26D01A76F77E0015F8E8 /* Location.m */,
 				7DB6E0F61A8174E90017A42F /* Message.h */,
@@ -726,7 +738,7 @@
 				E2B756AA1D8482EB00C102EC /* ChannelSectionView.swift */,
 				E2FA133D1D8220DD0057F287 /* MenuItemView.swift */,
 				E29A4CD91BD077520059D5B9 /* MessageView.swift */,
-				E2B756A81D84600E00C102EC /* NavHeaderView.swift */,
+				E2B756A81D84600E00C102EC /* MainDrawerHeaderView.swift */,
 				E29A4CD71BCF25220059D5B9 /* NotificationView.swift */,
 				E2F85C6B1C302F3400FC2364 /* PatchDetailView.swift */,
 				E256B4251BD2C9E200EBF894 /* PatchView.swift */,
@@ -745,7 +757,6 @@
 			children = (
 				7DA730951A71B962008C25FA /* BaseTableViewController.swift */,
 				E227294A1CEA743600913041 /* GalleryGridViewController.swift */,
-				E2B756A41D84565F00C102EC /* NavigationController.swift */,
 				7D40B9411A7864A000F9954C /* NotificationsTableViewController.swift */,
 				7D9651931AAFBD02000C5718 /* PatchTableViewController.swift */,
 				9FDCC06A84126B197626CEB2 /* PhotoPickerViewController.swift */,
@@ -927,6 +938,7 @@
 			children = (
 				E2D12A7A1C091C4D00DE507E /* BaseViewController.swift */,
 				844D6E341AA4D01200EE71ED /* DevelopmentViewController.swift */,
+				E2B756A41D84565F00C102EC /* DrawerController.swift */,
 				E2BFB7F01CE6189500F4B962 /* GalleryBrowser.swift */,
 				E29730651C16295300B9433B /* InviteViewController.swift */,
 				E2D12A801C0A52D700DE507E /* LobbyViewController.swift */,
@@ -1108,6 +1120,9 @@
 								enabled = 1;
 							};
 							com.apple.Keychain = {
+								enabled = 1;
+							};
+							com.apple.Push = {
 								enabled = 1;
 							};
 							com.apple.SafariKeychain = {
@@ -1456,7 +1471,7 @@
 				E2D12A831C0A58F000DE507E /* AirLabelTitle.swift in Sources */,
 				7DE975EE1AA7F72400C1ECE9 /* ModelUtilities.m in Sources */,
 				7DA7308E1A71ACC9008C25FA /* _ServiceObject.m in Sources */,
-				E2B756A51D84566000C102EC /* NavigationController.swift in Sources */,
+				E2B756A51D84566000C102EC /* DrawerController.swift in Sources */,
 				E227708D1C46C01800866733 /* MBProgressHUD+MBProgressHudAccessible.m in Sources */,
 				E2D12A791C08FA0E00DE507E /* AirLinkButton.swift in Sources */,
 				E2C0D92F1B6BD55200E28CE9 /* TTTAttributedLabel.m in Sources */,
@@ -1495,7 +1510,7 @@
 				E2D12A771C08F9CE00DE507E /* AirFeaturedButton.swift in Sources */,
 				E2D25DC81B23892000E51461 /* UserController.swift in Sources */,
 				E256B4261BD2C9E200EBF894 /* PatchView.swift in Sources */,
-				E2B756A91D84600E00C102EC /* NavHeaderView.swift in Sources */,
+				E2B756A91D84600E00C102EC /* MainDrawerHeaderView.swift in Sources */,
 				E29A921C1DB1988A00B27093 /* FireUser.swift in Sources */,
 				E2B471DA1C2612AD00374F1F /* AirToolButton.swift in Sources */,
 				E29730661C16295300B9433B /* InviteViewController.swift in Sources */,
@@ -1504,6 +1519,7 @@
 				E25327B21B0FCE9C00990A81 /* Constants.swift in Sources */,
 				E29A92201DB19A3C00B27093 /* FirePhoto.swift in Sources */,
 				84EF12AC1AA904700043EBBA /* Utils.swift in Sources */,
+				E2CA16FF1DB95DDB00F99E1D /* FireAttachment.swift in Sources */,
 				E23C01111CE4F771009C56B2 /* CaptionView.swift in Sources */,
 				E29F654F1B61A0780000BEF4 /* OneShotLocationManager.swift in Sources */,
 				7D3F26D31A76F77E0015F8E8 /* _Location.m in Sources */,
@@ -1538,6 +1554,9 @@
 				9FDCC8F9EEEF77DEBE173AFA /* PhotoPickerViewController.swift in Sources */,
 				9FDCC4E31D09C35191FA3624 /* PatchTableMapViewController.swift in Sources */,
 				E227294D1CEA7D0600913041 /* GalleryViewCell.swift in Sources */,
+				9FDCC8FD0E124B99BA23D71A /* FirePatch.swift in Sources */,
+				9FDCC0B1FBF9425A99BD2185 /* FireChannel.swift in Sources */,
+				9FDCC775425D3AEFD715E7C3 /* FireMessage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1636,6 +1655,7 @@
 				PRODUCT_NAME = Patchr;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				VALID_ARCHS = "arm64 armv7 armv7s";
 			};
 			name = Debug;
@@ -1678,6 +1698,7 @@
 				PRODUCT_NAME = Patchr;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 3.0;
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = "arm64 armv7 armv7s";
 			};
@@ -1704,7 +1725,6 @@
 				);
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				INFOPLIST_FILE = Patchr/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
@@ -1836,10 +1856,6 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_BITCODE = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/PatchrShare/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
@@ -1946,6 +1962,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = Patchr;
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 3.0;
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = "arm64 armv7 armv7s";
 			};

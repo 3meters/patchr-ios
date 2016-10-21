@@ -7,15 +7,13 @@
 //
 
 import Foundation
-import CocoaLumberjack
 import Bugsnag
+import SwiftyBeaver
 
 struct Log {
 	static func v(_ message: String, breadcrumb: Bool = false) {
         #if DEBUG
-			if LOG_LEVEL.rawValue >= DDLogLevel.verbose.rawValue {
-				DDLogVerbose(message)
-			}
+            SwiftyBeaver.self.verbose(message)
         #endif
 		if breadcrumb {
 			Log.breadcrumb(message: message);
@@ -24,9 +22,7 @@ struct Log {
 	
     static func d(_ message: String, breadcrumb: Bool = false) {
         #if DEBUG
-			if LOG_LEVEL.rawValue >= DDLogLevel.debug.rawValue {
-				DDLogDebug(message)
-			}
+            SwiftyBeaver.self.debug(message)
         #endif
 		if breadcrumb {
 			Log.breadcrumb(message: message);
@@ -34,27 +30,21 @@ struct Log {
     }
 	
     static func i(_ message: String, breadcrumb: Bool = false) {
-		if LOG_LEVEL.rawValue >= DDLogLevel.info.rawValue {
-			DDLogInfo(message)
-		}
+        SwiftyBeaver.self.info(message)
 		if breadcrumb {
 			Log.breadcrumb(message: message);
 		}
     }
 	
     static func w(_ message: String, breadcrumb: Bool = false) {
-		if LOG_LEVEL.rawValue >= DDLogLevel.warning.rawValue {
-			DDLogWarn(message)
-		}
+        SwiftyBeaver.self.warning(message)
 		if breadcrumb {
 			Log.breadcrumb(message: message);
 		}
     }
 	
 	static func e(_ message: String, breadcrumb: Bool = false) {
-		if LOG_LEVEL.rawValue >= DDLogLevel.error.rawValue {
-			DDLogError(message)
-		}
+        SwiftyBeaver.self.error(message)
 		if breadcrumb {
 			Log.breadcrumb(message: message);
 		}

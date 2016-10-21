@@ -129,14 +129,14 @@ class LobbyViewController: BaseViewController {
 		self.buttonLogin.setTitleColor(Theme.colorTint, for: .highlighted)
 		self.buttonLogin.borderColor = Colors.white
 		self.buttonLogin.borderWidth = Theme.dimenButtonBorderWidth
-		self.buttonLogin.cornerRadius = Theme.dimenButtonCornerRadius
+		self.buttonLogin.cornerRadius = Int(Theme.dimenButtonCornerRadius)
 		
 		self.buttonSignup.setTitle("SIGN UP", for: .normal)
 		self.buttonSignup.setTitleColor(Colors.white, for: .normal)
 		self.buttonSignup.setTitleColor(Theme.colorTint, for: .highlighted)
 		self.buttonSignup.borderColor = Colors.white
 		self.buttonSignup.borderWidth = Theme.dimenButtonBorderWidth
-		self.buttonSignup.cornerRadius = Theme.dimenButtonCornerRadius
+		self.buttonSignup.cornerRadius = Int(Theme.dimenButtonCornerRadius)
 		
 		self.buttonGroup.addSubview(self.buttonLogin)
 		self.buttonGroup.addSubview(self.buttonSignup)

@@ -9,7 +9,8 @@
 import Foundation
 import FirebaseAuth
 
-class FireUser: NSObject {
+
+class FireUser: NSObject, DictionaryConvertible {
     
     var id: String!
     var createdAt: Int?
@@ -17,22 +18,29 @@ class FireUser: NSObject {
     var username: String?
     var profile: FireProfile?
     
-    convenience init(id: String) {
+    required convenience init?(dict: [String: Any], id: String?) {
+        guard let id = id else { return nil }
         self.init()
         self.id = id
-    }
-    
-    override init() {
-        super.init()
-    }
-    
-    static func setPropertiesFromDictionary(dictionary: NSDictionary, onObject user: FireUser) -> FireUser {
-        user.createdAt = dictionary["created_at"] as? Int
-        user.modifiedAt = dictionary["modified_at"] as? Int
-        user.username = dictionary["username"] as? String
-        if let profileMap = dictionary["profile"] as? NSDictionary {
-            user.profile = FireProfile.setPropertiesFromDictionary(dictionary: profileMap, onObject: FireProfile())
+        self.createdAt = dict["created_at"] as? Int
+        self.modifiedAt = dict["modified_at"] as? Int
+        self.username = dict["username"] as? String
+        if (dict["profile"] as? NSDictionary) != nil {
+            self.profile = FireProfile(dict: dict["profile"] as! [String: Any], id: nil)
         }
-        return user
     }
+    
+    internal var dict: [String : Any] {
+        return [
+            "created_at": self.createdAt,
+            "modified_at": self.modifiedAt,
+            "username": self.username,
+            "profile": self.profile?.dict
+        ]
+    }
+}
+
+protocol DictionaryConvertible {
+    init?(dict: [String: Any], id: String?)
+    var dict: [String: Any] { get }
 }

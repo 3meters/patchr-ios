@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import CocoaLumberjack
 import MessageUI
 
 let Device                          = UIDevice.current
@@ -40,7 +39,6 @@ let NAMESPACE						= "com.3meters.patchr.ios."
 let CELL_IDENTIFIER                 = "cell"
 let COGNITO_POOLID                  = "us-east-1:ff1976dc-9c27-4046-a59f-7dd43355869b"
 
-var LOG_LEVEL                       = DDLogLevel.all
 var LOG_TIMERS						= false
 var MailComposer					: MFMailComposeViewController? = MFMailComposeViewController()
 

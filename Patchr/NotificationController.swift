@@ -96,7 +96,7 @@ class NotificationController: NSObject {
         Log.d("Success registering for remote notifications")
     }
 
-    func didFailToRegisterForRemoteNotificationsWithError(application: UIApplication, error: NSError) {
+    func didFailToRegisterForRemoteNotificationsWithError(application: UIApplication, error: Error) {
         Log.w("Failed to register for remote notifications: \(error)")
     }
 

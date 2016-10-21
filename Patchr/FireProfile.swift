@@ -8,22 +8,38 @@
 
 import Foundation
 
-class FireProfile: NSObject {
+class FireProfile: NSObject, DictionaryConvertible {
     
     var email: String?
     var firstName: String?
     var lastName: String?
     var fullName: String?
+    var phone: String?
+    var skype: String?
     var photo: FirePhoto?
     
-    static func setPropertiesFromDictionary(dictionary: NSDictionary, onObject profile: FireProfile) -> FireProfile {
-        profile.email = dictionary["email"] as? String
-        profile.firstName = dictionary["first_name"] as? String
-        profile.lastName = dictionary["last_name"] as? String
-        profile.fullName = dictionary["full_name"] as? String
-        if let photoMap = dictionary["photo"] as? NSDictionary {
-            profile.photo = FirePhoto.setPropertiesFromDictionary(dictionary: photoMap, onObject: FirePhoto())
+    required convenience init?(dict: [String: Any], id: String?) {
+        self.init()
+        self.email = dict["email"] as? String
+        self.firstName = dict["first_name"] as? String
+        self.lastName = dict["last_name"] as? String
+        self.fullName = dict["full_name"] as? String
+        self.phone = dict["phone"] as? String
+        self.skype = dict["skype"] as? String
+        if (dict["photo"] as? NSDictionary) != nil {
+            self.photo = FirePhoto(dict: dict["photo"] as! [String: Any], id: nil)
         }
-        return profile
+    }
+    
+    internal var dict: [String: Any] {
+        return [
+            "email": self.email,
+            "first_name": self.firstName,
+            "last_name": self.lastName,
+            "full_name": self.fullName,
+            "phone": self.phone,
+            "skype": self.skype,
+            "photo": self.photo?.dict
+        ]
     }
 }
