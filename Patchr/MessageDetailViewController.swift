@@ -50,7 +50,7 @@ class MessageDetailViewController: BaseViewController {
 	var patchPhoto		= AirImageButton()
 	
 	var userGroup		= UIView()
-	var userPhoto		= UserPhotoView()
+	var userPhoto		= PhotoView()
 	var userName		= AirLinkButton()
 	
 	var messageGroup	= UIView()

@@ -8,11 +8,14 @@
 
 import Foundation
 import FirebaseAuth
+import Firebase
+import FirebaseDatabase
 
-
-class FireMessage: NSObject, DictionaryConvertible {
+class FireMessage: NSObject {
     
-    var id: String!
+    static let path = "/channel-messages"
+    
+    var id: String?
     var channel: String?
     var event: String?
     var text: String?
@@ -21,6 +24,25 @@ class FireMessage: NSObject, DictionaryConvertible {
     var createdBy: String?
     var modifiedAt: Int?
     var modifiedBy: String?
+    
+    var pathInstance: String {
+        return "\(FireMessage.path)/\(self.channel!)/\(self.id!)"
+    }
+    
+    @discardableResult static func observe(id: String, channelId: String, eventType: FIRDataEventType, with block: @escaping (FIRDataSnapshot) -> Swift.Void) -> UInt {
+        let db = FIRDatabase.database().reference()
+        return db.child("\(FireMessage.path)/\(channelId)/\(id)").observe(eventType, with: block)
+    }
+    
+    @discardableResult func observe(eventType: FIRDataEventType, with block: @escaping (FIRDataSnapshot) -> Swift.Void) -> UInt {
+        let db = FIRDatabase.database().reference()
+        return db.child(pathInstance).observe(eventType, with: block)
+    }
+    
+    func removeObserver(withHandle handle: UInt) {
+        let db = FIRDatabase.database().reference()
+        db.removeObserver(withHandle: handle)
+    }
     
     required convenience init?(dict: [String: Any], id: String?) {
         guard let id = id else { return nil }

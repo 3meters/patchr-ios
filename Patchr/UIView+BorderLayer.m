@@ -20,7 +20,7 @@
     [self.layer setBorderWidth:borderWidth];
 }
 
--(void)setCornerRadius:(NSInteger)cornerRadius{
+-(void)setCornerRadius:(CGFloat)cornerRadius{
     [self.layer setCornerRadius:cornerRadius];
 }
 

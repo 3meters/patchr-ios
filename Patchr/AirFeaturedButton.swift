@@ -29,7 +29,7 @@ class AirFeaturedButton: UIButton {
 		self.backgroundColor = Theme.colorButtonFillFeatured
 		self.borderColor = Theme.colorButtonBorderFeatured
 		self.borderWidth = Theme.dimenButtonBorderWidth
-		self.cornerRadius = Int(Theme.dimenButtonCornerRadius)
+		self.cornerRadius = Theme.dimenButtonCornerRadius
 		
 		self.layer.masksToBounds = false
 		self.layer.shadowColor = Colors.black.cgColor

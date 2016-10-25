@@ -55,7 +55,7 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
     var addressField		= AirContactPicker()
     var addressLabel		= AirLabelDisplay()
 
-    var userPhoto			= UserPhotoView()
+    var userPhoto			= PhotoView()
     var userName			= AirLabelDisplay()
     var descriptionField	= AirTextView()
     var photoView			= PhotoEditView()

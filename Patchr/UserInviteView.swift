@@ -12,7 +12,7 @@ class UserInviteView: BaseDetailView {
 	
 	var message				= AirLabelDisplay()
 	var member				= AirLabelDisplay()
-	var photo				= UserPhotoView()
+	var photo				= PhotoView()
 	var joinButton			= AirFeaturedButton()
 	var loginButton			= AirLinkButton()
 	var signupButton		= AirLinkButton()

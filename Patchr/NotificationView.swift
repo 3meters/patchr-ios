@@ -15,7 +15,7 @@ class NotificationView: BaseView {
 	var photo			: AirImageView?
 	var hasPhoto		= false
 	
-	var userPhoto		= UserPhotoView()
+	var userPhoto		= PhotoView()
 	var iconImageView	= UIImageView(frame: CGRect.zero)
 	var ageDot			= UIView()
 	var createdDate		= AirLabelDisplay()

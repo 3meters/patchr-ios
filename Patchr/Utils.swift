@@ -114,13 +114,16 @@ struct Utils {
         return imageKey
     }
 	
-	static func initialsFromName(fullname: String) -> String {
+    static func initialsFromName(fullname: String, count: Int? = 2) -> String {
         let words: [String] = fullname.components(separatedBy: " ")
 		var initials = ""
 		for word in words {
 			if !word.isEmpty {
                 let initial = String(word.characters.prefix(1)).uppercased()
 				initials.append(initial)
+                if initials.length >= count! {
+                    break
+                }
 			}
 		}
 		return initials.length > 2 ? initials[0...1] : initials
@@ -133,7 +136,7 @@ struct Utils {
         }
         return total
 	}
-	
+    
 	static func randomColor(seed: Int?) -> UIColor {
         if seed != nil {
             srand48(seed!)

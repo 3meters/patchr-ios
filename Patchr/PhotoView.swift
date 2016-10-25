@@ -9,15 +9,23 @@
 import UIKit
 import SDWebImage
 
-class UserPhotoView: UIControl {
+@IBDesignable
+class PhotoView: UIControl {
 
-	var name		= AirLabelDisplay()
-	var photo		= AirImageView(frame: CGRect.zero)
-	
-	init() {
-		super.init(frame: CGRect.zero)
-		initialize()
-	}
+    var name = AirLabelDisplay()
+	var photo = AirImageView(frame: CGRect.zero)
+    
+    @IBInspectable var initialsCount: Int = 2
+    @IBInspectable var rounded: Bool = true {
+        didSet {
+            self.layer.cornerRadius = self.rounded ? self.width() * 0.5 : self.radius
+        }
+    }
+    @IBInspectable var radius: CGFloat = 0 {
+        didSet {
+            self.layer.cornerRadius = self.radius
+        }
+    }
 	
 	override init(frame: CGRect) {
 		/* Called when instantiated from code */
@@ -26,7 +34,9 @@ class UserPhotoView: UIControl {
 	}
 	
 	required init?(coder aDecoder: NSCoder) {
-		fatalError("This view should never be loaded from storyboard")
+        /* Called when instantiated from nib/storyboard */
+        super.init(coder: aDecoder)
+        initialize()
 	}
 	
 	func initialize() {
@@ -43,17 +53,24 @@ class UserPhotoView: UIControl {
 		self.name.textAlignment = .center
 
 		self.addSubview(self.photo)
-		self.addSubview(self.name)
+        self.addSubview(self.name)
 	}
-	
+    
+    override func prepareForInterfaceBuilder() {
+        super.prepareForInterfaceBuilder()
+        self.backgroundColor = Colors.accentColorLight
+        self.name.isHidden = true
+        let bundle = Bundle(for: PhotoView.self)
+        self.photo.image = UIImage(named: "imgDummyUser", in: bundle, compatibleWith: self.traitCollection)
+    }
+    
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		
-		self.layer.cornerRadius = self.width() * 0.5
+        self.layer.cornerRadius = self.rounded ? self.width() * 0.5 : self.radius
 		self.photo.fillSuperview()
 		self.name.fillSuperview()
 	}
-	
+    
 	func bindToEntity(entity: Entity!) {
 		if entity != nil {
 			if entity.photo != nil {
@@ -122,9 +139,9 @@ class UserPhotoView: UIControl {
 			)
 		}
 		else if name != nil {
-			self.name.text = Utils.initialsFromName(fullname: name!).uppercased()
+            self.name.text = Utils.initialsFromName(fullname: name!, count: self.initialsCount).uppercased()
 			let seed = Utils.numberFromName(fullname: name!)
-			self.backgroundColor = Utils.randomColor(seed: seed)
+			self.backgroundColor = ColorArray.randomColor(seed: seed)
 		}
 	}
 }

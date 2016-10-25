@@ -8,28 +8,56 @@
 
 import Foundation
 import FirebaseAuth
+import Firebase
+import FirebaseDatabase
 
-
-class FireChannel: NSObject, DictionaryConvertible {
+class FireChannel: NSObject {
     
-    var id: String!
+    static let path = "/patch-channels"
+    
+    var id: String?
     var name: String?
-    var patch: String?
+    var group: String?
     var photo: FirePhoto?
     var purpose: String?
     var type: String?
     var visibility: String?
     var isGeneral: Bool?
     var isDefault: Bool?
+    var isArchived: Bool?
     var createdAt: Int?
     var createdBy: String?
     
+    /* Link properties for the current user */
+    var favorite: Bool?
+    var muted: Bool?
+    var archived: Bool?
+
+    var pathInstance: String {
+        return "\(FireChannel.path)/\(self.group!)/\(self.id!)"
+    }
+    
+    @discardableResult static func observe(id: String, groupId: String, eventType: FIRDataEventType, with block: @escaping (FIRDataSnapshot) -> Swift.Void) -> UInt {
+        let db = FIRDatabase.database().reference()
+        return db.child("\(FireChannel.path)/\(groupId)/\(id)").observe(eventType, with: block)
+    }
+    
+    @discardableResult func observe(eventType: FIRDataEventType, with block: @escaping (FIRDataSnapshot) -> Swift.Void) -> UInt {
+        let db = FIRDatabase.database().reference()
+        return db.child(pathInstance).observe(eventType, with: block)
+    }
+    
+    func removeObserver(withHandle handle: UInt) {
+        let db = FIRDatabase.database().reference()
+        db.removeObserver(withHandle: handle)
+    }
+
     required convenience init?(dict: [String: Any], id: String?) {
         guard let id = id else { return nil }
         self.init()
         self.id = id
         self.name = dict["name"] as? String
-        self.patch = dict["patch"] as? String
+        self.group = dict["group"] as? String
         if (dict["photo"] as? NSDictionary) != nil {
             self.photo = FirePhoto(dict: dict["photo"] as! [String: Any], id: nil)
         }
@@ -38,6 +66,7 @@ class FireChannel: NSObject, DictionaryConvertible {
         self.visibility = dict["visibility"] as? String
         self.isDefault = dict["is_default"] as? Bool
         self.isGeneral = dict["is_general"] as? Bool
+        self.isArchived = dict["is_archived"] as? Bool
         self.createdAt = dict["created_at"] as? Int
         self.createdBy = dict["created_by"] as? String
     }
@@ -52,8 +81,15 @@ class FireChannel: NSObject, DictionaryConvertible {
             "visibility": self.visibility,
             "is_general": self.isGeneral,
             "is_default": self.isDefault,
+            "is_archived": self.isArchived,
             "created_at": self.createdAt,
             "created_by": self.name
         ]
+    }
+    
+    func membershipFrom(dict: [String: Any]) {
+        self.favorite = dict["favorite"] as? Bool
+        self.muted = dict["muted"] as? Bool
+        self.archived = dict["archived"] as? Bool
     }
 }

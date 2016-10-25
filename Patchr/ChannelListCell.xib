@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11201" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="FontAwesome.otf">
+            <string>FontAwesome</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="27" id="LTM-Mi-qV7" customClass="ChannelListCell" customModule="Patchr" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="389" height="36"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="LTM-Mi-qV7" id="f05-yI-zfl">
+                <frame key="frameInset" width="389" height="35"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="massena-time-really-long" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="meX-Hb-lPU">
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="K45-sW-jLW"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="16"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0lE-lf-n5O">
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="UTT-s1-iBq"/>
+                            <constraint firstAttribute="width" constant="20" id="rV3-Tn-vST"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="FontAwesome" family="FontAwesome" pointSize="17"/>
+                        <color key="textColor" red="1" green="0.71764705880000002" blue="0.30196078430000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="0lE-lf-n5O" firstAttribute="centerY" secondItem="meX-Hb-lPU" secondAttribute="centerY" id="Bcd-Fw-D02"/>
+                    <constraint firstItem="0lE-lf-n5O" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="f05-yI-zfl" secondAttribute="trailing" constant="-16" id="RQs-aL-rks"/>
+                    <constraint firstItem="meX-Hb-lPU" firstAttribute="centerY" secondItem="f05-yI-zfl" secondAttribute="centerY" id="cQP-vA-dnP"/>
+                    <constraint firstItem="0lE-lf-n5O" firstAttribute="leading" secondItem="meX-Hb-lPU" secondAttribute="trailing" constant="8" id="obg-p6-ztw"/>
+                    <constraint firstItem="meX-Hb-lPU" firstAttribute="leading" secondItem="f05-yI-zfl" secondAttribute="leading" constant="16" id="tSq-yH-5Ib"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="icon" destination="0lE-lf-n5O" id="YKo-W7-lcQ"/>
+                <outlet property="title" destination="meX-Hb-lPU" id="KkB-OH-HdK"/>
+            </connections>
+            <point key="canvasLocation" x="-188.5" y="-215"/>
+        </tableViewCell>
+    </objects>
+</document>

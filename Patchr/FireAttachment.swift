@@ -8,7 +8,7 @@
 
 import Foundation
 
-class FireAttachment: NSObject, DictionaryConvertible {
+class FireAttachment: NSObject {
     
     var title: String?
     var photo: FirePhoto?

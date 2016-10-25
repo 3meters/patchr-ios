@@ -12,7 +12,7 @@ import IDMPhotoBrowser
 class CaptionView: IDMCaptionView {
 	
 	var userName		= AirLabelDisplay()
-	var userPhoto		= UserPhotoView()
+	var userPhoto		= PhotoView()
 	var createdDate		= AirLabelDisplay()
 	var caption			= AirLabelDisplay()
 	var likeButton		= AirLikeButton(frame: CGRect.zero)

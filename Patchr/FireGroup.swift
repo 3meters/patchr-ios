@@ -8,11 +8,14 @@
 
 import Foundation
 import FirebaseAuth
+import Firebase
+import FirebaseDatabase
 
-
-class FirePatch: NSObject, DictionaryConvertible {
+class FireGroup: NSObject {
     
-    var id: String!
+    static let path = "/groups"
+    
+    var id: String?
     var name: String?
     var title: String?
     var desc: String?
@@ -22,6 +25,32 @@ class FirePatch: NSObject, DictionaryConvertible {
     var createdBy: String?
     var modifiedAt: Int?
     var modifiedBy: String?
+    
+    /* Link properties for the current user */
+    var isDisabled: Bool?
+    var role: String?
+    var notifications: String?
+    var hideEmail: Bool?
+    var joinedAt: Int?
+    
+    var pathInstance: String {
+        return "\(FireGroup.path)/\(self.id!)"
+    }
+    
+    @discardableResult static func observe(id: String, eventType: FIRDataEventType, with block: @escaping (FIRDataSnapshot) -> Swift.Void) -> UInt {
+        let db = FIRDatabase.database().reference()
+        return db.child("\(FireGroup.path)/\(id)").observe(eventType, with: block)
+    }
+    
+    @discardableResult func observe(eventType: FIRDataEventType, with block: @escaping (FIRDataSnapshot) -> Swift.Void) -> UInt {
+        let db = FIRDatabase.database().reference()
+        return db.child(pathInstance).observe(eventType, with: block)
+    }
+    
+    func removeObserver(withHandle handle: UInt) {
+        let db = FIRDatabase.database().reference()
+        db.removeObserver(withHandle: handle)
+    }
     
     required convenience init?(dict: [String: Any], id: String?) {
         guard let id = id else { return nil }
@@ -52,5 +81,13 @@ class FirePatch: NSObject, DictionaryConvertible {
             "modified at": self.modifiedAt,
             "modified_by": self.modifiedBy
         ]
+    }
+    
+    func membershipFrom(dict: [String: Any]) {
+        self.isDisabled = dict["is_disabled"] as? Bool
+        self.role = dict["role"] as? String
+        self.notifications = dict["notifications"] as? String
+        self.hideEmail = dict["hide_email"] as? Bool
+        self.joinedAt = dict["joined_at"] as? Int
     }
 }

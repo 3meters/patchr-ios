@@ -96,10 +96,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
             Reporting.track("Launched for First Time")
         }
         
-        let log = SwiftyBeaver.self
-        let console = ConsoleDestination()
-        log.addDestination(console)
-
+        Log.prepare()
         Log.i("Patchr launching...")
 
         /* Turn on network activity indicator */
@@ -228,15 +225,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
             SlideMenuOptions.animationDuration = CGFloat(0.2)
             SlideMenuOptions.simultaneousGestureRecognizers = false
             
-            let menuController = SideMenuViewController()
-            let navigationController = DrawerController()
-            navigationController.filter = PatchListFilter.Watching
+            let rightController = SideMenuViewController()
+            let leftController = ChannelPickerController()
             let mainController = PatchDetailViewController()
-            mainController.entityId = "pa.150820.00499.464.259239"
-            let mainNavController = AirNavigationController(rootViewController: mainController)
             
-            let drawerController = SlideMenuController(mainViewController: mainNavController, leftMenuViewController: navigationController, rightMenuViewController: menuController)
-            //let drawerController = NavigationDrawerController(rootViewController: mainNavController, leftViewController: navigationController, rightViewController: menuController)
+            mainController.entityId = "pa.150820.00499.464.259239"
+            
+            let leftNavController = AirNavigationController(rootViewController: leftController)
+            let mainNavController = AirNavigationController(rootViewController: mainController)
+            leftNavController.setNavigationBarHidden(true, animated: false)
+            
+            let drawerController = SlideMenuController(mainViewController: mainNavController, leftMenuViewController: leftNavController, rightMenuViewController: rightController)
             self.window?.setRootViewController(rootViewController: drawerController, animated: true)
         }
         else {

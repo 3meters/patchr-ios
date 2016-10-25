@@ -28,7 +28,7 @@ class PasswordResetViewController: BaseEditViewController {
     var emailField      = AirTextField()
 
     var userName        = AirLabel()
-    var userPhoto       = UserPhotoView()
+    var userPhoto       = PhotoView()
     var passwordField   = AirTextField()
     var hideShowButton  = AirHideShowButton()
 

@@ -12,7 +12,7 @@ class UserView: BaseView {
 
 	var titleGroup		= UIView()
 	var name			= AirLinkButton()
-	var photo			= UserPhotoView()
+	var photo			= PhotoView()
 	var area			= UILabel()
 	var owner			= UILabel()
 	

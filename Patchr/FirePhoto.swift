@@ -8,7 +8,7 @@
 
 import Foundation
 
-class FirePhoto: NSObject, DictionaryConvertible {
+class FirePhoto: NSObject {
     
     var filename: String?
     var width: Int?

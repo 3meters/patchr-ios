@@ -10,9 +10,10 @@ import Lockbox
 import Branch
 import Firebase
 import FirebaseAuth
+import RxSwift
 
 class UserController: NSObject {
-
+    
     static let instance = UserController()
 
     let lockbox = Lockbox(keyPrefix: KEYCHAIN_GROUP)
@@ -24,6 +25,9 @@ class UserController: NSObject {
 
     private var jsonUser: String?
     private var jsonSession: String?
+    
+    var currentPatchId = Variable<String?>(nil)
+    var currentChannelId = Variable<String?>(nil)
 
     var authenticated: Bool {
         return (self.userId != nil && self.sessionKey != nil)
@@ -41,6 +45,21 @@ class UserController: NSObject {
         self.jsonUser = userDefaults.string(forKey: PatchrUserDefaultKey(subKey: "user"))
         self.jsonSession = self.lockbox?.unarchiveObject(forKey: "session") as? String
         self.sessionKey = self.lockbox?.unarchiveObject(forKey: "sessionKey") as? String
+        
+        if let currentPatchId = UserDefaults.standard.string(forKey: "patchId") {
+            self.currentPatchId.value = currentPatchId
+        }
+        if let currentChannelId = UserDefaults.standard.string(forKey: "channelId") {
+            self.currentChannelId.value = currentChannelId
+        }
+        
+        _ = self.currentPatchId.asObservable().subscribe(onNext: { patchId in
+            UserDefaults.standard.set(patchId!, forKey: "patchId")
+        })
+        
+        _ = self.currentChannelId.asObservable().subscribe(onNext: { channelId in
+            UserDefaults.standard.set(channelId!, forKey: "channelId")
+        })
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -200,4 +219,10 @@ class UserController: NSObject {
     }
     
     func warmup() {}
+    
+    /*--------------------------------------------------------------------------------------------
+     * Functions
+     *--------------------------------------------------------------------------------------------*/
+    
+
 }

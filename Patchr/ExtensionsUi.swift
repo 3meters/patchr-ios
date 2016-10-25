@@ -56,7 +56,7 @@ extension UIAlertController {
 	}
 }
 
-extension UIView {
+public extension UIView {
 	
     func fadeIn(duration: TimeInterval = 0.3, delay: TimeInterval = 0.0, alpha: CGFloat = 1.0, completion: @escaping ((Bool) -> Void) = {(finished: Bool) -> Void in}) {
         if self.alpha != alpha {
@@ -174,6 +174,10 @@ extension UIView {
 			self.disableRecursivelyAllSubviews(view: subview)
 		}
 	}
+    
+    class func fromNib<T : UIView>() -> T {
+        return Bundle.main.loadNibNamed(String(describing: T.self), owner: nil, options: nil)![0] as! T
+    }
 }
 
 extension UIWindow {

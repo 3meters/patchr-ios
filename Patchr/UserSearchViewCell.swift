@@ -12,7 +12,7 @@ class UserSearchViewCell: UITableViewCell {
 
 	var title			= AirLabelDisplay()
 	var subtitle		= AirLabelDisplay()
-	var photo			= UserPhotoView()
+	var photo			= PhotoView()
 
 	override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
 		super.init(style: style, reuseIdentifier: reuseIdentifier)

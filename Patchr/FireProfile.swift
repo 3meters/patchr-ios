@@ -8,7 +8,7 @@
 
 import Foundation
 
-class FireProfile: NSObject, DictionaryConvertible {
+class FireProfile: NSObject {
     
     var email: String?
     var firstName: String?

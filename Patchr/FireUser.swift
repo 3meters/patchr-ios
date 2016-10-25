@@ -8,15 +8,37 @@
 
 import Foundation
 import FirebaseAuth
+import Firebase
+import FirebaseDatabase
 
+class FireUser: NSObject {
 
-class FireUser: NSObject, DictionaryConvertible {
-    
-    var id: String!
+    static let path = "/users"
+
+    var id: String?
     var createdAt: Int?
     var modifiedAt: Int?
     var username: String?
     var profile: FireProfile?
+    
+    var pathInstance: String {
+        return "\(FireUser.path)/\(self.id!)"
+    }
+    
+    @discardableResult static func observe(id: String, eventType: FIRDataEventType, with block: @escaping (FIRDataSnapshot) -> Swift.Void) -> UInt {
+        let db = FIRDatabase.database().reference()
+        return db.child("\(FireUser.path)/\(id)").observe(eventType, with: block)
+    }
+    
+    @discardableResult func observe(eventType: FIRDataEventType, with block: @escaping (FIRDataSnapshot) -> Swift.Void) -> UInt {
+        let db = FIRDatabase.database().reference()
+        return db.child(pathInstance).observe(eventType, with: block)
+    }
+    
+    func removeObserver(withHandle handle: UInt) {
+        let db = FIRDatabase.database().reference()
+        db.removeObserver(withHandle: handle)
+    }
     
     required convenience init?(dict: [String: Any], id: String?) {
         guard let id = id else { return nil }
@@ -38,9 +60,4 @@ class FireUser: NSObject, DictionaryConvertible {
             "profile": self.profile?.dict
         ]
     }
-}
-
-protocol DictionaryConvertible {
-    init?(dict: [String: Any], id: String?)
-    var dict: [String: Any] { get }
 }

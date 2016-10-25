@@ -10,7 +10,20 @@ import Foundation
 import Bugsnag
 import SwiftyBeaver
 
-struct Log {
+class Log {
+    
+    static func prepare() {
+        let log = SwiftyBeaver.self
+        let console = ConsoleDestination()
+        console.format = "$Dyyyy-MM-dd HH:mm:ss.SSS$d $T $L: $M"
+        console.levelString.verbose = "⚪️ VERBOSE"
+        console.levelString.debug = "💙 DEBUG  "
+        console.levelString.info = "💚 INFO   "
+        console.levelString.warning = "💛 WARNING"
+        console.levelString.error = "❤️ ERROR  "
+        log.addDestination(console)
+    }
+    
 	static func v(_ message: String, breadcrumb: Bool = false) {
         #if DEBUG
             SwiftyBeaver.self.verbose(message)

@@ -19,7 +19,7 @@ class MessageView: BaseView {
 	
 	var patchName		= AirLabelDisplay()
 	var userName		= AirLabelDisplay()
-	var userPhoto		= UserPhotoView()
+	var userPhoto		= PhotoView()
 	var createdDate		= AirLabelDisplay()
 
 	var recipientsGroup = UIView()

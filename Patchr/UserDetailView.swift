@@ -11,7 +11,7 @@ import UIKit
 class UserDetailView: BaseDetailView {
 
 	var name           = AirLabelTitle()
-	var photo          = UserPhotoView()
+	var photo          = PhotoView()
     var username       = UILabel()
 	var rule           = UIView()
 	var userGroup      = UIView()
