@@ -15,12 +15,12 @@ class Log {
     static func prepare() {
         let log = SwiftyBeaver.self
         let console = ConsoleDestination()
-        console.format = "$Dyyyy-MM-dd HH:mm:ss.SSS$d $T $L: $M"
-        console.levelString.verbose = "⚪️ VERBOSE"
-        console.levelString.debug = "💙 DEBUG  "
-        console.levelString.info = "💚 INFO   "
-        console.levelString.warning = "💛 WARNING"
-        console.levelString.error = "❤️ ERROR  "
+        console.format = "$Dyyyy-MM-dd HH:mm:ss.SSS$d $T $C$L$c: $M"
+        console.levelString.verbose = " VERBOSE"
+        console.levelString.debug   = " DEBUG  "
+        console.levelString.info    = " INFO   "
+        console.levelString.warning = " WARNING"
+        console.levelString.error   = " ERROR  "
         log.addDestination(console)
     }
     

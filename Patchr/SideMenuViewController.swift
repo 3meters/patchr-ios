@@ -16,6 +16,8 @@ import FirebaseDatabase
 
 class SideMenuViewController: UITableViewController {
 
+    let db = FIRDatabase.database().reference()
+
     var menuHeader: UserHeaderView!
     var inviteCell: WrapperTableViewCell?
     var membersCell: WrapperTableViewCell?
@@ -93,7 +95,7 @@ class SideMenuViewController: UITableViewController {
     }
     
     func bind(authUser: FIRUser) {
-        FireController.instance.observe(path: "users/\(authUser.uid)", eventType: .value, with:{ snap in
+        self.db.child("users/\(authUser.uid)").observe(.value, with: { snap in
             if let user = FireUser(dict: snap.value as! [String: Any], id: authUser.uid) {
                 self.menuHeader.bindToUser(user: user)
                 self.menuHeader.setNeedsLayout()

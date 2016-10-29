@@ -83,10 +83,10 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 			self.emptyLabel.layer.cornerRadius = 80
             self.emptyLabel.titleLabel!.font = Theme.fontTextDisplay
             self.emptyLabel.titleLabel!.numberOfLines = 0
-			self.emptyLabel.titleLabel!.textAlignment = NSTextAlignment.center
 			self.emptyLabel.titleEdgeInsets = UIEdgeInsetsMake(16, 16, 16, 16)
+            self.emptyLabel.titleLabel!.textAlignment = NSTextAlignment.center
+            self.emptyLabel.setTitleColor(Theme.colorTextPlaceholder, for: .normal)
 			self.emptyLabel.setTitle(self.emptyMessage, for: .normal)
-			self.emptyLabel.setTitleColor(Theme.colorTextPlaceholder, for: .normal)
 
             self.tableView.addSubview(self.emptyLabel)
         }
@@ -454,17 +454,6 @@ class BaseTableViewController: UITableViewController, NSFetchedResultsController
 			let cell = WrapperTableViewCell(view: view, padding: self.itemPadding, reuseIdentifier: "cell")
 			return cell
 		}
-		else if self.listType == .Messages {
-			let view = MessageView()
-			let cell = WrapperTableViewCell(view: view, padding: self.itemPadding, reuseIdentifier: "cell")
-			if view.description_ != nil && !(view.description_ is TTTAttributedLabel) {
-				let label = view.description_ as! TTTAttributedLabel
-				label.delegate = self
-			}
-			view.photo?.isUserInteractionEnabled = true
-			view.photo?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(photoAction(sender:))))
-			return cell
-		}
 		else if self.listType == .Patches {
             let view = ChannelView(frame: CGRect(x:0, y:0, width:self.view.width(), height:40))
 			let cell = WrapperTableViewCell(view: view, padding: self.itemPadding, reuseIdentifier: "cell")
@@ -492,11 +481,6 @@ extension BaseTableViewController {
 		if self.listType == .Notifications {
 			let notificationView = cell.view! as! NotificationView
 			notificationView.bindToEntity(entity: entity, location: nil)
-		}
-		
-		if self.listType == .Messages {
-			let messageView = cell.view! as! MessageView
-			messageView.bindToEntity(entity: entity, location: nil)
 		}
 		
 		if self.listType == .Patches {

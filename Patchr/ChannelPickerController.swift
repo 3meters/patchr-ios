@@ -10,15 +10,16 @@ import Firebase
 import FirebaseAuth
 import FirebaseDatabaseUI
 import RxSwift
+import Material
 
 class ChannelPickerController: UIViewController, UITableViewDelegate {
 
     let db = FIRDatabase.database().reference()
-    
-    var channelsHeaderView: ChannelsHeaderView!
-    var channelsTableView = UITableView(frame: CGRect.zero, style: .plain)
-    var channelsTableViewDataSource: FirebaseTableViewDataSource!
-    var channelsFooterView = AirLinkButton()
+    var groupId: String!
+    var headerView: ChannelsHeaderView!
+    var tableView = AirTableView(frame: CGRect.zero, style: .plain)
+    var tableViewDataSource: FirebaseTableViewDataSource!
+    var footerView = AirLinkButton()
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -26,18 +27,22 @@ class ChannelPickerController: UIViewController, UITableViewDelegate {
 
     override func loadView() {
         super.loadView()
+        guard self.groupId != nil else {
+            fatalError("Channel picker cannot be launched without a groupId")
+        }
         initialize()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        bind()
     }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        self.channelsHeaderView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 72)
-        self.channelsFooterView.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 48)
-        self.channelsTableView.alignBetweenTop(self.channelsHeaderView, andBottom: self.channelsFooterView, centeredWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
+        self.headerView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 72)
+        self.footerView.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 48)
+        self.tableView.alignBetweenTop(self.headerView, andBottom: self.footerView, centeredWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -54,17 +59,29 @@ class ChannelPickerController: UIViewController, UITableViewDelegate {
     }
     
     func switchAction(sender: AnyObject?) {
-        let controller = PatchPickerController()
+        let controller = GroupPickerController()
         controller.modalPresentationStyle = .overCurrentContext
         if let nav = self.slideMenuController()?.leftViewController as? UINavigationController {
            nav.present(controller, animated: true, completion: nil)
         }
     }
-
+    
     /*--------------------------------------------------------------------------------------------
     * Notifications
     *--------------------------------------------------------------------------------------------*/
 
+    func groupChanged(notification: NSNotification) {
+        let groupId = notification.userInfo?["groupId"] as? String
+        if groupId != nil {
+            self.groupId = groupId
+            bind()
+        }
+        else {
+            self.tableView.dataSource = nil
+            self.tableView.reloadData()
+        }
+    }
+    
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
@@ -73,46 +90,47 @@ class ChannelPickerController: UIViewController, UITableViewDelegate {
         
         self.view.backgroundColor = UIColor.white
         
-        self.channelsHeaderView = Bundle.main.loadNibNamed("ChannelsHeaderView", owner: nil, options: nil)?.first as? ChannelsHeaderView
-        self.channelsHeaderView.switchButton?.addTarget(self, action: #selector(ChannelPickerController.switchAction(sender:)), for: .touchUpInside)
+        self.headerView = Bundle.main.loadNibNamed("ChannelsHeaderView", owner: nil, options: nil)?.first as? ChannelsHeaderView
+        self.headerView.switchButton?.addTarget(self, action: #selector(ChannelPickerController.switchAction(sender:)), for: .touchUpInside)
         
-        self.channelsFooterView.setTitle("Add channel", for: .normal)
-        self.channelsFooterView.setImage(UIImage(named: "imgAddLight"), for: .normal)
-        self.channelsFooterView.imageView!.contentMode = UIViewContentMode.scaleAspectFit
-        self.channelsFooterView.imageView?.tintColor = Colors.brandColorDark
-        self.channelsFooterView.imageEdgeInsets = UIEdgeInsetsMake(6, 4, 6, 24)
-        self.channelsFooterView.contentHorizontalAlignment = .center
-        self.channelsFooterView.backgroundColor = Colors.gray95pcntColor
-        self.channelsFooterView.addTarget(self, action: #selector(ChannelPickerController.addAction(sender:)), for: .touchUpInside)
+        self.footerView.setTitle("Add channel", for: .normal)
+        self.footerView.setImage(UIImage(named: "imgAddLight"), for: .normal)
+        self.footerView.imageView!.contentMode = UIViewContentMode.scaleAspectFit
+        self.footerView.imageView?.tintColor = Colors.brandColorDark
+        self.footerView.imageEdgeInsets = UIEdgeInsetsMake(6, 4, 6, 24)
+        self.footerView.contentHorizontalAlignment = .center
+        self.footerView.backgroundColor = Colors.gray95pcntColor
+        self.footerView.addTarget(self, action: #selector(ChannelPickerController.addAction(sender:)), for: .touchUpInside)
         
-        self.channelsTableView.backgroundColor = Theme.colorBackgroundEmptyBubble
-        self.channelsTableView.delegate = self
-        self.channelsTableView.separatorStyle = .none
+        self.tableView.backgroundColor = Theme.colorBackgroundEmptyBubble
+        self.tableView.delegate = self
+        self.tableView.separatorStyle = .none
         
-        _ = UserController.instance.currentPatchId.asObservable().subscribe(onNext: { [unowned self] (groupId: String?) in
-            self.bind(groupId: groupId! as String, userId: FIRAuth.auth()!.currentUser!.uid)
-        })
+        self.view.addSubview(self.headerView)
+        self.view.addSubview(self.tableView)
+        self.view.addSubview(self.footerView)
         
-        self.view.addSubview(self.channelsHeaderView)
-        self.view.addSubview(self.channelsTableView)
-        self.view.addSubview(self.channelsFooterView)
+        NotificationCenter.default.addObserver(self, selector: #selector(ChannelPickerController.groupChanged(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidChange), object: nil)
     }
     
-    func bind(groupId: String, userId: String) {
+    func bind() {
         
-        self.channelsHeaderView.observe(groupId: groupId)
+        let userId = FIRAuth.auth()!.currentUser!.uid
         
-        self.channelsTableView.dataSource = nil
-        self.channelsTableView.reloadData()
+        self.headerView.observe(groupId: self.groupId!)
         
-        let ref = self.db.child("member-channels/\(userId)/\(groupId)")
+        self.tableView.dataSource = nil
+        self.tableView.reloadData()
         
-        self.channelsTableViewDataSource = FirebaseTableViewDataSource(ref: ref
+        let path = "member-channels/\(userId)/\(self.groupId!)"
+        let ref = self.db.child(path)
+        
+        self.tableViewDataSource = FirebaseTableViewDataSource(ref: ref
             , nibNamed: "ChannelListCell"
             , cellReuseIdentifier: "ChannelViewCell"
-            , view: self.channelsTableView)
+            , view: self.tableView)
         
-        self.channelsTableViewDataSource.populateCell { (cell, data) in
+        self.tableViewDataSource.populateCell { (cell, data) in
             
             let snap = data as! FIRDataSnapshot
             let cell = cell as! ChannelListCell
@@ -120,12 +138,14 @@ class ChannelPickerController: UIViewController, UITableViewDelegate {
             let channelId = snap.key
             let link = snap.value as! [String: Any]
             
+            cell.backgroundColor = Colors.white
             cell.title?.textColor = Theme.colorText
-            if channelId == UserController.instance.currentChannelId.value {
-                cell.title?.textColor = Colors.accentColorTextLight
+            if channelId == MainController.instance.channelId {
+                cell.backgroundColor = Color.orange.lighten5
+                //cell.title?.textColor = Colors.white
             }
-            
-            let ref = self.db.child("group-channels/\(groupId)/\(channelId)")
+            let path = "group-channels/\(self.groupId!)/\(channelId)"
+            let ref = self.db.child(path)
             ref.observeSingleEvent(of: .value, with: { snap in
                 if let channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key) {
                     channel.membershipFrom(dict: link)
@@ -134,20 +154,14 @@ class ChannelPickerController: UIViewController, UITableViewDelegate {
             })
         }
         
-        self.channelsTableView.dataSource = self.channelsTableViewDataSource
+        self.tableView.dataSource = self.tableViewDataSource
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let cell = tableView.cellForRow(at: indexPath) as! ChannelListCell
-        UserController.instance.currentChannelId.value = cell.channel.id
-        
-        /* Switch channels */
-        let mainController = PatchDetailViewController()
-        mainController.entityId = "pa.150820.00499.464.259239"
-        let mainNavController = AirNavigationController(rootViewController: mainController)
-        self.slideMenuController()?.changeMainViewController(mainNavController, close: true)
-        
+        MainController.instance.setChannelId(channelId: cell.channel.id)
+        self.slideMenuController()?.closeLeft()
         tableView.reloadData()
     }
     

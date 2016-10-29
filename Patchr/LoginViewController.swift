@@ -300,7 +300,7 @@ class LoginViewController: BaseEditViewController {
             }
         }
         else {
-            AppDelegate.appDelegate().routeForRoot()
+            MainController.instance.route()
             if UserController.instance.userName != nil {
                 UIShared.Toast(message: "Logged in as \(UserController.instance.userName!)")
             }

@@ -54,5 +54,5 @@ class ReachabilityManager: NSObject {
         return self.reach.isReachableViaWiFi
     }
     
-    func warmup() {}
+    func prepare() {}
 }

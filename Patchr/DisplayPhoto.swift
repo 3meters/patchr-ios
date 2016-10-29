@@ -11,6 +11,37 @@ class DisplayPhoto: IDMPhoto {
 	var userLikes			= false
 	var userLikesId			: String?
 	var size				: CGSize?
+    
+    static func fromMessage(message: FireMessage) -> DisplayPhoto {
+        
+        let displayPhoto = DisplayPhoto()
+        
+        displayPhoto.caption = message.text
+        displayPhoto.entityId = message.id
+        
+        if let photo = message.attachments?.first?.photo {
+            displayPhoto.photoURL = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) as URL!
+            if photo.width != nil && photo.height != nil {
+                displayPhoto.size = CGSize(width: CGFloat(photo.width!), height: CGFloat(photo.height!))
+            }
+        }
+        
+        let createdDate = NSDate(timeIntervalSince1970: Double(message.createdAt!) / 1000)
+        displayPhoto.createdDateValue = createdDate as Date
+        displayPhoto.createdDateLabel = UIShared.timeAgoShort(date: createdDate)
+        
+        if let creator = message.creator {
+            displayPhoto.creatorName = creator.username
+            if let userPhoto = creator.profile?.photo {
+                displayPhoto.creatorUrl = PhotoUtils.url(prefix: userPhoto.filename, source: userPhoto.source, category: SizeCategory.profile)! as URL
+            }
+        }
+        
+//        displayPhoto.userLikes = entity.userLikesValue
+//        displayPhoto.userLikesId = entity.userLikesId
+        
+        return displayPhoto
+    }
 	
 	static func fromEntity(entity: Entity) -> DisplayPhoto {
 		
@@ -36,44 +67,12 @@ class DisplayPhoto: IDMPhoto {
 		if let creator = entity.creator {
 			displayPhoto.creatorName = creator.name
 			if let userPhoto = creator.photo{
-				displayPhoto.creatorUrl = PhotoUtils.url(prefix: userPhoto.prefix, source: userPhoto.source, category: SizeCategory.profile) as URL
+				displayPhoto.creatorUrl = PhotoUtils.url(prefix: userPhoto.prefix, source: userPhoto.source, category: SizeCategory.profile)! as URL
 			}
 		}
 		
 		displayPhoto.userLikes = entity.userLikesValue
 		displayPhoto.userLikesId = entity.userLikesId
-		
-		return displayPhoto
-	}
-	
-	static func fromMap(map: [String: AnyObject]) -> DisplayPhoto {
-		
-		let displayPhoto = DisplayPhoto()
-		
-		displayPhoto.caption = map["description"] as? String
-		displayPhoto.entityId = map["_id"] as? String
-		
-		if let photoMap = map["photo"] as? [String: AnyObject] {
-			displayPhoto.photoURL = PhotoUtils.url(prefix: photoMap["prefix"] as! String, source: photoMap["source"] as! String, category: SizeCategory.standard) as URL!
-		}
-		
-		if let createdDate = map["createdDate"] as? Int {
-			displayPhoto.createdDateValue = NSDate(timeIntervalSince1970: TimeInterval(createdDate / 1000)) as Date
-			displayPhoto.createdDateLabel = UIShared.timeAgoShort(date: displayPhoto.createdDateValue! as NSDate)
-		}		
-		
-		if let creatorMap = map["creator"] as? [String: AnyObject] {
-			displayPhoto.creatorName = creatorMap["name"] as? String
-			if let userPhotoMap = creatorMap["photo"] as? [String: AnyObject] {
-				displayPhoto.creatorUrl = PhotoUtils.url(prefix: userPhotoMap["prefix"] as! String, source: userPhotoMap["source"] as! String, category: SizeCategory.profile) as URL
-			}
-		}
-		
-		if let linksArray = map["links"] as? [[String: AnyObject]] , linksArray.count > 0 {
-			var linkMap = linksArray[0]
-			if let type = linkMap["type"] as? String , type == "like" {
-			}
-		}
 		
 		return displayPhoto
 	}

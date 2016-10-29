@@ -123,53 +123,6 @@ class GalleryGridViewController: UICollectionViewController {
 		self.navigationItem.rightBarButtonItems = [cancelButton]
 	}
 	
-	func loadPhotos() {
-		
-		guard !self.processing else {
-			return
-		}
-		
-		self.processing = true
-		
-		DataController.instance.backgroundOperationQueue.addOperation {
-			
-			DataController.proxibase.fetchPhotosForPatch(patchId: self.entityId!, limit: self.pageSize, skip: self.virtualSize) {
-				response, error in
-				
-				if ServerError(error) == nil {
-					let dataWrapper = ServiceData()
-					if let dictionary = response as? [String:AnyObject] {
-						ServiceData.setPropertiesFrom(dictionary, onObject: dataWrapper)
-						if let maps = dataWrapper.data as? [[String: AnyObject]] {
-							for map in maps {
-								let displayPhoto = DisplayPhoto.fromMap(map: map)
-								self.displayPhotos[displayPhoto.entityId!] = displayPhoto
-							}
-						}
-						self.morePhotos = dataWrapper.moreValue
-						self.virtualSize += self.pageSize
-					}
-				}
-				
-				OperationQueue.main.addOperation {
-					
-					if let error = ServerError(error) {
-						self.handleError(error)
-					}
-					else {
-						if self.displayPhotos.count > 0 {
-							/* Stub */
-						}
-						else {
-							UIShared.Toast(message: "No photos yet", controller: self, addToWindow: false)
-						}
-					}
-					self.processing = false
-				}
-			}
-		}
-	}
-	
     func imageForIndexPath(indexPath: NSIndexPath) -> DisplayPhoto? {
 		if indexPath.row > self.displayPhotosArray!.count - 1 {
 			return nil

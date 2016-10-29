@@ -67,7 +67,7 @@ class MessageDetailViewController: BaseViewController {
 	var shareFrame		= AirButton()
 	var recipientsLabel = AirLabelDisplay()
 	var recipients		= AirLabelDisplay()
-	var messageView		: MessageView?
+//	var messageView		: MessageView?
 	var patchView		: PatchView?
 	var emptyView		: AirLabelDisplay?
 
@@ -138,10 +138,6 @@ class MessageDetailViewController: BaseViewController {
 				if message.patch != nil {
 					self.shareFrame.anchorTopCenterFillingWidth(withLeftAndRightPadding: 16, topPadding: 12, height: 128)
 					self.patchView!.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 128)
-				}
-				else if message.message != nil {
-					self.shareFrame.anchorTopCenterFillingWidth(withLeftAndRightPadding: 16, topPadding: 12, height: self.messageView!.height() + 8)
-					self.messageView!.anchorTopCenterFillingWidth(withLeftAndRightPadding: 12, topPadding: 8, height: self.messageView!.height())
 				}
 				else {
 					self.shareFrame.anchorTopCenterFillingWidth(withLeftAndRightPadding: 16, topPadding: 12, height:128)
@@ -522,71 +518,18 @@ class MessageDetailViewController: BaseViewController {
 	
 	func bind() {
 		
-		self.scrollView.isHidden = false
-		
-        if self.isShare {
+		self.scrollView.isHidden = false		
 			
-			if self.inputMessage!.message != nil {
-				
-				self.messageView = MessageView()
-				self.messageView?.bindToEntity(entity: self.inputMessage!.message!, location: nil)
-				
-				/* Resize once here because sizing in viewWillLayoutSubviews causes recursion */
-				let viewWidth = min(CONTENT_WIDTH_MAX, self.view.bounds.size.width)
-				let contentWidth = CGFloat(viewWidth - 32)
-				self.messageView!.bounds.size.width = contentWidth - 24
-				self.messageView!.sizeToFit()
-				self.messageView?.clipsToBounds = false
-				self.shareFrame.addSubview(self.messageView!)
-				self.shareFrame.addTarget(self, action: #selector(MessageDetailViewController.shareBrowseAction(sender:)), for: UIControlEvents.touchUpInside)
-				self.shareFrame.addTarget(self, action: #selector(MessageDetailViewController.buttonTouchDownAction(sender:)), for: UIControlEvents.touchDown)
-				UIView.disableAllSubviewsOf(view: self.shareFrame)
-			}
-			else if self.inputMessage!.patch != nil {
-				
-                self.patchView = PatchView(frame: CGRect(x:0, y:0, width:self.view.width(), height:136))
-				self.patchView!.bindToEntity(entity: self.inputMessage!.patch!, location: nil)
-				self.patchView!.shadow.isHidden = true
-				self.patchView?.name.textColor = Colors.brandColor
-				self.shareFrame.addSubview(self.patchView!)
-				self.shareFrame.addTarget(self, action: #selector(MessageDetailViewController.shareBrowseAction(sender:)), for: UIControlEvents.touchUpInside)
-				self.shareFrame.addTarget(self, action: #selector(MessageDetailViewController.buttonTouchDownAction(sender:)), for: UIControlEvents.touchDown)
-				UIView.disableAllSubviewsOf(view: self.shareFrame)
-			}
-			else {
-				/*
-				 * The target of the share message has been deleted'
-				 */
-				self.emptyView = AirLabelDisplay()
-				self.emptyView!.text = "Deleted"
-				self.emptyView!.textAlignment = .center
-				self.emptyView!.textColor = Colors.white
-				self.shareFrame.borderColor = Theme.colorBackgroundWindow
-				self.shareFrame.backgroundColor = Theme.colorBackgroundWindow
-				self.shareFrame.addSubview(self.emptyView!)
-			}
-
-			self.recipients.text = ""
-			if self.inputMessage?.recipients != nil {
-				for recipient in self.inputMessage!.recipients as! Set<Shortcut> {
-					self.recipients.text!.append("\(recipient.name), ")
-				}
-				self.recipients.text = String(self.recipients.text!.characters.dropLast(2))
-			}
-        }
-        else {
-			
-            /* Patch */
-            if self.inputMessage!.patch != nil {
-				if let photo = self.inputMessage!.patch.photo {
-					self.patchPhoto.setImageWithPhoto(photo: photo)
-				}
-				else if let name = self.inputMessage!.patch.name {
-					let seed = Utils.numberFromName(fullname: name)
-					self.photo.backgroundColor = Utils.randomColor(seed: seed)
-				}
-                self.patchName.setTitle(self.inputMessage!.patch.name, for: .normal)
+        /* Patch */
+        if self.inputMessage!.patch != nil {
+            if let photo = self.inputMessage!.patch.photo {
+                self.patchPhoto.setImageWithPhoto(photo: photo)
             }
+            else if let name = self.inputMessage!.patch.name {
+                let seed = Utils.numberFromName(fullname: name)
+                self.photo.backgroundColor = Utils.randomColor(seed: seed)
+            }
+            self.patchName.setTitle(self.inputMessage!.patch.name, for: .normal)
         }
 
 		/* Message */

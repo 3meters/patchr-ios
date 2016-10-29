@@ -26,9 +26,6 @@ class UserController: NSObject {
     private var jsonUser: String?
     private var jsonSession: String?
     
-    var currentPatchId = Variable<String?>(nil)
-    var currentChannelId = Variable<String?>(nil)
-
     var authenticated: Bool {
         return (self.userId != nil && self.sessionKey != nil)
     }
@@ -44,22 +41,7 @@ class UserController: NSObject {
         self.userId = userDefaults.string(forKey: PatchrUserDefaultKey(subKey: "userId"))
         self.jsonUser = userDefaults.string(forKey: PatchrUserDefaultKey(subKey: "user"))
         self.jsonSession = self.lockbox?.unarchiveObject(forKey: "session") as? String
-        self.sessionKey = self.lockbox?.unarchiveObject(forKey: "sessionKey") as? String
-        
-        if let currentPatchId = UserDefaults.standard.string(forKey: "patchId") {
-            self.currentPatchId.value = currentPatchId
-        }
-        if let currentChannelId = UserDefaults.standard.string(forKey: "channelId") {
-            self.currentChannelId.value = currentChannelId
-        }
-        
-        _ = self.currentPatchId.asObservable().subscribe(onNext: { patchId in
-            UserDefaults.standard.set(patchId!, forKey: "patchId")
-        })
-        
-        _ = self.currentChannelId.asObservable().subscribe(onNext: { channelId in
-            UserDefaults.standard.set(channelId!, forKey: "channelId")
-        })
+        self.sessionKey = self.lockbox?.unarchiveObject(forKey: "sessionKey") as? String        
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -187,7 +169,7 @@ class UserController: NSObject {
 
                 let navController = AirNavigationController()
                 navController.viewControllers = [LobbyViewController()]
-                AppDelegate.appDelegate().window!.setRootViewController(rootViewController: navController, animated: true)
+                MainController.instance.window!.setRootViewController(rootViewController: navController, animated: true)
             }
         }
     }
@@ -218,7 +200,7 @@ class UserController: NSObject {
         DataController.instance.reset()
     }
     
-    func warmup() {}
+    func prepare() {}
     
     /*--------------------------------------------------------------------------------------------
      * Functions

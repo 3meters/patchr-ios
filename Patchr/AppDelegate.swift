@@ -12,43 +12,25 @@ import AFNetworking
 import AFNetworkActivityLogger
 import AWSCore
 import Branch
-import iRate
-import MBProgressHUD
-import SlideMenuControllerSwift
 import Bugsnag
-import FirebaseRemoteConfig
 import Firebase
-import FirebaseAuth
-import FirebaseDatabase
-import SwiftyBeaver
+import FirebaseRemoteConfig
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var firstLaunch: Bool = false
     var backgroundSessionCompletionHandler: (() -> Void)?
-
-    class func appDelegate() -> AppDelegate {
-        return UIApplication.shared.delegate as! AppDelegate
-    }
-
-    override class func initialize() -> Void {
-        iRate.sharedInstance().verboseLogging = false
-        iRate.sharedInstance().daysUntilPrompt = 7
-        iRate.sharedInstance().usesUntilPrompt = 10
-        iRate.sharedInstance().remindPeriod = 1
-        iRate.sharedInstance().promptForNewVersionIfUserRated = true
-        iRate.sharedInstance().onlyPromptIfLatestVersion = true
-        iRate.sharedInstance().useUIAlertControllerIfAvailable = true
-        iRate.sharedInstance().promptAtLaunch = false
-    }
 
     /*--------------------------------------------------------------------------------------------
     * Delegate methods
     *--------------------------------------------------------------------------------------------*/
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+        
+        Log.prepare()
+        Log.i("Patchr launching...")
         
         /* Initialize Firebase */
         FIRApp.configure()
@@ -77,13 +59,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
         /* Initialize Bugsnag */
         Bugsnag.start(withApiKey: BUGSNAG_KEY)
         
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        
-        /* Instance the data controller */
-        DataController.instance.warmup()
-
-        iRate.sharedInstance().delegate = self
-
         #if DEBUG
         AFNetworkActivityLogger.shared().startLogging()
         AFNetworkActivityLogger.shared().level = AFHTTPRequestLoggerLevel.AFLoggerLevelFatal
@@ -96,39 +71,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
             Reporting.track("Launched for First Time")
         }
         
-        Log.prepare()
-        Log.i("Patchr launching...")
-
-        /* Turn on network activity indicator */
-        AFNetworkActivityIndicatorManager.shared().isEnabled = true
+        self.window = UIWindow(frame: UIScreen.main.bounds)
 
         /* Load setting defaults */
         let defaultSettingsFile: NSString = Bundle.main.path(forResource: "DefaultSettings", ofType: "plist")! as NSString
         let settingsDictionary: NSDictionary = NSDictionary(contentsOfFile: defaultSettingsFile as String)!
         UserDefaults.standard.register(defaults: settingsDictionary as! [String:AnyObject])
 
+        /* Instance the data controller */
+        DataController.instance.prepare()
+        
         /* Notifications */
         NotificationController.instance.initWithLaunchOptions(launchOptions: launchOptions as [NSObject : AnyObject]!)
 
         /* Instance the reachability manager */
-        ReachabilityManager.instance.warmup()
+        ReachabilityManager.instance.prepare()
         
         /* Start listening for auth changes */
-        UserController.instance.warmup()
+        UserController.instance.prepare()
+        
+        /* Setup master UI controller */
+        MainController.instance.prepare()
 
-        initUI()
-
-        let ref = FIRDatabase.database().reference()
-        ref.child("clients").child("ios").observeSingleEvent(of: .value, with: {
-            snapshot in
-            if let minVersion = snapshot.value as? Int {
-                if !UIShared.versionIsValid(versionMin: Int(minVersion)) {
-                    UIShared.compatibilityUpgrade()
-                }
-            }
-        })
-
-        routeForRoot()
+        /* Bootstrap UI */
+        MainController.instance.didLaunch()
 
         return true
     }
@@ -156,10 +122,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         /* Guard against becoming active without any UI */
-        if self.window?.rootViewController == nil {
+        if MainController.instance.window?.rootViewController == nil {
             Log.w("Patchr is becoming active without a root view controller, resetting to launch routing", breadcrumb: true)
-            initUI()
-            routeForRoot()
+            MainController.instance.prepare()
+            MainController.instance.route()
         }
     }
 
@@ -168,17 +134,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
             if controller is PhotoBrowser || controller is PhotoPreview {
                 return UIInterfaceOrientationMask.all;
             }
-            else {
-                return UIInterfaceOrientationMask.portrait;
-            }
         }
         return UIInterfaceOrientationMask.portrait;
     }
 
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
-        /*
-         * This is the initial entry point for universal links vs openURL for old school uri schemes.
-         */
+        /* This is the initial entry point for universal links vs openURL for old school uri schemes. */
         return Branch.getInstance().continue(userActivity) // Returns true if call was caused by a branch universal link
     }
 
@@ -197,85 +158,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
-
-    func initUI() {
-
-        /* Initialize Creative sdk: 25% of method time */
-        AdobeUXAuthManager.shared().setAuthenticationParametersWithClientID(PatchrKeys().creativeSdkClientId(), clientSecret: PatchrKeys().creativeSdkClientSecret(), enableSignUp: false)
-
-        /* Turn on status bar */
-        let statusBarHidden = UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "statusBarHidden"))    // Default = false, set in dev settings
-        UIApplication.shared.setStatusBarHidden(statusBarHidden, with: UIStatusBarAnimation.slide)
-
-        /* Global UI tweaks */
-        UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: Theme.fontBarText], for: UIControlState.normal)
-        self.window?.backgroundColor = Theme.colorBackgroundWindow
-        self.window?.tintColor = Theme.colorTint
-        UINavigationBar.appearance().tintColor = Theme.colorTint
-        UITabBar.appearance().tintColor = Theme.colorTabBarTint
-        UISwitch.appearance().onTintColor = Theme.colorTint
-    }
-
-    func routeForRoot() {
-
-        /* If we have an authenticated user then start at the usual spot, otherwise start at the lobby scene. */
-        if (FIRAuth.auth()?.currentUser) != nil {
-            SlideMenuOptions.leftViewWidth = NAVIGATION_DRAWER_WIDTH
-            SlideMenuOptions.rightViewWidth = SIDE_MENU_WIDTH
-            SlideMenuOptions.animationDuration = CGFloat(0.2)
-            SlideMenuOptions.simultaneousGestureRecognizers = false
-            
-            let rightController = SideMenuViewController()
-            let leftController = ChannelPickerController()
-            let mainController = PatchDetailViewController()
-            
-            mainController.entityId = "pa.150820.00499.464.259239"
-            
-            let leftNavController = AirNavigationController(rootViewController: leftController)
-            let mainNavController = AirNavigationController(rootViewController: mainController)
-            leftNavController.setNavigationBarHidden(true, animated: false)
-            
-            let drawerController = SlideMenuController(mainViewController: mainNavController, leftMenuViewController: leftNavController, rightMenuViewController: rightController)
-            self.window?.setRootViewController(rootViewController: drawerController, animated: true)
-        }
-        else {
-            let controller = LobbyViewController()
-            let navController = AirNavigationController()
-            navController.viewControllers = [controller]
-            self.window?.setRootViewController(rootViewController: navController, animated: true)
-        }
-
-        self.window?.makeKeyAndVisible()
-    }
-
-    func routeDeepLink(params: NSDictionary?, error: NSError?) {
-
-        if let feature = params!["~feature"] as? String, feature == "reset_password" {
-            if let token = params!["token"] as? String {
-                /* Skip if we are already showing the reset screen */
-                if let topController = UIViewController.topMostViewController() as? PasswordResetViewController {
-                    if topController.inputToken == token {
-                        return
-                    }
-                }
-
-                let controller = PasswordResetViewController()
-                controller.inputToken = token
-                if let userName = params!["userName"] as? String {
-                    controller.inputUserName = userName.replacingOccurrences(of: "+", with: " ")
-                    if let userPhoto = params!["userPhoto"] as? String {
-                        controller.inputUserPhoto = userPhoto
-                    }
-                }
-
-                let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: controller, action: #selector(controller.cancelAction(sender:)))
-                controller.navigationItem.rightBarButtonItems = [cancelButton]
-                let navController = AirNavigationController()
-                navController.viewControllers = [controller]
-                UIViewController.topMostViewController()?.present(navController, animated: true, completion: nil)
-            }
-        }
-    }
 
     /*--------------------------------------------------------------------------------------------
     * Notifications
@@ -329,58 +211,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate, iRateDelegate {
         self.backgroundSessionCompletionHandler = completionHandler
         Log.d("handleEventsForBackgroundURLSession called")
         UIShared.Toast(message: "Message Posted!")
-    }
-}
-
-extension AppDelegate {
-    func iRateDidPromptForRating() {
-        Reporting.track("Prompted for Rating")
-    }
-
-    func iRateUserDidAttemptToRateApp() {
-        Reporting.track("Attempted to Rate")
-    }
-
-    func iRateUserDidDeclineToRateApp() {
-        Reporting.track("Declined to Rate")
-    }
-
-    func iRateUserDidRequestReminderToRateApp() {
-        Reporting.track("Requested Reminder to Rate")
-    }
-}
-
-extension AppDelegate {
-    /*
-     * Testing support
-     */
-    func resetToLobby() {
-        /*
-         * Client state is reset but service may still see the install as signed in.
-         * The service will still send notifications to the install based on the signed in user.
-         * We assume that if no authenticated user then we are at correct initial state.
-         */
-        UserController.instance.discardCredentials()
-        Reporting.updateUser(user: nil)
-        BranchProvider.logout()
-
-        UserDefaults.standard.set(nil, forKey: PatchrUserDefaultKey(subKey: "userEmail"))
-        UserController.instance.clearStore()
-        LocationController.instance.clearLastLocationAccepted()
-
-        if !(UIViewController.topMostViewController() is LobbyViewController) {
-            let navController = AirNavigationController()
-            navController.viewControllers = [LobbyViewController()]
-            self.window!.setRootViewController(rootViewController: navController, animated: true)
-        }
-    }
-
-    func resetToMain() {
-        routeForRoot()
-    }
-
-    func disableAnimations(state: Bool) {
-        UIView.setAnimationsEnabled(!state)
-        UIApplication.shared.keyWindow!.layer.speed = state ? 100.0 : 1.0
     }
 }

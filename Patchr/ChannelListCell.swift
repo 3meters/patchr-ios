@@ -13,7 +13,7 @@ import UIKit
 class ChannelListCell: UITableViewCell {
     
     @IBOutlet weak var title: UILabel?
-    @IBOutlet weak var icon: UILabel?
+    @IBOutlet weak var icon: UIImageView?
     
     var channel: FireChannel!
     

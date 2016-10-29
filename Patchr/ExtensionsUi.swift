@@ -297,7 +297,7 @@ extension UIViewController {
 			
 			let navController = AirNavigationController()
 			navController.viewControllers = [LobbyViewController()]
-			AppDelegate.appDelegate().window!.setRootViewController(rootViewController: navController, animated: true)
+			MainController.instance.window!.setRootViewController(rootViewController: navController, animated: true)
         }
         
         Log.w("Network Error Summary")

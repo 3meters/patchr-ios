@@ -20,17 +20,35 @@ class WrapperTableViewCell: UITableViewCell {
 		self.padding = padding
 		initialize()
 	}
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        initialize()
+    }
 	
 	required init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
+        initialize()
 	}
 	
 	func initialize() {
 		addSeparator()
+        
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = Theme.colorBackgroundSelected
+        self.selectedBackgroundView = backgroundView
+        self.selectionStyle = .default
+        
 		if self.view != nil {
 			self.contentView.addSubview(self.view!)
 		}
 	}
+    
+    func injectView(view: UIView, padding: UIEdgeInsets) {
+        self.view = view
+        self.padding = padding
+        self.contentView.addSubview(self.view!)
+    }
 	
 	override func layoutSubviews() {
 		

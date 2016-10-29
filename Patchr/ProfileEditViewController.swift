@@ -480,7 +480,7 @@ class ProfileEditViewController: BaseEditViewController {
 
                     let navController = AirNavigationController()
                     navController.viewControllers = [LobbyViewController()]
-                    AppDelegate.appDelegate().window!.setRootViewController(rootViewController: navController, animated: true)
+                    MainController.instance.window!.setRootViewController(rootViewController: navController, animated: true)
                     Reporting.track("Deleted User", properties: ["id": self.inputUser!.id_, "name": userName, "email": self.inputUser!.email])
                     UIShared.Toast(message: "User \(userName) erased", controller: navController)
                 }
@@ -510,7 +510,7 @@ class ProfileEditViewController: BaseEditViewController {
                 }
         }
         else {
-            AppDelegate.appDelegate().routeForRoot()
+            MainController.instance.route()
             if UserController.instance.userName != nil {
                 UIShared.Toast(message: "Logged in as \(UserController.instance.userName!)")
             }

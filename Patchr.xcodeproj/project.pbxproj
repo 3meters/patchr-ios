@@ -149,15 +149,17 @@
 		E28915931C5AD528005D7AA0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E28915921C5AD528005D7AA0 /* LaunchScreen.storyboard */; };
 		E28D565F1BB1849F00BFD433 /* ReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */; };
 		E28DB2921DBBF95D008B2E4B /* ChannelListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E28DB2911DBBF95D008B2E4B /* ChannelListCell.xib */; };
-		E28DB2941DBBFA1C008B2E4B /* PatchListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28DB2931DBBFA1C008B2E4B /* PatchListCell.swift */; };
+		E28DB2941DBBFA1C008B2E4B /* GroupListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28DB2931DBBFA1C008B2E4B /* GroupListCell.swift */; };
 		E297305A1C135BFA00B9433B /* PatchEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29730591C135BFA00B9433B /* PatchEditViewController.swift */; };
 		E297305C1C13644800B9433B /* AirTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305B1C13644800B9433B /* AirTextView.swift */; };
 		E297305E1C136E8300B9433B /* AirRadioButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305D1C136E8300B9433B /* AirRadioButton.swift */; };
 		E29730601C14A7BC00B9433B /* AirSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305F1C14A7BC00B9433B /* AirSearchField.swift */; };
 		E29730641C15090300B9433B /* AirRuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29730631C15090300B9433B /* AirRuleView.swift */; };
 		E29730661C16295300B9433B /* InviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29730651C16295300B9433B /* InviteViewController.swift */; };
+		E2999EE31DC25AAE005C69D8 /* EmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2999EE21DC25AAE005C69D8 /* EmptyViewController.swift */; };
+		E2999EE51DC2CD3B005C69D8 /* FirePhotoBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2999EE41DC2CD3B005C69D8 /* FirePhotoBrowser.swift */; };
 		E29A4CD81BCF25220059D5B9 /* NotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A4CD71BCF25220059D5B9 /* NotificationView.swift */; };
-		E29A4CDA1BD077520059D5B9 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A4CD91BD077520059D5B9 /* MessageView.swift */; };
+		E29A4CDA1BD077520059D5B9 /* MessageViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A4CD91BD077520059D5B9 /* MessageViewCell.swift */; };
 		E29A921A1DB1859E00B27093 /* UserHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A92191DB1859E00B27093 /* UserHeaderView.swift */; };
 		E29A921C1DB1988A00B27093 /* FireUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A921B1DB1988A00B27093 /* FireUser.swift */; };
 		E29A921E1DB19A2600B27093 /* FireProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A921D1DB19A2600B27093 /* FireProfile.swift */; };
@@ -194,7 +196,7 @@
 		E2C7C5CB1B2CF2F80045038A /* ImageResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C7C5CA1B2CF2F80045038A /* ImageResult.swift */; };
 		E2CA0C351C4FFEAF00E2F380 /* build.sh in Resources */ = {isa = PBXBuildFile; fileRef = E2CA0C331C4FFEAF00E2F380 /* build.sh */; };
 		E2CA0C361C4FFEAF00E2F380 /* test.sh in Resources */ = {isa = PBXBuildFile; fileRef = E2CA0C341C4FFEAF00E2F380 /* test.sh */; };
-		E2CA16FD1DB8016500F99E1D /* FireController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CA16FC1DB8016500F99E1D /* FireController.swift */; };
+		E2CA16FD1DB8016500F99E1D /* MainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CA16FC1DB8016500F99E1D /* MainController.swift */; };
 		E2CA16FF1DB95DDB00F99E1D /* FireAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CA16FE1DB95DDB00F99E1D /* FireAttachment.swift */; };
 		E2CC15A11C2C897800316356 /* WrapperTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CC15A01C2C897800316356 /* WrapperTableViewCell.swift */; };
 		E2CCAAE01B67CC0E0071170C /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CCAADF1B67CC0E0071170C /* NotificationController.swift */; };
@@ -234,6 +236,10 @@
 		E2FA133A1D81FC8A0057F287 /* SideMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FA13391D81FC8A0057F287 /* SideMenuViewController.swift */; };
 		E2FA133E1D8220DD0057F287 /* MenuItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FA133D1D8220DD0057F287 /* MenuItemView.swift */; };
 		E2FA13401D8323030057F287 /* ChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FA133F1D8323030057F287 /* ChannelView.swift */; };
+		E2FB2C481DBFC48100E97050 /* ChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FB2C471DBFC48100E97050 /* ChannelViewController.swift */; };
+		E2FB2C4A1DBFD33E00E97050 /* ChannelDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FB2C491DBFD33E00E97050 /* ChannelDetailView.swift */; };
+		E2FB2C4C1DC02E4600E97050 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FB2C4B1DC02E4600E97050 /* MessageView.swift */; };
+		E2FB2C4E1DC0EEBF00E97050 /* FireController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FB2C4D1DC0EEBF00E97050 /* FireController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -440,15 +446,17 @@
 		E28915921C5AD528005D7AA0 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ReachabilityManager.swift; path = Patchr/ReachabilityManager.swift; sourceTree = "<group>"; };
 		E28DB2911DBBF95D008B2E4B /* ChannelListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChannelListCell.xib; sourceTree = "<group>"; };
-		E28DB2931DBBFA1C008B2E4B /* PatchListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchListCell.swift; sourceTree = "<group>"; };
+		E28DB2931DBBFA1C008B2E4B /* GroupListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupListCell.swift; sourceTree = "<group>"; };
 		E29730591C135BFA00B9433B /* PatchEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PatchEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E297305B1C13644800B9433B /* AirTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirTextView.swift; sourceTree = "<group>"; };
 		E297305D1C136E8300B9433B /* AirRadioButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirRadioButton.swift; sourceTree = "<group>"; };
 		E297305F1C14A7BC00B9433B /* AirSearchField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirSearchField.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E29730631C15090300B9433B /* AirRuleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirRuleView.swift; sourceTree = "<group>"; };
 		E29730651C16295300B9433B /* InviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = InviteViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		E2999EE21DC25AAE005C69D8 /* EmptyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyViewController.swift; sourceTree = "<group>"; };
+		E2999EE41DC2CD3B005C69D8 /* FirePhotoBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirePhotoBrowser.swift; sourceTree = "<group>"; };
 		E29A4CD71BCF25220059D5B9 /* NotificationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = NotificationView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		E29A4CD91BD077520059D5B9 /* MessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = MessageView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		E29A4CD91BD077520059D5B9 /* MessageViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = MessageViewCell.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E29A92191DB1859E00B27093 /* UserHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = UserHeaderView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E29A921B1DB1988A00B27093 /* FireUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireUser.swift; sourceTree = "<group>"; };
 		E29A921D1DB19A2600B27093 /* FireProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireProfile.swift; sourceTree = "<group>"; };
@@ -485,7 +493,7 @@
 		E2C7C5CA1B2CF2F80045038A /* ImageResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageResult.swift; sourceTree = "<group>"; };
 		E2CA0C331C4FFEAF00E2F380 /* build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = SOURCE_ROOT; };
 		E2CA0C341C4FFEAF00E2F380 /* test.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test.sh; sourceTree = SOURCE_ROOT; };
-		E2CA16FC1DB8016500F99E1D /* FireController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireController.swift; sourceTree = "<group>"; };
+		E2CA16FC1DB8016500F99E1D /* MainController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainController.swift; sourceTree = "<group>"; };
 		E2CA16FE1DB95DDB00F99E1D /* FireAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireAttachment.swift; sourceTree = "<group>"; };
 		E2CC15A01C2C897800316356 /* WrapperTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WrapperTableViewCell.swift; sourceTree = "<group>"; };
 		E2CCAADF1B67CC0E0071170C /* NotificationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NotificationController.swift; path = Patchr/NotificationController.swift; sourceTree = "<group>"; };
@@ -533,6 +541,10 @@
 		E2FA13391D81FC8A0057F287 /* SideMenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SideMenuViewController.swift; sourceTree = "<group>"; };
 		E2FA133D1D8220DD0057F287 /* MenuItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = MenuItemView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2FA133F1D8323030057F287 /* ChannelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelView.swift; sourceTree = "<group>"; };
+		E2FB2C471DBFC48100E97050 /* ChannelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelViewController.swift; sourceTree = "<group>"; };
+		E2FB2C491DBFD33E00E97050 /* ChannelDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelDetailView.swift; sourceTree = "<group>"; };
+		E2FB2C4B1DC02E4600E97050 /* MessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
+		E2FB2C4D1DC0EEBF00E97050 /* FireController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireController.swift; sourceTree = "<group>"; };
 		E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKCore.framework; path = Frameworks/AdobeCreativeSDKCore.framework; sourceTree = "<group>"; };
 		ED13DC8FAA3F0F42AF9C2AC5 /* Pods-Patchr.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.debug.xcconfig"; sourceTree = "<group>"; };
 		F8F2D0B82E3F8D83CE211D2E /* Pods_PatchrShare.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PatchrShare.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -576,10 +588,11 @@
 				E28177751B5C39E200D65AC1 /* AwsS3.swift */,
 				E20C3A821BDEBBB9008CCED1 /* CoreDataStack.swift */,
 				7DA3D9111A72D5A60082D2AB /* DataController.swift */,
-				E2CA16FC1DB8016500F99E1D /* FireController.swift */,
+				E2FB2C4D1DC0EEBF00E97050 /* FireController.swift */,
+				E2CA16FC1DB8016500F99E1D /* MainController.swift */,
 				E2F618D51AFFACF00055D09C /* LocationController.swift */,
-				7D3D39EF1A6F116E00A44CB2 /* Proxibase.swift */,
 				E2CCAADF1B67CC0E0071170C /* NotificationController.swift */,
+				7D3D39EF1A6F116E00A44CB2 /* Proxibase.swift */,
 				E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */,
 				E2D25DC71B23892000E51461 /* UserController.swift */,
 				E238BADF1B51D3290094AF41 /* PatchrShare */,
@@ -721,9 +734,10 @@
 		E227294E1CECB36100913041 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				E227294C1CEA7D0600913041 /* GalleryViewCell.swift */,
-				E28DB2931DBBFA1C008B2E4B /* PatchListCell.swift */,
 				E23EC4CD1DBD44DB00EBCD42 /* ChannelListCell.swift */,
+				E227294C1CEA7D0600913041 /* GalleryViewCell.swift */,
+				E29A4CD91BD077520059D5B9 /* MessageViewCell.swift */,
+				E28DB2931DBBFA1C008B2E4B /* GroupListCell.swift */,
 				E29F65521B61A9450000BEF4 /* PatchSearchCell.swift */,
 				E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */,
 				E24199011C18C1F200DDA549 /* UserSearchViewCell.swift */,
@@ -758,11 +772,12 @@
 				E20C3A7A1BD6A717008CCED1 /* BaseView.swift */,
 				E20C3A801BDC1D57008CCED1 /* BaseDetailView.swift */,
 				E23C01101CE4F771009C56B2 /* CaptionView.swift */,
-				E2FA133F1D8323030057F287 /* ChannelView.swift */,
+				E2FB2C491DBFD33E00E97050 /* ChannelDetailView.swift */,
 				E2B756AA1D8482EB00C102EC /* ChannelSectionView.swift */,
 				E2B756A81D84600E00C102EC /* ChannelsHeaderView.swift */,
+				E2FA133F1D8323030057F287 /* ChannelView.swift */,
 				E2FA133D1D8220DD0057F287 /* MenuItemView.swift */,
-				E29A4CD91BD077520059D5B9 /* MessageView.swift */,
+				E2FB2C4B1DC02E4600E97050 /* MessageView.swift */,
 				E29A4CD71BCF25220059D5B9 /* NotificationView.swift */,
 				E23EC4D51DBE52AC00EBCD42 /* PatchesHeaderView.swift */,
 				E2F85C6B1C302F3400FC2364 /* PatchDetailView.swift */,
@@ -796,6 +811,7 @@
 			children = (
 				E24D74501BB349BD0061F339 /* BaseDetailViewController.swift */,
 				7D9C9E3C1A9BAFCE0069E332 /* PatchDetailViewController.swift */,
+				E2FB2C471DBFC48100E97050 /* ChannelViewController.swift */,
 				7D6E26461A7AB93F000128A7 /* UserDetailViewController.swift */,
 			);
 			name = TableForms;
@@ -964,16 +980,18 @@
 				E2D12A7A1C091C4D00DE507E /* BaseViewController.swift */,
 				E23EC4D71DBE848B00EBCD42 /* ChannelPickerController.swift */,
 				844D6E341AA4D01200EE71ED /* DevelopmentViewController.swift */,
+				E2999EE21DC25AAE005C69D8 /* EmptyViewController.swift */,
 				E2BFB7F01CE6189500F4B962 /* GalleryBrowser.swift */,
+				E2B756A41D84565F00C102EC /* GroupPickerController.swift */,
 				E29730651C16295300B9433B /* InviteViewController.swift */,
 				E2D12A801C0A52D700DE507E /* LobbyViewController.swift */,
 				9FDCCB14A8FC471EB243625F /* MessageDetailViewController.swift */,
 				E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */,
 				E21FE56C1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift */,
-				E2B756A41D84565F00C102EC /* GroupPickerController.swift */,
 				E2E9AAA81CF0AC250057698F /* PatchSettingsController.swift */,
 				E26B58501C8B3F6B00467B51 /* PermissionsViewController.swift */,
 				E26B0C8F1B45C07D00706F4A /* PhotoBrowser.swift */,
+				E2999EE41DC2CD3B005C69D8 /* FirePhotoBrowser.swift */,
 				E273B5351B488F2000888E73 /* PhotoPreview.swift */,
 				844D6E361AA6550400EE71ED /* PhotoChooserUI.swift */,
 				7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */,
@@ -1434,17 +1452,18 @@
 				E2F85C771C32E55100FC2364 /* DeviceUID.m in Sources */,
 				E227294B1CEA743600913041 /* GalleryGridViewController.swift in Sources */,
 				E20C3A851BE04BBC008CCED1 /* Stopwatch.swift in Sources */,
+				E2999EE51DC2CD3B005C69D8 /* FirePhotoBrowser.swift in Sources */,
 				E2B8A4B61CE7875400A28D3A /* AirRadialMenu.swift in Sources */,
 				7D01FA361A7024E200DD6DFA /* JSONResponseSerializerWithData.m in Sources */,
 				E2FA13401D8323030057F287 /* ChannelView.swift in Sources */,
 				E29A921A1DB1859E00B27093 /* UserHeaderView.swift in Sources */,
 				E25327E01B1A282D00990A81 /* FXBlurView.m in Sources */,
 				E2DBD4F01B0F65580006575C /* ExtensionsModel.swift in Sources */,
-				E29A4CDA1BD077520059D5B9 /* MessageView.swift in Sources */,
+				E29A4CDA1BD077520059D5B9 /* MessageViewCell.swift in Sources */,
 				E2A28E6F1B4A602200B3A2FE /* AirToggleButton.swift in Sources */,
 				E2064BF51BC18A66009C7B6A /* AirProgress.swift in Sources */,
 				E241D15A1B1B3FCE00702E01 /* UIView+BorderLayer.m in Sources */,
-				E2CA16FD1DB8016500F99E1D /* FireController.swift in Sources */,
+				E2CA16FD1DB8016500F99E1D /* MainController.swift in Sources */,
 				7DA730931A71ACC9008C25FA /* ServiceBase.m in Sources */,
 				E2D12A7F1C0A090200DE507E /* Theming.swift in Sources */,
 				E2B2CAB21C553A8900CAE183 /* BaseEditViewController.swift in Sources */,
@@ -1456,11 +1475,13 @@
 				E2A4368C1D6E01C3009FFD4C /* _FeedItem.m in Sources */,
 				E256B4281BD3DDC900EBF894 /* AirTableViewCell.swift in Sources */,
 				E24199001C18ACAF00DDA549 /* AirContactPicker.swift in Sources */,
-				E28DB2941DBBFA1C008B2E4B /* PatchListCell.swift in Sources */,
+				E28DB2941DBBFA1C008B2E4B /* GroupListCell.swift in Sources */,
 				7D40B9421A7864A000F9954C /* NotificationsTableViewController.swift in Sources */,
 				E24198FE1C1736E900DDA549 /* MessageEditViewController.swift in Sources */,
 				E25327B61B1000C000990A81 /* AirImageView.swift in Sources */,
+				E2999EE31DC25AAE005C69D8 /* EmptyViewController.swift in Sources */,
 				E23C010F1CE4D73B009C56B2 /* DisplayPhoto.swift in Sources */,
+				E2FB2C4E1DC0EEBF00E97050 /* FireController.swift in Sources */,
 				7DB6E0FF1A8177060017A42F /* User.m in Sources */,
 				7DA730961A71B962008C25FA /* BaseTableViewController.swift in Sources */,
 				7DA7308F1A71ACC9008C25FA /* Entity.m in Sources */,
@@ -1496,6 +1517,7 @@
 				7D3F26D51A76F77E0015F8E8 /* Location.m in Sources */,
 				E2C0D9381B6D2CC700E28CE9 /* PatchNavigationController.swift in Sources */,
 				E2F618D61AFFACF00055D09C /* LocationController.swift in Sources */,
+				E2FB2C481DBFC48100E97050 /* ChannelViewController.swift in Sources */,
 				E21FE56D1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift in Sources */,
 				7DC1763F1ACDFF010051BA6C /* Link.m in Sources */,
 				7D3F26D41A76F77E0015F8E8 /* _Photo.m in Sources */,
@@ -1503,6 +1525,7 @@
 				E2B4590E1BC1E76C00155659 /* SwiftyJSON.swift in Sources */,
 				E20004DF1B094ACA00425694 /* PasswordEditViewController.swift in Sources */,
 				E2D12A811C0A52D700DE507E /* LobbyViewController.swift in Sources */,
+				E2FB2C4A1DBFD33E00E97050 /* ChannelDetailView.swift in Sources */,
 				E2D12A831C0A58F000DE507E /* AirLabelTitle.swift in Sources */,
 				7DE975EE1AA7F72400C1ECE9 /* ModelUtilities.m in Sources */,
 				7DA7308E1A71ACC9008C25FA /* _ServiceObject.m in Sources */,
@@ -1543,6 +1566,7 @@
 				E2A28E6D1B49D88900B3A2FE /* AirLikeButton.swift in Sources */,
 				E2D12A751C08F85E00DE507E /* AirButton.swift in Sources */,
 				7DA3D9121A72D5A60082D2AB /* DataController.swift in Sources */,
+				E2FB2C4C1DC02E4600E97050 /* MessageView.swift in Sources */,
 				E2D12A771C08F9CE00DE507E /* AirFeaturedButton.swift in Sources */,
 				E2D25DC81B23892000E51461 /* UserController.swift in Sources */,
 				E256B4261BD2C9E200EBF894 /* PatchView.swift in Sources */,

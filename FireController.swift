@@ -10,30 +10,31 @@ import FirebaseDatabase
 class FireController: NSObject {
 
     static let instance = FireController()
-    let ref = FIRDatabase.database().reference()
+    let db = FIRDatabase.database().reference()
 
     private override init() {}
-
+    
     /*--------------------------------------------------------------------------------------------
-     * Singles
+     * MARK: - Methods
      *--------------------------------------------------------------------------------------------*/
 
-    @discardableResult func observe(path: String, eventType: FIRDataEventType, with block: @escaping (FIRDataSnapshot) -> Swift.Void) -> UInt {
-        return self.ref.child(path).observe(eventType, with: block)
+    func autoPickChannel(userId: String, groupId: String, preferGeneral: Bool) {
+        
+        let path = "member-channels/\(userId)/\(groupId)"
+        let ref = self.db.child(path)
+        ref.observeSingleEvent(of: .childAdded, with: { snap in
+            
+            let channelId = snap.key
+            let path = "group-channels/\(groupId)/\(channelId)"
+            let ref = self.db.child(path)
+            ref.observeSingleEvent(of: .value, with: { snap in
+                if let channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key) {
+                    if !preferGeneral || channel.isGeneral! {
+                        MainController.instance.setChannelId(channelId: channel.id)
+                        ref.removeAllObservers()
+                    }
+                }
+            })
+        })
     }
-    
-    func removeObserver(withHandle handle: UInt) {
-        self.ref.removeObserver(withHandle: handle)
-    }
-    
-    /*--------------------------------------------------------------------------------------------
-     * Collections
-     *--------------------------------------------------------------------------------------------*/
-
-    
-    /*--------------------------------------------------------------------------------------------
-     * Methods
-     *--------------------------------------------------------------------------------------------*/
-
-    func warmup() {}
 }

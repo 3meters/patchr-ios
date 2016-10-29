@@ -24,6 +24,7 @@ class FireMessage: NSObject {
     var createdBy: String?
     var modifiedAt: Int?
     var modifiedBy: String?
+    var creator: FireUser?
     
     var pathInstance: String {
         return "\(FireMessage.path)/\(self.channel!)/\(self.id!)"

@@ -132,7 +132,7 @@ class NotificationView: BaseView {
 		if let photo = notification.photoBig {
 			self.photo?.isHidden = false
 			let photoUrl = PhotoUtils.url(prefix: photo.prefix!, source: photo.source!, category: SizeCategory.standard)
-			bindPhoto(photoUrl: photoUrl)
+			bindPhoto(photoUrl: photoUrl!)
 		}
 		else {
 			self.photo?.isHidden = true

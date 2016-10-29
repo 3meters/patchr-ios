@@ -111,7 +111,7 @@ class PatchDetailViewController: BaseDetailViewController {
 
     func dismissAction(sender: AnyObject) {
         self.dismiss(animated: true) {
-            AppDelegate.appDelegate().routeForRoot()
+            MainController.instance.route()
         }
     }
 
@@ -1000,13 +1000,6 @@ private enum ShareButtonFunction {
 private enum ActionButtonFunction {
     case Leave
     case Report
-}
-
-enum ShareRoute {
-    case Patchr
-    case Facebook
-    case AirDrop
-    case Actions
 }
 
 enum ContextAction: UInt {

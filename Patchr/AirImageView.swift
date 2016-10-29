@@ -101,14 +101,14 @@ class AirImageView: UIImageView {
         }
         
         let photoUrl = PhotoUtils.url(prefix: photo.prefix!, source: photo.source!, category: self.sizeCategory)
-        return (self.linkedPhotoUrl!.absoluteString == photoUrl.absoluteString)
+        return (self.linkedPhotoUrl!.absoluteString == photoUrl!.absoluteString)
     }
     
     func setImageWithPhoto(photo: Photo, animate: Bool = true) {
         
 		let photoUrl = PhotoUtils.url(prefix: photo.prefix!, source: photo.source!, category: self.sizeCategory)
 		
-		guard photoUrl.absoluteString != self.linkedPhotoUrl?.absoluteString else {
+		guard photoUrl?.absoluteString != self.linkedPhotoUrl?.absoluteString else {
 			return
 		}
 		
@@ -147,7 +147,7 @@ class AirImageView: UIImageView {
         }
         
         DispatchQueue.global().async {
-			if photoUrl.absoluteString.isEmpty {
+			if (photoUrl?.absoluteString.isEmpty)! {
 				let error = NSError(domain: "Photo error", code: 0, userInfo: [NSLocalizedDescriptionKey:"Photo has invalid source: \(photo.source!)"])
 				DispatchQueue.main.async() {
 					self.imageCompletion(image: nil, error: error, cacheType: nil, url: nil, animate: animate)

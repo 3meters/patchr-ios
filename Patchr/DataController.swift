@@ -558,7 +558,7 @@ class DataController: NSObject {
         return nil
     }
     
-    func warmup() {}
+    func prepare() {}
 }
 
 enum FetchStrategy: Int {

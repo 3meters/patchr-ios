@@ -60,7 +60,6 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
     var descriptionField	= AirTextView()
     var photoView			= PhotoEditView()
 
-    var messageView			: MessageView?
     var patchView			: PatchView?
     var doneButton			= AirFeaturedButton()
 
@@ -90,30 +89,11 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
         let navHeight = self.navigationController?.navigationBar.height() ?? 0
         let statusHeight = UIApplication.shared.statusBarFrame.size.height
 
-        if self.inputState == .Sharing {
-
-            self.userPhoto.anchorTopLeft(withLeftPadding: 16, topPadding: 8, width: 48, height: 48)
-            self.addressField.setNeedsLayout()
-            self.addressField.layoutIfNeeded()
-            self.addressField.anchorTopLeft(withLeftPadding: 72, topPadding: 12, width: contentWidth - 56, height: self.addressField.height())
-            self.contactList!.alignUnder(self.addressField, matchingLeftAndRightWithTopPadding: 0, height: CGFloat(self.contactModels.count * 52))
-            self.addressGroup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: CGFloat(statusHeight + navHeight), height: self.contactList!.height() + self.addressField.height() + 24)
-            self.descriptionField.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: contentWidth, height: max(96, descriptionSize.height))
-
-            if self.inputShareSchema == Schema.ENTITY_PATCH {
-                self.patchView!.alignUnder(self.descriptionField, matchingLeftAndRightWithTopPadding: 8, height: 128)
-            }
-            else {
-                self.messageView!.alignUnder(self.descriptionField, matchingRightAndFillingWidthWithLeftPadding: 0, topPadding: 16, height: 400)
-            }
-        }
-        else {
-            self.addressGroup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: CGFloat(statusHeight + navHeight), height: 64)
-            self.userPhoto.anchorCenterLeft(withLeftPadding: 16, width: 48, height: 48)
-            self.addressLabel.fillSuperview(withLeftPadding: 72, rightPadding: 8, topPadding: 0, bottomPadding: 0)
-            self.descriptionField.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: contentWidth, height: max(96, descriptionSize.height))
-            self.photoView.alignUnder(self.descriptionField, matchingLeftAndRightWithTopPadding: 8, height: self.photoView.photoMode == .Empty ? 48 : contentWidth * 0.75)
-        }
+        self.addressGroup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: CGFloat(statusHeight + navHeight), height: 64)
+        self.userPhoto.anchorCenterLeft(withLeftPadding: 16, width: 48, height: 48)
+        self.addressLabel.fillSuperview(withLeftPadding: 72, rightPadding: 8, topPadding: 0, bottomPadding: 0)
+        self.descriptionField.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: contentWidth, height: max(96, descriptionSize.height))
+        self.photoView.alignUnder(self.descriptionField, matchingLeftAndRightWithTopPadding: 8, height: self.photoView.photoMode == .Empty ? 48 : contentWidth * 0.75)
 
         self.contentHolder.resizeToFitSubviews()
         self.scrollView.contentSize = CGSize(width:self.contentHolder.width(), height: self.contentHolder.height() + CGFloat(32))
@@ -210,8 +190,6 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
 
         self.view.backgroundColor = Theme.colorBackgroundForm
 
-        let viewWidth = min(CONTENT_WIDTH_MAX, self.view.bounds.size.width)
-
         let fullScreenRect = UIScreen.main.applicationFrame
         self.scrollView.frame = fullScreenRect
         self.scrollView.backgroundColor = Theme.colorBackgroundForm
@@ -246,106 +224,37 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
         self.view.addSubview(self.addressGroup)
         self.view.addSubview(self.scrollView)
 
-        if self.inputState == State.Sharing {
+        self.addressField.isHidden = true
 
-            self.photoView.isHidden = true
-            self.addressLabel.isHidden = true
+        self.descriptionField.placeholderLabel.text = "What\'s happening?"
 
-            self.addressField.setPlaceholderLabelText("Who would you like to invite?")
-            self.addressField.setPromptLabelText("To: ")
-            self.addressField.delegate = self
-
-            self.contactList = UITableView(frame: CGRect.zero, style: .plain)
-            self.contactList!.delegate = self;
-            self.contactList!.dataSource = self;
-            self.contactList!.rowHeight = 52
-
-            self.addressGroup.addSubview(self.contactList!)
-
-            if self.inputShareSchema == Schema.ENTITY_PATCH {
-
-                Reporting.screen("PatchInvite")
-
-                self.progressStartLabel = "Inviting"
-                self.progressFinishLabel = "Invites sent"
-                self.cancelledLabel = "Invites cancelled"
-
-                self.patchView = PatchView(frame: CGRect(x:0, y:0, width:viewWidth, height:136))
-                self.patchView!.borderColor = Theme.colorButtonBorder
-                self.patchView!.borderWidth = Theme.dimenButtonBorderWidth
-                self.patchView!.cornerRadius = 6
-                self.patchView!.shadow.backgroundColor = Colors.clear
-
-                self.contentHolder.addSubview(self.patchView!)
-
-                self.descriptionField.placeholderLabel.text = "Add a message to your invite..."
-                self.navigationItem.title = "Invite to patch"
-                self.descriptionDefault = "\(UserController.instance.currentUser.name) invited you to the \'\(self.inputShareEntity!.name!)\' patch."
-            }
-
-            else if self.inputShareSchema == Schema.ENTITY_MESSAGE {
-
-                Reporting.screen("MessageShare")
-
-                self.progressStartLabel = "Sharing"
-                self.progressFinishLabel = "Shared"
-                self.cancelledLabel = "Sharing cancelled"
-
-                self.messageView = MessageView()
-                self.contentHolder.addSubview(self.messageView!)
-
-                self.descriptionField.placeholderLabel.text = "Add a message..."
-                self.navigationItem.title = Utils.LocalizedString(str: "Share posted message")
-                if let message = self.inputShareEntity as? Message {
-                    if message.patch != nil {
-                        self.descriptionDefault = "\(UserController.instance.currentUser.name) shared \(message.creator.name!)\'s message posted to the \'\(message.patch.name)\' patch."
-                    }
-                    else {
-                        self.descriptionDefault = "\(UserController.instance.currentUser.name) shared \(message.creator.name!)\'s message posted to a patch."
-                    }
-                }
-            }
+        if self.inputState == State.Creating {
+            Reporting.screen("MessageNew")
+            self.progressStartLabel = "Posting"
+            self.progressFinishLabel = "Posted"
+            self.cancelledLabel = "Post cancelled"
 
             /* Navigation bar buttons */
             let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: self, action: #selector(MessageEditViewController.cancelAction(sender:)))
-            let doneButton = UIBarButtonItem(title: "Send", style: UIBarButtonItemStyle.plain, target: self, action: #selector(MessageEditViewController.doneAction(sender:)))
+            let doneButton = UIBarButtonItem(title: "Post", style: UIBarButtonItemStyle.plain, target: self, action: #selector(MessageEditViewController.doneAction(sender:)))
             self.navigationItem.leftBarButtonItems = [cancelButton]
             self.navigationItem.rightBarButtonItems = [doneButton]
         }
         else {
+            Reporting.screen("MessageEdit")
+            self.progressStartLabel = "Updating"
+            self.progressFinishLabel = "Updated"
+            self.cancelledLabel = "Update cancelled"
 
-            self.addressField.isHidden = true
+            self.doneButton.isHidden = true
 
-            self.descriptionField.placeholderLabel.text = "What\'s happening?"
-
-            if self.inputState == State.Creating {
-                Reporting.screen("MessageNew")
-                self.progressStartLabel = "Posting"
-                self.progressFinishLabel = "Posted"
-                self.cancelledLabel = "Post cancelled"
-
-                /* Navigation bar buttons */
-                let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: self, action: #selector(MessageEditViewController.cancelAction(sender:)))
-                let doneButton = UIBarButtonItem(title: "Post", style: UIBarButtonItemStyle.plain, target: self, action: #selector(MessageEditViewController.doneAction(sender:)))
-                self.navigationItem.leftBarButtonItems = [cancelButton]
-                self.navigationItem.rightBarButtonItems = [doneButton]
-            }
-            else {
-                Reporting.screen("MessageEdit")
-                self.progressStartLabel = "Updating"
-                self.progressFinishLabel = "Updated"
-                self.cancelledLabel = "Update cancelled"
-
-                self.doneButton.isHidden = true
-
-                /* Navigation bar buttons */
-                self.navigationItem.title = "Edit message"
-                let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: self, action: #selector(MessageEditViewController.cancelAction(sender:)))
-                let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.trash, target: self, action: #selector(MessageEditViewController.deleteAction(sender:)))
-                let doneButton = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(MessageEditViewController.doneAction(sender:)))
-                self.navigationItem.leftBarButtonItems = [cancelButton]
-                self.navigationItem.rightBarButtonItems = [doneButton, Utils.spacer, deleteButton]
-            }
+            /* Navigation bar buttons */
+            self.navigationItem.title = "Edit message"
+            let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: self, action: #selector(MessageEditViewController.cancelAction(sender:)))
+            let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.trash, target: self, action: #selector(MessageEditViewController.deleteAction(sender:)))
+            let doneButton = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(MessageEditViewController.doneAction(sender:)))
+            self.navigationItem.leftBarButtonItems = [cancelButton]
+            self.navigationItem.rightBarButtonItems = [doneButton, Utils.spacer, deleteButton]
         }
     }
 
@@ -368,16 +277,6 @@ class MessageEditViewController: BaseEditViewController, UITableViewDelegate, UI
         }
         else if self.inputState == .Creating {
             self.addressLabel.text = self.inputToString! + " Patch"
-        }
-        else if self.inputState == .Sharing {
-            if self.inputShareSchema == Schema.ENTITY_PATCH {
-                self.patchView!.bindToEntity(entity: self.inputShareEntity!, location: nil)
-            }
-            else {
-                self.messageView!.bindToEntity(entity: self.inputShareEntity!, location: nil)
-                self.messageView!.setNeedsLayout()
-                self.messageView!.layoutIfNeeded()
-            }
         }
     }
 

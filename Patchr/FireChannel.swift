@@ -13,7 +13,7 @@ import FirebaseDatabase
 
 class FireChannel: NSObject {
     
-    static let path = "/patch-channels"
+    static let path = "/group-channels"
     
     var id: String?
     var name: String?
@@ -39,7 +39,8 @@ class FireChannel: NSObject {
     
     @discardableResult static func observe(id: String, groupId: String, eventType: FIRDataEventType, with block: @escaping (FIRDataSnapshot) -> Swift.Void) -> UInt {
         let db = FIRDatabase.database().reference()
-        return db.child("\(FireChannel.path)/\(groupId)/\(id)").observe(eventType, with: block)
+        let path = "\(FireChannel.path)/\(groupId)/\(id)"
+        return db.child(path).observe(eventType, with: block)
     }
     
     @discardableResult func observe(eventType: FIRDataEventType, with block: @escaping (FIRDataSnapshot) -> Swift.Void) -> UInt {

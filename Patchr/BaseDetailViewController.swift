@@ -223,10 +223,6 @@ class BaseDetailViewController: BaseTableViewController {
 
     override func makeCell() -> WrapperTableViewCell {
         let cell = super.makeCell()
-        if let view = cell.view as? MessageView {
-            view.showPatchName = self.patchNameVisible
-            view.patchName.isHidden = !self.patchNameVisible
-        }
         return cell
     }
 }

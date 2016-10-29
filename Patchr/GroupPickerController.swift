@@ -12,10 +12,10 @@ import FirebaseDatabaseUI
 
 class GroupPickerController: UIViewController, UITableViewDelegate {
 
-    var groupsHeaderView: PatchesHeaderView!
-    var groupsTableView = UITableView(frame: CGRect.zero, style: .plain)
-    var groupsTableViewDataSource: FirebaseTableViewDataSource!
-    var groupsFooterView = AirLinkButton()
+    var headerView: PatchesHeaderView!
+    var tableView = UITableView(frame: CGRect.zero, style: .plain)
+    var tableViewDataSource: FirebaseTableViewDataSource!
+    var footerView = AirLinkButton()
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -33,9 +33,9 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        self.groupsHeaderView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 72)
-        self.groupsFooterView.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 48)
-        self.groupsTableView.alignBetweenTop(self.groupsHeaderView, andBottom: self.groupsFooterView, centeredWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
+        self.headerView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 72)
+        self.footerView.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 48)
+        self.tableView.alignBetweenTop(self.headerView, andBottom: self.footerView, centeredWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -68,24 +68,24 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
         self.view.backgroundColor = UIColor.clear
         self.view.isOpaque = false
         
-        self.groupsHeaderView = Bundle.main.loadNibNamed("PatchesHeaderView", owner: nil, options: nil)?.first as? PatchesHeaderView
-        self.groupsHeaderView.closeButton?.addTarget(self, action: #selector(GroupPickerController.closeAction(sender:)), for: .touchUpInside)
+        self.headerView = Bundle.main.loadNibNamed("PatchesHeaderView", owner: nil, options: nil)?.first as? PatchesHeaderView
+        self.headerView.closeButton?.addTarget(self, action: #selector(GroupPickerController.closeAction(sender:)), for: .touchUpInside)
         
-        self.groupsFooterView.setTitle("Create group", for: .normal)
-        self.groupsFooterView.setImage(UIImage(named: "imgAddLight"), for: .normal)
-        self.groupsFooterView.imageView!.contentMode = UIViewContentMode.scaleAspectFit
-        self.groupsFooterView.imageView?.tintColor = Colors.brandColorDark
-        self.groupsFooterView.imageEdgeInsets = UIEdgeInsetsMake(6, 4, 6, 24)
-        self.groupsFooterView.contentHorizontalAlignment = .center
-        self.groupsFooterView.backgroundColor = Colors.gray95pcntColor
-        self.groupsFooterView.addTarget(self, action: #selector(GroupPickerController.addAction(sender:)), for: .touchUpInside)
+        self.footerView.setTitle("Create group", for: .normal)
+        self.footerView.setImage(UIImage(named: "imgAddLight"), for: .normal)
+        self.footerView.imageView!.contentMode = UIViewContentMode.scaleAspectFit
+        self.footerView.imageView?.tintColor = Colors.brandColorDark
+        self.footerView.imageEdgeInsets = UIEdgeInsetsMake(6, 4, 6, 24)
+        self.footerView.contentHorizontalAlignment = .center
+        self.footerView.backgroundColor = Colors.gray95pcntColor
+        self.footerView.addTarget(self, action: #selector(GroupPickerController.addAction(sender:)), for: .touchUpInside)
         
-        self.groupsTableView.backgroundColor = Theme.colorBackgroundEmptyBubble
-        self.groupsTableView.delegate = self
+        self.tableView.backgroundColor = Theme.colorBackgroundEmptyBubble
+        self.tableView.delegate = self
         
-        self.view.addSubview(self.groupsHeaderView)
-        self.view.addSubview(self.groupsTableView)
-        self.view.addSubview(self.groupsFooterView)
+        self.view.addSubview(self.headerView)
+        self.view.addSubview(self.tableView)
+        self.view.addSubview(self.footerView)
     }
     
     func bind() {
@@ -93,34 +93,34 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
         let userId = FIRAuth.auth()?.currentUser?.uid
         let db = FIRDatabase.database().reference()
         let ref = db.child("member-groups/\(userId!)")
-        self.groupsTableViewDataSource = FirebaseTableViewDataSource(ref: ref, nibNamed: "PatchListCell", cellReuseIdentifier: "PatchViewCell", view: self.groupsTableView)
-        self.groupsTableView.dataSource = self.groupsTableViewDataSource
+        self.tableViewDataSource = FirebaseTableViewDataSource(ref: ref, nibNamed: "PatchListCell", cellReuseIdentifier: "PatchViewCell", view: self.tableView)
+        self.tableView.dataSource = self.tableViewDataSource
         
-        self.groupsTableViewDataSource.populateCell { (cell, data) in
+        self.tableViewDataSource.populateCell { (cell, data) in
             
             let snap = data as! FIRDataSnapshot
-            let cell = cell as! PatchListCell
+            let cell = cell as! GroupListCell
             
             let groupId = snap.key
             let link = snap.value as! [String: Any]
             
             cell.title?.textColor = Theme.colorText
-            if groupId == UserController.instance.currentPatchId.value {
+            if groupId == MainController.instance.groupId {
                 cell.title?.textColor = Colors.accentColorTextLight
             }
             
             db.child("groups/\(groupId)").observeSingleEvent(of: .value, with: { snap in
                 if let group = FireGroup(dict: snap.value as! [String: Any], id: snap.key) {
                     group.membershipFrom(dict: link)
-                    cell.bind(patch: group)
+                    cell.bind(group: group)
                 }
             })
         }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath) as! PatchListCell
-        UserController.instance.currentPatchId.value = cell.patch.id
+        let cell = tableView.cellForRow(at: indexPath) as! GroupListCell
+        MainController.instance.setGroupId(groupId: cell.group.id)
         self.slideMenuController()?.closeLeft()
         self.closeAction(sender: nil)
     }

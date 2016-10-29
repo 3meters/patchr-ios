@@ -85,7 +85,7 @@ class SettingsTableViewController: UITableViewController {
         
         let navController = AirNavigationController()
         navController.viewControllers = [LobbyViewController()]
-        AppDelegate.appDelegate().window!.setRootViewController(rootViewController: navController, animated: true)
+        MainController.instance.window!.setRootViewController(rootViewController: navController, animated: true)
     }
 
     func clearHistoryAction(sender: AnyObject) {

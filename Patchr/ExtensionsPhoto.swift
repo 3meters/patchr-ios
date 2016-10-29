@@ -11,7 +11,11 @@ import UIKit
 
 class PhotoUtils {
     
-    static func url(prefix: String, source: String, category: String) -> URL {
+    static func url(prefix: String?, source: String?, category: String) -> URL? {
+        
+        guard prefix != nil && source != nil else {
+            return nil
+        }
 		
         var path: String = ""
         var quality: Int = 75
@@ -25,15 +29,15 @@ class PhotoUtils {
         if source == PhotoSource.aircandi_images {
             let width = (category == SizeCategory.standard) ? 400 : 100
             if category == SizeCategory.profile {
-                path = "https://3meters-images.imgix.net/\(prefix)?w=\(width)&dpr=\(PIXEL_SCALE)&q=\(quality)&h=\(width)&fit=min&trim=auto"
+                path = "https://3meters-images.imgix.net/\(prefix!)?w=\(width)&dpr=\(PIXEL_SCALE)&q=\(quality)&h=\(width)&fit=min&trim=auto"
             }
             else {
-                path = "https://3meters-images.imgix.net/\(prefix)?w=\(width)&dpr=\(PIXEL_SCALE)&q=\(quality)"
+                path = "https://3meters-images.imgix.net/\(prefix!)?w=\(width)&dpr=\(PIXEL_SCALE)&q=\(quality)"
             }
         }
         else if source == PhotoSource.google {
             let width: CGFloat = CGFloat(IMAGE_DIMENSION_MAX) * PIXEL_SCALE
-            if (prefix.range(of: "?") != nil) {
+            if (prefix!.range(of: "?") != nil) {
                 path = "\(prefix)&maxwidth=\(width)"
             }
             else {
@@ -45,7 +49,7 @@ class PhotoUtils {
             path = "\(prefix)&s=\(width)"
         }
 		
-        return URL(string: path)!
+        return URL(string: path)
     }
 }
 

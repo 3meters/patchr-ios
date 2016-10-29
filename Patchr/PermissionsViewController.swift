@@ -136,6 +136,6 @@ class PermissionsViewController: BaseViewController {
     }
 
     func routeToMain() {
-        AppDelegate.appDelegate().routeForRoot()
+        MainController.instance.route()
     }
 }
