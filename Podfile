@@ -46,7 +46,6 @@ target 'Patchr' do
     pod 'SwiftyBeaver'
     pod 'RxSwift',                  '3.0.0-beta.2'
     pod 'RxCocoa',                  '3.0.0-beta.2'
-    pod 'Material',                 '~> 2.0'
     pod 'PhoneNumberKit',           '~> 1.0'
     pod 'SlideMenuControllerSwift'
     pod 'FontAwesome.swift',        :git=>'https://github.com/thii/FontAwesome.swift.git'

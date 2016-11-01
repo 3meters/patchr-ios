@@ -103,7 +103,6 @@ PODS:
   - KSCrash/RecordingAdvanced (1.8.13):
     - KSCrash/Recording
   - Lockbox (3.0.2)
-  - Material (2.1.2)
   - MBProgressHUD (0.9.2)
   - NHBalancedFlowLayout (0.2)
   - OneSignal (2.0.11)
@@ -148,7 +147,6 @@ DEPENDENCIES:
   - iRate (~> 1.11.6)
   - Keys (from `Pods/CocoaPodsKeys`)
   - Lockbox (~> 3.0.1)
-  - Material (~> 2.0)
   - MBProgressHUD (~> 0.9.1)
   - NHBalancedFlowLayout (~> 0.2)
   - OneSignal (~> 2.0.10)
@@ -209,7 +207,6 @@ SPEC CHECKSUMS:
   Keys: 9c35bf00f612ee1d48556f4a4b9b4551e224e90f
   KSCrash: 4c3a83f133b60f4bd57e05235ebf8d46e36d378d
   Lockbox: bfc91deef886f9c0302e809a4d11e171c92c341b
-  Material: e27257b2efea0ea145150b141da22e1d68bef552
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
   NHBalancedFlowLayout: fd253023c6754e605acdb180d50123e582cc62bb
   OneSignal: 2ac92fa759f2316038bd59cc34487cdd1e605212
@@ -226,6 +223,6 @@ SPEC CHECKSUMS:
   TWMessageBarManager: fd84e7948ba7968a2b5d9454859135761214ec56
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
 
-PODFILE CHECKSUM: 1a0e8571327fb87b9ef369b0dcd2fc5989f9be5d
+PODFILE CHECKSUM: 0224529ef52cdaf8674ddc33f2c75bc0a2d4c277
 
 COCOAPODS: 1.1.0.rc.3
