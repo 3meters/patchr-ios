@@ -201,7 +201,7 @@
 		E2C7C5CB1B2CF2F80045038A /* ImageResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C7C5CA1B2CF2F80045038A /* ImageResult.swift */; };
 		E2CA0C351C4FFEAF00E2F380 /* build.sh in Resources */ = {isa = PBXBuildFile; fileRef = E2CA0C331C4FFEAF00E2F380 /* build.sh */; };
 		E2CA0C361C4FFEAF00E2F380 /* test.sh in Resources */ = {isa = PBXBuildFile; fileRef = E2CA0C341C4FFEAF00E2F380 /* test.sh */; };
-		E2CA16FD1DB8016500F99E1D /* MainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CA16FC1DB8016500F99E1D /* MainController.swift */; };
+		E2CA16FD1DB8016500F99E1D /* Patchr in Sources */ = {isa = PBXBuildFile; fileRef = E2CA16FC1DB8016500F99E1D /* Patchr */; };
 		E2CA16FF1DB95DDB00F99E1D /* FireAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CA16FE1DB95DDB00F99E1D /* FireAttachment.swift */; };
 		E2CC15A11C2C897800316356 /* WrapperTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CC15A01C2C897800316356 /* WrapperTableViewCell.swift */; };
 		E2CCAAE01B67CC0E0071170C /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CCAADF1B67CC0E0071170C /* NotificationController.swift */; };
@@ -243,7 +243,7 @@
 		E2FA13401D8323030057F287 /* ChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FA133F1D8323030057F287 /* ChannelView.swift */; };
 		E2FB2C4A1DBFD33E00E97050 /* ChannelDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FB2C491DBFD33E00E97050 /* ChannelDetailView.swift */; };
 		E2FB2C4C1DC02E4600E97050 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FB2C4B1DC02E4600E97050 /* MessageView.swift */; };
-		E2FB2C4E1DC0EEBF00E97050 /* FireController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FB2C4D1DC0EEBF00E97050 /* FireController.swift */; };
+		E2FB2C4E1DC0EEBF00E97050 /* Patchr in Sources */ = {isa = PBXBuildFile; fileRef = E2FB2C4D1DC0EEBF00E97050 /* Patchr */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -502,7 +502,7 @@
 		E2C7C5CA1B2CF2F80045038A /* ImageResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageResult.swift; sourceTree = "<group>"; };
 		E2CA0C331C4FFEAF00E2F380 /* build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = SOURCE_ROOT; };
 		E2CA0C341C4FFEAF00E2F380 /* test.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = test.sh; sourceTree = SOURCE_ROOT; };
-		E2CA16FC1DB8016500F99E1D /* MainController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainController.swift; sourceTree = "<group>"; };
+		E2CA16FC1DB8016500F99E1D /* Patchr */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = folder; path = Patchr; sourceTree = "<group>"; };
 		E2CA16FE1DB95DDB00F99E1D /* FireAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireAttachment.swift; sourceTree = "<group>"; };
 		E2CC15A01C2C897800316356 /* WrapperTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WrapperTableViewCell.swift; sourceTree = "<group>"; };
 		E2CCAADF1B67CC0E0071170C /* NotificationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NotificationController.swift; path = Patchr/NotificationController.swift; sourceTree = "<group>"; };
@@ -552,7 +552,7 @@
 		E2FA133F1D8323030057F287 /* ChannelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelView.swift; sourceTree = "<group>"; };
 		E2FB2C491DBFD33E00E97050 /* ChannelDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelDetailView.swift; sourceTree = "<group>"; };
 		E2FB2C4B1DC02E4600E97050 /* MessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
-		E2FB2C4D1DC0EEBF00E97050 /* FireController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireController.swift; sourceTree = "<group>"; };
+		E2FB2C4D1DC0EEBF00E97050 /* Patchr */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = folder; path = Patchr; sourceTree = "<group>"; };
 		E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKCore.framework; path = Frameworks/AdobeCreativeSDKCore.framework; sourceTree = "<group>"; };
 		ED13DC8FAA3F0F42AF9C2AC5 /* Pods-Patchr.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.debug.xcconfig"; sourceTree = "<group>"; };
 		F8F2D0B82E3F8D83CE211D2E /* Pods_PatchrShare.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PatchrShare.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -596,8 +596,8 @@
 				E28177751B5C39E200D65AC1 /* AwsS3.swift */,
 				E20C3A821BDEBBB9008CCED1 /* CoreDataStack.swift */,
 				7DA3D9111A72D5A60082D2AB /* DataController.swift */,
-				E2FB2C4D1DC0EEBF00E97050 /* FireController.swift */,
-				E2CA16FC1DB8016500F99E1D /* MainController.swift */,
+				E2FB2C4D1DC0EEBF00E97050 /* Patchr */,
+				E2CA16FC1DB8016500F99E1D /* Patchr */,
 				E2F618D51AFFACF00055D09C /* LocationController.swift */,
 				E2CCAADF1B67CC0E0071170C /* NotificationController.swift */,
 				7D3D39EF1A6F116E00A44CB2 /* Proxibase.swift */,
@@ -1476,7 +1476,7 @@
 				E2A28E6F1B4A602200B3A2FE /* AirToggleButton.swift in Sources */,
 				E2064BF51BC18A66009C7B6A /* AirProgress.swift in Sources */,
 				E241D15A1B1B3FCE00702E01 /* UIView+BorderLayer.m in Sources */,
-				E2CA16FD1DB8016500F99E1D /* MainController.swift in Sources */,
+				E2CA16FD1DB8016500F99E1D /* Patchr in Sources */,
 				7DA730931A71ACC9008C25FA /* ServiceBase.m in Sources */,
 				E2810BA61DC8E6930013AEA0 /* PresenceView.swift in Sources */,
 				E2D12A7F1C0A090200DE507E /* Theming.swift in Sources */,
@@ -1495,7 +1495,7 @@
 				E25327B61B1000C000990A81 /* AirImageView.swift in Sources */,
 				E2999EE31DC25AAE005C69D8 /* EmptyViewController.swift in Sources */,
 				E23C010F1CE4D73B009C56B2 /* DisplayPhoto.swift in Sources */,
-				E2FB2C4E1DC0EEBF00E97050 /* FireController.swift in Sources */,
+				E2FB2C4E1DC0EEBF00E97050 /* Patchr in Sources */,
 				7DB6E0FF1A8177060017A42F /* User.m in Sources */,
 				7DA730961A71B962008C25FA /* BaseTableViewController.swift in Sources */,
 				7DA7308F1A71ACC9008C25FA /* Entity.m in Sources */,

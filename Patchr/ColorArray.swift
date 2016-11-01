@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Material
 
 struct ColorArray {
     

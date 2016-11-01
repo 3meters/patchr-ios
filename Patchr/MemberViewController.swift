@@ -8,7 +8,6 @@
 
 import UIKit
 import MessageUI
-import Material
 import PhoneNumberKit
 import Branch
 import Firebase

@@ -9,7 +9,6 @@ import AVFoundation
 import Firebase
 import FirebaseDatabaseUI
 import RxSwift
-import Material
 
 class ChannelPickerController: UIViewController, UITableViewDelegate {
 
