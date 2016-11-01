@@ -33,26 +33,6 @@ class FireChannel: NSObject {
     var muted: Bool?
     var archived: Bool?
 
-    var pathInstance: String {
-        return "\(FireChannel.path)/\(self.group!)/\(self.id!)"
-    }
-    
-    @discardableResult static func observe(id: String, groupId: String, eventType: FIRDataEventType, with block: @escaping (FIRDataSnapshot) -> Swift.Void) -> UInt {
-        let db = FIRDatabase.database().reference()
-        let path = "\(FireChannel.path)/\(groupId)/\(id)"
-        return db.child(path).observe(eventType, with: block)
-    }
-    
-    @discardableResult func observe(eventType: FIRDataEventType, with block: @escaping (FIRDataSnapshot) -> Swift.Void) -> UInt {
-        let db = FIRDatabase.database().reference()
-        return db.child(pathInstance).observe(eventType, with: block)
-    }
-    
-    func removeObserver(withHandle handle: UInt) {
-        let db = FIRDatabase.database().reference()
-        db.removeObserver(withHandle: handle)
-    }
-
     required convenience init?(dict: [String: Any], id: String?) {
         guard let id = id else { return nil }
         self.init()
@@ -65,9 +45,9 @@ class FireChannel: NSObject {
         self.purpose = dict["purpose"] as? String
         self.type = dict["type"] as? String
         self.visibility = dict["visibility"] as? String
-        self.isDefault = dict["is_default"] as? Bool
-        self.isGeneral = dict["is_general"] as? Bool
-        self.isArchived = dict["is_archived"] as? Bool
+        self.isDefault = dict["default"] as? Bool
+        self.isGeneral = dict["general"] as? Bool
+        self.isArchived = dict["archived"] as? Bool
         self.createdAt = dict["created_at"] as? Int
         self.createdBy = dict["created_by"] as? String
     }
@@ -80,9 +60,9 @@ class FireChannel: NSObject {
             "purpose": self.name,
             "type": self.type,
             "visibility": self.visibility,
-            "is_general": self.isGeneral,
-            "is_default": self.isDefault,
-            "is_archived": self.isArchived,
+            "general": self.isGeneral,
+            "default": self.isDefault,
+            "archived": self.isArchived,
             "created_at": self.createdAt,
             "created_by": self.name
         ]

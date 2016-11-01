@@ -65,7 +65,7 @@ class FirePhotoBrowser: IDMPhotoBrowser {
 	
 	func bind(message: FireMessage?) {
 		self.message = message
-//		self.likeButton.bindEntity(entity: entity)
-//		self.likeButton.isHidden = (entity == nil)
+		self.likeButton.bind(message: message)
+		self.likeButton.isHidden = (message == nil)
 	}
 }

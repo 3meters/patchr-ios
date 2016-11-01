@@ -13,7 +13,8 @@ import UIKit
 class ChannelListCell: UITableViewCell {
     
     @IBOutlet weak var title: UILabel?
-    @IBOutlet weak var icon: UIImageView?
+    @IBOutlet weak var star: UIImageView?
+    @IBOutlet weak var lock: UIImageView?
     
     var channel: FireChannel!
     
@@ -21,6 +22,7 @@ class ChannelListCell: UITableViewCell {
         self.channel = channel
         
         self.title?.text = "# \(channel.name!)"
-        self.icon?.isHidden = (channel.visibility != "private")
+        self.lock?.isHidden = (channel.visibility != "private")
+        self.star?.isHidden = !(channel.favorite!)
     }
 }

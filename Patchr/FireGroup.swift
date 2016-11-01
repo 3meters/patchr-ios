@@ -33,25 +33,6 @@ class FireGroup: NSObject {
     var hideEmail: Bool?
     var joinedAt: Int?
     
-    var pathInstance: String {
-        return "\(FireGroup.path)/\(self.id!)"
-    }
-    
-    @discardableResult static func observe(id: String, eventType: FIRDataEventType, with block: @escaping (FIRDataSnapshot) -> Swift.Void) -> UInt {
-        let db = FIRDatabase.database().reference()
-        return db.child("\(FireGroup.path)/\(id)").observe(eventType, with: block)
-    }
-    
-    @discardableResult func observe(eventType: FIRDataEventType, with block: @escaping (FIRDataSnapshot) -> Swift.Void) -> UInt {
-        let db = FIRDatabase.database().reference()
-        return db.child(pathInstance).observe(eventType, with: block)
-    }
-    
-    func removeObserver(withHandle handle: UInt) {
-        let db = FIRDatabase.database().reference()
-        db.removeObserver(withHandle: handle)
-    }
-    
     required convenience init?(dict: [String: Any], id: String?) {
         guard let id = id else { return nil }
         self.init()
@@ -84,7 +65,7 @@ class FireGroup: NSObject {
     }
     
     func membershipFrom(dict: [String: Any]) {
-        self.isDisabled = dict["is_disabled"] as? Bool
+        self.isDisabled = dict["disabled"] as? Bool
         self.role = dict["role"] as? String
         self.notifications = dict["notifications"] as? String
         self.hideEmail = dict["hide_email"] as? Bool

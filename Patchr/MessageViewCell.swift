@@ -191,14 +191,21 @@ class MessageViewCell: UIView {
         self.createdDate.text = UIShared.timeAgoShort(date: NSDate(timeIntervalSince1970: Double(message.createdAt!) / 1000))
 			
         self.toolbar.isHidden = false
-//        self.likeButton.bindEntity(entity: message)
-//        self.likes.text = nil
-//        if message.countLikes != nil {
-//            if message.countLikes?.intValue != 0 {
-//                self.likes.text = String(message.countLikes.intValue)
-//            }
-//        }
-//        self.likes.textColor = message.userLikesValue ? Colors.brandColor : Theme.colorText
+        self.likeButton.bind(message: message)
+        self.likes.text = nil
+        self.likes.textColor = Theme.colorText
+        
+        if let reactions = message.reactions {
+            if let thumbsup = reactions[":thumbsup:"] {
+                if thumbsup.count != 0 {
+                    self.likes.text = String(thumbsup.count)
+                }
+                let userId = UserController.instance.fireUserId
+                if thumbsup[userId!] != nil {
+                    self.likes.textColor = Colors.brandColor
+                }
+            }
+        }
 		
 		self.setNeedsLayout()	// Needed because binding can change the layout
 	}

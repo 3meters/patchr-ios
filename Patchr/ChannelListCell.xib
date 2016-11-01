@@ -12,9 +12,16 @@
             <rect key="frame" x="0.0" y="0.0" width="389" height="36"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="LTM-Mi-qV7" id="f05-yI-zfl">
-                <frame key="frameInset" width="389" height="35.5"/>
+                <frame key="frameInset" width="389" height="35"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="imgStarFilledLight" translatesAutoresizingMaskIntoConstraints="NO" id="MzM-rM-rpX">
+                        <color key="tintColor" red="1" green="0.71764705880000002" blue="0.30196078430000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="16" id="4Ze-kp-eLh"/>
+                            <constraint firstAttribute="width" constant="16" id="Dbz-Qn-smc"/>
+                        </constraints>
+                    </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="massena-time-really-long" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="meX-Hb-lPU">
                         <constraints>
                             <constraint firstAttribute="height" constant="20" id="K45-sW-jLW"/>
@@ -32,15 +39,18 @@
                     </imageView>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="MzM-rM-rpX" firstAttribute="centerY" secondItem="f05-yI-zfl" secondAttribute="centerY" id="6XA-pG-pc4"/>
                     <constraint firstItem="Tdc-C9-Sed" firstAttribute="leading" secondItem="meX-Hb-lPU" secondAttribute="trailing" constant="8" id="RSM-fw-lkP"/>
                     <constraint firstItem="Tdc-C9-Sed" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="f05-yI-zfl" secondAttribute="trailing" constant="-16" id="cGq-Da-X6T"/>
                     <constraint firstItem="meX-Hb-lPU" firstAttribute="centerY" secondItem="f05-yI-zfl" secondAttribute="centerY" id="cQP-vA-dnP"/>
+                    <constraint firstItem="MzM-rM-rpX" firstAttribute="leading" secondItem="f05-yI-zfl" secondAttribute="leading" constant="12" id="ir6-Wb-Ln0"/>
                     <constraint firstItem="Tdc-C9-Sed" firstAttribute="centerY" secondItem="meX-Hb-lPU" secondAttribute="centerY" id="kwP-eA-xPg"/>
-                    <constraint firstItem="meX-Hb-lPU" firstAttribute="leading" secondItem="f05-yI-zfl" secondAttribute="leading" constant="16" id="tSq-yH-5Ib"/>
+                    <constraint firstItem="meX-Hb-lPU" firstAttribute="leading" secondItem="f05-yI-zfl" secondAttribute="leading" constant="36" id="tSq-yH-5Ib"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>
-                <outlet property="icon" destination="Tdc-C9-Sed" id="CyT-oM-3HW"/>
+                <outlet property="lock" destination="Tdc-C9-Sed" id="bmZ-ar-ttY"/>
+                <outlet property="star" destination="MzM-rM-rpX" id="sBI-FJ-OZ6"/>
                 <outlet property="title" destination="meX-Hb-lPU" id="KkB-OH-HdK"/>
             </connections>
             <point key="canvasLocation" x="-188.5" y="-215"/>
@@ -48,5 +58,6 @@
     </objects>
     <resources>
         <image name="imgLockLight" width="22" height="22"/>
+        <image name="imgStarFilledLight" width="32" height="32"/>
     </resources>
 </document>

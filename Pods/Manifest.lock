@@ -108,6 +108,12 @@ PODS:
   - NHBalancedFlowLayout (0.2)
   - OneSignal (2.0.11)
   - PBWebViewController (0.5.0)
+  - PhoneNumberKit (1.0.1):
+    - PhoneNumberKit/PhoneNumberKitCore (= 1.0.1)
+    - PhoneNumberKit/UIKit (= 1.0.1)
+  - PhoneNumberKit/PhoneNumberKitCore (1.0.1)
+  - PhoneNumberKit/UIKit (1.0.1):
+    - PhoneNumberKit/PhoneNumberKitCore
   - pop (1.0.9)
   - ReachabilitySwift (3)
   - RxCocoa (3.0.0-beta.2):
@@ -147,6 +153,7 @@ DEPENDENCIES:
   - NHBalancedFlowLayout (~> 0.2)
   - OneSignal (~> 2.0.10)
   - PBWebViewController (~> 0.5)
+  - PhoneNumberKit (~> 1.0)
   - pop (~> 1.0)
   - ReachabilitySwift (~> 3)
   - RxCocoa (= 3.0.0-beta.2)
@@ -207,6 +214,7 @@ SPEC CHECKSUMS:
   NHBalancedFlowLayout: fd253023c6754e605acdb180d50123e582cc62bb
   OneSignal: 2ac92fa759f2316038bd59cc34487cdd1e605212
   PBWebViewController: 6537990155ca850fb8d0563efbc12becebc953ef
+  PhoneNumberKit: 0b5ea9a5454d201656db766343e9d768f8542496
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
   ReachabilitySwift: f5b9bb30a0777fac8f09ce8b067e32faeb29bb64
   RxCocoa: 1dd105d8a4e18034ccd7bd6d136445363ce67c8e
@@ -218,6 +226,6 @@ SPEC CHECKSUMS:
   TWMessageBarManager: fd84e7948ba7968a2b5d9454859135761214ec56
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
 
-PODFILE CHECKSUM: d356f79d28bb6188937348b854a5e9075659800a
+PODFILE CHECKSUM: 1a0e8571327fb87b9ef369b0dcd2fc5989f9be5d
 
 COCOAPODS: 1.1.0.rc.3

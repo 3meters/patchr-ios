@@ -37,8 +37,15 @@ class DisplayPhoto: IDMPhoto {
             }
         }
         
-//        displayPhoto.userLikes = entity.userLikesValue
-//        displayPhoto.userLikesId = entity.userLikesId
+        let userId = UserController.instance.fireUserId
+        if let reactions = message.reactions {
+            if let thumbsup = reactions[":thumbsup:"] {
+                if let active = thumbsup[userId!] {
+                    displayPhoto.userLikes = true
+                    displayPhoto.userLikesId = userId
+                }
+            }
+        }
         
         return displayPhoto
     }

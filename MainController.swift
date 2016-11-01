@@ -16,6 +16,10 @@ import RxSwift
 class MainController: NSObject, iRateDelegate {
 
     static let instance = MainController()
+    
+    var onlineRef: FIRDatabaseReference!
+    var userRef: FIRDatabaseReference!
+
     var window: UIWindow?
     let db = FIRDatabase.database().reference()
     var disposeBag = DisposeBag()
@@ -80,6 +84,19 @@ class MainController: NSObject, iRateDelegate {
             self.channelId = UserDefaults.standard.string(forKey: self.groupId!)
         }
         
+        self.onlineRef = FIRDatabase.database().reference().child(".info/connected")
+        FIRAuth.auth()?.addStateDidChangeListener { auth, user in
+            if user != nil {
+                self.userRef = FIRDatabase.database().reference().child("users/\(user!.uid)")
+                self.onlineRef.observe(.value, with: { snap in
+                    if snap.value != nil {
+                        self.userRef.onDisconnectUpdateChildValues(["presence": FIRServerValue.timestamp()])
+                        self.userRef.updateChildValues(["presence": true])
+                    }
+                })
+            }
+        }
+        
         NotificationCenter.default.addObserver(self, selector: #selector(MainController.channelDidChange(notification:)), name: NSNotification.Name(rawValue: Events.ChannelDidChange), object: nil)
     }
 
@@ -89,7 +106,7 @@ class MainController: NSObject, iRateDelegate {
     }
 
     func route() {
-        if (FIRAuth.auth()?.currentUser) != nil {
+        if (UserController.instance.fireUser) != nil {
             showMain()
         }
         else {
@@ -111,7 +128,7 @@ class MainController: NSObject, iRateDelegate {
         let leftNavController = AirNavigationController(rootViewController: channelPicker)
         
         leftNavController.setNavigationBarHidden(true, animated: false)
-        channelPicker.groupId = self.groupId
+        channelPicker.inputGroupId = self.groupId
         mainController.emptyLabel.text = "Loading..."
 
         let drawerController = SlideMenuController(mainViewController: mainController, leftMenuViewController: leftNavController, rightMenuViewController: menuController)
@@ -131,8 +148,8 @@ class MainController: NSObject, iRateDelegate {
 
     func showChannel(groupId: String, channelId: String) {
         let controller = ChannelViewController()
-        controller.channelId = channelId
-        controller.groupId = groupId
+        controller.inputChannelId = channelId
+        controller.inputGroupId = groupId
         let nav = AirNavigationController(rootViewController: controller)
         self.window?.rootViewController?.slideMenuController()?.changeMainViewController(nav, close: true)
     }
@@ -172,15 +189,13 @@ class MainController: NSObject, iRateDelegate {
     }
 
     func setChannelId(channelId: String?) {
-        if self.channelId != channelId {
-            self.channelId = channelId
-            UserDefaults.standard.set(channelId, forKey: self.groupId!)
-            let userInfo = [
-                "groupId": self.groupId,
-                "channelId":self.channelId
-            ]
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.ChannelDidChange), object: self, userInfo: userInfo)
-        }
+        self.channelId = channelId
+        UserDefaults.standard.set(channelId, forKey: self.groupId!)
+        let userInfo = [
+            "groupId": self.groupId,
+            "channelId":self.channelId
+        ]
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.ChannelDidChange), object: self, userInfo: userInfo)
     }
 
     func checkCompatibility() {

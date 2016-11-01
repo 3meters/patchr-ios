@@ -7,35 +7,52 @@
 import UIKit
 import AVFoundation
 import Firebase
-import FirebaseAuth
 import FirebaseDatabaseUI
 import RxSwift
 import Material
 
 class ChannelPickerController: UIViewController, UITableViewDelegate {
 
-    let db = FIRDatabase.database().reference()
-    var groupId: String!
+    var inputGroupId: String!
+    
+    var groupRef: FIRDatabaseReference!
+    var groupHandle: UInt!
+    var channelsQuery: FIRDatabaseQuery!
+    var group: FireGroup!
+    
     var headerView: ChannelsHeaderView!
     var tableView = AirTableView(frame: CGRect.zero, style: .plain)
     var tableViewDataSource: FirebaseTableViewDataSource!
     var footerView = AirLinkButton()
+    var hasFavorites = false
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
 
-    override func loadView() {
-        super.loadView()
-        guard self.groupId != nil else {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        guard self.inputGroupId != nil else {
             fatalError("Channel picker cannot be launched without a groupId")
         }
         initialize()
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        bind()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.groupHandle = self.groupRef.observe(.value, with: { snap in
+            if snap.value is NSNull {
+                Log.w("Group snapshot is null")
+                return
+            }
+            self.group = FireGroup(dict: snap.value as! [String: Any], id: snap.key)
+            self.bind()
+        })
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.groupRef.removeObserver(withHandle: self.groupHandle)
     }
     
     override func viewWillLayoutSubviews() {
@@ -73,7 +90,10 @@ class ChannelPickerController: UIViewController, UITableViewDelegate {
     func groupChanged(notification: NSNotification) {
         let groupId = notification.userInfo?["groupId"] as? String
         if groupId != nil {
-            self.groupId = groupId
+            self.inputGroupId = groupId
+            let userId = UserController.instance.fireUserId
+            self.groupRef = FIRDatabase.database().reference().child("groups/\(self.inputGroupId!)")
+            self.channelsQuery = FIRDatabase.database().reference().child("member-channels/\(userId!)/\(self.inputGroupId!)").queryOrdered(byChild: "sort_priority")
             bind()
         }
         else {
@@ -89,6 +109,10 @@ class ChannelPickerController: UIViewController, UITableViewDelegate {
     func initialize() {
         
         self.view.backgroundColor = UIColor.white
+        
+        let userId = UserController.instance.fireUserId
+        self.groupRef = FIRDatabase.database().reference().child("groups/\(self.inputGroupId!)")
+        self.channelsQuery = FIRDatabase.database().reference().child("member-channels/\(userId!)/\(self.inputGroupId!)").queryOrdered(byChild: "sort_priority")
         
         self.headerView = Bundle.main.loadNibNamed("ChannelsHeaderView", owner: nil, options: nil)?.first as? ChannelsHeaderView
         self.headerView.switchButton?.addTarget(self, action: #selector(ChannelPickerController.switchAction(sender:)), for: .touchUpInside)
@@ -115,17 +139,12 @@ class ChannelPickerController: UIViewController, UITableViewDelegate {
     
     func bind() {
         
-        let userId = FIRAuth.auth()!.currentUser!.uid
-        
-        self.headerView.observe(groupId: self.groupId!)
+        self.headerView.bind(patch: self.group)
         
         self.tableView.dataSource = nil
         self.tableView.reloadData()
         
-        let path = "member-channels/\(userId)/\(self.groupId!)"
-        let ref = self.db.child(path)
-        
-        self.tableViewDataSource = FirebaseTableViewDataSource(ref: ref
+        self.tableViewDataSource = ChannelsDataSource(query: self.channelsQuery
             , nibNamed: "ChannelListCell"
             , cellReuseIdentifier: "ChannelViewCell"
             , view: self.tableView)
@@ -142,10 +161,9 @@ class ChannelPickerController: UIViewController, UITableViewDelegate {
             cell.title?.textColor = Theme.colorText
             if channelId == MainController.instance.channelId {
                 cell.backgroundColor = Color.orange.lighten5
-                //cell.title?.textColor = Colors.white
             }
-            let path = "group-channels/\(self.groupId!)/\(channelId)"
-            let ref = self.db.child(path)
+            let path = "group-channels/\(self.inputGroupId!)/\(channelId)"
+            let ref = FIRDatabase.database().reference().child(path)
             ref.observeSingleEvent(of: .value, with: { snap in
                 if let channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key) {
                     channel.membershipFrom(dict: link)
@@ -167,5 +185,17 @@ class ChannelPickerController: UIViewController, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 36
+    }
+}
+
+extension ChannelPickerController {
+    /* 
+     * UITableViewDataSource 
+     */
+    class ChannelsDataSource: FirebaseTableViewDataSource {
+        
+        override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+            return "Channels"
+        }
     }
 }

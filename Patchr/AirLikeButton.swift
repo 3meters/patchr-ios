@@ -12,6 +12,8 @@ class AirLikeButton: AirToggleButton {
     
     var entity			: Entity?
 	var entityId		: String?
+    var message			: FireMessage?
+    var messageId       : String?
 	var userLikes		= false
 	var userLikesId		: String?
 	var displayPhoto	: DisplayPhoto?
@@ -33,7 +35,7 @@ class AirLikeButton: AirToggleButton {
         super.initialize()
     }
 
-	func bindEntity(entity: Entity?) {
+	func bind(entity: Entity?) {
 		self.entity = entity
         if entity != nil {
 			self.entityId = self.entity!.id_
@@ -45,8 +47,22 @@ class AirLikeButton: AirToggleButton {
             toggleOn(on: false, animate: false)
         }
 	}
-	
-	func bind(displayPhoto: DisplayPhoto) {
+
+    func bind(message: FireMessage?) {
+        self.message = message
+        let userId = UserController.instance.fireUserId
+        if let reactions = message?.reactions {
+            if let thumbsup = reactions[":thumbsup:"] {
+                if let active = thumbsup[userId!] {
+                    toggleOn(on: active, animate: false)
+                    return
+                }
+            }
+        }
+        toggleOn(on: false, animate: false)
+    }
+
+    func bind(displayPhoto: DisplayPhoto) {
 		self.displayPhoto = displayPhoto
 		self.entityId = displayPhoto.entityId
 		self.userLikes = displayPhoto.userLikes

@@ -14,16 +14,18 @@ import FirebaseDatabaseUI
 
 class ChannelViewController: UIViewController, UITableViewDelegate {
     
-    let db = FIRDatabase.database().reference()
+    var inputGroupId: String!
+    var inputChannelId: String!
+    
+    var channelRef: FIRDatabaseReference!
+    var channelHandle: UInt!
+    var messagesQuery: FIRDatabaseQuery!
+    var channel: FireChannel!
     
     var tableView: UITableView!
     var tableViewDataSource: FirebaseTableViewDataSource!
     var headerView: ChannelDetailView!
     
-    var groupId: String!
-    var channelId: String!
-    var channel: FireChannel?
-
     var originalRect: CGRect?
     var originalScrollTop = CGFloat(-64.0)
     var lastContentOffset = CGFloat(0)
@@ -56,14 +58,34 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
      * MARK: - Lifecycle
      *--------------------------------------------------------------------------------------------*/
 
-    override func loadView() {
-        super.loadView()
-        initialize()
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        bind()
+        initialize()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.channelHandle = self.channelRef.observe(.value, with: { snap in
+            self.channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key)
+            self.bind()
+        })
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if self.actionButton != nil {
+            showActionButton()
+        }
+        
+        iRate.sharedInstance().promptIfAllCriteriaMet()
+        reachabilityChanged()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.activity.stopAnimating()
+        self.channelRef.removeObserver(withHandle: self.channelHandle)
     }
 
     override func viewWillLayoutSubviews() {
@@ -85,22 +107,6 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
         self.tableView.tableHeaderView?.bounds.size = CGSize(width: viewWidth, height: viewHeight)    // Triggers layoutSubviews on header
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        if self.actionButton != nil {
-            showActionButton()
-        }
-
-        iRate.sharedInstance().promptIfAllCriteriaMet()
-        reachabilityChanged()
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        self.activity.stopAnimating()
-    }
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         Log.w("Patchr received memory warning: clearing memory image cache")
@@ -119,6 +125,16 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
         let point = sender.location(in: self.tableView)
         if let indexPath = self.tableView.indexPathForRow(at: point) {
             UIShared.Toast(message: "Long press row: \(indexPath.row)")
+        }
+    }
+    
+    func memberAction(sender: AnyObject?) {
+        if let photoView = sender as? PhotoView {
+            if let user = photoView.target as? FireUser {
+                let controller = MemberViewController()
+                controller.inputUserId = user.id
+                self.navigationController?.pushViewController(controller, animated: true)
+            }
         }
     }
     
@@ -151,7 +167,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
             }
         }
     }
-
+    
     func photosAction(sender: AnyObject) {
         showPhotos()
     }
@@ -177,7 +193,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
         /* Has its own nav because we segue modally and it needs its own stack */
         let controller = MessageEditViewController()
         controller.inputToString = self.channel?.name
-        controller.inputPatchId = self.groupId
+        controller.inputPatchId = self.inputGroupId
         controller.inputState = .Creating
 
         let navController = AirNavigationController()
@@ -296,7 +312,10 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
     func initialize() {
 
         Reporting.screen("PatchDetail")
-
+        
+        self.channelRef = FIRDatabase.database().reference().child("group-channels/\(self.inputGroupId!)/\(self.inputChannelId!)")
+        self.messagesQuery = FIRDatabase.database().reference().child("channel-messages/\(self.inputChannelId!)").queryOrdered(byChild: "timestamp")
+        
         self.headerView = ChannelDetailView()
         self.tableView = AirTableView(frame: self.view.frame, style: .plain)
         self.tableView.estimatedRowHeight = 100						// Zero turns off estimates
@@ -365,70 +384,79 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
 
     func bind() {
 
-        FireChannel.observe(id: channelId, groupId: groupId, eventType: .value) { snap in
-            if snap.value is NSNull { return }
-            let channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key)
-            self.channel = channel
-            self.drawNavBarButtons(channel: channel!)
-            
-            /* We do this here so we have tableView sizing */
-            if self.tableView.tableHeaderView == nil {
-                let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
-                self.headerView.frame = CGRect(x:0, y:0, width: viewWidth, height: 100)
-                self.headerView.bind(channel: channel)
-                let viewHeight = self.headerView.height()
-                self.headerView.frame = CGRect(x:0, y:0, width: viewWidth, height: viewHeight)
-                self.headerView.photo.frame = CGRect(x: -24, y: -36, width: self.headerView.contentGroup.width() + 48, height: self.headerView.contentGroup.height() + 72)
-                self.originalRect = self.headerView.photo.frame
-                self.tableView.tableHeaderView = self.headerView
-                self.tableView.reloadData()
-            }
-                
-            self.headerView.observe(channelId: self.channelId, groupId: self.groupId)
+        self.drawNavBarButtons()
+        
+        /* We do this here so we have tableView sizing */
+        if self.tableView.tableHeaderView == nil {
+            let viewWidth = min(CONTENT_WIDTH_MAX, self.tableView.width())
+            self.headerView.frame = CGRect(x:0, y:0, width: viewWidth, height: 100)
+            self.headerView.bind(channel: channel)
+            let viewHeight = self.headerView.height()
+            self.headerView.frame = CGRect(x:0, y:0, width: viewWidth, height: viewHeight)
+            self.headerView.photo.frame = CGRect(x: -24, y: -36, width: self.headerView.contentGroup.width() + 48, height: self.headerView.contentGroup.height() + 72)
+            self.originalRect = self.headerView.photo.frame
+            self.tableView.tableHeaderView = self.headerView
+            self.tableView.reloadData()
         }
-
-        let ref = self.db.child("channel-messages/\(channelId!)")
-        let query = ref.queryOrdered(byChild: "created_at")
+        else {
+            self.headerView.bind(channel: self.channel)
+        }
         
-        self.tableViewDataSource = FirebaseTableViewDataSource(query: query
-            , cellClass: WrapperTableViewCell.self
-            , cellReuseIdentifier: "MessageViewCell"
-            , view: self.tableView)
-        
-        self.tableViewDataSource.populateCell { (cell, data) in
+        if self.tableViewDataSource == nil {
             
-            let snap = data as! FIRDataSnapshot
-            let cell = cell as! WrapperTableViewCell
-            let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)! as FireMessage
+            self.tableViewDataSource = FirebaseTableViewDataSource(query: self.messagesQuery
+                , cellClass: WrapperTableViewCell.self
+                , cellReuseIdentifier: "MessageViewCell"
+                , view: self.tableView)
             
-            FireUser.observe(id: message.createdBy!, eventType: .value) { snap in
-                if let user = FireUser(dict: snap.value as! [String: Any], id: snap.key) {
-                    message.creator = user
-                    
-                    if cell.view == nil {
-                        cell.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(self.longPressAction(sender:))))
-
-                        let view = MessageViewCell(frame: CGRect(x: 0, y: 0, width: self.view.width(), height: 40))
-                        if view.description_ != nil && (view.description_ is TTTAttributedLabel) {
-                            let label = view.description_ as! TTTAttributedLabel
-                            label.delegate = self
+            self.tableViewDataSource.populateCell { (cell, data) in
+                
+                let snap = data as! FIRDataSnapshot
+                let cell = cell as! WrapperTableViewCell
+                let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)! as FireMessage
+                
+                if message.createdBy == nil {
+                    self.bindMessageView(cell: cell, message: message)
+                }
+                else {
+                    let userRef = FIRDatabase.database().reference().child("users/\(message.createdBy!)")
+                    userRef.observeSingleEvent(of: .value, with: { snap in
+                        if let user = FireUser(dict: snap.value as! [String: Any], id: snap.key) {
+                            message.creator = user
+                            self.bindMessageView(cell: cell, message: message)
                         }
-                        view.photo?.isUserInteractionEnabled = true
-                        view.photo?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.photoAction(sender:))))
-                        cell.injectView(view: view, padding: self.itemPadding)
-                        cell.layoutSubviews()   // Make sure padding has been applied
-                    }
-                    
-                    let messageView = cell.view! as! MessageViewCell
-                    messageView.bind(message: message)
+                    })
                 }
             }
+            
+            self.tableView.dataSource = self.tableViewDataSource
+        }
+    }
+    
+    func bindMessageView(cell: WrapperTableViewCell, message: FireMessage) {
+        if cell.view == nil {
+            cell.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(self.longPressAction(sender:))))
+            
+            let view = MessageViewCell(frame: CGRect(x: 0, y: 0, width: self.view.width(), height: 40))
+            if view.description_ != nil && (view.description_ is TTTAttributedLabel) {
+                let label = view.description_ as! TTTAttributedLabel
+                label.delegate = self
+            }
+            view.photo?.isUserInteractionEnabled = true
+            view.photo?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.photoAction(sender:))))
+            cell.injectView(view: view, padding: self.itemPadding)
+            cell.layoutSubviews()   // Make sure padding has been applied
         }
         
-        self.tableView.dataSource = self.tableViewDataSource
+        let messageView = cell.view! as! MessageViewCell
+        messageView.bind(message: message)
+        if message.creator != nil {
+            messageView.userPhoto.target = message.creator
+            messageView.userPhoto.addTarget(self, action: #selector(self.memberAction(sender:)), for: .touchUpInside)
+        }
     }
 
-    func drawNavBarButtons(channel: FireChannel) {
+    func drawNavBarButtons() {
 
         /* Navigation button */
         var button = UIButton(type: .custom)
@@ -513,7 +541,9 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
         for data in self.tableViewDataSource.items {
             let snap = data as! FIRDataSnapshot            
             if let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key) {
-                FireUser.observe(id: message.createdBy!, eventType: .value) { snap in
+                
+                let userRef = FIRDatabase.database().reference().child("users/\(message.createdBy!)")
+                userRef.observeSingleEvent(of: .value, with: { snap in
                     remaining -= 1
                     let user = FireUser(dict: snap.value as! [String: Any], id: snap.key)
                     if (message.attachments?.first?.photo) != nil {
@@ -531,7 +561,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
                         navController.viewControllers = [controller]
                         self.navigationController!.present(navController, animated: true, completion: nil)
                     }
-                }
+                })
             }
         }
     }
@@ -612,7 +642,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
     *--------------------------------------------------------------------------------------------*/
 
     func isUserOwner() -> Bool {
-        let userId = FIRAuth.auth()?.currentUser?.uid
+        let userId = UserController.instance.fireUserId
         return self.channel!.createdBy == userId
     }
 }

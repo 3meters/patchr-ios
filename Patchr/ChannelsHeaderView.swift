@@ -16,23 +16,6 @@ class ChannelsHeaderView: UIView {
 	@IBOutlet weak var photoView       : PhotoView?
     @IBOutlet weak var switchButton    : UIButton?
     
-    func observe(patch: FireGroup) {
-        patch.observe(eventType: .value) { snap in
-            if let patch = FireGroup(dict: snap.value as! [String: Any], id: snap.key) {
-                self.bind(patch: patch)
-            }
-        }
-    }
-    
-    func observe(groupId: String) {
-        FireGroup.observe(id: groupId, eventType: .value) { snap in
-            if snap.value is NSNull { return }
-            if let patch = FireGroup(dict: snap.value as! [String: Any], id: snap.key) {
-                self.bind(patch: patch)
-            }
-        }
-    }
-    
 	func bind(patch: FireGroup!) {
         self.title?.text = patch.title
 		self.subtitle?.text = patch.name

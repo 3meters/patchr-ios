@@ -149,7 +149,7 @@ class AirImageButton: UIButton {
         
         if error != nil {
             Log.w("Image fetch failed: " + error!.localizedDescription)
-            Log.w("Failed url: \(url?.absoluteString)")
+            Log.w("Failed url: \(url!.absoluteString)")
             
             self.linkedPhotoUrl = nil
             

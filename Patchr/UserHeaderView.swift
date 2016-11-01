@@ -73,7 +73,7 @@ class UserHeaderView: BaseDetailView {
 		self.rule.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 1)
 	}
 	
-	func bindToUser(user: FireUser!) {
+	func bind(user: FireUser!) {
         self.name.text?.removeAll(keepingCapacity: false)
         self.username.text?.removeAll(keepingCapacity: false)
         
@@ -86,5 +86,9 @@ class UserHeaderView: BaseDetailView {
             }
             self.photo.bindPhoto(photoUrl: photoUrl, name: profile.fullName!)
         }
+        
+        self.setNeedsLayout()
+        self.layoutIfNeeded()
+        self.sizeToFit()
 	}
 }

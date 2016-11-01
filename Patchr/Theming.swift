@@ -56,7 +56,7 @@ class Snow {
 	let colorBackgroundContactSelected 	= Colors.accentColorFill
 	let colorBackgroundSelected		= Colors.gray90pcntColor
 
-	let colorRule                   = Colors.gray75pcntColor
+	let colorRule                   = Colors.gray85pcntColor
 	let colorRuleActive             = Colors.accentColorRule
 	let colorTint                   = Colors.brandColorTextLight
 	let colorTabBarTint             = Colors.brandColorTextLight

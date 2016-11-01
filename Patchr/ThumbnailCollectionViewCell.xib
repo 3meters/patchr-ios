@@ -27,7 +27,7 @@
             <connections>
                 <outlet property="thumbnail" destination="owZ-FX-YTf" id="hFJ-Id-kr7"/>
             </connections>
-            <point key="canvasLocation" x="346" y="400"/>
+            <point key="canvasLocation" x="-804" y="-19"/>
         </collectionViewCell>
     </objects>
 </document>

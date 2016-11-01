@@ -54,7 +54,7 @@
                             <state key="normal" image="imgSwitchLight"/>
                         </button>
                     </subviews>
-                    <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                    <color key="backgroundColor" white="0.95159993154539479" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstItem="PNf-Qo-2dd" firstAttribute="leading" secondItem="lPp-SG-dj9" secondAttribute="trailing" constant="8" id="3aT-8a-fNa"/>
                         <constraint firstItem="PNf-Qo-2dd" firstAttribute="trailing" secondItem="Qnm-vY-7NZ" secondAttribute="leading" constant="-8" id="CIW-cY-Z3m"/>

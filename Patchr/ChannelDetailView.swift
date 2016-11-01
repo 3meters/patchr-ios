@@ -10,7 +10,6 @@ import UIKit
 
 class ChannelDetailView: UIView {
     
-    var channel: FireChannel?
     var photoRect: CGRect!
 
     var contentGroup = UIView()
@@ -68,7 +67,8 @@ class ChannelDetailView: UIView {
         self.gradient.frame = CGRect(x:0, y:self.contentGroup.height() - gradientHeight, width:self.contentGroup.width(), height:gradientHeight)
 
         /* Purpose */
-        if self.channel?.purpose != nil && !self.channel!.purpose!.isEmpty {
+        if !self.purpose.isHidden {
+            self.infoGroup.isHidden = false
             self.purpose.bounds.size.width = viewWidth - 32
             self.purpose.sizeToFit()
             self.purpose.anchorTopLeft(withLeftPadding: 12, topPadding: 12, width: self.purpose.width(), height: self.purpose.height())
@@ -134,35 +134,15 @@ class ChannelDetailView: UIView {
         self.contentGroup.clipsToBounds = true
     }
     
-    func observe(channel: FireChannel) {
-        channel.observe(eventType: .value) { snap in
-            if let channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key) {
-                self.bind(channel: channel)
-            }
-        }
-    }
-    
-    func observe(channelId: String, groupId: String) {
-        FireChannel.observe(id: channelId, groupId: groupId, eventType: .value) { snap in
-            if snap.value is NSNull {
-                Log.w("Channel snapshot is null")
-                return
-            }
-            if let channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key) {
-                self.bind(channel: channel)
-            }
-        }
-    }
-    
     func bind(channel: FireChannel!) {
-        
-        self.channel = channel
         
         /* Name, type and photo */
         
         self.name.text = "#\(channel.name!)"
-        if channel.purpose != nil {
+        self.purpose.isHidden = true
+        if channel.purpose != nil && !channel.purpose!.isEmpty {
             self.purpose.text = channel.purpose!
+            self.purpose.isHidden = false
         }
 
         if let photo = channel.photo {

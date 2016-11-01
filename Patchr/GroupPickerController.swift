@@ -7,12 +7,13 @@
 import UIKit
 import AVFoundation
 import Firebase
-import FirebaseAuth
 import FirebaseDatabaseUI
 
 class GroupPickerController: UIViewController, UITableViewDelegate {
+    
+    var query: FIRDatabaseQuery!
 
-    var headerView: PatchesHeaderView!
+    var headerView: GroupsHeaderView!
     var tableView = UITableView(frame: CGRect.zero, style: .plain)
     var tableViewDataSource: FirebaseTableViewDataSource!
     var footerView = AirLinkButton()
@@ -21,13 +22,9 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
 
-    override func loadView() {
-        super.loadView()
-        initialize()
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        initialize()
         bind()
     }
     
@@ -65,10 +62,13 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
     
     func initialize() {
         
+        let userId = UserController.instance.fireUserId
+        self.query = FIRDatabase.database().reference().child("member-groups/\(userId!)").queryOrdered(byChild: "sort_priority")
+        
         self.view.backgroundColor = UIColor.clear
         self.view.isOpaque = false
         
-        self.headerView = Bundle.main.loadNibNamed("PatchesHeaderView", owner: nil, options: nil)?.first as? PatchesHeaderView
+        self.headerView = Bundle.main.loadNibNamed("GroupsHeaderView", owner: nil, options: nil)?.first as? GroupsHeaderView
         self.headerView.closeButton?.addTarget(self, action: #selector(GroupPickerController.closeAction(sender:)), for: .touchUpInside)
         
         self.footerView.setTitle("Create group", for: .normal)
@@ -90,12 +90,7 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
     
     func bind() {
         
-        let userId = FIRAuth.auth()?.currentUser?.uid
-        let db = FIRDatabase.database().reference()
-        let ref = db.child("member-groups/\(userId!)")
-        self.tableViewDataSource = FirebaseTableViewDataSource(ref: ref, nibNamed: "PatchListCell", cellReuseIdentifier: "PatchViewCell", view: self.tableView)
-        self.tableView.dataSource = self.tableViewDataSource
-        
+        self.tableViewDataSource = FirebaseTableViewDataSource(query: self.query, nibNamed: "GroupListCell", cellReuseIdentifier: "GroupListCell", view: self.tableView)
         self.tableViewDataSource.populateCell { (cell, data) in
             
             let snap = data as! FIRDataSnapshot
@@ -109,13 +104,14 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
                 cell.title?.textColor = Colors.accentColorTextLight
             }
             
-            db.child("groups/\(groupId)").observeSingleEvent(of: .value, with: { snap in
+            FIRDatabase.database().reference().child("groups/\(groupId)").observeSingleEvent(of: .value, with: { snap in
                 if let group = FireGroup(dict: snap.value as! [String: Any], id: snap.key) {
                     group.membershipFrom(dict: link)
                     cell.bind(group: group)
                 }
             })
         }
+        self.tableView.dataSource = self.tableViewDataSource
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

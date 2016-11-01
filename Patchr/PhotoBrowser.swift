@@ -65,7 +65,7 @@ class PhotoBrowser: IDMPhotoBrowser {
 	
 	func bindEntity(entity: Entity?) {
 		self.entity = entity
-		self.likeButton.bindEntity(entity: entity)
+		self.likeButton.bind(entity: entity)
 		self.likeButton.isHidden = (entity == nil)
 	}
 }

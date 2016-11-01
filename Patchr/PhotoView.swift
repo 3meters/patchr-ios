@@ -14,6 +14,7 @@ class PhotoView: UIControl {
 
     var name = AirLabelDisplay()
 	var photo = AirImageView(frame: CGRect.zero)
+    var target: AnyObject?
     
     @IBInspectable var initialsCount: Int = 2
     @IBInspectable var rounded: Bool = true {

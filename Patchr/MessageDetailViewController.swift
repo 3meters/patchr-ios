@@ -561,7 +561,7 @@ class MessageDetailViewController: BaseViewController {
 
 		/* Like button */
         
-        likeButton.bindEntity(entity: self.inputMessage)
+        likeButton.bind(entity: self.inputMessage)
 
 		/* Likes button */
 

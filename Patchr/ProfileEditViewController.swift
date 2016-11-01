@@ -528,11 +528,13 @@ class ProfileEditViewController: BaseEditViewController {
             }
         }
         else {
-            if !stringsAreEqual(string1: self.firstNameField.text, string2: self.inputUser!.name) {
-                return true
-            }
-            if !stringsAreEqual(string1: self.emailField.text, string2: self.inputUser!.email) {
-                return true
+            if self.inputUser != nil {
+                if !stringsAreEqual(string1: self.firstNameField.text, string2: self.inputUser!.name) {
+                    return true
+                }
+                if !stringsAreEqual(string1: self.emailField.text, string2: self.inputUser!.email) {
+                    return true
+                }                
             }
         }
 

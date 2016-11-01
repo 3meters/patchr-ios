@@ -9,7 +9,7 @@
 import UIKit
 
 @IBDesignable
-class PatchesHeaderView: UIView {
+class GroupsHeaderView: UIView {
 
     @IBOutlet weak var title : UILabel?
     @IBOutlet weak var closeButton : UIButton?

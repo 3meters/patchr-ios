@@ -128,7 +128,7 @@ class MessageView: BaseView {
             if let message = self.entity as? Message, message.id_ != nil && entityId == message.id_ {
                 
                 /* Likes button */
-                self.likeButton.bindEntity(entity: message)
+                self.likeButton.bind(entity: message)
                 
                 self.likes.text = nil
                 
@@ -289,7 +289,7 @@ class MessageView: BaseView {
             }
             else {
                 self.toolbar.isHidden = false
-                self.likeButton.bindEntity(entity: message)
+                self.likeButton.bind(entity: message)
                 self.likes.text = nil
                 if message.countLikes != nil {
                     if message.countLikes?.intValue != 0 {

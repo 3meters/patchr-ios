@@ -16,7 +16,9 @@ import FirebaseDatabase
 
 class SideMenuViewController: UITableViewController {
 
-    let db = FIRDatabase.database().reference()
+    var ref: FIRDatabaseReference!
+    var handle: UInt!
+    var user: FireUser?
 
     var menuHeader: UserHeaderView!
     var inviteCell: WrapperTableViewCell?
@@ -35,10 +37,15 @@ class SideMenuViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.handle = self.ref.observe(.value, with: { snap in
+            self.user = FireUser(dict: snap.value as! [String: Any], id: snap.key)
+            self.bind()
+        })
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.ref.removeObserver(withHandle: self.handle)
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -64,6 +71,9 @@ class SideMenuViewController: UITableViewController {
     func initialize() {
 
         Reporting.screen("SideMenu")
+        
+        let userId = UserController.instance.fireUserId
+        self.ref = FIRDatabase.database().reference().child("users/\(userId!)")
 
         self.tableView = UITableView(frame: self.tableView.frame, style: .plain)
         self.tableView.rowHeight = 64
@@ -89,19 +99,18 @@ class SideMenuViewController: UITableViewController {
         
         FIRAuth.auth()?.addStateDidChangeListener { auth, user in
             if user != nil {
-                self.bind(authUser: user!)
+                let userId = UserController.instance.fireUserId
+                self.ref = FIRDatabase.database().reference().child("users/\(userId!)")
+                self.handle = self.ref.observe(.value, with: { snap in
+                    self.user = FireUser(dict: snap.value as! [String: Any], id: snap.key)
+                    self.bind()
+                })
             }
         }
     }
     
-    func bind(authUser: FIRUser) {
-        self.db.child("users/\(authUser.uid)").observe(.value, with: { snap in
-            if let user = FireUser(dict: snap.value as! [String: Any], id: authUser.uid) {
-                self.menuHeader.bindToUser(user: user)
-                self.menuHeader.setNeedsLayout()
-                self.menuHeader.layoutIfNeeded()
-            }
-        })
+    func bind() {
+        self.menuHeader.bind(user: user)
     }
 }
 
