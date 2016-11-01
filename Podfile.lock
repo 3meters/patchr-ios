@@ -98,6 +98,7 @@ PODS:
     - pop
     - SDWebImage
   - iRate (1.11.6)
+  - JVFloatLabeledTextField (1.1.1)
   - Keys (1.0.0)
   - KSCrash/Recording (1.8.13)
   - KSCrash/RecordingAdvanced (1.8.13):
@@ -145,6 +146,7 @@ DEPENDENCIES:
   - FontAwesome.swift (from `https://github.com/thii/FontAwesome.swift.git`)
   - IDMPhotoBrowser (from `~/code/IDMPhotoBrowser`)
   - iRate (~> 1.11.6)
+  - JVFloatLabeledTextField (~> 1.1)
   - Keys (from `Pods/CocoaPodsKeys`)
   - Lockbox (~> 3.0.1)
   - MBProgressHUD (~> 0.9.1)
@@ -204,6 +206,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: 8bbc733218aad26306f9d4a253823986110e3358
   IDMPhotoBrowser: bcd6cbc9ccaf7e945c3a5a065ffa1a4dee81b722
   iRate: 61e558919c4a7fde63b3c22ebbd6c114a1eee658
+  JVFloatLabeledTextField: 0e5524b097f102036214dd8279edc8ecf08b5e18
   Keys: 9c35bf00f612ee1d48556f4a4b9b4551e224e90f
   KSCrash: 4c3a83f133b60f4bd57e05235ebf8d46e36d378d
   Lockbox: bfc91deef886f9c0302e809a4d11e171c92c341b
@@ -223,6 +226,6 @@ SPEC CHECKSUMS:
   TWMessageBarManager: fd84e7948ba7968a2b5d9454859135761214ec56
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
 
-PODFILE CHECKSUM: 0224529ef52cdaf8674ddc33f2c75bc0a2d4c277
+PODFILE CHECKSUM: 76e6d5b3866dfdf9eec49cc18d34c6c508ff34c4
 
 COCOAPODS: 1.1.0.rc.3

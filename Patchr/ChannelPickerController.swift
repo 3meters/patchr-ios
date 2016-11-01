@@ -159,7 +159,7 @@ class ChannelPickerController: UIViewController, UITableViewDelegate {
             cell.backgroundColor = Colors.white
             cell.title?.textColor = Theme.colorText
             if channelId == MainController.instance.channelId {
-                cell.backgroundColor = Color.orange.lighten5
+                cell.backgroundColor = MaterialColor.orange.lighten5
             }
             let path = "group-channels/\(self.inputGroupId!)/\(channelId)"
             let ref = FIRDatabase.database().reference().child(path)

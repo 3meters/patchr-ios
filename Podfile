@@ -44,6 +44,7 @@ target 'Patchr' do
     pod 'ReachabilitySwift',        '~> 3'
     pod 'Bugsnag'                                   # Crash reporting
     pod 'SwiftyBeaver'
+    pod 'JVFloatLabeledTextField',  '~> 1.1'
     pod 'RxSwift',                  '3.0.0-beta.2'
     pod 'RxCocoa',                  '3.0.0-beta.2'
     pod 'PhoneNumberKit',           '~> 1.0'

@@ -57,21 +57,6 @@ public protocol ColorPalette {
 }
 
 open class MaterialColor: UIColor {
-	// dark text
-    open class darkText {
-		open static let primary = Color.black.withAlphaComponent(0.87)
-		open static let secondary = Color.black.withAlphaComponent(0.54)
-		open static let others = Color.black.withAlphaComponent(0.38)
-		open static let dividers = Color.black.withAlphaComponent(0.12)
-	}
-	
-	// light text
-    open class lightText {
-		open static let primary = Color.white
-		open static let secondary = Color.white.withAlphaComponent(0.7)
-		open static let others = Color.white.withAlphaComponent(0.5)
-		open static let dividers = Color.white.withAlphaComponent(0.12)
-	}
 	
 	// red
     open class red: ColorPalette {
