@@ -74,17 +74,17 @@ class MessageViewCell: UIView {
 			bottomView = self.description_
 			self.description_?.bounds.size.width = columnWidth
 			self.description_?.sizeToFit()
-			self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 0, height: self.description_!.height())
+			self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 2, height: self.description_!.height())
 		}
 		
 		if self.message.text != nil && self.message.attachments != nil {
 			self.description_?.bounds.size.width = columnWidth
 			self.description_?.sizeToFit()
-			self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 0, height: self.description_!.height())
-			self.photo?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: photoHeight)
+			self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 2, height: self.description_!.height())
+			self.photo?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 10, height: photoHeight)
 		}
 		else if (self.message.attachments?.first) != nil {
-            self.photo?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 8, height: photoHeight)
+            self.photo?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 10, height: photoHeight)
 		}
 		
 		/* Footer */
@@ -186,7 +186,7 @@ class MessageViewCell: UIView {
         self.userName.text = message.creator?.username
         let fullName = message.creator?.profile?.fullName
         let photoUrl = PhotoUtils.url(prefix: message.creator?.profile?.photo?.filename, source: message.creator?.profile?.photo?.source, category: SizeCategory.profile)
-        self.userPhoto.bindPhoto(photoUrl: photoUrl, name: fullName)
+        self.userPhoto.bind(photoUrl: photoUrl, name: fullName)
 		
         self.createdDate.text = UIShared.timeAgoShort(date: NSDate(timeIntervalSince1970: Double(message.createdAt!) / 1000))
 			
@@ -200,7 +200,7 @@ class MessageViewCell: UIView {
                 if thumbsup.count != 0 {
                     self.likes.text = String(thumbsup.count)
                 }
-                let userId = UserController.instance.fireUserId
+                let userId = ZUserController.instance.fireUserId
                 if thumbsup[userId!] != nil {
                     self.likes.textColor = Colors.brandColor
                 }

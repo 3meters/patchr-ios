@@ -22,10 +22,7 @@
                             <inset key="imageEdgeInsets" minX="8" minY="8" maxX="8" maxY="8"/>
                             <state key="normal" image="imgCancelLight"/>
                         </button>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select a group" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Yu-Ib-y3H">
-                            <constraints>
-                                <constraint firstAttribute="height" constant="28" id="hnd-aD-nNr"/>
-                            </constraints>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select a group" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Yu-Ib-y3H">
                             <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="20"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
@@ -34,10 +31,11 @@
                     <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                     <constraints>
                         <constraint firstItem="Qnm-vY-7NZ" firstAttribute="trailing" secondItem="4ht-VM-RzK" secondAttribute="trailing" constant="-8" id="KO3-tw-9oU"/>
+                        <constraint firstItem="3Yu-Ib-y3H" firstAttribute="top" secondItem="4ht-VM-RzK" secondAttribute="top" constant="22" id="P0z-pN-2ag"/>
                         <constraint firstItem="3Yu-Ib-y3H" firstAttribute="leading" secondItem="4ht-VM-RzK" secondAttribute="leading" constant="16" id="RSV-qW-WBX"/>
-                        <constraint firstItem="3Yu-Ib-y3H" firstAttribute="centerY" secondItem="4ht-VM-RzK" secondAttribute="centerY" id="RmM-zY-GoU"/>
-                        <constraint firstItem="Qnm-vY-7NZ" firstAttribute="top" secondItem="4ht-VM-RzK" secondAttribute="top" constant="11" id="eOB-Zw-wV7"/>
+                        <constraint firstItem="Qnm-vY-7NZ" firstAttribute="centerY" secondItem="4ht-VM-RzK" secondAttribute="centerY" id="bAz-N3-Ia3"/>
                         <constraint firstItem="3Yu-Ib-y3H" firstAttribute="trailing" secondItem="Qnm-vY-7NZ" secondAttribute="leading" constant="-8" id="jbd-ZZ-vop"/>
+                        <constraint firstItem="3Yu-Ib-y3H" firstAttribute="bottom" secondItem="4ht-VM-RzK" secondAttribute="bottom" constant="-22" id="wiw-F5-l1K"/>
                     </constraints>
                 </view>
             </subviews>

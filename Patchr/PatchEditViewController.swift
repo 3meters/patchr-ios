@@ -20,7 +20,6 @@ class PatchEditViewController: BaseEditViewController {
 
     var schema = Schema.ENTITY_PATCH
 
-    var imageUploadRequest	: AWSS3TransferManagerUploadRequest?
     var entityPostRequest	: URLSessionTask?
 
     var inputState			: State?	= State.Editing
@@ -674,7 +673,7 @@ class PatchEditViewController: BaseEditViewController {
         return true
     }
 
-    override func textFieldShouldReturn(textField: UITextField) -> Bool {
+    override func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 
         if self.inputState == .Creating {
             if textField == self.nameField {

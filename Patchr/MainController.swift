@@ -17,14 +17,19 @@ class MainController: NSObject, iRateDelegate {
 
     static let instance = MainController()
     
-    var onlineRef: FIRDatabaseReference!
-    var userRef: FIRDatabaseReference!
-
-    var window: UIWindow?
     let db = FIRDatabase.database().reference()
-    var disposeBag = DisposeBag()
-    var groupId: String?
-    var channelId: String?
+    var window: UIWindow?
+    
+    var emptyController = EmptyViewController()
+    var channelController = ChannelViewController()
+    var sideMenuController = SideMenuViewController()
+    var channelPickerController = ChannelPickerController()
+    
+    var slideController : SlideMenuController!
+    var navigationController: AirNavigationController!
+    var lobbyController: AirNavigationController!
+    
+    var upgradeRequired = false
 
     private override init() { }
 
@@ -33,14 +38,27 @@ class MainController: NSObject, iRateDelegate {
     *--------------------------------------------------------------------------------------------*/
 
     func channelDidChange(notification: NSNotification) {
-        let channelId = notification.userInfo?["channelId"] as? String
-        let groupId = notification.userInfo?["groupId"] as? String
-        if (channelId != nil && groupId != nil) {
-            self.showChannel(groupId: self.groupId!, channelId: channelId!)
-        }
-        else {
-            self.clearChannel()
-        }
+        route()
+    }
+    
+    func groupDidChange(notification: NSNotification) {
+        route()
+    }
+
+    func userStateDidChange(notification: NSNotification) {
+        route()
+    }
+    
+    func stateInitialized(notification: NSNotification) {
+        checkCompatibility()
+        route()
+        NotificationCenter.default.addObserver(self, selector: #selector(groupDidChange(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidChange), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(channelDidChange(notification:)), name: NSNotification.Name(rawValue: Events.ChannelDidChange), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(userStateDidChange(notification:)), name: NSNotification.Name(rawValue: Events.UserStateDidChange), object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -76,82 +94,71 @@ class MainController: NSObject, iRateDelegate {
         UITabBar.appearance().tintColor = Theme.colorTabBarTint
         UISwitch.appearance().onTintColor = Theme.colorTint
 
-        /* Turn on network activity indicator */
-        AFNetworkActivityIndicatorManager.shared().isEnabled = true
-
-        self.groupId = UserDefaults.standard.string(forKey: "groupId")
-        if self.groupId != nil {
-            self.channelId = UserDefaults.standard.string(forKey: self.groupId!)
-        }
-        
-        self.onlineRef = FIRDatabase.database().reference().child(".info/connected")
-        FIRAuth.auth()?.addStateDidChangeListener { auth, user in
-            if user != nil {
-                self.userRef = FIRDatabase.database().reference().child("users/\(user!.uid)")
-                self.onlineRef.observe(.value, with: { snap in
-                    if snap.value != nil {
-                        self.userRef.onDisconnectUpdateChildValues(["presence": FIRServerValue.timestamp()])
-                        self.userRef.updateChildValues(["presence": true])
-                    }
-                })
-            }
-        }
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(MainController.channelDidChange(notification:)), name: NSNotification.Name(rawValue: Events.ChannelDidChange), object: nil)
-    }
-
-    func didLaunch() {
-        checkCompatibility()
-        route()
-    }
-
-    func route() {
-        if (UserController.instance.fireUser) != nil {
-            showMain()
-        }
-        else {
-            showLobby()
-        }
-        self.window?.makeKeyAndVisible()
-    }
-
-    func showMain() {
-
+        /* Get the primary ui components ready */
         SlideMenuOptions.leftViewWidth = NAVIGATION_DRAWER_WIDTH
         SlideMenuOptions.rightViewWidth = SIDE_MENU_WIDTH
         SlideMenuOptions.animationDuration = CGFloat(0.2)
         SlideMenuOptions.simultaneousGestureRecognizers = false
 
-        let mainController = EmptyViewController()   // Placeholder
-        let channelPicker = ChannelPickerController()
-        let menuController = SideMenuViewController()
-        let leftNavController = AirNavigationController(rootViewController: channelPicker)
-        
-        leftNavController.setNavigationBarHidden(true, animated: false)
-        channelPicker.inputGroupId = self.groupId
-        mainController.emptyLabel.text = "Loading..."
+        self.lobbyController = AirNavigationController(rootViewController: LobbyViewController())
+        self.navigationController = AirNavigationController(rootViewController: self.channelPickerController)
+        self.navigationController.setNavigationBarHidden(true, animated: false)
 
-        let drawerController = SlideMenuController(mainViewController: mainController, leftMenuViewController: leftNavController, rightMenuViewController: menuController)
-        self.window?.setRootViewController(rootViewController: drawerController, animated: true)
-        
-        if self.channelId != nil {
-            showChannel(groupId: self.groupId!, channelId: self.channelId!)
+        self.slideController = SlideMenuController(
+            mainViewController: self.emptyController,
+            leftMenuViewController: self.navigationController,
+            rightMenuViewController: self.sideMenuController)
+
+        self.window?.setRootViewController(rootViewController: self.slideController, animated: true) // While we wait for state to initialize
+        self.window?.makeKeyAndVisible()
+
+        /* Turn on network activity indicator */
+        AFNetworkActivityIndicatorManager.shared().isEnabled = true
+
+        NotificationCenter.default.addObserver(self, selector: #selector(stateInitialized(notification:)), name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
+    }
+
+    func route() {
+        if self.upgradeRequired {
+            showLobby()
+        }
+        else if UserController.instance.userId == nil {
+            showLobby()
+        }
+        else if StateController.instance.groupId == nil {
+            showGroupPicker()
+        }
+        else if StateController.instance.channelId != nil {
+            showMain()
+            showChannel(groupId: StateController.instance.groupId!, channelId: StateController.instance.channelId!)
+        }
+    }
+    
+    func showMain() {
+        if self.slideController.mainViewController != self.channelController {
+            let nav = AirNavigationController(rootViewController: self.channelController)
+            self.slideController.changeMainViewController(nav, close: false)
+        }
+        if self.window?.rootViewController != self.slideController {
+            self.window?.setRootViewController(rootViewController: self.slideController, animated: true)
         }
     }
 
     func showLobby() {
-        let controller = LobbyViewController()
-        let navController = AirNavigationController()
-        navController.viewControllers = [controller]
-        self.window?.setRootViewController(rootViewController: navController, animated: true)
+        if self.window?.rootViewController != self.lobbyController {
+            self.window?.setRootViewController(rootViewController: self.lobbyController, animated: true)
+        }
+    }
+
+    func showGroupPicker() {
+        let controller = GroupPickerController()
+        controller.mode = .fullscreen
+        let nav = AirNavigationController(rootViewController: controller)
+        self.window?.setRootViewController(rootViewController: nav, animated: true)
     }
 
     func showChannel(groupId: String, channelId: String) {
-        let controller = ChannelViewController()
-        controller.inputChannelId = channelId
-        controller.inputGroupId = groupId
-        let nav = AirNavigationController(rootViewController: controller)
-        self.window?.rootViewController?.slideMenuController()?.changeMainViewController(nav, close: true)
+        self.channelController.bindChannel(groupId: groupId, channelId: channelId)
     }
 
     func clearChannel() {
@@ -162,47 +169,11 @@ class MainController: NSObject, iRateDelegate {
         }
     }
 
-    func setGroupId(groupId: String?) {
-
-        /* Setting to nil */
-        guard let groupId = groupId else {
-            UserDefaults.standard.removeObject(forKey: "groupId")
-            if self.groupId != nil {
-                UserDefaults.standard.removeObject(forKey: self.groupId!)
-                self.groupId = nil
-            }
-            setChannelId(channelId: nil)
-            return
-        }
-
-        /* Changing */
-        if self.groupId != groupId {
-            self.groupId = groupId
-            UserDefaults.standard.set(groupId, forKey: "groupId")
-            let lastChannelId = UserDefaults.standard.string(forKey: groupId)
-            setChannelId(channelId: lastChannelId ?? nil)
-            let userInfo = [
-                "groupId": self.groupId
-            ]
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: userInfo)
-        }
-    }
-
-    func setChannelId(channelId: String?) {
-        self.channelId = channelId
-        UserDefaults.standard.set(channelId, forKey: self.groupId!)
-        let userInfo = [
-            "groupId": self.groupId,
-            "channelId":self.channelId
-        ]
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.ChannelDidChange), object: self, userInfo: userInfo)
-    }
-
     func checkCompatibility() {
-        db.child("clients").child("ios").observeSingleEvent(of: .value, with: {
-            snapshot in
-            if let minVersion = snapshot.value as? Int {
+        db.child("clients").child("ios").observeSingleEvent(of: .value, with: { snap in
+            if let minVersion = snap.value as? Int {
                 if !UIShared.versionIsValid(versionMin: Int(minVersion)) {
+                    self.upgradeRequired = true
                     UIShared.compatibilityUpgrade()
                 }
             }
@@ -220,12 +191,12 @@ class MainController: NSObject, iRateDelegate {
          * The service will still send notifications to the install based on the signed in user.
          * We assume that if no authenticated user then we are at correct initial state.
          */
-        UserController.instance.discardCredentials()
+        ZUserController.instance.discardCredentials()
         Reporting.updateUser(user: nil)
         BranchProvider.logout()
 
         UserDefaults.standard.set(nil, forKey: PatchrUserDefaultKey(subKey: "userEmail"))
-        UserController.instance.clearStore()
+        ZUserController.instance.clearStore()
         LocationController.instance.clearLastLocationAccepted()
 
         if !(UIViewController.topMostViewController() is LobbyViewController) {

@@ -67,9 +67,9 @@ class PatchNavigationController: AirNavigationController {
 			let watching = PatchTableViewController()
 
 			owns.filter = PatchListFilter.Owns
-			owns.user = UserController.instance.currentUser
+			owns.user = ZUserController.instance.currentUser
 			watching.filter = PatchListFilter.Watching
-			watching.user = UserController.instance.currentUser
+			watching.user = ZUserController.instance.currentUser
 			
 			self.segmentsController.viewControllers.insert(owns, at: 1)
 			self.segmentsController.viewControllers.insert(watching, at: 1)
@@ -82,7 +82,7 @@ class PatchNavigationController: AirNavigationController {
 	
     func segmentViewControllers() -> [UIViewController] {
 		
-		if !UserController.instance.authenticated {
+		if !ZUserController.instance.authenticated {
 			
 			let nearby = PatchTableViewController()
 			let explore = PatchTableViewController()
@@ -101,9 +101,9 @@ class PatchNavigationController: AirNavigationController {
 		
         nearby.filter = PatchListFilter.Nearby
         owns.filter = PatchListFilter.Owns
-        owns.user = UserController.instance.currentUser
+        owns.user = ZUserController.instance.currentUser
         watching.filter = PatchListFilter.Watching
-        watching.user = UserController.instance.currentUser
+        watching.user = ZUserController.instance.currentUser
         explore.filter = PatchListFilter.Explore
         
         let controllers = [nearby, watching, owns, explore]

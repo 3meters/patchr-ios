@@ -123,8 +123,8 @@ class PatchDetailViewController: BaseDetailViewController {
         
         /* Has its own nav because we segue modally and it needs its own stack */
         let controller = MessageEditViewController()
-        controller.inputToString = self.entity!.name
-        controller.inputPatchId = self.entityId
+//        controller.inputToString = self.entity!.name
+//        controller.inputPatchId = self.entityId
         controller.inputState = .Creating
 
         let navController = AirNavigationController()
@@ -202,7 +202,7 @@ class PatchDetailViewController: BaseDetailViewController {
         }
         else if patch!.userWatchStatusValue == .nonMember {
             /* Service automatically sets enabled = false if user is not the patch owner */
-            DataController.proxibase.insertLink(fromID: UserController.instance.userId! as String, toID: patch!.id_, linkType: .Watch) {
+            DataController.proxibase.insertLink(fromID: ZUserController.instance.userId! as String, toID: patch!.id_, linkType: .Watch) {
                 response, error in
 
                 OperationQueue.main.addOperation {
@@ -723,16 +723,16 @@ class PatchDetailViewController: BaseDetailViewController {
         if route == .Patchr {
             let controller = MessageEditViewController()
             let navController = AirNavigationController()
-            controller.inputShareEntity = self.entity
-            controller.inputShareSchema = Schema.ENTITY_PATCH
-            controller.inputShareId = self.entityId!
-            controller.inputMessageType = .Share
+//            controller.inputShareEntity = self.entity
+//            controller.inputShareSchema = Schema.ENTITY_PATCH
+//            controller.inputShareId = self.entityId!
+//            controller.inputMessageType = .Share
             controller.inputState = .Sharing
             navController.viewControllers = [controller]
             self.present(navController, animated: true, completion: nil)
         }
         else if route == .AirDrop {
-            BranchProvider.invite(entity: self.entity as! Patch, referrer: UserController.instance.currentUser) {
+            BranchProvider.invite(entity: self.entity as! Patch, referrer: ZUserController.instance.currentUser) {
                 response, error in
 
                 if let error = ServerError(error) {
@@ -780,7 +780,7 @@ class PatchDetailViewController: BaseDetailViewController {
             }
         }
         else if route == .Actions {
-            BranchProvider.invite(entity: self.entity as! Patch, referrer: UserController.instance.currentUser) {
+            BranchProvider.invite(entity: self.entity as! Patch, referrer: ZUserController.instance.currentUser) {
                 response, error in
 
                 if let error = ServerError(error) {
@@ -847,7 +847,7 @@ class PatchDetailViewController: BaseDetailViewController {
     *--------------------------------------------------------------------------------------------*/
 
     func isUserOwner() -> Bool {
-        if let currentUser = UserController.instance.currentUser, let entity = self.entity {
+        if let currentUser = ZUserController.instance.currentUser, let entity = self.entity {
             return currentUser.id_ == entity.creator?.entityId
         }
         return false
@@ -973,7 +973,7 @@ class PatchItem: NSObject, UIActivityItemSource {
     }
 
     func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivityType) -> Any? {
-        let text = "\(UserController.instance.currentUser.name) has invited you to the \(self.entity.name) patch!"
+        let text = "\(ZUserController.instance.currentUser.name) has invited you to the \(self.entity.name) patch!"
         return text
     }
 

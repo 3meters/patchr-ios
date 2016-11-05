@@ -37,7 +37,7 @@ class BranchProvider: NSObject {
 		applink.metadata?["ownerName"] = ownerName
 		applink.metadata?["patchName"] = patchName
 		
-		if let photo = UserController.instance.currentUser.photo {
+		if let photo = ZUserController.instance.currentUser.photo {
 			let photoUrl = PhotoUtils.url(prefix: photo.prefix!, source: photo.source!, category: SizeCategory.profile)
 			applink.metadata?["referrerPhotoUrl"] = photoUrl
 		}
@@ -92,7 +92,7 @@ class BranchProvider: NSObject {
 			applink.metadata?["patchName"] = patchName
 		}
 		
-		if let photo = UserController.instance.currentUser.photo {
+		if let photo = ZUserController.instance.currentUser.photo {
 			let photoUrl = PhotoUtils.url(prefix: photo.prefix!, source: photo.source!, category: SizeCategory.profile)
 			applink.metadata?["referrerPhotoUrl"] = photoUrl
 		}

@@ -294,10 +294,8 @@ extension UIViewController {
              * Mostly because a more current client version is required. 
              */
             LocationController.instance.clearLastLocationAccepted()
-			
-			let navController = AirNavigationController()
-			navController.viewControllers = [LobbyViewController()]
-			MainController.instance.window!.setRootViewController(rootViewController: navController, animated: true)
+            UserController.instance.setUserId(userId: nil)
+            MainController.instance.route()
         }
         
         Log.w("Network Error Summary")
@@ -453,7 +451,7 @@ public func <(lhs: NSDate, rhs: NSDate) -> Bool {
 extension NSDate: Comparable { }
 
 extension String {
-	
+    
 	func isEmail() -> Bool {
 		if self.isEmpty {
 			return false
@@ -496,6 +494,19 @@ extension Dictionary {
         for (key,value) in other {
             self.updateValue(value, forKey:key)
         }
+    }
+}
+
+
+extension NSDate {
+    var milliseconds: Int64 {
+        return Int64(self.timeIntervalSince1970 * 1000)
+    }
+}
+
+extension Date {
+    var milliseconds: Int64 {
+        return Int64(self.timeIntervalSince1970 * 1000)
     }
 }
 

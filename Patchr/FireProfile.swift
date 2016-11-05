@@ -18,17 +18,19 @@ class FireProfile: NSObject {
     var skype: String?
     var photo: FirePhoto?
     
-    required convenience init?(dict: [String: Any], id: String?) {
-        self.init()
-        self.email = dict["email"] as? String
-        self.firstName = dict["first_name"] as? String
-        self.lastName = dict["last_name"] as? String
-        self.fullName = dict["full_name"] as? String
-        self.phone = dict["phone"] as? String
-        self.skype = dict["skype"] as? String
-        if (dict["photo"] as? NSDictionary) != nil {
-            self.photo = FirePhoto(dict: dict["photo"] as! [String: Any], id: nil)
+    static func from(dict: [String: Any]?) -> FireProfile? {
+        if dict != nil {
+            let profile = FireProfile()
+            profile.email = dict!["email"] as? String
+            profile.firstName = dict!["first_name"] as? String
+            profile.lastName = dict!["last_name"] as? String
+            profile.fullName = dict!["full_name"] as? String
+            profile.phone = dict!["phone"] as? String
+            profile.skype = dict!["skype"] as? String
+            profile.photo = FirePhoto.from(dict: dict!["photo"] as! [String : Any]?)
+            return profile
         }
+        return nil
     }
     
     internal var dict: [String: Any] {

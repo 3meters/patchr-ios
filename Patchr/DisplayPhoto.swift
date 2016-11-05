@@ -37,7 +37,7 @@ class DisplayPhoto: IDMPhoto {
             }
         }
         
-        let userId = UserController.instance.fireUserId
+        let userId = ZUserController.instance.fireUserId
         if let reactions = message.reactions {
             if let thumbsup = reactions[":thumbsup:"] {
                 if let active = thumbsup[userId!] {

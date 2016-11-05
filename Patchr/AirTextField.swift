@@ -7,22 +7,12 @@
 //
 
 import UIKit
+import JVFloatLabeledTextField
 
-class AirTextField: UITextField {
+class AirTextField: JVFloatLabeledTextField {
 	
 	var rule = UIView()
 	
-	override var placeholder: String? {
-		didSet {
-			if self.placeholder != nil {
-				if !self.placeholder!.isEmpty {
-					self.attributedPlaceholder = NSAttributedString(string:self.placeholder!,
-						attributes:[NSForegroundColorAttributeName: Theme.colorTextPlaceholder])
-				}
-			}
-		}
-	}
-
 	required init(coder aDecoder: NSCoder) {
 		/* Called when instantiated from XIB or Storyboard */
 		super.init(coder: aDecoder)!

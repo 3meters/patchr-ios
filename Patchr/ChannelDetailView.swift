@@ -76,6 +76,7 @@ class ChannelDetailView: UIView {
         }
         else {
             self.infoGroup.isHidden = true
+            self.infoGroup.alignUnder(self.contentGroup, matchingLeftAndRightWithTopPadding: 0, height: 0)
         }
     }
 
@@ -149,9 +150,12 @@ class ChannelDetailView: UIView {
             if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
                 self.photo.setImageWithUrl(url: photoUrl)
                 self.gradient.isHidden = false
+                self.photo.backgroundColor = Theme.colorBackgroundImage
             }
         }
         else {
+            self.gradient.isHidden = true
+            self.photo.image = nil
             let seed = Utils.numberFromName(fullname: channel.name!)
             self.photo.backgroundColor = ColorArray.randomColor(seed: seed)
         }

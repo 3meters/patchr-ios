@@ -49,10 +49,14 @@ func PatchrUserDefaultKey(subKey: String) -> String {
 public struct Events {
     static let ChannelDidChange             = "ChannelDidChange"
     static let GroupDidChange               = "GroupDidChange"
+    static let PhotoDidChange               = "PhotoDidChange"
+    static let PhotoRemoved                 = "PhotoRemoved"
+    static let PhotoViewHasFocus            = "PhotoViewHasFocus"
+    static let UserStateDidChange           = "UserStateDidChange"
+    static let StateInitialized             = "StateInitialized"
+    
     static let LikeDidChange                = "LikeDidChange"
     static let WatchDidChange               = "WatchDidChange"
-    static let PhotoDidChange               = "PhotoDidChange"
-    static let PhotoViewHasFocus            = "PhotoViewHasFocus"
     static let WillFetch                    = "WillFetch"
     static let DidFetch                     = "DidFetch"
     static let WillFetchQuery               = "WillFetchQuery"

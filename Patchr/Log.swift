@@ -8,25 +8,31 @@
 
 import Foundation
 import Bugsnag
-import SwiftyBeaver
+import CocoaLumberjack
 
 class Log {
     
     static func prepare() {
-        let log = SwiftyBeaver.self
-        let console = ConsoleDestination()
-        console.format = "$Dyyyy-MM-dd HH:mm:ss.SSS$d $T $C$L$c: $M"
-        console.levelString.verbose = " VERBOSE"
-        console.levelString.debug   = " DEBUG  "
-        console.levelString.info    = " INFO   "
-        console.levelString.warning = " WARNING"
-        console.levelString.error   = " ERROR  "
-        log.addDestination(console)
+        
+        /* Logging */
+        DDLog.add(DDTTYLogger.sharedInstance()) // TTY = Xcode console
+//        DDLog.add(DDASLLogger.sharedInstance()) // ASL = Apple System Logs
+        DDTTYLogger.sharedInstance().colorsEnabled = true
+        DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogVerbose, backgroundColor: nil, for: DDLogFlag.verbose)
+        DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogDebug, backgroundColor: nil, for: DDLogFlag.debug)
+        DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogInfo, backgroundColor: nil, for: DDLogFlag.info)
+        DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogWarning, backgroundColor: nil, for: DDLogFlag.warning)
+        DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogError, backgroundColor: nil, for: DDLogFlag.error)
+        
+//        let fileLogger: DDFileLogger = DDFileLogger() // File Logger
+//        fileLogger.rollingFrequency = 60 * 60 * 24  // 24 hours
+//        fileLogger.logFileManager.maximumNumberOfLogFiles = 7
+//        DDLog.add(fileLogger)
     }
     
 	static func v(_ message: String, breadcrumb: Bool = false) {
         #if DEBUG
-            SwiftyBeaver.self.verbose(message)
+            DDLogVerbose("Verbose")
         #endif
 		if breadcrumb {
 			Log.breadcrumb(message: message);
@@ -35,7 +41,7 @@ class Log {
 	
     static func d(_ message: String, breadcrumb: Bool = false) {
         #if DEBUG
-            SwiftyBeaver.self.debug(message)
+            DDLogDebug(message)
         #endif
 		if breadcrumb {
 			Log.breadcrumb(message: message);
@@ -43,21 +49,21 @@ class Log {
     }
 	
     static func i(_ message: String, breadcrumb: Bool = false) {
-        SwiftyBeaver.self.info(message)
+        DDLogInfo(message)
 		if breadcrumb {
 			Log.breadcrumb(message: message);
 		}
     }
 	
     static func w(_ message: String, breadcrumb: Bool = false) {
-        SwiftyBeaver.self.warning(message)
+        DDLogWarn(message)
 		if breadcrumb {
 			Log.breadcrumb(message: message);
 		}
     }
 	
 	static func e(_ message: String, breadcrumb: Bool = false) {
-        SwiftyBeaver.self.error(message)
+        DDLogError(message)
 		if breadcrumb {
 			Log.breadcrumb(message: message);
 		}

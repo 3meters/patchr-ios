@@ -11,6 +11,7 @@ import Keys
 import AFNetworking
 import AFNetworkActivityLogger
 import AWSCore
+import AWSS3
 import Branch
 import Bugsnag
 import Firebase
@@ -34,6 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         /* Initialize Firebase */
         FIRApp.configure()
+        FIRDatabase.database().persistenceEnabled = false
         
         /* Remote config */
         FIRRemoteConfig.remoteConfig().fetch { status, error in
@@ -90,11 +92,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         /* Start listening for auth changes */
         UserController.instance.prepare()
         
-        /* Setup master UI controller */
+        /* Setup master UI */
         MainController.instance.prepare()
 
-        /* Bootstrap UI */
-        MainController.instance.didLaunch()
+        /* Initialize current group and channel state */
+        StateController.instance.prepare()
 
         return true
     }
@@ -124,8 +126,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         /* Guard against becoming active without any UI */
         if MainController.instance.window?.rootViewController == nil {
             Log.w("Patchr is becoming active without a root view controller, resetting to launch routing", breadcrumb: true)
-            MainController.instance.prepare()
-            MainController.instance.route()
+//            MainController.instance.prepare()
+//            MainController.instance.route()
         }
     }
 
@@ -199,7 +201,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
         /*
-         * Applications using an NSURLSession with a background configuration may be launched or resumed in the b@escaping @escaping ackground in order to handle the
+         * Applications using an NSURLSession with a background configuration may be launched or resumed in the background in order to handle the
          * completion of tasks in that session, or to handle authentication. This method will be called with the identifier of the session needing
          * attention. Once a session has been created from a configuration object with that identifier, the session's delegate will begin receiving
          * callbacks. If such a session has already been created (if the app is being resumed, for instance), then the delegate will start receiving
@@ -208,6 +210,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          * This gets called if the share extension isn't running when the background data task
          * completes. Use the identifier to reconstitute the URLSession.
          */
+        AWSS3TransferUtility.interceptApplication(application, handleEventsForBackgroundURLSession: identifier, completionHandler: completionHandler)
         self.backgroundSessionCompletionHandler = completionHandler
         Log.d("handleEventsForBackgroundURLSession called")
         UIShared.Toast(message: "Message Posted!")

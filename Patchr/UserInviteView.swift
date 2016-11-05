@@ -92,7 +92,7 @@ class UserInviteView: BaseDetailView {
 		
 		self.message.text?.removeAll(keepingCapacity: false)
 		self.message.text = message
-		self.photo.bindPhoto(photoUrl: photoUrl, name: name)
+		self.photo.bind(photoUrl: photoUrl, name: name)
 		self.setNeedsLayout()
 	}
 }

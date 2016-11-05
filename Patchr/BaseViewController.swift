@@ -62,7 +62,6 @@ class BaseViewController: UIViewController {
 		self.scrollView.bounces = true
 		self.scrollView.alwaysBounceVertical = true
 		self.scrollView.addSubview(self.contentHolder)
-		self.view.addSubview(self.scrollView)
 		
 		/* Empty label */
 		self.emptyLabel.alpha = 0
@@ -75,6 +74,8 @@ class BaseViewController: UIViewController {
 		self.emptyLabel.insets = UIEdgeInsetsMake(16, 16, 16, 16)
 		self.emptyLabel.textAlignment = NSTextAlignment.center
 		self.emptyLabel.textColor = Theme.colorTextPlaceholder
+        
+        self.view.addSubview(self.scrollView)
 		self.view.addSubview(self.emptyLabel)
 	}
 	

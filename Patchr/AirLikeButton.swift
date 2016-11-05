@@ -50,7 +50,7 @@ class AirLikeButton: AirToggleButton {
 
     func bind(message: FireMessage?) {
         self.message = message
-        let userId = UserController.instance.fireUserId
+        let userId = ZUserController.instance.fireUserId
         if let reactions = message?.reactions {
             if let thumbsup = reactions[":thumbsup:"] {
                 if let active = thumbsup[userId!] {
@@ -123,7 +123,7 @@ class AirLikeButton: AirToggleButton {
         }
         else {
 			
-            DataController.proxibase.insertLink(fromID: UserController.instance.userId! as String, toID: self.entityId!, linkType: .Like) {
+            DataController.proxibase.insertLink(fromID: ZUserController.instance.userId! as String, toID: self.entityId!, linkType: .Like) {
                 response, error in
 
 				OperationQueue.main.addOperation {

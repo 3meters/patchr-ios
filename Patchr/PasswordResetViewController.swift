@@ -182,10 +182,10 @@ class PasswordResetViewController: BaseEditViewController {
         if self.resetActive {
             if self.inputUserPhoto != nil {
                 let photoUrl = PhotoUtils.url(prefix: self.inputUserPhoto!, source: PhotoSource.aircandi_images, category: SizeCategory.profile)
-                self.userPhoto.bindPhoto(photoUrl: photoUrl, name: nil)
+                self.userPhoto.bind(photoUrl: photoUrl, name: nil)
             }
             else if self.inputUserName != nil {
-                self.userPhoto.bindPhoto(photoUrl: nil, name: self.inputUserName)
+                self.userPhoto.bind(photoUrl: nil, name: self.inputUserName)
             }
             self.userName.text = self.inputUserName
         }
@@ -354,20 +354,20 @@ class PasswordResetViewController: BaseEditViewController {
             || !UIApplication.shared.isRegisteredForRemoteNotifications {
                 let controller = PermissionsViewController()
                 self.navigationController?.pushViewController(controller, animated: true)
-                if UserController.instance.userName != nil {
-                    UIShared.Toast(message: "Logged in as \(UserController.instance.userName!)", controller: controller, addToWindow: false)
+                if ZUserController.instance.userName != nil {
+                    UIShared.Toast(message: "Logged in as \(ZUserController.instance.userName!)", controller: controller, addToWindow: false)
                 }
         }
         else {
             MainController.instance.route()
-            if UserController.instance.userName != nil {
-                UIShared.Toast(message: "Logged in as \(UserController.instance.userName!)")
+            if ZUserController.instance.userName != nil {
+                UIShared.Toast(message: "Logged in as \(ZUserController.instance.userName!)")
             }
         }
     }
 
 
-    override func textFieldShouldReturn(textField: UITextField) -> Bool {
+    override func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 
         if textField == self.emailField {
             self.passwordField.becomeFirstResponder()

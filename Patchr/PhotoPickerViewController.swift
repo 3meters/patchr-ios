@@ -402,9 +402,9 @@ extension PhotoPickerViewController {
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         if let cell = collectionView.cellForItem(at: indexPath) as? ThumbnailCollectionViewCell {
-            let photo = IDMPhoto(image:cell.thumbnail.image)
+            let photo = IDMPhoto(image: cell.thumbnail.image!)!
             let photos = Array([photo])
-            let browser = PhotoPreview(photos:photos as [Any], animatedFrom: cell.thumbnail)
+            let browser = PhotoPreview(photos: photos as [AnyObject], animatedFrom: cell.thumbnail)
             
             browser?.usePopAnimation = true
             browser?.scaleImage = cell.thumbnail.image  // Used because final image might have different aspect ratio than initially

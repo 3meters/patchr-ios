@@ -9,6 +9,7 @@
 import Foundation
 import ObjectiveC
 import Firebase
+import FirebaseAuth
 import Bugsnag
 import ReachabilitySwift
 
@@ -49,16 +50,16 @@ struct Reporting {
         }
     }
 	
-    static func updateUser(user: User?) {
+    static func updateUser(user: FIRUser?) {
         
-        FIRAnalytics.setUserID(user?.id_)
-        FIRAnalytics.setUserPropertyString(user?.name, forName: "name")
+        FIRAnalytics.setUserID(user?.uid)
+        FIRAnalytics.setUserPropertyString(user?.displayName, forName: "name")
         FIRAnalytics.setUserPropertyString(user?.email, forName: "email")
         
-        Bugsnag.configuration()!.setUser(user?.id_, withName: user?.name, andEmail: user?.email)
+        Bugsnag.configuration()!.setUser(user?.uid, withName: user?.displayName, andEmail: user?.email)
         
         if user != nil {
-			BranchProvider.setIdentity(identity: user!.id_)
+			BranchProvider.setIdentity(identity: user!.uid)
         }
         else {
 			BranchProvider.logout()

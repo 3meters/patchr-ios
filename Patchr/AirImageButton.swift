@@ -117,7 +117,7 @@ class AirImageButton: UIButton {
 		}
     }
 
-	func setImageWithUrl(url: URL, animate: Bool = true) {
+    func setImageWithUrl(url: URL, animate: Bool = true, finished: ((_ success: Bool) -> Void)? = nil) {
 
 		if self.progressAuto {
 			startProgress()
@@ -136,6 +136,9 @@ class AirImageButton: UIButton {
                             if self != nil {
                                 DispatchQueue.main.async() {
                                     self!.imageCompletion(image: image, error: error, cacheType: cacheType, url: url, animate: animate)
+                                    if finished != nil {
+                                        finished!(error == nil)
+                                    }
                                 }
                             }
         })

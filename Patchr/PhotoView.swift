@@ -76,18 +76,18 @@ class PhotoView: UIControl {
 		if entity != nil {
 			if entity.photo != nil {
 				let photoUrl = PhotoUtils.url(prefix: entity.photo!.prefix!, source: entity.photo!.source!, category: SizeCategory.profile)
-				bindPhoto(photoUrl: photoUrl, name: entity.name)
+				bind(photoUrl: photoUrl, name: entity.name)
 			}
 			else {
-				bindPhoto(photoUrl: nil, name: entity.name)
+				bind(photoUrl: nil, name: entity.name)
 			}
 		}
 		else {
-			bindPhoto(photoUrl: nil, name: nil)
+			bind(photoUrl: nil, name: nil)
 		}
 	}
 	
-	func bindPhoto(photoUrl: URL?, name: String?) {
+	func bind(photoUrl: URL?, name: String?) {
 		
 		if self.photo.image != nil
 			&& self.photo.linkedPhotoUrl != nil

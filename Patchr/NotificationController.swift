@@ -130,11 +130,11 @@ class NotificationController: NSObject {
     
     func activateUser() {
         
-        guard UserController.instance.userId != nil else {
+        guard ZUserController.instance.userId != nil else {
             fatalError("Activating user for notifications requires a current user")
         }
         
-        OneSignal.syncHashedEmail(UserController.instance.userId)
+        OneSignal.syncHashedEmail(ZUserController.instance.userId)
         
         OneSignal.idsAvailable() {
             userId, pushToken in

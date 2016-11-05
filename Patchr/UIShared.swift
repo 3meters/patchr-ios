@@ -102,7 +102,7 @@ struct UIShared {
          * Create browser (must be done each time photo browser is displayed. Photo
          * browser objects cannot be re-used)
          */
-        let photo = IDMPhoto(image:image)!
+        let photo = IDMPhoto(image: image)!
         let photos = Array([photo])
         let browser = FirePhotoBrowser(photos:photos as [AnyObject], animatedFrom: animateFromView)
         

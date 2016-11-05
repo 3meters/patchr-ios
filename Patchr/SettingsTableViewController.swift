@@ -78,14 +78,7 @@ class SettingsTableViewController: UITableViewController {
         self.progress!.removeFromSuperViewOnHide = true
         self.progress!.show(true)
         
-        try! FIRAuth.auth()!.signOut()
-        
-        Reporting.track("Logged Out")
-        Log.i("User logged out")
-        
-        let navController = AirNavigationController()
-        navController.viewControllers = [LobbyViewController()]
-        MainController.instance.window!.setRootViewController(rootViewController: navController, animated: true)
+        UserController.instance.logout()
     }
 
     func clearHistoryAction(sender: AnyObject) {
@@ -144,7 +137,7 @@ class SettingsTableViewController: UITableViewController {
         self.buildInfoLabel.textAlignment = .center
         self.buildInfoCell.isUserInteractionEnabled = false
 
-        if let user = UserController.instance.currentUser {
+        if let user = ZUserController.instance.currentUser {
             if user.developerValue {
                 developmentCell.isHidden = false
                 developmentCell.frame.size.height = 0
@@ -243,7 +236,7 @@ extension SettingsTableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
         if indexPath.section == 0 && indexPath.row == 6 {
-            if let user = UserController.instance.currentUser {
+            if let user = ZUserController.instance.currentUser {
                 if !user.developerValue {
                     developmentCell.isHidden = true
                     return CGFloat(0)

@@ -46,8 +46,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         super.viewWillAppear(animated)
         self.handle = self.ref.observe(.value, with: { snap in
             if snap.value != nil {
-                self.ref.onDisconnectUpdateChildValues(["presence":false])
-                self.user = FireUser(dict: snap.value as! [String: Any], id: snap.key)
+                self.user = FireUser.from(dict: snap.value as? [String: Any], id: snap.key)
                 self.bind()
             }
         })
@@ -92,9 +91,12 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     
     func editAction(sender: AnyObject?) {
         let controller = ProfileEditViewController()
+        let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: controller, action: #selector(controller.cancelAction(sender:)))
+        controller.navigationItem.rightBarButtonItems = [cancelButton]
         let navController = AirNavigationController()
+        controller.inputUser = self.user
         navController.viewControllers = [controller]
-        self.navigationController?.present(navController, animated: true, completion: nil)
+        UIViewController.topMostViewController()?.present(navController, animated: true, completion: nil)
     }
     
     func emailAction(sender: AnyObject?) {
@@ -135,6 +137,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
 	
 	override func initialize() {
 		super.initialize()
+        
         self.ref = FIRDatabase.database().reference().child("users/\(self.inputUserId!)")
         
         self.phone.caption.text = "Phone"
@@ -177,13 +180,13 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         
         self.headerView.bind(user: self.user)
         
-        self.editButton.isHidden = (self.user?.id != UserController.instance.fireUserId)
-        self.callButton.isHidden = (self.user?.profile?.phone == nil)
+        self.editButton.isHidden = (self.user?.id != ZUserController.instance.fireUserId)
+        self.callButton.isHidden = (self.user?.profile?.phone?.isEmpty ?? true)
         self.buttonGroup.isHidden = (self.callButton.isHidden && self.editButton.isHidden)
         
-        self.phone.isHidden = (self.user?.profile?.phone == nil)
-        self.email.isHidden = (self.user?.profile?.email == nil)
-        self.skype.isHidden = (self.user?.profile?.skype == nil)
+        self.phone.isHidden = (self.user?.profile?.phone?.isEmpty ?? true)
+        self.email.isHidden = (self.user?.profile?.email?.isEmpty ?? true)
+        self.skype.isHidden = (self.user?.profile?.skype?.isEmpty ?? true)
         
         if self.user?.profile?.phone != nil {
             self.phone.label.text = self.user!.profile!.phone!

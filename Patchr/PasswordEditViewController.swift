@@ -142,7 +142,7 @@ class PasswordEditViewController: BaseEditViewController {
 		progress.show(true)
 		progress.isUserInteractionEnabled = true
 		
-        DataController.proxibase.updatePassword(userId: UserController.instance.currentUser.id_,
+        DataController.proxibase.updatePassword(userId: ZUserController.instance.currentUser.id_,
             password: passwordField.text!,
             passwordNew: passwordNewField.text!) { response, error in
                 
@@ -191,7 +191,7 @@ class PasswordEditViewController: BaseEditViewController {
         return true
     }
 	
-	override func textFieldShouldReturn(textField: UITextField) -> Bool {
+	override func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		if textField == self.passwordField {
 			self.passwordNewField.becomeFirstResponder()
 			return false

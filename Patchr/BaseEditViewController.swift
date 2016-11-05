@@ -7,35 +7,32 @@
 //
 
 import UIKit
+import AWSS3
+import Firebase
 
 class BaseEditViewController: BaseViewController, UITextFieldDelegate {
 	
+    var imageUploadRequest: AWSS3TransferManagerUploadRequest?    
 	var activeTextField		: UIView?
 	
 	/*--------------------------------------------------------------------------------------------
 	* Lifecycle
 	*--------------------------------------------------------------------------------------------*/
-	
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-	
+    
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		
-		let notificationCenter = NotificationCenter.default
-		notificationCenter.addObserver(self, selector: #selector(BaseEditViewController.photoDidChange(sender:)), name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
-		notificationCenter.addObserver(self, selector: #selector(BaseEditViewController.photoViewHasFocus(sender:)), name: NSNotification.Name(rawValue: Events.PhotoViewHasFocus), object: nil)
-		notificationCenter.addObserver(self, selector: #selector(BaseEditViewController.keyboardWillBeShown(sender:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-		notificationCenter.addObserver(self, selector: #selector(BaseEditViewController.keyboardWillBeHidden(sender:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(photoViewHasFocus(sender:)), name: NSNotification.Name(rawValue: Events.PhotoViewHasFocus), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeShown(sender:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden(sender:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
 	}
 	
 	override func viewDidDisappear(_ animated: Bool) {
 		super.viewDidDisappear(animated)
-		
-		let notificationCenter = NotificationCenter.default
-		notificationCenter.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-		notificationCenter.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.PhotoViewHasFocus), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
 	}
 
 	/*--------------------------------------------------------------------------------------------
@@ -49,6 +46,10 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate {
 	func photoDidChange(sender: NSNotification) {
 		viewWillLayoutSubviews()
 	}
+    
+    func photoRemoved(sender: NSNotification) {
+        viewWillLayoutSubviews()
+    }
 	
 	/*--------------------------------------------------------------------------------------------
 	* Methods
@@ -57,7 +58,7 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate {
 	override func initialize() {
 		super.initialize()
 	}
-	
+    
 	func keyboardWillBeShown(sender: NSNotification) {
 		/*
 		* Called when the UIKeyboardDidShowNotification is sent.
@@ -98,17 +99,17 @@ extension BaseEditViewController {
 	/*
 	 * UITextFieldDelegate
 	 */
-	func textFieldDidBeginEditing(textField: UITextField) {
+	func textFieldDidBeginEditing(_ textField: UITextField) {
 		self.activeTextField = textField
 	}
 	
-	func textFieldDidEndEditing(textField: UITextField) {
+	func textFieldDidEndEditing(_ textField: UITextField) {
 		if self.activeTextField == textField {
 			self.activeTextField = nil
 		}
 	}
 	
-	func textFieldShouldReturn(textField: UITextField) -> Bool {
+	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		return true
 	}
 }

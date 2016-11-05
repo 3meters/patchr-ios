@@ -415,7 +415,7 @@ public class Proxibase {
         sessionManager.post("auth/signin", parameters: parameters,
             success: {
                 dataTask, response in
-                UserController.instance.handleSuccessfulLoginResponse(response: response)
+                ZUserController.instance.handleSuccessfulLoginResponse(response: response)
                 completion(response, nil)
             },
             failure: {
@@ -452,7 +452,7 @@ public class Proxibase {
         sessionManager.post("user/pw/change", parameters: addSessionParameters(parameters: parameters),
             success: {
                 dataTask, response in
-                UserController.instance.handlePasswordChange(response: response)
+                ZUserController.instance.handlePasswordChange(response: response)
                 completion(response, nil)
             },
             failure: {
@@ -491,7 +491,7 @@ public class Proxibase {
         sessionManager.post("user/pw/reset", parameters: parameters,
             success: {
                 dataTask, response in
-                UserController.instance.handleSuccessfulLoginResponse(response: response)
+                ZUserController.instance.handleSuccessfulLoginResponse(response: response)
                 completion(response, nil)
             },
             failure: {
@@ -546,8 +546,8 @@ public class Proxibase {
         /* Skip if already includes a sessionKey */
         var parameters = inParameters
         if parameters["session"] == nil {
-            parameters["session"] = UserController.instance.sessionKey
-            parameters["user"] = UserController.instance.userId
+            parameters["session"] = ZUserController.instance.sessionKey
+            parameters["user"] = ZUserController.instance.userId
         }
         return parameters
     }

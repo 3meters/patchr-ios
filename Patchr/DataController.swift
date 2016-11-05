@@ -276,8 +276,8 @@ class DataController: NSObject {
         }
         
         var isOwner = false
-        if entity != nil && entity.creator != nil && UserController.instance.authenticated {
-            isOwner = (entity.creator.entityId == UserController.instance.currentUser.id_)
+        if entity != nil && entity.creator != nil && ZUserController.instance.authenticated {
+            isOwner = (entity.creator.entityId == ZUserController.instance.currentUser.id_)
         }
 
         var skip = 0
@@ -486,8 +486,8 @@ class DataController: NSObject {
 
                         /* A tiny bit of fixup */
                         if let user = entity as? User {
-                            if user.email == nil && user.id_ == UserController.instance.currentUser.id_ {
-                                user.email = UserController.instance.currentUser.email
+                            if user.email == nil && user.id_ == ZUserController.instance.currentUser.id_ {
+                                user.email = ZUserController.instance.currentUser.email
                             }
                         }
                         

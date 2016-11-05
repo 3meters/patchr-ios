@@ -1,5 +1,5 @@
 //
-//  LobbyViewController.swift
+//  TextZoomController.swift
 //  Patchr
 //
 //  Created by Rob MacEachern on 2015-02-17.

@@ -142,8 +142,8 @@ class LobbyViewController: BaseViewController {
 		self.buttonGroup.addSubview(self.buttonSignup)
 		self.view.addSubview(self.buttonGroup)
 		
-		self.buttonLogin.addTarget(self, action: #selector(LobbyViewController.loginAction(sender:)), for: .touchUpInside)
-		self.buttonSignup.addTarget(self, action: #selector(LobbyViewController.signupAction(sender:)), for: .touchUpInside)
+		self.buttonLogin.addTarget(self, action: #selector(loginAction(sender:)), for: .touchUpInside)
+		self.buttonSignup.addTarget(self, action: #selector(signupAction(sender:)), for: .touchUpInside)
 		
 		if self.firstLaunch {
 			self.appName.alpha = 0.0

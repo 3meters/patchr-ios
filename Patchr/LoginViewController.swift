@@ -261,25 +261,21 @@ class LoginViewController: BaseEditViewController {
 
     func didLogin() {
         /* Navigate to main interface */
-        if self.inputRouteToMain {
-            self.navigateToMain()    // Replaces any current navigation stack
+        MainController.instance.route()
+        if self.isModal {
+            self.dismiss(animated: true, completion: nil)
         }
         else {
-            if self.isModal {
-                self.dismiss(animated: true, completion: nil)
-            }
-            else {
-                let _ = self.navigationController?.popViewController(animated: true)
-            }
-            if UserController.instance.userName != nil {
-                UIShared.Toast(message: "Logged in as \(UserController.instance.userName!)")
-            }
+            let _ = self.navigationController?.popViewController(animated: true)
+        }
+        if ZUserController.instance.userName != nil {
+            UIShared.Toast(message: "Logged in as \(ZUserController.instance.userName!)")
         }
     }
 
     func didValidate() {
         /* Navigate to next page */
-        let controller = ProfileEditViewController()
+        let controller = ZProfileEditViewController()
         controller.inputProvider = self.provider
         controller.inputState = State.Onboarding
         controller.inputEmail = self.emailField.text
@@ -291,20 +287,16 @@ class LoginViewController: BaseEditViewController {
 
     func navigateToMain() {
 
-        if CLLocationManager.authorizationStatus() == .notDetermined
-                || !UIApplication.shared.isRegisteredForRemoteNotifications {
-            let controller = PermissionsViewController()
-            self.navigationController?.pushViewController(controller, animated: true)
-            if UserController.instance.userName != nil {
-                UIShared.Toast(message: "Logged in as \(UserController.instance.userName!)", controller: controller, addToWindow: false)
-            }
-        }
-        else {
-            MainController.instance.route()
-            if UserController.instance.userName != nil {
-                UIShared.Toast(message: "Logged in as \(UserController.instance.userName!)")
-            }
-        }
+//        if CLLocationManager.authorizationStatus() == .notDetermined
+//                || !UIApplication.shared.isRegisteredForRemoteNotifications {
+//            let controller = PermissionsViewController()
+//            self.navigationController?.pushViewController(controller, animated: true)
+//            if UserController.instance.userName != nil {
+//                UIShared.Toast(message: "Logged in as \(UserController.instance.userName!)", controller: controller, addToWindow: false)
+//            }
+//        }
+//        else {
+//        }
     }
 
     func isValid() -> Bool {
@@ -327,7 +319,7 @@ class LoginViewController: BaseEditViewController {
         return true
     }
 
-    override func textFieldShouldReturn(textField: UITextField) -> Bool {
+    override func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 
         if textField == self.emailField {
             self.passwordField.becomeFirstResponder()

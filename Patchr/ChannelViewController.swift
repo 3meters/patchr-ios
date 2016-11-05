@@ -25,6 +25,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
     var tableView: UITableView!
     var tableViewDataSource: FirebaseTableViewDataSource!
     var headerView: ChannelDetailView!
+    var clearingTableView = false
     
     var originalRect: CGRect?
     var originalScrollTop = CGFloat(-64.0)
@@ -65,10 +66,6 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.channelHandle = self.channelRef.observe(.value, with: { snap in
-            self.channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key)
-            self.bind()
-        })
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -85,7 +82,6 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         self.activity.stopAnimating()
-        self.channelRef.removeObserver(withHandle: self.channelHandle)
     }
 
     override func viewWillLayoutSubviews() {
@@ -105,6 +101,10 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
         
         let viewHeight = (viewWidth * 0.625) + self.headerView.infoGroup.height()
         self.tableView.tableHeaderView?.bounds.size = CGSize(width: viewWidth, height: viewHeight)    // Triggers layoutSubviews on header
+        
+        if self.messageBar.alpha > 0.0 {
+            self.messageBar.alignUnder(self.navigationController?.navigationBar, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 40)
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -115,6 +115,9 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
     
     deinit {
         NotificationCenter.default.removeObserver(self)
+        if self.channelRef != nil {
+            self.channelRef.removeObserver(withHandle: self.channelHandle)
+        }
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -178,24 +181,17 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
         self.navigationController?.pushViewController(controller, animated: true)
     }
 
-    func dismissAction(sender: AnyObject) {
-        self.dismiss(animated: true) {
-            MainController.instance.route()
-        }
-    }
-
     func toggleAction(sender: AnyObject) {
         self.slideMenuController()?.openLeft()
+        UIApplication.shared.setStatusBarHidden(true, with: UIStatusBarAnimation.slide)
     }
 
     func addAction() {
         
         /* Has its own nav because we segue modally and it needs its own stack */
         let controller = MessageEditViewController()
-        controller.inputToString = self.channel?.name
-        controller.inputPatchId = self.inputGroupId
+        controller.inputChannelId = self.channel.id
         controller.inputState = .Creating
-
         let navController = AirNavigationController()
         navController.viewControllers = [controller]
 
@@ -266,6 +262,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
 
     func sideMenuAction(sender: AnyObject?) {
         self.slideMenuController()?.openRight()
+        UIApplication.shared.setStatusBarHidden(true, with: UIStatusBarAnimation.slide)
     }
 
     func joinAction(sender: AnyObject?) { }
@@ -312,9 +309,6 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
     func initialize() {
 
         Reporting.screen("PatchDetail")
-        
-        self.channelRef = FIRDatabase.database().reference().child("group-channels/\(self.inputGroupId!)/\(self.inputChannelId!)")
-        self.messagesQuery = FIRDatabase.database().reference().child("channel-messages/\(self.inputChannelId!)").queryOrdered(byChild: "timestamp")
         
         self.headerView = ChannelDetailView()
         self.tableView = AirTableView(frame: self.view.frame, style: .plain)
@@ -381,6 +375,36 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
         self.actionButton.anchorBottomRight(withRightPadding: 16, bottomPadding: 16, width: self.actionButton!.width(), height: self.actionButton!.height())
         self.actionButtonCenter = self.actionButton.center
     }
+    
+    func bindChannel(groupId: String, channelId: String) {
+        
+        self.inputGroupId = groupId
+        self.inputChannelId = channelId
+        self.activity.startAnimating()
+        
+        if self.channelRef != nil && self.channelHandle != nil {
+            self.channelRef.removeObserver(withHandle: self.channelHandle)
+        }
+        
+        if self.tableView != nil && self.tableViewDataSource != nil {
+            self.tableView.dataSource = nil
+            self.tableView.reloadData()
+        }
+        
+        self.channelRef = FIRDatabase.database().reference().child("group-channels/\(self.inputGroupId!)/\(self.inputChannelId!)")
+        self.messagesQuery = FIRDatabase.database().reference().child("channel-messages/\(self.inputChannelId!)").queryOrdered(byChild: "timestamp")
+        Log.d("Current channel: \(self.inputChannelId!)")
+
+        self.channelHandle = self.channelRef.observe(.value, with: { snap in
+            if !(snap.value is NSNull) {
+                self.channel = FireChannel.from(dict: snap.value as? [String: Any], id: snap.key)
+                self.bind()
+            }
+            else {
+                self.activity.stopAnimating()
+            }
+        })
+    }
 
     func bind() {
 
@@ -402,35 +426,36 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
             self.headerView.bind(channel: self.channel)
         }
         
-        if self.tableViewDataSource == nil {
+        self.tableViewDataSource = FirebaseTableViewDataSource(query: self.messagesQuery
+            , cellClass: WrapperTableViewCell.self
+            , cellReuseIdentifier: "\(self.inputChannelId!)-cell"
+            , view: self.tableView)
+        
+        self.tableViewDataSource.populateCell { [weak self] (cell, data) in
             
-            self.tableViewDataSource = FirebaseTableViewDataSource(query: self.messagesQuery
-                , cellClass: WrapperTableViewCell.self
-                , cellReuseIdentifier: "MessageViewCell"
-                , view: self.tableView)
+            let snap = data as! FIRDataSnapshot
+            let cell = cell as! WrapperTableViewCell
+            let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key)! as FireMessage
             
-            self.tableViewDataSource.populateCell { (cell, data) in
-                
-                let snap = data as! FIRDataSnapshot
-                let cell = cell as! WrapperTableViewCell
-                let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key)! as FireMessage
-                
-                if message.createdBy == nil {
-                    self.bindMessageView(cell: cell, message: message)
-                }
-                else {
-                    let userRef = FIRDatabase.database().reference().child("users/\(message.createdBy!)")
-                    userRef.observeSingleEvent(of: .value, with: { snap in
-                        if let user = FireUser(dict: snap.value as! [String: Any], id: snap.key) {
-                            message.creator = user
-                            self.bindMessageView(cell: cell, message: message)
-                        }
-                    })
-                }
+            if (self?.activity.isAnimating)! {
+                self?.activity.stopAnimating()
             }
             
-            self.tableView.dataSource = self.tableViewDataSource
+            if message.createdBy == nil {
+                self?.bindMessageView(cell: cell, message: message)
+            }
+            else {
+                let userRef = FIRDatabase.database().reference().child("users/\(message.createdBy!)")
+                userRef.observeSingleEvent(of: .value, with: { snap in
+                    if let user = FireUser.from(dict: snap.value as? [String: Any], id: snap.key) {
+                        message.creator = user
+                        self?.bindMessageView(cell: cell, message: message)
+                    }
+                })
+            }
         }
+        
+        self.tableView.dataSource = self.tableViewDataSource
     }
     
     func bindMessageView(cell: WrapperTableViewCell, message: FireMessage) {
@@ -540,12 +565,12 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
         
         for data in self.tableViewDataSource.items {
             let snap = data as! FIRDataSnapshot            
-            if let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key) {
+            if let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key) {
                 
                 let userRef = FIRDatabase.database().reference().child("users/\(message.createdBy!)")
                 userRef.observeSingleEvent(of: .value, with: { snap in
                     remaining -= 1
-                    let user = FireUser(dict: snap.value as! [String: Any], id: snap.key)
+                    let user = FireUser.from(dict: snap.value as? [String: Any], id: snap.key)
                     if (message.attachments?.first?.photo) != nil {
                         message.creator = user
                         let displayPhoto = DisplayPhoto.fromMessage(message: message)
@@ -570,37 +595,33 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
 
     func showMessageBar() {
         self.view.insertSubview(self.messageBar, at: self.view.subviews.count)
-        self.messageBar.anchorTopCenter(withTopPadding: 0, width: self.view.width(), height: 40)
+        self.messageBar.alignUnder(self.navigationController?.navigationBar, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 40)
         self.messageBarTop = self.messageBar.frame.origin.y
-        UIView.animate(withDuration: 0.10,
-                                   delay: 0,
-                                   options: UIViewAnimationOptions.curveEaseOut,
-                                   animations: {
-                                       self.messageBar.alpha = 1
-                                   }) { _ in
+        UIView.animate(
+            withDuration: 0.10,
+            delay: 0,
+            options: UIViewAnimationOptions.curveEaseOut,
+            animations: {
+                self.messageBar.alpha = 1
+            }) { _ in
             Animation.bounce(view: self.messageBar)
         }
     }
 
     func hideMessageBar() {
-        UIView.animate(withDuration: 0.30,
-                                   delay: 0,
-                                   options: UIViewAnimationOptions.curveEaseOut,
-                                   animations: {
-                                       self.messageBar.alpha = 0
-                                   }) { _ in
+        UIView.animate(
+            withDuration: 0.30,
+            delay: 0,
+            options: UIViewAnimationOptions.curveEaseOut,
+            animations: {
+                self.messageBar.alpha = 0
+            }) { _ in
             self.messageBar.removeFromSuperview()
         }
     }
     
     func scrollToFirstRow(animated: Bool = true) {
         self.tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: animated)
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        let cell = tableView.cellForRow(at: indexPath) as! MessageViewCell
-//        let controller = MessageDetailViewController()
-//        self.navigationController?.pushViewController(controller, animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -616,7 +637,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
         var viewHeight = CGFloat(100)
         let snap = self.tableViewDataSource.object(at: UInt(indexPath.row)) as! FIRDataSnapshot
         
-        if let message = FireMessage(dict: snap.value as! [String: Any], id: snap.key) {
+        if let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key) {
             
             if message.id != nil {
                 if let cachedHeight = self.rowHeights.object(forKey: message.id!) as? CGFloat {
@@ -642,7 +663,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
     *--------------------------------------------------------------------------------------------*/
 
     func isUserOwner() -> Bool {
-        let userId = UserController.instance.fireUserId
+        let userId = ZUserController.instance.fireUserId
         return self.channel!.createdBy == userId
     }
 }
@@ -658,12 +679,6 @@ extension ChannelViewController {
      * UITableViewDelegate
      */
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-
-        //self.actionButton.center.y = self.actionButtonCenter.y + scrollView.contentOffset.y
-        
-        if self.messageBar.alpha > 0.0 {
-            self.messageBar.frame.origin.y = scrollView.contentOffset.y + 64 // todo: Fragile if status and navigation bar don't match this
-        }
 
         if scrollView.contentSize.height > scrollView.height() {
             if (self.lastContentOffset > scrollView.contentOffset.y)
@@ -720,7 +735,7 @@ class ChannelItem: NSObject, UIActivityItemSource {
     }
 
     func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivityType) -> Any? {
-        let text = "\(UserController.instance.currentUser.name) has invited you to the \(self.entity.name) patch!"
+        let text = "\(ZUserController.instance.currentUser.name) has invited you to the \(self.entity.name) patch!"
         return text
     }
 

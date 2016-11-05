@@ -77,7 +77,7 @@ public class S3: NSObject {
             let uploadRequest = S3.sharedService.buildUploadRequest(fileURL: imageURL, contentType: "image/jpeg", bucket: self.imageBucket, key: imageKey)
 
             /* Upload */
-            AWSS3TransferManager.default().upload(uploadRequest).continue ({(task:AWSTask) in
+            AWSS3TransferManager.default().upload(uploadRequest).continue ({(task: AWSTask) in
                 if let error = task.error {
                     Log.w("S3 image upload failed: [\(error)]")
                 }
@@ -98,6 +98,35 @@ public class S3: NSObject {
             return uploadRequest
         }
         return nil
+    }
+
+    func upload(image: UIImage, imageKey: String, progress: AWSS3TransferUtilityProgressBlock?, completionHandler: AWSS3TransferUtilityUploadCompletionHandlerBlock?) {
+        /*
+         * It is expected that this will be called on a background thread.
+         */
+        let expression = AWSS3TransferUtilityUploadExpression()
+        if progress != nil {
+            expression.progressBlock = progress
+        }
+        
+        if let imageData: Data = UIImageJPEGRepresentation(image, /*compressionQuality*/0.70) as Data? {
+            let transferUtility = AWSS3TransferUtility.default()
+            transferUtility.uploadData(
+                imageData as Data,
+                bucket: self.imageBucket,
+                key: imageKey,
+                contentType: "image/jpeg",
+                expression: expression,
+                completionHander: completionHandler).continue({ task -> Any! in
+                    if let error = task.error {
+                        Log.w("Image upload error: \(error.localizedDescription)")
+                    }
+                    if let exception = task.exception {
+                        Log.w("Image upload exception: \(exception.description)")
+                    }
+                    return nil
+                })
+        }
     }
 
     func uploadImage(image inImage: UIImage, key: String, bucket: String, shared: Bool = false) {

@@ -16,13 +16,17 @@ class FirePhoto: NSObject {
     var source: String?
     var takenAt: Int?
     
-    required convenience init?(dict: [String: Any], id: String?) {
-        self.init()
-        self.filename = dict["filename"] as? String
-        self.source = dict["source"] as? String
-        self.width = dict["width"] as? Int
-        self.height = dict["height"] as? Int
-        self.takenAt = dict["taken_at"] as? Int
+    static func from(dict: [String: Any]?) -> FirePhoto? {
+        if dict != nil {
+            let photo = FirePhoto()
+            photo.filename = dict!["filename"] as? String
+            photo.source = dict!["source"] as? String
+            photo.width = dict!["width"] as? Int
+            photo.height = dict!["height"] as? Int
+            photo.takenAt = dict!["taken_at"] as? Int
+            return photo
+        }
+        return nil
     }
     
     internal var dict: [String : Any] {

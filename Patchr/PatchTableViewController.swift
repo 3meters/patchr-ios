@@ -32,7 +32,7 @@ class PatchTableViewController: BaseTableViewController {
         }
 
         if self.user == nil {
-            self.user = UserController.instance.currentUser
+            self.user = ZUserController.instance.currentUser
         }
 
         /* Strings */

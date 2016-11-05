@@ -84,7 +84,7 @@ class UserHeaderView: BaseDetailView {
             if let photo = profile.photo {
                 photoUrl = PhotoUtils.url(prefix: photo.filename!, source: photo.source!, category: SizeCategory.profile)
             }
-            self.photo.bindPhoto(photoUrl: photoUrl, name: profile.fullName!)
+            self.photo.bind(photoUrl: photoUrl, name: profile.fullName!)
         }
         
         self.setNeedsLayout()

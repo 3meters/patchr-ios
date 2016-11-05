@@ -25,7 +25,7 @@ class MessageDetailViewController: BaseViewController {
 	}
 
     private var isOwner: Bool {
-        if let currentUser = UserController.instance.currentUser {
+        if let currentUser = ZUserController.instance.currentUser {
             if self.inputMessage != nil && self.inputMessage!.creator != nil {
                 return currentUser.id_ == self.inputMessage!.creator.entityId
             }
@@ -34,7 +34,7 @@ class MessageDetailViewController: BaseViewController {
     }
     
     private var isPatchOwner: Bool {
-        if let currentUser = UserController.instance.currentUser {
+        if let currentUser = ZUserController.instance.currentUser {
             if self.inputMessage != nil && self.inputMessage!.patch != nil && self.inputMessage!.patch!.ownerId != nil {
                 return currentUser.id_ == self.inputMessage!.patch!.ownerId
             }
@@ -377,7 +377,7 @@ class MessageDetailViewController: BaseViewController {
         /* Has its own nav because we segue modally and it needs its own stack */
 		let controller = MessageEditViewController()
 		let navController = AirNavigationController()
-		controller.inputEntity = self.inputMessage
+//		controller.inputEntity = self.inputMessage
 		controller.inputState = .Editing
 		navController.viewControllers = [controller]
 		self.navigationController?.present(navController, animated: true, completion: nil)
@@ -704,17 +704,17 @@ class MessageDetailViewController: BaseViewController {
 			
 			let controller = MessageEditViewController()
 			let navController = AirNavigationController()
-			controller.inputShareEntity = self.inputMessage
-			controller.inputShareSchema = Schema.ENTITY_MESSAGE
-			controller.inputShareId = self.inputMessage?.id_ ?? self.inputMessageId!
-			controller.inputMessageType = .Share
+//			controller.inputShareEntity = self.inputMessage
+//			controller.inputShareSchema = Schema.ENTITY_MESSAGE
+//			controller.inputShareId = self.inputMessage?.id_ ?? self.inputMessageId!
+//			controller.inputMessageType = .Share
 			controller.inputState = .Sharing
 			navController.viewControllers = [controller]
 			self.present(navController, animated: true, completion: nil)
         }
         else if route == .Actions {			
 			
-			BranchProvider.share(entity: self.inputMessage!, referrer: UserController.instance.currentUser) {
+			BranchProvider.share(entity: self.inputMessage!, referrer: ZUserController.instance.currentUser) {
 				response, error in
 				
 				if let error = ServerError(error) {

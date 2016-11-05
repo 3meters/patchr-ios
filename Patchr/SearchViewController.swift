@@ -114,7 +114,7 @@ class SearchViewController: UITableViewController {
         self.recentItems.removeAll()
         if let groupDefaults = UserDefaults(suiteName: "group.com.3meters.patchr.ios") {
             self.userId = groupDefaults.string(forKey: PatchrUserDefaultKey(subKey: "userId"))
-            self.sessionKey = UserController.instance.lockbox!.unarchiveObject(forKey: "sessionKey") as? String
+            self.sessionKey = ZUserController.instance.lockbox!.unarchiveObject(forKey: "sessionKey") as? String
             if let recentPatches = groupDefaults.array(forKey: PatchrUserDefaultKey(subKey: "recent.patches")) as? [[String:Any]] {
                 for recent in recentPatches {
                     self.recentItems.append(recent)

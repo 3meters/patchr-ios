@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import AWSS3
 
 enum PhotoMode: Int {
     case None
@@ -39,6 +40,8 @@ class PhotoEditView: UIView {
     var setPhotoButton		= UIButton()
     var editPhotoButton		= UIButton()
     var clearPhotoButton	= UIButton()
+    var progressView        = UIProgressView(progressViewStyle: .default)
+    var progressBlock       : AWSS3TransferUtilityProgressBlock?
 	
 	var clearButtonAlignment: NSTextAlignment = NSTextAlignment.left
 	var editButtonAlignment: NSTextAlignment = NSTextAlignment.right
@@ -59,6 +62,10 @@ class PhotoEditView: UIView {
         super.init(frame: frame)
         initialize()
     }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
 	
 	/*--------------------------------------------------------------------------------------------
 	* Events
@@ -69,6 +76,7 @@ class PhotoEditView: UIView {
 		
 		self.photoGroup.fillSuperview()
 		self.imageButton.fillSuperview()
+        self.progressView.anchorInCenter(withWidth: self.width() - 32, height: 12)
 		self.scrimGroup.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 48)
 		
 		if self.editButtonAlignment == .right {
@@ -133,7 +141,7 @@ class PhotoEditView: UIView {
 		self.photoActive = false
 		self.photoDirty = true
 		
-		NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
+		NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: nil)
 	}
 	
 	func setPhotoAction(sender: AnyObject) {
@@ -149,8 +157,18 @@ class PhotoEditView: UIView {
 	
 	func photoChosen(image: UIImage?, imageResult: ImageResult?) -> Void {
 		
+        Reporting.track("Set Photo", properties: ["target":self.photoSchema! as AnyObject])
+        self.usingPhotoDefault = false
+        
+        self.photoDirty = true
+        self.photoActive = true
+        self.photoChosen = true
+        
+        configureTo(photoMode: .Photo)
+        
 		if image != nil {
 			self.imageButton.setImage(image, for: .normal)
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
 		}
 		else if imageResult != nil {
 			/*
@@ -159,19 +177,10 @@ class PhotoEditView: UIView {
 			 */
 			let dimension = imageResult!.width! >= imageResult!.height! ? ResizeDimension.width : ResizeDimension.height
 			let url = URL(string: GooglePlusProxy.convert(uri: imageResult!.contentUrl!, size: Int(IMAGE_DIMENSION_MAX), dimension: dimension))
-			self.imageButton.setImageWithUrl(url: url!)  // Downloads and pushes into photoImage
+            self.imageButton.setImageWithUrl(url: url!, finished: { success in
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
+            })  // Downloads and pushes into photoImage
 		}
-		
-		Reporting.track("Set Photo", properties: ["target":self.photoSchema! as AnyObject])
-		self.usingPhotoDefault = false
-		
-		self.photoDirty = true
-		self.photoActive = true
-		self.photoChosen = true
-		
-		configureTo(photoMode: .Photo)
-		
-		NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
 	}
 	
 	/*--------------------------------------------------------------------------------------------
@@ -180,37 +189,38 @@ class PhotoEditView: UIView {
 
 	func initialize() {
 		
-		let notificationCenter = NotificationCenter.default
-		notificationCenter.addObserver(self, selector: #selector(PhotoEditView.imageNotFoundAction(sender:)), name: NSNotification.Name(rawValue: Events.ImageNotFound), object: self.imageButton)
+		NotificationCenter.default.addObserver(self, selector: #selector(PhotoEditView.imageNotFoundAction(sender:)), name: NSNotification.Name(rawValue: Events.ImageNotFound), object: self.imageButton)
 		
 		self.backgroundColor = Colors.clear
+        
+        self.progressView.isHidden = true
+        self.progressBlock = { task, progress in
+            DispatchQueue.main.async {
+                self.progressView.progress = Float(progress.fractionCompleted)
+                self.progressView.isHidden = (progress.fractionCompleted == 1.0)
+            }
+        }
 		
 		self.photoGroup.alpha = 0
 		self.photoGroup.backgroundColor = Theme.colorBackgroundImage
 		self.photoGroup.cornerRadius = 4
 		self.photoGroup.clipsToBounds = true
-		self.addSubview(self.photoGroup)
 		
 		self.imageButton.imageView?.contentMode = UIViewContentMode.scaleAspectFill
 		self.imageButton.contentMode = .scaleAspectFill
 		self.imageButton.contentVerticalAlignment = UIControlContentVerticalAlignment.fill
 		self.imageButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.fill
 		self.imageButton.sizeCategory = SizeCategory.standard
-		self.photoGroup.addSubview(self.imageButton)
-		
-		self.photoGroup.addSubview(self.scrimGroup)
 		
 		self.editPhotoButton.setImage(UIImage(named: "imgEdit2Light"), for: .normal)
 		self.editPhotoButton.backgroundColor = Theme.colorScrimLighten
 		self.editPhotoButton.cornerRadius = 18
 		self.editPhotoButton.alpha = 0
-		self.scrimGroup.addSubview(self.editPhotoButton)
 		
 		self.clearPhotoButton.setImage(UIImage(named: "imgCancelDark"), for: .normal)
 		self.clearPhotoButton.backgroundColor = Theme.colorScrimLighten
 		self.clearPhotoButton.cornerRadius = 18
 		self.clearPhotoButton.alpha = 0
-		self.scrimGroup.addSubview(self.clearPhotoButton)
 		
 		self.setPhotoButton.setImage(UIImage(named: "UIButtonCamera"), for: .normal)
 		self.setPhotoButton.borderWidth = Theme.dimenButtonBorderWidth
@@ -227,6 +237,13 @@ class PhotoEditView: UIView {
 		}
 		
 		self.setPhotoButton.alpha = 0
+        
+        self.addSubview(self.photoGroup)
+        self.photoGroup.addSubview(self.imageButton)
+        self.photoGroup.addSubview(self.scrimGroup)
+        self.photoGroup.addSubview(self.progressView)
+        self.scrimGroup.addSubview(self.editPhotoButton)
+        self.scrimGroup.addSubview(self.clearPhotoButton)
 		self.addSubview(self.setPhotoButton)
 		
 		self.editPhotoButton.addTarget(self, action: #selector(PhotoEditView.editPhotoAction(sender:)), for: .touchUpInside)
@@ -241,7 +258,15 @@ class PhotoEditView: UIView {
 			self.photoActive = true
 		}
 	}
-	
+
+    func bind(url: URL?) {
+        if url != nil {
+            self.imageButton.setImageWithUrl(url: url!, animate: true)
+            self.usingPhotoDefault = false
+            self.photoActive = true
+        }
+    }
+
 	func setHostController(controller: UIViewController) {
 		self.controller = controller
 		self.photoChooser = PhotoChooserUI(hostViewController: controller)

@@ -15,9 +15,9 @@ class UserDetailViewController: BaseDetailViewController {
 	var progress: AirProgress?
 	
 	private var isCurrentUser: Bool {
-		return (UserController.instance.authenticated
-			&& UserController.instance.currentUser != nil
-			&& self.entityId == UserController.instance.userId)
+		return (ZUserController.instance.authenticated
+			&& ZUserController.instance.currentUser != nil
+			&& self.entityId == ZUserController.instance.userId)
 	}
 	
 	/*--------------------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ class UserDetailViewController: BaseDetailViewController {
 	}
 
 	func editAction() {
-		let controller = ProfileEditViewController()
+		let controller = ZProfileEditViewController()
 		let navController = AirNavigationController()
 		controller.inputUser = self.entity as? User
 		navController.viewControllers = [controller]

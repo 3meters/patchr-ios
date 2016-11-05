@@ -23,6 +23,7 @@ class SideMenuViewController: UITableViewController {
     var menuHeader: UserHeaderView!
     var inviteCell: WrapperTableViewCell?
     var membersCell: WrapperTableViewCell?
+    var profileCell: WrapperTableViewCell?
     var settingsCell: WrapperTableViewCell?
     var switchCell: WrapperTableViewCell?
 
@@ -30,22 +31,24 @@ class SideMenuViewController: UITableViewController {
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
 
-    override func loadView() {
-        super.loadView()
+    override func viewDidLoad() {
+        super.viewDidLoad()
         initialize()
+        if UserController.instance.userId != nil {
+            self.ref = FIRDatabase.database().reference().child("users/\(UserController.instance.userId!)")
+            self.handle = self.ref.observe(.value, with: { snap in
+                self.user = FireUser.from(dict: snap.value as? [String: Any], id: snap.key)
+                self.bind()
+            })
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.handle = self.ref.observe(.value, with: { snap in
-            self.user = FireUser(dict: snap.value as! [String: Any], id: snap.key)
-            self.bind()
-        })
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        self.ref.removeObserver(withHandle: self.handle)
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -59,9 +62,22 @@ class SideMenuViewController: UITableViewController {
     
     func editProfileAction(sender: AnyObject?) {
         let controller = ProfileEditViewController()
+        let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: controller, action: #selector(controller.cancelAction(sender:)))
+        controller.navigationItem.rightBarButtonItems = [cancelButton]
         let navController = AirNavigationController()
+        controller.inputUser = self.user
         navController.viewControllers = [controller]
-        self.navigationController?.present(navController, animated: true, completion: nil)
+        UIViewController.topMostViewController()?.present(navController, animated: true, completion: nil)
+    }
+    
+    func userStateDidChange(notification: NSNotification) {
+        if UserController.instance.userId != nil {
+            self.ref = FIRDatabase.database().reference().child("users/\(UserController.instance.userId!)")
+            self.handle = self.ref.observe(.value, with: { snap in
+                self.user = FireUser.from(dict: snap.value as? [String: Any], id: snap.key)
+                self.bind()
+            })
+        }
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -72,8 +88,9 @@ class SideMenuViewController: UITableViewController {
 
         Reporting.screen("SideMenu")
         
-        let userId = UserController.instance.fireUserId
-        self.ref = FIRDatabase.database().reference().child("users/\(userId!)")
+        if UserController.instance.userId != nil {
+            self.ref = FIRDatabase.database().reference().child("users/\(UserController.instance.userId!)")
+        }
 
         self.tableView = UITableView(frame: self.tableView.frame, style: .plain)
         self.tableView.rowHeight = 64
@@ -93,24 +110,16 @@ class SideMenuViewController: UITableViewController {
         self.tableView.tableHeaderView = menuHeader	// Triggers table binding
 
         self.inviteCell = WrapperTableViewCell(view: MenuItemView(title: "Invite", image: UIImage(named: "imgInvite2Light")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
-        self.membersCell = WrapperTableViewCell(view: MenuItemView(title: "Patch members", image: UIImage(named: "imgUsersLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
+        self.membersCell = WrapperTableViewCell(view: MenuItemView(title: "Group members", image: UIImage(named: "imgUsersLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
+        self.profileCell = WrapperTableViewCell(view: MenuItemView(title: "Edit profile", image: UIImage(named: "imgEdit2Light")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         self.settingsCell = WrapperTableViewCell(view: MenuItemView(title: "Settings", image: UIImage(named: "imgSettingsLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
-        self.switchCell = WrapperTableViewCell(view: MenuItemView(title: "Switch patches", image: UIImage(named: "imgSwitchLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
+        self.switchCell = WrapperTableViewCell(view: MenuItemView(title: "Switch groups", image: UIImage(named: "imgSwitchLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         
-        FIRAuth.auth()?.addStateDidChangeListener { auth, user in
-            if user != nil {
-                let userId = UserController.instance.fireUserId
-                self.ref = FIRDatabase.database().reference().child("users/\(userId!)")
-                self.handle = self.ref.observe(.value, with: { snap in
-                    self.user = FireUser(dict: snap.value as! [String: Any], id: snap.key)
-                    self.bind()
-                })
-            }
-        }
+        NotificationCenter.default.addObserver(self, selector: #selector(userStateDidChange(notification:)), name: NSNotification.Name(rawValue: Events.UserStateDidChange), object: nil)
     }
     
     func bind() {
-        self.menuHeader.bind(user: user)
+        self.menuHeader.bind(user: self.user)
     }
 }
 
@@ -123,7 +132,7 @@ extension SideMenuViewController {
         let selectedCell = tableView.cellForRow(at: indexPath)
 
         if selectedCell == self.inviteCell {
-            /* Do something! */
+            /* Show contact picker */
         }
         else if selectedCell == self.settingsCell {
             let controller = SettingsTableViewController()
@@ -133,6 +142,23 @@ extension SideMenuViewController {
             navController.viewControllers = [controller]
             UIViewController.topMostViewController()?.present(navController, animated: true, completion: nil)
         }
+        else if selectedCell == self.profileCell {
+            editProfileAction(sender: self)
+        }
+        else if selectedCell == self.switchCell {
+            let controller = GroupPickerController()
+            controller.mode = .fullscreen
+            let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: controller, action: #selector(controller.closeAction(sender:)))
+            controller.navigationItem.rightBarButtonItems = [cancelButton]
+            let nav = AirNavigationController(rootViewController: controller)
+            UIViewController.topMostViewController()?.present(nav, animated: true, completion: nil)
+        }
+        else if selectedCell == self.membersCell {
+            /* Show member list */
+        }
+        
+        UIApplication.shared.setStatusBarHidden(false, with: UIStatusBarAnimation.slide)
+        slideMenuController()?.closeRight()
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -144,10 +170,13 @@ extension SideMenuViewController {
             return self.membersCell!
         }
         else if indexPath.row == 1 {
-            return self.settingsCell!
+            return self.inviteCell!
         }
         else if indexPath.row == 2 {
-            return self.inviteCell!
+            return self.profileCell!
+        }
+        else if indexPath.row == 4 {
+            return self.settingsCell!
         }
         return self.switchCell!
     }
@@ -157,6 +186,6 @@ extension SideMenuViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 4
+        return 5
     }
 }

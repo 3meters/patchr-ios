@@ -20,6 +20,7 @@ class FireGroup: NSObject {
     var title: String?
     var desc: String?
     var photo: FirePhoto?
+    var general: String?
     var ownedBy: String?
     var createdAt: Int?
     var createdBy: String?
@@ -33,21 +34,23 @@ class FireGroup: NSObject {
     var hideEmail: Bool?
     var joinedAt: Int?
     
-    required convenience init?(dict: [String: Any], id: String?) {
-        guard let id = id else { return nil }
-        self.init()
-        self.id = id
-        self.name = dict["name"] as? String
-        self.title = dict["title"] as? String
-        self.desc = dict["description"] as? String
-        self.ownedBy = dict["owned_by"] as? String
-        self.createdAt = dict["created_at"] as? Int
-        self.createdBy = dict["created_by"] as? String
-        self.modifiedAt = dict["modified_at"] as? Int
-        self.modifiedBy = dict["modified_by"] as? String
-        if (dict["photo"] as? NSDictionary) != nil {
-            self.photo = FirePhoto(dict: dict["photo"] as! [String: Any], id: nil)
+    static func from(dict: [String: Any]?, id: String?) -> FireGroup? {
+        if dict != nil {
+            let group = FireGroup()
+            group.id = id
+            group.name = dict!["name"] as? String
+            group.title = dict!["title"] as? String
+            group.desc = dict!["description"] as? String
+            group.general = dict!["general"] as? String
+            group.ownedBy = dict!["owned_by"] as? String
+            group.createdAt = dict!["created_at"] as? Int
+            group.createdBy = dict!["created_by"] as? String
+            group.modifiedAt = dict!["modified_at"] as? Int
+            group.modifiedBy = dict!["modified_by"] as? String
+            group.photo = FirePhoto.from(dict: dict!["photo"] as! [String : Any]?)
+            return group
         }
+        return nil
     }
     
     internal var dict: [String : Any] {
@@ -56,6 +59,7 @@ class FireGroup: NSObject {
             "title": self.title,
             "description": self.desc,
             "photo": self.photo?.dict,
+            "general": self.general,
             "owned_by": self.ownedBy,
             "created_at": self.createdAt,
             "created_by": self.createdBy,

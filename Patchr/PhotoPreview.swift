@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PhotoPreview: PhotoBrowser {
+class PhotoPreview: FirePhotoBrowser {
     
     /* Wraps photo browser with ui specialized for previewing photos from the photo picker. */
 	

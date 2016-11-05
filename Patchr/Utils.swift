@@ -93,7 +93,7 @@ struct Utils {
         return NSLocalizedString(str, comment: comment)
     }
     
-    static func DateTimeTag() -> String! {
+    static func DateTimeTag() -> String {
         let date = Date()     			// Initialized to current date
 		let calendar = Calendar.current // System caches currentCalendar as of iOS 7
         let calComponents: Set<Calendar.Component> = Set([.year, .month, .day, .hour, .minute, .second, .nanosecond])
@@ -336,32 +336,21 @@ struct Utils {
 	}
 }
 
-extension NSDate {
-	var milliseconds: Int64 {
-		return Int64(self.timeIntervalSince1970 * 1000)
-	}
-}
-
-extension Date {
-    var milliseconds: Int64 {
-        return Int64(self.timeIntervalSince1970 * 1000)
-    }
-}
-
+/* In here because this is shared with extension */
 extension String {
-	
-	var length: Int {
-		return characters.count
-	}
-		
-	subscript (i: Int) -> Character {
-		return self[self.characters.index(self.startIndex, offsetBy: i)]
-	}
-	
-	subscript (i: Int) -> String {
-		return String(self[i] as Character)
-	}
-	
+    
+    var length: Int {
+        return characters.count
+    }
+    
+    subscript (i: Int) -> Character {
+        return self[self.characters.index(self.startIndex, offsetBy: i)]
+    }
+    
+    subscript (i: Int) -> String {
+        return String(self[i] as Character)
+    }
+    
     subscript (r: Range<Int>) -> String {
         let start = characters.index(startIndex, offsetBy: r.lowerBound)
         let end = characters.index(start, offsetBy: r.upperBound - r.lowerBound)
@@ -374,3 +363,4 @@ extension String {
         return self[(start ... end)]
     }
 }
+

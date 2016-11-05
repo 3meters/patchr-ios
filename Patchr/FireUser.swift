@@ -22,17 +22,18 @@ class FireUser: NSObject {
     var presence: Any?
     var profile: FireProfile?
     
-    required convenience init?(dict: [String: Any], id: String?) {
-        guard let id = id else { return nil }
-        self.init()
-        self.id = id
-        self.createdAt = dict["created_at"] as? Int
-        self.modifiedAt = dict["modified_at"] as? Int
-        self.username = dict["username"] as? String
-        self.presence = dict["presence"]
-        if (dict["profile"] as? NSDictionary) != nil {
-            self.profile = FireProfile(dict: dict["profile"] as! [String: Any], id: nil)
+    static func from(dict: [String: Any]?, id: String?) -> FireUser? {
+        if dict != nil {
+            let user = FireUser()
+            user.id = id
+            user.createdAt = dict!["created_at"] as? Int
+            user.modifiedAt = dict!["modified_at"] as? Int
+            user.username = dict!["username"] as? String
+            user.presence = dict!["presence"]
+            user.profile = FireProfile.from(dict: dict!["profile"] as! [String : Any]?)
+            return user
         }
+        return nil
     }
     
     internal var dict: [String : Any] {

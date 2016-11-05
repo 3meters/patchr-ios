@@ -122,8 +122,10 @@ class MemberDetailView: UIView {
     func bind(user: FireUser!) {
         
         /* Name, type and photo */
-        
-        self.title.text = user.profile?.fullName!
+        if user.profile?.fullName == nil {
+
+        }
+        self.title.text = user.profile?.fullName == nil || (user.profile?.fullName?.isEmpty)! ? user.username : user.profile?.fullName
         self.subtitle.text = "@\(user.username!)"
         self.presenceView.bind(online: user.presence)
         if let photo = user.profile?.photo {

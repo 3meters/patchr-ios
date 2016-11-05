@@ -1,5 +1,5 @@
 //
-//  LobbyViewController.swift
+//  InviteViewController.swift
 //  Patchr
 //
 //  Created by Rob MacEachern on 2015-02-17.
@@ -109,17 +109,17 @@ class InviteViewController: BaseViewController {
 			
 			let controller = MessageEditViewController()
 			let navController = AirNavigationController()
-			controller.inputShareEntity = self.inputEntity
-			controller.inputShareSchema = Schema.ENTITY_PATCH
-			controller.inputShareId = self.inputEntity.id_!
-			controller.inputMessageType = .Share
+//			controller.inputShareEntity = self.inputEntity
+//			controller.inputShareSchema = Schema.ENTITY_PATCH
+//			controller.inputShareId = self.inputEntity.id_!
+//			controller.inputMessageType = .Share
 			controller.inputState = .Sharing
 			navController.viewControllers = [controller]
 			self.present(navController, animated: true, completion: nil)
 		}
 		else if route == .Actions {
 			
-			BranchProvider.invite(entity: self.inputEntity!, referrer: UserController.instance.currentUser) {
+			BranchProvider.invite(entity: self.inputEntity!, referrer: ZUserController.instance.currentUser) {
 				response, error in
 				
 				if let error = ServerError(error) {

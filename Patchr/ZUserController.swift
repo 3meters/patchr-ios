@@ -12,9 +12,9 @@ import Firebase
 import FirebaseAuth
 import RxSwift
 
-class UserController: NSObject {
+class ZUserController: NSObject {
     
-    static let instance = UserController()
+    static let instance = ZUserController()
 
     let lockbox = Lockbox(keyPrefix: KEYCHAIN_GROUP)
 
@@ -28,10 +28,6 @@ class UserController: NSObject {
     
     var authenticated: Bool {
         return (self.userId != nil && self.sessionKey != nil)
-    }
-    
-    var fireUser: FIRUser? {
-        return FIRAuth.auth()?.currentUser
     }
     
     var fireUserId: String? {
@@ -158,30 +154,6 @@ class UserController: NSObject {
         })
     }
 
-    func logout() {
-        /*
-         * Always switches to lobby. Caller should handle UI cleanup in viewWillDisappear()
-         */
-        DataController.proxibase.logout {
-            response, error in
-
-            OperationQueue.main.addOperation {	// In case we are not called back on main thread
-
-                if error != nil {
-                    Log.w("Error during logout \(error)")
-                }
-
-                self.clearUserState()
-                Reporting.track("Logged Out")
-                Log.i("User logged out")
-
-                let navController = AirNavigationController()
-                navController.viewControllers = [LobbyViewController()]
-                MainController.instance.window!.setRootViewController(rootViewController: navController, animated: true)
-            }
-        }
-    }
-
     func clearUserState() {
         /*
         * Should be called when logging out or if for any reason do not have a valid user.
@@ -196,7 +168,6 @@ class UserController: NSObject {
         self.currentUser = user
         self.userName = user.name
         self.userId = user.id_
-        Reporting.updateUser(user: user)
 
         /* Need to seed these because sign-in with previous version might not have included them */
         if let groupDefaults = UserDefaults(suiteName: "group.com.3meters.patchr.ios") {

@@ -43,8 +43,8 @@ target 'Patchr' do
     pod 'OneSignal',                '~> 2.0.10'
     pod 'ReachabilitySwift',        '~> 3'
     pod 'Bugsnag'                                   # Crash reporting
-    pod 'SwiftyBeaver'
-    pod 'JVFloatLabeledTextField',  '~> 1.1'
+    pod 'CocoaLumberjack/Swift'
+    pod 'JVFloatLabeledTextField'
     pod 'RxSwift',                  '3.0.0-beta.2'
     pod 'RxCocoa',                  '3.0.0-beta.2'
     pod 'PhoneNumberKit',           '~> 1.0'
@@ -63,7 +63,7 @@ target 'PatchrShare' do
   pod 'AWSS3',                    '2.4.9'
   pod 'Lockbox',                  '~> 3.0.1'		# Used to protect secrets and install info
   pod 'Facade',                   '~> 1.1.1'	    # Convenience methods for frame based layout
-  pod 'SwiftyBeaver'
+  pod 'CocoaLumberjack/Swift'
   pod 'Bugsnag'                                     # Crash reporting
   pod 'Firebase/RemoteConfig'
 end

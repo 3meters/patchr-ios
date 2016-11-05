@@ -12,8 +12,6 @@ import RxSwift
 
 class ChannelPickerController: UIViewController, UITableViewDelegate {
 
-    var inputGroupId: String!
-    
     var groupRef: FIRDatabaseReference!
     var groupHandle: UInt!
     var channelsQuery: FIRDatabaseQuery!
@@ -31,27 +29,21 @@ class ChannelPickerController: UIViewController, UITableViewDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard self.inputGroupId != nil else {
-            fatalError("Channel picker cannot be launched without a groupId")
-        }
         initialize()
+        bindGroup()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.groupHandle = self.groupRef.observe(.value, with: { snap in
-            if snap.value is NSNull {
-                Log.w("Group snapshot is null")
-                return
-            }
-            self.group = FireGroup(dict: snap.value as! [String: Any], id: snap.key)
-            self.bind()
-        })
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        self.groupRef.removeObserver(withHandle: self.groupHandle)
     }
     
     override func viewWillLayoutSubviews() {
@@ -61,6 +53,10 @@ class ChannelPickerController: UIViewController, UITableViewDelegate {
         self.tableView.alignBetweenTop(self.headerView, andBottom: self.footerView, centeredWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
     /*--------------------------------------------------------------------------------------------
     * Events
     *--------------------------------------------------------------------------------------------*/
@@ -86,18 +82,10 @@ class ChannelPickerController: UIViewController, UITableViewDelegate {
     * Notifications
     *--------------------------------------------------------------------------------------------*/
 
-    func groupChanged(notification: NSNotification) {
-        let groupId = notification.userInfo?["groupId"] as? String
-        if groupId != nil {
-            self.inputGroupId = groupId
-            let userId = UserController.instance.fireUserId
-            self.groupRef = FIRDatabase.database().reference().child("groups/\(self.inputGroupId!)")
-            self.channelsQuery = FIRDatabase.database().reference().child("member-channels/\(userId!)/\(self.inputGroupId!)").queryOrdered(byChild: "sort_priority")
-            bind()
-        }
-        else {
-            self.tableView.dataSource = nil
-            self.tableView.reloadData()
+    func groupDidChange(notification: NSNotification?) {
+        bindGroup()
+        if (self.slideMenuController()?.isLeftOpen())! && StateController.instance.channelId != nil {
+            self.slideMenuController()?.closeLeft()
         }
     }
     
@@ -109,21 +97,16 @@ class ChannelPickerController: UIViewController, UITableViewDelegate {
         
         self.view.backgroundColor = UIColor.white
         
-        let userId = UserController.instance.fireUserId
-        self.groupRef = FIRDatabase.database().reference().child("groups/\(self.inputGroupId!)")
-        self.channelsQuery = FIRDatabase.database().reference().child("member-channels/\(userId!)/\(self.inputGroupId!)").queryOrdered(byChild: "sort_priority")
-        
         self.headerView = Bundle.main.loadNibNamed("ChannelsHeaderView", owner: nil, options: nil)?.first as? ChannelsHeaderView
         self.headerView.switchButton?.addTarget(self, action: #selector(ChannelPickerController.switchAction(sender:)), for: .touchUpInside)
         
-        self.footerView.setTitle("Add channel", for: .normal)
-        self.footerView.setImage(UIImage(named: "imgAddLight"), for: .normal)
-        self.footerView.imageView!.contentMode = UIViewContentMode.scaleAspectFit
-        self.footerView.imageView?.tintColor = Colors.brandColorDark
-        self.footerView.imageEdgeInsets = UIEdgeInsetsMake(6, 4, 6, 24)
+        self.footerView.setImage(UIImage(named: "imgAddCircleLight"), for: .normal)
+        self.footerView.imageView!.contentMode = .scaleAspectFit
+        self.footerView.imageView?.tintColor = Colors.brandOnLight
+        self.footerView.imageEdgeInsets = UIEdgeInsetsMake(8, 8, 8, 8)
         self.footerView.contentHorizontalAlignment = .center
         self.footerView.backgroundColor = Colors.gray95pcntColor
-        self.footerView.addTarget(self, action: #selector(ChannelPickerController.addAction(sender:)), for: .touchUpInside)
+        self.footerView.addTarget(self, action: #selector(addAction(sender:)), for: .touchUpInside)
         
         self.tableView.backgroundColor = Theme.colorBackgroundEmptyBubble
         self.tableView.delegate = self
@@ -133,10 +116,35 @@ class ChannelPickerController: UIViewController, UITableViewDelegate {
         self.view.addSubview(self.tableView)
         self.view.addSubview(self.footerView)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(ChannelPickerController.groupChanged(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidChange), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(groupDidChange(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidChange), object: nil)
+    }
+    
+    func bindGroup() {
+        
+        let groupId = StateController.instance.groupId
+        let userId = UserController.instance.userId
+        
+        if userId != nil && groupId != nil {
+            
+            self.groupRef = FIRDatabase.database().reference().child("groups/\(groupId!)")
+            self.channelsQuery = FIRDatabase.database().reference().child("member-channels/\(userId!)/\(groupId!)").queryOrdered(byChild: "sort_priority")
+            
+            self.groupHandle = self.groupRef.observe(.value, with: { snap in
+                if !(snap.value is NSNull) {
+                    self.group = FireGroup.from(dict: snap.value as? [String: Any], id: snap.key)
+                    self.bind()
+                }
+            })
+        }
+        else {
+            self.tableView.dataSource = nil
+            self.tableView.reloadData()
+        }
     }
     
     func bind() {
+        
+        let groupId = StateController.instance.groupId
         
         self.headerView.bind(patch: self.group)
         
@@ -158,15 +166,21 @@ class ChannelPickerController: UIViewController, UITableViewDelegate {
             
             cell.backgroundColor = Colors.white
             cell.title?.textColor = Theme.colorText
-            if channelId == MainController.instance.channelId {
-                cell.backgroundColor = MaterialColor.orange.lighten5
+            cell.lock?.tintColor = Colors.brandColorLight
+            if channelId == StateController.instance.channelId {
+                cell.backgroundColor = Colors.accentColorFill
+                cell.title?.textColor = Colors.white
+                cell.lock?.tintColor = Colors.white
             }
-            let path = "group-channels/\(self.inputGroupId!)/\(channelId)"
+            let path = "group-channels/\(groupId!)/\(channelId)"
             let ref = FIRDatabase.database().reference().child(path)
+            
             ref.observeSingleEvent(of: .value, with: { snap in
-                if let channel = FireChannel(dict: snap.value as! [String: Any], id: snap.key) {
-                    channel.membershipFrom(dict: link)
-                    cell.bind(channel: channel)
+                if !(snap.value is NSNull) {
+                    if let channel = FireChannel.from(dict: snap.value as? [String: Any], id: snap.key) {
+                        channel.membershipFrom(dict: link)
+                        cell.bind(channel: channel)
+                    }
                 }
             })
         }
@@ -177,7 +191,7 @@ class ChannelPickerController: UIViewController, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let cell = tableView.cellForRow(at: indexPath) as! ChannelListCell
-        MainController.instance.setChannelId(channelId: cell.channel.id)
+        StateController.instance.setChannelId(channelId: cell.channel.id)
         self.slideMenuController()?.closeLeft()
         tableView.reloadData()
     }
