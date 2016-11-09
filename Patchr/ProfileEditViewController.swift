@@ -13,9 +13,9 @@ import FirebaseRemoteConfig
 import Firebase
 
 class ProfileEditViewController: BaseEditViewController {
-
-    var ref: FIRDatabaseReference!
-    var inputUser: FireUser!
+    
+    var user: FireUser!
+    var mode: Mode = .update
 
     var message = AirLabelTitle()
     var photoEditView = PhotoEditView()
@@ -53,7 +53,10 @@ class ProfileEditViewController: BaseEditViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
-        bind()
+        FireController.instance.getUserOnce(userId: UserController.instance.userId!, with: { user in
+            self.user = user
+            self.bind()
+        })
     }
 
     override func viewWillLayoutSubviews() {
@@ -80,7 +83,6 @@ class ProfileEditViewController: BaseEditViewController {
     
     func accountAction(sender: AnyObject) {
         let controller = AccountEditViewController()
-        controller.inputUser = self.inputUser
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
@@ -88,27 +90,27 @@ class ProfileEditViewController: BaseEditViewController {
         super.textFieldDidEndEditing(textField)
         
         if textField == self.firstNameField {
-            self.ref.updateChildValues([
+            FireController.db.child(self.user.path).updateChildValues([
                 "modified_at": FIRServerValue.timestamp(),
                 "profile/first_name": self.firstNameField.text!,
                 "profile/full_name": self.fullName
             ])
         }
         else if textField == self.lastNameField {
-            self.ref.updateChildValues([
+            FireController.db.child(self.user.path).updateChildValues([
                 "modified_at": FIRServerValue.timestamp(),
                 "profile/last_name": self.lastNameField.text!,
                 "profile/full_name": self.fullName
             ])
         }
         else if textField == self.phoneField {
-            self.ref.updateChildValues([
+            FireController.db.child(self.user.path).updateChildValues([
                 "modified_at": FIRServerValue.timestamp(),
                 "profile/phone": self.phoneField.text!
                 ])
         }
         else if textField == self.skypeField {
-            self.ref.updateChildValues([
+            FireController.db.child(self.user.path).updateChildValues([
                 "modified_at": FIRServerValue.timestamp(),
                 "profile/skype": self.skypeField.text!
                 ])
@@ -132,11 +134,11 @@ class ProfileEditViewController: BaseEditViewController {
         return true
     }
     
-    func doneAction(sender: AnyObject?){
+    func doneAction(sender: AnyObject?) {
         cancelAction(sender: sender)
     }
     
-    func cancelAction(sender: AnyObject?){
+    func cancelAction(sender: AnyObject?) {
         
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: nil)
@@ -161,7 +163,7 @@ class ProfileEditViewController: BaseEditViewController {
     
     override func photoRemoved(sender: NSNotification) {
         super.photoRemoved(sender: sender)
-        self.ref.updateChildValues([
+        FireController.db.child(self.user.path).updateChildValues([
             "modified_at": FIRServerValue.timestamp(),
             "profile/photo": NSNull()
         ]) { (err, ref) in
@@ -180,8 +182,6 @@ class ProfileEditViewController: BaseEditViewController {
 
         Reporting.screen("ProfileEdit")
 
-        self.ref = FIRDatabase.database().reference().child("users/\(self.inputUser.id!)")
-
         self.message.text = "Profile"
         self.message.textColor = Theme.colorTextTitle
         self.message.numberOfLines = 0
@@ -189,7 +189,6 @@ class ProfileEditViewController: BaseEditViewController {
 
         self.photoEditView.photoSchema = Schema.ENTITY_USER
         self.photoEditView.setHostController(controller: self)
-        self.photoEditView.configureTo(photoMode: self.inputUser.profile?.photo != nil ? .Photo : .Placeholder)
 
         self.firstNameField.placeholder = "First name"
         self.firstNameField.font = Theme.fontTextDisplay
@@ -252,12 +251,14 @@ class ProfileEditViewController: BaseEditViewController {
 
     func bind() {
         
-        self.firstNameField.text = self.inputUser.profile?.firstName
-        self.lastNameField.text = self.inputUser.profile?.lastName
-        self.phoneField.text = self.inputUser.profile?.phone
-        self.skypeField.text = self.inputUser.profile?.skype
+        self.photoEditView.configureTo(photoMode: self.user.profile?.photo != nil ? .Photo : .Placeholder)
         
-        if let photo = self.inputUser.profile?.photo {
+        self.firstNameField.text = self.user.profile?.firstName
+        self.lastNameField.text = self.user.profile?.lastName
+        self.phoneField.text = self.user.profile?.phone
+        self.skypeField.text = self.user.profile?.skype
+        
+        if let photo = self.user.profile?.photo {
             if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
                 self.photoEditView.bind(url: photoUrl)
             }
@@ -296,7 +297,7 @@ class ProfileEditViewController: BaseEditViewController {
                         "filename": imageKey
                         ] as [String: Any]
                     
-                    self.ref.updateChildValues([
+                    FireController.db.child(self.user.path).updateChildValues([
                         "modified_at": FIRServerValue.timestamp(),
                         "profile/photo": photo
                         ])
@@ -311,5 +312,10 @@ class ProfileEditViewController: BaseEditViewController {
             hud.hide(true)
             let _ = self.imageUploadRequest?.cancel() // Should do nothing if upload already complete or isn't any
         }
+    }
+    
+    enum Mode: Int {
+        case insert
+        case update
     }
 }

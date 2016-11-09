@@ -61,14 +61,14 @@ class PasswordEditViewController: BaseEditViewController {
 	
 	func hideShowPasswordAction(sender: AnyObject?) {
 		if let button = sender as? AirHideShowButton {
-			button.toggleOn(on: !button.toggledOn)
+			button.toggle(on: !button.toggledOn)
 			self.passwordField.isSecureTextEntry = !button.toggledOn
 		}
 	}
 
 	func hideShowNewPasswordAction(sender: AnyObject?) {
 		if let button = sender as? AirHideShowButton {
-			button.toggleOn(on: !button.toggledOn)
+			button.toggle(on: !button.toggledOn)
 			self.passwordNewField.isSecureTextEntry = !button.toggledOn
 		}
 	}

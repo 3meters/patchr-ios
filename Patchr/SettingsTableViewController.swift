@@ -130,7 +130,7 @@ class SettingsTableViewController: UITableViewController {
         self.buildInfoCell.accessoryType = .none
 
         let components = NSCalendar.current.dateComponents([.year, .month, .day], from: Date())
-        self.buildInfoLabel.text = "©\(components.year) 3meters LLC\nVersion \(appVersion()) (\(build()))"
+        self.buildInfoLabel.text = "©\(components.year!) 3meters LLC\nVersion \(appVersion()) (\(build()))"
         self.buildInfoLabel.textColor = Theme.colorTextTitle
         self.buildInfoLabel.font = Theme.fontTextDisplay
         self.buildInfoLabel.numberOfLines = 2

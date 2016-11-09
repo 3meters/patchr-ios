@@ -125,7 +125,7 @@ class PatchDetailViewController: BaseDetailViewController {
         let controller = MessageEditViewController()
 //        controller.inputToString = self.entity!.name
 //        controller.inputPatchId = self.entityId
-        controller.inputState = .Creating
+//        controller.inputState = .Creating
 
         let navController = AirNavigationController()
         navController.viewControllers = [controller]
@@ -585,14 +585,14 @@ class PatchDetailViewController: BaseDetailViewController {
         button.addTarget(self, action: #selector(PatchDetailViewController.moreAction(sender:)), for: .touchUpInside)
         button.showsTouchWhenHighlighted = true
         button.setTitleColor(Colors.black, for: .normal)
-        button.titleLabel!.font = UIFont.fontAwesomeOfSize(16)
+        button.titleLabel!.font = UIFont.fontAwesome(ofSize: 16)
         
         if let patch = self.entity as? Patch {
             if patch.visibility != nil && patch.visibility == "public" {
-                button.setTitle(String.fontAwesomeIconWithName(.Hashtag), for: .normal)
+                button.setTitle(String.fontAwesomeIcon(name: .hashtag), for: .normal)
             }
             else {
-                button.setTitle(String.fontAwesomeIconWithName(.Lock), for: .normal)
+                button.setTitle(String.fontAwesomeIcon(name: .lock), for: .normal)
             }
             button.sizeToFit()
             button.bounds.size.width = 16
@@ -727,7 +727,7 @@ class PatchDetailViewController: BaseDetailViewController {
 //            controller.inputShareSchema = Schema.ENTITY_PATCH
 //            controller.inputShareId = self.entityId!
 //            controller.inputMessageType = .Share
-            controller.inputState = .Sharing
+//            controller.inputState = .Sharing
             navController.viewControllers = [controller]
             self.present(navController, animated: true, completion: nil)
         }

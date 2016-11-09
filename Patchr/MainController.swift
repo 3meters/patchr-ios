@@ -136,6 +136,7 @@ class MainController: NSObject, iRateDelegate {
     
     func showMain() {
         if self.slideController.mainViewController != self.channelController {
+            _ = self.channelController.view // Triggers viewDidLoad
             let nav = AirNavigationController(rootViewController: self.channelController)
             self.slideController.changeMainViewController(nav, close: false)
         }
@@ -158,7 +159,7 @@ class MainController: NSObject, iRateDelegate {
     }
 
     func showChannel(groupId: String, channelId: String) {
-        self.channelController.bindChannel(groupId: groupId, channelId: channelId)
+        self.channelController.bind(groupId: groupId, channelId: channelId)
     }
 
     func clearChannel() {

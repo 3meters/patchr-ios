@@ -26,12 +26,12 @@ PODS:
   - AWSCore (2.4.9)
   - AWSS3 (2.4.9):
     - AWSCore (= 2.4.9)
-  - Branch (0.12.12):
-    - Branch/Core (= 0.12.12)
-    - Branch/without-IDFA (= 0.12.12)
-  - Branch/Core (0.12.12)
-  - Branch/without-IDFA (0.12.12)
-  - Bugsnag (5.6.2):
+  - Branch (0.12.15):
+    - Branch/Core (= 0.12.15)
+    - Branch/without-IDFA (= 0.12.15)
+  - Branch/Core (0.12.15)
+  - Branch/without-IDFA (0.12.15)
+  - Bugsnag (5.6.5):
     - KSCrash/RecordingAdvanced (= 1.8.13)
   - CocoaLumberjack/Core (3.0.0)
   - CocoaLumberjack/Default (3.0.0):
@@ -44,62 +44,69 @@ PODS:
   - DateTools (1.7.0)
   - DLRadioButton (1.4.9)
   - Facade (1.1.1)
-  - Firebase/Auth (3.7.1):
+  - Firebase/Auth (3.9.0):
     - Firebase/Core
-    - FirebaseAuth (= 3.0.5)
-  - Firebase/Core (3.7.1):
-    - FirebaseAnalytics (= 3.4.4)
-    - FirebaseCore (= 3.4.3)
-  - Firebase/Crash (3.7.1):
+    - FirebaseAuth (= 3.0.6)
+  - Firebase/Core (3.9.0):
+    - FirebaseAnalytics (= 3.5.1)
+    - FirebaseCore (= 3.4.4)
+  - Firebase/Crash (3.9.0):
     - Firebase/Core
-    - FirebaseCrash (= 1.0.7)
-  - Firebase/Database (3.7.1):
+    - FirebaseCrash (= 1.1.3)
+  - Firebase/Database (3.9.0):
     - Firebase/Core
-    - FirebaseDatabase (= 3.0.3)
-  - Firebase/RemoteConfig (3.7.1):
+    - FirebaseDatabase (= 3.1.0)
+  - Firebase/RemoteConfig (3.9.0):
     - Firebase/Core
-    - FirebaseRemoteConfig (= 1.3.0)
-  - FirebaseAnalytics (3.4.4):
+    - FirebaseRemoteConfig (= 1.3.1)
+  - FirebaseAnalytics (3.5.1):
     - FirebaseCore (~> 3.4)
     - FirebaseInstanceID (~> 1.0)
     - GoogleInterchangeUtilities (~> 1.2)
     - GoogleSymbolUtilities (~> 1.1)
-  - FirebaseAuth (3.0.5):
-    - FirebaseAnalytics (~> 3.3)
-    - GoogleNetworkingUtilities (~> 1.2)
-    - GoogleUtilities (~> 1.2)
-  - FirebaseCore (3.4.3):
+    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
+  - FirebaseAuth (3.0.6):
+    - FirebaseAnalytics (~> 3.4)
+    - GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)
+    - GTMSessionFetcher/Core (~> 1.1)
+  - FirebaseCore (3.4.4):
     - GoogleInterchangeUtilities (~> 1.2)
-    - GoogleUtilities (~> 1.2)
-  - FirebaseCrash (1.0.7):
-    - FirebaseAnalytics (~> 3.2)
+    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
+  - FirebaseCrash (1.1.3):
+    - FirebaseAnalytics (~> 3.4)
     - FirebaseInstanceID (~> 1.0)
     - GoogleInterchangeUtilities (~> 1.2)
     - GoogleSymbolUtilities (~> 1.1)
-    - GoogleUtilities (~> 1.2)
-  - FirebaseDatabase (3.0.3):
-    - FirebaseAnalytics (~> 3.3)
+    - GoogleToolboxForMac/Logger (~> 2.1)
+    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
+  - FirebaseDatabase (3.1.0):
+    - FirebaseAnalytics (~> 3.4)
   - FirebaseInstanceID (1.0.8)
-  - FirebaseRemoteConfig (1.3.0):
-    - FirebaseAnalytics (~> 3.3)
+  - FirebaseRemoteConfig (1.3.1):
+    - FirebaseAnalytics (~> 3.4)
     - FirebaseInstanceID (~> 1.0)
     - GoogleInterchangeUtilities (~> 1.2)
-    - GoogleIPhoneUtilities (~> 1.2)
     - GoogleSymbolUtilities (~> 1.1)
-    - GoogleUtilities (~> 1.2)
-  - FirebaseUI/Database (0.6.1):
+    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
+  - FirebaseUI/Database (1.0.0):
     - Firebase/Database
-  - FontAwesome.swift (0.11.1)
+  - FontAwesome.swift (1.1.0)
   - GoogleInterchangeUtilities (1.2.2):
     - GoogleSymbolUtilities (~> 1.1)
-  - GoogleIPhoneUtilities (1.2.1):
-    - GoogleSymbolUtilities (~> 1.0)
-    - GoogleUtilities (~> 1.0)
-  - GoogleNetworkingUtilities (1.2.2):
-    - GoogleSymbolUtilities (~> 1.1)
   - GoogleSymbolUtilities (1.1.2)
-  - GoogleUtilities (1.3.2):
-    - GoogleSymbolUtilities (~> 1.1)
+  - GoogleToolboxForMac/DebugUtils (2.1.0):
+    - GoogleToolboxForMac/Defines (= 2.1.0)
+  - GoogleToolboxForMac/Defines (2.1.0)
+  - GoogleToolboxForMac/Logger (2.1.0):
+    - GoogleToolboxForMac/Defines (= 2.1.0)
+  - GoogleToolboxForMac/NSData+zlib (2.1.0):
+    - GoogleToolboxForMac/Defines (= 2.1.0)
+  - GoogleToolboxForMac/NSDictionary+URLArguments (2.1.0):
+    - GoogleToolboxForMac/DebugUtils (= 2.1.0)
+    - GoogleToolboxForMac/Defines (= 2.1.0)
+    - GoogleToolboxForMac/NSString+URLArguments (= 2.1.0)
+  - GoogleToolboxForMac/NSString+URLArguments (2.1.0)
+  - GTMSessionFetcher/Core (1.1.7)
   - IDMPhotoBrowser (1.7):
     - DACircularProgress
     - pop
@@ -110,7 +117,7 @@ PODS:
   - KSCrash/Recording (1.8.13)
   - KSCrash/RecordingAdvanced (1.8.13):
     - KSCrash/Recording
-  - Lockbox (3.0.2)
+  - Lockbox (3.0.3)
   - MBProgressHUD (0.9.2)
   - NHBalancedFlowLayout (0.2)
   - OneSignal (2.0.11)
@@ -149,7 +156,7 @@ DEPENDENCIES:
   - Firebase/Crash
   - Firebase/Database
   - Firebase/RemoteConfig
-  - FirebaseUI/Database (~> 0.6)
+  - FirebaseUI/Database
   - FontAwesome.swift (from `https://github.com/thii/FontAwesome.swift.git`)
   - IDMPhotoBrowser (from `~/code/IDMPhotoBrowser`)
   - iRate (~> 1.11.6)
@@ -181,7 +188,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   FontAwesome.swift:
-    :commit: b03d71746f277690d1ff7df0c539641c4ba57d4d
+    :commit: 2309b11d3ed5895fda0bfdc392d16a1d199c97c0
     :git: https://github.com/thii/FontAwesome.swift.git
 
 SPEC CHECKSUMS:
@@ -189,34 +196,33 @@ SPEC CHECKSUMS:
   AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
   AWSCore: 175208358b95492e0ebe0337df2ab415300bddac
   AWSS3: e4959b48db48d5f3dcd5cdf9e24a07f60a313611
-  Branch: 714cc02afc4676902f14f949157cdbf8c73f64f4
-  Bugsnag: c20663a316811b425fd58f7ea9a1375f4cc8bc9d
+  Branch: 076dda33e7062b5bdefc1be209e2cd863141b7f3
+  Bugsnag: a390acb8d937a9af54dd5044298a892e716c6eef
   CocoaLumberjack: c823149bccc5519a9447aeb433be7b1212a7d6a5
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   DateTools: 53288ee8b905fdc75897a1e6b5cc0144b14cba60
   DLRadioButton: 7bb8a6e3768b572469ace553391ab4d2af6f9c19
   Facade: 3c5c6fb1ba042d20885cfe5a290050f5b9351ca2
-  Firebase: be473484f0d515e72ffd04acf22f981773c23e58
-  FirebaseAnalytics: 0533a00b681e08fd0b2cd0444b7ddf0ef9fd7a1a
-  FirebaseAuth: 75a062bbf2d3c97d1e6e55bbc110e13a6853e25d
-  FirebaseCore: 5a885548bbc5f0c410b04f8e9ac9d73ff1221907
-  FirebaseCrash: 2efeb3715b76ac843b841529ce413efb67e5fd4d
-  FirebaseDatabase: 750a4a0fe18ef114318876fd654b2d9c671e0992
+  Firebase: ff77ffb77b317c3720fef57a60e9335cebf962e6
+  FirebaseAnalytics: 6e58fc9b397664369ac7617fb0ba93fab6ba7b5b
+  FirebaseAuth: 96e9674ff31d6e1f826d53e26aa003a57cab0295
+  FirebaseCore: d0ed25f27b6f9158eccc439f1be6f92e81207e28
+  FirebaseCrash: bafd94cd9c9373b6eb8c631705680e891f54bdb3
+  FirebaseDatabase: 3ebb2edb6007c3f0f87b248f3fa212bde56a1468
   FirebaseInstanceID: ba1e640935235e5fac39dfa816fe7660e72e1a8a
-  FirebaseRemoteConfig: 981f45d4278281cfefa8f48a6f5c566f2c95ac5a
-  FirebaseUI: cfe7b83264b9fbdd7e4c9804327a397471e2643b
-  FontAwesome.swift: 9879cd6a1462bf160662d519f7b7474d73bdd1c3
+  FirebaseRemoteConfig: 383a9afe0a9291ada949e3f615257928a823b594
+  FirebaseUI: 82bd64fc3fc5a9451c37a720aee813990e727cf1
+  FontAwesome.swift: beb63f208f69f998d00fdb2d4d5d8813b494f3d8
   GoogleInterchangeUtilities: d5bc4d88d5b661ab72f9d70c58d02ca8c27ad1f7
-  GoogleIPhoneUtilities: 63f25e93a3ddcb66884d182aab3a660d98f1479b
-  GoogleNetworkingUtilities: 3edd3a8161347494f2da60ea0deddc8a472d94cb
   GoogleSymbolUtilities: 631ee17048aa5e9ab133470d768ea997a5ef9b96
-  GoogleUtilities: 8bbc733218aad26306f9d4a253823986110e3358
+  GoogleToolboxForMac: 2b2596cbb7186865e98cadf2b1e262d851c2b168
+  GTMSessionFetcher: a1f8ed39e4fe21c68957daed472c7afbcdf29166
   IDMPhotoBrowser: bcd6cbc9ccaf7e945c3a5a065ffa1a4dee81b722
   iRate: 61e558919c4a7fde63b3c22ebbd6c114a1eee658
   JVFloatLabeledTextField: 0e5524b097f102036214dd8279edc8ecf08b5e18
   Keys: 9c35bf00f612ee1d48556f4a4b9b4551e224e90f
   KSCrash: 4c3a83f133b60f4bd57e05235ebf8d46e36d378d
-  Lockbox: bfc91deef886f9c0302e809a4d11e171c92c341b
+  Lockbox: 7bc46733434e89900924d53a08bd9d0e5ca12d46
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
   NHBalancedFlowLayout: fd253023c6754e605acdb180d50123e582cc62bb
   OneSignal: 2ac92fa759f2316038bd59cc34487cdd1e605212
@@ -232,6 +238,6 @@ SPEC CHECKSUMS:
   TWMessageBarManager: fd84e7948ba7968a2b5d9454859135761214ec56
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
 
-PODFILE CHECKSUM: 2a26141fa740d128030f7a1f28cb5f5ecb9a80ee
+PODFILE CHECKSUM: d865139f626a6547a27fce1bac45dec3368c436b
 
 COCOAPODS: 1.1.0.rc.3

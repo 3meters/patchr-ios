@@ -378,7 +378,7 @@ class MessageDetailViewController: BaseViewController {
 		let controller = MessageEditViewController()
 		let navController = AirNavigationController()
 //		controller.inputEntity = self.inputMessage
-		controller.inputState = .Editing
+//		controller.inputState = .Editing
 		navController.viewControllers = [controller]
 		self.navigationController?.present(navController, animated: true, completion: nil)
 	}
@@ -708,7 +708,7 @@ class MessageDetailViewController: BaseViewController {
 //			controller.inputShareSchema = Schema.ENTITY_MESSAGE
 //			controller.inputShareId = self.inputMessage?.id_ ?? self.inputMessageId!
 //			controller.inputMessageType = .Share
-			controller.inputState = .Sharing
+//			controller.inputState = .Sharing
 			navController.viewControllers = [controller]
 			self.present(navController, animated: true, completion: nil)
         }

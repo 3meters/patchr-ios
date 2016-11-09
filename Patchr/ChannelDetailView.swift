@@ -17,7 +17,8 @@ class ChannelDetailView: UIView {
     var photo = AirImageView(frame: CGRect.zero)
     var name = AirLabelDisplay()
     var lockImage = AirImageView(frame: CGRect.zero)
-    var mutedImage = AirImageView(frame: CGRect.zero)
+    var mutedImage = AirMuteView(frame: CGRect.zero)
+    var starButton = AirStarButton(frame: CGRect.zero)
     var infoGroup = AirRuleView()
     var purpose = AirLabelDisplay(frame: CGRect.zero)
     var gradient = CAGradientLayer()
@@ -55,13 +56,14 @@ class ChannelDetailView: UIView {
         let viewHeight = viewWidth * 0.625
 
         self.contentGroup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: viewHeight) // 16:10
-        self.titleGroup.anchorBottomLeft(withLeftPadding: 12, bottomPadding: 16, width: viewWidth - 60, height: 72)
-
+        self.titleGroup.anchorBottomLeft(withLeftPadding: 12, bottomPadding: 16, width: viewWidth - 24, height: 72)
+        
         self.name.bounds.size.width = self.titleGroup.width()
         self.name.sizeToFit()
         self.name.anchorBottomLeft(withLeftPadding: 0, bottomPadding: 0, width: self.name.width(), height: self.name.height())
-        self.lockImage.align(toTheRightOf: self.name, matchingCenterWithLeftPadding: 4, width: !self.lockImage.isHidden ? 16 : 0, height: !self.lockImage.isHidden ? 16 : 0)
-        self.mutedImage.align(toTheRightOf: self.lockImage, matchingCenterWithLeftPadding: 4, width: !self.mutedImage.isHidden ? 20 : 0, height: !self.mutedImage.isHidden ? 20 : 0)
+        self.lockImage.align(toTheRightOf: self.name, matchingCenterWithLeftPadding: 4, width: !self.lockImage.isHidden ? 16 : 0, height: 16)
+        self.mutedImage.align(toTheRightOf: self.lockImage, matchingCenterWithLeftPadding: 4, width: !self.mutedImage.isHidden ? 20 : 0, height: 20)
+        self.starButton.align(toTheRightOf: self.mutedImage, matchingCenterWithLeftPadding: 4, width: 24, height: 24)
 
         let gradientHeight = self.contentGroup.width() * 0.35
         self.gradient.frame = CGRect(x:0, y:self.contentGroup.height() - gradientHeight, width:self.contentGroup.width(), height:gradientHeight)
@@ -89,6 +91,7 @@ class ChannelDetailView: UIView {
         self.titleGroup.addSubview(self.name)
         self.titleGroup.addSubview(self.lockImage)
         self.titleGroup.addSubview(self.mutedImage)
+        self.titleGroup.addSubview(self.starButton)
         
         self.contentGroup.addSubview(self.photo)
         self.contentGroup.addSubview(self.titleGroup)
@@ -160,16 +163,19 @@ class ChannelDetailView: UIView {
             self.photo.backgroundColor = ColorArray.randomColor(seed: seed)
         }
 
-        /* Indicators */
-
+        /* Public/private */
         self.lockImage.isHidden = (channel.visibility == "public")
-        self.mutedImage.isHidden = (channel.muted == nil || channel.muted!)
+        self.mutedImage.isHidden = true
+        
+        /* Per user indicators */
+        self.starButton.bind(channel: channel)
+        self.mutedImage.bind(channel: channel)
 
         self.setNeedsLayout()    // Needed because binding can change element layout
         self.layoutIfNeeded()
         self.sizeToFit()
     }
-
+    
     override func sizeThatFits(_ size: CGSize) -> CGSize {
         
         var w = CGFloat(0)

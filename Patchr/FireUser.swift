@@ -13,7 +13,9 @@ import FirebaseDatabase
 
 class FireUser: NSObject {
 
-    static let path = "/users"
+    var path: String {
+        return "users/\(self.id!)"
+    }
 
     var id: String?
     var createdAt: Int?
@@ -21,6 +23,13 @@ class FireUser: NSObject {
     var username: String?
     var presence: Any?
     var profile: FireProfile?
+    
+    /* Link properties for the current user */
+    var disabled: Bool?
+    var role: String?
+    var notifications: String?
+    var hideEmail: Bool?
+    var joinedAt: Int?
     
     static func from(dict: [String: Any]?, id: String?) -> FireUser? {
         if dict != nil {
@@ -43,5 +52,14 @@ class FireUser: NSObject {
             "username": self.username,
             "profile": self.profile?.dict
         ]
+    }
+    
+    
+    func membershipFrom(dict: [String: Any]) {
+        self.disabled = dict["disabled"] as? Bool
+        self.role = dict["role"] as? String
+        self.notifications = dict["notifications"] as? String
+        self.hideEmail = dict["hide_email"] as? Bool
+        self.joinedAt = dict["joined_at"] as? Int
     }
 }

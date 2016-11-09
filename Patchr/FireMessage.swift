@@ -13,7 +13,9 @@ import FirebaseDatabase
 
 class FireMessage: NSObject {
     
-    static let path = "/channel-messages"
+    var path: String {
+        return "channel-messages/\(self.channel!)/\(self.id!)"
+    }
     
     var id: String?
     var channel: String?
@@ -77,5 +79,40 @@ class FireMessage: NSObject {
         }
         
         return dict
+    }
+    
+    func getCreator(with block: @escaping (FireUser) -> Swift.Void) {
+        FireController.db.child("users/\(self.createdBy!)").observeSingleEvent(of: .value, with: { snap in
+            if !(snap.value is NSNull) {
+                let user = FireUser.from(dict: snap.value as? [String: Any], id: snap.key)
+                block(user!)
+            }
+        })
+    }
+    
+    func addReaction(emoji: Emoji) {
+        let userId = UserController.instance.userId
+        let path = "channel-messages/\(self.channel!)/\(self.id!)/reactions/\(emoji.rawValue)/\(userId!)"
+        FireController.db.child(path).setValue(true)
+    }
+    
+    func removeReaction(emoji: Emoji) {
+        let userId = UserController.instance.userId
+        let path = "channel-messages/\(self.channel!)/\(self.id!)/reactions/\(emoji.rawValue)/\(userId!)"
+        FireController.db.child(path).removeValue()
+    }
+    
+    func delete() {
+        FireController.db.child(self.path).removeValue()
+    }
+    
+    func getReactionCount(emoji: Emoji) -> Int {
+        let reaction = self.reactions?[emoji.rawValue]
+        return (reaction?.count ?? 0)
+    }
+    
+    func getReaction(emoji: Emoji, userId: String) -> Bool {
+        let reaction = self.reactions?[emoji.rawValue]?[userId]
+        return (reaction ?? false)
     }
 }

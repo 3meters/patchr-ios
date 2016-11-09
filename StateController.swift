@@ -50,6 +50,7 @@ class StateController: NSObject {
 
         /* Setting to nil */
         if groupId == nil {
+            Log.d("Current group: nothing")
             self.groupId = nil
             UserDefaults.standard.removeObject(forKey: "groupId")
             setChannelId(channelId: nil)
@@ -60,6 +61,8 @@ class StateController: NSObject {
             
         /* Changing */
         if self.groupId != groupId {
+            
+            Log.d("Current group: \(groupId!)")
             
             /* Validate first */
             self.db.child("groups/\(groupId!)").observeSingleEvent(of: .value, with: { snap in

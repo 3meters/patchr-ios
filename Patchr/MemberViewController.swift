@@ -15,6 +15,7 @@ import FirebaseDatabase
 
 class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFieldDelegate {
     
+    let db = FIRDatabase.database().reference()
     var inputUserId: String!
     var ref: FIRDatabaseReference!
     var handle: UInt!
@@ -94,7 +95,6 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: controller, action: #selector(controller.cancelAction(sender:)))
         controller.navigationItem.rightBarButtonItems = [cancelButton]
         let navController = AirNavigationController()
-        controller.inputUser = self.user
         navController.viewControllers = [controller]
         UIViewController.topMostViewController()?.present(navController, animated: true, completion: nil)
     }
@@ -138,7 +138,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
 	override func initialize() {
 		super.initialize()
         
-        self.ref = FIRDatabase.database().reference().child("users/\(self.inputUserId!)")
+        self.ref = self.db.child("users/\(self.inputUserId!)")
         
         self.phone.caption.text = "Phone"
         self.phone.label.textColor = Colors.brandColorTextLight
@@ -180,7 +180,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         
         self.headerView.bind(user: self.user)
         
-        self.editButton.isHidden = (self.user?.id != ZUserController.instance.fireUserId)
+        self.editButton.isHidden = (self.user?.id != UserController.instance.userId)
         self.callButton.isHidden = (self.user?.profile?.phone?.isEmpty ?? true)
         self.buttonGroup.isHidden = (self.callButton.isHidden && self.editButton.isHidden)
         
@@ -213,21 +213,23 @@ extension MemberViewController {
         
         /* Parallax effect when user scrolls down */
         let offset = scrollView.contentOffset.y
-        if self.originalRect != nil && offset >= self.originalScrollTop && offset <= 300 {
-            let movement = self.originalScrollTop - scrollView.contentOffset.y
-            let ratio: CGFloat = (movement <= 0) ? 0.50 : 1.0
-            self.headerView.photo.frame.origin.y = self.originalRect!.origin.y + (-(movement) * ratio)
-        }
-        else {
-            let movement = (originalScrollTop - scrollView.contentOffset.y) * 0.35
-            if movement > 0 {
-                self.headerView.photo.frame.origin.y = self.originalRect!.origin.y - (movement * 0.5)
-                self.headerView.photo.frame.origin.x = self.originalRect!.origin.x - (movement * 0.5)
-                self.headerView.photo.frame.size.width = self.originalRect!.size.width + movement
-                self.headerView.photo.frame.size.height = self.originalRect!.size.height + movement
+        if self.originalRect != nil {
+            if offset >= self.originalScrollTop && offset <= 300 {
+                let movement = self.originalScrollTop - scrollView.contentOffset.y
+                let ratio: CGFloat = (movement <= 0) ? 0.50 : 1.0
+                self.headerView.photo.frame.origin.y = self.originalRect!.origin.y + (-(movement) * ratio)
+            }
+            else {
+                let movement = (originalScrollTop - scrollView.contentOffset.y) * 0.35
+                if movement > 0 {
+                    self.headerView.photo.frame.origin.y = self.originalRect!.origin.y - (movement * 0.5)
+                    self.headerView.photo.frame.origin.x = self.originalRect!.origin.x - (movement * 0.5)
+                    self.headerView.photo.frame.size.width = self.originalRect!.size.width + movement
+                    self.headerView.photo.frame.size.height = self.originalRect!.size.height + movement
+                }
             }
         }
-    }    
+    }
 }
 
 extension MemberViewController: MFMailComposeViewControllerDelegate {

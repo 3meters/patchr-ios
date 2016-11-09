@@ -50,12 +50,13 @@ target 'Patchr' do
     pod 'PhoneNumberKit',           '~> 1.0'
     pod 'SlideMenuControllerSwift'
     pod 'FontAwesome.swift',        :git=>'https://github.com/thii/FontAwesome.swift.git'
+    
     pod 'Firebase/RemoteConfig'
     pod 'Firebase/Core'
     pod 'Firebase/Crash'
     pod 'Firebase/Auth'
     pod 'Firebase/Database'
-    pod 'FirebaseUI/Database',      '~> 0.6'
+    pod 'FirebaseUI/Database'
 end
 
 target 'PatchrShare' do
@@ -65,7 +66,7 @@ target 'PatchrShare' do
   pod 'Facade',                   '~> 1.1.1'	    # Convenience methods for frame based layout
   pod 'CocoaLumberjack/Swift'
   pod 'Bugsnag'                                     # Crash reporting
-  pod 'Firebase/RemoteConfig'
+  #pod 'Firebase/RemoteConfig'
 end
 
 plugin 'cocoapods-no-dev-schemes'

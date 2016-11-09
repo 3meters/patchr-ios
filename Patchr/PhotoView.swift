@@ -76,18 +76,18 @@ class PhotoView: UIControl {
 		if entity != nil {
 			if entity.photo != nil {
 				let photoUrl = PhotoUtils.url(prefix: entity.photo!.prefix!, source: entity.photo!.source!, category: SizeCategory.profile)
-				bind(photoUrl: photoUrl, name: entity.name)
+                bind(photoUrl: photoUrl, name: entity.name, colorSeed: nil)
 			}
 			else {
-				bind(photoUrl: nil, name: entity.name)
+                bind(photoUrl: nil, name: entity.name, colorSeed: nil)
 			}
 		}
 		else {
-			bind(photoUrl: nil, name: nil)
+            bind(photoUrl: nil, name: nil, colorSeed: nil)
 		}
 	}
 	
-	func bind(photoUrl: URL?, name: String?) {
+    func bind(photoUrl: URL?, name: String?, colorSeed: String?) {
 		
 		if self.photo.image != nil
 			&& self.photo.linkedPhotoUrl != nil
@@ -141,7 +141,7 @@ class PhotoView: UIControl {
 		}
 		else if name != nil {
             self.name.text = Utils.initialsFromName(fullname: name!, count: self.initialsCount).uppercased()
-			let seed = Utils.numberFromName(fullname: name!)
+			let seed = Utils.numberFromName(fullname: colorSeed ?? name!)
 			self.backgroundColor = ColorArray.randomColor(seed: seed)
 		}
 	}

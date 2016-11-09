@@ -10,8 +10,8 @@ import Foundation
 import AWSS3
 import AWSCore
 import Keys
-import Firebase
-import FirebaseRemoteConfig
+//import Firebase
+//import FirebaseRemoteConfig
 
 public class S3: NSObject {
     public typealias S3UploadCompletionBlock = (AWSTask<AnyObject>) -> Void
@@ -42,11 +42,11 @@ public class S3: NSObject {
         super.init()
 
         // Note: There are probably safer ways to store the AWS credentials.
-        let access = FIRRemoteConfig.remoteConfig().configValue(forKey: "aws_access_key").stringValue!
-        let secret = FIRRemoteConfig.remoteConfig().configValue(forKey: "aws_secret_key").stringValue!
-        let credProvider = AWSStaticCredentialsProvider(accessKey: access, secretKey: secret)
-        let serviceConfig = AWSServiceConfiguration(region: AWSRegionType(rawValue: 3/*'us-west-2'*/)!, credentialsProvider: credProvider)
-        AWSServiceManager.default().defaultServiceConfiguration = serviceConfig
+//        let access = FIRRemoteConfig.remoteConfig().configValue(forKey: "aws_access_key").stringValue!
+//        let secret = FIRRemoteConfig.remoteConfig().configValue(forKey: "aws_secret_key").stringValue!
+//        let credProvider = AWSStaticCredentialsProvider(accessKey: access, secretKey: secret)
+//        let serviceConfig = AWSServiceConfiguration(region: AWSRegionType(rawValue: 3/*'us-west-2'*/)!, credentialsProvider: credProvider)
+//        AWSServiceManager.default().defaultServiceConfiguration = serviceConfig
 
         if Static.session == nil {
             let configIdentifier = "group.com.3meters.patchr.ios.image"

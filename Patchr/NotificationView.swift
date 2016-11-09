@@ -172,7 +172,7 @@ class NotificationView: BaseView {
 		}
 		else if notification.type == "like" {
 			if notification.targetId.hasPrefix("pa.") {
-				self.iconImageView.image = Utils.imageStar
+				self.iconImageView.image = Utils.imageStarOn
 			}
 			else {
 				self.iconImageView.image = Utils.imageLike

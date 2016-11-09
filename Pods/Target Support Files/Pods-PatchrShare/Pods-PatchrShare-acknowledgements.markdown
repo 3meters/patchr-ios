@@ -79,42 +79,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
-## Firebase
-
-Copyright 2016 Google
-
-## FirebaseAnalytics
-
-Copyright 2016 Google
-
-## FirebaseCore
-
-Copyright 2016 Google
-
-## FirebaseInstanceID
-
-Copyright 2016 Google
-
-## FirebaseRemoteConfig
-
-Copyright 2016 Google
-
-## GoogleIPhoneUtilities
-
-Copyright 2015 Google Inc.
-
-## GoogleInterchangeUtilities
-
-Copyright 2016 Google
-
-## GoogleSymbolUtilities
-
-Copyright 2016 Google
-
-## GoogleUtilities
-
-Copyright 2016 Google
-
 ## KSCrash
 
 Copyright (c) 2012 Karl Stenerud

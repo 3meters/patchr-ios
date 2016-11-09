@@ -3,7 +3,7 @@ Credentials
 
 Keys for Patchr iOS
  ├  BingAccessKey - bNm8LpZdJma/cbJdDiwHq+TGwzVF7nW+QF9vWdPh/Rg
- ├  BingSubscriptionKey - 5aaa2c15eec947808821a471ad784acd
+ ├  BingSubscriptionKey - 3ca600480b5341ebba4b61d405427ae3
  ├  CreativeSdkClientId - 924463f8481c4941a773fc9610fac9dd
  ├  CreativeSdkClientSecret - e2cc5494-911d-4c66-a2b4-cc9ebab420ab
  ├  AwsS3Key - AKIAIYU2FPHC2AOUG3CA

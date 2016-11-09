@@ -22,10 +22,10 @@ class ChannelsHeaderView: UIView {
         
         if patch.photo != nil {
             let photoUrl = PhotoUtils.url(prefix: patch.photo!.filename!, source: patch.photo!.source!, category: SizeCategory.profile)
-            self.photoView?.bind(photoUrl: photoUrl, name: nil)
+            self.photoView?.bind(photoUrl: photoUrl, name: nil, colorSeed: patch.id)
         }
         else {
-            self.photoView?.bind(photoUrl: nil, name: patch.title)
+            self.photoView?.bind(photoUrl: nil, name: patch.title, colorSeed: patch.id)
         }
 	}
 }

@@ -69,12 +69,10 @@ class PresenceView: UIView {
     
 	func bind(online: Any?) {
         
+        showOffline()
         if let online = online as? Int {
             if online == 1 {
                 showOnline()
-            }
-            else {
-                showOffline()
             }
         }
 	}

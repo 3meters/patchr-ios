@@ -359,7 +359,8 @@ public class Proxibase {
 
         let bingSessionManager: AFHTTPSessionManager = AFHTTPSessionManager(baseURL: NSURL(string: URI_PROXIBASE_SEARCH_IMAGES) as URL?)
         let requestSerializer: AFJSONRequestSerializer = AFJSONRequestSerializer()
-        let bingKey = FIRRemoteConfig.remoteConfig().configValue(forKey: "bing_subscription_key").stringValue!
+//        let bingKey = FIRRemoteConfig.remoteConfig().configValue(forKey: "bing_subscription_key").stringValue!
+        let bingKey = "3ca600480b5341ebba4b61d405427ae3"
 
         requestSerializer.setValue(bingKey, forHTTPHeaderField: "Ocp-Apim-Subscription-Key")
         bingSessionManager.requestSerializer = requestSerializer

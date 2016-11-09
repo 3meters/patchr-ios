@@ -67,7 +67,7 @@
 		E20004DF1B094ACA00425694 /* PasswordEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */; };
 		E20004E11B099CBD00425694 /* PasswordResetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20004E01B099CBD00425694 /* PasswordResetViewController.swift */; };
 		E20555061DBC178F003C8398 /* ColorArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20555051DBC178F003C8398 /* ColorArray.swift */; };
-		E2064BF11BBF3C26009C7B6A /* AirMuteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2064BF01BBF3C26009C7B6A /* AirMuteButton.swift */; };
+		E2064BF11BBF3C26009C7B6A /* AirMuteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2064BF01BBF3C26009C7B6A /* AirMuteView.swift */; };
 		E2064BF31BC0212B009C7B6A /* silence.caf in Resources */ = {isa = PBXBuildFile; fileRef = E2064BF21BC0212B009C7B6A /* silence.caf */; };
 		E2064BF51BC18A66009C7B6A /* AirProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2064BF41BC18A66009C7B6A /* AirProgress.swift */; };
 		E20C3A7B1BD6A717008CCED1 /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A7A1BD6A717008CCED1 /* BaseView.swift */; };
@@ -131,6 +131,9 @@
 		E25A73711C1C81D000688EDC /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E25A73701C1C81D000688EDC /* libc++.tbd */; };
 		E25A73761C1C87E200688EDC /* AdobeCreativeSDKCoreResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E25A73751C1C87E200688EDC /* AdobeCreativeSDKCoreResources.bundle */; };
 		E25A73781C1C87F500688EDC /* AdobeCreativeSDKImageResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E25A73771C1C87F500688EDC /* AdobeCreativeSDKImageResources.bundle */; };
+		E25B0F461DCE778B00021D5B /* UserListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25B0F451DCE778B00021D5B /* UserListController.swift */; };
+		E25B0F481DCE7D7400021D5B /* UserListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25B0F471DCE7D7400021D5B /* UserListCell.swift */; };
+		E25B0F4A1DCE803B00021D5B /* UserListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E25B0F491DCE803B00021D5B /* UserListCell.xib */; };
 		E25E1E601DBA781900BE1800 /* ChannelsHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E25E1E5F1DBA781900BE1800 /* ChannelsHeaderView.xib */; };
 		E26B0C891B456F8A00706F4A /* ExtensionsUi.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26B0C881B456F8A00706F4A /* ExtensionsUi.swift */; };
 		E26B0C901B45C07D00706F4A /* PhotoBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26B0C8F1B45C07D00706F4A /* PhotoBrowser.swift */; };
@@ -229,6 +232,12 @@
 		E2D569AF1BF3F45C001CCE58 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D569AE1BF3F45C001CCE58 /* Location.swift */; };
 		E2D569BC1C038C1B001CCE58 /* Photo.m in Sources */ = {isa = PBXBuildFile; fileRef = E2D569BB1C038C1B001CCE58 /* Photo.m */; };
 		E2D569BE1C052A30001CCE58 /* ZProfileEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D569BD1C052A30001CCE58 /* ZProfileEditViewController.swift */; };
+		E2DA16D51DCFDF430096D86F /* ChannelTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16D41DCFDF430096D86F /* ChannelTitleView.swift */; };
+		E2DA16D71DCFDF770096D86F /* ChannelTitleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2DA16D61DCFDF770096D86F /* ChannelTitleView.xib */; };
+		E2DA16D91DD0F7280096D86F /* AirUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16D81DD0F7280096D86F /* AirUIView.swift */; };
+		E2DA16DB1DD114230096D86F /* AirStarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16DA1DD114230096D86F /* AirStarButton.swift */; };
+		E2DA16DD1DD11B7A0096D86F /* AirToggleImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16DC1DD11B7A0096D86F /* AirToggleImage.swift */; };
+		E2DA16DF1DD142E00096D86F /* Emoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DA16DE1DD142E00096D86F /* Emoji.swift */; };
 		E2DBD4F01B0F65580006575C /* ExtensionsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DBD4EF1B0F65580006575C /* ExtensionsModel.swift */; };
 		E2DEAB4E1DCCC15900FF3BDE /* StateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DEAB4D1DCCC15900FF3BDE /* StateController.swift */; };
 		E2E271291C5D1ED600E36804 /* BranchProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2E271281C5D1ED600E36804 /* BranchProvider.swift */; };
@@ -371,7 +380,7 @@
 		E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PasswordEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E20004E01B099CBD00425694 /* PasswordResetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PasswordResetViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E20555051DBC178F003C8398 /* ColorArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorArray.swift; sourceTree = "<group>"; };
-		E2064BF01BBF3C26009C7B6A /* AirMuteButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirMuteButton.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		E2064BF01BBF3C26009C7B6A /* AirMuteView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirMuteView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2064BF21BC0212B009C7B6A /* silence.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = silence.caf; sourceTree = "<group>"; };
 		E2064BF41BC18A66009C7B6A /* AirProgress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirProgress.swift; sourceTree = "<group>"; };
 		E20C1FB61AFE462500A471E9 /* UIShared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIShared.swift; sourceTree = "<group>"; };
@@ -441,6 +450,9 @@
 		E25A73701C1C81D000688EDC /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		E25A73751C1C87E200688EDC /* AdobeCreativeSDKCoreResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKCoreResources.bundle; path = ../Frameworks/AdobeCreativeSDKCore.framework/Versions/A/Resources/AdobeCreativeSDKCoreResources.bundle; sourceTree = "<group>"; };
 		E25A73771C1C87F500688EDC /* AdobeCreativeSDKImageResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AdobeCreativeSDKImageResources.bundle; path = ../Frameworks/AdobeCreativeSDKImage.framework/Versions/A/Resources/AdobeCreativeSDKImageResources.bundle; sourceTree = "<group>"; };
+		E25B0F451DCE778B00021D5B /* UserListController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserListController.swift; sourceTree = "<group>"; };
+		E25B0F471DCE7D7400021D5B /* UserListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserListCell.swift; sourceTree = "<group>"; };
+		E25B0F491DCE803B00021D5B /* UserListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserListCell.xib; sourceTree = "<group>"; };
 		E25E1E5F1DBA781900BE1800 /* ChannelsHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChannelsHeaderView.xib; sourceTree = "<group>"; };
 		E26B0C881B456F8A00706F4A /* ExtensionsUi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ExtensionsUi.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E26B0C8F1B45C07D00706F4A /* PhotoBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoBrowser.swift; sourceTree = "<group>"; };
@@ -536,6 +548,12 @@
 		E2D569AE1BF3F45C001CCE58 /* Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		E2D569BB1C038C1B001CCE58 /* Photo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Photo.m; path = Model/Photo.m; sourceTree = "<group>"; };
 		E2D569BD1C052A30001CCE58 /* ZProfileEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ZProfileEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		E2DA16D41DCFDF430096D86F /* ChannelTitleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelTitleView.swift; sourceTree = "<group>"; };
+		E2DA16D61DCFDF770096D86F /* ChannelTitleView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChannelTitleView.xib; sourceTree = "<group>"; };
+		E2DA16D81DD0F7280096D86F /* AirUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirUIView.swift; sourceTree = "<group>"; };
+		E2DA16DA1DD114230096D86F /* AirStarButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirStarButton.swift; sourceTree = "<group>"; };
+		E2DA16DC1DD11B7A0096D86F /* AirToggleImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirToggleImage.swift; sourceTree = "<group>"; };
+		E2DA16DE1DD142E00096D86F /* Emoji.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Emoji.swift; sourceTree = "<group>"; };
 		E2DBD4EF1B0F65580006575C /* ExtensionsModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionsModel.swift; sourceTree = "<group>"; };
 		E2DEAB4D1DCCC15900FF3BDE /* StateController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StateController.swift; sourceTree = "<group>"; };
 		E2E271281C5D1ED600E36804 /* BranchProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BranchProvider.swift; sourceTree = "<group>"; };
@@ -739,11 +757,13 @@
 				7D3D39D51A6F086F00A44CB2 /* Images.xcassets */,
 				E28915921C5AD528005D7AA0 /* LaunchScreen.storyboard */,
 				E25E1E5F1DBA781900BE1800 /* ChannelsHeaderView.xib */,
+				E2DA16D61DCFDF770096D86F /* ChannelTitleView.xib */,
 				E28DB2911DBBF95D008B2E4B /* ChannelListCell.xib */,
+				E29F65501B61A9280000BEF4 /* ChannelSearchCell.xib */,
 				E23EC4D31DBE523D00EBCD42 /* GroupsHeaderView.xib */,
 				E23EC4CF1DBD45C800EBCD42 /* GroupListCell.xib */,
-				E29F65501B61A9280000BEF4 /* ChannelSearchCell.xib */,
 				E26B0C911B46D01E00706F4A /* ThumbnailCollectionViewCell.xib */,
+				E25B0F491DCE803B00021D5B /* UserListCell.xib */,
 				8468F8211A9D09D1007D6EE6 /* Localizable.strings */,
 				E2C7C5C31B2A19720045038A /* DefaultSettings.plist */,
 				E25A73771C1C87F500688EDC /* AdobeCreativeSDKImageResources.bundle */,
@@ -762,6 +782,7 @@
 				E28DB2931DBBFA1C008B2E4B /* GroupListCell.swift */,
 				E29F65521B61A9450000BEF4 /* PatchSearchCell.swift */,
 				E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */,
+				E25B0F471DCE7D7400021D5B /* UserListCell.swift */,
 				E24199011C18C1F200DDA549 /* UserSearchViewCell.swift */,
 				E2CC15A01C2C897800316356 /* WrapperTableViewCell.swift */,
 			);
@@ -797,6 +818,7 @@
 				E2FB2C491DBFD33E00E97050 /* ChannelDetailView.swift */,
 				E2B756AA1D8482EB00C102EC /* ChannelSectionView.swift */,
 				E2B756A81D84600E00C102EC /* ChannelsHeaderView.swift */,
+				E2DA16D41DCFDF430096D86F /* ChannelTitleView.swift */,
 				E2FA133F1D8323030057F287 /* ChannelView.swift */,
 				E23EC4D51DBE52AC00EBCD42 /* GroupsHeaderView.swift */,
 				E259082F1DC69C3F00CB6C3F /* MemberDetailView.swift */,
@@ -969,21 +991,24 @@
 				E25908311DC7B3AA00CB6C3F /* AirLabelStack.swift */,
 				E2A28E6C1B49D88800B3A2FE /* AirLikeButton.swift */,
 				E2D12A781C08FA0E00DE507E /* AirLinkButton.swift */,
-				E2064BF01BBF3C26009C7B6A /* AirMuteButton.swift */,
+				E2064BF01BBF3C26009C7B6A /* AirMuteView.swift */,
 				E2E9AAA61CEF86470057698F /* AirNavigationController.swift */,
+				E24773441DCA254F00EFB46F /* AirPhoneField.swift */,
 				E2064BF41BC18A66009C7B6A /* AirProgress.swift */,
 				E2B8A4B51CE7875400A28D3A /* AirRadialMenu.swift */,
 				E297305D1C136E8300B9433B /* AirRadioButton.swift */,
 				E29730631C15090300B9433B /* AirRuleView.swift */,
+				E2DA16DA1DD114230096D86F /* AirStarButton.swift */,
 				E2D12A701C0778C100DE507E /* AirScrollView.swift */,
 				E297305F1C14A7BC00B9433B /* AirSearchField.swift */,
 				E20C3A7C1BD70DD2008CCED1 /* AirTableView.swift */,
 				E256B4271BD3DDC900EBF894 /* AirTableViewCell.swift */,
 				E2D12A721C08DC4900DE507E /* AirTextField.swift */,
-				E24773441DCA254F00EFB46F /* AirPhoneField.swift */,
 				E297305B1C13644800B9433B /* AirTextView.swift */,
 				E2A28E6E1B4A602200B3A2FE /* AirToggleButton.swift */,
+				E2DA16DC1DD11B7A0096D86F /* AirToggleImage.swift */,
 				E2B471D91C2612AD00374F1F /* AirToolButton.swift */,
+				E2DA16D81DD0F7280096D86F /* AirUIView.swift */,
 				E2D10E5B1C87AA760099EA6E /* AirHideShowButton.swift */,
 				E2B8A4B21CE7818B00A28D3A /* CKRadialMenu.m */,
 				E2B8A4B31CE7818B00A28D3A /* CKRadialMenu.h */,
@@ -1024,6 +1049,7 @@
 				7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */,
 				E2FA13391D81FC8A0057F287 /* SideMenuViewController.swift */,
 				7D021AC11A9423080047DAAE /* TextZoomController.swift */,
+				E25B0F451DCE778B00021D5B /* UserListController.swift */,
 				E2F618DE1B02667A0055D09C /* Edit */,
 				E24D744F1BB2F4030061F339 /* TableForms */,
 				E24D744E1BB2F3E70061F339 /* Collections */,
@@ -1045,14 +1071,15 @@
 			isa = PBXGroup;
 			children = (
 				E26C80911C3AE246001514B3 /* Animation.swift */,
+				9FDCC7A62C9C1A632319795D /* Color.swift */,
+				E20555051DBC178F003C8398 /* ColorArray.swift */,
 				E25327B11B0FCE9C00990A81 /* Constants.swift */,
+				E2DA16DE1DD142E00096D86F /* Emoji.swift */,
+				E2C0D9301B6C415100E28CE9 /* Log.swift */,
+				E281776D1B5B0EE200D65AC1 /* Reporting.swift */,
 				E2D12A7E1C0A090200DE507E /* Theming.swift */,
 				E20C1FB61AFE462500A471E9 /* UIShared.swift */,
 				84EF12AB1AA904700043EBBA /* Utils.swift */,
-				E281776D1B5B0EE200D65AC1 /* Reporting.swift */,
-				E2C0D9301B6C415100E28CE9 /* Log.swift */,
-				E20555051DBC178F003C8398 /* ColorArray.swift */,
-				9FDCC7A62C9C1A632319795D /* Color.swift */,
 			);
 			name = Shared;
 			sourceTree = "<group>";
@@ -1244,6 +1271,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E25B0F4A1DCE803B00021D5B /* UserListCell.xib in Resources */,
 				E25A73781C1C87F500688EDC /* AdobeCreativeSDKImageResources.bundle in Resources */,
 				E2A603241CD97B7A00FBD55B /* InfoPlist.strings in Resources */,
 				E28915911C5A85CF005D7AA0 /* .xctool-args in Resources */,
@@ -1270,6 +1298,7 @@
 				E25327D01B13DB3000990A81 /* notification_pop.aac in Resources */,
 				E25327CD1B13DB2900990A81 /* notification_activity.aac in Resources */,
 				E2F6C9291B1DF5500067D959 /* Notes.md in Resources */,
+				E2DA16D71DCFDF770096D86F /* ChannelTitleView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1469,6 +1498,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E25B0F481DCE7D7400021D5B /* UserListCell.swift in Sources */,
 				7DB6E0FE1A8177060017A42F /* _User.m in Sources */,
 				E29730641C15090300B9433B /* AirRuleView.swift in Sources */,
 				E2F85C7A1C342B8600FC2364 /* PhotoView.swift in Sources */,
@@ -1513,6 +1543,7 @@
 				E2999EE31DC25AAE005C69D8 /* EmptyViewController.swift in Sources */,
 				E23C010F1CE4D73B009C56B2 /* DisplayPhoto.swift in Sources */,
 				7DB6E0FF1A8177060017A42F /* User.m in Sources */,
+				E2DA16D51DCFDF430096D86F /* ChannelTitleView.swift in Sources */,
 				7DA730961A71B962008C25FA /* BaseTableViewController.swift in Sources */,
 				7DA7308F1A71ACC9008C25FA /* Entity.m in Sources */,
 				E20555061DBC178F003C8398 /* ColorArray.swift in Sources */,
@@ -1583,7 +1614,7 @@
 				E2BFB7F11CE6189500F4B962 /* GalleryBrowser.swift in Sources */,
 				E2F85C6C1C302F3400FC2364 /* PatchDetailView.swift in Sources */,
 				7DD89F411AC62B90005CD004 /* UserTableViewController.swift in Sources */,
-				E2064BF11BBF3C26009C7B6A /* AirMuteButton.swift in Sources */,
+				E2064BF11BBF3C26009C7B6A /* AirMuteView.swift in Sources */,
 				E2F0E3791C78E0180012BF90 /* UserInviteView.swift in Sources */,
 				E2D12A711C0778C100DE507E /* AirScrollView.swift in Sources */,
 				7D40B9401A7816C400F9954C /* ServiceData.m in Sources */,
@@ -1609,6 +1640,7 @@
 				E29A4CD81BCF25220059D5B9 /* NotificationView.swift in Sources */,
 				E25327B21B0FCE9C00990A81 /* Constants.swift in Sources */,
 				E25908301DC69C3F00CB6C3F /* MemberDetailView.swift in Sources */,
+				E2DA16DD1DD11B7A0096D86F /* AirToggleImage.swift in Sources */,
 				E29A92201DB19A3C00B27093 /* FirePhoto.swift in Sources */,
 				84EF12AC1AA904700043EBBA /* Utils.swift in Sources */,
 				E2CA16FF1DB95DDB00F99E1D /* FireAttachment.swift in Sources */,
@@ -1628,6 +1660,7 @@
 				E297305C1C13644800B9433B /* AirTextView.swift in Sources */,
 				E2F6C9211B1BDC7A0067D959 /* _Shortcut.m in Sources */,
 				9FDCCCC0113B14385C08DA41 /* MessageDetailViewController.swift in Sources */,
+				E25B0F461DCE778B00021D5B /* UserListController.swift in Sources */,
 				E2C720C71B4EDAFE00714B53 /* AirLabel.swift in Sources */,
 				E2F6C9271B1C94E50067D959 /* Debug.m in Sources */,
 				E238BB061B571AFF0094AF41 /* ExtensionsPhoto.swift in Sources */,
@@ -1635,6 +1668,7 @@
 				E2B471D21C22304300374F1F /* SearchViewController.swift in Sources */,
 				E20C3A7B1BD6A717008CCED1 /* BaseView.swift in Sources */,
 				E27DB4051B06477A0090D023 /* QueryItem.m in Sources */,
+				E2DA16DB1DD114230096D86F /* AirStarButton.swift in Sources */,
 				E24D74521BB865F50061F339 /* AwsS3.swift in Sources */,
 				E28D565F1BB1849F00BFD433 /* ReachabilityManager.swift in Sources */,
 				E2B8A4B41CE7818B00A28D3A /* CKRadialMenu.m in Sources */,
@@ -1644,6 +1678,7 @@
 				E273B5361B488F2000888E73 /* PhotoPreview.swift in Sources */,
 				E297305A1C135BFA00B9433B /* PatchEditViewController.swift in Sources */,
 				9FDCC8F9EEEF77DEBE173AFA /* PhotoPickerViewController.swift in Sources */,
+				E2DA16DF1DD142E00096D86F /* Emoji.swift in Sources */,
 				9FDCC4E31D09C35191FA3624 /* PatchTableMapViewController.swift in Sources */,
 				E227294D1CEA7D0600913041 /* GalleryViewCell.swift in Sources */,
 				9FDCC8FD0E124B99BA23D71A /* FireGroup.swift in Sources */,
@@ -1657,6 +1692,7 @@
 				9FDCCE62CE764FDC39D41C5F /* ProfileEditViewController.swift in Sources */,
 				9FDCCFD4969C57E5231CF509 /* AccountEditViewController.swift in Sources */,
 				9FDCC287BBA22F42F418CB81 /* UserController.swift in Sources */,
+				E2DA16D91DD0F7280096D86F /* AirUIView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -37,14 +37,10 @@ class DisplayPhoto: IDMPhoto {
             }
         }
         
-        let userId = ZUserController.instance.fireUserId
-        if let reactions = message.reactions {
-            if let thumbsup = reactions[":thumbsup:"] {
-                if let active = thumbsup[userId!] {
-                    displayPhoto.userLikes = true
-                    displayPhoto.userLikesId = userId
-                }
-            }
+        let userId = UserController.instance.userId
+        if message.getReaction(emoji: .thumbsup, userId: userId!) {
+            displayPhoto.userLikes = true
+            displayPhoto.userLikesId = userId
         }
         
         return displayPhoto

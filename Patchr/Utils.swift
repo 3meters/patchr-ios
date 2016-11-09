@@ -18,7 +18,8 @@ struct Utils {
 	static var imageMedia: UIImage = { return UIImage(named: "imgMediaLight") }()!
 	static var imageMessage: UIImage = { return UIImage(named: "imgMessageLight") }()!
 	static var imageWatch: UIImage = { return UIImage(named: "imgWatchLight") }()!
-	static var imageStar: UIImage = { return UIImage(named: "imgStarFilledLight") }()!
+	static var imageStarOn: UIImage = { return UIImage(named: "imgStarFilledLight") }()!
+    static var imageStarOff: UIImage = { return UIImage(named: "imgStarLight") }()!
 	static var imageLike: UIImage = { return UIImage(named: "imgLikeLight") }()!
 	static var imageShare: UIImage = { return UIImage(named: "imgShareLight") }()!
 	static var imageLocation: UIImage = { return UIImage(named: "imgLocationLight") }()!

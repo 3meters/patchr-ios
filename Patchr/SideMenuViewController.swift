@@ -16,6 +16,7 @@ import FirebaseDatabase
 
 class SideMenuViewController: UITableViewController {
 
+    let db = FIRDatabase.database().reference()
     var ref: FIRDatabaseReference!
     var handle: UInt!
     var user: FireUser?
@@ -35,7 +36,7 @@ class SideMenuViewController: UITableViewController {
         super.viewDidLoad()
         initialize()
         if UserController.instance.userId != nil {
-            self.ref = FIRDatabase.database().reference().child("users/\(UserController.instance.userId!)")
+            self.ref = self.db.child("users/\(UserController.instance.userId!)")
             self.handle = self.ref.observe(.value, with: { snap in
                 self.user = FireUser.from(dict: snap.value as? [String: Any], id: snap.key)
                 self.bind()
@@ -65,14 +66,13 @@ class SideMenuViewController: UITableViewController {
         let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: controller, action: #selector(controller.cancelAction(sender:)))
         controller.navigationItem.rightBarButtonItems = [cancelButton]
         let navController = AirNavigationController()
-        controller.inputUser = self.user
         navController.viewControllers = [controller]
         UIViewController.topMostViewController()?.present(navController, animated: true, completion: nil)
     }
     
     func userStateDidChange(notification: NSNotification) {
         if UserController.instance.userId != nil {
-            self.ref = FIRDatabase.database().reference().child("users/\(UserController.instance.userId!)")
+            self.ref = self.db.child("users/\(UserController.instance.userId!)")
             self.handle = self.ref.observe(.value, with: { snap in
                 self.user = FireUser.from(dict: snap.value as? [String: Any], id: snap.key)
                 self.bind()
@@ -89,7 +89,7 @@ class SideMenuViewController: UITableViewController {
         Reporting.screen("SideMenu")
         
         if UserController.instance.userId != nil {
-            self.ref = FIRDatabase.database().reference().child("users/\(UserController.instance.userId!)")
+            self.ref = self.db.child("users/\(UserController.instance.userId!)")
         }
 
         self.tableView = UITableView(frame: self.tableView.frame, style: .plain)
@@ -154,7 +154,11 @@ extension SideMenuViewController {
             UIViewController.topMostViewController()?.present(nav, animated: true, completion: nil)
         }
         else if selectedCell == self.membersCell {
-            /* Show member list */
+            let controller = UserListController()
+            let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: controller, action: #selector(controller.closeAction(sender:)))
+            controller.navigationItem.rightBarButtonItems = [cancelButton]
+            let nav = AirNavigationController(rootViewController: controller)
+            UIViewController.topMostViewController()?.present(nav, animated: true, completion: nil)
         }
         
         UIApplication.shared.setStatusBarHidden(false, with: UIStatusBarAnimation.slide)

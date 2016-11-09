@@ -105,7 +105,32 @@ public extension UIView {
 			}
 			, completion: completion)
 	}
-	
+    
+    func slideUp(duration: TimeInterval = 0.3, delay: TimeInterval = 0.0, completion: @escaping (Bool) -> Void = {(finished: Bool) -> Void in}) {
+        UIView.animate(withDuration: duration
+            , delay: delay
+            , usingSpringWithDamping: 0.8
+            , initialSpringVelocity: 0.3
+            , options: [.curveEaseIn]
+            , animations: {
+                self.transform = CGAffineTransform(translationX: 0, y: 100)
+            }
+            , completion: completion)
+    }
+
+    func slideDown(duration: TimeInterval = 0.3, delay: TimeInterval = 0.0, completion: @escaping (Bool) -> Void = {(finished: Bool) -> Void in}) {
+        UIView.animate(withDuration: duration
+            , delay: delay
+            , usingSpringWithDamping: 0.8
+            , initialSpringVelocity: 0.3
+            , options: [.curveEaseIn]
+            , animations: {
+                /* Resets to original state */
+                self.transform = CGAffineTransform.identity
+            }
+            , completion: completion)
+    }
+
 	func showShadow(rounded: Bool = false, cornerRadius: CGFloat = 0) {
 		
 		self.layer.masksToBounds = false

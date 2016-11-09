@@ -36,7 +36,7 @@ struct ColorArray {
         22:MaterialColor.green.lighten1,
         23:MaterialColor.lightGreen.lighten1,
         24:MaterialColor.lime.lighten1,
-        25:MaterialColor.yellow.lighten1,
+        25:MaterialColor.yellow.darken1,
         26:MaterialColor.amber.lighten1,
         27:MaterialColor.orange.lighten1,
         28:MaterialColor.deepOrange.lighten1

@@ -34,10 +34,10 @@ class GroupListCell: UITableViewCell {
         
         if group.photo != nil {
             let photoUrl = PhotoUtils.url(prefix: group.photo!.filename!, source: group.photo!.source!, category: SizeCategory.profile)
-            self.photoView?.bind(photoUrl: photoUrl, name: nil)
+            self.photoView?.bind(photoUrl: photoUrl, name: nil, colorSeed: group.id)
         }
         else {
-            self.photoView?.bind(photoUrl: nil, name: group.title)
+            self.photoView?.bind(photoUrl: nil, name: group.title, colorSeed: group.id)
         }
     }
 }

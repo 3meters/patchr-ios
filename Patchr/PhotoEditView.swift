@@ -27,7 +27,7 @@ class PhotoEditView: UIView {
 	var photoDirty: Bool = false
 	var photoActive: Bool = false
 	var photoChosen: Bool = false
-	var controller: UIViewController?
+	weak var controller: UIViewController?
 	
 	var photoSchema: String?
 	

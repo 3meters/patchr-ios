@@ -13,7 +13,9 @@ import FirebaseDatabase
 
 class FireChannel: NSObject {
     
-    static let path = "/group-channels"
+    var path: String {
+        return "group-channels/\(self.group!)/\(self.id!)"
+    }
     
     var id: String?
     var name: String?
@@ -29,7 +31,7 @@ class FireChannel: NSObject {
     var createdBy: String?
     
     /* Link properties for the current user */
-    var favorite: Bool?
+    var starred: Bool?
     var muted: Bool?
     var archived: Bool?
     
@@ -70,8 +72,36 @@ class FireChannel: NSObject {
     }
     
     func membershipFrom(dict: [String: Any]) {
-        self.favorite = dict["favorite"] as? Bool
+        self.starred = dict["starred"] as? Bool
         self.muted = dict["muted"] as? Bool
         self.archived = dict["archived"] as? Bool
+    }
+    
+    func star(on: Bool) {
+        let userId = UserController.instance.userId
+        let path = "member-channels/\(userId!)/\(self.group!)/\(self.id!)"
+        let updates: [String: Any] = [
+            "starred": on,
+            "sort_priority": on ? 100 : 250]
+        
+        FireController.db.child(path).updateChildValues(updates)
+    }
+    
+    func mute(on: Bool) {
+        let userId = UserController.instance.userId
+        let path = "member-channels/\(userId!)/\(self.group!)/\(self.id!)/muted"
+        FireController.db.child(path).setValue(on)
+    }
+    
+    func delete() {
+        let channelMessagesPath = "channel-messages/\(self.id!)"
+        let channelMembersPath = "channel-members/\(self.id!)"
+        let updates: [String: Any] = [
+            self.path: NSNull(),
+            channelMessagesPath: NSNull(),
+            channelMembersPath: NSNull()
+        ]
+        /* Need to walk the users that are members of the channel */
+        FireController.db.child(self.path).updateChildValues(updates)
     }
 }

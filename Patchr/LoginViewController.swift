@@ -92,7 +92,7 @@ class LoginViewController: BaseEditViewController {
 
     func hideShowPasswordAction(sender: AnyObject?) {
         if let button = sender as? AirHideShowButton {
-            button.toggleOn(on: !button.toggledOn)
+            button.toggle(on: !button.toggledOn)
             self.passwordField.isSecureTextEntry = !button.toggledOn
         }
     }
@@ -254,6 +254,7 @@ class LoginViewController: BaseEditViewController {
             }
             else {
                 Reporting.track("Logged In", properties: ["source": self.source as AnyObject])
+                UserController.instance.setUserId(userId: user?.uid)
                 self.didLogin()
             }
         }
@@ -267,9 +268,6 @@ class LoginViewController: BaseEditViewController {
         }
         else {
             let _ = self.navigationController?.popViewController(animated: true)
-        }
-        if ZUserController.instance.userName != nil {
-            UIShared.Toast(message: "Logged in as \(ZUserController.instance.userName!)")
         }
     }
 

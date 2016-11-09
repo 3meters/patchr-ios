@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11201" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="Alignment constraints to the first baseline" minToolsVersion="6.0"/>
+        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="64" id="LTM-Mi-qV7" customClass="UserListCell" customModule="Patchr" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="334" height="68"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="LTM-Mi-qV7" id="f05-yI-zfl">
+                <frame key="frameInset" width="334" height="67.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="X0K-3n-IIP" customClass="PhotoView" customModule="Patchr">
+                        <constraints>
+                            <constraint firstAttribute="width" constant="48" id="1qT-bb-Xdu"/>
+                            <constraint firstAttribute="height" constant="48" id="4aa-9q-h0w"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="rounded" value="NO"/>
+                            <userDefinedRuntimeAttribute type="number" keyPath="initialsCount">
+                                <integer key="value" value="1"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="radius">
+                                <real key="value" value="24"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </view>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Jay Massena" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="meX-Hb-lPU">
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="K45-sW-jLW"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="18"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="@jaymassena" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NLS-Er-vuL">
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="m7S-Vc-nhc"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
+                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="admin" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9B3-1a-Ge9" userLabel="Role">
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="7cf-kb-RRH"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bca-gN-N9j" customClass="PresenceView" customModule="Patchr" customModuleProvider="target">
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="12" id="bWQ-qf-XRY"/>
+                            <constraint firstAttribute="width" constant="12" id="nC7-qj-uP8"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="meX-Hb-lPU" firstAttribute="leading" secondItem="X0K-3n-IIP" secondAttribute="trailing" constant="8" id="7VO-3B-Xfq"/>
+                    <constraint firstItem="X0K-3n-IIP" firstAttribute="leading" secondItem="f05-yI-zfl" secondAttribute="leading" constant="16" id="9MQ-fs-qfT"/>
+                    <constraint firstItem="NLS-Er-vuL" firstAttribute="bottom" secondItem="X0K-3n-IIP" secondAttribute="bottom" constant="-4" id="AAi-Ze-k7m"/>
+                    <constraint firstItem="Bca-gN-N9j" firstAttribute="leading" secondItem="meX-Hb-lPU" secondAttribute="trailing" constant="8" id="BGQ-9O-Ihi"/>
+                    <constraint firstItem="X0K-3n-IIP" firstAttribute="centerY" secondItem="f05-yI-zfl" secondAttribute="centerY" id="JSV-cj-9Vg"/>
+                    <constraint firstItem="Bca-gN-N9j" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="f05-yI-zfl" secondAttribute="trailing" constant="-16" id="Jo6-VU-qs1"/>
+                    <constraint firstItem="9B3-1a-Ge9" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="f05-yI-zfl" secondAttribute="trailing" constant="-16" id="MSM-1w-0t6"/>
+                    <constraint firstItem="9B3-1a-Ge9" firstAttribute="leading" secondItem="NLS-Er-vuL" secondAttribute="trailing" constant="8" id="MfW-tO-Jun"/>
+                    <constraint firstItem="9B3-1a-Ge9" firstAttribute="centerY" secondItem="NLS-Er-vuL" secondAttribute="centerY" id="OSX-NS-IzJ"/>
+                    <constraint firstItem="NLS-Er-vuL" firstAttribute="leading" secondItem="X0K-3n-IIP" secondAttribute="trailing" constant="8" id="aWO-7d-OOi"/>
+                    <constraint firstItem="meX-Hb-lPU" firstAttribute="top" secondItem="X0K-3n-IIP" secondAttribute="top" constant="4" id="soN-0S-azX"/>
+                    <constraint firstItem="Bca-gN-N9j" firstAttribute="baseline" secondItem="meX-Hb-lPU" secondAttribute="firstBaseline" id="svj-3q-6Uo"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="photoView" destination="X0K-3n-IIP" id="vba-NC-l4f"/>
+                <outlet property="presenceView" destination="Bca-gN-N9j" id="6Tx-QK-i0c"/>
+                <outlet property="role" destination="9B3-1a-Ge9" id="NWq-tl-Hno"/>
+                <outlet property="subtitle" destination="NLS-Er-vuL" id="bMR-8W-F1w"/>
+                <outlet property="title" destination="meX-Hb-lPU" id="KkB-OH-HdK"/>
+            </connections>
+            <point key="canvasLocation" x="-216" y="-196"/>
+        </tableViewCell>
+    </objects>
+</document>

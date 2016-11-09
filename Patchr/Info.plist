@@ -151,6 +151,8 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We use your location to discover nearby patches.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Select library photos to include with messages.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

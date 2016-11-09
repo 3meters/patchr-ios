@@ -8,6 +8,7 @@
 
 import UIKit
 import IDMPhotoBrowser
+import Firebase
 
 class FirePhotoBrowser: IDMPhotoBrowser {
     
@@ -63,9 +64,9 @@ class FirePhotoBrowser: IDMPhotoBrowser {
         toolbar.items = items
     }
 	
-	func bind(message: FireMessage?) {
+	func bind(message: FireMessage!) {
 		self.message = message
-		self.likeButton.bind(message: message)
+        self.likeButton.bind(message: message)
 		self.likeButton.isHidden = (message == nil)
 	}
 }

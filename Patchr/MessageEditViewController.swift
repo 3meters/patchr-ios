@@ -12,24 +12,19 @@ import THContactPicker
 import MBProgressHUD
 import Firebase
 
-enum MessageType: Int {
-    case Content
-    case Share
-}
-
 class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
 
-    var ref: FIRDatabaseReference!
     var serverOffset: Int!
+    
+    /* For editing */
     var inputMessageId: String!
     var inputChannelId: String!
     var message: FireMessage!
-    var user: FireUser!
 
     var descriptionField	= AirTextView()
     var photoEditView       = PhotoEditView()
     
-    var inputState			: State? = State.Editing
+    var mode: Mode = .insert
     var processing			: Bool = false
     var progressStartLabel	: String?
     var progressFinishLabel	: String?
@@ -46,32 +41,22 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
         super.viewDidLoad()
         initialize()
         
-        let userId = FIRAuth.auth()?.currentUser?.uid
-        FIRDatabase.database().reference().child("users/\(userId!)").observeSingleEvent(of: .value, with: { snap in
-            if !(snap.value is NSNull) {
-                self.user = FireUser.from(dict: snap.value as? [String: Any], id: snap.key)
-                if self.inputMessageId != nil {
-                    self.ref.child(self.inputMessageId!).observeSingleEvent(of: .value, with: { snap in
-                        if snap.value != nil {
-                            self.message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key)
-                            self.bind()
-                        }
-                    })
-                }
-                else {
-                    FIRDatabase.database().reference().child(".info/serverTimeOffset").observeSingleEvent(of: .value, with: { snap in
-                        if snap.value != nil {
-                            self.serverOffset = snap.value as! Int!
-                        }
-                    })
-                }
-            }
-        })
+        if self.mode == .update {
+            FireController.instance.getMessageOnce(channelId: self.inputChannelId!, messageId: self.inputMessageId!, with: { message in
+                self.message = message
+                self.bind()
+            })
+        }
+        else if self.mode == .insert {
+            FireController.instance.getServerTimeOffset(with: { offset in
+                self.serverOffset = offset
+            })
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if self.inputState == State.Creating && self.firstAppearance  {
+        if self.mode == .insert && self.firstAppearance  {
             self.descriptionField.becomeFirstResponder()
         }
     }
@@ -181,8 +166,6 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
     override func initialize() {
         super.initialize()
         
-        self.ref = FIRDatabase.database().reference().child("channel-messages/\(self.inputChannelId!)")
-
         self.photoEditView.photoSchema = Schema.ENTITY_MESSAGE
         self.photoEditView.setHostController(controller: self)
         self.photoEditView.configureTo(photoMode: .Empty)
@@ -201,7 +184,7 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(photoDidChange(sender:)), name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(photoRemoved(sender:)), name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: nil)
 
-        if self.inputState == State.Creating {
+        if self.mode == .insert {
             Reporting.screen("MessageNew")
             self.progressStartLabel = "Posting"
             self.progressFinishLabel = "Posted"
@@ -213,7 +196,7 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
             self.navigationItem.leftBarButtonItems = [cancelButton]
             self.navigationItem.rightBarButtonItems = [doneButton]
         }
-        else {
+        else if self.mode == .update {
             Reporting.screen("MessageEdit")
             self.progressStartLabel = "Updating"
             self.progressFinishLabel = "Updated"
@@ -239,6 +222,7 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
         
         if let photo = self.message.attachments?.first?.photo {
             if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
+                self.photoEditView.configureTo(photoMode: .Photo)
                 self.photoEditView.bind(url: photoUrl)
             }
         }
@@ -249,26 +233,19 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
     func post() {
         self.processing = true
         
-        if self.inputMessageId == nil {
-            if let image = self.photoEditView.imageButton.image(for: .normal) {
-                postPhoto(image: image)
-            }
-            else {
-                postMessage(photo: nil)
-            }
+        if let image = self.photoEditView.imageButton.image(for: .normal) {
+            postPhoto(image: image)
+        }
+        else {
+            postMessage(photo: nil)
         }
         
         UIShared.Toast(message: self.progressStartLabel)
-        self.processing = true
+        self.processing = false
         self.performBack(animated: true)
     }
     
     func postPhoto(image: UIImage?) {
-        
-        guard image != nil else {
-            Log.w("Cannot post image that is nil")
-            return
-        }
         
         /* Ensure image is resized/rotated before upload */
         let preparedImage = Utils.prepareImage(image: image!)
@@ -303,43 +280,50 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
     
     func postMessage(photo: [String: Any]?) {
         
-        var messageMap: [String: Any] = [:]
-        
-        let timestamp = Utils.now() + self.serverOffset!
-        let timestampReversed = -1 * timestamp
-        
-        messageMap["modified_at"] = Int(timestamp)
-        messageMap["created_at"] = Int(timestamp)
-        messageMap["modified_by"] = self.user.id!
-        messageMap["created_by"] = self.user.id!
-        messageMap["timestamp"] = Int(timestampReversed)
-        messageMap["channel"] = self.inputChannelId!
-        
-        if !self.descriptionField.text.isEmpty {
-            messageMap["text"] = self.descriptionField.text
+        if self.mode == .insert {
+            
+            let timestamp = Utils.now() + self.serverOffset!
+            let timestampReversed = -1 * timestamp
+            
+            var messageMap: [String: Any] = [:]
+            messageMap["modified_at"] = Int(timestamp)
+            messageMap["created_at"] = Int(timestamp)
+            messageMap["modified_by"] = UserController.instance.userId!
+            messageMap["created_by"] = UserController.instance.userId!
+            messageMap["timestamp"] = Int(timestampReversed)
+            messageMap["channel"] = self.inputChannelId!
+            
+            if !self.descriptionField.text.isEmpty {
+                messageMap["text"] = self.descriptionField.text
+            }
+            
+            if photo != nil {
+                messageMap["attachments"] = [[
+                    "photo": photo!
+                    ]]
+            }
+            
+            let newMessage = FireController.db.child("channel-messages/\(self.inputChannelId!)").childByAutoId()
+            newMessage.setValue(messageMap)
         }
-        
-        if photo != nil {
-            messageMap["attachments"] = [[
-                "photo": photo!
-            ]]
+        else if self.mode == .update {
+            
+            var updateMap: [String: Any] = ["modified_at": FIRServerValue.timestamp()]
+            updateMap["attachments"] = photo != nil ? [["photo": photo!]] : NSNull()
+            updateMap["text"] = self.descriptionField.text.isEmpty ? NSNull() : self.descriptionField.text
+            
+            FireController.db.child(self.message.path).updateChildValues(updateMap)
         }
-        
-        let newMessage = self.ref.childByAutoId()
-        newMessage.setValue(messageMap)
     }
     
     func delete() {
-        self.processing = true
-        self.ref.child(self.inputMessageId!).removeValue {_,_ in
-            self.processing = false
-            self.performBack(animated: true)
-        }
+        message.delete()
+        self.performBack(animated: true)
     }
 
     func isDirty() -> Bool {
 
-        if self.inputState == .Creating {
+        if self.mode == .insert {
             if !self.descriptionField.text!.isEmpty {
                 return true
             }
@@ -347,12 +331,7 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
                 return true
             }
         }
-        else if self.inputState == .Sharing {
-            if !self.descriptionField.text!.isEmpty {
-                return true
-            }
-        }
-        else if self.inputState == .Editing {
+        else if self.mode == .update {
             if !stringsAreEqual(string1: self.descriptionField.text, string2: self.message.text) {
                 return true
             }
@@ -372,4 +351,10 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
         }
         return true
     }
+    
+    enum Mode: Int {
+        case insert
+        case update
+    }
 }
+

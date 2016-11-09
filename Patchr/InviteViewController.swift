@@ -113,7 +113,7 @@ class InviteViewController: BaseViewController {
 //			controller.inputShareSchema = Schema.ENTITY_PATCH
 //			controller.inputShareId = self.inputEntity.id_!
 //			controller.inputMessageType = .Share
-			controller.inputState = .Sharing
+//			controller.inputState = .Sharing
 			navController.viewControllers = [controller]
 			self.present(navController, animated: true, completion: nil)
 		}

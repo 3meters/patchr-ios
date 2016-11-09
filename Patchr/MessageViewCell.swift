@@ -9,17 +9,17 @@
 import UIKit
 import SDWebImage
 
-class MessageViewCell: UIView {
+class MessageViewCell: AirUIView {
     
     var message: FireMessage!
-	
+
 	var description_	: UILabel?
 	var photo			: AirImageView?
 	var userName		= AirLabelDisplay()
 	var userPhoto		= PhotoView()
 	var createdDate		= AirLabelDisplay()
 	
-	var toolbar			= UIView()
+	var toolbar			= AirUIView()
 	var likeButton		= AirLikeButton(frame: CGRect.zero)
 	var likes			= AirLabelDisplay()
 
@@ -28,14 +28,10 @@ class MessageViewCell: UIView {
         initialize()
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+    required init(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)!
         initialize()
     }
-
-	deinit {
-		NotificationCenter.default.removeObserver(self)
-	}
 	
 	/*--------------------------------------------------------------------------------------------
 	* Events
@@ -106,6 +102,7 @@ class MessageViewCell: UIView {
 		 * The calls to addSubview will trigger a call to layoutSubviews for
 		 * the current update cycle.
 		 */
+        self.hitInsets = UIEdgeInsets(top: -16, left: -16, bottom: -16, right: -16)
 		
 		/* Description */
 		self.description_ = TTTAttributedLabel(frame: CGRect.zero)
@@ -142,10 +139,13 @@ class MessageViewCell: UIView {
 		self.createdDate.textAlignment = .right
 		
 		/* Footer */
+        
+        self.toolbar.hitInsets = UIEdgeInsets(top: -16, left: -16, bottom: -16, right: -16)
 		
 		self.likeButton.imageView!.tintColor = Theme.colorTint
         self.likeButton.bounds.size = CGSize(width:48, height:48)
 		self.likeButton.imageEdgeInsets = UIEdgeInsetsMake(14, 12, 14, 12)
+        self.likeButton.hitInsets = UIEdgeInsets(top: -16, left: -16, bottom: -16, right: -16)
 
 		self.likes.font = Theme.fontText
 		self.likes.numberOfLines = 1
@@ -168,7 +168,7 @@ class MessageViewCell: UIView {
 		self.message = message
 		
 		self.description_?.isHidden = true
-		self.photo?.isHidden = true
+        self.photo?.isHidden = true
 		self.toolbar.isHidden = true
 		
 		if let description = message.text {
@@ -177,7 +177,7 @@ class MessageViewCell: UIView {
 		}
 		
 		if let photo = message.attachments?.first?.photo {
-			self.photo?.isHidden = false
+            self.photo?.isHidden = false
             if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
                 bindPhoto(photoUrl: photoUrl)
             }
@@ -186,25 +186,26 @@ class MessageViewCell: UIView {
         self.userName.text = message.creator?.username
         let fullName = message.creator?.profile?.fullName
         let photoUrl = PhotoUtils.url(prefix: message.creator?.profile?.photo?.filename, source: message.creator?.profile?.photo?.source, category: SizeCategory.profile)
-        self.userPhoto.bind(photoUrl: photoUrl, name: fullName)
+        self.userPhoto.bind(photoUrl: photoUrl, name: fullName, colorSeed: message.creator?.id)
 		
         self.createdDate.text = UIShared.timeAgoShort(date: NSDate(timeIntervalSince1970: Double(message.createdAt!) / 1000))
 			
         self.toolbar.isHidden = false
+        
         self.likeButton.bind(message: message)
         self.likes.text = nil
         self.likes.textColor = Theme.colorText
         
-        if let reactions = message.reactions {
-            if let thumbsup = reactions[":thumbsup:"] {
-                if thumbsup.count != 0 {
-                    self.likes.text = String(thumbsup.count)
-                }
-                let userId = ZUserController.instance.fireUserId
-                if thumbsup[userId!] != nil {
-                    self.likes.textColor = Colors.brandColor
-                }
-            }
+        let thumbsupCount = message.getReactionCount(emoji: .thumbsup)
+        if thumbsupCount != 0 {
+            self.likes.text = String(thumbsupCount)
+        }
+        else {
+            self.likes.text = nil
+        }
+        let userId = UserController.instance.userId
+        if message.getReaction(emoji: .thumbsup, userId: userId!) {
+            self.likes.textColor = Colors.brandColor
         }
 		
 		self.setNeedsLayout()	// Needed because binding can change the layout
@@ -218,7 +219,7 @@ class MessageViewCell: UIView {
 			return
 		}
 		
-		self.photo?.image = nil
+        //self.photo?.image = nil
 		self.photo!.setImageWithUrl(url: photoUrl, animate: true)
 	}
     
@@ -227,5 +228,15 @@ class MessageViewCell: UIView {
         self.setNeedsLayout()
         self.layoutIfNeeded()
         return sizeThatFitsSubviews()
+    }
+    
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        
+        let newRect = CGRect(x: 0 + hitInsets.left,
+                             y: 0 + hitInsets.top,
+                             width: self.frame.size.width - hitInsets.left - hitInsets.right,
+                             height: self.frame.size.height - hitInsets.top - hitInsets.bottom)
+        
+        return newRect.contains(point)
     }
 }

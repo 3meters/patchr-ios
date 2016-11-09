@@ -13,7 +13,9 @@ import FirebaseDatabase
 
 class FireGroup: NSObject {
     
-    static let path = "/groups"
+    var path: String {
+        return "groups/\(self.id!)"
+    }
     
     var id: String?
     var name: String?
@@ -28,7 +30,7 @@ class FireGroup: NSObject {
     var modifiedBy: String?
     
     /* Link properties for the current user */
-    var isDisabled: Bool?
+    var disabled: Bool?
     var role: String?
     var notifications: String?
     var hideEmail: Bool?
@@ -69,7 +71,7 @@ class FireGroup: NSObject {
     }
     
     func membershipFrom(dict: [String: Any]) {
-        self.isDisabled = dict["disabled"] as? Bool
+        self.disabled = dict["disabled"] as? Bool
         self.role = dict["role"] as? String
         self.notifications = dict["notifications"] as? String
         self.hideEmail = dict["hide_email"] as? Bool

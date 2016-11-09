@@ -29,10 +29,6 @@ class ZUserController: NSObject {
     var authenticated: Bool {
         return (self.userId != nil && self.sessionKey != nil)
     }
-    
-    var fireUserId: String? {
-        return FIRAuth.auth()?.currentUser?.uid
-    }
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle

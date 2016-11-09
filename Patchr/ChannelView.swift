@@ -36,7 +36,7 @@ class ChannelView: BaseView {
 		self.addSubview(self.name)
 		
 		/* Patch visibility */
-        self.visibility.font = UIFont.fontAwesomeOfSize(16)
+        self.visibility.font = UIFont.fontAwesome(ofSize: 16)
         self.visibility.textColor = Theme.colorTextSecondary
 		self.addSubview(self.visibility)
 	}
@@ -46,7 +46,9 @@ class ChannelView: BaseView {
 		if let patch = entity as? Patch {
             self.entity = patch
             self.name.text = patch.name.lowercased().replacingOccurrences(of: " ", with: "-")
-            self.visibility.text = (patch.visibility != nil && patch.visibility == "public") ? String.fontAwesomeIconWithName(.Hashtag) : String.fontAwesomeIconWithName(.Lock)
+            self.visibility.text = (patch.visibility != nil && patch.visibility == "public")
+                ? String.fontAwesomeIcon(name: .hashtag)
+                : String.fontAwesomeIcon(name: .lock)
 		}
 
 		self.setNeedsLayout()

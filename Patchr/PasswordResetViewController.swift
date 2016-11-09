@@ -101,7 +101,7 @@ class PasswordResetViewController: BaseEditViewController {
 
     func hideShowPasswordAction(sender: AnyObject?) {
         if let button = sender as? AirHideShowButton {
-            button.toggleOn(on: !button.toggledOn)
+            button.toggle(on: !button.toggledOn)
             self.passwordField.isSecureTextEntry = !button.toggledOn
         }
     }
@@ -182,10 +182,10 @@ class PasswordResetViewController: BaseEditViewController {
         if self.resetActive {
             if self.inputUserPhoto != nil {
                 let photoUrl = PhotoUtils.url(prefix: self.inputUserPhoto!, source: PhotoSource.aircandi_images, category: SizeCategory.profile)
-                self.userPhoto.bind(photoUrl: photoUrl, name: nil)
+                self.userPhoto.bind(photoUrl: photoUrl, name: nil, colorSeed: nil)
             }
             else if self.inputUserName != nil {
-                self.userPhoto.bind(photoUrl: nil, name: self.inputUserName)
+                self.userPhoto.bind(photoUrl: nil, name: self.inputUserName, colorSeed: nil)
             }
             self.userName.text = self.inputUserName
         }

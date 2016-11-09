@@ -11,12 +11,14 @@ import FirebaseDatabaseUI
 
 class GroupPickerController: UIViewController, UITableViewDelegate {
     
+    let db = FIRDatabase.database().reference()
     var query: FIRDatabaseQuery!
-
+    
     var headerView: GroupsHeaderView!
     var message = AirLabelTitle()
     var tableView = UITableView(frame: CGRect.zero, style: .plain)
-    var tableViewDataSource: FirebaseTableViewDataSource!
+    var tableViewDataSource: FUITableViewDataSource!
+    var cellReuseIdentifier: String!
     var footerView = AirLinkButton()
     var rule = UIView()
     var mode: Mode = .drawer
@@ -26,10 +28,10 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
             || (self.navigationController != nil && self.navigationController?.presentingViewController?.presentedViewController == self.navigationController)
             || self.tabBarController?.presentingViewController is UITabBarController
     }
-
+    
     /*--------------------------------------------------------------------------------------------
-    * Lifecycle
-    *--------------------------------------------------------------------------------------------*/
+     * Lifecycle
+     *--------------------------------------------------------------------------------------------*/
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,10 +57,10 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
             self.tableView.alignBetweenTop(self.rule, andBottom: self.footerView, centeredWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
         }
     }
-
+    
     /*--------------------------------------------------------------------------------------------
-    * Events
-    *--------------------------------------------------------------------------------------------*/
+     * Events
+     *--------------------------------------------------------------------------------------------*/
     
     func addAction(sender: AnyObject?) {
         let controller = PatchEditViewController()
@@ -71,29 +73,26 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
     
     func closeAction(sender: AnyObject?) {
         if self.isModal {
-            self.dismiss(animated: (self.mode == .drawer), completion: nil)
+            self.dismiss(animated: true, completion: nil)
         }
         else {
             let _ = self.navigationController?.popViewController(animated: true)
         }
     }
-
+    
     /*--------------------------------------------------------------------------------------------
-    * Notifications
-    *--------------------------------------------------------------------------------------------*/
-
+     * Notifications
+     *--------------------------------------------------------------------------------------------*/
+    
     /*--------------------------------------------------------------------------------------------
-    * Methods
-    *--------------------------------------------------------------------------------------------*/
+     * Methods
+     *--------------------------------------------------------------------------------------------*/
     
     func initialize() {
         
-        let userId = ZUserController.instance.fireUserId
-        self.query = FIRDatabase.database().reference().child("member-groups/\(userId!)").queryOrdered(byChild: "sort_priority")
-
         self.view.backgroundColor = Theme.colorBackgroundForm
         self.rule.backgroundColor = Theme.colorSeparator
-
+        
         if self.mode == .drawer {
             self.headerView = Bundle.main.loadNibNamed("GroupsHeaderView", owner: nil, options: nil)?.first as? GroupsHeaderView
             self.headerView.closeButton?.addTarget(self, action: #selector(closeAction(sender:)), for: .touchUpInside)
@@ -115,8 +114,10 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
         self.footerView.backgroundColor = Colors.gray95pcntColor
         self.footerView.addTarget(self, action: #selector(addAction(sender:)), for: .touchUpInside)
         
+        self.cellReuseIdentifier = "group-cell"
         self.tableView.backgroundColor = Theme.colorBackgroundEmptyBubble
         self.tableView.delegate = self
+        self.tableView.register(UINib(nibName: "GroupListCell", bundle: nil), forCellReuseIdentifier: self.cellReuseIdentifier)
         
         self.view.addSubview(self.tableView)
         self.view.addSubview(self.footerView)
@@ -124,34 +125,42 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
     
     func bind() {
         
-        self.tableViewDataSource = FirebaseTableViewDataSource(query: self.query, nibNamed: "GroupListCell", cellReuseIdentifier: "GroupListCell", view: self.tableView)
-        self.tableViewDataSource.populateCell { (cell, data) in
+        if self.tableViewDataSource == nil {
             
-            let snap = data as! FIRDataSnapshot
-            let cell = cell as! GroupListCell
+            let userId = UserController.instance.userId
+            self.query = self.db.child("member-groups/\(userId!)").queryOrdered(byChild: "sort_priority")
             
-            let groupId = snap.key
-            let link = snap.value as! [String: Any]
-            
-            cell.title?.textColor = Theme.colorText
-            if groupId == StateController.instance.groupId {
-                cell.title?.textColor = Colors.accentColorTextLight
-            }
-            
-            FIRDatabase.database().reference().child("groups/\(groupId)").observeSingleEvent(of: .value, with: { snap in
-                if let group = FireGroup.from(dict: snap.value as? [String: Any], id: snap.key) {
-                    group.membershipFrom(dict: link)
-                    cell.bind(group: group)
-                }
+            self.tableViewDataSource = FUITableViewDataSource(
+                query: self.query,
+                view: self.tableView,
+                populateCell: { [weak self] (view, indexPath, snap) -> GroupListCell in
+                    
+                    let cell = view.dequeueReusableCell(withIdentifier: (self?.cellReuseIdentifier)!, for: indexPath) as! GroupListCell
+                    let groupId = snap.key
+                    let link = snap.value as! [String: Any]
+                    
+                    cell.title?.textColor = Theme.colorText
+                    if groupId == StateController.instance.groupId {
+                        cell.title?.textColor = Colors.accentColorTextLight
+                    }
+                    
+                    self?.db.child("groups/\(groupId)").observeSingleEvent(of: .value, with: { snap in
+                        if let group = FireGroup.from(dict: snap.value as? [String: Any], id: snap.key) {
+                            group.membershipFrom(dict: link)
+                            cell.bind(group: group)
+                        }
+                    })
+                    
+                    return cell
             })
+
+            self.tableView.dataSource = self.tableViewDataSource
         }
-        self.tableView.dataSource = self.tableViewDataSource
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! GroupListCell
         StateController.instance.setGroupId(groupId: cell.group.id)
-        self.closeAction(sender: nil)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -163,4 +172,3 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
         case fullscreen
     }
 }
-
