@@ -515,7 +515,7 @@ class PatchEditViewController: BaseEditViewController {
                             Log.d("Inserted entity \(serverResponse.resultID)")
                             DataController.instance.activityDateInsertDeletePatch = Utils.now()
                             DataController.instance.activityDateWatching = DataController.instance.activityDateInsertDeletePatch
-                            let controller = InviteViewController()
+                            let controller = ZInviteViewController()
                             controller.inputEntity = self.insertedEntity as! Patch
                             self.navigationController?.pushViewController(controller, animated: true)
                         }

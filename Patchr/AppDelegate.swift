@@ -79,12 +79,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let defaultSettingsFile: NSString = Bundle.main.path(forResource: "DefaultSettings", ofType: "plist")! as NSString
         let settingsDictionary: NSDictionary = NSDictionary(contentsOfFile: defaultSettingsFile as String)!
         UserDefaults.standard.register(defaults: settingsDictionary as! [String:AnyObject])
-
+        
         /* Instance the data controller */
         DataController.instance.prepare()
         
         /* Notifications */
-        NotificationController.instance.initWithLaunchOptions(launchOptions: launchOptions as [NSObject : AnyObject]!)
+        NotificationController.instance.initWithLaunchOptions(launchOptions: launchOptions as [NSObject: AnyObject]!)
 
         /* Instance the reachability manager */
         ReachabilityManager.instance.prepare()
@@ -93,7 +93,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UserController.instance.prepare()
         
         /* Setup master UI */
-        MainController.instance.prepare()
+        MainController.instance.prepare(launchOptions: launchOptions)
 
         /* Initialize current group and channel state */
         StateController.instance.prepare()
@@ -120,15 +120,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         return false
-    }
-
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        /* Guard against becoming active without any UI */
-        if MainController.instance.window?.rootViewController == nil {
-            Log.w("Patchr is becoming active without a root view controller, resetting to launch routing", breadcrumb: true)
-//            MainController.instance.prepare()
-//            MainController.instance.route()
-        }
     }
 
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {

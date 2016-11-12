@@ -162,6 +162,13 @@ class MessageViewCell: AirUIView {
         self.addSubview(self.userName)
         self.addSubview(self.createdDate)
 	}
+    
+    func prepareForReuse() {
+        self.photo?.image = nil
+        self.description_?.text = nil
+        self.userPhoto.photo.image = nil
+        self.userName.text = nil
+    }
 	
     func bind(message: FireMessage) {
         
@@ -219,7 +226,6 @@ class MessageViewCell: AirUIView {
 			return
 		}
 		
-        //self.photo?.image = nil
 		self.photo!.setImageWithUrl(url: photoUrl, animate: true)
 	}
     

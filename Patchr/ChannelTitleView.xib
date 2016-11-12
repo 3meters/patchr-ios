@@ -9,7 +9,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="ChannelTitleView" customModule="Patchr">
-            <rect key="frame" x="0.0" y="0.0" width="330" height="50"/>
+            <rect key="frame" x="0.0" y="0.0" width="305" height="46"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Jay Massena Group" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Yu-Ib-y3H">
@@ -28,15 +28,25 @@
                     <color key="textColor" red="1" green="0.50196078430000002" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="imgDropdown3Light" translatesAutoresizingMaskIntoConstraints="NO" id="bOh-pM-djn" userLabel="Dropdown">
+                    <color key="tintColor" red="1" green="0.50196078430000002" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="9" id="akT-3D-suk"/>
+                        <constraint firstAttribute="width" constant="12" id="h8f-rl-6NT"/>
+                    </constraints>
+                </imageView>
             </subviews>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
             <constraints>
                 <constraint firstItem="3Yu-Ib-y3H" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="5P7-mJ-LXD"/>
-                <constraint firstItem="PNf-Qo-2dd" firstAttribute="top" secondItem="3Yu-Ib-y3H" secondAttribute="bottom" constant="-4" id="BkJ-e4-35i"/>
+                <constraint firstItem="bOh-pM-djn" firstAttribute="leading" secondItem="PNf-Qo-2dd" secondAttribute="trailing" constant="2" id="65j-OE-xj8"/>
+                <constraint firstItem="PNf-Qo-2dd" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="iN0-l3-epB" secondAttribute="leading" id="ITo-qQ-G8d"/>
+                <constraint firstItem="PNf-Qo-2dd" firstAttribute="top" secondItem="3Yu-Ib-y3H" secondAttribute="bottom" constant="-6" id="Iev-xY-2ye"/>
                 <constraint firstItem="3Yu-Ib-y3H" firstAttribute="trailing" secondItem="iN0-l3-epB" secondAttribute="trailing" id="NE3-Ul-pvW"/>
-                <constraint firstItem="PNf-Qo-2dd" firstAttribute="trailing" secondItem="iN0-l3-epB" secondAttribute="trailing" id="TUQ-5h-oXs"/>
-                <constraint firstItem="PNf-Qo-2dd" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Xnk-T2-bdF"/>
+                <constraint firstItem="PNf-Qo-2dd" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="iN0-l3-epB" secondAttribute="trailing" id="Q2V-tY-Lnu"/>
                 <constraint firstItem="3Yu-Ib-y3H" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="ZE8-oX-Nsx"/>
+                <constraint firstItem="PNf-Qo-2dd" firstAttribute="centerX" secondItem="3Yu-Ib-y3H" secondAttribute="centerX" constant="-8" id="gA3-F4-WVU"/>
+                <constraint firstItem="bOh-pM-djn" firstAttribute="baseline" secondItem="PNf-Qo-2dd" secondAttribute="baseline" id="nU5-jn-OXB"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <nil key="simulatedTopBarMetrics"/>
@@ -46,7 +56,10 @@
                 <outlet property="subtitle" destination="PNf-Qo-2dd" id="tNu-c1-ZtL"/>
                 <outlet property="title" destination="3Yu-Ib-y3H" id="zc1-vn-B7H"/>
             </connections>
-            <point key="canvasLocation" x="-194" y="-179"/>
+            <point key="canvasLocation" x="-206.5" y="-181"/>
         </view>
     </objects>
+    <resources>
+        <image name="imgDropdown3Light" width="40" height="40"/>
+    </resources>
 </document>

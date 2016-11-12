@@ -226,7 +226,7 @@ class AirImageView: UIImageView {
         		
 		if animate /*|| cacheType == SDImageCacheType.None || cacheType == SDImageCacheType.Disk*/ {
 			UIView.transition(with: self,
-				duration: 0.4,
+				duration: 0.2,
 				options: UIViewAnimationOptions.transitionCrossDissolve,
 				animations: {
 					self.image = image

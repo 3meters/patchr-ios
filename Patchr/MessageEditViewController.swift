@@ -42,7 +42,8 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
         initialize()
         
         if self.mode == .update {
-            FireController.instance.getMessageOnce(channelId: self.inputChannelId!, messageId: self.inputMessageId!, with: { message in
+            let messageQuery = MessageQuery(channelId: self.inputChannelId, messageId: self.inputMessageId)
+            messageQuery.once(with: { message in
                 self.message = message
                 self.bind()
             })

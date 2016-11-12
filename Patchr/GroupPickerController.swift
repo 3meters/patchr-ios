@@ -15,7 +15,8 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
     var query: FIRDatabaseQuery!
     
     var headerView: GroupsHeaderView!
-    var message = AirLabelTitle()
+    var message: String = "Select from groups you are a member of. You can switch groups at anytime."
+    var messageLabel = AirLabelTitle()
     var tableView = UITableView(frame: CGRect.zero, style: .plain)
     var tableViewDataSource: FUITableViewDataSource!
     var cellReuseIdentifier: String!
@@ -50,9 +51,9 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
             self.tableView.alignBetweenTop(self.headerView, andBottom: self.footerView, centeredWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
         }
         else {
-            let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-            self.message.alignUnder(self.navigationController?.navigationBar, matchingCenterWithTopPadding: 0, width: 288, height: messageSize.height + 24)
-            self.rule.alignUnder(self.message, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 1)
+            let messageSize = self.messageLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
+            self.messageLabel.alignUnder(self.navigationController?.navigationBar, matchingCenterWithTopPadding: 0, width: 288, height: messageSize.height + 24)
+            self.rule.alignUnder(self.messageLabel, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 1)
             self.footerView.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 48)
             self.tableView.alignBetweenTop(self.rule, andBottom: self.footerView, centeredWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
         }
@@ -99,10 +100,10 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
             self.view.addSubview(self.headerView)
         }
         else {
-            self.message.textAlignment = NSTextAlignment.center
-            self.message.numberOfLines = 0
-            self.message.text = "Select from groups you are a member of. You can switch groups at anytime."
-            self.view.addSubview(self.message)
+            self.messageLabel.textAlignment = NSTextAlignment.center
+            self.messageLabel.numberOfLines = 0
+            self.messageLabel.text = "Select from groups you are a member of. You can switch groups at anytime."
+            self.view.addSubview(self.messageLabel)
             self.view.addSubview(self.rule)
         }
         

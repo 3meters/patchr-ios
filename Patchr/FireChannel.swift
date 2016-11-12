@@ -25,7 +25,6 @@ class FireChannel: NSObject {
     var type: String?
     var visibility: String?
     var isGeneral: Bool?
-    var isDefault: Bool?
     var isArchived: Bool?
     var createdAt: Int?
     var createdBy: String?
@@ -44,7 +43,6 @@ class FireChannel: NSObject {
             channel.purpose = dict!["purpose"] as? String
             channel.type = dict!["type"] as? String
             channel.visibility = dict!["visibility"] as? String
-            channel.isDefault = dict!["default"] as? Bool
             channel.isGeneral = dict!["general"] as? Bool
             channel.isArchived = dict!["archived"] as? Bool
             channel.createdAt = dict!["created_at"] as? Int
@@ -64,7 +62,6 @@ class FireChannel: NSObject {
             "type": self.type,
             "visibility": self.visibility,
             "general": self.isGeneral,
-            "default": self.isDefault,
             "archived": self.isArchived,
             "created_at": self.createdAt,
             "created_by": self.name
@@ -82,7 +79,7 @@ class FireChannel: NSObject {
         let path = "member-channels/\(userId!)/\(self.group!)/\(self.id!)"
         let updates: [String: Any] = [
             "starred": on,
-            "sort_priority": on ? 100 : 250]
+            "sort_priority": on ? 150 : 250]
         
         FireController.db.child(path).updateChildValues(updates)
     }

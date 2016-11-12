@@ -10,17 +10,17 @@ import UIKit
 import MessageUI
 import MBProgressHUD
 import PBWebViewController
+import AddressBookUI
+import ContactsUI
 import Firebase
 import FirebaseAuth
 import FirebaseDatabase
 
 class SideMenuViewController: UITableViewController {
 
-    let db = FIRDatabase.database().reference()
-    var ref: FIRDatabaseReference!
-    var handle: UInt!
     var user: FireUser?
-
+    var userQuery: UserQuery!
+ 
     var menuHeader: UserHeaderView!
     var inviteCell: WrapperTableViewCell?
     var membersCell: WrapperTableViewCell?
@@ -36,9 +36,9 @@ class SideMenuViewController: UITableViewController {
         super.viewDidLoad()
         initialize()
         if UserController.instance.userId != nil {
-            self.ref = self.db.child("users/\(UserController.instance.userId!)")
-            self.handle = self.ref.observe(.value, with: { snap in
-                self.user = FireUser.from(dict: snap.value as? [String: Any], id: snap.key)
+            self.userQuery = UserQuery(userId: UserController.instance.userId!)
+            self.userQuery.observe(with: { user in
+                self.user = user
                 self.bind()
             })
         }
@@ -72,14 +72,34 @@ class SideMenuViewController: UITableViewController {
     
     func userStateDidChange(notification: NSNotification) {
         if UserController.instance.userId != nil {
-            self.ref = self.db.child("users/\(UserController.instance.userId!)")
-            self.handle = self.ref.observe(.value, with: { snap in
-                self.user = FireUser.from(dict: snap.value as? [String: Any], id: snap.key)
+            if self.userQuery != nil {
+                self.userQuery.remove()
+            }
+            self.userQuery = UserQuery(userId: UserController.instance.userId!)
+            self.userQuery.observe(with: { user in
+                self.user = user
                 self.bind()
             })
         }
     }
+    
+    func peoplePickerNavigationController(_ peoplePicker: ABPeoplePickerNavigationController, didSelectPerson person: ABRecord) {
+        let emails: ABMultiValue = ABRecordCopyValue(person, kABPersonEmailProperty).takeRetainedValue()
+        if (ABMultiValueGetCount(emails) > 0) {
+            let index = 0 as CFIndex
+            let email = ABMultiValueCopyValueAtIndex(emails, index).takeRetainedValue() as! String
+            UIShared.Toast(message: "Picked a person: \(email)")
+        }
+        else {
+            UIShared.Toast(message: "Picked a person: no email address")
+            print("No email address")
+        }
+    }
 
+    func peoplePickerNavigationControllerDidCancel(_ peoplePicker: ABPeoplePickerNavigationController) {
+        UIShared.Toast(message: "Cancelled")
+    }
+    
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
@@ -87,10 +107,6 @@ class SideMenuViewController: UITableViewController {
     func initialize() {
 
         Reporting.screen("SideMenu")
-        
-        if UserController.instance.userId != nil {
-            self.ref = self.db.child("users/\(UserController.instance.userId!)")
-        }
 
         self.tableView = UITableView(frame: self.tableView.frame, style: .plain)
         self.tableView.rowHeight = 64
@@ -132,7 +148,39 @@ extension SideMenuViewController {
         let selectedCell = tableView.cellForRow(at: indexPath)
 
         if selectedCell == self.inviteCell {
-            /* Show contact picker */
+            
+            BranchProvider.invite(group: StateController.instance.group, channel: nil, completion: { response, error in
+                if let error = ServerError(error) {
+                    UIViewController.topMostViewController()!.handleError(error)
+                }
+                else {
+                    let invite = response as! InviteItem
+                    let inviteUrl = invite.url
+                    
+                    let group = StateController.instance.group
+                    let userTitle = self.user!.profile?.fullName != nil ? self.user!.profile!.fullName! : self.user!.username!
+                    let groupTitle = group!.title != nil ? group!.title! : group!.name!
+                    let groupName = group!.name!
+                    let userEmail = UserController.instance.user?.profile?.email!
+                    let subject = "\(userTitle) invited you to \(groupTitle) on Patchr"
+                    
+                    let htmlFile = Bundle.main.path(forResource: "invite", ofType: "html")
+                    
+                    let templateString = try? String(contentsOfFile: htmlFile!, encoding: .utf8)
+                    var htmlString = templateString?.replacingOccurrences(of: "[[group.name]]", with: groupName)
+                    htmlString = htmlString?.replacingOccurrences(of: "[[user.fullName]]", with: userTitle)
+                    htmlString = htmlString?.replacingOccurrences(of: "[[user.email]]", with: userEmail!)
+                    htmlString = htmlString?.replacingOccurrences(of: "[[link]]", with: inviteUrl)
+                    
+                    if MFMailComposeViewController.canSendMail() {
+                        MailComposer!.mailComposeDelegate = self
+                        MailComposer!.setSubject(subject)
+                        MailComposer!.setMessageBody(htmlString!, isHTML: true)
+                        self.present(MailComposer!, animated: true, completion: nil)
+                    }
+                }
+            })
+            
         }
         else if selectedCell == self.settingsCell {
             let controller = SettingsTableViewController()
@@ -191,5 +239,28 @@ extension SideMenuViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 5
+    }
+}
+
+extension SideMenuViewController: MFMailComposeViewControllerDelegate {
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        
+        switch result {
+        case MFMailComposeResult.cancelled:    // 0
+            UIShared.Toast(message: "Feedback cancelled", controller: self, addToWindow: false)
+        case MFMailComposeResult.saved:        // 1
+            UIShared.Toast(message: "Feedback saved", controller: self, addToWindow: false)
+        case MFMailComposeResult.sent:        // 2
+            Reporting.track("Sent Feedback")
+            UIShared.Toast(message: "Feedback sent", controller: self, addToWindow: false)
+        case MFMailComposeResult.failed:    // 3
+            UIShared.Toast(message: "Feedback send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
+            break
+        }
+        
+        self.dismiss(animated: true) {
+            MailComposer = nil
+            MailComposer = MFMailComposeViewController()
+        }
     }
 }

@@ -77,6 +77,8 @@
 		E20C3A831BDEBBB9008CCED1 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A821BDEBBB9008CCED1 /* CoreDataStack.swift */; };
 		E20C3A851BE04BBC008CCED1 /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */; };
 		E20C3A861BE08887008CCED1 /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */; };
+		E20C742F1DD4BB0700D90A4D /* ZInviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C742E1DD4BB0700D90A4D /* ZInviteViewController.swift */; };
+		E20C74311DD548A400D90A4D /* invite.html in Resources */ = {isa = PBXBuildFile; fileRef = E20C74301DD548A400D90A4D /* invite.html */; };
 		E21FE56D1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E21FE56C1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift */; };
 		E224C3501B6ED27F00879775 /* PatchrShare.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E238BAE41B51D3290094AF41 /* PatchrShare.storyboard */; };
 		E224C3551B6EDBBE00879775 /* PatchTargetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */; };
@@ -390,6 +392,8 @@
 		E20C3A801BDC1D57008CCED1 /* BaseDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseDetailView.swift; sourceTree = "<group>"; };
 		E20C3A821BDEBBB9008CCED1 /* CoreDataStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CoreDataStack.swift; path = Patchr/CoreDataStack.swift; sourceTree = "<group>"; };
 		E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stopwatch.swift; sourceTree = "<group>"; };
+		E20C742E1DD4BB0700D90A4D /* ZInviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZInviteViewController.swift; sourceTree = "<group>"; };
+		E20C74301DD548A400D90A4D /* invite.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = invite.html; sourceTree = "<group>"; };
 		E21FE56C1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationSettingsSimpleViewController.swift; sourceTree = "<group>"; };
 		E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTargetViewController.swift; sourceTree = "<group>"; };
 		E227294A1CEA743600913041 /* GalleryGridViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryGridViewController.swift; sourceTree = "<group>"; };
@@ -754,6 +758,7 @@
 		E215995A1AEFC193002C936F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E20C74301DD548A400D90A4D /* invite.html */,
 				7D3D39D51A6F086F00A44CB2 /* Images.xcassets */,
 				E28915921C5AD528005D7AA0 /* LaunchScreen.storyboard */,
 				E25E1E5F1DBA781900BE1800 /* ChannelsHeaderView.xib */,
@@ -1050,6 +1055,7 @@
 				E2FA13391D81FC8A0057F287 /* SideMenuViewController.swift */,
 				7D021AC11A9423080047DAAE /* TextZoomController.swift */,
 				E25B0F451DCE778B00021D5B /* UserListController.swift */,
+				E20C742E1DD4BB0700D90A4D /* ZInviteViewController.swift */,
 				E2F618DE1B02667A0055D09C /* Edit */,
 				E24D744F1BB2F4030061F339 /* TableForms */,
 				E24D744E1BB2F3E70061F339 /* Collections */,
@@ -1296,6 +1302,7 @@
 				E25327CF1B13DB3000990A81 /* notification_carme.aac in Resources */,
 				E2A5A8801B6FCE98006D6E81 /* GoogleService-Info.plist in Resources */,
 				E25327D01B13DB3000990A81 /* notification_pop.aac in Resources */,
+				E20C74311DD548A400D90A4D /* invite.html in Resources */,
 				E25327CD1B13DB2900990A81 /* notification_activity.aac in Resources */,
 				E2F6C9291B1DF5500067D959 /* Notes.md in Resources */,
 				E2DA16D71DCFDF770096D86F /* ChannelTitleView.xib in Resources */,
@@ -1640,6 +1647,7 @@
 				E29A4CD81BCF25220059D5B9 /* NotificationView.swift in Sources */,
 				E25327B21B0FCE9C00990A81 /* Constants.swift in Sources */,
 				E25908301DC69C3F00CB6C3F /* MemberDetailView.swift in Sources */,
+				E20C742F1DD4BB0700D90A4D /* ZInviteViewController.swift in Sources */,
 				E2DA16DD1DD11B7A0096D86F /* AirToggleImage.swift in Sources */,
 				E29A92201DB19A3C00B27093 /* FirePhoto.swift in Sources */,
 				84EF12AC1AA904700043EBBA /* Utils.swift in Sources */,

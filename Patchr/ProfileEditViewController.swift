@@ -53,7 +53,8 @@ class ProfileEditViewController: BaseEditViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
-        FireController.instance.getUserOnce(userId: UserController.instance.userId!, with: { user in
+        let userQuery = UserQuery(userId: UserController.instance.userId!)
+        userQuery.once(with: { user in
             self.user = user
             self.bind()
         })

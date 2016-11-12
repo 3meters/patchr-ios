@@ -12,6 +12,7 @@ import SlideMenuControllerSwift
 import Firebase
 import FirebaseDatabase
 import RxSwift
+import Branch
 
 class MainController: NSObject, iRateDelegate {
 
@@ -65,7 +66,7 @@ class MainController: NSObject, iRateDelegate {
      * MARK: - Methods
      *--------------------------------------------------------------------------------------------*/
 
-    func prepare() {
+    func prepare(launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) {
 
         iRate.sharedInstance().verboseLogging = false
         iRate.sharedInstance().daysUntilPrompt = 7
@@ -111,6 +112,17 @@ class MainController: NSObject, iRateDelegate {
 
         self.window?.setRootViewController(rootViewController: self.slideController, animated: true) // While we wait for state to initialize
         self.window?.makeKeyAndVisible()
+        
+        /* Initialize Branch: The deepLinkHandler gets called every time the app opens. */
+        Branch.getInstance().initSession(launchOptions: launchOptions, andRegisterDeepLinkHandler: { params, error in
+            if error == nil {
+                /* A hit could mean a deferred link match */
+                if let clickedBranchLink = params["+clicked_branch_link"] as? Bool , clickedBranchLink {
+                    Log.d("Deep link routing based on clicked branch link", breadcrumb: true)
+                    self.routeDeepLink(params: params, error: error)    /* Presents modally on top of main tab controller. */
+                }
+            }
+        })
 
         /* Turn on network activity indicator */
         AFNetworkActivityIndicatorManager.shared().isEnabled = true
@@ -125,10 +137,7 @@ class MainController: NSObject, iRateDelegate {
         else if UserController.instance.userId == nil {
             showLobby()
         }
-        else if StateController.instance.groupId == nil {
-            showGroupPicker()
-        }
-        else if StateController.instance.channelId != nil {
+        else if StateController.instance.groupId != nil && StateController.instance.channelId != nil {
             showMain()
             showChannel(groupId: StateController.instance.groupId!, channelId: StateController.instance.channelId!)
         }
@@ -137,7 +146,8 @@ class MainController: NSObject, iRateDelegate {
     func showMain() {
         if self.slideController.mainViewController != self.channelController {
             _ = self.channelController.view // Triggers viewDidLoad
-            let nav = AirNavigationController(rootViewController: self.channelController)
+            let nav = AirNavigationController(navigationBarClass: AirNavigationBar.self, toolbarClass: nil)
+            nav.viewControllers = [self.channelController]
             self.slideController.changeMainViewController(nav, close: false)
         }
         if self.window?.rootViewController != self.slideController {
@@ -184,6 +194,36 @@ class MainController: NSObject, iRateDelegate {
     func disableAnimations(state: Bool) {
         UIView.setAnimationsEnabled(!state)
         UIApplication.shared.keyWindow!.layer.speed = state ? 100.0 : 1.0
+    }
+    
+    func routeDeepLink(params: [AnyHashable: Any]?, error: Error?) {
+        if let groupId = params?["groupId"] as? String {
+            let channelId = params?["channelId"] as? String
+            let guest = params?["guest"] as? Bool
+            
+            if UserController.instance.authenticated {
+                let userId = UserController.instance.userId
+                FireController.db.child("group-members/\(groupId)/\(userId!)").observeSingleEvent(of: .value, with: { snap in
+                    let alreadyMember = !(snap.value is NSNull)
+                    if !alreadyMember {
+                        FireController.instance.addUserToGroup(groupId: groupId, channelId: channelId, guest: guest!, complete: { error in
+                            StateController.instance.setGroupId(groupId: groupId, channelId: channelId)
+                        })
+                    }
+                    else {
+                        /* Toast: Already a member */
+                        UIShared.Toast(message: "Already a member of this group!")
+                    }
+                })
+            }
+            else {
+                /*
+                 * - User needs to log in or sign up.
+                 * - Add user to group/channel as member/guest
+                 * - Auto switch to group/channel
+                 */
+            }
+        }
     }
 
     func resetToLobby() {

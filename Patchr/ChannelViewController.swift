@@ -1,9 +1,8 @@
 //
-//  PatchDetailViewController.swift
+//  ChanneliewController.swift
 //
 
 import UIKit
-import Branch
 import MessageUI
 import iRate
 import IDMPhotoBrowser
@@ -61,13 +60,10 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.frame.size.height = 54
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        self.navigationController?.navigationBar.frame.size.height = 54
         
         if self.actionButton != nil {
             showActionButton()
@@ -365,9 +361,9 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
         }
         
         let userId = UserController.instance.userId
-        let channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId!)
+        self.channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId!)
         
-        channelQuery.observe(with: { channel in
+        self.channelQuery.observe(with: { channel in
             
             self.channel = channel
             self.drawNavBarButtons()
@@ -401,6 +397,10 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
                 let cell = view.dequeueReusableCell(withIdentifier: (self?.cellReuseIdentifier)!, for: indexPath) as! WrapperTableViewCell
                 let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key)! as FireMessage
                 
+                if let messageView = cell.view as? MessageViewCell {
+                    messageView.prepareForReuse()
+                }
+                
                 if message.createdBy == nil {
                     self?.bindMessageView(cell: cell, message: message)
                 }
@@ -417,6 +417,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
     }
     
     func bindMessageView(cell: WrapperTableViewCell, message: FireMessage) {
+        
         if cell.view == nil {
             let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.longPressAction(sender:)))
             recognizer.minimumPressDuration = TimeInterval(0.5)
@@ -433,37 +434,34 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
             cell.layoutSubviews()   // Make sure padding has been applied
         }
         
-        let messageView = cell.view! as! MessageViewCell
-        messageView.bind(message: message)
-        if message.creator != nil {
-            messageView.userPhoto.target = message.creator
-            messageView.userPhoto.addTarget(self, action: #selector(self.memberAction(sender:)), for: .touchUpInside)
+        if let messageView = cell.view! as? MessageViewCell {
+            messageView.bind(message: message)
+            if message.creator != nil {
+                messageView.userPhoto.target = message.creator
+                messageView.userPhoto.addTarget(self, action: #selector(self.memberAction(sender:)), for: .touchUpInside)
+            }
         }
     }
 
     func drawNavBarButtons() {
         
-        let groupId = StateController.instance.groupId
-        FireController.db.child("groups/\(groupId!)").observeSingleEvent(of: .value, with: { snap in
-            if !(snap.value is NSNull) {
-                let group = FireGroup.from(dict: snap.value as? [String: Any], id: snap.key)
-
-                /* Title */
-                let maxWidth = self.view.frame.size.width - CGFloat(36 + 36 + 36 + 30 + 16 + 72)
-                self.titleView = (Bundle.main.loadNibNamed("ChannelTitleView", owner: nil, options: nil)?.first as? ChannelTitleView)!
-                self.titleView.bounds.size = CGSize(width: maxWidth, height: (self.navigationController?.navigationBar.height())!)
-                
-                self.titleView.title?.text = group?.title! ?? group?.name!
-                self.titleView.subtitle?.text = "#\(self.channel.name!)"
-                self.titleView.title?.sizeToFit()
-                self.titleView.subtitle?.sizeToFit()
-                self.titleView.sizeToFit()
-                
-                self.navigationItem.titleView = self.titleView
-                let tap = UITapGestureRecognizer(target: self, action: #selector(self.showChannelActions(gesture:)))
-                self.titleView.addGestureRecognizer(tap)
-            }
-        })
+        if let group = StateController.instance.group {
+            
+            /* Title */
+            let maxWidth = self.view.frame.size.width - CGFloat(36 + 36 + 36 + 30 + 16 + 72 + 24)
+            self.titleView = (Bundle.main.loadNibNamed("ChannelTitleView", owner: nil, options: nil)?.first as? ChannelTitleView)!
+            self.titleView.bounds.size = CGSize(width: maxWidth, height: (self.navigationController?.navigationBar.height())!)
+            
+            self.titleView.title?.text = (group.title != nil) ? group.title! : group.name!
+            self.titleView.subtitle?.text = "#\(self.channel.name!)"
+            self.titleView.title?.sizeToFit()
+            self.titleView.subtitle?.sizeToFit()
+            self.titleView.sizeToFit()
+            
+            self.navigationItem.titleView = self.titleView
+            let tap = UITapGestureRecognizer(target: self, action: #selector(self.showChannelActions(gesture:)))
+            self.titleView.addGestureRecognizer(tap)
+        }
 
         /* Navigation button */
         var button = UIButton(type: .custom)

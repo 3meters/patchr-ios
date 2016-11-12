@@ -61,7 +61,7 @@ class WrapperTableViewCell: UITableViewCell {
 		self.selectedBackgroundView?.fillSuperview()
 		self.separator.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 1)
 	}
-	
+    
 	func addSeparator() {
 		self.separator.layer.backgroundColor = Theme.colorSeparator.cgColor
         self.contentView.addSubview(self.separator)

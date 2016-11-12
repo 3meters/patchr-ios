@@ -71,8 +71,8 @@ class LoginViewController: BaseEditViewController {
                 self.progress.labelText = "Verifying..."
                 self.progress.removeFromSuperViewOnHide = true
                 self.progress.show(true)
-
-                validateEmail()
+                
+                signup()
             }
             else {
                 self.passwordField.resignFirstResponder()
@@ -132,7 +132,7 @@ class LoginViewController: BaseEditViewController {
         super.initialize()
 
         if self.onboardMode == .Signup {
-            self.message.text = "Sign up for a free account to post messages, create patches, and more."
+            self.message.text = "Sign up for a free account to join and create groups."
         }
         else {
             self.message.text = "Welcome back."
@@ -192,42 +192,9 @@ class LoginViewController: BaseEditViewController {
             self.emailField.text = UserDefaults.standard.object(forKey: PatchrUserDefaultKey(subKey: "userEmail")) as? String
         }
     }
-
-    func validateEmail() {
-
-        guard !self.processing else {
-            return
-        }
-
-        processing = true
-
-        /*
-        * Successful login will also update the install record so the authenticated user
-        * is associated with the install. Logging out clears the associated user.
-        */
-        DataController.proxibase.validEmail(email: self.emailField.text!) {
-            response, error in
-
-            OperationQueue.main.addOperation {
-                self.processing = false
-
-                self.progress?.hide(true)
-
-                if let error = ServerError(error) {
-                    self.handleError(error)
-                }
-                else {
-                    if let serviceData = DataController.instance.dataWrapperForResponse(response: response!) {
-                        if serviceData.count == 0 {
-                            self.didValidate()
-                        }
-                        else {
-                            self.Alert(title: "Email has already been used.")
-                        }
-                    }
-                }
-            }
-        }
+    
+    func signup() {
+        
     }
 
     func login() {
@@ -262,39 +229,9 @@ class LoginViewController: BaseEditViewController {
 
     func didLogin() {
         /* Navigate to main interface */
-        MainController.instance.route()
-        if self.isModal {
-            self.dismiss(animated: true, completion: nil)
-        }
-        else {
-            let _ = self.navigationController?.popViewController(animated: true)
-        }
-    }
-
-    func didValidate() {
-        /* Navigate to next page */
-        let controller = ZProfileEditViewController()
-        controller.inputProvider = self.provider
-        controller.inputState = State.Onboarding
-        controller.inputEmail = self.emailField.text
-        controller.inputPassword = self.passwordField.text
-        controller.inputRouteToMain = self.inputRouteToMain
-        controller.source = self.source
+        let controller = GroupPickerController()
+        controller.mode = .fullscreen
         self.navigationController?.pushViewController(controller, animated: true)
-    }
-
-    func navigateToMain() {
-
-//        if CLLocationManager.authorizationStatus() == .notDetermined
-//                || !UIApplication.shared.isRegisteredForRemoteNotifications {
-//            let controller = PermissionsViewController()
-//            self.navigationController?.pushViewController(controller, animated: true)
-//            if UserController.instance.userName != nil {
-//                UIShared.Toast(message: "Logged in as \(UserController.instance.userName!)", controller: controller, addToWindow: false)
-//            }
-//        }
-//        else {
-//        }
     }
 
     func isValid() -> Bool {

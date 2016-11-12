@@ -5,23 +5,16 @@
 //  Created by Jay Massena on 5/11/15.
 //  Copyright (c) 2015 3meters. All rights reserved.
 //
-import AdSupport
-import Lockbox
-import Branch
 import Firebase
 import FirebaseAuth
-import FirebaseDatabase
-import RxSwift
 
 class UserController: NSObject {
     
     static let instance = UserController()
 
-    let db = FIRDatabase.database().reference()
-    var onlineRef: FIRDatabaseReference!
-    var userRef: FIRDatabaseReference!
-
+    fileprivate var userQuery: UserQuery!
     fileprivate(set) internal var userId: String?
+    fileprivate(set) internal var user: FireUser?
 
     var authenticated: Bool {
         return (self.userId != nil)
@@ -34,7 +27,6 @@ class UserController: NSObject {
      *--------------------------------------------------------------------------------------------*/
 
     func prepare() {
-        self.onlineRef = self.db.child(".info/connected")
         self.setUserId(userId: FIRAuth.auth()?.currentUser?.uid)
     }
 
@@ -43,27 +35,29 @@ class UserController: NSObject {
         try! FIRAuth.auth()!.signOut()
         Reporting.track("Logged Out")
         Log.i("User logged out")
-        setUserId(userId: nil)
-        MainController.instance.route()
+        setUserId(userId: nil)  // Triggers userStateDidChange with is monitored by MainController
     }
 
     func setUserId(userId: String?) {
 
         if userId != nil {
             self.userId = userId
-            self.userRef = self.db.child("users/\(userId!)")
-            Reporting.updateUser(user: FIRAuth.auth()?.currentUser)
-            self.onlineRef.observe(.value, with: { snap in
-                if !(snap.value is NSNull) {
-                    self.userRef.onDisconnectUpdateChildValues(["presence": FIRServerValue.timestamp()])
-                    self.userRef.updateChildValues(["presence": true])
-                }
+            self.userQuery = UserQuery(userId: userId!, trackPresence: true)
+            self.userQuery.observe(with: { user in
+                self.user = user
             })
+            Reporting.updateUser(user: FIRAuth.auth()?.currentUser)
         }
         else {
-            self.userRef = nil
             self.userId = nil
+            if self.userQuery != nil {
+                self.userQuery.remove()
+            }
+            self.userQuery = nil
+            self.user = nil
             Reporting.updateUser(user: nil)
         }
+        
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UserStateDidChange), object: nil, userInfo: nil)
     }
 }

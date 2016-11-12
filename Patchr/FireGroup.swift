@@ -23,6 +23,7 @@ class FireGroup: NSObject {
     var desc: String?
     var photo: FirePhoto?
     var general: String?
+    var defaultChannels: [String]?
     var ownedBy: String?
     var createdAt: Int?
     var createdBy: String?
@@ -44,6 +45,7 @@ class FireGroup: NSObject {
             group.title = dict!["title"] as? String
             group.desc = dict!["description"] as? String
             group.general = dict!["general"] as? String
+            group.defaultChannels = dict!["default_channels"] as? [String]
             group.ownedBy = dict!["owned_by"] as? String
             group.createdAt = dict!["created_at"] as? Int
             group.createdBy = dict!["created_by"] as? String
@@ -62,6 +64,7 @@ class FireGroup: NSObject {
             "description": self.desc,
             "photo": self.photo?.dict,
             "general": self.general,
+            "default_channels": self.defaultChannels,
             "owned_by": self.ownedBy,
             "created_at": self.createdAt,
             "created_by": self.createdBy,

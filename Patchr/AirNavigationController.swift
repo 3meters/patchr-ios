@@ -13,8 +13,11 @@ class AirNavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
+}
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
+class AirNavigationBar: UINavigationBar {
+    override func sizeThatFits(_ size: CGSize) -> CGSize {
+        let newSize :CGSize = CGSize(width: self.frame.size.width, height: 54)
+        return newSize
     }
 }
