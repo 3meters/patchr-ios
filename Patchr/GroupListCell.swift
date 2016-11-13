@@ -18,6 +18,12 @@ class GroupListCell: UITableViewCell {
     
     var group: FireGroup!
     
+    func reset() {
+        self.photoView?.photo.image = nil
+        self.title?.text = nil
+        self.subtitle?.text = nil
+    }
+    
     func bind(group: FireGroup) {
         self.group = group
         self.title?.text = group.title!

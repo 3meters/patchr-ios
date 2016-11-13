@@ -19,7 +19,7 @@ import FirebaseDatabase
 class SideMenuViewController: UITableViewController {
 
     var user: FireUser?
-    var userQuery: UserQuery!
+    var userQuery: UserQuery?
  
     var menuHeader: UserHeaderView!
     var inviteCell: WrapperTableViewCell?
@@ -37,7 +37,13 @@ class SideMenuViewController: UITableViewController {
         initialize()
         if UserController.instance.userId != nil {
             self.userQuery = UserQuery(userId: UserController.instance.userId!)
-            self.userQuery.observe(with: { user in
+            self.userQuery!.observe(with: { user in
+                
+                guard user != nil else {
+                    assertionFailure("user not found or no longer exists")
+                    return
+                }
+
                 self.user = user
                 self.bind()
             })
@@ -72,32 +78,19 @@ class SideMenuViewController: UITableViewController {
     
     func userStateDidChange(notification: NSNotification) {
         if UserController.instance.userId != nil {
-            if self.userQuery != nil {
-                self.userQuery.remove()
-            }
+            self.userQuery?.remove()
             self.userQuery = UserQuery(userId: UserController.instance.userId!)
-            self.userQuery.observe(with: { user in
+            self.userQuery!.observe(with: { user in
+                
+                guard user != nil else {
+                    assertionFailure("user not found or no longer exists")
+                    return
+                }
+
                 self.user = user
                 self.bind()
             })
         }
-    }
-    
-    func peoplePickerNavigationController(_ peoplePicker: ABPeoplePickerNavigationController, didSelectPerson person: ABRecord) {
-        let emails: ABMultiValue = ABRecordCopyValue(person, kABPersonEmailProperty).takeRetainedValue()
-        if (ABMultiValueGetCount(emails) > 0) {
-            let index = 0 as CFIndex
-            let email = ABMultiValueCopyValueAtIndex(emails, index).takeRetainedValue() as! String
-            UIShared.Toast(message: "Picked a person: \(email)")
-        }
-        else {
-            UIShared.Toast(message: "Picked a person: no email address")
-            print("No email address")
-        }
-    }
-
-    func peoplePickerNavigationControllerDidCancel(_ peoplePicker: ABPeoplePickerNavigationController) {
-        UIShared.Toast(message: "Cancelled")
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -149,7 +142,8 @@ extension SideMenuViewController {
 
         if selectedCell == self.inviteCell {
             
-            BranchProvider.invite(group: StateController.instance.group, channel: nil, completion: { response, error in
+            BranchProvider.inviteMember(group: StateController.instance.group, completion: { response, error in
+                
                 if let error = ServerError(error) {
                     UIViewController.topMostViewController()!.handleError(error)
                 }
@@ -183,30 +177,33 @@ extension SideMenuViewController {
             
         }
         else if selectedCell == self.settingsCell {
+            
             let controller = SettingsTableViewController()
+            let wrapper = AirNavigationController(rootViewController: controller)
             let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: controller, action: #selector(controller.cancelAction(sender:)))
             controller.navigationItem.rightBarButtonItems = [cancelButton]
-            let navController = AirNavigationController()
-            navController.viewControllers = [controller]
-            UIViewController.topMostViewController()?.present(navController, animated: true, completion: nil)
+            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         }
         else if selectedCell == self.profileCell {
+            
             editProfileAction(sender: self)
         }
         else if selectedCell == self.switchCell {
+            
             let controller = GroupPickerController()
+            let wrapper = AirNavigationController(rootViewController: controller)
+            let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: controller, action: #selector(controller.dismissAction(sender:)))
             controller.mode = .fullscreen
-            let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: controller, action: #selector(controller.closeAction(sender:)))
             controller.navigationItem.rightBarButtonItems = [cancelButton]
-            let nav = AirNavigationController(rootViewController: controller)
-            UIViewController.topMostViewController()?.present(nav, animated: true, completion: nil)
+            self.slideMenuController()?.mainViewController?.present(wrapper, animated: true, completion: nil)
         }
         else if selectedCell == self.membersCell {
+            
             let controller = UserListController()
+            let wrapper = AirNavigationController(rootViewController: controller)
             let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: controller, action: #selector(controller.closeAction(sender:)))
             controller.navigationItem.rightBarButtonItems = [cancelButton]
-            let nav = AirNavigationController(rootViewController: controller)
-            UIViewController.topMostViewController()?.present(nav, animated: true, completion: nil)
+            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         }
         
         UIApplication.shared.setStatusBarHidden(false, with: UIStatusBarAnimation.slide)
@@ -247,14 +244,14 @@ extension SideMenuViewController: MFMailComposeViewControllerDelegate {
         
         switch result {
         case MFMailComposeResult.cancelled:    // 0
-            UIShared.Toast(message: "Feedback cancelled", controller: self, addToWindow: false)
+            UIShared.Toast(message: "Invites cancelled", controller: self, addToWindow: false)
         case MFMailComposeResult.saved:        // 1
-            UIShared.Toast(message: "Feedback saved", controller: self, addToWindow: false)
+            UIShared.Toast(message: "Invites saved", controller: self, addToWindow: false)
         case MFMailComposeResult.sent:        // 2
-            Reporting.track("Sent Feedback")
-            UIShared.Toast(message: "Feedback sent", controller: self, addToWindow: false)
+            Reporting.track("Sent Invites")
+            UIShared.Toast(message: "Invites sent", controller: self, addToWindow: false)
         case MFMailComposeResult.failed:    // 3
-            UIShared.Toast(message: "Feedback send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
+            UIShared.Toast(message: "Invites send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
             break
         }
         

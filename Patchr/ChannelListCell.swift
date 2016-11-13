@@ -18,6 +18,13 @@ class ChannelListCell: UITableViewCell {
     
     var channel: FireChannel!
     
+    func reset() {
+        self.title?.text = nil
+        self.star?.isHidden = true
+        self.lock?.isHidden = true
+        self.channel = nil
+    }
+    
     func bind(channel: FireChannel) {
         self.channel = channel
         

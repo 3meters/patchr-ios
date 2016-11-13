@@ -14,7 +14,7 @@ import FirebaseDatabaseUI
 class ChannelViewController: UIViewController, UITableViewDelegate {
     
     var messagesQuery: FIRDatabaseQuery!
-    var channelQuery: ChannelQuery!
+    var channelQuery: ChannelQuery?
     var channel: FireChannel!
     
     var tableView: UITableView!
@@ -108,9 +108,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
     
     deinit {
         NotificationCenter.default.removeObserver(self)
-        if self.channelQuery != nil {
-            self.channelQuery.remove()
-        }
+        self.channelQuery?.remove()
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -224,7 +222,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
             actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
                 doIt in
                 if doIt {
-                    message.delete()
+                    FireController.instance.delete(messageId: message.id!, channelId: message.channel!)
                 }
         }
     }
@@ -352,8 +350,6 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
     
     func bind(groupId: String, channelId: String) {
         
-        Log.d("Current channel: \(channelId)")
-        
         if self.tableView != nil && self.tableViewDataSource != nil {
             self.rowHeights.removeAllObjects()
             self.tableView.dataSource = nil
@@ -361,9 +357,14 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
         }
         
         let userId = UserController.instance.userId
+        self.channelQuery?.remove()
         self.channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId!)
-        
-        self.channelQuery.observe(with: { channel in
+        self.channelQuery!.observe(with: { channel in
+            
+            guard channel != nil else {
+                assertionFailure("channel not found or no longer exists")
+                return
+            }
             
             self.channel = channel
             self.drawNavBarButtons()
@@ -398,7 +399,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
                 let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key)! as FireMessage
                 
                 if let messageView = cell.view as? MessageViewCell {
-                    messageView.prepareForReuse()
+                    messageView.reset()
                 }
                 
                 if message.createdBy == nil {

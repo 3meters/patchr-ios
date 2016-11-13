@@ -79,6 +79,7 @@ class SettingsTableViewController: UITableViewController {
         self.progress!.show(true)
         
         UserController.instance.logout()
+        self.dismiss(animated: true, completion: nil)
     }
 
     func clearHistoryAction(sender: AnyObject) {

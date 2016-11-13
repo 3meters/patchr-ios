@@ -44,6 +44,10 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
         if self.mode == .update {
             let messageQuery = MessageQuery(channelId: self.inputChannelId, messageId: self.inputMessageId)
             messageQuery.once(with: { message in
+                guard message != nil else {
+                    assertionFailure("message not found or no longer exists")
+                    return
+                }
                 self.message = message
                 self.bind()
             })
@@ -303,9 +307,8 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
                     "photo": photo!
                     ]]
             }
-            
-            let newMessage = FireController.db.child("channel-messages/\(self.inputChannelId!)").childByAutoId()
-            newMessage.setValue(messageMap)
+            let path = "channel-messages/\(self.inputChannelId!)"
+            FireController.db.child(path).childByAutoId().setValue(messageMap)
         }
         else if self.mode == .update {
             
@@ -318,7 +321,7 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
     }
     
     func delete() {
-        message.delete()
+        FireController.instance.delete(messageId: message.id!, channelId: message.channel!)
         self.performBack(animated: true)
     }
 

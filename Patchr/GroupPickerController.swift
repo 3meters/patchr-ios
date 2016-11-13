@@ -11,7 +11,6 @@ import FirebaseDatabaseUI
 
 class GroupPickerController: UIViewController, UITableViewDelegate {
     
-    let db = FIRDatabase.database().reference()
     var query: FIRDatabaseQuery!
     
     var headerView: GroupsHeaderView!
@@ -72,13 +71,8 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
         self.present(navController, animated: true, completion: nil)
     }
     
-    func closeAction(sender: AnyObject?) {
-        if self.isModal {
-            self.dismiss(animated: true, completion: nil)
-        }
-        else {
-            let _ = self.navigationController?.popViewController(animated: true)
-        }
+    func dismissAction(sender: AnyObject?) {
+        self.performBack(animated: true)
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -96,7 +90,7 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
         
         if self.mode == .drawer {
             self.headerView = Bundle.main.loadNibNamed("GroupsHeaderView", owner: nil, options: nil)?.first as? GroupsHeaderView
-            self.headerView.closeButton?.addTarget(self, action: #selector(closeAction(sender:)), for: .touchUpInside)
+            self.headerView.dismissButton?.addTarget(self, action: #selector(dismissAction(sender:)), for: .touchUpInside)
             self.view.addSubview(self.headerView)
         }
         else {
@@ -129,7 +123,7 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
         if self.tableViewDataSource == nil {
             
             let userId = UserController.instance.userId
-            self.query = self.db.child("member-groups/\(userId!)").queryOrdered(byChild: "sort_priority")
+            self.query = FireController.db.child("member-groups/\(userId!)").queryOrdered(byChild: "sort_priority")
             
             self.tableViewDataSource = FUITableViewDataSource(
                 query: self.query,
@@ -140,12 +134,14 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
                     let groupId = snap.key
                     let link = snap.value as! [String: Any]
                     
+                    cell.reset()
                     cell.title?.textColor = Theme.colorText
+                    
                     if groupId == StateController.instance.groupId {
                         cell.title?.textColor = Colors.accentColorTextLight
                     }
                     
-                    self?.db.child("groups/\(groupId)").observeSingleEvent(of: .value, with: { snap in
+                    FireController.db.child("groups/\(groupId)").observeSingleEvent(of: .value, with: { snap in
                         if let group = FireGroup.from(dict: snap.value as? [String: Any], id: snap.key) {
                             group.membershipFrom(dict: link)
                             cell.bind(group: group)
@@ -159,9 +155,29 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
         }
     }
     
+    func performBack(animated: Bool = true) {
+        /* Override in subclasses for control of dismiss/pop process */
+        if isModal {
+            if self.navigationController != nil {
+                self.navigationController!.dismiss(animated: animated, completion: nil)
+            }
+            else {
+                self.dismiss(animated: animated, completion: nil)
+            }
+        }
+        else {
+            let _ = self.navigationController?.popViewController(animated: true)
+        }
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! GroupListCell
-        StateController.instance.setGroupId(groupId: cell.group.id)
+        self.dismissAction(sender: nil)
+        StateController.instance.setGroupId(groupId: cell.group.id, notify: true) { result in
+            if let groupId = StateController.instance.groupId, let channelId = StateController.instance.channelId {
+                MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+            }
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

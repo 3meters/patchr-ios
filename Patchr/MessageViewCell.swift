@@ -163,7 +163,7 @@ class MessageViewCell: AirUIView {
         self.addSubview(self.createdDate)
 	}
     
-    func prepareForReuse() {
+    func reset() {
         self.photo?.image = nil
         self.description_?.text = nil
         self.userPhoto.photo.image = nil

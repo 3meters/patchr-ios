@@ -207,7 +207,7 @@ public extension UIView {
 
 extension UIWindow {
     
-    func setRootViewController(rootViewController: UIViewController, animated: Bool) {
+    func setRootViewController(rootViewController: UIViewController, animated: Bool, completion: ((Bool) -> Void)? = nil) {
 		
         if !animated {
             self.rootViewController = rootViewController
@@ -226,7 +226,7 @@ extension UIWindow {
                 UIView.setAnimationsEnabled(false)
                 self.rootViewController = rootViewController
                 UIView.setAnimationsEnabled(oldState)
-            }, completion: nil)
+            }, completion: completion)
     }
 }
 
@@ -319,8 +319,8 @@ extension UIViewController {
              * Mostly because a more current client version is required. 
              */
             LocationController.instance.clearLastLocationAccepted()
-            UserController.instance.setUserId(userId: nil)
-            MainController.instance.route()
+            UserController.instance.clearUser()
+            MainController.instance.showLobby()
         }
         
         Log.w("Network Error Summary")

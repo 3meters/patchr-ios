@@ -20,6 +20,14 @@ class UserListCell: UITableViewCell {
     
     var user: FireUser!
     
+    func reset() {
+        self.photoView?.photo.image = nil
+        self.title?.text = nil
+        self.subtitle?.text = nil
+        self.role?.text = nil
+        self.presenceView?.showOffline()
+    }
+    
     func bind(user: FireUser) {
         
         self.user = user

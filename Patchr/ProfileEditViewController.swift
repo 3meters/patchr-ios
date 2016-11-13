@@ -55,6 +55,12 @@ class ProfileEditViewController: BaseEditViewController {
         initialize()
         let userQuery = UserQuery(userId: UserController.instance.userId!)
         userQuery.once(with: { user in
+            
+            guard user != nil else {
+                assertionFailure("user not found or no longer exists")
+                return
+            }
+            
             self.user = user
             self.bind()
         })

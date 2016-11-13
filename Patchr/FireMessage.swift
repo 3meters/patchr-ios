@@ -102,10 +102,6 @@ class FireMessage: NSObject {
         FireController.db.child(path).removeValue()
     }
     
-    func delete() {
-        FireController.db.child(self.path).removeValue()
-    }
-    
     func getReactionCount(emoji: Emoji) -> Int {
         let reaction = self.reactions?[emoji.rawValue]
         return (reaction?.count ?? 0)

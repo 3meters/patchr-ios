@@ -89,16 +89,4 @@ class FireChannel: NSObject {
         let path = "member-channels/\(userId!)/\(self.group!)/\(self.id!)/muted"
         FireController.db.child(path).setValue(on)
     }
-    
-    func delete() {
-        let channelMessagesPath = "channel-messages/\(self.id!)"
-        let channelMembersPath = "channel-members/\(self.id!)"
-        let updates: [String: Any] = [
-            self.path: NSNull(),
-            channelMessagesPath: NSNull(),
-            channelMembersPath: NSNull()
-        ]
-        /* Need to walk the users that are members of the channel */
-        FireController.db.child(self.path).updateChildValues(updates)
-    }
 }

@@ -14,9 +14,7 @@ import pop
 
 class ChannelPickerController: UIViewController, UITableViewDelegate, SlideMenuControllerDelegate, UINavigationControllerDelegate {
 
-    let db = FIRDatabase.database().reference()
-    var groupRef: FIRDatabaseReference!
-    var groupHandle: UInt!
+    var groupQuery: GroupQuery!
     var channelsQuery: FIRDatabaseQuery!
     var group: FireGroup!
     
@@ -26,7 +24,6 @@ class ChannelPickerController: UIViewController, UITableViewDelegate, SlideMenuC
     var cellReuseIdentifier: String!
     var footerView = AirLinkButton()
     var hasFavorites = false
-    let navigationAnimator = SlideAnimationController()
     var groupPickerController = GroupPickerController()
 
     /*--------------------------------------------------------------------------------------------
@@ -55,28 +52,30 @@ class ChannelPickerController: UIViewController, UITableViewDelegate, SlideMenuC
     *--------------------------------------------------------------------------------------------*/
     
     func addAction(sender: AnyObject?) {
+        
         let controller = PatchEditViewController()
-        let navController = AirNavigationController()
+        let nav = AirNavigationController(rootViewController: controller)
+        
         controller.inputState = .Creating
         controller.inputType = "group"
-        navController.viewControllers = [controller]
-        self.present(navController, animated: true, completion: nil)
+        
+        UIViewController.topMostViewController()?.present(nav, animated: true, completion: nil)
+        UIApplication.shared.setStatusBarHidden(false, with: UIStatusBarAnimation.slide)
+        slideMenuController()?.closeLeft()
     }
     
     func switchAction(sender: AnyObject?) {
-        self.navigationController!.pushViewController(self.groupPickerController, animated: true)
-    }
-    
-    func leftDidClose() {
-        let _ = self.navigationController?.popToRootViewController(animated: false)
-    }
-    
-    func navigationController(_ navigationController: UINavigationController,
-                    animationControllerFor operation: UINavigationControllerOperation,
-                                         from fromVC: UIViewController,
-                                             to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        self.navigationAnimator.reverse = (operation == .pop)
-        return self.navigationAnimator
+        
+        let controller = GroupPickerController()
+        let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: controller, action: #selector(controller.dismissAction(sender:)))
+        let nav = AirNavigationController(rootViewController: controller)
+        
+        controller.mode = .fullscreen
+        controller.navigationItem.rightBarButtonItems = [cancelButton]
+        
+        UIViewController.topMostViewController()?.present(nav, animated: true, completion: nil)
+        UIApplication.shared.setStatusBarHidden(false, with: UIStatusBarAnimation.slide)
+        slideMenuController()?.closeLeft()
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -85,9 +84,6 @@ class ChannelPickerController: UIViewController, UITableViewDelegate, SlideMenuC
 
     func groupDidChange(notification: NSNotification?) {
         bind()
-        if (self.slideMenuController()?.isLeftOpen())! && StateController.instance.channelId != nil {
-            self.slideMenuController()?.closeLeft()
-        }
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -127,68 +123,60 @@ class ChannelPickerController: UIViewController, UITableViewDelegate, SlideMenuC
     }
     
     func bind() {
-        
-        let groupId = StateController.instance.groupId
-        let userId = UserController.instance.userId
-        
-        if userId != nil && groupId != nil {
+
+        self.tableView.dataSource = nil
+        self.tableView.reloadData()
+
+        if let groupId = StateController.instance.groupId,
+            let userId = UserController.instance.userId {
             
-            self.groupRef = self.db.child("groups/\(groupId!)")
-            self.channelsQuery = self.db.child("member-channels/\(userId!)/\(groupId!)").queryOrdered(byChild: "sort_priority")
+            self.channelsQuery = FireController.db.child("member-channels/\(userId)/\(groupId)").queryOrdered(byChild: "sort_priority")
             
-            self.groupHandle = self.groupRef.observe(.value, with: { snap in
-                if !(snap.value is NSNull) {
-                    self.group = FireGroup.from(dict: snap.value as? [String: Any], id: snap.key)
-                    self.bindChannels()
-                }
+            self.groupQuery?.remove()
+            self.groupQuery = GroupQuery(groupId: groupId, userId: userId)
+            self.groupQuery!.observe(with: { group in
+                self.group = group
+                self.headerView.bind(patch: self.group)
+                self.bindChannels(groupId: groupId)
             })
-        }
-        else {
-            self.tableView.dataSource = nil
-            self.tableView.reloadData()
         }
     }
     
-    func bindChannels() {
+    func bindChannels(groupId: String) {
         
-        let groupId = StateController.instance.groupId
-        
-        self.headerView.bind(patch: self.group)
-        
-        self.tableView.dataSource = nil
-        self.tableView.reloadData()
-        
-        self.tableViewDataSource = ChannelsDataSource(
-            query: self.channelsQuery,
-            view: self.tableView,
-            populateCell: { [weak self] (view, indexPath, snap) -> ChannelListCell in
+        self.tableViewDataSource = ChannelsDataSource(query: self.channelsQuery
+            , view: self.tableView
+            , populateCell: { [weak self] (view, indexPath, snap) -> ChannelListCell in
             
-            let cell = view.dequeueReusableCell(withIdentifier: (self?.cellReuseIdentifier)!, for: indexPath) as! ChannelListCell
-            let channelId = snap.key
-            let link = snap.value as! [String: Any]
-            
-            cell.backgroundColor = Colors.white
-            cell.title?.textColor = Theme.colorText
-            cell.lock?.tintColor = Colors.brandColorLight
-            cell.star?.tintColor = Colors.brandColorLight
-            if channelId == StateController.instance.channelId {
-                cell.backgroundColor = Colors.accentColorFill
-                cell.title?.textColor = Colors.white
-                cell.lock?.tintColor = Colors.white
-                cell.star?.tintColor = Colors.white
-            }
+                let cell = view.dequeueReusableCell(withIdentifier: (self?.cellReuseIdentifier)!, for: indexPath) as! ChannelListCell
+                let channelId = snap.key
+                let link = snap.value as! [String: Any]
                 
-            let path = "group-channels/\(groupId!)/\(channelId)"
-            if let ref = self?.db.child(path) {
-                ref.observeSingleEvent(of: .value, with: { snap in
+                cell.reset()
+                cell.backgroundColor = Colors.white
+                cell.title?.textColor = Theme.colorText
+                cell.lock?.tintColor = Colors.brandColorLight
+                cell.star?.tintColor = Colors.brandColorLight
+                    
+                if channelId == StateController.instance.channelId {
+                    cell.backgroundColor = Colors.accentColorFill
+                    cell.title?.textColor = Colors.white
+                    cell.lock?.tintColor = Colors.white
+                    cell.star?.tintColor = Colors.white
+                }
+                
+                let path = "group-channels/\(groupId)/\(channelId)"
+                FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
                     if !(snap.value is NSNull) {
                         if let channel = FireChannel.from(dict: snap.value as? [String: Any], id: snap.key) {
                             channel.membershipFrom(dict: link)
                             cell.bind(channel: channel)
                         }
                     }
+                    else {
+                        Log.w("Ouch! User is member of channel that does not exist")
+                    }
                 })
-            }
                 
                 return cell
         })
@@ -199,66 +187,15 @@ class ChannelPickerController: UIViewController, UITableViewDelegate, SlideMenuC
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let cell = tableView.cellForRow(at: indexPath) as! ChannelListCell
-        StateController.instance.setChannelId(channelId: cell.channel.id)
-        self.slideMenuController()?.closeLeft()
-        tableView.reloadData()
+        if let channel = cell.channel {
+            MainController.instance.showChannel(groupId: self.group.id!, channelId: channel.id!)
+            self.slideMenuController()?.closeLeft()
+            tableView.reloadData()
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 36
-    }
-    
-    class SlideAnimationController: NSObject, UIViewControllerAnimatedTransitioning {
-        
-        var reverse: Bool = false
-        
-        func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-            return 2.0
-        }
-        
-        func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-            
-            let containerView = transitionContext.containerView
-            let toViewController = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)!
-            let fromViewController = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from)!
-            let toView = toViewController.view
-            let fromView = fromViewController.view
-            
-            if !reverse {
-                toView?.frame = CGRect(x: 0, y: 0, width: containerView.width(), height: containerView.height())
-                toView?.center = containerView.center
-                toView?.center.y = containerView.center.y + containerView.height()
-                
-                containerView.addSubview(toView!)
-                containerView.sendSubview(toBack: fromView!)
-                
-                let spring = POPSpringAnimation(propertyNamed: kPOPLayerPositionY)
-                spring?.toValue = containerView.center.y
-                spring?.springBounciness = 10
-                spring?.springSpeed = 8
-                spring?.completionBlock = { finished in
-                    transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
-                }                
-                toView?.layer.pop_add(spring, forKey: "positionAnimation")
-            }
-            else {
-                fromView?.frame = CGRect(x: 0, y: 0, width: containerView.width(), height: containerView.height())
-                fromView?.center = containerView.center
-                fromView?.center.y = containerView.center.y
-                
-                containerView.addSubview(toView!)
-                containerView.sendSubview(toBack: toView!)
-                
-                let spring = POPSpringAnimation(propertyNamed: kPOPLayerPositionY)
-                spring?.toValue = containerView.center.y + containerView.height()
-                spring?.springBounciness = 10
-                spring?.springSpeed = 8
-                spring?.completionBlock = { finished in
-                    transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
-                }
-                fromView?.layer.pop_add(spring, forKey: "positionAnimation")
-            }
-        }
     }
 }
 

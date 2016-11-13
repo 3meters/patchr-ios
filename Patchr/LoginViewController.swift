@@ -206,8 +206,10 @@ class LoginViewController: BaseEditViewController {
         processing = true
         
         FIRAuth.auth()?.signIn(withEmail: self.emailField.text!, password: self.passwordField.text!) { (user, error) in
+            
             self.processing = false
             self.progress?.hide(true)
+            
             if error != nil {
                 if error!._code == FIRAuthErrorCode.errorCodeEmailAlreadyInUse.rawValue {
                     self.Alert(title: "Email already used")
@@ -221,17 +223,13 @@ class LoginViewController: BaseEditViewController {
             }
             else {
                 Reporting.track("Logged In", properties: ["source": self.source as AnyObject])
-                UserController.instance.setUserId(userId: user?.uid)
-                self.didLogin()
+                UserController.instance.setUserId(userId: user?.uid) { result in
+                    let controller = GroupPickerController()
+                    controller.mode = .fullscreen
+                    self.navigationController?.pushViewController(controller, animated: true)
+                }
             }
         }
-    }
-
-    func didLogin() {
-        /* Navigate to main interface */
-        let controller = GroupPickerController()
-        controller.mode = .fullscreen
-        self.navigationController?.pushViewController(controller, animated: true)
     }
 
     func isValid() -> Bool {

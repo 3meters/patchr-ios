@@ -17,13 +17,11 @@ class StateController: NSObject {
 
     static let instance = StateController()
     
-    let db = FIRDatabase.database().reference()
-
     fileprivate(set) internal var groupId: String?
     fileprivate(set) internal var channelId: String?
     
-    fileprivate var groupQuery: GroupQuery!
-    fileprivate var channelQuery: ChannelQuery!
+    fileprivate var groupQuery: GroupQuery?
+    fileprivate var channelQuery: ChannelQuery?
     
     fileprivate(set) internal var group: FireGroup!
     fileprivate(set) internal var channel: FireChannel!
@@ -41,11 +39,12 @@ class StateController: NSObject {
         /* Init state */
         queue.tasks += { _, next in
             if UserController.instance.authenticated {
-                self.setGroupId(groupId: UserDefaults.standard.string(forKey: "groupId"), next: next)
+                if let groupId = UserDefaults.standard.string(forKey: "groupId") {
+                    self.setGroupId(groupId: groupId, next: next)
+                    return
+                }
             }
-            else {
-                next(nil)
-            }
+            next(nil)
         }
 
         queue.tasks += {
@@ -56,115 +55,148 @@ class StateController: NSObject {
         
         queue.run()
     }
-
-    func setGroupId(groupId: String?, channelId: String? = nil, next: ((Any?) -> Void)? = nil) {
-
-        /* Setting to nil */
-        if groupId == nil {
-            Log.d("Current group: nothing")
-            self.groupId = nil
-            self.group = nil
-            UserDefaults.standard.removeObject(forKey: "groupId")
-            if self.groupQuery != nil {
-                self.groupQuery.remove()
-            }
-            self.groupQuery = nil
-            setChannelId(channelId: nil)
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
-            if next != nil { next!(nil) }
+    
+    func setGroupId(groupId: String?, channelId: String? = nil, notify: Bool = true, next: ((Any?) -> Void)? = nil) {
+        
+        guard groupId != nil else {
+            assertionFailure("groupId cannot be nil")
+            next?(nil)
             return
         }
-            
-        /* Changing */
-        if self.groupId != groupId {
-            
-            Log.d("Current group: \(groupId!)")
-            
-            /* Validate first */
-            self.db.child("groups/\(groupId!)").observeSingleEvent(of: .value, with: { snap in
-                if !(snap.value is NSNull) {
-                    
-                    self.groupId = groupId
-                    UserDefaults.standard.set(groupId, forKey: "groupId")
-                    if self.groupQuery != nil {
-                        self.groupQuery.remove()
-                    }
-                    let userId = UserController.instance.userId
-                    self.groupQuery = GroupQuery(groupId: groupId!, userId: userId!)
-                    self.groupQuery.observe(with: { group in
-                        self.group = group
-                    })
-                    
-                    if channelId != nil {
-                        self.setChannelId(channelId: channelId, notify: false)
-                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
-                        /* group exists and using specified channel */
-                        if next != nil { next!(nil) }
-                    }
-                    else {
-                        /* Set last channel or first accessible channel */
-                        if let lastChannelId = UserDefaults.standard.string(forKey: groupId!) {
-                            self.setChannelId(channelId: lastChannelId, notify: false)
-                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
-                            /* group exists and using last channel */
-                            if next != nil { next!(nil) }
-                        }
-                        else {
-                            let userId = UserController.instance.userId
-                            let query = self.db.child("member-channels/\(userId!)/\(groupId!)").queryOrdered(byChild: "sort_priority")
-                            query.observeSingleEvent(of: .childAdded, with: { snap in
-                                if !(snap.value is NSNull) {
-                                    self.setChannelId(channelId: snap.key, notify: false)
-                                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
-                                    /* group exists and using first channel */
-                                    if next != nil { next!(nil) }
-                                }
-                            })
-                        }
-                    }
-                }
-                else {
-                    /* group no longer exists */
-                    self.groupId = nil
-                    self.channelId = nil
-                    if next != nil { next!(nil) }
-                }
-            })
-        }
-        else {
-            /* group unchanged */
-            if next != nil { next!(nil) }
-        }
-    }
-
-    func setChannelId(channelId: String?, notify: Bool = true) {
-        self.channelId = channelId
-        if channelId == nil {
-            if self.channelQuery != nil {
-                self.channelQuery.remove()
-            }
-            self.channelQuery = nil
-            self.channel = nil
+        
+        guard groupId != self.groupId else {
+            next?(nil)
+            return
         }
         
-        if self.groupId != nil {
-            if channelId == nil {
-                UserDefaults.standard.removeObject(forKey: self.groupId!)
+        /* Changing */
+        
+        let userId = UserController.instance.userId
+        self.groupQuery?.remove()
+        self.groupQuery = GroupQuery(groupId: groupId!, userId: userId!)
+        self.groupQuery!.observe(with: { group in
+            
+            guard group != nil else {
+                Log.w("Requested group invalid: \(groupId!)")
+                self.clearGroup()
+                next?(nil)
+                return
+            }
+            
+            self.group = group
+            self.groupId = groupId
+            UserDefaults.standard.set(groupId, forKey: "groupId")
+            Log.d("Current group: \(groupId!)")
+            
+            /* Use specified channel */
+            if channelId != nil {
+                self.setChannelId(channelId: channelId, notify: false) { result in
+                    if result != nil && notify {
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
+                    }
+                    next?(result)
+                }
             }
             else {
-                UserDefaults.standard.set(channelId, forKey: self.groupId!)
-                if self.channelQuery != nil {
-                    self.channelQuery.remove()
+                /* User last channel if available */
+                if let lastChannelId = UserDefaults.standard.string(forKey: groupId!) {
+                    self.setChannelId(channelId: lastChannelId, notify: false) { result in
+                        if result == nil {
+                            self.selectFirstChannel(groupId: groupId, notify: notify, next: next) // Try to recover
+                            return
+                        }
+                        if notify {
+                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
+                        }
+                        next?(result)
+                    }
                 }
-                let userId = UserController.instance.userId
-                self.channelQuery = ChannelQuery(groupId: groupId!, channelId: channelId!, userId: userId!)
-                self.channelQuery.observe(with: { channel in
-                    self.channel = channel
-                })
+                /* User first channel available to this user */
+                else {
+                    self.selectFirstChannel(groupId: groupId, notify: notify, next: next)
+                }
             }
-        }
-        if notify {
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.ChannelDidChange), object: self, userInfo: nil)
-        }
+        })
     }
+    
+    func selectFirstChannel(groupId: String?, notify: Bool = true, next: ((Any?) -> Void)? = nil) {
+        
+        let userId = UserController.instance.userId
+        let query = FireController.db.child("member-channels/\(userId!)/\(groupId!)").queryOrdered(byChild: "sort_priority").queryLimited(toFirst: 1)
+        
+        query.observeSingleEvent(of: .childAdded, with: { snap in
+            
+            if !(snap.value is NSNull) {
+                self.setChannelId(channelId: snap.key, notify: false) { result in
+                    if result != nil && notify {
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
+                    }
+                    next?(result)
+                }
+            }
+            else {
+                /* We totally whiffed on auto picking a channel which is a total fail */
+                Log.w("Group does not have a channel accessible by the current user")
+                self.clearGroup()
+                next?(nil)
+            }
+        })
+    }
+
+    func setChannelId(channelId: String?, notify: Bool = true, next: ((Any?) -> Void)? = nil) {
+        
+        guard channelId != nil && self.groupId != nil && UserController.instance.userId != nil else {
+            assertionFailure("userId, groupId and channelId must be set")
+            next?(nil)
+            return
+        }
+        
+        guard channelId != self.channelId else {
+            next?(nil)
+            return
+        }
+
+        self.channelQuery?.remove()
+        self.channelQuery = ChannelQuery(groupId: groupId!, channelId: channelId!, userId: UserController.instance.userId!)
+        self.channelQuery!.observe(with: { channel in
+            
+            guard channel != nil else {
+                Log.w("Requested channel invalid: \(channelId!)")
+                self.clearChannel()
+                next?(nil)
+                return
+            }
+            
+            self.channelId = channelId
+            self.channel = channel
+            UserDefaults.standard.set(channelId, forKey: self.groupId!) // channelId keyed on groupId
+            Log.d("Current channel: \(channelId!)")
+            
+            if notify {
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.ChannelDidChange), object: self, userInfo: nil)
+            }
+            next?(true)
+        })
+    }
+    
+    func clearGroup() {
+        Log.d("Current group: nothing")
+        clearChannel()
+        self.groupQuery?.remove() // Clear active observer if one
+        self.groupId = nil
+        self.group = nil
+        self.groupQuery = nil
+        UserDefaults.standard.removeObject(forKey: "groupId")
+    }
+    
+    func clearChannel() {
+        Log.d("Current channel: nothing")
+        self.channelQuery?.remove()
+        self.channelQuery = nil
+        self.channel = nil
+        self.channelId = nil
+        if self.groupId != nil {
+            UserDefaults.standard.removeObject(forKey: self.groupId!)   // channelId keyed on groupId
+        }
+    }    
 }

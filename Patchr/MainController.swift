@@ -21,14 +21,16 @@ class MainController: NSObject, iRateDelegate {
     let db = FIRDatabase.database().reference()
     var window: UIWindow?
     
-    var emptyController = EmptyViewController()
-    var channelController = ChannelViewController()
+    var slideController : SlideMenuController!
     var sideMenuController = SideMenuViewController()
     var channelPickerController = ChannelPickerController()
     
-    var slideController : SlideMenuController!
-    var navigationController: AirNavigationController!
-    var lobbyController: AirNavigationController!
+    var emptyController = EmptyViewController()
+    var channelController = ChannelViewController()
+    var lobbyController = LobbyViewController()
+    
+    var mainWrapper: AirNavigationController!
+    var lobbyWrapper: AirNavigationController!
     
     var upgradeRequired = false
 
@@ -38,24 +40,10 @@ class MainController: NSObject, iRateDelegate {
     * MARK: - Notifications
     *--------------------------------------------------------------------------------------------*/
 
-    func channelDidChange(notification: NSNotification) {
-        route()
-    }
-    
-    func groupDidChange(notification: NSNotification) {
-        route()
-    }
-
-    func userStateDidChange(notification: NSNotification) {
-        route()
-    }
-    
     func stateInitialized(notification: NSNotification) {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
         checkCompatibility()
         route()
-        NotificationCenter.default.addObserver(self, selector: #selector(groupDidChange(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidChange), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(channelDidChange(notification:)), name: NSNotification.Name(rawValue: Events.ChannelDidChange), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(userStateDidChange(notification:)), name: NSNotification.Name(rawValue: Events.UserStateDidChange), object: nil)
     }
     
     deinit {
@@ -101,16 +89,11 @@ class MainController: NSObject, iRateDelegate {
         SlideMenuOptions.animationDuration = CGFloat(0.2)
         SlideMenuOptions.simultaneousGestureRecognizers = false
 
-        self.lobbyController = AirNavigationController(rootViewController: LobbyViewController())
-        self.navigationController = AirNavigationController(rootViewController: self.channelPickerController)
-        self.navigationController.setNavigationBarHidden(true, animated: false)
+        self.mainWrapper = AirNavigationController(rootViewController: self.channelController)
+        self.slideController = SlideMenuController(mainViewController: self.mainWrapper, leftMenuViewController: self.channelPickerController, rightMenuViewController: self.sideMenuController)
+        self.lobbyWrapper = AirNavigationController(rootViewController: self.lobbyController)
 
-        self.slideController = SlideMenuController(
-            mainViewController: self.emptyController,
-            leftMenuViewController: self.navigationController,
-            rightMenuViewController: self.sideMenuController)
-
-        self.window?.setRootViewController(rootViewController: self.slideController, animated: true) // While we wait for state to initialize
+        self.window?.setRootViewController(rootViewController: self.emptyController, animated: true) // While we wait for state to initialize
         self.window?.makeKeyAndVisible()
         
         /* Initialize Branch: The deepLinkHandler gets called every time the app opens. */
@@ -137,47 +120,36 @@ class MainController: NSObject, iRateDelegate {
         else if UserController.instance.userId == nil {
             showLobby()
         }
-        else if StateController.instance.groupId != nil && StateController.instance.channelId != nil {
+        else if StateController.instance.groupId == nil || StateController.instance.channelId == nil {
+            showGroupPicker() // Here to catch inconsistent state
+        }
+        else {
             showMain()
             showChannel(groupId: StateController.instance.groupId!, channelId: StateController.instance.channelId!)
         }
     }
     
-    func showMain() {
-        if self.slideController.mainViewController != self.channelController {
-            _ = self.channelController.view // Triggers viewDidLoad
-            let nav = AirNavigationController(navigationBarClass: AirNavigationBar.self, toolbarClass: nil)
-            nav.viewControllers = [self.channelController]
-            self.slideController.changeMainViewController(nav, close: false)
-        }
-        if self.window?.rootViewController != self.slideController {
-            self.window?.setRootViewController(rootViewController: self.slideController, animated: true)
-        }
-    }
-
     func showLobby() {
-        if self.window?.rootViewController != self.lobbyController {
-            self.window?.setRootViewController(rootViewController: self.lobbyController, animated: true)
-        }
+        self.window?.setRootViewController(rootViewController: self.lobbyWrapper, animated: true)
     }
-
+    
     func showGroupPicker() {
+        StateController.instance.clearGroup()   // Make sure group and channel are both unset
         let controller = GroupPickerController()
         controller.mode = .fullscreen
-        let nav = AirNavigationController(rootViewController: controller)
-        self.window?.setRootViewController(rootViewController: nav, animated: true)
+        UIViewController.topMostViewController()?.present(controller, animated: true, completion: nil)
+    }
+    
+    func showMain() {
+        self.window?.setRootViewController(rootViewController: self.slideController, animated: true)
     }
 
     func showChannel(groupId: String, channelId: String) {
-        self.channelController.bind(groupId: groupId, channelId: channelId)
-    }
-
-    func clearChannel() {
-        if let slideMenuController = self.window?.rootViewController?.slideMenuController() {
-            let controller = EmptyViewController()
-            controller.emptyLabel.text = "You really need to select a channel!"
-            slideMenuController.changeMainViewController(controller, close: false)
+        if let root = self.window?.rootViewController, root != self.slideController {
+            showMain()
         }
+        let _ = self.channelController.view // Triggers viewDidLoad
+        self.channelController.bind(groupId: groupId, channelId: channelId)
     }
 
     func checkCompatibility() {

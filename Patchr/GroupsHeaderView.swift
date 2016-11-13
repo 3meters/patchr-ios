@@ -12,5 +12,5 @@ import UIKit
 class GroupsHeaderView: UIView {
 
     @IBOutlet weak var title : UILabel?
-    @IBOutlet weak var closeButton : UIButton?
+    @IBOutlet weak var dismissButton : UIButton?
 }
