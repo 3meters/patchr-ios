@@ -16,16 +16,16 @@ class ChannelsHeaderView: UIView {
 	@IBOutlet weak var photoView       : PhotoView?
     @IBOutlet weak var switchButton    : UIButton?
     
-	func bind(patch: FireGroup!) {
-        self.title?.text = patch.title
-		self.subtitle?.text = patch.name
+    func bind(group: FireGroup!) {
+        self.title?.text = group.title
+		self.subtitle?.text = group.name
         
-        if patch.photo != nil {
-            let photoUrl = PhotoUtils.url(prefix: patch.photo!.filename!, source: patch.photo!.source!, category: SizeCategory.profile)
-            self.photoView?.bind(photoUrl: photoUrl, name: nil, colorSeed: patch.id)
+        if let photo = group.photo, !photo.uploading {
+            let photoUrl = PhotoUtils.url(prefix: photo.filename!, source: photo.source!, category: SizeCategory.profile)
+            self.photoView?.bind(photoUrl: photoUrl, name: nil, colorSeed: group.id)
         }
         else {
-            self.photoView?.bind(photoUrl: nil, name: patch.title, colorSeed: patch.id)
+            self.photoView?.bind(photoUrl: nil, name: group.title, colorSeed: group.id)
         }
 	}
 }

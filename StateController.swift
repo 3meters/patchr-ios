@@ -56,7 +56,7 @@ class StateController: NSObject {
         queue.run()
     }
     
-    func setGroupId(groupId: String?, channelId: String? = nil, notify: Bool = true, next: ((Any?) -> Void)? = nil) {
+    func setGroupId(groupId: String?, channelId: String? = nil, next: ((Any?) -> Void)? = nil) {
         
         guard groupId != nil else {
             assertionFailure("groupId cannot be nil")
@@ -71,6 +71,7 @@ class StateController: NSObject {
         
         /* Changing */
         
+        Log.d("Current group: \(groupId!)")
         let userId = UserController.instance.userId
         self.groupQuery?.remove()
         self.groupQuery = GroupQuery(groupId: groupId!, userId: userId!)
@@ -83,67 +84,54 @@ class StateController: NSObject {
                 return
             }
             
+            if self.group != nil {
+                Log.d("Group updated: \(group!.id!)")
+            }
+            
             self.group = group
             self.groupId = groupId
             UserDefaults.standard.set(groupId, forKey: "groupId")
-            Log.d("Current group: \(groupId!)")
             
             /* Use specified channel */
             if channelId != nil {
-                self.setChannelId(channelId: channelId, notify: false) { result in
-                    if result != nil && notify {
-                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
-                    }
+                self.setChannelId(channelId: channelId) { result in
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
                     next?(result)
                 }
             }
             else {
                 /* User last channel if available */
                 if let lastChannelId = UserDefaults.standard.string(forKey: groupId!) {
-                    self.setChannelId(channelId: lastChannelId, notify: false) { result in
-                        if result == nil {
-                            self.selectFirstChannel(groupId: groupId, notify: notify, next: next) // Try to recover
-                            return
+                    
+                    let validateQuery = ChannelQuery(groupId: groupId!, channelId: lastChannelId, userId: userId!)
+                    validateQuery.once(with: { channel in
+                        if channel == nil {
+                            Log.w("Last channel invalid: \(lastChannelId): trying first channel")
+                            self.selectFirstChannel(groupId: groupId) { result in
+                                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
+                                next?(result)
+                            }
                         }
-                        if notify {
-                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
+                        else {
+                            self.setChannelId(channelId: lastChannelId) { result in
+                                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
+                                next?(result)
+                            }
                         }
-                        next?(result)
-                    }
+                    })
                 }
                 /* User first channel available to this user */
                 else {
-                    self.selectFirstChannel(groupId: groupId, notify: notify, next: next)
+                    self.selectFirstChannel(groupId: groupId) { result in
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
+                        next?(true)
+                    }
                 }
             }
         })
     }
     
-    func selectFirstChannel(groupId: String?, notify: Bool = true, next: ((Any?) -> Void)? = nil) {
-        
-        let userId = UserController.instance.userId
-        let query = FireController.db.child("member-channels/\(userId!)/\(groupId!)").queryOrdered(byChild: "sort_priority").queryLimited(toFirst: 1)
-        
-        query.observeSingleEvent(of: .childAdded, with: { snap in
-            
-            if !(snap.value is NSNull) {
-                self.setChannelId(channelId: snap.key, notify: false) { result in
-                    if result != nil && notify {
-                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
-                    }
-                    next?(result)
-                }
-            }
-            else {
-                /* We totally whiffed on auto picking a channel which is a total fail */
-                Log.w("Group does not have a channel accessible by the current user")
-                self.clearGroup()
-                next?(nil)
-            }
-        })
-    }
-
-    func setChannelId(channelId: String?, notify: Bool = true, next: ((Any?) -> Void)? = nil) {
+    func setChannelId(channelId: String?, next: ((Any?) -> Void)?) {
         
         guard channelId != nil && self.groupId != nil && UserController.instance.userId != nil else {
             assertionFailure("userId, groupId and channelId must be set")
@@ -156,26 +144,66 @@ class StateController: NSObject {
             return
         }
 
-        self.channelQuery?.remove()
-        self.channelQuery = ChannelQuery(groupId: groupId!, channelId: channelId!, userId: UserController.instance.userId!)
-        self.channelQuery!.observe(with: { channel in
+        Log.d("Current channel: \(channelId!)")
+        
+        /* First we validate */
+        let validateQuery = ChannelQuery(groupId: groupId!, channelId: channelId!, userId: UserController.instance.userId!)
+        
+        validateQuery.once(with: { channel in
             
             guard channel != nil else {
                 Log.w("Requested channel invalid: \(channelId!)")
                 self.clearChannel()
-                next?(nil)
                 return
             }
             
             self.channelId = channelId
             self.channel = channel
             UserDefaults.standard.set(channelId, forKey: self.groupId!) // channelId keyed on groupId
-            Log.d("Current channel: \(channelId!)")
             
-            if notify {
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.ChannelDidChange), object: self, userInfo: nil)
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.ChannelDidSwitch), object: self, userInfo: nil)
+            
+            next?(nil)
+            
+            /* Now we observe */
+            self.channelQuery?.remove()
+            self.channelQuery = ChannelQuery(groupId: self.groupId!, channelId: channelId!, userId: UserController.instance.userId!)
+            self.channelQuery!.observe(with: { channel in
+                if channel != nil {
+                    self.channel = channel
+                    Log.d("Channel updated: \(channel!.id!)")
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.ChannelDidChange), object: self, userInfo: nil)
+                }
+                else {
+                    /* Channel has been deleted */
+                    self.selectFirstChannel(groupId: self.groupId) { result in
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
+                        next?(true)
+                    }
+                }
+            })
+        })
+    }
+    
+    func selectFirstChannel(groupId: String?, next: ((Any?) -> Void)? = nil) {
+        
+        let userId = UserController.instance.userId
+        let query = FireController.db.child("member-channels/\(userId!)/\(groupId!)").queryOrdered(byChild: "index_priority_joined_at_desc").queryLimited(toFirst: 1)
+        
+        query.observeSingleEvent(of: .childAdded, with: { snap in
+            
+            if !(snap.value is NSNull) {
+                self.setChannelId(channelId: snap.key) { result in
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
+                    next?(true)
+                }
             }
-            next?(true)
+            else {
+                /* We totally whiffed on auto picking a channel which is a total fail */
+                Log.w("Group does not have a channel accessible by the current user")
+                self.clearGroup()
+                next?(nil)
+            }
         })
     }
     

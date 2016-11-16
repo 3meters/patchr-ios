@@ -123,7 +123,7 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
         if self.tableViewDataSource == nil {
             
             let userId = UserController.instance.userId
-            self.query = FireController.db.child("member-groups/\(userId!)").queryOrdered(byChild: "sort_priority")
+            self.query = FireController.db.child("member-groups/\(userId!)").queryOrdered(byChild: "index_priority_joined_at_desc")
             
             self.tableViewDataSource = FUITableViewDataSource(
                 query: self.query,
@@ -173,7 +173,7 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! GroupListCell
         self.dismissAction(sender: nil)
-        StateController.instance.setGroupId(groupId: cell.group.id, notify: true) { result in
+        StateController.instance.setGroupId(groupId: cell.group.id) { result in
             if let groupId = StateController.instance.groupId, let channelId = StateController.instance.channelId {
                 MainController.instance.showChannel(groupId: groupId, channelId: channelId)
             }

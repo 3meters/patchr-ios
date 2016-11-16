@@ -114,6 +114,18 @@ struct Utils {
         let imageKey = "\(Utils.DateTimeTag())_\(Utils.genSalt())"
         return imageKey
     }
+    
+    static func genRandomId() -> String {
+        let charCount = 9
+        let charSet = "abcdefghijklmnopqrstuvwxyz0123456789"
+        let charSetSize = charSet.length
+        var id = ""
+        for _ in 1...charCount {
+            let randPos = floorf(Float(arc4random_uniform(UInt32(charSetSize))))
+            id += charSet[Int(randPos)]
+        }
+        return id
+    }
 	
     static func initialsFromName(fullname: String, count: Int? = 2) -> String {
         let words: [String] = fullname.components(separatedBy: " ")

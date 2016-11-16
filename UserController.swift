@@ -49,27 +49,27 @@ class UserController: NSObject {
         Reporting.updateUser(user: nil)
     }
 
-    func setUserId(userId: String?, next: ((Any?) -> Void)? = nil) {
-        
-        guard userId != nil else {
-            assertionFailure("userId must be set")
-            return
-        }
+    func setUserId(userId: String, next: ((Any?) -> Void)? = nil) {
         
         guard userId != self.userId else { return }
 
+        Log.i("User logged in: \(userId)")
+        
         self.userId = userId
         self.userQuery?.remove()
-        self.userQuery = UserQuery(userId: userId!, trackPresence: true)
+        self.userQuery = UserQuery(userId: userId, trackPresence: true)
         self.userQuery!.observe(with: { user in
             
             guard user != nil else {
                 assertionFailure("user not found or no longer exists")
                 return
             }
+            
+            if self.user != nil {
+                Log.d("User updated: \(user!.id!)")
+            }
 
             self.user = user
-            Log.i("User logged in: \(user!.username!)")
             next?(nil)
             
             Reporting.updateUser(user: FIRAuth.auth()?.currentUser)

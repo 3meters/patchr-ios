@@ -252,11 +252,11 @@ class PhotoEditView: UIView {
 	}
 	
 	func bindPhoto(photo: Photo?) {
-		if photo != nil {
-			self.imageButton.setImageWithPhoto(photo: photo!)
-			self.usingPhotoDefault = false
-			self.photoActive = true
-		}
+//		if photo != nil {
+//			self.imageButton.setImageWithPhoto(photo: photo!)
+//			self.usingPhotoDefault = false
+//			self.photoActive = true
+//		}
 	}
 
     func bind(url: URL?) {

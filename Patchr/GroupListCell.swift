@@ -38,8 +38,8 @@ class GroupListCell: UITableViewCell {
             self.subtitle?.textColor = Theme.colorTextSecondary
         }
         
-        if group.photo != nil {
-            let photoUrl = PhotoUtils.url(prefix: group.photo!.filename!, source: group.photo!.source!, category: SizeCategory.profile)
+        if let photo = group.photo, !photo.uploading {
+            let photoUrl = PhotoUtils.url(prefix: photo.filename!, source: photo.source!, category: SizeCategory.profile)
             self.photoView?.bind(photoUrl: photoUrl, name: nil, colorSeed: group.id)
         }
         else {

@@ -47,7 +47,9 @@ func PatchrUserDefaultKey(subKey: String) -> String {
 }
 
 public struct Events {
+    static let ChannelDidSwitch             = "ChannelDidSwitch"
     static let ChannelDidChange             = "ChannelDidChange"
+    static let GroupDidSwitch               = "GroupDidSwitch"
     static let GroupDidChange               = "GroupDidChange"
     static let PhotoDidChange               = "PhotoDidChange"
     static let PhotoRemoved                 = "PhotoRemoved"

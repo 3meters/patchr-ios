@@ -128,7 +128,7 @@ class MemberDetailView: UIView {
         self.title.text = user.profile?.fullName == nil || (user.profile?.fullName?.isEmpty)! ? user.username : user.profile?.fullName
         self.subtitle.text = "@\(user.username!)"
         self.presenceView.bind(online: user.presence)
-        if let photo = user.profile?.photo {
+        if let photo = user.profile?.photo, !photo.uploading {
             if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
                 self.photo.setImageWithUrl(url: photoUrl)
                 self.gradient.isHidden = false

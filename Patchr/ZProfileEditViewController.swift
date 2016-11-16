@@ -15,11 +15,6 @@ import Firebase
 
 class ZProfileEditViewController: BaseEditViewController {
 
-    var processing: Bool = false
-    var progressStartLabel: String?
-    var progressFinishLabel: String?
-    var cancelledLabel: String?
-
     var schema: String?
 
     var entityPostRequest	: URLSessionTask?
@@ -44,8 +39,6 @@ class ZProfileEditViewController: BaseEditViewController {
     var joinButton           = AirFeaturedButton()
     var termsButton          = AirLinkButton()
     var message				 = AirLabelTitle()
-
-    var progress			 : AirProgress?
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -312,30 +305,30 @@ class ZProfileEditViewController: BaseEditViewController {
                 image = Utils.prepareImage(image: image)
 
                 /* Generate image key */
-                let imageKey = "\(Utils.genImageKey()).jpg"
+//                let imageKey = "\(Utils.genImageKey()).jpg"
 
                 /* Upload */
-                self.imageUploadRequest = S3.sharedService.uploadImageToS3(image: image, imageKey: imageKey) {
-                    task in
-
-                    if let err = task.error {
-                        if task.isCancelled {
-                            cancelled = true
-                        }
-                        queue.skip()
-                        next(Result(response: nil, error: err as NSError?))
-                    }
-                    else {
-                        let photo = [
-                            "width": Int(image.size.width), // width/height are in points...should be pixels?
-                            "height": Int(image.size.height),
-                            "source": S3.sharedService.imageSource,
-                            "prefix": imageKey
-                        ] as [String : Any]
-                        parameters["photo"] = photo
-                        next(nil)
-                    }
-                }
+//                self.imageUploadRequest = S3.sharedService.uploadImageToS3(image: image, imageKey: imageKey) {
+//                    task in
+//
+//                    if let err = task.error {
+//                        if task.isCancelled {
+//                            cancelled = true
+//                        }
+//                        queue.skip()
+//                        next(Result(response: nil, error: err as NSError?))
+//                    }
+//                    else {
+//                        let photo = [
+//                            "width": Int(image.size.width), // width/height are in points...should be pixels?
+//                            "height": Int(image.size.height),
+//                            "source": S3.sharedService.imageSource,
+//                            "prefix": imageKey
+//                        ] as [String : Any]
+//                        parameters["photo"] = photo
+//                        next(nil)
+//                    }
+//                }
             }
         }
 
@@ -568,7 +561,6 @@ class ZProfileEditViewController: BaseEditViewController {
         if let gesture = sender as? UIGestureRecognizer, let hud = gesture.view as? MBProgressHUD {
             hud.animationType = MBProgressHUDAnimation.zoomIn
             hud.hide(true)
-            let _ = self.imageUploadRequest?.cancel() // Should do nothing if upload already complete or isn't any
             self.entityPostRequest?.cancel()
         }
     }

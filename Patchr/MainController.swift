@@ -89,7 +89,8 @@ class MainController: NSObject, iRateDelegate {
         SlideMenuOptions.animationDuration = CGFloat(0.2)
         SlideMenuOptions.simultaneousGestureRecognizers = false
 
-        self.mainWrapper = AirNavigationController(rootViewController: self.channelController)
+        self.mainWrapper = AirNavigationController(navigationBarClass: AirNavigationBar.self, toolbarClass: nil)
+        self.mainWrapper.viewControllers = [self.channelController]
         self.slideController = SlideMenuController(mainViewController: self.mainWrapper, leftMenuViewController: self.channelPickerController, rightMenuViewController: self.sideMenuController)
         self.lobbyWrapper = AirNavigationController(rootViewController: self.lobbyController)
 
@@ -178,7 +179,7 @@ class MainController: NSObject, iRateDelegate {
                 FireController.db.child("group-members/\(groupId)/\(userId!)").observeSingleEvent(of: .value, with: { snap in
                     let alreadyMember = !(snap.value is NSNull)
                     if !alreadyMember {
-                        FireController.instance.addUserToGroup(groupId: groupId, channelId: channelId, guest: guest!, complete: { error in
+                        FireController.instance.addUserToGroup(groupId: groupId, channelId: channelId, guest: guest!, then: { error in
                             StateController.instance.setGroupId(groupId: groupId, channelId: channelId)
                         })
                     }

@@ -13,8 +13,8 @@ import FirebaseDatabaseUI
 
 class ChannelViewController: UIViewController, UITableViewDelegate {
     
-    var messagesQuery: FIRDatabaseQuery!
     var channelQuery: ChannelQuery?
+    var messagesQuery: FIRDatabaseQuery!
     var channel: FireChannel!
     
     var tableView: UITableView!
@@ -195,11 +195,13 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
 
     func editAction() {
 
-        let controller = PatchEditViewController()
-        let navController = AirNavigationController()
-        navController.viewControllers = [controller]
-
-        self.present(navController, animated: true, completion: nil)
+        let controller = ChannelEditViewController()
+        let wrapper = AirNavigationController()
+        controller.mode = .update
+        controller.inputChannelId = self.channel.id
+        controller.inputGroupId = self.channel.group
+        wrapper.viewControllers = [controller]
+        self.present(wrapper, animated: true, completion: nil)
     }
     
     func editMessageAction(message: FireMessage) {
@@ -352,17 +354,27 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
         
         if self.tableView != nil && self.tableViewDataSource != nil {
             self.rowHeights.removeAllObjects()
+            self.headerView.reset()
             self.tableView.dataSource = nil
             self.tableView.reloadData()
         }
         
         let userId = UserController.instance.userId
+        
         self.channelQuery?.remove()
         self.channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId!)
         self.channelQuery!.observe(with: { channel in
             
             guard channel != nil else {
-                assertionFailure("channel not found or no longer exists")
+                /* Most likely they channel has been deleted from under us. */
+                if self.tableView != nil && self.tableViewDataSource != nil {
+                    self.rowHeights.removeAllObjects()
+                    self.headerView.reset()
+                    self.tableView.dataSource = nil
+                    self.tableView.reloadData()
+                }
+                StateController.instance.selectFirstChannel(groupId: groupId)
+                MainController.instance.showChannel(groupId: groupId, channelId: StateController.instance.channelId!)
                 return
             }
             
@@ -388,14 +400,13 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
             }
         })
         
-        self.messagesQuery = FireController.db.child("channel-messages/\(channelId)").queryOrdered(byChild: "timestamp")
+        self.messagesQuery = FireController.db.child("channel-messages/\(channelId)").queryOrdered(byChild: "created_at_desc")
         
-        self.tableViewDataSource = FUITableViewDataSource(
-            query: self.messagesQuery,
-            view: self.tableView,
-            populateCell: { [weak self] (view, indexPath, snap) -> WrapperTableViewCell in
+        self.tableViewDataSource = FUITableViewDataSource(query: self.messagesQuery
+            , view: self.tableView
+            , populateCell: { [weak self] tableView, indexPath, snap in
                 
-                let cell = view.dequeueReusableCell(withIdentifier: (self?.cellReuseIdentifier)!, for: indexPath) as! WrapperTableViewCell
+                let cell = tableView.dequeueReusableCell(withIdentifier: (self?.cellReuseIdentifier)!, for: indexPath) as! WrapperTableViewCell
                 let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key)! as FireMessage
                 
                 if let messageView = cell.view as? MessageViewCell {

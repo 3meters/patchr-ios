@@ -73,18 +73,7 @@ class PhotoView: UIControl {
 	}
     
 	func bindToEntity(entity: Entity!) {
-		if entity != nil {
-			if entity.photo != nil {
-				let photoUrl = PhotoUtils.url(prefix: entity.photo!.prefix!, source: entity.photo!.source!, category: SizeCategory.profile)
-                bind(photoUrl: photoUrl, name: entity.name, colorSeed: nil)
-			}
-			else {
-                bind(photoUrl: nil, name: entity.name, colorSeed: nil)
-			}
-		}
-		else {
-            bind(photoUrl: nil, name: nil, colorSeed: nil)
-		}
+        /* Zombie */
 	}
 	
     func bind(photoUrl: URL?, name: String?, colorSeed: String?) {

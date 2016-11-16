@@ -522,7 +522,6 @@ extension Dictionary {
     }
 }
 
-
 extension NSDate {
     var milliseconds: Int64 {
         return Int64(self.timeIntervalSince1970 * 1000)

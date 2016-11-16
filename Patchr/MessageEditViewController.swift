@@ -12,26 +12,16 @@ import THContactPicker
 import MBProgressHUD
 import Firebase
 
-class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
+class MessageEditViewController: BaseEditViewController {
 
-    var serverOffset: Int!
-    
     /* For editing */
     var inputMessageId: String!
     var inputChannelId: String!
     var message: FireMessage!
 
-    var descriptionField	= AirTextView()
-    var photoEditView       = PhotoEditView()
-    
-    var mode: Mode = .insert
-    var processing			: Bool = false
-    var progressStartLabel	: String?
-    var progressFinishLabel	: String?
-    var cancelledLabel		: String?
-    var firstAppearance		= true
-    var progress			: AirProgress?
-    var doneButton			= AirFeaturedButton()
+    var descriptionField = AirTextView()
+    var photoEditView = PhotoEditView()
+    var doneButton = AirFeaturedButton()
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -52,11 +42,6 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
                 self.bind()
             })
         }
-        else if self.mode == .insert {
-            FireController.instance.getServerTimeOffset(with: { offset in
-                self.serverOffset = offset
-            })
-        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -64,11 +49,6 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
         if self.mode == .insert && self.firstAppearance  {
             self.descriptionField.becomeFirstResponder()
         }
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.firstAppearance = false
     }
     
     override func viewWillLayoutSubviews() {
@@ -133,26 +113,6 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
         }
     }
 
-    func userCancelTaskAction(sender: AnyObject) {
-        if let gesture = sender as? UIGestureRecognizer, let hud = gesture.view as? MBProgressHUD {
-            hud.animationType = MBProgressHUDAnimation.zoomIn
-            hud.hide(true)
-            let _ = self.imageUploadRequest?.cancel() // Should do nothing if upload already complete or isn't any
-        }
-    }
-    
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        if let textView = textView as? AirTextView {
-            self.activeTextField = textView
-        }
-    }
-    
-    func textViewDidEndEditing(_ textView: UITextView) {
-        if self.activeTextField == textView {
-            self.activeTextField = nil
-        }
-    }
-    
     func textViewDidChange(_ textView: UITextView) {
         if let textView = textView as? AirTextView {
             textView.placeholderLabel.isHidden = !self.descriptionField.text.isEmpty
@@ -176,8 +136,11 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
         self.photoEditView.configureTo(photoMode: .Empty)
 
         self.descriptionField = AirTextView()
-        self.descriptionField.placeholderLabel.text = "What\'s happening?"
-        self.descriptionField.placeholderLabel.insets = UIEdgeInsetsMake(0, 0, 0, 0)
+        self.descriptionField.placeholder = "What\'s happening?"
+        self.descriptionField.floatingLabelActiveTextColor = Colors.accentColorTextLight
+        self.descriptionField.floatingLabelFont = Theme.fontComment
+        self.descriptionField.floatingLabelTextColor = Theme.colorTextPlaceholder
+        self.descriptionField.delegate = self
         self.descriptionField.initialize()
         self.descriptionField.delegate = self
 
@@ -190,10 +153,9 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(photoRemoved(sender:)), name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: nil)
 
         if self.mode == .insert {
+            
             Reporting.screen("MessageNew")
-            self.progressStartLabel = "Posting"
             self.progressFinishLabel = "Posted"
-            self.cancelledLabel = "Post cancelled"
 
             /* Navigation bar buttons */
             let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: self, action: #selector(MessageEditViewController.cancelAction(sender:)))
@@ -202,10 +164,9 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
             self.navigationItem.rightBarButtonItems = [doneButton]
         }
         else if self.mode == .update {
+            
             Reporting.screen("MessageEdit")
-            self.progressStartLabel = "Updating"
             self.progressFinishLabel = "Updated"
-            self.cancelledLabel = "Update cancelled"
 
             self.doneButton.isHidden = true
 
@@ -225,7 +186,7 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
             self.descriptionField.text = self.message.text!
         }
         
-        if let photo = self.message.attachments?.first?.photo {
+        if let photo = self.message.attachments?.first?.photo, !photo.uploading {
             if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
                 self.photoEditView.configureTo(photoMode: .Photo)
                 self.photoEditView.bind(url: photoUrl)
@@ -236,58 +197,25 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
     }
 
     func post() {
+        
         self.processing = true
-        
-        if let image = self.photoEditView.imageButton.image(for: .normal) {
-            postPhoto(image: image)
-        }
-        else {
-            postMessage(photo: nil)
-        }
-        
-        UIShared.Toast(message: self.progressStartLabel)
-        self.processing = false
-        self.performBack(animated: true)
-    }
-    
-    func postPhoto(image: UIImage?) {
-        
-        /* Ensure image is resized/rotated before upload */
-        let preparedImage = Utils.prepareImage(image: image!)
-        
-        /* Generate image key */
-        let imageKey = "\(Utils.genImageKey()).jpg"
-        
-        /* Upload */
-        DispatchQueue.global().async {
-            S3.sharedService.upload(
-                image: preparedImage,
-                imageKey: imageKey,
-                progress: self.photoEditView.progressBlock,
-                completionHandler: { task, error in
-                    
-                if let error = error {
-                    Log.w("Image upload error: \(error.localizedDescription)")
-                }
-                else {
-                    let photo = [
-                        "width": Int(preparedImage.size.width), // width/height are in points...should be pixels?
-                        "height": Int(preparedImage.size.height),
-                        "source": S3.sharedService.imageSource,
-                        "filename": imageKey
-                        ] as [String: Any]
-                    
-                    self.postMessage(photo: photo)
-                }
-            })
-        }
-    }
-    
-    func postMessage(photo: [String: Any]?) {
         
         if self.mode == .insert {
             
-            let timestamp = Utils.now() + self.serverOffset!
+            let path = "channel-messages/\(self.inputChannelId!)"
+            let refMessage = FireController.db.child(path).childByAutoId()
+            
+            var photoMap: [String: Any]?
+            if let image = self.photoEditView.imageButton.image(for: .normal) {
+                photoMap = postPhoto(image: image, progress: self.photoEditView.progressBlock, next: { error in
+                    if error == nil {
+                        photoMap!["uploading"] = NSNull()
+                        refMessage.child("attachments").setValue([["photo": photoMap!]])
+                    }
+                })
+            }
+            
+            let timestamp = Utils.now() + (FireController.instance.serverOffset ?? 0)
             let timestampReversed = -1 * timestamp
             
             var messageMap: [String: Any] = [:]
@@ -302,22 +230,39 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
                 messageMap["text"] = self.descriptionField.text
             }
             
-            if photo != nil {
-                messageMap["attachments"] = [[
-                    "photo": photo!
-                    ]]
+            if photoMap != nil {
+                messageMap["attachments"] = [["photo": photoMap!]]
             }
-            let path = "channel-messages/\(self.inputChannelId!)"
-            FireController.db.child(path).childByAutoId().setValue(messageMap)
+            
+            refMessage.setValue(messageMap)
         }
         else if self.mode == .update {
             
             var updateMap: [String: Any] = ["modified_at": FIRServerValue.timestamp()]
-            updateMap["attachments"] = photo != nil ? [["photo": photo!]] : NSNull()
+            let path = self.message.path
+            
+            if self.photoEditView.photoDirty {
+                var photoMap: [String: Any]?
+                if let image = self.photoEditView.imageButton.image(for: .normal) {
+                    photoMap = postPhoto(image: image, progress: self.photoEditView.progressBlock, next: { error in
+                        if error == nil {
+                            photoMap!["uploading"] = NSNull()
+                            FireController.db.child(path).child("attachments").setValue([["photo": photoMap!]])
+                        }
+                    })
+                }
+                
+                updateMap["attachments"] = photoMap != nil ? [["photo": photoMap!]] : NSNull()
+            }
+            
             updateMap["text"] = self.descriptionField.text.isEmpty ? NSNull() : self.descriptionField.text
             
-            FireController.db.child(self.message.path).updateChildValues(updateMap)
+            FireController.db.child(path).updateChildValues(updateMap)
         }
+        
+        UIShared.Toast(message: self.progressFinishLabel)
+        self.processing = false
+        self.performBack(animated: true)
     }
     
     func delete() {
@@ -354,11 +299,6 @@ class MessageEditViewController: BaseEditViewController, UITextViewDelegate {
                 return false
         }
         return true
-    }
-    
-    enum Mode: Int {
-        case insert
-        case update
     }
 }
 

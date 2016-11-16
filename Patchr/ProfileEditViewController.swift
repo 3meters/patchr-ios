@@ -15,7 +15,6 @@ import Firebase
 class ProfileEditViewController: BaseEditViewController {
     
     var user: FireUser!
-    var mode: Mode = .update
 
     var message = AirLabelTitle()
     var photoEditView = PhotoEditView()
@@ -53,8 +52,7 @@ class ProfileEditViewController: BaseEditViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
-        let userQuery = UserQuery(userId: UserController.instance.userId!)
-        userQuery.once(with: { user in
+        UserQuery(userId: UserController.instance.userId!).once(with: { user in
             
             guard user != nil else {
                 assertionFailure("user not found or no longer exists")
@@ -164,8 +162,21 @@ class ProfileEditViewController: BaseEditViewController {
     
     override func photoDidChange(sender: NSNotification) {
         super.photoDidChange(sender: sender)
+        
         let image = self.photoEditView.imageButton.image(for: .normal)
-        postPhoto(image: image)
+        let path = self.user.path
+        var photoMap: [String: Any]?
+        photoMap = postPhoto(image: image!, progress: self.photoEditView.progressBlock, next: { error in
+            if error == nil {
+                photoMap!["uploading"] = NSNull()
+                FireController.db.child(path).updateChildValues(["profile/photo": photoMap!])
+            }
+        })
+        
+        FireController.db.child(path).updateChildValues([
+            "modified_at": FIRServerValue.timestamp(),
+            "profile/photo": photoMap
+        ])
     }
     
     override func photoRemoved(sender: NSNotification) {
@@ -173,11 +184,7 @@ class ProfileEditViewController: BaseEditViewController {
         FireController.db.child(self.user.path).updateChildValues([
             "modified_at": FIRServerValue.timestamp(),
             "profile/photo": NSNull()
-        ]) { (err, ref) in
-            if err != nil {
-                UIShared.Toast(message: "Network error")
-            }
-        }
+        ])
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -199,9 +206,6 @@ class ProfileEditViewController: BaseEditViewController {
 
         self.firstNameField.placeholder = "First name"
         self.firstNameField.font = Theme.fontTextDisplay
-        self.firstNameField.floatingLabelActiveTextColor = Colors.accentColorTextLight
-        self.firstNameField.floatingLabelFont = Theme.fontComment
-        self.firstNameField.floatingLabelTextColor = Theme.colorTextPlaceholder
         self.firstNameField.delegate = self
         self.firstNameField.autocapitalizationType = .words
         self.firstNameField.autocorrectionType = .no
@@ -210,9 +214,6 @@ class ProfileEditViewController: BaseEditViewController {
 
         self.lastNameField.placeholder = "Last name"
         self.lastNameField.font = Theme.fontTextDisplay
-        self.lastNameField.floatingLabelActiveTextColor = Colors.accentColorTextLight
-        self.lastNameField.floatingLabelFont = Theme.fontComment
-        self.lastNameField.floatingLabelTextColor = Theme.colorTextPlaceholder
         self.lastNameField.delegate = self
         self.lastNameField.autocapitalizationType = .words
         self.lastNameField.autocorrectionType = .no
@@ -221,9 +222,6 @@ class ProfileEditViewController: BaseEditViewController {
 
         self.phoneField.placeholder = "Phone number"
         self.phoneField.font = Theme.fontTextDisplay
-        self.phoneField.floatingLabelActiveTextColor = Colors.accentColorTextLight
-        self.phoneField.floatingLabelFont = Theme.fontComment
-        self.phoneField.floatingLabelTextColor = Theme.colorTextPlaceholder
         self.phoneField.delegate = self
         self.phoneField.autocapitalizationType = .none
         self.phoneField.autocorrectionType = .no
@@ -232,9 +230,6 @@ class ProfileEditViewController: BaseEditViewController {
         
         self.skypeField.placeholder = "Skype username"
         self.skypeField.font = Theme.fontTextDisplay
-        self.skypeField.floatingLabelActiveTextColor = Colors.accentColorTextLight
-        self.skypeField.floatingLabelFont = Theme.fontComment
-        self.skypeField.floatingLabelTextColor = Theme.colorTextPlaceholder
         self.skypeField.delegate = self
         self.skypeField.autocapitalizationType = .none
         self.skypeField.autocorrectionType = .no
@@ -265,59 +260,10 @@ class ProfileEditViewController: BaseEditViewController {
         self.phoneField.text = self.user.profile?.phone
         self.skypeField.text = self.user.profile?.skype
         
-        if let photo = self.user.profile?.photo {
+        if let photo = self.user.profile?.photo, !photo.uploading {
             if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
                 self.photoEditView.bind(url: photoUrl)
             }
-        }
-    }
-    
-    func postPhoto(image: UIImage?) {
-        
-        guard image != nil else {
-            Log.w("Cannot post image that is nil")
-            return
-        }
-        
-        /* Ensure image is resized/rotated before upload */
-        let preparedImage = Utils.prepareImage(image: image!)
-        
-        /* Generate image key */
-        let imageKey = "\(Utils.genImageKey()).jpg"
-        
-        /* Upload */
-        DispatchQueue.global().async {
-            S3.sharedService.upload(
-                image: preparedImage,
-                imageKey: imageKey,
-                progress: self.photoEditView.progressBlock,
-                completionHandler: { task, error in
-                    
-                if let error = error {
-                    Log.w("Image upload error: \(error.localizedDescription)")
-                }
-                else {
-                    let photo = [
-                        "width": Int(preparedImage.size.width), // width/height are in points...should be pixels?
-                        "height": Int(preparedImage.size.height),
-                        "source": S3.sharedService.imageSource,
-                        "filename": imageKey
-                        ] as [String: Any]
-                    
-                    FireController.db.child(self.user.path).updateChildValues([
-                        "modified_at": FIRServerValue.timestamp(),
-                        "profile/photo": photo
-                        ])
-                }
-            })
-        }
-    }
-    
-    func progressWasCancelled(sender: AnyObject) {
-        if let gesture = sender as? UIGestureRecognizer, let hud = gesture.view as? MBProgressHUD {
-            hud.animationType = MBProgressHUDAnimation.zoomIn
-            hud.hide(true)
-            let _ = self.imageUploadRequest?.cancel() // Should do nothing if upload already complete or isn't any
         }
     }
     

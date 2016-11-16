@@ -18,11 +18,12 @@ class ChannelPickerController: UIViewController, UITableViewDelegate, SlideMenuC
     var channelsQuery: FIRDatabaseQuery!
     var group: FireGroup!
     
-    var headerView: ChannelsHeaderView!
     var tableView = AirTableView(frame: CGRect.zero, style: .plain)
     var tableViewDataSource: FUITableViewDataSource!
     var cellReuseIdentifier: String!
+    var headerView: ChannelsHeaderView!
     var footerView = AirLinkButton()
+    
     var hasFavorites = false
     var groupPickerController = GroupPickerController()
 
@@ -53,13 +54,11 @@ class ChannelPickerController: UIViewController, UITableViewDelegate, SlideMenuC
     
     func addAction(sender: AnyObject?) {
         
-        let controller = PatchEditViewController()
-        let nav = AirNavigationController(rootViewController: controller)
-        
-        controller.inputState = .Creating
-        controller.inputType = "group"
-        
-        UIViewController.topMostViewController()?.present(nav, animated: true, completion: nil)
+        let controller = ChannelEditViewController()
+        let wrapper = AirNavigationController(rootViewController: controller)
+        controller.mode = .insert
+        controller.inputGroupId = self.group.id!
+        UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         UIApplication.shared.setStatusBarHidden(false, with: UIStatusBarAnimation.slide)
         slideMenuController()?.closeLeft()
     }
@@ -83,6 +82,14 @@ class ChannelPickerController: UIViewController, UITableViewDelegate, SlideMenuC
     *--------------------------------------------------------------------------------------------*/
 
     func groupDidChange(notification: NSNotification?) {
+        bind()
+    }
+    
+    func channelDidChange(notification: NSNotification?) {
+        self.tableView.reloadData()
+    }
+
+    func channelDidSwitch(notification: NSNotification?) {
         bind()
     }
     
@@ -120,77 +127,77 @@ class ChannelPickerController: UIViewController, UITableViewDelegate, SlideMenuC
         self.view.addSubview(self.footerView)
         
         NotificationCenter.default.addObserver(self, selector: #selector(groupDidChange(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidChange), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(channelDidChange(notification:)), name: NSNotification.Name(rawValue: Events.ChannelDidChange), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(channelDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.ChannelDidSwitch), object: nil)
     }
     
     func bind() {
-
-        self.tableView.dataSource = nil
-        self.tableView.reloadData()
+        
+        if self.tableViewDataSource != nil {
+            self.tableView.dataSource = nil
+            self.tableView.reloadData()
+        }
 
         if let groupId = StateController.instance.groupId,
             let userId = UserController.instance.userId {
-            
-            self.channelsQuery = FireController.db.child("member-channels/\(userId)/\(groupId)").queryOrdered(byChild: "sort_priority")
             
             self.groupQuery?.remove()
             self.groupQuery = GroupQuery(groupId: groupId, userId: userId)
             self.groupQuery!.observe(with: { group in
                 self.group = group
-                self.headerView.bind(patch: self.group)
-                self.bindChannels(groupId: groupId)
+                self.headerView.bind(group: self.group)
             })
-        }
-    }
-    
-    func bindChannels(groupId: String) {
-        
-        self.tableViewDataSource = ChannelsDataSource(query: self.channelsQuery
-            , view: self.tableView
-            , populateCell: { [weak self] (view, indexPath, snap) -> ChannelListCell in
             
-                let cell = view.dequeueReusableCell(withIdentifier: (self?.cellReuseIdentifier)!, for: indexPath) as! ChannelListCell
-                let channelId = snap.key
-                let link = snap.value as! [String: Any]
-                
-                cell.reset()
-                cell.backgroundColor = Colors.white
-                cell.title?.textColor = Theme.colorText
-                cell.lock?.tintColor = Colors.brandColorLight
-                cell.star?.tintColor = Colors.brandColorLight
+            self.channelsQuery = FireController.db.child("member-channels/\(userId)/\(groupId)").queryOrdered(byChild: "index_priority_joined_at_desc")
+            
+            self.tableViewDataSource = ChannelsDataSource(query: self.channelsQuery
+                , view: self.tableView
+                , populateCell: { tableView, indexPath, snap in
                     
-                if channelId == StateController.instance.channelId {
-                    cell.backgroundColor = Colors.accentColorFill
-                    cell.title?.textColor = Colors.white
-                    cell.lock?.tintColor = Colors.white
-                    cell.star?.tintColor = Colors.white
-                }
-                
-                let path = "group-channels/\(groupId)/\(channelId)"
-                FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
-                    if !(snap.value is NSNull) {
-                        if let channel = FireChannel.from(dict: snap.value as? [String: Any], id: snap.key) {
-                            channel.membershipFrom(dict: link)
-                            cell.bind(channel: channel)
+                    let cell = tableView.dequeueReusableCell(withIdentifier: (self.cellReuseIdentifier)!, for: indexPath) as! ChannelListCell
+                    let channelId = snap.key
+                    let link = snap.value as! [String: Any]
+                    
+                    cell.reset()
+                    cell.backgroundColor = Colors.white
+                    cell.title?.textColor = Theme.colorText
+                    cell.lock?.tintColor = Colors.brandColorLight
+                    cell.star?.tintColor = Colors.brandColorLight
+                    
+                    if channelId == StateController.instance.channelId {
+                        cell.backgroundColor = Colors.accentColorFill
+                        cell.title?.textColor = Colors.white
+                        cell.lock?.tintColor = Colors.white
+                        cell.star?.tintColor = Colors.white
+                    }
+                    
+                    let path = "group-channels/\(groupId)/\(channelId)"
+                    FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
+                        if !(snap.value is NSNull) {
+                            if let channel = FireChannel.from(dict: snap.value as? [String: Any], id: snap.key) {
+                                channel.membershipFrom(dict: link)
+                                cell.bind(channel: channel)
+                            }
                         }
-                    }
-                    else {
-                        Log.w("Ouch! User is member of channel that does not exist")
-                    }
-                })
-                
-                return cell
-        })
-        
-        self.tableView.dataSource = self.tableViewDataSource
+                        else {
+                            Log.w("Ouch! User is member of channel that does not exist")
+                        }
+                    })
+                    
+                    return cell
+            })
+            
+            self.tableView.dataSource = self.tableViewDataSource
+        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let cell = tableView.cellForRow(at: indexPath) as! ChannelListCell
         if let channel = cell.channel {
+            StateController.instance.setChannelId(channelId: channel.id!, next: nil) // We know it's good
             MainController.instance.showChannel(groupId: self.group.id!, channelId: channel.id!)
             self.slideMenuController()?.closeLeft()
-            tableView.reloadData()
         }
     }
     

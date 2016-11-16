@@ -85,6 +85,7 @@
 		E20C3A861BE08887008CCED1 /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */; };
 		E20C742F1DD4BB0700D90A4D /* ZInviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C742E1DD4BB0700D90A4D /* ZInviteViewController.swift */; };
 		E20C74311DD548A400D90A4D /* invite.html in Resources */ = {isa = PBXBuildFile; fileRef = E20C74301DD548A400D90A4D /* invite.html */; };
+		E20C74351DD934CD00D90A4D /* ChannelEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C74341DD934CC00D90A4D /* ChannelEditViewController.swift */; };
 		E21FE56D1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E21FE56C1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift */; };
 		E224C3501B6ED27F00879775 /* PatchrShare.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E238BAE41B51D3290094AF41 /* PatchrShare.storyboard */; };
 		E224C3551B6EDBBE00879775 /* PatchTargetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */; };
@@ -406,6 +407,7 @@
 		E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stopwatch.swift; sourceTree = "<group>"; };
 		E20C742E1DD4BB0700D90A4D /* ZInviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZInviteViewController.swift; sourceTree = "<group>"; };
 		E20C74301DD548A400D90A4D /* invite.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = invite.html; sourceTree = "<group>"; };
+		E20C74341DD934CC00D90A4D /* ChannelEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelEditViewController.swift; sourceTree = "<group>"; };
 		E21FE56C1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationSettingsSimpleViewController.swift; sourceTree = "<group>"; };
 		E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTargetViewController.swift; sourceTree = "<group>"; };
 		E227294A1CEA743600913041 /* GalleryGridViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryGridViewController.swift; sourceTree = "<group>"; };
@@ -645,10 +647,10 @@
 				9FDCC68ACDC02C764EE70B02 /* FireController.swift */,
 				E2F618D51AFFACF00055D09C /* LocationController.swift */,
 				9FDCCADB4957C2E128DDE9FF /* MainController.swift */,
-				E2DEAB4D1DCCC15900FF3BDE /* StateController.swift */,
 				E2CCAADF1B67CC0E0071170C /* NotificationController.swift */,
 				7D3D39EF1A6F116E00A44CB2 /* Proxibase.swift */,
 				E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */,
+				E2DEAB4D1DCCC15900FF3BDE /* StateController.swift */,
 				9FDCC6A9289168B01494872A /* UserController.swift */,
 				E2D25DC71B23892000E51461 /* ZUserController.swift */,
 				E238BADF1B51D3290094AF41 /* PatchrShare */,
@@ -1129,6 +1131,7 @@
 			children = (
 				9FDCCBBC7BF1C0419007B9F9 /* AccountEditViewController.swift */,
 				E2B2CAB11C553A8900CAE183 /* BaseEditViewController.swift */,
+				E20C74341DD934CC00D90A4D /* ChannelEditViewController.swift */,
 				7D021ABD1A9409450047DAAE /* LoginViewController.swift */,
 				E24198FD1C1736E900DDA549 /* MessageEditViewController.swift */,
 				E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */,
@@ -1595,6 +1598,7 @@
 				E24D74511BB349BD0061F339 /* BaseDetailViewController.swift in Sources */,
 				E26BBF981DB5734F00038754 /* PHAsset+identifier.swift in Sources */,
 				E2A5A8851B703B9B006D6E81 /* PhotoEditView.swift in Sources */,
+				E20C74351DD934CD00D90A4D /* ChannelEditViewController.swift in Sources */,
 				E2C7C5C21B2A0B730045038A /* NotificationSettingsViewController.swift in Sources */,
 				7DA730941A71ACC9008C25FA /* ServiceObject.m in Sources */,
 				E20C3A7D1BD70DD2008CCED1 /* AirTableView.swift in Sources */,

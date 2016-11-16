@@ -10,10 +10,18 @@ import UIKit
 import AWSS3
 import Firebase
 
-class BaseEditViewController: BaseViewController, UITextFieldDelegate {
+class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextViewDelegate {
 	
-    var imageUploadRequest: AWSS3TransferManagerUploadRequest?    
-	var activeTextField		: UIView?
+	var activeTextField: UIView?
+    
+    var processing: Bool = false
+    var progressStartLabel: String?
+    var progressFinishLabel: String?
+    var cancelledLabel: String?
+    var progress: AirProgress?
+    var firstAppearance	= true
+
+    var mode: Mode = .insert
 	
 	/*--------------------------------------------------------------------------------------------
 	* Lifecycle
@@ -27,6 +35,11 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden(sender:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
 	}
 	
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.firstAppearance = false
+    }
+
 	override func viewDidDisappear(_ animated: Bool) {
 		super.viewDidDisappear(animated)
         
@@ -50,7 +63,7 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate {
     func photoRemoved(sender: NSNotification) {
         viewWillLayoutSubviews()
     }
-	
+
 	/*--------------------------------------------------------------------------------------------
 	* Methods
 	*--------------------------------------------------------------------------------------------*/
@@ -58,6 +71,41 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate {
 	override func initialize() {
 		super.initialize()
 	}
+    
+    func postPhoto(image: UIImage
+        , progress: AWSS3TransferUtilityProgressBlock? = nil
+        , next: ((Any?) -> Void)? = nil) -> [String: Any] {
+        
+        /* Ensure image is resized/rotated before upload */
+        let preparedImage = Utils.prepareImage(image: image)
+        
+        /* Generate image key */
+        let imageKey = "\(Utils.genImageKey()).jpg"
+        
+        let photoMap = [
+            "width": Int(preparedImage.size.width), // width/height are in points...should be pixels?
+            "height": Int(preparedImage.size.height),
+            "source": S3.sharedService.imageSource,
+            "filename": imageKey,
+            "uploading": true
+            ] as [String: Any]
+        
+        /* Upload */
+        DispatchQueue.global().async {
+            S3.sharedService.upload(
+                image: preparedImage,
+                imageKey: imageKey,
+                progress: progress,
+                completionHandler: { task, error in
+                    if error != nil {
+                        Log.w("Image upload error: \(error!.localizedDescription)")
+                    }
+                    next?(error)
+            })
+        }
+        
+        return photoMap
+    }
     
 	func keyboardWillBeShown(sender: NSNotification) {
 		/*
@@ -93,12 +141,17 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate {
 		self.scrollView.contentInset = UIEdgeInsetsMake(self.scrollView.contentInset.top, 0, 0, 0)
 		self.scrollView.scrollIndicatorInsets = scrollView.contentInset
 	}
+    
+    enum Mode: Int {
+        case insert
+        case update
+    }
 }
 
 extension BaseEditViewController {
-	/*
-	 * UITextFieldDelegate
-	 */
+    
+	/* UITextFieldDelegate */
+    
 	func textFieldDidBeginEditing(_ textField: UITextField) {
 		self.activeTextField = textField
 	}
@@ -112,4 +165,18 @@ extension BaseEditViewController {
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		return true
 	}
+    
+    /* UITextViewDelegate */
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if let textView = textView as? AirTextView {
+            self.activeTextField = textView
+        }
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if self.activeTextField == textView {
+            self.activeTextField = nil
+        }
+    }
 }

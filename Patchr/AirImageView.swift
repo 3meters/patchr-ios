@@ -105,75 +105,7 @@ class AirImageView: UIImageView {
     }
     
     func setImageWithPhoto(photo: Photo, animate: Bool = true) {
-        
-		let photoUrl = PhotoUtils.url(prefix: photo.prefix!, source: photo.source!, category: self.sizeCategory)
-		
-		guard photoUrl?.absoluteString != self.linkedPhotoUrl?.absoluteString else {
-			return
-		}
-		
-        if photo.source == PhotoSource.resource {
-            if animate {
-                UIView.transition(with: self,
-                    duration: 0.5,
-                    options: UIViewAnimationOptions.transitionCrossDissolve,
-                    animations: {
-						/* Optimization to skip decoding from file */
-						if photo.prefix == "imgDefaultPatch" {
-							self.image = Utils.imageDefaultPatch
-						}
-						if photo.prefix == "imgDefaultUser" {
-							self.image = Utils.imageDefaultUser
-						}
-						else {
-							self.image = UIImage(named: photo.prefix)
-						}
-                    },
-                    completion: nil)
-            }
-            else {
-				/* Optimization to skip decoding from file */
-				if photo.prefix == "imgDefaultPatch" {
-					self.image = Utils.imageDefaultPatch
-				}
-				if photo.prefix == "imgDefaultUser" {
-					self.image = Utils.imageDefaultUser
-				}
-				else {
-					self.image = UIImage(named: photo.prefix)
-				}
-            }
-            return
-        }
-        
-        DispatchQueue.global().async {
-			if (photoUrl?.absoluteString.isEmpty)! {
-				let error = NSError(domain: "Photo error", code: 0, userInfo: [NSLocalizedDescriptionKey:"Photo has invalid source: \(photo.source!)"])
-				DispatchQueue.main.async() {
-					self.imageCompletion(image: nil, error: error, cacheType: nil, url: nil, animate: animate)
-				}
-				return
-			}
-			
-			/* Stash the url we are loading so we can check for a match later when download is completed. */
-			self.linkedPhotoUrl = photoUrl
-			let options: SDWebImageOptions = [.retryFailed, .lowPriority, .avoidAutoSetImage, /* .ProgressiveDownload */]
-			
-            self.sd_setImage(with: photoUrl,
-				placeholderImage: nil,
-				options: options,
-				completed: {
-                    [weak self] image, error, cacheType, url in
-                    if (self != nil) {
-                        DispatchQueue.main.async() {
-                            self!.imageCompletion(image: image, error: error, cacheType: cacheType, url: url, animate: animate)
-                        }
-                    }
-            })
-		}
-        DispatchQueue.main.async {
-			self.startActivity()
-		}
+        /* Zombie */
     }
 	
 	func setImageWithUrl(url: URL, animate: Bool = true) {
@@ -199,7 +131,7 @@ class AirImageView: UIImageView {
 		
         if error != nil {
 			
-			Log.w("Image fetch failed: " + error!.localizedDescription)
+			Log.w("Image fetch failed for image view: " + error!.localizedDescription)
 			Log.w("Failed url: \(url!.absoluteString)")
 			
 			self.linkedPhotoUrl = nil

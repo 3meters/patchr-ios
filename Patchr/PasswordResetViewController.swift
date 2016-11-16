@@ -11,10 +11,8 @@ import MBProgressHUD
 
 class PasswordResetViewController: BaseEditViewController {
 
-    var processing			: Bool = false
     var emailValidated		: Bool = false
     var resetRequested		: Bool = false
-    var progress			: AirProgress!
     var userId				: String?
     var sessionKey			: String?
 
@@ -202,12 +200,12 @@ class PasswordResetViewController: BaseEditViewController {
         self.emailField.resignFirstResponder()
 
         self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
-        self.progress.mode = MBProgressHUDMode.indeterminate
-        self.progress.styleAs(progressStyle: .ActivityWithText)
-        self.progress.minShowTime = 0.5
-        self.progress.labelText = "Verifying..."
-        self.progress.removeFromSuperViewOnHide = true
-        self.progress.show(true)
+        self.progress?.mode = MBProgressHUDMode.indeterminate
+        self.progress?.styleAs(progressStyle: .ActivityWithText)
+        self.progress?.minShowTime = 0.5
+        self.progress?.labelText = "Verifying..."
+        self.progress?.removeFromSuperViewOnHide = true
+        self.progress?.show(true)
 
         /*
         * Successful login will also update the install record so the authenticated user

@@ -13,11 +13,6 @@ import Facade
 
 class PatchEditViewController: BaseEditViewController {
 
-    var processing: Bool = false
-    var progressStartLabel: String?
-    var progressFinishLabel: String?
-    var cancelledLabel: String?
-
     var schema = Schema.ENTITY_PATCH
 
     var entityPostRequest	: URLSessionTask?
@@ -26,7 +21,7 @@ class PatchEditViewController: BaseEditViewController {
     var inputPatch			: Patch?
     var inputType			: String?
 
-    var settings			: PatchSettings!
+    //    var settings			: PatchSettings!
 
     var photoView           = PhotoEditView()
     var nameField           = AirTextField()
@@ -59,7 +54,6 @@ class PatchEditViewController: BaseEditViewController {
     var typeValue			: String? = nil
     var visibilityValue		= "public"
 
-    var progress			: AirProgress?
     var insertedEntity		: Entity?
 
     /*--------------------------------------------------------------------------------------------
@@ -154,7 +148,6 @@ class PatchEditViewController: BaseEditViewController {
         if let gesture = sender as? UIGestureRecognizer, let hud = gesture.view as? MBProgressHUD {
             hud.animationType = MBProgressHUDAnimation.zoomIn
             hud.hide(true)
-            let _ = self.imageUploadRequest?.cancel() // Should do nothing if upload already complete or isn't any
             self.entityPostRequest?.cancel()
         }
     }
@@ -184,7 +177,6 @@ class PatchEditViewController: BaseEditViewController {
 
     func settingsAction(sender: AnyObject) {
         let controller = PatchSettingsController()
-        controller.inputSettings = self.settings
         self.navigationController?.pushViewController(controller, animated: true)
     }
 
@@ -358,13 +350,9 @@ class PatchEditViewController: BaseEditViewController {
 
         if self.inputState == State.Editing {
 
-            self.settings = PatchSettings(patch: self.inputPatch)
-
             self.nameField.text = self.inputPatch?.name
             self.descriptionField.text = self.inputPatch?.description_
             self.photoView.bindPhoto(photo: self.inputPatch?.photo)
-
-            textViewDidChange(self.descriptionField)
 
             /* Visibility */
             self.visibilitySwitch.isOn = (self.inputPatch?.visibility == "private")
@@ -394,8 +382,6 @@ class PatchEditViewController: BaseEditViewController {
             }
         }
         else {
-
-            self.settings = PatchSettings(patch: nil)
 
             /* Use location managers last location fix */
             if let lastLocation = LocationController.instance.mostRecentAvailableLocation() {
@@ -429,30 +415,30 @@ class PatchEditViewController: BaseEditViewController {
                 image = Utils.prepareImage(image: image)
 
                 /* Generate image key */
-                let imageKey = "\(Utils.genImageKey()).jpg"
+//                let imageKey = "\(Utils.genImageKey()).jpg"
 
                 /* Upload */
-                self.imageUploadRequest = S3.sharedService.uploadImageToS3(image: image, imageKey: imageKey) {
-                    task in
-
-                    if let err = task.error {
-                        if task.isCancelled {
-                            cancelled = true
-                        }
-                        queue.skip()
-                        next(Result(response: nil, error: err as NSError?))
-                    }
-                    else {
-                        let photo = [
-                            "width": Int(image.size.width), // width/height are in points...should be pixels?
-                            "height": Int(image.size.height),
-                            "source": S3.sharedService.imageSource,
-                            "prefix": imageKey
-                        ] as [String : Any]
-                        parameters["photo"] = photo
-                        next(nil)
-                    }
-                }
+//                self.imageUploadRequest = S3.sharedService.uploadImageToS3(image: image, imageKey: imageKey) {
+//                    task in
+//
+//                    if let err = task.error {
+//                        if task.isCancelled {
+//                            cancelled = true
+//                        }
+//                        queue.skip()
+//                        next(Result(response: nil, error: err as NSError?))
+//                    }
+//                    else {
+//                        let photo = [
+//                            "width": Int(image.size.width), // width/height are in points...should be pixels?
+//                            "height": Int(image.size.height),
+//                            "source": S3.sharedService.imageSource,
+//                            "prefix": imageKey
+//                        ] as [String : Any]
+//                        parameters["photo"] = photo
+//                        next(nil)
+//                    }
+//                }
             }
         }
 
@@ -575,7 +561,6 @@ class PatchEditViewController: BaseEditViewController {
             parameters["visibility"] = nilToNull(value: self.visibilityValue as AnyObject?)
             parameters["location"] = nilToNull(value: self.locationValue)
             parameters["type"] = nilToNull(value: self.typeValue as AnyObject?)
-            parameters["locked"] = nilToNull(value: self.settings.locked as AnyObject?)
         }
         else {
             if self.nameField.text != self.inputPatch?.name  {
@@ -594,7 +579,6 @@ class PatchEditViewController: BaseEditViewController {
                 parameters["type"] = nilToNull(value: self.typeValue as AnyObject?)
             }
             parameters["location"] = nilToNull(value: self.locationValue)
-            parameters["locked"] = nilToNull(value: self.settings.locked as AnyObject?)
         }
         return parameters
     }
@@ -649,9 +633,6 @@ class PatchEditViewController: BaseEditViewController {
                 }
             }
             if self.typeValue != self.inputPatch?.type {
-                return true
-            }
-            if self.settings.locked != self.inputPatch?.lockedValue {
                 return true
             }
         }
@@ -719,28 +700,6 @@ extension PatchEditViewController: MapViewDelegate {
     var locationPhoto: AnyObject? {
         get {
             return self.photoView.imageButton.image(for: .normal)
-        }
-    }
-}
-
-extension PatchEditViewController: UITextViewDelegate {
-
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        if let textView = textView as? AirTextView {
-            self.activeTextField = textView
-        }
-    }
-
-    func textViewDidEndEditing(_ textView: UITextView) {
-        if self.activeTextField == textView {
-            self.activeTextField = nil
-        }
-    }
-
-    func textViewDidChange(_ textView: UITextView) {
-        if let textView = textView as? AirTextView {
-            textView.placeholderLabel.isHidden = !self.descriptionField.text.isEmpty
-            self.viewWillLayoutSubviews()
         }
     }
 }

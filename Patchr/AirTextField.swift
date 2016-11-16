@@ -34,6 +34,9 @@ class AirTextField: JVFloatLabeledTextField {
 		self.rule.backgroundColor = Theme.colorRule
 		self.font = Theme.fontText
 		self.textColor = Theme.colorText
+        self.floatingLabelActiveTextColor = Colors.accentColorTextLight
+        self.floatingLabelFont = Theme.fontComment
+        self.floatingLabelTextColor = Theme.colorTextPlaceholder
 		self.clearButtonMode = UITextFieldViewMode.whileEditing
 		self.addSubview(self.rule)
 	}

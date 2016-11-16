@@ -65,56 +65,7 @@ class AirImageButton: UIButton {
     }
     
     func setImageWithPhoto(photo: Photo, animate: Bool = true) {
-        
-        if photo.source == PhotoSource.resource {
-            if animate {
-                UIView.transition(with: self,
-                    duration: 0.5,
-                    options: UIViewAnimationOptions.transitionCrossDissolve,
-                    animations: {
-                        self.setImage(UIImage(named: photo.prefix), for:UIControlState.normal)
-                    },
-                    completion: nil)
-            }
-            else {
-                self.setImage(UIImage(named: photo.prefix), for:UIControlState.normal)
-            }
-            return
-        }
-		
-		if self.progressAuto {
-			self.startProgress()
-		}
-        
-        DispatchQueue.global().async {
-			
-			let photoUrl = PhotoUtils.url(prefix: photo.prefix!, source: photo.source!, category: self.sizeCategory)
-			
-			if (photoUrl?.absoluteString.isEmpty)! {
-				let error = NSError(domain: "Photo error", code: 0, userInfo: [NSLocalizedDescriptionKey:"Photo has invalid source: \(photo.source!)"])
-				DispatchQueue.main.async() {
-					self.imageCompletion(image: nil, error: error, cacheType: nil, url: nil, animate: animate)
-				}
-				return
-			}
-			
-			self.linkedPhotoUrl = photoUrl
-			
-			let options: SDWebImageOptions = [.retryFailed, .lowPriority, .avoidAutoSetImage, /* .ProgressiveDownload */]
-			
-            self.sd_setImage(with: photoUrl,
-                for:UIControlState.normal,
-                placeholderImage: nil,
-                options: options,
-                completed: { [weak self] image, error, cacheType, url in
-                    if (self != nil) {
-                        DispatchQueue.main.async() {
-                            self!.imageCompletion(image: image, error: error, cacheType: cacheType, url: url, animate: animate)
-                        }
-                    }
-				}
-			)
-		}
+        /* Zombie */
     }
 
     func setImageWithUrl(url: URL, animate: Bool = true, finished: ((_ success: Bool) -> Void)? = nil) {
@@ -151,7 +102,7 @@ class AirImageButton: UIButton {
         }
         
         if error != nil {
-            Log.w("Image fetch failed: " + error!.localizedDescription)
+            Log.w("Image fetch failed for image button: " + error!.localizedDescription)
             Log.w("Failed url: \(url!.absoluteString)")
             
             self.linkedPhotoUrl = nil

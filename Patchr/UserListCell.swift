@@ -47,7 +47,12 @@ class UserListCell: UITableViewCell {
         }
         
         let fullName = user.profile?.fullName
-        let photoUrl = PhotoUtils.url(prefix: user.profile?.photo?.filename, source: user.profile?.photo?.source, category: SizeCategory.profile)
-        self.photoView?.bind(photoUrl: photoUrl, name: fullName, colorSeed: user.id)
+        if let photo = user.profile?.photo, !photo.uploading {
+            let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile)
+            self.photoView?.bind(photoUrl: photoUrl, name: fullName, colorSeed: user.id)
+        }
+        else {
+            self.photoView?.bind(photoUrl: nil, name: fullName, colorSeed: user.id)
+        }
     }
 }

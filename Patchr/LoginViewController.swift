@@ -13,10 +13,8 @@ import Firebase
 
 class LoginViewController: BaseEditViewController {
 
-    var processing: Bool = false
     var provider = AuthProvider.PROXIBASE
     var onboardMode = OnboardMode.Login
-    var progress: AirProgress!
     var source = "Lobby"
 
     var emailField = AirTextField()
@@ -65,12 +63,12 @@ class LoginViewController: BaseEditViewController {
                 self.passwordField.resignFirstResponder()
 
                 self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
-                self.progress.mode = MBProgressHUDMode.indeterminate
-                self.progress.styleAs(progressStyle: .ActivityWithText)
-                self.progress.minShowTime = 0.5
-                self.progress.labelText = "Verifying..."
-                self.progress.removeFromSuperViewOnHide = true
-                self.progress.show(true)
+                self.progress?.mode = MBProgressHUDMode.indeterminate
+                self.progress?.styleAs(progressStyle: .ActivityWithText)
+                self.progress?.minShowTime = 0.5
+                self.progress?.labelText = "Verifying..."
+                self.progress?.removeFromSuperViewOnHide = true
+                self.progress?.show(true)
                 
                 signup()
             }
@@ -78,12 +76,12 @@ class LoginViewController: BaseEditViewController {
                 self.passwordField.resignFirstResponder()
 
                 self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
-                self.progress.mode = MBProgressHUDMode.indeterminate
-                self.progress.styleAs(progressStyle: .ActivityWithText)
-                self.progress.minShowTime = 0.5
-                self.progress.labelText = "Logging in..."
-                self.progress.removeFromSuperViewOnHide = true
-                self.progress.show(true)
+                self.progress?.mode = MBProgressHUDMode.indeterminate
+                self.progress?.styleAs(progressStyle: .ActivityWithText)
+                self.progress?.minShowTime = 0.5
+                self.progress?.labelText = "Logging in..."
+                self.progress?.removeFromSuperViewOnHide = true
+                self.progress?.show(true)
 
                 login()
             }
@@ -223,7 +221,7 @@ class LoginViewController: BaseEditViewController {
             }
             else {
                 Reporting.track("Logged In", properties: ["source": self.source as AnyObject])
-                UserController.instance.setUserId(userId: user?.uid) { result in
+                UserController.instance.setUserId(userId: (user?.uid)!) { result in
                     let controller = GroupPickerController()
                     controller.mode = .fullscreen
                     self.navigationController?.pushViewController(controller, animated: true)

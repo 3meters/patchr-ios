@@ -11,8 +11,6 @@ import MBProgressHUD
 
 class PasswordEditViewController: BaseEditViewController {
 
-    var processing: Bool = false
-
     var message				= AirLabelTitle()
     var passwordField		= AirTextField()
     var passwordNewField	= AirTextField()

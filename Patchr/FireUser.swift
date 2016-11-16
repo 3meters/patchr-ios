@@ -62,6 +62,4 @@ class FireUser: NSObject {
         self.hideEmail = dict["hide_email"] as? Bool
         self.joinedAt = dict["joined_at"] as? Int
     }
-    
-    
 }

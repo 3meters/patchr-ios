@@ -72,7 +72,7 @@ class UserListController: UIViewController, UITableViewDelegate {
     func initialize() {
         
         let groupId = StateController.instance.groupId
-        self.query = self.db.child("group-members/\(groupId!)").queryOrdered(byChild: "sort_priority")
+        self.query = self.db.child("group-members/\(groupId!)").queryOrdered(byChild: "index_priority_joined_at_desc")
         
         self.view.backgroundColor = Theme.colorBackgroundForm
         

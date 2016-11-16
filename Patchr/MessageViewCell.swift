@@ -185,15 +185,22 @@ class MessageViewCell: AirUIView {
 		
 		if let photo = message.attachments?.first?.photo {
             self.photo?.isHidden = false
-            if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
-                bindPhoto(photoUrl: photoUrl)
+            if !photo.uploading {
+                if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
+                    bindPhoto(photoUrl: photoUrl)
+                }
             }
 		}
         
         self.userName.text = message.creator?.username
         let fullName = message.creator?.profile?.fullName
-        let photoUrl = PhotoUtils.url(prefix: message.creator?.profile?.photo?.filename, source: message.creator?.profile?.photo?.source, category: SizeCategory.profile)
-        self.userPhoto.bind(photoUrl: photoUrl, name: fullName, colorSeed: message.creator?.id)
+        if let photo = message.creator?.profile?.photo, !photo.uploading {
+            let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile)
+            self.userPhoto.bind(photoUrl: photoUrl, name: fullName, colorSeed: message.creator?.id)
+        }
+        else {
+            self.userPhoto.bind(photoUrl: nil, name: fullName, colorSeed: message.creator?.id)
+        }
 		
         self.createdDate.text = UIShared.timeAgoShort(date: NSDate(timeIntervalSince1970: Double(message.createdAt!) / 1000))
 			

@@ -138,6 +138,16 @@ class ChannelDetailView: UIView {
         self.contentGroup.clipsToBounds = true
     }
     
+    func reset() {
+        self.gradient.isHidden = true
+        self.photo.image = nil
+        self.photo.backgroundColor = Theme.colorBackgroundImage
+        self.name.text = nil
+        self.purpose.text = nil
+        self.mutedImage.isHidden = true
+        self.lockImage.isHidden = true        
+    }
+    
     func bind(channel: FireChannel!) {
         
         /* Name, type and photo */
@@ -149,7 +159,7 @@ class ChannelDetailView: UIView {
             self.purpose.isHidden = false
         }
 
-        if let photo = channel.photo {
+        if let photo = channel.photo, !photo.uploading {
             if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
                 self.photo.setImageWithUrl(url: photoUrl)
                 self.gradient.isHidden = false

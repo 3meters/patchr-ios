@@ -1,5 +1,5 @@
 //
-//  AirTextField.swift
+//  AirTextView.swift
 //  Patchr
 //
 //  Created by Jay Massena on 11/27/15.
@@ -7,24 +7,25 @@
 //
 
 import UIKit
+import JVFloatLabeledTextField
 
-class AirTextView: UITextView {
+class AirTextView: JVFloatLabeledTextView {
 	
-	var placeholderLabel = AirLabelDisplay()
-	var rule			 = UIView()
+	var rule = UIView()
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
 	
 	func initialize() {
 		
-		NotificationCenter.default.addObserver(self, selector: #selector(AirTextView.editingBegin(notification:)), name: NSNotification.Name.UITextFieldTextDidBeginEditing, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(AirTextView.editingBegin(notification:)), name: NSNotification.Name.UITextViewTextDidBeginEditing, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(editingBegin(notification:)), name: NSNotification.Name.UITextViewTextDidBeginEditing, object: nil)
 		
 		self.textColor = Theme.colorText
 		self.font = Theme.fontText
-		
-		self.placeholderLabel.textColor = Theme.colorTextPlaceholder
-		self.placeholderLabel.font = Theme.fontText
-		self.placeholderLabel.isHidden = !self.text.isEmpty
-		self.addSubview(self.placeholderLabel)
+        self.floatingLabelActiveTextColor = Colors.accentColorTextLight
+        self.floatingLabelFont = Theme.fontComment
+        self.floatingLabelTextColor = Theme.colorTextPlaceholder
 		
 		self.isScrollEnabled = false
 		self.textContainer.lineFragmentPadding = 0
@@ -40,17 +41,17 @@ class AirTextView: UITextView {
 		
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		self.placeholderLabel.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 48)
 		self.rule.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: Theme.dimenRuleThickness)
 	}
 	
 	func editingBegin(notification: NSNotification) {
-		if let textField = notification.object as? UITextView {
-			if textField == self {
+		if let textView = notification.object as? UITextView {
+			if textView == self {
 				self.rule.backgroundColor = Theme.colorRuleActive
-				return
 			}
+            else {
+                self.rule.backgroundColor = Theme.colorRule
+            }
 		}
-		self.rule.backgroundColor = Theme.colorRule
 	}
 }

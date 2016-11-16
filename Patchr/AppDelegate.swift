@@ -22,7 +22,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var firstLaunch: Bool = false
-    var backgroundSessionCompletionHandler: (() -> Void)?
 
     /*--------------------------------------------------------------------------------------------
     * Delegate methods
@@ -81,6 +80,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UserDefaults.standard.register(defaults: settingsDictionary as! [String:AnyObject])
         
         /* Instance the data controller */
+        FireController.instance.prepare()
         DataController.instance.prepare()
         
         /* Notifications */
@@ -202,8 +202,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          * completes. Use the identifier to reconstitute the URLSession.
          */
         AWSS3TransferUtility.interceptApplication(application, handleEventsForBackgroundURLSession: identifier, completionHandler: completionHandler)
-        self.backgroundSessionCompletionHandler = completionHandler
         Log.d("handleEventsForBackgroundURLSession called")
-        UIShared.Toast(message: "Message Posted!")
     }
 }

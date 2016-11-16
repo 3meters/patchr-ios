@@ -15,10 +15,12 @@ class ChannelQuery: NSObject {
     var linkHandle: UInt!
     var linkMap: [String: Any]!
 
-    init(groupId: String, channelId: String, userId: String) {
+    init(groupId: String, channelId: String, userId: String?) {
         super.init()
         self.channelPath = "group-channels/\(groupId)/\(channelId)"
-        self.linkPath = "member-channels/\(userId)/\(groupId)/\(channelId)"
+        if userId != nil {
+            self.linkPath = "member-channels/\(userId!)/\(groupId)/\(channelId)"
+        }
     }
 
     func observe(with block: @escaping (FireChannel?) -> Swift.Void) {
@@ -26,7 +28,10 @@ class ChannelQuery: NSObject {
         self.channelHandle = FireController.db.child(self.channelPath).observe(.value, with: { snap in
             if !(snap.value is NSNull) {
                 self.channel = FireChannel.from(dict: snap.value as? [String: Any], id: snap.key)
-                if self.linkMap != nil {
+                if self.linkPath == nil {
+                    block(self.channel)  // May or may not have link info
+                }
+                else if self.linkMap != nil {
                     self.channel!.membershipFrom(dict: self.linkMap)
                     block(self.channel)  // May or may not have link info
                 }
@@ -37,19 +42,21 @@ class ChannelQuery: NSObject {
             }
         })
 
-        self.linkHandle = FireController.db.child(self.linkPath).observe(.value, with: { snap in
-            if !(snap.value is NSNull) {
-                self.linkMap = snap.value as! [String: Any]
-                if self.channel != nil {
-                    self.channel!.membershipFrom(dict: self.linkMap)
-                    block(self.channel)
+        if self.linkPath != nil {
+            self.linkHandle = FireController.db.child(self.linkPath).observe(.value, with: { snap in
+                if !(snap.value is NSNull) {
+                    self.linkMap = snap.value as! [String: Any]
+                    if self.channel != nil {
+                        self.channel!.membershipFrom(dict: self.linkMap)
+                        block(self.channel)
+                    }
                 }
-            }
-            else {
-                Log.w("Channel link snapshot is null: \(self.linkPath!)")
-                block(nil)
-            }
-        })
+                else {
+                    Log.w("Channel link snapshot is null: \(self.linkPath!)")
+                    block(nil)
+                }
+            })
+        }
     }
 
     func once(with block: @escaping (FireChannel?) -> Swift.Void) {
@@ -57,7 +64,10 @@ class ChannelQuery: NSObject {
         FireController.db.child(self.channelPath).observeSingleEvent(of: .value, with: { snap in
             if !(snap.value is NSNull) {
                 self.channel = FireChannel.from(dict: snap.value as? [String: Any], id: snap.key)
-                if self.linkMap != nil {
+                if self.linkPath == nil {
+                    block(self.channel)  // May or may not have link info
+                }
+                else if self.linkMap != nil {
                     self.channel!.membershipFrom(dict: self.linkMap)
                     block(self.channel)  // May or may not have link info
                 }
@@ -67,20 +77,22 @@ class ChannelQuery: NSObject {
                 block(nil)
             }
         })
-
-        FireController.db.child(self.linkPath).observeSingleEvent(of: .value, with: { snap in
-            if !(snap.value is NSNull) {
-                self.linkMap = snap.value as! [String: Any]
-                if self.channel != nil {
-                    self.channel!.membershipFrom(dict: self.linkMap)
-                    block(self.channel)
+        
+        if self.linkPath != nil {
+            FireController.db.child(self.linkPath).observeSingleEvent(of: .value, with: { snap in
+                if !(snap.value is NSNull) {
+                    self.linkMap = snap.value as! [String: Any]
+                    if self.channel != nil {
+                        self.channel!.membershipFrom(dict: self.linkMap)
+                        block(self.channel)
+                    }
                 }
-            }
-            else {
-                Log.w("Channel link snapshot is null: \(self.linkPath!)")
-                block(nil)
-            }
-        })
+                else {
+                    Log.w("Channel link snapshot is null: \(self.linkPath!)")
+                    block(nil)
+                }
+            })
+        }
     }
 
     func remove() {

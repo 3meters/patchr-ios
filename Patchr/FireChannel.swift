@@ -33,6 +33,7 @@ class FireChannel: NSObject {
     var starred: Bool?
     var muted: Bool?
     var archived: Bool?
+    var joinedAt: Int?
     
     static func from(dict: [String: Any]?, id: String?) -> FireChannel? {
         if dict != nil {
@@ -72,14 +73,22 @@ class FireChannel: NSObject {
         self.starred = dict["starred"] as? Bool
         self.muted = dict["muted"] as? Bool
         self.archived = dict["archived"] as? Bool
+        self.joinedAt = dict["joined_at"] as? Int
     }
     
     func star(on: Bool) {
         let userId = UserController.instance.userId
         let path = "member-channels/\(userId!)/\(self.group!)/\(self.id!)"
+        let priority = on ? 150 : 250
+        let priorityReversed = on ? 350 : 210
+        let index = Int("\(priority)\(self.joinedAt!)")
+        let indexReversed = Int("-\(priorityReversed)\(self.joinedAt!)")
         let updates: [String: Any] = [
             "starred": on,
-            "sort_priority": on ? 150 : 250]
+            "priority": priority,
+            "index_priority_joined_at": index!,
+            "index_priority_joined_at_desc": indexReversed!
+        ]
         
         FireController.db.child(path).updateChildValues(updates)
     }
