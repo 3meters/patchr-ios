@@ -18,7 +18,7 @@ class ChannelsHeaderView: UIView {
     
     func bind(group: FireGroup!) {
         self.title?.text = group.title
-		self.subtitle?.text = group.name
+		self.subtitle?.text = UserController.instance.user?.username!
         
         if let photo = group.photo, !photo.uploading {
             let photoUrl = PhotoUtils.url(prefix: photo.filename!, source: photo.source!, category: SizeCategory.profile)

@@ -28,16 +28,17 @@ class Snow {
 	
 	let light					= true
 	
-	let colorText				= Colors.black
-	let colorTextSecondary		= Colors.gray50pcntColor
-	let colorTextDisplay		= Colors.black
-	let colorTextTitle			= Colors.accentOnLight
-	let colorTextBanner			= Colors.white
-	let colorTextPlaceholder	= Colors.lightGray
-	let colorTextNotification	= Colors.white
-	let colorTextToast			= Colors.black
-	let colorTextActivity		= Colors.black
-	let colorNumberFeatured		= Colors.accentColorDark
+	let colorText                   = Colors.black
+	let colorTextSecondary          = Colors.gray50pcntColor
+	let colorTextDisplay            = Colors.black
+	let colorTextTitle              = Colors.accentOnLight
+	let colorTextBanner             = Colors.white
+	let colorTextPlaceholder        = Colors.lightGray
+	let colorTextNotification       = Colors.white
+	let colorTextToast              = Colors.black
+	let colorTextActivity           = Colors.black
+	let colorNumberFeatured         = Colors.accentColorDark
+    let colorTextValidationError    = Colors.validationErrorColor
 
 	let colorBackgroundForm         = Colors.white
 	let colorBackgroundTable		= Colors.gray95pcntColor
@@ -103,6 +104,7 @@ class Snow {
 	let fontLinkText			: UIFont! = UIFont(name: "HelveticaNeue", size: 18)
 	let fontBarText				: UIFont! = UIFont(name: "HelveticaNeue", size: 18)
 	let fontNumberFeatured		: UIFont! = UIFont(name: "HelveticaNeue-Light", size: 30)
+    let fontValidationError		: UIFont! = UIFont(name: "HelveticaNeue-Light", size: 16)
 	
 	let colorLogVerbose			= Colors.gray50pcntColor
 	let colorLogDebug			= Colors.accentColorDarker
@@ -166,7 +168,9 @@ public struct Colors {
 	static let brandColorTextDark = brandColor
 	static let brandColorFill = brandColor
 	static let brandColorRule = brandColor
-	
+    
+    static let validationErrorColor = UIColor(red: 255/255, green: 87/255, blue: 34/255, alpha: 1)
+    
 	static let facebookColor = UIColor(hexString: "#3B5998ff")
 	static let googleColor = UIColor(hexString: "#DD4B39ff")
 }

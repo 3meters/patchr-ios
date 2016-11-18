@@ -51,7 +51,10 @@ class UserController: NSObject {
 
     func setUserId(userId: String, next: ((Any?) -> Void)? = nil) {
         
-        guard userId != self.userId else { return }
+        guard userId != self.userId else {
+            next?(nil)
+            return
+        }
 
         Log.i("User logged in: \(userId)")
         

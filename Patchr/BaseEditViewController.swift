@@ -145,6 +145,8 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
     enum Mode: Int {
         case insert
         case update
+        case login
+        case create
     }
 }
 

@@ -67,12 +67,11 @@ class ChannelPickerController: UIViewController, UITableViewDelegate, SlideMenuC
         
         let controller = GroupPickerController()
         let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: controller, action: #selector(controller.dismissAction(sender:)))
-        let nav = AirNavigationController(rootViewController: controller)
+        let wrapper = AirNavigationController(rootViewController: controller)
         
-        controller.mode = .fullscreen
         controller.navigationItem.rightBarButtonItems = [cancelButton]
         
-        UIViewController.topMostViewController()?.present(nav, animated: true, completion: nil)
+        UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         UIApplication.shared.setStatusBarHidden(false, with: UIStatusBarAnimation.slide)
         slideMenuController()?.closeLeft()
     }
@@ -194,9 +193,9 @@ class ChannelPickerController: UIViewController, UITableViewDelegate, SlideMenuC
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let cell = tableView.cellForRow(at: indexPath) as! ChannelListCell
-        if let channel = cell.channel {
-            StateController.instance.setChannelId(channelId: channel.id!, next: nil) // We know it's good
-            MainController.instance.showChannel(groupId: self.group.id!, channelId: channel.id!)
+        if let channelId = cell.channel.id {
+            StateController.instance.setChannelId(channelId: channelId, next: nil) // We know it's good
+            MainController.instance.showChannel(groupId: self.group.id!, channelId: channelId)
             self.slideMenuController()?.closeLeft()
         }
     }

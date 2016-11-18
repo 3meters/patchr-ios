@@ -23,9 +23,13 @@ class SettingsTableViewController: UITableViewController {
     var termsOfServiceCell = AirTableViewCell()
     var privacyPolicyCell = AirTableViewCell()
     var softwareLicensesCell = AirTableViewCell()
+    
+    var adminCell = AirTableViewCell()
     var developmentCell = AirTableViewCell()
+    
     var logoutCell = AirTableViewCell()
     var clearHistoryCell = AirTableViewCell()
+    
     var buildInfoCell = AirTableViewCell()
 
     var buildInfoLabel = AirLabelDisplay()
@@ -152,6 +156,7 @@ class SettingsTableViewController: UITableViewController {
         self.privacyPolicyCell.textLabel!.text = "Privacy Policy"
         self.softwareLicensesCell.textLabel!.text = "Software Licenses"
         self.developmentCell.textLabel!.text = "Developer"
+        self.adminCell.textLabel!.text = "Group Settings"
         
         self.clearHistoryButton.setTitle("Clear search history".uppercased(), for: .normal)
         self.logoutButton.setTitle("Log out".uppercased(), for: .normal)
@@ -229,6 +234,10 @@ extension SettingsTableViewController {
             Reporting.track("Viewed Software Licenses")
         }
         else if selectedCell == self.developmentCell {
+            let controller = DevelopmentViewController()
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
+        else if selectedCell == self.adminCell {
             let controller = DevelopmentViewController()
             self.navigationController?.pushViewController(controller, animated: true)
         }

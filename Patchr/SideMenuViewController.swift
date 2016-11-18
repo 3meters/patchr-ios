@@ -25,8 +25,10 @@ class SideMenuViewController: UITableViewController {
     var inviteCell: WrapperTableViewCell?
     var membersCell: WrapperTableViewCell?
     var profileCell: WrapperTableViewCell?
-    var settingsCell: WrapperTableViewCell?
     var switchCell: WrapperTableViewCell?
+    var settingsCell: WrapperTableViewCell?
+    
+    var adminCell: WrapperTableViewCell?
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -93,6 +95,14 @@ class SideMenuViewController: UITableViewController {
         }
     }
     
+    func groupDidSwitch(notification: NSNotification) {
+        self.tableView.reloadData()
+    }
+    
+    func groupDidChange(notification: NSNotification) {
+        self.tableView.reloadData()
+    }
+    
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
@@ -123,7 +133,10 @@ class SideMenuViewController: UITableViewController {
         self.profileCell = WrapperTableViewCell(view: MenuItemView(title: "Edit profile", image: UIImage(named: "imgEdit2Light")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         self.settingsCell = WrapperTableViewCell(view: MenuItemView(title: "Settings", image: UIImage(named: "imgSettingsLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         self.switchCell = WrapperTableViewCell(view: MenuItemView(title: "Switch groups", image: UIImage(named: "imgSwitchLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
+        self.adminCell = WrapperTableViewCell(view: MenuItemView(title: "Group settings", image: UIImage(named: "imgSettingsLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         
+        NotificationCenter.default.addObserver(self, selector: #selector(groupDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(groupDidChange(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidChange), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(userStateDidChange(notification:)), name: NSNotification.Name(rawValue: Events.UserStateDidChange), object: nil)
     }
     
@@ -193,7 +206,6 @@ extension SideMenuViewController {
             let controller = GroupPickerController()
             let wrapper = AirNavigationController(rootViewController: controller)
             let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: controller, action: #selector(controller.dismissAction(sender:)))
-            controller.mode = .fullscreen
             controller.navigationItem.rightBarButtonItems = [cancelButton]
             self.slideMenuController()?.mainViewController?.present(wrapper, animated: true, completion: nil)
         }
@@ -202,6 +214,14 @@ extension SideMenuViewController {
             let controller = UserListController()
             let wrapper = AirNavigationController(rootViewController: controller)
             let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: controller, action: #selector(controller.closeAction(sender:)))
+            controller.navigationItem.rightBarButtonItems = [cancelButton]
+            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+        }
+        else if selectedCell == self.adminCell {
+            
+            let controller = GroupEditViewController()
+            let wrapper = AirNavigationController(rootViewController: controller)
+            let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: controller, action: #selector(controller.cancelAction(sender:)))
             controller.navigationItem.rightBarButtonItems = [cancelButton]
             UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         }
@@ -227,6 +247,9 @@ extension SideMenuViewController {
         else if indexPath.row == 4 {
             return self.settingsCell!
         }
+        else if indexPath.row == 5 {
+            return self.adminCell!
+        }
         return self.switchCell!
     }
     
@@ -235,6 +258,11 @@ extension SideMenuViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if let group = StateController.instance.group, let role = group.role {
+            if role == "admin" {
+                return 6
+            }
+        }
         return 5
     }
 }

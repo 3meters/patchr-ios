@@ -42,7 +42,7 @@ class BranchProvider: NSObject {
             applink.metadata?["referrerPhotoUrl"] = photoUrl
         }
         
-        applink.metadata?["inviteType"] = "member"
+        applink.metadata?["role"] = "member"
         applink.metadata?["groupId"] = group.id!
         applink.metadata?["groupName"] = group.name!
         
@@ -98,7 +98,7 @@ class BranchProvider: NSObject {
             applink.metadata?["referrerPhotoUrl"] = photoUrl
         }
         
-        applink.metadata?["inviteType"] = "guest"
+        applink.metadata?["role"] = "guest"
         applink.metadata?["groupId"] = group.id!
         applink.metadata?["groupName"] = group.name!
         

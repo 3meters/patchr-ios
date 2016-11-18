@@ -32,9 +32,9 @@ class LobbyViewController: BaseViewController {
 		super.viewWillLayoutSubviews()
 		
 		self.imageBackground.fillSuperview()
-		self.buttonGroup.anchorInCenter(withWidth: 228, height: 96)
-		self.buttonLogin.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 44)
-		self.buttonSignup.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 44)
+		self.buttonGroup.anchorInCenter(withWidth: 240, height: 96)
+		self.buttonSignup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 44)
+		self.buttonLogin.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 44)
 		self.appName.align(above: self.buttonGroup, matchingCenterWithBottomPadding: 20, width: 228, height: 48)
 	}
 	
@@ -88,8 +88,8 @@ class LobbyViewController: BaseViewController {
 			return
 		}
 		
-		let controller = LoginViewController()
-		controller.onboardMode = OnboardMode.Login
+		let controller = EmailViewController()
+		controller.mode = .login
 		self.navigationController?.pushViewController(controller, animated: true)
 	}
 	
@@ -99,10 +99,10 @@ class LobbyViewController: BaseViewController {
 			UIShared.compatibilityUpgrade()
 			return
 		}
-		
-		let controller = LoginViewController()
-		controller.onboardMode = OnboardMode.Signup
-		self.navigationController?.pushViewController(controller, animated: true)
+        
+        let controller = EmailViewController()
+        controller.mode = .create
+        self.navigationController?.pushViewController(controller, animated: true)
 	}
 	
     /*--------------------------------------------------------------------------------------------
@@ -124,14 +124,14 @@ class LobbyViewController: BaseViewController {
 		self.appName.textAlignment = NSTextAlignment.center
 		self.view.addSubview(self.appName)
 		
-		self.buttonLogin.setTitle("LOG IN", for: .normal)
+		self.buttonLogin.setTitle("Log in to an existing group", for: .normal)
 		self.buttonLogin.setTitleColor(Colors.white, for: .normal)
 		self.buttonLogin.setTitleColor(Theme.colorTint, for: .highlighted)
 		self.buttonLogin.borderColor = Colors.white
 		self.buttonLogin.borderWidth = Theme.dimenButtonBorderWidth
 		self.buttonLogin.cornerRadius = Theme.dimenButtonCornerRadius
 		
-		self.buttonSignup.setTitle("SIGN UP", for: .normal)
+		self.buttonSignup.setTitle("Create a new Patchr group", for: .normal)
 		self.buttonSignup.setTitleColor(Colors.white, for: .normal)
 		self.buttonSignup.setTitleColor(Theme.colorTint, for: .highlighted)
 		self.buttonSignup.borderColor = Colors.white

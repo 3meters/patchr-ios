@@ -21,7 +21,6 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
     var cellReuseIdentifier: String!
     var footerView = AirLinkButton()
     var rule = UIView()
-    var mode: Mode = .drawer
     
     var isModal: Bool {
         return self.presentingViewController?.presentedViewController == self
@@ -42,20 +41,16 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         
-        if self.mode == .drawer {
-            self.headerView.bounds.size.width = self.view.width()
-            self.headerView.title?.sizeToFit()
-            self.headerView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 44 + (self.headerView.title?.height())!)
-            self.footerView.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 48)
-            self.tableView.alignBetweenTop(self.headerView, andBottom: self.footerView, centeredWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
+        let messageSize = self.messageLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
+        if self.navigationController != nil {
+            self.messageLabel.alignUnder(self.navigationController?.navigationBar, matchingCenterWithTopPadding: 0, width: 288, height: messageSize.height + 24)
         }
         else {
-            let messageSize = self.messageLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-            self.messageLabel.alignUnder(self.navigationController?.navigationBar, matchingCenterWithTopPadding: 0, width: 288, height: messageSize.height + 24)
-            self.rule.alignUnder(self.messageLabel, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 1)
-            self.footerView.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 48)
-            self.tableView.alignBetweenTop(self.rule, andBottom: self.footerView, centeredWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
+            self.messageLabel.anchorTopCenter(withTopPadding: 24, width: 288, height:  messageSize.height + 24)
         }
+        self.rule.alignUnder(self.messageLabel, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 1)
+        self.footerView.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 48)
+        self.tableView.alignBetweenTop(self.rule, andBottom: self.footerView, centeredWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -63,12 +58,10 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
      *--------------------------------------------------------------------------------------------*/
     
     func addAction(sender: AnyObject?) {
-        let controller = PatchEditViewController()
-        let navController = AirNavigationController()
-        controller.inputState = .Creating
-        controller.inputType = "group"
-        navController.viewControllers = [controller]
-        self.present(navController, animated: true, completion: nil)
+        let controller = GroupCreateController()
+        let wrapper = AirNavigationController()
+        wrapper.viewControllers = [controller]
+        self.present(wrapper, animated: true, completion: nil)
     }
     
     func dismissAction(sender: AnyObject?) {
@@ -88,18 +81,11 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
         self.view.backgroundColor = Theme.colorBackgroundForm
         self.rule.backgroundColor = Theme.colorSeparator
         
-        if self.mode == .drawer {
-            self.headerView = Bundle.main.loadNibNamed("GroupsHeaderView", owner: nil, options: nil)?.first as? GroupsHeaderView
-            self.headerView.dismissButton?.addTarget(self, action: #selector(dismissAction(sender:)), for: .touchUpInside)
-            self.view.addSubview(self.headerView)
-        }
-        else {
-            self.messageLabel.textAlignment = NSTextAlignment.center
-            self.messageLabel.numberOfLines = 0
-            self.messageLabel.text = "Select from groups you are a member of. You can switch groups at anytime."
-            self.view.addSubview(self.messageLabel)
-            self.view.addSubview(self.rule)
-        }
+        self.messageLabel.textAlignment = NSTextAlignment.center
+        self.messageLabel.numberOfLines = 0
+        self.messageLabel.text = "Select from groups you are a member of. You can switch groups at anytime."
+        self.view.addSubview(self.messageLabel)
+        self.view.addSubview(self.rule)
         
         self.footerView.setImage(UIImage(named: "imgAddCircleLight"), for: .normal)
         self.footerView.imageView!.contentMode = .scaleAspectFit
@@ -171,21 +157,48 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
         let cell = tableView.cellForRow(at: indexPath) as! GroupListCell
-        self.dismissAction(sender: nil)
-        StateController.instance.setGroupId(groupId: cell.group.id) { result in
-            if let groupId = StateController.instance.groupId, let channelId = StateController.instance.channelId {
-                MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+        
+        /* User last channel if available */
+        let groupId = cell.group.id!
+        let userId = UserController.instance.userId
+        
+        if let lastChannelId = UserDefaults.standard.string(forKey: groupId)  {
+            let validateQuery = ChannelQuery(groupId: groupId, channelId: lastChannelId, userId: userId!)
+            validateQuery.once(with: { channel in
+                if channel == nil {
+                    Log.w("Last channel invalid: \(lastChannelId): trying first channel")
+                    FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
+                        if firstChannelId != nil {
+                            StateController.instance.setGroupId(groupId: groupId, channelId: firstChannelId)
+                            MainController.instance.showChannel(groupId: groupId, channelId: firstChannelId!)
+                            let _ = self.navigationController?.popToRootViewController(animated: false)
+                            self.dismissAction(sender: nil)
+                        }
+                    }
+                }
+                else {
+                    StateController.instance.setGroupId(groupId: groupId, channelId: lastChannelId)
+                    MainController.instance.showChannel(groupId: groupId, channelId: lastChannelId)
+                    let _ = self.navigationController?.popToRootViewController(animated: false)
+                    self.dismissAction(sender: nil)
+                }
+            })
+        }
+        else {
+            FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
+                if firstChannelId != nil {
+                    StateController.instance.setGroupId(groupId: groupId, channelId: firstChannelId)
+                    MainController.instance.showChannel(groupId: groupId, channelId: firstChannelId!)
+                    let _ = self.navigationController?.popToRootViewController(animated: false)
+                    self.dismissAction(sender: nil)
+                }
             }
         }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 64
-    }
-    
-    enum Mode: Int {
-        case drawer
-        case fullscreen
     }
 }

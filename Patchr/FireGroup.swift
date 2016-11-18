@@ -33,6 +33,7 @@ class FireGroup: NSObject {
     /* Link properties for the current user */
     var disabled: Bool?
     var role: String?
+    var username: String?
     var notifications: String?
     var hideEmail: Bool?
     var joinedAt: Int?
@@ -79,5 +80,6 @@ class FireGroup: NSObject {
         self.notifications = dict["notifications"] as? String
         self.hideEmail = dict["hide_email"] as? Bool
         self.joinedAt = dict["joined_at"] as? Int
+        self.username = dict["username"] as? String
     }
 }

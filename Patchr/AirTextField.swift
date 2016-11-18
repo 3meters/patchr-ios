@@ -30,14 +30,18 @@ class AirTextField: JVFloatLabeledTextField {
 	}
 	
 	func initialize() {
-		NotificationCenter.default.addObserver(self, selector: #selector(AirTextField.editingBegin(notification:)), name: NSNotification.Name.UITextFieldTextDidBeginEditing, object: nil)
-		self.rule.backgroundColor = Theme.colorRule
+        
+		NotificationCenter.default.addObserver(self, selector: #selector(editingBegin(notification:)), name: NSNotification.Name.UITextFieldTextDidBeginEditing, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(editingBegin(notification:)), name: NSNotification.Name.UITextViewTextDidBeginEditing, object: nil)
+        
 		self.font = Theme.fontText
 		self.textColor = Theme.colorText
         self.floatingLabelActiveTextColor = Colors.accentColorTextLight
         self.floatingLabelFont = Theme.fontComment
         self.floatingLabelTextColor = Theme.colorTextPlaceholder
 		self.clearButtonMode = UITextFieldViewMode.whileEditing
+        
+        self.rule.backgroundColor = Theme.colorRule
 		self.addSubview(self.rule)
 	}
 	
@@ -55,5 +59,8 @@ class AirTextField: JVFloatLabeledTextField {
 				self.rule.backgroundColor = Theme.colorRule
 			}
 		}
+        else if let _ = notification.object as? UITextView {
+            self.rule.backgroundColor = Theme.colorRule
+        }
 	}
 }

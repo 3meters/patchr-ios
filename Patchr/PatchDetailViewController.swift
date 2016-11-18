@@ -391,25 +391,25 @@ class PatchDetailViewController: BaseDetailViewController {
     }
 
     func loginAction(sender: AnyObject?) {
-        let controller = LoginViewController()
-        let navController = AirNavigationController()
-        navController.viewControllers = [controller]
-        controller.onboardMode = OnboardMode.Login
-        controller.inputRouteToMain = false
-        controller.source = "Invite"
-        self.present(navController, animated: true) {
-        }
+//        let controller = LoginViewController()
+//        let navController = AirNavigationController()
+//        navController.viewControllers = [controller]
+//        controller.onboardMode = OnboardMode.Login
+//        controller.inputRouteToMain = false
+//        controller.source = "Invite"
+//        self.present(navController, animated: true) {
+//        }
     }
 
     func signupAction(sender: AnyObject?) {
-        let controller = LoginViewController()
-        let navController = AirNavigationController()
-        navController.viewControllers = [controller]
-        controller.onboardMode = OnboardMode.Signup
-        controller.inputRouteToMain = false
-        controller.source = "Invite"
-        self.present(navController, animated: true) {
-        }
+//        let controller = LoginViewController()
+//        let navController = AirNavigationController()
+//        navController.viewControllers = [controller]
+//        controller.onboardMode = OnboardMode.Signup
+//        controller.inputRouteToMain = false
+//        controller.source = "Invite"
+//        self.present(navController, animated: true) {
+//        }
     }
 
     func actionButtonTapped(gester: UIGestureRecognizer) {

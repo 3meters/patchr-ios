@@ -60,6 +60,10 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        if StateController.instance.groupId == nil {
+            let controller = GroupPickerController()
+            self.present(controller, animated: true, completion: nil)
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -295,6 +299,8 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
         self.tableView.delegate = self
         self.tableView.register(WrapperTableViewCell.self, forCellReuseIdentifier: self.cellReuseIdentifier)
         
+        self.titleView = (Bundle.main.loadNibNamed("ChannelTitleView", owner: nil, options: nil)?.first as? ChannelTitleView)!
+        
         /* Simple activity indicator (frame sizing) */
         self.activity.color = Theme.colorActivityIndicator
         self.activity.hidesWhenStopped = true
@@ -315,9 +321,9 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
         self.footerView.addSubview(self.loadMoreActivity)
         self.footerView.backgroundColor = Theme.colorBackgroundTileList
 
-        NotificationCenter.default.addObserver(self, selector: #selector(ChannelViewController.reachabilityChanged), name: ReachabilityChangedNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(ChannelViewController.applicationDidEnterBackground(sender:)), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(ChannelViewController.applicationWillEnterForeground(sender:)), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged), name: ReachabilityChangedNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground(sender:)), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationWillEnterForeground(sender:)), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
 
         self.progressOffsetY = 80
         self.loadMoreMessage = "LOAD MORE MESSAGES"
@@ -360,21 +366,43 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
         }
         
         let userId = UserController.instance.userId
+        let groupQuery = GroupQuery(groupId: groupId, userId: userId!)
+        
+        groupQuery.once(with: { group in
+            
+            let maxWidth = self.view.frame.size.width - CGFloat(36 + 36 + 36 + 30 + 16 + 72 + 24)
+            self.titleView.bounds.size = CGSize(width: maxWidth, height: (self.navigationController?.navigationBar.height())!)
+
+            self.titleView.title?.text = (group?.title != nil) ? group?.title! : group?.name!
+            self.titleView.title?.sizeToFit()
+            self.titleView.sizeToFit()
+
+            self.navigationItem.titleView = self.titleView
+            let tap = UITapGestureRecognizer(target: self, action: #selector(self.showChannelActions(gesture:)))
+            self.titleView.addGestureRecognizer(tap)
+        })
         
         self.channelQuery?.remove()
         self.channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId!)
         self.channelQuery!.observe(with: { channel in
             
             guard channel != nil else {
-                /* Most likely they channel has been deleted from under us. */
+                /* The channel has been deleted from under us. */
+                self.channelQuery?.remove()
                 if self.tableView != nil && self.tableViewDataSource != nil {
                     self.rowHeights.removeAllObjects()
                     self.headerView.reset()
                     self.tableView.dataSource = nil
                     self.tableView.reloadData()
                 }
-                StateController.instance.selectFirstChannel(groupId: groupId)
-                MainController.instance.showChannel(groupId: groupId, channelId: StateController.instance.channelId!)
+
+                FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
+                    if firstChannelId != nil {
+                        StateController.instance.setChannelId(channelId: firstChannelId)
+                        MainController.instance.showChannel(groupId: groupId, channelId: StateController.instance.channelId!)
+                    }
+                }
+
                 return
             }
             
@@ -457,23 +485,9 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
 
     func drawNavBarButtons() {
         
-        if let group = StateController.instance.group {
-            
-            /* Title */
-            let maxWidth = self.view.frame.size.width - CGFloat(36 + 36 + 36 + 30 + 16 + 72 + 24)
-            self.titleView = (Bundle.main.loadNibNamed("ChannelTitleView", owner: nil, options: nil)?.first as? ChannelTitleView)!
-            self.titleView.bounds.size = CGSize(width: maxWidth, height: (self.navigationController?.navigationBar.height())!)
-            
-            self.titleView.title?.text = (group.title != nil) ? group.title! : group.name!
-            self.titleView.subtitle?.text = "#\(self.channel.name!)"
-            self.titleView.title?.sizeToFit()
-            self.titleView.subtitle?.sizeToFit()
-            self.titleView.sizeToFit()
-            
-            self.navigationItem.titleView = self.titleView
-            let tap = UITapGestureRecognizer(target: self, action: #selector(self.showChannelActions(gesture:)))
-            self.titleView.addGestureRecognizer(tap)
-        }
+        self.titleView.subtitle?.text = "#\(self.channel.name!)"
+        self.titleView.subtitle?.sizeToFit()
+        self.titleView.sizeToFit()
 
         /* Navigation button */
         var button = UIButton(type: .custom)

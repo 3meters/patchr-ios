@@ -19,16 +19,14 @@ class ChannelEditViewController: BaseEditViewController {
     var channel: FireChannel!
 
     var banner = AirLabelTitle()
-    var message = AirLabelDisplay()
     var photoEditView = PhotoEditView()
     var nameField = AirTextField()
+    var errorLabel = AirLabelDisplay()
     var purposeField = AirTextView()
     var visibilityGroup = AirRuleView()
     var visibilitySwitch = UISwitch()
     var visibilityLabel	= AirLabelDisplay()
     var visibilityValue = "public"
-    
-    var doneButton = AirFeaturedButton()
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -61,18 +59,18 @@ class ChannelEditViewController: BaseEditViewController {
         super.viewWillLayoutSubviews()
 
         let bannerSize = self.banner.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         let descriptionSize = self.purposeField.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
+        let errorSize = self.errorLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
 
         self.visibilityLabel.sizeToFit()
 
         self.banner.anchorTopCenter(withTopPadding: 0, width: 288, height: bannerSize.height)
-        self.message.alignUnder(self.banner, matchingCenterWithTopPadding: 8, width: 288, height: messageSize.height)
-        self.nameField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-        self.purposeField.alignUnder(self.nameField, matchingCenterWithTopPadding: 8, width: 288, height: max(48, descriptionSize.height))
+        self.nameField.alignUnder(self.banner, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+        self.errorLabel.alignUnder(self.nameField, matchingCenterWithTopPadding: 0, width: 288, height: errorSize.height)
+        self.purposeField.alignUnder(self.errorLabel, matchingCenterWithTopPadding: 16, width: 288, height: max(48, descriptionSize.height))
         self.photoEditView.alignUnder(self.purposeField, matchingCenterWithTopPadding: 16, width: 288, height: 288 * 0.56)
+        
         self.visibilityGroup.alignUnder(self.photoEditView, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-
         self.visibilityLabel.anchorCenterLeft(withLeftPadding: 0, width: 144, height: self.visibilityLabel.height())
         self.visibilitySwitch.anchorCenterRight(withRightPadding: 0, width: self.visibilitySwitch.width(), height: self.visibilitySwitch.height())
 
@@ -93,7 +91,9 @@ class ChannelEditViewController: BaseEditViewController {
             post()
         }
         else {
-            self.performBack(animated: true)
+            if isValid() {
+                self.performBack(animated: true)
+            }
         }
     }
 
@@ -146,10 +146,13 @@ class ChannelEditViewController: BaseEditViewController {
         
         if self.mode == .update {
             if textField == self.nameField {
-                FireController.db.child(self.channel.path).updateChildValues([
-                    "modified_at": FIRServerValue.timestamp(),
-                    "name": self.nameField.text!
-                ])
+                if isValid() {
+                    FireController.db.child(self.channel.path).updateChildValues([
+                        "modified_at": FIRServerValue.timestamp(),
+                        "name": self.nameField.text!
+                        ])
+                    
+                }
             }
         }
     }
@@ -157,6 +160,9 @@ class ChannelEditViewController: BaseEditViewController {
     func visibilityChanged(sender: AnyObject) {
         if let switchView = sender as? UISwitch {
             self.visibilityValue = (switchView.isOn) ? "private" : "public"
+            self.banner.text = (self.visibilityValue == "private") ? "New Private Channel" : "New Channel"
+            self.view.setNeedsLayout()
+            
             if self.mode == .update {
                 FireController.db.child(self.channel.path).updateChildValues([
                     "modified_at": FIRServerValue.timestamp(),
@@ -213,19 +219,21 @@ class ChannelEditViewController: BaseEditViewController {
         self.banner.numberOfLines = 0
         self.banner.textAlignment = .center
 
-        self.message.numberOfLines = 0
-        self.message.textAlignment = .center
-
         self.photoEditView.photoSchema = Schema.ENTITY_PATCH
         self.photoEditView.setHostController(controller: self)
         self.photoEditView.configureTo(photoMode: .Placeholder)
 
-        self.nameField.placeholder = "Channel Name"
+        self.nameField.placeholder = "Channel name (lower case)"
         self.nameField.delegate = self
         self.nameField.autocapitalizationType = .none
         self.nameField.autocorrectionType = .no
         self.nameField.keyboardType = UIKeyboardType.default
         self.nameField.returnKeyType = UIReturnKeyType.next
+        
+        self.errorLabel.textColor = Theme.colorTextValidationError
+        self.errorLabel.alpha = 0.0
+        self.errorLabel.numberOfLines = 0
+        self.errorLabel.font = Theme.fontValidationError
 
         self.purposeField.placeholder = "Tell people what this channel is for"
         self.purposeField.autocapitalizationType = .sentences
@@ -241,8 +249,8 @@ class ChannelEditViewController: BaseEditViewController {
         self.visibilityGroup.addSubview(self.visibilitySwitch)
 
         self.contentHolder.addSubview(self.banner)
-        self.contentHolder.addSubview(self.message)
         self.contentHolder.addSubview(self.nameField)
+        self.contentHolder.addSubview(self.errorLabel)
         self.contentHolder.addSubview(self.purposeField)
         self.contentHolder.addSubview(self.photoEditView)
         self.contentHolder.addSubview(self.visibilityGroup)
@@ -262,7 +270,7 @@ class ChannelEditViewController: BaseEditViewController {
 
             Reporting.screen("ChannelEdit")
             self.banner.text = "Edit Channel"
-            self.doneButton.isHidden = true
+            self.visibilityGroup.isHidden = true
 
             /* Navigation bar buttons */
             let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.trash, target: self, action: #selector(deleteAction(sender:)))
@@ -277,8 +285,6 @@ class ChannelEditViewController: BaseEditViewController {
 
     func bind() {
         
-        /* Only called once: onViewLoad */
-
         self.nameField.text = self.channel.name
         self.purposeField.text = self.channel.purpose
         
@@ -290,8 +296,8 @@ class ChannelEditViewController: BaseEditViewController {
         }
 
         /* Visibility */
-        self.visibilitySwitch.isOn = (self.channel.visibility == "private")
-        self.visibilityValue = (self.channel.visibility)!
+        self.banner.text = (self.channel.visibility == "private") ? "Private Channel Settings" : "Channel Settings"
+        self.view.setNeedsLayout()
     }
 
     func post() {
@@ -364,7 +370,25 @@ class ChannelEditViewController: BaseEditViewController {
     func isValid() -> Bool {
 
         if self.nameField.isEmpty {
-            Alert(title: "Enter a name for the channel.", message: nil, cancelButtonTitle: "OK")
+            self.errorLabel.text = "Name your channel"
+            self.view.setNeedsLayout()
+            self.errorLabel.fadeIn()
+            return false
+        }
+
+        let channelName = nameField.text!
+        let characterSet: NSCharacterSet = NSCharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz0123456789_-")
+        if channelName.rangeOfCharacter(from: characterSet.inverted) != nil {
+            self.errorLabel.text = "Name must be lower case and cannot contain spaces or periods."
+            self.view.setNeedsLayout()
+            self.errorLabel.fadeIn()
+            return false
+        }
+        
+        if (nameField.text!.utf16.count > 21) {
+            self.errorLabel.text = "Name must be 21 characters or less."
+            self.view.setNeedsLayout()
+            self.errorLabel.fadeIn()
             return false
         }
 

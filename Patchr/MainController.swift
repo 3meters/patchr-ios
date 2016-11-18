@@ -137,7 +137,6 @@ class MainController: NSObject, iRateDelegate {
     func showGroupPicker() {
         StateController.instance.clearGroup()   // Make sure group and channel are both unset
         let controller = GroupPickerController()
-        controller.mode = .fullscreen
         UIViewController.topMostViewController()?.present(controller, animated: true, completion: nil)
     }
     
@@ -170,17 +169,21 @@ class MainController: NSObject, iRateDelegate {
     }
     
     func routeDeepLink(params: [AnyHashable: Any]?, error: Error?) {
+        
         if let groupId = params?["groupId"] as? String {
+            
             let channelId = params?["channelId"] as? String
-            let guest = params?["guest"] as? Bool
+            let role = params?["role"] as? String
             
             if UserController.instance.authenticated {
                 let userId = UserController.instance.userId
+                let username = UserController.instance.user?.username
                 FireController.db.child("group-members/\(groupId)/\(userId!)").observeSingleEvent(of: .value, with: { snap in
                     let alreadyMember = !(snap.value is NSNull)
                     if !alreadyMember {
-                        FireController.instance.addUserToGroup(groupId: groupId, channelId: channelId, guest: guest!, then: { error in
+                        FireController.instance.addUserToGroup(groupId: groupId, channelId: channelId, role: role!, username: username!, then: { error in
                             StateController.instance.setGroupId(groupId: groupId, channelId: channelId)
+                            MainController.instance.showChannel(groupId: groupId, channelId: channelId!)
                         })
                     }
                     else {

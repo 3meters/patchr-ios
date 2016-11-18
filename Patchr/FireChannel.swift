@@ -79,10 +79,9 @@ class FireChannel: NSObject {
     func star(on: Bool) {
         let userId = UserController.instance.userId
         let path = "member-channels/\(userId!)/\(self.group!)/\(self.id!)"
-        let priority = on ? 150 : 250
-        let priorityReversed = on ? 350 : 210
-        let index = Int("\(priority)\(self.joinedAt!)")
-        let indexReversed = Int("-\(priorityReversed)\(self.joinedAt!)")
+        let priority = on ? 1 : 4
+        let index = Int("\(FireController.instance.priorities[priority])\(self.joinedAt!)")
+        let indexReversed = Int("-\(FireController.instance.priorities.reversed()[priority])\(self.joinedAt!)")
         let updates: [String: Any] = [
             "starred": on,
             "priority": priority,
