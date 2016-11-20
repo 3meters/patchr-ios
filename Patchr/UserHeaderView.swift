@@ -68,23 +68,45 @@ class UserHeaderView: BaseDetailView {
 
 		self.userGroup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 192)
 		self.photo.anchorTopCenter(withTopPadding: 16, width: 96, height: 96)
-		self.name.alignUnder(self.photo, matchingCenterWithTopPadding: 8, width: contentWidth, height: 36)
+        self.name.alignUnder(self.photo, matchingCenterWithTopPadding: 8, width: contentWidth, height: self.name.isHidden ? 0 : 36)
         self.username.alignUnder(self.name, matchingCenterWithTopPadding: 0, width: contentWidth, height: 24)
 		self.rule.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 1)
 	}
 	
-	func bind(user: FireUser!) {
+	func bind(user: FireUser?) {
         self.name.text?.removeAll(keepingCapacity: false)
         self.username.text?.removeAll(keepingCapacity: false)
         
-        self.username.text = "@\(user.username!)"
-        if let profile = user.profile {
-            self.name.text = profile.fullName!
-            var photoUrl: URL? = nil
-            if let photo = profile.photo {
-                photoUrl = PhotoUtils.url(prefix: photo.filename!, source: photo.source!, category: SizeCategory.profile)
+        if user != nil {
+            if user!.username != nil {
+                self.username.text = "@\(user!.username!)"
             }
-            self.photo.bind(photoUrl: photoUrl, name: profile.fullName!, colorSeed: user.id)
+            
+            if let profile = user!.profile {
+                let photo = profile.photo
+                let fullName = profile.fullName
+                
+                self.name.isHidden = true
+                if fullName != nil {
+                    self.name.text = fullName
+                    self.name.isHidden = false
+                }
+                
+                var photoUrl: URL? = nil
+                if photo != nil {
+                    photoUrl = PhotoUtils.url(prefix: photo!.filename!, source: photo!.source!, category: SizeCategory.profile)
+                }
+                
+                if photoUrl != nil || fullName != nil {
+                    self.photo.bind(photoUrl: photoUrl, name: profile.fullName, colorSeed: user!.id)
+                }
+                else {
+                    self.photo.bind(photoUrl: photoUrl, name: profile.fullName, colorSeed: user!.id, color: Colors.accentColorFill)
+                }
+            }
+        }
+        else {
+            self.photo.bind(photoUrl: nil, name: nil, colorSeed: nil, color: Theme.colorBackgroundImage)
         }
         
         self.setNeedsLayout()

@@ -135,7 +135,7 @@ class ChannelEditViewController: BaseEditViewController {
             if textView == self.purposeField {
                 FireController.db.child(self.channel.path).updateChildValues([
                     "modified_at": FIRServerValue.timestamp(),
-                    "purpose": self.purposeField.text!
+                    "purpose": emptyToNull(self.purposeField.text)
                     ])
             }
         }
@@ -149,7 +149,7 @@ class ChannelEditViewController: BaseEditViewController {
                 if isValid() {
                     FireController.db.child(self.channel.path).updateChildValues([
                         "modified_at": FIRServerValue.timestamp(),
-                        "name": self.nameField.text!
+                        "name": emptyToNull(self.nameField.text)
                         ])
                     
                 }

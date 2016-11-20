@@ -27,8 +27,6 @@ class SideMenuViewController: UITableViewController {
     var profileCell: WrapperTableViewCell?
     var switchCell: WrapperTableViewCell?
     var settingsCell: WrapperTableViewCell?
-    
-    var adminCell: WrapperTableViewCell?
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -37,19 +35,7 @@ class SideMenuViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
-        if UserController.instance.userId != nil {
-            self.userQuery = UserQuery(userId: UserController.instance.userId!)
-            self.userQuery!.observe(with: { user in
-                
-                guard user != nil else {
-                    assertionFailure("user not found or no longer exists")
-                    return
-                }
-
-                self.user = user
-                self.bind()
-            })
-        }
+        bind()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -79,28 +65,15 @@ class SideMenuViewController: UITableViewController {
     }
     
     func userStateDidChange(notification: NSNotification) {
-        if UserController.instance.userId != nil {
-            self.userQuery?.remove()
-            self.userQuery = UserQuery(userId: UserController.instance.userId!)
-            self.userQuery!.observe(with: { user in
-                
-                guard user != nil else {
-                    assertionFailure("user not found or no longer exists")
-                    return
-                }
-
-                self.user = user
-                self.bind()
-            })
-        }
+        bind()
     }
     
     func groupDidSwitch(notification: NSNotification) {
-        self.tableView.reloadData()
+        bind()
     }
     
     func groupDidChange(notification: NSNotification) {
-        self.tableView.reloadData()
+        bind()
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -133,15 +106,30 @@ class SideMenuViewController: UITableViewController {
         self.profileCell = WrapperTableViewCell(view: MenuItemView(title: "Edit profile", image: UIImage(named: "imgEdit2Light")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         self.settingsCell = WrapperTableViewCell(view: MenuItemView(title: "Settings", image: UIImage(named: "imgSettingsLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         self.switchCell = WrapperTableViewCell(view: MenuItemView(title: "Switch groups", image: UIImage(named: "imgSwitchLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
-        self.adminCell = WrapperTableViewCell(view: MenuItemView(title: "Group settings", image: UIImage(named: "imgSettingsLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         
+        NotificationCenter.default.addObserver(self, selector: #selector(userStateDidChange(notification:)), name: NSNotification.Name(rawValue: Events.UserStateDidChange), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(groupDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(groupDidChange(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidChange), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(userStateDidChange(notification:)), name: NSNotification.Name(rawValue: Events.UserStateDidChange), object: nil)
     }
     
     func bind() {
-        self.menuHeader.bind(user: self.user)
+        let userId = UserController.instance.userId
+        let groupId = StateController.instance.groupId
+        
+        if userId != nil {
+            self.userQuery?.remove()
+            self.userQuery = UserQuery(userId: userId!, groupId: groupId)
+            self.userQuery!.observe(with: { user in
+                
+                guard user != nil else {
+                    assertionFailure("user not found or no longer exists")
+                    return
+                }
+                
+                self.user = user
+                self.menuHeader.bind(user: self.user)
+            })
+        }
     }
 }
 
@@ -164,17 +152,16 @@ extension SideMenuViewController {
                     let invite = response as! InviteItem
                     let inviteUrl = invite.url
                     
-                    let group = StateController.instance.group
+                    let group = StateController.instance.group!
                     let userTitle = self.user!.profile?.fullName != nil ? self.user!.profile!.fullName! : self.user!.username!
-                    let groupTitle = group!.title != nil ? group!.title! : group!.name!
-                    let groupName = group!.name!
+                    let groupTitle = group.title!
                     let userEmail = UserController.instance.user?.profile?.email!
                     let subject = "\(userTitle) invited you to \(groupTitle) on Patchr"
                     
                     let htmlFile = Bundle.main.path(forResource: "invite", ofType: "html")
                     
                     let templateString = try? String(contentsOfFile: htmlFile!, encoding: .utf8)
-                    var htmlString = templateString?.replacingOccurrences(of: "[[group.name]]", with: groupName)
+                    var htmlString = templateString?.replacingOccurrences(of: "[[group.name]]", with: groupTitle)
                     htmlString = htmlString?.replacingOccurrences(of: "[[user.fullName]]", with: userTitle)
                     htmlString = htmlString?.replacingOccurrences(of: "[[user.email]]", with: userEmail!)
                     htmlString = htmlString?.replacingOccurrences(of: "[[link]]", with: inviteUrl)
@@ -217,14 +204,6 @@ extension SideMenuViewController {
             controller.navigationItem.rightBarButtonItems = [cancelButton]
             UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         }
-        else if selectedCell == self.adminCell {
-            
-            let controller = GroupEditViewController()
-            let wrapper = AirNavigationController(rootViewController: controller)
-            let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: controller, action: #selector(controller.cancelAction(sender:)))
-            controller.navigationItem.rightBarButtonItems = [cancelButton]
-            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
-        }
         
         UIApplication.shared.setStatusBarHidden(false, with: UIStatusBarAnimation.slide)
         slideMenuController()?.closeRight()
@@ -244,13 +223,13 @@ extension SideMenuViewController {
         else if indexPath.row == 2 {
             return self.profileCell!
         }
+        else if indexPath.row == 3 {
+            return self.switchCell!
+        }
         else if indexPath.row == 4 {
             return self.settingsCell!
         }
-        else if indexPath.row == 5 {
-            return self.adminCell!
-        }
-        return self.switchCell!
+        return UITableViewCell()
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -258,11 +237,6 @@ extension SideMenuViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let group = StateController.instance.group, let role = group.role {
-            if role == "admin" {
-                return 6
-            }
-        }
         return 5
     }
 }

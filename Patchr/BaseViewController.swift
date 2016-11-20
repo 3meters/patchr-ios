@@ -97,8 +97,15 @@ class BaseViewController: UIViewController {
 	func dismissKeyboard(sender: NSNotification) {
 		self.view.endEditing(true)
 	}
+    
+    func emptyToNull(_ value: String?) -> NSObject {
+        if value == nil || value!.isEmpty {
+            return NSNull()
+        }
+        return (value! as NSString)
+    }
 	
-	func nullToNil(value : AnyObject?) -> AnyObject? {
+	func nullToNil(value: AnyObject?) -> AnyObject? {
 		if value is NSNull {
 			return nil
 		} else {
@@ -106,7 +113,7 @@ class BaseViewController: UIViewController {
 		}
 	}
 	
-	func nilToNull(value : AnyObject?) -> AnyObject? {
+	func nilToNull(value: AnyObject?) -> AnyObject? {
 		if value == nil {
 			return NSNull()
 		} else {

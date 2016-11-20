@@ -24,19 +24,22 @@ class GroupListCell: UITableViewCell {
         self.subtitle?.text = nil
     }
     
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        let color = self.photoView?.backgroundColor
+        super.setSelected(selected, animated: animated)
+        self.photoView?.backgroundColor = color
+    }
+    
+    override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+        let color = self.photoView?.backgroundColor
+        super.setHighlighted(highlighted, animated: animated)
+        self.photoView?.backgroundColor = color
+    }
+    
     func bind(group: FireGroup) {
         self.group = group
         self.title?.text = group.title!
         self.subtitle?.text = "\(group.role!)"
-        if group.role == "admin" {
-            self.subtitle?.textColor = Colors.brandColorTextLight
-        }
-        else if group.role == "guest" {
-            self.subtitle?.textColor = Colors.accentColorTextLight
-        }
-        else {
-            self.subtitle?.textColor = Theme.colorTextSecondary
-        }
         
         if let photo = group.photo, !photo.uploading {
             let photoUrl = PhotoUtils.url(prefix: photo.filename!, source: photo.source!, category: SizeCategory.profile)

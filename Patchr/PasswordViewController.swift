@@ -31,6 +31,10 @@ class PasswordViewController: BaseEditViewController {
         initialize()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        self.passwordField.becomeFirstResponder()
+    }
+
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 
@@ -54,6 +58,15 @@ class PasswordViewController: BaseEditViewController {
     func doneAction(sender: AnyObject) {
         if isValid() {
             self.passwordField.resignFirstResponder()
+            
+            self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
+            self.progress?.mode = MBProgressHUDMode.indeterminate
+            self.progress?.styleAs(progressStyle: .ActivityWithText)
+            self.progress?.minShowTime = 0.5
+            self.progress?.labelText = "Logging in..."
+            self.progress?.removeFromSuperViewOnHide = true
+            self.progress?.show(true)
+
             authenticate()
         }
     }
@@ -140,6 +153,7 @@ class PasswordViewController: BaseEditViewController {
         let email = self.inputEmail!
         
         if self.inputEmailExists {
+            
             FIRAuth.auth()?.signIn(withEmail: email, password: password) { (user, error) in
                 
                 self.processing = false
@@ -147,8 +161,6 @@ class PasswordViewController: BaseEditViewController {
                 
                 if error == nil {
                     Reporting.track("Logged In")
-                    /* Remember email address for easy data entry */
-                    UserDefaults.standard.set(email, forKey: PatchrUserDefaultKey(subKey: "userEmail"))
                     UserController.instance.setUserId(userId: (user?.uid)!) { result in
                         if self.mode == .login {
                             let controller = GroupPickerController()
@@ -176,20 +188,28 @@ class PasswordViewController: BaseEditViewController {
                 }
             }
         }
-        else {
+        else {  // Only happens if creating group
+            
             FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { user, error in
                 
                 self.processing = false
                 self.progress?.hide(true)
 
-                if error == nil {
-                    Reporting.track("Logged In")
-                    /* Remember email address for easy data entry */
-                    UserDefaults.standard.set(email, forKey: PatchrUserDefaultKey(subKey: "userEmail"))
-                    UserController.instance.setUserId(userId: (user?.uid)!) { result in
-                        let controller = GroupPickerController()
-                        self.navigationController?.pushViewController(controller, animated: true)
-                    }
+                if error == nil, let user = user {
+                    /*
+                     * - send verification email
+                     */
+                    var profileMap: [String: Any] = ["email": user.email!]
+                    FireController.instance.addUser(userId: user.uid, profileMap: &profileMap, then: { success in
+                        if success {
+                            user.sendEmailVerification()
+                            Reporting.track("Account Created")
+                            UserController.instance.setUserId(userId: user.uid) { result in
+                                let controller = GroupCreateController()
+                                self.navigationController?.pushViewController(controller, animated: true)
+                            }
+                        }
+                    })
                 }
                 else {
                     self.errorLabel.text = error?.localizedDescription

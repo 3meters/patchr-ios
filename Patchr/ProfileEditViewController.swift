@@ -52,7 +52,7 @@ class ProfileEditViewController: BaseEditViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
-        UserQuery(userId: UserController.instance.userId!).once(with: { user in
+        UserQuery(userId: UserController.instance.userId!, groupId: nil).once(with: { user in
             
             guard user != nil else {
                 assertionFailure("user not found or no longer exists")
@@ -97,27 +97,27 @@ class ProfileEditViewController: BaseEditViewController {
         if textField == self.firstNameField {
             FireController.db.child(self.user.path).updateChildValues([
                 "modified_at": FIRServerValue.timestamp(),
-                "profile/first_name": self.firstNameField.text!,
+                "profile/first_name":  emptyToNull(self.firstNameField.text),
                 "profile/full_name": self.fullName
             ])
         }
         else if textField == self.lastNameField {
             FireController.db.child(self.user.path).updateChildValues([
                 "modified_at": FIRServerValue.timestamp(),
-                "profile/last_name": self.lastNameField.text!,
+                "profile/last_name": emptyToNull(self.lastNameField.text),
                 "profile/full_name": self.fullName
             ])
         }
         else if textField == self.phoneField {
             FireController.db.child(self.user.path).updateChildValues([
                 "modified_at": FIRServerValue.timestamp(),
-                "profile/phone": self.phoneField.text!
+                "profile/phone": emptyToNull(self.phoneField.text)
                 ])
         }
         else if textField == self.skypeField {
             FireController.db.child(self.user.path).updateChildValues([
                 "modified_at": FIRServerValue.timestamp(),
-                "profile/skype": self.skypeField.text!
+                "profile/skype": emptyToNull(self.skypeField.text)
                 ])
         }
     }
@@ -130,7 +130,7 @@ class ProfileEditViewController: BaseEditViewController {
         case lastNameField:
             phoneField.becomeFirstResponder()
         case phoneField:
-            self.doneAction(sender: textField)
+            skypeField.becomeFirstResponder()
         case skypeField:
             self.doneAction(sender: textField)
         default:
@@ -175,7 +175,7 @@ class ProfileEditViewController: BaseEditViewController {
         
         FireController.db.child(path).updateChildValues([
             "modified_at": FIRServerValue.timestamp(),
-            "profile/photo": photoMap
+            "profile/photo": photoMap!
         ])
     }
     

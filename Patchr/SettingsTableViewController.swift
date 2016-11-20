@@ -23,7 +23,6 @@ class SettingsTableViewController: UITableViewController {
     var termsOfServiceCell = AirTableViewCell()
     var privacyPolicyCell = AirTableViewCell()
     var softwareLicensesCell = AirTableViewCell()
-    
     var adminCell = AirTableViewCell()
     var developmentCell = AirTableViewCell()
     
@@ -238,20 +237,31 @@ extension SettingsTableViewController {
             self.navigationController?.pushViewController(controller, animated: true)
         }
         else if selectedCell == self.adminCell {
-            let controller = DevelopmentViewController()
+            let controller = GroupEditViewController()
             self.navigationController?.pushViewController(controller, animated: true)
         }
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
-        if indexPath.section == 0 && indexPath.row == 6 {
-            if let user = ZUserController.instance.currentUser {
-                if !user.developerValue {
-                    developmentCell.isHidden = true
-                    return CGFloat(0)
+        if indexPath.section == 0 && indexPath.row == 7 {
+            developmentCell.isHidden = true
+            if let developer = UserController.instance.user?.profile?.developer {
+                if developer {
+                    return CGFloat(44)
                 }
             }
+            return CGFloat(0)
+        }
+        if indexPath.section == 0 && indexPath.row == 0 {
+            adminCell.isHidden = true
+            if let role = StateController.instance.group.role {
+                if role == "admin" {
+                    adminCell.isHidden = false
+                    return CGFloat(44)
+                }
+            }
+            return CGFloat(0)
         }
         else if indexPath.section == 2 && indexPath.row == 0 {
             return CGFloat(64)
@@ -263,13 +273,14 @@ extension SettingsTableViewController {
         switch (indexPath.section) {
             case 0:
                 switch (indexPath.row) {
-                    case 0: return self.notificationsCell
-                    case 1: return self.sendFeedbackCell
-                    case 2: return self.rateCell
-                    case 3: return self.termsOfServiceCell
-                    case 4: return self.privacyPolicyCell
-                    case 5: return self.softwareLicensesCell
-                    case 6: return self.developmentCell
+                    case 0: return self.adminCell
+                    case 1: return self.notificationsCell
+                    case 2: return self.sendFeedbackCell
+                    case 3: return self.rateCell
+                    case 4: return self.termsOfServiceCell
+                    case 5: return self.privacyPolicyCell
+                    case 6: return self.softwareLicensesCell
+                    case 7: return self.developmentCell
                     default: fatalError("Unknown row in section 1")
                 }
             case 1:
@@ -301,7 +312,7 @@ extension SettingsTableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
-            case 0: return 7
+            case 0: return 8
             case 1: return 2
             case 2: return 1
             default: fatalError("Unknown number of sections")

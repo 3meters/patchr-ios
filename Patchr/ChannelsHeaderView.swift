@@ -17,8 +17,12 @@ class ChannelsHeaderView: UIView {
     @IBOutlet weak var switchButton    : UIButton?
     
     func bind(group: FireGroup!) {
+        
         self.title?.text = group.title
-		self.subtitle?.text = UserController.instance.user?.username!
+        
+        if let username = UserController.instance.user?.username {
+            self.subtitle?.text = username
+        }
         
         if let photo = group.photo, !photo.uploading {
             let photoUrl = PhotoUtils.url(prefix: photo.filename!, source: photo.source!, category: SizeCategory.profile)

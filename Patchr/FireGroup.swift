@@ -18,11 +18,9 @@ class FireGroup: NSObject {
     }
     
     var id: String?
-    var name: String?
     var title: String?
     var desc: String?
     var photo: FirePhoto?
-    var general: String?
     var defaultChannels: [String]?
     var ownedBy: String?
     var createdAt: Int?
@@ -32,20 +30,18 @@ class FireGroup: NSObject {
     
     /* Link properties for the current user */
     var disabled: Bool?
-    var role: String?
-    var username: String?
-    var notifications: String?
     var hideEmail: Bool?
     var joinedAt: Int?
+    var notifications: String?
+    var role: String?
+    var username: String?
     
     static func from(dict: [String: Any]?, id: String?) -> FireGroup? {
         if dict != nil {
             let group = FireGroup()
             group.id = id
-            group.name = dict!["name"] as? String
             group.title = dict!["title"] as? String
             group.desc = dict!["description"] as? String
-            group.general = dict!["general"] as? String
             group.defaultChannels = dict!["default_channels"] as? [String]
             group.ownedBy = dict!["owned_by"] as? String
             group.createdAt = dict!["created_at"] as? Int
@@ -58,20 +54,13 @@ class FireGroup: NSObject {
         return nil
     }
     
-    internal var dict: [String : Any] {
-        return [
-            "name": self.name,
-            "title": self.title,
-            "description": self.desc,
-            "photo": self.photo?.dict,
-            "general": self.general,
-            "default_channels": self.defaultChannels,
-            "owned_by": self.ownedBy,
-            "created_at": self.createdAt,
-            "created_by": self.createdBy,
-            "modified at": self.modifiedAt,
-            "modified_by": self.modifiedBy
-        ]
+    func membershipClear() {
+        self.disabled = nil
+        self.username = nil
+        self.role = nil
+        self.notifications = nil
+        self.hideEmail = nil
+        self.joinedAt = nil
     }
     
     func membershipFrom(dict: [String: Any]) {

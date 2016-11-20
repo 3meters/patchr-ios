@@ -43,7 +43,7 @@ class PhotoView: UIControl {
 	func initialize() {
 		
 		self.clipsToBounds = true
-		self.layer.backgroundColor = Theme.colorBackgroundImage.cgColor
+        self.backgroundColor = Theme.colorBackgroundImage
 		
 		/* User photo */
 		self.photo.contentMode = .scaleAspectFill
@@ -52,8 +52,8 @@ class PhotoView: UIControl {
 		self.name.font = Theme.fontHeading
 		self.name.textColor = Colors.white
 		self.name.textAlignment = .center
-
-		self.addSubview(self.photo)
+        
+        self.addSubview(self.photo)
         self.addSubview(self.name)
 	}
     
@@ -76,7 +76,7 @@ class PhotoView: UIControl {
         /* Zombie */
 	}
 	
-    func bind(photoUrl: URL?, name: String?, colorSeed: String?) {
+    func bind(photoUrl: URL?, name: String?, colorSeed: String?, color: UIColor? = nil) {
 		
 		if self.photo.image != nil
 			&& self.photo.linkedPhotoUrl != nil
@@ -91,8 +91,6 @@ class PhotoView: UIControl {
 		self.photo.image = nil
 		self.name.text = nil
 		self.name.isHidden = false
-		
-		self.backgroundColor = Colors.gray80pcntColor
 		
 		if photoUrl != nil {
 			
@@ -128,10 +126,17 @@ class PhotoView: UIControl {
 				}
 			)
 		}
-		else if name != nil {
-            self.name.text = Utils.initialsFromName(fullname: name!, count: self.initialsCount).uppercased()
-			let seed = Utils.numberFromName(fullname: colorSeed ?? name!)
-			self.backgroundColor = ColorArray.randomColor(seed: seed)
+		else {
+            if name != nil {
+                self.name.text = Utils.initialsFromName(fullname: name!, count: self.initialsCount).uppercased()
+            }
+            if color != nil {
+                self.backgroundColor = color
+            }
+            else {
+                let seed = Utils.numberFromName(fullname: colorSeed ?? name ?? "lastchance")
+                self.backgroundColor = ColorArray.randomColor(seed: seed)
+            }
 		}
 	}
 }

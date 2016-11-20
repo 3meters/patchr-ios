@@ -33,7 +33,11 @@ class UserListCell: UITableViewCell {
         self.user = user
         self.presenceView?.bind(online: user.presence)
         self.title?.text = user.profile?.fullName
-        self.subtitle?.text = "@\(user.username!)"
+        
+        if user.username != nil {
+            self.subtitle?.text = "@\(user.username!)"
+        }
+
         self.role?.text = user.role
         
         if user.role == "admin" {

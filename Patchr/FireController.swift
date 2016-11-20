@@ -33,10 +33,27 @@ class FireController: NSObject {
      * MARK: - Methods
      *--------------------------------------------------------------------------------------------*/
     
-    func addGroup(groupId: String, groupMap: inout [String: Any], then: ((Bool) -> Void)? = nil) {
+    func addUser(userId: String, profileMap: inout [String: Any], then: ((Bool) -> Void)? = nil) {
+        
+        let timestamp = Utils.now() + (FireController.instance.serverOffset ?? 0)
+        var updates: [String: Any] = [:]
+        
+        let userMap: [String: Any] = [
+            "created_at": Int(timestamp),
+            "modified_at": Int(timestamp),
+            "profile": profileMap
+        ]
+
+        updates["users/\(userId)"] = userMap
+        
+        FireController.db.updateChildValues(updates) { error, ref in
+            then?(error == nil)
+        }
+    }
+    
+    func addGroup(groupId: String, groupMap: inout [String: Any], username: String, then: ((Bool) -> Void)? = nil) {
         
         let userId = UserController.instance.userId!
-        let username = UserController.instance.user?.username!
         let timestamp = Utils.now() + (FireController.instance.serverOffset ?? 0)
         var updates: [String: Any] = [:]
         
@@ -51,7 +68,7 @@ class FireController: NSObject {
         /* Add creator as admin member */
         
         let groupPriority = 3   // admin
-        let groupLink = groupMemberMap(timestamp: timestamp, priorityIndex: groupPriority, role: "admin", username: username!)
+        let groupLink = groupMemberMap(timestamp: timestamp, priorityIndex: groupPriority, role: "admin", username: username)
         updates["member-groups/\(userId)/\(groupId)"] = groupLink
         updates["group-members/\(groupId)/\(userId)"] = groupLink
         
@@ -227,6 +244,7 @@ class FireController: NSObject {
             "hide_email": false,
             "notifications": "all",
             "role": role,
+            "username": username,
             "priority": priority,
             "joined_at": joinedAt,
             "joined_at_desc": joinedAt * -1,
@@ -375,7 +393,20 @@ class FireController: NSObject {
         let userId = UserController.instance.userId!
         let query = FireController.db.child("member-channels/\(userId)/\(groupId)").queryOrdered(byChild: "index_priority_joined_at_desc").queryLimited(toFirst: 1)
         
-        query.observeSingleEvent(of: .childAdded, with: { snap in
+        query.observeSingleEvent(of: .value, with: { snap in
+            if !(snap.value is NSNull) && snap.hasChildren() {
+                let channelId = (snap.children.nextObject() as! FIRDataSnapshot).key
+                next?(channelId)
+                return
+            }
+            next?(nil)
+        })
+    }
+    
+    func findFirstGroup(userId: String, next: ((String?) -> Void)? = nil) {
+        let query = FireController.db.child("member-groups/\(userId)").queryOrdered(byChild: "index_priority_joined_at_desc").queryLimited(toFirst: 1)
+        
+        query.observeSingleEvent(of: .value, with: { snap in
             if !(snap.value is NSNull) {
                 next?(snap.key)
                 return

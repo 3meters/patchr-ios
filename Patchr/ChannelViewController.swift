@@ -60,7 +60,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if StateController.instance.groupId == nil {
+        if UserController.instance.userId != nil && StateController.instance.groupId == nil {
             let controller = GroupPickerController()
             self.present(controller, animated: true, completion: nil)
         }
@@ -369,17 +369,18 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
         let groupQuery = GroupQuery(groupId: groupId, userId: userId!)
         
         groupQuery.once(with: { group in
-            
-            let maxWidth = self.view.frame.size.width - CGFloat(36 + 36 + 36 + 30 + 16 + 72 + 24)
-            self.titleView.bounds.size = CGSize(width: maxWidth, height: (self.navigationController?.navigationBar.height())!)
-
-            self.titleView.title?.text = (group?.title != nil) ? group?.title! : group?.name!
-            self.titleView.title?.sizeToFit()
-            self.titleView.sizeToFit()
-
-            self.navigationItem.titleView = self.titleView
-            let tap = UITapGestureRecognizer(target: self, action: #selector(self.showChannelActions(gesture:)))
-            self.titleView.addGestureRecognizer(tap)
+            if group != nil {
+                let maxWidth = self.view.frame.size.width - CGFloat(36 + 36 + 36 + 30 + 16 + 72 + 24)
+                self.titleView.bounds.size = CGSize(width: maxWidth, height: (self.navigationController?.navigationBar.height())!)
+                
+                self.titleView.title?.text = group!.title
+                self.titleView.title?.sizeToFit()
+                self.titleView.sizeToFit()
+                
+                self.navigationItem.titleView = self.titleView
+                let tap = UITapGestureRecognizer(target: self, action: #selector(self.showChannelActions(gesture:)))
+                self.titleView.addGestureRecognizer(tap)
+            }
         })
         
         self.channelQuery?.remove()
@@ -425,6 +426,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
             }
             else {
                 self.headerView.bind(channel: self.channel)
+                self.tableView.tableHeaderView = self.headerView
             }
         })
         
@@ -592,6 +594,10 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
                 }
             }
             
+            let scroll = UIAlertAction(title: "Scroll", style: .default) { action in
+                self.scrollToFirstRow()
+            }
+            
             let cancel = UIAlertAction(title: "Cancel", style: .cancel) {
                 action in
                 sheet.dismiss(animated: true, completion: nil)
@@ -600,6 +606,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
             sheet.addAction(star)
             sheet.addAction(mute)
             sheet.addAction(leave)
+            sheet.addAction(scroll)
             sheet.addAction(cancel)
             
             if let presenter = sheet.popoverPresentationController {
@@ -693,11 +700,21 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
         }
     }
     
-    func channel(star: Bool) {
+    func channel(star: Bool) {}
+    
+    func scrollToHeader(animated: Bool = true) {
+        self.tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: animated)
     }
     
     func scrollToFirstRow(animated: Bool = true) {
-        self.tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: animated)
+        let indexPath = IndexPath(row: 0, section: 0)
+        self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+    }
+    
+    func scrollToLastRow(animated: Bool = true) {
+        let itemCount = self.tableViewDataSource.items.count
+        let indexPath = IndexPath(row: itemCount - 1, section: 0)
+        self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

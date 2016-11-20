@@ -95,7 +95,7 @@ class UserListController: UIViewController, UITableViewDelegate {
         self.db.child("groups/\(groupId!)").observeSingleEvent(of: .value, with: { snap in
             if !(snap.value is NSNull) {
                 let group = FireGroup.from(dict: snap.value as? [String: Any], id: snap.key)
-                self.navigationItem.title = group?.title ?? group?.name
+                self.navigationItem.title = group?.title
             }
         })
         

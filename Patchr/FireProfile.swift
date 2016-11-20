@@ -16,6 +16,7 @@ class FireProfile: NSObject {
     var fullName: String?
     var phone: String?
     var skype: String?
+    var developer: Bool?
     var photo: FirePhoto?
     
     static func from(dict: [String: Any]?) -> FireProfile? {
@@ -27,21 +28,10 @@ class FireProfile: NSObject {
             profile.fullName = dict!["full_name"] as? String
             profile.phone = dict!["phone"] as? String
             profile.skype = dict!["skype"] as? String
+            profile.developer = dict!["developer"] as? Bool
             profile.photo = FirePhoto.from(dict: dict!["photo"] as! [String : Any]?)
             return profile
         }
         return nil
-    }
-    
-    internal var dict: [String: Any] {
-        return [
-            "email": self.email,
-            "first_name": self.firstName,
-            "last_name": self.lastName,
-            "full_name": self.fullName,
-            "phone": self.phone,
-            "skype": self.skype,
-            "photo": self.photo?.dict
-        ]
     }
 }

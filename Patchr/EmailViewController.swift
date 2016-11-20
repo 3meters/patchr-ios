@@ -25,6 +25,10 @@ class EmailViewController: BaseEditViewController {
         super.loadView()
         initialize()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        self.emailField.becomeFirstResponder()
+    }
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
@@ -111,10 +115,7 @@ class EmailViewController: BaseEditViewController {
         
         /* Navigation bar buttons */
         let nextButton = UIBarButtonItem(title: "Next", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
-        let cancelButton = UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.plain, target: self, action: #selector(cancelAction(sender:)))
-
         self.navigationItem.rightBarButtonItems = [nextButton]
-        self.navigationItem.leftBarButtonItems = [cancelButton]
 
         self.emailField.text = UserDefaults.standard.object(forKey: PatchrUserDefaultKey(subKey: "userEmail")) as? String
     }
@@ -123,11 +124,14 @@ class EmailViewController: BaseEditViewController {
         
         guard !self.processing else { return }
         self.processing = true
+        
         let email = self.emailField.text!
         
         FireController.instance.emailExists(email: email, next: { exists in
+            
             self.progress?.hide(true)
             self.processing = false
+            
             if self.mode == .login {
                 if !exists {
                     self.errorLabel.text = "No account found."
@@ -174,8 +178,6 @@ class EmailViewController: BaseEditViewController {
 
         if textField == self.emailField {
             self.doneAction(sender: textField)
-            textField.resignFirstResponder()
-            return false
         }
 
         return true

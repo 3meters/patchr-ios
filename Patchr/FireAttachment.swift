@@ -22,11 +22,4 @@ class FireAttachment: NSObject {
         }
         return nil
     }
-    
-    internal var dict: [String: Any] {
-        return [
-            "title": self.title,
-            "photo": self.photo?.dict
-        ]
-    }
 }

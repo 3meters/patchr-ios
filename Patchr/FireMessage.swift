@@ -59,28 +59,6 @@ class FireMessage: NSObject {
         return nil
     }
     
-    internal var dict: [String : Any] {
-        var dict: [String: Any] = [
-            "channel": self.channel,
-            "event": self.event,
-            "text": self.text,
-            "created_at": self.createdAt,
-            "created_by": self.createdBy,
-            "modified at": self.modifiedAt,
-            "modified_by": self.modifiedBy
-        ]
-        
-        if self.attachments != nil && (self.attachments?.count)! > 0 {
-            var attachments: [[String: Any]] = []
-            for attachment in self.attachments! {
-                attachments.append(attachment.dict)
-            }
-            dict["attachments"] = attachments
-        }
-        
-        return dict
-    }
-    
     func getCreator(with block: @escaping (FireUser) -> Swift.Void) {
         FireController.db.child("users/\(self.createdBy!)").observeSingleEvent(of: .value, with: { snap in
             if !(snap.value is NSNull) {

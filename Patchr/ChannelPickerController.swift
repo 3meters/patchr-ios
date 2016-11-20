@@ -25,7 +25,6 @@ class ChannelPickerController: UIViewController, UITableViewDelegate, SlideMenuC
     var footerView = AirLinkButton()
     
     var hasFavorites = false
-    var groupPickerController = GroupPickerController()
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -162,12 +161,15 @@ class ChannelPickerController: UIViewController, UITableViewDelegate, SlideMenuC
                     cell.title?.textColor = Theme.colorText
                     cell.lock?.tintColor = Colors.brandColorLight
                     cell.star?.tintColor = Colors.brandColorLight
+                    cell.accessoryType = .none
                     
                     if channelId == StateController.instance.channelId {
                         cell.backgroundColor = Colors.accentColorFill
                         cell.title?.textColor = Colors.white
                         cell.lock?.tintColor = Colors.white
                         cell.star?.tintColor = Colors.white
+                        cell.tintColor = Colors.white
+                        cell.accessoryType = .checkmark
                     }
                     
                     let path = "group-channels/\(groupId)/\(channelId)"

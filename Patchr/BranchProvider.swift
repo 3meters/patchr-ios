@@ -44,10 +44,10 @@ class BranchProvider: NSObject {
         
         applink.metadata?["role"] = "member"
         applink.metadata?["groupId"] = group.id!
-        applink.metadata?["groupName"] = group.name!
+        applink.metadata?["groupTitle"] = group.title!
         
         /* $og_title */
-        applink.title = "Invite by \(referrerName) to the \(group.name!) group"
+        applink.title = "Invite by \(referrerName) to the \(group.title!) group"
         
         /* $og_image */
         if group.photo != nil {
@@ -100,7 +100,7 @@ class BranchProvider: NSObject {
         
         applink.metadata?["role"] = "guest"
         applink.metadata?["groupId"] = group.id!
-        applink.metadata?["groupName"] = group.name!
+        applink.metadata?["groupTitle"] = group.title!
         
         applink.metadata?["channelId"] = channel!.id!
         applink.metadata?["channelName"] = channel!.name!
@@ -166,7 +166,7 @@ class InviteItem: NSObject, UIActivityItemSource {
     }
     
     func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivityType) -> Any? {
-        let text = "\(UserController.instance.user?.profile?.fullName) has invited you to the \(self.group.name!) group!"
+        let text = "\(UserController.instance.user?.profile?.fullName) has invited you to the \(self.group.title!) group!"
         return text
     }
     
@@ -178,7 +178,7 @@ class InviteItem: NSObject, UIActivityItemSource {
          * Apple message calls this (I believe as an alternative if nothing provided via itemForActivityType).
          */
         if activityType == UIActivityType.mail {
-            return "Invitation to the \(self.group.name!) group"
+            return "Invitation to the \(self.group.title!) group"
         }
         return ""
     }

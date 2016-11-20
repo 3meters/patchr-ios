@@ -33,6 +33,14 @@ class StateController: NSObject {
 
         let queue = TaskQueue()
         
+        /* Init user */
+        queue.tasks += { _, next in
+            /* We wait until user is resolved */
+            UserController.instance.prepare() { success in
+                next(nil)
+            }
+        }
+        
         /* Init state */
         queue.tasks += { _, next in
             

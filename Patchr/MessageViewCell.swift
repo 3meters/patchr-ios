@@ -125,6 +125,7 @@ class MessageViewCell: AirUIView {
 		
         self.photo = AirImageView(frame: CGRect(x:0, y:0, width:columnWidth, height:photoHeight))
 		self.photo!.clipsToBounds = true
+        self.photo!.cornerRadius = 4
 		self.photo!.contentMode = .scaleAspectFill
 		self.photo!.backgroundColor = Theme.colorBackgroundImage
 		

@@ -160,6 +160,7 @@ class ChannelDetailView: UIView {
         }
 
         if let photo = channel.photo, !photo.uploading {
+            self.starButton.tintColor = Colors.brandColor
             if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
                 self.photo.setImageWithUrl(url: photoUrl)
                 self.gradient.isHidden = false
@@ -169,8 +170,17 @@ class ChannelDetailView: UIView {
         else {
             self.gradient.isHidden = true
             self.photo.image = nil
-            let seed = Utils.numberFromName(fullname: channel.name!)
-            self.photo.backgroundColor = ColorArray.randomColor(seed: seed)
+            self.starButton.tintColor = Colors.white
+            if channel.name == "general" || channel.general! {
+                self.photo.backgroundColor = Colors.brandColorLight
+            }
+            else if channel.name == "chatter" {
+                self.photo.backgroundColor = Colors.accentColorFill
+            }
+            else {
+                let seed = Utils.numberFromName(fullname: channel.name!)
+                self.photo.backgroundColor = ColorArray.randomColor(seed: seed)
+            }
         }
 
         /* Public/private */

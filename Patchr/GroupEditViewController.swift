@@ -63,13 +63,13 @@ class GroupEditViewController: BaseEditViewController {
 
     func doneAction(sender: AnyObject) {
         if isValid() {
-            self.performBack(animated: true)
+            cancelAction(sender: sender)
         }
     }
 
     func cancelAction(sender: AnyObject) {
         if isValid() {
-            self.performBack(animated: true)
+            let _ = self.navigationController?.popViewController(animated: true)
         }
     }
 
@@ -83,8 +83,7 @@ class GroupEditViewController: BaseEditViewController {
             actionTitle: "Delete",
             cancelTitle: "Cancel",
             destructConfirmation: true,
-            delegate: self) {
-                doIt in
+            delegate: self) { doIt in
                 if doIt {
                     self.delete()
                 }
@@ -98,7 +97,7 @@ class GroupEditViewController: BaseEditViewController {
             if isValid() {
                 FireController.db.child(self.group.path).updateChildValues([
                     "modified_at": FIRServerValue.timestamp(),
-                    "title": self.titleField.text!
+                    "title": emptyToNull(self.titleField.text)
                     ])
             }
         }

@@ -26,27 +26,21 @@ class UserController: NSObject {
      * Methods
      *--------------------------------------------------------------------------------------------*/
 
-    func prepare() {
-        if let userId = FIRAuth.auth()?.currentUser?.uid {
-            self.setUserId(userId: userId)
+    func prepare(then: ((Bool) -> Void)? = nil) {
+        if let user = FIRAuth.auth()?.currentUser {
+            user.reload(completion: { error in
+                if error == nil {
+                    self.setUserId(userId: user.uid)
+                }
+                else {
+                    /* User account could have been deleted */
+                    try! FIRAuth.auth()!.signOut()
+                    StateController.instance.clearGroup() // Also clears channel
+                    Log.w((error?.localizedDescription)!)
+                }
+                then?(error == nil)
+            })
         }
-    }
-
-    func logout() {
-        try! FIRAuth.auth()!.signOut()
-        clearUser()
-        Reporting.track("Logged Out")
-        Log.i("User logged out")
-        StateController.instance.clearGroup() // Also clears channel
-        MainController.instance.showLobby()
-    }
-    
-    func clearUser() {
-        self.userQuery?.remove()
-        self.userQuery = nil
-        self.userId = nil
-        self.user = nil
-        Reporting.updateUser(user: nil)
     }
 
     func setUserId(userId: String, next: ((Any?) -> Void)? = nil) {
@@ -55,12 +49,12 @@ class UserController: NSObject {
             next?(nil)
             return
         }
-
+        
         Log.i("User logged in: \(userId)")
         
         self.userId = userId
         self.userQuery?.remove()
-        self.userQuery = UserQuery(userId: userId, trackPresence: true)
+        self.userQuery = UserQuery(userId: userId, groupId: nil, trackPresence: true)
         self.userQuery!.observe(with: { user in
             
             guard user != nil else {
@@ -71,12 +65,30 @@ class UserController: NSObject {
             if self.user != nil {
                 Log.d("User updated: \(user!.id!)")
             }
-
+            
             self.user = user
             next?(nil)
             
             Reporting.updateUser(user: FIRAuth.auth()?.currentUser)
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UserStateDidChange), object: nil, userInfo: nil)
         })
+    }
+
+    func logout() {
+        try! FIRAuth.auth()!.signOut()
+        clearUser()
+        StateController.instance.clearGroup() // Also clears channel
+        MainController.instance.route()
+        Reporting.track("Logged Out")
+        Log.i("User logged out")
+    }
+    
+    func clearUser() {
+        self.userQuery?.remove()
+        self.userQuery = nil
+        self.userId = nil
+        self.user = nil
+        UserDefaults.standard.removeObject(forKey: PatchrUserDefaultKey(subKey: "userEmail"))
+        Reporting.updateUser(user: nil)
     }
 }

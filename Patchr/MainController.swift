@@ -122,6 +122,7 @@ class MainController: NSObject, iRateDelegate {
             showLobby()
         }
         else if StateController.instance.groupId == nil || StateController.instance.channelId == nil {
+            /* What about the case where a user isn't currently a member of any group? */
             showGroupPicker() // Here to catch inconsistent state
         }
         else {
@@ -134,10 +135,12 @@ class MainController: NSObject, iRateDelegate {
         self.window?.setRootViewController(rootViewController: self.lobbyWrapper, animated: true)
     }
     
-    func showGroupPicker() {
+    fileprivate func showGroupPicker() {
         StateController.instance.clearGroup()   // Make sure group and channel are both unset
         let controller = GroupPickerController()
-        UIViewController.topMostViewController()?.present(controller, animated: true, completion: nil)
+        let wrapper = AirNavigationController()
+        wrapper.viewControllers = [controller]
+        UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
     }
     
     func showMain() {

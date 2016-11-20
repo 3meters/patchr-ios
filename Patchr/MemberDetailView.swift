@@ -121,27 +121,36 @@ class MemberDetailView: UIView {
     
     func bind(user: FireUser!) {
         
-        /* Name, type and photo */
-        if user.profile?.fullName == nil {
-
-        }
-        self.title.text = user.profile?.fullName == nil || (user.profile?.fullName?.isEmpty)! ? user.username : user.profile?.fullName
-        self.subtitle.text = "@\(user.username!)"
-        self.presenceView.bind(online: user.presence)
-        if let photo = user.profile?.photo, !photo.uploading {
-            if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
-                self.photo.setImageWithUrl(url: photoUrl)
-                self.gradient.isHidden = false
+        if let group = StateController.instance.group, let profile = user.profile {
+            if profile.fullName != nil {
+                self.title.text = profile.fullName
+                self.subtitle.text = "@\(group.username!)"
             }
+            else {
+                self.title.text = group.username
+            }
+            
+            /* Name, type and photo */
+            self.presenceView.bind(online: user.presence)
+            
+            if let photo = profile.photo, !photo.uploading {
+                if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
+                    self.photo.setImageWithUrl(url: photoUrl)
+                    self.gradient.isHidden = false
+                }
+            }
+            else if profile.fullName != nil {
+                let seed = Utils.numberFromName(fullname: user.id!)
+                self.photo.backgroundColor = ColorArray.randomColor(seed: seed)
+            }
+            else {
+                self.photo.backgroundColor = Colors.accentColorFill
+            }
+            
+            self.setNeedsLayout()    // Needed because binding can change element layout
+            self.layoutIfNeeded()
+            self.sizeToFit()
         }
-        else {
-            let seed = Utils.numberFromName(fullname: user.id!)
-            self.photo.backgroundColor = ColorArray.randomColor(seed: seed)
-        }
-
-        self.setNeedsLayout()    // Needed because binding can change element layout
-        self.layoutIfNeeded()
-        self.sizeToFit()
     }
 
     override func sizeThatFits(_ size: CGSize) -> CGSize {

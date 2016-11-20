@@ -27,6 +27,10 @@ class GroupCreateController: BaseEditViewController {
         initialize()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        self.groupTitleField.becomeFirstResponder()
+    }
+
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 
@@ -50,6 +54,15 @@ class GroupCreateController: BaseEditViewController {
     func doneAction(sender: AnyObject?) {
         if isValid() {
             self.activeTextField?.resignFirstResponder()
+            
+            self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
+            self.progress?.mode = MBProgressHUDMode.indeterminate
+            self.progress?.styleAs(progressStyle: .ActivityWithText)
+            self.progress?.minShowTime = 0.5
+            self.progress?.labelText = "Activating..."
+            self.progress?.removeFromSuperViewOnHide = true
+            self.progress?.show(true)
+
             createGroup()
         }
     }
@@ -121,10 +134,18 @@ class GroupCreateController: BaseEditViewController {
     
     func createGroup() {
         
+        guard !self.processing else { return }
+        self.processing = true
+        
         let groupId = "gr-\(Utils.genRandomId())"
+        let username = self.userNameField.text!
         var groupMap: [String: Any] = ["title": self.groupTitleField.text!]
 
-        FireController.instance.addGroup(groupId: groupId, groupMap: &groupMap, then: { success in
+        FireController.instance.addGroup(groupId: groupId, groupMap: &groupMap, username: username, then: { success in
+            
+            self.progress?.hide(true)
+            self.processing = false
+
             if success {
                 FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
                     if firstChannelId != nil {
@@ -173,10 +194,11 @@ class GroupCreateController: BaseEditViewController {
 
     override func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 
-        if textField == self.userNameField {
+        if textField == self.groupTitleField {
+            userNameField.resignFirstResponder()
+        }
+        else if textField == self.userNameField {
             self.doneAction(sender: textField)
-            textField.resignFirstResponder()
-            return false
         }
 
         return true

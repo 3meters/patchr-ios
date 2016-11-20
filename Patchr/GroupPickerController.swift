@@ -22,6 +22,12 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
     var footerView = AirLinkButton()
     var rule = UIView()
     
+    var buttonLogin		= AirButton()
+    var buttonSignup	= AirButton()
+    var buttonGroup		= UIView()
+    
+    var groupAvailable = false
+    
     var isModal: Bool {
         return self.presentingViewController?.presentedViewController == self
             || (self.navigationController != nil && self.navigationController?.presentingViewController?.presentedViewController == self.navigationController)
@@ -43,14 +49,22 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
         
         let messageSize = self.messageLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         if self.navigationController != nil {
-            self.messageLabel.alignUnder(self.navigationController?.navigationBar, matchingCenterWithTopPadding: 0, width: 288, height: messageSize.height + 24)
+            self.messageLabel.alignUnder(self.navigationController?.navigationBar, matchingCenterWithTopPadding: 24, width: 288, height: messageSize.height + 24)
         }
         else {
             self.messageLabel.anchorTopCenter(withTopPadding: 24, width: 288, height:  messageSize.height + 24)
         }
         self.rule.alignUnder(self.messageLabel, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 1)
-        self.footerView.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 48)
-        self.tableView.alignBetweenTop(self.rule, andBottom: self.footerView, centeredWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
+        
+        if self.groupAvailable {
+            self.footerView.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 48)
+            self.tableView.alignBetweenTop(self.rule, andBottom: self.footerView, centeredWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
+        }
+        else {
+            self.buttonGroup.anchorInCenter(withWidth: 240, height: 96)
+            self.buttonSignup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 44)
+            self.buttonLogin.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 44)
+        }
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -58,14 +72,31 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
      *--------------------------------------------------------------------------------------------*/
     
     func addAction(sender: AnyObject?) {
-        let controller = GroupCreateController()
-        let wrapper = AirNavigationController()
-        wrapper.viewControllers = [controller]
-        self.present(wrapper, animated: true, completion: nil)
+        if self.groupAvailable {
+            let controller = GroupCreateController()
+            let wrapper = AirNavigationController()
+            wrapper.viewControllers = [controller]
+            self.present(wrapper, animated: true, completion: nil)
+        }
+        else {
+            let controller = GroupCreateController()
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
     }
     
     func dismissAction(sender: AnyObject?) {
         self.performBack(animated: true)
+    }
+    
+    func loginAction(sender: AnyObject?) {
+        let controller = EmailViewController()
+        controller.mode = .login
+        self.navigationController?.pushViewController(controller, animated: true)
+    }
+    
+    func logoutAction(sender: AnyObject?) {
+        UserController.instance.logout()
+        self.dismiss(animated: true, completion: nil)
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -81,27 +112,72 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
         self.view.backgroundColor = Theme.colorBackgroundForm
         self.rule.backgroundColor = Theme.colorSeparator
         
-        self.messageLabel.textAlignment = NSTextAlignment.center
-        self.messageLabel.numberOfLines = 0
-        self.messageLabel.text = "Select from groups you are a member of. You can switch groups at anytime."
-        self.view.addSubview(self.messageLabel)
-        self.view.addSubview(self.rule)
-        
-        self.footerView.setImage(UIImage(named: "imgAddCircleLight"), for: .normal)
-        self.footerView.imageView!.contentMode = .scaleAspectFit
-        self.footerView.imageView?.tintColor = Colors.brandOnLight
-        self.footerView.imageEdgeInsets = UIEdgeInsetsMake(8, 8, 8, 8)
-        self.footerView.contentHorizontalAlignment = .center
-        self.footerView.backgroundColor = Colors.gray95pcntColor
-        self.footerView.addTarget(self, action: #selector(addAction(sender:)), for: .touchUpInside)
-        
-        self.cellReuseIdentifier = "group-cell"
-        self.tableView.backgroundColor = Theme.colorBackgroundEmptyBubble
-        self.tableView.delegate = self
-        self.tableView.register(UINib(nibName: "GroupListCell", bundle: nil), forCellReuseIdentifier: self.cellReuseIdentifier)
-        
-        self.view.addSubview(self.tableView)
-        self.view.addSubview(self.footerView)
+        let userId = UserController.instance.userId
+        FireController.instance.findFirstGroup(userId: userId!, next: { group in
+            
+            /* User is a member of at least one group */
+            if group != nil {
+                
+                self.groupAvailable = true
+                
+                self.messageLabel.textAlignment = NSTextAlignment.center
+                self.messageLabel.numberOfLines = 0
+                self.messageLabel.text = "Select from groups you are a member of. You can switch groups at anytime."
+                self.view.addSubview(self.messageLabel)
+                self.view.addSubview(self.rule)
+                
+                self.footerView.setImage(UIImage(named: "imgAddCircleLight"), for: .normal)
+                self.footerView.imageView!.contentMode = .scaleAspectFit
+                self.footerView.imageView?.tintColor = Colors.brandOnLight
+                self.footerView.imageEdgeInsets = UIEdgeInsetsMake(8, 8, 8, 8)
+                self.footerView.contentHorizontalAlignment = .center
+                self.footerView.backgroundColor = Colors.gray95pcntColor
+                self.footerView.addTarget(self, action: #selector(self.addAction(sender:)), for: .touchUpInside)
+                
+                self.cellReuseIdentifier = "group-cell"
+                self.tableView.backgroundColor = Theme.colorBackgroundEmptyBubble
+                self.tableView.delegate = self
+                self.tableView.register(UINib(nibName: "GroupListCell", bundle: nil), forCellReuseIdentifier: self.cellReuseIdentifier)
+                
+                self.view.addSubview(self.tableView)
+                self.view.addSubview(self.footerView)
+            }
+                
+            /* User is not a member of any group */
+            else {
+                
+                self.messageLabel.textAlignment = NSTextAlignment.center
+                self.messageLabel.numberOfLines = 0
+                self.messageLabel.text = "Oops, you are not a member of any Patchr group."
+                self.view.addSubview(self.messageLabel)
+                self.view.addSubview(self.rule)
+                
+                self.buttonLogin.setTitle("Log in with another email", for: .normal)
+//                self.buttonLogin.setTitleColor(Colors.white, for: .normal)
+//                self.buttonLogin.setTitleColor(Theme.colorTint, for: .highlighted)
+//                self.buttonLogin.borderColor = Colors.white
+//                self.buttonLogin.borderWidth = Theme.dimenButtonBorderWidth
+//                self.buttonLogin.cornerRadius = Theme.dimenButtonCornerRadius
+                
+                self.buttonSignup.setTitle("Create a new Patchr group", for: .normal)
+//                self.buttonSignup.setTitleColor(Colors.white, for: .normal)
+//                self.buttonSignup.setTitleColor(Theme.colorTint, for: .highlighted)
+//                self.buttonSignup.borderColor = Colors.white
+//                self.buttonSignup.borderWidth = Theme.dimenButtonBorderWidth
+//                self.buttonSignup.cornerRadius = Theme.dimenButtonCornerRadius
+                
+                self.buttonGroup.addSubview(self.buttonLogin)
+                self.buttonGroup.addSubview(self.buttonSignup)
+                self.view.addSubview(self.buttonGroup)
+                
+                self.buttonLogin.addTarget(self, action: #selector(self.loginAction(sender:)), for: .touchUpInside)
+                self.buttonSignup.addTarget(self, action: #selector(self.addAction(sender:)), for: .touchUpInside)
+                
+                /* Navigation bar buttons */
+                let logoutButton = UIBarButtonItem(title: "Log out", style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.logoutAction(sender:)))
+                self.navigationItem.rightBarButtonItems = [logoutButton]
+            }
+        })
     }
     
     func bind() {
@@ -121,10 +197,20 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
                     let link = snap.value as! [String: Any]
                     
                     cell.reset()
+                    cell.backgroundColor = Colors.white
                     cell.title?.textColor = Theme.colorText
+                    cell.subtitle?.textColor = Theme.colorTextSecondary
+                    cell.photoView?.layer.borderWidth = 0
+                    cell.accessoryType = .none
                     
                     if groupId == StateController.instance.groupId {
-                        cell.title?.textColor = Colors.accentColorTextLight
+                        cell.backgroundColor = Colors.accentColorFill
+                        cell.title?.textColor = Colors.white
+                        cell.subtitle?.textColor = Colors.black
+                        cell.photoView?.layer.borderColor = Colors.opacity50pcntWhite.cgColor
+                        cell.photoView?.layer.borderWidth = 0.5
+                        cell.tintColor = Colors.white
+                        cell.accessoryType = .checkmark
                     }
                     
                     FireController.db.child("groups/\(groupId)").observeSingleEvent(of: .value, with: { snap in

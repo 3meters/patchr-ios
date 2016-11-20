@@ -89,12 +89,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         /* Instance the reachability manager */
         ReachabilityManager.instance.prepare()
         
-        /* Start listening for auth changes */
-        UserController.instance.prepare()
-        
         /* Setup master UI */
         MainController.instance.prepare(launchOptions: launchOptions)
-
+        
         /* Initialize current group and channel state */
         StateController.instance.prepare()
 

@@ -32,15 +32,4 @@ class FirePhoto: NSObject {
         }
         return nil
     }
-    
-    internal var dict: [String : Any] {
-        return [
-            "filename": self.filename,
-            "source": self.source,
-            "width": self.width,
-            "height": self.height,
-            "taken_at": self.takenAt,
-            "uploading": self.uploading
-        ]
-    }
 }

@@ -221,9 +221,9 @@ class MessageEditViewController: BaseEditViewController {
             var messageMap: [String: Any] = [:]
             messageMap["modified_at"] = Int(timestamp)
             messageMap["created_at"] = Int(timestamp)
+            messageMap["created_at_desc"] = Int(timestampReversed)
             messageMap["modified_by"] = UserController.instance.userId!
             messageMap["created_by"] = UserController.instance.userId!
-            messageMap["timestamp"] = Int(timestampReversed)
             messageMap["channel"] = self.inputChannelId!
             
             if !self.descriptionField.text.isEmpty {
