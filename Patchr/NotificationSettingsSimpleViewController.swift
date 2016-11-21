@@ -62,12 +62,12 @@ class NotificationSettingsSimpleViewController: UITableViewController {
         self.notificationSettingsCell.textLabel?.text = "Notification settings"
         self.soundEffectsCell.textLabel!.text = "Play sound effects"
         
-        self.soundEffectsCell.accessoryView = makeSwitch(notificationType: .SoundEffects, state: userDefaults.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")))
+        self.soundEffectsCell.accessoryView = makeSwitch(notificationType: .playSoundEffects, state: userDefaults.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")))
     }
 
     func toggleAction(sender: AnyObject?) {
         if let switcher = sender as? UISwitch {
-            if switcher.tag == Setting.SoundEffects.rawValue {
+            if switcher.tag == Setting.playSoundEffects.rawValue {
                 userDefaults.set(switcher.isOn, forKey: PatchrUserDefaultKey(subKey: "SoundEffects"))
             }
         }

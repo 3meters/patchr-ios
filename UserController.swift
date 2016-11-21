@@ -41,6 +41,9 @@ class UserController: NSObject {
                 then?(error == nil)
             })
         }
+        else {
+            then?(true)
+        }
     }
 
     func setUserId(userId: String, next: ((Any?) -> Void)? = nil) {

@@ -145,6 +145,7 @@ class ChannelDetailView: UIView {
         self.name.text = nil
         self.purpose.text = nil
         self.mutedImage.isHidden = true
+        self.starButton.isHidden = true
         self.lockImage.isHidden = true        
     }
     
@@ -154,11 +155,14 @@ class ChannelDetailView: UIView {
         
         self.name.text = "#\(channel.name!)"
         self.purpose.isHidden = true
+        
         if channel.purpose != nil && !channel.purpose!.isEmpty {
             self.purpose.text = channel.purpose!
             self.purpose.isHidden = false
         }
 
+        self.starButton.isHidden = false
+        
         if let photo = channel.photo, !photo.uploading {
             self.starButton.tintColor = Colors.brandColor
             if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
@@ -184,7 +188,7 @@ class ChannelDetailView: UIView {
         }
 
         /* Public/private */
-        self.lockImage.isHidden = (channel.visibility == "public")
+        self.lockImage.isHidden = (channel.visibility == "open")
         self.mutedImage.isHidden = true
         
         /* Per user indicators */

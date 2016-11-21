@@ -10,7 +10,6 @@ import Foundation
 
 class FireProfile: NSObject {
     
-    var email: String?
     var firstName: String?
     var lastName: String?
     var fullName: String?
@@ -22,7 +21,6 @@ class FireProfile: NSObject {
     static func from(dict: [String: Any]?) -> FireProfile? {
         if dict != nil {
             let profile = FireProfile()
-            profile.email = dict!["email"] as? String
             profile.firstName = dict!["first_name"] as? String
             profile.lastName = dict!["last_name"] as? String
             profile.fullName = dict!["full_name"] as? String

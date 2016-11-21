@@ -87,7 +87,9 @@ class ProfileEditViewController: BaseEditViewController {
      *--------------------------------------------------------------------------------------------*/
     
     func accountAction(sender: AnyObject) {
-        let controller = AccountEditViewController()
+        /* Requires re-authentication */
+        let controller = PasswordViewController()
+        controller.mode = .reauth
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
@@ -95,6 +97,11 @@ class ProfileEditViewController: BaseEditViewController {
         super.textFieldDidEndEditing(textField)
         
         if textField == self.firstNameField {
+            
+            let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
+            changeRequest?.displayName = self.fullName
+            changeRequest?.commitChanges()
+
             FireController.db.child(self.user.path).updateChildValues([
                 "modified_at": FIRServerValue.timestamp(),
                 "profile/first_name":  emptyToNull(self.firstNameField.text),
@@ -102,11 +109,16 @@ class ProfileEditViewController: BaseEditViewController {
             ])
         }
         else if textField == self.lastNameField {
+            
+            let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
+            changeRequest?.displayName = self.fullName
+            changeRequest?.commitChanges()
+            
             FireController.db.child(self.user.path).updateChildValues([
                 "modified_at": FIRServerValue.timestamp(),
                 "profile/last_name": emptyToNull(self.lastNameField.text),
                 "profile/full_name": self.fullName
-            ])
+                ])
         }
         else if textField == self.phoneField {
             FireController.db.child(self.user.path).updateChildValues([
@@ -144,16 +156,9 @@ class ProfileEditViewController: BaseEditViewController {
     }
     
     func cancelAction(sender: AnyObject?) {
-        
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: nil)
-        
-        if self.isModal {
-            self.dismiss(animated: true, completion: nil)
-        }
-        else {
-            let _ = self.navigationController?.popViewController(animated: true)
-        }
+        close()
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -177,10 +182,20 @@ class ProfileEditViewController: BaseEditViewController {
             "modified_at": FIRServerValue.timestamp(),
             "profile/photo": photoMap!
         ])
+        
+        let photoUrl = PhotoUtils.url(prefix: photoMap!["filename"] as! String?, source: photoMap!["source"] as! String?, category: SizeCategory.profile)
+        let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
+        changeRequest?.photoURL = photoUrl
+        changeRequest?.commitChanges()
     }
     
     override func photoRemoved(sender: NSNotification) {
         super.photoRemoved(sender: sender)
+        
+        let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
+        changeRequest?.photoURL = nil
+        changeRequest?.commitChanges()
+        
         FireController.db.child(self.user.path).updateChildValues([
             "modified_at": FIRServerValue.timestamp(),
             "profile/photo": NSNull()
@@ -236,7 +251,7 @@ class ProfileEditViewController: BaseEditViewController {
         self.skypeField.keyboardType = .default
         self.skypeField.returnKeyType = .done
 
-        self.accountButton.setTitle("Account", for: .normal)
+        self.accountButton.setTitle("Account".uppercased(), for: .normal)
         self.accountButton.addTarget(self, action: #selector(accountAction(sender:)), for: .touchUpInside)
         
         self.contentHolder.addSubview(self.message)
@@ -265,10 +280,5 @@ class ProfileEditViewController: BaseEditViewController {
                 self.photoEditView.bind(url: photoUrl)
             }
         }
-    }
-    
-    enum Mode: Int {
-        case insert
-        case update
     }
 }

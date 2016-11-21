@@ -142,8 +142,10 @@ class ChannelPickerController: UIViewController, UITableViewDelegate, SlideMenuC
             self.groupQuery?.remove()
             self.groupQuery = GroupQuery(groupId: groupId, userId: userId)
             self.groupQuery!.observe(with: { group in
-                self.group = group
-                self.headerView.bind(group: self.group)
+                if group != nil {
+                    self.group = group
+                    self.headerView.bind(group: self.group)                    
+                }
             })
             
             self.channelsQuery = FireController.db.child("member-channels/\(userId)/\(groupId)").queryOrdered(byChild: "index_priority_joined_at_desc")

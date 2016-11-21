@@ -40,6 +40,11 @@ class SideMenuViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        /* In case the photo needs be retried */
+        if self.user != nil {
+            self.menuHeader.bind(user: self.user)
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -58,10 +63,11 @@ class SideMenuViewController: UITableViewController {
     func editProfileAction(sender: AnyObject?) {
         let controller = ProfileEditViewController()
         let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: controller, action: #selector(controller.cancelAction(sender:)))
+        let wrapper = AirNavigationController()
+        
         controller.navigationItem.rightBarButtonItems = [cancelButton]
-        let navController = AirNavigationController()
-        navController.viewControllers = [controller]
-        UIViewController.topMostViewController()?.present(navController, animated: true, completion: nil)
+        wrapper.viewControllers = [controller]
+        UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
     }
     
     func userStateDidChange(notification: NSNotification) {
@@ -153,16 +159,33 @@ extension SideMenuViewController {
                     let inviteUrl = invite.url
                     
                     let group = StateController.instance.group!
-                    let userTitle = self.user!.profile?.fullName != nil ? self.user!.profile!.fullName! : self.user!.username!
                     let groupTitle = group.title!
-                    let userEmail = UserController.instance.user?.profile?.email!
-                    let subject = "\(userTitle) invited you to \(groupTitle) on Patchr"
                     
+                    var userTitle: String?
+                    if let profile = UserController.instance.user?.profile, profile.fullName != nil {
+                        userTitle = profile.fullName
+                    }
+                    if userTitle == nil, let username = group.username {
+                        userTitle = username
+                    }
+                    if userTitle == nil, let displayName = FIRAuth.auth()?.currentUser?.displayName {
+                        userTitle = displayName
+                    }
+
+                    var userEmail: String?
+                    if let email = UserController.instance.user?.email {
+                        userEmail = email
+                    }
+                    if userEmail == nil, let authEmail = FIRAuth.auth()?.currentUser?.email {
+                        userEmail = authEmail
+                    }
+                    
+                    let subject = "\(userTitle!) invited you to \(groupTitle) on Patchr"
                     let htmlFile = Bundle.main.path(forResource: "invite", ofType: "html")
-                    
                     let templateString = try? String(contentsOfFile: htmlFile!, encoding: .utf8)
+                    
                     var htmlString = templateString?.replacingOccurrences(of: "[[group.name]]", with: groupTitle)
-                    htmlString = htmlString?.replacingOccurrences(of: "[[user.fullName]]", with: userTitle)
+                    htmlString = htmlString?.replacingOccurrences(of: "[[user.fullName]]", with: userTitle!)
                     htmlString = htmlString?.replacingOccurrences(of: "[[user.email]]", with: userEmail!)
                     htmlString = htmlString?.replacingOccurrences(of: "[[link]]", with: inviteUrl)
                     

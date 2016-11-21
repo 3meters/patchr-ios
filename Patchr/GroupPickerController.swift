@@ -9,7 +9,7 @@ import AVFoundation
 import Firebase
 import FirebaseDatabaseUI
 
-class GroupPickerController: UIViewController, UITableViewDelegate {
+class GroupPickerController: BaseViewController, UITableViewDelegate {
     
     var query: FIRDatabaseQuery!
     
@@ -27,12 +27,6 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
     var buttonGroup		= UIView()
     
     var groupAvailable = false
-    
-    var isModal: Bool {
-        return self.presentingViewController?.presentedViewController == self
-            || (self.navigationController != nil && self.navigationController?.presentingViewController?.presentedViewController == self.navigationController)
-            || self.tabBarController?.presentingViewController is UITabBarController
-    }
     
     /*--------------------------------------------------------------------------------------------
      * Lifecycle
@@ -74,9 +68,7 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
     func addAction(sender: AnyObject?) {
         if self.groupAvailable {
             let controller = GroupCreateController()
-            let wrapper = AirNavigationController()
-            wrapper.viewControllers = [controller]
-            self.present(wrapper, animated: true, completion: nil)
+            self.navigationController?.pushViewController(controller, animated: true)
         }
         else {
             let controller = GroupCreateController()
@@ -85,12 +77,12 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
     }
     
     func dismissAction(sender: AnyObject?) {
-        self.performBack(animated: true)
+        self.close(animated: true)
     }
     
-    func loginAction(sender: AnyObject?) {
+    func switchLoginAction(sender: AnyObject?) {
         let controller = EmailViewController()
-        controller.mode = .login
+        controller.mode = .onboardLogin
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
@@ -107,9 +99,9 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
      * Methods
      *--------------------------------------------------------------------------------------------*/
     
-    func initialize() {
+    override func initialize() {
+        super.initialize()
         
-        self.view.backgroundColor = Theme.colorBackgroundForm
         self.rule.backgroundColor = Theme.colorSeparator
         
         let userId = UserController.instance.userId
@@ -153,24 +145,13 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
                 self.view.addSubview(self.rule)
                 
                 self.buttonLogin.setTitle("Log in with another email", for: .normal)
-//                self.buttonLogin.setTitleColor(Colors.white, for: .normal)
-//                self.buttonLogin.setTitleColor(Theme.colorTint, for: .highlighted)
-//                self.buttonLogin.borderColor = Colors.white
-//                self.buttonLogin.borderWidth = Theme.dimenButtonBorderWidth
-//                self.buttonLogin.cornerRadius = Theme.dimenButtonCornerRadius
-                
                 self.buttonSignup.setTitle("Create a new Patchr group", for: .normal)
-//                self.buttonSignup.setTitleColor(Colors.white, for: .normal)
-//                self.buttonSignup.setTitleColor(Theme.colorTint, for: .highlighted)
-//                self.buttonSignup.borderColor = Colors.white
-//                self.buttonSignup.borderWidth = Theme.dimenButtonBorderWidth
-//                self.buttonSignup.cornerRadius = Theme.dimenButtonCornerRadius
                 
                 self.buttonGroup.addSubview(self.buttonLogin)
                 self.buttonGroup.addSubview(self.buttonSignup)
                 self.view.addSubview(self.buttonGroup)
                 
-                self.buttonLogin.addTarget(self, action: #selector(self.loginAction(sender:)), for: .touchUpInside)
+                self.buttonLogin.addTarget(self, action: #selector(self.switchLoginAction(sender:)), for: .touchUpInside)
                 self.buttonSignup.addTarget(self, action: #selector(self.addAction(sender:)), for: .touchUpInside)
                 
                 /* Navigation bar buttons */
@@ -224,21 +205,6 @@ class GroupPickerController: UIViewController, UITableViewDelegate {
             })
 
             self.tableView.dataSource = self.tableViewDataSource
-        }
-    }
-    
-    func performBack(animated: Bool = true) {
-        /* Override in subclasses for control of dismiss/pop process */
-        if isModal {
-            if self.navigationController != nil {
-                self.navigationController!.dismiss(animated: animated, completion: nil)
-            }
-            else {
-                self.dismiss(animated: animated, completion: nil)
-            }
-        }
-        else {
-            let _ = self.navigationController?.popViewController(animated: true)
         }
     }
     

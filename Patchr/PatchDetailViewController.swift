@@ -588,7 +588,7 @@ class PatchDetailViewController: BaseDetailViewController {
         button.titleLabel!.font = UIFont.fontAwesome(ofSize: 16)
         
         if let patch = self.entity as? Patch {
-            if patch.visibility != nil && patch.visibility == "public" {
+            if patch.visibility != nil && patch.visibility == "open" {
                 button.setTitle(String.fontAwesomeIcon(name: .hashtag), for: .normal)
             }
             else {

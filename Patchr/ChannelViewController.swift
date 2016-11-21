@@ -24,6 +24,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
 
     var originalRect: CGRect?
     var originalScrollTop = CGFloat(-64.0)
+    var originalScrollInset: UIEdgeInsets!
     var lastContentOffset = CGFloat(0)
 
     var actionButton: AirRadialMenu!
@@ -60,9 +61,12 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         if UserController.instance.userId != nil && StateController.instance.groupId == nil {
             let controller = GroupPickerController()
-            self.present(controller, animated: true, completion: nil)
+            let wrapper = AirNavigationController()
+            wrapper.viewControllers = [controller]
+            self.present(wrapper, animated: true, completion: nil)
         }
     }
     
@@ -421,6 +425,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
                     (self.headerView.contentGroup.width())
                         + 48, height: (self.headerView.contentGroup.height()) + 72)
                 self.originalRect = self.headerView.photo.frame
+                self.originalScrollInset = self.tableView.contentInset
                 self.tableView.tableHeaderView = self.headerView
                 self.tableView.reloadData()
             }
@@ -428,6 +433,9 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
                 self.headerView.bind(channel: self.channel)
                 self.tableView.tableHeaderView = self.headerView
             }
+            
+            let purpose = self.headerView.infoGroup
+            self.tableView.contentInset.top = (self.originalScrollInset.top - (self.headerView.height() - (96 + purpose.height())))  //-168
         })
         
         self.messagesQuery = FireController.db.child("channel-messages/\(channelId)").queryOrdered(byChild: "created_at_desc")
@@ -447,7 +455,8 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
                     self?.bindMessageView(cell: cell, message: message)
                 }
                 else {
-                    message.getCreator(with: { user in
+                    let userQuery = UserQuery(userId: message.createdBy!, groupId: groupId)
+                    userQuery.once(with: { user in
                         message.creator = user
                         self?.bindMessageView(cell: cell, message: message)
                     })
@@ -594,8 +603,8 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
                 }
             }
             
-            let scroll = UIAlertAction(title: "Scroll", style: .default) { action in
-                self.scrollToFirstRow()
+            let addMembers = UIAlertAction(title: "Add members", style: .default) { action in
+                UIShared.Toast(message: "Show invite ui")
             }
             
             let cancel = UIAlertAction(title: "Cancel", style: .cancel) {
@@ -606,7 +615,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
             sheet.addAction(star)
             sheet.addAction(mute)
             sheet.addAction(leave)
-            sheet.addAction(scroll)
+            sheet.addAction(addMembers)
             sheet.addAction(cancel)
             
             if let presenter = sheet.popoverPresentationController {
@@ -699,8 +708,6 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
             self.messageBar.removeFromSuperview()
         }
     }
-    
-    func channel(star: Bool) {}
     
     func scrollToHeader(animated: Bool = true) {
         self.tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: animated)

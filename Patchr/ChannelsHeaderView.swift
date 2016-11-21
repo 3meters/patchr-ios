@@ -20,7 +20,7 @@ class ChannelsHeaderView: UIView {
         
         self.title?.text = group.title
         
-        if let username = UserController.instance.user?.username {
+        if let username = group.username {
             self.subtitle?.text = username
         }
         

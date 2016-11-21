@@ -26,7 +26,7 @@ class ChannelEditViewController: BaseEditViewController {
     var visibilityGroup = AirRuleView()
     var visibilitySwitch = UISwitch()
     var visibilityLabel	= AirLabelDisplay()
-    var visibilityValue = "public"
+    var visibilityValue = "open"
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -92,7 +92,7 @@ class ChannelEditViewController: BaseEditViewController {
         }
         else {
             if isValid() {
-                self.performBack(animated: true)
+                self.close(animated: true)
             }
         }
     }
@@ -100,7 +100,7 @@ class ChannelEditViewController: BaseEditViewController {
     func cancelAction(sender: AnyObject){
 
         if !isDirty() {
-            self.performBack(animated: true)
+            self.close(animated: true)
             return
         }
 
@@ -109,7 +109,7 @@ class ChannelEditViewController: BaseEditViewController {
             actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
                 doIt in
                 if doIt {
-                    self.performBack(animated: true)
+                    self.close(animated: true)
                 }
         }
     }
@@ -159,14 +159,14 @@ class ChannelEditViewController: BaseEditViewController {
 
     func visibilityChanged(sender: AnyObject) {
         if let switchView = sender as? UISwitch {
-            self.visibilityValue = (switchView.isOn) ? "private" : "public"
+            self.visibilityValue = (switchView.isOn) ? "private" : "open"
             self.banner.text = (self.visibilityValue == "private") ? "New Private Channel" : "New Channel"
             self.view.setNeedsLayout()
             
             if self.mode == .update {
                 FireController.db.child(self.channel.path).updateChildValues([
                     "modified_at": FIRServerValue.timestamp(),
-                    "visibility": (switchView.isOn) ? "private" : "public"
+                    "visibility": (switchView.isOn) ? "private" : "open"
                 ])
             }
         }
@@ -344,12 +344,12 @@ class ChannelEditViewController: BaseEditViewController {
         FireController.instance.addChannelToGroup(channelId: channelId, channelMap: channelMap, groupId: groupId) { result in
             StateController.instance.setChannelId(channelId: channelId, next: nil) // We know it's good
             MainController.instance.showChannel(groupId: groupId, channelId: channelId)
-            self.performBack(animated: true)
+            self.close(animated: true)
         }
     }
 
     func delete() {
-        self.performBack(animated: true)
+        self.close(animated: true)
         FireController.instance.delete(channelId: self.channel.id!, groupId: self.channel.group!)
     }
 

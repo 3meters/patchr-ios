@@ -89,7 +89,7 @@ class LobbyViewController: BaseViewController {
 		}
 		
 		let controller = EmailViewController()
-		controller.mode = .login
+		controller.mode = .onboardLogin
 		self.navigationController?.pushViewController(controller, animated: true)
 	}
 	
@@ -101,7 +101,7 @@ class LobbyViewController: BaseViewController {
 		}
         
         let controller = EmailViewController()
-        controller.mode = .create
+        controller.mode = .onboardCreate
         self.navigationController?.pushViewController(controller, animated: true)
 	}
 	

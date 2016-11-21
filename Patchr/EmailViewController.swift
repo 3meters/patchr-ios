@@ -66,12 +66,7 @@ class EmailViewController: BaseEditViewController {
     }
 
     func cancelAction(sender: AnyObject) {
-        if self.isModal {
-            self.dismiss(animated: true, completion: nil)
-        }
-        else {
-            let _ = self.navigationController?.popViewController(animated: true)
-        }
+        close()
     }
     
     override func textFieldDidBeginEditing(_ textField: UITextField) {
@@ -86,7 +81,7 @@ class EmailViewController: BaseEditViewController {
     override func initialize() {
         super.initialize()
 
-        if self.mode == .login {
+        if self.mode == .onboardLogin {
             self.message.text = "Welcome back."
         }
         else {
@@ -132,14 +127,14 @@ class EmailViewController: BaseEditViewController {
             self.progress?.hide(true)
             self.processing = false
             
-            if self.mode == .login {
+            if self.mode == .onboardLogin {
                 if !exists {
                     self.errorLabel.text = "No account found."
                     self.errorLabel.fadeIn()
                 }
                 else {
                     let controller = PasswordViewController()
-                    controller.mode = .login
+                    controller.mode = .onboardLogin
                     controller.inputEmail = email
                     controller.inputEmailExists = true
                     self.navigationController?.pushViewController(controller, animated: true)
@@ -147,7 +142,7 @@ class EmailViewController: BaseEditViewController {
             }
             else {
                 let controller = PasswordViewController()
-                controller.mode = .create
+                controller.mode = .onboardCreate
                 controller.inputEmail = email
                 controller.inputEmailExists = exists
                 self.navigationController?.pushViewController(controller, animated: true)

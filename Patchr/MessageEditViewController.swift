@@ -84,7 +84,7 @@ class MessageEditViewController: BaseEditViewController {
     func cancelAction(sender: AnyObject){
 
         if !isDirty() {
-            self.performBack(animated: true)
+            self.close(animated: true)
             return
         }
 
@@ -93,7 +93,7 @@ class MessageEditViewController: BaseEditViewController {
             actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
                 doIt in
                 if doIt {
-                    self.performBack(animated: true)
+                    self.close(animated: true)
                 }
         }
     }
@@ -262,12 +262,12 @@ class MessageEditViewController: BaseEditViewController {
         
         UIShared.Toast(message: self.progressFinishLabel)
         self.processing = false
-        self.performBack(animated: true)
+        self.close(animated: true)
     }
     
     func delete() {
         FireController.instance.delete(messageId: message.id!, channelId: message.channel!)
-        self.performBack(animated: true)
+        self.close(animated: true)
     }
 
     func isDirty() -> Bool {

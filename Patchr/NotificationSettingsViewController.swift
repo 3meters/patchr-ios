@@ -17,10 +17,12 @@ class NotificationSettingsViewController: UITableViewController {
     /* Notifications */
 
     var typeAllCell = AirTableViewCell()
-    var typeMessagesOnlyCell = AirTableViewCell()
+    var typeDirectOnlyCell = AirTableViewCell()
     var typeNoneCell = AirTableViewCell()
+    
     var soundCell = AirTableViewCell()
     var vibrateCell = AirTableViewCell()
+    
     var soundEffectsCell = AirTableViewCell()
 
     var typeValue: String? = nil
@@ -60,34 +62,38 @@ class NotificationSettingsViewController: UITableViewController {
         self.tableView.sectionFooterHeight = 0
 
         self.typeAllCell.textLabel?.text = "Activity of any kind"
-        self.typeMessagesOnlyCell.textLabel?.text = "Only messages"
+        self.typeDirectOnlyCell.textLabel?.text = "Only direct messages"
         self.typeNoneCell.textLabel?.text = "Nothing (push notifications off)"
         self.soundCell.textLabel?.text = "Sound"
         self.vibrateCell.textLabel?.text = "Vibrate"
         self.soundEffectsCell.textLabel!.text = "Play sound effects"
         
         self.typeAllCell.selectionStyle = .none
-        self.typeMessagesOnlyCell.selectionStyle = .none
+        self.typeDirectOnlyCell.selectionStyle = .none
         self.typeNoneCell.selectionStyle = .none
-
-        let notificationType = userDefaults.string(forKey: PatchrUserDefaultKey(subKey: "NotificationType"))
-        self.typeAllCell.accessoryType = notificationType == "all" ? .checkmark : .none
-        self.typeMessagesOnlyCell.accessoryType = notificationType == "messages_only" ? .checkmark : .none
-        self.typeNoneCell.accessoryType = notificationType == "none" ? .checkmark : .none
-        self.soundCell.accessoryView = makeSwitch(notificationType: .SoundForNotifications, state: userDefaults.bool(forKey: PatchrUserDefaultKey(subKey: "SoundForNotifications")))
-        self.vibrateCell.accessoryView = makeSwitch(notificationType: .VibrateForNotifications, state: userDefaults.bool(forKey: PatchrUserDefaultKey(subKey: "VibrateForNotifications")))
-        self.soundEffectsCell.accessoryView = makeSwitch(notificationType: .SoundEffects, state: userDefaults.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")))
+        
+        if let group = StateController.instance.group {
+            if let notifications = group.notifications {
+                self.typeAllCell.accessoryType = notifications == "all" ? .checkmark : .none
+                self.typeDirectOnlyCell.accessoryType = notifications == "direct_only" ? .checkmark : .none
+                self.typeNoneCell.accessoryType = notifications == "none" ? .checkmark : .none
+            }
+        }
+        
+        self.soundCell.accessoryView = makeSwitch(notificationType: .soundForNotifications, state: userDefaults.bool(forKey: PatchrUserDefaultKey(subKey: "SoundForNotifications")))
+        self.vibrateCell.accessoryView = makeSwitch(notificationType: .vibrateForNotifications, state: userDefaults.bool(forKey: PatchrUserDefaultKey(subKey: "VibrateForNotifications")))
+        self.soundEffectsCell.accessoryView = makeSwitch(notificationType: .playSoundEffects, state: userDefaults.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")))
     }
 
     func toggleAction(sender: AnyObject?) {
         if let switcher = sender as? UISwitch {
-            if switcher.tag == Setting.SoundForNotifications.rawValue {
+            if switcher.tag == Setting.soundForNotifications.rawValue {
                 userDefaults.set(switcher.isOn, forKey: PatchrUserDefaultKey(subKey: "SoundForNotifications"))
             }
-            else if switcher.tag == Setting.VibrateForNotifications.rawValue {
+            else if switcher.tag == Setting.vibrateForNotifications.rawValue {
                 userDefaults.set(switcher.isOn, forKey: PatchrUserDefaultKey(subKey: "VibrateForNotifications"))
             }
-            else if switcher.tag == Setting.SoundEffects.rawValue {
+            else if switcher.tag == Setting.playSoundEffects.rawValue {
                 userDefaults.set(switcher.isOn, forKey: PatchrUserDefaultKey(subKey: "SoundEffects"))
             }
         }
@@ -96,7 +102,7 @@ class NotificationSettingsViewController: UITableViewController {
     func makeSwitch(notificationType: Setting, state: Bool = false) -> UISwitch {
         let switchView = UISwitch()
         switchView.tag = notificationType.rawValue
-        switchView.addTarget(self, action: #selector(NotificationSettingsViewController.toggleAction(sender:)), for: UIControlEvents.valueChanged)
+        switchView.addTarget(self, action: #selector(toggleAction(sender:)), for: UIControlEvents.valueChanged)
         switchView.isOn = state
         return switchView
     }
@@ -106,21 +112,35 @@ extension NotificationSettingsViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let selectedCell = tableView.cellForRow(at: indexPath)
-        
-        self.typeAllCell.accessoryType = .none
-        self.typeMessagesOnlyCell.accessoryType = .none
-        self.typeNoneCell.accessoryType = .none
-        selectedCell!.accessoryType = .checkmark
-        
-        if selectedCell == self.typeAllCell {
-            userDefaults.set("all", forKey: PatchrUserDefaultKey(subKey: "NotificationType"))
-        }
-        else if selectedCell == self.typeMessagesOnlyCell {
-            userDefaults.set("messages_only", forKey: PatchrUserDefaultKey(subKey: "NotificationType"))
-        }
-        else if selectedCell == self.typeNoneCell {
-            userDefaults.set("none", forKey: PatchrUserDefaultKey(subKey: "NotificationType"))
+        if indexPath.section == 0 {
+            
+            let groupId = StateController.instance.groupId
+            let userId = UserController.instance.userId
+            let memberGroupsPath = "member-groups/\(userId!)/\(groupId!)/notifications"
+            let groupMembersPath = "group-members/\(groupId!)/\(userId!)/notifications"
+            
+            let selectedCell = tableView.cellForRow(at: indexPath)
+            
+            self.typeAllCell.accessoryType = .none
+            self.typeDirectOnlyCell.accessoryType = .none
+            self.typeNoneCell.accessoryType = .none
+            
+            selectedCell!.accessoryType = .checkmark
+            
+            var notificationsValue = "all"
+            if selectedCell == self.typeDirectOnlyCell {
+                notificationsValue = "direct_only"
+            }
+            else if selectedCell == self.typeNoneCell {
+                notificationsValue = "none"
+            }
+            
+            let updates: [String: Any] = [
+                groupMembersPath: notificationsValue,
+                memberGroupsPath: notificationsValue
+            ]
+            FireController.db.updateChildValues(updates)
+            userDefaults.set(notificationsValue, forKey: PatchrUserDefaultKey(subKey: "NotificationType"))
         }
     }
 
@@ -142,7 +162,7 @@ extension NotificationSettingsViewController {
             case 0:
                 switch (indexPath.row) {
                     case 0: return self.typeAllCell
-                    case 1: return self.typeMessagesOnlyCell
+                    case 1: return self.typeDirectOnlyCell
                     case 2: return self.typeNoneCell
                     default: fatalError("Unknown row in section 0")
                 }
@@ -170,10 +190,4 @@ extension NotificationSettingsViewController {
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 48
     }
-}
-
-enum Setting: Int {
-    case SoundForNotifications
-    case VibrateForNotifications
-    case SoundEffects
 }

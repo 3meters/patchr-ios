@@ -46,7 +46,7 @@ class ChannelView: BaseView {
 		if let patch = entity as? Patch {
             self.entity = patch
             self.name.text = patch.name.lowercased().replacingOccurrences(of: " ", with: "-")
-            self.visibility.text = (patch.visibility != nil && patch.visibility == "public")
+            self.visibility.text = (patch.visibility != nil && patch.visibility == "open")
                 ? String.fontAwesomeIcon(name: .hashtag)
                 : String.fontAwesomeIcon(name: .lock)
 		}

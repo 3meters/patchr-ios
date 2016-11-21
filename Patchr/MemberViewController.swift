@@ -99,7 +99,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     }
     
     func emailAction(sender: AnyObject?) {
-        let email = self.user!.profile!.email!
+        let email = self.user!.email!
         if MFMailComposeViewController.canSendMail() {
             MailComposer!.mailComposeDelegate = self
             MailComposer!.setToRecipients([email])
@@ -184,15 +184,15 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.buttonGroup.isHidden = (self.callButton.isHidden && self.editButton.isHidden)
         
         self.phone.isHidden = (self.user?.profile?.phone?.isEmpty ?? true)
-        self.email.isHidden = (self.user?.profile?.email?.isEmpty ?? true)
+        self.email.isHidden = (self.user?.email?.isEmpty ?? true)
         self.skype.isHidden = (self.user?.profile?.skype?.isEmpty ?? true)
         
         if self.user?.profile?.phone != nil {
             self.phone.label.text = self.user!.profile!.phone!
         }
         
-        if self.user?.profile?.email != nil {
-            self.email.label.text = self.user!.profile!.email!
+        if self.user?.email != nil {
+            self.email.label.text = self.user!.email!
         }
         
         if self.user?.profile?.skype != nil {

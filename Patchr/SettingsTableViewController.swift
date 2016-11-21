@@ -17,21 +17,25 @@ class SettingsTableViewController: UITableViewController {
 
     var progress: AirProgress?
 
+    /* Section 1: Global settings */
+    var editProfileCell = AirTableViewCell()
+    var editGroupCell = AirTableViewCell()
+
+    /* Section 2: User settings for group */
     var notificationsCell = AirTableViewCell()
+    var usernameCell = AirTableViewCell()
+    var hideEmailCell = AirTableViewCell()
+
+    /* Section 3: Informational */
     var sendFeedbackCell = AirTableViewCell()
     var rateCell = AirTableViewCell()
-    var termsOfServiceCell = AirTableViewCell()
-    var privacyPolicyCell = AirTableViewCell()
-    var softwareLicensesCell = AirTableViewCell()
-    var adminCell = AirTableViewCell()
+    var aboutCell = AirTableViewCell()
     var developmentCell = AirTableViewCell()
-    
-    var logoutCell = AirTableViewCell()
-    var clearHistoryCell = AirTableViewCell()
-    
-    var buildInfoCell = AirTableViewCell()
 
-    var buildInfoLabel = AirLabelDisplay()
+    /* Section 4: Actions */
+    var clearHistoryCell = AirTableViewCell()
+    var logoutCell = AirTableViewCell()
+
     var logoutButton = AirLinkButton()
     var clearHistoryButton = AirLinkButton()
     
@@ -54,6 +58,7 @@ class SettingsTableViewController: UITableViewController {
         if let indexPath = self.tableView.indexPathForSelectedRow {
             self.tableView.deselectRow(at: indexPath, animated: animated)
         }
+        bind()
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -68,7 +73,6 @@ class SettingsTableViewController: UITableViewController {
 
         self.logoutButton.fillSuperview()
         self.clearHistoryButton.fillSuperview()
-        self.buildInfoLabel.fillSuperview()
     }
 
     func logoutAction(sender: AnyObject) {
@@ -128,55 +132,61 @@ class SettingsTableViewController: UITableViewController {
 
         self.clearHistoryCell.contentView.addSubview(self.clearHistoryButton)
         self.logoutCell.contentView.addSubview(self.logoutButton)
-        self.buildInfoCell.contentView.addSubview(self.buildInfoLabel)
         self.clearHistoryCell.accessoryType = .none
         self.logoutCell.accessoryType = .none
-        self.buildInfoCell.accessoryType = .none
 
-        let components = NSCalendar.current.dateComponents([.year, .month, .day], from: Date())
-        self.buildInfoLabel.text = "©\(components.year!) 3meters LLC\nVersion \(appVersion()) (\(build()))"
-        self.buildInfoLabel.textColor = Theme.colorTextTitle
-        self.buildInfoLabel.font = Theme.fontTextDisplay
-        self.buildInfoLabel.numberOfLines = 2
-        self.buildInfoLabel.textAlignment = .center
-        self.buildInfoCell.isUserInteractionEnabled = false
-
-        if let user = ZUserController.instance.currentUser {
-            if user.developerValue {
-                developmentCell.isHidden = false
-                developmentCell.frame.size.height = 0
-            }
-        }
+        self.editProfileCell.textLabel!.text = "Profile Settings"
+        self.editGroupCell.textLabel!.text = "Group Settings"
 
         self.notificationsCell.textLabel!.text = "Notifications and Sound"
+        self.usernameCell.textLabel!.text = "Username"
+        self.hideEmailCell.textLabel!.text = "Hide Email"
+
         self.sendFeedbackCell.textLabel!.text = "Send feedback"
         self.rateCell.textLabel!.text = "Rate Patchr"
-        self.termsOfServiceCell.textLabel!.text = "Terms of Service"
-        self.privacyPolicyCell.textLabel!.text = "Privacy Policy"
-        self.softwareLicensesCell.textLabel!.text = "Software Licenses"
+        self.aboutCell.textLabel!.text = "About"
         self.developmentCell.textLabel!.text = "Developer"
-        self.adminCell.textLabel!.text = "Group Settings"
-        
+
         self.clearHistoryButton.setTitle("Clear search history".uppercased(), for: .normal)
         self.logoutButton.setTitle("Log out".uppercased(), for: .normal)
-
+        
         self.logoutButton.addTarget(self, action: #selector(SettingsTableViewController.logoutAction(sender:)), for: .touchUpInside)
         self.clearHistoryButton.addTarget(self, action: #selector(SettingsTableViewController.clearHistoryAction(sender:)), for: .touchUpInside)
     }
     
-    func appVersion() -> String {
-        return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "Unknown"
+    func bind() {
+        if let group = StateController.instance.group {
+            if group.hideEmail != nil {
+                self.hideEmailCell.accessoryView = makeSwitch(notificationType: .hideEmail, state: group.hideEmail!)
+            }
+            self.usernameCell.detailTextLabel!.text = group.username!
+        }
     }
 
-    func build() -> String {
-        return Bundle.main.object(forInfoDictionaryKey: kCFBundleVersionKey as String) as? String ?? "Unknown"
+    func makeSwitch(notificationType: Setting, state: Bool = false) -> UISwitch {
+        let switchView = UISwitch()
+        switchView.tag = notificationType.rawValue
+        switchView.addTarget(self, action: #selector(NotificationSettingsSimpleViewController.toggleAction(sender:)), for: UIControlEvents.valueChanged)
+        switchView.isOn = state
+        return switchView
     }
 
-    func pushWebViewController(url: URL?) -> Void {
-        let webViewController = PBWebViewController()
-        webViewController.url = url
-        webViewController.showsNavigationToolbar = false
-        self.navigationController?.pushViewController(webViewController, animated: true)
+    func toggleAction(sender: AnyObject?) {
+        if let switcher = sender as? UISwitch {
+            if switcher.tag == Setting.hideEmail.rawValue {
+                let groupId = StateController.instance.groupId
+                let userId = UserController.instance.userId
+                let memberGroupsPath = "member-groups/\(userId!)/\(groupId!)/hide_email"
+                let groupMembersPath = "group-members/\(groupId!)/\(userId!)/hide_email"
+                
+                let updates: [String: Any] = [
+                    groupMembersPath: switcher.isOn,
+                    memberGroupsPath: switcher.isOn
+                ]
+                
+                FireController.db.updateChildValues(updates)
+            }
+        }
     }
 }
 
@@ -187,12 +197,29 @@ extension SettingsTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
         let selectedCell = tableView.cellForRow(at: indexPath)
-
-        if selectedCell == self.notificationsCell {
-            let controller = NotificationSettingsSimpleViewController()
+        
+        
+        if selectedCell == self.editGroupCell {
+            let controller = GroupEditViewController()
             self.navigationController?.pushViewController(controller, animated: true)
         }
-        else if selectedCell == self.sendFeedbackCell {
+        
+        if selectedCell == self.editProfileCell {
+            let controller = ProfileEditViewController()
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
+
+        if selectedCell == self.notificationsCell {
+            let controller = NotificationSettingsViewController()
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
+        
+        if selectedCell == self.usernameCell {
+            let controller = UsernameSettingViewController()
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
+        
+        if selectedCell == self.sendFeedbackCell {
             let email = "feedback@patchr.com"
             let subject = "Feedback for Patchr iOS"
             if MFMailComposeViewController.canSendMail() {
@@ -210,41 +237,29 @@ extension SettingsTableViewController {
                 }
             }
         }
-        else if selectedCell == self.rateCell {
+            
+        if selectedCell == self.rateCell {
             let appStoreURL = "itms-apps://itunes.apple.com/app/id\(APPLE_APP_ID)"
             if let url = NSURL(string: appStoreURL) {
                 UIApplication.shared.openURL(url as URL)
             }
             self.tableView.deselectRow(at: indexPath, animated: true)
         }
-        else if selectedCell == self.termsOfServiceCell {
-            let termsURLString = "http://patchr.com/terms"
-            self.pushWebViewController(url: NSURL(string: termsURLString) as URL?)
-            Reporting.track("Viewed Terms of Service")
-        }
-        else if selectedCell == self.privacyPolicyCell {
-            let privacyPolicyURLString = "http://patchr.com/privacy"
-            self.pushWebViewController(url: NSURL(string: privacyPolicyURLString) as URL?)
-            Reporting.track("Viewed Privacy Policy")
-        }
-        else if selectedCell == self.softwareLicensesCell {
-            let softwareLicensesURLString = "http://patchr.com/ios"
-            self.pushWebViewController(url: NSURL(string: softwareLicensesURLString) as URL?)
-            Reporting.track("Viewed Software Licenses")
-        }
-        else if selectedCell == self.developmentCell {
-            let controller = DevelopmentViewController()
+            
+        if selectedCell == self.aboutCell {
+            let controller = AboutViewController()
             self.navigationController?.pushViewController(controller, animated: true)
         }
-        else if selectedCell == self.adminCell {
-            let controller = GroupEditViewController()
+            
+        if selectedCell == self.developmentCell {
+            let controller = DevelopmentViewController()
             self.navigationController?.pushViewController(controller, animated: true)
         }
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
-        if indexPath.section == 0 && indexPath.row == 7 {
+        if indexPath.section == 2 && indexPath.row == 3 {
             developmentCell.isHidden = true
             if let developer = UserController.instance.user?.profile?.developer {
                 if developer {
@@ -253,19 +268,21 @@ extension SettingsTableViewController {
             }
             return CGFloat(0)
         }
-        if indexPath.section == 0 && indexPath.row == 0 {
-            adminCell.isHidden = true
+
+        if indexPath.section == 0 && indexPath.row == 1 {
+            editGroupCell.isHidden = true
             if let role = StateController.instance.group.role {
                 if role == "admin" {
-                    adminCell.isHidden = false
+                    editGroupCell.isHidden = false
                     return CGFloat(44)
                 }
             }
             return CGFloat(0)
         }
-        else if indexPath.section == 2 && indexPath.row == 0 {
+        else if indexPath.section == 4 && indexPath.row == 0 {
             return CGFloat(64)
         }
+
         return CGFloat(44)
     }
 
@@ -273,51 +290,74 @@ extension SettingsTableViewController {
         switch (indexPath.section) {
             case 0:
                 switch (indexPath.row) {
-                    case 0: return self.adminCell
-                    case 1: return self.notificationsCell
-                    case 2: return self.sendFeedbackCell
-                    case 3: return self.rateCell
-                    case 4: return self.termsOfServiceCell
-                    case 5: return self.privacyPolicyCell
-                    case 6: return self.softwareLicensesCell
-                    case 7: return self.developmentCell
+                    case 0: return self.editProfileCell
+                    case 1: return self.editGroupCell
                     default: fatalError("Unknown row in section 1")
                 }
             case 1:
                 switch (indexPath.row) {
-                    case 0: return self.clearHistoryCell
-                    case 1: return self.logoutCell
+                    case 0: return self.notificationsCell
+                    case 1: return self.usernameCell
+                    case 2: return self.hideEmailCell
                     default: fatalError("Unknown row in section 2")
                 }
             case 2:
                 switch (indexPath.row) {
-                    case 0: return self.buildInfoCell
+                    case 0: return self.sendFeedbackCell
+                    case 1: return self.rateCell
+                    case 2: return self.aboutCell
+                    case 3: return self.developmentCell
                     default: fatalError("Unknown row in section 3")
+                }
+            case 3:
+                switch (indexPath.row) {
+                    case 0: return self.clearHistoryCell
+                    case 1: return self.logoutCell
+                    default: fatalError("Unknown row in section 4")
                 }
             default: fatalError("Unknown section")
         }
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return section == 0 ? "General".uppercased() : nil
+        switch (section) {
+            case 0: return nil
+            case 1:
+                if let group = StateController.instance.group {
+                    return "Your settings for group: \(group.title!)".uppercased()
+                }
+                return "Group settings".uppercased()
+            case 2: return nil
+            case 3: return nil
+            case 4: return nil
+            default: fatalError("Unknown number of sections")
+        }
     }
 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return section == 0 ? 48 : 24
+        return (section == 1) ? 48 : 24
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 4
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
-            case 0: return 8
-            case 1: return 2
-            case 2: return 1
+            case 0: return 2
+            case 1: return 3
+            case 2: return 4
+            case 3: return 2
             default: fatalError("Unknown number of sections")
         }
     }
+}
+
+enum Setting: Int {
+    case hideEmail
+    case playSoundEffects
+    case vibrateForNotifications
+    case soundForNotifications
 }
 
 extension SettingsTableViewController: MFMailComposeViewControllerDelegate {

@@ -155,7 +155,7 @@ class PatchEditViewController: BaseEditViewController {
     func cancelAction(sender: AnyObject){
 
         if !isDirty() {
-            self.performBack(animated: true)
+            self.close(animated: true)
             return
         }
 
@@ -164,7 +164,7 @@ class PatchEditViewController: BaseEditViewController {
             actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
                 doIt in
                 if doIt {
-                    self.performBack(animated: true)
+                    self.close(animated: true)
                 }
         }
     }
@@ -515,7 +515,7 @@ class PatchEditViewController: BaseEditViewController {
                 }
             }
 
-            self.performBack(animated: true)
+            self.close(animated: true)
             UIShared.Toast(message: self.progressFinishLabel)
         }
 
@@ -545,7 +545,7 @@ class PatchEditViewController: BaseEditViewController {
                     DataController.instance.saveContext(wait: BLOCKING)
                     DataController.instance.activityDateInsertDeletePatch = Utils.now()
                     Reporting.track("Deleted Patch")
-                    self.performBack()
+                    self.close()
                 }
             }
         }
@@ -712,5 +712,22 @@ class PatchSettings: NSObject {
         if patch != nil {
             self.locked = patch!.lockedValue
         }
+    }
+}
+
+enum State: Int {
+    case Editing
+    case Creating
+    case Onboarding
+    case Sharing
+    case Searching
+}
+
+class Result {
+    var response: AnyObject?
+    var error: NSError?
+    init(response: AnyObject?, error: NSError?) {
+        self.response = response
+        self.error = error
     }
 }

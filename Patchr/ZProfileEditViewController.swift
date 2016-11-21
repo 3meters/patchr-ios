@@ -91,7 +91,7 @@ class ZProfileEditViewController: BaseEditViewController {
     func cancelAction(sender: AnyObject){
 
         if !isDirty() {
-            self.performBack(animated: true)
+            self.close(animated: true)
             return
         }
 
@@ -100,7 +100,7 @@ class ZProfileEditViewController: BaseEditViewController {
             actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
                 doIt in
                 if doIt {
-                    self.performBack(animated: true)
+                    self.close(animated: true)
                 }
         }
     }
@@ -427,7 +427,7 @@ class ZProfileEditViewController: BaseEditViewController {
                 }
             }
 
-            self.performBack(animated: true)
+            self.close(animated: true)
             UIShared.Toast(message: self.progressFinishLabel)
         }
 

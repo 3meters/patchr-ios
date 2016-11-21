@@ -34,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         /* Initialize Firebase */
         FIRApp.configure()
-        //FIRDatabase.setLoggingEnabled(false)
+        FIRDatabase.setLoggingEnabled(false)
         
         /* Remote config */
         FIRRemoteConfig.remoteConfig().fetch { status, error in

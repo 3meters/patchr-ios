@@ -303,8 +303,8 @@ class PatchDetailView: BaseDetailView {
 
             /* Indicators */
 
-            self.lockImage.isHidden = (entity.visibility == "public")
-            self.visibility.isHidden = (entity.visibility == "public")
+            self.lockImage.isHidden = (entity.visibility == "open")
+            self.visibility.isHidden = (entity.visibility == "open")
             self.mutedImage.isHidden = !entity.userWatchMutedValue
 
             /* Members button */
@@ -330,8 +330,8 @@ class PatchDetailView: BaseDetailView {
             }
 
             /* Info indicators */
-            self.infoLockImage.isHidden = (entity.visibility == "public")
-            self.infoVisibility.isHidden = (entity.visibility == "public")
+            self.infoLockImage.isHidden = (entity.visibility == "open")
+            self.infoVisibility.isHidden = (entity.visibility == "open")
             self.infoSettings.text = entity.lockedValue ? "Only owners can post messages" : nil
 
             self.infoDescription.text = entity.description_

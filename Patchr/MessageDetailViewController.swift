@@ -642,8 +642,6 @@ class MessageDetailViewController: BaseViewController {
 						self?.activity.stopAnimating()
 						if error == nil {
 							if objectId == nil {
-								self?.emptyLabel.text = "Message is private or has been deleted"
-								self?.emptyLabel.fadeIn()
 							}
 							else {
 								self?.inputMessage = DataController.instance.mainContext.object(with: objectId!) as? Message

@@ -12,15 +12,15 @@ import FirebaseAuth
 import Firebase
 
 class PasswordViewController: BaseEditViewController {
-
+    
     var inputEmail: String!
     var inputEmailExists = false
     
+    var message = AirLabelTitle()
     var passwordField = AirTextField()
     var errorLabel = AirLabelDisplay()
     var hideShowButton = AirHideShowButton()
     var forgotPasswordButton = AirLinkButton()
-    var message = AirLabelTitle()
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -59,15 +59,19 @@ class PasswordViewController: BaseEditViewController {
         if isValid() {
             self.passwordField.resignFirstResponder()
             
-            self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
-            self.progress?.mode = MBProgressHUDMode.indeterminate
-            self.progress?.styleAs(progressStyle: .ActivityWithText)
-            self.progress?.minShowTime = 0.5
-            self.progress?.labelText = "Logging in..."
-            self.progress?.removeFromSuperViewOnHide = true
-            self.progress?.show(true)
-
-            authenticate()
+            if self.mode == .reauth {
+                reauthenticate()
+            }
+            else {
+                self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
+                self.progress?.mode = MBProgressHUDMode.indeterminate
+                self.progress?.styleAs(progressStyle: .ActivityWithText)
+                self.progress?.minShowTime = 0.5
+                self.progress?.removeFromSuperViewOnHide = true
+                self.progress?.show(true)
+                self.progress?.labelText = "Logging in..."
+                authenticate()
+            }
         }
     }
 
@@ -87,12 +91,7 @@ class PasswordViewController: BaseEditViewController {
     }
 
     func cancelAction(sender: AnyObject) {
-        if self.isModal {
-            self.dismiss(animated: true, completion: nil)
-        }
-        else {
-            let _ = self.navigationController?.popViewController(animated: true)
-        }
+        close()
     }
 
     override func textFieldDidBeginEditing(_ textField: UITextField) {
@@ -107,7 +106,9 @@ class PasswordViewController: BaseEditViewController {
     override func initialize() {
         super.initialize()
 
-        self.message.text = "Almost to the good stuff."
+        self.message.text = (self.mode == .reauth)
+            ? "Password confirmation"
+            : "Almost to the good stuff."
 
         self.message.textColor = Theme.colorTextTitle
         self.message.numberOfLines = 0
@@ -130,14 +131,19 @@ class PasswordViewController: BaseEditViewController {
         self.errorLabel.alpha = 0.0
         self.errorLabel.numberOfLines = 0
         self.errorLabel.font = Theme.fontValidationError
-
-        self.forgotPasswordButton.setTitle("Forgot password?", for: .normal)
-        self.forgotPasswordButton.addTarget(self, action: #selector(passwordResetAction(sender:)), for: .touchUpInside)
+        
+        if self.mode == .reauth {
+            self.forgotPasswordButton.isHidden = true
+        }
+        else {
+            self.forgotPasswordButton.setTitle("Forgot password?", for: .normal)
+            self.forgotPasswordButton.addTarget(self, action: #selector(passwordResetAction(sender:)), for: .touchUpInside)
+            self.contentHolder.addSubview(self.forgotPasswordButton)
+        }
         
         self.contentHolder.addSubview(self.message)
         self.contentHolder.addSubview(self.passwordField)
         self.contentHolder.addSubview(self.errorLabel)
-        self.contentHolder.addSubview(self.forgotPasswordButton)
 
         /* Navigation bar buttons */
         let nextButton = UIBarButtonItem(title: "Next", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
@@ -162,12 +168,13 @@ class PasswordViewController: BaseEditViewController {
                 if error == nil {
                     Reporting.track("Logged In")
                     UserController.instance.setUserId(userId: (user?.uid)!) { result in
-                        if self.mode == .login {
+                        if self.mode == .onboardLogin {
                             let controller = GroupPickerController()
                             self.navigationController?.pushViewController(controller, animated: true)
                         }
-                        else if self.mode == .create {
+                        else if self.mode == .onboardCreate {
                             let controller = GroupCreateController()
+                            controller.mode = .onboardCreate
                             self.navigationController?.pushViewController(controller, animated: true)
                         }
                     }
@@ -206,6 +213,7 @@ class PasswordViewController: BaseEditViewController {
                             Reporting.track("Account Created")
                             UserController.instance.setUserId(userId: user.uid) { result in
                                 let controller = GroupCreateController()
+                                controller.mode = .onboardCreate
                                 self.navigationController?.pushViewController(controller, animated: true)
                             }
                         }
@@ -213,6 +221,31 @@ class PasswordViewController: BaseEditViewController {
                 }
                 else {
                     self.errorLabel.text = error?.localizedDescription
+                    self.errorLabel.fadeIn()
+                }
+            })
+        }
+    }
+    
+    func reauthenticate() {
+        
+        guard !self.processing else { return }
+        
+        if let user = FIRAuth.auth()?.currentUser, let email = user.email {
+            self.processing = true
+            let password = self.passwordField.text!
+            let credentials = FIREmailPasswordAuthProvider.credential(withEmail: email, password: password)
+            user.reauthenticate(with: credentials, completion: { error in
+                
+                self.processing = false
+
+                if error == nil {
+                    let controller = AccountEditViewController()
+                    self.navigationController?.pushViewController(controller, animated: true)
+                }
+                else {
+                    self.errorLabel.text = error?.localizedDescription
+                    self.view.setNeedsLayout()
                     self.errorLabel.fadeIn()
                 }
             })

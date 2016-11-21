@@ -84,7 +84,7 @@ class FireController: NSObject {
             "purpose": "This channel is for messaging and announcements to the whole group. All group members are in this channel.",
             "general": true,
             "archived": false,
-            "visibility": "public",
+            "visibility": "open",
             "created_at": Int(timestamp),
             "created_by": userId ]
         
@@ -95,7 +95,7 @@ class FireController: NSObject {
             "purpose": "The perfect place for crazy talk that you\'d prefer to keep off the other channels.",
             "general": false,
             "archived": false,
-            "visibility": "public",
+            "visibility": "open",
             "created_at": Int(timestamp),
             "created_by": userId ]
         
@@ -126,7 +126,7 @@ class FireController: NSObject {
         updates["group-channels/\(groupId)/\(channelId)"] = channelMap
         
         /* Make all non-guests members of public channels */
-        if (channelMap["visibility"] as? String) == "public" {
+        if (channelMap["visibility"] as? String) == "open" {
             FireController.db.child("group-members/\(groupId)").observeSingleEvent(of: .value, with: { snap in
                 if !(snap.value is NSNull) {
                     let membersMap = snap.value as! [String: Any]

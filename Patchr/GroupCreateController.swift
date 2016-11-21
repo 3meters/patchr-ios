@@ -68,12 +68,7 @@ class GroupCreateController: BaseEditViewController {
     }
 
     func cancelAction(sender: AnyObject?) {
-        if self.isModal {
-            self.dismiss(animated: true, completion: nil)
-        }
-        else {
-            let _ = self.navigationController?.popViewController(animated: true)
-        }
+        close()
     }
     
     override func textFieldDidBeginEditing(_ textField: UITextField) {
@@ -97,7 +92,9 @@ class GroupCreateController: BaseEditViewController {
     override func initialize() {
         super.initialize()
 
-        self.message.text = "Share and message more safely because Patchr groups stay focused."
+        self.message.text = (self.mode == .onboardCreate)
+            ? "Share and message more safely because Patchr groups stay focused."
+            : "Create a new Patchr group."
 
         self.message.textColor = Theme.colorTextTitle
         self.message.numberOfLines = 0

@@ -176,8 +176,6 @@ class GroupEditViewController: BaseEditViewController {
 
         /* Navigation bar buttons */
         let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.trash, target: self, action: #selector(deleteAction(sender:)))
-        let closeButton = UIBarButtonItem(title: "Close", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
-        self.navigationItem.leftBarButtonItems = [closeButton]
         self.navigationItem.rightBarButtonItems = [deleteButton]
         
         NotificationCenter.default.addObserver(self, selector: #selector(photoDidChange(sender:)), name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
@@ -199,7 +197,7 @@ class GroupEditViewController: BaseEditViewController {
         FireController.instance.delete(groupId: self.group.id!, then: { updates in
             if updates != nil {
                 StateController.instance.clearGroup()   // Make sure group and channel are both unset
-                self.performBack(animated: true)
+                self.close(animated: true)
             }
         })
     }

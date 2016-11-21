@@ -8,10 +8,12 @@
 
 import UIKit
 
-class AirTableViewCell: UITableViewCell {
+class AirTextFieldCell: AirTableViewCell {
+    
+    var textField = UITextField()
 	
-	init () {
-		super.init(style: .value1, reuseIdentifier: nil)
+	override init () {
+		super.init(style: .default, reuseIdentifier: nil)
 		initialize()
 	}
 	
@@ -24,10 +26,15 @@ class AirTableViewCell: UITableViewCell {
 		super.init(coder: aDecoder)
 		initialize()
 	}
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.textField.fillSuperview()
+    }
 	
-	func initialize() {
-		self.accessoryType = .disclosureIndicator
-		self.textLabel!.font = Theme.fontTextDisplay
-		self.textLabel!.textColor = Theme.colorText
+	override func initialize() {
+        super.initialize()
+        self.accessoryType = .none
+        self.contentView.addSubview(self.textField)
 	}
 }

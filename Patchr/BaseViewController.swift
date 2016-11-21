@@ -12,8 +12,7 @@ class BaseViewController: UIViewController {
 	
 	var scrollView		= AirScrollView()
 	var contentHolder	= UIView()
-	var emptyLabel		= AirLabel(frame: CGRect.zero)
-	
+
 	var isModal: Bool {
 		return self.presentingViewController?.presentedViewController == self
 			|| (self.navigationController != nil && self.navigationController?.presentingViewController?.presentedViewController == self.navigationController)
@@ -33,15 +32,6 @@ class BaseViewController: UIViewController {
 		self.view.addGestureRecognizer(tap)
     }
 	
-	override func viewWillLayoutSubviews() {
-		super.viewWillLayoutSubviews()
-		self.emptyLabel.anchorInCenter(withWidth: 160, height: 160)
-	}
-	
-	override func viewWillDisappear(_ animated: Bool) {
-		super.viewWillDisappear(animated)
-	}
-		
 	deinit {
 		NotificationCenter.default.removeObserver(self)
 	}
@@ -63,23 +53,10 @@ class BaseViewController: UIViewController {
 		self.scrollView.alwaysBounceVertical = true
 		self.scrollView.addSubview(self.contentHolder)
 		
-		/* Empty label */
-		self.emptyLabel.alpha = 0
-		self.emptyLabel.layer.borderWidth = 1
-		self.emptyLabel.layer.borderColor = Theme.colorRule.cgColor
-		self.emptyLabel.layer.backgroundColor = Theme.colorBackgroundEmptyBubble.cgColor
-		self.emptyLabel.layer.cornerRadius = 80
-		self.emptyLabel.font = Theme.fontTextDisplay
-		self.emptyLabel.numberOfLines = 0
-		self.emptyLabel.insets = UIEdgeInsetsMake(16, 16, 16, 16)
-		self.emptyLabel.textAlignment = NSTextAlignment.center
-		self.emptyLabel.textColor = Theme.colorTextPlaceholder
-        
         self.view.addSubview(self.scrollView)
-		self.view.addSubview(self.emptyLabel)
 	}
 	
-	func performBack(animated: Bool = true) {
+	func close(animated: Bool = true) {
 		/* Override in subclasses for control of dismiss/pop process */
 		if isModal {
 			if self.navigationController != nil {
@@ -145,21 +122,4 @@ extension BaseViewController: UIGestureRecognizerDelegate {
 		}
 		return true
 	}
-}
-
-class Result {
-	var response: AnyObject?
-	var error: NSError?
-	init(response: AnyObject?, error: NSError?) {
-		self.response = response
-		self.error = error
-	}
-}
-
-enum State: Int {
-	case Editing
-	case Creating
-	case Onboarding
-	case Sharing
-	case Searching
 }
