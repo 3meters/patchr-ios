@@ -70,6 +70,7 @@ class PasswordViewController: BaseEditViewController {
                 self.progress?.removeFromSuperViewOnHide = true
                 self.progress?.show(true)
                 self.progress?.labelText = "Logging in..."
+                
                 authenticate()
             }
         }
@@ -109,6 +110,10 @@ class PasswordViewController: BaseEditViewController {
         self.message.text = (self.mode == .reauth)
             ? "Password confirmation"
             : "Almost to the good stuff."
+        
+        if self.flow == .onboardCreate {
+            self.navigationItem.title = "Step 2 of 3"
+        }
 
         self.message.textColor = Theme.colorTextTitle
         self.message.numberOfLines = 0
@@ -168,13 +173,13 @@ class PasswordViewController: BaseEditViewController {
                 if error == nil {
                     Reporting.track("Logged In")
                     UserController.instance.setUserId(userId: (user?.uid)!) { result in
-                        if self.mode == .onboardLogin {
+                        if self.flow == .onboardLogin {
                             let controller = GroupPickerController()
                             self.navigationController?.pushViewController(controller, animated: true)
                         }
-                        else if self.mode == .onboardCreate {
+                        else if self.flow == .onboardCreate {
                             let controller = GroupCreateController()
-                            controller.mode = .onboardCreate
+                            controller.flow = .onboardCreate
                             self.navigationController?.pushViewController(controller, animated: true)
                         }
                     }
@@ -213,7 +218,7 @@ class PasswordViewController: BaseEditViewController {
                             Reporting.track("Account Created")
                             UserController.instance.setUserId(userId: user.uid) { result in
                                 let controller = GroupCreateController()
-                                controller.mode = .onboardCreate
+                                controller.flow = .onboardCreate
                                 self.navigationController?.pushViewController(controller, animated: true)
                             }
                         }

@@ -91,11 +91,11 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     
     func editAction(sender: AnyObject?) {
         let controller = ProfileEditViewController()
-        let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: controller, action: #selector(controller.cancelAction(sender:)))
-        controller.navigationItem.rightBarButtonItems = [cancelButton]
-        let navController = AirNavigationController()
-        navController.viewControllers = [controller]
-        UIViewController.topMostViewController()?.present(navController, animated: true, completion: nil)
+        let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: controller, action: #selector(controller.closeAction(sender:)))
+        let wrapper = AirNavigationController()
+        controller.navigationItem.rightBarButtonItems = [closeButton]
+        wrapper.viewControllers = [controller]
+        UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
     }
     
     func emailAction(sender: AnyObject?) {

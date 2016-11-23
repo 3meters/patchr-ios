@@ -92,9 +92,13 @@ class GroupCreateController: BaseEditViewController {
     override func initialize() {
         super.initialize()
 
-        self.message.text = (self.mode == .onboardCreate)
+        self.message.text = (self.flow == .onboardCreate)
             ? "Share and message more safely because Patchr groups stay focused."
             : "Create a new Patchr group."
+        
+        if self.flow == .onboardCreate {
+            self.navigationItem.title = "Step 3 of 3"
+        }
 
         self.message.textColor = Theme.colorTextTitle
         self.message.numberOfLines = 0
@@ -125,8 +129,8 @@ class GroupCreateController: BaseEditViewController {
         self.contentHolder.addSubview(self.errorLabel)
         
         /* Navigation bar buttons */
-        let nextButton = UIBarButtonItem(title: "Next", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
-        self.navigationItem.rightBarButtonItems = [nextButton]
+        let createButton = UIBarButtonItem(title: "Create", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
+        self.navigationItem.rightBarButtonItems = [createButton]
     }
     
     func createGroup() {
@@ -144,12 +148,22 @@ class GroupCreateController: BaseEditViewController {
             self.processing = false
 
             if success {
-                FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
-                    if firstChannelId != nil {
-                        StateController.instance.setGroupId(groupId: groupId, channelId: firstChannelId)
-                        MainController.instance.showChannel(groupId: groupId, channelId: firstChannelId!)
-                        let _ = self.navigationController?.popToRootViewController(animated: false)
-                        self.cancelAction(sender: nil)
+                if self.flow == .onboardCreate {
+                    let controller = InviteViewController()
+                    controller.flow = .onboardCreate
+                    controller.inputGroupId = groupId
+                    controller.inputGroupTitle = self.groupTitleField.text!
+                    controller.inputUsername = username
+                    self.navigationController?.pushViewController(controller, animated: true)
+                }
+                else {
+                    FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
+                        if firstChannelId != nil {
+                            StateController.instance.setGroupId(groupId: groupId, channelId: firstChannelId)
+                            MainController.instance.showChannel(groupId: groupId, channelId: firstChannelId!)
+                            let _ = self.navigationController?.popToRootViewController(animated: false)
+                            self.cancelAction(sender: nil)
+                        }
                     }
                 }
             }
@@ -192,7 +206,7 @@ class GroupCreateController: BaseEditViewController {
     override func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 
         if textField == self.groupTitleField {
-            userNameField.resignFirstResponder()
+            userNameField.becomeFirstResponder()
         }
         else if textField == self.userNameField {
             self.doneAction(sender: textField)

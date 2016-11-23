@@ -76,13 +76,13 @@ class GroupPickerController: BaseViewController, UITableViewDelegate {
         }
     }
     
-    func dismissAction(sender: AnyObject?) {
+    func closeAction(sender: AnyObject?) {
         self.close(animated: true)
     }
     
     func switchLoginAction(sender: AnyObject?) {
         let controller = EmailViewController()
-        controller.mode = .onboardLogin
+        controller.flow = .onboardLogin
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
@@ -226,7 +226,7 @@ class GroupPickerController: BaseViewController, UITableViewDelegate {
                             StateController.instance.setGroupId(groupId: groupId, channelId: firstChannelId)
                             MainController.instance.showChannel(groupId: groupId, channelId: firstChannelId!)
                             let _ = self.navigationController?.popToRootViewController(animated: false)
-                            self.dismissAction(sender: nil)
+                            self.closeAction(sender: nil)
                         }
                     }
                 }
@@ -234,7 +234,7 @@ class GroupPickerController: BaseViewController, UITableViewDelegate {
                     StateController.instance.setGroupId(groupId: groupId, channelId: lastChannelId)
                     MainController.instance.showChannel(groupId: groupId, channelId: lastChannelId)
                     let _ = self.navigationController?.popToRootViewController(animated: false)
-                    self.dismissAction(sender: nil)
+                    self.closeAction(sender: nil)
                 }
             })
         }
@@ -244,7 +244,7 @@ class GroupPickerController: BaseViewController, UITableViewDelegate {
                     StateController.instance.setGroupId(groupId: groupId, channelId: firstChannelId)
                     MainController.instance.showChannel(groupId: groupId, channelId: firstChannelId!)
                     let _ = self.navigationController?.popToRootViewController(animated: false)
-                    self.dismissAction(sender: nil)
+                    self.closeAction(sender: nil)
                 }
             }
         }

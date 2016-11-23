@@ -81,7 +81,7 @@ class EmailViewController: BaseEditViewController {
     override func initialize() {
         super.initialize()
 
-        if self.mode == .onboardLogin {
+        if self.flow == .onboardLogin {
             self.message.text = "Welcome back."
         }
         else {
@@ -108,6 +108,10 @@ class EmailViewController: BaseEditViewController {
         self.contentHolder.addSubview(self.emailField)
         self.contentHolder.addSubview(self.errorLabel)
         
+        if self.flow == .onboardCreate {
+            self.navigationItem.title = "Step 1 of 3"
+        }
+        
         /* Navigation bar buttons */
         let nextButton = UIBarButtonItem(title: "Next", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
         self.navigationItem.rightBarButtonItems = [nextButton]
@@ -127,14 +131,14 @@ class EmailViewController: BaseEditViewController {
             self.progress?.hide(true)
             self.processing = false
             
-            if self.mode == .onboardLogin {
+            if self.flow == .onboardLogin {
                 if !exists {
                     self.errorLabel.text = "No account found."
                     self.errorLabel.fadeIn()
                 }
                 else {
                     let controller = PasswordViewController()
-                    controller.mode = .onboardLogin
+                    controller.flow = .onboardLogin
                     controller.inputEmail = email
                     controller.inputEmailExists = true
                     self.navigationController?.pushViewController(controller, animated: true)
@@ -142,7 +146,7 @@ class EmailViewController: BaseEditViewController {
             }
             else {
                 let controller = PasswordViewController()
-                controller.mode = .onboardCreate
+                controller.flow = .onboardCreate
                 controller.inputEmail = email
                 controller.inputEmailExists = exists
                 self.navigationController?.pushViewController(controller, animated: true)

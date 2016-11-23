@@ -105,7 +105,7 @@ class SettingsTableViewController: UITableViewController {
         self.progress!.hide(true)
     }
     
-    func cancelAction(sender: AnyObject?){
+    func closeAction(sender: AnyObject?){
         if self.isModal {
             self.dismiss(animated: true, completion: nil)
         }

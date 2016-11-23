@@ -85,7 +85,7 @@
 		E20C3A851BE04BBC008CCED1 /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */; };
 		E20C3A861BE08887008CCED1 /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */; };
 		E20C742F1DD4BB0700D90A4D /* ZInviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C742E1DD4BB0700D90A4D /* ZInviteViewController.swift */; };
-		E20C74311DD548A400D90A4D /* invite.html in Resources */ = {isa = PBXBuildFile; fileRef = E20C74301DD548A400D90A4D /* invite.html */; };
+		E20C74311DD548A400D90A4D /* invite_member.html in Resources */ = {isa = PBXBuildFile; fileRef = E20C74301DD548A400D90A4D /* invite_member.html */; };
 		E20C74351DD934CD00D90A4D /* ChannelEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C74341DD934CC00D90A4D /* ChannelEditViewController.swift */; };
 		E21FE56D1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E21FE56C1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift */; };
 		E224C3501B6ED27F00879775 /* PatchrShare.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E238BAE41B51D3290094AF41 /* PatchrShare.storyboard */; };
@@ -214,6 +214,8 @@
 		E2BC53291DE20B6400C97A2C /* UsenameSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BC53281DE20B6300C97A2C /* UsenameSettingViewController.swift */; };
 		E2BC532B1DE20E6F00C97A2C /* AirTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BC532A1DE20E6F00C97A2C /* AirTextFieldCell.swift */; };
 		E2BC532D1DE2299A00C97A2C /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BC532C1DE2299A00C97A2C /* AboutViewController.swift */; };
+		E2BC532F1DE3AD3A00C97A2C /* InviteOldViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BC532E1DE3AD3900C97A2C /* InviteOldViewController.swift */; };
+		E2BC53311DE4D55100C97A2C /* invite_guest.html in Resources */ = {isa = PBXBuildFile; fileRef = E2BC53301DE4D55100C97A2C /* invite_guest.html */; };
 		E2BFB7F11CE6189500F4B962 /* GalleryBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BFB7F01CE6189500F4B962 /* GalleryBrowser.swift */; };
 		E2C0D92F1B6BD55200E28CE9 /* TTTAttributedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D92E1B6BD55200E28CE9 /* TTTAttributedLabel.m */; };
 		E2C0D9311B6C415100E28CE9 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C0D9301B6C415100E28CE9 /* Log.swift */; };
@@ -413,7 +415,7 @@
 		E20C3A821BDEBBB9008CCED1 /* CoreDataStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stopwatch.swift; sourceTree = "<group>"; };
 		E20C742E1DD4BB0700D90A4D /* ZInviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZInviteViewController.swift; sourceTree = "<group>"; };
-		E20C74301DD548A400D90A4D /* invite.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = invite.html; sourceTree = "<group>"; };
+		E20C74301DD548A400D90A4D /* invite_member.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = invite_member.html; sourceTree = "<group>"; };
 		E20C74341DD934CC00D90A4D /* ChannelEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelEditViewController.swift; sourceTree = "<group>"; };
 		E21FE56C1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationSettingsSimpleViewController.swift; sourceTree = "<group>"; };
 		E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTargetViewController.swift; sourceTree = "<group>"; };
@@ -545,6 +547,8 @@
 		E2BC53281DE20B6300C97A2C /* UsenameSettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsenameSettingViewController.swift; sourceTree = "<group>"; };
 		E2BC532A1DE20E6F00C97A2C /* AirTextFieldCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirTextFieldCell.swift; sourceTree = "<group>"; };
 		E2BC532C1DE2299A00C97A2C /* AboutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
+		E2BC532E1DE3AD3900C97A2C /* InviteOldViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InviteOldViewController.swift; sourceTree = "<group>"; };
+		E2BC53301DE4D55100C97A2C /* invite_guest.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = invite_guest.html; sourceTree = "<group>"; };
 		E2BFB7F01CE6189500F4B962 /* GalleryBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryBrowser.swift; sourceTree = "<group>"; };
 		E2C0D92D1B6BD55200E28CE9 /* TTTAttributedLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTTAttributedLabel.h; sourceTree = "<group>"; };
 		E2C0D92E1B6BD55200E28CE9 /* TTTAttributedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = TTTAttributedLabel.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -751,6 +755,8 @@
 		E200E62B1DDD235E00E3457F /* Zombies */ = {
 			isa = PBXGroup;
 			children = (
+				E20004E01B099CBD00425694 /* PasswordResetViewController.swift */,
+				E2BC532E1DE3AD3900C97A2C /* InviteOldViewController.swift */,
 				E2FB2C4B1DC02E4600E97050 /* MessageView.swift */,
 				E2F85C6B1C302F3400FC2364 /* PatchDetailView.swift */,
 				E256B4251BD2C9E200EBF894 /* PatchView.swift */,
@@ -855,7 +861,8 @@
 		E215995A1AEFC193002C936F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				E20C74301DD548A400D90A4D /* invite.html */,
+				E20C74301DD548A400D90A4D /* invite_member.html */,
+				E2BC53301DE4D55100C97A2C /* invite_guest.html */,
 				7D3D39D51A6F086F00A44CB2 /* Images.xcassets */,
 				E28915921C5AD528005D7AA0 /* LaunchScreen.storyboard */,
 				E25E1E5F1DBA781900BE1800 /* ChannelsHeaderView.xib */,
@@ -1170,7 +1177,6 @@
 				E2BC53261DDF458700C97A2C /* GroupEditViewController.swift */,
 				E24198FD1C1736E900DDA549 /* MessageEditViewController.swift */,
 				E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */,
-				E20004E01B099CBD00425694 /* PasswordResetViewController.swift */,
 				7D021ABD1A9409450047DAAE /* PasswordViewController.swift */,
 				9FDCCE5E0AA449B739AD0137 /* ProfileEditViewController.swift */,
 			);
@@ -1372,8 +1378,9 @@
 				E25327CE1B13DB3000990A81 /* notification_candi_discovered_soft.aac in Resources */,
 				E25327CF1B13DB3000990A81 /* notification_carme.aac in Resources */,
 				E2A5A8801B6FCE98006D6E81 /* GoogleService-Info.plist in Resources */,
+				E2BC53311DE4D55100C97A2C /* invite_guest.html in Resources */,
 				E25327D01B13DB3000990A81 /* notification_pop.aac in Resources */,
-				E20C74311DD548A400D90A4D /* invite.html in Resources */,
+				E20C74311DD548A400D90A4D /* invite_member.html in Resources */,
 				E25327CD1B13DB2900990A81 /* notification_activity.aac in Resources */,
 				E2F6C9291B1DF5500067D959 /* Notes.md in Resources */,
 				E2DA16D71DCFDF770096D86F /* ChannelTitleView.xib in Resources */,
@@ -1709,6 +1716,7 @@
 				E2E9AAA71CEF86470057698F /* AirNavigationController.swift in Sources */,
 				7D3F26DC1A7706610015F8E8 /* FeedItem.m in Sources */,
 				E2D12A731C08DC4900DE507E /* AirTextField.swift in Sources */,
+				E2BC532F1DE3AD3A00C97A2C /* InviteOldViewController.swift in Sources */,
 				E2A28E6D1B49D88900B3A2FE /* AirLikeButton.swift in Sources */,
 				E2D12A751C08F85E00DE507E /* AirButton.swift in Sources */,
 				7DA3D9121A72D5A60082D2AB /* DataController.swift in Sources */,

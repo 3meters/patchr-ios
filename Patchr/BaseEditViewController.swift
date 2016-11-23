@@ -21,7 +21,8 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
     var progress: AirProgress?
     var firstAppearance	= true
 
-    var mode: Mode = .insert
+    var mode: Mode = .none
+    var flow: Flow = .none
 	
 	/*--------------------------------------------------------------------------------------------
 	* Lifecycle
@@ -142,12 +143,18 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
 		self.scrollView.scrollIndicatorInsets = scrollView.contentInset
 	}
     
+    enum Flow: Int {
+        case onboardLogin
+        case onboardCreate
+        case onboardInvite
+        case none
+    }
+    
     enum Mode: Int {
         case insert
         case update
-        case onboardLogin
-        case onboardCreate
         case reauth
+        case none
     }
 }
 

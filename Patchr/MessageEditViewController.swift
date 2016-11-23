@@ -81,7 +81,7 @@ class MessageEditViewController: BaseEditViewController {
         post()
     }
 
-    func cancelAction(sender: AnyObject){
+    func closeAction(sender: AnyObject){
 
         if !isDirty() {
             self.close(animated: true)
@@ -158,9 +158,9 @@ class MessageEditViewController: BaseEditViewController {
             self.progressFinishLabel = "Posted"
 
             /* Navigation bar buttons */
-            let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: self, action: #selector(MessageEditViewController.cancelAction(sender:)))
+            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(closeAction(sender:)))
             let doneButton = UIBarButtonItem(title: "Post", style: UIBarButtonItemStyle.plain, target: self, action: #selector(MessageEditViewController.doneAction(sender:)))
-            self.navigationItem.leftBarButtonItems = [cancelButton]
+            self.navigationItem.leftBarButtonItems = [closeButton]
             self.navigationItem.rightBarButtonItems = [doneButton]
         }
         else if self.mode == .update {
@@ -172,10 +172,10 @@ class MessageEditViewController: BaseEditViewController {
 
             /* Navigation bar buttons */
             self.navigationItem.title = "Edit message"
-            let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: self, action: #selector(MessageEditViewController.cancelAction(sender:)))
+            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(closeAction(sender:)))
             let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.trash, target: self, action: #selector(MessageEditViewController.deleteAction(sender:)))
             let doneButton = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(MessageEditViewController.doneAction(sender:)))
-            self.navigationItem.leftBarButtonItems = [cancelButton]
+            self.navigationItem.leftBarButtonItems = [closeButton]
             self.navigationItem.rightBarButtonItems = [doneButton, Utils.spacer, deleteButton]
         }
     }

@@ -173,34 +173,62 @@ class MainController: NSObject, iRateDelegate {
     
     func routeDeepLink(params: [AnyHashable: Any]?, error: Error?) {
         
-        if let groupId = params?["groupId"] as? String {
+        /*
+         * If logged in:
+         *
+         * Screens
+         * - username -> open in group or group/channel
+         *
+         * Steps
+         * - Check to see if they are already a group member.
+         * - If yes, then route to group/channel
+         * - If no, then perform all updates and route to group/channel
+         *
+         * If not logged in:
+         *
+         * Screens
+         * - email (account exists, becomes login), password, username -> open in group or group/channel
+         * - email (new account, becomes signup), password, username -> open in group or group/channel
+         *
+         * Steps
+         * - Login or signup.
+         * - If login then check to see if they are already a group member.
+         *      - If yes, then route to group/channel
+         *      - If no, then perform all updates and route to group/channel
+         * - If signup then perform all updates and route to group/channel
+         */
+        if let groupId = params?["groupId"] as? String, let role = params?["role"] as? String {
             
-            let channelId = params?["channelId"] as? String
-            let role = params?["role"] as? String
-            
-            if UserController.instance.authenticated {
-                let userId = UserController.instance.userId
-                let username = UserController.instance.user?.username
-                FireController.db.child("group-members/\(groupId)/\(userId!)").observeSingleEvent(of: .value, with: { snap in
-                    let alreadyMember = !(snap.value is NSNull)
-                    if !alreadyMember {
-                        FireController.instance.addUserToGroup(groupId: groupId, channelId: channelId, role: role!, username: username!, then: { error in
-                            StateController.instance.setGroupId(groupId: groupId, channelId: channelId)
-                            MainController.instance.showChannel(groupId: groupId, channelId: channelId!)
-                        })
-                    }
-                    else {
-                        /* Toast: Already a member */
-                        UIShared.Toast(message: "Already a member of this group!")
-                    }
-                })
+            if role == "member" {
+                let channelId = params?["channelId"] as? String
+                
+                if UserController.instance.authenticated {
+                    let userId = UserController.instance.userId
+                    let username = UserController.instance.user?.username
+                    FireController.db.child("group-members/\(groupId)/\(userId!)").observeSingleEvent(of: .value, with: { snap in
+                        let alreadyMember = !(snap.value is NSNull)
+                        if !alreadyMember {
+                            FireController.instance.addUserToGroup(groupId: groupId, channelId: channelId, role: role, username: username!, then: { error in
+                                StateController.instance.setGroupId(groupId: groupId, channelId: channelId)
+                                MainController.instance.showChannel(groupId: groupId, channelId: channelId!)
+                            })
+                        }
+                        else {
+                            /* Toast: Already a member */
+                            UIShared.Toast(message: "Already a member of this group!")
+                        }
+                    })
+                }
+                else {
+                    /*
+                     * - User needs to log in or sign up.
+                     * - Add user to group/channel as member/guest
+                     * - Auto switch to group/channel
+                     */
+                }
             }
-            else {
-                /*
-                 * - User needs to log in or sign up.
-                 * - Add user to group/channel as member/guest
-                 * - Auto switch to group/channel
-                 */
+            else if role == "guest" {
+                
             }
         }
     }

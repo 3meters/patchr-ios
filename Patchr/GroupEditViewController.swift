@@ -63,11 +63,11 @@ class GroupEditViewController: BaseEditViewController {
 
     func doneAction(sender: AnyObject) {
         if isValid() {
-            cancelAction(sender: sender)
+            closeAction(sender: sender)
         }
     }
 
-    func cancelAction(sender: AnyObject) {
+    func closeAction(sender: AnyObject) {
         if isValid() {
             let _ = self.navigationController?.popViewController(animated: true)
         }

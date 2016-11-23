@@ -7,13 +7,7 @@
 //
 
 import UIKit
-import MessageUI
-import MBProgressHUD
-import PBWebViewController
-import AddressBookUI
-import ContactsUI
 import Firebase
-import FirebaseAuth
 import FirebaseDatabase
 
 class SideMenuViewController: UITableViewController {
@@ -62,12 +56,13 @@ class SideMenuViewController: UITableViewController {
     
     func editProfileAction(sender: AnyObject?) {
         let controller = ProfileEditViewController()
-        let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: controller, action: #selector(controller.cancelAction(sender:)))
+        let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: controller, action: #selector(controller.closeAction(sender:)))
         let wrapper = AirNavigationController()
-        
-        controller.navigationItem.rightBarButtonItems = [cancelButton]
+        controller.navigationItem.rightBarButtonItems = [closeButton]
         wrapper.viewControllers = [controller]
         UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+        UIApplication.shared.setStatusBarHidden(false, with: UIStatusBarAnimation.slide)
+        slideMenuController()?.closeRight()
     }
     
     func userStateDidChange(notification: NSNotification) {
@@ -99,7 +94,7 @@ class SideMenuViewController: UITableViewController {
         self.tableView.separatorStyle = .none
         
         self.menuHeader = UserHeaderView()
-        let headerTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(SideMenuViewController.editProfileAction(sender:)))
+        let headerTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(editProfileAction(sender:)))
         self.menuHeader.userGroup.addGestureRecognizer(headerTapGestureRecognizer)
         self.menuHeader.frame = CGRect(x:0, y:0, width:self.tableView.width(), height:CGFloat(208))
         self.menuHeader.setNeedsLayout()
@@ -149,82 +144,43 @@ extension SideMenuViewController {
 
         if selectedCell == self.inviteCell {
             
-            BranchProvider.inviteMember(group: StateController.instance.group, completion: { response, error in
-                
-                if let error = ServerError(error) {
-                    UIViewController.topMostViewController()!.handleError(error)
-                }
-                else {
-                    let invite = response as! InviteItem
-                    let inviteUrl = invite.url
-                    
-                    let group = StateController.instance.group!
-                    let groupTitle = group.title!
-                    
-                    var userTitle: String?
-                    if let profile = UserController.instance.user?.profile, profile.fullName != nil {
-                        userTitle = profile.fullName
-                    }
-                    if userTitle == nil, let username = group.username {
-                        userTitle = username
-                    }
-                    if userTitle == nil, let displayName = FIRAuth.auth()?.currentUser?.displayName {
-                        userTitle = displayName
-                    }
-
-                    var userEmail: String?
-                    if let email = UserController.instance.user?.email {
-                        userEmail = email
-                    }
-                    if userEmail == nil, let authEmail = FIRAuth.auth()?.currentUser?.email {
-                        userEmail = authEmail
-                    }
-                    
-                    let subject = "\(userTitle!) invited you to \(groupTitle) on Patchr"
-                    let htmlFile = Bundle.main.path(forResource: "invite", ofType: "html")
-                    let templateString = try? String(contentsOfFile: htmlFile!, encoding: .utf8)
-                    
-                    var htmlString = templateString?.replacingOccurrences(of: "[[group.name]]", with: groupTitle)
-                    htmlString = htmlString?.replacingOccurrences(of: "[[user.fullName]]", with: userTitle!)
-                    htmlString = htmlString?.replacingOccurrences(of: "[[user.email]]", with: userEmail!)
-                    htmlString = htmlString?.replacingOccurrences(of: "[[link]]", with: inviteUrl)
-                    
-                    if MFMailComposeViewController.canSendMail() {
-                        MailComposer!.mailComposeDelegate = self
-                        MailComposer!.setSubject(subject)
-                        MailComposer!.setMessageBody(htmlString!, isHTML: true)
-                        self.present(MailComposer!, animated: true, completion: nil)
-                    }
-                }
-            })
-            
+            let controller = InviteViewController()
+            let wrapper = AirNavigationController(rootViewController: controller)
+            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: controller, action: #selector(controller.closeAction(sender:)))
+            controller.navigationItem.rightBarButtonItems = [closeButton]
+            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         }
         else if selectedCell == self.settingsCell {
             
             let controller = SettingsTableViewController()
             let wrapper = AirNavigationController(rootViewController: controller)
-            let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: controller, action: #selector(controller.cancelAction(sender:)))
-            controller.navigationItem.rightBarButtonItems = [cancelButton]
+            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: controller, action: #selector(controller.closeAction(sender:)))
+            controller.navigationItem.rightBarButtonItems = [closeButton]
             UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         }
         else if selectedCell == self.profileCell {
             
-            editProfileAction(sender: self)
+            let controller = ProfileEditViewController()
+            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: controller, action: #selector(controller.closeAction(sender:)))
+            let wrapper = AirNavigationController()
+            controller.navigationItem.rightBarButtonItems = [closeButton]
+            wrapper.viewControllers = [controller]
+            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         }
         else if selectedCell == self.switchCell {
             
             let controller = GroupPickerController()
             let wrapper = AirNavigationController(rootViewController: controller)
-            let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: controller, action: #selector(controller.dismissAction(sender:)))
-            controller.navigationItem.rightBarButtonItems = [cancelButton]
+            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: controller, action: #selector(controller.closeAction(sender:)))
+            controller.navigationItem.rightBarButtonItems = [closeButton]
             self.slideMenuController()?.mainViewController?.present(wrapper, animated: true, completion: nil)
         }
         else if selectedCell == self.membersCell {
             
             let controller = UserListController()
             let wrapper = AirNavigationController(rootViewController: controller)
-            let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: controller, action: #selector(controller.closeAction(sender:)))
-            controller.navigationItem.rightBarButtonItems = [cancelButton]
+            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: controller, action: #selector(controller.closeAction(sender:)))
+            controller.navigationItem.leftBarButtonItems = [closeButton]
             UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         }
         
@@ -261,28 +217,5 @@ extension SideMenuViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 5
-    }
-}
-
-extension SideMenuViewController: MFMailComposeViewControllerDelegate {
-    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
-        
-        switch result {
-        case MFMailComposeResult.cancelled:    // 0
-            UIShared.Toast(message: "Invites cancelled", controller: self, addToWindow: false)
-        case MFMailComposeResult.saved:        // 1
-            UIShared.Toast(message: "Invites saved", controller: self, addToWindow: false)
-        case MFMailComposeResult.sent:        // 2
-            Reporting.track("Sent Invites")
-            UIShared.Toast(message: "Invites sent", controller: self, addToWindow: false)
-        case MFMailComposeResult.failed:    // 3
-            UIShared.Toast(message: "Invites send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
-            break
-        }
-        
-        self.dismiss(animated: true) {
-            MailComposer = nil
-            MailComposer = MFMailComposeViewController()
-        }
     }
 }

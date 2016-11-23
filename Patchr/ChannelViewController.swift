@@ -23,8 +23,9 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
     var headerView: ChannelDetailView!
 
     var originalRect: CGRect?
+    var originalHeaderRect: CGRect?
     var originalScrollTop = CGFloat(-64.0)
-    var originalScrollInset: UIEdgeInsets!
+    var originalScrollInset: UIEdgeInsets?
     var lastContentOffset = CGFloat(0)
 
     var actionButton: AirRadialMenu!
@@ -425,6 +426,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
                     (self.headerView.contentGroup.width())
                         + 48, height: (self.headerView.contentGroup.height()) + 72)
                 self.originalRect = self.headerView.photo.frame
+                self.originalHeaderRect = self.headerView.frame
                 self.originalScrollInset = self.tableView.contentInset
                 self.tableView.tableHeaderView = self.headerView
                 self.tableView.reloadData()
@@ -434,8 +436,8 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
                 self.tableView.tableHeaderView = self.headerView
             }
             
-            let purpose = self.headerView.infoGroup
-            self.tableView.contentInset.top = (self.originalScrollInset.top - (self.headerView.height() - (96 + purpose.height())))  //-168
+//            let purpose = self.headerView.infoGroup
+//            self.tableView.contentInset.top = (self.originalScrollInset!.top - (self.headerView.height() - (96 + purpose.height())))
         })
         
         self.messagesQuery = FireController.db.child("channel-messages/\(channelId)").queryOrdered(byChild: "created_at_desc")
@@ -603,7 +605,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
                 }
             }
             
-            let addMembers = UIAlertAction(title: "Add members", style: .default) { action in
+            let addMembers = UIAlertAction(title: "Add someone", style: .default) { action in
                 UIShared.Toast(message: "Show invite ui")
             }
             
@@ -779,15 +781,17 @@ extension ChannelViewController {
      * UITableViewDelegate
      */
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-
-        if scrollView.contentSize.height > scrollView.height() {
-            if (self.lastContentOffset > scrollView.contentOffset.y)
+        
+        if scrollView.panGestureRecognizer.state != .possible {
+            if scrollView.contentSize.height > scrollView.height() {
+                if (self.lastContentOffset > scrollView.contentOffset.y)
                     && self.lastContentOffset < (scrollView.contentSize.height - scrollView.frame.height) {
-                showActionButton()
-            }
-            else if (self.lastContentOffset < scrollView.contentOffset.y
+                    showActionButton()
+                }
+                else if (self.lastContentOffset < scrollView.contentOffset.y
                     && scrollView.contentOffset.y > 0) {
-                hideActionButton()
+                    hideActionButton()
+                }
             }
         }
 
@@ -806,7 +810,7 @@ extension ChannelViewController {
             else {
                 let movement = (originalScrollTop - scrollView.contentOffset.y) * 0.35
                 if movement > 0 {
-                    headerView.photo.frame.origin.y = self.originalRect!.origin.y - (movement * 0.5)
+                    headerView.photo.frame.origin.y = self.originalRect!.origin.y // - (movement * 0.8)
                     headerView.photo.frame.origin.x = self.originalRect!.origin.x - (movement * 0.5)
                     headerView.photo.frame.size.width = self.originalRect!.size.width + movement
                     headerView.photo.frame.size.height = self.originalRect!.size.height + movement

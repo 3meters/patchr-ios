@@ -14,7 +14,7 @@ import AVFoundation
 import Firebase
 import FirebaseDatabaseUI
 
-class UserListController: UIViewController, UITableViewDelegate {
+class UserListController: BaseViewController, UITableViewDelegate {
     
     let db = FIRDatabase.database().reference()
     var query: FIRDatabaseQuery!
@@ -22,12 +22,6 @@ class UserListController: UIViewController, UITableViewDelegate {
     var tableView = UITableView(frame: CGRect.zero, style: .plain)
     var tableViewDataSource: FUITableViewDataSource!
     var cellReuseIdentifier: String!
-    
-    var isModal: Bool {
-        return self.presentingViewController?.presentedViewController == self
-            || (self.navigationController != nil && self.navigationController?.presentingViewController?.presentedViewController == self.navigationController)
-            || self.tabBarController?.presentingViewController is UITabBarController
-    }
     
     /*--------------------------------------------------------------------------------------------
      * Lifecycle
@@ -53,12 +47,7 @@ class UserListController: UIViewController, UITableViewDelegate {
     }
     
     func closeAction(sender: AnyObject?) {
-        if self.isModal {
-            self.dismiss(animated: true, completion: nil)
-        }
-        else {
-            let _ = self.navigationController?.popViewController(animated: true)
-        }
+        close()
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -69,7 +58,8 @@ class UserListController: UIViewController, UITableViewDelegate {
      * Methods
      *--------------------------------------------------------------------------------------------*/
     
-    func initialize() {
+    override func initialize() {
+        super.initialize()
         
         let groupId = StateController.instance.groupId
         self.query = self.db.child("group-members/\(groupId!)").queryOrdered(byChild: "index_priority_joined_at_desc")
@@ -81,10 +71,8 @@ class UserListController: UIViewController, UITableViewDelegate {
         self.tableView.backgroundColor = Theme.colorBackgroundEmptyBubble
         self.tableView.delegate = self
         
-        let closeButton = UIBarButtonItem(title: "Close", style: .plain, target: self, action: #selector(closeAction(sender:)))
         let inviteButton = UIBarButtonItem(title: "Invite", style: .plain, target: self, action: #selector(inviteAction(sender:)))
         self.navigationItem.rightBarButtonItems = [inviteButton]
-        self.navigationItem.leftBarButtonItems = [closeButton]
         
         self.view.addSubview(self.tableView)
     }

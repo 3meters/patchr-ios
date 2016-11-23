@@ -97,7 +97,7 @@ class ChannelEditViewController: BaseEditViewController {
         }
     }
 
-    func cancelAction(sender: AnyObject){
+    func closeAction(sender: AnyObject){
 
         if !isDirty() {
             self.close(animated: true)
@@ -261,9 +261,9 @@ class ChannelEditViewController: BaseEditViewController {
             self.banner.text = "New Channel"
 
             /* Navigation bar buttons */
-            let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: self, action: #selector(cancelAction(sender:)))
+            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(closeAction(sender:)))
             let createButton = UIBarButtonItem(title: "Create", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
-            self.navigationItem.leftBarButtonItems = [cancelButton]
+            self.navigationItem.leftBarButtonItems = [closeButton]
             self.navigationItem.rightBarButtonItems = [createButton]
         }
         else if self.mode == .update  {
@@ -273,8 +273,8 @@ class ChannelEditViewController: BaseEditViewController {
             self.visibilityGroup.isHidden = true
 
             /* Navigation bar buttons */
+            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(closeAction(sender:)))
             let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.trash, target: self, action: #selector(deleteAction(sender:)))
-            let closeButton = UIBarButtonItem(title: "Close", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
             self.navigationItem.leftBarButtonItems = [closeButton]
             self.navigationItem.rightBarButtonItems = [deleteButton]
         }
@@ -368,25 +368,25 @@ class ChannelEditViewController: BaseEditViewController {
     }
 
     func isValid() -> Bool {
-
+        
         if self.nameField.isEmpty {
             self.errorLabel.text = "Name your channel"
             self.view.setNeedsLayout()
             self.errorLabel.fadeIn()
             return false
         }
-
+        
         let channelName = nameField.text!
         let characterSet: NSCharacterSet = NSCharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz0123456789_-")
         if channelName.rangeOfCharacter(from: characterSet.inverted) != nil {
-            self.errorLabel.text = "Name must be lower case and cannot contain spaces or periods."
+            self.errorLabel.text = "Channel name must be lower case and cannot contain spaces or periods."
             self.view.setNeedsLayout()
             self.errorLabel.fadeIn()
             return false
         }
         
         if (nameField.text!.utf16.count > 21) {
-            self.errorLabel.text = "Name must be 21 characters or less."
+            self.errorLabel.text = "Channel name must be 21 characters or less."
             self.view.setNeedsLayout()
             self.errorLabel.fadeIn()
             return false

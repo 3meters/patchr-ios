@@ -93,7 +93,7 @@ class GalleryGridViewController: UICollectionViewController {
 	 * Events
 	 *--------------------------------------------------------------------------------------------*/
     
-    func cancelAction(sender: AnyObject){
+    func closeAction(sender: AnyObject){
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -119,8 +119,8 @@ class GalleryGridViewController: UICollectionViewController {
 		self.activity = addActivityIndicatorTo(view: self.view)
 		
 		/* Navigation bar buttons */
-		let cancelButton = UIBarButtonItem(title: "Close", style: .plain, target: self, action: #selector(PhotoPickerViewController.cancelAction(sender:)))
-		self.navigationItem.rightBarButtonItems = [cancelButton]
+        let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(closeAction(sender:)))
+		self.navigationItem.rightBarButtonItems = [closeButton]
 	}
 	
     func imageForIndexPath(indexPath: NSIndexPath) -> DisplayPhoto? {

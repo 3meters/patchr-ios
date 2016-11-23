@@ -152,10 +152,10 @@ class ProfileEditViewController: BaseEditViewController {
     }
     
     func doneAction(sender: AnyObject?) {
-        cancelAction(sender: sender)
+        closeAction(sender: sender)
     }
     
-    func cancelAction(sender: AnyObject?) {
+    func closeAction(sender: AnyObject?) {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: nil)
         close()
@@ -251,7 +251,7 @@ class ProfileEditViewController: BaseEditViewController {
         self.skypeField.keyboardType = .default
         self.skypeField.returnKeyType = .done
 
-        self.accountButton.setTitle("Account".uppercased(), for: .normal)
+        self.accountButton.setTitle("Account settings".uppercased(), for: .normal)
         self.accountButton.addTarget(self, action: #selector(accountAction(sender:)), for: .touchUpInside)
         
         self.contentHolder.addSubview(self.message)

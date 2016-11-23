@@ -65,10 +65,10 @@ class ChannelPickerController: UIViewController, UITableViewDelegate, SlideMenuC
     func switchAction(sender: AnyObject?) {
         
         let controller = GroupPickerController()
-        let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: controller, action: #selector(controller.dismissAction(sender:)))
+        let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: controller, action: #selector(controller.closeAction(sender:)))
         let wrapper = AirNavigationController(rootViewController: controller)
         
-        controller.navigationItem.rightBarButtonItems = [cancelButton]
+        controller.navigationItem.rightBarButtonItems = [closeButton]
         
         UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         UIApplication.shared.setStatusBarHidden(false, with: UIStatusBarAnimation.slide)
