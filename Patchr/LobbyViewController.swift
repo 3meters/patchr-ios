@@ -82,24 +82,12 @@ class LobbyViewController: BaseViewController {
     *--------------------------------------------------------------------------------------------*/
     
 	func loginAction(sender: AnyObject?) {
-		
-		guard DataController.proxibase.versionIsValid else {
-			UIShared.compatibilityUpgrade()
-			return
-		}
-		
 		let controller = EmailViewController()
 		controller.flow = .onboardLogin
 		self.navigationController?.pushViewController(controller, animated: true)
 	}
 	
 	func signupAction(sender: AnyObject?) {
-		
-		guard DataController.proxibase.versionIsValid else {
-			UIShared.compatibilityUpgrade()
-			return
-		}
-        
         let controller = EmailViewController()
         controller.flow = .onboardCreate
         self.navigationController?.pushViewController(controller, animated: true)

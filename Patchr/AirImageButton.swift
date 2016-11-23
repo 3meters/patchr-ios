@@ -55,19 +55,6 @@ class AirImageButton: UIButton {
 		self.progress.anchorInCenter(withWidth: self.progressSize, height: self.progressSize)
 	}
 	
-    func linkedToPhoto(photo: Photo) -> Bool {
-        if self.linkedPhotoUrl == nil {
-            return false
-        }
-        
-        let photoUrl = PhotoUtils.url(prefix: photo.prefix!, source: photo.source!, category: self.sizeCategory)
-        return (self.linkedPhotoUrl!.absoluteString == photoUrl!.absoluteString)
-    }
-    
-    func setImageWithPhoto(photo: Photo, animate: Bool = true) {
-        /* Zombie */
-    }
-
     func setImageWithUrl(url: URL, animate: Bool = true, finished: ((_ success: Bool) -> Void)? = nil) {
 
 		if self.progressAuto {
@@ -106,15 +93,6 @@ class AirImageButton: UIButton {
             Log.w("Failed url: \(url!.absoluteString)")
             
             self.linkedPhotoUrl = nil
-            
-            if error!._code == HTTPStatusCode.NotFound.rawValue {
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.ImageNotFound), object: self)
-                UIShared.Toast(message: "Image not found")
-            }
-            else if error!._code == HTTPStatusCode.UnsupportedMediaType.rawValue {
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.ImageNotFound), object: self)
-                UIShared.Toast(message: "Image format not supported")
-            }
             return
         }
         else {

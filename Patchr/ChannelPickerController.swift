@@ -8,7 +8,6 @@ import UIKit
 import AVFoundation
 import Firebase
 import FirebaseDatabaseUI
-import RxSwift
 import SlideMenuControllerSwift
 import pop
 

@@ -13,7 +13,6 @@ import FirebaseDatabase
 class AirLikeButton: AirToggleButton {
     
     var message         : FireMessage!
-    var entity			: Entity?
 	var entityId		: String?
     var messageId       : String?
 	var userLikes		= false
@@ -37,10 +36,6 @@ class AirLikeButton: AirToggleButton {
         
         super.initialize()
     }
-
-	func bind(entity: Entity?) {
-        /* Zombie */
-	}
 
     func bind(message: FireMessage) {
         self.message = message

@@ -11,7 +11,6 @@ import Foundation
 class BaseView: UIView {
 	
 	var cell: UITableViewCell?
-	var entity: Entity?
 	
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
 		self.bounds.size.width = size.width
@@ -19,6 +18,4 @@ class BaseView: UIView {
 		self.layoutIfNeeded()
 		return sizeThatFitsSubviews()
 	}
-	
-	func bindToEntity(entity: AnyObject, location: CLLocation?) {}
 }

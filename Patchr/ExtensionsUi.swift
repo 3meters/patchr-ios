@@ -288,49 +288,7 @@ extension UIViewController {
 			hud.hide(true)
 		}
 	}
-    
-    func handleError(_ error: ServerError, errorActionType: ErrorActionType = .AUTO, errorAction: ErrorAction = .NONE ) {
         
-        /* Show any required ui */
-        let alertMessage: String = (error.message != nil ? error.message : error.description != nil ? error.description : "Unknown error")!
-		
-		var errAction = errorAction
-        
-        if errorActionType == .AUTO || errorActionType == .TOAST {
-			UIShared.Toast(message: alertMessage, controller: self, addToWindow: false)
-            if error.code == .UNAUTHORIZED_SESSION_EXPIRED || error.code == .UNAUTHORIZED_CREDENTIALS {
-                errAction = .SIGNOUT
-            }
-        }
-        else if errorActionType == .ALERT {
-            self.Alert(title: alertMessage)
-        }
-        
-        /* Perform any follow-up actions */
-        
-        if errAction == .SIGNOUT {
-            /*
-             * Error requires that the user signs in again.
-             */
-			UserController.instance.logout()
-        }
-        else if errAction == .LOBBY {
-            /* 
-             * Mostly because a more current client version is required. 
-             */
-            LocationController.instance.clearLastLocationAccepted()
-            UserController.instance.clearUser()
-            MainController.instance.showLobby()
-        }
-        
-        Log.w("Network Error Summary")
-        if error.message != nil {
-            Log.w(error.message!)
-        }
-        Log.w(error.code.rawValue.description)
-        Log.w(error.description!)
-    }
-    
 	func Alert(title: String?, message: String? = nil, cancelButtonTitle: String = "OK", onDismiss: (() -> Void)? = nil) {
 		let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
 		let okAction = UIAlertAction(title: cancelButtonTitle, style: .cancel, handler: { _ in onDismiss?() })

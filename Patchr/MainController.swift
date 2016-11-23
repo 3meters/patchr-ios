@@ -11,7 +11,6 @@ import iRate
 import SlideMenuControllerSwift
 import Firebase
 import FirebaseDatabase
-import RxSwift
 import Branch
 
 class MainController: NSObject, iRateDelegate {
@@ -230,27 +229,6 @@ class MainController: NSObject, iRateDelegate {
             else if role == "guest" {
                 
             }
-        }
-    }
-
-    func resetToLobby() {
-        /*
-         * Client state is reset but service may still see the install as signed in.
-         * The service will still send notifications to the install based on the signed in user.
-         * We assume that if no authenticated user then we are at correct initial state.
-         */
-        ZUserController.instance.discardCredentials()
-        Reporting.updateUser(user: nil)
-        BranchProvider.logout()
-
-        UserDefaults.standard.set(nil, forKey: PatchrUserDefaultKey(subKey: "userEmail"))
-        ZUserController.instance.clearStore()
-        LocationController.instance.clearLastLocationAccepted()
-
-        if !(UIViewController.topMostViewController() is LobbyViewController) {
-            let navController = AirNavigationController()
-            navController.viewControllers = [LobbyViewController()]
-            self.window!.setRootViewController(rootViewController: navController, animated: true)
         }
     }
 }

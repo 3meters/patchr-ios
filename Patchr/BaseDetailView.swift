@@ -10,8 +10,6 @@ import UIKit
 
 class BaseDetailView: UIView {
 
-	var entity: Entity?
-	
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
 		
 		var w = CGFloat(0)

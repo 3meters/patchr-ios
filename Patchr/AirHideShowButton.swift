@@ -10,8 +10,6 @@ import UIKit
 
 class AirHideShowButton: AirToggleButton {
     
-    var entity: Entity?
-
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         initialize()

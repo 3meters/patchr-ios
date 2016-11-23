@@ -56,7 +56,6 @@ class PermissionsViewController: BaseViewController {
 //            LocationController.instance.requestWhenInUseAuthorization()
 //        }
         if self.notificationNeeded {
-            NotificationController.instance.registerForRemoteNotifications()
             routeToMain()
         }
         Reporting.track("Selected Full Permissions")
@@ -73,14 +72,12 @@ class PermissionsViewController: BaseViewController {
 
     func locationWasDenied(sender: NSNotification?) {
         if self.notificationNeeded {
-            NotificationController.instance.registerForRemoteNotifications()
         }
         routeToMain()
     }
 
     func locationWasAllowed(sender: NSNotification) {
         if self.notificationNeeded {
-            NotificationController.instance.registerForRemoteNotifications()
         }
         routeToMain()
     }
@@ -94,10 +91,7 @@ class PermissionsViewController: BaseViewController {
 
         Reporting.screen("Permissions")
 
-        if CLLocationManager.authorizationStatus() != .notDetermined {
-            self.locationNeeded = false
-        }
-        else if UIApplication.shared.isRegisteredForRemoteNotifications {
+        if UIApplication.shared.isRegisteredForRemoteNotifications {
             self.notificationNeeded = false
         }
 

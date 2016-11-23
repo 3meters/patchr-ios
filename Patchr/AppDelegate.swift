@@ -81,11 +81,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         /* Instance the data controller */
         FireController.instance.prepare()
-        DataController.instance.prepare()
         
-        /* Notifications */
-        NotificationController.instance.initWithLaunchOptions(launchOptions: launchOptions as [NSObject: AnyObject]!)
-
         /* Instance the reachability manager */
         ReachabilityManager.instance.prepare()
         
@@ -121,7 +117,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         if let controller = UIViewController.topMostViewController() {
-            if controller is PhotoBrowser || controller is PhotoPreview {
+            if controller is FirePhotoBrowser || controller is PhotoPreview {
                 return UIInterfaceOrientationMask.all;
             }
         }
@@ -148,40 +144,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
-
-    /*--------------------------------------------------------------------------------------------
-    * Notifications
-    *--------------------------------------------------------------------------------------------*/
-    
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        NotificationController.instance.didRegisterForRemoteNotificationsWithDeviceToken(application: application, deviceToken: deviceToken as NSData)
-    }
-
-    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        NotificationController.instance.didFailToRegisterForRemoteNotificationsWithError(application: application, error: error)
-    }
-
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        /*
-         * This delegate method offers an opportunity for applications with the "remote-notification"
-         * background mode to fetch appropriate new data in response to an incoming remote notification.
-         * You should call the fetchCompletionHandler as soon as you're finished performing that operation,
-         * so the system can accurately estimate its power and data cost.
-         *
-         * This method will be invoked even if the application was launched or resumed because of the
-         * remote notification. The respective delegate methods will be invoked first. Note that this
-         * behavior is in contrast to application:didReceiveRemoteNotification:, which is not called in
-         * those cases, and which will not be invoked if this method is implemented.
-         *
-         * If app is in the background, this is called if the user taps on the notification in the
-         * pulldown tray.
-         */
-        NotificationController.instance.didReceiveRemoteNotification(application: application, notification: userInfo as [NSObject : AnyObject], fetchCompletionHandler: completionHandler)
-    }
-    
-    func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
-        NotificationController.instance.didReceiveLocalNotification(application: application, notification: notification)
-    }
 
     /*--------------------------------------------------------------------------------------------
     * Background Sessions

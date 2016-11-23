@@ -90,7 +90,6 @@ PODS:
     - GoogleToolboxForMac/NSData+zlib (~> 2.1)
   - FirebaseUI/Database (1.0.0):
     - Firebase/Database
-  - FontAwesome.swift (1.1.0)
   - GoogleInterchangeUtilities (1.2.2):
     - GoogleSymbolUtilities (~> 1.1)
   - GoogleSymbolUtilities (1.1.2)
@@ -117,10 +116,8 @@ PODS:
   - KSCrash/Recording (1.8.13)
   - KSCrash/RecordingAdvanced (1.8.13):
     - KSCrash/Recording
-  - Lockbox (3.0.3)
   - MBProgressHUD (0.9.2)
   - NHBalancedFlowLayout (0.2)
-  - OneSignal (2.0.11)
   - PBWebViewController (0.5.0)
   - PhoneNumberKit (1.0.1):
     - PhoneNumberKit/PhoneNumberKitCore (= 1.0.1)
@@ -130,15 +127,10 @@ PODS:
     - PhoneNumberKit/PhoneNumberKitCore
   - pop (1.0.9)
   - ReachabilitySwift (3)
-  - RxCocoa (3.0.0-beta.2):
-    - RxSwift (~> 3.0.0-beta.2)
-  - RxSwift (3.0.0-beta.2)
   - SDWebImage (3.8.2):
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
   - SlideMenuControllerSwift (3.0.0)
-  - THContactPicker (1.2)
-  - TWMessageBarManager (1.8.1)
   - UIDevice-Hardware (0.1.8)
 
 DEPENDENCIES:
@@ -157,39 +149,25 @@ DEPENDENCIES:
   - Firebase/Database
   - Firebase/RemoteConfig
   - FirebaseUI/Database
-  - FontAwesome.swift (from `https://github.com/thii/FontAwesome.swift.git`)
   - IDMPhotoBrowser (from `~/code/IDMPhotoBrowser`)
   - iRate (~> 1.11.6)
   - JVFloatLabeledTextField
   - Keys (from `Pods/CocoaPodsKeys`)
-  - Lockbox (~> 3.0.1)
   - MBProgressHUD (~> 0.9.1)
   - NHBalancedFlowLayout (~> 0.2)
-  - OneSignal (~> 2.0.10)
   - PBWebViewController (~> 0.5)
   - PhoneNumberKit (~> 1.0)
   - pop (~> 1.0)
   - ReachabilitySwift (~> 3)
-  - RxCocoa (= 3.0.0-beta.2)
-  - RxSwift (= 3.0.0-beta.2)
   - SDWebImage (~> 3.8.1)
   - SlideMenuControllerSwift
-  - THContactPicker (~> 1.2)
-  - TWMessageBarManager (~> 1.8)
   - UIDevice-Hardware (~> 0.1.7)
 
 EXTERNAL SOURCES:
-  FontAwesome.swift:
-    :git: https://github.com/thii/FontAwesome.swift.git
   IDMPhotoBrowser:
     :path: ~/code/IDMPhotoBrowser
   Keys:
     :path: Pods/CocoaPodsKeys
-
-CHECKOUT OPTIONS:
-  FontAwesome.swift:
-    :commit: 2309b11d3ed5895fda0bfdc392d16a1d199c97c0
-    :git: https://github.com/thii/FontAwesome.swift.git
 
 SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
@@ -212,7 +190,6 @@ SPEC CHECKSUMS:
   FirebaseInstanceID: ba1e640935235e5fac39dfa816fe7660e72e1a8a
   FirebaseRemoteConfig: 383a9afe0a9291ada949e3f615257928a823b594
   FirebaseUI: 82bd64fc3fc5a9451c37a720aee813990e727cf1
-  FontAwesome.swift: beb63f208f69f998d00fdb2d4d5d8813b494f3d8
   GoogleInterchangeUtilities: d5bc4d88d5b661ab72f9d70c58d02ca8c27ad1f7
   GoogleSymbolUtilities: 631ee17048aa5e9ab133470d768ea997a5ef9b96
   GoogleToolboxForMac: 2b2596cbb7186865e98cadf2b1e262d851c2b168
@@ -222,22 +199,16 @@ SPEC CHECKSUMS:
   JVFloatLabeledTextField: 0e5524b097f102036214dd8279edc8ecf08b5e18
   Keys: 9c35bf00f612ee1d48556f4a4b9b4551e224e90f
   KSCrash: 4c3a83f133b60f4bd57e05235ebf8d46e36d378d
-  Lockbox: 7bc46733434e89900924d53a08bd9d0e5ca12d46
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
   NHBalancedFlowLayout: fd253023c6754e605acdb180d50123e582cc62bb
-  OneSignal: 2ac92fa759f2316038bd59cc34487cdd1e605212
   PBWebViewController: 6537990155ca850fb8d0563efbc12becebc953ef
   PhoneNumberKit: 0b5ea9a5454d201656db766343e9d768f8542496
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
   ReachabilitySwift: f5b9bb30a0777fac8f09ce8b067e32faeb29bb64
-  RxCocoa: 1dd105d8a4e18034ccd7bd6d136445363ce67c8e
-  RxSwift: 0ea939d7d97cb70657190ffde8dc2a9b455778fc
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   SlideMenuControllerSwift: 9c0a84f9a3fba51681debd7be77617094562ebcc
-  THContactPicker: e723f7c6ab6e1d6d10d59d618322ab8bfcb00365
-  TWMessageBarManager: fd84e7948ba7968a2b5d9454859135761214ec56
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
 
-PODFILE CHECKSUM: d865139f626a6547a27fce1bac45dec3368c436b
+PODFILE CHECKSUM: 04bf6e70ea5ec19091f615eaf1ab7e4dd5b65be4
 
 COCOAPODS: 1.1.0.rc.3

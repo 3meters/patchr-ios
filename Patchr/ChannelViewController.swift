@@ -145,19 +145,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
         }
     }
     
-    func membersAction(sender: AnyObject) {
-        let controller = UserTableViewController()
-        self.navigationController?.pushViewController(controller, animated: true)
-    }
-    
     func photoAction(sender: AnyObject?) {
-        
-        if let control = sender as? AirImageView,
-            let container = sender?.superview as? BaseView {
-            if control.image != nil {
-                UIShared.showPhoto(image: control.image, animateFromView: control, viewController: self, entity: container.entity)
-            }
-        }
         
         if let recognizer = sender as? UITapGestureRecognizer,
             let control = recognizer.view as? AirImageView,
@@ -166,23 +154,10 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
                 UIShared.showPhoto(image: control.image, animateFromView: control, viewController: self, message: container.message)
             }
         }
-        
-        if let control = sender as? UIButton,
-            let container = sender?.superview as? BaseView {
-            if control.imageView!.image != nil {
-                UIShared.showPhoto(image: control.imageView!.image, animateFromView: control, viewController: self, entity: container.entity)
-            }
-        }
     }
     
     func photosAction(sender: AnyObject) {
         showPhotos()
-    }
-
-    func mapAction(sender: AnyObject) {
-        let controller = PatchMapViewController()
-        controller.locationDelegate = self
-        self.navigationController?.pushViewController(controller, animated: true)
     }
 
     func toggleAction(sender: AnyObject) {
@@ -505,7 +480,7 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
         /* Navigation button */
         var button = UIButton(type: .custom)
         button.frame = CGRect(x:0, y:0, width:36, height:36)
-        button.addTarget(self, action: #selector(PatchDetailViewController.toggleAction(sender:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(toggleAction(sender:)), for: .touchUpInside)
         button.showsTouchWhenHighlighted = true
         button.setImage(UIImage(named: "imgNavigationLight"), for: .normal)
         button.imageEdgeInsets = UIEdgeInsetsMake(8, 0, 8, 16);
@@ -833,7 +808,7 @@ class ChannelItem: NSObject, UIActivityItemSource {
     }
 
     func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivityType) -> Any? {
-        let text = "\(ZUserController.instance.currentUser.name) has invited you to the patch!"
+        let text = "\(UserController.instance.user!.profile!.fullName!) has invited you to the patch!"
         return text
     }
 
@@ -848,38 +823,6 @@ class ChannelItem: NSObject, UIActivityItemSource {
             return "Invitation to the patch"
         }
         return ""
-    }
-}
-
-extension ChannelViewController: MapViewDelegate {
-    
-    func locationForMap() -> CLLocation? {
-        return nil
-    }
-    
-    func locationChangedTo(location: CLLocation) {
-    }
-    
-    func locationEditable() -> Bool {
-        return false
-    }
-    
-    var locationTitle: String? {
-        get {
-            return nil
-        }
-    }
-    
-    var locationSubtitle: String? {
-        get {
-            return nil
-        }
-    }
-    
-    var locationPhoto: AnyObject? {
-        get {
-            return nil
-        }
     }
 }
 

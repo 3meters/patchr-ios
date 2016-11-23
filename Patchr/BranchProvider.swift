@@ -129,14 +129,6 @@ class BranchProvider: NSObject {
             }
         })
     }
-	
-	static func invite(entity: Patch, referrer: User, completion: @escaping CompletionBlock) {
-        /* Zombie */
-	}
-	
-	static func share(entity: Message, referrer: User, completion: @escaping CompletionBlock) {
-        /* Zombie */
-	}
 }
 
 class InviteItem: NSObject, UIActivityItemSource {

@@ -11,9 +11,7 @@ plugin 'cocoapods-keys', {
     "CreativeSdkClientSecret",
     "AwsS3Key",
     "AwsS3Secret",
-    "BranchKey",
-    "ProxibaseSecret",
-    "FacebookToken"
+    "BranchKey"
   ]
 }
 
@@ -24,7 +22,6 @@ use_frameworks!
 target 'Patchr' do
     pod 'IDMPhotoBrowser', :path => '~/code/IDMPhotoBrowser'
     pod 'SDWebImage',               '~> 3.8.1'
-    pod 'Lockbox',                  '~> 3.0.1'		# Used to protect secrets and install info
     pod 'AWSS3',                    '2.4.9'
     pod 'AFNetworking',             '~> 2.6'
     pod 'AFNetworkActivityLogger',  '~> 2.0'
@@ -34,22 +31,16 @@ target 'Patchr' do
     pod 'NHBalancedFlowLayout',     '~> 0.2'
     pod 'UIDevice-Hardware',        '~> 0.1.7'		# Convenience for determining system version and model identifier
     pod 'pop',                      '~> 1.0'		# Animation library
-    pod 'TWMessageBarManager',      '~> 1.8'		# In-app notifications
     pod 'Facade',                   '~> 1.1.1'	    # Convenience methods for frame based layout
-    pod 'THContactPicker',          '~> 1.2'		# Used in message edit
     pod 'DateTools',                '~> 1.7.0'
     pod 'iRate',                    '~> 1.11.6'
     pod 'Branch',                   '~> 0.12.5'     # Url routing and deep linking
-    pod 'OneSignal',                '~> 2.0.10'
     pod 'ReachabilitySwift',        '~> 3'
     pod 'Bugsnag'                                   # Crash reporting
     pod 'CocoaLumberjack/Swift'
     pod 'JVFloatLabeledTextField'
-    pod 'RxSwift',                  '3.0.0-beta.2'
-    pod 'RxCocoa',                  '3.0.0-beta.2'
     pod 'PhoneNumberKit',           '~> 1.0'
     pod 'SlideMenuControllerSwift'
-    pod 'FontAwesome.swift',        :git=>'https://github.com/thii/FontAwesome.swift.git'
     
     pod 'Firebase/RemoteConfig'
     pod 'Firebase/Core'
@@ -62,7 +53,6 @@ end
 target 'PatchrShare' do
   pod 'SDWebImage',               '~> 3.8.1'
   pod 'AWSS3',                    '2.4.9'
-  pod 'Lockbox',                  '~> 3.0.1'		# Used to protect secrets and install info
   pod 'Facade',                   '~> 1.1.1'	    # Convenience methods for frame based layout
   pod 'CocoaLumberjack/Swift'
   pod 'Bugsnag'                                     # Crash reporting

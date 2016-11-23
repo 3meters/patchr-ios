@@ -251,14 +251,6 @@ class PhotoEditView: UIView {
 		self.setPhotoButton.addTarget(self, action: #selector(PhotoEditView.setPhotoAction(sender:)), for: .touchUpInside)
 	}
 	
-	func bindPhoto(photo: Photo?) {
-//		if photo != nil {
-//			self.imageButton.setImageWithPhoto(photo: photo!)
-//			self.usingPhotoDefault = false
-//			self.photoActive = true
-//		}
-	}
-
     func bind(url: URL?) {
         if url != nil {
             self.imageButton.setImageWithUrl(url: url!, animate: true)

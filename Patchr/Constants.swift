@@ -9,6 +9,8 @@
 import UIKit
 import MessageUI
 
+typealias CompletionBlock = (_ response: Any?, _ error: NSError?) -> Void
+
 let Device                          = UIDevice.current
 let iosVersion                      = NSString(string: Device.systemVersion).doubleValue
 let IOS9                            = iosVersion >= 9

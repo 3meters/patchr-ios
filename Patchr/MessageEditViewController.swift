@@ -8,7 +8,6 @@
 
 import UIKit
 import AWSS3
-import THContactPicker
 import MBProgressHUD
 import Firebase
 

@@ -17,7 +17,6 @@
 import UIKit
 import Foundation
 import CoreLocation
-import Lockbox
 import SDWebImage
 import Facade
 
@@ -107,8 +106,6 @@ class PatchTargetViewController: UITableViewController {
         self.currentItems = recentItems
         if let groupDefaults = UserDefaults(suiteName: "group.com.3meters.patchr.ios") {
             self.userId = groupDefaults.string(forKey: PatchrUserDefaultKey(subKey: "userId"))
-            let lockbox = Lockbox(keyPrefix: KEYCHAIN_GROUP)
-            self.sessionKey = lockbox?.unarchiveObject(forKey: "sessionKey") as? String
             if let recentPatches = groupDefaults.array(forKey: PatchrUserDefaultKey(subKey: "recent.patches")) as? [[String:AnyObject]] {
                 for recent in recentPatches {
                     self.recentItems.add(recent)

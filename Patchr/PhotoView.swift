@@ -1,7 +1,4 @@
 //
-//  UserDetailView.swift
-//  Patchr
-//
 //  Created by Jay Massena on 10/24/15.
 //  Copyright © 2015 3meters. All rights reserved.
 //
@@ -70,10 +67,6 @@ class PhotoView: UIControl {
         self.layer.cornerRadius = self.rounded ? self.width() * 0.5 : self.radius
 		self.photo.fillSuperview()
 		self.name.fillSuperview()
-	}
-    
-	func bindToEntity(entity: Entity!) {
-        /* Zombie */
 	}
 	
     func bind(photoUrl: URL?, name: String?, colorSeed: String?, color: UIColor? = nil) {

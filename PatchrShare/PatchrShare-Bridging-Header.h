@@ -9,6 +9,4 @@
 #ifndef Patchr_PatchrShare_Bridging_Header_h
 #define Patchr_PatchrShare_Bridging_Header_h
 
-#import "Photo.h"
-
 #endif

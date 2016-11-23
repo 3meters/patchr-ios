@@ -27,31 +27,6 @@ class InviteViewController: BaseEditViewController {
     var inputUsername: String?
     
     var validateFor = "member"
-    
-    var userTitle: String? {
-        var userTitle: String?
-        if let profile = UserController.instance.user?.profile, profile.fullName != nil {
-            userTitle = profile.fullName
-        }
-        if userTitle == nil, let username = StateController.instance.group.username {
-            userTitle = username
-        }
-        if userTitle == nil, let displayName = FIRAuth.auth()?.currentUser?.displayName {
-            userTitle = displayName
-        }
-        return userTitle
-    }
-    
-    var userEmail: String? {
-        var userEmail: String?
-        if let email = UserController.instance.user?.email {
-            userEmail = email
-        }
-        if userEmail == nil, let authEmail = FIRAuth.auth()?.currentUser?.email {
-            userEmail = authEmail
-        }
-        return userEmail
-    }
 	
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -197,20 +172,19 @@ class InviteViewController: BaseEditViewController {
         
         BranchProvider.inviteMember(groupId: groupId, groupTitle: groupTitle, username: username, completion: { response, error in
             
-            if let error = ServerError(error) {
-                UIViewController.topMostViewController()!.handleError(error)
-            }
-            else {
+            if error == nil {
                 let invite = response as! InviteItem
                 let inviteUrl = invite.url
+                let userTitle = UserController.instance.userTitle
+                let userEmail = UserController.instance.userEmail
                 
-                let subject = "\(self.userTitle!) invited you to \(groupTitle) on Patchr"
+                let subject = "\(userTitle!) invited you to \(groupTitle) on Patchr"
                 let htmlFile = Bundle.main.path(forResource: "invite_member", ofType: "html")
                 let templateString = try? String(contentsOfFile: htmlFile!, encoding: .utf8)
                 
                 var htmlString = templateString?.replacingOccurrences(of: "[[group.name]]", with: groupTitle)
-                htmlString = htmlString?.replacingOccurrences(of: "[[user.fullName]]", with: self.userTitle!)
-                htmlString = htmlString?.replacingOccurrences(of: "[[user.email]]", with: self.userEmail!)
+                htmlString = htmlString?.replacingOccurrences(of: "[[user.fullName]]", with: userTitle!)
+                htmlString = htmlString?.replacingOccurrences(of: "[[user.email]]", with: userEmail!)
                 htmlString = htmlString?.replacingOccurrences(of: "[[link]]", with: inviteUrl)
                 
                 if MFMailComposeViewController.canSendMail() {
@@ -227,12 +201,11 @@ class InviteViewController: BaseEditViewController {
         
         BranchProvider.inviteGuest(group: StateController.instance.group, channel: self.channel, completion: { response, error in
             
-            if let error = ServerError(error) {
-                UIViewController.topMostViewController()!.handleError(error)
-            }
-            else {
+            if error == nil {
                 let invite = response as! InviteItem
                 let inviteUrl = invite.url
+                let userTitle = UserController.instance.userTitle
+                let userEmail = UserController.instance.userEmail
                 
                 let group = StateController.instance.group!
                 let channel = self.channel!
@@ -240,14 +213,14 @@ class InviteViewController: BaseEditViewController {
                 let groupTitle = group.title!
                 let channelName = channel.name!
                 
-                let subject = "\(self.userTitle!) invited you to \(channelName) on Patchr"
+                let subject = "\(userTitle!) invited you to \(channelName) on Patchr"
                 let htmlFile = Bundle.main.path(forResource: "invite_guest", ofType: "html")
                 let templateString = try? String(contentsOfFile: htmlFile!, encoding: .utf8)
                 
                 var htmlString = templateString?.replacingOccurrences(of: "[[group.name]]", with: groupTitle)
-                htmlString = htmlString?.replacingOccurrences(of: "[[user.fullName]]", with: self.userTitle!)
+                htmlString = htmlString?.replacingOccurrences(of: "[[user.fullName]]", with: userTitle!)
                 htmlString = htmlString?.replacingOccurrences(of: "[[channel.name]]", with: channelName)
-                htmlString = htmlString?.replacingOccurrences(of: "[[user.email]]", with: self.userEmail!)
+                htmlString = htmlString?.replacingOccurrences(of: "[[user.email]]", with: userEmail!)
                 htmlString = htmlString?.replacingOccurrences(of: "[[link]]", with: inviteUrl)
                 
                 if MFMailComposeViewController.canSendMail() {

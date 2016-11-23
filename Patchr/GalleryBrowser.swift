@@ -9,7 +9,7 @@
 import UIKit
 import IDMPhotoBrowser
 
-class GalleryBrowser: PhotoBrowser {
+class GalleryBrowser: FirePhotoBrowser {
     
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -23,8 +23,4 @@ class GalleryBrowser: PhotoBrowser {
 		super.initialize()
 		self.likeButton.isHidden = false
     }
-	
-	override func bindEntity(entity: Entity?) {
-		super.bindEntity(entity: entity)
-	}
 }

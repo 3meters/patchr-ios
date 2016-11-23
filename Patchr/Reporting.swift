@@ -31,23 +31,6 @@ struct Reporting {
 				Bugsnag.addAttribute("network_type", withValue: "wwan", toTabWithName: "network")
             }
         }
-
-        /* Identifies device/install combo */
-        if let installId = NotificationController.instance.installId {
-            Bugsnag.addAttribute("patchr_install_id", withValue: installId, toTabWithName: "device")
-        }
-		
-        /* Location info */
-        if let location: CLLocation = LocationController.instance.lastLocationAccepted() {
-            let eventDate = location.timestamp
-            let howRecent = abs(trunc(eventDate.timeIntervalSinceNow * 100) / 100)
-            Bugsnag.addAttribute("accuracy", withValue: location.horizontalAccuracy, toTabWithName: "location")
-            Bugsnag.addAttribute("age", withValue: howRecent, toTabWithName: "location")
-        }
-        else {
-			Bugsnag.addAttribute("accuracy", withValue: nil, toTabWithName: "location")
-			Bugsnag.addAttribute("age", withValue: nil, toTabWithName: "location")
-        }
     }
 	
     static func updateUser(user: FIRUser?) {

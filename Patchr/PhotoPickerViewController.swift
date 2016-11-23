@@ -174,9 +174,9 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 			self.collectionView?.setContentOffset(topOffset, animated: true)
         }
 		
-		DataController.instance.backgroundOperationQueue.addOperation {
+		BingController.instance.backgroundOperationQueue.addOperation {
 			
-			DataController.proxibase.loadSearchImages(query: self.searchBar!.text!, count: Int64(self.pageSize), offset: Int64(self.offset)) {
+			BingController.instance.loadSearchImages(query: self.searchBar!.text!, count: Int64(self.pageSize), offset: Int64(self.offset)) {
 				response, error in
                 
 				OperationQueue.main.addOperation {
@@ -184,10 +184,7 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 					self.activity?.stopAnimating()
 					var userInfo: [AnyHashable: Any] = ["error": (error != nil)]
 					
-					if let error = ServerError(error) {
-						self.handleError(error)
-					}
-					else {
+					if error == nil {
                         let json = JSON(response!)
                         var imagesFiltered: [ImageResult] = [ImageResult]()
                         let offsetAddCount = json["nextOffsetAddCount"].int

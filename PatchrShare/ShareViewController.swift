@@ -9,12 +9,10 @@
 import UIKit
 import Social
 import MobileCoreServices
-import Lockbox
 
 class ShareViewController: SLComposeServiceViewController {
 
     var userId: String?
-    var sessionKey: String?
     var image: UIImage?
     var patch: [String:AnyObject]?
     var patchId: String!
@@ -35,9 +33,7 @@ class ShareViewController: SLComposeServiceViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         if let groupDefaults = UserDefaults(suiteName: "group.com.3meters.patchr.ios") {
-			let lockbox = Lockbox(keyPrefix: KEYCHAIN_GROUP)
             self.userId = groupDefaults.string(forKey: PatchrUserDefaultKey(subKey: "userId"))
-			self.sessionKey = lockbox?.unarchiveObject(forKey: "sessionKey") as? String
         }
         /*
         * ISSUE: User info won't be there if the user uses is not currently signed into Patchr.
@@ -229,7 +225,6 @@ class ShareViewController: SLComposeServiceViewController {
         
         let body = [
             "user": self.userId! as AnyObject,
-            "session": self.sessionKey! as AnyObject,
             "data": message as AnyObject
             ] as [String:AnyObject]
         

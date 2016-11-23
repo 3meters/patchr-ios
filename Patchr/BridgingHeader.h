@@ -11,27 +11,11 @@
 
 #import "JSONResponseSerializerWithData.h"
 #import "NGAParallaxMotion.h"
-#import "GCPlaceholderTextView.h"
 #import "UIView+BorderLayer.h"
 #import "TTTAttributedLabel.h"
 #import "CKRadialMenu.h"
 
-#import "Patch.h"
-#import "Query.h"
-#import "QueryItem.h"
-#import "ServiceData.h"
-#import "FeedItem.h"
-#import "Entity.h"
-#import "ServiceBase.h"
-#import "Location.h"
-#import "Photo.h"
-#import "Message.h"
-#import "User.h"
-#import "Link.h"
-#import "Shortcut.h"
-
 #import <CommonCrypto/CommonCrypto.h>
-#import <OneSignal/OneSignal.h>
 
 #import <AdobeCreativeSDKCore/AdobeUXAuthManager.h>
 #import <AdobeCreativeSDKImage/AdobeUXImageEditorViewController.h>
