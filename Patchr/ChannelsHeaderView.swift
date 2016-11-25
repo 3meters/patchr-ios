@@ -3,10 +3,11 @@ import UIKit
 @IBDesignable
 class ChannelsHeaderView: UIView {
 
-    @IBOutlet weak var title           : UILabel?
-    @IBOutlet weak var subtitle        : UILabel?
-	@IBOutlet weak var photoView       : PhotoView?
-    @IBOutlet weak var switchButton    : UIButton?
+    @IBOutlet weak var title: UILabel?
+    @IBOutlet weak var subtitle: UILabel?
+	@IBOutlet weak var photoView: PhotoView?
+    @IBOutlet weak var switchButton: UIButton?
+    @IBOutlet weak var searchBar: UISearchBar?
     
     func bind(group: FireGroup!) {
         

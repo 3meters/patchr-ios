@@ -123,6 +123,7 @@
 		E28915911C5A85CF005D7AA0 /* .xctool-args in Resources */ = {isa = PBXBuildFile; fileRef = E28915901C5A85CF005D7AA0 /* .xctool-args */; };
 		E28915931C5AD528005D7AA0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E28915921C5AD528005D7AA0 /* LaunchScreen.storyboard */; };
 		E28A481F1DE72E0400A01B46 /* BaseTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28A481E1DE72E0400A01B46 /* BaseTableController.swift */; };
+		E28A48211DE8867000A01B46 /* ChannelSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28A48201DE8867000A01B46 /* ChannelSearchController.swift */; };
 		E28D565F1BB1849F00BFD433 /* ReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */; };
 		E28DB2921DBBF95D008B2E4B /* ChannelListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E28DB2911DBBF95D008B2E4B /* ChannelListCell.xib */; };
 		E28DB2941DBBFA1C008B2E4B /* GroupListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28DB2931DBBFA1C008B2E4B /* GroupListCell.swift */; };
@@ -354,6 +355,7 @@
 		E28915901C5A85CF005D7AA0 /* .xctool-args */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ".xctool-args"; sourceTree = "<group>"; };
 		E28915921C5AD528005D7AA0 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E28A481E1DE72E0400A01B46 /* BaseTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTableController.swift; sourceTree = "<group>"; };
+		E28A48201DE8867000A01B46 /* ChannelSearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelSearchController.swift; sourceTree = "<group>"; };
 		E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ReachabilityManager.swift; path = Patchr/ReachabilityManager.swift; sourceTree = "<group>"; };
 		E28DB2911DBBF95D008B2E4B /* ChannelListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChannelListCell.xib; sourceTree = "<group>"; };
 		E28DB2931DBBFA1C008B2E4B /* GroupListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupListCell.swift; sourceTree = "<group>"; };
@@ -820,6 +822,7 @@
 				E2D12A7A1C091C4D00DE507E /* BaseViewController.swift */,
 				E28A481E1DE72E0400A01B46 /* BaseTableController.swift */,
 				E23EC4D71DBE848B00EBCD42 /* ChannelPickerController.swift */,
+				E28A48201DE8867000A01B46 /* ChannelSearchController.swift */,
 				9FDCC7D2BF8341DCBB416DC4 /* ChannelViewController.swift */,
 				E2999EE21DC25AAE005C69D8 /* EmptyViewController.swift */,
 				E2B756A41D84565F00C102EC /* GroupPickerController.swift */,
@@ -1259,6 +1262,7 @@
 				E24198FE1C1736E900DDA549 /* MessageEditViewController.swift in Sources */,
 				E25327B61B1000C000990A81 /* AirImageView.swift in Sources */,
 				E2999EE31DC25AAE005C69D8 /* EmptyViewController.swift in Sources */,
+				E28A48211DE8867000A01B46 /* ChannelSearchController.swift in Sources */,
 				E23C010F1CE4D73B009C56B2 /* DisplayPhoto.swift in Sources */,
 				E2BC53331DE5D54600C97A2C /* BingController.swift in Sources */,
 				E2DA16D51DCFDF430096D86F /* ChannelTitleView.swift in Sources */,

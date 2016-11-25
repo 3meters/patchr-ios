@@ -452,7 +452,9 @@ class FireController: NSObject {
     }
     
     func findFirstGroup(userId: String, next: ((String?) -> Void)? = nil) {
-        let query = FireController.db.child("member-groups/\(userId)").queryOrdered(byChild: "index_priority_joined_at_desc").queryLimited(toFirst: 1)
+        let query = FireController.db.child("member-groups/\(userId)")
+            .queryOrdered(byChild: "index_priority_joined_at_desc")
+            .queryLimited(toFirst: 1)
         
         query.observeSingleEvent(of: .value, with: { snap in
             if !(snap.value is NSNull) {

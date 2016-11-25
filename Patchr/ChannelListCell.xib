@@ -37,20 +37,34 @@
                             <constraint firstAttribute="width" constant="16" id="rka-wR-vMS"/>
                         </constraints>
                     </imageView>
+                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="(not a member)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WMI-oF-Ce5" userLabel="Status">
+                        <constraints>
+                            <constraint firstAttribute="width" constant="95" id="bU1-dh-SPS"/>
+                            <constraint firstAttribute="height" constant="21" id="meZ-YH-eoX"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
+                        <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                        <nil key="highlightedColor"/>
+                    </label>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="WMI-oF-Ce5" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="f05-yI-zfl" secondAttribute="trailing" constant="-16" id="5cG-EI-jbu"/>
                     <constraint firstItem="MzM-rM-rpX" firstAttribute="centerY" secondItem="f05-yI-zfl" secondAttribute="centerY" id="6XA-pG-pc4"/>
+                    <constraint firstItem="WMI-oF-Ce5" firstAttribute="centerY" secondItem="meX-Hb-lPU" secondAttribute="centerY" id="FQ9-HC-Ks2"/>
                     <constraint firstItem="Tdc-C9-Sed" firstAttribute="leading" secondItem="meX-Hb-lPU" secondAttribute="trailing" constant="8" id="RSM-fw-lkP"/>
-                    <constraint firstItem="Tdc-C9-Sed" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="f05-yI-zfl" secondAttribute="trailing" constant="-16" id="cGq-Da-X6T"/>
                     <constraint firstItem="meX-Hb-lPU" firstAttribute="centerY" secondItem="f05-yI-zfl" secondAttribute="centerY" id="cQP-vA-dnP"/>
                     <constraint firstItem="MzM-rM-rpX" firstAttribute="leading" secondItem="f05-yI-zfl" secondAttribute="leading" constant="12" id="ir6-Wb-Ln0"/>
                     <constraint firstItem="Tdc-C9-Sed" firstAttribute="centerY" secondItem="meX-Hb-lPU" secondAttribute="centerY" id="kwP-eA-xPg"/>
+                    <constraint firstItem="WMI-oF-Ce5" firstAttribute="leading" secondItem="Tdc-C9-Sed" secondAttribute="trailing" constant="8" id="t10-nZ-Ux2"/>
                     <constraint firstItem="meX-Hb-lPU" firstAttribute="leading" secondItem="f05-yI-zfl" secondAttribute="leading" constant="36" id="tSq-yH-5Ib"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>
                 <outlet property="lock" destination="Tdc-C9-Sed" id="bmZ-ar-ttY"/>
+                <outlet property="lockWidth" destination="rka-wR-vMS" id="gcf-7d-taL"/>
                 <outlet property="star" destination="MzM-rM-rpX" id="sBI-FJ-OZ6"/>
+                <outlet property="status" destination="WMI-oF-Ce5" id="efE-N1-LEY"/>
+                <outlet property="statusWidth" destination="bU1-dh-SPS" id="UIN-8u-JHJ"/>
                 <outlet property="title" destination="meX-Hb-lPU" id="KkB-OH-HdK"/>
             </connections>
             <point key="canvasLocation" x="-188.5" y="-215"/>
