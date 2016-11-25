@@ -38,7 +38,6 @@ class InviteViewController: BaseEditViewController {
 	}
     
 	override func viewWillLayoutSubviews() {
-		super.viewWillLayoutSubviews()
 		
         let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         let inviteMembersCommentSize = self.inviteMembersComment.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
@@ -51,9 +50,7 @@ class InviteViewController: BaseEditViewController {
         self.channelField.alignUnder(self.inviteGuestsButton, matchingCenterWithTopPadding: 12, width: 288, height: 48)
         self.inviteGuestsComment.alignUnder(self.channelField, matchingCenterWithTopPadding: 12, width: 280, height: inviteGuestsCommentSize.height)
 		
-		self.contentHolder.resizeToFitSubviews()
-        self.scrollView.contentSize = CGSize(width:self.contentHolder.frame.size.width, height:self.contentHolder.frame.size.height + CGFloat(32))
-        self.contentHolder.anchorTopCenterFillingWidth(withLeftAndRightPadding: 16, topPadding: 16, height: self.contentHolder.frame.size.height)
+        super.viewWillLayoutSubviews()
 	}
 	
     /*--------------------------------------------------------------------------------------------
@@ -132,6 +129,7 @@ class InviteViewController: BaseEditViewController {
             self.channelField.autocapitalizationType = .none
             self.channelField.autocorrectionType = .no
             self.channelField.returnKeyType = .default
+            self.channelField.isUserInteractionEnabled = false
             
             if let groupId = StateController.instance.groupId, let channelId = StateController.instance.channelId {
                 let channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: nil)

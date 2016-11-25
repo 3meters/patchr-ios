@@ -17,6 +17,18 @@ class UserListCell: UITableViewCell {
     
     var user: FireUser!
     
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        let color = self.photoView?.backgroundColor
+        super.setSelected(selected, animated: animated)
+        self.photoView?.backgroundColor = color
+    }
+    
+    override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+        let color = self.photoView?.backgroundColor
+        super.setHighlighted(highlighted, animated: animated)
+        self.photoView?.backgroundColor = color
+    }
+    
     func reset() {
         self.photoView?.photo.image = nil
         self.title?.text = nil
@@ -29,7 +41,7 @@ class UserListCell: UITableViewCell {
         
         self.user = user
         self.presenceView?.bind(online: user.presence)
-        self.title?.text = user.profile?.fullName
+        self.title?.text = user.profile?.fullName ?? user.username
         
         if user.username != nil {
             self.subtitle?.text = "@\(user.username!)"
@@ -47,7 +59,7 @@ class UserListCell: UITableViewCell {
             self.role?.textColor = Theme.colorTextSecondary
         }
         
-        let fullName = user.profile?.fullName
+        let fullName = user.profile?.fullName ?? user.username
         if let photo = user.profile?.photo, !photo.uploading {
             let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile)
             self.photoView?.bind(photoUrl: photoUrl, name: fullName, colorSeed: user.id)

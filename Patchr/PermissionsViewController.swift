@@ -29,7 +29,6 @@ class PermissionsViewController: BaseViewController {
     }
     
     override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
 
         let headingSize = self.heading.sizeThatFits(CGSize(width:228, height:CGFloat.greatestFiniteMagnitude))
         let messageSize = self.message.sizeThatFits(CGSize(width:228, height:CGFloat.greatestFiniteMagnitude))
@@ -41,9 +40,7 @@ class PermissionsViewController: BaseViewController {
         self.allowButton.alignUnder(self.disclaimer, matchingCenterWithTopPadding: 24, width: 228, height: 44)
         self.cancelButton.alignUnder(self.allowButton, matchingCenterWithTopPadding: 8, width: 228, height: 44)
 
-        self.contentHolder.resizeToFitSubviews()
-        self.scrollView.contentSize = CGSize(width:self.contentHolder.frame.size.width, height:self.contentHolder.frame.size.height + CGFloat(32))
-        self.contentHolder.anchorTopCenterFillingWidth(withLeftAndRightPadding: 16, topPadding: 16, height: self.contentHolder.frame.size.height)
+        super.viewWillLayoutSubviews()
     }
 
     /*--------------------------------------------------------------------------------------------

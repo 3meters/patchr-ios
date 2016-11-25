@@ -7,11 +7,10 @@ import UIKit
 
 class UserHeaderView: BaseDetailView {
 
-	var name           = AirLabelTitle()
-	var photo          = PhotoView()
-    var username       = UILabel()
-	var rule           = UIView()
-	var userGroup      = UIView()
+	var photoView = PhotoView()
+    var fullName = AirLabelTitle()
+    var username = UILabel()
+	var rule = UIView()
 	
 	init() {
 		super.init(frame: CGRect.zero)
@@ -34,10 +33,9 @@ class UserHeaderView: BaseDetailView {
 		self.backgroundColor = Theme.colorBackgroundForm
 		
 		/* User friendly name */
-		self.name.lineBreakMode = .byTruncatingMiddle
-		self.name.font = Theme.fontTitleLarge
-        self.name.textAlignment = NSTextAlignment.center
-
+		self.fullName.lineBreakMode = .byTruncatingMiddle
+		self.fullName.font = Theme.fontTitleLarge
+        self.fullName.textAlignment = NSTextAlignment.center
 		
         /* Username */
         self.username.lineBreakMode = .byTruncatingMiddle
@@ -48,11 +46,10 @@ class UserHeaderView: BaseDetailView {
 		/* Rule */
 		self.rule.backgroundColor = Theme.colorSeparator
 		
-		self.userGroup.addSubview(self.photo)
-		self.userGroup.addSubview(self.name)
-        self.userGroup.addSubview(self.username)
-		self.userGroup.addSubview(self.rule)
-		self.addSubview(self.userGroup)
+		self.addSubview(self.photoView)
+		self.addSubview(self.fullName)
+        self.addSubview(self.username)
+		self.addSubview(self.rule)
 	}
 	
 	override func layoutSubviews() {
@@ -60,54 +57,66 @@ class UserHeaderView: BaseDetailView {
         
         let contentWidth = self.bounds.size.width - 32
 
-        self.name.sizeToFit()
+        self.username.bounds.size.width = contentWidth
         self.username.sizeToFit()
-
-		self.userGroup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 192)
-		self.photo.anchorTopCenter(withTopPadding: 16, width: 96, height: 96)
-        self.name.alignUnder(self.photo, matchingCenterWithTopPadding: 8, width: contentWidth, height: self.name.isHidden ? 0 : 36)
-        self.username.alignUnder(self.name, matchingCenterWithTopPadding: 0, width: contentWidth, height: 24)
-		self.rule.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 1)
+        
+        self.photoView.anchorTopCenter(withTopPadding: 16, width: 96, height: 96)
+        
+        if !self.fullName.isHidden {
+            self.fullName.bounds.size.width = contentWidth
+            self.fullName.sizeToFit()
+            self.fullName.alignUnder(self.photoView, matchingCenterWithTopPadding: 8, width: contentWidth, height: 36)
+            self.username.alignUnder(self.fullName, matchingCenterWithTopPadding: 0, width: contentWidth, height: 24)
+            self.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: (16 + 96 + 40 + 24 + 16))
+        }
+        else {
+            self.fullName.alignUnder(self.photoView, matchingCenterWithTopPadding: 0, width: contentWidth, height: 0)
+            self.username.alignUnder(self.fullName, matchingCenterWithTopPadding: 8, width: contentWidth, height: 24)
+            self.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: (16 + 96 + 32 + 16))
+        }
+        
+        self.rule.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 1)
 	}
 	
 	func bind(user: FireUser?) {
-        self.name.text?.removeAll(keepingCapacity: false)
+        
+        self.fullName.text?.removeAll(keepingCapacity: false)
         self.username.text?.removeAll(keepingCapacity: false)
+        self.photoView.photo.image = nil
+        self.fullName.isHidden = true
         
         if user != nil {
+            
             if user!.username != nil {
                 self.username.text = "@\(user!.username!)"
+                self.fullName.text = user!.username!
             }
             
-            if let profile = user!.profile {
-                let photo = profile.photo
-                let fullName = profile.fullName
-                
-                self.name.isHidden = true
-                if fullName != nil {
-                    self.name.text = fullName
-                    self.name.isHidden = false
-                }
-                
-                var photoUrl: URL? = nil
-                if photo != nil {
-                    photoUrl = PhotoUtils.url(prefix: photo!.filename!, source: photo!.source!, category: SizeCategory.profile)
-                }
-                
-                if photoUrl != nil || fullName != nil {
-                    self.photo.bind(photoUrl: photoUrl, name: profile.fullName, colorSeed: user!.id)
-                }
-                else {
-                    self.photo.bind(photoUrl: photoUrl, name: profile.fullName, colorSeed: user!.id, color: Colors.accentColorFill)
-                }
+            let photo = user!.profile?.photo
+
+            if user!.profile?.fullName != nil && !user!.profile!.fullName!.isEmpty {
+                self.fullName.text = user!.profile?.fullName
+            }
+            
+            self.fullName.isHidden = (self.fullName.text == nil || self.fullName.text!.isEmpty)
+            let fullName = self.fullName.text
+
+            var photoUrl: URL? = nil
+            if photo != nil {
+                photoUrl = PhotoUtils.url(prefix: photo!.filename!, source: photo!.source!, category: SizeCategory.profile)
+            }
+            
+            if photoUrl != nil || fullName != nil {
+                self.photoView.bind(photoUrl: photoUrl, name: fullName, colorSeed: user!.id)
+            }
+            else {
+                self.photoView.bind(photoUrl: photoUrl, name: fullName, colorSeed: user!.id, color: Colors.accentColorFill)
             }
         }
         else {
-            self.photo.bind(photoUrl: nil, name: nil, colorSeed: nil, color: Theme.colorBackgroundImage)
+            self.photoView.bind(photoUrl: nil, name: nil, colorSeed: nil, color: Theme.colorBackgroundImage)
         }
         
         self.setNeedsLayout()
-        self.layoutIfNeeded()
-        self.sizeToFit()
 	}
 }

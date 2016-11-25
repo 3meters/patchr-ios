@@ -143,7 +143,7 @@ extension GalleryGridViewController: IDMPhotoBrowserDelegate {
 		
 		let index = Int(index)
 		
-		if let browser = photoBrowser as? GalleryBrowser {
+		if let browser = photoBrowser as? PhotoBrowser {
 			let displayPhoto = self.displayPhotosArray![index]
 			browser.likeButton.bind(displayPhoto: displayPhoto)
 		}
@@ -159,7 +159,8 @@ extension GalleryGridViewController { /* UICollectionViewDelegate, UICollectionV
 		* browser objects cannot be re-used)
 		*/
 		let cell = collectionView.cellForItem(at: indexPath) as! GalleryViewCell
-        let browser = GalleryBrowser(photos: self.displayPhotosArray! as [Any], animatedFrom: cell)
+        let browser = PhotoBrowser(photos: self.displayPhotosArray! as [Any], animatedFrom: cell)
+        browser?.mode = .gallery
 		
 		browser?.setInitialPageIndex(UInt(indexPath.row))
 		browser?.useWhiteBackgroundColor = true

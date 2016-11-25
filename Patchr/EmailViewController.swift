@@ -31,7 +31,6 @@ class EmailViewController: BaseEditViewController {
     }
 
     override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
 
         let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         let errorSize = self.errorLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
@@ -40,9 +39,7 @@ class EmailViewController: BaseEditViewController {
         self.emailField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
         self.errorLabel.alignUnder(self.emailField, matchingCenterWithTopPadding: 0, width: 288, height: errorSize.height)
 
-        self.contentHolder.resizeToFitSubviews()
-        self.scrollView.contentSize = CGSize(width:self.contentHolder.frame.size.width, height:self.contentHolder.frame.size.height + CGFloat(32))
-        self.contentHolder.anchorTopCenterFillingWidth(withLeftAndRightPadding: 16, topPadding: 16, height: self.contentHolder.frame.size.height)
+        super.viewWillLayoutSubviews()
     }
 
     /*--------------------------------------------------------------------------------------------

@@ -117,7 +117,7 @@ class MainController: NSObject, iRateDelegate {
         if self.upgradeRequired {
             showLobby()
         }
-        else if UserController.instance.userId == nil {
+        else if !UserController.instance.authenticated {
             showLobby()
         }
         else if StateController.instance.groupId == nil || StateController.instance.channelId == nil {
@@ -171,65 +171,49 @@ class MainController: NSObject, iRateDelegate {
     }
     
     func routeDeepLink(params: [AnyHashable: Any]?, error: Error?) {
-        
         /*
-         * If logged in:
-         *
-         * Screens
-         * - username -> open in group or group/channel
-         *
-         * Steps
-         * - Check to see if they are already a group member.
-         * - If yes, then route to group/channel
-         * - If no, then perform all updates and route to group/channel
-         *
-         * If not logged in:
-         *
-         * Screens
-         * - email (account exists, becomes login), password, username -> open in group or group/channel
-         * - email (new account, becomes signup), password, username -> open in group or group/channel
-         *
-         * Steps
-         * - Login or signup.
-         * - If login then check to see if they are already a group member.
-         *      - If yes, then route to group/channel
-         *      - If no, then perform all updates and route to group/channel
-         * - If signup then perform all updates and route to group/channel
+         * Logged in: username -> open in group or group/channel
+         * Else: email -> password -> username -> open in group or group/channel
          */
-        if let groupId = params?["groupId"] as? String, let role = params?["role"] as? String {
-            
-            if role == "member" {
-                let channelId = params?["channelId"] as? String
-                
+        let groupId = (params?["groupId"] as! String)
+        
+        FireController.db.child("groups/\(groupId)").observeSingleEvent(of: .value, with: { snap in
+            if !(snap.value is NSNull) {
                 if UserController.instance.authenticated {
-                    let userId = UserController.instance.userId
-                    let username = UserController.instance.user?.username
-                    FireController.db.child("group-members/\(groupId)/\(userId!)").observeSingleEvent(of: .value, with: { snap in
-                        let alreadyMember = !(snap.value is NSNull)
-                        if !alreadyMember {
-                            FireController.instance.addUserToGroup(groupId: groupId, channelId: channelId, role: role, username: username!, then: { error in
-                                StateController.instance.setGroupId(groupId: groupId, channelId: channelId)
-                                MainController.instance.showChannel(groupId: groupId, channelId: channelId!)
-                            })
+                    
+                    let userId = UserController.instance.userId!
+                    let path = "group-members/\(groupId)/\(userId)"
+                    
+                    FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
+                        if !(snap.value is NSNull) {
+                            UIShared.Toast(message: "Already a member of this group!")
                         }
                         else {
-                            /* Toast: Already a member */
-                            UIShared.Toast(message: "Already a member of this group!")
+                            let controller = JoinViewController()
+                            let wrapper = AirNavigationController()
+                            controller.inputGroupId = params?["groupId"] as? String
+                            controller.inputRole = params?["role"] as? String
+                            controller.inputChannelId = params?["channelId"] as? String
+                            controller.inputGroupTitle = params?["groupTitle"] as? String
+                            controller.inputChannelName = params?["channelName"] as? String
+                            controller.flow = .onboardInvite
+                            wrapper.viewControllers = [controller]
+                            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
                         }
                     })
                 }
                 else {
-                    /*
-                     * - User needs to log in or sign up.
-                     * - Add user to group/channel as member/guest
-                     * - Auto switch to group/channel
-                     */
+                    let controller = EmailViewController()
+                    let wrapper = AirNavigationController()
+                    controller.flow = .onboardInvite
+                    wrapper.viewControllers = [controller]
+                    UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
                 }
             }
-            else if role == "guest" {
-                
+            else {
+                UIShared.Toast(message: "Group is not active")
             }
-        }
+        })
     }
 }
 

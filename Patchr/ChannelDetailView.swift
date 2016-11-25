@@ -16,6 +16,7 @@ class ChannelDetailView: UIView {
     var lockImage = AirImageView(frame: CGRect.zero)
     var mutedImage = AirMuteView(frame: CGRect.zero)
     var starButton = AirStarButton(frame: CGRect.zero)
+    var optionsButton = AirImageButton(frame: CGRect.zero)
     var infoGroup = AirRuleView()
     var purpose = AirLabelDisplay(frame: CGRect.zero)
     var gradient = CAGradientLayer()
@@ -53,14 +54,18 @@ class ChannelDetailView: UIView {
         let viewHeight = viewWidth * 0.625
 
         self.contentGroup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: viewHeight) // 16:10
-        self.titleGroup.anchorBottomLeft(withLeftPadding: 12, bottomPadding: 16, width: viewWidth - 24, height: 72)
+        self.titleGroup.anchorBottomLeft(withLeftPadding: 12, bottomPadding: 16, width: viewWidth - 72, height: 72)
         
-        self.name.bounds.size.width = self.titleGroup.width()
+        let indicatorsWidth = (!self.lockImage.isHidden ? 20 : 0) + (!self.mutedImage.isHidden ? 24 : 0)
+        self.name.bounds.size.width = self.titleGroup.width() - CGFloat(indicatorsWidth + 28)
         self.name.sizeToFit()
         self.name.anchorBottomLeft(withLeftPadding: 0, bottomPadding: 0, width: self.name.width(), height: self.name.height())
+        
         self.lockImage.align(toTheRightOf: self.name, matchingCenterWithLeftPadding: 4, width: !self.lockImage.isHidden ? 16 : 0, height: 16)
         self.mutedImage.align(toTheRightOf: self.lockImage, matchingCenterWithLeftPadding: 4, width: !self.mutedImage.isHidden ? 20 : 0, height: 20)
         self.starButton.align(toTheRightOf: self.mutedImage, matchingCenterWithLeftPadding: 4, width: 24, height: 24)
+        
+        self.optionsButton.anchorBottomRight(withRightPadding: 12, bottomPadding: 20, width: 24, height: 24)
 
         let gradientHeight = self.contentGroup.width() * 0.35
         self.gradient.frame = CGRect(x:0, y:self.contentGroup.height() - gradientHeight, width:self.contentGroup.width(), height:gradientHeight)
@@ -92,6 +97,7 @@ class ChannelDetailView: UIView {
         
         self.contentGroup.addSubview(self.photo)
         self.contentGroup.addSubview(self.titleGroup)
+        self.contentGroup.addSubview(self.optionsButton)
         
         self.infoGroup.backgroundColor = Theme.colorBackgroundTile
         self.infoGroup.addSubview(self.purpose)
@@ -124,6 +130,9 @@ class ChannelDetailView: UIView {
         
         self.purpose.numberOfLines = 0
         
+        self.optionsButton.setImage(UIImage(named: "imgOverflowVerticalLight"), for: .normal)
+        self.optionsButton.showsTouchWhenHighlighted = true
+
         self.lockImage.image = Utils.imageLock
         self.lockImage.tintColor = Colors.white
         self.mutedImage.image = Utils.imageMuted

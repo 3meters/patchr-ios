@@ -11,7 +11,7 @@ import ReachabilitySwift
 import Firebase
 import FirebaseDatabaseUI
 
-class ChannelViewController: UIViewController, UITableViewDelegate {
+class ChannelViewController: BaseTableController, UITableViewDelegate {
     
     var channelQuery: ChannelQuery?
     var messagesQuery: FIRDatabaseQuery!
@@ -133,6 +133,10 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
                 showMessageActions(message: message!)
             }
         }
+    }
+    
+    func optionsAction(sender: AnyObject?) {
+        
     }
     
     func memberAction(sender: AnyObject?) {
@@ -261,7 +265,8 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
      * MARK: - Methods
      *--------------------------------------------------------------------------------------------*/
 
-    func initialize() {
+    override func initialize() {
+        super.initialize()
 
         Reporting.screen("PatchDetail")
         
@@ -331,6 +336,8 @@ class ChannelViewController: UIViewController, UITableViewDelegate {
         self.view.addSubview(self.tableView)
         self.view.addSubview(self.activity)
         self.view.insertSubview(self.actionButton, at: self.view.subviews.count)
+        
+        self.headerView.optionsButton.addTarget(self, action: #selector(showChannelActions(gesture:)), for: .touchUpInside)
         
         self.actionButton.anchorBottomRight(withRightPadding: 16, bottomPadding: 16, width: self.actionButton!.width(), height: self.actionButton!.height())
         self.actionButtonCenter = self.actionButton.center

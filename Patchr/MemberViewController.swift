@@ -14,11 +14,10 @@ import FirebaseDatabase
 
 class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFieldDelegate {
     
-    let db = FIRDatabase.database().reference()
     var inputUserId: String!
-    var ref: FIRDatabaseReference!
-    var handle: UInt!
-    var user: FireUser?
+    
+    var userQuery: UserQuery?
+    var user: FireUser!
 
     var headerView = MemberDetailView()
     var email = AirLabelStack()
@@ -40,25 +39,20 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.handle = self.ref.observe(.value, with: { snap in
-            if snap.value != nil {
-                self.user = FireUser.from(dict: snap.value as? [String: Any], id: snap.key)
-                self.bind()
-            }
+        let groupId = StateController.instance.groupId
+        self.userQuery = UserQuery(userId: self.inputUserId, groupId: groupId)
+        self.userQuery?.observe(with: { user in
+            self.user = user
+            self.bind()
         })
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        ref.removeObserver(withHandle: self.handle)
+        self.userQuery?.remove()
     }
 	
 	override func viewWillLayoutSubviews() {
-		super.viewWillLayoutSubviews()
         
         let viewWidth = min(CONTENT_WIDTH_MAX, self.view.bounds.size.width)
         let buttonWidth = (viewWidth - 48) / 2
@@ -137,8 +131,6 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
 	override func initialize() {
 		super.initialize()
         
-        self.ref = self.db.child("users/\(self.inputUserId!)")
-        
         self.phone.caption.text = "Phone"
         self.phone.label.textColor = Colors.brandColorTextLight
         self.phone.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(phoneAction(sender:))))
@@ -171,6 +163,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
 	}
 	
 	func bind() {
+        
         /* Push data into form and header */
 
         let viewWidth = min(CONTENT_WIDTH_MAX, self.view.bounds.size.width)
@@ -184,20 +177,24 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.buttonGroup.isHidden = (self.callButton.isHidden && self.editButton.isHidden)
         
         self.phone.isHidden = (self.user?.profile?.phone?.isEmpty ?? true)
-        self.email.isHidden = (self.user?.email?.isEmpty ?? true)
         self.skype.isHidden = (self.user?.profile?.skype?.isEmpty ?? true)
         
         if self.user?.profile?.phone != nil {
             self.phone.label.text = self.user!.profile!.phone!
         }
         
-        if self.user?.email != nil {
-            self.email.label.text = self.user!.email!
+        self.email.isHidden = true
+        if self.user!.hideEmail == nil || !self.user!.hideEmail! {
+            if self.user?.email != nil && !self.user!.email!.isEmpty {
+                self.email.isHidden = false
+                self.email.label.text = self.user!.email!
+            }
         }
         
         if self.user?.profile?.skype != nil {
             self.skype.label.text = self.user!.profile!.skype!
         }
+        
         self.view?.setNeedsLayout()
     }
 }
@@ -216,15 +213,15 @@ extension MemberViewController {
             if offset >= self.originalScrollTop && offset <= 300 {
                 let movement = self.originalScrollTop - scrollView.contentOffset.y
                 let ratio: CGFloat = (movement <= 0) ? 0.50 : 1.0
-                self.headerView.photo.frame.origin.y = self.originalRect!.origin.y + (-(movement) * ratio)
+                self.headerView.photoView.frame.origin.y = self.originalRect!.origin.y + (-(movement) * ratio)
             }
             else {
                 let movement = (originalScrollTop - scrollView.contentOffset.y) * 0.35
                 if movement > 0 {
-                    self.headerView.photo.frame.origin.y = self.originalRect!.origin.y - (movement * 0.5)
-                    self.headerView.photo.frame.origin.x = self.originalRect!.origin.x - (movement * 0.5)
-                    self.headerView.photo.frame.size.width = self.originalRect!.size.width + movement
-                    self.headerView.photo.frame.size.height = self.originalRect!.size.height + movement
+                    self.headerView.photoView.frame.origin.y = self.originalRect!.origin.y - (movement * 0.5)
+                    self.headerView.photoView.frame.origin.x = self.originalRect!.origin.x - (movement * 0.5)
+                    self.headerView.photoView.frame.size.width = self.originalRect!.size.width + movement
+                    self.headerView.photoView.frame.size.height = self.originalRect!.size.height + movement
                 }
             }
         }

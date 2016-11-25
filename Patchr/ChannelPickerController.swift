@@ -11,7 +11,7 @@ import FirebaseDatabaseUI
 import SlideMenuControllerSwift
 import pop
 
-class ChannelPickerController: UIViewController, UITableViewDelegate, SlideMenuControllerDelegate, UINavigationControllerDelegate {
+class ChannelPickerController: BaseTableController, UITableViewDelegate, SlideMenuControllerDelegate, UINavigationControllerDelegate {
 
     var groupQuery: GroupQuery!
     var channelsQuery: FIRDatabaseQuery!
@@ -40,10 +40,6 @@ class ChannelPickerController: UIViewController, UITableViewDelegate, SlideMenuC
         self.headerView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 72)
         self.footerView.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 48)
         self.tableView.alignBetweenTop(self.headerView, andBottom: self.footerView, centeredWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
-    }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self)
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -94,7 +90,8 @@ class ChannelPickerController: UIViewController, UITableViewDelegate, SlideMenuC
     * Methods
     *--------------------------------------------------------------------------------------------*/
     
-    func initialize() {
+    override func initialize() {
+        super.initialize()
         
         self.definesPresentationContext = true
         self.navigationController?.delegate = self
@@ -212,8 +209,7 @@ extension ChannelPickerController {
     /* 
      * UITableViewDataSource 
      */
-    class ChannelsDataSource: FUITableViewDataSource {
-        
+    class ChannelsDataSource: FUITableViewDataSource {        
         override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
             return "Channels"
         }

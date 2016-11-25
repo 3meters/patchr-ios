@@ -38,6 +38,7 @@ class SideMenuViewController: UITableViewController {
         /* In case the photo needs be retried */
         if self.user != nil {
             self.menuHeader.bind(user: self.user)
+            self.tableView.tableHeaderView = self.menuHeader
         }
     }
     
@@ -51,7 +52,7 @@ class SideMenuViewController: UITableViewController {
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        self.tableView.bounds.size.width = SIDE_MENU_WIDTH        
+        self.tableView.bounds.size.width = SIDE_MENU_WIDTH
     }
     
     func editProfileAction(sender: AnyObject?) {
@@ -93,14 +94,10 @@ class SideMenuViewController: UITableViewController {
         self.tableView.separatorInset = UIEdgeInsets.zero
         self.tableView.separatorStyle = .none
         
-        self.menuHeader = UserHeaderView()
+        self.menuHeader = UserHeaderView(frame: CGRect.zero)
         let headerTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(editProfileAction(sender:)))
-        self.menuHeader.userGroup.addGestureRecognizer(headerTapGestureRecognizer)
-        self.menuHeader.frame = CGRect(x:0, y:0, width:self.tableView.width(), height:CGFloat(208))
-        self.menuHeader.setNeedsLayout()
-        self.menuHeader.layoutIfNeeded()
-        
-        self.tableView.tableHeaderView = menuHeader	// Triggers table binding
+        self.menuHeader.addGestureRecognizer(headerTapGestureRecognizer)
+        self.tableView.tableHeaderView = self.menuHeader	// Triggers table binding
 
         self.inviteCell = WrapperTableViewCell(view: MenuItemView(title: "Invite", image: UIImage(named: "imgInvite2Light")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         self.membersCell = WrapperTableViewCell(view: MenuItemView(title: "Group members", image: UIImage(named: "imgUsersLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
@@ -129,6 +126,8 @@ class SideMenuViewController: UITableViewController {
                 
                 self.user = user
                 self.menuHeader.bind(user: self.user)
+                self.tableView.tableHeaderView = self.menuHeader	// Triggers table binding
+                self.tableView.reloadData()
             })
         }
     }
@@ -189,6 +188,9 @@ extension SideMenuViewController {
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if StateController.instance.group?.role != "admin" && indexPath.row == 1 {
+            return CGFloat(0)
+        }
         return CGFloat(64)
     }
 

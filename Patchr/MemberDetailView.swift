@@ -4,6 +4,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class MemberDetailView: UIView {
     
@@ -11,12 +12,15 @@ class MemberDetailView: UIView {
 
     var contentGroup = UIView()
     var titleGroup = UIView()
-    var photo = AirImageView(frame: CGRect.zero)
+    var photoView = AirImageView(frame: CGRect.zero)
     var title = AirLabelDisplay()
     var subtitle = AirLabelDisplay()
+    var role = AirLabelDisplay()
     var presenceView = PresenceView()
     var gradient = CAGradientLayer()
-
+    
+    var user: FireUser!
+    
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
@@ -52,13 +56,13 @@ class MemberDetailView: UIView {
         self.contentGroup.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: viewHeight) // 16:10
         self.titleGroup.anchorBottomLeft(withLeftPadding: 16, bottomPadding: 16, width: viewWidth - 32, height: 72)
 
-        self.photo.frame = CGRect(x: -24, y: -36, width: viewWidth + 48, height: viewHeight + 72)
+        self.photoView.frame = CGRect(x: -24, y: -36, width: viewWidth + 48, height: viewHeight + 72)
         
         self.subtitle.bounds.size.width = self.titleGroup.width()
         self.subtitle.sizeToFit()
         self.subtitle.anchorBottomLeft(withLeftPadding: 0, bottomPadding: 0, width: self.subtitle.width(), height: self.subtitle.height())
         
-        self.presenceView.align(toTheRightOf: self.subtitle, matchingCenterWithLeftPadding: 8, width: 12, height: 12)
+        self.presenceView.align(toTheRightOf: self.subtitle, matchingCenterWithLeftPadding: 8, width: 12, height: 12, topPadding: 2)
 
         self.title.bounds.size.width = self.titleGroup.width()
         self.title.sizeToFit()
@@ -78,17 +82,17 @@ class MemberDetailView: UIView {
         self.titleGroup.addSubview(self.subtitle)
         self.titleGroup.addSubview(self.presenceView)
 
-        self.contentGroup.addSubview(self.photo)
+        self.contentGroup.addSubview(self.photoView)
         self.contentGroup.addSubview(self.titleGroup)
         
         self.clipsToBounds = false
         self.backgroundColor = Theme.colorBackgroundForm
         
-        self.photo.parallaxIntensity = -40
-        self.photo.sizeCategory = SizeCategory.standard
-        self.photo.clipsToBounds = true
-        self.photo.contentMode = UIViewContentMode.scaleAspectFill
-        self.photo.backgroundColor = Theme.colorBackgroundImage
+        self.photoView.parallaxIntensity = -40
+        self.photoView.sizeCategory = SizeCategory.standard
+        self.photoView.clipsToBounds = true
+        self.photoView.contentMode = UIViewContentMode.scaleAspectFill
+        self.photoView.backgroundColor = Theme.colorBackgroundImage
         
         /* Apply gradient to banner */
         let topColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.0))        // Top
@@ -118,36 +122,45 @@ class MemberDetailView: UIView {
     
     func bind(user: FireUser!) {
         
-        if let group = StateController.instance.group, let profile = user.profile {
-            if profile.fullName != nil {
-                self.title.text = profile.fullName
-                self.subtitle.text = "@\(group.username!)"
-            }
-            else {
-                self.title.text = group.username
-            }
-            
-            /* Name, type and photo */
-            self.presenceView.bind(online: user.presence)
-            
-            if let photo = profile.photo, !photo.uploading {
-                if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
-                    self.photo.setImageWithUrl(url: photoUrl)
-                    self.gradient.isHidden = false
-                }
-            }
-            else if profile.fullName != nil {
-                let seed = Utils.numberFromName(fullname: user.id!)
-                self.photo.backgroundColor = ColorArray.randomColor(seed: seed)
-            }
-            else {
-                self.photo.backgroundColor = Colors.accentColorFill
-            }
-            
-            self.setNeedsLayout()    // Needed because binding can change element layout
-            self.layoutIfNeeded()
-            self.sizeToFit()
+        self.user = user
+        self.presenceView.bind(online: user.presence)
+        self.title.text = user.profile?.fullName ?? user.username
+        
+        if user.username != nil {
+            self.subtitle.text = "@\(user.username!)"
         }
+        
+        self.role.text = user.role
+        
+        if user.role == "admin" {
+            self.role.textColor = Colors.brandColorTextLight
+        }
+        else if user.role == "guest" {
+            self.role.textColor = Colors.accentColorTextLight
+        }
+        else {
+            self.role.textColor = Theme.colorTextSecondary
+        }
+
+        let fullName = user.profile?.fullName ?? user.username
+
+        if let photo = user.profile?.photo, !photo.uploading {
+            if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
+                self.photoView.setImageWithUrl(url: photoUrl)
+                self.gradient.isHidden = false
+            }
+        }
+        else if fullName != nil {
+            let seed = Utils.numberFromName(fullname: user.id!)
+            self.photoView.backgroundColor = ColorArray.randomColor(seed: seed)
+        }
+        else {
+            self.photoView.backgroundColor = Colors.accentColorFill
+        }
+        
+        self.setNeedsLayout()    // Needed because binding can change element layout
+        self.layoutIfNeeded()
+        self.sizeToFit()
     }
 
     override func sizeThatFits(_ size: CGSize) -> CGSize {

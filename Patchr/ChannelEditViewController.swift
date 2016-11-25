@@ -56,8 +56,6 @@ class ChannelEditViewController: BaseEditViewController {
          * - setting frame on self.view if size is different
          * - scrolling when self.view is a scrollview
          */
-        super.viewWillLayoutSubviews()
-
         let bannerSize = self.banner.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         let descriptionSize = self.purposeField.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         let errorSize = self.errorLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
@@ -74,9 +72,7 @@ class ChannelEditViewController: BaseEditViewController {
         self.visibilityLabel.anchorCenterLeft(withLeftPadding: 0, width: 144, height: self.visibilityLabel.height())
         self.visibilitySwitch.anchorCenterRight(withRightPadding: 0, width: self.visibilitySwitch.width(), height: self.visibilitySwitch.height())
 
-        self.contentHolder.resizeToFitSubviews()
-        self.scrollView.contentSize = CGSize(width:self.contentHolder.width(), height:self.contentHolder.height() + CGFloat(32))
-        self.contentHolder.anchorTopCenterFillingWidth(withLeftAndRightPadding: 16, topPadding: 16, height: self.contentHolder.height())
+        super.viewWillLayoutSubviews()        
     }
 
     /*--------------------------------------------------------------------------------------------

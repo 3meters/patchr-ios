@@ -9,7 +9,7 @@ import AVFoundation
 import Firebase
 import FirebaseDatabaseUI
 
-class GroupPickerController: BaseViewController, UITableViewDelegate {
+class GroupPickerController: BaseTableController, UITableViewDelegate {
     
     var query: FIRDatabaseQuery!
     
@@ -43,7 +43,7 @@ class GroupPickerController: BaseViewController, UITableViewDelegate {
         
         let messageSize = self.messageLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         if self.navigationController != nil {
-            self.messageLabel.alignUnder(self.navigationController?.navigationBar, matchingCenterWithTopPadding: 24, width: 288, height: messageSize.height + 24)
+            self.messageLabel.alignUnder(self.navigationController?.navigationBar, matchingCenterWithTopPadding: 16, width: 288, height: messageSize.height + 24)
         }
         else {
             self.messageLabel.anchorTopCenter(withTopPadding: 24, width: 288, height:  messageSize.height + 24)
@@ -77,7 +77,7 @@ class GroupPickerController: BaseViewController, UITableViewDelegate {
     }
     
     func closeAction(sender: AnyObject?) {
-        self.close(animated: true)
+        close(animated: true)
     }
     
     func switchLoginAction(sender: AnyObject?) {

@@ -15,6 +15,7 @@ import Firebase
 class ProfileEditViewController: BaseEditViewController {
     
     var user: FireUser!
+    var userQuery: UserQuery!
 
     var message = AirLabelTitle()
     var photoEditView = PhotoEditView()
@@ -24,20 +25,20 @@ class ProfileEditViewController: BaseEditViewController {
     var skypeField = AirTextField()
     var accountButton = AirButton()
 
-    var fullName: String! {
+    var fullName: String? {
         
-        let firstName = self.firstNameField.text?.trimmingCharacters(in: .whitespacesAndNewlines)
-        let lastName = self.lastNameField.text?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let firstName = emptyToNil(self.firstNameField.text?.trimmingCharacters(in: .whitespacesAndNewlines))
+        let lastName = emptyToNil(self.lastNameField.text?.trimmingCharacters(in: .whitespacesAndNewlines))
         
-        if firstName == nil || firstName!.isEmpty {
-            if lastName == nil || lastName!.isEmpty {
-                return ""
+        if firstName == nil {
+            if lastName == nil {
+                return nil
             }
             else {
                 return lastName
             }
         }
-        else if lastName == nil || lastName!.isEmpty {
+        else if lastName == nil {
             return firstName
         }
         else {
@@ -52,20 +53,23 @@ class ProfileEditViewController: BaseEditViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
-        UserQuery(userId: UserController.instance.userId!, groupId: nil).once(with: { user in
-            
-            guard user != nil else {
-                assertionFailure("user not found or no longer exists")
-                return
+        
+        let userId = UserController.instance.userId!
+        self.userQuery = UserQuery(userId: userId, groupId: nil)
+        self.userQuery.observe(with: { user in
+            if (user != nil) {
+                self.user = user
+                self.bind()
             }
-            
-            self.user = user
-            self.bind()
         })
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.userQuery.remove()
     }
 
     override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
 
         let messageSize = self.message.sizeThatFits(CGSize(width: 288, height: CGFloat.greatestFiniteMagnitude))
         self.message.anchorTopCenter(withTopPadding: 0, width: 288, height: messageSize.height)
@@ -77,9 +81,7 @@ class ProfileEditViewController: BaseEditViewController {
 
         self.accountButton.alignUnder(self.skypeField, matchingCenterWithTopPadding: 12, width: 288, height: 48)
 
-        self.contentHolder.resizeToFitSubviews()
-        self.scrollView.contentSize = CGSize(width: self.contentHolder.frame.size.width, height: self.contentHolder.frame.size.height + CGFloat(32))
-        self.contentHolder.anchorTopCenterFillingWidth(withLeftAndRightPadding: 16, topPadding: 24, height: self.contentHolder.frame.size.height)
+        super.viewWillLayoutSubviews()
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -97,40 +99,46 @@ class ProfileEditViewController: BaseEditViewController {
         super.textFieldDidEndEditing(textField)
         
         if textField == self.firstNameField {
-            
-            let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
-            changeRequest?.displayName = self.fullName
-            changeRequest?.commitChanges()
-
-            FireController.db.child(self.user.path).updateChildValues([
-                "modified_at": FIRServerValue.timestamp(),
-                "profile/first_name":  emptyToNull(self.firstNameField.text),
-                "profile/full_name": self.fullName
-            ])
+            if emptyToNil(self.firstNameField.text) != self.user.profile?.firstName {
+                let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
+                changeRequest?.displayName = self.fullName
+                changeRequest?.commitChanges()
+                
+                FireController.db.child(self.user.path).updateChildValues([
+                    "modified_at": FIRServerValue.timestamp(),
+                    "profile/first_name": emptyToNull(self.firstNameField.text),
+                    "profile/full_name": nilToNull(self.fullName)
+                    ])
+            }
         }
         else if textField == self.lastNameField {
-            
-            let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
-            changeRequest?.displayName = self.fullName
-            changeRequest?.commitChanges()
-            
-            FireController.db.child(self.user.path).updateChildValues([
-                "modified_at": FIRServerValue.timestamp(),
-                "profile/last_name": emptyToNull(self.lastNameField.text),
-                "profile/full_name": self.fullName
-                ])
+            if emptyToNil(self.lastNameField.text) != self.user.profile?.lastName {
+                let changeRequest = FIRAuth.auth()?.currentUser?.profileChangeRequest()
+                changeRequest?.displayName = self.fullName
+                changeRequest?.commitChanges()
+                
+                FireController.db.child(self.user.path).updateChildValues([
+                    "modified_at": FIRServerValue.timestamp(),
+                    "profile/last_name": emptyToNull(self.lastNameField.text),
+                    "profile/full_name": nilToNull(self.fullName)
+                    ])
+            }
         }
         else if textField == self.phoneField {
-            FireController.db.child(self.user.path).updateChildValues([
-                "modified_at": FIRServerValue.timestamp(),
-                "profile/phone": emptyToNull(self.phoneField.text)
-                ])
+            if emptyToNil(self.phoneField.text) != self.user.profile?.phone {
+                FireController.db.child(self.user.path).updateChildValues([
+                    "modified_at": FIRServerValue.timestamp(),
+                    "profile/phone": emptyToNull(self.phoneField.text)
+                    ])
+            }
         }
         else if textField == self.skypeField {
-            FireController.db.child(self.user.path).updateChildValues([
-                "modified_at": FIRServerValue.timestamp(),
-                "profile/skype": emptyToNull(self.skypeField.text)
-                ])
+            if emptyToNil(self.skypeField.text) != self.user.profile?.skype {
+                FireController.db.child(self.user.path).updateChildValues([
+                    "modified_at": FIRServerValue.timestamp(),
+                    "profile/skype": emptyToNull(self.skypeField.text)
+                    ])
+            }
         }
     }
     
@@ -143,16 +151,10 @@ class ProfileEditViewController: BaseEditViewController {
             phoneField.becomeFirstResponder()
         case phoneField:
             skypeField.becomeFirstResponder()
-        case skypeField:
-            self.doneAction(sender: textField)
         default:
             textField.resignFirstResponder()
         }
         return true
-    }
-    
-    func doneAction(sender: AnyObject?) {
-        closeAction(sender: sender)
     }
     
     func closeAction(sender: AnyObject?) {
@@ -261,6 +263,9 @@ class ProfileEditViewController: BaseEditViewController {
         self.contentHolder.addSubview(self.phoneField)
         self.contentHolder.addSubview(self.skypeField)
         self.contentHolder.addSubview(self.accountButton)
+        
+        let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(closeAction(sender:)))
+        self.navigationItem.rightBarButtonItems = [doneButton]
         
         NotificationCenter.default.addObserver(self, selector: #selector(photoDidChange(sender:)), name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(photoRemoved(sender:)), name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: nil)

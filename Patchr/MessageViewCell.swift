@@ -194,7 +194,7 @@ class MessageViewCell: AirUIView {
 		}
         
         self.userName.text = message.creator?.username
-        let fullName = message.creator?.profile?.fullName
+        let fullName = message.creator?.profile?.fullName ?? message.creator?.username
         if let photo = message.creator?.profile?.photo, !photo.uploading {
             let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile)
             self.userPhoto.bind(photoUrl: photoUrl, name: fullName, colorSeed: message.creator?.id)

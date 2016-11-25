@@ -8,11 +8,8 @@
 
 import UIKit
 
-class BaseViewController: UIViewController {
+class BaseTableController: UIViewController {
 	
-	var scrollView		= AirScrollView()
-	var contentHolder	= UIView()
-
 	var isModal: Bool {
 		return self.presentingViewController?.presentedViewController == self
 			|| (self.navigationController != nil && self.navigationController?.presentingViewController?.presentedViewController == self.navigationController)
@@ -23,23 +20,6 @@ class BaseViewController: UIViewController {
 	* Lifecycle
 	*--------------------------------------------------------------------------------------------*/
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-		
-		let tap = UITapGestureRecognizer(target: self, action: #selector(BaseViewController.dismissKeyboard(sender:)));
-		tap.delegate = self
-		tap.cancelsTouchesInView = false
-		self.view.addGestureRecognizer(tap)
-    }
-    
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        
-        self.contentHolder.resizeToFitSubviews()
-        self.scrollView.contentSize = CGSize(width: self.contentHolder.frame.size.width, height: self.contentHolder.frame.size.height + CGFloat(32))
-        self.contentHolder.anchorTopCenterFillingWidth(withLeftAndRightPadding: 16, topPadding: 16, height: self.contentHolder.frame.size.height)
-    }
-	
 	deinit {
 		NotificationCenter.default.removeObserver(self)
 	}
@@ -54,14 +34,6 @@ class BaseViewController: UIViewController {
 	
 	func initialize() {
 		self.view.backgroundColor = Theme.colorBackgroundForm
-		
-		self.scrollView.frame = UIScreen.main.applicationFrame
-		self.scrollView.backgroundColor = Theme.colorBackgroundForm
-		self.scrollView.bounces = true
-		self.scrollView.alwaysBounceVertical = true
-        
-		self.scrollView.addSubview(self.contentHolder)		
-        self.view.addSubview(self.scrollView)
 	}
 	
 	func close(animated: Bool = true) {
@@ -128,13 +100,4 @@ class BaseViewController: UIViewController {
 	func isEmptyString(value : String?) -> Bool {
 		return (value == nil || value!.isEmpty)
 	}	
-}
-
-extension BaseViewController: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-		if (touch.view is UIButton) {
-			return false
-		}
-		return true
-	}
 }

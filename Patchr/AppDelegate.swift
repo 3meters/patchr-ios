@@ -117,7 +117,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         if let controller = UIViewController.topMostViewController() {
-            if controller is FirePhotoBrowser || controller is PhotoPreview {
+            if controller is PhotoBrowser {
                 return UIInterfaceOrientationMask.all;
             }
         }

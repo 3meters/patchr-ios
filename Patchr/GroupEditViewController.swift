@@ -40,8 +40,6 @@ class GroupEditViewController: BaseEditViewController {
          * - setting frame on self.view if size is different
          * - scrolling when self.view is a scrollview
          */
-        super.viewWillLayoutSubviews()
-
         let bannerSize = self.banner.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         let errorSize = self.errorLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
@@ -52,9 +50,7 @@ class GroupEditViewController: BaseEditViewController {
         self.titleField.alignUnder(self.photoEditView, matchingCenterWithTopPadding: 16, width: 288, height: 48)
         self.errorLabel.alignUnder(self.titleField, matchingCenterWithTopPadding: 0, width: 288, height: errorSize.height)
 
-        self.contentHolder.resizeToFitSubviews()
-        self.scrollView.contentSize = CGSize(width:self.contentHolder.width(), height:self.contentHolder.height() + CGFloat(32))
-        self.contentHolder.anchorTopCenterFillingWidth(withLeftAndRightPadding: 16, topPadding: 16, height: self.contentHolder.height())
+        super.viewWillLayoutSubviews()
     }
 
     /*--------------------------------------------------------------------------------------------

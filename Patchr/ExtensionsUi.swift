@@ -130,6 +130,10 @@ public extension UIView {
             }
             , completion: completion)
     }
+    
+    func align(toTheRightOf view: UIView, matchingCenterWithLeftPadding left: CGFloat, width: CGFloat, height: CGFloat, topPadding: CGFloat) {
+        self.frame = CGRect(x: view.frame.maxX + left, y: (view.frame.midY - (height / 2.0) + topPadding), width: width, height: height);
+    }
 
 	func showShadow(rounded: Bool = false, cornerRadius: CGFloat = 0) {
 		

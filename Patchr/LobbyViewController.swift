@@ -9,7 +9,7 @@
 import UIKit
 import pop
 
-class LobbyViewController: BaseViewController {
+class LobbyViewController: UIViewController {
 	
 	var appName			= AirLabelBanner()
 	var imageBackground = AirImageView(frame: CGRect.zero)
@@ -97,8 +97,7 @@ class LobbyViewController: BaseViewController {
     * Methods
     *--------------------------------------------------------------------------------------------*/
 	
-	override func initialize() {
-		super.initialize()
+	func initialize() {
 		
 		self.imageBackground.image = UIImage(named: "imgLobbyBackground")
 		self.imageBackground.contentMode = UIViewContentMode.scaleToFill

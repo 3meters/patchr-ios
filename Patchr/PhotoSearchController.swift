@@ -9,7 +9,7 @@
 import UIKit
 import IDMPhotoBrowser
 
-class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate, UITableViewDataSource {
+class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UITableViewDataSource {
     
     var imageResults: [ImageResult] = [ImageResult]()
     var searchBarActive: Bool = false
@@ -96,7 +96,7 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 		loadSearches()
 		
 		/* Navigation bar buttons */
-		let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: self, action: #selector(PhotoPickerViewController.cancelAction(sender:)))
+		let cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel, target: self, action: #selector(PhotoSearchController.cancelAction(sender:)))
 		self.navigationItem.rightBarButtonItems = [cancelButton]
 	}
 
@@ -300,7 +300,7 @@ class PhotoPickerViewController: UICollectionViewController, UITableViewDelegate
 	}
 }
 
-extension PhotoPickerViewController: UISearchBarDelegate {
+extension PhotoSearchController: UISearchBarDelegate {
 	
 	func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
 		filterSearchesWithSubstring(substring: searchText)
@@ -327,7 +327,7 @@ extension PhotoPickerViewController: UISearchBarDelegate {
     }
 }
 
-extension PhotoPickerViewController {
+extension PhotoSearchController {
 	/*
 	* UITableViewDelegate
 	*/
@@ -364,7 +364,7 @@ extension PhotoPickerViewController {
 	}
 }
 
-extension PhotoPickerViewController {
+extension PhotoSearchController {
     /*
      * UICollectionViewDelegate
      */
@@ -401,8 +401,9 @@ extension PhotoPickerViewController {
         if let cell = collectionView.cellForItem(at: indexPath) as? ThumbnailCollectionViewCell {
             let photo = IDMPhoto(image: cell.thumbnail.image!)!
             let photos = Array([photo])
-            let browser = PhotoPreview(photos: photos as [AnyObject], animatedFrom: cell.thumbnail)
+            let browser = PhotoBrowser(photos: photos as [AnyObject], animatedFrom: cell.thumbnail)
             
+            browser?.mode = .preview
             browser?.usePopAnimation = true
             browser?.scaleImage = cell.thumbnail.image  // Used because final image might have different aspect ratio than initially
             browser?.useWhiteBackgroundColor = true
@@ -416,7 +417,7 @@ extension PhotoPickerViewController {
     }
 }
 
-extension PhotoPickerViewController {
+extension PhotoSearchController {
     /*
      * UICollectionViewDataSource
      */
@@ -442,7 +443,7 @@ extension PhotoPickerViewController {
     }
 }
 
-extension PhotoPickerViewController : UICollectionViewDelegateFlowLayout {
+extension PhotoSearchController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,

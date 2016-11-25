@@ -25,6 +25,7 @@ class SettingsTableViewController: UITableViewController {
     var notificationsCell = AirTableViewCell()
     var usernameCell = AirTableViewCell()
     var hideEmailCell = AirTableViewCell()
+    var leaveGroupCell = AirTableViewCell()
 
     /* Section 3: Informational */
     var sendFeedbackCell = AirTableViewCell()
@@ -38,6 +39,7 @@ class SettingsTableViewController: UITableViewController {
 
     var logoutButton = AirLinkButton()
     var clearHistoryButton = AirLinkButton()
+    var leaveGroupButton = AirLinkButton()
     
     var isModal: Bool {
         return self.presentingViewController?.presentedViewController == self
@@ -73,6 +75,37 @@ class SettingsTableViewController: UITableViewController {
 
         self.logoutButton.fillSuperview()
         self.clearHistoryButton.fillSuperview()
+        self.leaveGroupButton.fillSuperview()
+    }
+    
+    func leaveGroupAction(sender: AnyObject) {
+        
+        DeleteConfirmationAlert(
+            title: "Confirm",
+            message: "Are you sure you want to leave this group? An invitation may be required to rejoin.",
+            actionTitle: "Leave", cancelTitle: "Cancel", delegate: self) { doIt in
+                if doIt {
+                    self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
+                    self.progress!.mode = MBProgressHUDMode.indeterminate
+                    self.progress!.styleAs(progressStyle: .ActivityWithText)
+                    self.progress!.minShowTime = 0.5
+                    self.progress!.labelText = "Leaving..."
+                    self.progress!.removeFromSuperViewOnHide = true
+                    self.progress!.show(true)
+                    
+                    if let group = StateController.instance.group {
+                        FireController.instance.removeUserFromGroup(groupId: group.id!, then: { success in
+                            self.progress?.hide(true)
+                            self.dismiss(animated: true, completion: nil)
+                            StateController.instance.clearGroup()   // Make sure group and channel are both unset
+                            let controller = GroupPickerController()
+                            let wrapper = AirNavigationController()
+                            wrapper.viewControllers = [controller]
+                            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+                        })
+                    }
+                }
+        }
     }
 
     func logoutAction(sender: AnyObject) {
@@ -132,8 +165,10 @@ class SettingsTableViewController: UITableViewController {
 
         self.clearHistoryCell.contentView.addSubview(self.clearHistoryButton)
         self.logoutCell.contentView.addSubview(self.logoutButton)
+        self.leaveGroupCell.contentView.addSubview(self.leaveGroupButton)
         self.clearHistoryCell.accessoryType = .none
         self.logoutCell.accessoryType = .none
+        self.leaveGroupCell.accessoryType = .none
 
         self.editProfileCell.textLabel!.text = "Profile Settings"
         self.editGroupCell.textLabel!.text = "Group Settings"
@@ -149,9 +184,11 @@ class SettingsTableViewController: UITableViewController {
 
         self.clearHistoryButton.setTitle("Clear search history".uppercased(), for: .normal)
         self.logoutButton.setTitle("Log out".uppercased(), for: .normal)
+        self.leaveGroupButton.setTitle("Leave group".uppercased(), for: .normal)
         
         self.logoutButton.addTarget(self, action: #selector(SettingsTableViewController.logoutAction(sender:)), for: .touchUpInside)
         self.clearHistoryButton.addTarget(self, action: #selector(SettingsTableViewController.clearHistoryAction(sender:)), for: .touchUpInside)
+        self.leaveGroupButton.addTarget(self, action: #selector(SettingsTableViewController.leaveGroupAction(sender:)), for: .touchUpInside)
     }
     
     func bind() {
@@ -197,7 +234,6 @@ extension SettingsTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
         let selectedCell = tableView.cellForRow(at: indexPath)
-        
         
         if selectedCell == self.editGroupCell {
             let controller = GroupEditViewController()
@@ -299,6 +335,7 @@ extension SettingsTableViewController {
                     case 0: return self.notificationsCell
                     case 1: return self.usernameCell
                     case 2: return self.hideEmailCell
+                    case 3: return self.leaveGroupCell
                     default: fatalError("Unknown row in section 2")
                 }
             case 2:
@@ -345,7 +382,7 @@ extension SettingsTableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
             case 0: return 2
-            case 1: return 3
+            case 1: return 4
             case 2: return 4
             case 3: return 2
             default: fatalError("Unknown number of sections")

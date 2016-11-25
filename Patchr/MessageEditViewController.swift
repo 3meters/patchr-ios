@@ -51,7 +51,6 @@ class MessageEditViewController: BaseEditViewController {
     }
     
     override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
 
         let viewWidth = min(CONTENT_WIDTH_MAX, self.view.bounds.size.width)
         let contentWidth = CGFloat(viewWidth - 32)
@@ -63,9 +62,7 @@ class MessageEditViewController: BaseEditViewController {
         self.descriptionField.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: contentWidth, height: max(96, descriptionSize.height))
         self.photoEditView.alignUnder(self.descriptionField, matchingLeftAndRightWithTopPadding: 8, height: self.photoEditView.photoMode == .Empty ? 48 : contentWidth * 0.75)
 
-        self.contentHolder.resizeToFitSubviews()
-        self.scrollView.contentSize = CGSize(width:self.contentHolder.width(), height: self.contentHolder.height() + CGFloat(32))
-        self.contentHolder.anchorTopCenterFillingWidth(withLeftAndRightPadding: 16, topPadding: 0, height: self.contentHolder.height() + 32)
+        super.viewWillLayoutSubviews()
     }
 
     /*--------------------------------------------------------------------------------------------

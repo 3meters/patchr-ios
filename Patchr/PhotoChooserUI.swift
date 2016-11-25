@@ -109,7 +109,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
         chosenPhotoFunction = .SearchPhoto
 		let navController = AirNavigationController()
 		let layout = UICollectionViewFlowLayout()
-		let controller = PhotoPickerViewController(collectionViewLayout: layout)
+		let controller = PhotoSearchController(collectionViewLayout: layout)
 		controller.pickerDelegate = self
 		navController.viewControllers = [controller]
 		self.hostViewController?.present(navController, animated: true, completion: nil)
