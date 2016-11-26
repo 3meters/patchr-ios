@@ -31,7 +31,7 @@ class ChannelListCell: UITableViewCell {
         
         self.title?.text = "# \(channel.name!)"
         self.lock?.isHidden = (channel.visibility != "private")
-        self.star?.isHidden = !(channel.starred!)
+        self.star?.isHidden = !(channel.starred != nil && channel.starred!)
         
         if channel.joinedAt == nil {
             self.status?.isHidden = false

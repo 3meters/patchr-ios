@@ -88,7 +88,7 @@ class GroupPickerController: BaseTableController, UITableViewDelegate {
     
     func logoutAction(sender: AnyObject?) {
         UserController.instance.logout()
-        self.dismiss(animated: true, completion: nil)
+        close(animated: true)
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -133,6 +133,11 @@ class GroupPickerController: BaseTableController, UITableViewDelegate {
                 
                 self.view.addSubview(self.tableView)
                 self.view.addSubview(self.footerView)
+                
+                if self.presented {
+                    let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(self.closeAction(sender:)))
+                    self.navigationItem.rightBarButtonItems = [closeButton]
+                }
             }
                 
             /* User is not a member of any group */

@@ -9,6 +9,8 @@
 import UIKit
 
 class AirButton: UIButton {
+    
+    var data: AnyObject?
 
 	required init(coder aDecoder: NSCoder) {
 		/* Called when instantiated from XIB or Storyboard */

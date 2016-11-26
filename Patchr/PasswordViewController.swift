@@ -15,6 +15,7 @@ class PasswordViewController: BaseEditViewController {
     
     var inputEmail: String!
     var inputEmailExists = false
+    var inputInviteParams: [AnyHashable: Any]?
     
     var message = AirLabelTitle()
     var passwordField = AirTextField()
@@ -179,6 +180,11 @@ class PasswordViewController: BaseEditViewController {
                             controller.flow = .onboardCreate
                             self.navigationController?.pushViewController(controller, animated: true)
                         }
+                        else if self.flow == .onboardInvite {
+                            let controller = GroupPickerController()
+                            self.navigationController?.pushViewController(controller, animated: true)
+                            MainController.instance.routeDeepLink(params: self.inputInviteParams, error: nil)
+                        }
                     }
                 }
                 else {
@@ -193,6 +199,7 @@ class PasswordViewController: BaseEditViewController {
                         errorMessage = "Wrong email and password combination"
                     }
                     self.errorLabel.text = errorMessage
+                    self.view.setNeedsLayout()
                     self.errorLabel.fadeIn()
                 }
             }
@@ -223,6 +230,7 @@ class PasswordViewController: BaseEditViewController {
                 }
                 else {
                     self.errorLabel.text = error?.localizedDescription
+                    self.view.setNeedsLayout()
                     self.errorLabel.fadeIn()
                 }
             })

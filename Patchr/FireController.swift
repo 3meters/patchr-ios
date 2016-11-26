@@ -68,7 +68,7 @@ class FireController: NSObject {
         /* Add creator as admin member */
         
         let groupPriority = 3   // admin
-        let groupLink = groupMemberMap(timestamp: timestamp, priorityIndex: groupPriority, role: "admin", username: username)
+        let groupLink = groupMemberMap(timestamp: timestamp, priorityIndex: groupPriority, role: "owner", username: username)
         updates["member-groups/\(userId)/\(groupId)"] = groupLink
         updates["group-members/\(groupId)/\(userId)"] = groupLink
         
@@ -158,14 +158,14 @@ class FireController: NSObject {
         }
     }
     
-    func addUserToChannel(groupId: String, channelId: String?, then: ((Bool) -> Void)? = nil) {
+    func addUserToChannel(groupId: String, channelId: String, then: ((Bool) -> Void)? = nil) {
         
-        let userId = UserController.instance.userId
+        let userId = UserController.instance.userId!
         let channelLink = channelMemberMap(timestamp: Utils.now(), priorityIndex: 4 /* neutral */)
         
         var updates: [String: Any] = [:]
-        updates["channel-members/\(channelId)/\(userId!)"] = true
-        updates["member-channels/\(userId!)/\(groupId)/\(channelId)"] = channelLink
+        updates["channel-members/\(channelId)/\(userId)"] = true
+        updates["member-channels/\(userId)/\(groupId)/\(channelId)"] = channelLink
         
         FireController.db.updateChildValues(updates) { error, ref in
             then?(error == nil)
@@ -256,7 +256,19 @@ class FireController: NSObject {
             }
         })
     }
-    
+
+    func removeUserFromChannel(groupId: String, channelId: String, then: ((Bool) -> Void)? = nil) {
+        
+        let userId = UserController.instance.userId!
+        var updates: [String: Any] = [:]
+        
+        updates["member-channels/\(userId)/\(groupId)/\(channelId)"] = NSNull()
+        updates["channel-members/\(channelId)/\(userId)"] = NSNull()
+        FireController.db.updateChildValues(updates) { error, ref in
+            then?(error == nil)
+        }
+    }
+
     func channelMemberMap(timestamp: Int64, priorityIndex: Int) -> [String: Any] {
         
         let priority = self.priorities[priorityIndex]

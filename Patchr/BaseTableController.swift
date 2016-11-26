@@ -10,7 +10,7 @@ import UIKit
 
 class BaseTableController: UIViewController {
 	
-	var isModal: Bool {
+	var presented: Bool {
 		return self.presentingViewController?.presentedViewController == self
 			|| (self.navigationController != nil && self.navigationController?.presentingViewController?.presentedViewController == self.navigationController)
 			|| self.tabBarController?.presentingViewController is UITabBarController
@@ -38,7 +38,7 @@ class BaseTableController: UIViewController {
 	
 	func close(animated: Bool = true) {
 		/* Override in subclasses for control of dismiss/pop process */
-		if isModal {
+		if self.presented {
 			if self.navigationController != nil {
 				self.navigationController!.dismiss(animated: animated, completion: nil)
 			}

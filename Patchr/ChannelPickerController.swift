@@ -61,18 +61,13 @@ class ChannelPickerController: BaseTableController, UITableViewDelegate, SlideMe
     func switchAction(sender: AnyObject?) {
         
         let controller = GroupPickerController()
-        let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: controller, action: #selector(controller.closeAction(sender:)))
         let wrapper = AirNavigationController(rootViewController: controller)
-        
-        controller.navigationItem.rightBarButtonItems = [closeButton]
-        
         UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         UIApplication.shared.setStatusBarHidden(false, with: UIStatusBarAnimation.slide)
         slideMenuController()?.closeLeft()
     }
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        Log.d("Search bar began editing")
         self.headerView.searchBar?.setShowsCancelButton(true, animated: true)
         self.tableView.fadeOut()
         self.searchTableView.fadeIn()
@@ -83,7 +78,6 @@ class ChannelPickerController: BaseTableController, UITableViewDelegate, SlideMe
     }
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        Log.d("Search bar stopped editing")
         self.tableView.fadeIn()
         self.searchTableView.fadeOut()
     }

@@ -41,7 +41,7 @@ class SettingsTableViewController: UITableViewController {
     var clearHistoryButton = AirLinkButton()
     var leaveGroupButton = AirLinkButton()
     
-    var isModal: Bool {
+    var presented: Bool {
         return self.presentingViewController?.presentedViewController == self
             || (self.navigationController != nil && self.navigationController?.presentingViewController?.presentedViewController == self.navigationController)
             || self.tabBarController?.presentingViewController is UITabBarController
@@ -139,7 +139,7 @@ class SettingsTableViewController: UITableViewController {
     }
     
     func closeAction(sender: AnyObject?){
-        if self.isModal {
+        if self.presented {
             self.dismiss(animated: true, completion: nil)
         }
         else {
@@ -186,9 +186,18 @@ class SettingsTableViewController: UITableViewController {
         self.logoutButton.setTitle("Log out".uppercased(), for: .normal)
         self.leaveGroupButton.setTitle("Leave group".uppercased(), for: .normal)
         
+        if StateController.instance.group?.ownedBy == UserController.instance.userId {
+            self.leaveGroupCell.isHidden = true
+        }
+        
         self.logoutButton.addTarget(self, action: #selector(SettingsTableViewController.logoutAction(sender:)), for: .touchUpInside)
         self.clearHistoryButton.addTarget(self, action: #selector(SettingsTableViewController.clearHistoryAction(sender:)), for: .touchUpInside)
         self.leaveGroupButton.addTarget(self, action: #selector(SettingsTableViewController.leaveGroupAction(sender:)), for: .touchUpInside)
+        
+        if self.presented {
+            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(self.closeAction(sender:)))
+            self.navigationItem.rightBarButtonItems = [closeButton]
+        }
     }
     
     func bind() {
@@ -203,7 +212,7 @@ class SettingsTableViewController: UITableViewController {
     func makeSwitch(notificationType: Setting, state: Bool = false) -> UISwitch {
         let switchView = UISwitch()
         switchView.tag = notificationType.rawValue
-        switchView.addTarget(self, action: #selector(NotificationSettingsSimpleViewController.toggleAction(sender:)), for: UIControlEvents.valueChanged)
+        switchView.addTarget(self, action: #selector(toggleAction(sender:)), for: UIControlEvents.valueChanged)
         switchView.isOn = state
         return switchView
     }
@@ -295,6 +304,17 @@ extension SettingsTableViewController {
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
+        if indexPath.section == 0 && indexPath.row == 1 {
+            editGroupCell.isHidden = true
+            if let role = StateController.instance.group.role {
+                if role == "owner" {
+                    editGroupCell.isHidden = false
+                    return CGFloat(44)
+                }
+            }
+            return CGFloat(0)
+        }
+        
         if indexPath.section == 2 && indexPath.row == 3 {
             developmentCell.isHidden = true
             if let developer = UserController.instance.user?.profile?.developer {
@@ -304,18 +324,14 @@ extension SettingsTableViewController {
             }
             return CGFloat(0)
         }
-
-        if indexPath.section == 0 && indexPath.row == 1 {
-            editGroupCell.isHidden = true
-            if let role = StateController.instance.group.role {
-                if role == "admin" {
-                    editGroupCell.isHidden = false
-                    return CGFloat(44)
-                }
+        
+        if indexPath.section == 1 && indexPath.row == 3 {
+            if StateController.instance.group?.ownedBy == UserController.instance.userId {
+                return CGFloat(0)
             }
-            return CGFloat(0)
         }
-        else if indexPath.section == 4 && indexPath.row == 0 {
+        
+        if indexPath.section == 4 && indexPath.row == 0 {
             return CGFloat(64)
         }
 

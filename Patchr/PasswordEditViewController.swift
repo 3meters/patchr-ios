@@ -129,6 +129,7 @@ class PasswordEditViewController: BaseEditViewController {
                 }
                 else {
                     self.errorLabel.text = error?.localizedDescription
+                    self.view.setNeedsLayout()
                     self.errorLabel.fadeIn()
                 }
             })

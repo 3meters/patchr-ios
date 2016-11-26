@@ -79,41 +79,32 @@ class ChannelEditViewController: BaseEditViewController {
      * Events
      *--------------------------------------------------------------------------------------------*/
 
-    func doneAction(sender: AnyObject){
+    func closeAction(sender: AnyObject){
         
         if self.mode == .insert {
-            guard isValid() else { return }
-            guard !self.processing else { return }
-            post()
-        }
-        else {
-            if isValid() {
+            if !isDirty() {
                 self.close(animated: true)
+                return
+            }
+            
+            DeleteConfirmationAlert(
+                title: "Do you want to discard your editing changes?",
+                actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
+                    doIt in
+                    if doIt {
+                        self.close(animated: true)
+                    }
             }
         }
-    }
-
-    func closeAction(sender: AnyObject){
-
-        if !isDirty() {
+        else {
             self.close(animated: true)
-            return
-        }
-
-        DeleteConfirmationAlert(
-            title: "Do you want to discard your editing changes?",
-            actionTitle: "Discard", cancelTitle: "Cancel", delegate: self) {
-                doIt in
-                if doIt {
-                    self.close(animated: true)
-                }
         }
     }
-
+    
     func deleteAction(sender: AnyObject) {
-
+        
         guard !self.processing else { return }
-
+        
         DeleteConfirmationAlert(
             title: "Confirm Delete",
             message: "Are you sure you want to delete this?",
@@ -125,14 +116,28 @@ class ChannelEditViewController: BaseEditViewController {
         }
     }
     
+    func doneAction(sender: AnyObject){
+        
+        if self.mode == .insert {
+            guard isValid() else { return }
+            guard !self.processing else { return }
+            post()
+        }
+        else {
+            self.close(animated: true)
+        }
+    }
+    
     override func textViewDidEndEditing(_ textView: UITextView) {
         super.textViewDidEndEditing(textView)
         if self.mode == .update {
             if textView == self.purposeField {
-                FireController.db.child(self.channel.path).updateChildValues([
-                    "modified_at": FIRServerValue.timestamp(),
-                    "purpose": emptyToNull(self.purposeField.text)
+                if emptyToNil(self.purposeField.text) != self.channel!.purpose {
+                    FireController.db.child(self.channel.path).updateChildValues([
+                        "modified_at": FIRServerValue.timestamp(),
+                        "purpose": emptyToNull(self.purposeField.text)
                     ])
+                }
             }
         }
     }
@@ -146,8 +151,7 @@ class ChannelEditViewController: BaseEditViewController {
                     FireController.db.child(self.channel.path).updateChildValues([
                         "modified_at": FIRServerValue.timestamp(),
                         "name": emptyToNull(self.nameField.text)
-                        ])
-                    
+                    ])
                 }
             }
         }
@@ -258,9 +262,9 @@ class ChannelEditViewController: BaseEditViewController {
 
             /* Navigation bar buttons */
             let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(closeAction(sender:)))
-            let createButton = UIBarButtonItem(title: "Create", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
+            let doneButton = UIBarButtonItem(title: "Create", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
             self.navigationItem.leftBarButtonItems = [closeButton]
-            self.navigationItem.rightBarButtonItems = [createButton]
+            self.navigationItem.rightBarButtonItems = [doneButton]
         }
         else if self.mode == .update  {
 
@@ -270,9 +274,7 @@ class ChannelEditViewController: BaseEditViewController {
 
             /* Navigation bar buttons */
             let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(closeAction(sender:)))
-            let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.trash, target: self, action: #selector(deleteAction(sender:)))
             self.navigationItem.leftBarButtonItems = [closeButton]
-            self.navigationItem.rightBarButtonItems = [deleteButton]
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(photoDidChange(sender:)), name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
@@ -289,6 +291,15 @@ class ChannelEditViewController: BaseEditViewController {
                 self.photoEditView.configureTo(photoMode: .Photo)
                 self.photoEditView.bind(url: photoUrl)
             }
+        }
+        
+        let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
+        let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.trash, target: self, action: #selector(deleteAction(sender:)))
+        if self.channel.general! {
+            self.navigationItem.setRightBarButtonItems([doneButton], animated: true)
+        }
+        else {
+            self.navigationItem.setRightBarButtonItems([doneButton, deleteButton], animated: true)
         }
 
         /* Visibility */

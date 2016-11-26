@@ -9,7 +9,7 @@
 import UIKit
 
 class AirLinkButton: UIButton {
-
+    
 	required init(coder aDecoder: NSCoder) {
 		/* Called when instantiated from XIB or Storyboard */
 		super.init(coder: aDecoder)!

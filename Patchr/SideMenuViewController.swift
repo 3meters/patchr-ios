@@ -57,9 +57,7 @@ class SideMenuViewController: UITableViewController {
     
     func editProfileAction(sender: AnyObject?) {
         let controller = ProfileEditViewController()
-        let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: controller, action: #selector(controller.closeAction(sender:)))
         let wrapper = AirNavigationController()
-        controller.navigationItem.rightBarButtonItems = [closeButton]
         wrapper.viewControllers = [controller]
         UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         UIApplication.shared.setStatusBarHidden(false, with: UIStatusBarAnimation.slide)
@@ -145,24 +143,18 @@ extension SideMenuViewController {
             
             let controller = InviteViewController()
             let wrapper = AirNavigationController(rootViewController: controller)
-            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: controller, action: #selector(controller.closeAction(sender:)))
-            controller.navigationItem.rightBarButtonItems = [closeButton]
             UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         }
         else if selectedCell == self.settingsCell {
             
             let controller = SettingsTableViewController()
             let wrapper = AirNavigationController(rootViewController: controller)
-            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: controller, action: #selector(controller.closeAction(sender:)))
-            controller.navigationItem.rightBarButtonItems = [closeButton]
             UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         }
         else if selectedCell == self.profileCell {
             
             let controller = ProfileEditViewController()
-            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: controller, action: #selector(controller.closeAction(sender:)))
             let wrapper = AirNavigationController()
-            controller.navigationItem.rightBarButtonItems = [closeButton]
             wrapper.viewControllers = [controller]
             UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         }
@@ -170,16 +162,12 @@ extension SideMenuViewController {
             
             let controller = GroupPickerController()
             let wrapper = AirNavigationController(rootViewController: controller)
-            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: controller, action: #selector(controller.closeAction(sender:)))
-            controller.navigationItem.rightBarButtonItems = [closeButton]
             self.slideMenuController()?.mainViewController?.present(wrapper, animated: true, completion: nil)
         }
         else if selectedCell == self.membersCell {
             
             let controller = UserListController()
             let wrapper = AirNavigationController(rootViewController: controller)
-            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: controller, action: #selector(controller.closeAction(sender:)))
-            controller.navigationItem.leftBarButtonItems = [closeButton]
             UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         }
         
@@ -188,7 +176,7 @@ extension SideMenuViewController {
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if StateController.instance.group?.role != "admin" && indexPath.row == 1 {
+        if StateController.instance.group?.role != "owner" && indexPath.row == 1 {
             return CGFloat(0)
         }
         return CGFloat(64)

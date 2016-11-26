@@ -50,13 +50,19 @@ class UserListController: BaseTableController, UITableViewDelegate {
     
     func inviteAction(sender: AnyObject?) {
         let controller = InviteViewController()
-        let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: controller, action: #selector(controller.closeAction(sender:)))
-        controller.navigationItem.rightBarButtonItems = [closeButton]
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
     func closeAction(sender: AnyObject?) {
         close()
+    }
+    
+    func manageUserAction(sender: AnyObject?) {
+        if let button = sender as? AirButton, let user = button.data as? FireUser {
+            let controller = MemberSettingsController()
+            controller.inputUser = user
+            self.navigationController?.pushViewController(controller, animated: true)
+        }
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -86,14 +92,22 @@ class UserListController: BaseTableController, UITableViewDelegate {
         self.tableView.backgroundColor = Theme.colorBackgroundEmptyBubble
         self.tableView.delegate = self
         
-        if StateController.instance.group?.role == "admin" {
-            let inviteButton = UIBarButtonItem(title: "Invite", style: .plain, target: self, action: #selector(inviteAction(sender:)))
-            self.navigationItem.rightBarButtonItems = [inviteButton]
-        }
-        
         self.view.addSubview(self.tableView)
+        
+        if StateController.instance.group?.role == "owner" {
+            let inviteButton = UIBarButtonItem(title: "Invite", style: .plain, target: self, action: #selector(inviteAction(sender:)))
+            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(self.closeAction(sender:)))
+            self.navigationItem.rightBarButtonItems = [inviteButton]
+            self.navigationItem.leftBarButtonItems = [closeButton]
+        }
+        else {
+            if self.presented {
+                let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(self.closeAction(sender:)))
+                self.navigationItem.rightBarButtonItems = [closeButton]
+            }
+        }
     }
-    
+
     func bind() {
         
         let group = StateController.instance.group
@@ -111,6 +125,8 @@ class UserListController: BaseTableController, UITableViewDelegate {
                 userQuery.once(with: { user in
                     if user != nil {
                         cell.bind(user: user!)
+                        cell.manageButton?.data = user
+                        cell.manageButton?.addTarget(self, action: #selector(self?.manageUserAction(sender:)), for: .touchUpInside)
                     }
                 })
                 

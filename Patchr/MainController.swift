@@ -186,7 +186,7 @@ class MainController: NSObject, iRateDelegate {
                     
                     FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
                         if !(snap.value is NSNull) {
-                            UIShared.Toast(message: "Already a member of this group!")
+                            UIShared.Toast(message: "Already a member of the \(params!["groupTitle"]) Patchr group!")
                         }
                         else {
                             let controller = JoinViewController()
@@ -206,12 +206,13 @@ class MainController: NSObject, iRateDelegate {
                     let controller = EmailViewController()
                     let wrapper = AirNavigationController()
                     controller.flow = .onboardInvite
+                    controller.inputInviteParams = params
                     wrapper.viewControllers = [controller]
                     UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
                 }
             }
             else {
-                UIShared.Toast(message: "Group is not active")
+                UIShared.Toast(message: "The \(params!["groupTitle"]) Patchr group is not active")
             }
         })
     }

@@ -95,6 +95,12 @@ class ProfileEditViewController: BaseEditViewController {
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
+    func closeAction(sender: AnyObject?) {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: nil)
+        close()
+    }
+    
     override func textFieldDidEndEditing(_ textField: UITextField) {
         super.textFieldDidEndEditing(textField)
         
@@ -157,12 +163,6 @@ class ProfileEditViewController: BaseEditViewController {
         return true
     }
     
-    func closeAction(sender: AnyObject?) {
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: nil)
-        close()
-    }
-
     /*--------------------------------------------------------------------------------------------
      * Notifications
      *--------------------------------------------------------------------------------------------*/
@@ -264,8 +264,10 @@ class ProfileEditViewController: BaseEditViewController {
         self.contentHolder.addSubview(self.skypeField)
         self.contentHolder.addSubview(self.accountButton)
         
-        let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(closeAction(sender:)))
-        self.navigationItem.rightBarButtonItems = [doneButton]
+        if self.presented {
+            let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(closeAction(sender:)))
+            self.navigationItem.rightBarButtonItems = [doneButton]
+        }        
         
         NotificationCenter.default.addObserver(self, selector: #selector(photoDidChange(sender:)), name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(photoRemoved(sender:)), name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: nil)

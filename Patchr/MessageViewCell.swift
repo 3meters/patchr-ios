@@ -18,6 +18,7 @@ class MessageViewCell: AirUIView {
 	var userName		= AirLabelDisplay()
 	var userPhoto		= PhotoView()
 	var createdDate		= AirLabelDisplay()
+    var edited          = AirLabelDisplay()
 	
 	var toolbar			= AirUIView()
 	var likeButton		= AirLikeButton(frame: CGRect.zero)
@@ -59,6 +60,7 @@ class MessageViewCell: AirUIView {
 		/* Header */
         
 		self.createdDate.sizeToFit()
+        self.edited.sizeToFit()
 		self.userName.sizeToFit()
 		self.userName.align(toTheRightOf: self.userPhoto, matchingTopWithLeftPadding: 8, width: columnWidth - (self.createdDate.width() + 8), height: self.userName.height())
 		self.createdDate.align(toTheRightOf: self.userName, matchingCenterAndFillingWidthWithLeftAndRightPadding: 0, height: self.createdDate.height())
@@ -82,10 +84,12 @@ class MessageViewCell: AirUIView {
 		else if (self.message.attachments?.first) != nil {
             self.photo?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 10, height: photoHeight)
 		}
-		
+        
+        self.edited.alignUnder(bottomView!, matchingLeftWithTopPadding: 2, width: self.edited.width(), height: self.edited.isHidden ? 0 : self.edited.height())
+        
 		/* Footer */
 		
-        self.toolbar.alignUnder(bottomView!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 0, height: 48)
+        self.toolbar.alignUnder(self.edited, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 0, height: 48)
         self.likeButton.anchorCenterLeft(withLeftPadding: 0, width: self.likeButton.width(), height: self.likeButton.height())
         self.likeButton.frame.origin.x -= 12
         self.likes.sizeToFit()
@@ -138,6 +142,12 @@ class MessageViewCell: AirUIView {
 		self.createdDate.numberOfLines = 1
 		self.createdDate.textColor = Theme.colorTextSecondary
 		self.createdDate.textAlignment = .right
+        
+        self.edited.text = "(edited)"
+        self.edited.font = Theme.fontCommentSmall
+        self.edited.numberOfLines = 1
+        self.edited.textColor = Colors.gray66pcntColor
+        self.edited.textAlignment = .left
 		
 		/* Footer */
         
@@ -162,6 +172,7 @@ class MessageViewCell: AirUIView {
         self.addSubview(self.userPhoto)
         self.addSubview(self.userName)
         self.addSubview(self.createdDate)
+        self.addSubview(self.edited)
 	}
     
     func reset() {
@@ -178,6 +189,7 @@ class MessageViewCell: AirUIView {
 		self.description_?.isHidden = true
         self.photo?.isHidden = true
 		self.toolbar.isHidden = true
+        self.edited.isHidden = true
 		
 		if let description = message.text {
 			self.description_?.isHidden = false
@@ -204,6 +216,10 @@ class MessageViewCell: AirUIView {
         }
 		
         self.createdDate.text = UIShared.timeAgoShort(date: NSDate(timeIntervalSince1970: Double(message.createdAt!) / 1000))
+        
+        if message.createdAt != message.modifiedAt {
+            self.edited.isHidden = false
+        }
 			
         self.toolbar.isHidden = false
         

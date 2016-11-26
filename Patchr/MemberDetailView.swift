@@ -132,7 +132,7 @@ class MemberDetailView: UIView {
         
         self.role.text = user.role
         
-        if user.role == "admin" {
+        if user.role == "owner" {
             self.role.textColor = Colors.brandColorTextLight
         }
         else if user.role == "guest" {

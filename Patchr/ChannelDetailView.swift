@@ -63,7 +63,7 @@ class ChannelDetailView: UIView {
         
         self.lockImage.align(toTheRightOf: self.name, matchingCenterWithLeftPadding: 4, width: !self.lockImage.isHidden ? 16 : 0, height: 16)
         self.mutedImage.align(toTheRightOf: self.lockImage, matchingCenterWithLeftPadding: 4, width: !self.mutedImage.isHidden ? 20 : 0, height: 20)
-        self.starButton.align(toTheRightOf: self.mutedImage, matchingCenterWithLeftPadding: 4, width: 24, height: 24)
+        self.starButton.align(toTheRightOf: self.mutedImage, matchingCenterWithLeftPadding: 4, width: !self.starButton.isHidden ? 24 : 0, height: 24)
         
         self.optionsButton.anchorBottomRight(withRightPadding: 12, bottomPadding: 20, width: 24, height: 24)
 
@@ -167,10 +167,10 @@ class ChannelDetailView: UIView {
             self.purpose.isHidden = false
         }
 
-        self.starButton.isHidden = false
         
         if let photo = channel.photo, !photo.uploading {
             self.starButton.tintColor = Colors.brandColor
+            self.optionsButton.tintColor = Colors.brandColor
             if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
                 self.photo.setImageWithUrl(url: photoUrl)
                 self.gradient.isHidden = false
@@ -181,6 +181,7 @@ class ChannelDetailView: UIView {
             self.gradient.isHidden = true
             self.photo.image = nil
             self.starButton.tintColor = Colors.white
+            self.optionsButton.tintColor = Colors.white
             if channel.name == "general" || channel.general! {
                 self.photo.backgroundColor = Colors.brandColorLight
             }
@@ -196,6 +197,7 @@ class ChannelDetailView: UIView {
         /* Public/private */
         self.lockImage.isHidden = (channel.visibility == "open")
         self.mutedImage.isHidden = true
+        self.starButton.isHidden = (channel.joinedAt == nil)
         
         /* Per user indicators */
         self.starButton.bind(channel: channel)

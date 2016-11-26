@@ -14,6 +14,7 @@ class ChannelQuery: NSObject {
     var linkPath: String!
     var linkHandle: UInt!
     var linkMap: [String: Any]!
+    var linkMapMiss = false
 
     init(groupId: String, channelId: String, userId: String?) {
         super.init()
@@ -28,7 +29,7 @@ class ChannelQuery: NSObject {
         self.channelHandle = FireController.db.child(self.channelPath).observe(.value, with: { snap in
             if !(snap.value is NSNull) {
                 self.channel = FireChannel.from(dict: snap.value as? [String: Any], id: snap.key)
-                if self.linkPath == nil {
+                if self.linkPath == nil || self.linkMapMiss {
                     block(self.channel)  // May or may not have link info
                 }
                 else if self.linkMap != nil {
@@ -52,8 +53,12 @@ class ChannelQuery: NSObject {
                     }
                 }
                 else {
-                    Log.w("Channel link snapshot is null: \(self.linkPath!)")
-                    block(nil)
+                    /* User might not be a member so send the channel without link info */
+                    self.linkMapMiss = true
+                    if self.channel != nil {
+                        self.channel!.membershipClear()
+                        block(self.channel)
+                    }
                 }
             })
         }
@@ -67,7 +72,7 @@ class ChannelQuery: NSObject {
             if !fired {
                 if !(snap.value is NSNull) {
                     self.channel = FireChannel.from(dict: snap.value as? [String: Any], id: snap.key)
-                    if self.linkPath == nil {
+                    if self.linkPath == nil || self.linkMapMiss {
                         fired = true
                         block(self.channel)  // May or may not have link info
                     }
@@ -97,9 +102,12 @@ class ChannelQuery: NSObject {
                         }
                     }
                     else {
-                        fired = true
-                        Log.w("Channel link snapshot is null: \(self.linkPath!)")
-                        block(nil)
+                        /* User might not be a member so send the channel without link info */
+                        self.linkMapMiss = true
+                        if self.channel != nil {
+                            fired = true
+                            block(self.channel)
+                        }
                     }
                     
                 }

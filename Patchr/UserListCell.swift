@@ -14,6 +14,8 @@ class UserListCell: UITableViewCell {
     @IBOutlet weak var subtitle: UILabel?
     @IBOutlet weak var role: UILabel?
     @IBOutlet weak var presenceView = PresenceView()
+    @IBOutlet weak var manageButton: AirButton?
+
     
     var user: FireUser!
     
@@ -35,13 +37,19 @@ class UserListCell: UITableViewCell {
         self.subtitle?.text = nil
         self.role?.text = nil
         self.presenceView?.showOffline()
+        self.manageButton?.isHidden = true
     }
     
     func bind(user: FireUser) {
         
         self.user = user
         self.presenceView?.bind(online: user.presence)
-        self.title?.text = user.profile?.fullName ?? user.username
+        if user.id == UserController.instance.userId {
+            self.title?.text = "\(user.profile?.fullName ?? user.username!) (you)"
+        }
+        else {
+            self.title?.text = user.profile?.fullName ?? user.username!
+        }
         
         if user.username != nil {
             self.subtitle?.text = "@\(user.username!)"
@@ -49,14 +57,22 @@ class UserListCell: UITableViewCell {
 
         self.role?.text = user.role
         
-        if user.role == "admin" {
-            self.role?.textColor = Colors.brandColorTextLight
+        if user.role == "owner" {
+            self.role?.textColor = MaterialColor.deepOrange.base
+        }
+        else if user.role == "admin" {
+            self.role?.textColor = MaterialColor.amber.base
+        }
+        else if user.role == "member" {
+            self.role?.textColor = MaterialColor.lightGreen.base
         }
         else if user.role == "guest" {
-            self.role?.textColor = Colors.accentColorTextLight
+            self.role?.textColor = MaterialColor.lightBlue.base
         }
-        else {
-            self.role?.textColor = Theme.colorTextSecondary
+        
+        self.manageButton?.isHidden = true
+        if let role = StateController.instance.group!.role {
+            self.manageButton?.isHidden = !(role == "owner" || role == "admin")
         }
         
         let fullName = user.profile?.fullName ?? user.username

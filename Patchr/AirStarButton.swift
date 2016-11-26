@@ -32,7 +32,7 @@ class AirStarButton: AirToggleButton {
 
     func bind(channel: FireChannel) {
         self.channel = channel
-        toggle(on: channel.starred!, animate: false)
+        toggle(on: (channel.starred != nil && channel.starred!), animate: false)
     }
 
     override func onClick(sender: AnyObject) {

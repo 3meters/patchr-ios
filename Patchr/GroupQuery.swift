@@ -14,6 +14,7 @@ class GroupQuery: NSObject {
     var linkPath: String!
     var linkHandle: UInt!
     var linkMap: [String: Any]!
+    var linkMapMiss = false
 
     init(groupId: String, userId: String?) {
         super.init()
@@ -28,7 +29,7 @@ class GroupQuery: NSObject {
         self.groupHandle = FireController.db.child(self.groupPath).observe(.value, with: { snap in
             if !(snap.value is NSNull) {
                 self.group = FireGroup.from(dict: snap.value as? [String: Any], id: snap.key)
-                if self.linkPath == nil {
+                if self.linkPath == nil || self.linkMapMiss {
                     block(self.group)
                 }
                 else if self.linkMap != nil {
@@ -53,13 +54,10 @@ class GroupQuery: NSObject {
                 }
                 else {
                     /* Group might be fine but user is not member of group anymore */
+                    self.linkMapMiss = true
                     if self.group != nil {
                         self.group!.membershipClear()
                         block(self.group)
-                    }
-                    else {
-                        Log.w("Group link snapshot is null: \(self.linkPath!)")
-                        block(nil)
                     }
                 }
             })
@@ -74,7 +72,7 @@ class GroupQuery: NSObject {
             if !fired {
                 if !(snap.value is NSNull) {
                     self.group = FireGroup.from(dict: snap.value as? [String: Any], id: snap.key)
-                    if self.linkPath == nil {
+                    if self.linkPath == nil || self.linkMapMiss {
                         fired = true
                         block(self.group)
                     }
@@ -104,9 +102,11 @@ class GroupQuery: NSObject {
                         }
                     }
                     else {
-                        fired = true
-                        Log.w("Group link snapshot is null")
-                        block(nil)
+                        self.linkMapMiss = true
+                        if self.group != nil {
+                            fired = true
+                            block(self.group)
+                        }
                     }
                 }
             })

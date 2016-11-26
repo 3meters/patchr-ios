@@ -32,6 +32,7 @@ class FireChannel: NSObject {
     /* Link properties for the current user */
     var starred: Bool?
     var muted: Bool?
+    var role: String?
     var joinedAt: Int?
     
     static func from(dict: [String: Any]?, id: String?) -> FireChannel? {
@@ -53,10 +54,19 @@ class FireChannel: NSObject {
         return nil
     }
     
+    func membershipClear() {
+        self.starred = nil
+        self.muted = nil
+        self.archived = nil
+        self.role = nil
+        self.joinedAt = nil
+    }
+
     func membershipFrom(dict: [String: Any]) {
         self.starred = dict["starred"] as? Bool
         self.muted = dict["muted"] as? Bool
         self.archived = dict["archived"] as? Bool
+        self.role = dict["role"] as? String
         self.joinedAt = dict["joined_at"] as? Int
     }
     

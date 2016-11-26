@@ -11,10 +11,10 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="64" id="LTM-Mi-qV7" customClass="UserListCell" customModule="Patchr" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="334" height="68"/>
+            <rect key="frame" x="0.0" y="0.0" width="495" height="68"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="LTM-Mi-qV7" id="f05-yI-zfl">
-                <frame key="frameInset" width="334" height="67.5"/>
+                <frame key="frameInset" width="495" height="67.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="X0K-3n-IIP" customClass="PhotoView" customModule="Patchr">
@@ -63,6 +63,14 @@
                             <constraint firstAttribute="width" constant="12" id="nC7-qj-uP8"/>
                         </constraints>
                     </view>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RWH-L1-GYn" customClass="AirButton" customModule="Patchr" customModuleProvider="target">
+                        <constraints>
+                            <constraint firstAttribute="width" constant="77" id="X23-0L-M8b"/>
+                            <constraint firstAttribute="height" constant="30" id="ypz-e4-hTj"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
+                        <state key="normal" title="Manage"/>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstItem="meX-Hb-lPU" firstAttribute="leading" secondItem="X0K-3n-IIP" secondAttribute="trailing" constant="8" id="7VO-3B-Xfq"/>
@@ -75,18 +83,21 @@
                     <constraint firstItem="9B3-1a-Ge9" firstAttribute="leading" secondItem="NLS-Er-vuL" secondAttribute="trailing" constant="8" id="MfW-tO-Jun"/>
                     <constraint firstItem="9B3-1a-Ge9" firstAttribute="centerY" secondItem="NLS-Er-vuL" secondAttribute="centerY" id="OSX-NS-IzJ"/>
                     <constraint firstItem="NLS-Er-vuL" firstAttribute="leading" secondItem="X0K-3n-IIP" secondAttribute="trailing" constant="8" id="aWO-7d-OOi"/>
+                    <constraint firstItem="RWH-L1-GYn" firstAttribute="centerY" secondItem="f05-yI-zfl" secondAttribute="centerY" id="ofS-ZS-ZMm"/>
                     <constraint firstItem="meX-Hb-lPU" firstAttribute="top" secondItem="X0K-3n-IIP" secondAttribute="top" constant="4" id="soN-0S-azX"/>
                     <constraint firstItem="Bca-gN-N9j" firstAttribute="baseline" secondItem="meX-Hb-lPU" secondAttribute="firstBaseline" id="svj-3q-6Uo"/>
+                    <constraint firstAttribute="trailing" secondItem="RWH-L1-GYn" secondAttribute="trailing" constant="16" id="ybm-y3-m6t"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>
+                <outlet property="manageButton" destination="RWH-L1-GYn" id="vCE-eW-Jg1"/>
                 <outlet property="photoView" destination="X0K-3n-IIP" id="vba-NC-l4f"/>
                 <outlet property="presenceView" destination="Bca-gN-N9j" id="6Tx-QK-i0c"/>
                 <outlet property="role" destination="9B3-1a-Ge9" id="NWq-tl-Hno"/>
                 <outlet property="subtitle" destination="NLS-Er-vuL" id="bMR-8W-F1w"/>
                 <outlet property="title" destination="meX-Hb-lPU" id="KkB-OH-HdK"/>
             </connections>
-            <point key="canvasLocation" x="-216" y="-196"/>
+            <point key="canvasLocation" x="-135.5" y="-196"/>
         </tableViewCell>
     </objects>
 </document>

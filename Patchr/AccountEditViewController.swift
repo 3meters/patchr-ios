@@ -138,6 +138,7 @@ class AccountEditViewController: BaseEditViewController {
             
             if exists {
                 self.errorLabel.text = "Email is already being used"
+                self.view.setNeedsLayout()
                 self.errorLabel.fadeIn()
             }
             else {
@@ -160,12 +161,14 @@ class AccountEditViewController: BaseEditViewController {
                         }
                         else {
                             self.errorLabel.text = error?.localizedDescription
+                            self.view.setNeedsLayout()
                             self.errorLabel.fadeIn()
                         }
                     }
                 }
                 else {
                     self.errorLabel.text = error?.localizedDescription
+                    self.view.setNeedsLayout()
                     self.errorLabel.fadeIn()
                 }
             })

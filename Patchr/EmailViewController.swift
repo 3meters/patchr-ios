@@ -12,6 +12,8 @@ import FirebaseAuth
 import Firebase
 
 class EmailViewController: BaseEditViewController {
+    
+    var inputInviteParams: [AnyHashable: Any]?
 
     var emailField = AirTextField()
     var errorLabel = AirLabelDisplay()
@@ -131,6 +133,7 @@ class EmailViewController: BaseEditViewController {
             if self.flow == .onboardLogin {
                 if !exists {
                     self.errorLabel.text = "No account found."
+                    self.view.setNeedsLayout()
                     self.errorLabel.fadeIn()
                 }
                 else {
@@ -140,6 +143,14 @@ class EmailViewController: BaseEditViewController {
                     controller.inputEmailExists = true
                     self.navigationController?.pushViewController(controller, animated: true)
                 }
+            }
+            else if self.flow == .onboardInvite {
+                let controller = PasswordViewController()
+                controller.flow = .onboardInvite
+                controller.inputEmail = email
+                controller.inputEmailExists = true
+                controller.inputInviteParams = self.inputInviteParams
+                self.navigationController?.pushViewController(controller, animated: true)
             }
             else {
                 let controller = PasswordViewController()

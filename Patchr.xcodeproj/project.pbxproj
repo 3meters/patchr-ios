@@ -48,7 +48,6 @@
 		E20C3A861BE08887008CCED1 /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */; };
 		E20C74311DD548A400D90A4D /* invite_member.html in Resources */ = {isa = PBXBuildFile; fileRef = E20C74301DD548A400D90A4D /* invite_member.html */; };
 		E20C74351DD934CD00D90A4D /* ChannelEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C74341DD934CC00D90A4D /* ChannelEditViewController.swift */; };
-		E21FE56D1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E21FE56C1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift */; };
 		E224C3501B6ED27F00879775 /* PatchrShare.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E238BAE41B51D3290094AF41 /* PatchrShare.storyboard */; };
 		E224C3551B6EDBBE00879775 /* PatchTargetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */; };
 		E227294B1CEA743600913041 /* GalleryGridViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E227294A1CEA743600913041 /* GalleryGridViewController.swift */; };
@@ -124,6 +123,7 @@
 		E28915931C5AD528005D7AA0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E28915921C5AD528005D7AA0 /* LaunchScreen.storyboard */; };
 		E28A481F1DE72E0400A01B46 /* BaseTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28A481E1DE72E0400A01B46 /* BaseTableController.swift */; };
 		E28A48211DE8867000A01B46 /* ChannelSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28A48201DE8867000A01B46 /* ChannelSearchController.swift */; };
+		E28A48231DEA062200A01B46 /* MemberSettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28A48221DEA062200A01B46 /* MemberSettingsController.swift */; };
 		E28D565F1BB1849F00BFD433 /* ReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */; };
 		E28DB2921DBBF95D008B2E4B /* ChannelListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E28DB2911DBBF95D008B2E4B /* ChannelListCell.xib */; };
 		E28DB2941DBBFA1C008B2E4B /* GroupListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28DB2931DBBFA1C008B2E4B /* GroupListCell.swift */; };
@@ -282,7 +282,6 @@
 		E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stopwatch.swift; sourceTree = "<group>"; };
 		E20C74301DD548A400D90A4D /* invite_member.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = invite_member.html; sourceTree = "<group>"; };
 		E20C74341DD934CC00D90A4D /* ChannelEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelEditViewController.swift; sourceTree = "<group>"; };
-		E21FE56C1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationSettingsSimpleViewController.swift; sourceTree = "<group>"; };
 		E224C3541B6EDBBE00879775 /* PatchTargetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatchTargetViewController.swift; sourceTree = "<group>"; };
 		E227294A1CEA743600913041 /* GalleryGridViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GalleryGridViewController.swift; sourceTree = "<group>"; };
 		E227294C1CEA7D0600913041 /* GalleryViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = GalleryViewCell.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -356,6 +355,7 @@
 		E28915921C5AD528005D7AA0 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E28A481E1DE72E0400A01B46 /* BaseTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTableController.swift; sourceTree = "<group>"; };
 		E28A48201DE8867000A01B46 /* ChannelSearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelSearchController.swift; sourceTree = "<group>"; };
+		E28A48221DEA062200A01B46 /* MemberSettingsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberSettingsController.swift; sourceTree = "<group>"; };
 		E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ReachabilityManager.swift; path = Patchr/ReachabilityManager.swift; sourceTree = "<group>"; };
 		E28DB2911DBBF95D008B2E4B /* ChannelListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChannelListCell.xib; sourceTree = "<group>"; };
 		E28DB2931DBBFA1C008B2E4B /* GroupListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupListCell.swift; sourceTree = "<group>"; };
@@ -530,12 +530,12 @@
 				E29A921F1DB19A3C00B27093 /* FirePhoto.swift */,
 				E29A921D1DB19A2600B27093 /* FireProfile.swift */,
 				E29A921B1DB1988A00B27093 /* FireUser.swift */,
+				E23C010E1CE4D73B009C56B2 /* DisplayPhoto.swift */,
+				E2C7C5CA1B2CF2F80045038A /* ImageResult.swift */,
+				9FDCCE483C7DF6C69EC46E17 /* ChannelQuery.swift */,
+				9FDCC2AE42A7C32316E95CE2 /* GroupQuery.swift */,
 				9FDCCEFC8FC05526D291A77B /* MessageQuery.swift */,
 				9FDCC5452372EFCC98BA01BF /* UserQuery.swift */,
-				9FDCC2AE42A7C32316E95CE2 /* GroupQuery.swift */,
-				9FDCCE483C7DF6C69EC46E17 /* ChannelQuery.swift */,
-				E2C7C5CA1B2CF2F80045038A /* ImageResult.swift */,
-				E23C010E1CE4D73B009C56B2 /* DisplayPhoto.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -587,8 +587,8 @@
 				E2BC532C1DE2299A00C97A2C /* AboutViewController.swift */,
 				E26B58501C8B3F6B00467B51 /* PermissionsViewController.swift */,
 				844D6E341AA4D01200EE71ED /* DevelopmentViewController.swift */,
+				E28A48221DEA062200A01B46 /* MemberSettingsController.swift */,
 				E2C7C5C11B2A0B730045038A /* NotificationSettingsViewController.swift */,
-				E21FE56C1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift */,
 				E2BC53281DE20B6300C97A2C /* UsenameSettingViewController.swift */,
 				7DE393E61AAE43AD00D1B80E /* SettingsTableViewController.swift */,
 			);
@@ -1285,7 +1285,6 @@
 				E25603961DDE122B00961E10 /* GroupCreateController.swift in Sources */,
 				E25327C11B13942D00990A81 /* UIShared.swift in Sources */,
 				7D3D39CF1A6F086F00A44CB2 /* AppDelegate.swift in Sources */,
-				E21FE56D1D71E63100616C27 /* NotificationSettingsSimpleViewController.swift in Sources */,
 				E26B58511C8B3F6B00467B51 /* PermissionsViewController.swift in Sources */,
 				E2B4590E1BC1E76C00155659 /* SwiftyJSON.swift in Sources */,
 				E20004DF1B094ACA00425694 /* PasswordEditViewController.swift in Sources */,
@@ -1301,6 +1300,7 @@
 				E2C7C5CB1B2CF2F80045038A /* ImageResult.swift in Sources */,
 				E28A481F1DE72E0400A01B46 /* BaseTableController.swift in Sources */,
 				844D6E351AA4D01200EE71ED /* DevelopmentViewController.swift in Sources */,
+				E28A48231DEA062200A01B46 /* MemberSettingsController.swift in Sources */,
 				E2FA133A1D81FC8A0057F287 /* SideMenuViewController.swift in Sources */,
 				E2F85C741C31F0D700FC2364 /* UIImage+ImageEffects.m in Sources */,
 				E2BC53401DE5EEC200C97A2C /* JoinViewController.swift in Sources */,

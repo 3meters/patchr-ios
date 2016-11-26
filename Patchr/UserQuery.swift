@@ -17,6 +17,7 @@ class UserQuery: NSObject {
     var linkPath: String!
     var linkHandle: UInt!
     var linkMap: [String: Any]!
+    var linkMapMiss = false
 
     init(userId: String, groupId: String?, trackPresence: Bool = false) {
         super.init()
@@ -39,7 +40,7 @@ class UserQuery: NSObject {
         self.userHandle = FireController.db.child(self.userPath).observe(.value, with: { snap in
             if !(snap.value is NSNull) {
                 self.user = FireUser.from(dict: snap.value as? [String: Any], id: snap.key)
-                if self.linkPath == nil {
+                if self.linkPath == nil || self.linkMapMiss {
                     block(self.user)  // May or may not have link info
                 }
                 else if self.linkMap != nil {
@@ -64,13 +65,10 @@ class UserQuery: NSObject {
                 }
                 else {
                     /* User might be fine but group was deleted */
+                    self.linkMapMiss = true
                     if self.user != nil {
                         self.user!.membershipClear()
                         block(self.user)
-                    }
-                    else {
-                        Log.w("User link snapshot is null: \(self.linkPath!)")
-                        block(nil)
                     }
                 }
             })
@@ -85,7 +83,7 @@ class UserQuery: NSObject {
             if !fired {
                 if !(snap.value is NSNull) {
                     self.user = FireUser.from(dict: snap.value as? [String: Any], id: snap.key)
-                    if self.linkPath == nil {
+                    if self.linkPath == nil || self.linkMapMiss {
                         fired = true
                         block(self.user)  // May or may not have link info
                     }
@@ -115,9 +113,11 @@ class UserQuery: NSObject {
                         }
                     }
                     else {
-                        fired = true
-                        Log.w("User link snapshot is null: \(self.linkPath!)")
-                        block(nil)
+                        self.linkMapMiss = true
+                        if self.user != nil {
+                            fired = true
+                            block(self.user)
+                        }
                     }
                 }
             })

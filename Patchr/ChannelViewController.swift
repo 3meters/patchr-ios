@@ -124,22 +124,26 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
      * MARK: - Events
      *--------------------------------------------------------------------------------------------*/
 
-    func longPressAction(sender: UILongPressGestureRecognizer) {
-        if sender.state == UIGestureRecognizerState.began {
-            let point = sender.location(in: self.tableView)
-            if let indexPath = self.tableView.indexPathForRow(at: point) {
-                let snap = self.tableViewDataSource.object(at: UInt(indexPath.row)) as! FIRDataSnapshot
-                let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key)
-                showMessageActions(message: message!)
-            }
-        }
+    func openGalleryAction(sender: AnyObject) {
+        showPhotos()
     }
     
-    func optionsAction(sender: AnyObject?) {
-        
+    func openNavigationAction(sender: AnyObject) {
+        self.slideMenuController()?.openLeft()
+        UIApplication.shared.setStatusBarHidden(true, with: UIStatusBarAnimation.slide)
     }
     
-    func memberAction(sender: AnyObject?) {
+    func openMenuAction(sender: AnyObject?) {
+        self.slideMenuController()?.openRight()
+        UIApplication.shared.setStatusBarHidden(true, with: UIStatusBarAnimation.slide)
+    }
+    
+    func floatingButtonTapped(gesture: UIGestureRecognizer) {
+        addMessageAction()
+        Animation.bounce(view: self.actionButton)
+    }
+    
+    func browseMemberAction(sender: AnyObject?) {
         if let photoView = sender as? PhotoView {
             if let user = photoView.target as? FireUser {
                 let controller = MemberViewController()
@@ -149,7 +153,7 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
         }
     }
     
-    func photoAction(sender: AnyObject?) {
+    func browsePhotoAction(sender: AnyObject?) {
         
         if let recognizer = sender as? UITapGestureRecognizer,
             let control = recognizer.view as? AirImageView,
@@ -160,16 +164,7 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
         }
     }
     
-    func photosAction(sender: AnyObject) {
-        showPhotos()
-    }
-
-    func toggleAction(sender: AnyObject) {
-        self.slideMenuController()?.openLeft()
-        UIApplication.shared.setStatusBarHidden(true, with: UIStatusBarAnimation.slide)
-    }
-
-    func addAction() {
+    func addMessageAction() {
         
         /* Has its own nav because we segue modally and it needs its own stack */
         let controller = MessageEditViewController()
@@ -177,19 +172,8 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
         controller.mode = .insert
         let navController = AirNavigationController()
         navController.viewControllers = [controller]
-
+        
         self.present(navController, animated: true, completion: nil)
-    }
-
-    func editAction() {
-
-        let controller = ChannelEditViewController()
-        let wrapper = AirNavigationController()
-        controller.mode = .update
-        controller.inputChannelId = self.channel.id
-        controller.inputGroupId = self.channel.group
-        wrapper.viewControllers = [controller]
-        self.present(wrapper, animated: true, completion: nil)
     }
     
     func editMessageAction(message: FireMessage) {
@@ -216,22 +200,67 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
                 }
         }
     }
-    
-    func shareAction(sender: AnyObject?) { }
 
-    func sideMenuAction(sender: AnyObject?) {
-        self.slideMenuController()?.openRight()
-        UIApplication.shared.setStatusBarHidden(true, with: UIStatusBarAnimation.slide)
-    }
-
-    func joinAction() { }
-
-    func actionButtonTapped(gesture: UIGestureRecognizer) {
-        addAction()
-        Animation.bounce(view: self.actionButton)
+    func editChannelAction() {
+        
+        let controller = ChannelEditViewController()
+        let wrapper = AirNavigationController()
+        controller.mode = .update
+        controller.inputChannelId = self.channel.id
+        controller.inputGroupId = self.channel.group
+        wrapper.viewControllers = [controller]
+        self.present(wrapper, animated: true, completion: nil)
     }
     
-    func loadMoreAction(sender: AnyObject?) {
+    func joinChannelAction(sender: AnyObject?) {
+        let groupId = StateController.instance.groupId!
+        let channelId = self.channel.id!
+        FireController.instance.addUserToChannel(groupId: groupId, channelId: channelId, then: { success in
+            if success {
+                UIShared.Toast(message: "You are now a member")
+                if UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")) {
+                    AudioController.instance.play(sound: Sound.pop.rawValue)
+                }
+            }
+        })
+    }
+
+    func leaveChannelAction(sender: AnyObject?) {
+        
+        if self.channel.visibility == "private" {
+            DeleteConfirmationAlert(
+                title: "Confirm",
+                message: "Are you sure you want to leave this private channel? A new invitation is required to rejoin.",
+                actionTitle: "Leave", cancelTitle: "Cancel", delegate: self) { doIt in
+                    if doIt {
+                        if let group = StateController.instance.group {
+                            FireController.instance.removeUserFromChannel(groupId: group.id!, channelId: self.channel.id!, then: { success in
+                                if success {
+                                    /* Close and switch to accessible channel */
+                                    self.dismiss(animated: true, completion: nil)
+                                    UIShared.Toast(message: "You are not a member of this channel")
+                                    StateController.instance.clearChannel()
+                                }
+                            })
+                        }
+                    }
+            }
+        }
+        else {
+            if let group = StateController.instance.group {
+                FireController.instance.removeUserFromChannel(groupId: group.id!, channelId: self.channel.id!, then: { success in
+                    if success {
+                        UIShared.Toast(message: "You are not a member of this channel")
+                        if UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")) {
+                            AudioController.instance.play(sound: Sound.pop.rawValue)
+                        }
+                    }
+                })
+            }
+        }
+    }
+
+    func nextPageAction(sender: AnyObject?) {
         if let button = self.footerView.viewWithTag(1) as? UIButton,
             let spinner = self.footerView.viewWithTag(2) as? UIActivityIndicatorView {
             button.isHidden = true
@@ -239,6 +268,17 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
             spinner.startAnimating()
         }
         // todo: Go ask for another page
+    }
+
+    func longPressAction(sender: UILongPressGestureRecognizer) {
+        if sender.state == UIGestureRecognizerState.began {
+            let point = sender.location(in: self.tableView)
+            if let indexPath = self.tableView.indexPathForRow(at: point) {
+                let snap = self.tableViewDataSource.object(at: UInt(indexPath.row)) as! FIRDataSnapshot
+                let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key)
+                showMessageActions(message: message!)
+            }
+        }
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -294,7 +334,7 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
         self.loadMoreButton.tag = 1
         self.loadMoreButton.backgroundColor = Theme.colorBackgroundTile
         self.loadMoreButton.layer.cornerRadius = 8
-        self.loadMoreButton.addTarget(self, action: #selector(ChannelViewController.loadMoreAction(sender:)), for: UIControlEvents.touchUpInside)
+        self.loadMoreButton.addTarget(self, action: #selector(ChannelViewController.nextPageAction(sender:)), for: UIControlEvents.touchUpInside)
         self.loadMoreButton.setTitle(self.loadMoreMessage, for: .normal)
         self.footerView.addSubview(self.loadMoreButton)
         
@@ -330,7 +370,7 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
         self.actionButton.imageInsets = UIEdgeInsetsMake(14, 14, 14, 14)
         self.actionButton.imageView.image = UIImage(named: "imgAddLight")    // Default
         self.actionButton.showBackground = false
-        self.actionButton.centerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(actionButtonTapped(gesture:))))
+        self.actionButton.centerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(floatingButtonTapped(gesture:))))
         self.actionButton!.transform = CGAffineTransform.identity
         
         self.view.addSubview(self.tableView)
@@ -417,9 +457,6 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
                 self.headerView.bind(channel: self.channel)
                 self.tableView.tableHeaderView = self.headerView
             }
-            
-//            let purpose = self.headerView.infoGroup
-//            self.tableView.contentInset.top = (self.originalScrollInset!.top - (self.headerView.height() - (96 + purpose.height())))
         })
         
         self.messagesQuery = FireController.db.child("channel-messages/\(channelId)").queryOrdered(byChild: "created_at_desc")
@@ -464,7 +501,7 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
                 label.delegate = self
             }
             view.photo?.isUserInteractionEnabled = true
-            view.photo?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.photoAction(sender:))))
+            view.photo?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.browsePhotoAction(sender:))))
             cell.injectView(view: view, padding: self.itemPadding)
             cell.layoutSubviews()   // Make sure padding has been applied
         }
@@ -473,7 +510,7 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
             messageView.bind(message: message)
             if message.creator != nil {
                 messageView.userPhoto.target = message.creator
-                messageView.userPhoto.addTarget(self, action: #selector(self.memberAction(sender:)), for: .touchUpInside)
+                messageView.userPhoto.addTarget(self, action: #selector(self.browseMemberAction(sender:)), for: .touchUpInside)
             }
         }
     }
@@ -487,7 +524,7 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
         /* Navigation button */
         var button = UIButton(type: .custom)
         button.frame = CGRect(x:0, y:0, width:36, height:36)
-        button.addTarget(self, action: #selector(toggleAction(sender:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(openNavigationAction(sender:)), for: .touchUpInside)
         button.showsTouchWhenHighlighted = true
         button.setImage(UIImage(named: "imgNavigationLight"), for: .normal)
         button.imageEdgeInsets = UIEdgeInsetsMake(8, 0, 8, 16);
@@ -496,7 +533,7 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
         /* Gallery button */
         button = UIButton(type: .custom)
         button.frame = CGRect(x:0, y:0, width:36, height:36)
-        button.addTarget(self, action: #selector(photosAction(sender:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(openGalleryAction(sender:)), for: .touchUpInside)
         button.showsTouchWhenHighlighted = true
         button.setImage(UIImage(named: "imgGallery2Light"), for: .normal)
         button.imageEdgeInsets = UIEdgeInsetsMake(6, 6, 6, 6);
@@ -505,7 +542,7 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
         /* Menu button */
         button = UIButton(type: .custom)
         button.frame = CGRect(x:0, y:0, width:36, height:36)
-        button.addTarget(self, action: #selector(sideMenuAction(sender:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(openMenuAction(sender:)), for: .touchUpInside)
         button.showsTouchWhenHighlighted = true
         button.setImage(UIImage(named: "imgOverflowVerticalLight"), for: .normal)
         button.imageEdgeInsets = UIEdgeInsetsMake(8, 8, 8, 8);
@@ -560,34 +597,42 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
         if self.channel != nil {
             let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
             
-            if isUserOwner() {
-                let edit = UIAlertAction(title: "Edit channel", style: .default) { action in
-                    self.editAction()
+            let isMember = (self.channel.joinedAt != nil)
+            let isOwner = (self.channel.role == "owner")
+            
+            let statusTitle = isMember ? "Leave channel" : "Join channel"
+            let statusAction = UIAlertAction(title: statusTitle, style: .default) { action in
+                if isMember {
+                    self.leaveChannelAction(sender: nil)
                 }
-                sheet.addAction(edit)
-            }
-            
-            let muted = self.channel.muted
-            let mutedTitle = muted! ? "Unmute channel" : "Mute channel"
-            let mute = UIAlertAction(title: mutedTitle, style: .default) { action in
-                self.channel.mute(on: !muted!)
-            }
-            
-            let starred = self.channel.starred
-            let starredTitle = starred! ? "Unstar channel" : "Star channel"
-            let star = UIAlertAction(title: starredTitle, style: .default) { action in
-                self.channel.star(on: !starred!)
-                self.headerView.starButton.toggle(on: !starred!, animate: true)
-            }
-            
-            let leave = UIAlertAction(title: "Leave channel", style: .default) { action in
-                self.joinAction()
-                Utils.delay(1.0) {
-                    UIShared.Toast(message: "You have left this channel", controller: self, addToWindow: false)
+                else {
+                    self.joinChannelAction(sender: nil)
                 }
             }
             
-            let addMembers = UIAlertAction(title: "Add someone", style: .default) { action in
+            var muteAction: UIAlertAction? = nil
+            var starAction: UIAlertAction? = nil
+            
+            if isMember || isOwner {
+                let muted = self.channel.muted
+                let mutedTitle = muted! ? "Unmute channel" : "Mute channel"
+                muteAction = UIAlertAction(title: mutedTitle, style: .default) { action in
+                    self.channel.mute(on: !muted!)
+                }
+                
+                let starred = self.channel.starred
+                let starredTitle = starred! ? "Unstar channel" : "Star channel"
+                starAction = UIAlertAction(title: starredTitle, style: .default) { action in
+                    self.channel.star(on: !starred!)
+                    self.headerView.starButton.toggle(on: !starred!, animate: true)
+                }
+            }
+
+            let editAction = UIAlertAction(title: "Edit channel", style: .default) { action in
+                self.editChannelAction()
+            }
+            
+            let addMembersAction = UIAlertAction(title: "Add someone", style: .default) { action in
                 UIShared.Toast(message: "Show invite ui")
             }
             
@@ -596,11 +641,25 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
                 sheet.dismiss(animated: true, completion: nil)
             }
             
-            sheet.addAction(star)
-            sheet.addAction(mute)
-            sheet.addAction(leave)
-            sheet.addAction(addMembers)
-            sheet.addAction(cancel)
+            if isOwner {
+                sheet.addAction(starAction!)
+                sheet.addAction(muteAction!)
+                sheet.addAction(addMembersAction)
+                sheet.addAction(editAction)
+                sheet.addAction(cancel)
+            }
+            else if isMember {
+                sheet.addAction(starAction!)
+                sheet.addAction(muteAction!)
+                if !self.channel!.general! {
+                    sheet.addAction(statusAction)
+                }
+                sheet.addAction(cancel)
+            }
+            else {
+                sheet.addAction(statusAction)
+                sheet.addAction(cancel)
+            }
             
             if let presenter = sheet.popoverPresentationController {
                 presenter.sourceView = self.titleView
@@ -740,15 +799,6 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
         }
         
         return viewHeight
-    }
-
-    /*--------------------------------------------------------------------------------------------
-    * MARK: - Properties
-    *--------------------------------------------------------------------------------------------*/
-
-    func isUserOwner() -> Bool {
-        let userId = UserController.instance.userId
-        return self.channel!.createdBy == userId
     }
 }
 

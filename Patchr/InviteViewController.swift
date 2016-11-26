@@ -147,14 +147,10 @@ class InviteViewController: BaseEditViewController {
             
             let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(closeAction(sender:)))
             self.navigationItem.rightBarButtonItems = [closeButton]
-            self.navigationItem.leftBarButtonItems = []
-            self.navigationItem.hidesBackButton = true
         }
         else {
             let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(doneAction(sender:)))
             self.navigationItem.rightBarButtonItems = [closeButton]
-            self.navigationItem.leftBarButtonItems = []
-            self.navigationItem.hidesBackButton = true
         }
 		
 		self.contentHolder.addSubview(self.message)

@@ -85,9 +85,7 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
     
     func editAction(sender: AnyObject?) {
         let controller = ProfileEditViewController()
-        let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: controller, action: #selector(controller.closeAction(sender:)))
         let wrapper = AirNavigationController()
-        controller.navigationItem.rightBarButtonItems = [closeButton]
         wrapper.viewControllers = [controller]
         UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
     }
@@ -117,6 +115,10 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         catch {
             Log.w("Invalid phone number: \(self.user?.profile?.phone!)")
         }
+    }
+    
+    func closeAction(sender: AnyObject?) {
+        close(animated: true)
     }
     
 	/*--------------------------------------------------------------------------------------------
@@ -160,6 +162,11 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         self.contentHolder.addSubview(self.profileGroup)
         
         self.scrollView.delegate = self
+        
+        if self.presented {
+            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(closeAction(sender:)))
+            self.navigationItem.rightBarButtonItems = [closeButton]
+        }
 	}
 	
 	func bind() {
