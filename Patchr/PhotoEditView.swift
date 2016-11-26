@@ -146,11 +146,11 @@ class PhotoEditView: UIView {
 	
 	func setPhotoAction(sender: AnyObject) {
 		NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoViewHasFocus), object: nil)
-		self.photoChooser?.choosePhoto(sender: sender) {
-			[weak self] image, imageResult, cancelled in
-			
+		self.photoChooser?.choosePhoto(sender: sender) { [weak self] image, imageResult, cancelled in
 			if !cancelled {
-                self?.photoChosen(image: image, imageResult: imageResult)
+                DispatchQueue.main.async {
+                    self?.photoChosen(image: image, imageResult: imageResult)
+                }
 			}
 		}
 	}

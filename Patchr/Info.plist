@@ -136,25 +136,23 @@
 				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
 				<false/>
 			</dict>
-            <key>firebaseio.com</key>
-            <dict>
-                <key>NSIncludesSubdomains</key>
-                <true/>
-                <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
-                <true/>
-                <key>NSThirdPartyExceptionMinimumTLSVersion</key>
-                <string>TLSv1.0</string>
-                <key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
-                <false/>
-            </dict>
+			<key>firebaseio.com</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSThirdPartyExceptionMinimumTLSVersion</key>
+				<string>TLSv1.0</string>
+				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+				<false/>
+			</dict>
 		</dict>
 	</dict>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We use your location to discover nearby patches.</string>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>Select library photos to include with messages.</string>
-    <key>NSContactsUsageDescription</key>
-    <string>We will send invites to your selected contacts.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Select library photos to include with messages.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Take a photo to include with messages.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

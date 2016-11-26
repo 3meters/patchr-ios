@@ -116,11 +116,11 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 	}
 
 	fileprivate func addPhotoToAlbum(image: UIImage, toAlbum albumName: String, handler: @escaping CompletionHandler) {
-        PHPhotoLibrary.saveImage(image: image, albumName: albumName) {
-            asset in
+        PHPhotoLibrary.saveImage(image: image, albumName: albumName) { asset in
             guard asset != nil else {
                 assert(false, "Image asset is nil")
             }
+            handler(true)
         }
 	}
 
@@ -161,8 +161,7 @@ extension PhotoChooserUI: UIImagePickerControllerDelegate {
             
 			/* If the user took a photo then add it to the patchr photo album */
             if self.chosenPhotoFunction == .TakePhoto {
-                self.addPhotoToAlbum(image: image, toAlbum: "Patchr") {
-                    (success) -> Void in
+                self.addPhotoToAlbum(image: image, toAlbum: "Patchr") { success in
                     print("Image added to Patchr album: \(success)");
                     self.finishedChoosing!(image, nil, false)
                 }
