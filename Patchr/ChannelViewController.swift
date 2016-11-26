@@ -632,8 +632,22 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
                 self.editChannelAction()
             }
             
+            let browseMembersAction = UIAlertAction(title: "Channel members", style: .default) { action in
+                let controller = UserListController()
+                let wrapper = AirNavigationController(rootViewController: controller)
+                controller.scope = .channel
+                controller.mode = .browse
+                controller.target = .channel
+                UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+            }
+            
             let addMembersAction = UIAlertAction(title: "Add someone", style: .default) { action in
-                UIShared.Toast(message: "Show invite ui")
+                let controller = UserListController()
+                let wrapper = AirNavigationController(rootViewController: controller)
+                controller.scope = .group
+                controller.mode = .selection
+                controller.target = .channel
+                UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
             }
             
             let cancel = UIAlertAction(title: "Cancel", style: .cancel) {
@@ -644,6 +658,7 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
             if isOwner {
                 sheet.addAction(starAction!)
                 sheet.addAction(muteAction!)
+                sheet.addAction(browseMembersAction)
                 sheet.addAction(addMembersAction)
                 sheet.addAction(editAction)
                 sheet.addAction(cancel)
@@ -651,12 +666,14 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
             else if isMember {
                 sheet.addAction(starAction!)
                 sheet.addAction(muteAction!)
+                sheet.addAction(browseMembersAction)
                 if !self.channel!.general! {
                     sheet.addAction(statusAction)
                 }
                 sheet.addAction(cancel)
             }
             else {
+                sheet.addAction(browseMembersAction)
                 sheet.addAction(statusAction)
                 sheet.addAction(cancel)
             }

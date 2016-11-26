@@ -70,11 +70,6 @@ class UserListCell: UITableViewCell {
             self.role?.textColor = MaterialColor.lightBlue.base
         }
         
-        self.manageButton?.isHidden = true
-        if let role = StateController.instance.group!.role {
-            self.manageButton?.isHidden = !(role == "owner" || role == "admin")
-        }
-        
         let fullName = user.profile?.fullName ?? user.username
         if let photo = user.profile?.photo, !photo.uploading {
             let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile)

@@ -166,9 +166,12 @@ extension SideMenuViewController {
         }
         else if selectedCell == self.membersCell {
             
-            let controller = UserListController()
-            let wrapper = AirNavigationController(rootViewController: controller)
-            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+            if let role = StateController.instance.group.role {
+                let controller = UserListController()
+                let wrapper = AirNavigationController(rootViewController: controller)
+                controller.scope = (role == "guest") ? .channel : .group
+                UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+            }
         }
         
         UIApplication.shared.setStatusBarHidden(false, with: UIStatusBarAnimation.slide)
