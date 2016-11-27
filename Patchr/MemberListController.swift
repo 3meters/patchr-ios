@@ -14,7 +14,7 @@ import AVFoundation
 import Firebase
 import FirebaseDatabaseUI
 
-class UserListController: BaseTableController, UITableViewDelegate {
+class MemberListController: BaseTableController, UITableViewDelegate {
     
     var tableView = UITableView(frame: CGRect.zero, style: .plain)
     var tableViewDataSource: FUITableViewDataSource!
@@ -22,7 +22,6 @@ class UserListController: BaseTableController, UITableViewDelegate {
     
     var channel: FireChannel!
     
-    var mode: ListMode = .browse
     var scope: ListScope = .group
     var target: MemberTarget = .group
     
@@ -66,23 +65,15 @@ class UserListController: BaseTableController, UITableViewDelegate {
      * Events
      *--------------------------------------------------------------------------------------------*/
     
-    func inviteAction(sender: AnyObject?) {
+    func groupInviteAction(sender: AnyObject?) {
         let controller = InviteViewController()
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
-    func addMembersAction(sender: AnyObject?) {
-        if self.mode == .browse {
-            let controller = UserListController()
-            let wrapper = AirNavigationController(rootViewController: controller)
-            controller.scope = .group
-            controller.mode = .selection
-            controller.target = .channel
-            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
-        }
-        else {
-            /* Walk the selected members and add them to the channel */
-        }
+    func channelInviteAction(sender: AnyObject?) {
+        let controller = MemberPickerController()
+        let wrapper = AirNavigationController(rootViewController: controller)
+        UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
     }
     
     func closeAction(sender: AnyObject?) {
@@ -94,6 +85,15 @@ class UserListController: BaseTableController, UITableViewDelegate {
             let controller = MemberSettingsController()
             controller.inputUser = user
             self.navigationController?.pushViewController(controller, animated: true)
+        }
+    }
+    
+    func removeMemberAction(sender: AnyObject?) {
+        if let button = sender as? AirButton, let user = button.data as? FireUser {
+            let groupId = self.channel.group!
+            let channelId = self.channel.id!
+            let userId = user.id!
+            FireController.instance.removeUserFromChannel(userId: userId, groupId: groupId, channelId: channelId)
         }
     }
     
@@ -112,10 +112,6 @@ class UserListController: BaseTableController, UITableViewDelegate {
         self.tableView.register(UINib(nibName: "UserListCell", bundle: nil), forCellReuseIdentifier: self.cellReuseIdentifier)
         self.tableView.backgroundColor = Theme.colorBackgroundEmptyBubble
         self.tableView.delegate = self
-        
-        if self.mode == .selection {
-            self.tableView.allowsMultipleSelection = true
-        }
         
         self.view.addSubview(self.tableView)
         
@@ -139,13 +135,14 @@ class UserListController: BaseTableController, UITableViewDelegate {
         
         if (self.scope == .channel && self.channel.role == "owner") || StateController.instance.group?.role == "owner" {
             if self.target == .channel {
-                let addButton = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(addMembersAction(sender:)))
+                let addButton = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(channelInviteAction(sender:)))
                 self.navigationItem.rightBarButtonItems = [addButton]
             }
-            else {
-                let inviteButton = UIBarButtonItem(title: "Invite", style: .plain, target: self, action: #selector(inviteAction(sender:)))
+            else if self.target == .group {
+                let inviteButton = UIBarButtonItem(title: "Invite", style: .plain, target: self, action: #selector(groupInviteAction(sender:)))
                 self.navigationItem.rightBarButtonItems = [inviteButton]
             }
+            
             let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(self.closeAction(sender:)))
             self.navigationItem.leftBarButtonItems = [closeButton]
         }
@@ -161,21 +158,27 @@ class UserListController: BaseTableController, UITableViewDelegate {
                 let userId = snap.key
                 let userQuery = UserQuery(userId: userId, groupId: groupId)
                 
-                if self?.mode == .selection {
-                    cell.selectionStyle = .none
-                    cell.accessoryType = cell.isSelected ? .checkmark : .none
-                }
-                
                 cell.reset()
 
                 userQuery.once(with: { user in
                     if user != nil {
                         cell.bind(user: user!)
-                        if self?.mode == .browse && self?.scope == .group {
+                        if self?.scope == .group {
                             if let role = StateController.instance.group!.role, (role == "owner" || role == "admin") {
-                                cell.manageButton?.isHidden = false
-                                cell.manageButton?.data = user
-                                cell.manageButton?.addTarget(self, action: #selector(self?.manageUserAction(sender:)), for: .touchUpInside)
+                                cell.actionButton?.isHidden = false
+                                cell.actionButton?.setTitle("Manage", for: .normal)
+                                cell.actionButton?.data = user
+                                cell.actionButton?.addTarget(self, action: #selector(self?.manageUserAction(sender:)), for: .touchUpInside)
+                            }
+                        }
+                        else if self?.scope == .channel {
+                            if let role = StateController.instance.group!.role, (role == "owner" || role == "admin") {
+                                if user!.id != UserController.instance.userId {
+                                    cell.actionButton?.isHidden = false
+                                    cell.actionButton?.setTitle("Remove", for: .normal)
+                                    cell.actionButton?.data = user
+                                    cell.actionButton?.addTarget(self, action: #selector(self?.removeMemberAction(sender:)), for: .touchUpInside)
+                                }
                             }
                         }
                     }
@@ -190,18 +193,9 @@ class UserListController: BaseTableController, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! UserListCell
         let user = cell.user
-        if self.mode == .browse {
-            let controller = MemberViewController()
-            controller.inputUserId = user?.id
-            self.navigationController?.pushViewController(controller, animated: true)
-        }
-        else {
-            self.tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        self.tableView.cellForRow(at: indexPath)?.accessoryType = .none
+        let controller = MemberViewController()
+        controller.inputUserId = user?.id
+        self.navigationController?.pushViewController(controller, animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -211,11 +205,6 @@ class UserListController: BaseTableController, UITableViewDelegate {
     enum ListScope: Int {
         case group
         case channel
-    }
-    
-    enum ListMode: Int {
-        case selection
-        case browse
     }
     
     enum MemberTarget: Int {

@@ -167,7 +167,7 @@ extension SideMenuViewController {
         else if selectedCell == self.membersCell {
             
             if let role = StateController.instance.group.role {
-                let controller = UserListController()
+                let controller = MemberListController()
                 let wrapper = AirNavigationController(rootViewController: controller)
                 controller.scope = (role == "guest") ? .channel : .group
                 UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)

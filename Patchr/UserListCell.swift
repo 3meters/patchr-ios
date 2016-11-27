@@ -14,8 +14,9 @@ class UserListCell: UITableViewCell {
     @IBOutlet weak var subtitle: UILabel?
     @IBOutlet weak var role: UILabel?
     @IBOutlet weak var presenceView = PresenceView()
-    @IBOutlet weak var manageButton: AirButton?
-
+    @IBOutlet weak var actionButton: AirButton?
+    
+    var allowSelection = true
     
     var user: FireUser!
     
@@ -35,9 +36,12 @@ class UserListCell: UITableViewCell {
         self.photoView?.photo.image = nil
         self.title?.text = nil
         self.subtitle?.text = nil
+        self.subtitle?.isHidden = false
         self.role?.text = nil
+        self.role?.isHidden = false
         self.presenceView?.showOffline()
-        self.manageButton?.isHidden = true
+        self.actionButton?.isHidden = true
+        self.allowSelection = true
     }
     
     func bind(user: FireUser) {

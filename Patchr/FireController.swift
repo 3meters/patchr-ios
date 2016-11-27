@@ -158,9 +158,8 @@ class FireController: NSObject {
         }
     }
     
-    func addUserToChannel(groupId: String, channelId: String, then: ((Bool) -> Void)? = nil) {
+    func addUserToChannel(userId: String, groupId: String, channelId: String, then: ((Bool) -> Void)? = nil) {
         
-        let userId = UserController.instance.userId!
         let channelLink = channelMemberMap(timestamp: Utils.now(), priorityIndex: 4 /* neutral */)
         
         var updates: [String: Any] = [:]
@@ -172,7 +171,7 @@ class FireController: NSObject {
         }
     }
 
-    func addUserToGroup(groupId: String, channelId: String?, role: String, username: String, then: ((Bool) -> Void)? = nil) {
+    func addUserToGroup(userId: String, groupId: String, channelId: String?, role: String, username: String, then: ((Bool) -> Void)? = nil) {
         /*
          * Standard member is added to group membership and all default channels.
          * Guest member is added to group and to targeted channel.
@@ -181,7 +180,6 @@ class FireController: NSObject {
          * re-invited as a member instead of a guest?
          */
         let timestamp = Utils.now()
-        let userId = UserController.instance.userId!
         let channelLink = channelMemberMap(timestamp: timestamp, priorityIndex: 4)
         
         var updates: [String: Any] = [:]
@@ -222,12 +220,11 @@ class FireController: NSObject {
         }
     }
     
-    func removeUserFromGroup(groupId: String, then: ((Bool) -> Void)? = nil) {
+    func removeUserFromGroup(userId: String, groupId: String, then: ((Bool) -> Void)? = nil) {
         /*
          * - remove from member-groups and group-members
          * - remove from all member-channels and channel-members
          */
-        let userId = UserController.instance.userId!
         var updates: [String: Any] = [:]
         
         updates["member-groups/\(userId)/\(groupId)"] = NSNull()
@@ -257,11 +254,8 @@ class FireController: NSObject {
         })
     }
 
-    func removeUserFromChannel(groupId: String, channelId: String, then: ((Bool) -> Void)? = nil) {
-        
-        let userId = UserController.instance.userId!
+    func removeUserFromChannel(userId: String, groupId: String, channelId: String, then: ((Bool) -> Void)? = nil) {
         var updates: [String: Any] = [:]
-        
         updates["member-channels/\(userId)/\(groupId)/\(channelId)"] = NSNull()
         updates["channel-members/\(channelId)/\(userId)"] = NSNull()
         FireController.db.updateChildValues(updates) { error, ref in
@@ -477,6 +471,13 @@ class FireController: NSObject {
         })
     }
     
+    func isChannelMember(userId: String, channelId: String, next: @escaping ((Bool) -> Void)) {
+        FireController.db.child("channel-members/\(channelId)/\(userId)")
+            .observeSingleEvent(of: .value, with: { snap in
+                next(!(snap.value is NSNull))
+            })
+    }
+    
     func groupnameExists(groupname: String, next: @escaping ((Bool) -> Void)) {
         FireController.db.child("groups")
             .queryOrdered(byChild: "name")
@@ -495,7 +496,16 @@ class FireController: NSObject {
         })
     }
     
-    func emailExists(email: String, next: @escaping ((Bool) -> Void)) {        
+    func emailExists(email: String, next: @escaping ((Bool) -> Void)) {
+        FireController.db.child("users")
+            .queryOrdered(byChild: "email")
+            .queryEqual(toValue: email)
+            .observeSingleEvent(of: .value, with: { snap in
+                next(!(snap.value is NSNull))
+        })
+    }
+    
+    func emailProviderExists(email: String, next: @escaping ((Bool) -> Void)) {
         FIRAuth.auth()?.fetchProviders(forEmail: email, completion: { providers, error in
             next(error == nil && providers != nil && providers!.count > 0)
         })

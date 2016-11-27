@@ -94,7 +94,8 @@ class SettingsTableViewController: UITableViewController {
                     self.progress!.show(true)
                     
                     if let group = StateController.instance.group {
-                        FireController.instance.removeUserFromGroup(groupId: group.id!, then: { success in
+                        let userId = UserController.instance.userId!
+                        FireController.instance.removeUserFromGroup(userId: userId, groupId: group.id!, then: { success in
                             self.progress?.hide(true)
                             self.dismiss(animated: true, completion: nil)
                             StateController.instance.clearGroup()   // Make sure group and channel are both unset

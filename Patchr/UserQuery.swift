@@ -34,6 +34,15 @@ class UserQuery: NSObject {
             })
         }
     }
+    /**
+     * Call to include channel link properties instead of group link
+     * properties.
+     */
+    init(userId: String, groupId: String, channelId: String) {
+        super.init()
+        self.userPath = "users/\(userId)"
+        self.linkPath = "member-channels/\(userId)/\(groupId)/\(channelId)"
+    }
 
     func observe(with block: @escaping (FireUser?) -> Swift.Void) {
         

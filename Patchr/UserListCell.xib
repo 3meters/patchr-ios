@@ -45,7 +45,7 @@
                             <constraint firstAttribute="height" constant="20" id="m7S-Vc-nhc"/>
                         </constraints>
                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
-                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="textColor" red="0.49803921579999999" green="0.49803921579999999" blue="0.49803921579999999" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="admin" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9B3-1a-Ge9" userLabel="Role">
@@ -63,7 +63,7 @@
                             <constraint firstAttribute="width" constant="12" id="nC7-qj-uP8"/>
                         </constraints>
                     </view>
-                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RWH-L1-GYn" customClass="AirButton" customModule="Patchr" customModuleProvider="target">
+                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RWH-L1-GYn" customClass="AirButton" customModule="Patchr" customModuleProvider="target">
                         <constraints>
                             <constraint firstAttribute="width" constant="77" id="X23-0L-M8b"/>
                             <constraint firstAttribute="height" constant="30" id="ypz-e4-hTj"/>
@@ -86,11 +86,11 @@
                     <constraint firstItem="RWH-L1-GYn" firstAttribute="centerY" secondItem="f05-yI-zfl" secondAttribute="centerY" id="ofS-ZS-ZMm"/>
                     <constraint firstItem="meX-Hb-lPU" firstAttribute="top" secondItem="X0K-3n-IIP" secondAttribute="top" constant="4" id="soN-0S-azX"/>
                     <constraint firstItem="Bca-gN-N9j" firstAttribute="baseline" secondItem="meX-Hb-lPU" secondAttribute="firstBaseline" id="svj-3q-6Uo"/>
-                    <constraint firstAttribute="trailing" secondItem="RWH-L1-GYn" secondAttribute="trailing" constant="16" id="ybm-y3-m6t"/>
+                    <constraint firstItem="RWH-L1-GYn" firstAttribute="trailing" secondItem="f05-yI-zfl" secondAttribute="trailing" constant="-16" id="ybm-y3-m6t"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>
-                <outlet property="manageButton" destination="RWH-L1-GYn" id="vCE-eW-Jg1"/>
+                <outlet property="actionButton" destination="RWH-L1-GYn" id="aSw-XL-vWx"/>
                 <outlet property="photoView" destination="X0K-3n-IIP" id="vba-NC-l4f"/>
                 <outlet property="presenceView" destination="Bca-gN-N9j" id="6Tx-QK-i0c"/>
                 <outlet property="role" destination="9B3-1a-Ge9" id="NWq-tl-Hno"/>

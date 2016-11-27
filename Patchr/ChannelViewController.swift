@@ -215,7 +215,8 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
     func joinChannelAction(sender: AnyObject?) {
         let groupId = StateController.instance.groupId!
         let channelId = self.channel.id!
-        FireController.instance.addUserToChannel(groupId: groupId, channelId: channelId, then: { success in
+        let userId = UserController.instance.userId!
+        FireController.instance.addUserToChannel(userId: userId, groupId: groupId, channelId: channelId, then: { success in
             if success {
                 UIShared.Toast(message: "You are now a member")
                 if UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")) {
@@ -234,7 +235,8 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
                 actionTitle: "Leave", cancelTitle: "Cancel", delegate: self) { doIt in
                     if doIt {
                         if let group = StateController.instance.group {
-                            FireController.instance.removeUserFromChannel(groupId: group.id!, channelId: self.channel.id!, then: { success in
+                            let userId = UserController.instance.userId!
+                            FireController.instance.removeUserFromChannel(userId: userId, groupId: group.id!, channelId: self.channel.id!, then: { success in
                                 if success {
                                     /* Close and switch to accessible channel */
                                     self.dismiss(animated: true, completion: nil)
@@ -248,7 +250,8 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
         }
         else {
             if let group = StateController.instance.group {
-                FireController.instance.removeUserFromChannel(groupId: group.id!, channelId: self.channel.id!, then: { success in
+                let userId = UserController.instance.userId!
+                FireController.instance.removeUserFromChannel(userId: userId, groupId: group.id!, channelId: self.channel.id!, then: { success in
                     if success {
                         UIShared.Toast(message: "You are not a member of this channel")
                         if UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")) {
@@ -545,7 +548,7 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
         button.addTarget(self, action: #selector(openMenuAction(sender:)), for: .touchUpInside)
         button.showsTouchWhenHighlighted = true
         button.setImage(UIImage(named: "imgOverflowVerticalLight"), for: .normal)
-        button.imageEdgeInsets = UIEdgeInsetsMake(8, 8, 8, 8);
+        button.imageEdgeInsets = UIEdgeInsetsMake(8, 16, 8, 0);
         let moreButton = UIBarButtonItem(customView: button)
         
         self.navigationItem.setLeftBarButtonItems([navButton], animated: true)
@@ -633,20 +636,16 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
             }
             
             let browseMembersAction = UIAlertAction(title: "Channel members", style: .default) { action in
-                let controller = UserListController()
+                let controller = MemberListController()
                 let wrapper = AirNavigationController(rootViewController: controller)
                 controller.scope = .channel
-                controller.mode = .browse
                 controller.target = .channel
                 UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
             }
             
-            let addMembersAction = UIAlertAction(title: "Add someone", style: .default) { action in
-                let controller = UserListController()
+            let addMembersAction = UIAlertAction(title: "Invite to channel", style: .default) { action in
+                let controller = MemberPickerController()
                 let wrapper = AirNavigationController(rootViewController: controller)
-                controller.scope = .group
-                controller.mode = .selection
-                controller.target = .channel
                 UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
             }
             

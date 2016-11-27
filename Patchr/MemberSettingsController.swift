@@ -118,7 +118,8 @@ class MemberSettingsController: UITableViewController {
                     self.progress!.show(true)
                     
                     if let group = StateController.instance.group {
-                        FireController.instance.removeUserFromGroup(groupId: group.id!, then: { success in
+                        let userId = self.inputUser.id!
+                        FireController.instance.removeUserFromGroup(userId: userId, groupId: group.id!, then: { success in
                             self.progress?.hide(true)
                             if success {
                                 self.closeAction(sender: nil)

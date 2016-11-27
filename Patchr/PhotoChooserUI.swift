@@ -117,10 +117,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 
 	fileprivate func addPhotoToAlbum(image: UIImage, toAlbum albumName: String, handler: @escaping CompletionHandler) {
         PHPhotoLibrary.saveImage(image: image, albumName: albumName) { asset in
-            guard asset != nil else {
-                assert(false, "Image asset is nil")
-            }
-            handler(true)
+            handler(asset != nil)
         }
 	}
 

@@ -29,7 +29,7 @@ class FireChannel: NSObject {
     var createdAt: Int?
     var createdBy: String?
     
-    /* Link properties for the current user */
+    /* Channel link properties for the current user */
     var starred: Bool?
     var muted: Bool?
     var role: String?

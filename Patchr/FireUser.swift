@@ -24,13 +24,19 @@ class FireUser: NSObject {
     var email: String?
     var profile: FireProfile?
     
-    /* Link properties for the current user */
+    /* Group link properties for the current user */
     var disabled: Bool?
     var hideEmail: Bool?
-    var joinedAt: Int?
     var notifications: String?
-    var role: String?
     var username: String?
+    
+    /* Group link properties for the user */
+    var starred: Bool?
+    var muted: Bool?
+    
+    /* Shared by group and channel links */
+    var role: String?
+    var joinedAt: Int?
     
     static func from(dict: [String: Any]?, id: String?) -> FireUser? {
         if dict != nil {
@@ -53,6 +59,8 @@ class FireUser: NSObject {
         self.notifications = nil
         self.hideEmail = nil
         self.joinedAt = nil
+        self.starred = nil
+        self.muted = nil
     }
     
     func membershipFrom(dict: [String: Any]) {
@@ -62,5 +70,7 @@ class FireUser: NSObject {
         self.notifications = dict["notifications"] as? String
         self.hideEmail = dict["hide_email"] as? Bool
         self.joinedAt = dict["joined_at"] as? Int
+        self.starred = dict["starred"] as? Bool
+        self.muted = dict["muted"] as? Bool
     }
 }

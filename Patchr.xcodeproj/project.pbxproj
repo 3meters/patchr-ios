@@ -98,6 +98,7 @@
 		E25B0F481DCE7D7400021D5B /* UserListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25B0F471DCE7D7400021D5B /* UserListCell.swift */; };
 		E25B0F4A1DCE803B00021D5B /* UserListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E25B0F491DCE803B00021D5B /* UserListCell.xib */; };
 		E25E1E601DBA781900BE1800 /* ChannelsHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E25E1E5F1DBA781900BE1800 /* ChannelsHeaderView.xib */; };
+		E266A1C01DEB4E8900C71C28 /* MemberPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E266A1BF1DEB4E8900C71C28 /* MemberPickerController.swift */; };
 		E26B0C891B456F8A00706F4A /* ExtensionsUi.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26B0C881B456F8A00706F4A /* ExtensionsUi.swift */; };
 		E26B0C921B46D01E00706F4A /* ThumbnailCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E26B0C911B46D01E00706F4A /* ThumbnailCollectionViewCell.xib */; };
 		E26B58511C8B3F6B00467B51 /* PermissionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26B58501C8B3F6B00467B51 /* PermissionsViewController.swift */; };
@@ -335,6 +336,7 @@
 		E25B0F471DCE7D7400021D5B /* UserListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserListCell.swift; sourceTree = "<group>"; };
 		E25B0F491DCE803B00021D5B /* UserListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserListCell.xib; sourceTree = "<group>"; };
 		E25E1E5F1DBA781900BE1800 /* ChannelsHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChannelsHeaderView.xib; sourceTree = "<group>"; };
+		E266A1BF1DEB4E8900C71C28 /* MemberPickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberPickerController.swift; sourceTree = "<group>"; };
 		E26B0C881B456F8A00706F4A /* ExtensionsUi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ExtensionsUi.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E26B0C911B46D01E00706F4A /* ThumbnailCollectionViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ThumbnailCollectionViewCell.xib; sourceTree = "<group>"; };
 		E26B58501C8B3F6B00467B51 /* PermissionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PermissionsViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -829,6 +831,7 @@
 				E29730651C16295300B9433B /* InviteViewController.swift */,
 				E2D12A801C0A52D700DE507E /* LobbyViewController.swift */,
 				E25B0F451DCE778B00021D5B /* MemberListController.swift */,
+				E266A1BF1DEB4E8900C71C28 /* MemberPickerController.swift */,
 				E259082D1DC69BBE00CB6C3F /* MemberViewController.swift */,
 				E2FA13391D81FC8A0057F287 /* SideMenuViewController.swift */,
 				E2F618DE1B02667A0055D09C /* Edit */,
@@ -1312,6 +1315,7 @@
 				E2BC533E1DE5E7EC00C97A2C /* Http.swift in Sources */,
 				E2D12A711C0778C100DE507E /* AirScrollView.swift in Sources */,
 				E2CC15A11C2C897800316356 /* WrapperTableViewCell.swift in Sources */,
+				E266A1C01DEB4E8900C71C28 /* MemberPickerController.swift in Sources */,
 				E24D74541BBAED5F0061F339 /* TaskQueue.swift in Sources */,
 				E2E9AAA71CEF86470057698F /* AirNavigationController.swift in Sources */,
 				E2D12A731C08DC4900DE507E /* AirTextField.swift in Sources */,
@@ -1580,7 +1584,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
@@ -1597,8 +1600,8 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
 				CODE_SIGN_ENTITLEMENTS = Patchr/Patchr.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1648,7 +1651,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
@@ -1688,7 +1690,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios.PatchrShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "PatchrShare/PatchrShare-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1704,8 +1705,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon2;
 				CLANG_ENABLE_MODULES = NO;
 				CODE_SIGN_ENTITLEMENTS = PatchrShare/PatchrShare.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_BITCODE = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1729,7 +1730,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios.PatchrShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "PatchrShare/PatchrShare-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1841,7 +1841,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = Patchr/BridgingHeader.h;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 armv7 armv7s i386 x86_64";
@@ -1881,7 +1880,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.3meters.patchr.ios.PatchrShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "PatchrShare/PatchrShare-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = "1,2";

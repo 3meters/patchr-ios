@@ -169,7 +169,8 @@ class JoinViewController: BaseEditViewController {
                 self.errorLabel.fadeIn()
             }
             else {
-                FireController.instance.addUserToGroup(groupId: groupId, channelId: self.inputChannelId, role: role, username: username, then: { success in
+                let userId = UserController.instance.userId!
+                FireController.instance.addUserToGroup(userId: userId, groupId: groupId, channelId: self.inputChannelId, role: role, username: username, then: { success in
                     self.progress?.hide(true)
                     self.processing = false
                     if success {
