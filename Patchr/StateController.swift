@@ -115,6 +115,9 @@ class StateController: NSObject {
         
         UserDefaults.standard.set(groupId, forKey: "groupId")
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: self, userInfo: nil)
+        if NotificationController.instance.groupBadgeCounts[groupId] != nil {
+            NotificationController.instance.groupBadgeCounts[groupId] = 0
+        }
         next?(nil)
         
         /* Convenience for other parts of the code that need quick access to the group object */
@@ -155,6 +158,9 @@ class StateController: NSObject {
         self.channelId = channelId
         UserDefaults.standard.set(channelId, forKey: self.groupId!) // channelId keyed on groupId
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.ChannelDidSwitch), object: self, userInfo: nil)
+        if NotificationController.instance.channelBadgeCounts[channelId!] != nil {
+            NotificationController.instance.channelBadgeCounts[channelId!] = 0
+        }
         next?(nil)
     }
     

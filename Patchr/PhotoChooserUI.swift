@@ -28,7 +28,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
     weak var hostViewController: UIViewController?
 	fileprivate var finishedChoosing: ((UIImage?, ImageResult?, Bool) -> Void)? = nil
     fileprivate var library: ALAssetsLibrary?
-    fileprivate var chosenPhotoFunction: PhotoButtonFunction?
+    var chosenPhotoFunction: PhotoButtonFunction?
 
 	fileprivate lazy var imagePickerController: UIImagePickerController = {
 		return UIImagePickerController(rootViewController: self.hostViewController!)
@@ -121,7 +121,7 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
         }
 	}
 
-	private enum PhotoButtonFunction {
+	enum PhotoButtonFunction {
 		case TakePhoto
 		case ChooseLibraryPhoto
 		case SearchPhoto

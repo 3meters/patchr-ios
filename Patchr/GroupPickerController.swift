@@ -188,7 +188,12 @@ class GroupPickerController: BaseTableController, UITableViewDelegate {
                     cell.subtitle?.textColor = Theme.colorTextSecondary
                     cell.photoView?.layer.borderWidth = 0
                     cell.accessoryType = .none
-                    
+
+                    if let count = NotificationController.instance.groupBadgeCounts[groupId], count > 0 {
+                        cell.badge?.text = "\(count)"
+                        cell.badge?.isHidden = false
+                    }
+
                     if groupId == StateController.instance.groupId {
                         cell.backgroundColor = Colors.accentColorFill
                         cell.title?.textColor = Colors.white

@@ -33,7 +33,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>200</string>
+	<string>201</string>
 	<key>FacebookAppID</key>
 	<string>894654857249670</string>
 	<key>FacebookDisplayName</key>
@@ -125,7 +125,7 @@
 				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
 				<false/>
 			</dict>
-			<key>patchr.com</key>
+			<key>firebaseio.com</key>
 			<dict>
 				<key>NSIncludesSubdomains</key>
 				<true/>
@@ -136,7 +136,7 @@
 				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
 				<false/>
 			</dict>
-			<key>firebaseio.com</key>
+			<key>patchr.com</key>
 			<dict>
 				<key>NSIncludesSubdomains</key>
 				<true/>
@@ -149,10 +149,10 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Select library photos to include with messages.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Take a photo to include with messages.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Select library photos to include with messages.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

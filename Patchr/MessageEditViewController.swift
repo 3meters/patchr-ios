@@ -13,9 +13,11 @@ import Firebase
 
 class MessageEditViewController: BaseEditViewController {
 
-    /* For editing */
-    var inputMessageId: String!
-    var inputChannelId: String!
+    var inputChannelId: String!     // Insert and edit
+    var inputChannelName: String!   // Insert
+    var inputUsername: String!      // Insert
+    var inputMessageId: String!     // Edit
+    
     var message: FireMessage!
 
     var descriptionField = AirTextView()
@@ -198,21 +200,28 @@ class MessageEditViewController: BaseEditViewController {
         
         if self.mode == .insert {
             
-            let path = "channel-messages/\(self.inputChannelId!)"
-            let refMessage = FireController.db.child(path).childByAutoId()
+            let messageRef = FireController.db.child("channel-messages/\(self.inputChannelId!)").childByAutoId()
             
             var photoMap: [String: Any]?
             if let image = self.photoEditView.imageButton.image(for: .normal) {
                 photoMap = postPhoto(image: image, progress: self.photoEditView.progressBlock, next: { error in
                     if error == nil {
                         photoMap!["uploading"] = NSNull()
-                        refMessage.child("attachments").setValue([["photo": photoMap!]])
+                        messageRef.child("attachments").setValue([["photo": photoMap!]])
                     }
                 })
             }
             
             let timestamp = Utils.now() + (FireController.instance.serverOffset ?? 0)
             let timestampReversed = -1 * timestamp
+            
+            var notificationMap: [String: Any] = [:]
+            notificationMap["channelName"] = self.inputChannelName!
+            notificationMap["username"] = self.inputUsername!
+            notificationMap["created_at"] = Int(timestamp)
+            notificationMap["created_by"] = UserController.instance.userId!
+            notificationMap["channelId"] = self.inputChannelId!
+            notificationMap["groupId"] = StateController.instance.groupId!
             
             var messageMap: [String: Any] = [:]
             messageMap["modified_at"] = Int(timestamp)
@@ -224,13 +233,16 @@ class MessageEditViewController: BaseEditViewController {
             
             if !self.descriptionField.text.isEmpty {
                 messageMap["text"] = self.descriptionField.text
+                notificationMap["text"] = self.descriptionField.text
             }
             
             if photoMap != nil {
                 messageMap["attachments"] = [["photo": photoMap!]]
+                notificationMap["photo"] = photoMap!
             }
             
-            refMessage.setValue(messageMap)
+            messageRef.setValue(messageMap)
+            FireController.db.child("notification-queue/\(messageRef.key)").setValue(notificationMap)
         }
         else if self.mode == .update {
             

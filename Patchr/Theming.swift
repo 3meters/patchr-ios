@@ -56,6 +56,7 @@ class Snow {
 	let colorBackgroundAgeDot       = Colors.accentColorFill
 	let colorBackgroundContactSelected 	= Colors.accentColorFill
 	let colorBackgroundSelected		= Colors.gray90pcntColor
+    let colorBackgroundBadge        = Colors.accentColorFill
 
 	let colorRule                   = Colors.gray85pcntColor
 	let colorRuleActive             = Colors.accentColorRule

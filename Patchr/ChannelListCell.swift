@@ -18,6 +18,14 @@ class ChannelListCell: UITableViewCell {
     
     var channel: FireChannel!
     
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
     func reset() {
         self.title?.text = nil
         self.star?.isHidden = true

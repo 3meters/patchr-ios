@@ -169,6 +169,8 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
         /* Has its own nav because we segue modally and it needs its own stack */
         let controller = MessageEditViewController()
         controller.inputChannelId = self.channel.id
+        controller.inputChannelName = self.channel.name
+        controller.inputUsername = StateController.instance.group.username
         controller.mode = .insert
         let navController = AirNavigationController()
         navController.viewControllers = [controller]

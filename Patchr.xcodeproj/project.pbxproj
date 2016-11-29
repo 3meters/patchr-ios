@@ -154,6 +154,7 @@
 		E2B756A91D84600E00C102EC /* ChannelsHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B756A81D84600E00C102EC /* ChannelsHeaderView.swift */; };
 		E2B8A4B41CE7818B00A28D3A /* CKRadialMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = E2B8A4B21CE7818B00A28D3A /* CKRadialMenu.m */; };
 		E2B8A4B61CE7875400A28D3A /* AirRadialMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8A4B51CE7875400A28D3A /* AirRadialMenu.swift */; };
+		E2B98F901DEDD3A50041E503 /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B98F8F1DEDD3A50041E503 /* NotificationController.swift */; };
 		E2BC53271DDF458700C97A2C /* GroupEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BC53261DDF458700C97A2C /* GroupEditViewController.swift */; };
 		E2BC53291DE20B6400C97A2C /* UsenameSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BC53281DE20B6300C97A2C /* UsenameSettingViewController.swift */; };
 		E2BC532B1DE20E6F00C97A2C /* AirTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2BC532A1DE20E6F00C97A2C /* AirTextFieldCell.swift */; };
@@ -385,6 +386,7 @@
 		E2B8A4B21CE7818B00A28D3A /* CKRadialMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CKRadialMenu.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		E2B8A4B31CE7818B00A28D3A /* CKRadialMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CKRadialMenu.h; sourceTree = "<group>"; };
 		E2B8A4B51CE7875400A28D3A /* AirRadialMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirRadialMenu.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		E2B98F8F1DEDD3A50041E503 /* NotificationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationController.swift; sourceTree = "<group>"; };
 		E2BC53261DDF458700C97A2C /* GroupEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupEditViewController.swift; sourceTree = "<group>"; };
 		E2BC53281DE20B6300C97A2C /* UsenameSettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsenameSettingViewController.swift; sourceTree = "<group>"; };
 		E2BC532A1DE20E6F00C97A2C /* AirTextFieldCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirTextFieldCell.swift; sourceTree = "<group>"; };
@@ -482,6 +484,7 @@
 				E2BC53321DE5D54600C97A2C /* BingController.swift */,
 				9FDCC68ACDC02C764EE70B02 /* FireController.swift */,
 				9FDCCADB4957C2E128DDE9FF /* MainController.swift */,
+				E2B98F8F1DEDD3A50041E503 /* NotificationController.swift */,
 				E28D565E1BB1849F00BFD433 /* ReachabilityManager.swift */,
 				E2BC53361DE5DE4500C97A2C /* StateController.swift */,
 				E2BC53381DE5DE5600C97A2C /* UserController.swift */,
@@ -1244,6 +1247,7 @@
 				E24A87261B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift in Sources */,
 				E227294B1CEA743600913041 /* GalleryGridViewController.swift in Sources */,
 				E25908321DC7B3AA00CB6C3F /* AirLabelStack.swift in Sources */,
+				E2B98F901DEDD3A50041E503 /* NotificationController.swift in Sources */,
 				E20C3A851BE04BBC008CCED1 /* Stopwatch.swift in Sources */,
 				E2999EE51DC2CD3B005C69D8 /* PhotoBrowser.swift in Sources */,
 				E2B8A4B61CE7875400A28D3A /* AirRadialMenu.swift in Sources */,

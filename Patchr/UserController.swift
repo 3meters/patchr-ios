@@ -83,6 +83,10 @@ class UserController: NSObject {
         
         Log.i("User logged in: \(userId)")
         
+        if let token = FIRInstanceID.instanceID().token() {
+            FireController.db.child("installs/\(userId)/\(token)").setValue(true)
+        }
+        
         self.userId = userId
         self.userQuery?.remove()
         self.userQuery = UserQuery(userId: userId, groupId: nil, trackPresence: true)

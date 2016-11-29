@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import UserNotifications
 import Keys
 import AFNetworking
 import AFNetworkActivityLogger
@@ -15,6 +16,8 @@ import AWSS3
 import Branch
 import Bugsnag
 import Firebase
+import FirebaseInstanceID
+import FirebaseMessaging
 import FirebaseRemoteConfig
 
 @UIApplicationMain
@@ -22,7 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var firstLaunch: Bool = false
-
+    
     /*--------------------------------------------------------------------------------------------
     * Delegate methods
     *--------------------------------------------------------------------------------------------*/
@@ -32,8 +35,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Log.prepare()
         Log.i("Patchr launching...")
         
-        /* Initialize Firebase */
+        /* Remote notifications */
+        if #available(iOS 10.0, *) {
+            
+            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+            UNUserNotificationCenter.current().requestAuthorization(options: authOptions, completionHandler: {_, _ in })
+            
+            /* For iOS 10 display notification (sent via APNS) */
+            UNUserNotificationCenter.current().delegate = self
+            
+            /* For iOS 10 data message (sent via FCM) */
+            FIRMessaging.messaging().remoteMessageDelegate = self
+        }
+        else {
+            let settings: UIUserNotificationSettings = UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
+            application.registerUserNotificationSettings(settings)
+        }
+        
+        NotificationController.instance.prepare()
+        application.registerForRemoteNotifications()
+        
         FIRApp.configure()
+        FIRDatabase.database().persistenceEnabled = true
         FIRDatabase.setLoggingEnabled(false)
         
         /* Remote config */
@@ -63,7 +86,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #if DEBUG
         AFNetworkActivityLogger.shared().startLogging()
         AFNetworkActivityLogger.shared().level = AFHTTPRequestLoggerLevel.AFLoggerLevelFatal
-        #endif
+        #endif        
 
         /* Flag first launch for special treatment */
         if !UserDefaults.standard.bool(forKey: "firstLaunch") {
@@ -131,6 +154,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         Log.d("Application will enter foreground", breadcrumb: true)
+        application.applicationIconBadgeNumber = 0
+        NotificationController.instance.totalBadgeCount = 0
+    }
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        Log.d("Application did become active", breadcrumb: true)
+        NotificationController.instance.connectToFcm()
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
@@ -139,12 +169,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidEnterBackground(_ application: UIApplication) {
         Log.d("Application did enter background", breadcrumb: true)
+        NotificationController.instance.disconnectFromFcm()
     }
 
     /*--------------------------------------------------------------------------------------------
-    * Methods
+    * Notifications
     *--------------------------------------------------------------------------------------------*/
-
+    
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
+        NotificationController.instance.didReceiveRemoteNotification(application: application, notification: userInfo, fetchCompletionHandler: nil)
+    }
+    
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        NotificationController.instance.didReceiveRemoteNotification(application: application, notification: userInfo, fetchCompletionHandler: completionHandler)
+    }
+    
+    func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
+        NotificationController.instance.didReceiveLocalNotification(application: application, notification: notification)
+    }
+    
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        NotificationController.instance.didFailToRegisterForRemoteNotificationsWithError(application: application, error: error)
+    }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        NotificationController.instance.didRegisterForRemoteNotificationsWithDeviceToken(application: application, deviceToken: deviceToken)
+    }
+    
     /*--------------------------------------------------------------------------------------------
     * Background Sessions
     *--------------------------------------------------------------------------------------------*/
@@ -162,5 +213,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          */
         AWSS3TransferUtility.interceptApplication(application, handleEventsForBackgroundURLSession: identifier, completionHandler: completionHandler)
         Log.d("handleEventsForBackgroundURLSession called")
+    }
+}
+
+
+@available(iOS 10, *)
+extension AppDelegate : UNUserNotificationCenterDelegate {
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter
+        , willPresent notification: UNNotification
+        , withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        
+        /* A local or remote notification has been delivered. */
+        
+        let userInfo = notification.request.content.userInfo
+        Log.d(userInfo.description)
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter
+        , didReceive response: UNNotificationResponse
+        , withCompletionHandler completionHandler: @escaping () -> Void) {
+        
+        /* User interacted with notification. Could be tap, dismiss, action button. */
+        
+        let userInfo = response.notification.request.content.userInfo
+        let channelId = userInfo["channelId"] as! String
+        let groupId = userInfo["groupId"] as! String
+        StateController.instance.setGroupId(groupId: groupId, channelId: channelId)
+        MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+    }
+}
+
+extension AppDelegate : FIRMessagingDelegate {
+    func applicationReceivedRemoteMessage(_ remoteMessage: FIRMessagingRemoteMessage) {
+        /* Receive data message on iOS 10 devices while app is in the foreground. */
+        Log.d(remoteMessage.appData.description)
     }
 }

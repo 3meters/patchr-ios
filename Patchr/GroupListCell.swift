@@ -12,13 +12,35 @@ class GroupListCell: UITableViewCell {
     @IBOutlet weak var photoView: PhotoView?
     @IBOutlet weak var title: UILabel?
     @IBOutlet weak var subtitle: UILabel?
+    @IBOutlet weak var badge: UILabel?
     
     var group: FireGroup!
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        initialize()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        initialize()
+    }
+    
+    func initialize() {
+        self.badge?.backgroundColor = Theme.colorBackgroundBadge
+    }
+    
+    override func layoutSubviews() {
+        self.badge?.layer.cornerRadius = (self.badge?.frame.size.width)! / 2
+    }
     
     func reset() {
         self.photoView?.photo.image = nil
         self.title?.text = nil
         self.subtitle?.text = nil
+        self.badge?.text = nil
+        self.badge?.isHidden = true
+        self.group = nil
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -35,6 +57,7 @@ class GroupListCell: UITableViewCell {
     
     func bind(group: FireGroup) {
         self.group = group
+        
         self.title?.text = group.title!
         self.subtitle?.text = "\(group.role!)"
         

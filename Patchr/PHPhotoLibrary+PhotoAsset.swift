@@ -81,7 +81,7 @@ public extension PHPhotoLibrary {
                     completion(PHAsset.ah_fetchAssetWithLocalIdentifier(identifier: placeholder.localIdentifier, options: nil))
                 }
                 else {
-                    print(error)
+                    print(error as Any)
                     completion(nil)
                 }
         })
@@ -123,7 +123,7 @@ public extension PHPhotoLibrary {
                     completion(PHAsset.ah_fetchAssetWithLocalIdentifier(identifier: placeholder.localIdentifier, options:nil))
                 }
                 else {
-                    print(error)
+                    print(error as Any)
                     completion(nil)
                 }
         })
@@ -167,7 +167,7 @@ public extension PHPhotoLibrary {
                     completion(fetchResult.firstObject!)
                 }
                 else {
-                    print(error)
+                    print(error as Any)
                     completion(nil)
                 }
         })

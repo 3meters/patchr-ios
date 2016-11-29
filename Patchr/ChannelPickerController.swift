@@ -195,6 +195,10 @@ class ChannelPickerController: BaseTableController, UITableViewDelegate, SlideMe
                     cell.star?.tintColor = Colors.brandColorLight
                     cell.accessoryType = .none
                     
+                    if let count = NotificationController.instance.channelBadgeCounts[channelId], count > 0 {
+                        cell.title?.textColor = Colors.accentColorDark
+                    }
+                    
                     if channelId == StateController.instance.channelId {
                         cell.backgroundColor = Colors.accentColorFill
                         cell.title?.textColor = Colors.white
