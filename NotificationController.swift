@@ -46,18 +46,22 @@ class NotificationController: NSObject {
             MainController.instance.showChannel(groupId: groupId, channelId: channelId)
         }
         else {
-            if application.applicationState != .active {
-                if self.groupBadgeCounts[groupId] == nil {
-                    self.groupBadgeCounts[groupId] = 0
-                }
-                if self.channelBadgeCounts[channelId] == nil {
-                    self.channelBadgeCounts[channelId] = 0
-                }
+            if application.applicationState == .background {
                 self.totalBadgeCount += 1
-                self.groupBadgeCounts[groupId] = self.groupBadgeCounts[groupId]! + 1
-                self.channelBadgeCounts[channelId] = self.channelBadgeCounts[channelId]! + 1
                 application.applicationIconBadgeNumber = self.totalBadgeCount
             }
+            
+            if self.groupBadgeCounts[groupId] == nil {
+                self.groupBadgeCounts[groupId] = 0
+            }
+            
+            if self.channelBadgeCounts[channelId] == nil {
+                self.channelBadgeCounts[channelId] = 0
+            }
+            
+            self.groupBadgeCounts[groupId] = self.groupBadgeCounts[groupId]! + 1
+            self.channelBadgeCounts[channelId] = self.channelBadgeCounts[channelId]! + 1
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
         }
         /*
          * We have thirty seconds to process and call the completion handler before being

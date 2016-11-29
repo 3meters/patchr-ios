@@ -139,6 +139,7 @@ PODS:
   - SDWebImage (3.8.2):
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
+  - SlackTextViewController (1.9.5)
   - SlideMenuControllerSwift (3.0.0)
   - UIDevice-Hardware (0.1.8)
 
@@ -170,6 +171,7 @@ DEPENDENCIES:
   - pop (~> 1.0)
   - ReachabilitySwift (~> 3)
   - SDWebImage (~> 3.8.1)
+  - SlackTextViewController (from `~/code/SlackTextViewController`)
   - SlideMenuControllerSwift
   - UIDevice-Hardware (~> 0.1.7)
 
@@ -178,6 +180,8 @@ EXTERNAL SOURCES:
     :path: ~/code/IDMPhotoBrowser
   Keys:
     :path: Pods/CocoaPodsKeys
+  SlackTextViewController:
+    :path: ~/code/SlackTextViewController
 
 SPEC CHECKSUMS:
   AFNetworkActivityLogger: 121486778117d53b3ab1c61d264b88081d0c3eee
@@ -217,9 +221,10 @@ SPEC CHECKSUMS:
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
   ReachabilitySwift: f5b9bb30a0777fac8f09ce8b067e32faeb29bb64
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
+  SlackTextViewController: fbcdadbb8090673f604484ff5b6eb8d77baed42a
   SlideMenuControllerSwift: 9c0a84f9a3fba51681debd7be77617094562ebcc
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
 
-PODFILE CHECKSUM: 5b10d58205c728768ae8b7f02fcaaad1bfc17a47
+PODFILE CHECKSUM: 7166ff783dafa2f65f251f13a850e2c41bad5686
 
 COCOAPODS: 1.1.0.rc.3

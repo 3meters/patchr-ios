@@ -95,6 +95,10 @@ class GroupPickerController: BaseTableController, UITableViewDelegate {
      * Notifications
      *--------------------------------------------------------------------------------------------*/
     
+    func groupDidChange(notification: NSNotification?) {
+        self.tableView.reloadData() // To pickup badge changes
+    }
+
     /*--------------------------------------------------------------------------------------------
      * Methods
      *--------------------------------------------------------------------------------------------*/
@@ -164,6 +168,8 @@ class GroupPickerController: BaseTableController, UITableViewDelegate {
                 self.navigationItem.rightBarButtonItems = [logoutButton]
             }
         })
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(groupDidChange(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidChange), object: nil)
     }
     
     func bind() {
@@ -188,6 +194,7 @@ class GroupPickerController: BaseTableController, UITableViewDelegate {
                     cell.subtitle?.textColor = Theme.colorTextSecondary
                     cell.photoView?.layer.borderWidth = 0
                     cell.accessoryType = .none
+                    cell.tintColor = Colors.brandColor
 
                     if let count = NotificationController.instance.groupBadgeCounts[groupId], count > 0 {
                         cell.badge?.text = "\(count)"
@@ -200,8 +207,8 @@ class GroupPickerController: BaseTableController, UITableViewDelegate {
                         cell.subtitle?.textColor = Colors.black
                         cell.photoView?.layer.borderColor = Colors.opacity50pcntWhite.cgColor
                         cell.photoView?.layer.borderWidth = 0.5
-                        cell.tintColor = Colors.white
                         cell.accessoryType = .checkmark
+                        cell.tintColor = Colors.white
                     }
                     
                     FireController.db.child("groups/\(groupId)").observeSingleEvent(of: .value, with: { snap in

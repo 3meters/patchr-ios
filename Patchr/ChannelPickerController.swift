@@ -97,6 +97,7 @@ class ChannelPickerController: BaseTableController, UITableViewDelegate, SlideMe
     *--------------------------------------------------------------------------------------------*/
 
     func groupDidChange(notification: NSNotification?) {
+        self.tableView.reloadData()
         bind()
         self.searchDataSource.load()
     }

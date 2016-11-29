@@ -20,7 +20,8 @@ inhibit_all_warnings!
 use_frameworks!
 
 target 'Patchr' do
-    pod 'IDMPhotoBrowser', :path => '~/code/IDMPhotoBrowser'
+    pod 'IDMPhotoBrowser',          :path => '~/code/IDMPhotoBrowser'
+    pod 'SlackTextViewController',  :path => '~/code/SlackTextViewController'
     pod 'SDWebImage',               '~> 3.8.1'
     pod 'AWSS3',                    '2.4.9'
     pod 'AFNetworking',             '~> 2.6'

@@ -15,7 +15,7 @@
             <rect key="frame" x="0.0" y="0.0" width="391" height="68"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="LTM-Mi-qV7" id="f05-yI-zfl">
-                <rect key="frame" x="0.0" y="0.0" width="391" height="68"/>
+                <rect key="frame" x="0.0" y="0.0" width="391" height="67"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="X0K-3n-IIP" customClass="PhotoView" customModule="Patchr">
@@ -35,24 +35,20 @@
                         </userDefinedRuntimeAttributes>
                     </view>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FXG-gs-i6e" userLabel="Badge">
-                        <rect key="frame" x="10" y="6" width="20" height="20"/>
-                        <color key="backgroundColor" red="0.89803921568627454" green="0.22352941176470587" blue="0.20784313725490194" alpha="1" colorSpace="calibratedRGB"/>
+                        <rect key="frame" x="10" y="6" width="22" height="22"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="20" id="G8W-ae-Sc2"/>
-                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="20" id="s4f-fo-YcZ"/>
+                            <constraint firstAttribute="height" constant="22" id="G8W-ae-Sc2"/>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="22" id="s4f-fo-YcZ"/>
                         </constraints>
                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                         <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                <real key="value" value="12"/>
-                            </userDefinedRuntimeAttribute>
                             <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
                                 <color key="value" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             </userDefinedRuntimeAttribute>
                             <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
-                                <real key="value" value="1"/>
+                                <real key="value" value="0.75"/>
                             </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </label>

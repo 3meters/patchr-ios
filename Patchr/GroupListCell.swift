@@ -26,15 +26,15 @@ class GroupListCell: UITableViewCell {
         initialize()
     }
     
-    func initialize() {
-        self.badge?.backgroundColor = Theme.colorBackgroundBadge
-    }
+    func initialize() {}
     
     override func layoutSubviews() {
+        super.layoutSubviews()
         self.badge?.layer.cornerRadius = (self.badge?.frame.size.width)! / 2
     }
     
     func reset() {
+        self.badge?.backgroundColor = Theme.colorBackgroundBadge
         self.photoView?.photo.image = nil
         self.title?.text = nil
         self.subtitle?.text = nil
