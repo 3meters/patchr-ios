@@ -149,8 +149,8 @@ class InviteViewController: BaseEditViewController {
             self.navigationItem.rightBarButtonItems = [closeButton]
         }
         else {
-            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(doneAction(sender:)))
-            self.navigationItem.rightBarButtonItems = [closeButton]
+            let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(closeAction(sender:)))
+            self.navigationItem.rightBarButtonItems = [doneButton]
         }
 		
 		self.contentHolder.addSubview(self.message)
@@ -169,7 +169,7 @@ class InviteViewController: BaseEditViewController {
             if error == nil {
                 let invite = response as! InviteItem
                 let inviteUrl = invite.url
-                let userTitle = UserController.instance.userTitle
+                let userTitle = UserController.instance.userTitle ?? self.inputUsername
                 let userEmail = UserController.instance.userEmail
                 
                 let subject = "\(userTitle!) invited you to \(groupTitle) on Patchr"
@@ -250,6 +250,9 @@ extension InviteViewController: MFMailComposeViewControllerDelegate {
         case MFMailComposeResult.sent:        // 2
             Reporting.track("Sent Invites")
             UIShared.Toast(message: "Invites sent", controller: self, addToWindow: false)
+            if self.flow == .onboardCreate {
+                doneAction(sender: nil)
+            }
         case MFMailComposeResult.failed:    // 3
             UIShared.Toast(message: "Invites send failure: \(error!.localizedDescription)", controller: self, addToWindow: false)
             break

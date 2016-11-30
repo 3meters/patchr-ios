@@ -118,7 +118,6 @@ class SideMenuViewController: UITableViewController {
             self.userQuery!.observe(with: { user in
                 
                 guard user != nil else {
-                    assertionFailure("user not found or no longer exists")
                     return
                 }
                 

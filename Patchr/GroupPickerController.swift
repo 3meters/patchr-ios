@@ -207,7 +207,7 @@ class GroupPickerController: BaseTableController, UITableViewDelegate {
                         cell.subtitle?.textColor = Colors.black
                         cell.photoView?.layer.borderColor = Colors.opacity50pcntWhite.cgColor
                         cell.photoView?.layer.borderWidth = 0.5
-                        cell.accessoryType = .checkmark
+                        cell.accessoryType = cell.badge!.isHidden ? .checkmark : .none
                         cell.tintColor = Colors.white
                     }
                     

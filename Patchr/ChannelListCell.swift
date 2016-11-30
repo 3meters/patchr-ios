@@ -13,6 +13,7 @@ class ChannelListCell: UITableViewCell {
     @IBOutlet weak var star: UIImageView?
     @IBOutlet weak var lock: UIImageView?
     @IBOutlet weak var status: UILabel?
+    @IBOutlet weak var badge: UILabel?
     @IBOutlet weak var statusWidth: NSLayoutConstraint!
     @IBOutlet weak var lockWidth: NSLayoutConstraint!
     
@@ -26,11 +27,19 @@ class ChannelListCell: UITableViewCell {
         super.init(coder: aDecoder)
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.badge?.layer.cornerRadius = (self.badge?.frame.size.width)! / 2
+    }
+    
     func reset() {
         self.title?.text = nil
         self.star?.isHidden = true
         self.lock?.isHidden = true
         self.status?.isHidden = true
+        self.badge?.backgroundColor = Theme.colorBackgroundBadge
+        self.badge?.text = nil
+        self.badge?.isHidden = true
         self.channel = nil
     }
     

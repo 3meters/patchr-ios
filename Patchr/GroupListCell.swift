@@ -18,15 +18,11 @@ class GroupListCell: UITableViewCell {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        initialize()
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        initialize()
     }
-    
-    func initialize() {}
     
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -34,25 +30,25 @@ class GroupListCell: UITableViewCell {
     }
     
     func reset() {
-        self.badge?.backgroundColor = Theme.colorBackgroundBadge
         self.photoView?.photo.image = nil
         self.title?.text = nil
         self.subtitle?.text = nil
+        self.badge?.backgroundColor = Theme.colorBackgroundBadge
         self.badge?.text = nil
         self.badge?.isHidden = true
         self.group = nil
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
-        let color = self.photoView?.backgroundColor
+        let colorPhoto = self.photoView?.backgroundColor
         super.setSelected(selected, animated: animated)
-        self.photoView?.backgroundColor = color
+        self.photoView?.backgroundColor = colorPhoto
     }
     
     override func setHighlighted(_ highlighted: Bool, animated: Bool) {
-        let color = self.photoView?.backgroundColor
+        let colorPhoto = self.photoView?.backgroundColor
         super.setHighlighted(highlighted, animated: animated)
-        self.photoView?.backgroundColor = color
+        self.photoView?.backgroundColor = colorPhoto
     }
     
     func bind(group: FireGroup) {

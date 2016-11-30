@@ -12,6 +12,7 @@ class NotificationController: NSObject {
     
     var groupBadgeCounts: [String: Int] = [:]
     var channelBadgeCounts: [String: Int] = [:]
+    var newMessages: [String: Bool] = [:]
     var totalBadgeCount = 0
     
     private override init() {}
@@ -39,6 +40,8 @@ class NotificationController: NSObject {
          */
         let channelId = notification["channelId"] as! String
         let groupId = notification["groupId"] as! String
+        let messageId = notification["messageId"] as! String
+        let userId = UserController.instance.userId
         
         if application.applicationState == .inactive {
             /* Switch to the channel */
@@ -46,22 +49,34 @@ class NotificationController: NSObject {
             MainController.instance.showChannel(groupId: groupId, channelId: channelId)
         }
         else {
-            if application.applicationState == .background {
-                self.totalBadgeCount += 1
-                application.applicationIconBadgeNumber = self.totalBadgeCount
+            if let creatorId = notification["userId"] as? String, creatorId != userId {
+                if application.applicationState == .background {
+                    self.totalBadgeCount += 1
+                    application.applicationIconBadgeNumber = self.totalBadgeCount
+                }
+                
+                if self.groupBadgeCounts[groupId] == nil {
+                    self.groupBadgeCounts[groupId] = 0
+                }
+                
+                if self.channelBadgeCounts[channelId] == nil {
+                    self.channelBadgeCounts[channelId] = 0
+                }
+                
+                self.newMessages[messageId] = true
+                self.groupBadgeCounts[groupId] = self.groupBadgeCounts[groupId]! + 1
+                self.channelBadgeCounts[channelId] = self.channelBadgeCounts[channelId]! + 1
+                
+                if userId != nil {
+                    let channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)
+                    channelQuery.once(with: { channel in
+                        if channel?.priority != 0 {
+                            channel?.unread(on: true)
+                        }
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
+                    })
+                }
             }
-            
-            if self.groupBadgeCounts[groupId] == nil {
-                self.groupBadgeCounts[groupId] = 0
-            }
-            
-            if self.channelBadgeCounts[channelId] == nil {
-                self.channelBadgeCounts[channelId] = 0
-            }
-            
-            self.groupBadgeCounts[groupId] = self.groupBadgeCounts[groupId]! + 1
-            self.channelBadgeCounts[channelId] = self.channelBadgeCounts[channelId]! + 1
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
         }
         /*
          * We have thirty seconds to process and call the completion handler before being

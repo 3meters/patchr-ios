@@ -15,7 +15,7 @@
             <rect key="frame" x="0.0" y="0.0" width="391" height="68"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="LTM-Mi-qV7" id="f05-yI-zfl">
-                <rect key="frame" x="0.0" y="0.0" width="391" height="67"/>
+                <rect key="frame" x="0.0" y="0.0" width="391" height="67.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="X0K-3n-IIP" customClass="PhotoView" customModule="Patchr">
@@ -34,24 +34,6 @@
                             </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </view>
-                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FXG-gs-i6e" userLabel="Badge">
-                        <rect key="frame" x="10" y="6" width="22" height="22"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="22" id="G8W-ae-Sc2"/>
-                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="22" id="s4f-fo-YcZ"/>
-                        </constraints>
-                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
-                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                        <nil key="highlightedColor"/>
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
-                                <color key="value" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                            </userDefinedRuntimeAttribute>
-                            <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
-                                <real key="value" value="0.75"/>
-                            </userDefinedRuntimeAttribute>
-                        </userDefinedRuntimeAttributes>
-                    </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Group Patch (Jay)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="meX-Hb-lPU">
                         <rect key="frame" x="72" y="14" width="303" height="20"/>
                         <constraints>
@@ -70,20 +52,41 @@
                         <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FXG-gs-i6e" userLabel="Badge">
+                        <rect key="frame" x="353" y="23" width="22" height="22"/>
+                        <color key="backgroundColor" red="1" green="0.50196078430000002" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="22" id="G8W-ae-Sc2"/>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="22" id="s4f-fo-YcZ"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
+                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                <color key="value" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                <real key="value" value="0.75"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </label>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="FXG-gs-i6e" firstAttribute="centerY" secondItem="f05-yI-zfl" secondAttribute="centerY" id="29k-mS-Z7t"/>
                     <constraint firstItem="meX-Hb-lPU" firstAttribute="leading" secondItem="X0K-3n-IIP" secondAttribute="trailing" constant="8" id="7VO-3B-Xfq"/>
                     <constraint firstItem="X0K-3n-IIP" firstAttribute="leading" secondItem="f05-yI-zfl" secondAttribute="leading" constant="16" id="9MQ-fs-qfT"/>
                     <constraint firstItem="NLS-Er-vuL" firstAttribute="bottom" secondItem="X0K-3n-IIP" secondAttribute="bottom" constant="-4" id="AAi-Ze-k7m"/>
-                    <constraint firstItem="FXG-gs-i6e" firstAttribute="leading" secondItem="f05-yI-zfl" secondAttribute="leading" constant="10" id="FFD-QB-xbd"/>
                     <constraint firstItem="NLS-Er-vuL" firstAttribute="trailing" secondItem="f05-yI-zfl" secondAttribute="trailing" constant="-16" id="IvE-o2-o3S"/>
                     <constraint firstItem="X0K-3n-IIP" firstAttribute="centerY" secondItem="f05-yI-zfl" secondAttribute="centerY" id="JSV-cj-9Vg"/>
                     <constraint firstItem="NLS-Er-vuL" firstAttribute="leading" secondItem="X0K-3n-IIP" secondAttribute="trailing" constant="8" id="aWO-7d-OOi"/>
                     <constraint firstItem="meX-Hb-lPU" firstAttribute="trailing" secondItem="f05-yI-zfl" secondAttribute="trailing" constant="-16" id="evd-Vj-xBV"/>
-                    <constraint firstItem="FXG-gs-i6e" firstAttribute="top" secondItem="f05-yI-zfl" secondAttribute="top" constant="6" id="lLj-eZ-eaA"/>
                     <constraint firstItem="meX-Hb-lPU" firstAttribute="top" secondItem="X0K-3n-IIP" secondAttribute="top" constant="4" id="soN-0S-azX"/>
                 </constraints>
             </tableViewCellContentView>
+            <constraints>
+                <constraint firstItem="FXG-gs-i6e" firstAttribute="trailing" secondItem="LTM-Mi-qV7" secondAttribute="trailing" constant="-16" id="mOC-6n-QvF"/>
+            </constraints>
             <connections>
                 <outlet property="badge" destination="FXG-gs-i6e" id="fog-12-eg0"/>
                 <outlet property="photoView" destination="X0K-3n-IIP" id="vba-NC-l4f"/>

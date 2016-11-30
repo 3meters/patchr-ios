@@ -38,6 +38,8 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
     var progressOffsetY     = Float(-48)
     var progressOffsetX     = Float(8)
     
+    var newMessages: [String: Bool] = [:]
+    
     var titleView: ChannelTitleView!
 
     /* Load more button displayed in table footer */
@@ -49,7 +51,7 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
     /* Only used for row sizing */
     var rowHeights			: NSMutableDictionary = [:]
     var itemTemplate		= MessageViewCell()
-    var itemPadding			= UIEdgeInsetsMake(12, 12, 20, 12)
+    var itemPadding	= UIEdgeInsetsMake(12, 12, 12, 12)
 
     /*--------------------------------------------------------------------------------------------
      * MARK: - Lifecycle
@@ -395,6 +397,7 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
             self.headerView.reset()
             self.tableView.dataSource = nil
             self.tableView.reloadData()
+            self.newMessages.removeAll()
         }
         
         let userId = UserController.instance.userId
@@ -505,6 +508,7 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
                 let label = view.description_ as! TTTAttributedLabel
                 label.delegate = self
             }
+            
             view.photo?.isUserInteractionEnabled = true
             view.photo?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.browsePhotoAction(sender:))))
             cell.injectView(view: view, padding: self.itemPadding)
@@ -512,10 +516,21 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
         }
         
         if let messageView = cell.view! as? MessageViewCell {
+
             messageView.bind(message: message)
+            
             if message.creator != nil {
                 messageView.userPhoto.target = message.creator
                 messageView.userPhoto.addTarget(self, action: #selector(self.browseMemberAction(sender:)), for: .touchUpInside)
+            }
+            
+            if NotificationController.instance.newMessages[message.id!] != nil {
+                self.newMessages[message.id!] = true
+                NotificationController.instance.newMessages.removeValue(forKey: message.id!)
+            }
+            
+            if self.newMessages[message.id!] != nil {
+                messageView.unread.isHidden = false
             }
         }
     }
@@ -809,6 +824,7 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
             self.itemTemplate.bind(message: message)
             self.itemTemplate.bounds.size.width = viewWidth - (self.itemPadding.left + self.itemPadding.right)
             self.itemTemplate.sizeToFit()
+            
             viewHeight = self.itemTemplate.height() + (self.itemPadding.top + self.itemPadding.bottom + 1)
 
             if message.id != nil {

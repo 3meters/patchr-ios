@@ -53,7 +53,7 @@ class NotificationSettingsViewController: UITableViewController {
     func initialize() {
         Reporting.screen("NotificationSettings")
 
-        self.navigationItem.title = "Notifications"
+        self.navigationItem.title = "Notifications and Sounds"
 
         self.tableView = UITableView(frame: self.tableView.frame, style: .grouped)
         self.tableView.rowHeight = 48
@@ -64,8 +64,6 @@ class NotificationSettingsViewController: UITableViewController {
         self.typeAllCell.textLabel?.text = "Activity of any kind"
         self.typeDirectOnlyCell.textLabel?.text = "Only direct messages"
         self.typeNoneCell.textLabel?.text = "Nothing (push notifications off)"
-        self.soundCell.textLabel?.text = "Sound"
-        self.vibrateCell.textLabel?.text = "Vibrate"
         self.soundEffectsCell.textLabel!.text = "Play sound effects"
         
         self.typeAllCell.selectionStyle = .none
@@ -80,20 +78,12 @@ class NotificationSettingsViewController: UITableViewController {
             }
         }
         
-        self.soundCell.accessoryView = makeSwitch(notificationType: .soundForNotifications, state: userDefaults.bool(forKey: PatchrUserDefaultKey(subKey: "SoundForNotifications")))
-        self.vibrateCell.accessoryView = makeSwitch(notificationType: .vibrateForNotifications, state: userDefaults.bool(forKey: PatchrUserDefaultKey(subKey: "VibrateForNotifications")))
         self.soundEffectsCell.accessoryView = makeSwitch(notificationType: .playSoundEffects, state: userDefaults.bool(forKey: PatchrUserDefaultKey(subKey: "SoundEffects")))
     }
 
     func toggleAction(sender: AnyObject?) {
         if let switcher = sender as? UISwitch {
-            if switcher.tag == Setting.soundForNotifications.rawValue {
-                userDefaults.set(switcher.isOn, forKey: PatchrUserDefaultKey(subKey: "SoundForNotifications"))
-            }
-            else if switcher.tag == Setting.vibrateForNotifications.rawValue {
-                userDefaults.set(switcher.isOn, forKey: PatchrUserDefaultKey(subKey: "VibrateForNotifications"))
-            }
-            else if switcher.tag == Setting.playSoundEffects.rawValue {
+            if switcher.tag == Setting.playSoundEffects.rawValue {
                 userDefaults.set(switcher.isOn, forKey: PatchrUserDefaultKey(subKey: "SoundEffects"))
             }
         }
@@ -139,20 +129,20 @@ extension NotificationSettingsViewController {
                 groupMembersPath: notificationsValue,
                 memberGroupsPath: notificationsValue
             ]
+            
             FireController.db.updateChildValues(updates)
             userDefaults.set(notificationsValue, forKey: PatchrUserDefaultKey(subKey: "NotificationType"))
         }
     }
 
     override func numberOfSections(in: UITableView) -> Int {
-        return 3
+        return 2
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
             case 0: return 3
-            case 1: return 2
-            case 2: return 1
+            case 1: return 1
             default: fatalError("Unknown number of sections")
         }
     }
@@ -167,12 +157,6 @@ extension NotificationSettingsViewController {
                     default: fatalError("Unknown row in section 0")
                 }
             case 1:
-                switch (indexPath.row) {
-                    case 0: return self.soundCell
-                    case 1: return self.vibrateCell
-                    default: fatalError("Unknown row in section 1")
-                }
-            case 2:
                 return self.soundEffectsCell
             default: fatalError("Unknown section")
         }
@@ -181,8 +165,7 @@ extension NotificationSettingsViewController {
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch (section) {
             case 0: return "Send me push notifications for".uppercased()
-            case 1: return "Notification type".uppercased()
-            case 2: return "Sound".uppercased()
+            case 1: return "Sound".uppercased()
             default: fatalError("Unknown section")
         }
     }

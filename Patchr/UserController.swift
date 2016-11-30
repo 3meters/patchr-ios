@@ -25,7 +25,7 @@ class UserController: NSObject {
         if let profile = self.user?.profile, profile.fullName != nil {
             userTitle = profile.fullName
         }
-        if userTitle == nil, let username = StateController.instance.group.username {
+        if userTitle == nil, let username = StateController.instance.group?.username {
             userTitle = username
         }
         if userTitle == nil, let username = self.user?.username {
@@ -76,6 +76,8 @@ class UserController: NSObject {
 
     func setUserId(userId: String, next: ((Any?) -> Void)? = nil) {
         
+        var calledBack = false
+        
         guard userId != self.userId else {
             next?(nil)
             return
@@ -102,7 +104,11 @@ class UserController: NSObject {
             }
             
             self.user = user
-            next?(nil)
+            
+            if !calledBack {
+                next?(nil)
+                calledBack = true
+            }
             
             Reporting.updateUser(user: FIRAuth.auth()?.currentUser)
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UserStateDidChange), object: nil, userInfo: nil)

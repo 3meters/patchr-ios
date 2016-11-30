@@ -195,9 +195,11 @@ class ChannelPickerController: BaseTableController, UITableViewDelegate, SlideMe
                     cell.lock?.tintColor = Colors.brandColorLight
                     cell.star?.tintColor = Colors.brandColorLight
                     cell.accessoryType = .none
-                    
+                    cell.tintColor = Colors.brandColor
+
                     if let count = NotificationController.instance.channelBadgeCounts[channelId], count > 0 {
-                        cell.title?.textColor = Colors.accentColorDark
+                        cell.badge?.text = "\(count)"
+                        cell.badge?.isHidden = false
                     }
                     
                     if channelId == StateController.instance.channelId {
@@ -206,7 +208,7 @@ class ChannelPickerController: BaseTableController, UITableViewDelegate, SlideMe
                         cell.lock?.tintColor = Colors.white
                         cell.star?.tintColor = Colors.white
                         cell.tintColor = Colors.white
-                        cell.accessoryType = .checkmark
+                        cell.accessoryType = cell.badge!.isHidden ? .checkmark : .none
                     }
                     
                     let path = "group-channels/\(groupId)/\(channelId)"

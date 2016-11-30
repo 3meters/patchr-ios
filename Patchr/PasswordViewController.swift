@@ -135,7 +135,7 @@ class PasswordViewController: BaseEditViewController {
         self.errorLabel.numberOfLines = 0
         self.errorLabel.font = Theme.fontValidationError
         
-        if self.mode == .reauth {
+        if self.mode == .reauth || (self.flow == .onboardCreate && !self.inputEmailExists) {
             self.forgotPasswordButton.isHidden = true
         }
         else {

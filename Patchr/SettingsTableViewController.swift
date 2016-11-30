@@ -174,7 +174,7 @@ class SettingsTableViewController: UITableViewController {
         self.editProfileCell.textLabel!.text = "Profile Settings"
         self.editGroupCell.textLabel!.text = "Group Settings"
 
-        self.notificationsCell.textLabel!.text = "Notifications and Sound"
+        self.notificationsCell.textLabel!.text = "Notifications and Sounds"
         self.usernameCell.textLabel!.text = "Username"
         self.hideEmailCell.textLabel!.text = "Hide Email"
 

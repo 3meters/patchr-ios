@@ -30,6 +30,7 @@ class FireChannel: NSObject {
     var createdBy: String?
     
     /* Channel link properties for the current user */
+    var priority: Int?
     var starred: Bool?
     var muted: Bool?
     var role: String?
@@ -60,6 +61,7 @@ class FireChannel: NSObject {
         self.archived = nil
         self.role = nil
         self.joinedAt = nil
+        self.priority = nil
     }
 
     func membershipFrom(dict: [String: Any]) {
@@ -67,6 +69,7 @@ class FireChannel: NSObject {
         self.muted = dict["muted"] as? Bool
         self.archived = dict["archived"] as? Bool
         self.role = dict["role"] as? String
+        self.priority = dict["priority"] as? Int
         self.joinedAt = dict["joined_at"] as? Int
     }
     
@@ -78,6 +81,21 @@ class FireChannel: NSObject {
         let indexReversed = Int("-\(FireController.instance.priorities.reversed()[priority])\(self.joinedAt!)")
         let updates: [String: Any] = [
             "starred": on,
+            "priority": priority,
+            "index_priority_joined_at": index!,
+            "index_priority_joined_at_desc": indexReversed!
+        ]
+        
+        FireController.db.child(path).updateChildValues(updates)
+    }
+    
+    func unread(on: Bool) {
+        let userId = UserController.instance.userId
+        let path = "member-channels/\(userId!)/\(self.group!)/\(self.id!)"
+        let priority = on ? 0 : self.starred! ? 1 : 4
+        let index = Int("\(FireController.instance.priorities[priority])\(self.joinedAt!)")
+        let indexReversed = Int("-\(FireController.instance.priorities.reversed()[priority])\(self.joinedAt!)")
+        let updates: [String: Any] = [
             "priority": priority,
             "index_priority_joined_at": index!,
             "index_priority_joined_at_desc": indexReversed!
