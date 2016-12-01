@@ -70,7 +70,6 @@
 		E23EC4D41DBE523D00EBCD42 /* GroupsHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E23EC4D31DBE523D00EBCD42 /* GroupsHeaderView.xib */; };
 		E23EC4D61DBE52AC00EBCD42 /* GroupsHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EC4D51DBE52AC00EBCD42 /* GroupsHeaderView.swift */; };
 		E23EC4D81DBE848B00EBCD42 /* ChannelPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23EC4D71DBE848B00EBCD42 /* ChannelPickerController.swift */; };
-		E24198FE1C1736E900DDA549 /* MessageEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24198FD1C1736E900DDA549 /* MessageEditViewController.swift */; };
 		E241D15A1B1B3FCE00702E01 /* UIView+BorderLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = E241D1591B1B3FCE00702E01 /* UIView+BorderLayer.m */; };
 		E24773451DCA254F00EFB46F /* AirPhoneField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24773441DCA254F00EFB46F /* AirPhoneField.swift */; };
 		E24A87261B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24A87251B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift */; };
@@ -99,6 +98,7 @@
 		E25B0F4A1DCE803B00021D5B /* UserListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E25B0F491DCE803B00021D5B /* UserListCell.xib */; };
 		E25E1E601DBA781900BE1800 /* ChannelsHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E25E1E5F1DBA781900BE1800 /* ChannelsHeaderView.xib */; };
 		E266A1C01DEB4E8900C71C28 /* MemberPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E266A1BF1DEB4E8900C71C28 /* MemberPickerController.swift */; };
+		E26B0B311DEF7C130086FDAD /* BaseSlackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26B0B301DEF7C130086FDAD /* BaseSlackController.swift */; };
 		E26B0C891B456F8A00706F4A /* ExtensionsUi.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26B0C881B456F8A00706F4A /* ExtensionsUi.swift */; };
 		E26B0C921B46D01E00706F4A /* ThumbnailCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E26B0C911B46D01E00706F4A /* ThumbnailCollectionViewCell.xib */; };
 		E26B58511C8B3F6B00467B51 /* PermissionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26B58501C8B3F6B00467B51 /* PermissionsViewController.swift */; };
@@ -310,7 +310,6 @@
 		E23EC4D31DBE523D00EBCD42 /* GroupsHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GroupsHeaderView.xib; sourceTree = "<group>"; };
 		E23EC4D51DBE52AC00EBCD42 /* GroupsHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupsHeaderView.swift; sourceTree = "<group>"; };
 		E23EC4D71DBE848B00EBCD42 /* ChannelPickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelPickerController.swift; sourceTree = "<group>"; };
-		E24198FD1C1736E900DDA549 /* MessageEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = MessageEditViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E241D1581B1B3FCE00702E01 /* UIView+BorderLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+BorderLayer.h"; sourceTree = "<group>"; };
 		E241D1591B1B3FCE00702E01 /* UIView+BorderLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+BorderLayer.m"; sourceTree = "<group>"; };
 		E24773441DCA254F00EFB46F /* AirPhoneField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirPhoneField.swift; sourceTree = "<group>"; };
@@ -338,6 +337,7 @@
 		E25B0F491DCE803B00021D5B /* UserListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserListCell.xib; sourceTree = "<group>"; };
 		E25E1E5F1DBA781900BE1800 /* ChannelsHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChannelsHeaderView.xib; sourceTree = "<group>"; };
 		E266A1BF1DEB4E8900C71C28 /* MemberPickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberPickerController.swift; sourceTree = "<group>"; };
+		E26B0B301DEF7C130086FDAD /* BaseSlackController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseSlackController.swift; sourceTree = "<group>"; };
 		E26B0C881B456F8A00706F4A /* ExtensionsUi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ExtensionsUi.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E26B0C911B46D01E00706F4A /* ThumbnailCollectionViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ThumbnailCollectionViewCell.xib; sourceTree = "<group>"; };
 		E26B58501C8B3F6B00467B51 /* PermissionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PermissionsViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -826,6 +826,7 @@
 			children = (
 				E2D12A7A1C091C4D00DE507E /* BaseViewController.swift */,
 				E28A481E1DE72E0400A01B46 /* BaseTableController.swift */,
+				E26B0B301DEF7C130086FDAD /* BaseSlackController.swift */,
 				E23EC4D71DBE848B00EBCD42 /* ChannelPickerController.swift */,
 				E28A48201DE8867000A01B46 /* ChannelSearchController.swift */,
 				9FDCC7D2BF8341DCBB416DC4 /* ChannelViewController.swift */,
@@ -880,7 +881,6 @@
 				E25603951DDE122B00961E10 /* GroupCreateController.swift */,
 				E2BC53261DDF458700C97A2C /* GroupEditViewController.swift */,
 				E2BC533F1DE5EEC200C97A2C /* JoinViewController.swift */,
-				E24198FD1C1736E900DDA549 /* MessageEditViewController.swift */,
 				E20004DE1B094ACA00425694 /* PasswordEditViewController.swift */,
 				7D021ABD1A9409450047DAAE /* PasswordViewController.swift */,
 				9FDCCE5E0AA449B739AD0137 /* ProfileEditViewController.swift */,
@@ -1266,7 +1266,6 @@
 				E297305E1C136E8300B9433B /* AirRadioButton.swift in Sources */,
 				E256B4281BD3DDC900EBF894 /* AirTableViewCell.swift in Sources */,
 				E28DB2941DBBFA1C008B2E4B /* GroupListCell.swift in Sources */,
-				E24198FE1C1736E900DDA549 /* MessageEditViewController.swift in Sources */,
 				E25327B61B1000C000990A81 /* AirImageView.swift in Sources */,
 				E2999EE31DC25AAE005C69D8 /* EmptyViewController.swift in Sources */,
 				E28A48211DE8867000A01B46 /* ChannelSearchController.swift in Sources */,
@@ -1281,6 +1280,7 @@
 				E2A5A8851B703B9B006D6E81 /* PhotoEditView.swift in Sources */,
 				E20C74351DD934CD00D90A4D /* ChannelEditViewController.swift in Sources */,
 				E2C7C5C21B2A0B730045038A /* NotificationSettingsViewController.swift in Sources */,
+				E26B0B311DEF7C130086FDAD /* BaseSlackController.swift in Sources */,
 				E20C3A7D1BD70DD2008CCED1 /* AirTableView.swift in Sources */,
 				E229CD121C1337A700F5BDAC /* AirLabelBase.swift in Sources */,
 				E20C3A811BDC1D57008CCED1 /* BaseDetailView.swift in Sources */,

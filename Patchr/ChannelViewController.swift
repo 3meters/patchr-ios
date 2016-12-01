@@ -11,13 +11,11 @@ import ReachabilitySwift
 import Firebase
 import FirebaseDatabaseUI
 
-class ChannelViewController: BaseTableController, UITableViewDelegate {
+class ChannelViewController: BaseSlackController {
     
     var channelQuery: ChannelQuery?
     var messagesQuery: FIRDatabaseQuery!
-    var channel: FireChannel!
     
-    var tableView: UITableView!
     var tableViewDataSource: FUITableViewDataSource!
     var cellReuseIdentifier: String!
     var headerView: ChannelDetailView!
@@ -26,11 +24,8 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
     var originalHeaderRect: CGRect?
     var originalScrollTop = CGFloat(-64.0)
     var originalScrollInset: UIEdgeInsets?
-    var lastContentOffset = CGFloat(0)
+    //var lastContentOffset = CGFloat(0)
 
-    var actionButton: AirRadialMenu!
-    var actionButtonCenter: CGPoint!
-    var actionButtonAnimating = false
     var messageBar = UILabel()
     var messageBarTop = CGFloat(0)
     
@@ -75,11 +70,6 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        if self.actionButton != nil {
-            showActionButton()
-        }
-        
         iRate.sharedInstance().promptIfAllCriteriaMet()
         reachabilityChanged()
     }
@@ -140,11 +130,6 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
         UIApplication.shared.setStatusBarHidden(true, with: UIStatusBarAnimation.slide)
     }
     
-    func floatingButtonTapped(gesture: UIGestureRecognizer) {
-        addMessageAction()
-        Animation.bounce(view: self.actionButton)
-    }
-    
     func browseMemberAction(sender: AnyObject?) {
         if let photoView = sender as? PhotoView {
             if let user = photoView.target as? FireUser {
@@ -164,33 +149,6 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
                 UIShared.showPhoto(image: control.image, animateFromView: control, viewController: self, message: container.message)
             }
         }
-    }
-    
-    func addMessageAction() {
-        
-        /* Has its own nav because we segue modally and it needs its own stack */
-        let controller = MessageEditViewController()
-        controller.inputChannelId = self.channel.id
-        controller.inputChannelName = self.channel.name
-        controller.inputUsername = StateController.instance.group.username
-        controller.mode = .insert
-        let navController = AirNavigationController()
-        navController.viewControllers = [controller]
-        
-        self.present(navController, animated: true, completion: nil)
-    }
-    
-    func editMessageAction(message: FireMessage) {
-        
-        /* Has its own nav because we segue modally and it needs its own stack */
-        let controller = MessageEditViewController()
-        controller.inputMessageId = message.id
-        controller.inputChannelId = self.channel.id
-        controller.mode = .update
-        let navController = AirNavigationController()
-        navController.viewControllers = [controller]
-        self.present(navController, animated: true, completion: nil)
-        self.rowHeights.removeObject(forKey: message.id!)
     }
     
     func deleteMessageAction(message: FireMessage) {
@@ -318,7 +276,6 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
         Reporting.screen("PatchDetail")
         
         self.headerView = ChannelDetailView()
-        self.tableView = AirTableView(frame: self.view.frame, style: .plain)
         self.tableView.estimatedRowHeight = 100						// Zero turns off estimates
         self.tableView.rowHeight = UITableViewAutomaticDimension	// Actual height is handled in heightForRowAtIndexPath
         
@@ -369,30 +326,14 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
         self.messageBar.layer.backgroundColor = Colors.accentColorFill.cgColor
         self.messageBar.alpha = 0.0
         
-        /* Action button */
-        self.actionButton = AirRadialMenu(attachedToView: self.view)
-        self.actionButton.bounds.size = CGSize(width:56, height:56)
-        self.actionButton.autoresizingMask = [.flexibleRightMargin, .flexibleLeftMargin, .flexibleBottomMargin, .flexibleTopMargin]
-        self.actionButton.centerView.gestureRecognizers?.forEach(self.actionButton.centerView.removeGestureRecognizer) /* Remove default tap regcognizer */
-        self.actionButton.imageInsets = UIEdgeInsetsMake(14, 14, 14, 14)
-        self.actionButton.imageView.image = UIImage(named: "imgAddLight")    // Default
-        self.actionButton.showBackground = false
-        self.actionButton.centerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(floatingButtonTapped(gesture:))))
-        self.actionButton!.transform = CGAffineTransform.identity
-        
-        self.view.addSubview(self.tableView)
         self.view.addSubview(self.activity)
-        self.view.insertSubview(self.actionButton, at: self.view.subviews.count)
         
         self.headerView.optionsButton.addTarget(self, action: #selector(showChannelActions(gesture:)), for: .touchUpInside)
-        
-        self.actionButton.anchorBottomRight(withRightPadding: 16, bottomPadding: 16, width: self.actionButton!.width(), height: self.actionButton!.height())
-        self.actionButtonCenter = self.actionButton.center
     }
     
     func bind(groupId: String, channelId: String) {
         
-        if self.tableView != nil && self.tableViewDataSource != nil {
+        if self.tableViewDataSource != nil {
             self.rowHeights.removeAllObjects()
             self.headerView.reset()
             self.tableView.dataSource = nil
@@ -425,7 +366,7 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
             guard channel != nil else {
                 /* The channel has been deleted from under us. */
                 self.channelQuery?.remove()
-                if self.tableView != nil && self.tableViewDataSource != nil {
+                if self.tableViewDataSource != nil {
                     self.rowHeights.removeAllObjects()
                     self.headerView.reset()
                     self.tableView.dataSource = nil
@@ -443,7 +384,7 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
             }
             
             self.channel = channel
-            self.drawNavBarButtons()
+            self.bindUi()
             
             /* We do this here so we have tableView sizing */
             if self.tableView.tableHeaderView == nil {
@@ -465,6 +406,12 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
                 self.headerView.bind(channel: self.channel)
                 self.tableView.tableHeaderView = self.headerView
             }
+            
+            if channel?.priority == 0 {
+                channel?.unread(on: false)
+            }
+            
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
         })
         
         self.messagesQuery = FireController.db.child("channel-messages/\(channelId)").queryOrdered(byChild: "created_at_desc")
@@ -535,11 +482,13 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
         }
     }
 
-    func drawNavBarButtons() {
+    func bindUi() {
         
         self.titleView.subtitle?.text = "#\(self.channel.name!)"
         self.titleView.subtitle?.sizeToFit()
         self.titleView.sizeToFit()
+        
+        self.textView.placeholder = "Message #\(self.channel.name!)"
 
         /* Navigation button */
         var button = UIButton(type: .custom)
@@ -589,7 +538,7 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
         }
         
         let edit = UIAlertAction(title: "Edit message", style: .default) { action in
-            self.editMessageAction(message: message)
+            self.editMessage(message: message)
         }
         let delete = UIAlertAction(title: "Delete message", style: .destructive) { action in
             self.deleteMessageAction(message: message)
@@ -703,26 +652,6 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
         }
     }
 
-    func hideActionButton() {
-        if !self.actionButtonAnimating && self.actionButton != nil {
-            self.actionButtonAnimating = true
-            self.actionButton!.scaleOut() {
-                finished in
-                self.actionButtonAnimating = false
-            }
-        }
-    }
-
-    func showActionButton() {
-        if !self.actionButtonAnimating && self.actionButton != nil {
-            self.actionButtonAnimating = true
-            self.actionButton!.scaleIn() {
-                finished in
-                self.actionButtonAnimating = false
-            }
-        }
-    }
-
     func showPhotos() {
 
         /* Cherry pick display photos */
@@ -800,7 +729,7 @@ class ChannelViewController: BaseTableController, UITableViewDelegate {
         self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         /*
          * Using an estimate significantly improves table view load time but we can get
          * small scrolling glitches if actual height ends up different than estimated height.
@@ -843,26 +772,9 @@ extension ChannelViewController: TTTAttributedLabelDelegate {
 }
 
 extension ChannelViewController {
-    /*
-     * UITableViewDelegate
-     */
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        super.scrollViewDidScroll(scrollView)
         
-        if scrollView.panGestureRecognizer.state != .possible {
-            if scrollView.contentSize.height > scrollView.height() {
-                if (self.lastContentOffset > scrollView.contentOffset.y)
-                    && self.lastContentOffset < (scrollView.contentSize.height - scrollView.frame.height) {
-                    showActionButton()
-                }
-                else if (self.lastContentOffset < scrollView.contentOffset.y
-                    && scrollView.contentOffset.y > 0) {
-                    hideActionButton()
-                }
-            }
-        }
-
-        self.lastContentOffset = scrollView.contentOffset.y
-
         /* Parallax effect when user scrolls down */
         let offset = scrollView.contentOffset.y
         if self.originalRect != nil {

@@ -37,6 +37,7 @@ class BaseViewController: UIViewController {
         
         self.contentHolder.resizeToFitSubviews()
         self.scrollView.contentSize = CGSize(width: self.contentHolder.frame.size.width, height: self.contentHolder.frame.size.height + CGFloat(32))
+        self.scrollView.fillSuperview()
         self.contentHolder.anchorTopCenterFillingWidth(withLeftAndRightPadding: 16, topPadding: 16, height: self.contentHolder.frame.size.height)
     }
 	
@@ -55,7 +56,6 @@ class BaseViewController: UIViewController {
 	func initialize() {
 		self.view.backgroundColor = Theme.colorBackgroundForm
 		
-		self.scrollView.frame = UIScreen.main.applicationFrame
 		self.scrollView.backgroundColor = Theme.colorBackgroundForm
 		self.scrollView.bounces = true
 		self.scrollView.alwaysBounceVertical = true

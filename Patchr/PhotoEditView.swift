@@ -46,7 +46,7 @@ class PhotoEditView: UIView {
 	var clearButtonAlignment: NSTextAlignment = NSTextAlignment.left
 	var editButtonAlignment: NSTextAlignment = NSTextAlignment.right
 	var setButtonAlignment: NSTextAlignment = NSTextAlignment.center
-	
+    
 	/*--------------------------------------------------------------------------------------------
 	* Lifecycle
 	*--------------------------------------------------------------------------------------------*/
@@ -157,9 +157,7 @@ class PhotoEditView: UIView {
 	
 	func photoChosen(image: UIImage?, imageResult: ImageResult?) -> Void {
 		
-        Reporting.track("Set Photo", properties: ["target":self.photoSchema! as AnyObject])
         self.usingPhotoDefault = false
-        
         self.photoDirty = true
         self.photoActive = true
         self.photoChosen = true
@@ -200,7 +198,7 @@ class PhotoEditView: UIView {
                 self.progressView.isHidden = (progress.fractionCompleted == 1.0)
             }
         }
-		
+        
 		self.photoGroup.alpha = 0
 		self.photoGroup.backgroundColor = Theme.colorBackgroundImage
 		self.photoGroup.cornerRadius = 4
@@ -246,9 +244,9 @@ class PhotoEditView: UIView {
         self.scrimGroup.addSubview(self.clearPhotoButton)
 		self.addSubview(self.setPhotoButton)
 		
-		self.editPhotoButton.addTarget(self, action: #selector(PhotoEditView.editPhotoAction(sender:)), for: .touchUpInside)
-		self.clearPhotoButton.addTarget(self, action: #selector(PhotoEditView.clearPhotoAction(sender:)), for: .touchUpInside)
-		self.setPhotoButton.addTarget(self, action: #selector(PhotoEditView.setPhotoAction(sender:)), for: .touchUpInside)
+		self.editPhotoButton.addTarget(self, action: #selector(editPhotoAction(sender:)), for: .touchUpInside)
+		self.clearPhotoButton.addTarget(self, action: #selector(clearPhotoAction(sender:)), for: .touchUpInside)
+		self.setPhotoButton.addTarget(self, action: #selector(setPhotoAction(sender:)), for: .touchUpInside)
 	}
 	
     func bind(url: URL?) {
@@ -257,6 +255,14 @@ class PhotoEditView: UIView {
             self.usingPhotoDefault = false
             self.photoActive = true
         }
+    }
+    
+    func reset() {
+        self.imageButton.setImage(nil, for: .normal)
+        configureTo(photoMode: .Empty)
+        self.photoDirty = false
+        self.photoActive = false
+        self.photoChosen = false
     }
 
 	func setHostController(controller: UIViewController) {

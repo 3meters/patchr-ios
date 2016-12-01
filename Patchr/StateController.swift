@@ -152,16 +152,6 @@ class StateController: NSObject {
         
         if NotificationController.instance.channelBadgeCounts[channelId!] != nil {
             NotificationController.instance.channelBadgeCounts[channelId!] = 0
-            if let userId = UserController.instance.userId {
-                let channelQuery = ChannelQuery(groupId: self.groupId!, channelId: channelId!, userId: userId)
-                channelQuery.once(with: { channel in
-                    if channel?.priority == 0 {
-                        channel?.unread(on: false)
-                    }
-                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange)
-                        , object: self, userInfo: nil)
-                })
-            }
         }
         
         guard channelId != self.channelId else {
