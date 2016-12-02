@@ -53,45 +53,26 @@ public struct Events {
     static let ChannelDidChange             = "ChannelDidChange"
     static let GroupDidSwitch               = "GroupDidSwitch"
     static let GroupDidChange               = "GroupDidChange"
+    static let MessageDidChange             = "MessageDidChange"
     static let PhotoDidChange               = "PhotoDidChange"
     static let PhotoRemoved                 = "PhotoRemoved"
     static let PhotoViewHasFocus            = "PhotoViewHasFocus"
     static let UserStateDidChange           = "UserStateDidChange"
     static let StateInitialized             = "StateInitialized"
+    static let UnreadChange                 = "UnreadChange"
     
-    static let LikeDidChange                = "LikeDidChange"
-    static let WatchDidChange               = "WatchDidChange"
-    static let WillFetch                    = "WillFetch"
-    static let DidFetch                     = "DidFetch"
-    static let WillFetchQuery               = "WillFetchQuery"
     static let DidFetchQuery                = "DidFetchQuery"
     static let ImageNotFound                = "ImageNotFound"
-    static let DidInsertMessage             = "DidInsertMessage"
     static let LocationWasDenied            = "LocationWasDenied"
     static let LocationWasAllowed           = "LocationWasAllowed"
-    static let LocationWasUpdated           = "LocationWasUpdated"
-    static let LocationWasRestricted        = "LocationWasRestricted"
-    static let NotificationsDenied          = "NotificationsDenied"
-    static let PhotoDenied                  = "PhotoDenied"
-    static let UserDidLogin                 = "UserDidLogin"
     static let DidReceiveRemoteNotification = "DidReceiveRemoteNotification"
 }
 
 public struct Schema {
     static let ENTITY_BEACON        = "beacon"
     static let ENTITY_MESSAGE       = "message"
-    static let ENTITY_NOTIFICATION  = "notification"
     static let ENTITY_PATCH         = "patch"
-    static let ENTITY_PLACE         = "place"
     static let ENTITY_USER          = "user"
-    static let PHOTO                = "photo"
-    static let LINK                 = "link"
-}
-
-public struct AuthProvider {
-	static let FACEBOOK				= "facebook"
-	static let GOOGLE				= "google"
-	static let PROXIBASE			= "proxibase"
 }
 
 /*

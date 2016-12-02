@@ -87,8 +87,9 @@ class BaseSlackController: SLKTextViewController {
     
     override func didPressRightButton(_ sender: Any!) {
         self.textView.refreshFirstResponder()
-        hidePhotoEdit()
         sendMessage()
+        hidePhotoEdit()
+        self.photoEditView.reset()
         let indexPath = IndexPath(row: 0, section: 0)
         let scrollPosition: UITableViewScrollPosition = self.isInverted ? .bottom : .top
         self.tableView.scrollToRow(at: indexPath, at: scrollPosition, animated: true)
@@ -98,8 +99,9 @@ class BaseSlackController: SLKTextViewController {
     override func didCommitTextEditing(_ sender: Any) {
         self.textView.refreshFirstResponder()
         dismissKeyboard(true)
-        hidePhotoEdit()
         updateMessage()
+        hidePhotoEdit()
+        self.photoEditView.reset()
         super.didCommitTextEditing(sender)
     }
     
@@ -211,7 +213,6 @@ class BaseSlackController: SLKTextViewController {
         if self.photoEditView.photoDirty {
             var photoMap: [String: Any]?
             if let image = self.photoEditView.imageButton.image(for: .normal) {
-                self.photoEditView.reset()
                 photoMap = postPhoto(image: image, progress: self.photoEditView.progressBlock, next: { error in
                     if error == nil {
                         photoMap!["uploading"] = NSNull()
@@ -227,6 +228,7 @@ class BaseSlackController: SLKTextViewController {
         updateMap["text"] = (text == nil || text!.isEmpty) ? NSNull() : text
         
         FireController.db.child(path).updateChildValues(updateMap)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidChange), object: self, userInfo: ["messageId":self.editingMessage.id!])
     }
     
     func sendMessage() {
@@ -241,7 +243,6 @@ class BaseSlackController: SLKTextViewController {
         
         var photoMap: [String: Any]?
         if let image = self.photoEditView.imageButton.image(for: .normal) {
-            self.photoEditView.reset()
             photoMap = postPhoto(image: image, progress: self.photoEditView.progressBlock, next: { error in
                 if error == nil {
                     photoMap!["uploading"] = NSNull()
@@ -281,6 +282,7 @@ class BaseSlackController: SLKTextViewController {
         
         messageRef.setValue(messageMap)
         FireController.db.child("notification-queue/\(messageRef.key)").setValue(notificationMap)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidChange), object: self, userInfo: ["messageId":messageRef.key])
     }
     
     func postPhoto(image: UIImage

@@ -511,3 +511,31 @@ class FireController: NSObject {
         })
     }
 }
+
+/* FIRAuthErrorCode enum
+typedef NS_ENUM(NSInteger, FIRAuthErrorCode ) {
+    FIRAuthErrorCodeInvalidCustomToken = 17000,
+    FIRAuthErrorCodeCustomTokenMismatch = 17002,
+    FIRAuthErrorCodeInvalidCredential = 17004,
+    FIRAuthErrorCodeUserDisabled = 17005,
+    FIRAuthErrorCodeOperationNotAllowed = 17006,
+    FIRAuthErrorCodeEmailAlreadyInUse = 17007,
+    FIRAuthErrorCodeInvalidEmail = 17008,
+    FIRAuthErrorCodeWrongPassword = 17009,
+    FIRAuthErrorCodeTooManyRequests = 17010,
+    FIRAuthErrorCodeUserNotFound = 17011,
+    FIRAuthErrrorCodeAccountExistsWithDifferentCredential = 17012,
+    FIRAuthErrorCodeRequiresRecentLogin = 17014,
+    FIRAuthErrorCodeProviderAlreadyLinked = 17015,
+    FIRAuthErrorCodeNoSuchProvider = 17016,
+    FIRAuthErrorCodeInvalidUserToken = 17017,
+    FIRAuthErrorCodeNetworkError = 17020,
+    FIRAuthErrorCodeUserTokenExpired = 17021,
+    FIRAuthErrorCodeInvalidAPIKey = 17023,
+    FIRAuthErrorCodeUserMismatch = 17024,
+    FIRAuthErrorCodeCredentialAlreadyInUse = 17025,
+    FIRAuthErrorCodeWeakPassword = 17026,
+    FIRAuthErrorCodeAppNotAuthorized = 17028,
+    FIRAuthErrorCodeKeychainError = 17995,
+    FIRAuthErrorCodeInternalError = 17999,
+} */

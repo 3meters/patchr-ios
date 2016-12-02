@@ -72,8 +72,8 @@ class NotificationController: NSObject {
                     channelQuery.once(with: { channel in
                         if channel?.priority != 0 {
                             channel?.unread(on: true)
+                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: nil)
                         }
-                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
                     })
                 }
             }

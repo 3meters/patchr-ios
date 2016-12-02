@@ -57,15 +57,24 @@ class UserController: NSObject {
     func prepare(then: ((Bool) -> Void)? = nil) {
         if let user = FIRAuth.auth()?.currentUser {
             user.reload(completion: { error in
-                if error == nil {
-                    self.setUserId(userId: user.uid)
+                if let error = error as? NSError {
+                    Log.w(error.localizedDescription)
+                    Log.w("error code: \(error.code)")
+                    if let networkError = error.userInfo["NSUnderlyingError"] as? NSError {
+                        /* Network error: code = -1009, domain = NSURLErrorDomain */
+                        Log.w(networkError.localizedDescription)
+                        Log.w("internal error code: \(networkError.code)")
+                    }
+                    /* Network error: code = 17020, domain = FIRAuthErrorDomain */
+                    if error.code != 17020 {
+                        /* User account could have been deleted */
+                        try! FIRAuth.auth()!.signOut()
+                        StateController.instance.clearGroup() // Also clears channel
+                        then?(false)
+                        return
+                    }
                 }
-                else {
-                    /* User account could have been deleted */
-                    try! FIRAuth.auth()!.signOut()
-                    StateController.instance.clearGroup() // Also clears channel
-                    Log.w((error?.localizedDescription)!)
-                }
+                self.setUserId(userId: user.uid)
                 then?(error == nil)
             })
         }

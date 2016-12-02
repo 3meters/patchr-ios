@@ -256,6 +256,12 @@ class ChannelViewController: BaseSlackController {
         /* User either switched to patchr or turned their screen back on. */
         reachabilityChanged()
     }
+    
+    func messageDidChange(notification: NSNotification) {
+        if let userInfo = notification.userInfo, let messageId = userInfo["messageId"] as? String {
+            self.rowHeights.removeObject(forKey: messageId)
+        }
+    }
 
     func reachabilityChanged() {
         if ReachabilityManager.instance.isReachable() {
@@ -313,6 +319,7 @@ class ChannelViewController: BaseSlackController {
         NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged), name: ReachabilityChangedNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground(sender:)), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(applicationWillEnterForeground(sender:)), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(messageDidChange(notification:)), name: NSNotification.Name(rawValue: Events.MessageDidChange), object: nil)
 
         self.progressOffsetY = 80
         self.loadMoreMessage = "LOAD MORE MESSAGES"
@@ -409,9 +416,8 @@ class ChannelViewController: BaseSlackController {
             
             if channel?.priority == 0 {
                 channel?.unread(on: false)
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: nil)
             }
-            
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
         })
         
         self.messagesQuery = FireController.db.child("channel-messages/\(channelId)").queryOrdered(byChild: "created_at_desc")
@@ -529,6 +535,9 @@ class ChannelViewController: BaseSlackController {
         let likes = message.getReaction(emoji: .thumbsup, userId: userId!)
         let likeTitle = likes ? "Remove like" : "Add like"
         let like = UIAlertAction(title: likeTitle, style: .default) { action in
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidChange)
+                , object: self, userInfo: ["messageId": message.id!])
+            self.rowHeights.removeObject(forKey: message.id!)
             if likes {
                 message.removeReaction(emoji: .thumbsup)
             }
@@ -766,12 +775,14 @@ class ChannelViewController: BaseSlackController {
 }
 
 extension ChannelViewController: TTTAttributedLabelDelegate {
+    
     func attributedLabel(_ label: TTTAttributedLabel!, didSelectLinkWith url: URL!) {
         UIApplication.shared.openURL(url)
     }
 }
 
 extension ChannelViewController {
+    
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         super.scrollViewDidScroll(scrollView)
         

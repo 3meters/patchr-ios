@@ -17,10 +17,11 @@ class ChannelPickerController: BaseTableController, UITableViewDelegate, SlideMe
     var channelsQuery: FIRDatabaseQuery!
     var group: FireGroup!
     
-    var tableView = AirTableView(frame: CGRect.zero, style: .plain)
-    var tableViewDataSource: FUITableViewDataSource!
     var headerView: ChannelsHeaderView!
     var footerView = AirLinkButton()
+    
+    var tableViewDataSource: FUITableViewDataSource!
+    var tableView = AirTableView(frame: CGRect.zero, style: .plain)
     
     var searchDataSource: SearchDataSource!
     var searchTableView = AirTableView(frame: CGRect.zero, style: .plain)
@@ -78,6 +79,7 @@ class ChannelPickerController: BaseTableController, UITableViewDelegate, SlideMe
     }
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        self.headerView.searchBar?.text = nil
         self.tableView.fadeIn()
         self.searchTableView.fadeOut()
     }
@@ -110,6 +112,10 @@ class ChannelPickerController: BaseTableController, UITableViewDelegate, SlideMe
         bind()
     }
     
+    func unreadChange(notification: NSNotification?) {
+        self.tableView.reloadData()
+    }
+    
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
@@ -139,22 +145,24 @@ class ChannelPickerController: BaseTableController, UITableViewDelegate, SlideMe
         self.tableView.backgroundColor = Theme.colorBackgroundEmptyBubble
         self.tableView.delegate = self
         self.tableView.separatorStyle = .none
-        self.tableView.register(UINib(nibName: "ChannelListCell", bundle: nil), forCellReuseIdentifier: "channel-cell")
+        self.tableView.register(UINib(nibName: "ChannelListCell", bundle: nil), forCellReuseIdentifier: "channel-list-cell")
+        
+        self.searchDataSource = SearchDataSource()
+        self.searchDataSource.tableView = self.searchTableView
         
         self.searchTableView.alpha = 0.0
         self.searchTableView.backgroundColor = Theme.colorBackgroundEmptyBubble
         self.searchTableView.delegate = self
         self.searchTableView.separatorStyle = .none
-        self.searchTableView.register(UINib(nibName: "ChannelListCell", bundle: nil), forCellReuseIdentifier: "channel-cell")
-        self.searchDataSource = SearchDataSource()
+        self.searchTableView.register(UINib(nibName: "ChannelListCell", bundle: nil), forCellReuseIdentifier: "channel-search-cell")
         self.searchTableView.dataSource = self.searchDataSource
-        self.searchDataSource.tableView = self.searchTableView
         
         self.view.addSubview(self.headerView)
         self.view.addSubview(self.searchTableView)
         self.view.addSubview(self.tableView)
         self.view.addSubview(self.footerView)
         
+        NotificationCenter.default.addObserver(self, selector: #selector(unreadChange(notification:)), name: NSNotification.Name(rawValue: Events.UnreadChange), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(groupDidChange(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidChange), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(channelDidChange(notification:)), name: NSNotification.Name(rawValue: Events.ChannelDidChange), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(channelDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.ChannelDidSwitch), object: nil)
@@ -185,7 +193,7 @@ class ChannelPickerController: BaseTableController, UITableViewDelegate, SlideMe
                 , view: self.tableView
                 , populateCell: { tableView, indexPath, snap in
                     
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "channel-cell", for: indexPath) as! ChannelListCell
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "channel-list-cell", for: indexPath) as! ChannelListCell
                     let channelId = snap.key
                     let link = snap.value as! [String: Any]
                     
@@ -231,10 +239,6 @@ class ChannelPickerController: BaseTableController, UITableViewDelegate, SlideMe
         }
     }
     
-    func loadOpenChannels() {
-        self.searchDataSource.load()
-    }
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let cell = tableView.cellForRow(at: indexPath) as! ChannelListCell
@@ -263,7 +267,7 @@ class SearchDataSource: NSObject, UITableViewDataSource {
     var tableView: UITableView? = nil
     
     func filter(searchText: String, scope: String = "All") {
-        channelsFiltered = channelsSource.filter { channel in
+        self.channelsFiltered = channelsSource.filter { channel in
             return channel.name!.lowercased().contains(searchText.lowercased())
         }
         self.tableView?.reloadData()
@@ -306,9 +310,13 @@ class SearchDataSource: NSObject, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "channel-cell", for: indexPath) as! ChannelListCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "channel-search-cell", for: indexPath) as! ChannelListCell
         let channel = self.channelsFiltered[indexPath.row]
         cell.reset()
+        
+        cell.lock?.tintColor = Colors.brandColorLight
+        cell.star?.tintColor = Colors.brandColorLight
+        
         cell.bind(channel: channel)
         return cell
     }
