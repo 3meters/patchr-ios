@@ -27,6 +27,8 @@ class FireController: NSObject {
                 self.serverOffset = snap.value as! Int!
             }
         })
+        /* So email lookups will work right */
+        FireController.db.child("users").keepSynced(true)
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -478,10 +480,10 @@ class FireController: NSObject {
             })
     }
     
-    func groupnameExists(groupname: String, next: @escaping ((Bool) -> Void)) {
-        FireController.db.child("groups")
+    func channelNameExists(groupId: String, channelName: String, next: @escaping ((Bool) -> Void)) {
+        FireController.db.child("group-channels/\(groupId)")
             .queryOrdered(byChild: "name")
-            .queryEqual(toValue: groupname)
+            .queryEqual(toValue: channelName)
             .observeSingleEvent(of: .value, with: { snap in
             next(!(snap.value is NSNull))
         })

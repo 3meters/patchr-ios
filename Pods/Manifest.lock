@@ -26,6 +26,7 @@ PODS:
   - AWSCore (2.4.9)
   - AWSS3 (2.4.9):
     - AWSCore (= 2.4.9)
+  - BEMCheckBox (1.4.0)
   - Branch (0.12.15):
     - Branch/Core (= 0.12.15)
     - Branch/without-IDFA (= 0.12.15)
@@ -33,6 +34,7 @@ PODS:
   - Branch/without-IDFA (0.12.15)
   - Bugsnag (5.6.5):
     - KSCrash/RecordingAdvanced (= 1.8.13)
+  - CLTokenInputView (2.3.0)
   - CocoaLumberjack/Core (3.0.0)
   - CocoaLumberjack/Default (3.0.0):
     - CocoaLumberjack/Core
@@ -147,8 +149,10 @@ DEPENDENCIES:
   - AFNetworkActivityLogger (~> 2.0)
   - AFNetworking (~> 2.6)
   - AWSS3 (= 2.4.9)
+  - BEMCheckBox
   - Branch (~> 0.12.5)
   - Bugsnag
+  - CLTokenInputView
   - CocoaLumberjack/Swift
   - DateTools (~> 1.7.0)
   - DLRadioButton (~> 1.4.9)
@@ -188,8 +192,10 @@ SPEC CHECKSUMS:
   AFNetworking: cb8d14a848e831097108418f5d49217339d4eb60
   AWSCore: 175208358b95492e0ebe0337df2ab415300bddac
   AWSS3: e4959b48db48d5f3dcd5cdf9e24a07f60a313611
+  BEMCheckBox: e18e4a148905b290bd03d98b767651c104f4eda3
   Branch: 076dda33e7062b5bdefc1be209e2cd863141b7f3
   Bugsnag: a390acb8d937a9af54dd5044298a892e716c6eef
+  CLTokenInputView: 9dc1ffb7c9d2d81787e69a63c75bd97b0b2d1e76
   CocoaLumberjack: c823149bccc5519a9447aeb433be7b1212a7d6a5
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   DateTools: 53288ee8b905fdc75897a1e6b5cc0144b14cba60
@@ -225,6 +231,6 @@ SPEC CHECKSUMS:
   SlideMenuControllerSwift: 9c0a84f9a3fba51681debd7be77617094562ebcc
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
 
-PODFILE CHECKSUM: 7166ff783dafa2f65f251f13a850e2c41bad5686
+PODFILE CHECKSUM: 84cf58a8c677970afee9b6228f32f927db4ebdca
 
 COCOAPODS: 1.1.0.rc.3

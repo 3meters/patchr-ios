@@ -56,10 +56,10 @@ class ProfileEditViewController: BaseEditViewController {
         
         let userId = UserController.instance.userId!
         self.userQuery = UserQuery(userId: userId, groupId: nil)
-        self.userQuery.observe(with: { user in
+        self.userQuery.observe(with: { [weak self] user in
             if (user != nil) {
-                self.user = user
-                self.bind()
+                self?.user = user
+                self?.bind()
             }
         })
     }
@@ -67,6 +67,10 @@ class ProfileEditViewController: BaseEditViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         self.userQuery.remove()
+    }
+    
+    deinit {
+        self.userQuery?.remove()
     }
 
     override func viewWillLayoutSubviews() {

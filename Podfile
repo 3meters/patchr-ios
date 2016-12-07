@@ -15,7 +15,7 @@ plugin 'cocoapods-keys', {
   ]
 }
 
-platform :ios, '8.0'
+platform :ios, '9.0'
 inhibit_all_warnings!
 use_frameworks!
 
@@ -37,12 +37,13 @@ target 'Patchr' do
     pod 'iRate',                    '~> 1.11.6'
     pod 'Branch',                   '~> 0.12.5'     # Url routing and deep linking
     pod 'ReachabilitySwift',        '~> 3'
+    pod 'PhoneNumberKit',           '~> 1.0'
     pod 'Bugsnag'                                   # Crash reporting
     pod 'CocoaLumberjack/Swift'
+    pod 'CLTokenInputView'
     pod 'JVFloatLabeledTextField'
-    pod 'PhoneNumberKit',           '~> 1.0'
+    pod 'BEMCheckBox'
     pod 'SlideMenuControllerSwift'
-    
     pod 'Firebase/RemoteConfig'
     pod 'Firebase/Core'
     pod 'Firebase/Crash'

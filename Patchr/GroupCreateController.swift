@@ -135,8 +135,9 @@ class GroupCreateController: BaseEditViewController {
         guard !self.processing else { return }
         self.processing = true
         
-        let groupId = "gr-\(Utils.genRandomId())"
+        /* Not checking username uniqueness because group doesn't have any yet */
         let username = self.userNameField.text!
+        let groupId = "gr-\(Utils.genRandomId())"
         var groupMap: [String: Any] = ["title": self.groupTitleField.text!]
 
         FireController.instance.addGroup(groupId: groupId, groupMap: &groupMap, username: username, then: { success in

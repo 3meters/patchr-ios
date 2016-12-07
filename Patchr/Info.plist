@@ -33,7 +33,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>202</string>
+	<string>204</string>
 	<key>FacebookAppID</key>
 	<string>894654857249670</string>
 	<key>FacebookDisplayName</key>
@@ -150,9 +150,11 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Take a photo to include with messages.</string>
+	<string>Take a photo to include with your message.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Select library photos to include with messages.</string>
+	<string>Select a library photo to include with your message.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Invite people to your Patchr group.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

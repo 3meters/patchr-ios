@@ -4,7 +4,6 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
         <capability name="Alignment constraints to the first baseline" minToolsVersion="6.0"/>
         <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
@@ -21,10 +20,10 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="X0K-3n-IIP" customClass="PhotoView" customModule="Patchr">
-                        <rect key="frame" x="16" y="10" width="48" height="48"/>
+                        <rect key="frame" x="16" y="14" width="40" height="40"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="48" id="1qT-bb-Xdu"/>
-                            <constraint firstAttribute="height" constant="48" id="4aa-9q-h0w"/>
+                            <constraint firstAttribute="width" constant="40" id="1qT-bb-Xdu"/>
+                            <constraint firstAttribute="height" constant="40" id="4aa-9q-h0w"/>
                         </constraints>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="boolean" keyPath="rounded" value="NO"/>
@@ -32,12 +31,12 @@
                                 <integer key="value" value="1"/>
                             </userDefinedRuntimeAttribute>
                             <userDefinedRuntimeAttribute type="number" keyPath="radius">
-                                <real key="value" value="24"/>
+                                <real key="value" value="20"/>
                             </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Jay Massena" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="meX-Hb-lPU">
-                        <rect key="frame" x="72" y="14" width="101.5" height="20"/>
+                        <rect key="frame" x="64" y="14" width="102" height="20"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="20" id="K45-sW-jLW"/>
                         </constraints>
@@ -46,16 +45,16 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="@jaymassena" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NLS-Er-vuL">
-                        <rect key="frame" x="72" y="34" width="97.5" height="20"/>
+                        <rect key="frame" x="64" y="34" width="86" height="20"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="20" id="m7S-Vc-nhc"/>
                         </constraints>
-                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
+                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
                         <color key="textColor" red="0.49803921579999999" green="0.49803921579999999" blue="0.49803921579999999" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="admin" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9B3-1a-Ge9" userLabel="Role">
-                        <rect key="frame" x="177.5" y="34" width="44.5" height="20"/>
+                        <rect key="frame" x="158" y="34" width="45" height="20"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="20" id="7cf-kb-RRH"/>
                         </constraints>
@@ -64,7 +63,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bca-gN-N9j" customClass="PresenceView" customModule="Patchr" customModuleProvider="target">
-                        <rect key="frame" x="181.5" y="19.5" width="12" height="12"/>
+                        <rect key="frame" x="174" y="18" width="12" height="12"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="12" id="bWQ-qf-XRY"/>
@@ -80,26 +79,42 @@
                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
                         <state key="normal" title="Manage"/>
                     </button>
+                    <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="N6v-4M-haE" customClass="AirCheckBox" customModule="Patchr" customModuleProvider="target">
+                        <rect key="frame" x="435" y="22" width="24" height="24"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="24" id="1Q1-cX-a64"/>
+                            <constraint firstAttribute="height" constant="24" id="GMk-Hf-VwE"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="hideBox" value="NO"/>
+                        </userDefinedRuntimeAttributes>
+                    </view>
                 </subviews>
                 <constraints>
                     <constraint firstItem="meX-Hb-lPU" firstAttribute="leading" secondItem="X0K-3n-IIP" secondAttribute="trailing" constant="8" id="7VO-3B-Xfq"/>
                     <constraint firstItem="X0K-3n-IIP" firstAttribute="leading" secondItem="f05-yI-zfl" secondAttribute="leading" constant="16" id="9MQ-fs-qfT"/>
-                    <constraint firstItem="NLS-Er-vuL" firstAttribute="bottom" secondItem="X0K-3n-IIP" secondAttribute="bottom" constant="-4" id="AAi-Ze-k7m"/>
+                    <constraint firstItem="NLS-Er-vuL" firstAttribute="bottom" secondItem="X0K-3n-IIP" secondAttribute="bottom" id="AAi-Ze-k7m"/>
                     <constraint firstItem="Bca-gN-N9j" firstAttribute="leading" secondItem="meX-Hb-lPU" secondAttribute="trailing" constant="8" id="BGQ-9O-Ihi"/>
                     <constraint firstItem="X0K-3n-IIP" firstAttribute="centerY" secondItem="f05-yI-zfl" secondAttribute="centerY" id="JSV-cj-9Vg"/>
+                    <constraint firstItem="N6v-4M-haE" firstAttribute="centerY" secondItem="f05-yI-zfl" secondAttribute="centerY" id="JfI-hN-xXS"/>
                     <constraint firstItem="Bca-gN-N9j" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="f05-yI-zfl" secondAttribute="trailing" constant="-16" id="Jo6-VU-qs1"/>
                     <constraint firstItem="9B3-1a-Ge9" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="f05-yI-zfl" secondAttribute="trailing" constant="-16" id="MSM-1w-0t6"/>
                     <constraint firstItem="9B3-1a-Ge9" firstAttribute="leading" secondItem="NLS-Er-vuL" secondAttribute="trailing" constant="8" id="MfW-tO-Jun"/>
                     <constraint firstItem="9B3-1a-Ge9" firstAttribute="centerY" secondItem="NLS-Er-vuL" secondAttribute="centerY" id="OSX-NS-IzJ"/>
                     <constraint firstItem="NLS-Er-vuL" firstAttribute="leading" secondItem="X0K-3n-IIP" secondAttribute="trailing" constant="8" id="aWO-7d-OOi"/>
                     <constraint firstItem="RWH-L1-GYn" firstAttribute="centerY" secondItem="f05-yI-zfl" secondAttribute="centerY" id="ofS-ZS-ZMm"/>
-                    <constraint firstItem="meX-Hb-lPU" firstAttribute="top" secondItem="X0K-3n-IIP" secondAttribute="top" constant="4" id="soN-0S-azX"/>
+                    <constraint firstItem="meX-Hb-lPU" firstAttribute="top" secondItem="X0K-3n-IIP" secondAttribute="top" id="soN-0S-azX"/>
                     <constraint firstItem="Bca-gN-N9j" firstAttribute="baseline" secondItem="meX-Hb-lPU" secondAttribute="firstBaseline" id="svj-3q-6Uo"/>
                     <constraint firstItem="RWH-L1-GYn" firstAttribute="trailing" secondItem="f05-yI-zfl" secondAttribute="trailing" constant="-16" id="ybm-y3-m6t"/>
                 </constraints>
             </tableViewCellContentView>
+            <constraints>
+                <constraint firstItem="N6v-4M-haE" firstAttribute="trailing" secondItem="LTM-Mi-qV7" secondAttribute="trailing" constant="-36" id="opq-qL-djl"/>
+            </constraints>
             <connections>
                 <outlet property="actionButton" destination="RWH-L1-GYn" id="aSw-XL-vWx"/>
+                <outlet property="checkBox" destination="N6v-4M-haE" id="HGz-dH-l3C"/>
                 <outlet property="photoView" destination="X0K-3n-IIP" id="vba-NC-l4f"/>
                 <outlet property="presenceView" destination="Bca-gN-N9j" id="6Tx-QK-i0c"/>
                 <outlet property="role" destination="9B3-1a-Ge9" id="NWq-tl-Hno"/>

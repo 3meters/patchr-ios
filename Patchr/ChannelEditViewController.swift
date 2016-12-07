@@ -311,48 +311,61 @@ class ChannelEditViewController: BaseEditViewController {
         
         self.processing = true
         
-        let channelId = "ch-\(Utils.genRandomId())"
         let groupId = self.inputGroupId!
-        let refChannel = FireController.db.child("group-channels/\(groupId)/\(channelId)")
+        let channelName = self.nameField.text!
         
-        var photoMap: [String: Any]?
-        if let image = self.photoEditView.imageButton.image(for: .normal) {
-            photoMap = postPhoto(image: image, next: { error in
-                if error != nil {
-                    photoMap!["uploading"] = NSNull()
-                    refChannel.child("photo").setValue(photoMap!)
+        FireController.instance.channelNameExists(groupId: groupId, channelName: channelName, next: { exists in
+            if exists {
+                self.progress?.hide(true)
+                self.processing = false
+                self.errorLabel.text = "Choose another channel name"
+                self.view.setNeedsLayout()
+                self.errorLabel.fadeIn()
+            }
+            else {
+                let channelId = "ch-\(Utils.genRandomId())"
+                let refChannel = FireController.db.child("group-channels/\(groupId)/\(channelId)")
+                
+                var photoMap: [String: Any]?
+                if let image = self.photoEditView.imageButton.image(for: .normal) {
+                    photoMap = self.postPhoto(image: image, next: { error in
+                        if error != nil {
+                            photoMap!["uploading"] = NSNull()
+                            refChannel.child("photo").setValue(photoMap!)
+                        }
+                    })
                 }
-            })
-        }
-        
-        let timestamp = Utils.now() + (FireController.instance.serverOffset ?? 0)
-        
-        var channelMap: [String: Any] = [:]
-        channelMap["group"] = self.inputGroupId!
-        channelMap["type"] = "channel"
-        channelMap["general"] = false
-        channelMap["archived"] = false
-        channelMap["visibility"] = self.visibilityValue
-        channelMap["created_at"] = Int(timestamp)
-        channelMap["created_by"] = UserController.instance.userId!
-        
-        if !self.purposeField.text.isEmpty {
-            channelMap["purpose"] = self.purposeField.text
-        }
-        
-        if !(self.nameField.text?.isEmpty)! {
-            channelMap["name"] = self.nameField.text
-        }
-        
-        if photoMap != nil {
-            channelMap["photo"] = photoMap!
-        }
-        
-        FireController.instance.addChannelToGroup(channelId: channelId, channelMap: channelMap, groupId: groupId) { result in
-            StateController.instance.setChannelId(channelId: channelId, next: nil) // We know it's good
-            MainController.instance.showChannel(groupId: groupId, channelId: channelId)
-            self.close(animated: true)
-        }
+                
+                let timestamp = Utils.now() + (FireController.instance.serverOffset ?? 0)
+                
+                var channelMap: [String: Any] = [:]
+                channelMap["group"] = self.inputGroupId!
+                channelMap["type"] = "channel"
+                channelMap["general"] = false
+                channelMap["archived"] = false
+                channelMap["visibility"] = self.visibilityValue
+                channelMap["created_at"] = Int(timestamp)
+                channelMap["created_by"] = UserController.instance.userId!
+                
+                if !self.purposeField.text.isEmpty {
+                    channelMap["purpose"] = self.purposeField.text
+                }
+                
+                if !(self.nameField.text?.isEmpty)! {
+                    channelMap["name"] = self.nameField.text
+                }
+                
+                if photoMap != nil {
+                    channelMap["photo"] = photoMap!
+                }
+                
+                FireController.instance.addChannelToGroup(channelId: channelId, channelMap: channelMap, groupId: groupId) { result in
+                    StateController.instance.setChannelId(channelId: channelId, next: nil) // We know it's good
+                    MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+                    self.close(animated: true)
+                }
+            }
+        })
     }
 
     func delete() {

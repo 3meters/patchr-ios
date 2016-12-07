@@ -41,14 +41,17 @@ class MemberViewController: BaseViewController, UIScrollViewDelegate, UITextFiel
         initialize()
         let groupId = StateController.instance.groupId
         self.userQuery = UserQuery(userId: self.inputUserId, groupId: groupId)
-        self.userQuery?.observe(with: { user in
-            self.user = user
-            self.bind()
+        self.userQuery?.observe(with: { [weak self] user in
+            self?.user = user
+            self?.bind()
         })
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+    }
+    
+    deinit {
         self.userQuery?.remove()
     }
 	

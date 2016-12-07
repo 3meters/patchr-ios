@@ -29,7 +29,6 @@ class SideMenuViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
-        bind()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -44,6 +43,10 @@ class SideMenuViewController: UITableViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+    }
+
+    deinit {
+        self.userQuery?.remove()
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -115,16 +118,18 @@ class SideMenuViewController: UITableViewController {
         if userId != nil {
             self.userQuery?.remove()
             self.userQuery = UserQuery(userId: userId!, groupId: groupId)
-            self.userQuery!.observe(with: { user in
+            self.userQuery!.once(with: { [weak self] user in
                 
                 guard user != nil else {
                     return
                 }
                 
-                self.user = user
-                self.menuHeader.bind(user: self.user)
-                self.tableView.tableHeaderView = self.menuHeader	// Triggers table binding
-                self.tableView.reloadData()
+                let user = user!
+                
+                self?.user = user
+                self?.menuHeader.bind(user: self?.user)
+                self?.tableView.tableHeaderView = self?.menuHeader	// Triggers table binding
+                self?.tableView.reloadData()
             })
         }
     }

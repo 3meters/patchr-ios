@@ -265,6 +265,7 @@ class SearchDataSource: NSObject, UITableViewDataSource {
     var channelsSource = [FireChannel]()
     var channelsFiltered = [FireChannel]()
     var tableView: UITableView? = nil
+    var loading = false
     
     func filter(searchText: String, scope: String = "All") {
         self.channelsFiltered = channelsSource.filter { channel in
@@ -275,6 +276,12 @@ class SearchDataSource: NSObject, UITableViewDataSource {
     
     func load() {
         
+        guard !self.loading else {
+            Log.w("Attempt to reload search while loading")
+            return
+        }
+        
+        self.loading = true
         self.channelsSource.removeAll()
         self.channelsFiltered.removeAll()
         
@@ -282,8 +289,12 @@ class SearchDataSource: NSObject, UITableViewDataSource {
         let groupId = StateController.instance.groupId!
 
         let query = FireController.db.child("group-channels/\(groupId)").queryOrdered(byChild: "name")
+        let debouncer = Debouncer(delay: 0.5) {
+            self.loading = false
+        }
         
         query.observe(.childAdded, with: { snap in
+            debouncer.call()
             if !(snap.value is NSNull) {
                 if let channel = FireChannel.from(dict: snap.value as? [String: Any], id: snap.key) {
                     let path = "member-channels/\(userId)/\(groupId)/\(channel.id!)"

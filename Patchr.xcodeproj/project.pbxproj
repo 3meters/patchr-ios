@@ -98,6 +98,8 @@
 		E25B0F4A1DCE803B00021D5B /* UserListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E25B0F491DCE803B00021D5B /* UserListCell.xib */; };
 		E25E1E601DBA781900BE1800 /* ChannelsHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E25E1E5F1DBA781900BE1800 /* ChannelsHeaderView.xib */; };
 		E266A1C01DEB4E8900C71C28 /* MemberPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E266A1BF1DEB4E8900C71C28 /* MemberPickerController.swift */; };
+		E26A02FD1DF5BE0D00EE32D3 /* ContactPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26A02FC1DF5BE0D00EE32D3 /* ContactPickerController.swift */; };
+		E26A02FF1DF5DC5800EE32D3 /* AirContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26A02FE1DF5DC5800EE32D3 /* AirContactView.swift */; };
 		E26B0B311DEF7C130086FDAD /* BaseSlackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26B0B301DEF7C130086FDAD /* BaseSlackController.swift */; };
 		E26B0C891B456F8A00706F4A /* ExtensionsUi.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26B0C881B456F8A00706F4A /* ExtensionsUi.swift */; };
 		E26B0C921B46D01E00706F4A /* ThumbnailCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E26B0C911B46D01E00706F4A /* ThumbnailCollectionViewCell.xib */; };
@@ -205,6 +207,9 @@
 		E2FA133A1D81FC8A0057F287 /* SideMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FA13391D81FC8A0057F287 /* SideMenuViewController.swift */; };
 		E2FA133E1D8220DD0057F287 /* MenuItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FA133D1D8220DD0057F287 /* MenuItemView.swift */; };
 		E2FB2C4A1DBFD33E00E97050 /* ChannelDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FB2C491DBFD33E00E97050 /* ChannelDetailView.swift */; };
+		E2FFD38B1DF32D3200FD75C7 /* Debouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FFD38A1DF32D3200FD75C7 /* Debouncer.swift */; };
+		E2FFD38D1DF3441D00FD75C7 /* Firebase.md in Sources */ = {isa = PBXBuildFile; fileRef = E2FFD38C1DF3441C00FD75C7 /* Firebase.md */; };
+		E2FFD38F1DF4817700FD75C7 /* AirCheckBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FFD38E1DF4817700FD75C7 /* AirCheckBox.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -337,6 +342,8 @@
 		E25B0F491DCE803B00021D5B /* UserListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserListCell.xib; sourceTree = "<group>"; };
 		E25E1E5F1DBA781900BE1800 /* ChannelsHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChannelsHeaderView.xib; sourceTree = "<group>"; };
 		E266A1BF1DEB4E8900C71C28 /* MemberPickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberPickerController.swift; sourceTree = "<group>"; };
+		E26A02FC1DF5BE0D00EE32D3 /* ContactPickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactPickerController.swift; sourceTree = "<group>"; };
+		E26A02FE1DF5DC5800EE32D3 /* AirContactView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirContactView.swift; sourceTree = "<group>"; };
 		E26B0B301DEF7C130086FDAD /* BaseSlackController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseSlackController.swift; sourceTree = "<group>"; };
 		E26B0C881B456F8A00706F4A /* ExtensionsUi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ExtensionsUi.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E26B0C911B46D01E00706F4A /* ThumbnailCollectionViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ThumbnailCollectionViewCell.xib; sourceTree = "<group>"; };
@@ -441,6 +448,9 @@
 		E2FA133D1D8220DD0057F287 /* MenuItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = MenuItemView.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2FB2C491DBFD33E00E97050 /* ChannelDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelDetailView.swift; sourceTree = "<group>"; };
 		E2FB81411B8640E8006B6690 /* AdobeCreativeSDKCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKCore.framework; path = Frameworks/AdobeCreativeSDKCore.framework; sourceTree = "<group>"; };
+		E2FFD38A1DF32D3200FD75C7 /* Debouncer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Debouncer.swift; sourceTree = "<group>"; };
+		E2FFD38C1DF3441C00FD75C7 /* Firebase.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Firebase.md; sourceTree = "<group>"; };
+		E2FFD38E1DF4817700FD75C7 /* AirCheckBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirCheckBox.swift; sourceTree = "<group>"; };
 		ED13DC8FAA3F0F42AF9C2AC5 /* Pods-Patchr.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.debug.xcconfig"; sourceTree = "<group>"; };
 		F8F2D0B82E3F8D83CE211D2E /* Pods_PatchrShare.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PatchrShare.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F934DAF428AEDCA8C8D034E2 /* Pods-Patchr.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Patchr.release.xcconfig"; path = "Pods/Target Support Files/Pods-Patchr/Pods-Patchr.release.xcconfig"; sourceTree = "<group>"; };
@@ -703,6 +713,7 @@
 			isa = PBXGroup;
 			children = (
 				E23C010C1CE243F2009C56B2 /* Keys.md */,
+				E2FFD38C1DF3441C00FD75C7 /* Firebase.md */,
 				E2F6C9281B1DF5500067D959 /* Notes.md */,
 			);
 			name = Docs;
@@ -733,6 +744,7 @@
 		E26B0C8A1B4570BB00706F4A /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				E2FFD38A1DF32D3200FD75C7 /* Debouncer.swift */,
 				7D01FA341A7024E200DD6DFA /* JSONResponseSerializerWithData.h */,
 				7D01FA351A7024E200DD6DFA /* JSONResponseSerializerWithData.m */,
 				7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */,
@@ -780,6 +792,8 @@
 			isa = PBXGroup;
 			children = (
 				E2D12A741C08F85E00DE507E /* AirButton.swift */,
+				E2FFD38E1DF4817700FD75C7 /* AirCheckBox.swift */,
+				E26A02FE1DF5DC5800EE32D3 /* AirContactView.swift */,
 				E2D12A761C08F9CE00DE507E /* AirFeaturedButton.swift */,
 				E25327B51B1000C000990A81 /* AirImageView.swift */,
 				E25327B71B103ECA00990A81 /* AirImageButton.swift */,
@@ -830,6 +844,7 @@
 				E23EC4D71DBE848B00EBCD42 /* ChannelPickerController.swift */,
 				E28A48201DE8867000A01B46 /* ChannelSearchController.swift */,
 				9FDCC7D2BF8341DCBB416DC4 /* ChannelViewController.swift */,
+				E26A02FC1DF5BE0D00EE32D3 /* ContactPickerController.swift */,
 				E2999EE21DC25AAE005C69D8 /* EmptyViewController.swift */,
 				E2B756A41D84565F00C102EC /* GroupPickerController.swift */,
 				E29730651C16295300B9433B /* InviteViewController.swift */,
@@ -1248,6 +1263,7 @@
 				E227294B1CEA743600913041 /* GalleryGridViewController.swift in Sources */,
 				E25908321DC7B3AA00CB6C3F /* AirLabelStack.swift in Sources */,
 				E2B98F901DEDD3A50041E503 /* NotificationController.swift in Sources */,
+				E2FFD38B1DF32D3200FD75C7 /* Debouncer.swift in Sources */,
 				E20C3A851BE04BBC008CCED1 /* Stopwatch.swift in Sources */,
 				E2999EE51DC2CD3B005C69D8 /* PhotoBrowser.swift in Sources */,
 				E2B8A4B61CE7875400A28D3A /* AirRadialMenu.swift in Sources */,
@@ -1257,6 +1273,7 @@
 				E29A4CDA1BD077520059D5B9 /* MessageViewCell.swift in Sources */,
 				E2A28E6F1B4A602200B3A2FE /* AirToggleButton.swift in Sources */,
 				E2064BF51BC18A66009C7B6A /* AirProgress.swift in Sources */,
+				E2FFD38D1DF3441D00FD75C7 /* Firebase.md in Sources */,
 				E241D15A1B1B3FCE00702E01 /* UIView+BorderLayer.m in Sources */,
 				E2810BA61DC8E6930013AEA0 /* PresenceView.swift in Sources */,
 				E2D12A7F1C0A090200DE507E /* Theming.swift in Sources */,
@@ -1273,6 +1290,7 @@
 				E2BC53331DE5D54600C97A2C /* BingController.swift in Sources */,
 				E2DA16D51DCFDF430096D86F /* ChannelTitleView.swift in Sources */,
 				E20555061DBC178F003C8398 /* ColorArray.swift in Sources */,
+				E2FFD38F1DF4817700FD75C7 /* AirCheckBox.swift in Sources */,
 				E25327D21B13DEF800990A81 /* AudioController.swift in Sources */,
 				E2BC532B1DE20E6F00C97A2C /* AirTextFieldCell.swift in Sources */,
 				E26BBF981DB5734F00038754 /* PHAsset+identifier.swift in Sources */,
@@ -1320,6 +1338,7 @@
 				E2D12A711C0778C100DE507E /* AirScrollView.swift in Sources */,
 				E2CC15A11C2C897800316356 /* WrapperTableViewCell.swift in Sources */,
 				E266A1C01DEB4E8900C71C28 /* MemberPickerController.swift in Sources */,
+				E26A02FD1DF5BE0D00EE32D3 /* ContactPickerController.swift in Sources */,
 				E24D74541BBAED5F0061F339 /* TaskQueue.swift in Sources */,
 				E2E9AAA71CEF86470057698F /* AirNavigationController.swift in Sources */,
 				E2D12A731C08DC4900DE507E /* AirTextField.swift in Sources */,
@@ -1340,6 +1359,7 @@
 				E23C01111CE4F771009C56B2 /* CaptionView.swift in Sources */,
 				E29F654F1B61A0780000BEF4 /* OneShotLocationManager.swift in Sources */,
 				E25327B81B103ECA00990A81 /* AirImageButton.swift in Sources */,
+				E26A02FF1DF5DC5800EE32D3 /* AirContactView.swift in Sources */,
 				E26BBF991DB5734F00038754 /* PHPhotoLibrary+PhotoAsset.swift in Sources */,
 				E2E271291C5D1ED600E36804 /* BranchProvider.swift in Sources */,
 				844D6E371AA6550400EE71ED /* PhotoChooserUI.swift in Sources */,
@@ -1467,7 +1487,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1511,7 +1531,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1547,7 +1567,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				INFOPLIST_FILE = Patchr/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1615,7 +1635,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				INFOPLIST_FILE = Patchr/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1675,7 +1695,7 @@
 				ENABLE_BITCODE = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/PatchrShare/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
@@ -1715,7 +1735,7 @@
 				ENABLE_BITCODE = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/PatchrShare/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
@@ -1772,7 +1792,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1805,7 +1825,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				INFOPLIST_FILE = Patchr/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1865,7 +1885,7 @@
 				ENABLE_BITCODE = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/PatchrShare/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (

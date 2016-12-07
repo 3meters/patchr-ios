@@ -104,7 +104,7 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
                 let userQuery = UserQuery(userId: userId, groupId: groupId)
                 
                 cell.selectionStyle = .none
-                cell.accessoryType = cell.isSelected ? .checkmark : .none
+                cell.accessoryType = .none
                 cell.role?.isHidden = true
                 cell.reset()
 
@@ -116,10 +116,13 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
                                 cell.role?.isHidden = false
                                 cell.role?.text = "already a member"
                                 cell.role?.textColor = MaterialColor.lightGreen.base
+                                cell.checkBox?.isHidden = true
                                 cell.allowSelection = false
                             }
                             else {
                                 cell.role?.isHidden = true
+                                cell.checkBox?.isHidden = false
+                                cell.checkBox?.on = cell.isSelected
                             }
                         })
                     }
@@ -154,7 +157,7 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let cell = self.tableView.cellForRow(at: indexPath) as? UserListCell {
             if cell.allowSelection {
-                cell.accessoryType = .checkmark
+                cell.checkBox?.setOn(true, animated: true)
                 let user = cell.user!
                 self.invites[user.id!] = user
                 self.submitButton.isEnabled = (self.invites.count > 0)
@@ -164,7 +167,7 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         if let cell = self.tableView.cellForRow(at: indexPath) as? UserListCell {
-            cell.accessoryType = .none
+            cell.checkBox?.setOn(false, animated: true)
             let user = cell.user!
             self.invites.removeValue(forKey: user.id!)
             self.submitButton.isEnabled = (self.invites.count > 0)

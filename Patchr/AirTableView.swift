@@ -32,10 +32,6 @@ class AirTableView: UITableView {
 	override func scrollToNearestSelectedRow(at scrollPosition: UITableViewScrollPosition, animated: Bool) {
 		return
 	}
-    
-//    override func scrollToRow(at indexPath: IndexPath, at scrollPosition: UITableViewScrollPosition, animated: Bool) {
-//		return
-//	}
 	
 	override func touchesShouldCancel(in view: UIView) -> Bool {
 		return true

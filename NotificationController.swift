@@ -110,15 +110,16 @@ class NotificationController: NSObject {
     func tokenRefreshNotification(_ notification: Notification) {
         if let refreshedToken = FIRInstanceID.instanceID().token() {
             Log.d("InstanceID token: \(refreshedToken)")
-            let userId = UserController.instance.userId!
-            FireController.db.child("installs/\(userId)/\(refreshedToken)").setValue(true)
+            if let userId = UserController.instance.userId {
+                FireController.db.child("installs/\(userId)/\(refreshedToken)").setValue(true)
+            }
         }
         connectToFcm() /* Connect to FCM since connection may have failed when attempted before having a token. */
     }
     
     func connectToFcm() {
         FIRMessaging.messaging().connect { error in
-            Log.d((error != nil) ? "Unable to connect with FCM. \(error)" : "Connected to FCM.")
+            Log.d((error != nil) ? "Unable to connect with FCM. \(error!)" : "Connected to FCM.")
         }
     }
     

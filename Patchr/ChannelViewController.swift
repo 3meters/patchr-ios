@@ -618,7 +618,7 @@ class ChannelViewController: BaseSlackController {
                 UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
             }
             
-            let addMembersAction = UIAlertAction(title: "Invite to channel", style: .default) { action in
+            let addMembersAction = UIAlertAction(title: "Add members to channel", style: .default) { action in
                 let controller = MemberPickerController()
                 let wrapper = AirNavigationController(rootViewController: controller)
                 UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)

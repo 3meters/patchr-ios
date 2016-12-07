@@ -53,7 +53,7 @@ class UserQuery: NSObject {
                     block(self.user)  // May or may not have link info
                 }
                 else if self.linkMap != nil {
-                    self.user!.membershipFrom(dict: self.linkMap)
+                    self.user!.membershipFrom(dict: (self.linkMap)!)
                     block(self.user)  // May or may not have link info
                 }
             }
@@ -68,7 +68,7 @@ class UserQuery: NSObject {
                 if !(snap.value is NSNull) {
                     self.linkMap = snap.value as! [String: Any]
                     if self.user != nil {
-                        self.user!.membershipFrom(dict: self.linkMap)
+                        self.user!.membershipFrom(dict: (self.linkMap)!)
                         block(self.user)
                     }
                 }
@@ -98,7 +98,7 @@ class UserQuery: NSObject {
                     }
                     else if self.linkMap != nil {
                         fired = true
-                        self.user!.membershipFrom(dict: self.linkMap)
+                        self.user!.membershipFrom(dict: (self.linkMap)!)
                         block(self.user)  // May or may not have link info
                     }
                 }
@@ -117,7 +117,7 @@ class UserQuery: NSObject {
                         self.linkMap = snap.value as! [String: Any]
                         if self.user != nil {
                             fired = true
-                            self.user!.membershipFrom(dict: self.linkMap)
+                            self.user!.membershipFrom(dict: (self.linkMap)!)
                             block(self.user)
                         }
                     }

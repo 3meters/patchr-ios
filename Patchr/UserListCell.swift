@@ -5,6 +5,8 @@
 
 import Foundation
 import UIKit
+import BEMCheckBox
+import Contacts
 
 @IBDesignable
 class UserListCell: UITableViewCell {
@@ -14,11 +16,13 @@ class UserListCell: UITableViewCell {
     @IBOutlet weak var subtitle: UILabel?
     @IBOutlet weak var role: UILabel?
     @IBOutlet weak var presenceView = PresenceView()
+    @IBOutlet weak var checkBox: AirCheckBox?
     @IBOutlet weak var actionButton: AirButton?
     
     var allowSelection = true
     
     var user: FireUser!
+    var contact: CNContact!
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         let color = self.photoView?.backgroundColor
@@ -42,6 +46,34 @@ class UserListCell: UITableViewCell {
         self.presenceView?.showOffline()
         self.actionButton?.isHidden = true
         self.allowSelection = true
+    }
+    
+    func bind(contact: CNContact) {
+        self.role?.isHidden = true
+        self.actionButton?.isHidden = true
+        self.presenceView?.isHidden = true
+        self.photoView?.photo.isHidden = true
+        self.photoView?.name.isHidden = false
+        self.checkBox?.isHidden = false
+        self.accessoryType = .none
+        self.photoView?.initialsCount = 2
+        self.photoView?.name.font = Theme.fontText
+        
+        self.contact = contact
+        let email = contact.emailAddresses.first?.value as String!
+        let fullName = CNContactFormatter.string(from: contact, style: .fullName)
+        let title = fullName ?? email!
+        
+        if contact.imageDataAvailable {
+            self.photoView?.photo.image = UIImage(data: contact.thumbnailImageData!)
+            self.photoView?.photo.isHidden = false
+            self.photoView?.name.isHidden = true
+        }
+        else {
+            self.photoView?.bind(photoUrl: nil, name: title, colorSeed: email!)
+        }
+        self.title?.text = title
+        self.subtitle?.text = email!
     }
     
     func bind(user: FireUser) {

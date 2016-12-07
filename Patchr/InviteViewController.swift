@@ -101,17 +101,35 @@ class InviteViewController: BaseEditViewController {
         
 		self.message.textAlignment = NSTextAlignment.center
 		self.message.numberOfLines = 0
-		/*
-		 * Invite dialog doesn't show if user is already a member or pending.
-		 */
-		self.inviteMembersButton.setTitle("Full members".uppercased(), for: .normal)
-        self.inviteMembersComment.text = "Full members can partipate in any open channel and access the full group directory."
-        self.inviteMembersComment.textColor = Theme.colorTextSecondary
-        self.inviteMembersComment.textAlignment = .center
-        self.inviteMembersComment.numberOfLines = 0
-        self.inviteMembersButton.addTarget(self, action: #selector(inviteMembersAction(sender:)), for: .touchUpInside)
         
-        if self.flow != .onboardCreate {
+        if self.flow == .onboardCreate {
+            /*
+             * Invite dialog doesn't show if user is already a member or pending.
+             */
+            self.inviteMembersButton.setTitle("Contacts".uppercased(), for: .normal)
+            self.inviteMembersComment.text = "An email invitation will be sent to your selected contacts. Accepting the invitation will add them as members of your group and help them install Patchr if they don't have it yet."
+            self.inviteMembersComment.textColor = Theme.colorTextSecondary
+            self.inviteMembersComment.textAlignment = .center
+            self.inviteMembersComment.numberOfLines = 0
+            self.inviteMembersButton.addTarget(self, action: #selector(inviteMembersAction(sender:)), for: .touchUpInside)
+            
+            let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
+            self.navigationItem.rightBarButtonItems = [doneButton]
+            
+            self.contentHolder.addSubview(self.message)
+            self.contentHolder.addSubview(self.inviteMembersButton)
+            self.contentHolder.addSubview(self.inviteMembersComment)
+        }
+        else {
+            /*
+             * Invite dialog doesn't show if user is already a member or pending.
+             */
+            self.inviteMembersButton.setTitle("Full members".uppercased(), for: .normal)
+            self.inviteMembersComment.text = "Full members can partipate in any open channel and access the full group directory."
+            self.inviteMembersComment.textColor = Theme.colorTextSecondary
+            self.inviteMembersComment.textAlignment = .center
+            self.inviteMembersComment.numberOfLines = 0
+            self.inviteMembersButton.addTarget(self, action: #selector(inviteMembersAction(sender:)), for: .touchUpInside)
             
             self.inviteGuestsButton.setTitle("Guest members".uppercased(), for: .normal)
             self.inviteGuestsComment.text = "Guests can only partipate in selected channels."
@@ -141,6 +159,9 @@ class InviteViewController: BaseEditViewController {
                 })
             }
             
+            self.contentHolder.addSubview(self.message)
+            self.contentHolder.addSubview(self.inviteMembersButton)
+            self.contentHolder.addSubview(self.inviteMembersComment)
             self.contentHolder.addSubview(self.inviteGuestsButton)
             self.contentHolder.addSubview(self.inviteGuestsComment)
             self.contentHolder.addSubview(self.channelField)
@@ -148,83 +169,25 @@ class InviteViewController: BaseEditViewController {
             let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(closeAction(sender:)))
             self.navigationItem.rightBarButtonItems = [closeButton]
         }
-        else {
-            let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(closeAction(sender:)))
-            self.navigationItem.rightBarButtonItems = [doneButton]
-        }
-		
-		self.contentHolder.addSubview(self.message)
-		self.contentHolder.addSubview(self.inviteMembersButton)
-        self.contentHolder.addSubview(self.inviteMembersComment)
 	}
     
     func inviteMembers() {
-        
-        let groupId = StateController.instance.group?.id ?? self.inputGroupId!
-        let groupTitle = StateController.instance.group?.title ?? self.inputGroupTitle!
-        let username = StateController.instance.group?.username ?? self.inputUsername!
-        
-        BranchProvider.inviteMember(groupId: groupId, groupTitle: groupTitle, username: username, completion: { response, error in
-            
-            if error == nil {
-                let invite = response as! InviteItem
-                let inviteUrl = invite.url
-                let userTitle = UserController.instance.userTitle ?? self.inputUsername
-                let userEmail = UserController.instance.userEmail
-                
-                let subject = "\(userTitle!) invited you to \(groupTitle) on Patchr"
-                let htmlFile = Bundle.main.path(forResource: "invite_member", ofType: "html")
-                let templateString = try? String(contentsOfFile: htmlFile!, encoding: .utf8)
-                
-                var htmlString = templateString?.replacingOccurrences(of: "[[group.name]]", with: groupTitle)
-                htmlString = htmlString?.replacingOccurrences(of: "[[user.fullName]]", with: userTitle!)
-                htmlString = htmlString?.replacingOccurrences(of: "[[user.email]]", with: userEmail!)
-                htmlString = htmlString?.replacingOccurrences(of: "[[link]]", with: inviteUrl)
-                
-                if MFMailComposeViewController.canSendMail() {
-                    MailComposer!.mailComposeDelegate = self
-                    MailComposer!.setSubject(subject)
-                    MailComposer!.setMessageBody(htmlString!, isHTML: true)
-                    self.present(MailComposer!, animated: true, completion: nil)
-                }
-            }
-        })
+        let controller = ContactPickerController()
+        controller.role = "members"
+        controller.inputGroupId = self.inputGroupId
+        controller.inputGroupTitle = self.inputGroupTitle
+        controller.inputUsername = self.inputUsername
+        self.navigationController?.pushViewController(controller, animated: true)
     }
     
     func inviteGuests() {
-        
-        BranchProvider.inviteGuest(group: StateController.instance.group, channel: self.channel, completion: { response, error in
-            
-            if error == nil {
-                let invite = response as! InviteItem
-                let inviteUrl = invite.url
-                let userTitle = UserController.instance.userTitle
-                let userEmail = UserController.instance.userEmail
-                
-                let group = StateController.instance.group!
-                let channel = self.channel!
-                
-                let groupTitle = group.title!
-                let channelName = channel.name!
-                
-                let subject = "\(userTitle!) invited you to \(channelName) on Patchr"
-                let htmlFile = Bundle.main.path(forResource: "invite_guest", ofType: "html")
-                let templateString = try? String(contentsOfFile: htmlFile!, encoding: .utf8)
-                
-                var htmlString = templateString?.replacingOccurrences(of: "[[group.name]]", with: groupTitle)
-                htmlString = htmlString?.replacingOccurrences(of: "[[user.fullName]]", with: userTitle!)
-                htmlString = htmlString?.replacingOccurrences(of: "[[channel.name]]", with: channelName)
-                htmlString = htmlString?.replacingOccurrences(of: "[[user.email]]", with: userEmail!)
-                htmlString = htmlString?.replacingOccurrences(of: "[[link]]", with: inviteUrl)
-                
-                if MFMailComposeViewController.canSendMail() {
-                    MailComposer!.mailComposeDelegate = self
-                    MailComposer!.setSubject(subject)
-                    MailComposer!.setMessageBody(htmlString!, isHTML: true)
-                    self.present(MailComposer!, animated: true, completion: nil)
-                }
-            }
-        })
+        let controller = ContactPickerController()
+        controller.role = "guests"
+        controller.channel = self.channel
+        controller.inputGroupId = self.inputGroupId
+        controller.inputGroupTitle = self.inputGroupTitle
+        controller.inputUsername = self.inputUsername
+        self.navigationController?.pushViewController(controller, animated: true)
     }
     
     func isValid() -> Bool {
