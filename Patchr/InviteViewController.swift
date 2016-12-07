@@ -106,7 +106,7 @@ class InviteViewController: BaseEditViewController {
             /*
              * Invite dialog doesn't show if user is already a member or pending.
              */
-            self.inviteMembersButton.setTitle("Contacts".uppercased(), for: .normal)
+            self.inviteMembersButton.setTitle("Invite Members".uppercased(), for: .normal)
             self.inviteMembersComment.text = "An email invitation will be sent to your selected contacts. Accepting the invitation will add them as members of your group and help them install Patchr if they don't have it yet."
             self.inviteMembersComment.textColor = Theme.colorTextSecondary
             self.inviteMembersComment.textAlignment = .center
@@ -124,14 +124,14 @@ class InviteViewController: BaseEditViewController {
             /*
              * Invite dialog doesn't show if user is already a member or pending.
              */
-            self.inviteMembersButton.setTitle("Full members".uppercased(), for: .normal)
-            self.inviteMembersComment.text = "Full members can partipate in any open channel and access the full group directory."
+            self.inviteMembersButton.setTitle("Invite Members".uppercased(), for: .normal)
+            self.inviteMembersComment.text = "Members can partipate in any open channel and access the full group directory."
             self.inviteMembersComment.textColor = Theme.colorTextSecondary
             self.inviteMembersComment.textAlignment = .center
             self.inviteMembersComment.numberOfLines = 0
             self.inviteMembersButton.addTarget(self, action: #selector(inviteMembersAction(sender:)), for: .touchUpInside)
             
-            self.inviteGuestsButton.setTitle("Guest members".uppercased(), for: .normal)
+            self.inviteGuestsButton.setTitle("Invite Guests".uppercased(), for: .normal)
             self.inviteGuestsComment.text = "Guests can only partipate in selected channels."
             self.inviteGuestsComment.textColor = Theme.colorTextSecondary
             self.inviteGuestsComment.textAlignment = .center
@@ -142,6 +142,7 @@ class InviteViewController: BaseEditViewController {
             self.channelField.setPlaceholder("Select a channel", floatingTitle: "Selected channel")
             self.channelField.floatingLabel.textAlignment = .center
             self.channelField.textAlignment = .center
+            self.channelField.textColor = Colors.accentColorDark
             self.channelField.delegate = self
             self.channelField.keyboardType = .default
             self.channelField.autocapitalizationType = .none
@@ -174,6 +175,7 @@ class InviteViewController: BaseEditViewController {
     func inviteMembers() {
         let controller = ContactPickerController()
         controller.role = "members"
+        controller.flow = self.flow
         controller.inputGroupId = self.inputGroupId
         controller.inputGroupTitle = self.inputGroupTitle
         controller.inputUsername = self.inputUsername
@@ -183,6 +185,7 @@ class InviteViewController: BaseEditViewController {
     func inviteGuests() {
         let controller = ContactPickerController()
         controller.role = "guests"
+        controller.flow = self.flow
         controller.channel = self.channel
         controller.inputGroupId = self.inputGroupId
         controller.inputGroupTitle = self.inputGroupTitle

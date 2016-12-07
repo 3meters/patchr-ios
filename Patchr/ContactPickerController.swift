@@ -36,6 +36,8 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
     var filterText: String?
     var filterActive = false
     
+    var flow: BaseEditViewController.Flow = .none
+    
     let keysToFetch = [
         CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
         CNContactEmailAddressesKey,
@@ -70,6 +72,18 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
     func inviteAction(sender: AnyObject?) {
         invite()
     }
+    
+    func onboardAction(sender: AnyObject?) {
+        let groupId = self.inputGroupId!
+        FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
+            if firstChannelId != nil {
+                StateController.instance.setGroupId(groupId: groupId, channelId: firstChannelId)
+                MainController.instance.showChannel(groupId: groupId, channelId: firstChannelId!)
+                let _ = self.navigationController?.popToRootViewController(animated: false)
+                self.close()
+            }
+        }
+    }
 
     /*--------------------------------------------------------------------------------------------
     * Notifications
@@ -100,7 +114,9 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
         self.view.backgroundColor = Colors.gray95pcntColor
         
         self.contactsView = AirContactView(frame: CGRect(x: 0, y: 0, width: self.view.width(), height: 44))
-        self.contactsView.placeholderText = "Search"
+        self.contactsView.placeholder.text = "Search"
+        self.contactsView.placeholder.textColor = Theme.colorTextPlaceholder
+        self.contactsView.placeholder.font = Theme.fontComment
         self.contactsView.backgroundColor = Colors.white
         self.contactsView.delegate = self
         self.contactsView.autoresizingMask = [UIViewAutoresizing.flexibleBottomMargin, UIViewAutoresizing.flexibleWidth]
@@ -110,11 +126,13 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
         self.tableView.backgroundColor = Colors.white
         self.tableView.delegate = self
         self.tableView.dataSource = self
+        self.tableView.tableFooterView = UIView()
         
         self.view.addSubview(self.contactsView)
         self.view.addSubview(self.tableView)
+        self.view.addSubview(self.activity)
         
-        self.navigationItem.title = "Invite from Contacts"
+        self.navigationItem.title = self.role == "members" ? "Invite Members from Contacts" : "Invite Guests from Contacts"
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
@@ -130,14 +148,14 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
             CNContactStore().requestAccess(for: .contacts) { authorized, error in
                 if authorized {
                     DispatchQueue.global().async {
-                        self.loadUnifiedContacts()
+                        self.loadContacts()
                     }
                 }
             }
         }
         else if CNContactStore.authorizationStatus(for: .contacts) == .authorized {
             DispatchQueue.global().async {
-                self.loadUnifiedContacts()
+                self.loadContacts()
             }
         }
         else {
@@ -145,7 +163,10 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
         }
     }
     
-    func loadUnifiedContacts() {
+    func loadContacts() {
+        DispatchQueue.main.async {
+            self.activity.startAnimating()
+        }
         do {
             let fetchRequest = CNContactFetchRequest(keysToFetch: self.keysToFetch as! [CNKeyDescriptor])
             fetchRequest.sortOrder = .givenName
@@ -158,6 +179,9 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                 }
             }
             filterContacts()
+            DispatchQueue.main.async {
+                self.activity.stopAnimating()
+            }
         }
         catch {
             Log.w("Error enumerating contacts: \(error.localizedDescription)")
@@ -250,7 +274,12 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                     
                     let queueRef = FireController.db.child("email-queue").childByAutoId()
                     queueRef.setValue(emailMap)
-                    self.close()
+                    if self.flow == .onboardCreate {
+                        self.onboardAction(sender: nil)
+                    }
+                    else {
+                        self.close()
+                    }
                     UIShared.Toast(message: "Invites sent")
                 }
             })
@@ -294,6 +323,9 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
             })
         }
     }
+}
+
+extension ContactPickerController {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
@@ -372,7 +404,6 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
     }
 }
 
-@available(iOS 9.0, *)
 extension ContactPickerController {
     
     func tokenInputView(_ view: CLTokenInputView, didChangeText text: String?) {
@@ -383,10 +414,16 @@ extension ContactPickerController {
     
     func tokenInputView(_ view: CLTokenInputView, didAdd token: CLToken) {
         self.inviteButton.isEnabled = (self.contactsView.allTokens.count > 0)
+        self.contactsView.searchImage.fadeOut(duration: 0.0)
+        self.contactsView.placeholder.fadeOut(duration: 0.0)
     }
     
     func tokenInputView(_ view: CLTokenInputView, didRemove token: CLToken) {
         self.inviteButton.isEnabled = (self.contactsView.allTokens.count > 0)
+        if self.contactsView.allTokens.count == 0 {
+            self.contactsView.searchImage.fadeIn(duration: 0.2)
+            self.contactsView.placeholder.fadeIn(duration: 0.2)
+        }
         if let cell = token.context as? UserListCell, let contact = cell.contact {
             cell.setSelected(false, animated: true)
             cell.checkBox?.setOn(false, animated: true)
@@ -414,10 +451,16 @@ extension ContactPickerController {
     }
     
     func tokenInputViewDidEndEditing(_ view: CLTokenInputView) {
+        if self.contactsView.allTokens.count == 0 {
+            self.contactsView.searchImage.fadeIn(duration: 0.2)
+            self.contactsView.placeholder.fadeIn(duration: 0.2)
+        }
         self.tableView.reloadData()
     }
     
     func tokenInputViewDidBeginEditing(_ view: CLTokenInputView) {
+        self.contactsView.searchImage.fadeOut(duration: 0.2)
+        self.contactsView.placeholder.fadeOut(duration: 0.2)
         self.tableView.reloadData()
     }
     

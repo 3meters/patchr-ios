@@ -59,6 +59,7 @@ class ChannelSearchController: BaseTableController, UITableViewDelegate, UITable
         
         self.cellReuseIdentifier = "channel-cell"
         self.tableView.backgroundColor = Theme.colorBackgroundEmptyBubble
+        self.tableView.tableFooterView = UIView()
         self.tableView.delegate = self
         self.tableView.separatorStyle = .none
         self.tableView.register(UINib(nibName: "ChannelListCell", bundle: nil), forCellReuseIdentifier: self.cellReuseIdentifier)

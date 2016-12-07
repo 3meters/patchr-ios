@@ -54,16 +54,16 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="admin" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9B3-1a-Ge9" userLabel="Role">
-                        <rect key="frame" x="158" y="34" width="45" height="20"/>
+                        <rect key="frame" x="158" y="34" width="39" height="20"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="20" id="7cf-kb-RRH"/>
                         </constraints>
-                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
+                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Bca-gN-N9j" customClass="PresenceView" customModule="Patchr" customModuleProvider="target">
-                        <rect key="frame" x="174" y="18" width="12" height="12"/>
+                        <rect key="frame" x="174" y="19" width="12" height="12"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="12" id="bWQ-qf-XRY"/>
@@ -80,14 +80,17 @@
                         <state key="normal" title="Manage"/>
                     </button>
                     <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="N6v-4M-haE" customClass="AirCheckBox" customModule="Patchr" customModuleProvider="target">
-                        <rect key="frame" x="435" y="22" width="24" height="24"/>
+                        <rect key="frame" x="437" y="23" width="22" height="22"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="24" id="1Q1-cX-a64"/>
-                            <constraint firstAttribute="height" constant="24" id="GMk-Hf-VwE"/>
+                            <constraint firstAttribute="width" constant="22" id="1Q1-cX-a64"/>
+                            <constraint firstAttribute="height" constant="22" id="GMk-Hf-VwE"/>
                         </constraints>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="boolean" keyPath="hideBox" value="NO"/>
+                            <userDefinedRuntimeAttribute type="color" keyPath="tintColor">
+                                <color key="value" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                            </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </view>
                 </subviews>

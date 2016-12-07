@@ -111,6 +111,7 @@ class MemberListController: BaseTableController, UITableViewDelegate {
         self.cellReuseIdentifier = "user-cell"
         self.tableView.register(UINib(nibName: "UserListCell", bundle: nil), forCellReuseIdentifier: self.cellReuseIdentifier)
         self.tableView.backgroundColor = Theme.colorBackgroundEmptyBubble
+        self.tableView.tableFooterView = UIView()
         self.tableView.delegate = self
         
         self.view.addSubview(self.tableView)

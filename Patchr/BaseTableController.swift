@@ -10,6 +10,8 @@ import UIKit
 
 class BaseTableController: UIViewController {
 	
+    var activity = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+    
 	var presented: Bool {
 		return self.presentingViewController?.presentedViewController == self
 			|| (self.navigationController != nil && self.navigationController?.presentingViewController?.presentedViewController == self.navigationController)
@@ -19,6 +21,10 @@ class BaseTableController: UIViewController {
 	/*--------------------------------------------------------------------------------------------
 	* Lifecycle
 	*--------------------------------------------------------------------------------------------*/
+    
+    override func viewWillLayoutSubviews() {
+        self.activity.anchorInCenter(withWidth: 20, height: 20)
+    }
     
 	deinit {
 		NotificationCenter.default.removeObserver(self)
@@ -33,7 +39,9 @@ class BaseTableController: UIViewController {
 	*--------------------------------------------------------------------------------------------*/
 	
 	func initialize() {
-		self.view.backgroundColor = Theme.colorBackgroundForm
+        self.view.backgroundColor = Theme.colorBackgroundForm
+        self.activity.color = Theme.colorActivityIndicator
+        self.activity.hidesWhenStopped = true
 	}
 	
 	func close(animated: Bool = true) {

@@ -12,6 +12,8 @@ import CLTokenInputView
 class AirContactView: CLTokenInputView {
     
     var rule = UIView()
+    var searchImage = AirImageView(frame: CGRect.zero)
+    var placeholder = AirLabelDisplay()
     
     required init(coder aDecoder: NSCoder) {
         /* Called when instantiated from XIB or Storyboard */
@@ -29,11 +31,18 @@ class AirContactView: CLTokenInputView {
         NotificationCenter.default.addObserver(self, selector: #selector(editingBegin(notification:)), name: NSNotification.Name.UITextFieldTextDidBeginEditing, object: nil)
         self.rule.backgroundColor = Theme.colorRule
         self.drawBottomBorder = true
+        self.searchImage.image = UIImage(named: "imgSearchLight")
+        self.searchImage.tintColor = Theme.colorTextPlaceholder
         self.addSubview(self.rule)
+        self.addSubview(self.searchImage)
+        self.addSubview(self.placeholder)
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        self.placeholder.sizeToFit()
+        self.searchImage.anchorCenterLeft(withLeftPadding: 16, width: 16, height: 16)
+        self.placeholder.align(toTheRightOf: self.searchImage, matchingCenterWithLeftPadding: 8, width: self.placeholder.width(), height: self.placeholder.height())
         self.rule.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: Theme.dimenRuleThickness)
     }
     

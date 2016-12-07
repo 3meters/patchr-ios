@@ -158,8 +158,13 @@ extension PhotoChooserUI: UIImagePickerControllerDelegate {
             
 			/* If the user took a photo then add it to the patchr photo album */
             if self.chosenPhotoFunction == .TakePhoto {
-                self.addPhotoToAlbum(image: image, toAlbum: "Patchr") { success in
-                    print("Image added to Patchr album: \(success)");
+                if PHPhotoLibrary.authorizationStatus() == .authorized {
+                    self.addPhotoToAlbum(image: image, toAlbum: "Patchr") { success in
+                        print("Image added to Patchr album: \(success)");
+                        self.finishedChoosing!(image, nil, false)
+                    }
+                }
+                else {
                     self.finishedChoosing!(image, nil, false)
                 }
             }

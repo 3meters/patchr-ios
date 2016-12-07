@@ -154,7 +154,7 @@
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Select a library photo to include with your message.</string>
 	<key>NSContactsUsageDescription</key>
-	<string>Invite people to your Patchr group.</string>
+	<string>Invite people to your Patchr group using your contacts.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

@@ -143,6 +143,7 @@ class ChannelPickerController: BaseTableController, UITableViewDelegate, SlideMe
         self.footerView.addTarget(self, action: #selector(addAction(sender:)), for: .touchUpInside)
         
         self.tableView.backgroundColor = Theme.colorBackgroundEmptyBubble
+        self.tableView.tableFooterView = UIView()
         self.tableView.delegate = self
         self.tableView.separatorStyle = .none
         self.tableView.register(UINib(nibName: "ChannelListCell", bundle: nil), forCellReuseIdentifier: "channel-list-cell")
@@ -151,6 +152,7 @@ class ChannelPickerController: BaseTableController, UITableViewDelegate, SlideMe
         self.searchDataSource.tableView = self.searchTableView
         
         self.searchTableView.alpha = 0.0
+        self.searchTableView.tableFooterView = UIView()
         self.searchTableView.backgroundColor = Theme.colorBackgroundEmptyBubble
         self.searchTableView.delegate = self
         self.searchTableView.separatorStyle = .none

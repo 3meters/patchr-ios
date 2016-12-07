@@ -132,7 +132,7 @@ public extension PHPhotoLibrary {
     static func findAlbum(albumName: String) -> PhotoAlbum? {
         let fetchOptions = PHFetchOptions()
         fetchOptions.predicate = NSPredicate(format: "title = %@", albumName)
-        let fetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .albumRegular, options: fetchOptions)
+        let fetchResult = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: fetchOptions)
         
         if fetchResult.count == 0 {
             return nil
