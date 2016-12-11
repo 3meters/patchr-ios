@@ -14,12 +14,11 @@ import Firebase
 class PasswordViewController: BaseEditViewController {
     
     var inputEmail: String!
-    var inputEmailExists = false
     var inputInviteParams: [AnyHashable: Any]?
     
     var message = AirLabelTitle()
-    var passwordField = AirTextField()
-    var errorLabel = AirLabelDisplay()
+    var userNameField = FloatTextField(frame: CGRect.zero)
+    var passwordField = FloatTextField(frame: CGRect.zero)
     var hideShowButton = AirHideShowButton()
     var forgotPasswordButton = AirLinkButton()
 
@@ -33,18 +32,28 @@ class PasswordViewController: BaseEditViewController {
     }
 
     override func viewDidAppear(_ animated: Bool) {
-        self.passwordField.becomeFirstResponder()
+        if self.flow == .onboardCreate && self.branch == .signup {
+            let _ = self.userNameField.becomeFirstResponder()
+        }
+        else {
+            let _ = self.passwordField.becomeFirstResponder()
+        }
     }
 
     override func viewWillLayoutSubviews() {
 
         let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        let errorSize = self.errorLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         
         self.message.anchorTopCenter(withTopPadding: 0, width: 288, height: messageSize.height)
-        self.passwordField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-        self.errorLabel.alignUnder(self.passwordField, matchingCenterWithTopPadding: 0, width: 288, height: errorSize.height)
-        self.forgotPasswordButton.alignUnder(self.passwordField, matchingCenterWithTopPadding: 36, width: 288, height: 48)
+        
+        if self.flow == .onboardCreate && self.branch == .signup {
+            self.userNameField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+            self.passwordField.alignUnder(self.userNameField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+        }
+        else {
+            self.passwordField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
+            self.forgotPasswordButton.alignUnder(self.passwordField, matchingCenterWithTopPadding: 36, width: 288, height: 48)
+        }
 
         super.viewWillLayoutSubviews()
     }
@@ -55,7 +64,7 @@ class PasswordViewController: BaseEditViewController {
 
     func doneAction(sender: AnyObject) {
         if isValid() {
-            self.passwordField.resignFirstResponder()
+            let _ = self.passwordField.resignFirstResponder()
             
             if self.mode == .reauth {
                 reauthenticate()
@@ -92,11 +101,6 @@ class PasswordViewController: BaseEditViewController {
     func cancelAction(sender: AnyObject) {
         close()
     }
-
-    override func textFieldDidBeginEditing(_ textField: UITextField) {
-        super.textFieldDidBeginEditing(textField)
-        self.errorLabel.fadeOut()
-    }
     
     /*--------------------------------------------------------------------------------------------
     * Methods
@@ -116,9 +120,18 @@ class PasswordViewController: BaseEditViewController {
         self.message.textColor = Theme.colorTextTitle
         self.message.numberOfLines = 0
         self.message.textAlignment = .center
+        
+        self.userNameField.placeholder = "Username"
+        self.userNameField.title = "Username (lower case)"
+        self.userNameField.setDelegate(delegate: self)
+        self.userNameField.keyboardType = .default
+        self.userNameField.autocapitalizationType = .none
+        self.userNameField.autocorrectionType = .no
+        self.userNameField.returnKeyType = UIReturnKeyType.next
 
-        self.passwordField.placeholder = "Password (6+ characters)"
-        self.passwordField.delegate = self
+        self.passwordField.placeholder = "Password"
+        self.passwordField.title = "Password (6+ characters)"
+        self.passwordField.setDelegate(delegate: self)
         self.passwordField.isSecureTextEntry = true
         self.passwordField.autocapitalizationType = .none
         self.passwordField.keyboardType = UIKeyboardType.default
@@ -130,12 +143,7 @@ class PasswordViewController: BaseEditViewController {
         self.hideShowButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
         self.hideShowButton.addTarget(self, action: #selector(hideShowPasswordAction(sender:)), for: .touchUpInside)
         
-        self.errorLabel.textColor = Theme.colorTextValidationError
-        self.errorLabel.alpha = 0.0
-        self.errorLabel.numberOfLines = 0
-        self.errorLabel.font = Theme.fontValidationError
-        
-        if self.mode == .reauth || (self.flow == .onboardCreate && !self.inputEmailExists) {
+        if self.mode == .reauth || (self.flow == .onboardCreate && self.branch == .signup) {
             self.forgotPasswordButton.isHidden = true
         }
         else {
@@ -146,7 +154,10 @@ class PasswordViewController: BaseEditViewController {
         
         self.contentHolder.addSubview(self.message)
         self.contentHolder.addSubview(self.passwordField)
-        self.contentHolder.addSubview(self.errorLabel)
+        
+        if self.flow == .onboardCreate && self.branch == .signup {
+            self.contentHolder.addSubview(self.userNameField)
+        }
 
         /* Navigation bar buttons */
         let nextButton = UIBarButtonItem(title: "Next", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
@@ -161,7 +172,7 @@ class PasswordViewController: BaseEditViewController {
         let password = self.passwordField.text!
         let email = self.inputEmail!
         
-        if self.inputEmailExists {
+        if self.branch == .login {
             
             FIRAuth.auth()?.signIn(withEmail: email, password: password) { (user, error) in
                 
@@ -177,7 +188,7 @@ class PasswordViewController: BaseEditViewController {
                         }
                         else if self.flow == .onboardCreate {
                             let controller = GroupCreateController()
-                            controller.flow = .onboardCreate
+                            controller.flow = self.flow
                             self.navigationController?.pushViewController(controller, animated: true)
                         }
                         else if self.flow == .onboardInvite {
@@ -198,9 +209,7 @@ class PasswordViewController: BaseEditViewController {
                     else if error!._code == FIRAuthErrorCode.errorCodeWrongPassword.rawValue {
                         errorMessage = "Wrong email and password combination"
                     }
-                    self.errorLabel.text = errorMessage
-                    self.view.setNeedsLayout()
-                    self.errorLabel.fadeIn()
+                    self.passwordField.errorMessage = errorMessage
                 }
             }
         }
@@ -212,11 +221,9 @@ class PasswordViewController: BaseEditViewController {
                 self.progress?.hide(true)
 
                 if error == nil, let user = user {
-                    /*
-                     * - send verification email
-                     */
-                    var profileMap: [String: Any] = ["email": user.email!]
-                    FireController.instance.addUser(userId: user.uid, profileMap: &profileMap, then: { success in
+                    let username = self.userNameField.text!
+                    let email = user.email!
+                    FireController.instance.addUser(userId: user.uid, username: username, email: email, then: { success in
                         if success {
                             user.sendEmailVerification()
                             Reporting.track("Account Created")
@@ -229,9 +236,7 @@ class PasswordViewController: BaseEditViewController {
                     })
                 }
                 else {
-                    self.errorLabel.text = error?.localizedDescription
-                    self.view.setNeedsLayout()
-                    self.errorLabel.fadeIn()
+                    self.passwordField.errorMessage = error?.localizedDescription
                 }
             })
         }
@@ -254,9 +259,7 @@ class PasswordViewController: BaseEditViewController {
                     self.navigationController?.pushViewController(controller, animated: true)
                 }
                 else {
-                    self.errorLabel.text = error?.localizedDescription
-                    self.view.setNeedsLayout()
-                    self.errorLabel.fadeIn()
+                    self.passwordField.errorMessage = error?.localizedDescription
                 }
             })
         }
@@ -265,10 +268,28 @@ class PasswordViewController: BaseEditViewController {
     func isValid() -> Bool {
 
         if (passwordField.text!.utf16.count < 6) {
-            self.errorLabel.text = "Enter a password with six characters or more."
-            self.view.setNeedsLayout()
-            self.errorLabel.fadeIn()
+            self.passwordField.errorMessage = "Enter a password with six characters or more."
             return false
+        }
+        
+        if self.flow == .onboardCreate && self.branch == .signup {
+            
+            if self.userNameField.isEmpty {
+                self.userNameField.errorMessage = "Choose your username for this group"
+                return false
+            }
+            
+            let username = userNameField.text!
+            let characterSet: NSCharacterSet = NSCharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz0123456789_-")
+            if username.rangeOfCharacter(from: characterSet.inverted) != nil {
+                self.userNameField.errorMessage = "Username must be lower case and cannot contain spaces or periods."
+                return false
+            }
+            
+            if (userNameField.text!.utf16.count > 21) {
+                self.userNameField.errorMessage = "Username must be 21 characters or less."
+                return false
+            }
         }
 
         return true
@@ -276,11 +297,13 @@ class PasswordViewController: BaseEditViewController {
 
     override func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 
-        if textField == self.passwordField {
+        if textField == self.userNameField {
+            let _ = passwordField.becomeFirstResponder()
+        }
+        else if textField == self.passwordField {
             self.doneAction(sender: textField)
             return false
         }
-
         return true
     }
 }

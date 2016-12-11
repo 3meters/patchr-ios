@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import SDWebImage
 
-class DevelopmentViewController: UIViewController {
+class DevelopmentViewController: BaseViewController {
     
     let userDefaults = { UserDefaults.standard }()
 	
@@ -60,7 +60,7 @@ class DevelopmentViewController: UIViewController {
 
 	func statusBarHiddenAction(sender: AnyObject) {
 		self.userDefaults.set(statusBarHiddenSwitch.isOn, forKey: PatchrUserDefaultKey(subKey: "statusBarHidden"))
-		UIApplication.shared.setStatusBarHidden(statusBarHiddenSwitch.isOn, with: UIStatusBarAnimation.slide)
+        self.statusBarHidden = statusBarHiddenSwitch.isOn
 		self.view.setNeedsLayout()
 	}
 	
@@ -76,7 +76,8 @@ class DevelopmentViewController: UIViewController {
     * Methods
     *--------------------------------------------------------------------------------------------*/
 	
-	func initialize() {
+	override func initialize() {
+        super.initialize()
 		
 		Reporting.screen("DevelopmentSettings")
 		self.view.backgroundColor = Theme.colorBackgroundForm

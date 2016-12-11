@@ -22,7 +22,8 @@ class BranchProvider: NSObject {
     typealias CompletionBlock = (_ response: AnyObject?, _ error: NSError?) -> Void
     
     static func inviteMember(group: FireGroup, completion: @escaping CompletionBlock) {
-        BranchProvider.inviteMember(groupId: group.id!, groupTitle: group.title!, username: group.username, completion: completion)
+        let username = UserController.instance.user?.username
+        BranchProvider.inviteMember(groupId: group.id!, groupTitle: group.title!, username: username, completion: completion)
     }
     
     static func inviteMember(groupId: String, groupTitle: String, username: String?, completion: @escaping CompletionBlock) {
@@ -81,7 +82,7 @@ class BranchProvider: NSObject {
         
         let referrer = UserController.instance.user
         let referrerId = UserController.instance.userId
-        let referrerName = referrer!.profile?.fullName ?? group.username
+        let referrerName = referrer!.profile?.fullName ?? UserController.instance.user?.username
         let photoUrl = PhotoUtils.url(prefix: referrer?.profile?.photo?.filename, source: referrer?.profile?.photo?.source, category: SizeCategory.profile)
         let path = "group/\(group.id!)"
         let applink = BranchUniversalObject(canonicalIdentifier: path)

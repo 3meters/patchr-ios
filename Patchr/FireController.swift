@@ -35,7 +35,7 @@ class FireController: NSObject {
      * MARK: - Methods
      *--------------------------------------------------------------------------------------------*/
     
-    func addUser(userId: String, profileMap: inout [String: Any], then: ((Bool) -> Void)? = nil) {
+    func addUser(userId: String, username: String, email: String, then: ((Bool) -> Void)? = nil) {
         
         let timestamp = Utils.now() + (FireController.instance.serverOffset ?? 0)
         var updates: [String: Any] = [:]
@@ -43,7 +43,8 @@ class FireController: NSObject {
         let userMap: [String: Any] = [
             "created_at": Int(timestamp),
             "modified_at": Int(timestamp),
-            "profile": profileMap
+            "username": username,
+            "email": email
         ]
 
         updates["users/\(userId)"] = userMap
@@ -53,7 +54,7 @@ class FireController: NSObject {
         }
     }
     
-    func addGroup(groupId: String, groupMap: inout [String: Any], username: String, then: ((Bool) -> Void)? = nil) {
+    func addGroup(groupId: String, groupMap: inout [String: Any], then: ((Bool) -> Void)? = nil) {
         
         let userId = UserController.instance.userId!
         let timestamp = Utils.now() + (FireController.instance.serverOffset ?? 0)
@@ -70,7 +71,7 @@ class FireController: NSObject {
         /* Add creator as admin member */
         
         let groupPriority = 3   // admin
-        let groupLink = groupMemberMap(timestamp: timestamp, priorityIndex: groupPriority, role: "owner", username: username)
+        let groupLink = groupMemberMap(timestamp: timestamp, priorityIndex: groupPriority, role: "owner")
         updates["member-groups/\(userId)/\(groupId)"] = groupLink
         updates["group-members/\(groupId)/\(userId)"] = groupLink
         
@@ -109,11 +110,11 @@ class FireController: NSObject {
         
         /* Add creator as member of default channels */
         
-        let generalLink = self.channelMemberMap(timestamp: timestamp, priorityIndex: 2 /* general */)
+        let generalLink = self.channelMemberMap(timestamp: timestamp, priorityIndex: 2, role: "owner" /* general */)
         updates["channel-members/\(generalId)/\(userId)"] = true
         updates["member-channels/\(userId)/\(groupId)/\(generalId)"] = generalLink
         
-        let chatterLink = self.channelMemberMap(timestamp: timestamp, priorityIndex: 3 /* general */)
+        let chatterLink = self.channelMemberMap(timestamp: timestamp, priorityIndex: 3, role: "owner" /* general */)
         updates["channel-members/\(chatterId)/\(userId)"] = true
         updates["member-channels/\(userId)/\(groupId)/\(chatterId)"] = chatterLink
         
@@ -135,7 +136,8 @@ class FireController: NSObject {
                     for (memberId, membership) in membersMap {
                         let membershipMap = membership as! [String: Any]
                         if (membershipMap["role"] as? String) != "guest" {
-                            let channelLink = self.channelMemberMap(timestamp: Utils.now(), priorityIndex: 4 /* neutral */)
+                            let role = (memberId == UserController.instance.userId) ? "owner" : "member"
+                            let channelLink = self.channelMemberMap(timestamp: Utils.now(), priorityIndex: 4, role: role /* neutral */)
                             updates["channel-members/\(channelId)/\(memberId)"] = true
                             updates["member-channels/\(memberId)/\(groupId)/\(channelId)"] = channelLink
                         }
@@ -150,7 +152,7 @@ class FireController: NSObject {
         else {
             /* Add creator as first member of private channel */
             let userId = UserController.instance.userId
-            let channelLink = channelMemberMap(timestamp: Utils.now(), priorityIndex: 4 /* neutral */)
+            let channelLink = channelMemberMap(timestamp: Utils.now(), priorityIndex: 4, role: "owner" /* neutral */)
             updates["channel-members/\(channelId)/\(userId!)"] = true
             updates["member-channels/\(userId!)/\(groupId)/\(channelId)"] = channelLink
 
@@ -162,7 +164,7 @@ class FireController: NSObject {
     
     func addUserToChannel(userId: String, groupId: String, channelId: String, then: ((Bool) -> Void)? = nil) {
         
-        let channelLink = channelMemberMap(timestamp: Utils.now(), priorityIndex: 4 /* neutral */)
+        let channelLink = channelMemberMap(timestamp: Utils.now(), priorityIndex: 4, role: "member" /* neutral */)
         
         var updates: [String: Any] = [:]
         updates["channel-members/\(channelId)/\(userId)"] = true
@@ -173,7 +175,7 @@ class FireController: NSObject {
         }
     }
 
-    func addUserToGroup(userId: String, groupId: String, channelId: String?, role: String, username: String, then: ((Bool) -> Void)? = nil) {
+    func addUserToGroup(userId: String, groupId: String, channelId: String?, role: String, then: ((Bool) -> Void)? = nil) {
         /*
          * Standard member is added to group membership and all default channels.
          * Guest member is added to group and to targeted channel.
@@ -182,7 +184,7 @@ class FireController: NSObject {
          * re-invited as a member instead of a guest?
          */
         let timestamp = Utils.now()
-        let channelLink = channelMemberMap(timestamp: timestamp, priorityIndex: 4)
+        let channelLink = channelMemberMap(timestamp: timestamp, priorityIndex: 4, role: "member")
         
         var updates: [String: Any] = [:]
         
@@ -192,7 +194,7 @@ class FireController: NSObject {
         }
         
         let groupPriority = (role == "guest") ? 5 : 4
-        let groupLink = groupMemberMap(timestamp: Utils.now(), priorityIndex: groupPriority, role: role, username: username)
+        let groupLink = groupMemberMap(timestamp: Utils.now(), priorityIndex: groupPriority, role: role)
         
         updates["member-groups/\(userId)/\(groupId)"] = groupLink
         updates["group-members/\(groupId)/\(userId)"] = groupLink
@@ -203,7 +205,7 @@ class FireController: NSObject {
                 
                 if !(snap.value is NSNull) {
                     let defaultChannelIds = snap.value as! [String]
-                    let defaultChannelLink = self.channelMemberMap(timestamp: timestamp, priorityIndex: 3)
+                    let defaultChannelLink = self.channelMemberMap(timestamp: timestamp, priorityIndex: 3, role: "member")
                     for defaultChannelId in defaultChannelIds {
                         updates["channel-members/\(defaultChannelId)/\(userId)"] = true
                         updates["member-channels/\(userId)/\(groupId)/\(defaultChannelId)"] = defaultChannelLink
@@ -265,7 +267,7 @@ class FireController: NSObject {
         }
     }
 
-    func channelMemberMap(timestamp: Int64, priorityIndex: Int) -> [String: Any] {
+    func channelMemberMap(timestamp: Int64, priorityIndex: Int, role: String) -> [String: Any] {
         
         let priority = self.priorities[priorityIndex]
         let priorityReversed = self.priorities.reversed()[priorityIndex]
@@ -278,6 +280,7 @@ class FireController: NSObject {
             "muted": false,
             "starred": false,
             "priority": priority,
+            "role": role,
             "joined_at": joinedAt,
             "joined_at_desc": joinedAt * -1,
             "index_priority_joined_at": index!,
@@ -287,7 +290,7 @@ class FireController: NSObject {
         return link
     }
     
-    func groupMemberMap(timestamp: Int64, priorityIndex: Int, role: String, username: String) -> [String: Any] {
+    func groupMemberMap(timestamp: Int64, priorityIndex: Int, role: String) -> [String: Any] {
         
         let priority = self.priorities[priorityIndex]
         let priorityReversed = self.priorities.reversed()[priorityIndex]
@@ -300,7 +303,6 @@ class FireController: NSObject {
             "hide_email": false,
             "notifications": "all",
             "role": role,
-            "username": username,
             "priority": priority,
             "joined_at": joinedAt,
             "joined_at_desc": joinedAt * -1,
@@ -489,8 +491,8 @@ class FireController: NSObject {
         })
     }
     
-    func usernameExists(groupId: String, username: String, next: @escaping ((Bool) -> Void)) {
-        FireController.db.child("group-members/\(groupId)")
+    func usernameExists(username: String, next: @escaping ((Bool) -> Void)) {
+        FireController.db.child("users")
             .queryOrdered(byChild: "username")
             .queryEqual(toValue: username)
             .observeSingleEvent(of: .value, with: { snap in

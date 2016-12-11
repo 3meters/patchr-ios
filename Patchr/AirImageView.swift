@@ -95,21 +95,33 @@ class AirImageView: UIImageView {
         self.activity.stopAnimating()
     }
 	
-	func setImageWithUrl(url: URL, animate: Bool = true) {
-
+    func setImageWithUrl(url: URL, fallbackUrl: URL?, animate: Bool = true) {
+        
 		/* Stash the url we are loading so we can check for a match later when download is completed. */
 		self.linkedPhotoUrl = url
 		let options: SDWebImageOptions = [.retryFailed, .lowPriority, .avoidAutoSetImage, /* .ProgressiveDownload */]
 
-		self.sd_setImage(with: url,
-            placeholderImage: nil,
-            options: options,
-            completed: {
-                [weak self] image, error, cacheType, url in
-                if (self != nil) {
-                    self!.imageCompletion(image: image, error: error, cacheType: cacheType, url: url, animate: animate)
+		self.sd_setImage(with: url, placeholderImage: nil, options: options) { [weak self] image, error, cacheType, url in
+            if error != nil && fallbackUrl != nil {
+                Log.w("*** Image fetch failed: " + error!.localizedDescription)
+                Log.w("*** Failed url: \(url!.absoluteString)")
+                Log.w("*** Trying fallback url for image: \(fallbackUrl!)")
+                self?.linkedPhotoUrl = fallbackUrl
+                self?.sd_setImage(with: fallbackUrl!, placeholderImage: nil, options: options) { [weak self] image, error, cacheType, url in
+                    if error == nil {
+                        Log.w("*** Success using fallback url for image: \(fallbackUrl!)")
+                    }
+                    DispatchQueue.main.async() {
+                        self?.imageCompletion(image: image, error: error, cacheType: cacheType, url: url, animate: animate)
+                    }
                 }
-            })
+            }
+            else {
+                DispatchQueue.main.async() {
+                    self?.imageCompletion(image: image, error: error, cacheType: cacheType, url: url, animate: animate)
+                }
+            }
+        }
 	}
 
     func imageCompletion(image: UIImage?, error: Error?, cacheType: SDImageCacheType?, url: URL?, animate: Bool = true) -> Void {
@@ -117,10 +129,8 @@ class AirImageView: UIImageView {
         stopActivity()
 		
         if error != nil {
-			
-			Log.w("Image fetch failed for image view: " + error!.localizedDescription)
-			Log.w("Failed url: \(url!.absoluteString)")
-			
+            Log.w("*** Image fetch failed: " + error!.localizedDescription)
+            Log.w("*** Failed url: \(url!.absoluteString)")
 			self.linkedPhotoUrl = nil
 			return
         }

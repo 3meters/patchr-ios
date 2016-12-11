@@ -31,8 +31,8 @@ class NotificationController: NSObject {
          * have a chance to do any processing that should accompany the notification. Even
          * if the user has turned off remote notifications, we still get this call.
          */
-        Log.d("Notification received...")
-        Log.d("App state: \(application.applicationState == .background ? "background" : application.applicationState == .active ? "active" : "inactive")")
+        let appState = (application.applicationState == .background) ? "background" : (application.applicationState == .active) ? "active" : "inactive"
+        Log.d("Notification received - app state: \(appState)")
         /*
          * Inactive:    Always means that the user tapped on remote notification.
          * Active:      Notification received while app is active (foreground).

@@ -55,7 +55,6 @@ class ChannelPickerController: BaseTableController, UITableViewDelegate, SlideMe
         controller.mode = .insert
         controller.inputGroupId = self.group.id!
         UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
-        UIApplication.shared.setStatusBarHidden(false, with: UIStatusBarAnimation.slide)
         slideMenuController()?.closeLeft()
     }
     
@@ -64,7 +63,6 @@ class ChannelPickerController: BaseTableController, UITableViewDelegate, SlideMe
         let controller = GroupPickerController()
         let wrapper = AirNavigationController(rootViewController: controller)
         UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
-        UIApplication.shared.setStatusBarHidden(false, with: UIStatusBarAnimation.slide)
         slideMenuController()?.closeLeft()
     }
     

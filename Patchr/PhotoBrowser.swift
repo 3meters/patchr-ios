@@ -29,7 +29,7 @@ class PhotoBrowser: IDMPhotoBrowser {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-		self.displayDoneButton = false	// Prevent display of non-navbar done button
+        self.displayDoneButton = false	// Prevent display of non-navbar done button
         initialize()
     }
     
@@ -66,6 +66,9 @@ class PhotoBrowser: IDMPhotoBrowser {
             items.append(flexSpacer)
             
             toolbar.items = items
+            
+            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(IDMPhotoBrowser.doneButtonPressed(_:)))
+            self.navigationItem.rightBarButtonItems = [closeButton]
         }
         else {
             if self.message?.createdBy != nil {

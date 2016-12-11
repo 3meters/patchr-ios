@@ -9,8 +9,8 @@ import SDWebImage
 @IBDesignable
 class PhotoView: UIControl {
 
-    var name = AirLabelDisplay()
-	var photo = AirImageView(frame: CGRect.zero)
+    var nameLabel = AirLabelDisplay()
+	var photoView = AirImageView(frame: CGRect.zero)
     var target: AnyObject?
     
     @IBInspectable var initialsCount: Int = 2
@@ -43,85 +43,102 @@ class PhotoView: UIControl {
         self.backgroundColor = Theme.colorBackgroundImage
 		
 		/* User photo */
-		self.photo.contentMode = .scaleAspectFill
+		self.photoView.contentMode = .scaleAspectFill
 		
 		/* User name */
-		self.name.font = Theme.fontHeading
-		self.name.textColor = Colors.white
-		self.name.textAlignment = .center
+		self.nameLabel.font = Theme.fontHeading
+		self.nameLabel.textColor = Colors.white
+		self.nameLabel.textAlignment = .center
         
-        self.addSubview(self.photo)
-        self.addSubview(self.name)
+        self.addSubview(self.photoView)
+        self.addSubview(self.nameLabel)
 	}
     
     override func prepareForInterfaceBuilder() {
         super.prepareForInterfaceBuilder()
         self.backgroundColor = Colors.accentColorLight
-        self.name.isHidden = true
+        self.nameLabel.isHidden = true
         let bundle = Bundle(for: PhotoView.self)
-        self.photo.image = UIImage(named: "imgDummyUser", in: bundle, compatibleWith: self.traitCollection)
+        self.photoView.image = UIImage(named: "imgDummyUser", in: bundle, compatibleWith: self.traitCollection)
     }
     
 	override func layoutSubviews() {
 		super.layoutSubviews()
         self.layer.cornerRadius = self.rounded ? self.width() * 0.5 : self.radius
-		self.photo.fillSuperview()
-		self.name.fillSuperview()
+		self.photoView.fillSuperview()
+		self.nameLabel.fillSuperview()
 	}
 	
-    func bind(photoUrl: URL?, name: String?, colorSeed: String?, color: UIColor? = nil) {
+    func bind(url: URL?, fallbackUrl: URL?, name: String?, colorSeed: String?, color: UIColor? = nil) {
 		
-		if self.photo.image != nil
-			&& self.photo.linkedPhotoUrl != nil
-			&& photoUrl != nil
-			&& self.photo.linkedPhotoUrl?.absoluteString == photoUrl?.absoluteString {
+		if self.photoView.image != nil
+			&& self.photoView.linkedPhotoUrl != nil
+			&& url != nil
+			&& self.photoView.linkedPhotoUrl?.absoluteString == url?.absoluteString {
 			return
 		}
 		
 		let animate = true
 		
-		self.photo.isHidden = true
-		self.photo.image = nil
-		self.name.text = nil
-		self.name.isHidden = false
+		self.photoView.isHidden = true
+		self.photoView.image = nil
+		self.nameLabel.text = nil
+		self.nameLabel.isHidden = false
 		
-		if photoUrl != nil {
+		if url != nil {
 			
 			let options: SDWebImageOptions = [.retryFailed, .lowPriority, .avoidAutoSetImage,/* .ProgressiveDownload*/]
 			
-			self.photo.sd_setImage(with: photoUrl as URL!
-				, placeholderImage: nil
-				, options: options
-				, completed: { [weak self] image, error, cacheType, url in
-											
-					if self != nil && error == nil {
-						
-						DispatchQueue.main.async() {
-							
-							self?.photo.linkedPhotoUrl = photoUrl
-							self?.name.isHidden = true
-							self?.photo.isHidden = false
-							
-							if animate && self != nil {
-								UIView.transition(with: self!,
-									duration: 0.4,
-									options: UIViewAnimationOptions.transitionCrossDissolve,
-									animations: {
-										self?.photo.image = image
-									},
-									completion: nil)
-							}
-							else {
-								self?.photo.image = image
-							}
-						}
-					}
-				}
-			)
+            self.photoView.sd_setImage(with: url as URL!, placeholderImage: nil, options: options) { [weak self] image, error, cacheType, url in
+                if error != nil && fallbackUrl != nil {
+                    Log.w("*** Image fetch failed: " + error!.localizedDescription)
+                    Log.w("*** Failed url: \(url!.absoluteString)")
+                    Log.w("*** Trying fallback url for image: \(fallbackUrl!)")
+                    self?.photoView.sd_setImage(with: fallbackUrl!, placeholderImage: nil, options: options) { [weak self] image, error, cacheType, url in
+                        if error == nil {
+                            Log.w("*** Success using fallback url for image: \(fallbackUrl!)")
+                        }
+                        DispatchQueue.main.async() {
+                            self?.photoView.linkedPhotoUrl = fallbackUrl
+                            self?.nameLabel.isHidden = true
+                            self?.photoView.isHidden = false
+                            
+                            if animate && self != nil {
+                                UIView.transition(with: self!
+                                    , duration: 0.4
+                                    , options: UIViewAnimationOptions.transitionCrossDissolve
+                                    , animations: { self?.photoView.image = image }
+                                    , completion: nil)
+                            }
+                            else {
+                                self?.photoView.image = image
+                            }
+                        }
+                    }
+                }
+                else {
+                    DispatchQueue.main.async() {
+                        self?.photoView.linkedPhotoUrl = url
+                        self?.nameLabel.isHidden = true
+                        self?.photoView.isHidden = false
+                        
+                        if animate && self != nil {
+                            UIView.transition(with: self!
+                                , duration: 0.4
+                                , options: UIViewAnimationOptions.transitionCrossDissolve
+                                , animations: { self?.photoView.image = image }
+                                , completion: nil)
+                        }
+                        else {
+                            self?.photoView.image = image
+                        }
+                    }
+                }
+            }
 		}
 		else {
             if name != nil {
-                self.name.text = Utils.initialsFromName(fullname: name!, count: self.initialsCount).uppercased()
+                self.nameLabel.text = Utils.initialsFromName(fullname: name!, count: self.initialsCount).uppercased()
             }
             if color != nil {
                 self.backgroundColor = color

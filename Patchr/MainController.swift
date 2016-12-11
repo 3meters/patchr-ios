@@ -40,9 +40,11 @@ class MainController: NSObject, iRateDelegate {
     *--------------------------------------------------------------------------------------------*/
 
     func stateInitialized(notification: NSNotification) {
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
-        checkCompatibility()
-        route()
+        self.emptyController.startScene() {
+            NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
+            self.checkCompatibility()
+            self.route()
+        }
     }
     
     deinit {
@@ -70,10 +72,6 @@ class MainController: NSObject, iRateDelegate {
         /* Initialize Creative sdk: 25% of method time */
         AdobeUXAuthManager.shared().setAuthenticationParametersWithClientID(PatchrKeys().creativeSdkClientId(), clientSecret: PatchrKeys().creativeSdkClientSecret(), enableSignUp: false)
 
-        /* Turn on status bar */
-        let statusBarHidden = UserDefaults.standard.bool(forKey: PatchrUserDefaultKey(subKey: "statusBarHidden"))    // Default = false, set in dev settings
-        UIApplication.shared.setStatusBarHidden(statusBarHidden, with: UIStatusBarAnimation.slide)
-
         /* Global UI tweaks */
         UIBarButtonItem.appearance().setTitleTextAttributes([NSFontAttributeName: Theme.fontBarText], for: UIControlState.normal)
         self.window?.backgroundColor = Theme.colorBackgroundWindow
@@ -90,7 +88,9 @@ class MainController: NSObject, iRateDelegate {
 
         self.mainWrapper = AirNavigationController(navigationBarClass: AirNavigationBar.self, toolbarClass: nil)
         self.mainWrapper.viewControllers = [self.channelController]
-        self.slideController = SlideMenuController(mainViewController: self.mainWrapper, leftMenuViewController: self.channelPickerController, rightMenuViewController: self.sideMenuController)
+        self.slideController = SlideMenuController(mainViewController: self.mainWrapper
+            , leftMenuViewController: self.channelPickerController
+            , rightMenuViewController: self.sideMenuController)
         self.lobbyWrapper = AirNavigationController(rootViewController: self.lobbyController)
 
         self.window?.setRootViewController(rootViewController: self.emptyController, animated: true) // While we wait for state to initialize
@@ -196,6 +196,9 @@ class MainController: NSObject, iRateDelegate {
                             controller.inputChannelId = params?["channelId"] as? String
                             controller.inputGroupTitle = params?["groupTitle"] as? String
                             controller.inputChannelName = params?["channelName"] as? String
+                            controller.inputReferrerName = params?["referrerName"] as? String
+                            controller.inputReferrerId = params?["referrerId"] as? String
+                            controller.inputReferrerPhotoUrl = params?["referrerPhotoUrl"] as? String
                             controller.flow = .onboardInvite
                             wrapper.viewControllers = [controller]
                             UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)

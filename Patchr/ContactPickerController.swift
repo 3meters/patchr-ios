@@ -31,7 +31,6 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
     var channel: FireChannel!
     var inputGroupId: String?
     var inputGroupTitle: String?
-    var inputUsername: String?
     
     var filterText: String?
     var filterActive = false
@@ -246,7 +245,7 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
             
             let groupId = StateController.instance.group?.id ?? self.inputGroupId!
             let groupTitle = StateController.instance.group?.title ?? self.inputGroupTitle!
-            let username = StateController.instance.group?.username ?? self.inputUsername!
+            let username = UserController.instance.user!.username!
             
             BranchProvider.inviteMember(groupId: groupId, groupTitle: groupTitle, username: username, completion: { response, error in
                 
@@ -254,7 +253,7 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                     
                     let invite = response as! InviteItem
                     let inviteUrl = invite.url
-                    let userTitle = UserController.instance.userTitle ?? self.inputUsername
+                    let userTitle = UserController.instance.userTitle
                     let userEmail = UserController.instance.userEmail
                     
                     var recipients = [String]()

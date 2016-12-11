@@ -13,9 +13,7 @@ import Firebase
 
 class GroupCreateController: BaseEditViewController {
 
-    var groupTitleField = AirTextField()
-    var userNameField = AirTextField()
-    var errorLabel = AirLabelDisplay()
+    var groupTitleField = FloatTextField(frame: CGRect.zero)
     var message = AirLabelTitle()
 
     /*--------------------------------------------------------------------------------------------
@@ -28,19 +26,13 @@ class GroupCreateController: BaseEditViewController {
     }
 
     override func viewDidAppear(_ animated: Bool) {
-        self.groupTitleField.becomeFirstResponder()
+        let _ = self.groupTitleField.becomeFirstResponder()
     }
 
     override func viewWillLayoutSubviews() {
-
         let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        let errorSize = self.errorLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        
         self.message.anchorTopCenter(withTopPadding: 0, width: 288, height: messageSize.height)
         self.groupTitleField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-        self.userNameField.alignUnder(self.groupTitleField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-        self.errorLabel.alignUnder(self.userNameField, matchingCenterWithTopPadding: 0, width: 288, height: errorSize.height)
-
         super.viewWillLayoutSubviews()
     }
 
@@ -68,20 +60,6 @@ class GroupCreateController: BaseEditViewController {
         close()
     }
     
-    override func textFieldDidBeginEditing(_ textField: UITextField) {
-        super.textFieldDidBeginEditing(textField)
-        self.errorLabel.fadeOut()
-    }
-    
-    public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        if textField == self.userNameField {
-            let lowercased = (self.userNameField.text! as NSString).replacingCharacters(in: range, with: string.lowercased())
-            self.userNameField.text = lowercased
-            return false
-        }
-        return true
-    }
-
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
@@ -90,7 +68,7 @@ class GroupCreateController: BaseEditViewController {
         super.initialize()
 
         self.message.text = (self.flow == .onboardCreate)
-            ? "Share and message more safely because Patchr groups stay focused."
+            ? "Name your new Patchr group."
             : "Create a new Patchr group."
         
         if self.flow == .onboardCreate {
@@ -102,28 +80,14 @@ class GroupCreateController: BaseEditViewController {
         self.message.textAlignment = .center
 
         self.groupTitleField.placeholder = "Group Name"
-        self.groupTitleField.delegate = self
+        self.groupTitleField.setDelegate(delegate: self)
         self.groupTitleField.keyboardType = .default
         self.groupTitleField.autocapitalizationType = .words
         self.groupTitleField.autocorrectionType = .no
         self.groupTitleField.returnKeyType = UIReturnKeyType.next
         
-        self.userNameField.placeholder = "Your username for this group (lower case)"
-        self.userNameField.delegate = self
-        self.userNameField.keyboardType = .default
-        self.userNameField.autocapitalizationType = .none
-        self.userNameField.autocorrectionType = .no
-        self.userNameField.returnKeyType = UIReturnKeyType.next
-        
-        self.errorLabel.textColor = Theme.colorTextValidationError
-        self.errorLabel.alpha = 0.0
-        self.errorLabel.numberOfLines = 0
-        self.errorLabel.font = Theme.fontValidationError
-        
         self.contentHolder.addSubview(self.message)
         self.contentHolder.addSubview(self.groupTitleField)
-        self.contentHolder.addSubview(self.userNameField)
-        self.contentHolder.addSubview(self.errorLabel)
         
         /* Navigation bar buttons */
         let createButton = UIBarButtonItem(title: "Create", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
@@ -136,11 +100,10 @@ class GroupCreateController: BaseEditViewController {
         self.processing = true
         
         /* Not checking username uniqueness because group doesn't have any yet */
-        let username = self.userNameField.text!
         let groupId = "gr-\(Utils.genRandomId())"
         var groupMap: [String: Any] = ["title": self.groupTitleField.text!]
 
-        FireController.instance.addGroup(groupId: groupId, groupMap: &groupMap, username: username, then: { success in
+        FireController.instance.addGroup(groupId: groupId, groupMap: &groupMap, then: { success in
             
             self.progress?.hide(true)
             self.processing = false
@@ -151,7 +114,6 @@ class GroupCreateController: BaseEditViewController {
                     controller.flow = .onboardCreate
                     controller.inputGroupId = groupId
                     controller.inputGroupTitle = self.groupTitleField.text!
-                    controller.inputUsername = username
                     self.navigationController?.pushViewController(controller, animated: true)
                 }
                 else {
@@ -169,47 +131,17 @@ class GroupCreateController: BaseEditViewController {
     }
     
     func isValid() -> Bool {
-
         if self.groupTitleField.isEmpty {
-            Alert(title: "Name your group")
+            self.groupTitleField.errorMessage = "Name your group"
             return false
         }
-        
-        if self.userNameField.isEmpty {
-            self.errorLabel.text = "Choose your username for this group"
-            self.view.setNeedsLayout()
-            self.errorLabel.fadeIn()
-            return false
-        }
-        
-        let username = userNameField.text!
-        let characterSet: NSCharacterSet = NSCharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz0123456789_-")
-        if username.rangeOfCharacter(from: characterSet.inverted) != nil {
-            self.errorLabel.text = "Username must be lower case and cannot contain spaces or periods."
-            self.view.setNeedsLayout()
-            self.errorLabel.fadeIn()
-            return false
-        }
-        
-        if (userNameField.text!.utf16.count > 21) {
-            self.errorLabel.text = "Username must be 21 characters or less."
-            self.view.setNeedsLayout()
-            self.errorLabel.fadeIn()
-            return false
-        }
-
         return true
     }
 
     override func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-
         if textField == self.groupTitleField {
-            userNameField.becomeFirstResponder()
-        }
-        else if textField == self.userNameField {
             self.doneAction(sender: textField)
         }
-
         return true
     }
 }

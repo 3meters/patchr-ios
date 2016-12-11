@@ -16,18 +16,12 @@ class Log {
         
         /* Logging */
         DDLog.add(DDTTYLogger.sharedInstance()) // TTY = Xcode console
-//        DDLog.add(DDASLLogger.sharedInstance()) // ASL = Apple System Logs
-        DDTTYLogger.sharedInstance().colorsEnabled = true
-        DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogVerbose, backgroundColor: nil, for: DDLogFlag.verbose)
-        DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogDebug, backgroundColor: nil, for: DDLogFlag.debug)
-        DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogInfo, backgroundColor: nil, for: DDLogFlag.info)
-        DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogWarning, backgroundColor: nil, for: DDLogFlag.warning)
-        DDTTYLogger.sharedInstance().setForegroundColor(Theme.colorLogError, backgroundColor: nil, for: DDLogFlag.error)
-        
-//        let fileLogger: DDFileLogger = DDFileLogger() // File Logger
-//        fileLogger.rollingFrequency = 60 * 60 * 24  // 24 hours
-//        fileLogger.logFileManager.maximumNumberOfLogFiles = 7
-//        DDLog.add(fileLogger)
+//        DDASLLogger.sharedInstance().colorsEnabled = true
+//        DDASLLogger.sharedInstance().setForegroundColor(Theme.colorLogVerbose, backgroundColor: nil, for: DDLogFlag.verbose)
+//        DDASLLogger.sharedInstance().setForegroundColor(Theme.colorLogDebug, backgroundColor: nil, for: DDLogFlag.debug)
+//        DDASLLogger.sharedInstance().setForegroundColor(Theme.colorLogInfo, backgroundColor: nil, for: DDLogFlag.info)
+//        DDASLLogger.sharedInstance().setForegroundColor(Theme.colorLogWarning, backgroundColor: nil, for: DDLogFlag.warning)
+//        DDASLLogger.sharedInstance().setForegroundColor(Theme.colorLogError, backgroundColor: nil, for: DDLogFlag.error)
     }
     
 	static func v(_ message: String, breadcrumb: Bool = false) {

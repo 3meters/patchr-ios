@@ -30,7 +30,7 @@ class GroupListCell: UITableViewCell {
     }
     
     func reset() {
-        self.photoView?.photo.image = nil
+        self.photoView?.photoView.image = nil
         self.title?.text = nil
         self.subtitle?.text = nil
         self.badge?.backgroundColor = Theme.colorBackgroundBadge
@@ -57,12 +57,12 @@ class GroupListCell: UITableViewCell {
         self.title?.text = group.title!
         self.subtitle?.text = "\(group.role!)"
         
-        if let photo = group.photo, !photo.uploading {
+        if let photo = group.photo, photo.uploading == nil {
             let photoUrl = PhotoUtils.url(prefix: photo.filename!, source: photo.source!, category: SizeCategory.profile)
-            self.photoView?.bind(photoUrl: photoUrl, name: nil, colorSeed: group.id)
+            self.photoView?.bind(url: photoUrl, fallbackUrl: PhotoUtils.fallbackUrl(prefix: photo.filename!), name: nil, colorSeed: group.id)
         }
         else {
-            self.photoView?.bind(photoUrl: nil, name: group.title, colorSeed: group.id)
+            self.photoView?.bind(url: nil, fallbackUrl: nil, name: group.title, colorSeed: group.id)
         }
     }
 }

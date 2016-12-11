@@ -15,7 +15,7 @@ class FirePhoto: NSObject {
     var height: Int?
     var source: String?
     var takenAt: Int?
-    var uploading = false
+    var uploading: String?
     
     static func from(dict: [String: Any]?) -> FirePhoto? {
         if dict != nil {
@@ -25,9 +25,7 @@ class FirePhoto: NSObject {
             photo.width = dict!["width"] as? Int
             photo.height = dict!["height"] as? Int
             photo.takenAt = dict!["taken_at"] as? Int
-            if dict!["uploading"] != nil {
-                photo.uploading = dict!["uploading"] as! Bool
-            }
+            photo.uploading = dict!["uploading"] as? String
             return photo
         }
         return nil

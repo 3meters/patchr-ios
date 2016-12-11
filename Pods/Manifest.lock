@@ -141,8 +141,9 @@ PODS:
   - SDWebImage (3.8.2):
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
+  - SkyFloatingLabelTextField (2.0.0)
   - SlackTextViewController (1.9.5)
-  - SlideMenuControllerSwift (3.0.0)
+  - SlideMenuControllerSwift (3.0.1)
   - UIDevice-Hardware (0.1.8)
 
 DEPENDENCIES:
@@ -175,6 +176,7 @@ DEPENDENCIES:
   - pop (~> 1.0)
   - ReachabilitySwift (~> 3)
   - SDWebImage (~> 3.8.1)
+  - SkyFloatingLabelTextField (~> 2.0.0)
   - SlackTextViewController (from `~/code/SlackTextViewController`)
   - SlideMenuControllerSwift
   - UIDevice-Hardware (~> 0.1.7)
@@ -227,10 +229,11 @@ SPEC CHECKSUMS:
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
   ReachabilitySwift: f5b9bb30a0777fac8f09ce8b067e32faeb29bb64
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
+  SkyFloatingLabelTextField: a81a0eaed2785d1599f11484c6ebc1c4eb5d1228
   SlackTextViewController: fbcdadbb8090673f604484ff5b6eb8d77baed42a
-  SlideMenuControllerSwift: 9c0a84f9a3fba51681debd7be77617094562ebcc
+  SlideMenuControllerSwift: 9a163b16d54afab734add42858cba7ef7c307755
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
 
-PODFILE CHECKSUM: 84cf58a8c677970afee9b6228f32f927db4ebdca
+PODFILE CHECKSUM: 7ee00c06a5cbed05bdab3bd81add7f33f6804fb6
 
 COCOAPODS: 1.1.0.rc.3

@@ -82,7 +82,7 @@ class UserHeaderView: BaseDetailView {
         
         self.fullName.text?.removeAll(keepingCapacity: false)
         self.username.text?.removeAll(keepingCapacity: false)
-        self.photoView.photo.image = nil
+        self.photoView.photoView.image = nil
         self.fullName.isHidden = true
         
         if user != nil {
@@ -107,14 +107,15 @@ class UserHeaderView: BaseDetailView {
             }
             
             if photoUrl != nil || fullName != nil {
-                self.photoView.bind(photoUrl: photoUrl, name: fullName, colorSeed: user!.id)
+                let fallbackUrl = photo != nil ? PhotoUtils.fallbackUrl(prefix: photo!.filename!) : nil
+                self.photoView.bind(url: photoUrl, fallbackUrl: fallbackUrl, name: fullName, colorSeed: user!.id)
             }
             else {
-                self.photoView.bind(photoUrl: photoUrl, name: fullName, colorSeed: user!.id, color: Colors.accentColorFill)
+                self.photoView.bind(url: photoUrl, fallbackUrl: nil, name: fullName, colorSeed: user!.id, color: Colors.accentColorFill)
             }
         }
         else {
-            self.photoView.bind(photoUrl: nil, name: nil, colorSeed: nil, color: Theme.colorBackgroundImage)
+            self.photoView.bind(url: nil, fallbackUrl: nil, name: nil, colorSeed: nil, color: Theme.colorBackgroundImage)
         }
         
         self.setNeedsLayout()

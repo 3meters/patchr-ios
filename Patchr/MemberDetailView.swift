@@ -143,10 +143,10 @@ class MemberDetailView: UIView {
         }
 
         let fullName = user.profile?.fullName ?? user.username
-
-        if let photo = user.profile?.photo, !photo.uploading {
+        
+        if let photo = user.profile?.photo, photo.uploading == nil {
             if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
-                self.photoView.setImageWithUrl(url: photoUrl)
+                self.photoView.setImageWithUrl(url: photoUrl, fallbackUrl: PhotoUtils.fallbackUrl(prefix: photo.filename!))
                 self.gradient.isHidden = false
             }
         }

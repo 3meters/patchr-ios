@@ -23,6 +23,7 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
 
     var mode: Mode = .none
     var flow: Flow = .none
+    var branch: Branch = .none
 	
 	/*--------------------------------------------------------------------------------------------
 	* Lifecycle
@@ -31,7 +32,6 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		
-        NotificationCenter.default.addObserver(self, selector: #selector(photoViewHasFocus(sender:)), name: NSNotification.Name(rawValue: Events.PhotoViewHasFocus), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeShown(sender:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden(sender:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
 	}
@@ -44,7 +44,6 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
 	override func viewDidDisappear(_ animated: Bool) {
 		super.viewDidDisappear(animated)
         
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.PhotoViewHasFocus), object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
 	}
@@ -86,28 +85,40 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
         let photoMap = [
             "width": Int(preparedImage.size.width), // width/height are in points...should be pixels?
             "height": Int(preparedImage.size.height),
-            "source": S3.sharedService.imageSource,
+            "source": S3.instance.imageSource,
             "filename": imageKey,
-            "uploading": true
-            ] as [String: Any]
+            "uploading": true ] as [String: Any]
         
         /* Upload */
         DispatchQueue.global().async {
-            S3.sharedService.upload(
-                image: preparedImage,
-                imageKey: imageKey,
-                progress: progress,
-                completionHandler: { task, error in
-                    if error != nil {
-                        Log.w("Image upload error: \(error!.localizedDescription)")
-                    }
-                    next?(error)
-            })
+            S3.instance.upload(image: preparedImage, imageKey: imageKey, progress: progress) { task, error in
+                if error != nil {
+                    Log.w("*** S3 image upload stopped with error: \(error!.localizedDescription)")
+                }
+                else {
+                    Log.w("*** S3 image upload complete: \(imageKey)")
+                }
+                next?(error)
+            }
         }
         
         return photoMap
     }
     
+    func showError(_ textField: TextFieldView, error: String) {
+        textField.setErrorText(text: error)
+        self.view.setNeedsLayout()
+        self.view.layoutIfNeeded(animated: true)
+    }
+    
+    func clearErrorIfNeeded(_ textField: TextFieldView) {
+        if textField.errorLabel.text != nil {
+            textField.setErrorText(text: nil)
+            self.view.setNeedsLayout()
+            self.view.layoutIfNeeded(animated: true)
+        }
+    }
+
 	func keyboardWillBeShown(sender: NSNotification) {
 		/*
 		* Called when the UIKeyboardDidShowNotification is sent.
@@ -149,7 +160,13 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
         case onboardInvite
         case none
     }
-    
+
+    enum Branch: Int {
+        case login
+        case signup
+        case none
+    }
+
     enum Mode: Int {
         case insert
         case update

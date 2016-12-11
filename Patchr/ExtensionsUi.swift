@@ -131,6 +131,12 @@ public extension UIView {
             , completion: completion)
     }
     
+    func layoutIfNeeded(animated: Bool) {
+        UIView.animate(withDuration: 0.2, animations: { () -> Void in
+            self.layoutIfNeeded()
+        })
+    }
+    
     func align(toTheRightOf view: UIView, matchingCenterWithLeftPadding left: CGFloat, width: CGFloat, height: CGFloat, topPadding: CGFloat) {
         self.frame = CGRect(x: view.frame.maxX + left, y: (view.frame.midY - (height / 2.0) + topPadding), width: width, height: height);
     }

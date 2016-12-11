@@ -34,7 +34,6 @@ class FireGroup: NSObject {
     var joinedAt: Int?
     var notifications: String?
     var role: String?
-    var username: String?
     
     static func from(dict: [String: Any]?, id: String?) -> FireGroup? {
         if dict != nil {
@@ -56,7 +55,6 @@ class FireGroup: NSObject {
     
     func membershipClear() {
         self.disabled = nil
-        self.username = nil
         self.role = nil
         self.notifications = nil
         self.hideEmail = nil
@@ -69,6 +67,5 @@ class FireGroup: NSObject {
         self.notifications = dict["notifications"] as? String
         self.hideEmail = dict["hide_email"] as? Bool
         self.joinedAt = dict["joined_at"] as? Int
-        self.username = dict["username"] as? String
     }
 }

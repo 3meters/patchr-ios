@@ -16,7 +16,6 @@ class ChannelViewController: BaseSlackController {
     var channelQuery: ChannelQuery?
     var messagesQuery: FIRDatabaseQuery!
     
-    var tableViewDataSource: FUITableViewDataSource!
     var cellReuseIdentifier: String!
     var headerView: ChannelDetailView!
 
@@ -24,7 +23,6 @@ class ChannelViewController: BaseSlackController {
     var originalHeaderRect: CGRect?
     var originalScrollTop = CGFloat(-64.0)
     var originalScrollInset: UIEdgeInsets?
-    //var lastContentOffset = CGFloat(0)
 
     var messageBar = UILabel()
     var messageBarTop = CGFloat(0)
@@ -122,12 +120,10 @@ class ChannelViewController: BaseSlackController {
     
     func openNavigationAction(sender: AnyObject) {
         self.slideMenuController()?.openLeft()
-        UIApplication.shared.setStatusBarHidden(true, with: UIStatusBarAnimation.slide)
     }
     
     func openMenuAction(sender: AnyObject?) {
         self.slideMenuController()?.openRight()
-        UIApplication.shared.setStatusBarHidden(true, with: UIStatusBarAnimation.slide)
     }
     
     func browseMemberAction(sender: AnyObject?) {
@@ -239,6 +235,7 @@ class ChannelViewController: BaseSlackController {
         if sender.state == UIGestureRecognizerState.began {
             let point = sender.location(in: self.tableView)
             if let indexPath = self.tableView.indexPathForRow(at: point) {
+                dismissKeyboard(true)
                 let snap = self.tableViewDataSource.object(at: UInt(indexPath.row)) as! FIRDataSnapshot
                 let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key)
                 showMessageActions(message: message!)
@@ -311,6 +308,8 @@ class ChannelViewController: BaseSlackController {
         self.loadMoreActivity.tag = 2
         self.loadMoreActivity.color = Theme.colorActivityIndicator
         self.loadMoreActivity.isHidden = true
+        
+        self.itemTemplate.template = true
         
         self.footerView.frame.size.height = CGFloat(48 + 16)
         self.footerView.addSubview(self.loadMoreActivity)
@@ -395,17 +394,22 @@ class ChannelViewController: BaseSlackController {
             
             /* We do this here so we have tableView sizing */
             if self.tableView.tableHeaderView == nil {
-                let viewWidth = min(CONTENT_WIDTH_MAX, (self.tableView.width()))
+                
+                let screenSize = UIScreen.main.bounds.size
+                let viewWidth = min(CONTENT_WIDTH_MAX, screenSize.width)
+                
                 self.headerView.frame = CGRect(x:0, y:0, width: viewWidth, height: 100)
                 self.headerView.bind(channel: self.channel)
-                let viewHeight = self.headerView.height()
-                self.headerView.frame = CGRect(x:0, y:0, width: viewWidth, height: viewHeight)
-                self.headerView.photo.frame = CGRect(x: -24, y: -36, width:
-                    (self.headerView.contentGroup.width())
-                        + 48, height: (self.headerView.contentGroup.height()) + 72)
+                self.headerView.frame = CGRect(x:0, y:0, width: viewWidth, height: self.headerView.height())
+                
+                self.headerView.photo.frame = CGRect(x: -24, y: -36
+                    , width: (self.headerView.contentGroup.width()) + 48
+                    , height: (self.headerView.contentGroup.height()) + 72)
+                
                 self.originalRect = self.headerView.photo.frame
                 self.originalHeaderRect = self.headerView.frame
                 self.originalScrollInset = self.tableView.contentInset
+                
                 self.tableView.tableHeaderView = self.headerView
                 self.tableView.reloadData()
             }
@@ -462,8 +466,8 @@ class ChannelViewController: BaseSlackController {
                 label.delegate = self
             }
             
-            view.photo?.isUserInteractionEnabled = true
-            view.photo?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.browsePhotoAction(sender:))))
+            view.photoView?.isUserInteractionEnabled = true
+            view.photoView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.browsePhotoAction(sender:))))
             cell.injectView(view: view, padding: self.itemPadding)
             cell.layoutSubviews()   // Make sure padding has been applied
         }
@@ -473,8 +477,8 @@ class ChannelViewController: BaseSlackController {
             messageView.bind(message: message)
             
             if message.creator != nil {
-                messageView.userPhoto.target = message.creator
-                messageView.userPhoto.addTarget(self, action: #selector(self.browseMemberAction(sender:)), for: .touchUpInside)
+                messageView.userPhotoView.target = message.creator
+                messageView.userPhotoView.addTarget(self, action: #selector(self.browseMemberAction(sender:)), for: .touchUpInside)
             }
             
             if NotificationController.instance.newMessages[message.id!] != nil {
@@ -674,7 +678,7 @@ class ChannelViewController: BaseSlackController {
                 message.getCreator(with: { user in
                     
                     remaining -= 1
-                    if (message.attachments?.first?.photo) != nil {
+                    if (message.attachments?.values.first?.photo) != nil {
                         message.creator = user
                         let displayPhoto = DisplayPhoto.fromMessage(message: message)
                         displayPhotos[displayPhoto.entityId!] = displayPhoto
@@ -695,7 +699,7 @@ class ChannelViewController: BaseSlackController {
     }
 
     func shareUsing(route: ShareRoute) { }
-
+    
     func showMessageBar() {
         self.view.insertSubview(self.messageBar, at: self.view.subviews.count)
         self.messageBar.alignUnder(self.navigationController?.navigationBar, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 40)

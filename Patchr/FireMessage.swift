@@ -21,7 +21,7 @@ class FireMessage: NSObject {
     var channel: String?
     var event: String?
     var text: String?
-    var attachments: [FireAttachment]?
+    var attachments: [String: FireAttachment]?
     var createdAt: Int?
     var createdBy: String?
     var modifiedAt: Int?
@@ -38,10 +38,11 @@ class FireMessage: NSObject {
             message.event = dict!["event"] as? String
             message.text = dict!["text"] as? String
             
-            if let attachments = dict!["attachments"] as? [[String:Any]], attachments.count > 0 {
-                message.attachments = [FireAttachment]()
-                for attachment in attachments {
-                    message.attachments?.append(FireAttachment.from(dict: attachment)!)
+            if let attachments = dict!["attachments"] as? [String: Any], attachments.keys.count > 0 {
+                message.attachments = [:]
+                for attachmentKey in attachments.keys {
+                    let attachment = FireAttachment.from(dict: attachments[attachmentKey] as! [String : Any]?, id: attachmentKey)!
+                    message.attachments![attachmentKey] = attachment
                 }
             }
             

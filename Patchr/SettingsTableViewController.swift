@@ -23,7 +23,6 @@ class SettingsTableViewController: UITableViewController {
 
     /* Section 2: User settings for group */
     var notificationsCell = AirTableViewCell()
-    var usernameCell = AirTableViewCell()
     var hideEmailCell = AirTableViewCell()
     var leaveGroupCell = AirTableViewCell()
 
@@ -175,7 +174,6 @@ class SettingsTableViewController: UITableViewController {
         self.editGroupCell.textLabel!.text = "Group Settings"
 
         self.notificationsCell.textLabel!.text = "Notifications and Sounds"
-        self.usernameCell.textLabel!.text = "Username"
         self.hideEmailCell.textLabel!.text = "Hide Email"
 
         self.sendFeedbackCell.textLabel!.text = "Send feedback"
@@ -206,7 +204,6 @@ class SettingsTableViewController: UITableViewController {
             if group.hideEmail != nil {
                 self.hideEmailCell.accessoryView = makeSwitch(notificationType: .hideEmail, state: group.hideEmail!)
             }
-            self.usernameCell.detailTextLabel!.text = group.username!
         }
     }
 
@@ -257,11 +254,6 @@ extension SettingsTableViewController {
 
         if selectedCell == self.notificationsCell {
             let controller = NotificationSettingsViewController()
-            self.navigationController?.pushViewController(controller, animated: true)
-        }
-        
-        if selectedCell == self.usernameCell {
-            let controller = UsernameSettingViewController()
             self.navigationController?.pushViewController(controller, animated: true)
         }
         
@@ -326,7 +318,7 @@ extension SettingsTableViewController {
             return CGFloat(0)
         }
         
-        if indexPath.section == 1 && indexPath.row == 3 {
+        if indexPath.section == 1 && indexPath.row == 2 {
             if StateController.instance.group?.ownedBy == UserController.instance.userId {
                 return CGFloat(0)
             }
@@ -350,9 +342,8 @@ extension SettingsTableViewController {
             case 1:
                 switch (indexPath.row) {
                     case 0: return self.notificationsCell
-                    case 1: return self.usernameCell
-                    case 2: return self.hideEmailCell
-                    case 3: return self.leaveGroupCell
+                    case 1: return self.hideEmailCell
+                    case 2: return self.leaveGroupCell
                     default: fatalError("Unknown row in section 2")
                 }
             case 2:
@@ -399,7 +390,7 @@ extension SettingsTableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
             case 0: return 2
-            case 1: return 4
+            case 1: return 3
             case 2: return 4
             case 3: return 2
             default: fatalError("Unknown number of sections")

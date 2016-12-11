@@ -9,13 +9,5 @@
 		<string>applinks:bvvb.app.link</string>
 		<string>applinks:bvvb-alternate.app.link</string>
 	</array>
-	<key>com.apple.security.application-groups</key>
-	<array>
-		<string>group.com.3meters.patchr.ios</string>
-	</array>
-	<key>keychain-access-groups</key>
-	<array>
-		<string>$(AppIdentifierPrefix)com.3meters.patchr.ios</string>
-	</array>
 </dict>
 </plist>

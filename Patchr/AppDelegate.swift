@@ -235,12 +235,13 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
         , withCompletionHandler completionHandler: @escaping () -> Void) {
         
         /* User interacted with notification. Could be tap, dismiss, action button. */
-        
-        let userInfo = response.notification.request.content.userInfo
-        let channelId = userInfo["channelId"] as! String
-        let groupId = userInfo["groupId"] as! String
-        StateController.instance.setGroupId(groupId: groupId, channelId: channelId)
-        MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+        if response.actionIdentifier == UNNotificationDefaultActionIdentifier {
+            let userInfo = response.notification.request.content.userInfo
+            if let channelId = userInfo["channelId"] as? String, let groupId = userInfo["groupId"] as? String {
+                StateController.instance.setGroupId(groupId: groupId, channelId: channelId)
+                MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+            }
+        }
     }
 }
 

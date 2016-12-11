@@ -25,7 +25,7 @@ class UserController: NSObject {
         if let profile = self.user?.profile, profile.fullName != nil {
             userTitle = profile.fullName
         }
-        if userTitle == nil, let username = StateController.instance.group?.username {
+        if userTitle == nil, let username = UserController.instance.user?.username {
             userTitle = username
         }
         if userTitle == nil, let username = self.user?.username {

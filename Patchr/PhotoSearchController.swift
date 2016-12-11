@@ -58,7 +58,7 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
     fileprivate var sectionInsets: UIEdgeInsets?
     fileprivate var thumbnailWidth: CGFloat?
     fileprivate var availableWidth: CGFloat?
-    fileprivate let pageSize = 30
+    fileprivate let pageSize = 150      // Maximum allowed by Bing. We pull max to keep request count down.
     fileprivate var maxSize = 100
 	fileprivate var virtualSize = 30
     fileprivate let maxImageSize: Int = 500000
@@ -176,8 +176,9 @@ class PhotoSearchController: UICollectionViewController, UITableViewDelegate, UI
 		
 		BingController.instance.backgroundOperationQueue.addOperation {
 			
-			BingController.instance.loadSearchImages(query: self.searchBar!.text!, count: Int64(self.pageSize), offset: Int64(self.offset)) {
-				response, error in
+			BingController.instance.loadSearchImages(query: self.searchBar!.text!
+                , count: Int64(self.pageSize)
+                , offset: Int64(self.offset)) { response, error in
                 
 				OperationQueue.main.addOperation {
 					
@@ -434,7 +435,7 @@ extension PhotoSearchController {
 			if let thumbCell = cell as? ThumbnailCollectionViewCell {
 				if let imageView = thumbCell.thumbnail {
 					thumbCell.imageResult = imageResult
-					imageView.setImageWithUrl(url: URL(string: imageResult.thumbnailUrl!)!, animate: false)
+					imageView.setImageWithUrl(url: URL(string: imageResult.thumbnailUrl!)!, fallbackUrl: nil, animate: false)
 				}
 			}			
 		}

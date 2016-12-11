@@ -56,7 +56,6 @@ public struct Events {
     static let MessageDidChange             = "MessageDidChange"
     static let PhotoDidChange               = "PhotoDidChange"
     static let PhotoRemoved                 = "PhotoRemoved"
-    static let PhotoViewHasFocus            = "PhotoViewHasFocus"
     static let UserStateDidChange           = "UserStateDidChange"
     static let StateInitialized             = "StateInitialized"
     static let UnreadChange                 = "UnreadChange"

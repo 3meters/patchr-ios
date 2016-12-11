@@ -116,18 +116,14 @@ class PhotoEditView: UIView {
 	}
 	
 	func editPhotoAction(sender: AnyObject){
-		if self.controller != nil {
-			NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoViewHasFocus), object: nil)
-			let controller = AdobeUXImageEditorViewController(image: self.imageButton.image(for: .normal)!)
+        if self.controller != nil, let image = self.imageButton.image(for: .normal) {
+			let controller = AdobeUXImageEditorViewController(image: image)
 			controller.delegate = self
 			self.controller!.present(controller, animated: true, completion: nil)
 		}
 	}
 	
 	func clearPhotoAction(sender: AnyObject) {
-		
-		NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoViewHasFocus), object: nil)
-		
 		if self.photoSchema == Schema.ENTITY_MESSAGE {
 			self.imageButton.setImage(nil, for: .normal)
 			configureTo(photoMode: .Empty)
@@ -141,11 +137,10 @@ class PhotoEditView: UIView {
 		self.photoActive = false
 		self.photoDirty = true
 		
-		NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: nil)
+		NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: self)
 	}
 	
 	func setPhotoAction(sender: AnyObject) {
-		NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoViewHasFocus), object: nil)
 		self.photoChooser?.choosePhoto(sender: sender) { [weak self] image, imageResult, cancelled in
 			if !cancelled {
                 DispatchQueue.main.async {
@@ -166,7 +161,7 @@ class PhotoEditView: UIView {
         
 		if image != nil {
 			self.imageButton.setImage(image, for: .normal)
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: self)
 		}
 		else if imageResult != nil {
 			/*
@@ -175,8 +170,8 @@ class PhotoEditView: UIView {
 			 */
 			let dimension = imageResult!.width! >= imageResult!.height! ? ResizeDimension.width : ResizeDimension.height
 			let url = URL(string: GooglePlusProxy.convert(uri: imageResult!.contentUrl!, size: Int(IMAGE_DIMENSION_MAX), dimension: dimension))
-            self.imageButton.setImageWithUrl(url: url!, finished: { success in
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
+            self.imageButton.setImageWithUrl(url: url!, fallbackUrl: nil, finished: { success in
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: self)
             })  // Downloads and pushes into photoImage
 		}
 	}
@@ -249,12 +244,10 @@ class PhotoEditView: UIView {
 		self.setPhotoButton.addTarget(self, action: #selector(setPhotoAction(sender:)), for: .touchUpInside)
 	}
 	
-    func bind(url: URL?) {
-        if url != nil {
-            self.imageButton.setImageWithUrl(url: url!, animate: true)
-            self.usingPhotoDefault = false
-            self.photoActive = true
-        }
+    func bind(url: URL, fallbackUrl: URL?) {
+        self.imageButton.setImageWithUrl(url: url, fallbackUrl: fallbackUrl, animate: true)
+        self.usingPhotoDefault = false
+        self.photoActive = true
     }
     
     func reset() {

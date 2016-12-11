@@ -19,7 +19,15 @@ class BaseSlackController: SLKTextViewController {
 			|| (self.navigationController != nil && self.navigationController?.presentingViewController?.presentedViewController == self.navigationController)
 			|| self.tabBarController?.presentingViewController is UITabBarController
 	}
-    
+
+    var statusBarHidden: Bool = false {
+        didSet {
+            UIView.animate(withDuration: 0.5) { () -> Void in
+                self.setNeedsStatusBarAppearanceUpdate()
+            }
+        }
+    }
+
     var channel: FireChannel!
     var searchResult: [String]?
     var editingMessage: FireMessage!
@@ -32,6 +40,8 @@ class BaseSlackController: SLKTextViewController {
     var photoHolder	: UIVisualEffectView!
     var rule = UIView()
 	
+    var tableViewDataSource: FUITableViewDataSource!
+
     override var tableView: UITableView {
         get {
             return super.tableView!
@@ -55,10 +65,18 @@ class BaseSlackController: SLKTextViewController {
         self.rule.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 0.5)
         super.viewWillLayoutSubviews()
     }
-
-	deinit {
-		NotificationCenter.default.removeObserver(self)
-	}
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        NotificationCenter.default.addObserver(self.tableView, selector: #selector(UITableView.reloadData), name: NSNotification.Name.UIContentSizeCategoryDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(textInputbarDidMove(_:)), name: NSNotification.Name.SLKTextInputbarDidMove, object: nil)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIContentSizeCategoryDidChange, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.SLKTextInputbarDidMove, object: nil)
+    }
 	
 	/*--------------------------------------------------------------------------------------------
 	* Events
@@ -87,12 +105,18 @@ class BaseSlackController: SLKTextViewController {
     
     override func didPressRightButton(_ sender: Any!) {
         self.textView.refreshFirstResponder()
+        
         sendMessage()
+        
         hidePhotoEdit()
         self.photoEditView.reset()
-        let indexPath = IndexPath(row: 0, section: 0)
-        let scrollPosition: UITableViewScrollPosition = self.isInverted ? .bottom : .top
-        self.tableView.scrollToRow(at: indexPath, at: scrollPosition, animated: true)
+        
+        if self.tableViewDataSource.items.count > 0 {
+            let indexPath = IndexPath(row: 0, section: 0)
+            let scrollPosition: UITableViewScrollPosition = self.isInverted ? .bottom : .top
+            self.tableView.scrollToRow(at: indexPath, at: scrollPosition, animated: true)
+        }
+        
         super.didPressRightButton(sender)
     }
     
@@ -159,7 +183,7 @@ class BaseSlackController: SLKTextViewController {
         
         self.photoHolder.contentView.addSubview(self.rule)
         self.photoHolder.contentView.addSubview(self.photoEditView)
-        UIApplication.shared.keyWindow?.addSubview(self.photoHolder)
+        self.view.addSubview(self.photoHolder)
         
         self.bounces = true
         self.isKeyboardPanningEnabled = true
@@ -178,15 +202,12 @@ class BaseSlackController: SLKTextViewController {
         self.typingIndicatorView!.canResignByTouch = true
         
         self.tableView.separatorStyle = .none
-        //self.autoCompletionView.register(MessageTableViewCell.classForCoder(), forCellReuseIdentifier: AutoCompletionCellIdentifier)
         self.registerPrefixes(forAutoCompletion: ["@",  "#", ":", "+:", "/"])
 
         self.photoEditView.editPhotoButton.addTarget(self, action: #selector(editPhotoAction(sender:)), for: .touchUpInside)
         
-        NotificationCenter.default.addObserver(self.tableView, selector: #selector(UITableView.reloadData), name: NSNotification.Name.UIContentSizeCategoryDidChange, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(textInputbarDidMove(_:)), name: NSNotification.Name.SLKTextInputbarDidMove, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(photoDidChange(sender:)), name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(photoRemoved(sender:)), name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(photoDidChange(sender:)), name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: self.photoEditView)
+        NotificationCenter.default.addObserver(self, selector: #selector(photoRemoved(sender:)), name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: self.photoEditView)
 	}
     
     func editMessage(message: FireMessage) {
@@ -196,49 +217,26 @@ class BaseSlackController: SLKTextViewController {
             self.editText(message.text!)
         }
         
-        if let photo = message.attachments?.first?.photo, !photo.uploading {
+        if let photo = message.attachments?.values.first?.photo, photo.uploading == nil {
             if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
                 self.photoEditView.configureTo(photoMode: .Photo)
-                self.photoEditView.bind(url: photoUrl)
+                self.photoEditView.bind(url: photoUrl, fallbackUrl: PhotoUtils.fallbackUrl(prefix: photo.filename!))
                 showPhotoEdit()
             }
         }
     }
     
-    func updateMessage() {
-        
-        var updateMap: [String: Any] = ["modified_at": FIRServerValue.timestamp()]
-        let path = self.editingMessage.path
-        
-        if self.photoEditView.photoDirty {
-            var photoMap: [String: Any]?
-            if let image = self.photoEditView.imageButton.image(for: .normal) {
-                photoMap = postPhoto(image: image, progress: self.photoEditView.progressBlock, next: { error in
-                    if error == nil {
-                        photoMap!["uploading"] = NSNull()
-                        FireController.db.child(path).child("attachments").setValue([["photo": photoMap!]])
-                    }
-                })
-            }
-            
-            updateMap["attachments"] = photoMap != nil ? [["photo": photoMap!]] : NSNull()
-        }
-        
-        let text = self.textInputbar.textView.text
-        updateMap["text"] = (text == nil || text!.isEmpty) ? NSNull() : text
-        
-        FireController.db.child(path).updateChildValues(updateMap)
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidChange), object: self, userInfo: ["messageId":self.editingMessage.id!])
-    }
-    
     func sendMessage() {
         
-        let userId = UserController.instance.userId!
-        let groupId = StateController.instance.groupId!
-        let channelId = StateController.instance.channelId!
-        let username = StateController.instance.group!.username!
-        let channelName = self.channel.name
+        guard let userId = UserController.instance.userId
+            , let groupId = StateController.instance.groupId
+            , let channelId = StateController.instance.channelId
+            , let username = UserController.instance.user!.username
+            , let channelName = self.channel.name else {
+                fatalError("Tried to send a message without complete state available")
+        }
         
+        let attachmentId = "at-\(Utils.genRandomId())"
         let messageRef = FireController.db.child("channel-messages/\(channelId)").childByAutoId()
         
         var photoMap: [String: Any]?
@@ -246,7 +244,8 @@ class BaseSlackController: SLKTextViewController {
             photoMap = postPhoto(image: image, progress: self.photoEditView.progressBlock, next: { error in
                 if error == nil {
                     photoMap!["uploading"] = NSNull()
-                    messageRef.child("attachments").setValue([["photo": photoMap!]])
+                    messageRef.child("attachments/\(attachmentId)").setValue(["photo": photoMap!])
+                    Log.d("*** Cleared uploading timestamp: \(photoMap!["filename"]!)")
                 }
             })
         }
@@ -276,13 +275,45 @@ class BaseSlackController: SLKTextViewController {
         }
         
         if photoMap != nil {
-            messageMap["attachments"] = [["photo": photoMap!]]
+            messageMap["attachments"] = [attachmentId: ["photo": photoMap!]]
             notificationMap["photo"] = photoMap!
         }
         
         messageRef.setValue(messageMap)
         FireController.db.child("notification-queue/\(messageRef.key)").setValue(notificationMap)
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidChange), object: self, userInfo: ["messageId":messageRef.key])
+    }
+    
+    func updateMessage() {
+        
+        var updateMap: [String: Any] = ["modified_at": FIRServerValue.timestamp()]
+        let path = self.editingMessage.path
+        
+        if self.photoEditView.photoDirty {
+            var photoMap: [String: Any]?
+            let attachmentId = "at-\(Utils.genRandomId())"
+            if let image = self.photoEditView.imageButton.image(for: .normal) {
+                photoMap = postPhoto(image: image, progress: self.photoEditView.progressBlock, next: { error in
+                    if error == nil {
+                        photoMap!["uploading"] = NSNull()
+                        FireController.db.child(path).child("attachments/\(attachmentId)").setValue(["photo": photoMap!])
+                    }
+                })
+            }
+            
+            if photoMap != nil {
+                updateMap["attachments"] = [attachmentId: ["photo": photoMap!]]
+            }
+            else {
+                updateMap["attachments"] = NSNull()
+            }
+        }
+        
+        let text = self.textInputbar.textView.text
+        updateMap["text"] = (text == nil || text!.isEmpty) ? NSNull() : text
+        
+        FireController.db.child(path).updateChildValues(updateMap)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidChange), object: self, userInfo: ["messageId":self.editingMessage.id!])
     }
     
     func postPhoto(image: UIImage
@@ -294,27 +325,26 @@ class BaseSlackController: SLKTextViewController {
         
         /* Generate image key */
         let imageKey = "\(Utils.genImageKey()).jpg"
+//        let timestamp = Utils.now() + (FireController.instance.serverOffset ?? 0)
         
         let photoMap = [
             "width": Int(preparedImage.size.width), // width/height are in points...should be pixels?
             "height": Int(preparedImage.size.height),
-            "source": S3.sharedService.imageSource,
+            "source": S3.instance.imageSource,
             "filename": imageKey,
-            "uploading": true
-            ] as [String: Any]
+            "uploading": "true"] as [String: Any]
         
         /* Upload */
         DispatchQueue.global().async {
-            S3.sharedService.upload(
-                image: preparedImage,
-                imageKey: imageKey,
-                progress: progress,
-                completionHandler: { task, error in
-                    if error != nil {
-                        Log.w("Image upload error: \(error!.localizedDescription)")
-                    }
-                    next?(error)
-            })
+            S3.instance.upload(image: preparedImage, imageKey: imageKey, progress: progress) { task, error in
+                if error != nil {
+                    Log.w("*** S3 completion handler: image upload error: \(error!.localizedDescription)")
+                }
+                else {
+                    Log.w("*** S3 completion handler: image upload complete: \(imageKey)")
+                }
+                next?(error)
+            }
         }
         
         return photoMap
@@ -392,6 +422,14 @@ class BaseSlackController: SLKTextViewController {
     func hideOrShowTextInputbar() {
         let hide = !self.isTextInputbarHidden
         self.setTextInputbarHidden(hide, animated: true)
+    }
+    
+    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+        return UIStatusBarAnimation.slide
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return self.statusBarHidden
     }
 }
 

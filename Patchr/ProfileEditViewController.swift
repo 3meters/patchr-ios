@@ -286,9 +286,9 @@ class ProfileEditViewController: BaseEditViewController {
         self.phoneField.text = self.user.profile?.phone
         self.skypeField.text = self.user.profile?.skype
         
-        if let photo = self.user.profile?.photo, !photo.uploading {
+        if let photo = self.user.profile?.photo, photo.uploading == nil {
             if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
-                self.photoEditView.bind(url: photoUrl)
+                self.photoEditView.bind(url: photoUrl, fallbackUrl: PhotoUtils.fallbackUrl(prefix: photo.filename!))
             }
         }
     }

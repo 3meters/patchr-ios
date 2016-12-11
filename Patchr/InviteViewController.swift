@@ -24,7 +24,6 @@ class InviteViewController: BaseEditViewController {
     var channel: FireChannel!
     var inputGroupId: String?
     var inputGroupTitle: String?
-    var inputUsername: String?
     
     var validateFor = "member"
 	
@@ -178,7 +177,6 @@ class InviteViewController: BaseEditViewController {
         controller.flow = self.flow
         controller.inputGroupId = self.inputGroupId
         controller.inputGroupTitle = self.inputGroupTitle
-        controller.inputUsername = self.inputUsername
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
@@ -189,7 +187,6 @@ class InviteViewController: BaseEditViewController {
         controller.channel = self.channel
         controller.inputGroupId = self.inputGroupId
         controller.inputGroupTitle = self.inputGroupTitle
-        controller.inputUsername = self.inputUsername
         self.navigationController?.pushViewController(controller, animated: true)
     }
     

@@ -37,7 +37,7 @@ class UserListCell: UITableViewCell {
     }
     
     func reset() {
-        self.photoView?.photo.image = nil
+        self.photoView?.photoView.image = nil
         self.title?.text = nil
         self.subtitle?.text = nil
         self.subtitle?.isHidden = false
@@ -52,12 +52,12 @@ class UserListCell: UITableViewCell {
         self.role?.isHidden = true
         self.actionButton?.isHidden = true
         self.presenceView?.isHidden = true
-        self.photoView?.photo.isHidden = true
-        self.photoView?.name.isHidden = false
+        self.photoView?.photoView.isHidden = true
+        self.photoView?.nameLabel.isHidden = false
         self.checkBox?.isHidden = false
         self.accessoryType = .none
         self.photoView?.initialsCount = 2
-        self.photoView?.name.font = Theme.fontText
+        self.photoView?.nameLabel.font = Theme.fontText
         
         self.contact = contact
         let email = contact.emailAddresses.first?.value as String!
@@ -65,12 +65,12 @@ class UserListCell: UITableViewCell {
         let title = fullName ?? email!
         
         if contact.imageDataAvailable {
-            self.photoView?.photo.image = UIImage(data: contact.thumbnailImageData!)
-            self.photoView?.photo.isHidden = false
-            self.photoView?.name.isHidden = true
+            self.photoView?.photoView.image = UIImage(data: contact.thumbnailImageData!)
+            self.photoView?.photoView.isHidden = false
+            self.photoView?.nameLabel.isHidden = true
         }
         else {
-            self.photoView?.bind(photoUrl: nil, name: title, colorSeed: email!)
+            self.photoView?.bind(url: nil, fallbackUrl: nil, name: title, colorSeed: email!)
         }
         self.title?.text = title
         self.subtitle?.text = email!
@@ -107,12 +107,12 @@ class UserListCell: UITableViewCell {
         }
         
         let fullName = user.profile?.fullName ?? user.username
-        if let photo = user.profile?.photo, !photo.uploading {
+        if let photo = user.profile?.photo, photo.uploading == nil {
             let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile)
-            self.photoView?.bind(photoUrl: photoUrl, name: fullName, colorSeed: user.id)
+            self.photoView?.bind(url: photoUrl, fallbackUrl: PhotoUtils.fallbackUrl(prefix: photo.filename!), name: fullName, colorSeed: user.id)
         }
         else {
-            self.photoView?.bind(photoUrl: nil, name: fullName, colorSeed: user.id)
+            self.photoView?.bind(url: nil, fallbackUrl: nil, name: fullName, colorSeed: user.id)
         }
     }
 }

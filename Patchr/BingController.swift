@@ -21,7 +21,7 @@ class BingController: NSObject {
     
     func prepare() {}
     
-    public func loadSearchImages(query: String, count: Int64 = 50, offset: Int64 = 0, completion: @escaping CompletionBlock) {
+    public func loadSearchImages(query: String, count: Int64 = 150, offset: Int64 = 0, completion: @escaping CompletionBlock) {
         
         Log.d("Image search count: \(count), offset: \(offset) ")
         

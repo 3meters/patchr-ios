@@ -181,10 +181,10 @@ class GroupEditViewController: BaseEditViewController {
     func bind() {
         self.titleField.text = self.group.title
         
-        if let photo = self.group.photo, !photo.uploading {
+        if let photo = self.group.photo, photo.uploading == nil {
             if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
                 self.photoEditView.configureTo(photoMode: .Photo)
-                self.photoEditView.bind(url: photoUrl)
+                self.photoEditView.bind(url: photoUrl, fallbackUrl: PhotoUtils.fallbackUrl(prefix: photo.filename!))
             }
         }
     }

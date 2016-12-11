@@ -55,7 +55,7 @@ class AirImageButton: UIButton {
 		self.progress.anchorInCenter(withWidth: self.progressSize, height: self.progressSize)
 	}
 	
-    func setImageWithUrl(url: URL, animate: Bool = true, finished: ((_ success: Bool) -> Void)? = nil) {
+    func setImageWithUrl(url: URL, fallbackUrl: URL?, animate: Bool = true, finished: ((Bool) -> Void)? = nil) {
 
 		if self.progressAuto {
 			startProgress()
@@ -65,21 +65,29 @@ class AirImageButton: UIButton {
 		self.linkedPhotoUrl = url
 		let options: SDWebImageOptions = [.retryFailed, .lowPriority, .avoidAutoSetImage, /* .ProgressiveDownload */]
 		
-        self.sd_setImage(with: url,
-                         for: UIControlState.normal,
-                         placeholderImage: nil,
-                         options: options,
-                         completed: {
-                            [weak self] image, error, cacheType, url in
-                            if self != nil {
-                                DispatchQueue.main.async() {
-                                    self!.imageCompletion(image: image, error: error, cacheType: cacheType, url: url, animate: animate)
-                                    if finished != nil {
-                                        finished!(error == nil)
-                                    }
-                                }
-                            }
-        })
+        self.sd_setImage(with: url, for: UIControlState.normal, placeholderImage: nil, options: options) { [weak self] image, error, cacheType, url in
+            if error != nil && fallbackUrl != nil {
+                Log.w("*** Image fetch failed: " + error!.localizedDescription)
+                Log.w("*** Failed url: \(url!.absoluteString)")
+                Log.w("*** Trying fallback url for image: \(fallbackUrl!)")
+                self?.linkedPhotoUrl = fallbackUrl
+                self?.sd_setImage(with: fallbackUrl!, for: UIControlState.normal, placeholderImage: nil, options: options) { [weak self] image, error, cacheType, url in
+                    if error == nil {
+                        Log.w("*** Success using fallback url for image: \(fallbackUrl!)")
+                    }
+                    DispatchQueue.main.async() {
+                        self?.imageCompletion(image: image, error: error, cacheType: cacheType, url: url, animate: animate)
+                        finished?(error == nil)
+                    }
+                }
+            }
+            else {
+                DispatchQueue.main.async() {
+                    self?.imageCompletion(image: image, error: error, cacheType: cacheType, url: url, animate: animate)
+                    finished?(error == nil)
+                }
+            }
+        }
 	}
 
     func imageCompletion(image: UIImage?, error: Error?, cacheType: SDImageCacheType?, url: URL?, animate: Bool = true) -> Void {
@@ -89,8 +97,8 @@ class AirImageButton: UIButton {
         }
         
         if error != nil {
-            Log.w("Image fetch failed for image button: " + error!.localizedDescription)
-            Log.w("Failed url: \(url!.absoluteString)")
+            Log.w("*** Image fetch failed: " + error!.localizedDescription)
+            Log.w("*** Failed url: \(url!.absoluteString)")
             
             self.linkedPhotoUrl = nil
             return

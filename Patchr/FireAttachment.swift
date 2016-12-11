@@ -10,12 +10,14 @@ import Foundation
 
 class FireAttachment: NSObject {
     
+    var id: String?
     var title: String?
     var photo: FirePhoto?
     
-    static func from(dict: [String: Any]?) -> FireAttachment? {
+    static func from(dict: [String: Any]?, id: String?) -> FireAttachment? {
         if dict != nil {
             let attachment = FireAttachment()
+            attachment.id = id
             attachment.title = dict!["title"] as? String
             attachment.photo = FirePhoto.from(dict: dict!["photo"] as! [String : Any]?)
             return attachment

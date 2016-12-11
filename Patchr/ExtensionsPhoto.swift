@@ -11,7 +11,13 @@ import UIKit
 
 class PhotoUtils {
     
-    static func url(prefix: String?, source: String?, category: String) -> URL? {
+    static let useGoogle = false
+    
+    static func fallbackUrl(prefix: String) -> URL {
+        return URL(string: "https://s3-us-west-2.amazonaws.com/aircandi-images/\(prefix)")!
+    }
+    
+    static func url(prefix: String?, source: String?, category: String, google: Bool = false) -> URL? {
         
         guard prefix != nil && source != nil else {
             return nil
@@ -28,11 +34,18 @@ class PhotoUtils {
         
         if source == PhotoSource.aircandi_images {
             let width = (category == SizeCategory.standard) ? 400 : 100
-            if category == SizeCategory.profile {
-                path = "https://3meters-images.imgix.net/\(prefix!)?w=\(width)&dpr=\(PIXEL_SCALE)&q=\(quality)&h=\(width)&fit=min&trim=auto"
+            if google {
+                let dimension = (category == SizeCategory.profile) ? ResizeDimension.width : ResizeDimension.height
+                let imageUrl = PhotoUtils.fallbackUrl(prefix: prefix!).absoluteString
+                path = GooglePlusProxy.convert(uri: imageUrl, size: width, dimension: dimension)
             }
             else {
-                path = "https://3meters-images.imgix.net/\(prefix!)?w=\(width)&dpr=\(PIXEL_SCALE)&q=\(quality)"
+                if category == SizeCategory.profile {
+                    path = "https://3meters-images.imgix.net/\(prefix!)?w=\(width)&dpr=\(PIXEL_SCALE)&q=\(quality)&h=\(width)&fit=min&trim=auto"
+                }
+                else {
+                    path = "https://3meters-images.imgix.net/\(prefix!)?w=\(width)&dpr=\(PIXEL_SCALE)&q=\(quality)"
+                }
             }
         }
         else if source == PhotoSource.google {
@@ -66,6 +79,8 @@ class GooglePlusProxy {
     * Setting refresh to 60 minutes.
     */
     static func convert(uri: String, size: Int, dimension: ResizeDimension!) -> String {
+        
+        //let queryString = uri.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
         
         let queryString = (CFURLCreateStringByAddingPercentEscapes(nil, uri as NSString, nil, ":/?@!$&'()*+,;=" as NSString, CFStringConvertNSStringEncodingToEncoding(String.Encoding.utf8.rawValue)) as NSString) as String
         if dimension == ResizeDimension.width {

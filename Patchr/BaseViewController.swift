@@ -12,6 +12,13 @@ class BaseViewController: UIViewController {
 	
 	var scrollView		= AirScrollView()
 	var contentHolder	= UIView()
+    var statusBarHidden: Bool = false {
+        didSet {
+            UIView.animate(withDuration: 0.5) { () -> Void in
+                self.setNeedsStatusBarAppearanceUpdate()
+            }
+        }
+    }
 
 	var presented: Bool {
 		return self.presentingViewController?.presentedViewController == self
@@ -78,6 +85,14 @@ class BaseViewController: UIViewController {
 			let _ = self.navigationController?.popViewController(animated: true)
 		}
 	}
+    
+    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+        return UIStatusBarAnimation.slide
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return self.statusBarHidden
+    }
 	
 	func dismissKeyboard(sender: NSNotification) {
 		self.view.endEditing(true)

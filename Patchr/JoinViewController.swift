@@ -14,8 +14,7 @@ import Firebase
 class JoinViewController: BaseEditViewController {
 
     var message = AirLabelTitle()
-    var userNameField = AirTextField()
-    var errorLabel = AirLabelDisplay()
+    var joinButton = AirButton()
     
     var inputGroupId: String?
     var inputRole: String?
@@ -38,19 +37,10 @@ class JoinViewController: BaseEditViewController {
         memberCheck()   // Redirects if already a member
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        self.userNameField.becomeFirstResponder()
-    }
-
     override func viewWillLayoutSubviews() {
-
         let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        let errorSize = self.errorLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        
         self.message.anchorTopCenter(withTopPadding: 0, width: 288, height: messageSize.height)
-        self.userNameField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-        self.errorLabel.alignUnder(self.userNameField, matchingCenterWithTopPadding: 0, width: 288, height: errorSize.height)
-
+        self.joinButton.alignUnder(self.message, matchingCenterWithTopPadding: 48, width: 288, height: 48)
         super.viewWillLayoutSubviews()
     }
 
@@ -59,37 +49,19 @@ class JoinViewController: BaseEditViewController {
     *--------------------------------------------------------------------------------------------*/
 
     func doneAction(sender: AnyObject?) {
-        if isValid() {
-            self.activeTextField?.resignFirstResponder()
-            
-            self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
-            self.progress?.mode = MBProgressHUDMode.indeterminate
-            self.progress?.styleAs(progressStyle: .ActivityWithText)
-            self.progress?.minShowTime = 0.5
-            self.progress?.labelText = "Joining..."
-            self.progress?.removeFromSuperViewOnHide = true
-            self.progress?.show(true)
+        self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
+        self.progress?.mode = MBProgressHUDMode.indeterminate
+        self.progress?.styleAs(progressStyle: .ActivityWithText)
+        self.progress?.minShowTime = 0.5
+        self.progress?.labelText = "Joining..."
+        self.progress?.removeFromSuperViewOnHide = true
+        self.progress?.show(true)
 
-            join()
-        }
+        join()
     }
 
     func closeAction(sender: AnyObject?) {
         close()
-    }
-    
-    override func textFieldDidBeginEditing(_ textField: UITextField) {
-        super.textFieldDidBeginEditing(textField)
-        self.errorLabel.fadeOut()
-    }
-    
-    public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        if textField == self.userNameField {
-            let lowercased = (self.userNameField.text! as NSString).replacingCharacters(in: range, with: string.lowercased())
-            self.userNameField.text = lowercased
-            return false
-        }
-        return true
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -99,28 +71,17 @@ class JoinViewController: BaseEditViewController {
     override func initialize() {
         super.initialize()
 
-        self.message.text = "Your username for the \(self.inputGroupTitle!) group."
-        
+        self.message.text = "\(self.inputReferrerName!) has invited you to join the Patchr group \(self.inputGroupTitle!)."
         self.message.textColor = Theme.colorTextTitle
         self.message.numberOfLines = 0
         self.message.textAlignment = .center
-
-        self.userNameField.placeholder = "Username (lower case)"
-        self.userNameField.delegate = self
-        self.userNameField.keyboardType = .default
-        self.userNameField.autocapitalizationType = .none
-        self.userNameField.autocorrectionType = .no
-        self.userNameField.returnKeyType = .next
-        
-        self.errorLabel.textColor = Theme.colorTextValidationError
-        self.errorLabel.alpha = 0.0
-        self.errorLabel.numberOfLines = 0
-        self.errorLabel.font = Theme.fontValidationError
         
         self.contentHolder.addSubview(self.message)
-        self.contentHolder.addSubview(self.userNameField)
-        self.contentHolder.addSubview(self.errorLabel)
+        self.contentHolder.addSubview(self.joinButton)
         self.contentHolder.isHidden = true
+        
+        self.joinButton.setTitle("Join group".uppercased(), for: .normal)
+        self.joinButton.addTarget(self, action: #selector(doneAction(sender:)), for: .touchUpInside)
         
         /* Navigation bar buttons */
         let joinButton = UIBarButtonItem(title: "Join", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
@@ -155,28 +116,15 @@ class JoinViewController: BaseEditViewController {
         guard !self.processing else { return }
         self.processing = true
         
-        let username = self.userNameField.text!
         let groupId = self.inputGroupId!
         let role = self.inputRole!
+        let userId = UserController.instance.userId!
         
-        /* We have an authenticated user and they are not already a member */
-        FireController.instance.usernameExists(groupId: groupId, username: username, next: { exists in
-            if exists {
-                self.progress?.hide(true)
-                self.processing = false
-                self.errorLabel.text = "Choose another username"
-                self.view.setNeedsLayout()
-                self.errorLabel.fadeIn()
-            }
-            else {
-                let userId = UserController.instance.userId!
-                FireController.instance.addUserToGroup(userId: userId, groupId: groupId, channelId: self.inputChannelId, role: role, username: username, then: { success in
-                    self.progress?.hide(true)
-                    self.processing = false
-                    if success {
-                        self.route()
-                    }
-                })
+        FireController.instance.addUserToGroup(userId: userId, groupId: groupId, channelId: self.inputChannelId, role: role, then: { success in
+            self.progress?.hide(true)
+            self.processing = false
+            if success {
+                self.route()
             }
         })
     }
@@ -201,42 +149,5 @@ class JoinViewController: BaseEditViewController {
                 }
             }
         }
-    }
-    
-    func isValid() -> Bool {
-
-        if self.userNameField.isEmpty {
-            self.errorLabel.text = "Choose your username for this group"
-            self.view.setNeedsLayout()
-            self.errorLabel.fadeIn()
-            return false
-        }
-        
-        let username = userNameField.text!
-        let characterSet: NSCharacterSet = NSCharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz0123456789_-")
-        if username.rangeOfCharacter(from: characterSet.inverted) != nil {
-            self.errorLabel.text = "Username must be lower case and cannot contain spaces or periods."
-            self.view.setNeedsLayout()
-            self.errorLabel.fadeIn()
-            return false
-        }
-        
-        if (userNameField.text!.utf16.count > 21) {
-            self.errorLabel.text = "Username must be 21 characters or less."
-            self.view.setNeedsLayout()
-            self.errorLabel.fadeIn()
-            return false
-        }
-
-        return true
-    }
-
-    override func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-
-        if textField == self.userNameField {
-            self.doneAction(sender: textField)
-        }
-
-        return true
     }
 }

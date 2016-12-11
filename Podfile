@@ -3,7 +3,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 plugin 'cocoapods-keys', {
   :project => "Patchr",
-  :targets => ["Patchr", "PatchrShare"],
+  :targets => ["Patchr"],
   :keys => [
     "BugsnagKey",
     "BingSubscriptionKey",
@@ -38,12 +38,13 @@ target 'Patchr' do
     pod 'Branch',                   '~> 0.12.5'     # Url routing and deep linking
     pod 'ReachabilitySwift',        '~> 3'
     pod 'PhoneNumberKit',           '~> 1.0'
+    pod 'SkyFloatingLabelTextField','~> 2.0.0'
+    pod 'SlideMenuControllerSwift'
     pod 'Bugsnag'                                   # Crash reporting
     pod 'CocoaLumberjack/Swift'
     pod 'CLTokenInputView'
     pod 'JVFloatLabeledTextField'
     pod 'BEMCheckBox'
-    pod 'SlideMenuControllerSwift'
     pod 'Firebase/RemoteConfig'
     pod 'Firebase/Core'
     pod 'Firebase/Crash'
@@ -51,15 +52,6 @@ target 'Patchr' do
     pod 'Firebase/Database'
     pod 'Firebase/Messaging'
     pod 'FirebaseUI/Database'
-end
-
-target 'PatchrShare' do
-  pod 'SDWebImage',               '~> 3.8.1'
-  pod 'AWSS3',                    '2.4.9'
-  pod 'Facade',                   '~> 1.1.1'	    # Convenience methods for frame based layout
-  pod 'CocoaLumberjack/Swift'
-  pod 'Bugsnag'                                     # Crash reporting
-  #pod 'Firebase/RemoteConfig'
 end
 
 plugin 'cocoapods-no-dev-schemes'

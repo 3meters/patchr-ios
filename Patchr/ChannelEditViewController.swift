@@ -20,8 +20,8 @@ class ChannelEditViewController: BaseEditViewController {
 
     var banner = AirLabelTitle()
     var photoEditView = PhotoEditView()
-    var nameField = AirTextField()
-    var errorLabel = AirLabelDisplay()
+    var nameField = TextFieldView()
+
     var purposeField = AirTextView()
     var visibilityGroup = AirRuleView()
     var visibilitySwitch = UISwitch()
@@ -58,14 +58,12 @@ class ChannelEditViewController: BaseEditViewController {
          */
         let bannerSize = self.banner.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         let descriptionSize = self.purposeField.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        let errorSize = self.errorLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-
+        
         self.visibilityLabel.sizeToFit()
 
         self.banner.anchorTopCenter(withTopPadding: 0, width: 288, height: bannerSize.height)
-        self.nameField.alignUnder(self.banner, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-        self.errorLabel.alignUnder(self.nameField, matchingCenterWithTopPadding: 0, width: 288, height: errorSize.height)
-        self.purposeField.alignUnder(self.errorLabel, matchingCenterWithTopPadding: 16, width: 288, height: max(48, descriptionSize.height))
+        self.nameField.alignUnder(self.banner, matchingCenterWithTopPadding: 8, width: 288, height: 48 + nameField.errorLabel.height())
+        self.purposeField.alignUnder(self.nameField, matchingCenterWithTopPadding: 16, width: 288, height: max(48, descriptionSize.height))
         self.photoEditView.alignUnder(self.purposeField, matchingCenterWithTopPadding: 16, width: 288, height: 288 * 0.56)
         
         self.visibilityGroup.alignUnder(self.photoEditView, matchingCenterWithTopPadding: 8, width: 288, height: 48)
@@ -150,13 +148,27 @@ class ChannelEditViewController: BaseEditViewController {
                 if isValid() {
                     FireController.db.child(self.channel.path).updateChildValues([
                         "modified_at": FIRServerValue.timestamp(),
-                        "name": emptyToNull(self.nameField.text)
+                        "name": emptyToNull(self.nameField.textField.text)
                     ])
                 }
             }
         }
     }
-
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField == self.nameField.textField {
+            clearErrorIfNeeded(self.nameField)
+        }
+        return true
+    }
+    
+    func textFieldShouldClear(_ textField: UITextField) -> Bool {
+        if textField == self.nameField.textField {
+            clearErrorIfNeeded(self.nameField)
+        }
+        return true
+    }
+    
     func visibilityChanged(sender: AnyObject) {
         if let switchView = sender as? UISwitch {
             self.visibilityValue = (switchView.isOn) ? "private" : "open"
@@ -223,19 +235,15 @@ class ChannelEditViewController: BaseEditViewController {
         self.photoEditView.setHostController(controller: self)
         self.photoEditView.configureTo(photoMode: .Placeholder)
 
-        self.nameField.placeholder = "Channel name (lower case)"
-        self.nameField.delegate = self
-        self.nameField.autocapitalizationType = .none
-        self.nameField.autocorrectionType = .no
-        self.nameField.keyboardType = UIKeyboardType.default
-        self.nameField.returnKeyType = UIReturnKeyType.next
+        self.nameField.textField.placeholder = "Channel name (lower case)"
+        self.nameField.textField.delegate = self
+        self.nameField.textField.autocapitalizationType = .none
+        self.nameField.textField.autocorrectionType = .no
+        self.nameField.textField.keyboardType = UIKeyboardType.default
+        self.nameField.textField.returnKeyType = UIReturnKeyType.next
         
-        self.errorLabel.textColor = Theme.colorTextValidationError
-        self.errorLabel.alpha = 0.0
-        self.errorLabel.numberOfLines = 0
-        self.errorLabel.font = Theme.fontValidationError
-
-        self.purposeField.placeholder = "Tell people what this channel is for"
+        self.purposeField.placeholder = "Channel purpose (optional)"
+        self.purposeField.placeholderLabel.numberOfLines = 0
         self.purposeField.autocapitalizationType = .sentences
         self.purposeField.autocorrectionType = .yes
         self.purposeField.initialize()
@@ -250,7 +258,6 @@ class ChannelEditViewController: BaseEditViewController {
 
         self.contentHolder.addSubview(self.banner)
         self.contentHolder.addSubview(self.nameField)
-        self.contentHolder.addSubview(self.errorLabel)
         self.contentHolder.addSubview(self.purposeField)
         self.contentHolder.addSubview(self.photoEditView)
         self.contentHolder.addSubview(self.visibilityGroup)
@@ -283,13 +290,13 @@ class ChannelEditViewController: BaseEditViewController {
 
     func bind() {
         
-        self.nameField.text = self.channel.name
+        self.nameField.textField.text = self.channel.name
         self.purposeField.text = self.channel.purpose
         
-        if let photo = self.channel.photo, !photo.uploading {
+        if let photo = self.channel.photo, photo.uploading == nil {
             if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
                 self.photoEditView.configureTo(photoMode: .Photo)
-                self.photoEditView.bind(url: photoUrl)
+                self.photoEditView.bind(url: photoUrl, fallbackUrl: PhotoUtils.fallbackUrl(prefix: photo.filename!))
             }
         }
         
@@ -312,15 +319,15 @@ class ChannelEditViewController: BaseEditViewController {
         self.processing = true
         
         let groupId = self.inputGroupId!
-        let channelName = self.nameField.text!
+        let channelName = self.nameField.textField.text!
         
         FireController.instance.channelNameExists(groupId: groupId, channelName: channelName, next: { exists in
             if exists {
                 self.progress?.hide(true)
                 self.processing = false
-                self.errorLabel.text = "Choose another channel name"
+                self.nameField.errorLabel.text = "Choose another channel name"
                 self.view.setNeedsLayout()
-                self.errorLabel.fadeIn()
+                self.nameField.errorLabel.fadeIn()
             }
             else {
                 let channelId = "ch-\(Utils.genRandomId())"
@@ -351,8 +358,8 @@ class ChannelEditViewController: BaseEditViewController {
                     channelMap["purpose"] = self.purposeField.text
                 }
                 
-                if !(self.nameField.text?.isEmpty)! {
-                    channelMap["name"] = self.nameField.text
+                if !(self.nameField.textField.text?.isEmpty)! {
+                    channelMap["name"] = self.nameField.textField.text
                 }
                 
                 if photoMap != nil {
@@ -375,7 +382,7 @@ class ChannelEditViewController: BaseEditViewController {
 
     func isDirty() -> Bool {
 
-        if !self.nameField.text!.isEmpty {
+        if !self.nameField.textField.text!.isEmpty {
             return true
         }
         if !self.purposeField.text!.isEmpty {
@@ -389,26 +396,20 @@ class ChannelEditViewController: BaseEditViewController {
 
     func isValid() -> Bool {
         
-        if self.nameField.isEmpty {
-            self.errorLabel.text = "Name your channel"
-            self.view.setNeedsLayout()
-            self.errorLabel.fadeIn()
+        if self.nameField.textField.isEmpty {
+            showError(self.nameField, error: "Name your channel")
             return false
         }
         
-        let channelName = nameField.text!
+        let channelName = nameField.textField.text!
         let characterSet: NSCharacterSet = NSCharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz0123456789_-")
         if channelName.rangeOfCharacter(from: characterSet.inverted) != nil {
-            self.errorLabel.text = "Channel name must be lower case and cannot contain spaces or periods."
-            self.view.setNeedsLayout()
-            self.errorLabel.fadeIn()
+            showError(self.nameField, error: "Channel name must be lower case and cannot contain spaces or periods.")
             return false
         }
         
-        if (nameField.text!.utf16.count > 21) {
-            self.errorLabel.text = "Channel name must be 21 characters or less."
-            self.view.setNeedsLayout()
-            self.errorLabel.fadeIn()
+        if (nameField.textField.text!.utf16.count > 21) {
+            showError(self.nameField, error: "Channel name must be 21 characters or less.")
             return false
         }
 

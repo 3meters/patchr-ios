@@ -15,8 +15,7 @@ class EmailViewController: BaseEditViewController {
     
     var inputInviteParams: [AnyHashable: Any]?
 
-    var emailField = AirTextField()
-    var errorLabel = AirLabelDisplay()
+    var emailField = FloatTextField(frame: CGRect.zero)
     var message = AirLabelTitle()
 
     /*--------------------------------------------------------------------------------------------
@@ -29,17 +28,14 @@ class EmailViewController: BaseEditViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        self.emailField.becomeFirstResponder()
+        let _ = self.emailField.becomeFirstResponder()
     }
 
     override func viewWillLayoutSubviews() {
 
-        let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        let errorSize = self.errorLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
-        
+        let messageSize = self.message.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))        
         self.message.anchorTopCenter(withTopPadding: 0, width: 288, height: messageSize.height)
         self.emailField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
-        self.errorLabel.alignUnder(self.emailField, matchingCenterWithTopPadding: 0, width: 288, height: errorSize.height)
 
         super.viewWillLayoutSubviews()
     }
@@ -50,7 +46,7 @@ class EmailViewController: BaseEditViewController {
 
     func doneAction(sender: AnyObject) {
         if isValid() {
-            self.emailField.resignFirstResponder()
+            let _ = self.emailField.resignFirstResponder()
 
             self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
             self.progress?.mode = MBProgressHUDMode.indeterminate
@@ -68,11 +64,6 @@ class EmailViewController: BaseEditViewController {
         close()
     }
     
-    override func textFieldDidBeginEditing(_ textField: UITextField) {
-        super.textFieldDidBeginEditing(textField)
-        self.errorLabel.fadeOut()
-    }
-
     /*--------------------------------------------------------------------------------------------
     * Methods
     *--------------------------------------------------------------------------------------------*/
@@ -92,20 +83,14 @@ class EmailViewController: BaseEditViewController {
         self.message.textAlignment = .center
 
         self.emailField.placeholder = "Email"
-        self.emailField.delegate = self
+        self.emailField.setDelegate(delegate: self)
         self.emailField.keyboardType = UIKeyboardType.emailAddress
         self.emailField.autocapitalizationType = .none
         self.emailField.autocorrectionType = .no
         self.emailField.returnKeyType = UIReturnKeyType.next
         
-        self.errorLabel.textColor = Theme.colorTextValidationError
-        self.errorLabel.alpha = 0.0
-        self.errorLabel.numberOfLines = 0
-        self.errorLabel.font = Theme.fontValidationError
-        
         self.contentHolder.addSubview(self.message)
         self.contentHolder.addSubview(self.emailField)
-        self.contentHolder.addSubview(self.errorLabel)
         
         if self.flow == .onboardCreate {
             self.navigationItem.title = "Step 1 of 3"
@@ -132,31 +117,29 @@ class EmailViewController: BaseEditViewController {
             
             if self.flow == .onboardLogin {
                 if !exists {
-                    self.errorLabel.text = "No account found."
-                    self.view.setNeedsLayout()
-                    self.errorLabel.fadeIn()
+                    self.emailField.errorMessage = "No account found."
                 }
                 else {
                     let controller = PasswordViewController()
-                    controller.flow = .onboardLogin
+                    controller.flow = self.flow
+                    controller.branch = .login
                     controller.inputEmail = email
-                    controller.inputEmailExists = true
                     self.navigationController?.pushViewController(controller, animated: true)
                 }
             }
             else if self.flow == .onboardInvite {
                 let controller = PasswordViewController()
-                controller.flow = .onboardInvite
+                controller.flow = self.flow
+                controller.branch = .login
                 controller.inputEmail = email
-                controller.inputEmailExists = true
                 controller.inputInviteParams = self.inputInviteParams
                 self.navigationController?.pushViewController(controller, animated: true)
             }
-            else {
+            else if self.flow == .onboardCreate {
                 let controller = PasswordViewController()
-                controller.flow = .onboardCreate
+                controller.flow = self.flow
+                controller.branch = exists ? .login : .signup
                 controller.inputEmail = email
-                controller.inputEmailExists = exists
                 self.navigationController?.pushViewController(controller, animated: true)
             }
         })
@@ -165,16 +148,12 @@ class EmailViewController: BaseEditViewController {
     func isValid() -> Bool {
 
         if emailField.isEmpty {
-            self.errorLabel.text = "Enter an email address."
-            self.view.setNeedsLayout()
-            self.errorLabel.fadeIn()
+            self.emailField.errorMessage = "Enter an email address."
             return false
         }
 
         if !emailField.text!.isEmail() {
-            self.errorLabel.text = "Enter a valid email address."
-            self.view.setNeedsLayout()
-            self.errorLabel.fadeIn()
+            self.emailField.errorMessage = "Enter a valid email address."
             return false
         }
 
@@ -182,11 +161,9 @@ class EmailViewController: BaseEditViewController {
     }
 
     override func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-
         if textField == self.emailField {
             self.doneAction(sender: textField)
         }
-
         return true
     }
 }

@@ -139,8 +139,9 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
         let channelName = self.channel.name!
         var message = "The following users will be added to the \(channelName) channel:\n\n"
         for userId in self.invites.keys {
-            let username = (self.invites[userId] as! FireUser).username
-            message += "\(username!)\n"
+            if let username = (self.invites[userId] as! FireUser).username {
+                message += "\(username)\n"
+            }
         }
         
         UpdateConfirmationAlert(title: "Add to channel", message: message, actionTitle: "Add", cancelTitle: "Cancel", delegate: nil, onDismiss: { doit in

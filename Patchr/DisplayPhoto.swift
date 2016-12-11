@@ -11,6 +11,7 @@ class DisplayPhoto: IDMPhoto {
 	var userLikes			= false
 	var userLikesId			: String?
 	var size				: CGSize?
+    var fallbackUrl         : URL?
     
     static func fromMessage(message: FireMessage) -> DisplayPhoto {
         
@@ -19,8 +20,9 @@ class DisplayPhoto: IDMPhoto {
         displayPhoto.caption = message.text
         displayPhoto.entityId = message.id
         
-        if let photo = message.attachments?.first?.photo {
+        if let photo = message.attachments?.values.first?.photo {
             displayPhoto.photoURL = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) as URL!
+            displayPhoto.fallbackUrl = PhotoUtils.fallbackUrl(prefix: photo.filename!)
             if photo.width != nil && photo.height != nil {
                 displayPhoto.size = CGSize(width: CGFloat(photo.width!), height: CGFloat(photo.height!))
             }

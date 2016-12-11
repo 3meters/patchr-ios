@@ -154,6 +154,11 @@ struct UIShared {
         let networkStatus: Reachability.NetworkStatus = (reachability?.currentReachabilityStatus)!
         return (networkStatus != .notReachable)
     }
+    
+    static func secondsSince(timestamp: Int) -> Int {
+        let date = NSDate(timeIntervalSince1970: Double(timestamp) / 1000)
+        return Int(date.secondsAgo())
+    }
 	
 	static func timeAgoMedium(date: NSDate) -> String {
         let dateFormatter = DateFormatter()

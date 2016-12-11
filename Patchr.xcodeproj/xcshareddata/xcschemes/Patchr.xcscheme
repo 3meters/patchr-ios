@@ -79,16 +79,15 @@
             ReferencedContainer = "container:Patchr.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <CommandLineArguments>
-         <CommandLineArgument
-            argument = "FIRAnalyticsDebugEnabled"
-            isEnabled = "YES">
-         </CommandLineArgument>
-      </CommandLineArguments>
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "XcodeColors"
             value = "YES"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "OS_ACTIVITY_MODE"
+            value = "disable"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>

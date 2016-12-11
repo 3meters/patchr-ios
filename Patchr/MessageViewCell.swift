@@ -14,9 +14,9 @@ class MessageViewCell: AirUIView {
     var message: FireMessage!
 
     var description_: UILabel?
-    var photo: AirImageView?
+    var photoView: AirImageView?
     var userName = AirLabelDisplay()
-    var userPhoto = PhotoView()
+    var userPhotoView = PhotoView()
     var createdDate = AirLabelDisplay()
     var edited = AirLabelDisplay()
     var unread = AirLabelDisplay()
@@ -24,6 +24,8 @@ class MessageViewCell: AirUIView {
     var toolbar = AirUIView()
     var likeButton = AirLikeButton(frame: CGRect.zero)
     var likesLabel = AirLabelDisplay()
+    
+    var template = false
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -56,7 +58,7 @@ class MessageViewCell: AirUIView {
         let columnWidth = self.bounds.size.width - columnLeft
         let photoHeight = columnWidth * 0.5625        // 16:9 aspect ratio
 
-        self.userPhoto.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: 48, height: 48)
+        self.userPhotoView.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: 48, height: 48)
 
         /* Header */
 
@@ -64,13 +66,13 @@ class MessageViewCell: AirUIView {
         self.edited.sizeToFit()
         self.unread.sizeToFit()
         self.userName.sizeToFit()
-        self.userName.align(toTheRightOf: self.userPhoto, matchingTopWithLeftPadding: 8, width: self.userName.width(), height: 22)
+        self.userName.align(toTheRightOf: self.userPhotoView, matchingTopWithLeftPadding: 8, width: self.userName.width(), height: 22)
         self.createdDate.align(toTheRightOf: self.userName, matchingBottomWithLeftPadding: 8, width: self.createdDate.width(), height: self.createdDate.height())
         self.unread.align(toTheRightOf: self.createdDate, matchingBottomWithLeftPadding: 8, width: self.unread.width(), height: self.unread.height())
 
         /* Body */
 
-        var bottomView: UIView? = self.photo
+        var bottomView: UIView? = self.photoView
         if self.message.attachments == nil {
             bottomView = self.description_
             self.description_?.bounds.size.width = columnWidth
@@ -82,10 +84,10 @@ class MessageViewCell: AirUIView {
             self.description_?.bounds.size.width = columnWidth
             self.description_?.sizeToFit()
             self.description_?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 2, height: self.description_!.height())
-            self.photo?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 10, height: photoHeight)
+            self.photoView?.alignUnder(self.description_!, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 10, height: photoHeight)
         }
         else if (self.message.attachments?.first) != nil {
-            self.photo?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 10, height: photoHeight)
+            self.photoView?.alignUnder(self.userName, matchingLeftAndFillingWidthWithRightPadding: 0, topPadding: 10, height: photoHeight)
         }
 
         self.edited.alignUnder(bottomView!, matchingLeftWithTopPadding: 2, width: self.edited.width(), height: self.edited.isHidden ? 0 : self.edited.height())
@@ -130,11 +132,11 @@ class MessageViewCell: AirUIView {
         let columnWidth = min(CONTENT_WIDTH_MAX, UIScreen.main.bounds.size.width) - columnLeft
         let photoHeight = columnWidth * 0.5625        // 16:9 aspect ratio
 
-        self.photo = AirImageView(frame: CGRect(x: 0, y: 0, width: columnWidth, height: photoHeight))
-        self.photo!.clipsToBounds = true
-        self.photo!.cornerRadius = 4
-        self.photo!.contentMode = .scaleAspectFill
-        self.photo!.backgroundColor = Theme.colorBackgroundImage
+        self.photoView = AirImageView(frame: CGRect(x: 0, y: 0, width: columnWidth, height: photoHeight))
+        self.photoView!.clipsToBounds = true
+        self.photoView!.cornerRadius = 4
+        self.photoView!.contentMode = .scaleAspectFill
+        self.photoView!.backgroundColor = Theme.colorBackgroundImage
 
         /* Header */
         self.userName.font = Theme.fontTextBold
@@ -180,8 +182,8 @@ class MessageViewCell: AirUIView {
 
         self.addSubview(self.toolbar)
         self.addSubview(self.description_!)
-        self.addSubview(self.photo!)
-        self.addSubview(self.userPhoto)
+        self.addSubview(self.photoView!)
+        self.addSubview(self.userPhotoView)
         self.addSubview(self.userName)
         self.addSubview(self.createdDate)
         self.addSubview(self.edited)
@@ -189,9 +191,9 @@ class MessageViewCell: AirUIView {
     }
 
     func reset() {
-        self.photo?.image = nil
+        self.photoView?.image = nil
         self.description_?.text = nil
-        self.userPhoto.photo.image = nil
+        self.userPhotoView.photoView.image = nil
         self.userName.text = nil
         self.unread.isHidden = true
         self.toolbar.isHidden = true
@@ -205,30 +207,36 @@ class MessageViewCell: AirUIView {
         self.message = message
 
         self.description_?.isHidden = true
-        self.photo?.isHidden = true
+        self.photoView?.isHidden = true
 
         if let description = message.text {
             self.description_?.isHidden = false
             self.description_?.text = description
         }
-
-        if let photo = message.attachments?.first?.photo {
-            self.photo?.isHidden = false
-            if !photo.uploading {
-                if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
-                    bindPhoto(photoUrl: photoUrl)
-                }
-            }
-        }
-
+        
         self.userName.text = message.creator?.username
         let fullName = message.creator?.profile?.fullName ?? message.creator?.username
-        if let photo = message.creator?.profile?.photo, !photo.uploading {
-            let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile)
-            self.userPhoto.bind(photoUrl: photoUrl, name: fullName, colorSeed: message.creator?.id)
+        
+        if let photo = message.creator?.profile?.photo, photo.uploading == nil {
+            if !self.template {
+                let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile)
+                self.userPhotoView.bind(url: photoUrl, fallbackUrl: PhotoUtils.fallbackUrl(prefix: photo.filename!), name: fullName, colorSeed: message.creator?.id)
+            }
         }
         else {
-            self.userPhoto.bind(photoUrl: nil, name: fullName, colorSeed: message.creator?.id)
+            self.userPhotoView.bind(url: nil, fallbackUrl: nil, name: fullName, colorSeed: message.creator?.id)
+        }
+        
+        if let photo = message.attachments?.values.first?.photo {
+            self.photoView?.isHidden = false
+            if !self.template { // Don't fetch if acting as template
+                if photo.uploading == nil {
+                    if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
+                        let fallbackUrl = PhotoUtils.fallbackUrl(prefix: photo.filename!)
+                        bindPhoto(photoUrl: photoUrl, fallbackUrl: fallbackUrl)
+                    }
+                }
+            }
         }
 
         self.createdDate.text = UIShared.timeAgoShort(date: NSDate(timeIntervalSince1970: Double(message.createdAt!) / 1000))
@@ -258,15 +266,15 @@ class MessageViewCell: AirUIView {
         self.setNeedsLayout()    // Needed because binding can change the layout
     }
 
-    private func bindPhoto(photoUrl: URL) {
+    private func bindPhoto(photoUrl: URL, fallbackUrl: URL?) {
 
-        if self.photo?.image != nil
-        && self.photo!.linkedPhotoUrl != nil
-        && self.photo!.linkedPhotoUrl?.absoluteString == photoUrl.absoluteString {
+        if self.photoView?.image != nil
+        && self.photoView!.linkedPhotoUrl != nil
+        && self.photoView!.linkedPhotoUrl?.absoluteString == photoUrl.absoluteString {
             return
         }
 
-        self.photo!.setImageWithUrl(url: photoUrl, animate: true)
+        self.photoView!.setImageWithUrl(url: photoUrl, fallbackUrl: fallbackUrl, animate: true)
     }
 
     override func sizeThatFits(_ size: CGSize) -> CGSize {

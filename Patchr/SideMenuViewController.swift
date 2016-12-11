@@ -9,12 +9,15 @@
 import UIKit
 import Firebase
 import FirebaseDatabase
+import SlideMenuControllerSwift
 
-class SideMenuViewController: UITableViewController {
+class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableViewDataSource, SlideMenuControllerDelegate {
 
     var user: FireUser?
     var userQuery: UserQuery?
  
+    var tableView = UITableView(frame: CGRect.zero, style: .plain)
+
     var menuHeader: UserHeaderView!
     var inviteCell: WrapperTableViewCell?
     var membersCell: WrapperTableViewCell?
@@ -29,22 +32,13 @@ class SideMenuViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
+        bind()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        /* In case the photo needs be retried */
-        if self.user != nil {
-            self.menuHeader.bind(user: self.user)
-            self.tableView.tableHeaderView = self.menuHeader
-        }
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-    }
-
     deinit {
         self.userQuery?.remove()
     }
@@ -52,10 +46,13 @@ class SideMenuViewController: UITableViewController {
     /*--------------------------------------------------------------------------------------------
     * Events
     *--------------------------------------------------------------------------------------------*/
+    
+    func rightDidClose() {
+    }
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        self.tableView.bounds.size.width = SIDE_MENU_WIDTH
+        self.tableView.fillSuperview()
     }
     
     func editProfileAction(sender: AnyObject?) {
@@ -63,7 +60,6 @@ class SideMenuViewController: UITableViewController {
         let wrapper = AirNavigationController()
         wrapper.viewControllers = [controller]
         UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
-        UIApplication.shared.setStatusBarHidden(false, with: UIStatusBarAnimation.slide)
         slideMenuController()?.closeRight()
     }
     
@@ -83,11 +79,14 @@ class SideMenuViewController: UITableViewController {
     * Methods
     *--------------------------------------------------------------------------------------------*/
 
-    func initialize() {
+    override func initialize() {
+        super.initialize()
 
         Reporting.screen("SideMenu")
 
         self.tableView = UITableView(frame: self.tableView.frame, style: .plain)
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
         self.tableView.rowHeight = 64
         self.tableView.tableFooterView = UIView()
         self.tableView.backgroundColor = Colors.gray95pcntColor
@@ -106,6 +105,8 @@ class SideMenuViewController: UITableViewController {
         self.settingsCell = WrapperTableViewCell(view: MenuItemView(title: "Settings", image: UIImage(named: "imgSettingsLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         self.switchCell = WrapperTableViewCell(view: MenuItemView(title: "Switch groups", image: UIImage(named: "imgSwitchLight")!), padding: UIEdgeInsets.zero, reuseIdentifier: nil)
         
+        self.view.addSubview(self.tableView)
+        
         NotificationCenter.default.addObserver(self, selector: #selector(userStateDidChange(notification:)), name: NSNotification.Name(rawValue: Events.UserStateDidChange), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(groupDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(groupDidChange(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidChange), object: nil)
@@ -119,17 +120,12 @@ class SideMenuViewController: UITableViewController {
             self.userQuery?.remove()
             self.userQuery = UserQuery(userId: userId!, groupId: groupId)
             self.userQuery!.once(with: { [weak self] user in
-                
-                guard user != nil else {
-                    return
+                if let user = user {
+                    self?.user = user
+                    self?.menuHeader.bind(user: self?.user)
+                    self?.tableView.tableHeaderView = self?.menuHeader
+                    self?.tableView.reloadData()
                 }
-                
-                let user = user!
-                
-                self?.user = user
-                self?.menuHeader.bind(user: self?.user)
-                self?.tableView.tableHeaderView = self?.menuHeader	// Triggers table binding
-                self?.tableView.reloadData()
             })
         }
     }
@@ -139,7 +135,7 @@ extension SideMenuViewController {
     /*
     * UITableViewDelegate
     */
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
         let selectedCell = tableView.cellForRow(at: indexPath)
 
@@ -178,18 +174,20 @@ extension SideMenuViewController {
             }
         }
         
-        UIApplication.shared.setStatusBarHidden(false, with: UIStatusBarAnimation.slide)
         slideMenuController()?.closeRight()
+        if let indexPath = self.tableView.indexPathForSelectedRow {
+            self.tableView.deselectRow(at: indexPath, animated: false)
+        }
     }
 
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if StateController.instance.group?.role != "owner" && indexPath.row == 1 {
             return CGFloat(0)
         }
         return CGFloat(64)
     }
 
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
             return self.membersCell!
         }
@@ -208,11 +206,11 @@ extension SideMenuViewController {
         return UITableViewCell()
     }
     
-    override func numberOfSections(in tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 5
     }
 }

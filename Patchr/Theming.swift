@@ -106,6 +106,7 @@ class Snow {
 	let fontBarText				: UIFont! = UIFont(name: "HelveticaNeue", size: 18)
 	let fontNumberFeatured		: UIFont! = UIFont(name: "HelveticaNeue-Light", size: 30)
     let fontValidationError		: UIFont! = UIFont(name: "HelveticaNeue-Light", size: 16)
+    let fontFloatTitle			: UIFont! = UIFont(name: "HelveticaNeue-Light", size: 14)
 	
 	let colorLogVerbose			= Colors.gray50pcntColor
 	let colorLogDebug			= Colors.accentColorDarker

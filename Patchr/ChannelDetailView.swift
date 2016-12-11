@@ -166,13 +166,13 @@ class ChannelDetailView: UIView {
             self.purpose.text = channel.purpose!
             self.purpose.isHidden = false
         }
-
         
-        if let photo = channel.photo, !photo.uploading {
+        if let photo = channel.photo, photo.uploading == nil {
             self.starButton.tintColor = Colors.brandColor
             self.optionsButton.tintColor = Colors.brandColor
             if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
-                self.photo.setImageWithUrl(url: photoUrl)
+                let fallbackUrl = PhotoUtils.fallbackUrl(prefix: photo.filename!)
+                self.photo.setImageWithUrl(url: photoUrl, fallbackUrl: fallbackUrl)
                 self.gradient.isHidden = false
                 self.photo.backgroundColor = Theme.colorBackgroundImage
             }

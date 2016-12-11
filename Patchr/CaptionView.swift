@@ -66,7 +66,7 @@ class CaptionView: IDMCaptionView {
 		self.userName.numberOfLines = 1
 		self.userName.text = self.displayPhoto.creatorName
 		
-        self.userPhoto.bind(photoUrl: self.displayPhoto.creatorUrl, name: self.displayPhoto.creatorName, colorSeed: nil)
+        self.userPhoto.bind(url: self.displayPhoto.creatorUrl, fallbackUrl: nil, name: self.displayPhoto.creatorName, colorSeed: nil)
 		
 		self.createdDate.font = Theme.fontComment
 		self.createdDate.numberOfLines = 1

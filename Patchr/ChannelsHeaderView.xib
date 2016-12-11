@@ -4,7 +4,6 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -35,21 +34,12 @@
                             </userDefinedRuntimeAttributes>
                         </view>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Group Patch (Jay)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Yu-Ib-y3H">
-                            <rect key="frame" x="72" y="11" width="237" height="28"/>
+                            <rect key="frame" x="72" y="22" width="237" height="28"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="28" id="hnd-aD-nNr"/>
                             </constraints>
                             <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="20"/>
                             <nil key="textColor"/>
-                            <nil key="highlightedColor"/>
-                        </label>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="jaymassena" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PNf-Qo-2dd">
-                            <rect key="frame" x="72" y="36" width="237" height="21"/>
-                            <constraints>
-                                <constraint firstAttribute="height" constant="21" id="v1R-eh-cFP"/>
-                            </constraints>
-                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
-                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qnm-vY-7NZ">
@@ -71,19 +61,16 @@
                     </subviews>
                     <color key="backgroundColor" white="0.95159993154539479" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
-                        <constraint firstItem="PNf-Qo-2dd" firstAttribute="leading" secondItem="lPp-SG-dj9" secondAttribute="trailing" constant="8" id="3aT-8a-fNa"/>
                         <constraint firstItem="OEn-U4-hIS" firstAttribute="leading" secondItem="4ht-VM-RzK" secondAttribute="leading" id="8h1-je-tcS"/>
-                        <constraint firstItem="PNf-Qo-2dd" firstAttribute="trailing" secondItem="Qnm-vY-7NZ" secondAttribute="leading" constant="-8" id="CIW-cY-Z3m"/>
                         <constraint firstItem="lPp-SG-dj9" firstAttribute="leading" secondItem="4ht-VM-RzK" secondAttribute="leading" constant="16" id="E9s-Kf-46N"/>
                         <constraint firstItem="lPp-SG-dj9" firstAttribute="top" secondItem="4ht-VM-RzK" secondAttribute="top" constant="12" id="JV5-e5-bGj"/>
                         <constraint firstItem="Qnm-vY-7NZ" firstAttribute="trailing" secondItem="4ht-VM-RzK" secondAttribute="trailing" constant="-8" id="KO3-tw-9oU"/>
-                        <constraint firstItem="3Yu-Ib-y3H" firstAttribute="top" secondItem="4ht-VM-RzK" secondAttribute="top" constant="11" id="RmM-zY-GoU"/>
                         <constraint firstAttribute="bottom" secondItem="OEn-U4-hIS" secondAttribute="bottom" id="V8h-E8-Eh0"/>
+                        <constraint firstItem="3Yu-Ib-y3H" firstAttribute="centerY" secondItem="lPp-SG-dj9" secondAttribute="centerY" id="aeD-IY-uTx"/>
                         <constraint firstItem="Qnm-vY-7NZ" firstAttribute="top" secondItem="4ht-VM-RzK" secondAttribute="top" constant="11" id="eOB-Zw-wV7"/>
                         <constraint firstItem="3Yu-Ib-y3H" firstAttribute="trailing" secondItem="Qnm-vY-7NZ" secondAttribute="leading" constant="-8" id="jbd-ZZ-vop"/>
                         <constraint firstAttribute="trailing" secondItem="OEn-U4-hIS" secondAttribute="trailing" id="nh9-Va-gY9"/>
                         <constraint firstItem="3Yu-Ib-y3H" firstAttribute="leading" secondItem="lPp-SG-dj9" secondAttribute="trailing" constant="8" id="pDa-nu-acl"/>
-                        <constraint firstItem="PNf-Qo-2dd" firstAttribute="top" secondItem="3Yu-Ib-y3H" secondAttribute="bottom" constant="-3" id="x4w-Zo-V2v"/>
                     </constraints>
                 </view>
             </subviews>
@@ -101,7 +88,6 @@
             <connections>
                 <outlet property="photoView" destination="lPp-SG-dj9" id="tCI-pu-lVe"/>
                 <outlet property="searchBar" destination="OEn-U4-hIS" id="dt2-HT-TAJ"/>
-                <outlet property="subtitle" destination="PNf-Qo-2dd" id="tNu-c1-ZtL"/>
                 <outlet property="switchButton" destination="Qnm-vY-7NZ" id="rdT-LS-tgI"/>
                 <outlet property="title" destination="3Yu-Ib-y3H" id="zc1-vn-B7H"/>
             </connections>
