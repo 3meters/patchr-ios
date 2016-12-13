@@ -79,16 +79,13 @@ class GooglePlusProxy {
     * Setting refresh to 60 minutes.
     */
     static func convert(uri: String, size: Int, dimension: ResizeDimension!) -> String {
-        
-        //let queryString = uri.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-        
-        let queryString = (CFURLCreateStringByAddingPercentEscapes(nil, uri as NSString, nil, ":/?@!$&'()*+,;=" as NSString, CFStringConvertNSStringEncodingToEncoding(String.Encoding.utf8.rawValue)) as NSString) as String
+        let encodedUrl = uri.stringByAddingPercentEncodingForUrl()
         if dimension == ResizeDimension.width {
-            let converted = "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url=\(queryString)&container=focus&resize_w=\(size)&no_expand=1&refresh=3600"
+            let converted = "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url=\(encodedUrl!)&container=focus&resize_w=\(size)&no_expand=1&refresh=3600"
             return converted
         }
         else {
-            let converted = "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url=\(queryString)&container=focus&resize_h=\(size)&no_expand=1&refresh=3600"
+            let converted = "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url=\(encodedUrl!)&container=focus&resize_h=\(size)&no_expand=1&refresh=3600"
             return converted
         }
     }

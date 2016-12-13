@@ -69,7 +69,7 @@ class UsernameSettingViewController: UITableViewController, UITextFieldDelegate 
         self.tableView.backgroundColor = Colors.gray95pcntColor
         self.tableView.sectionFooterHeight = 0
         
-        if let group = StateController.instance.group, let username = UserController.instance.user?.username {
+        if let _ = StateController.instance.group, let username = UserController.instance.user?.username {
             self.usernameCell.textField.text = username
             self.usernameCell.textField.delegate = self
             self.usernameCell.textField.keyboardType = .default

@@ -470,8 +470,8 @@ extension BaseSlackController {
     
     override func didChangeAutoCompletionPrefix(_ prefix: String, andWord word: String) {
         
-        var array:Array<String> = []
-        let wordPredicate = NSPredicate(format: "self BEGINSWITH[c] %@", word);
+        let array:Array<String> = []
+        //let wordPredicate = NSPredicate(format: "self BEGINSWITH[c] %@", word);
         
         self.searchResult = nil
         
