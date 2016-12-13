@@ -102,7 +102,6 @@
 		E27F80AF1C56C84700D436E3 /* run-tests.sh in Resources */ = {isa = PBXBuildFile; fileRef = E27F80AE1C56C84700D436E3 /* run-tests.sh */; };
 		E27F8A781DF9E8550020E852 /* TextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27F8A771DF9E8550020E852 /* TextFieldView.swift */; };
 		E27F8A7A1DF9E8C40020E852 /* TextFieldView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E27F8A791DF9E8C40020E852 /* TextFieldView.xib */; };
-		E27F8A7C1DF9E9D30020E852 /* TextFieldView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E27F8A7B1DF9E9D30020E852 /* TextFieldView.xib */; };
 		E27F8A7E1DFB3A180020E852 /* FloatTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27F8A7D1DFB3A180020E852 /* FloatTextField.swift */; };
 		E2810BA61DC8E6930013AEA0 /* PresenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2810BA51DC8E6930013AEA0 /* PresenceView.swift */; };
 		E281776E1B5B0EE200D65AC1 /* Reporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = E281776D1B5B0EE200D65AC1 /* Reporting.swift */; };
@@ -846,7 +845,7 @@
 			attributes = {
 				LastSwiftMigration = 0700;
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = 3meters;
 				TargetAttributes = {
 					7D3D39C81A6F086F00A44CB2 = {
@@ -901,7 +900,6 @@
 				E25A73781C1C87F500688EDC /* AdobeCreativeSDKImageResources.bundle in Resources */,
 				E2A603241CD97B7A00FBD55B /* InfoPlist.strings in Resources */,
 				E28915911C5A85CF005D7AA0 /* .xctool-args in Resources */,
-				E27F8A7C1DF9E9D30020E852 /* TextFieldView.xib in Resources */,
 				E25A73761C1C87E200688EDC /* AdobeCreativeSDKCoreResources.bundle in Resources */,
 				E23EC4D01DBD45C800EBCD42 /* GroupListCell.xib in Resources */,
 				E27F80AF1C56C84700D436E3 /* run-tests.sh in Resources */,
