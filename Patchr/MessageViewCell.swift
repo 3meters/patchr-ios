@@ -8,6 +8,7 @@
 
 import UIKit
 import SDWebImage
+import TTTAttributedLabel
 
 class MessageViewCell: AirUIView {
 

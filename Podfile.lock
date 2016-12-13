@@ -144,6 +144,7 @@ PODS:
   - SkyFloatingLabelTextField (2.0.0)
   - SlackTextViewController (1.9.5)
   - SlideMenuControllerSwift (3.0.1)
+  - TTTAttributedLabel (2.0.0)
   - UIDevice-Hardware (0.1.8)
 
 DEPENDENCIES:
@@ -179,6 +180,7 @@ DEPENDENCIES:
   - SkyFloatingLabelTextField (~> 2.0.0)
   - SlackTextViewController (from `~/code/SlackTextViewController`)
   - SlideMenuControllerSwift
+  - TTTAttributedLabel
   - UIDevice-Hardware (~> 0.1.7)
 
 EXTERNAL SOURCES:
@@ -232,8 +234,9 @@ SPEC CHECKSUMS:
   SkyFloatingLabelTextField: a81a0eaed2785d1599f11484c6ebc1c4eb5d1228
   SlackTextViewController: fbcdadbb8090673f604484ff5b6eb8d77baed42a
   SlideMenuControllerSwift: 9a163b16d54afab734add42858cba7ef7c307755
+  TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
 
-PODFILE CHECKSUM: 7ee00c06a5cbed05bdab3bd81add7f33f6804fb6
+PODFILE CHECKSUM: 83e4937a371a026fcd5b2476f8dfb696944b7934
 
 COCOAPODS: 1.1.0.rc.3

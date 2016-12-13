@@ -40,11 +40,9 @@ class MainController: NSObject, iRateDelegate {
     *--------------------------------------------------------------------------------------------*/
 
     func stateInitialized(notification: NSNotification) {
-        self.emptyController.startScene() {
-            NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
-            self.checkCompatibility()
-            self.route()
-        }
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
+        checkCompatibility()
+        route()
     }
     
     deinit {
@@ -121,12 +119,11 @@ class MainController: NSObject, iRateDelegate {
             showLobby()
         }
         else if StateController.instance.groupId == nil || StateController.instance.channelId == nil {
-            /* What about the case where a user isn't currently a member of any group? */
-            showGroupPicker() // Here to catch inconsistent state
+            self.showGroupPicker() // Here to catch inconsistent state
         }
         else {
-            showMain()
-            showChannel(groupId: StateController.instance.groupId!, channelId: StateController.instance.channelId!)
+            self.showMain()
+            self.showChannel(groupId: StateController.instance.groupId!, channelId: StateController.instance.channelId!)
         }
     }
     
@@ -135,15 +132,28 @@ class MainController: NSObject, iRateDelegate {
     }
     
     fileprivate func showGroupPicker() {
+        
         StateController.instance.clearGroup()   // Make sure group and channel are both unset
         let controller = GroupPickerController()
         let wrapper = AirNavigationController()
         wrapper.viewControllers = [controller]
-        UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+        
+        if self.window?.rootViewController == self.emptyController {
+            self.emptyController.startScene() {
+                UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+            }
+        }
+        else {
+            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+        }
     }
     
     func showMain() {
-        self.window?.setRootViewController(rootViewController: self.slideController, animated: true)
+        if self.window?.rootViewController == self.emptyController {
+            self.emptyController.startScene() {
+                self.window?.setRootViewController(rootViewController: self.slideController, animated: true)
+            }
+        }
     }
 
     func showChannel(groupId: String, channelId: String) {

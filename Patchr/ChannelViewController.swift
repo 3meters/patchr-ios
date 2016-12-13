@@ -10,6 +10,7 @@ import NHBalancedFlowLayout
 import ReachabilitySwift
 import Firebase
 import FirebaseDatabaseUI
+import TTTAttributedLabel
 
 class ChannelViewController: BaseSlackController {
     

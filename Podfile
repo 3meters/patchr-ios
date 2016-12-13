@@ -39,6 +39,7 @@ target 'Patchr' do
     pod 'ReachabilitySwift',        '~> 3'
     pod 'PhoneNumberKit',           '~> 1.0'
     pod 'SkyFloatingLabelTextField','~> 2.0.0'
+    pod 'TTTAttributedLabel'
     pod 'SlideMenuControllerSwift'
     pod 'Bugsnag'                                   # Crash reporting
     pod 'CocoaLumberjack/Swift'

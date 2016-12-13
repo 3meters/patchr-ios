@@ -26,9 +26,9 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
     typealias CompletionHandler = (_ success:Bool) -> Void
     
     weak var hostViewController: UIViewController?
-	fileprivate var finishedChoosing: ((UIImage?, ImageResult?, Bool) -> Void)? = nil
-    fileprivate var library: ALAssetsLibrary?
     var chosenPhotoFunction: PhotoButtonFunction?
+    
+    fileprivate var finishedChoosing: ((UIImage?, ImageResult?, Bool) -> Void)? = nil
 
 	fileprivate lazy var imagePickerController: UIImagePickerController = {
 		return UIImagePickerController(rootViewController: self.hostViewController!)
@@ -36,7 +36,6 @@ class PhotoChooserUI: NSObject, UINavigationControllerDelegate {
 
 	init(hostViewController: UIViewController) {
 		self.hostViewController = hostViewController
-        library = ALAssetsLibrary()
 		super.init()
 	}
 
