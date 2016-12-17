@@ -119,7 +119,7 @@ class GroupCreateController: BaseEditViewController {
                 else {
                     FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
                         if firstChannelId != nil {
-                            StateController.instance.setGroupId(groupId: groupId, channelId: firstChannelId)
+                            StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
                             MainController.instance.showChannel(groupId: groupId, channelId: firstChannelId!)
                             let _ = self.navigationController?.popToRootViewController(animated: false)
                             self.cancelAction(sender: nil)

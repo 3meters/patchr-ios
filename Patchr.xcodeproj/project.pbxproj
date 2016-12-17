@@ -77,7 +77,12 @@
 		E25327D01B13DB3000990A81 /* notification_pop.aac in Resources */ = {isa = PBXBuildFile; fileRef = E25327C91B13D34200990A81 /* notification_pop.aac */; };
 		E25327D21B13DEF800990A81 /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25327D11B13DEF800990A81 /* AudioController.swift */; };
 		E25603961DDE122B00961E10 /* GroupCreateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25603951DDE122B00961E10 /* GroupCreateController.swift */; };
+		E25617EE1E01D07500E31240 /* NavigationHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E25617ED1E01D07500E31240 /* NavigationHeaderView.xib */; };
+		E25617F01E01D08800E31240 /* NavigationHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25617EF1E01D08800E31240 /* NavigationHeaderView.swift */; };
+		E25617F41E02F8D000E31240 /* AirScrimButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25617F31E02F8D000E31240 /* AirScrimButton.swift */; };
 		E256B4281BD3DDC900EBF894 /* AirTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E256B4271BD3DDC900EBF894 /* AirTableViewCell.swift */; };
+		E2588D081E01B6970058D7FB /* GroupSectionView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2588D071E01B6970058D7FB /* GroupSectionView.xib */; };
+		E2588D0A1E01B6D60058D7FB /* GroupSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2588D091E01B6D60058D7FB /* GroupSectionView.swift */; };
 		E259082E1DC69BBE00CB6C3F /* MemberViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E259082D1DC69BBE00CB6C3F /* MemberViewController.swift */; };
 		E25908301DC69C3F00CB6C3F /* MemberDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E259082F1DC69C3F00CB6C3F /* MemberDetailView.swift */; };
 		E25908321DC7B3AA00CB6C3F /* AirLabelStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25908311DC7B3AA00CB6C3F /* AirLabelStack.swift */; };
@@ -88,6 +93,7 @@
 		E25B0F461DCE778B00021D5B /* MemberListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25B0F451DCE778B00021D5B /* MemberListController.swift */; };
 		E25B0F481DCE7D7400021D5B /* UserListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25B0F471DCE7D7400021D5B /* UserListCell.swift */; };
 		E25B0F4A1DCE803B00021D5B /* UserListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E25B0F491DCE803B00021D5B /* UserListCell.xib */; };
+		E25B4ABB1E00BA6B00D17613 /* FireArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25B4ABA1E00BA6B00D17613 /* FireArray.swift */; };
 		E25E1E601DBA781900BE1800 /* ChannelsHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E25E1E5F1DBA781900BE1800 /* ChannelsHeaderView.xib */; };
 		E266A1C01DEB4E8900C71C28 /* MemberPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E266A1BF1DEB4E8900C71C28 /* MemberPickerController.swift */; };
 		E26A02FD1DF5BE0D00EE32D3 /* ContactPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26A02FC1DF5BE0D00EE32D3 /* ContactPickerController.swift */; };
@@ -101,7 +107,6 @@
 		E26C80921C3AE246001514B3 /* Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26C80911C3AE246001514B3 /* Animation.swift */; };
 		E27F80AF1C56C84700D436E3 /* run-tests.sh in Resources */ = {isa = PBXBuildFile; fileRef = E27F80AE1C56C84700D436E3 /* run-tests.sh */; };
 		E27F8A781DF9E8550020E852 /* TextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27F8A771DF9E8550020E852 /* TextFieldView.swift */; };
-		E27F8A7A1DF9E8C40020E852 /* TextFieldView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E27F8A791DF9E8C40020E852 /* TextFieldView.xib */; };
 		E27F8A7E1DFB3A180020E852 /* FloatTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27F8A7D1DFB3A180020E852 /* FloatTextField.swift */; };
 		E2810BA61DC8E6930013AEA0 /* PresenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2810BA51DC8E6930013AEA0 /* PresenceView.swift */; };
 		E281776E1B5B0EE200D65AC1 /* Reporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = E281776D1B5B0EE200D65AC1 /* Reporting.swift */; };
@@ -275,7 +280,12 @@
 		E25327C91B13D34200990A81 /* notification_pop.aac */ = {isa = PBXFileReference; lastKnownFileType = file; path = notification_pop.aac; sourceTree = "<group>"; };
 		E25327D11B13DEF800990A81 /* AudioController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AudioController.swift; path = Patchr/AudioController.swift; sourceTree = "<group>"; };
 		E25603951DDE122B00961E10 /* GroupCreateController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupCreateController.swift; sourceTree = "<group>"; };
+		E25617ED1E01D07500E31240 /* NavigationHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NavigationHeaderView.xib; sourceTree = "<group>"; };
+		E25617EF1E01D08800E31240 /* NavigationHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationHeaderView.swift; sourceTree = "<group>"; };
+		E25617F31E02F8D000E31240 /* AirScrimButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirScrimButton.swift; sourceTree = "<group>"; };
 		E256B4271BD3DDC900EBF894 /* AirTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirTableViewCell.swift; sourceTree = "<group>"; };
+		E2588D071E01B6970058D7FB /* GroupSectionView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GroupSectionView.xib; sourceTree = "<group>"; };
+		E2588D091E01B6D60058D7FB /* GroupSectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupSectionView.swift; sourceTree = "<group>"; };
 		E259082D1DC69BBE00CB6C3F /* MemberViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberViewController.swift; sourceTree = "<group>"; };
 		E259082F1DC69C3F00CB6C3F /* MemberDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberDetailView.swift; sourceTree = "<group>"; };
 		E25908311DC7B3AA00CB6C3F /* AirLabelStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirLabelStack.swift; sourceTree = "<group>"; };
@@ -286,6 +296,8 @@
 		E25B0F451DCE778B00021D5B /* MemberListController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberListController.swift; sourceTree = "<group>"; };
 		E25B0F471DCE7D7400021D5B /* UserListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserListCell.swift; sourceTree = "<group>"; };
 		E25B0F491DCE803B00021D5B /* UserListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserListCell.xib; sourceTree = "<group>"; };
+		E25B4AB81E00811C00D17613 /* Navigation.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Navigation.md; sourceTree = "<group>"; };
+		E25B4ABA1E00BA6B00D17613 /* FireArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FireArray.swift; sourceTree = "<group>"; };
 		E25E1E5F1DBA781900BE1800 /* ChannelsHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChannelsHeaderView.xib; sourceTree = "<group>"; };
 		E266A1BF1DEB4E8900C71C28 /* MemberPickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberPickerController.swift; sourceTree = "<group>"; };
 		E26A02FC1DF5BE0D00EE32D3 /* ContactPickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactPickerController.swift; sourceTree = "<group>"; };
@@ -302,8 +314,6 @@
 		E2737DC91B8F7EA100C176B1 /* UIImage+RoundedCorner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+RoundedCorner.swift"; sourceTree = "<group>"; };
 		E27F80AE1C56C84700D436E3 /* run-tests.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "run-tests.sh"; sourceTree = "<group>"; };
 		E27F8A771DF9E8550020E852 /* TextFieldView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFieldView.swift; sourceTree = "<group>"; };
-		E27F8A791DF9E8C40020E852 /* TextFieldView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TextFieldView.xib; sourceTree = "<group>"; };
-		E27F8A7B1DF9E9D30020E852 /* TextFieldView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TextFieldView.xib; sourceTree = "<group>"; };
 		E27F8A7D1DFB3A180020E852 /* FloatTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloatTextField.swift; sourceTree = "<group>"; };
 		E2810BA51DC8E6930013AEA0 /* PresenceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresenceView.swift; sourceTree = "<group>"; };
 		E281776D1B5B0EE200D65AC1 /* Reporting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reporting.swift; sourceTree = "<group>"; };
@@ -385,7 +395,7 @@
 		E2E271281C5D1ED600E36804 /* BranchProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BranchProvider.swift; sourceTree = "<group>"; };
 		E2E9AAA61CEF86470057698F /* AirNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirNavigationController.swift; sourceTree = "<group>"; };
 		E2F182CF1B4B37BC0020F6BB /* AdobeCreativeSDKImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdobeCreativeSDKImage.framework; path = Frameworks/AdobeCreativeSDKImage.framework; sourceTree = "<group>"; };
-		E2F6C9281B1DF5500067D959 /* Notes.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Notes.md; sourceTree = "<group>"; };
+		E2F6C9281B1DF5500067D959 /* Notifications.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = Notifications.md; sourceTree = "<group>"; };
 		E2F85C721C31F0D700FC2364 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
 		E2F85C731C31F0D700FC2364 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
 		E2F85C791C342B8600FC2364 /* PhotoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoView.swift; sourceTree = "<group>"; };
@@ -566,7 +576,8 @@
 				E28DB2911DBBF95D008B2E4B /* ChannelListCell.xib */,
 				E23EC4D31DBE523D00EBCD42 /* GroupsHeaderView.xib */,
 				E23EC4CF1DBD45C800EBCD42 /* GroupListCell.xib */,
-				E27F8A7B1DF9E9D30020E852 /* TextFieldView.xib */,
+				E2588D071E01B6970058D7FB /* GroupSectionView.xib */,
+				E25617ED1E01D07500E31240 /* NavigationHeaderView.xib */,
 				E26B0C911B46D01E00706F4A /* ThumbnailCollectionViewCell.xib */,
 				E25B0F491DCE803B00021D5B /* UserListCell.xib */,
 				8468F8211A9D09D1007D6EE6 /* Localizable.strings */,
@@ -574,7 +585,6 @@
 				E25A73771C1C87F500688EDC /* AdobeCreativeSDKImageResources.bundle */,
 				E25A73751C1C87E200688EDC /* AdobeCreativeSDKCoreResources.bundle */,
 				E25327CA1B13D34B00990A81 /* Sounds */,
-				E27F8A791DF9E8C40020E852 /* TextFieldView.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -601,7 +611,9 @@
 				E23C01101CE4F771009C56B2 /* CaptionView.swift */,
 				E2FB2C491DBFD33E00E97050 /* ChannelDetailView.swift */,
 				E2B756A81D84600E00C102EC /* ChannelsHeaderView.swift */,
+				E25617EF1E01D08800E31240 /* NavigationHeaderView.swift */,
 				E2DA16D41DCFDF430096D86F /* ChannelTitleView.swift */,
+				E2588D091E01B6D60058D7FB /* GroupSectionView.swift */,
 				E23EC4D51DBE52AC00EBCD42 /* GroupsHeaderView.swift */,
 				E259082F1DC69C3F00CB6C3F /* MemberDetailView.swift */,
 				E2FA133D1D8220DD0057F287 /* MenuItemView.swift */,
@@ -632,7 +644,8 @@
 			children = (
 				E23C010C1CE243F2009C56B2 /* Keys.md */,
 				E2FFD38C1DF3441C00FD75C7 /* Firebase.md */,
-				E2F6C9281B1DF5500067D959 /* Notes.md */,
+				E2F6C9281B1DF5500067D959 /* Notifications.md */,
+				E25B4AB81E00811C00D17613 /* Navigation.md */,
 			);
 			name = Docs;
 			sourceTree = "<group>";
@@ -668,6 +681,7 @@
 				7D01FA3A1A705D8700DD6DFA /* SwiftyJSON.swift */,
 				E24D74531BBAED5F0061F339 /* TaskQueue.swift */,
 				E20C3A841BE04BBC008CCED1 /* Stopwatch.swift */,
+				E25B4ABA1E00BA6B00D17613 /* FireArray.swift */,
 			);
 			name = Components;
 			sourceTree = "<group>";
@@ -708,6 +722,7 @@
 				E2B8A4B51CE7875400A28D3A /* AirRadialMenu.swift */,
 				E297305D1C136E8300B9433B /* AirRadioButton.swift */,
 				E29730631C15090300B9433B /* AirRuleView.swift */,
+				E25617F31E02F8D000E31240 /* AirScrimButton.swift */,
 				E2DA16DA1DD114230096D86F /* AirStarButton.swift */,
 				E2D12A701C0778C100DE507E /* AirScrollView.swift */,
 				E297305F1C14A7BC00B9433B /* AirSearchField.swift */,
@@ -895,7 +910,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E27F8A7A1DF9E8C40020E852 /* TextFieldView.xib in Resources */,
 				E25B0F4A1DCE803B00021D5B /* UserListCell.xib in Resources */,
 				E25A73781C1C87F500688EDC /* AdobeCreativeSDKImageResources.bundle in Resources */,
 				E2A603241CD97B7A00FBD55B /* InfoPlist.strings in Resources */,
@@ -907,6 +921,7 @@
 				E2CA0C361C4FFEAF00E2F380 /* test.sh in Resources */,
 				7D3D39D61A6F086F00A44CB2 /* Images.xcassets in Resources */,
 				E26B0C921B46D01E00706F4A /* ThumbnailCollectionViewCell.xib in Resources */,
+				E2588D081E01B6970058D7FB /* GroupSectionView.xib in Resources */,
 				E2CF51331DAEF39100515506 /* ServiceAccount.json in Resources */,
 				E28915931C5AD528005D7AA0 /* LaunchScreen.storyboard in Resources */,
 				E2064BF31BC0212B009C7B6A /* silence.caf in Resources */,
@@ -922,6 +937,7 @@
 				E2BC53311DE4D55100C97A2C /* invite_guest.html in Resources */,
 				E25327D01B13DB3000990A81 /* notification_pop.aac in Resources */,
 				E20C74311DD548A400D90A4D /* invite_member.html in Resources */,
+				E25617EE1E01D07500E31240 /* NavigationHeaderView.xib in Resources */,
 				E25327CD1B13DB2900990A81 /* notification_activity.aac in Resources */,
 				E2DA16D71DCFDF770096D86F /* ChannelTitleView.xib in Resources */,
 			);
@@ -1053,6 +1069,7 @@
 				E2FA133E1D8220DD0057F287 /* MenuItemView.swift in Sources */,
 				E2BC533C1DE5E53600C97A2C /* NGAParallaxMotion.m in Sources */,
 				E297305E1C136E8300B9433B /* AirRadioButton.swift in Sources */,
+				E25617F01E01D08800E31240 /* NavigationHeaderView.swift in Sources */,
 				E256B4281BD3DDC900EBF894 /* AirTableViewCell.swift in Sources */,
 				E28DB2941DBBFA1C008B2E4B /* GroupListCell.swift in Sources */,
 				E25327B61B1000C000990A81 /* AirImageView.swift in Sources */,
@@ -1111,6 +1128,8 @@
 				E2CC15A11C2C897800316356 /* WrapperTableViewCell.swift in Sources */,
 				E266A1C01DEB4E8900C71C28 /* MemberPickerController.swift in Sources */,
 				E26A02FD1DF5BE0D00EE32D3 /* ContactPickerController.swift in Sources */,
+				E2588D0A1E01B6D60058D7FB /* GroupSectionView.swift in Sources */,
+				E25B4ABB1E00BA6B00D17613 /* FireArray.swift in Sources */,
 				E24D74541BBAED5F0061F339 /* TaskQueue.swift in Sources */,
 				E2E9AAA71CEF86470057698F /* AirNavigationController.swift in Sources */,
 				E2D12A731C08DC4900DE507E /* AirTextField.swift in Sources */,
@@ -1135,6 +1154,7 @@
 				E26BBF991DB5734F00038754 /* PHPhotoLibrary+PhotoAsset.swift in Sources */,
 				E2E271291C5D1ED600E36804 /* BranchProvider.swift in Sources */,
 				844D6E371AA6550400EE71ED /* PhotoChooserUI.swift in Sources */,
+				E25617F41E02F8D000E31240 /* AirScrimButton.swift in Sources */,
 				E2BC53271DDF458700C97A2C /* GroupEditViewController.swift in Sources */,
 				E2D12A7D1C0A03F100DE507E /* AirLabelDisplay.swift in Sources */,
 				E297305C1C13644800B9433B /* AirTextView.swift in Sources */,

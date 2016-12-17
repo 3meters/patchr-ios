@@ -27,6 +27,6 @@ class AirLabelBase: UILabel {
 	override func drawText(in rect: CGRect) -> Void {
 		super.drawText(in: UIEdgeInsetsInsetRect(rect, self.insets))
 	}
-	
+    
 	func initialize() {	}
 }

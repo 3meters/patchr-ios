@@ -19,7 +19,7 @@ class ChannelSearchController: BaseTableController, UITableViewDelegate, UITable
     var tableView = AirTableView(frame: CGRect.zero, style: .plain)
     var tableViewDataSource: FUITableViewDataSource!
     var cellReuseIdentifier: String!
-    var headerView: ChannelsHeaderView!
+    var headerView: NavigationHeaderView!
 
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
@@ -54,11 +54,10 @@ class ChannelSearchController: BaseTableController, UITableViewDelegate, UITable
         self.definesPresentationContext = true
         self.view.backgroundColor = UIColor.white
         
-        self.headerView = Bundle.main.loadNibNamed("ChannelsHeaderView", owner: nil, options: nil)?.first as? ChannelsHeaderView
-        self.headerView.switchButton?.addTarget(self, action: #selector(ChannelPickerController.switchAction(sender:)), for: .touchUpInside)
+        self.headerView = Bundle.main.loadNibNamed("NavigationHeaderView", owner: nil, options: nil)?.first as? NavigationHeaderView
         
         self.cellReuseIdentifier = "channel-cell"
-        self.tableView.backgroundColor = Theme.colorBackgroundEmptyBubble
+        self.tableView.backgroundColor = Theme.colorBackgroundTable
         self.tableView.tableFooterView = UIView()
         self.tableView.delegate = self
         self.tableView.separatorStyle = .none
@@ -122,9 +121,9 @@ class ChannelSearchController: BaseTableController, UITableViewDelegate, UITable
         
         let cell = tableView.cellForRow(at: indexPath) as! ChannelListCell
         if let channelId = cell.channel.id {
-            let groupId = StateController.instance.groupId
-            StateController.instance.setChannelId(channelId: channelId, next: nil) // We know it's good
-            MainController.instance.showChannel(groupId: groupId!, channelId: channelId)
+            let groupId = StateController.instance.groupId!
+            StateController.instance.setChannelId(channelId: channelId, groupId: groupId, next: nil) // We know it's good
+            MainController.instance.showChannel(groupId: groupId, channelId: channelId)
             self.slideMenuController()?.closeLeft()
         }
     }

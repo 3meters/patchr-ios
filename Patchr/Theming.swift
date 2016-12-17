@@ -40,23 +40,18 @@ class Snow {
 	let colorNumberFeatured         = Colors.accentColorDark
     let colorTextValidationError    = Colors.validationErrorColor
 
-	let colorBackgroundForm         = Colors.white
-	let colorBackgroundTable		= Colors.gray95pcntColor
-	let colorBackgroundWindow       = Colors.gray90pcntColor
-	let colorBackgroundImage        = Colors.gray90pcntColor
-	let colorBackgroundNotification = Colors.brandColor
-	let colorBackgroundSidebar      = Colors.white
-	let colorBackgroundTile         = Colors.white
-	let colorBackgroundTileList     = Colors.gray95pcntColor
-	let colorBackgroundToast        = Colors.accentColorFill
-	let colorBackgroundOverlay      = Colors.opacity75pcntBlack
-	let colorBackgroundActivity     = Colors.white
-	let colorBackgroundActivityOnly = Colors.clear
-	let colorBackgroundEmptyBubble  = Colors.gray97pcntColor
-	let colorBackgroundAgeDot       = Colors.accentColorFill
-	let colorBackgroundContactSelected 	= Colors.accentColorFill
-	let colorBackgroundSelected		= Colors.gray90pcntColor
-    let colorBackgroundBadge        = Colors.accentColorFill
+	let colorBackgroundForm             = Colors.white
+	let colorBackgroundTable            = Colors.gray97pcntColor
+	let colorBackgroundWindow           = Colors.gray90pcntColor
+	let colorBackgroundImage            = Colors.gray90pcntColor
+	let colorBackgroundTile             = Colors.white
+	let colorBackgroundTileList         = Colors.gray95pcntColor
+	let colorBackgroundToast            = Colors.accentColorFill
+	let colorBackgroundActivity         = Colors.white
+	let colorBackgroundActivityOnly     = Colors.clear
+    let colorBackgroundBadge            = Colors.accentColorFill
+	let colorBackgroundSelected         = Colors.gray90pcntColor
+    let colorBackgroundSelectedChannel  = Colors.accentColorFill
 
 	let colorRule                   = Colors.gray85pcntColor
 	let colorRuleActive             = Colors.accentColorRule
@@ -172,6 +167,7 @@ public struct Colors {
 	static let brandColorRule = brandColor
     
     static let validationErrorColor = UIColor(red: 255/255, green: 87/255, blue: 34/255, alpha: 1)
+    static let testColor = brandColor.withAlphaComponent(0.1)
     
 	static let facebookColor = UIColor(hexString: "#3B5998ff")
 	static let googleColor = UIColor(hexString: "#DD4B39ff")

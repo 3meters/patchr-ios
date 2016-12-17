@@ -45,7 +45,7 @@ class NotificationController: NSObject {
         
         if application.applicationState == .inactive {
             /* Switch to the channel */
-            StateController.instance.setGroupId(groupId: groupId, channelId: channelId)
+            StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
             MainController.instance.showChannel(groupId: groupId, channelId: channelId)
         }
         else {
@@ -71,8 +71,9 @@ class NotificationController: NSObject {
                     let channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)
                     channelQuery.once(with: { channel in
                         if channel?.priority != 0 {
+                            let userInfo = ["groupId": groupId, "channelId": channelId, "messageId": messageId]
                             channel?.unread(on: true)
-                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: nil)
+                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: userInfo)
                         }
                     })
                 }

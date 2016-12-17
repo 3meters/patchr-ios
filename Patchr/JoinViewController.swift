@@ -134,7 +134,7 @@ class JoinViewController: BaseEditViewController {
         let groupId = self.inputGroupId!
         
         if self.inputChannelId != nil {
-            StateController.instance.setGroupId(groupId: groupId, channelId: self.inputChannelId!)
+            StateController.instance.setChannelId(channelId: self.inputChannelId!, groupId: groupId)
             MainController.instance.showChannel(groupId: groupId, channelId: self.inputChannelId!)
             let _ = self.navigationController?.popToRootViewController(animated: false)
             self.closeAction(sender: nil)
@@ -142,7 +142,7 @@ class JoinViewController: BaseEditViewController {
         else {
             FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
                 if firstChannelId != nil {
-                    StateController.instance.setGroupId(groupId: groupId, channelId: firstChannelId)
+                    StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
                     MainController.instance.showChannel(groupId: groupId, channelId: firstChannelId!)
                     let _ = self.navigationController?.popToRootViewController(animated: false)
                     self.closeAction(sender: nil)

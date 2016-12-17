@@ -106,6 +106,12 @@ public extension UIView {
 			, completion: completion)
 	}
     
+    func rotate(_ toValue: CGFloat, duration: TimeInterval = 0.3) {
+        UIView.animate(withDuration: duration) {
+            self.transform = CGAffineTransform(rotationAngle: toValue)
+        }
+    }
+    
     func slideUp(duration: TimeInterval = 0.3, delay: TimeInterval = 0.0, completion: @escaping (Bool) -> Void = {(finished: Bool) -> Void in}) {
         UIView.animate(withDuration: duration
             , delay: delay

@@ -72,7 +72,7 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
         
         self.cellReuseIdentifier = "user-cell"
         self.tableView.register(UINib(nibName: "UserListCell", bundle: nil), forCellReuseIdentifier: self.cellReuseIdentifier)
-        self.tableView.backgroundColor = Theme.colorBackgroundEmptyBubble
+        self.tableView.backgroundColor = Theme.colorBackgroundTable
         self.tableView.tableFooterView = UIView()
         self.tableView.delegate = self
         self.tableView.allowsMultipleSelection = true

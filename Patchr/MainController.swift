@@ -150,7 +150,12 @@ class MainController: NSObject, iRateDelegate {
     
     func showMain() {
         if self.window?.rootViewController == self.emptyController {
-            self.emptyController.startScene() {
+            if !self.emptyController.scenePlayed {
+                self.emptyController.startScene() {
+                    self.window?.setRootViewController(rootViewController: self.slideController, animated: true)
+                }
+            }
+            else {
                 self.window?.setRootViewController(rootViewController: self.slideController, animated: true)
             }
         }

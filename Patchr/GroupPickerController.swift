@@ -131,7 +131,7 @@ class GroupPickerController: BaseTableController, UITableViewDelegate {
                 self.footerView.addTarget(self, action: #selector(self.addAction(sender:)), for: .touchUpInside)
                 
                 self.cellReuseIdentifier = "group-cell"
-                self.tableView.backgroundColor = Theme.colorBackgroundEmptyBubble
+                self.tableView.backgroundColor = Theme.colorBackgroundTable
                 self.tableView.delegate = self
                 self.tableView.register(UINib(nibName: "GroupListCell", bundle: nil), forCellReuseIdentifier: self.cellReuseIdentifier)
                 
@@ -233,14 +233,15 @@ class GroupPickerController: BaseTableController, UITableViewDelegate {
         let groupId = cell.group.id!
         let userId = UserController.instance.userId
         
-        if let lastChannelId = UserDefaults.standard.string(forKey: groupId)  {
+        if let settings = UserDefaults.standard.dictionary(forKey: groupId),
+            let lastChannelId = settings["currentChannelId"] as? String {
             let validateQuery = ChannelQuery(groupId: groupId, channelId: lastChannelId, userId: userId!)
             validateQuery.once(with: { channel in
                 if channel == nil {
                     Log.w("Last channel invalid: \(lastChannelId): trying first channel")
                     FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
                         if firstChannelId != nil {
-                            StateController.instance.setGroupId(groupId: groupId, channelId: firstChannelId)
+                            StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
                             MainController.instance.showChannel(groupId: groupId, channelId: firstChannelId!)
                             let _ = self.navigationController?.popToRootViewController(animated: false)
                             self.closeAction(sender: nil)
@@ -248,7 +249,7 @@ class GroupPickerController: BaseTableController, UITableViewDelegate {
                     }
                 }
                 else {
-                    StateController.instance.setGroupId(groupId: groupId, channelId: lastChannelId)
+                    StateController.instance.setChannelId(channelId: lastChannelId, groupId: groupId)
                     MainController.instance.showChannel(groupId: groupId, channelId: lastChannelId)
                     let _ = self.navigationController?.popToRootViewController(animated: false)
                     self.closeAction(sender: nil)
@@ -258,7 +259,8 @@ class GroupPickerController: BaseTableController, UITableViewDelegate {
         else {
             FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
                 if firstChannelId != nil {
-                    StateController.instance.setGroupId(groupId: groupId, channelId: firstChannelId)
+                    StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
+                    MainController.instance.showMain()
                     MainController.instance.showChannel(groupId: groupId, channelId: firstChannelId!)
                     let _ = self.navigationController?.popToRootViewController(animated: false)
                     self.closeAction(sender: nil)

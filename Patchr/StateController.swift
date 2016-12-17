@@ -51,14 +51,15 @@ class StateController: NSObject {
             if let groupId = UserDefaults.standard.string(forKey: "groupId"),
                 let userId = UserController.instance.userId {
                 
-                if let lastChannelId = UserDefaults.standard.string(forKey: groupId)  {
+                if let settings = UserDefaults.standard.dictionary(forKey: groupId),
+                    let lastChannelId = settings["currentChannelId"] as? String {
                     let validateQuery = ChannelQuery(groupId: groupId, channelId: lastChannelId, userId: userId)
                     validateQuery.once(with: { channel in
                         if channel == nil {
                             Log.w("Last channel invalid: \(lastChannelId): trying first channel")
                             FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
                                 if firstChannelId != nil {
-                                    self.setGroupId(groupId: groupId, channelId: firstChannelId, next: next)
+                                    self.setChannelId(channelId: firstChannelId!, groupId: groupId, next: next)
                                 }
                                 else {
                                     /* Start from scratch */
@@ -69,14 +70,14 @@ class StateController: NSObject {
                             }
                         }
                         else {
-                            self.setGroupId(groupId: groupId, channelId: lastChannelId, next: next)
+                            self.setChannelId(channelId: lastChannelId, groupId: groupId, next: next)
                         }
                     })
                 }
                 else {
                     FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
                         if firstChannelId != nil {
-                            self.setGroupId(groupId: groupId, channelId: firstChannelId, next: next)
+                            self.setChannelId(channelId: firstChannelId!, groupId: groupId, next: next)
                         }
                         else {
                             /* Start from scratch */
@@ -101,70 +102,76 @@ class StateController: NSObject {
         queue.run()
     }
     
-    func setGroupId(groupId: String, channelId: String!, next: ((Any?) -> Void)? = nil) {
+    func setChannelId(channelId: String, groupId: String, bundle: [String: Any]? = nil, next: ((Any?) -> Void)? = nil) {
         
-        if NotificationController.instance.groupBadgeCounts[groupId] != nil {
-            NotificationController.instance.groupBadgeCounts[groupId] = 0
-        }
+        var userInfo: [String: Any] = [:]
+        userInfo["fromGroupId"] = bundle?["fromGroupId"] ?? self.groupId
+        userInfo["toGroupId"] = bundle?["toGroupId"] ?? groupId
         
-        guard groupId != self.groupId else {
-            next?(nil)
-            return
-        }
-        
-        Log.d("Current group: \(groupId)")
-        
-        self.groupId = groupId
-        setChannelId(channelId: channelId)
-        
-        UserDefaults.standard.set(groupId, forKey: "groupId")
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: self, userInfo: nil)
-        next?(nil)
-        
-        /* Convenience for other parts of the code that need quick access to the group object */
-        let userId = UserController.instance.userId
-        self.groupQuery?.remove()
-        self.groupQuery = GroupQuery(groupId: groupId, userId: userId!)
-        self.groupQuery!.observe(with: { group in
+        if groupId != self.groupId {
             
-            guard group != nil else {
-                Log.w("Requested group invalid: \(groupId)")
-                self.clearGroup()
+            if NotificationController.instance.groupBadgeCounts[groupId] != nil {
+                NotificationController.instance.groupBadgeCounts[groupId] = 0
+            }
+
+            Log.d("Current group: \(groupId)")
+            
+            self.groupId = groupId
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: self, userInfo: userInfo)
+            UserDefaults.standard.set(groupId, forKey: "groupId")
+            
+            setChannelId(channelId: channelId, groupId: groupId, bundle: userInfo, next: next)
+            
+            /* Convenience for other parts of the code that need quick access to the group object */
+            let userId = UserController.instance.userId
+            self.groupQuery?.remove()
+            self.groupQuery = GroupQuery(groupId: groupId, userId: userId!)
+            self.groupQuery!.observe(with: { group in
+                
+                guard group != nil else {
+                    Log.w("Requested group invalid: \(groupId)")
+                    self.clearGroup()
+                    next?(nil)
+                    return
+                }
+                
+                if self.group != nil {
+                    Log.d("Group updated: \(group!.id!)")
+                }
+                
+                self.group = group
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: ["groupId": groupId])
+            })
+        }
+        else {
+            
+            guard UserController.instance.userId != nil else {
+                assertionFailure("userId, groupId and channelId must be set")
+                return
+            }
+            
+            if NotificationController.instance.channelBadgeCounts[channelId] != nil {
+                NotificationController.instance.channelBadgeCounts[channelId] = 0
+            }
+            
+            guard channelId != self.channelId else {
                 next?(nil)
                 return
             }
             
-            if self.group != nil {
-                Log.d("Group updated: \(group!.id!)")
-            }
+            Log.d("Current channel: \(channelId)")
             
-            self.group = group
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: nil)
-        })
-    }
-    
-    func setChannelId(channelId: String?, next: ((Any?) -> Void)? = nil) {
-        
-        guard channelId != nil && self.groupId != nil && UserController.instance.userId != nil else {
-            assertionFailure("userId, groupId and channelId must be set")
-            return
+            userInfo["fromChannelId"] = self.channelId
+            userInfo["toChannelId"] = channelId
+            self.channelId = channelId
+            
+            var groupSettings: [String: Any] = (UserDefaults.standard.dictionary(forKey: groupId) ?? [:])!
+            groupSettings["currentChannelId"] = channelId
+            UserDefaults.standard.set(groupSettings, forKey: groupId)
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.ChannelDidSwitch), object: self, userInfo: userInfo)
+            
+            next?(nil)
         }
-        
-        if NotificationController.instance.channelBadgeCounts[channelId!] != nil {
-            NotificationController.instance.channelBadgeCounts[channelId!] = 0
-        }
-        
-        guard channelId != self.channelId else {
-            return
-        }
-
-        Log.d("Current channel: \(channelId!)")
-        
-        self.channelId = channelId
-        UserDefaults.standard.set(channelId, forKey: self.groupId!) // channelId keyed on groupId
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.ChannelDidSwitch)
-            , object: self, userInfo: nil)
-        next?(nil)
     }
     
     func clearGroup() {

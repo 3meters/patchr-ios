@@ -19,3 +19,10 @@ current observers, use keepSynched.
 For the life of the observer, the target reference will be synced and correct. Initial 
 callback will be stale if the value has been updated externally while not being observed.
 Correct value will be returned in a second callback after a network sync.
+
+Firebase Sorting
+
+Always returned in ascending order.
+- orderByChild order: null, false:key, true:key, numbers:key, strings:key, objects:key
+- orderByKey: keys that parse as 32 int, strings
+- orderByValue: same rules as orderByChild

@@ -382,7 +382,7 @@ class ChannelViewController: BaseSlackController {
 
                 FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
                     if firstChannelId != nil {
-                        StateController.instance.setChannelId(channelId: firstChannelId)
+                        StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
                         MainController.instance.showChannel(groupId: groupId, channelId: StateController.instance.channelId!)
                     }
                 }
@@ -421,7 +421,8 @@ class ChannelViewController: BaseSlackController {
             
             if channel?.priority == 0 {
                 channel?.unread(on: false)
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: nil)
+                let userInfo = ["groupId": groupId, "channelId": channelId]
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: userInfo)
             }
         })
         

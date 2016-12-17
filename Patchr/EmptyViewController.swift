@@ -14,7 +14,7 @@ class EmptyViewController: UIViewController {
     var appName			= AirLabelBanner()
     var imageBackground = AirImageView(frame: CGRect.zero)
     var imageLogo		= AirImageView(frame: CGRect.zero)
-    var firstLaunch		= true
+    var scenePlayed		= false
 		
 	/*--------------------------------------------------------------------------------------------
 	* MARK: - Lifecycle
@@ -38,18 +38,11 @@ class EmptyViewController: UIViewController {
         self.view.endEditing(true)
         self.navigationController?.setNavigationBarHidden(true, animated: animated)
         self.setNeedsStatusBarAppearanceUpdate()
-        if self.firstLaunch {
-            self.imageLogo.anchorInCenter(withWidth: 72, height: 72)
-        }
+        self.imageLogo.anchorInCenter(withWidth: 72, height: 72)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-//        if self.firstLaunch {
-//            startScene()
-//            self.firstLaunch = false
-//        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -76,9 +69,7 @@ class EmptyViewController: UIViewController {
         self.appName.textAlignment = NSTextAlignment.center
         self.view.addSubview(self.appName)
         
-        if self.firstLaunch {
-            self.appName.alpha = 0.0
-        }
+        self.appName.alpha = 0.0
     }
     
     func startScene(then: (() -> Void)? = nil) {
@@ -90,6 +81,7 @@ class EmptyViewController: UIViewController {
             spring?.springSpeed = 8
             self.imageLogo.pop_add(spring, forKey: "moveUp")
             self.appName.fadeIn(duration: 0.5) { finished in
+                self.scenePlayed = true
                 then?()
             }
         }

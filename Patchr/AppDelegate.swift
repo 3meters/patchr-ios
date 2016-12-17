@@ -238,7 +238,7 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
         if response.actionIdentifier == UNNotificationDefaultActionIdentifier {
             let userInfo = response.notification.request.content.userInfo
             if let channelId = userInfo["channelId"] as? String, let groupId = userInfo["groupId"] as? String {
-                StateController.instance.setGroupId(groupId: groupId, channelId: channelId)
+                StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
                 MainController.instance.showChannel(groupId: groupId, channelId: channelId)
             }
         }

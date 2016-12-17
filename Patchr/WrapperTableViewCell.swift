@@ -34,9 +34,8 @@ class WrapperTableViewCell: UITableViewCell {
 	func initialize() {
 		addSeparator()
         
-        let backgroundView = UIView()
-        backgroundView.backgroundColor = Theme.colorBackgroundSelected
-        self.selectedBackgroundView = backgroundView
+        self.selectedBackgroundView = UIView()
+        self.selectedBackgroundView?.backgroundColor = Theme.colorBackgroundSelected
         self.selectionStyle = .default
         
 		if self.view != nil {

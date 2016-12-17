@@ -27,7 +27,6 @@ class GalleryViewCell: UICollectionViewCell {
 		self.clipsToBounds = true
 		self.contentView.addSubview(self.displayImageView)
 	}
-
 	
 	override var layoutMargins: UIEdgeInsets {
 		get { return UIEdgeInsets.zero }
