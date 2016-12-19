@@ -21,8 +21,8 @@ class MainController: NSObject, iRateDelegate {
     var window: UIWindow?
     
     var slideController : SlideMenuController!
-    var sideMenuController = SideMenuViewController()
-    var channelPickerController = ChannelPickerController()
+    var menuController = SideMenuViewController()
+    var navigationController: PickerController!
     
     var emptyController = EmptyViewController()
     var channelController = ChannelViewController()
@@ -30,6 +30,7 @@ class MainController: NSObject, iRateDelegate {
     
     var mainWrapper: AirNavigationController!
     var lobbyWrapper: AirNavigationController!
+    var navigationWrapper: AirNavigationController!
     
     var upgradeRequired = false
 
@@ -86,9 +87,14 @@ class MainController: NSObject, iRateDelegate {
 
         self.mainWrapper = AirNavigationController(navigationBarClass: AirNavigationBar.self, toolbarClass: nil)
         self.mainWrapper.viewControllers = [self.channelController]
+
+        let pages = [GroupPickerController(simplePicker: true), NavigationController()]
+        self.navigationController = PickerController(pages)
+        self.navigationWrapper = AirNavigationController(rootViewController: self.navigationController)
+
         self.slideController = SlideMenuController(mainViewController: self.mainWrapper
-            , leftMenuViewController: self.channelPickerController
-            , rightMenuViewController: self.sideMenuController)
+            , leftMenuViewController: self.navigationController
+            , rightMenuViewController: self.menuController)
         self.lobbyWrapper = AirNavigationController(rootViewController: self.lobbyController)
 
         self.window?.setRootViewController(rootViewController: self.emptyController, animated: true) // While we wait for state to initialize

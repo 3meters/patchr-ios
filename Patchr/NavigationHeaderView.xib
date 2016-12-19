@@ -18,7 +18,7 @@
                     <rect key="frame" x="0.0" y="0.0" width="378" height="105"/>
                     <subviews>
                         <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="A8Z-qg-fdh">
-                            <rect key="frame" x="98.5" y="16" width="180" height="29"/>
+                            <rect key="frame" x="99" y="16" width="180" height="29"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="180" id="RF1-mS-bHO"/>
                             </constraints>
@@ -28,7 +28,7 @@
                             </segments>
                         </segmentedControl>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9PY-Wp-Xa3" customClass="AirLinkButton" customModule="Patchr" customModuleProvider="target">
-                            <rect key="frame" x="325" y="7.5" width="45" height="45"/>
+                            <rect key="frame" x="325" y="8" width="45" height="45"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="45" id="Ouq-LJ-z3p"/>
                                 <constraint firstAttribute="width" constant="45" id="mHu-S0-jOw"/>

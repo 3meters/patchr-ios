@@ -9,4 +9,6 @@
 import Foundation
 import FirebaseDatabaseUI
 
-class FireArray: FUIArray { }
+class FireArray: FUIArray {
+    var children: [Int: [[String: Any]]] = [:]
+}

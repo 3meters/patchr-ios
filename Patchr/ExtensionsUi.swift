@@ -449,6 +449,18 @@ public func <(lhs: NSDate, rhs: NSDate) -> Bool {
 
 extension NSDate: Comparable { }
 
+extension Array {
+    
+    func at(_ index: Int?) -> Element? {
+        if let index = index , index >= 0 && index < endIndex {
+            return self[index]
+        }
+        else {
+            return nil
+        }
+    }
+}
+
 extension String {
     
     func stringByAddingPercentEncodingForRFC3986() -> String? {

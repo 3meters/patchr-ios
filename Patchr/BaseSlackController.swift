@@ -453,10 +453,6 @@ extension BaseSlackController {
         }
     }
     
-    override func keyForTextCaching() -> String? {
-        return Bundle.main.bundleIdentifier
-    }
-    
     override func didPasteMediaContent(_ userInfo: [AnyHashable: Any]) {
         // Notifies the view controller when the user has pasted a media (image, video, etc) inside of the text view.
         super.didPasteMediaContent(userInfo)

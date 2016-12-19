@@ -11,14 +11,16 @@ import FirebaseDatabaseUI
 import SlideMenuControllerSwift
 import pop
 
-class ChannelPickerController: BaseTableController {
+class NavigationController: BaseTableController {
 
     var groupsQuery: FIRDatabaseQuery!
     var groupsArray: FireArray!
     
     var tableView = AirTableView(frame: CGRect.zero, style: .plain)
-    var headerView: NavigationHeaderView!
-    
+    var searchBar: UISearchBar!
+    var searchController: SearchController!
+    var searchTableView = AirTableView(frame: CGRect.zero, style: .plain)
+
     /*--------------------------------------------------------------------------------------------
     * Lifecycle
     *--------------------------------------------------------------------------------------------*/
@@ -31,8 +33,9 @@ class ChannelPickerController: BaseTableController {
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        self.headerView.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 105)
-        self.tableView.alignUnder(self.headerView, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
+        self.searchBar.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: 48)
+        self.tableView.alignUnder(self.searchBar, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
+        self.searchTableView.alignUnder(self.searchBar, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -47,10 +50,6 @@ class ChannelPickerController: BaseTableController {
         controller.inputGroupId = StateController.instance.groupId
         UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         slideMenuController()?.closeLeft()
-    }
-    
-    func segmentAction(sender: AnyObject?) {        
-        Log.d("Selected segment: \(self.headerView.segments?.selectedSegmentIndex)")
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -101,9 +100,14 @@ class ChannelPickerController: BaseTableController {
         
         self.slideMenuController()?.delegate = self
         
-        self.headerView = Bundle.main.loadNibNamed("NavigationHeaderView", owner: nil, options: nil)?.first as? NavigationHeaderView
-        self.headerView.segments?.addTarget(self, action: #selector(segmentAction(sender:)), for: .valueChanged)
-        self.headerView.addButton.addTarget(self, action: #selector(addAction(sender:)), for: .touchUpInside)
+        self.searchBar = UISearchBar(frame: CGRect.zero)
+        self.searchBar?.delegate = self
+        self.searchBar?.placeholder = "Search"
+        self.searchBar.searchBarStyle = .minimal
+        self.searchBar?.backgroundImage = Utils.imageFromColor(color: Colors.gray90pcntColor)
+        
+//        self.addButton = AirLinkButton(type: .custom)
+//        self.addButton.addTarget(self, action: #selector(addAction(sender:)), for: .touchUpInside)
         
         self.tableView.backgroundColor = Theme.colorBackgroundTable
         self.tableView.tableFooterView = UIView()
@@ -113,7 +117,18 @@ class ChannelPickerController: BaseTableController {
         self.tableView.register(UINib(nibName: "ChannelListCell", bundle: nil), forCellReuseIdentifier: "channel-list-cell")
         self.tableView.register(UINib(nibName: "GroupSectionView", bundle: nil), forHeaderFooterViewReuseIdentifier: "header")
         
-        self.view.addSubview(self.headerView)
+        self.searchController = SearchController(tableView: self.searchTableView)
+        
+        self.searchTableView.alpha = 0.0
+        self.searchTableView.tableFooterView = UIView()
+        self.searchTableView.backgroundColor = Theme.colorBackgroundTable
+        self.searchTableView.delegate = self
+        self.searchTableView.separatorStyle = .none
+        self.searchTableView.register(UINib(nibName: "ChannelListCell", bundle: nil), forCellReuseIdentifier: "channel-search-cell")
+        self.searchTableView.dataSource = self.searchController
+        
+        self.view.addSubview(self.searchBar)
+        self.view.addSubview(self.searchTableView)
         self.view.addSubview(self.tableView)
         
         NotificationCenter.default.addObserver(self, selector: #selector(unreadChange(notification:)), name: NSNotification.Name(rawValue: Events.UnreadChange), object: nil)
@@ -184,7 +199,7 @@ class ChannelPickerController: BaseTableController {
     }
 }
 
-extension ChannelPickerController: SectionToggledDelegate {
+extension NavigationController: SectionToggledDelegate {
     
     func toggled(expanded: Bool, target: UIView) {
         
@@ -203,7 +218,7 @@ extension ChannelPickerController: SectionToggledDelegate {
     }
 }
 
-extension ChannelPickerController: UITableViewDataSource {
+extension NavigationController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
@@ -265,7 +280,7 @@ extension ChannelPickerController: UITableViewDataSource {
     }
 }
 
-extension ChannelPickerController: UITableViewDelegate {
+extension NavigationController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didEndDisplayingHeaderView view: UIView, forSection section: Int) {
         if let headerView = view as? GroupSectionView {
@@ -365,7 +380,7 @@ extension ChannelPickerController: UITableViewDelegate {
     }
 }
 
-extension ChannelPickerController: FUIArrayDelegate {
+extension NavigationController: FUIArrayDelegate {
     
     func array(_ array: FUIArray!, didAdd object: Any!, at index: UInt) {
         Log.d("FireArray: didAdd: \(index)")
@@ -430,10 +445,114 @@ extension ChannelPickerController: FUIArrayDelegate {
     }
 }
 
-extension ChannelPickerController: SlideMenuControllerDelegate {
+extension NavigationController: UISearchBarDelegate {
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        self.searchBar?.setShowsCancelButton(true, animated: true)
+        self.tableView.fadeOut()
+        self.searchTableView.fadeIn()
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        self.searchController.filter(searchText: searchText)
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        self.searchBar?.text = nil
+        self.tableView.fadeIn()
+        self.searchTableView.fadeOut()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        self.searchBar?.setShowsCancelButton(false, animated: true)
+        self.searchBar?.endEditing(true)
+    }
+}
+
+extension NavigationController: UISearchResultsUpdating {
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        self.searchController.filter(searchText: self.searchBar!.text!)
+    }
+}
+
+extension NavigationController: SlideMenuControllerDelegate {
     
     func leftDidClose() {
-        self.headerView.searchBar?.setShowsCancelButton(false, animated: false)
-        self.headerView.searchBar?.endEditing(true)
+        self.searchBar?.setShowsCancelButton(false, animated: false)
+        self.searchBar?.endEditing(true)
+    }
+}
+
+class SearchController: NSObject, UITableViewDataSource {
+    
+    var channelsSource = [FireChannel]()
+    var channelsFiltered = [FireChannel]()
+    var tableView: UITableView? = nil
+    var loading = false
+    
+    init(tableView: UITableView) {
+        self.tableView = tableView
+    }
+    
+    func filter(searchText: String, scope: String = "All") {
+        self.channelsFiltered = channelsSource.filter { channel in
+            return channel.name!.lowercased().contains(searchText.lowercased())
+        }
+        self.tableView?.reloadData()
+    }
+    
+    func load() {
+        
+        guard !self.loading else {
+            Log.w("Attempt to reload search while loading")
+            return
+        }
+        
+        self.loading = true
+        self.channelsSource.removeAll()
+        self.channelsFiltered.removeAll()
+        
+        let userId = UserController.instance.userId!
+        let groupId = StateController.instance.groupId!
+
+        let query = FireController.db.child("group-channels/\(groupId)").queryOrdered(byChild: "name")
+        let debouncer = Debouncer(delay: 0.5) {
+            self.loading = false
+        }
+        
+        query.observe(.childAdded, with: { snap in
+            debouncer.call()
+            if !(snap.value is NSNull) {
+                if let channel = FireChannel.from(dict: snap.value as? [String: Any], id: snap.key) {
+                    let path = "member-channels/\(userId)/\(groupId)/\(channel.id!)"
+                    FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
+                        if !(snap.value is NSNull) {
+                            let link = snap.value as! [String: Any]
+                            channel.membershipFrom(dict: link)
+                            self.channelsSource.append(channel) // Channels user is a member of
+                        }
+                        else {
+                            /* Open channels user is not a member of and they are not a guest member */
+                            if StateController.instance.group.role != "guest" && channel.visibility == "open" {
+                                self.channelsSource.append(channel)
+                            }
+                        }
+                    })
+                }
+            }
+        })
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.channelsFiltered.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "channel-search-cell", for: indexPath) as! ChannelListCell
+        let channel = self.channelsFiltered[indexPath.row]
+        cell.reset()
+        cell.bind(channel: channel)
+        return cell
     }
 }

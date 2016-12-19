@@ -58,9 +58,7 @@ class GroupEditViewController: BaseEditViewController {
      *--------------------------------------------------------------------------------------------*/
 
     func doneAction(sender: AnyObject) {
-        if isValid() {
-            closeAction(sender: sender)
-        }
+        closeAction(sender: sender)
     }
 
     func closeAction(sender: AnyObject) {
@@ -171,8 +169,9 @@ class GroupEditViewController: BaseEditViewController {
         self.banner.text = "Group Settings"
 
         /* Navigation bar buttons */
+        let doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
         let deleteButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.trash, target: self, action: #selector(deleteAction(sender:)))
-        self.navigationItem.rightBarButtonItems = [deleteButton]
+        self.navigationItem.rightBarButtonItems = [doneButton, deleteButton]
         
         NotificationCenter.default.addObserver(self, selector: #selector(photoDidChange(sender:)), name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(photoRemoved(sender:)), name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: nil)

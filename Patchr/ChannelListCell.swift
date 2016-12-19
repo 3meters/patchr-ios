@@ -9,7 +9,7 @@ import UIKit
 @IBDesignable
 class ChannelListCell: UITableViewCell {
     
-    @IBOutlet weak var title: AirLabel?
+    @IBOutlet weak var title: UILabel?
     @IBOutlet weak var star: UIImageView?
     @IBOutlet weak var lock: UIImageView?
     @IBOutlet weak var status: UILabel?
@@ -37,8 +37,6 @@ class ChannelListCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         self.badge?.layer.cornerRadius = (self.badge?.frame.size.height)! / 2
-        self.title?.layer.cornerRadius = (self.title?.frame.size.height)! / 2
-        self.selectedBackground?.layer.cornerRadius = (self.selectedBackground?.frame.size.height)! / 2
     }
     
     func selected(on: Bool) {

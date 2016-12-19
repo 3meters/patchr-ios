@@ -9,28 +9,35 @@ import AVFoundation
 import Firebase
 import FirebaseDatabaseUI
 
-class GroupPickerController: BaseTableController, UITableViewDelegate {
+class GroupPickerController: BaseTableController {
     
-    var query: FIRDatabaseQuery!
+    var groupsQuery: FIRDatabaseQuery!
     
     var headerView: GroupsHeaderView!
-    var message: String = "Select from groups you are a member of. You can switch groups at anytime."
     var messageLabel = AirLabelTitle()
     var tableView = UITableView(frame: CGRect.zero, style: .plain)
-    var tableViewDataSource: FUITableViewDataSource!
-    var cellReuseIdentifier: String!
     var footerView = AirLinkButton()
     var rule = UIView()
+    var buttonLogin	= AirButton()
+    var buttonSignup = AirButton()
+    var buttonGroup	= UIView()
     
-    var buttonLogin		= AirButton()
-    var buttonSignup	= AirButton()
-    var buttonGroup		= UIView()
-    
+    var tableViewDataSource: FUITableViewDataSource!
+    var cellReuseIdentifier: String!
+
+    var message: String = "Select from groups you are a member of. You can switch groups at anytime."
+
     var groupAvailable = false
+    var simplePicker = false
     
     /*--------------------------------------------------------------------------------------------
      * Lifecycle
      *--------------------------------------------------------------------------------------------*/
+    
+    public convenience init(simplePicker: Bool = false) {
+        self.init(nibName: nil, bundle: nil)
+        self.simplePicker = simplePicker
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,6 +47,11 @@ class GroupPickerController: BaseTableController, UITableViewDelegate {
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
+        
+        if self.simplePicker {
+            self.tableView.fillSuperview()
+            return
+        }
         
         let messageSize = self.messageLabel.sizeThatFits(CGSize(width:288, height:CGFloat.greatestFiniteMagnitude))
         if self.navigationController != nil {
@@ -77,6 +89,10 @@ class GroupPickerController: BaseTableController, UITableViewDelegate {
     }
     
     func closeAction(sender: AnyObject?) {
+        if self.simplePicker {
+            self.slideMenuController()?.closeLeft()
+            return
+        }
         close(animated: true)
     }
     
@@ -95,8 +111,13 @@ class GroupPickerController: BaseTableController, UITableViewDelegate {
      * Notifications
      *--------------------------------------------------------------------------------------------*/
     
-    func groupDidChange(notification: NSNotification?) {
-        self.tableView.reloadData() // To pickup badge changes
+    func refresh(notification: NSNotification?) {
+        if self.tableViewDataSource == nil {
+            bind()
+        }
+        else {
+            self.tableView.reloadData()
+        }
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -108,8 +129,24 @@ class GroupPickerController: BaseTableController, UITableViewDelegate {
         
         self.rule.backgroundColor = Theme.colorSeparator
         
-        let userId = UserController.instance.userId
-        FireController.instance.findFirstGroup(userId: userId!, next: { group in
+        NotificationCenter.default.addObserver(self, selector: #selector(refresh(notification:)), name: NSNotification.Name(rawValue: Events.UnreadChange), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(refresh(notification:)), name: NSNotification.Name(rawValue: Events.ChannelDidSwitch), object: nil)
+        
+        if self.simplePicker {
+            self.cellReuseIdentifier = "group-cell"
+            self.tableView.backgroundColor = Theme.colorBackgroundTable
+            self.tableView.delegate = self
+            self.tableView.tableFooterView = UIView()
+            self.tableView.register(UINib(nibName: "GroupListCell", bundle: nil), forCellReuseIdentifier: self.cellReuseIdentifier)
+            self.view.addSubview(self.tableView)
+            return
+        }
+        
+        guard let userId = UserController.instance.userId else {
+            return
+        }
+        
+        FireController.instance.findFirstGroup(userId: userId, next: { group in
             
             /* User is a member of at least one group */
             if group != nil {
@@ -133,6 +170,7 @@ class GroupPickerController: BaseTableController, UITableViewDelegate {
                 self.cellReuseIdentifier = "group-cell"
                 self.tableView.backgroundColor = Theme.colorBackgroundTable
                 self.tableView.delegate = self
+                self.tableView.tableFooterView = UIView()
                 self.tableView.register(UINib(nibName: "GroupListCell", bundle: nil), forCellReuseIdentifier: self.cellReuseIdentifier)
                 
                 self.view.addSubview(self.tableView)
@@ -168,19 +206,20 @@ class GroupPickerController: BaseTableController, UITableViewDelegate {
                 self.navigationItem.rightBarButtonItems = [logoutButton]
             }
         })
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(groupDidChange(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidChange), object: nil)
     }
     
     func bind() {
         
         if self.tableViewDataSource == nil {
             
-            let userId = UserController.instance.userId
-            self.query = FireController.db.child("member-groups/\(userId!)").queryOrdered(byChild: "index_priority_joined_at_desc")
+            guard let userId = UserController.instance.userId else {
+                return
+            }
+            
+            self.groupsQuery = FireController.db.child("member-groups/\(userId)").queryOrdered(byChild: "index_priority_joined_at_desc")
             
             self.tableViewDataSource = FUITableViewDataSource(
-                query: self.query,
+                query: self.groupsQuery,
                 view: self.tableView,
                 populateCell: { [weak self] (view, indexPath, snap) -> GroupListCell in
                     
@@ -224,6 +263,9 @@ class GroupPickerController: BaseTableController, UITableViewDelegate {
             self.tableView.dataSource = self.tableViewDataSource
         }
     }
+}
+
+extension GroupPickerController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         

@@ -25,6 +25,7 @@ class GroupSectionView: UITableViewHeaderFooterView {
     var rule = UIView()
     
     var group: FireGroup!
+    var groupQuery: GroupQuery!
     var expanded = false
     var section = 0
     
@@ -42,6 +43,7 @@ class GroupSectionView: UITableViewHeaderFooterView {
     
     func toggleAction(sender: AnyObject?) {
         setExpanded(expanded: !self.expanded)
+        self.delegate?.toggled(expanded: self.expanded, target: self)
     }
     
     func initialize() {
@@ -53,21 +55,22 @@ class GroupSectionView: UITableViewHeaderFooterView {
     func setExpanded(expanded: Bool) {
         self.expando.rotate(expanded ? CGFloat(M_PI_2) : CGFloat(0.0))
         self.expanded = expanded
-        self.delegate?.toggled(expanded: self.expanded, target: self)
     }
     
     func reset() {
-        self.delegate = nil
-        self.photoView?.photoView.image = nil
-        self.title?.text = nil
-        self.subtitle?.text = nil
         self.badge?.backgroundColor = Theme.colorBackgroundBadge
         self.badge?.text = nil
         self.badge?.isHidden = true
-        self.group = nil
+    }
+    
+    func clear() {
+        self.photoView?.photoView.image = nil
+        self.title?.text = nil
+        self.subtitle?.text = nil
     }
     
     func bind(group: FireGroup) {
+        self.clear()
         self.group = group
         self.title?.text = group.title!
         self.subtitle?.text = "\(group.role!)"

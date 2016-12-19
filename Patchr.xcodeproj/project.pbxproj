@@ -125,6 +125,8 @@
 		E29730601C14A7BC00B9433B /* AirSearchField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297305F1C14A7BC00B9433B /* AirSearchField.swift */; };
 		E29730641C15090300B9433B /* AirRuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29730631C15090300B9433B /* AirRuleView.swift */; };
 		E29730661C16295300B9433B /* InviteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29730651C16295300B9433B /* InviteViewController.swift */; };
+		E298E3D81E06EB7400AD8867 /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E298E3D71E06EB7400AD8867 /* NavigationController.swift */; };
+		E298E3DA1E0708AB00AD8867 /* PickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E298E3D91E0708AB00AD8867 /* PickerController.swift */; };
 		E2999EE31DC25AAE005C69D8 /* EmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2999EE21DC25AAE005C69D8 /* EmptyViewController.swift */; };
 		E2999EE51DC2CD3B005C69D8 /* PhotoBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2999EE41DC2CD3B005C69D8 /* PhotoBrowser.swift */; };
 		E29A4CDA1BD077520059D5B9 /* MessageViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A4CD91BD077520059D5B9 /* MessageViewCell.swift */; };
@@ -331,6 +333,8 @@
 		E297305F1C14A7BC00B9433B /* AirSearchField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AirSearchField.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E29730631C15090300B9433B /* AirRuleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirRuleView.swift; sourceTree = "<group>"; };
 		E29730651C16295300B9433B /* InviteViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = InviteViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		E298E3D71E06EB7400AD8867 /* NavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
+		E298E3D91E0708AB00AD8867 /* PickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PickerController.swift; sourceTree = "<group>"; };
 		E2999EE21DC25AAE005C69D8 /* EmptyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyViewController.swift; sourceTree = "<group>"; };
 		E2999EE41DC2CD3B005C69D8 /* PhotoBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoBrowser.swift; sourceTree = "<group>"; };
 		E29A4CD91BD077520059D5B9 /* MessageViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = MessageViewCell.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -762,6 +766,8 @@
 				E25B0F451DCE778B00021D5B /* MemberListController.swift */,
 				E266A1BF1DEB4E8900C71C28 /* MemberPickerController.swift */,
 				E259082D1DC69BBE00CB6C3F /* MemberViewController.swift */,
+				E298E3D71E06EB7400AD8867 /* NavigationController.swift */,
+				E298E3D91E0708AB00AD8867 /* PickerController.swift */,
 				E2FA13391D81FC8A0057F287 /* SideMenuViewController.swift */,
 				E2F618DE1B02667A0055D09C /* Edit */,
 				E200E62C1DDD261B00E3457F /* Photos */,
@@ -1050,6 +1056,7 @@
 				E2C0D9311B6C415100E28CE9 /* Log.swift in Sources */,
 				E24A87261B2DC0AB00E6F96B /* ThumbnailCollectionViewCell.swift in Sources */,
 				E227294B1CEA743600913041 /* GalleryGridViewController.swift in Sources */,
+				E298E3D81E06EB7400AD8867 /* NavigationController.swift in Sources */,
 				E25908321DC7B3AA00CB6C3F /* AirLabelStack.swift in Sources */,
 				E2B98F901DEDD3A50041E503 /* NotificationController.swift in Sources */,
 				E2FFD38B1DF32D3200FD75C7 /* Debouncer.swift in Sources */,
@@ -1189,6 +1196,7 @@
 				9FDCCD29C66E8E0EFFF1EBAC /* UserQuery.swift in Sources */,
 				9FDCCD52BF2D16C71FA4DB41 /* GroupQuery.swift in Sources */,
 				9FDCC14A3F9BFB4B39C54AA2 /* ChannelQuery.swift in Sources */,
+				E298E3DA1E0708AB00AD8867 /* PickerController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
