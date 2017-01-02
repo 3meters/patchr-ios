@@ -264,15 +264,15 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                         recipients.append(email!)
                     }
                     
-                    var emailMap: [String: Any] = [:]
-                    emailMap["recipients"] = recipients
-                    emailMap["type"] = "invite-members"
-                    emailMap["group"] = ["title": groupTitle]
-                    emailMap["user"] = ["title": userTitle, "email": userEmail]
-                    emailMap["link"] = inviteUrl
+                    var task: [String: Any] = [:]
+                    task["recipients"] = recipients
+                    task["type"] = "invite-members"
+                    task["group"] = ["title": groupTitle]
+                    task["user"] = ["title": userTitle, "email": userEmail]
+                    task["link"] = inviteUrl
                     
-                    let queueRef = FireController.db.child("email-queue").childByAutoId()
-                    queueRef.setValue(emailMap)
+                    let queueRef = FireController.db.child("queue/emails").childByAutoId()
+                    queueRef.setValue(task)
                     if self.flow == .onboardCreate {
                         self.onboardAction(sender: nil)
                     }
@@ -306,16 +306,16 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                         recipients.append(email!)
                     }
                     
-                    var emailMap: [String: Any] = [:]
-                    emailMap["recipients"] = recipients
-                    emailMap["type"] = "invite-guests"
-                    emailMap["group"] = ["title": groupTitle]
-                    emailMap["channel"] = ["name": channelName]
-                    emailMap["user"] = ["title": userTitle, "email": userEmail]
-                    emailMap["link"] = inviteUrl
+                    var task: [String: Any] = [:]
+                    task["recipients"] = recipients
+                    task["type"] = "invite-guests"
+                    task["group"] = ["title": groupTitle]
+                    task["channel"] = ["name": channelName]
+                    task["user"] = ["title": userTitle, "email": userEmail]
+                    task["link"] = inviteUrl
                     
-                    let queueRef = FireController.db.child("email-queue").childByAutoId()
-                    queueRef.setValue(emailMap)
+                    let queueRef = FireController.db.child("queue/emails").childByAutoId()
+                    queueRef.setValue(task)
                     self.close()
                     UIShared.Toast(message: "Invites sent")
                 }

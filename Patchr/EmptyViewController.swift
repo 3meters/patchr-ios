@@ -12,8 +12,8 @@ import pop
 class EmptyViewController: UIViewController {
     
     var appName			= AirLabelBanner()
-    var imageBackground = AirImageView(frame: CGRect.zero)
-    var imageLogo		= AirImageView(frame: CGRect.zero)
+    var imageBackground = UIImageView(frame: CGRect.zero)
+    var imageLogo		= UIImageView(frame: CGRect.zero)
     var scenePlayed		= false
 		
 	/*--------------------------------------------------------------------------------------------

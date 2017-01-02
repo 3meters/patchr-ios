@@ -85,7 +85,7 @@ class JoinViewController: BaseEditViewController {
         
         /* Navigation bar buttons */
         let joinButton = UIBarButtonItem(title: "Join", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
-        let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(closeAction(sender:)))
+        let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
         self.navigationItem.rightBarButtonItems = [joinButton]
         self.navigationItem.leftBarButtonItems = [closeButton]
     }

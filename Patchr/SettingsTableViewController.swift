@@ -194,7 +194,7 @@ class SettingsTableViewController: UITableViewController {
         self.leaveGroupButton.addTarget(self, action: #selector(SettingsTableViewController.leaveGroupAction(sender:)), for: .touchUpInside)
         
         if self.presented {
-            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(self.closeAction(sender:)))
+            let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(self.closeAction(sender:)))
             self.navigationItem.rightBarButtonItems = [closeButton]
         }
     }

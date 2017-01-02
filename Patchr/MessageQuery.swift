@@ -6,16 +6,16 @@
 import Foundation
 
 class MessageQuery: NSObject {
-
+    
     var messagePath: String!
     var messageHandle: UInt!
     var message: FireMessage!
-
+    
     init(channelId: String, messageId: String) {
         super.init()
         self.messagePath = "channel-messages/\(channelId)/\(messageId)"
     }
-
+    
     func observe(with block: @escaping (FireMessage?) -> Swift.Void) {
         self.messageHandle = FireController.db.child(self.messagePath).observe(.value, with: { snap in
             if !(snap.value is NSNull) {
@@ -27,7 +27,7 @@ class MessageQuery: NSObject {
             }
         })
     }
-
+    
     func once(with block: @escaping (FireMessage?) -> Swift.Void) {
         FireController.db.child(self.messagePath).observeSingleEvent(of: .value, with: { snap in
             if !(snap.value is NSNull) {
@@ -39,13 +39,13 @@ class MessageQuery: NSObject {
             }
         })
     }
-
+    
     func remove() {
         if self.messageHandle != nil {
             FireController.db.child(self.messagePath).removeObserver(withHandle: self.messageHandle)
         }
     }
-
+    
     deinit {
         remove()
     }

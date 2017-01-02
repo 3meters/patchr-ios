@@ -11,7 +11,7 @@ import Contacts
 @IBDesignable
 class UserListCell: UITableViewCell {
     
-    @IBOutlet weak var photoView: PhotoView?
+    @IBOutlet weak var photoControl: PhotoControl?
     @IBOutlet weak var title: UILabel?
     @IBOutlet weak var subtitle: UILabel?
     @IBOutlet weak var role: UILabel?
@@ -25,19 +25,18 @@ class UserListCell: UITableViewCell {
     var contact: CNContact!
     
     override func setSelected(_ selected: Bool, animated: Bool) {
-        let color = self.photoView?.backgroundColor
+        let color = self.photoControl?.backgroundColor
         super.setSelected(selected, animated: animated)
-        self.photoView?.backgroundColor = color
+        self.photoControl?.backgroundColor = color
     }
     
     override func setHighlighted(_ highlighted: Bool, animated: Bool) {
-        let color = self.photoView?.backgroundColor
+        let color = self.photoControl?.backgroundColor
         super.setHighlighted(highlighted, animated: animated)
-        self.photoView?.backgroundColor = color
+        self.photoControl?.backgroundColor = color
     }
     
     func reset() {
-        self.photoView?.photoView.image = nil
         self.title?.text = nil
         self.subtitle?.text = nil
         self.subtitle?.isHidden = false
@@ -52,12 +51,10 @@ class UserListCell: UITableViewCell {
         self.role?.isHidden = true
         self.actionButton?.isHidden = true
         self.presenceView?.isHidden = true
-        self.photoView?.photoView.isHidden = true
-        self.photoView?.nameLabel.isHidden = false
         self.checkBox?.isHidden = false
         self.accessoryType = .none
-        self.photoView?.initialsCount = 2
-        self.photoView?.nameLabel.font = Theme.fontText
+        self.photoControl?.initialsCount = 2
+        self.photoControl?.nameLabel.font = Theme.fontText
         
         self.contact = contact
         let email = contact.emailAddresses.first?.value as String!
@@ -65,12 +62,11 @@ class UserListCell: UITableViewCell {
         let title = fullName ?? email!
         
         if contact.imageDataAvailable {
-            self.photoView?.photoView.image = UIImage(data: contact.thumbnailImageData!)
-            self.photoView?.photoView.isHidden = false
-            self.photoView?.nameLabel.isHidden = true
+            self.photoControl?.setImage(image: UIImage(data: contact.thumbnailImageData!))
+            self.photoControl?.nameLabel.isHidden = true
         }
         else {
-            self.photoView?.bind(url: nil, fallbackUrl: nil, name: title, colorSeed: email!)
+            self.photoControl?.bind(url: nil, fallbackUrl: nil, name: title, colorSeed: email!)
         }
         self.title?.text = title
         self.subtitle?.text = email!
@@ -108,11 +104,13 @@ class UserListCell: UITableViewCell {
         
         let fullName = user.profile?.fullName ?? user.username
         if let photo = user.profile?.photo, photo.uploading == nil {
-            let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile)
-            self.photoView?.bind(url: photoUrl, fallbackUrl: PhotoUtils.fallbackUrl(prefix: photo.filename!), name: fullName, colorSeed: user.id)
+            if let url = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile) {
+                let fallbackUrl = PhotoUtils.fallbackUrl(prefix: photo.filename!)
+                self.photoControl!.bind(url: url, fallbackUrl: fallbackUrl, name: fullName, colorSeed: user.id)
+            }
         }
         else {
-            self.photoView?.bind(url: nil, fallbackUrl: nil, name: fullName, colorSeed: user.id)
+            self.photoControl?.bind(url: nil, fallbackUrl: nil, name: fullName, colorSeed: user.id)
         }
     }
 }

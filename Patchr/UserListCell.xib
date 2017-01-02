@@ -19,7 +19,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="462" height="67.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <view clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="X0K-3n-IIP" customClass="PhotoView" customModule="Patchr">
+                    <view clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="X0K-3n-IIP" customClass="PhotoControl" customModule="Patchr">
                         <rect key="frame" x="16" y="14" width="40" height="40"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="40" id="1qT-bb-Xdu"/>
@@ -118,7 +118,7 @@
             <connections>
                 <outlet property="actionButton" destination="RWH-L1-GYn" id="aSw-XL-vWx"/>
                 <outlet property="checkBox" destination="N6v-4M-haE" id="HGz-dH-l3C"/>
-                <outlet property="photoView" destination="X0K-3n-IIP" id="vba-NC-l4f"/>
+                <outlet property="photoControl" destination="X0K-3n-IIP" id="pfq-Hr-Cj2"/>
                 <outlet property="presenceView" destination="Bca-gN-N9j" id="6Tx-QK-i0c"/>
                 <outlet property="role" destination="9B3-1a-Ge9" id="NWq-tl-Hno"/>
                 <outlet property="subtitle" destination="NLS-Er-vuL" id="bMR-8W-F1w"/>

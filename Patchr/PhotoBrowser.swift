@@ -67,7 +67,7 @@ class PhotoBrowser: IDMPhotoBrowser {
             
             toolbar.items = items
             
-            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(IDMPhotoBrowser.doneButtonPressed(_:)))
+            let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(IDMPhotoBrowser.doneButtonPressed(_:)))
             self.navigationItem.rightBarButtonItems = [closeButton]
         }
         else {

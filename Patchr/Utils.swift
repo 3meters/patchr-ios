@@ -317,6 +317,14 @@ struct Utils {
         UIGraphicsEndImageContext()
         return image!
     }
+    
+    static func imageFromLayer(layer: CALayer) -> UIImage {
+        UIGraphicsBeginImageContext(layer.frame.size)
+        layer.render(in: UIGraphicsGetCurrentContext()!)
+        let outputImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return outputImage!
+    }
 	
     static func updateNearbys(nearby: [NSObject: AnyObject]) -> [[NSObject:AnyObject]] {
 		

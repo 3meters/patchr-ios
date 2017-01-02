@@ -104,7 +104,7 @@ class GroupEditViewController: BaseEditViewController {
     override func photoDidChange(sender: NSNotification) {
         super.photoDidChange(sender: sender)
         
-        let image = self.photoEditView.imageButton.image(for: .normal)
+        let image = self.photoEditView.imageButton.image
         let path = self.group.path
         var photoMap: [String: Any]?
         photoMap = postPhoto(image: image!, progress: self.photoEditView.progressBlock, next: { error in

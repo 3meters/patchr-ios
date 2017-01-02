@@ -13,8 +13,10 @@ class UserController: NSObject {
     static let instance = UserController()
 
     fileprivate var userQuery: UserQuery?
+    fileprivate var unreadQuery: UnreadQuery?
     fileprivate(set) internal var userId: String?
     fileprivate(set) internal var user: FireUser?
+    fileprivate(set) internal var unreads = 0
 
     var authenticated: Bool {
         return (self.userId != nil)
@@ -96,6 +98,7 @@ class UserController: NSObject {
         
         if let token = FIRInstanceID.instanceID().token() {
             FireController.db.child("installs/\(userId)/\(token)").setValue(true)
+            FireController.db.child("unreads/\(userId)").keepSynced(true)
         }
         
         self.userId = userId
@@ -119,8 +122,19 @@ class UserController: NSObject {
                 calledBack = true
             }
             
+            /* So unread lookups will work right */
+            UserDefaults.standard.set(userId, forKey: "userId")
             Reporting.updateUser(user: FIRAuth.auth()?.currentUser)
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UserStateDidChange), object: nil, userInfo: nil)
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil, userInfo: nil)
+        })
+        
+        self.unreadQuery?.remove()
+        self.unreadQuery = UnreadQuery(level: .user, userId: userId)
+        self.unreadQuery!.observe(with: { [weak self] total in
+            Log.d("UserController: Observe query result for user unreads: \(total)")
+            self?.unreads = total
+            UIApplication.shared.applicationIconBadgeNumber = total
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: nil)
         })
     }
 

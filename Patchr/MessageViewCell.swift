@@ -14,10 +14,10 @@ class MessageViewCell: AirUIView {
 
     var message: FireMessage!
 
-    var description_: UILabel?
-    var photoView: AirImageView?
+    var description_: UILabel!
+    var photoView: AirImageView!
     var userName = AirLabelDisplay()
-    var userPhotoView = PhotoView()
+    var userPhotoControl = PhotoControl()
     var createdDate = AirLabelDisplay()
     var edited = AirLabelDisplay()
     var unread = AirLabelDisplay()
@@ -59,7 +59,7 @@ class MessageViewCell: AirUIView {
         let columnWidth = self.bounds.size.width - columnLeft
         let photoHeight = columnWidth * 0.5625        // 16:9 aspect ratio
 
-        self.userPhotoView.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: 48, height: 48)
+        self.userPhotoControl.anchorTopLeft(withLeftPadding: 0, topPadding: 0, width: 48, height: 48)
 
         /* Header */
 
@@ -67,7 +67,7 @@ class MessageViewCell: AirUIView {
         self.edited.sizeToFit()
         self.unread.sizeToFit()
         self.userName.sizeToFit()
-        self.userName.align(toTheRightOf: self.userPhotoView, matchingTopWithLeftPadding: 8, width: self.userName.width(), height: 22)
+        self.userName.align(toTheRightOf: self.userPhotoControl, matchingTopWithLeftPadding: 8, width: self.userName.width(), height: 22)
         self.createdDate.align(toTheRightOf: self.userName, matchingBottomWithLeftPadding: 8, width: self.createdDate.width(), height: self.createdDate.height())
         self.unread.align(toTheRightOf: self.createdDate, matchingBottomWithLeftPadding: 8, width: self.unread.width(), height: self.unread.height())
 
@@ -184,7 +184,7 @@ class MessageViewCell: AirUIView {
         self.addSubview(self.toolbar)
         self.addSubview(self.description_!)
         self.addSubview(self.photoView!)
-        self.addSubview(self.userPhotoView)
+        self.addSubview(self.userPhotoControl)
         self.addSubview(self.userName)
         self.addSubview(self.createdDate)
         self.addSubview(self.edited)
@@ -192,9 +192,7 @@ class MessageViewCell: AirUIView {
     }
 
     func reset() {
-        self.photoView?.image = nil
         self.description_?.text = nil
-        self.userPhotoView.photoView.image = nil
         self.userName.text = nil
         self.unread.isHidden = true
         self.toolbar.isHidden = true
@@ -220,24 +218,32 @@ class MessageViewCell: AirUIView {
         
         if let photo = message.creator?.profile?.photo, photo.uploading == nil {
             if !self.template {
-                let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile)
-                self.userPhotoView.bind(url: photoUrl, fallbackUrl: PhotoUtils.fallbackUrl(prefix: photo.filename!), name: fullName, colorSeed: message.creator?.id)
+                if let url = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile) {
+                    let fallbackUrl = PhotoUtils.fallbackUrl(prefix: photo.filename!)
+                    self.userPhotoControl.bind(url: url, fallbackUrl: fallbackUrl, name: fullName, colorSeed: message.creator?.id)
+                }
             }
         }
         else {
-            self.userPhotoView.bind(url: nil, fallbackUrl: nil, name: fullName, colorSeed: message.creator?.id)
+            self.userPhotoControl.bind(url: nil, fallbackUrl: nil, name: fullName, colorSeed: message.creator?.id)
         }
         
         if let photo = message.attachments?.values.first?.photo {
             self.photoView?.isHidden = false
             if !self.template { // Don't fetch if acting as template
                 if photo.uploading == nil {
-                    if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
-                        let fallbackUrl = PhotoUtils.fallbackUrl(prefix: photo.filename!)
-                        bindPhoto(photoUrl: photoUrl, fallbackUrl: fallbackUrl)
+                    if let url = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
+                        if !self.photoView.associated(withUrl: url) {
+                            self.photoView?.image = nil
+                            let fallbackUrl = PhotoUtils.fallbackUrl(prefix: photo.filename!)
+                            self.photoView.setImageWithUrl(url: url, fallbackUrl: fallbackUrl, animate: true)
+                        }
                     }
                 }
             }
+        }
+        else {
+            self.photoView?.image = nil
         }
 
         self.createdDate.text = UIShared.timeAgoShort(date: NSDate(timeIntervalSince1970: Double(message.createdAt!) / 1000))
@@ -265,17 +271,6 @@ class MessageViewCell: AirUIView {
         }
 
         self.setNeedsLayout()    // Needed because binding can change the layout
-    }
-
-    private func bindPhoto(photoUrl: URL, fallbackUrl: URL?) {
-
-        if self.photoView?.image != nil
-        && self.photoView!.linkedPhotoUrl != nil
-        && self.photoView!.linkedPhotoUrl?.absoluteString == photoUrl.absoluteString {
-            return
-        }
-
-        self.photoView!.setImageWithUrl(url: photoUrl, fallbackUrl: fallbackUrl, animate: true)
     }
 
     override func sizeThatFits(_ size: CGSize) -> CGSize {

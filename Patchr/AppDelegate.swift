@@ -21,13 +21,14 @@ import FirebaseMessaging
 import FirebaseRemoteConfig
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
 
     var window: UIWindow?
     var firstLaunch: Bool = false
+    var pendingNotification: [AnyHashable: Any]?
     
     /*--------------------------------------------------------------------------------------------
-    * Delegate methods
+    * MARK: - Delegate methods
     *--------------------------------------------------------------------------------------------*/
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
@@ -35,29 +36,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Log.prepare()
         Log.i("Patchr launching...")
         
-        /* Remote notifications */
-        if #available(iOS 10.0, *) {
-            
-            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-            UNUserNotificationCenter.current().requestAuthorization(options: authOptions, completionHandler: {_, _ in })
-            
-            /* For iOS 10 display notification (sent via APNS) */
-            UNUserNotificationCenter.current().delegate = self
-            
-            /* For iOS 10 data message (sent via FCM) */
-            FIRMessaging.messaging().remoteMessageDelegate = self
-        }
-        else {
-            let settings: UIUserNotificationSettings = UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
-            application.registerUserNotificationSettings(settings)
-        }
-        
-        NotificationController.instance.prepare()
-        application.registerForRemoteNotifications()
-        
         FIRApp.configure()
         FIRDatabase.database().persistenceEnabled = true
         FIRDatabase.setLoggingEnabled(false)
+        
+        /* Remote notifications */
+        if #available(iOS 10.0, *) {
+            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+            UNUserNotificationCenter.current().requestAuthorization(options: authOptions, completionHandler: {_, _ in })
+            UNUserNotificationCenter.current().delegate = self      // For iOS 10 display notification (sent via APNS)
+            FIRMessaging.messaging().remoteMessageDelegate = self   // For iOS 10 data message (sent via FCM)
+        }
+        else {
+            /* Triggers permission UI if needed */
+            application.registerUserNotificationSettings(UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil))
+        }
+        
+        NotificationCenter.default.addObserver(self
+            , selector: #selector(tokenRefreshNotification)
+            , name: .firInstanceIDTokenRefresh
+            , object: nil)
+
+        application.registerForRemoteNotifications() // Initiate the registration process with Apple Push Notification service.
         
         /* Remote config */
         FIRRemoteConfig.remoteConfig().fetch { status, error in
@@ -67,7 +67,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     Log.d("Remote config activated", breadcrumb: true)
                 }
                 
-                /* Default config for AWS */
+                /* Default config and credentials for AWS */
                 let access = FIRRemoteConfig.remoteConfig().configValue(forKey: "aws_access_key").stringValue!
                 let secret = FIRRemoteConfig.remoteConfig().configValue(forKey: "aws_secret_key").stringValue!
                 let credProvider = AWSStaticCredentialsProvider(accessKey: access, secretKey: secret)
@@ -111,7 +111,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         /* Setup master UI */
         MainController.instance.prepare(launchOptions: launchOptions)
         
-        /* Initialize current group and channel state */
+        /* Auto login user, initialize current group and channel state */
         StateController.instance.prepare()
 
         return true
@@ -154,13 +154,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         Log.d("Application will enter foreground", breadcrumb: true)
-        application.applicationIconBadgeNumber = 0
-        NotificationController.instance.totalBadgeCount = 0
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
         Log.d("Application did become active", breadcrumb: true)
-        NotificationController.instance.connectToFcm()
+        connectToFcm()
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
@@ -169,31 +167,100 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidEnterBackground(_ application: UIApplication) {
         Log.d("Application did enter background", breadcrumb: true)
-        NotificationController.instance.disconnectFromFcm()
+        disconnectFromFcm()
     }
 
     /*--------------------------------------------------------------------------------------------
-    * Notifications
+    * MARK: - Remote Notifications
     *--------------------------------------------------------------------------------------------*/
     
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
-        NotificationController.instance.didReceiveRemoteNotification(application: application, notification: userInfo, fetchCompletionHandler: nil)
-    }
-    
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        NotificationController.instance.didReceiveRemoteNotification(application: application, notification: userInfo, fetchCompletionHandler: completionHandler)
-    }
-    
-    func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
-        NotificationController.instance.didReceiveLocalNotification(application: application, notification: notification)
+        /*
+         * Inactive:    Always means that the user tapped on remote notification.
+         * Active:      Notification received while app is active (foreground).
+         * Background:  Notification received while app is not active (background or dead)
+         *
+         * We have thirty seconds to process and call the completion handler before being
+         * terminated if the app was started to process the notification.
+         */
+        let appState = (application.applicationState == .background)
+            ? "background" : (application.applicationState == .active)
+            ? "active" : "inactive"
+        
+        Log.d("Notification received - app state: \(appState)")
+        
+        if application.applicationState == .inactive {
+            if !StateController.instance.stateIntialized {
+                self.pendingNotification = userInfo
+                NotificationCenter.default.addObserver(self, selector: #selector(stateInitialized(notification:)), name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
+            }
+            else {
+                showChannel(notification: userInfo)
+            }
+        }
+        else if application.applicationState == .active {
+            let groupId = userInfo["groupId"] as! String
+            let channelId = userInfo["channelId"] as! String
+            let messageId = userInfo["messageId"] as! String
+            let userInfo = ["groupId": groupId, "channelId": channelId, "messageId": messageId]
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: userInfo)
+        }
+        completionHandler(.noData)
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        NotificationController.instance.didFailToRegisterForRemoteNotificationsWithError(application: application, error: error)
+        Log.w("Failed to register for remote notifications: \(error)")
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        NotificationController.instance.didRegisterForRemoteNotificationsWithDeviceToken(application: application, deviceToken: deviceToken)
+        Log.d("Success registering for remote notifications")
+        FIRInstanceID.instanceID().setAPNSToken(deviceToken, type: .unknown)
+        Log.d("APNS: \(deviceToken)")
+    }
+    
+    func stateInitialized(notification: AnyObject?) {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
+        if self.pendingNotification != nil {
+            showChannel(notification: self.pendingNotification)
+        }
+    }
+    
+    func showChannel(notification: [AnyHashable: Any]?) {
+        if notification != nil {
+            if let channelId = notification!["channelId"] as? String, let groupId = notification!["groupId"] as? String {
+                StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
+                MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+            }
+        }
+    }
+    
+    /*--------------------------------------------------------------------------------------------
+     * MARK: - Firebase Messaging
+     *--------------------------------------------------------------------------------------------*/
+    
+    func applicationReceivedRemoteMessage(_ remoteMessage: FIRMessagingRemoteMessage) {
+        /* Receive data message on iOS 10 devices while app is in the foreground. */
+        Log.d(remoteMessage.appData.description)
+    }
+    
+    func tokenRefreshNotification(_ notification: Notification) {
+        if let token = FIRInstanceID.instanceID().token(),
+            let userId = UserController.instance.userId {
+            Log.d("InstanceID token: \(token)")
+            FireController.db.child("installs/\(userId)/\(token)").setValue(true)
+            connectToFcm() /* Connect to FCM since connection may have failed when attempted before having a token. */
+        }
+    }
+    
+    func connectToFcm() {
+        FIRMessaging.messaging().connect { error in
+            Log.d((error != nil) ? "Unable to connect with FCM. \(error!)" : "Connected to FCM.")
+        }
+    }
+    
+    func disconnectFromFcm() {
+        FIRMessaging.messaging().disconnect()
+        Log.d("Disconnected from FCM.")
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -207,28 +274,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          * attention. Once a session has been created from a configuration object with that identifier, the session's delegate will begin receiving
          * callbacks. If such a session has already been created (if the app is being resumed, for instance), then the delegate will start receiving
          * callbacks without any action by the application. You should call the completionHandler as soon as you're finished handling the callbacks.
-         *
-         * This gets called if the share extension isn't running when the background data task
-         * completes. Use the identifier to reconstitute the URLSession.
          */
         AWSS3TransferUtility.interceptApplication(application, handleEventsForBackgroundURLSession: identifier, completionHandler: completionHandler)
         Log.d("handleEventsForBackgroundURLSession called")
     }
 }
 
-
 @available(iOS 10, *)
 extension AppDelegate : UNUserNotificationCenterDelegate {
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter
-        , willPresent notification: UNNotification
-        , withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        
-        /* A local or remote notification has been delivered. */
-        
-        let userInfo = notification.request.content.userInfo
-        Log.d(userInfo.description)
-    }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter
         , didReceive response: UNNotificationResponse
@@ -236,18 +289,13 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
         
         /* User interacted with notification. Could be tap, dismiss, action button. */
         if response.actionIdentifier == UNNotificationDefaultActionIdentifier {
-            let userInfo = response.notification.request.content.userInfo
-            if let channelId = userInfo["channelId"] as? String, let groupId = userInfo["groupId"] as? String {
-                StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
-                MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+            if !StateController.instance.stateIntialized {
+                self.pendingNotification = response.notification.request.content.userInfo
+                NotificationCenter.default.addObserver(self, selector: #selector(stateInitialized(notification:)), name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
+            }
+            else {
+                showChannel(notification: response.notification.request.content.userInfo)
             }
         }
-    }
-}
-
-extension AppDelegate : FIRMessagingDelegate {
-    func applicationReceivedRemoteMessage(_ remoteMessage: FIRMessagingRemoteMessage) {
-        /* Receive data message on iOS 10 devices while app is in the foreground. */
-        Log.d(remoteMessage.appData.description)
     }
 }

@@ -17,7 +17,7 @@
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4ht-VM-RzK">
                     <rect key="frame" x="0.0" y="0.0" width="373" height="116"/>
                     <subviews>
-                        <view clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="lPp-SG-dj9" customClass="PhotoView" customModule="Patchr">
+                        <view clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="lPp-SG-dj9" customClass="PhotoControl" customModule="Patchr">
                             <rect key="frame" x="16" y="12" width="48" height="48"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="48" id="Spl-AW-3Ga"/>
@@ -42,15 +42,6 @@
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qnm-vY-7NZ">
-                            <rect key="frame" x="317" y="11" width="48" height="48"/>
-                            <constraints>
-                                <constraint firstAttribute="width" constant="48" id="CKK-is-djE"/>
-                                <constraint firstAttribute="height" constant="48" id="gOL-Ae-gOP"/>
-                            </constraints>
-                            <inset key="imageEdgeInsets" minX="8" minY="8" maxX="8" maxY="8"/>
-                            <state key="normal" image="imgSwitchLight"/>
-                        </button>
                         <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="OEn-U4-hIS">
                             <rect key="frame" x="0.0" y="72" width="373" height="44"/>
                             <constraints>
@@ -58,6 +49,15 @@
                             </constraints>
                             <textInputTraits key="textInputTraits"/>
                         </searchBar>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qnm-vY-7NZ">
+                            <rect key="frame" x="317" y="12" width="48" height="48"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="48" id="CKK-is-djE"/>
+                                <constraint firstAttribute="height" constant="48" id="gOL-Ae-gOP"/>
+                            </constraints>
+                            <inset key="imageEdgeInsets" minX="8" minY="8" maxX="8" maxY="8"/>
+                            <state key="normal" image="imgSwitchLight"/>
+                        </button>
                     </subviews>
                     <color key="backgroundColor" white="0.95159993154539479" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
@@ -67,7 +67,7 @@
                         <constraint firstItem="Qnm-vY-7NZ" firstAttribute="trailing" secondItem="4ht-VM-RzK" secondAttribute="trailing" constant="-8" id="KO3-tw-9oU"/>
                         <constraint firstAttribute="bottom" secondItem="OEn-U4-hIS" secondAttribute="bottom" id="V8h-E8-Eh0"/>
                         <constraint firstItem="3Yu-Ib-y3H" firstAttribute="centerY" secondItem="lPp-SG-dj9" secondAttribute="centerY" id="aeD-IY-uTx"/>
-                        <constraint firstItem="Qnm-vY-7NZ" firstAttribute="top" secondItem="4ht-VM-RzK" secondAttribute="top" constant="11" id="eOB-Zw-wV7"/>
+                        <constraint firstItem="Qnm-vY-7NZ" firstAttribute="top" secondItem="4ht-VM-RzK" secondAttribute="top" constant="12" id="eOB-Zw-wV7"/>
                         <constraint firstItem="3Yu-Ib-y3H" firstAttribute="trailing" secondItem="Qnm-vY-7NZ" secondAttribute="leading" constant="-8" id="jbd-ZZ-vop"/>
                         <constraint firstAttribute="trailing" secondItem="OEn-U4-hIS" secondAttribute="trailing" id="nh9-Va-gY9"/>
                         <constraint firstItem="3Yu-Ib-y3H" firstAttribute="leading" secondItem="lPp-SG-dj9" secondAttribute="trailing" constant="8" id="pDa-nu-acl"/>
@@ -86,7 +86,7 @@
             <nil key="simulatedBottomBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
-                <outlet property="photoView" destination="lPp-SG-dj9" id="tCI-pu-lVe"/>
+                <outlet property="photoControl" destination="lPp-SG-dj9" id="Ltg-1C-UvO"/>
                 <outlet property="searchBar" destination="OEn-U4-hIS" id="dt2-HT-TAJ"/>
                 <outlet property="switchButton" destination="Qnm-vY-7NZ" id="rdT-LS-tgI"/>
                 <outlet property="title" destination="3Yu-Ib-y3H" id="zc1-vn-B7H"/>

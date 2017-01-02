@@ -8,7 +8,7 @@ import UIKit
 class MenuItemView: BaseView {
 
 	var name    = AirLabel()
-    var photo   = AirImageView(frame: CGRect.zero)
+    var photo   = UIImageView(frame: CGRect.zero)
     
 	init() {
 		super.init(frame: CGRect.zero)
@@ -35,20 +35,14 @@ class MenuItemView: BaseView {
 	}
 	
 	func initialize() {
-		
 		self.clipsToBounds = true
-
-		/* User photo */
+        self.name.font = Theme.fontTextDisplay
 		self.addSubview(self.photo)
-
-		/* User name */
-		self.name.font = Theme.fontTextDisplay
 		self.addSubview(self.name)
 	}
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
-				
 		self.photo.anchorCenterLeft(withLeftPadding: 32, width: 24, height: 24)
 		self.name.sizeToFit()
 		self.name.align(toTheRightOf: self.photo, matchingCenterAndFillingWidthWithLeftAndRightPadding: 16, height: 64)

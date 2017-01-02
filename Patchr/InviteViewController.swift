@@ -166,7 +166,7 @@ class InviteViewController: BaseEditViewController {
             self.contentHolder.addSubview(self.inviteGuestsComment)
             self.contentHolder.addSubview(self.channelField)
             
-            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(closeAction(sender:)))
+            let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
             self.navigationItem.rightBarButtonItems = [closeButton]
         }
 	}

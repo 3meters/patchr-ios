@@ -14,50 +14,38 @@ class ChannelListCell: UITableViewCell {
     @IBOutlet weak var lock: UIImageView?
     @IBOutlet weak var status: UILabel?
     @IBOutlet weak var badge: UILabel?
-    @IBOutlet weak var selectedBackground: UIView?
     @IBOutlet weak var statusWidth: NSLayoutConstraint!
     @IBOutlet weak var lockWidth: NSLayoutConstraint!
     
     var channel: FireChannel!
+    var unreadQuery: UnreadQuery?
+    var query: ChannelQuery?
+    var selectedOn = false
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        initialize()
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        initialize()
     }
     
-    func initialize() {
-        self.selectedBackground?.backgroundColor = Theme.colorBackgroundBadge
-    }
-
     override func layoutSubviews() {
         super.layoutSubviews()
         self.badge?.layer.cornerRadius = (self.badge?.frame.size.height)! / 2
     }
     
     func selected(on: Bool) {
+        self.selectedOn = on
         if on {
-            self.selectedBackground?.backgroundColor = Theme.colorBackgroundSelectedChannel
-            self.selectedBackground?.isHidden = false
-            self.title?.textColor = Colors.white
-            self.lock?.tintColor = Colors.white
-            self.star?.tintColor = Colors.white
-            self.tintColor = Colors.white
+            self.backgroundColor = Theme.colorBackgroundSelected
+            self.title?.font = UIFont(name: "HelveticaNeue-Medium", size: (self.title?.font.pointSize)!)
             self.accessoryType = self.badge!.isHidden ? .checkmark : .none
         }
         else {
-            self.selectedBackground?.backgroundColor = Colors.clear
-            self.selectedBackground?.isHidden = true
-            self.title?.backgroundColor = Colors.clear
-            self.title?.textColor = Theme.colorText
-            self.lock?.tintColor = Colors.brandColorLight
-            self.star?.tintColor = Colors.brandColorLight
+            self.backgroundColor = Colors.white
+            self.title?.font = UIFont(name: "HelveticaNeue-Light", size: (self.title?.font.pointSize)!)
             self.accessoryType = .none
-            self.tintColor = Colors.brandColor
         }
     }
     
@@ -71,6 +59,10 @@ class ChannelListCell: UITableViewCell {
         self.badge?.text = nil
         self.badge?.isHidden = true
         self.channel = nil
+        self.query?.remove()
+        self.query = nil
+        self.unreadQuery?.remove()
+        self.unreadQuery = nil
     }
     
     func bind(channel: FireChannel) {

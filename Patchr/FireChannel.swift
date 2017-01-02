@@ -89,10 +89,12 @@ class FireChannel: NSObject {
         FireController.db.child(path).updateChildValues(updates)
     }
     
-    func unread(on: Bool) {
-        let userId = UserController.instance.userId
-        let path = "member-channels/\(userId!)/\(self.group!)/\(self.id!)"
-        let priority = on ? 0 : self.starred! ? 1 : 4
+    func clearUnreadSorting() {
+        
+        /* Reset priority to normal */
+        let userId = UserController.instance.userId!
+        let path = "member-channels/\(userId)/\(self.group!)/\(self.id!)"
+        let priority = self.starred! ? 1 : 4
         let index = Int("\(FireController.instance.priorities[priority])\(self.joinedAt!)")
         let indexReversed = Int("-\(FireController.instance.priorities.reversed()[priority])\(self.joinedAt!)")
         let updates: [String: Any] = [
@@ -105,8 +107,10 @@ class FireChannel: NSObject {
     }
     
     func mute(on: Bool) {
-        let userId = UserController.instance.userId
-        let path = "member-channels/\(userId!)/\(self.group!)/\(self.id!)/muted"
-        FireController.db.child(path).setValue(on)
+        let userId = UserController.instance.userId!
+        let groupId = self.group!
+        let channelId = self.id!
+        FireController.db.child("member-channels/\(userId)/\(groupId)/\(channelId)/muted").setValue(on)
+        FireController.db.child("channel-members/\(channelId)/\(userId)/muted").setValue(on)
     }
 }

@@ -82,7 +82,7 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
         self.submitButton = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(sendInvitesAction(sender:)))
         self.submitButton.isEnabled = false
         self.navigationItem.rightBarButtonItems = [self.submitButton]
-        let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(self.closeAction(sender:)))
+        let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(self.closeAction(sender:)))
         self.navigationItem.leftBarButtonItems = [closeButton]
     }
 

@@ -192,7 +192,7 @@ class ChannelEditViewController: BaseEditViewController {
         super.photoDidChange(sender: sender)
         
         if self.mode == .update {
-            let image = self.photoEditView.imageButton.image(for: .normal)
+            let image = self.photoEditView.imageButton.image
             let path = self.channel.path
             var photoMap: [String: Any]?
             photoMap = postPhoto(image: image!, progress: self.photoEditView.progressBlock, next: { error in
@@ -268,8 +268,8 @@ class ChannelEditViewController: BaseEditViewController {
             self.banner.text = "New Channel"
 
             /* Navigation bar buttons */
-            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(closeAction(sender:)))
-            let doneButton = UIBarButtonItem(title: "Create", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
+            let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
+            let doneButton = UIBarButtonItem(title: "Create", style: .plain, target: self, action: #selector(doneAction(sender:)))
             self.navigationItem.leftBarButtonItems = [closeButton]
             self.navigationItem.rightBarButtonItems = [doneButton]
         }
@@ -280,7 +280,7 @@ class ChannelEditViewController: BaseEditViewController {
             self.visibilityGroup.isHidden = true
 
             /* Navigation bar buttons */
-            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(closeAction(sender:)))
+            let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
             self.navigationItem.leftBarButtonItems = [closeButton]
         }
         
@@ -334,7 +334,7 @@ class ChannelEditViewController: BaseEditViewController {
                 let refChannel = FireController.db.child("group-channels/\(groupId)/\(channelId)")
                 
                 var photoMap: [String: Any]?
-                if let image = self.photoEditView.imageButton.image(for: .normal) {
+                if let image = self.photoEditView.imageButton.image {
                     photoMap = self.postPhoto(image: image, next: { error in
                         if error != nil {
                             photoMap!["uploading"] = NSNull()

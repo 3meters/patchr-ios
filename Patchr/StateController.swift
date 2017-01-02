@@ -21,6 +21,7 @@ class StateController: NSObject {
     fileprivate var groupQuery: GroupQuery?
 
     fileprivate(set) internal var channelId: String?
+    fileprivate(set) internal var stateIntialized = false
     
     private override init() { }
 
@@ -94,6 +95,7 @@ class StateController: NSObject {
         }
 
         queue.tasks += {
+            self.stateIntialized = true
             NotificationCenter.default.post(
                 name: NSNotification.Name(rawValue: Events.StateInitialized),
                 object: self, userInfo: nil)
@@ -110,10 +112,6 @@ class StateController: NSObject {
         
         if groupId != self.groupId {
             
-            if NotificationController.instance.groupBadgeCounts[groupId] != nil {
-                NotificationController.instance.groupBadgeCounts[groupId] = 0
-            }
-
             Log.d("Current group: \(groupId)")
             
             self.groupId = groupId
@@ -140,7 +138,7 @@ class StateController: NSObject {
                 }
                 
                 self.group = group
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidChange), object: self, userInfo: ["groupId": groupId])
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.GroupDidUpdate), object: self, userInfo: ["groupId": groupId])
             })
         }
         else {
@@ -148,10 +146,6 @@ class StateController: NSObject {
             guard UserController.instance.userId != nil else {
                 assertionFailure("userId, groupId and channelId must be set")
                 return
-            }
-            
-            if NotificationController.instance.channelBadgeCounts[channelId] != nil {
-                NotificationController.instance.channelBadgeCounts[channelId] = 0
             }
             
             guard channelId != self.channelId else {

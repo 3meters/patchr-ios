@@ -35,7 +35,7 @@ class WrapperTableViewCell: UITableViewCell {
 		addSeparator()
         
         self.selectedBackgroundView = UIView()
-        self.selectedBackgroundView?.backgroundColor = Theme.colorBackgroundSelected
+        self.selectedBackgroundView?.backgroundColor = Theme.colorBackgroundHighlighted
         self.selectionStyle = .default
         
 		if self.view != nil {

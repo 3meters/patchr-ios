@@ -119,7 +119,7 @@ class GalleryGridViewController: UICollectionViewController {
 		self.activity = addActivityIndicatorTo(view: self.view)
 		
 		/* Navigation bar buttons */
-        let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(closeAction(sender:)))
+        let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
 		self.navigationItem.rightBarButtonItems = [closeButton]
 	}
 	
@@ -185,12 +185,14 @@ extension GalleryGridViewController { /* UICollectionViewDelegate, UICollectionV
 			cell = GalleryViewCell()
 		}
 		
-		cell!.displayImageView.image = nil
         cell!.backgroundColor = Theme.colorBackgroundImage
 		
 		if let displayPhoto = self.imageForIndexPath(indexPath: indexPath as NSIndexPath) {
-			cell!.displayPhoto = displayPhoto
-			cell!.displayImageView.setImageWithUrl(url: displayPhoto.photoURL!, fallbackUrl: displayPhoto.fallbackUrl, animate: false)
+            if !cell!.displayImageView.associated(withUrl: displayPhoto.photoURL!) {
+                cell!.displayImageView.image = nil
+                cell!.displayPhoto = displayPhoto                
+                cell!.displayImageView.setImageWithUrl(url: displayPhoto.photoURL!, fallbackUrl: displayPhoto.fallbackUrl, animate: false)
+            }
 		}
 		
         return cell!

@@ -248,6 +248,13 @@ class FireController: NSObject {
                 if error == nil {
                     let updates: [String: Any] = ["member-channels/\(userId)/\(groupId)": NSNull()]
                     FireController.db.updateChildValues(updates) { error, ref in
+                        if error == nil {
+                            var task: [String: Any] = [:]
+                            task["target"] = "group"
+                            task["groupId"] = groupId
+                            let queueRef = FireController.db.child("queue/clear-unreads").childByAutoId()
+                            queueRef.setValue(task)
+                        }
                         then?(error == nil)
                     }
                 }
@@ -263,6 +270,14 @@ class FireController: NSObject {
         updates["member-channels/\(userId)/\(groupId)/\(channelId)"] = NSNull()
         updates["channel-members/\(channelId)/\(userId)"] = NSNull()
         FireController.db.updateChildValues(updates) { error, ref in
+            if error == nil {
+                var task: [String: Any] = [:]
+                task["target"] = "channel"
+                task["groupId"] = groupId
+                task["channelId"] = channelId
+                let queueRef = FireController.db.child("queue/clear-unreads").childByAutoId()
+                queueRef.setValue(task)
+            }
             then?(error == nil)
         }
     }
@@ -359,6 +374,13 @@ class FireController: NSObject {
                                                 FireController.db.updateChildValues(phaseTwo) { error, ref in
                                                     if error == nil {
                                                         Log.d("Group deleted: \(groupId)")
+                                                        
+                                                        var task: [String: Any] = [:]
+                                                        task["target"] = "group"
+                                                        task["groupId"] = groupId
+                                                        let queueRef = FireController.db.child("queue/clear-unreads").childByAutoId()
+                                                        queueRef.setValue(task)
+
                                                         then?(updates)
                                                         return
                                                     }
@@ -416,6 +438,14 @@ class FireController: NSObject {
                     FireController.db.updateChildValues(updates) { error, ref in
                         if error == nil {
                             Log.d("Channel deleted: \(channelId)")
+                            
+                            var task: [String: Any] = [:]
+                            task["target"] = "channel"
+                            task["groupId"] = groupId
+                            task["channelId"] = channelId
+                            let queueRef = FireController.db.child("queue/clear-unreads").childByAutoId()
+                            queueRef.setValue(task)
+
                             then?(updates)
                             return
                         }
@@ -429,21 +459,27 @@ class FireController: NSObject {
         })
     }
     
-    func delete(messageId: String, channelId: String, execute: Bool = true, then: (([String: Any]?) -> Void)? = nil) {
-        let pathChannelMessages = "channel-messages/\(channelId)"
+    func delete(messageId: String, channelId: String, groupId: String, then: (([String: Any]?) -> Void)? = nil) {
+        
+        let path = "channel-messages/\(channelId)"
         let updates: [String: Any] = [messageId: NSNull()]
-        if execute {
-            FireController.db.child(pathChannelMessages).updateChildValues(updates) { error, ref in
-                if error == nil {
-                    Log.d("Message deleted: \(messageId)")
-                    then?(updates)
-                    return
-                }
-                then?(nil)
-            }
-        }
-        else {
-            then?(updates)
+        
+        FireController.db.child(path).updateChildValues(updates) { error, ref in
+            if error == nil {
+                Log.d("Message deleted: \(messageId)")
+                
+                var task: [String: Any] = [:]
+                task["target"] = "message"
+                task["groupId"] = groupId
+                task["channelId"] = channelId
+                task["messageId"] = messageId
+                let queueRef = FireController.db.child("queue/clear-unreads").childByAutoId()
+                queueRef.setValue(task)
+                
+                then?(updates)
+                return
+            }            
+            then?(nil)
         }
     }
     

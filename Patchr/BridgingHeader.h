@@ -12,6 +12,7 @@
 #import "JSONResponseSerializerWithData.h"
 #import "NGAParallaxMotion.h"
 #import "UIView+BorderLayer.h"
+#import "UIBarButtonItem+Badge.h"
 #import "CKRadialMenu.h"
 
 #import <CommonCrypto/CommonCrypto.h>

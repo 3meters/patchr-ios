@@ -20,17 +20,16 @@ class MainController: NSObject, iRateDelegate {
     let db = FIRDatabase.database().reference()
     var window: UIWindow?
     
-    var slideController : SlideMenuController!
-    var menuController = SideMenuViewController()
-    var navigationController: PickerController!
+    var slideController: SlideMenuController!
     
+    var menuController = SideMenuViewController()
     var emptyController = EmptyViewController()
-    var channelController = ChannelViewController()
+    var channelPickerController = ChannelPickerController()
     var lobbyController = LobbyViewController()
     
+    var drawerWrapper: AirNavigationController!
     var mainWrapper: AirNavigationController!
     var lobbyWrapper: AirNavigationController!
-    var navigationWrapper: AirNavigationController!
     
     var upgradeRequired = false
 
@@ -86,15 +85,16 @@ class MainController: NSObject, iRateDelegate {
         SlideMenuOptions.simultaneousGestureRecognizers = false
 
         self.mainWrapper = AirNavigationController(navigationBarClass: AirNavigationBar.self, toolbarClass: nil)
-        self.mainWrapper.viewControllers = [self.channelController]
-
-        let pages = [GroupPickerController(simplePicker: true), NavigationController()]
-        self.navigationController = PickerController(pages)
-        self.navigationWrapper = AirNavigationController(rootViewController: self.navigationController)
+        
+        let groupPickerController = GroupPickerController(simplePicker: true)
+        let _ = groupPickerController.view
+        self.drawerWrapper = AirNavigationController(navigationBarClass: AirNavigationBar.self, toolbarClass: nil)
+        self.drawerWrapper.viewControllers = [groupPickerController, channelPickerController]
 
         self.slideController = SlideMenuController(mainViewController: self.mainWrapper
-            , leftMenuViewController: self.navigationController
+            , leftMenuViewController: self.drawerWrapper
             , rightMenuViewController: self.menuController)
+        
         self.lobbyWrapper = AirNavigationController(rootViewController: self.lobbyController)
 
         self.window?.setRootViewController(rootViewController: self.emptyController, animated: true) // While we wait for state to initialize
@@ -168,11 +168,15 @@ class MainController: NSObject, iRateDelegate {
     }
 
     func showChannel(groupId: String, channelId: String) {
+        
         if let root = self.window?.rootViewController, root != self.slideController {
             showMain()
         }
-        let _ = self.channelController.view // Triggers viewDidLoad
-        self.channelController.bind(groupId: groupId, channelId: channelId)
+        
+        let controller = ChannelViewController()
+        controller.inputGroupId = groupId
+        controller.inputChannelId = channelId
+        self.mainWrapper.setViewControllers([controller], animated: true)
     }
 
     func checkCompatibility() {

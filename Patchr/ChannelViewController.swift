@@ -11,14 +11,19 @@ import ReachabilitySwift
 import Firebase
 import FirebaseDatabaseUI
 import TTTAttributedLabel
+import SlideMenuControllerSwift
 
-class ChannelViewController: BaseSlackController {
+class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     
     var channelQuery: ChannelQuery?
     var messagesQuery: FIRDatabaseQuery!
+    var unreadQuery: UnreadQuery?
+    var inputChannelId: String?
+    var inputGroupId: String?
     
-    var cellReuseIdentifier: String!
+    var cellReuseIdentifier = "message-cell"
     var headerView: ChannelDetailView!
+    var unreadRefs = [FIRDatabaseReference]()
 
     var originalRect: CGRect?
     var originalHeaderRect: CGRect?
@@ -32,9 +37,26 @@ class ChannelViewController: BaseSlackController {
     var progressOffsetY     = Float(-48)
     var progressOffsetX     = Float(8)
     
-    var newMessages: [String: Bool] = [:]
-    
     var titleView: ChannelTitleView!
+    var navButton: UIBarButtonItem!
+    var titleButton: UIBarButtonItem!
+    
+    var visible: Bool = false {
+        didSet {
+            if self.visible {
+                Log.d("Channel view controller is visible")
+                if self.unreadRefs.count > 0 {
+                    for ref in self.unreadRefs {
+                        ref.removeValue()
+                    }
+                    self.unreadRefs.removeAll()
+                }
+            }
+            else {
+                Log.d("Channel view controller is not visible")
+            }
+        }
+    }
 
     /* Load more button displayed in table footer */
     var footerView			= UIView()
@@ -54,11 +76,12 @@ class ChannelViewController: BaseSlackController {
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
+        bind(groupId: self.inputGroupId!, channelId: self.inputChannelId!)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        self.slideMenuController()?.delegate = self        
         if UserController.instance.userId != nil && StateController.instance.groupId == nil {
             let controller = GroupPickerController()
             let wrapper = AirNavigationController()
@@ -69,12 +92,16 @@ class ChannelViewController: BaseSlackController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        if self.slideMenuController() != nil && !self.slideMenuController()!.isLeftOpen() {
+            self.visible = true
+        }
         iRate.sharedInstance().promptIfAllCriteriaMet()
         reachabilityChanged()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        self.visible = false
     }
 
     override func viewWillLayoutSubviews() {
@@ -109,6 +136,7 @@ class ChannelViewController: BaseSlackController {
     deinit {
         NotificationCenter.default.removeObserver(self)
         self.channelQuery?.remove()
+        self.unreadQuery?.remove()
     }
 
     /*--------------------------------------------------------------------------------------------
@@ -128,8 +156,8 @@ class ChannelViewController: BaseSlackController {
     }
     
     func browseMemberAction(sender: AnyObject?) {
-        if let photoView = sender as? PhotoView {
-            if let user = photoView.target as? FireUser {
+        if let photoControl = sender as? PhotoControl {
+            if let user = photoControl.target as? FireUser {
                 let controller = MemberViewController()
                 controller.inputUserId = user.id
                 self.navigationController?.pushViewController(controller, animated: true)
@@ -155,7 +183,10 @@ class ChannelViewController: BaseSlackController {
             actionTitle: "Delete", cancelTitle: "Cancel", delegate: self) {
                 doIt in
                 if doIt {
-                    FireController.instance.delete(messageId: message.id!, channelId: message.channel!)
+                    let groupId = self.channel.group!
+                    let channelId = message.channel!
+                    let messageId = message.id!
+                    FireController.instance.delete(messageId: messageId, channelId: channelId, groupId: groupId)
                 }
         }
     }
@@ -229,7 +260,6 @@ class ChannelViewController: BaseSlackController {
             spinner.isHidden = false
             spinner.startAnimating()
         }
-        // todo: Go ask for another page
     }
 
     func longPressAction(sender: UILongPressGestureRecognizer) {
@@ -242,6 +272,15 @@ class ChannelViewController: BaseSlackController {
                 showMessageActions(message: message!)
             }
         }
+    }
+    
+    func leftDidOpen() {
+        self.visible = false
+    }
+    
+    func leftDidClose() {
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.LeftDidClose), object: self, userInfo: nil)
+        self.visible = true
     }
     
     /*--------------------------------------------------------------------------------------------
@@ -258,6 +297,30 @@ class ChannelViewController: BaseSlackController {
     func messageDidChange(notification: NSNotification) {
         if let userInfo = notification.userInfo, let messageId = userInfo["messageId"] as? String {
             self.rowHeights.removeObject(forKey: messageId)
+        }
+    }
+    
+    func unreadChange(notification: NSNotification?) {
+        
+        self.navButton.badgeValue = "\(UserController.instance.unreads)"
+        
+        /* Turn on unread indicator if we already have the message */
+        
+        if let channelId = notification?.userInfo?["channelId"] as? String,
+            let messageId = notification?.userInfo?["messageId"] as? String,
+            channelId == self.channel.id {
+            
+            var index = 0
+            for snap in self.tableViewDataSource.items as! [FIRDataSnapshot] {
+                if snap.key == messageId {
+                    self.tableView.beginUpdates()
+                    self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+                    self.tableView.endUpdates()
+                    return
+                }
+                index += 1
+            }
+            self.tableView.reloadData()
         }
     }
 
@@ -280,11 +343,10 @@ class ChannelViewController: BaseSlackController {
         Reporting.screen("PatchDetail")
         
         self.headerView = ChannelDetailView()
+        self.headerView.optionsButton.addTarget(self, action: #selector(showChannelActions(sender:)), for: .touchUpInside)
+        
         self.tableView.estimatedRowHeight = 100						// Zero turns off estimates
         self.tableView.rowHeight = UITableViewAutomaticDimension	// Actual height is handled in heightForRowAtIndexPath
-        
-        /* A bit of UI tweaking */
-        self.cellReuseIdentifier = "message-cell"
         self.tableView.backgroundColor = Theme.colorBackgroundTable
         self.tableView.separatorStyle = .none
         self.tableView.separatorInset = UIEdgeInsets.zero
@@ -315,11 +377,49 @@ class ChannelViewController: BaseSlackController {
         self.footerView.frame.size.height = CGFloat(48 + 16)
         self.footerView.addSubview(self.loadMoreActivity)
         self.footerView.backgroundColor = Theme.colorBackgroundTileList
+        
+        /* Navigation button */
+        var button = UIButton(type: .custom)
+        button.frame = CGRect(x:0, y:0, width:36, height:36)
+        button.addTarget(self, action: #selector(openNavigationAction(sender:)), for: .touchUpInside)
+        button.showsTouchWhenHighlighted = true
+        button.setImage(UIImage(named: "imgNavigationLight"), for: .normal)
+        button.imageEdgeInsets = UIEdgeInsetsMake(8, 0, 8, 16)
+        
+        self.navButton = UIBarButtonItem(customView: button)
+        self.navButton.shouldHideBadgeAtZero = true
+        self.navButton.badgeOriginX = 12
+        self.navButton.badgeBGColor = Theme.colorBackgroundBadge
+        self.navButton.badgeValue = "\(UserController.instance.unreads)"
 
-        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged), name: ReachabilityChangedNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground(sender:)), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationWillEnterForeground(sender:)), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(messageDidChange(notification:)), name: NSNotification.Name(rawValue: Events.MessageDidChange), object: nil)
+        /* Title */
+        let tap = UITapGestureRecognizer(target: self, action: #selector(self.showChannelActions(sender:)))
+        self.titleView = (Bundle.main.loadNibNamed("ChannelTitleView", owner: nil, options: nil)?.first as? ChannelTitleView)!
+        self.titleView.title?.text = nil
+        self.titleView.subtitle?.text = nil
+        self.titleView.addGestureRecognizer(tap)
+        self.titleButton = UIBarButtonItem(customView: self.titleView)
+        
+        /* Gallery button */
+        button = UIButton(type: .custom)
+        button.frame = CGRect(x:0, y:0, width:36, height:36)
+        button.addTarget(self, action: #selector(openGalleryAction(sender:)), for: .touchUpInside)
+        button.showsTouchWhenHighlighted = true
+        button.setImage(UIImage(named: "imgGallery2Light"), for: .normal)
+        button.imageEdgeInsets = UIEdgeInsetsMake(6, 6, 6, 6);
+        let photosButton = UIBarButtonItem(customView: button)
+        
+        /* Menu button */
+        button = UIButton(type: .custom)
+        button.frame = CGRect(x:0, y:0, width:36, height:36)
+        button.addTarget(self, action: #selector(openMenuAction(sender:)), for: .touchUpInside)
+        button.showsTouchWhenHighlighted = true
+        button.setImage(UIImage(named: "imgOverflowVerticalLight"), for: .normal)
+        button.imageEdgeInsets = UIEdgeInsetsMake(8, 16, 8, 0);
+        let moreButton = UIBarButtonItem(customView: button)
+        
+        self.navigationItem.setLeftBarButtonItems([self.navButton, spacerFixed, self.titleButton], animated: true)
+        self.navigationItem.setRightBarButtonItems([moreButton, photosButton], animated: true)
 
         self.progressOffsetY = 80
         self.loadMoreMessage = "LOAD MORE MESSAGES"
@@ -335,202 +435,157 @@ class ChannelViewController: BaseSlackController {
         
         self.view.addSubview(self.activity)
         
-        self.headerView.optionsButton.addTarget(self, action: #selector(showChannelActions(gesture:)), for: .touchUpInside)
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged), name: ReachabilityChangedNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground(sender:)), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationWillEnterForeground(sender:)), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(messageDidChange(notification:)), name: NSNotification.Name(rawValue: Events.MessageDidUpdate), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(unreadChange(notification:)), name: NSNotification.Name(rawValue: Events.UnreadChange), object: nil)
     }
     
-    func bind(groupId: String, channelId: String) {
+    fileprivate func bind(groupId: String, channelId: String) {
         
-        if self.tableViewDataSource != nil {
-            self.rowHeights.removeAllObjects()
-            self.headerView.reset()
-            self.tableView.dataSource = nil
-            self.tableView.reloadData()
-            self.newMessages.removeAll()
-        }
+        Log.d("Binding to: \(channelId)")
         
-        let userId = UserController.instance.userId
-        let groupQuery = GroupQuery(groupId: groupId, userId: userId!)
+        let userId = UserController.instance.userId!
+        let groupQuery = GroupQuery(groupId: groupId, userId: userId)
         
         groupQuery.once(with: { group in
+            Log.d("Once query result for group: \(group)")
             if group != nil {
-                let maxWidth = self.view.frame.size.width - CGFloat(36 + 36 + 36 + 30 + 16 + 72 + 24)
-                self.titleView.bounds.size = CGSize(width: maxWidth, height: (self.navigationController?.navigationBar.height())!)
-                
                 self.titleView.title?.text = group!.title
-                self.titleView.title?.sizeToFit()
-                self.titleView.sizeToFit()
-                
-                self.navigationItem.titleView = self.titleView
-                let tap = UITapGestureRecognizer(target: self, action: #selector(self.showChannelActions(gesture:)))
-                self.titleView.addGestureRecognizer(tap)
             }
         })
         
         self.channelQuery?.remove()
-        self.channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId!)
-        self.channelQuery!.observe(with: { channel in
+        self.channelQuery = ChannelQuery(groupId: groupId, channelId: channelId, userId: userId)
+        self.channelQuery!.observe(with: { [weak self] channel in
             
             guard channel != nil else {
                 /* The channel has been deleted from under us. */
-                self.channelQuery?.remove()
-                if self.tableViewDataSource != nil {
-                    self.rowHeights.removeAllObjects()
-                    self.headerView.reset()
-                    self.tableView.dataSource = nil
-                    self.tableView.reloadData()
-                }
-
+                self?.channelQuery?.remove()
                 FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
                     if firstChannelId != nil {
                         StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
                         MainController.instance.showChannel(groupId: groupId, channelId: StateController.instance.channelId!)
                     }
                 }
-
                 return
             }
             
-            self.channel = channel
-            self.bindUi()
+            Log.d("Observe query result for channel: \(channel!)")
+            
+            self?.channel = channel
+            
+            self?.titleView.subtitle?.text = "#\((self?.channel.name!)!)"
+            self?.textView.placeholder = "Message #\((self?.channel.name!)!)"
+            
+            self?.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
+            self?.unreadQuery!.observe(with: { [weak self] total in
+                if self != nil {
+                    Log.d("Observe query result for channel unreads: \(total): \(self!.channel?.name!)")
+                    if total == 0 && self!.channel?.priority == 0 {
+                        self!.channel?.clearUnreadSorting()
+                    }
+                }
+            })
             
             /* We do this here so we have tableView sizing */
-            if self.tableView.tableHeaderView == nil {
-                
+            Log.d("Bind channel header")
+
+            if self?.tableView.tableHeaderView == nil {
                 let screenSize = UIScreen.main.bounds.size
                 let viewWidth = min(CONTENT_WIDTH_MAX, screenSize.width)
                 
-                self.headerView.frame = CGRect(x:0, y:0, width: viewWidth, height: 100)
-                self.headerView.bind(channel: self.channel)
-                self.headerView.frame = CGRect(x:0, y:0, width: viewWidth, height: self.headerView.height())
+                self?.headerView.frame = CGRect(x:0, y:0, width: viewWidth, height: 100)
+                self?.headerView.bind(channel: self?.channel)
+                self?.headerView.frame = CGRect(x:0, y:0, width: viewWidth, height: (self?.headerView.height())!)
                 
-                self.headerView.photo.frame = CGRect(x: -24, y: -36
-                    , width: (self.headerView.contentGroup.width()) + 48
-                    , height: (self.headerView.contentGroup.height()) + 72)
+                self?.headerView.photoView.frame = CGRect(x: -24, y: -36
+                    , width: (self?.headerView.contentGroup.width())! + 48
+                    , height: (self?.headerView.contentGroup.height())! + 72)
                 
-                self.originalRect = self.headerView.photo.frame
-                self.originalHeaderRect = self.headerView.frame
-                self.originalScrollInset = self.tableView.contentInset
+                self?.originalRect = self?.headerView.photoView.frame
+                self?.originalHeaderRect = self?.headerView.frame
+                self?.originalScrollInset = self?.tableView.contentInset
                 
-                self.tableView.tableHeaderView = self.headerView
-                self.tableView.reloadData()
+                self?.tableView.tableHeaderView = self?.headerView
+                self?.tableView.reloadData()
             }
             else {
-                self.headerView.bind(channel: self.channel)
-                self.tableView.tableHeaderView = self.headerView
-            }
-            
-            if channel?.priority == 0 {
-                channel?.unread(on: false)
-                let userInfo = ["groupId": groupId, "channelId": channelId]
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: userInfo)
+                self?.headerView.bind(channel: self?.channel)
+                self?.tableView.tableHeaderView = self?.headerView
             }
         })
         
         self.messagesQuery = FireController.db.child("channel-messages/\(channelId)").queryOrdered(byChild: "created_at_desc")
         
-        self.tableViewDataSource = FUITableViewDataSource(query: self.messagesQuery
-            , view: self.tableView
-            , populateCell: { [weak self] tableView, indexPath, snap in
-                
-                let cell = tableView.dequeueReusableCell(withIdentifier: (self?.cellReuseIdentifier)!, for: indexPath) as! WrapperTableViewCell
-                let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key)! as FireMessage
-                
-                if let messageView = cell.view as? MessageViewCell {
-                    messageView.reset()
-                }
-                
-                if message.createdBy == nil {
-                    self?.bindMessageView(cell: cell, message: message)
-                }
-                else {
-                    let userQuery = UserQuery(userId: message.createdBy!, groupId: groupId)
-                    userQuery.once(with: { user in
-                        message.creator = user
-                        self?.bindMessageView(cell: cell, message: message)
-                    })
-                }
-                return cell
+        self.tableViewDataSource = FUITableViewDataSource(
+            query: self.messagesQuery,
+            view: self.tableView,
+            populateCell: { [weak self] tableView, indexPath, snap in
+                return (self?.populateCell(tableView, cellForRowAt: indexPath, snap: snap))!
             })
         
+        Log.d("Observe query triggered for channel messages")
         self.tableView.dataSource = self.tableViewDataSource
     }
     
-    func bindMessageView(cell: WrapperTableViewCell, message: FireMessage) {
+    func populateCell(_ tableView: UITableView, cellForRowAt indexPath: IndexPath, snap: FIRDataSnapshot) -> UITableViewCell {
         
-        if cell.view == nil {
-            let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.longPressAction(sender:)))
-            recognizer.minimumPressDuration = TimeInterval(0.5)
-            cell.addGestureRecognizer(recognizer)
-            
-            let view = MessageViewCell(frame: CGRect(x: 0, y: 0, width: self.view.width(), height: 40))
-            if view.description_ != nil && (view.description_ is TTTAttributedLabel) {
-                let label = view.description_ as! TTTAttributedLabel
-                label.delegate = self
-            }
-            
-            view.photoView?.isUserInteractionEnabled = true
-            view.photoView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.browsePhotoAction(sender:))))
-            cell.injectView(view: view, padding: self.itemPadding)
-            cell.layoutSubviews()   // Make sure padding has been applied
+        let cell = tableView.dequeueReusableCell(withIdentifier: self.cellReuseIdentifier, for: indexPath) as! WrapperTableViewCell
+        let message = FireMessage.from(dict: snap.value as? [String: Any], id: snap.key)! as FireMessage
+        let userId = UserController.instance.userId!
+        let groupId = self.channel.group!
+        let channelId = self.channel.id!
+        
+        if let messageView = cell.view as? MessageViewCell {
+            messageView.reset()
         }
         
-        if let messageView = cell.view! as? MessageViewCell {
-
-            messageView.bind(message: message)
+        let userQuery = UserQuery(userId: message.createdBy!, groupId: groupId)
+        userQuery.once(with: { user in
             
-            if message.creator != nil {
-                messageView.userPhotoView.target = message.creator
-                messageView.userPhotoView.addTarget(self, action: #selector(self.browseMemberAction(sender:)), for: .touchUpInside)
+            message.creator = user
+            
+            if cell.view == nil {
+                let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.longPressAction(sender:)))
+                recognizer.minimumPressDuration = TimeInterval(0.5)
+                cell.addGestureRecognizer(recognizer)
+                
+                let view = MessageViewCell(frame: CGRect(x: 0, y: 0, width: self.view.width(), height: 40))
+                if view.description_ != nil && (view.description_ is TTTAttributedLabel) {
+                    let label = view.description_ as! TTTAttributedLabel
+                    label.delegate = self
+                }
+                
+                view.photoView?.isUserInteractionEnabled = true
+                view.photoView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.browsePhotoAction(sender:))))
+                cell.injectView(view: view, padding: self.itemPadding)
+                cell.layoutSubviews()   // Make sure padding has been applied
             }
             
-            if NotificationController.instance.newMessages[message.id!] != nil {
-                self.newMessages[message.id!] = true
-                NotificationController.instance.newMessages.removeValue(forKey: message.id!)
+            if let messageView = cell.view! as? MessageViewCell {
+                messageView.bind(message: message)
+                if message.creator != nil {
+                    messageView.userPhotoControl.target = message.creator
+                    messageView.userPhotoControl.addTarget(self, action: #selector(self.browseMemberAction(sender:)), for: .touchUpInside)
+                }
+                
+                let unreadPath = "unreads/\(userId)/\(groupId)/\(channelId)/\(message.id!)"
+                FireController.db.child(unreadPath).observeSingleEvent(of: .value, with: { snap in
+                    if !(snap.value is NSNull) {
+                        messageView.unread.isHidden = false
+                        if self.visible {
+                            snap.ref.removeValue()
+                        }
+                        else {
+                            self.unreadRefs.append(snap.ref)
+                        }
+                    }
+                })
             }
-            
-            if self.newMessages[message.id!] != nil {
-                messageView.unread.isHidden = false
-            }
-        }
-    }
-
-    func bindUi() {
-        
-        self.titleView.subtitle?.text = "#\(self.channel.name!)"
-        self.titleView.subtitle?.sizeToFit()
-        self.titleView.sizeToFit()
-        
-        self.textView.placeholder = "Message #\(self.channel.name!)"
-
-        /* Navigation button */
-        var button = UIButton(type: .custom)
-        button.frame = CGRect(x:0, y:0, width:36, height:36)
-        button.addTarget(self, action: #selector(openNavigationAction(sender:)), for: .touchUpInside)
-        button.showsTouchWhenHighlighted = true
-        button.setImage(UIImage(named: "imgNavigationLight"), for: .normal)
-        button.imageEdgeInsets = UIEdgeInsetsMake(8, 0, 8, 16);
-        let navButton = UIBarButtonItem(customView: button)
-        
-        /* Gallery button */
-        button = UIButton(type: .custom)
-        button.frame = CGRect(x:0, y:0, width:36, height:36)
-        button.addTarget(self, action: #selector(openGalleryAction(sender:)), for: .touchUpInside)
-        button.showsTouchWhenHighlighted = true
-        button.setImage(UIImage(named: "imgGallery2Light"), for: .normal)
-        button.imageEdgeInsets = UIEdgeInsetsMake(6, 6, 6, 6);
-        let photosButton = UIBarButtonItem(customView: button)
-
-        /* Menu button */
-        button = UIButton(type: .custom)
-        button.frame = CGRect(x:0, y:0, width:36, height:36)
-        button.addTarget(self, action: #selector(openMenuAction(sender:)), for: .touchUpInside)
-        button.showsTouchWhenHighlighted = true
-        button.setImage(UIImage(named: "imgOverflowVerticalLight"), for: .normal)
-        button.imageEdgeInsets = UIEdgeInsetsMake(8, 16, 8, 0);
-        let moreButton = UIBarButtonItem(customView: button)
-        
-        self.navigationItem.setLeftBarButtonItems([navButton], animated: true)
-        self.navigationItem.setRightBarButtonItems([moreButton, photosButton], animated: true)
+        })
+        return cell
     }
     
     func showMessageActions(message: FireMessage) {
@@ -541,7 +596,7 @@ class ChannelViewController: BaseSlackController {
         let likes = message.getReaction(emoji: .thumbsup, userId: userId!)
         let likeTitle = likes ? "Remove like" : "Add like"
         let like = UIAlertAction(title: likeTitle, style: .default) { action in
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidChange)
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.MessageDidUpdate)
                 , object: self, userInfo: ["messageId": message.id!])
             self.rowHeights.removeObject(forKey: message.id!)
             if likes {
@@ -576,7 +631,7 @@ class ChannelViewController: BaseSlackController {
         present(sheet, animated: true, completion: nil)
     }
     
-    func showChannelActions(gesture: AnyObject?) {
+    func showChannelActions(sender: AnyObject?) {
         
         if self.channel != nil {
             let sheet = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
@@ -799,16 +854,16 @@ extension ChannelViewController {
                 let movement = self.originalScrollTop - scrollView.contentOffset.y
                 let ratio: CGFloat = (movement <= 0) ? 0.50 : 1.0
                 if self.originalRect != nil {
-                    self.headerView.photo.frame.origin.y = self.originalRect!.origin.y + (-(movement) * ratio)
+                    self.headerView.photoView.frame.origin.y = self.originalRect!.origin.y + (-(movement) * ratio)
                 }
             }
             else {
                 let movement = (originalScrollTop - scrollView.contentOffset.y) * 0.35
                 if movement > 0 {
-                    headerView.photo.frame.origin.y = self.originalRect!.origin.y // - (movement * 0.8)
-                    headerView.photo.frame.origin.x = self.originalRect!.origin.x - (movement * 0.5)
-                    headerView.photo.frame.size.width = self.originalRect!.size.width + movement
-                    headerView.photo.frame.size.height = self.originalRect!.size.height + movement
+                    headerView.photoView.frame.origin.y = self.originalRect!.origin.y // - (movement * 0.8)
+                    headerView.photoView.frame.origin.x = self.originalRect!.origin.x - (movement * 0.5)
+                    headerView.photoView.frame.size.width = self.originalRect!.size.width + movement
+                    headerView.photoView.frame.size.height = self.originalRect!.size.height + movement
                 }
             }
         }

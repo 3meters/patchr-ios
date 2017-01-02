@@ -117,7 +117,7 @@ class MemberListController: BaseTableController, UITableViewDelegate {
         self.view.addSubview(self.tableView)
         
         if self.presented {
-            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(self.closeAction(sender:)))
+            let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(self.closeAction(sender:)))
             self.navigationItem.rightBarButtonItems = [closeButton]
         }
     }
@@ -144,7 +144,7 @@ class MemberListController: BaseTableController, UITableViewDelegate {
                 self.navigationItem.rightBarButtonItems = [inviteButton]
             }
             
-            let closeButton = UIBarButtonItem(image: UIImage(named: "imgCancelLight"), style: .plain, target: self, action: #selector(self.closeAction(sender:)))
+            let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(self.closeAction(sender:)))
             self.navigationItem.leftBarButtonItems = [closeButton]
         }
         

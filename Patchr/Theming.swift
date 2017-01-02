@@ -49,10 +49,10 @@ class Snow {
 	let colorBackgroundToast            = Colors.accentColorFill
 	let colorBackgroundActivity         = Colors.white
 	let colorBackgroundActivityOnly     = Colors.clear
-    let colorBackgroundBadge            = Colors.accentColorFill
-	let colorBackgroundSelected         = Colors.gray90pcntColor
-    let colorBackgroundSelectedChannel  = Colors.accentColorFill
-
+    let colorBackgroundBadge            = UIColor.red
+	let colorBackgroundHighlighted      = Colors.gray90pcntColor
+    let colorBackgroundSelected         = Colors.gray90pcntColor
+    
 	let colorRule                   = Colors.gray85pcntColor
 	let colorRuleActive             = Colors.accentColorRule
 	let colorTint                   = Colors.brandColorTextLight
@@ -167,7 +167,6 @@ public struct Colors {
 	static let brandColorRule = brandColor
     
     static let validationErrorColor = UIColor(red: 255/255, green: 87/255, blue: 34/255, alpha: 1)
-    static let testColor = brandColor.withAlphaComponent(0.1)
     
 	static let facebookColor = UIColor(hexString: "#3B5998ff")
 	static let googleColor = UIColor(hexString: "#DD4B39ff")

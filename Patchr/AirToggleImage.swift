@@ -27,6 +27,7 @@ class AirToggleImage: AirImageView {
 		
     override func initialize(){
         super.initialize()
+        self.enableLogging = false
         toggle(on: false, animate: false)
     }
     

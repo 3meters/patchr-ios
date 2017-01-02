@@ -27,3 +27,26 @@ set to zero so it sorts to the top.
 
 App icon shows badge. Group and channel items show badge with count based on count tracking
 in notification controller. Messages show an unread indicator.
+
+REMOTE NOTIFICATIONS
+
+/*
+iOS 10.1
+
+App in foreground
+- didReceiveRemoteNotification
+- willPresent
+
+App running in background
+- didReceiveRemoteNotification
+
+App running in background: tap notification
+- didReceive
+
+App killed by user
+- App is not launched, badging must be delivered with notification.
+
+App suspended by system
+- App is launched, initial badging based on badge notification property, overwritten
+by app if desired.
+*/

@@ -14,18 +14,9 @@
             <rect key="frame" x="0.0" y="0.0" width="389" height="36"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="LTM-Mi-qV7" id="f05-yI-zfl">
-                <rect key="frame" x="0.0" y="0.0" width="389" height="35"/>
+                <rect key="frame" x="0.0" y="0.0" width="389" height="35.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Eh5-ju-D8P" userLabel="Selected">
-                        <rect key="frame" x="4" y="4" width="381" height="32"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                <real key="value" value="4"/>
-                            </userDefinedRuntimeAttribute>
-                        </userDefinedRuntimeAttributes>
-                    </view>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="imgStarFilledLight" translatesAutoresizingMaskIntoConstraints="NO" id="MzM-rM-rpX">
                         <rect key="frame" x="12" y="10" width="16" height="16"/>
                         <color key="tintColor" red="1" green="0.71764705880000002" blue="0.30196078430000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -81,7 +72,6 @@
                         </userDefinedRuntimeAttributes>
                     </label>
                 </subviews>
-                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                 <constraints>
                     <constraint firstItem="WMI-oF-Ce5" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="f05-yI-zfl" secondAttribute="trailing" constant="-16" id="5cG-EI-jbu"/>
                     <constraint firstItem="MzM-rM-rpX" firstAttribute="centerY" secondItem="f05-yI-zfl" secondAttribute="centerY" id="6XA-pG-pc4"/>
@@ -96,17 +86,13 @@
                 </constraints>
             </tableViewCellContentView>
             <constraints>
-                <constraint firstItem="Eh5-ju-D8P" firstAttribute="top" secondItem="LTM-Mi-qV7" secondAttribute="top" constant="4" id="0Jw-9Y-KU2"/>
-                <constraint firstItem="Eh5-ju-D8P" firstAttribute="leading" secondItem="LTM-Mi-qV7" secondAttribute="leading" constant="4" id="NZe-p8-DeF"/>
                 <constraint firstItem="h5i-BT-PQD" firstAttribute="trailing" secondItem="LTM-Mi-qV7" secondAttribute="trailing" constant="-16" id="auQ-dq-6mo"/>
-                <constraint firstItem="Eh5-ju-D8P" firstAttribute="trailing" secondItem="LTM-Mi-qV7" secondAttribute="trailing" constant="-4" id="kbt-gJ-Yki"/>
-                <constraint firstItem="Eh5-ju-D8P" firstAttribute="bottom" secondItem="LTM-Mi-qV7" secondAttribute="bottom" id="l95-yW-Ag0"/>
             </constraints>
+            <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
             <connections>
                 <outlet property="badge" destination="h5i-BT-PQD" id="8G7-1q-Elb"/>
                 <outlet property="lock" destination="Tdc-C9-Sed" id="bmZ-ar-ttY"/>
                 <outlet property="lockWidth" destination="rka-wR-vMS" id="gcf-7d-taL"/>
-                <outlet property="selectedBackground" destination="Eh5-ju-D8P" id="m9q-eV-MSH"/>
                 <outlet property="star" destination="MzM-rM-rpX" id="sBI-FJ-OZ6"/>
                 <outlet property="status" destination="WMI-oF-Ce5" id="efE-N1-LEY"/>
                 <outlet property="statusWidth" destination="bU1-dh-SPS" id="UIN-8u-JHJ"/>

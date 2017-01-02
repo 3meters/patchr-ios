@@ -7,7 +7,7 @@ import UIKit
 
 class UserHeaderView: BaseDetailView {
 
-	var photoView = PhotoView()
+	var photoControl = PhotoControl()
     var fullName = AirLabelTitle()
     var username = UILabel()
 	var rule = UIView()
@@ -46,7 +46,7 @@ class UserHeaderView: BaseDetailView {
 		/* Rule */
 		self.rule.backgroundColor = Theme.colorSeparator
 		
-		self.addSubview(self.photoView)
+		self.addSubview(self.photoControl)
 		self.addSubview(self.fullName)
         self.addSubview(self.username)
 		self.addSubview(self.rule)
@@ -60,17 +60,17 @@ class UserHeaderView: BaseDetailView {
         self.username.bounds.size.width = contentWidth
         self.username.sizeToFit()
         
-        self.photoView.anchorTopCenter(withTopPadding: 16, width: 96, height: 96)
+        self.photoControl.anchorTopCenter(withTopPadding: 16, width: 96, height: 96)
         
         if !self.fullName.isHidden {
             self.fullName.bounds.size.width = contentWidth
             self.fullName.sizeToFit()
-            self.fullName.alignUnder(self.photoView, matchingCenterWithTopPadding: 8, width: contentWidth, height: 36)
+            self.fullName.alignUnder(self.photoControl, matchingCenterWithTopPadding: 8, width: contentWidth, height: 36)
             self.username.alignUnder(self.fullName, matchingCenterWithTopPadding: 0, width: contentWidth, height: 24)
             self.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: (16 + 96 + 40 + 24 + 16))
         }
         else {
-            self.fullName.alignUnder(self.photoView, matchingCenterWithTopPadding: 0, width: contentWidth, height: 0)
+            self.fullName.alignUnder(self.photoControl, matchingCenterWithTopPadding: 0, width: contentWidth, height: 0)
             self.username.alignUnder(self.fullName, matchingCenterWithTopPadding: 8, width: contentWidth, height: 24)
             self.anchorTopCenterFillingWidth(withLeftAndRightPadding: 0, topPadding: 0, height: (16 + 96 + 32 + 16))
         }
@@ -82,7 +82,6 @@ class UserHeaderView: BaseDetailView {
         
         self.fullName.text?.removeAll(keepingCapacity: false)
         self.username.text?.removeAll(keepingCapacity: false)
-        self.photoView.photoView.image = nil
         self.fullName.isHidden = true
         
         if user != nil {
@@ -92,30 +91,25 @@ class UserHeaderView: BaseDetailView {
                 self.fullName.text = user!.username!
             }
             
-            let photo = user!.profile?.photo
-
             if user!.profile?.fullName != nil && !user!.profile!.fullName!.isEmpty {
                 self.fullName.text = user!.profile?.fullName
             }
             
             self.fullName.isHidden = (self.fullName.text == nil || self.fullName.text!.isEmpty)
             let fullName = self.fullName.text
-
-            var photoUrl: URL? = nil
-            if photo != nil {
-                photoUrl = PhotoUtils.url(prefix: photo!.filename!, source: photo!.source!, category: SizeCategory.profile)
-            }
             
-            if photoUrl != nil || fullName != nil {
-                let fallbackUrl = photo != nil ? PhotoUtils.fallbackUrl(prefix: photo!.filename!) : nil
-                self.photoView.bind(url: photoUrl, fallbackUrl: fallbackUrl, name: fullName, colorSeed: user!.id)
+            if let photo = user!.profile?.photo, photo.uploading == nil {
+                if let url = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.profile) {
+                    let fallbackUrl = PhotoUtils.fallbackUrl(prefix: photo.filename!)
+                    self.photoControl.bind(url: url, fallbackUrl: fallbackUrl, name: fullName, colorSeed: user!.id)
+                }
             }
             else {
-                self.photoView.bind(url: photoUrl, fallbackUrl: nil, name: fullName, colorSeed: user!.id, color: Colors.accentColorFill)
+                self.photoControl.bind(url: nil, fallbackUrl: nil, name: fullName, colorSeed: user!.id)
             }
         }
         else {
-            self.photoView.bind(url: nil, fallbackUrl: nil, name: nil, colorSeed: nil, color: Theme.colorBackgroundImage)
+            self.photoControl.bind(url: nil, fallbackUrl: nil, name: nil, colorSeed: nil, color: Theme.colorBackgroundImage)
         }
         
         self.setNeedsLayout()

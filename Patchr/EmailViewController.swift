@@ -75,7 +75,7 @@ class EmailViewController: BaseEditViewController {
             self.message.text = "Welcome back."
         }
         else {
-            self.message.text = "Patchr groups are for control enthusiasts."
+            self.message.text = "Patchr groups are perfect for control freaks."
         }
 
         self.message.textColor = Theme.colorTextTitle

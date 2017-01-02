@@ -12,6 +12,12 @@ class AirLabelBase: UILabel {
 	
 	var insets = UIEdgeInsets.zero
     
+    convenience init(text: String?) {
+        self.init(frame: CGRect.zero)
+        self.text = text
+        self.sizeToFit()
+    }
+    
 	required init(coder aDecoder: NSCoder) {
 		/* Called when instantiated from XIB or Storyboard */
 		super.init(coder: aDecoder)!

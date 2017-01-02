@@ -11,7 +11,7 @@ import Firebase
 import FirebaseDatabase
 import SlideMenuControllerSwift
 
-class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableViewDataSource, SlideMenuControllerDelegate {
+class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableViewDataSource {
 
     var user: FireUser?
     var userQuery: UserQuery?
@@ -47,9 +47,6 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
     * Events
     *--------------------------------------------------------------------------------------------*/
     
-    func rightDidClose() {
-    }
-
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         self.tableView.fillSuperview()
@@ -107,9 +104,9 @@ class SideMenuViewController: BaseTableController, UITableViewDelegate, UITableV
         
         self.view.addSubview(self.tableView)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(userStateDidChange(notification:)), name: NSNotification.Name(rawValue: Events.UserStateDidChange), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(userStateDidChange(notification:)), name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(groupDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(groupDidChange(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidChange), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(groupDidChange(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidUpdate), object: nil)
     }
     
     func bind() {
@@ -141,9 +138,14 @@ extension SideMenuViewController {
 
         if selectedCell == self.inviteCell {
             
-            let controller = InviteViewController()
-            let wrapper = AirNavigationController(rootViewController: controller)
-            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+            if StateController.instance.group?.role != "owner" {
+                self.Alert(title: "Only group owners can invite new members.")
+            }
+            else {
+                let controller = InviteViewController()
+                let wrapper = AirNavigationController(rootViewController: controller)
+                UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
+            }
         }
         else if selectedCell == self.settingsCell {
             
@@ -162,7 +164,7 @@ extension SideMenuViewController {
             
             let controller = GroupPickerController()
             let wrapper = AirNavigationController(rootViewController: controller)
-            self.slideMenuController()?.mainViewController?.present(wrapper, animated: true, completion: nil)
+            UIViewController.topMostViewController()?.present(wrapper, animated: true, completion: nil)
         }
         else if selectedCell == self.membersCell {
             
@@ -181,9 +183,6 @@ extension SideMenuViewController {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if StateController.instance.group?.role != "owner" && indexPath.row == 1 {
-            return CGFloat(0)
-        }
         return CGFloat(64)
     }
 

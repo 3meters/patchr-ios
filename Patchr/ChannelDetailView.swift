@@ -11,12 +11,12 @@ class ChannelDetailView: UIView {
 
     var contentGroup = UIView()
     var titleGroup = UIView()
-    var photo = AirImageView(frame: CGRect.zero)
+    var photoView = AirImageView(frame: CGRect.zero)
     var name = AirLabelDisplay()
-    var lockImage = AirImageView(frame: CGRect.zero)
+    var lockImage = UIImageView(frame: CGRect.zero)
     var mutedImage = AirMuteView(frame: CGRect.zero)
     var starButton = AirStarButton(frame: CGRect.zero)
-    var optionsButton = AirImageButton(frame: CGRect.zero)
+    var optionsButton = UIButton(frame: CGRect.zero)
     var infoGroup = AirRuleView()
     var purpose = AirLabelDisplay(frame: CGRect.zero)
     var gradient = CAGradientLayer()
@@ -95,7 +95,7 @@ class ChannelDetailView: UIView {
         self.titleGroup.addSubview(self.mutedImage)
         self.titleGroup.addSubview(self.starButton)
         
-        self.contentGroup.addSubview(self.photo)
+        self.contentGroup.addSubview(self.photoView)
         self.contentGroup.addSubview(self.titleGroup)
         self.contentGroup.addSubview(self.optionsButton)
         
@@ -105,11 +105,11 @@ class ChannelDetailView: UIView {
         self.clipsToBounds = false
         self.backgroundColor = Theme.colorBackgroundForm
         
-        self.photo.parallaxIntensity = -40
-        self.photo.sizeCategory = SizeCategory.standard
-        self.photo.clipsToBounds = true
-        self.photo.contentMode = UIViewContentMode.scaleAspectFill
-        self.photo.backgroundColor = Theme.colorBackgroundImage
+        self.photoView.parallaxIntensity = -40
+        self.photoView.sizeCategory = SizeCategory.standard
+        self.photoView.clipsToBounds = true
+        self.photoView.contentMode = UIViewContentMode.scaleAspectFill
+        self.photoView.backgroundColor = Theme.colorBackgroundImage
         
         /* Apply gradient to banner */
         let topColor: UIColor = UIColor(red: CGFloat(0), green: CGFloat(0), blue: CGFloat(0), alpha: CGFloat(0.0))        // Top
@@ -145,9 +145,6 @@ class ChannelDetailView: UIView {
     }
     
     func reset() {
-        self.gradient.isHidden = true
-        self.photo.image = nil
-        self.photo.backgroundColor = Theme.colorBackgroundImage
         self.name.text = nil
         self.purpose.text = nil
         self.mutedImage.isHidden = true
@@ -170,27 +167,30 @@ class ChannelDetailView: UIView {
         if let photo = channel.photo, photo.uploading == nil {
             self.starButton.tintColor = Colors.brandColor
             self.optionsButton.tintColor = Colors.brandColor
-            if let photoUrl = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
-                let fallbackUrl = PhotoUtils.fallbackUrl(prefix: photo.filename!)
-                self.photo.setImageWithUrl(url: photoUrl, fallbackUrl: fallbackUrl)
-                self.gradient.isHidden = false
-                self.photo.backgroundColor = Theme.colorBackgroundImage
+            self.photoView.backgroundColor = Theme.colorBackgroundImage
+            if let url = PhotoUtils.url(prefix: photo.filename, source: photo.source, category: SizeCategory.standard) {
+                if !self.photoView.associated(withUrl: url) {
+                    let fallbackUrl = PhotoUtils.fallbackUrl(prefix: photo.filename!)
+                    self.photoView.setImageWithUrl(url: url, fallbackUrl: fallbackUrl) { success in
+                        self.gradient.isHidden = false
+                    }
+                }
             }
         }
         else {
+            self.photoView.image = nil
             self.gradient.isHidden = true
-            self.photo.image = nil
             self.starButton.tintColor = Colors.white
             self.optionsButton.tintColor = Colors.white
             if channel.name == "general" || channel.general! {
-                self.photo.backgroundColor = Colors.brandColorLight
+                self.photoView.backgroundColor = Colors.brandColorLight
             }
             else if channel.name == "chatter" {
-                self.photo.backgroundColor = Colors.accentColorFill
+                self.photoView.backgroundColor = Colors.accentColorFill
             }
             else {
                 let seed = Utils.numberFromName(fullname: channel.name!)
-                self.photo.backgroundColor = ColorArray.randomColor(seed: seed)
+                self.photoView.backgroundColor = ColorArray.randomColor(seed: seed)
             }
         }
 

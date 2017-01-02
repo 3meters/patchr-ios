@@ -92,6 +92,11 @@ class GroupCreateController: BaseEditViewController {
         /* Navigation bar buttons */
         let createButton = UIBarButtonItem(title: "Create", style: UIBarButtonItemStyle.plain, target: self, action: #selector(doneAction(sender:)))
         self.navigationItem.rightBarButtonItems = [createButton]
+        
+        if self.flow == .none {
+            let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(cancelAction(sender:)))
+            self.navigationItem.leftBarButtonItems = [closeButton]
+        }
     }
     
     func createGroup() {

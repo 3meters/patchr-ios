@@ -9,15 +9,54 @@
 import UIKit
 
 class AirNavigationController: UINavigationController {
-
     override func viewDidLoad() {
         super.viewDidLoad()
     }
 }
 
 class AirNavigationBar: UINavigationBar {
+    
+    static let navigationBarHeight: CGFloat = 54
+    static let heightIncrease: CGFloat = navigationBarHeight - 44
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        initialize()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        initialize()
+    }
+    
+    private func initialize() {
+        let shift = AirNavigationBar.heightIncrease / 2
+        self.transform = CGAffineTransform(translationX: 0, y: -shift)
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        let shift = AirNavigationBar.heightIncrease / 2
+        var classNamesToReposition = ["_UINavigationBarBackground"]
+        if #available(iOS 10.0, *) {
+            classNamesToReposition = ["_UIBarBackground"]
+        }
+        
+        for view: UIView in self.subviews {
+            if classNamesToReposition.contains(NSStringFromClass(view.classForCoder)) {
+                let bounds: CGRect = self.bounds
+                var frame: CGRect = view.frame
+                frame.origin.y = bounds.origin.y + shift - 20.0
+                frame.size.height = bounds.size.height + 20.0
+                view.frame = frame
+            }
+        }
+    }
+    
     override func sizeThatFits(_ size: CGSize) -> CGSize {
-        let newSize :CGSize = CGSize(width: self.frame.size.width, height: 54)
+        let amendedSize: CGSize = super.sizeThatFits(size)
+        let newSize: CGSize = CGSize(width: amendedSize.width, height: AirNavigationBar.navigationBarHeight);
         return newSize
     }
 }
