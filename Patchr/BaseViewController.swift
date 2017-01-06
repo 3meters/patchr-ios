@@ -12,6 +12,8 @@ class BaseViewController: UIViewController {
 	
 	var scrollView		= AirScrollView()
 	var contentHolder	= UIView()
+    var controllerIsActive = false
+
     var statusBarHidden: Bool = false {
         didSet {
             UIView.animate(withDuration: 0.5) { () -> Void in
@@ -37,6 +39,7 @@ class BaseViewController: UIViewController {
 		tap.delegate = self
 		tap.cancelsTouchesInView = false
 		self.view.addGestureRecognizer(tap)
+        self.controllerIsActive = (UIApplication.shared.applicationState == .active)
     }
     
     override func viewWillLayoutSubviews() {
@@ -53,8 +56,18 @@ class BaseViewController: UIViewController {
 	}
 	
 	/*--------------------------------------------------------------------------------------------
-	* Events
+	* Notifications
 	*--------------------------------------------------------------------------------------------*/
+
+    func viewDidBecomeActive(sender: NSNotification) {
+        /* User either switched to app, launched app, or turned their screen back on with app in foreground. */
+        self.controllerIsActive = true
+    }
+    
+    func viewWillResignActive(sender: NSNotification) {
+        /* User either switched away from app or turned their screen off. */
+        self.controllerIsActive = false
+    }
 
 	/*--------------------------------------------------------------------------------------------
 	* Methods
@@ -69,6 +82,9 @@ class BaseViewController: UIViewController {
         
 		self.scrollView.addSubview(self.contentHolder)		
         self.view.addSubview(self.scrollView)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(viewWillResignActive(sender:)), name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(viewDidBecomeActive(sender:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
 	}
 	
 	func close(animated: Bool = true) {

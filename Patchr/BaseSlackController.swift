@@ -14,6 +14,7 @@ import FirebaseDatabaseUI
 
 class BaseSlackController: SLKTextViewController {
 	
+    var controllerIsActive = false
 	var presented: Bool {
 		return self.presentingViewController?.presentedViewController == self
 			|| (self.navigationController != nil && self.navigationController?.presentingViewController?.presentedViewController == self.navigationController)
@@ -54,6 +55,11 @@ class BaseSlackController: SLKTextViewController {
     
     override class func tableViewStyle(for decoder: NSCoder) -> UITableViewStyle {
         return .plain
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.controllerIsActive = (UIApplication.shared.applicationState == .active)
     }
     
     override func viewWillLayoutSubviews() {
@@ -163,6 +169,16 @@ class BaseSlackController: SLKTextViewController {
         self.photoHolder.frame = frame
     }
     
+    func viewDidBecomeActive(sender: NSNotification) {
+        /* User either switched to app, launched app, or turned their screen back on with app in foreground. */
+        self.controllerIsActive = true
+    }
+    
+    func viewWillResignActive(sender: NSNotification) {
+        /* User either switched away from app or turned their screen off. */
+        self.controllerIsActive = false
+    }
+
 	/*--------------------------------------------------------------------------------------------
 	* Methods
 	*--------------------------------------------------------------------------------------------*/
@@ -208,6 +224,8 @@ class BaseSlackController: SLKTextViewController {
         
         NotificationCenter.default.addObserver(self, selector: #selector(photoDidChange(sender:)), name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: self.photoEditView)
         NotificationCenter.default.addObserver(self, selector: #selector(photoRemoved(sender:)), name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: self.photoEditView)
+        NotificationCenter.default.addObserver(self, selector: #selector(viewWillResignActive(sender:)), name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(viewDidBecomeActive(sender:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
 	}
     
     func editMessage(message: FireMessage) {

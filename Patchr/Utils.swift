@@ -237,6 +237,13 @@ struct Utils {
 		}
 	}
     
+    static func appState() -> String {
+        let appState = (UIApplication.shared.applicationState == .background)
+            ? "background" : (UIApplication.shared.applicationState == .active)
+            ? "active" : "inactive"
+        return appState
+    }
+    
     static func updateRecents(recent: [String:AnyObject]) {
         
         if let groupDefaults = UserDefaults(suiteName: "group.com.3meters.patchr.ios") {

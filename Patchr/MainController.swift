@@ -41,6 +41,7 @@ class MainController: NSObject, iRateDelegate {
 
     func stateInitialized(notification: NSNotification) {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.StateInitialized), object: nil)
+        Log.d("State initialized - app state: \(Utils.appState())")
         checkCompatibility()
         route()
     }
@@ -104,7 +105,7 @@ class MainController: NSObject, iRateDelegate {
         Branch.getInstance().initSession(launchOptions: launchOptions, andRegisterDeepLinkHandler: { params, error in
             if error == nil {
                 /* A hit could mean a deferred link match */
-                if let clickedBranchLink = params["+clicked_branch_link"] as? Bool , clickedBranchLink {
+                if let clickedBranchLink = params?["+clicked_branch_link"] as? Bool , clickedBranchLink {
                     Log.d("Deep link routing based on clicked branch link", breadcrumb: true)
                     self.routeDeepLink(params: params, error: error)    /* Presents modally on top of main tab controller. */
                 }
@@ -164,6 +165,9 @@ class MainController: NSObject, iRateDelegate {
             else {
                 self.window?.setRootViewController(rootViewController: self.slideController, animated: true)
             }
+        }
+        else if self.window?.rootViewController == self.lobbyWrapper {
+            self.window?.setRootViewController(rootViewController: self.slideController, animated: true)
         }
     }
 

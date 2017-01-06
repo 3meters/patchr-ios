@@ -13,7 +13,6 @@ import pop
 
 class ChannelPickerController: BaseTableController {
     
-    var groupQuery: GroupQuery?
     var channelsQuery: FIRDatabaseQuery!
     var unreadsTotalQuery: UnreadQuery?
     var unreadsGroupQuery: UnreadQuery?
@@ -32,14 +31,13 @@ class ChannelPickerController: BaseTableController {
     var searchButton: UIBarButtonItem!
     var titleView: UIBarButtonItem!
     
-    var unreadTotal: Int? {
+    var unreadTotal = 0
+    var unreadGroup = 0
+    var unreadOther: Int? {
         didSet {
-            updateBackButton()
-        }
-    }
-    var unreadGroup: Int? {
-        didSet {
-            updateBackButton()
+            if unreadOther != oldValue {
+                updateBackButton()
+            }
         }
     }
     
@@ -194,7 +192,7 @@ class ChannelPickerController: BaseTableController {
         self.navigationItem.rightBarButtonItems = [self.backButton, self.searchButton]
         self.navigationItem.hidesBackButton = true
         
-        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addAction(sender:)))
+        let addButton = UIBarButtonItem(title: "New Channel", style: .plain, target: self, action: #selector(addAction(sender:)))
         self.toolbarItems = [spacerFlex, addButton, spacerFlex]
 
         NotificationCenter.default.addObserver(self, selector: #selector(userDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil)
@@ -212,9 +210,7 @@ class ChannelPickerController: BaseTableController {
             let color = ColorArray.randomColor(seed: seed)
             self.navigationController?.navigationBar.barTintColor = color
             
-            self.groupQuery?.remove()
-            self.groupQuery = GroupQuery(groupId: groupId, userId: userId)
-            self.groupQuery!.observe(with: { group in
+            GroupQuery(groupId: groupId, userId: userId).once(with: { group in
                 if group != nil {
                     (self.titleView.customView as? UILabel)?.text = group!.title!
                     self.titleView.customView?.sizeToFit()
@@ -229,13 +225,19 @@ class ChannelPickerController: BaseTableController {
             self.unreadsTotalQuery?.remove()
             self.unreadsTotalQuery = UnreadQuery(level: .user, userId: userId)
             self.unreadsTotalQuery!.observe(with: { total in
-                self.unreadTotal = total
+                if total != self.unreadTotal {
+                    self.unreadTotal = total
+                    self.unreadOther = self.unreadTotal - self.unreadGroup
+                }
             })
             
             self.unreadsGroupQuery?.remove()
             self.unreadsGroupQuery = UnreadQuery(level: .group, userId: userId, groupId: groupId)
             self.unreadsGroupQuery!.observe(with: { total in
-                self.unreadGroup = total
+                if total != self.unreadGroup {
+                    self.unreadGroup = total
+                    self.unreadOther = self.unreadTotal - self.unreadGroup
+                }
             })
             
             self.channelsQuery = FireController.db.child("member-channels/\(userId)/\(groupId)").queryOrdered(byChild: "index_priority_joined_at_desc")
@@ -269,31 +271,23 @@ class ChannelPickerController: BaseTableController {
     }
     
     func updateBackButton() {
-        if self.unreadTotal != nil && self.unreadGroup != nil {
-            let unreadOther = (self.unreadTotal! - self.unreadGroup!)
+        let unreadOther = (self.unreadTotal - self.unreadGroup)
+        if let backButtonView = self.backButton.customView as? UnreadBackView {
+            backButtonView.badge.text = unreadOther > 0 ? "\(unreadOther)" : nil
+            backButtonView.setNeedsLayout()
+            backButtonView.layoutIfNeeded()
             if unreadOther > 0 {
-                if let backButtonView = self.backButton.customView as? UnreadBackView {
-                    backButtonView.badge.text = "\(unreadOther)"
-                    backButtonView.setNeedsLayout()
-                    backButtonView.layoutIfNeeded()
-                    backButtonView.badge.fadeIn()
-                    Log.d("ChannelPicker: Setting other groups unread to \(unreadOther)")
-                }
+                backButtonView.badge.fadeIn()
             }
             else {
-                if let backButtonView = self.backButton.customView as? UnreadBackView {
-                    backButtonView.badge.text = nil
-                    backButtonView.setNeedsLayout()
-                    backButtonView.layoutIfNeeded()
-                    backButtonView.badge.fadeOut()
-                    Log.d("ChannelPicker: Setting other groups unread to 0")
-                }
+                backButtonView.badge.fadeOut()
             }
+            Log.d("ChannelPicker: Setting other groups unread to \(unreadOther)")
         }
     }
     
     override var prefersStatusBarHidden: Bool {
-        return true
+        return false
     }
     
     func populateCell(_ tableView: UITableView, cellForRowAt indexPath: IndexPath, snap: FIRDataSnapshot) -> UITableViewCell {

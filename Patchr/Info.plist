@@ -28,7 +28,6 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>patchr</string>
-				<string>fb894654857249670</string>
 			</array>
 		</dict>
 	</array>
@@ -183,6 +182,13 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
 	<key>branch_key</key>
-	<string>key_live_aabKfhL9u6piQ93E2lzVslklzraKnSc3</string>
+	<dict>
+		<key>live</key>
+		<string>key_live_aabKfhL9u6piQ93E2lzVslklzraKnSc3</string>
+	</dict>
+	<key>branch_app_domain</key>
+	<string>bvvb.app.link</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 </dict>
 </plist>

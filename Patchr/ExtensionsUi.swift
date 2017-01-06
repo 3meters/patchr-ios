@@ -147,13 +147,13 @@ public extension UIView {
         self.frame = CGRect(x: view.frame.maxX + left, y: (view.frame.midY - (height / 2.0) + topPadding), width: width, height: height);
     }
 
-	func showShadow(rounded: Bool = false, cornerRadius: CGFloat = 0) {
+    func showShadow(offset: CGSize = CGSize(width: 0, height: 3), radius: CGFloat = 3.0, rounded: Bool = false, cornerRadius: CGFloat = 0) {
 		
 		self.layer.masksToBounds = false
 		self.layer.shadowColor = Colors.black.cgColor
-        self.layer.shadowOffset = CGSize(width:0, height:3)
+        self.layer.shadowOffset = offset
 		self.layer.shadowOpacity = 0.4
-		self.layer.shadowRadius = 3.0
+		self.layer.shadowRadius = radius
 		
 		if rounded {
 			self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: cornerRadius).cgPath

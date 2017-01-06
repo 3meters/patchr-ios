@@ -1,6 +1,14 @@
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/hyperium/hyper/master/LICENSE)
 
+## What's New
+### We are starting an SDK beta test program at Branch!
+
+Get priority updates and receive swag when you sign up and participate in the beta program.
+
+[Read about the Branch SDK Beta Program](https://github.com/BranchMetrics/ios-branch-deep-linking/wiki/The-Branch-SDK-Beta-Project)<br/>
+[Sign up for the Branch SDK Beta Program](https://docs.google.com/a/branch.io/forms/d/1fbXVFG11i-sQkd9pzHUu-U3B2qCBuwA64pVnsTQwQMo)
+
 # Branch Metrics iOS SDK Reference
 
 This is a repository of our open source iOS SDK, and the information presented here serves as a reference manual for our iOS SDK. See the table of contents below for a complete list of the content featured in this document.
@@ -32,6 +40,7 @@ ___
   + [Setting the user id for tracking influencers](#persistent-identities)
   + [Logging a user out](#logout)
   + [Tracking custom events](#register-custom-events)
+  + [Tracking Apple Search Ad Attribution](#apple-search-ads)
 
 4. Branch Universal Objects
   + [Instantiate a Branch Universal Object](#branch-universal-object)
@@ -436,7 +445,8 @@ Branch.getInstance().setIdentity(your user id)  // your user id should not excee
 
 #### Parameters
 
-None
+**identity** (NSString *) _required_
+: This is the alias you'd like to label your user in the Branch system. Note that we only support a single alias per user.
 
 ### Logout
 
@@ -502,7 +512,63 @@ Some example events you might want to track:
 
 ####Parameters
 
-None
+
+**event** (NSString *) _required_
+: This is the event string you'd like to send to Branch. You can view the attribution of which links drove events to occur in the analytics.
+
+**state** (NSDictionary *) _optional_
+: If you'd like to pass additional metadata along with the event, you should use this dictionary. For example, this is how you pass revenue into Branch using the BNCPurchaseAmount constant as a key.
+
+### Apple Search Ads
+
+Branch can help track your Apple Search Ad campaigns by fetching the search ad attribution from
+Apple at app install.  You can then use the parameters you've set in the Apple Search Ad dashboard,
+parameters such as the campaign name, and take special action in you app after an install, or simply
+track the effectiveness of a campaign in the Branch dashboard, along with other your other Branch
+statistics, such as total installs, referrals, and app link statistics.
+
+1. External resources
+  + [Apple Search Ads](https://searchads.apple.com/)
+  + [Apple Search Ads for Developers](https://developer.apple.com/app-store/search-ads/)
+  + [Apple Search Ads WWDC](https://developer.apple.com/videos/play/wwdc2016/302/)
+
+
+#### Methods
+
+##### `- (void) delayInitToCheckForSearchAds`
+
+Call this method to enable checking for Apple Search Ads before Branch initialization.  This method
+must be called before you initialize your Branch session.
+
+Note that this will add about 1 second from call to initSession to callback due to Apple's latency.
+
+###### Objective-C
+```objc
+[[Branch getInstance] delayInitToCheckForSearchAds];
+```
+
+###### Swift
+```swift
+Branch.getInstance().delayInitToCheckForSearchAds
+```
+
+##### `- (void) setAppleSearchAdsDebugMode`
+
+The `setAppleSearchAdsDebugMode` method sets the SDK into Apple Search Ad debug mode.  In this mode
+fake campaign params are returned 100% of the time.  This is for testing only.
+
+Warning: This should not be used in production.
+
+###### Objective-C
+```objc
+[[Branch getInstance] setAppleSearchAdsDebugMode];
+```
+
+###### Swift
+```swift
+Branch.getInstance().setAppleSearchAdsDebugMode
+```
+
 
 ## Branch Universal Object (for deep links, content analytics and indexing)
 

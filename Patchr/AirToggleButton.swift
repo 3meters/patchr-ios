@@ -14,7 +14,6 @@ class AirToggleButton: AirImageButton {
     var imageOn: UIImage?
     var messageOn: String?
     var messageOff: String?
-    var hitInsets: UIEdgeInsets = UIEdgeInsets.zero
     
     var toggledOn: Bool = false
     
@@ -30,7 +29,7 @@ class AirToggleButton: AirImageButton {
 	
 	func onClick(sender: AnyObject) { }
 		
-    override func initialize(){
+    override func initialize() {
         super.initialize()
         toggle(on: false, animate: false)
         self.progressAuto = false
@@ -48,15 +47,5 @@ class AirToggleButton: AirImageButton {
 		if animate {
 			Animation.bounce(view: self)
 		}
-    }
-    
-    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-        
-        let newRect = CGRect(x: 0 + hitInsets.left,
-                             y: 0 + hitInsets.top,
-                             width: self.frame.size.width - hitInsets.left - hitInsets.right,
-                             height: self.frame.size.height - hitInsets.top - hitInsets.bottom)
-        
-        return newRect.contains(point)
     }
 }

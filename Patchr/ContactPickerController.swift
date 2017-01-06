@@ -256,16 +256,16 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                     let userTitle = UserController.instance.userTitle
                     let userEmail = UserController.instance.userEmail
                     
-                    var recipients = [String]()
+                    var emails = [String]()
                     
                     for key in self.invites.keys {
                         let contact = self.invites[key] as! CNContact
                         let email = contact.emailAddresses.first?.value as? String
-                        recipients.append(email!)
+                        emails.append(email!)
                     }
                     
                     var task: [String: Any] = [:]
-                    task["recipients"] = recipients
+                    task["recipients"] = emails
                     task["type"] = "invite-members"
                     task["group"] = ["title": groupTitle]
                     task["user"] = ["title": userTitle, "email": userEmail]
@@ -288,6 +288,7 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
             BranchProvider.inviteGuest(group: StateController.instance.group, channel: self.channel, completion: { response, error in
                 
                 if error == nil {
+                    
                     let invite = response as! InviteItem
                     let inviteUrl = invite.url
                     let userTitle = UserController.instance.userTitle
@@ -298,16 +299,16 @@ class ContactPickerController: BaseTableController, UITableViewDelegate, UITable
                     let channel = self.channel!
                     let channelName = channel.name!
                     
-                    var recipients = [String]()
+                    var emails = [String]()
                     
                     for key in self.invites.keys {
                         let contact = self.invites[key] as! CNContact
                         let email = contact.emailAddresses.first?.value as? String
-                        recipients.append(email!)
+                        emails.append(email!)
                     }
                     
                     var task: [String: Any] = [:]
-                    task["recipients"] = recipients
+                    task["recipients"] = emails
                     task["type"] = "invite-guests"
                     task["group"] = ["title": groupTitle]
                     task["channel"] = ["name": channelName]

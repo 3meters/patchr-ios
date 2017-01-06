@@ -15,15 +15,16 @@ import SlideMenuControllerSwift
 
 class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     
-    var channelQuery: ChannelQuery?
-    var messagesQuery: FIRDatabaseQuery!
-    var unreadQuery: UnreadQuery?
     var inputChannelId: String?
     var inputGroupId: String?
     
+    var channelQuery: ChannelQuery?
+    var messagesQuery: FIRDatabaseQuery!
+    var unreadQuery: UnreadQuery?
+    
     var cellReuseIdentifier = "message-cell"
     var headerView: ChannelDetailView!
-    var unreadRefs = [FIRDatabaseReference]()
+    var unreadRefs = [[String: Any]]()
 
     var originalRect: CGRect?
     var originalHeaderRect: CGRect?
@@ -33,30 +34,15 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     var messageBar = UILabel()
     var messageBarTop = CGFloat(0)
     
-    var activity			= UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
-    var progressOffsetY     = Float(-48)
-    var progressOffsetX     = Float(8)
+    var activity = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+    var progressOffsetY = Float(-48)
+    var progressOffsetX = Float(8)
     
     var titleView: ChannelTitleView!
     var navButton: UIBarButtonItem!
     var titleButton: UIBarButtonItem!
     
-    var visible: Bool = false {
-        didSet {
-            if self.visible {
-                Log.d("Channel view controller is visible")
-                if self.unreadRefs.count > 0 {
-                    for ref in self.unreadRefs {
-                        ref.removeValue()
-                    }
-                    self.unreadRefs.removeAll()
-                }
-            }
-            else {
-                Log.d("Channel view controller is not visible")
-            }
-        }
-    }
+    var viewIsVisible = false
 
     /* Load more button displayed in table footer */
     var footerView			= UIView()
@@ -92,18 +78,19 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if self.slideMenuController() != nil && !self.slideMenuController()!.isLeftOpen() {
-            self.visible = true
-        }
+        self.viewIsVisible = (self.slideMenuController() != nil && !self.slideMenuController()!.isLeftOpen())
         iRate.sharedInstance().promptIfAllCriteriaMet()
         reachabilityChanged()
+        if self.viewIsVisible {
+            cleanupUnreads()
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        self.visible = false
+        self.viewIsVisible = false
     }
-
+    
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         
@@ -166,7 +153,6 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     }
     
     func browsePhotoAction(sender: AnyObject?) {
-        
         if let recognizer = sender as? UITapGestureRecognizer,
             let control = recognizer.view as? AirImageView,
             let container = control.superview as? MessageViewCell {
@@ -192,7 +178,6 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     }
 
     func editChannelAction() {
-        
         let controller = ChannelEditViewController()
         let wrapper = AirNavigationController()
         controller.mode = .update
@@ -275,23 +260,30 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     }
     
     func leftDidOpen() {
-        self.visible = false
+        self.viewIsVisible = false
     }
     
     func leftDidClose() {
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.LeftDidClose), object: self, userInfo: nil)
-        self.visible = true
+        self.viewIsVisible = (self.view.window != nil)
+        if self.viewIsVisible {
+            cleanupUnreads()
+        }
     }
     
     /*--------------------------------------------------------------------------------------------
     * MARK: - Notifications
     *--------------------------------------------------------------------------------------------*/
 
-    func applicationDidEnterBackground(sender: NSNotification) { }
-
-    func applicationWillEnterForeground(sender: NSNotification) {
-        /* User either switched to patchr or turned their screen back on. */
+    override func viewDidBecomeActive(sender: NSNotification) {
         reachabilityChanged()
+        Log.d(self.viewIsVisible
+            ? "Channel view controller is active and visible"
+            : "Channel view controller is active and not visible")
+    }
+    
+    override func viewWillResignActive(sender: NSNotification) {
+        Log.d("Channel view controller will resign active")
     }
     
     func messageDidChange(notification: NSNotification) {
@@ -391,7 +383,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.navButton.badgeOriginX = 12
         self.navButton.badgeBGColor = Theme.colorBackgroundBadge
         self.navButton.badgeValue = "\(UserController.instance.unreads)"
-
+        
         /* Title */
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.showChannelActions(sender:)))
         self.titleView = (Bundle.main.loadNibNamed("ChannelTitleView", owner: nil, options: nil)?.first as? ChannelTitleView)!
@@ -436,8 +428,6 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.view.addSubview(self.activity)
         
         NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged), name: ReachabilityChangedNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground(sender:)), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationWillEnterForeground(sender:)), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(messageDidChange(notification:)), name: NSNotification.Name(rawValue: Events.MessageDidUpdate), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(unreadChange(notification:)), name: NSNotification.Name(rawValue: Events.UnreadChange), object: nil)
     }
@@ -472,7 +462,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 return
             }
             
-            Log.d("Observe query result for channel: \(channel!)")
+            Log.d("ChannelViewController: observe callback for channel: \(channel!)")
             
             self?.channel = channel
             
@@ -482,7 +472,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
             self?.unreadQuery = UnreadQuery(level: .channel, userId: userId, groupId: groupId, channelId: channelId)
             self?.unreadQuery!.observe(with: { [weak self] total in
                 if self != nil {
-                    Log.d("Observe query result for channel unreads: \(total): \(self!.channel?.name!)")
+                    Log.d("ChannelViewController: observe callback for channel unreads: \(total): \(channel!.name!)")
                     if total == 0 && self!.channel?.priority == 0 {
                         self!.channel?.clearUnreadSorting()
                     }
@@ -530,6 +520,18 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.tableView.dataSource = self.tableViewDataSource
     }
     
+    func cleanupUnreads() {
+        if self.unreadRefs.count > 0 {
+            for ref in self.unreadRefs {
+                let groupId = ref["groupId"] as! String
+                let channelId = ref["channelId"] as! String
+                let messageId = ref["messageId"] as! String
+                FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId)
+            }
+            self.unreadRefs.removeAll()
+        }
+    }
+    
     func populateCell(_ tableView: UITableView, cellForRowAt indexPath: IndexPath, snap: FIRDataSnapshot) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: self.cellReuseIdentifier, for: indexPath) as! WrapperTableViewCell
@@ -572,14 +574,19 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
                 }
                 
                 let unreadPath = "unreads/\(userId)/\(groupId)/\(channelId)/\(message.id!)"
+                let messageId = message.id!
                 FireController.db.child(unreadPath).observeSingleEvent(of: .value, with: { snap in
                     if !(snap.value is NSNull) {
                         messageView.unread.isHidden = false
-                        if self.visible {
-                            snap.ref.removeValue()
+                        if self.viewIsVisible {
+                            FireController.instance.clearMessageUnread(messageId: messageId, channelId: channelId, groupId: groupId)
                         }
                         else {
-                            self.unreadRefs.append(snap.ref)
+                            var task: [String: Any] = [:]
+                            task["groupId"] = groupId
+                            task["channelId"] = channelId
+                            task["messageId"] = messageId
+                            self.unreadRefs.append(task)
                         }
                     }
                 })

@@ -11,6 +11,7 @@ import UIKit
 class BaseTableController: UIViewController {
 	
     var activity = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+    var controllerIsActive = false
     var statusBarHidden: Bool = false {
         didSet {
             UIView.animate(withDuration: 0.5) { () -> Void in
@@ -29,6 +30,11 @@ class BaseTableController: UIViewController {
 	* Lifecycle
 	*--------------------------------------------------------------------------------------------*/
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.controllerIsActive = (UIApplication.shared.applicationState == .active)
+    }
+    
     override func viewWillLayoutSubviews() {
         self.activity.anchorInCenter(withWidth: 20, height: 20)
     }
@@ -38,8 +44,18 @@ class BaseTableController: UIViewController {
 	}
 	
 	/*--------------------------------------------------------------------------------------------
-	* Events
+	* Notifications
 	*--------------------------------------------------------------------------------------------*/
+    
+    func viewDidBecomeActive(sender: NSNotification) {
+        /* User either switched to app, launched app, or turned their screen back on with app in foreground. */
+        self.controllerIsActive = true
+    }
+    
+    func viewWillResignActive(sender: NSNotification) {
+        /* User either switched away from app or turned their screen off. */
+        self.controllerIsActive = false
+    }
 
 	/*--------------------------------------------------------------------------------------------
 	* Methods
@@ -49,6 +65,8 @@ class BaseTableController: UIViewController {
         self.view.backgroundColor = Theme.colorBackgroundForm
         self.activity.color = Theme.colorActivityIndicator
         self.activity.hidesWhenStopped = true
+        NotificationCenter.default.addObserver(self, selector: #selector(viewWillResignActive(sender:)), name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(viewDidBecomeActive(sender:)), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
 	}
 	
 	func close(animated: Bool = true) {

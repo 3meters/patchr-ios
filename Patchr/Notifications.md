@@ -1,41 +1,43 @@
 Notifications
 -------------
 
-BADGING AND UNREAD
+UNREADS
 
-** Data Tracking Local ** 
+** Unread state **
 
-When a remote notification is received, group and channel unread counts are incremented.
-If the application is in the background then app badge is incremented too. The associated
-message is tracked as unread in an unread map in the Notification controller. 
+All unread state is tracked in the service database at the message, channel, group,
+and user level. 
 
-** Data Tracking Persisted ** 
+** Patchr Cloud ** 
 
-When a remote notification is received, the priority for the members channel link is
-set to zero so it sorts to the top.
+- Unread flagging when messages are created (via notification queue)
+- Manage channel sorting to promote channels with unread messages
+- Manage user total unreads counter
+- Clear unreads on message, channel, group delete
+- Clear unreads when leaving channel, group
 
-** Data Tracking Clearing ** 
 
-- App Badge: Bringing app to the foreground always clears the app badge.
-- Group Badge: Setting the current group sets the group unread count to zero.
-- Channel Badge: Setting the current channel sets the channel unread count to zero. Viewing 
-  a channel restores it's priority to normal. 
-- Message Indicator: Viewing a message in channel view controller will clear the unread
-  flag in the notification controller unread map. 
+BADGING
 
-** UI Tracking **
+- App icon shows badging based on user unread counter. Set via remote notification
+  or direct from firebase database.
+- Drawer button shows user unread counter in-sync with app icon.
+- Group and channel pickers show unread counts via firebase.
+- Messages show unread indicator via firebase.
 
-App icon shows badge. Group and channel items show badge with count based on count tracking
-in notification controller. Messages show an unread indicator.
+** Clearing ** 
+
+Unread clearing is done at the message level when the user actively views the message. 
+Additional clearing is done based on deletions and leaving channels/groups.
+Channel sorting is returned to normal when no remaining unreads. 
+
 
 REMOTE NOTIFICATIONS
 
-/*
-iOS 10.1
+** iOS 10.1 **
 
 App in foreground
-- didReceiveRemoteNotification
-- willPresent
+- didReceiveRemoteNotification (willPresent is also an option that we do not use)
 
 App running in background
 - didReceiveRemoteNotification
@@ -47,6 +49,11 @@ App killed by user
 - App is not launched, badging must be delivered with notification.
 
 App suspended by system
-- App is launched, initial badging based on badge notification property, overwritten
-by app if desired.
-*/
+- App is launched, badging based on badge notification property.
+
+** iOS 9.0 or less **
+
+Exceptions to above:
+
+App running in background: tap notification
+- didReceiveRemoteNotification (state == .inactive)

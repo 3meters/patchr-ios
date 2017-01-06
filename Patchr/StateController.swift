@@ -54,8 +54,8 @@ class StateController: NSObject {
                 
                 if let settings = UserDefaults.standard.dictionary(forKey: groupId),
                     let lastChannelId = settings["currentChannelId"] as? String {
-                    let validateQuery = ChannelQuery(groupId: groupId, channelId: lastChannelId, userId: userId)
-                    validateQuery.once(with: { channel in
+                    let channelQuery = ChannelQuery(groupId: groupId, channelId: lastChannelId, userId: userId)
+                    channelQuery.once(with: { channel in
                         if channel == nil {
                             Log.w("Last channel invalid: \(lastChannelId): trying first channel")
                             FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in

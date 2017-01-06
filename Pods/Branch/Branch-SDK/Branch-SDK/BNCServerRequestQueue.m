@@ -131,6 +131,21 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
     return NO;
 }
 
+- (BOOL)removeInstallOrOpen {
+    @synchronized (self.queue) {
+        for (int i = 0; i < self.queue.count; i++) {
+            BranchOpenRequest *req = [self.queue objectAtIndex:i];
+            // Install extends open, so only need to check open.
+            if ([req isKindOfClass:[BranchOpenRequest class]]) {
+                req.callback = nil;
+                [self remove:req];
+                return YES;
+            }
+        }
+        return NO;
+    }
+}
+
 - (BranchOpenRequest *)moveInstallOrOpenToFront:(NSInteger)networkCount {
     BOOL requestAlreadyInProgress = networkCount > 0;
 
@@ -237,10 +252,7 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
     @try {
         NSError *error = nil;
         NSData *data = [NSData dataWithContentsOfURL:self.class.URLForQueueFile options:0 error:&error];
-        if (error || !data)
-            [[BNCPreferenceHelper preferenceHelper] logWarning:
-                [NSString stringWithFormat:@"Error loading network queue: %@.", error]];
-        else
+        if (!error && data)
             encodedRequests = [NSKeyedUnarchiver unarchiveObjectWithData:data];
     }
     @catch (NSException *exception) {
@@ -294,9 +306,9 @@ NSUInteger const BATCH_WRITE_TIMEOUT = 3;
     return path;
 }
 
-+ (NSURL*) URLForQueueFile {
++ (NSURL* _Nonnull) URLForQueueFile {
     NSURL *URL = [BNCPreferenceHelper URLForBranchDirectory];
-    URL = [URL URLByAppendingPathComponent:BRANCH_QUEUE_FILE];
+    URL = [URL URLByAppendingPathComponent:BRANCH_QUEUE_FILE isDirectory:NO];
     return URL;
 }
 

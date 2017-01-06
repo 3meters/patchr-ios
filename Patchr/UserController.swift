@@ -96,9 +96,13 @@ class UserController: NSObject {
         
         Log.i("User logged in: \(userId)")
         
+        FireController.db.child("unreads/\(userId)").keepSynced(true)
         if let token = FIRInstanceID.instanceID().token() {
+            Log.i("UserController: setting firebase messaging token: \(token)")
             FireController.db.child("installs/\(userId)/\(token)").setValue(true)
-            FireController.db.child("unreads/\(userId)").keepSynced(true)
+        }
+        else {
+            Log.w("No firebase messaging token - device not registered for remote notifications")
         }
         
         self.userId = userId

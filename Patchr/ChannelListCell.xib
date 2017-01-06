@@ -14,12 +14,11 @@
             <rect key="frame" x="0.0" y="0.0" width="389" height="36"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="LTM-Mi-qV7" id="f05-yI-zfl">
-                <rect key="frame" x="0.0" y="0.0" width="389" height="35.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="389" height="35"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="imgStarFilledLight" translatesAutoresizingMaskIntoConstraints="NO" id="MzM-rM-rpX">
                         <rect key="frame" x="12" y="10" width="16" height="16"/>
-                        <color key="tintColor" red="1" green="0.71764705880000002" blue="0.30196078430000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="16" id="4Ze-kp-eLh"/>
                             <constraint firstAttribute="width" constant="16" id="Dbz-Qn-smc"/>
@@ -36,7 +35,6 @@
                     </label>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="imgLockLight" translatesAutoresizingMaskIntoConstraints="NO" id="Tdc-C9-Sed">
                         <rect key="frame" x="218" y="10" width="16" height="16"/>
-                        <color key="tintColor" red="1" green="0.71764705880000002" blue="0.30196078430000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="16" id="3cv-o2-EF8"/>
                             <constraint firstAttribute="width" constant="16" id="rka-wR-vMS"/>

@@ -8,13 +8,11 @@
 
 import UIKit
 
-class AirScrimButton: UIButton {
+class AirScrimButton: AirButtonBase {
     
-    var data: AnyObject?
-
 	required init(coder aDecoder: NSCoder) {
 		/* Called when instantiated from XIB or Storyboard */
-		super.init(coder: aDecoder)!
+		super.init(coder: aDecoder)
 		initialize()
 	}
 	

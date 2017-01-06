@@ -8,11 +8,11 @@
 
 import UIKit
 
-class AirFeaturedButton: UIButton {
+class AirFeaturedButton: AirButtonBase {
 
 	required init(coder aDecoder: NSCoder) {
 		/* Called when instantiated from XIB or Storyboard */
-		super.init(coder: aDecoder)!
+		super.init(coder: aDecoder)
 		initialize()
 	}
 	

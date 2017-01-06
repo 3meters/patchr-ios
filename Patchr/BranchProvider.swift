@@ -72,7 +72,7 @@ class BranchProvider: NSObject {
             }
             else {
                 Log.d("Branch member invite link created: \(url)", breadcrumb: true)
-                let invite: InviteItem = InviteItem(group: nil, url: url)
+                let invite: InviteItem = InviteItem(group: nil, url: url!)
                 completion(invite, nil)
             }
         })
@@ -125,7 +125,7 @@ class BranchProvider: NSObject {
             }
             else {
                 Log.d("Branch guest invite link created: \(url)", breadcrumb: true)
-                let invite: InviteItem = InviteItem(group: nil, url: url)
+                let invite: InviteItem = InviteItem(group: nil, url: url!)
                 completion(invite, nil)
             }
         })

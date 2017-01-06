@@ -18,7 +18,6 @@ class GroupPickerController: BaseTableController {
     var gradientImage: UIImage!
     var messageLabel = AirLabelTitle()
     var tableView = UITableView(frame: CGRect.zero, style: .plain)
-    var footerView = AirLinkButton()
     var rule = UIView()
     var buttonLogin	= AirButton()
     var buttonSignup = AirButton()
@@ -50,7 +49,6 @@ class GroupPickerController: BaseTableController {
         if self.simplePicker {
             self.navigationController?.navigationBar.setBackgroundImage(self.gradientImage, for: .default)
             self.navigationController?.navigationBar.tintColor = Colors.white
-            self.navigationController?.setToolbarHidden(false, animated: true)
         }
     }
     
@@ -72,8 +70,7 @@ class GroupPickerController: BaseTableController {
         self.rule.alignUnder(self.messageLabel, centeredFillingWidthWithLeftAndRightPadding: 0, topPadding: 0, height: 1)
         
         if self.groupAvailable {
-            self.footerView.anchorBottomCenterFillingWidth(withLeftAndRightPadding: 0, bottomPadding: 0, height: 48)
-            self.tableView.alignBetweenTop(self.rule, andBottom: self.footerView, centeredWithLeftAndRightPadding: 0, topAndBottomPadding: 0)
+            self.tableView.alignUnder(self.rule, matchingLeftAndRightFillingHeightWithTopPadding: 0, bottomPadding: 0)
         }
         else {
             self.buttonGroup.anchorInCenter(withWidth: 240, height: 96)
@@ -170,7 +167,8 @@ class GroupPickerController: BaseTableController {
             self.navigationItem.rightBarButtonItems = [closeButton]
             self.navigationItem.leftBarButtonItems = [self.titleView]
             
-            let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addAction(sender:)))
+            self.navigationController?.setToolbarHidden(false, animated: true)
+            let addButton = UIBarButtonItem(title: "New Group", style: .plain, target: self, action: #selector(addAction(sender:)))
             self.toolbarItems = [spacerFlex, addButton, spacerFlex]
             
             return
@@ -193,14 +191,6 @@ class GroupPickerController: BaseTableController {
                 self.view.addSubview(self.messageLabel)
                 self.view.addSubview(self.rule)
                 
-                self.footerView.setImage(UIImage(named: "imgAddCircleLight"), for: .normal)
-                self.footerView.imageView!.contentMode = .scaleAspectFit
-                self.footerView.imageView?.tintColor = Colors.brandOnLight
-                self.footerView.imageEdgeInsets = UIEdgeInsetsMake(8, 8, 8, 8)
-                self.footerView.contentHorizontalAlignment = .center
-                self.footerView.backgroundColor = Colors.gray95pcntColor
-                self.footerView.addTarget(self, action: #selector(self.addAction(sender:)), for: .touchUpInside)
-                
                 self.cellReuseIdentifier = "group-cell"
                 self.tableView.backgroundColor = Theme.colorBackgroundTable
                 self.tableView.delegate = self
@@ -210,7 +200,10 @@ class GroupPickerController: BaseTableController {
                 self.tableView.register(UINib(nibName: "GroupListCell", bundle: nil), forCellReuseIdentifier: self.cellReuseIdentifier)
                 
                 self.view.addSubview(self.tableView)
-                self.view.addSubview(self.footerView)
+                
+                self.navigationController?.setToolbarHidden(false, animated: true)
+                let addButton = UIBarButtonItem(title: "New Group", style: .plain, target: self, action: #selector(self.addAction(sender:)))
+                self.toolbarItems = [spacerFlex, addButton, spacerFlex]
                 
                 if self.presented {
                     let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(self.closeAction(sender:)))
@@ -238,6 +231,7 @@ class GroupPickerController: BaseTableController {
                 self.buttonSignup.addTarget(self, action: #selector(self.addAction(sender:)), for: .touchUpInside)
                 
                 /* Navigation bar buttons */
+                self.navigationController?.setToolbarHidden(true, animated: true)
                 let logoutButton = UIBarButtonItem(title: "Log out", style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.logoutAction(sender:)))
                 self.navigationItem.rightBarButtonItems = [logoutButton]
             }
@@ -310,57 +304,38 @@ extension GroupPickerController: UITableViewDelegate {
             validateQuery.once(with: { channel in
                 if channel == nil {
                     Log.w("Last channel invalid: \(lastChannelId): trying first channel")
-                    FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
-                        if firstChannelId != nil {
-                            if !self.simplePicker {
-                                StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
-                                MainController.instance.showChannel(groupId: groupId, channelId: firstChannelId!)
-                                let _ = self.navigationController?.popToRootViewController(animated: false)
-                                self.closeAction(sender: nil)
-                            }
-                            else {
-                                StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
-                                MainController.instance.showChannel(groupId: groupId, channelId: firstChannelId!)
-                                let controller = MainController.instance.channelPickerController
-                                self.navigationController?.pushViewController(controller, animated: true)
-                            }
+                    FireController.instance.findFirstChannel(groupId: groupId) { channelId in
+                        if channelId != nil {
+                            self.showChannel(channelId: channelId!, groupId: groupId)
                         }
                     }
                 }
                 else {
-                    if !self.simplePicker {
-                        StateController.instance.setChannelId(channelId: lastChannelId, groupId: groupId)
-                        MainController.instance.showChannel(groupId: groupId, channelId: lastChannelId)
-                        let _ = self.navigationController?.popToRootViewController(animated: false)
-                        self.closeAction(sender: nil)
-                    }
-                    else {
-                        StateController.instance.setChannelId(channelId: lastChannelId, groupId: groupId)
-                        MainController.instance.showChannel(groupId: groupId, channelId: lastChannelId)
-                        let controller = MainController.instance.channelPickerController
-                        self.navigationController?.pushViewController(controller, animated: true)
-                    }
+                    self.showChannel(channelId: lastChannelId, groupId: groupId)
                 }
             })
         }
         else {
-            FireController.instance.findFirstChannel(groupId: groupId) { firstChannelId in
-                if firstChannelId != nil {
-                    if !self.simplePicker {
-                        StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
-                        MainController.instance.showMain()
-                        MainController.instance.showChannel(groupId: groupId, channelId: firstChannelId!)
-                        let _ = self.navigationController?.popToRootViewController(animated: false)
-                        self.closeAction(sender: nil)
-                    }
-                    else {
-                        StateController.instance.setChannelId(channelId: firstChannelId!, groupId: groupId)
-                        MainController.instance.showChannel(groupId: groupId, channelId: firstChannelId!)
-                        let controller = MainController.instance.channelPickerController
-                        self.navigationController?.pushViewController(controller, animated: true)
-                    }
+            FireController.instance.findFirstChannel(groupId: groupId) { channelId in
+                if channelId != nil {
+                    self.showChannel(channelId: channelId!, groupId: groupId)
                 }
             }
+        }
+    }
+    
+    func showChannel(channelId: String, groupId: String) {
+        if !self.simplePicker {
+            StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
+            MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+            let _ = self.navigationController?.popToRootViewController(animated: false)
+            self.closeAction(sender: nil)
+        }
+        else {
+            StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
+            MainController.instance.showChannel(groupId: groupId, channelId: channelId)
+            let controller = MainController.instance.channelPickerController
+            self.navigationController?.pushViewController(controller, animated: true)
         }
     }
 }

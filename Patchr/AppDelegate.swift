@@ -159,6 +159,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     func applicationDidBecomeActive(_ application: UIApplication) {
         Log.d("Application did become active", breadcrumb: true)
         connectToFcm()
+        FIRDatabase.database().goOnline()
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
@@ -168,8 +169,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     func applicationDidEnterBackground(_ application: UIApplication) {
         Log.d("Application did enter background", breadcrumb: true)
         disconnectFromFcm()
+        FIRDatabase.database().goOffline()
     }
-
+    
     /*--------------------------------------------------------------------------------------------
     * MARK: - Remote Notifications
     *--------------------------------------------------------------------------------------------*/
@@ -183,11 +185,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
          * We have thirty seconds to process and call the completion handler before being
          * terminated if the app was started to process the notification.
          */
-        let appState = (application.applicationState == .background)
-            ? "background" : (application.applicationState == .active)
-            ? "active" : "inactive"
-        
-        Log.d("Notification received - app state: \(appState)")
+        Log.d("Notification received - app state: \(Utils.appState())")
         
         if application.applicationState == .inactive {
             if !StateController.instance.stateIntialized {
@@ -205,6 +203,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
             let userInfo = ["groupId": groupId, "channelId": channelId, "messageId": messageId]
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: userInfo)
         }
+        
+        FIRMessaging.messaging().appDidReceiveMessage(userInfo)
         completionHandler(.noData)
     }
     
@@ -213,9 +213,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        Log.d("Success registering for remote notifications")
+        Log.d("Success registering for remote notifications: APNS: \(deviceToken.description)")
         FIRInstanceID.instanceID().setAPNSToken(deviceToken, type: .unknown)
-        Log.d("APNS: \(deviceToken)")
+        if let token = FIRInstanceID.instanceID().token(),
+            let userId = UserController.instance.userId {
+            Log.i("AppDelegate: setting firebase messaging token: \(userId)")
+            FireController.db.child("installs/\(userId)/\(token)").setValue(true)
+        }
     }
     
     func stateInitialized(notification: AnyObject?) {
@@ -239,14 +243,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
      *--------------------------------------------------------------------------------------------*/
     
     func applicationReceivedRemoteMessage(_ remoteMessage: FIRMessagingRemoteMessage) {
-        /* Receive data message on iOS 10 devices while app is in the foreground. */
+        /* 
+         * Receive data message on iOS 10 devices while app is in the foreground. Must
+         * include data object in notification and NOT include notification object.
+         */
         Log.d(remoteMessage.appData.description)
     }
     
     func tokenRefreshNotification(_ notification: Notification) {
         if let token = FIRInstanceID.instanceID().token(),
             let userId = UserController.instance.userId {
-            Log.d("InstanceID token: \(token)")
+            Log.i("AppDelegate: refreshing firebase messaging token: \(userId)")
             FireController.db.child("installs/\(userId)/\(token)").setValue(true)
             connectToFcm() /* Connect to FCM since connection may have failed when attempted before having a token. */
         }

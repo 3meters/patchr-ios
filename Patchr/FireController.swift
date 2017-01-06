@@ -483,6 +483,19 @@ class FireController: NSObject {
         }
     }
     
+    func clearMessageUnread(messageId: String, channelId: String, groupId: String) {
+        let userId = UserController.instance.userId!
+        let unreadPath = "unreads/\(userId)/\(groupId)/\(channelId)/\(messageId)"
+        FireController.db.child(unreadPath).removeValue()
+        FireController.db.child("users/\(userId)/unreads").runTransactionBlock { currentData -> FIRTransactionResult in
+            if let currentUnreads = currentData.value as? NSNumber {
+                currentData.value = currentUnreads.intValue - 1
+                return FIRTransactionResult.success(withValue: currentData)
+            }
+            return FIRTransactionResult.success(withValue: currentData)
+        }
+    }
+    
     func findFirstChannel(groupId: String, next: ((String?) -> Void)? = nil) {
         let userId = UserController.instance.userId!
         let query = FireController.db.child("member-channels/\(userId)/\(groupId)").queryOrdered(byChild: "index_priority_joined_at_desc").queryLimited(toFirst: 1)

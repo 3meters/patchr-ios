@@ -9,7 +9,7 @@
 import UIKit
 import SDWebImage
 
-class AirImageButton: UIButton {
+class AirImageButton: AirButtonBase {
 
     var fromUrl: URL?
     var fallbackUrl: URL?
@@ -22,7 +22,7 @@ class AirImageButton: UIButton {
     private var progressSize: CGFloat = 12
     
     required init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)!
+        super.init(coder: aDecoder)
         initialize()
     }
     

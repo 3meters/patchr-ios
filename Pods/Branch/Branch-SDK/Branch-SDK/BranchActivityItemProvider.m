@@ -63,7 +63,7 @@
     }
     
     // Because Facebook et al immediately scrape URLs, we add an additional parameter to the existing list, telling the backend to ignore the first click
-    NSArray *scrapers = @[@"Facebook", @"Twitter", @"Slack", @"com.apple.mobilenotes.SharingExtension"];
+    NSArray *scrapers = @[@"Facebook", @"Twitter", @"Slack", @"Apple Notes"];
     for (NSString *scraper in scrapers) {
         if ([channel isEqualToString:scraper])
             return [NSURL URLWithString:[[Branch getInstance] getShortURLWithParams:params andTags:tags andChannel:channel andFeature:feature andStage:stage andCampaign:campaign andAlias:alias ignoreUAString:self.userAgentString forceLinkCreation:YES]];
@@ -88,10 +88,18 @@
         @"flickr", UIActivityTypePostToFlickr,
         @"Tencent Weibo", UIActivityTypePostToTencentWeibo,
         @"Vimeo", UIActivityTypePostToVimeo,
+        @"Apple Notes", @"com.apple.mobilenotes.SharingExtension",
         @"Slack", @"com.tinyspeck.chatlyio.share",
         @"WhatsApp", @"net.whatsapp.WhatsApp.ShareExtension",
         @"WeChat", @"com.tencent.xin.sharetimeline",
         @"LINE", @"jp.naver.line.Share",
+		@"Pinterest", @"pinterest.ShareExtension",
+
+        //  Keys for older app versions --
+
+        @"Facebook",    @"com.facebook.Facebook.ShareExtension",
+        @"Twitter",     @"com.atebits.Tweetie2.ShareExtension",
+
         nil
     ];
     // Set to a more human readible sting if we can identify it
