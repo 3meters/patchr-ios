@@ -19,8 +19,8 @@ class MainController: NSObject, iRateDelegate {
     static let instance = MainController()
     var window: UIWindow?
     var upgradeRequired = false
-    var channelPicker = ChannelPickerController()
-    var groupPicker = GroupPickerController()
+    static let channelPicker = ChannelPickerController()
+    static let groupPicker = GroupPickerController()
 
     private override init() { }
 
@@ -96,7 +96,7 @@ class MainController: NSObject, iRateDelegate {
         SlideMenuOptions.animationDuration = CGFloat(0.2)
         SlideMenuOptions.simultaneousGestureRecognizers = false
         
-        self.groupPicker.simplePicker = true
+        MainController.groupPicker.simplePicker = true
 
         self.window?.setRootViewController(rootViewController: EmptyViewController(), animated: true) // While we wait for state to initialize
         self.window?.makeKeyAndVisible()
@@ -154,10 +154,6 @@ class MainController: NSObject, iRateDelegate {
             }
         }
         
-        if let rootWrapper = self.window?.rootViewController as? AirNavigationController {
-            rootWrapper.viewControllers = []
-        }
-        
         self.window?.setRootViewController(rootViewController: wrapper, animated: true) // Fade in
         then?()
     }
@@ -176,7 +172,7 @@ class MainController: NSObject, iRateDelegate {
             , leftMenuViewController: drawerWrapper
             , rightMenuViewController: menuController)
         
-        drawerWrapper.viewControllers = [self.groupPicker, self.channelPicker]
+        drawerWrapper.viewControllers = [MainController.groupPicker, MainController.channelPicker]
         
         if let emptyController = self.window?.rootViewController as? EmptyViewController,
             !emptyController.scenePlayed {

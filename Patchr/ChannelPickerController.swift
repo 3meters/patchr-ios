@@ -31,6 +31,8 @@ class ChannelPickerController: BaseTableController {
     var searchButton: UIBarButtonItem!
     var titleButton: UIBarButtonItem!
     
+    var role = "guest"
+    
     var unreadTotal = 0
     var unreadGroup = 0
     var unreadOther: Int? {
@@ -108,7 +110,6 @@ class ChannelPickerController: BaseTableController {
     
     func channelDidSwitch(notification: NSNotification?) {
         self.tableView.reloadData()
-        self.searchController.load()
     }
     
     func leftDidClose(notification: NSNotification?) {
@@ -208,6 +209,9 @@ class ChannelPickerController: BaseTableController {
             
             FireController.db.child("member-groups/\(userId)/\(groupId)/role").observeSingleEvent(of: .value, with: { [weak self] snap in
                 if let role = snap.value as? String {
+                    self?.searchController.role = role
+                    self?.searchController.load()
+
                     if role == "guest" {
                         self?.navigationController?.setToolbarHidden(true, animated: true)
                         self?.toolbarItems = []
@@ -260,7 +264,6 @@ class ChannelPickerController: BaseTableController {
             
             self.tableView.dataSource = self.tableViewDataSource
             self.view.setNeedsLayout()
-            self.searchController.load()
         }
     }
     
@@ -394,16 +397,12 @@ extension ChannelPickerController: UISearchResultsUpdating {
     }
 }
 
-extension ChannelPickerController: SlideMenuControllerDelegate {
-    
-}
-
 class SearchController: NSObject, UITableViewDataSource {
     
     var channelsSource = [FireChannel]()
     var channelsFiltered = [FireChannel]()
     var tableView: UITableView? = nil
-    var loading = false
+    var role: String!
     
     init(tableView: UITableView) {
         self.tableView = tableView
@@ -418,12 +417,6 @@ class SearchController: NSObject, UITableViewDataSource {
     
     func load() {
         
-        guard !self.loading else {
-            Log.w("Attempt to reload search while loading")
-            return
-        }
-        
-        self.loading = true
         self.channelsSource.removeAll()
         self.channelsFiltered.removeAll()
         
@@ -431,28 +424,30 @@ class SearchController: NSObject, UITableViewDataSource {
         let groupId = StateController.instance.groupId!
 
         let query = FireController.db.child("group-channels/\(groupId)").queryOrdered(byChild: "name")
-        let debouncer = Debouncer(delay: 0.5) {
-            self.loading = false
-        }
         
-        query.observe(.childAdded, with: { snap in
-            debouncer.call()
-            if !(snap.value is NSNull) {
-                if let channel = FireChannel.from(dict: snap.value as? [String: Any], id: snap.key) {
-                    let path = "member-channels/\(userId)/\(groupId)/\(channel.id!)"
-                    FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
-                        if !(snap.value is NSNull) {
-                            let link = snap.value as! [String: Any]
-                            channel.membershipFrom(dict: link)
-                            self.channelsSource.append(channel) // Channels user is a member of
-                        }
-                        else {
-                            /* Open channels user is not a member of and they are not a guest member */
-                            if StateController.instance.group.role != "guest" && channel.visibility == "open" {
-                                self.channelsSource.append(channel)
+        query.observe(.value, with: { [weak self] snap in
+            self?.channelsSource.removeAll()
+            if !(snap.value is NSNull) && snap.hasChildren() {
+                for item in snap.children {
+                    let snapChannel = item as! FIRDataSnapshot
+                    if let channel = FireChannel.from(dict: snapChannel.value as? [String: Any], id: snapChannel.key) {
+                        let channelId = channel.id!
+                        let path = "member-channels/\(userId)/\(groupId)/\(channelId)"
+                        FireController.db.child(path).observeSingleEvent(of: .value, with: { snap in
+                            if !(snap.value is NSNull) {
+                                /* Channels public or private the user is already a member of */
+                                let link = snap.value as! [String: Any]
+                                channel.membershipFrom(dict: link)
+                                self?.channelsSource.append(channel) // Channels user is a member of
                             }
-                        }
-                    })
+                            else {
+                                /* Open channels user is not a member of and they are not a guest member */
+                                if self?.role != "guest" && channel.visibility == "open" {
+                                    self?.channelsSource.append(channel)
+                                }
+                            }
+                        })
+                    }
                 }
             }
         })

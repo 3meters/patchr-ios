@@ -84,7 +84,7 @@ class SettingsTableViewController: UITableViewController {
             message: "Are you sure you want to leave this group? An invitation may be required to rejoin.",
             actionTitle: "Leave", cancelTitle: "Cancel", delegate: self) { doIt in
                 if doIt {
-                    self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
+                    self.progress = AirProgress.showAdded(to: MainController.instance.window!, animated: true)
                     self.progress!.mode = MBProgressHUDMode.indeterminate
                     self.progress!.styleAs(progressStyle: .activityWithText)
                     self.progress!.minShowTime = 0.5
@@ -96,7 +96,7 @@ class SettingsTableViewController: UITableViewController {
                         let userId = UserController.instance.userId!
                         FireController.instance.removeUserFromGroup(userId: userId, groupId: group.id!, then: { success in
                             self.progress?.hide(true)
-                            self.dismiss(animated: true, completion: nil)
+                            self.dismiss(animated: true)
                             StateController.instance.clearGroup()   // Make sure group and channel are both unset
                             let controller = GroupPickerController()
                             let wrapper = AirNavigationController()
@@ -109,22 +109,14 @@ class SettingsTableViewController: UITableViewController {
     }
 
     func logoutAction(sender: AnyObject) {
-
-        self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
-        self.progress!.mode = MBProgressHUDMode.indeterminate
-        self.progress!.styleAs(progressStyle: .activityWithText)
-        self.progress!.minShowTime = 0.5
-        self.progress!.labelText = "Logging out..."
-        self.progress!.removeFromSuperViewOnHide = true
-        self.progress!.show(true)
-        
-        UserController.instance.logout()
-        self.dismiss(animated: true, completion: nil)
+        self.dismiss(animated: true) {
+            UserController.instance.logout()
+        }
     }
 
     func clearHistoryAction(sender: AnyObject) {
 
-        self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
+        self.progress = AirProgress.showAdded(to: MainController.instance.window!, animated: true)
         self.progress!.mode = MBProgressHUDMode.indeterminate
         self.progress!.styleAs(progressStyle: .activityWithText)
         self.progress!.minShowTime = 0.5
@@ -140,7 +132,7 @@ class SettingsTableViewController: UITableViewController {
     
     func closeAction(sender: AnyObject?){
         if self.presented {
-            self.dismiss(animated: true, completion: nil)
+            self.dismiss(animated: true)
         }
         else {
             let _ = self.navigationController?.popViewController(animated: true)

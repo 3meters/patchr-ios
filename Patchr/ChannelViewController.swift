@@ -66,13 +66,14 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         }
         set {
             self.localTyping = newValue
-            let username = UserController.instance.user!.username!
-            let userId = UserController.instance.userId!
-            if self.localTyping {
-                self.typingRef.child(userId).setValue(username)
-            }
-            else {
-                self.typingRef.child(userId).removeValue()
+            if let username = UserController.instance.user?.username {
+                let userId = UserController.instance.userId!
+                if self.localTyping {
+                    self.typingRef.child(userId).setValue(username)
+                }
+                else {
+                    self.typingRef.child(userId).removeValue()
+                }
             }
         }
     }
@@ -501,13 +502,13 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         
         self.typingRef = FireController.db.child("typing/\(groupId)/\(channelId)")
         self.typingRef.child(userId).onDisconnectRemoveValue()
-        self.typingHandle = self.typingRef.observe(.value, with: { snap in
-            if !(snap.value is NSNull) && snap.hasChildren() {
-                if snap.childrenCount == 1 && self.isTyping { return }  // Just me
+        self.typingHandle = self.typingRef.observe(.value, with: { [weak self] snap in
+            if self != nil && !(snap.value is NSNull) && snap.hasChildren() {
+                if snap.childrenCount == 1 && self!.isTyping { return }  // Just me
                 for item in snap.children {
                     let typer = item as! FIRDataSnapshot
                     if let username = typer.value as? String {
-                        self.typingIndicatorView?.insertUsername(username)
+                        self!.typingIndicatorView?.insertUsername(username)
                     }
                 }
             }

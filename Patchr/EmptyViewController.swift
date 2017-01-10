@@ -59,14 +59,15 @@ class EmptyViewController: UIViewController {
         
         self.imageBackground.image = UIImage(named: "imgLobbyBackground")
         self.imageBackground.contentMode = UIViewContentMode.scaleToFill
-        self.view.addSubview(self.imageBackground)
         
         self.imageLogo.image = UIImage(named: "imgPatchrWhite")
         self.imageLogo.contentMode = UIViewContentMode.scaleAspectFill
-        self.view.addSubview(self.imageLogo)
         
         self.appName.text = "Patchr"
         self.appName.textAlignment = NSTextAlignment.center
+        
+        self.view.addSubview(self.imageBackground)
+        self.view.addSubview(self.imageLogo)
         self.view.addSubview(self.appName)
         
         self.appName.alpha = 0.0

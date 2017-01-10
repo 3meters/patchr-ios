@@ -170,6 +170,12 @@ public extension UIView {
 		UIGraphicsEndImageContext()
 		return image!
 	}
+    
+    func removeSubviews() {
+        for subview in self.subviews {
+            subview.removeFromSuperview()
+        }
+    }
 	
 	func resizeToFitSubviews() {
 		var w: CGFloat = 0
@@ -223,10 +229,11 @@ public extension UIView {
 
 extension UIWindow {
     
-    func setRootViewController(rootViewController: UIViewController, animated: Bool, completion: ((Bool) -> Void)? = nil) {
+    func setRootViewController(rootViewController: UIViewController, animated: Bool, then: ((Bool) -> Void)? = nil) {
 		
         if !animated {
             self.rootViewController = rootViewController
+            then?(true)
             return
         }
         
@@ -242,7 +249,7 @@ extension UIWindow {
                 UIView.setAnimationsEnabled(false)
                 self.rootViewController = rootViewController
                 UIView.setAnimationsEnabled(oldState)
-            }, completion: completion)
+            }, completion: then)
     }
 }
 

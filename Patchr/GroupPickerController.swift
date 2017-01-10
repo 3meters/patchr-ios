@@ -93,7 +93,7 @@ class GroupPickerController: BaseTableController {
     
     func closeAction(sender: AnyObject?) {
         if self.simplePicker {
-            let controller = MainController.instance.channelPicker
+            let controller = MainController.channelPicker
             self.navigationController?.pushViewController(controller, animated: true)
             return
         }
@@ -333,7 +333,7 @@ extension GroupPickerController: UITableViewDelegate {
         else {
             StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
             MainController.instance.showChannel(groupId: groupId, channelId: channelId)
-            let controller = MainController.instance.channelPicker
+            let controller = MainController.channelPicker
             self.navigationController?.pushViewController(controller, animated: true)
         }
     }
