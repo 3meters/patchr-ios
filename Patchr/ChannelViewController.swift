@@ -21,8 +21,11 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     var channelQuery: ChannelQuery?
     var messagesQuery: FIRDatabaseQuery!
     var unreadQuery: UnreadQuery?
+    var typingRef: FIRDatabaseReference!
+    var typingHandle: FIRDatabaseHandle!
+    var typingTask: DispatchWorkItem?
     
-    var cellReuseIdentifier = "message-cell"
+    let cellReuseIdentifier = "message-cell"
     var headerView: ChannelDetailView!
     var unreadRefs = [[String: Any]]()
 
@@ -54,6 +57,25 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     var rowHeights			: NSMutableDictionary = [:]
     var itemTemplate		= MessageViewCell()
     var itemPadding	= UIEdgeInsetsMake(12, 12, 12, 12)
+    
+    var localTyping = false
+    
+    var isTyping: Bool {
+        get {
+            return self.localTyping
+        }
+        set {
+            self.localTyping = newValue
+            let username = UserController.instance.user!.username!
+            let userId = UserController.instance.userId!
+            if self.localTyping {
+                self.typingRef.child(userId).setValue(username)
+            }
+            else {
+                self.typingRef.child(userId).removeValue()
+            }
+        }
+    }
 
     /*--------------------------------------------------------------------------------------------
      * MARK: - Lifecycle
@@ -89,6 +111,7 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         self.viewIsVisible = false
+        self.isTyping = false
     }
     
     override func viewWillLayoutSubviews() {
@@ -121,7 +144,10 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
     }
     
     deinit {
-        NotificationCenter.default.removeObserver(self)
+        Log.d("ChannelViewController deallocated")
+        if self.typingHandle != nil {
+            self.typingRef.removeObserver(withHandle: self.typingHandle)
+        }
         self.channelQuery?.remove()
         self.unreadQuery?.remove()
     }
@@ -268,6 +294,39 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.viewIsVisible = (self.view.window != nil)
         if self.viewIsVisible {
             cleanupUnreads()
+        }
+    }
+    
+    override func showPhotoEdit() {
+        super.showPhotoEdit()
+        self.isTyping = true
+    }
+    
+    override func didPressLeftButton(_ sender: Any!) {
+        super.didPressLeftButton(sender)
+        self.isTyping = true
+    }
+    
+    override func didPressRightButton(_ sender: Any!) {
+        super.didPressRightButton(sender)
+        self.isTyping = false
+    }
+    
+    override func textDidUpdate(_ animated: Bool) {
+        super.textDidUpdate(animated)
+        
+        let typing = (self.textInputbar.textView.text != nil && self.textInputbar.textView.text != "")
+        
+        if self.typingTask != nil {
+            self.typingTask!.cancel()
+        }
+        
+        self.isTyping = typing
+        
+        if typing {
+            self.typingTask = Utils.delay(2.0) {
+                self.isTyping = false
+            }
         }
     }
     
@@ -425,6 +484,8 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         self.messageBar.layer.backgroundColor = Colors.accentColorFill.cgColor
         self.messageBar.alpha = 0.0
         
+        self.typingIndicatorView?.interval = TimeInterval(8.0)
+        
         self.view.addSubview(self.activity)
         
         NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged), name: ReachabilityChangedNotification, object: nil)
@@ -437,12 +498,24 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         Log.d("Binding to: \(channelId)")
         
         let userId = UserController.instance.userId!
-        let groupQuery = GroupQuery(groupId: groupId, userId: userId)
         
-        groupQuery.once(with: { group in
-            Log.d("Once query result for group: \(group)")
-            if group != nil {
-                self.titleView.title?.text = group!.title
+        self.typingRef = FireController.db.child("typing/\(groupId)/\(channelId)")
+        self.typingRef.child(userId).onDisconnectRemoveValue()
+        self.typingHandle = self.typingRef.observe(.value, with: { snap in
+            if !(snap.value is NSNull) && snap.hasChildren() {
+                if snap.childrenCount == 1 && self.isTyping { return }  // Just me
+                for item in snap.children {
+                    let typer = item as! FIRDataSnapshot
+                    if let username = typer.value as? String {
+                        self.typingIndicatorView?.insertUsername(username)
+                    }
+                }
+            }
+        })
+        
+        FireController.db.child("groups/\(groupId)/title").observe(.value, with: { [weak self] snap in
+            if let title = snap.value as? String {
+                self?.titleView.title?.text = title
             }
         })
         
@@ -509,12 +582,14 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         
         self.messagesQuery = FireController.db.child("channel-messages/\(channelId)").queryOrdered(byChild: "created_at_desc")
         
-        self.tableViewDataSource = FUITableViewDataSource(
+        self.tableViewDataSource = MessagesDataSource(
             query: self.messagesQuery,
             view: self.tableView,
             populateCell: { [weak self] tableView, indexPath, snap in
                 return (self?.populateCell(tableView, cellForRowAt: indexPath, snap: snap))!
             })
+        
+        self.tableViewDataSource.rowHeights = self.rowHeights
         
         Log.d("Observe query triggered for channel messages")
         self.tableView.dataSource = self.tableViewDataSource
@@ -839,6 +914,18 @@ class ChannelViewController: BaseSlackController, SlideMenuControllerDelegate {
         }
         
         return viewHeight
+    }
+}
+
+class MessagesDataSource: FUITableViewDataSource {
+    
+    var rowHeights: NSMutableDictionary?
+    
+    override func array(_ array: FUIArray!, didChange object: Any!, at index: UInt) {
+        if let snap = object as? FIRDataSnapshot {
+            self.rowHeights?.removeObject(forKey: snap.key)
+        }
+        super.array(array, didChange: object, at: index)
     }
 }
 

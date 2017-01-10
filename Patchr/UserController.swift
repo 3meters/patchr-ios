@@ -85,12 +85,12 @@ class UserController: NSObject {
         }
     }
 
-    func setUserId(userId: String, next: ((Any?) -> Void)? = nil) {
+    func setUserId(userId: String, then: ((Any?) -> Void)? = nil) {
         
         var calledBack = false
         
         guard userId != self.userId else {
-            next?(nil)
+            then?(nil)
             return
         }
         
@@ -122,7 +122,7 @@ class UserController: NSObject {
             self.user = user
             
             if !calledBack {
-                next?(nil)
+                then?(nil)
                 calledBack = true
             }
             
@@ -138,6 +138,10 @@ class UserController: NSObject {
             Log.d("UserController: Observe query result for user unreads: \(total)")
             self?.unreads = total
             UIApplication.shared.applicationIconBadgeNumber = total
+            FireController.db.child("counters/\(userId)/unreads").runTransactionBlock { currentData -> FIRTransactionResult in
+                currentData.value = total
+                return FIRTransactionResult.success(withValue: currentData)
+            }
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: Events.UnreadChange), object: self, userInfo: nil)
         })
     }

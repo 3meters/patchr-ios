@@ -71,7 +71,7 @@ class AirProgress: MBProgressHUD {
         self.detailsLabelFont = Theme.fontCommentSmall
 		self.activityIndicatorColor = Theme.colorActivityIndicator
 		
-        if progressStyle == .ActivityWithText {
+        if progressStyle == .activityWithText {
             self.animationType = MBProgressHUDAnimation.zoom
             self.margin = 16
             self.cornerRadius = 8
@@ -81,7 +81,7 @@ class AirProgress: MBProgressHUD {
             self.shadow = true
             self.isSquare = true
         }
-        else if progressStyle == .ToastLight {
+        else if progressStyle == .toastLight {
             self.animationType = MBProgressHUDAnimation.fade
             self.margin = 16.0
             self.cornerRadius = 24.0
@@ -91,7 +91,18 @@ class AirProgress: MBProgressHUD {
             self.detailsLabelColor = Theme.colorTextToast
             self.shadow = true
         }
-        else if progressStyle == .ActivityOnly {
+        else if progressStyle == .stickyToastLight {
+            self.animationType = MBProgressHUDAnimation.fade
+            self.margin = 16.0
+            self.cornerRadius = 24.0
+            self.opacity = 0.7
+            self.color = Theme.colorBackgroundToast
+            self.labelColor = Theme.colorTextToast
+            self.detailsLabelColor = Theme.colorTextToast
+            self.shadow = true
+            self.detailsLabelFont = self.labelFont
+        }
+        else if progressStyle == .activityOnly {
             self.animationType = MBProgressHUDAnimation.fade
             self.opacity = 0.0
             self.color = Theme.colorBackgroundActivityOnly
@@ -102,9 +113,10 @@ class AirProgress: MBProgressHUD {
 }
 
 enum ProgressStyle: Int {
-    case ActivityOnly
-    case ActivityWithText
-    case ActivityDark
-    case ToastLight
-    case ToastDark
+    case activityOnly
+    case activityWithText
+    case activityDark
+    case toastLight
+    case toastDark
+    case stickyToastLight
 }

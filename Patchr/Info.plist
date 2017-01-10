@@ -32,29 +32,9 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>207</string>
-	<key>FacebookAppID</key>
-	<string>894654857249670</string>
-	<key>FacebookDisplayName</key>
-	<string>Patchr</string>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>fb</string>
-		<string>fbapi</string>
-		<string>fbapi20130214</string>
-		<string>fbapi20130410</string>
-		<string>fbapi20130702</string>
-		<string>fbapi20131010</string>
-		<string>fbapi20131219</string>
-		<string>fbapi20140410</string>
-		<string>fbapi20140116</string>
-		<string>fbapi20150313</string>
-		<string>fbapi20150629</string>
-		<string>fbauth</string>
-		<string>fbauth2</string>
-		<string>fb-messenger-api20140430</string>
-		<string>fbshareextension</string>
-	</array>
+	<string>208</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -107,20 +87,6 @@
 				<true/>
 				<key>NSThirdPartyExceptionMinimumTLSVersion</key>
 				<string>TLSv1.0</string>
-				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
-				<false/>
-			</dict>
-			<key>facebook.com</key>
-			<dict>
-				<key>NSIncludesSubdomains</key>
-				<true/>
-				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
-				<false/>
-			</dict>
-			<key>fbcdn.net</key>
-			<dict>
-				<key>NSIncludesSubdomains</key>
-				<true/>
 				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
 				<false/>
 			</dict>
@@ -181,14 +147,12 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>branch_app_domain</key>
+	<string>bvvb.app.link</string>
 	<key>branch_key</key>
 	<dict>
 		<key>live</key>
 		<string>key_live_aabKfhL9u6piQ93E2lzVslklzraKnSc3</string>
 	</dict>
-	<key>branch_app_domain</key>
-	<string>bvvb.app.link</string>
-	<key>FirebaseAppDelegateProxyEnabled</key>
-	<false/>
 </dict>
 </plist>

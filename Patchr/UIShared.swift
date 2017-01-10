@@ -96,9 +96,9 @@ struct UIShared {
         return browser!
     }
 	
-	@discardableResult static func StickyToast(message: String?, controller: UIViewController? = nil, addToWindow: Bool = true) -> AirProgress {
-		
-		var targetView: UIView = UIApplication.shared.windows.last!
+	@discardableResult static func StickyToast(message: String?, controller: UIViewController? = nil, addToWindow: Bool = true) -> AirProgress? {
+        
+        guard var targetView: UIView = MainController.instance.window else { return nil }
 		
 		if !addToWindow {
 			if controller == nil  {
@@ -110,14 +110,13 @@ struct UIShared {
 		}
 		
 		let progress = AirProgress.showAdded(to: targetView, animated: true)
-		progress?.mode = MBProgressHUDMode.text
-		progress?.styleAs(progressStyle: .ToastLight)
-		progress?.labelText = message
-		progress?.detailsLabelText = "Tap to dismiss"
-		progress?.xOffset = Float((UIScreen.main.bounds.size.height / 2) - 200)
-		progress?.shadow = true
-		progress?.removeFromSuperViewOnHide = false
-		progress?.isUserInteractionEnabled = true
+		progress!.mode = .text
+		progress!.styleAs(progressStyle: .stickyToastLight)
+		progress!.detailsLabelText = "\(message!)\rTap to dismiss"
+		progress!.yOffset = Float((UIScreen.main.bounds.size.height / 2) - 200)
+		progress!.shadow = true
+		progress!.removeFromSuperViewOnHide = true
+        progress!.isUserInteractionEnabled = true
 		
 		return progress!
 	}
@@ -138,7 +137,7 @@ struct UIShared {
         var progress: AirProgress
         progress = AirProgress.showAdded(to: targetView, animated: true)
         progress.mode = MBProgressHUDMode.text
-        progress.styleAs(progressStyle: .ToastLight)
+        progress.styleAs(progressStyle: .toastLight)
         progress.labelText = message
         progress.yOffset = Float((UIScreen.main.bounds.size.height / 2) - 200)
         progress.shadow = true

@@ -32,7 +32,7 @@ class PasswordViewController: BaseEditViewController {
     }
 
     override func viewDidAppear(_ animated: Bool) {
-        if self.flow == .onboardCreate && self.branch == .signup {
+        if self.branch == .signup {
             let _ = self.userNameField.becomeFirstResponder()
         }
         else {
@@ -46,7 +46,7 @@ class PasswordViewController: BaseEditViewController {
         
         self.message.anchorTopCenter(withTopPadding: 0, width: 288, height: messageSize.height)
         
-        if self.flow == .onboardCreate && self.branch == .signup {
+        if self.branch == .signup {
             self.userNameField.alignUnder(self.message, matchingCenterWithTopPadding: 8, width: 288, height: 48)
             self.passwordField.alignUnder(self.userNameField, matchingCenterWithTopPadding: 8, width: 288, height: 48)
         }
@@ -72,7 +72,7 @@ class PasswordViewController: BaseEditViewController {
             else {
                 self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
                 self.progress?.mode = MBProgressHUDMode.indeterminate
-                self.progress?.styleAs(progressStyle: .ActivityWithText)
+                self.progress?.styleAs(progressStyle: .activityWithText)
                 self.progress?.minShowTime = 0.5
                 self.progress?.removeFromSuperViewOnHide = true
                 self.progress?.show(true)
@@ -143,7 +143,7 @@ class PasswordViewController: BaseEditViewController {
         self.hideShowButton.imageEdgeInsets = UIEdgeInsetsMake(8, 10, 8, 10)
         self.hideShowButton.addTarget(self, action: #selector(hideShowPasswordAction(sender:)), for: .touchUpInside)
         
-        if self.mode == .reauth || (self.flow == .onboardCreate && self.branch == .signup) {
+        if self.mode == .reauth || self.branch == .signup {
             self.forgotPasswordButton.isHidden = true
         }
         else {
@@ -155,7 +155,7 @@ class PasswordViewController: BaseEditViewController {
         self.contentHolder.addSubview(self.message)
         self.contentHolder.addSubview(self.passwordField)
         
-        if self.flow == .onboardCreate && self.branch == .signup {
+        if self.branch == .signup {
             self.contentHolder.addSubview(self.userNameField)
         }
 
@@ -181,20 +181,22 @@ class PasswordViewController: BaseEditViewController {
                 
                 if error == nil {
                     Reporting.track("Logged In")
-                    UserController.instance.setUserId(userId: (user?.uid)!) { result in
-                        if self.flow == .onboardLogin {
-                            let controller = GroupPickerController()
-                            self.navigationController?.pushViewController(controller, animated: true)
-                        }
-                        else if self.flow == .onboardCreate {
-                            let controller = GroupCreateController()
-                            controller.flow = self.flow
-                            self.navigationController?.pushViewController(controller, animated: true)
-                        }
-                        else if self.flow == .onboardInvite {
-                            let controller = GroupPickerController()
-                            self.navigationController?.pushViewController(controller, animated: true)
-                            MainController.instance.routeDeepLink(params: self.inputInviteParams, error: nil)
+                    UserController.instance.setUserId(userId: (user?.uid)!) { [weak self] result in
+                        if self != nil {
+                            if self!.flow == .onboardLogin {
+                                let controller = GroupPickerController()
+                                self!.navigationController?.pushViewController(controller, animated: true)
+                            }
+                            else if self!.flow == .onboardCreate {
+                                let controller = GroupCreateController()
+                                controller.flow = self!.flow
+                                self!.navigationController?.pushViewController(controller, animated: true)
+                            }
+                            else if self!.flow == .onboardInvite {
+                                let controller = EmptyViewController()
+                                self!.navigationController?.setViewControllers([controller], animated: true)
+                                MainController.instance.routeDeepLink(params: self!.inputInviteParams, error: nil)
+                            }
                         }
                     }
                 }
@@ -228,9 +230,16 @@ class PasswordViewController: BaseEditViewController {
                             user.sendEmailVerification()
                             Reporting.track("Account Created")
                             UserController.instance.setUserId(userId: user.uid) { result in
-                                let controller = GroupCreateController()
-                                controller.flow = .onboardCreate
-                                self.navigationController?.pushViewController(controller, animated: true)
+                                if self.flow == .onboardCreate {
+                                    let controller = GroupCreateController()
+                                    controller.flow = self.flow
+                                    self.navigationController?.pushViewController(controller, animated: true)
+                                }
+                                else if self.flow == .onboardInvite {
+                                    let controller = EmptyViewController()
+                                    self.navigationController?.setViewControllers([controller], animated: true)
+                                    MainController.instance.routeDeepLink(params: self.inputInviteParams, error: nil)
+                                }
                             }
                         }
                     })
@@ -272,10 +281,10 @@ class PasswordViewController: BaseEditViewController {
             return false
         }
         
-        if self.flow == .onboardCreate && self.branch == .signup {
+        if self.branch == .signup {
             
             if self.userNameField.isEmpty {
-                self.userNameField.errorMessage = "Choose your username for this group"
+                self.userNameField.errorMessage = "Choose your username"
                 return false
             }
             

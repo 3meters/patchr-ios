@@ -13,10 +13,6 @@ class AirTextView: JVFloatLabeledTextView {
 	
 	var rule = UIView()
     
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-	
 	func initialize() {
 		
         NotificationCenter.default.addObserver(self, selector: #selector(editingBegin(notification:)), name: NSNotification.Name.UITextFieldTextDidBeginEditing, object: nil)

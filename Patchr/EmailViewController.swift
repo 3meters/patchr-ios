@@ -50,7 +50,7 @@ class EmailViewController: BaseEditViewController {
 
             self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
             self.progress?.mode = MBProgressHUDMode.indeterminate
-            self.progress?.styleAs(progressStyle: .ActivityWithText)
+            self.progress?.styleAs(progressStyle: .activityWithText)
             self.progress?.minShowTime = 0.5
             self.progress?.labelText = "Verifying..."
             self.progress?.removeFromSuperViewOnHide = true
@@ -73,6 +73,9 @@ class EmailViewController: BaseEditViewController {
 
         if self.flow == .onboardLogin {
             self.message.text = "Welcome back."
+        }
+        else if self.flow == .onboardInvite {
+            self.message.text = "Welcome."
         }
         else {
             self.message.text = "Patchr groups are perfect for control freaks."
@@ -130,7 +133,7 @@ class EmailViewController: BaseEditViewController {
             else if self.flow == .onboardInvite {
                 let controller = PasswordViewController()
                 controller.flow = self.flow
-                controller.branch = .login
+                controller.branch = exists ? .login : .signup
                 controller.inputEmail = email
                 controller.inputInviteParams = self.inputInviteParams
                 self.navigationController?.pushViewController(controller, animated: true)

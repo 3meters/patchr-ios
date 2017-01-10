@@ -28,7 +28,7 @@ class BaseSlackController: SLKTextViewController {
             }
         }
     }
-
+    
     var channel: FireChannel!
     var searchResult: [String]?
     var editingMessage: FireMessage!
@@ -41,7 +41,7 @@ class BaseSlackController: SLKTextViewController {
     var photoHolder	: UIVisualEffectView!
     var rule = UIView()
 	
-    var tableViewDataSource: FUITableViewDataSource!
+    var tableViewDataSource: MessagesDataSource!
 
     override var tableView: UITableView {
         get {
@@ -82,6 +82,10 @@ class BaseSlackController: SLKTextViewController {
         super.viewDidDisappear(animated)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIContentSizeCategoryDidChange, object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.SLKTextInputbarDidMove, object: nil)
+    }
+    
+    deinit {
+        Log.d("BaseSlackController deallocated")
     }
 	
 	/*--------------------------------------------------------------------------------------------
@@ -343,7 +347,6 @@ class BaseSlackController: SLKTextViewController {
         
         /* Generate image key */
         let imageKey = "\(Utils.genImageKey()).jpg"
-//        let timestamp = Utils.now() + (FireController.instance.serverOffset ?? 0)
         
         let photoMap = [
             "width": Int(preparedImage.size.width), // width/height are in points...should be pixels?

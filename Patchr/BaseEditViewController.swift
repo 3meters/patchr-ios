@@ -31,7 +31,6 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
     
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-		
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeShown(sender:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeHidden(sender:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
 	}
@@ -43,7 +42,6 @@ class BaseEditViewController: BaseViewController, UITextFieldDelegate, UITextVie
 
 	override func viewDidDisappear(_ animated: Bool) {
 		super.viewDidDisappear(animated)
-        
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
 	}

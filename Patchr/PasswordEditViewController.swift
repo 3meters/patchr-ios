@@ -54,7 +54,7 @@ class PasswordEditViewController: BaseEditViewController {
             
             self.progress = AirProgress.addedTo(view: self.view.window!)
             self.progress?.mode = MBProgressHUDMode.indeterminate
-            self.progress?.styleAs(progressStyle: .ActivityWithText)
+            self.progress?.styleAs(progressStyle: .activityWithText)
             self.progress?.minShowTime = 0.5
             self.progress?.labelText = "Updating..."
             self.progress?.removeFromSuperViewOnHide = true

@@ -38,10 +38,6 @@ class BaseTableController: UIViewController {
     override func viewWillLayoutSubviews() {
         self.activity.anchorInCenter(withWidth: 20, height: 20)
     }
-    
-	deinit {
-		NotificationCenter.default.removeObserver(self)
-	}
 	
 	/*--------------------------------------------------------------------------------------------
 	* Notifications

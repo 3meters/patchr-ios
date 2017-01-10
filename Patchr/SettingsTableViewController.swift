@@ -86,7 +86,7 @@ class SettingsTableViewController: UITableViewController {
                 if doIt {
                     self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
                     self.progress!.mode = MBProgressHUDMode.indeterminate
-                    self.progress!.styleAs(progressStyle: .ActivityWithText)
+                    self.progress!.styleAs(progressStyle: .activityWithText)
                     self.progress!.minShowTime = 0.5
                     self.progress!.labelText = "Leaving..."
                     self.progress!.removeFromSuperViewOnHide = true
@@ -112,7 +112,7 @@ class SettingsTableViewController: UITableViewController {
 
         self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
         self.progress!.mode = MBProgressHUDMode.indeterminate
-        self.progress!.styleAs(progressStyle: .ActivityWithText)
+        self.progress!.styleAs(progressStyle: .activityWithText)
         self.progress!.minShowTime = 0.5
         self.progress!.labelText = "Logging out..."
         self.progress!.removeFromSuperViewOnHide = true
@@ -126,7 +126,7 @@ class SettingsTableViewController: UITableViewController {
 
         self.progress = AirProgress.showAdded(to: self.view.window!, animated: true)
         self.progress!.mode = MBProgressHUDMode.indeterminate
-        self.progress!.styleAs(progressStyle: .ActivityWithText)
+        self.progress!.styleAs(progressStyle: .activityWithText)
         self.progress!.minShowTime = 0.5
         self.progress!.labelText = "Clearing..."
         self.progress!.removeFromSuperViewOnHide = true
@@ -308,6 +308,12 @@ extension SettingsTableViewController {
             return CGFloat(0)
         }
         
+        if indexPath.section == 1 && indexPath.row == 2 {
+            if StateController.instance.group?.ownedBy == UserController.instance.userId {
+                return CGFloat(0)
+            }
+        }
+        
         if indexPath.section == 2 && indexPath.row == 3 {
             developmentCell.isHidden = true
             if let developer = UserController.instance.user?.profile?.developer {
@@ -316,12 +322,6 @@ extension SettingsTableViewController {
                 }
             }
             return CGFloat(0)
-        }
-        
-        if indexPath.section == 1 && indexPath.row == 2 {
-            if StateController.instance.group?.ownedBy == UserController.instance.userId {
-                return CGFloat(0)
-            }
         }
         
         if indexPath.section == 4 && indexPath.row == 0 {

@@ -29,7 +29,7 @@ class ChannelPickerController: BaseTableController {
     var backButton: UIBarButtonItem!
     var searchBarButton: UIBarButtonItem!
     var searchButton: UIBarButtonItem!
-    var titleView: UIBarButtonItem!
+    var titleButton: UIBarButtonItem!
     
     var unreadTotal = 0
     var unreadGroup = 0
@@ -42,7 +42,7 @@ class ChannelPickerController: BaseTableController {
     }
     
     /*--------------------------------------------------------------------------------------------
-    * Lifecycle
+    * MARK: - Lifecycle
     *--------------------------------------------------------------------------------------------*/
     
     override func viewDidLoad() {
@@ -55,7 +55,6 @@ class ChannelPickerController: BaseTableController {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.setBackgroundImage(self.gradientImage, for: .default)
         self.navigationController?.navigationBar.tintColor = Colors.white
-        self.navigationController?.setToolbarHidden(false, animated: true)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -69,7 +68,7 @@ class ChannelPickerController: BaseTableController {
     }
 
     /*--------------------------------------------------------------------------------------------
-    * Events
+    * MARK: - Events
     *--------------------------------------------------------------------------------------------*/
     
     func addAction(sender: AnyObject?) {
@@ -96,7 +95,7 @@ class ChannelPickerController: BaseTableController {
     }
 
     /*--------------------------------------------------------------------------------------------
-    * Notifications
+    * MARK: - Notifications
     *--------------------------------------------------------------------------------------------*/
     
     func userDidSwitch(notification: NSNotification?) {
@@ -123,7 +122,7 @@ class ChannelPickerController: BaseTableController {
     }
 
     /*--------------------------------------------------------------------------------------------
-    * Methods
+    * MARK: - Methods
     *--------------------------------------------------------------------------------------------*/
     
     override func initialize() {
@@ -183,18 +182,15 @@ class ChannelPickerController: BaseTableController {
         
         self.gradientImage = Utils.imageFromLayer(layer: gradient)
         
-        let titleView = AirLabelDisplay()
+        let titleWidth = (NAVIGATION_DRAWER_WIDTH - 112)
+        let titleView = AirLabelDisplay(frame: CGRect(x: 0, y: 0, width: titleWidth, height: 24))
         titleView.font = Theme.fontBarText
-        titleView.sizeToFit()
-        self.titleView = UIBarButtonItem(customView: titleView)
+        self.titleButton = UIBarButtonItem(customView: titleView)
 
-        self.navigationItem.leftBarButtonItem = self.titleView
+        self.navigationItem.leftBarButtonItem = self.titleButton
         self.navigationItem.rightBarButtonItems = [self.backButton, self.searchButton]
         self.navigationItem.hidesBackButton = true
         
-        let addButton = UIBarButtonItem(title: "New Channel", style: .plain, target: self, action: #selector(addAction(sender:)))
-        self.toolbarItems = [spacerFlex, addButton, spacerFlex]
-
         NotificationCenter.default.addObserver(self, selector: #selector(userDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.UserDidSwitch), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(groupDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.GroupDidSwitch), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(channelDidSwitch(notification:)), name: NSNotification.Name(rawValue: Events.ChannelDidSwitch), object: nil)
@@ -210,10 +206,23 @@ class ChannelPickerController: BaseTableController {
             let color = ColorArray.randomColor(seed: seed)
             self.navigationController?.navigationBar.barTintColor = color
             
-            GroupQuery(groupId: groupId, userId: userId).once(with: { group in
-                if group != nil {
-                    (self.titleView.customView as? UILabel)?.text = group!.title!
-                    self.titleView.customView?.sizeToFit()
+            FireController.db.child("member-groups/\(userId)/\(groupId)/role").observeSingleEvent(of: .value, with: { [weak self] snap in
+                if let role = snap.value as? String {
+                    if role == "guest" {
+                        self?.navigationController?.setToolbarHidden(true, animated: true)
+                        self?.toolbarItems = []
+                    }
+                    else {
+                        self?.navigationController?.setToolbarHidden(false, animated: true)
+                        let addButton = UIBarButtonItem(title: "New Channel", style: .plain, target: self, action: #selector(self?.addAction(sender:)))
+                        self?.toolbarItems = [spacerFlex, addButton, spacerFlex]
+                    }
+                }
+            })
+            
+            FireController.db.child("groups/\(groupId)/title").observe(.value, with: { [weak self] snap in
+                if let title = snap.value as? String {
+                    (self?.titleButton.customView as? UILabel)?.text = title
                 }
             })
             
@@ -264,7 +273,7 @@ class ChannelPickerController: BaseTableController {
             self.searchBar.becomeFirstResponder()
         }
         else {
-            self.navigationItem.setLeftBarButton(self.titleView, animated: true)
+            self.navigationItem.setLeftBarButton(self.titleButton, animated: true)
             self.navigationItem.setRightBarButtonItems([self.backButton, self.searchButton], animated: true)
             self.searchBar.resignFirstResponder()
         }

@@ -16,8 +16,8 @@ class BaseViewController: UIViewController {
 
     var statusBarHidden: Bool = false {
         didSet {
-            UIView.animate(withDuration: 0.5) { () -> Void in
-                self.setNeedsStatusBarAppearanceUpdate()
+            UIView.animate(withDuration: 0.5) { [weak self] () -> Void in
+                self?.setNeedsStatusBarAppearanceUpdate()
             }
         }
     }
@@ -50,10 +50,6 @@ class BaseViewController: UIViewController {
         self.scrollView.fillSuperview()
         self.contentHolder.anchorTopCenterFillingWidth(withLeftAndRightPadding: 16, topPadding: 16, height: self.contentHolder.frame.size.height)
     }
-	
-	deinit {
-		NotificationCenter.default.removeObserver(self)
-	}
 	
 	/*--------------------------------------------------------------------------------------------
 	* Notifications

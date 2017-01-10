@@ -62,10 +62,6 @@ class PhotoEditView: UIView {
         super.init(frame: frame)
         initialize()
     }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
 	
 	/*--------------------------------------------------------------------------------------------
 	* Events

@@ -364,10 +364,10 @@ struct Utils {
         return nearbys
     }
     
-    static func delay(_ delay: Double, closure: @escaping () -> ()) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-            closure()
-        }
+    @discardableResult static func delay(_ delay: Double, closure: @escaping () -> ()) -> DispatchWorkItem? {
+        let task = DispatchWorkItem(block: closure)
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: task)
+        return task
     }
 
 	static func now() -> Int64 {

@@ -13,7 +13,7 @@ class GroupPickerController: BaseTableController {
     
     var groupsQuery: FIRDatabaseQuery!
     var tableViewDataSource: FUITableViewDataSource!
-    var cellReuseIdentifier: String!
+    let cellReuseIdentifier = "group-cell"
     
     var gradientImage: UIImage!
     var messageLabel = AirLabelTitle()
@@ -93,7 +93,7 @@ class GroupPickerController: BaseTableController {
     
     func closeAction(sender: AnyObject?) {
         if self.simplePicker {
-            let controller = MainController.instance.channelPickerController
+            let controller = MainController.instance.channelPicker
             self.navigationController?.pushViewController(controller, animated: true)
             return
         }
@@ -148,7 +148,6 @@ class GroupPickerController: BaseTableController {
 
             self.gradientImage = Utils.imageFromLayer(layer: gradient)
 
-            self.cellReuseIdentifier = "group-cell"
             self.tableView.backgroundColor = Theme.colorBackgroundTable
             self.tableView.delegate = self
             self.tableView.tableFooterView = UIView()
@@ -158,9 +157,10 @@ class GroupPickerController: BaseTableController {
             
             self.view.addSubview(self.tableView)
             
+            let titleWidth = (NAVIGATION_DRAWER_WIDTH - 112)
             let titleView = AirLabelDisplay(text: " Patchr Groups")
+            titleView.frame = CGRect(x: 0, y: 0, width: titleWidth, height: 24)
             titleView.font = Theme.fontBarText
-            titleView.sizeToFit()
             self.titleView = UIBarButtonItem(customView: titleView)
             
             let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeAction(sender:)))
@@ -191,7 +191,6 @@ class GroupPickerController: BaseTableController {
                 self.view.addSubview(self.messageLabel)
                 self.view.addSubview(self.rule)
                 
-                self.cellReuseIdentifier = "group-cell"
                 self.tableView.backgroundColor = Theme.colorBackgroundTable
                 self.tableView.delegate = self
                 self.tableView.tableFooterView = UIView()
@@ -262,7 +261,7 @@ class GroupPickerController: BaseTableController {
     
     func populateCell(_ tableView: UITableView, cellForRowAt indexPath: IndexPath, snap: FIRDataSnapshot) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: (self.cellReuseIdentifier)!, for: indexPath) as! GroupListCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: self.cellReuseIdentifier, for: indexPath) as! GroupListCell
         let link = snap.value as! [String: Any]
         let groupId = snap.key
         
@@ -334,7 +333,7 @@ extension GroupPickerController: UITableViewDelegate {
         else {
             StateController.instance.setChannelId(channelId: channelId, groupId: groupId)
             MainController.instance.showChannel(groupId: groupId, channelId: channelId)
-            let controller = MainController.instance.channelPickerController
+            let controller = MainController.instance.channelPicker
             self.navigationController?.pushViewController(controller, animated: true)
         }
     }

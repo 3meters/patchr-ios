@@ -137,6 +137,7 @@ PODS:
   - PhoneNumberKit/UIKit (1.0.1):
     - PhoneNumberKit/PhoneNumberKitCore
   - pop (1.0.9)
+  - PopupDialog (0.5.3)
   - ReachabilitySwift (3)
   - SDWebImage (3.8.2):
     - SDWebImage/Core (= 3.8.2)
@@ -175,6 +176,7 @@ DEPENDENCIES:
   - PBWebViewController (~> 0.5)
   - PhoneNumberKit (~> 1.0)
   - pop (~> 1.0)
+  - PopupDialog
   - ReachabilitySwift (~> 3)
   - SDWebImage (~> 3.8.1)
   - SkyFloatingLabelTextField (~> 2.0.0)
@@ -229,6 +231,7 @@ SPEC CHECKSUMS:
   PBWebViewController: 6537990155ca850fb8d0563efbc12becebc953ef
   PhoneNumberKit: 0b5ea9a5454d201656db766343e9d768f8542496
   pop: f667631a5108a2e60d9e8797c9b32ddaf2080bce
+  PopupDialog: 533dd564f8781633375505b9fbd406f8f146ccc9
   ReachabilitySwift: f5b9bb30a0777fac8f09ce8b067e32faeb29bb64
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   SkyFloatingLabelTextField: a81a0eaed2785d1599f11484c6ebc1c4eb5d1228
@@ -237,6 +240,6 @@ SPEC CHECKSUMS:
   TTTAttributedLabel: 8cffe8e127e4e82ff3af1e5386d4cd0ad000b656
   UIDevice-Hardware: ecb52d9a7b223b31f81982358e2b0769ac1a7918
 
-PODFILE CHECKSUM: 83e4937a371a026fcd5b2476f8dfb696944b7934
+PODFILE CHECKSUM: 3a61f9cfdafa9483481ab391f7399cc1f878fc7e
 
 COCOAPODS: 1.1.0.rc.3

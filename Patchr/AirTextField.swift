@@ -25,10 +25,6 @@ class AirTextField: JVFloatLabeledTextField {
 		initialize()
 	}
 	
-	deinit {
-		NotificationCenter.default.removeObserver(self)
-	}
-	
 	func initialize() {
         
 		NotificationCenter.default.addObserver(self, selector: #selector(editingBegin(notification:)), name: NSNotification.Name.UITextFieldTextDidBeginEditing, object: nil)

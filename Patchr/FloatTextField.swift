@@ -11,7 +11,7 @@ import SkyFloatingLabelTextField
 
 class FloatTextField: SkyFloatingLabelTextField, UITextFieldDelegate {
     
-    var fieldDelegate: UITextFieldDelegate?
+    weak var fieldDelegate: UITextFieldDelegate?
 	
 	required init(coder aDecoder: NSCoder) {
 		/* Called when instantiated from XIB or Storyboard */
@@ -27,7 +27,7 @@ class FloatTextField: SkyFloatingLabelTextField, UITextFieldDelegate {
 	
 	func initialize() {
         
-        self.delegate = self
+        self.delegate = self    // weak ref
         
         /* Fonts */
 		self.font = Theme.fontText

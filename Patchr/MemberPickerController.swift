@@ -19,7 +19,7 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
     var submitButton: UIBarButtonItem!
     var tableView = UITableView(frame: CGRect.zero, style: .plain)
     var tableViewDataSource: FUITableViewDataSource!
-    var cellReuseIdentifier: String!
+    let cellReuseIdentifier = "user-cell"
     
     var invites: [String: Any] = [:]
     
@@ -70,7 +70,6 @@ class MemberPickerController: BaseTableController, UITableViewDelegate {
     override func initialize() {
         super.initialize()
         
-        self.cellReuseIdentifier = "user-cell"
         self.tableView.register(UINib(nibName: "UserListCell", bundle: nil), forCellReuseIdentifier: self.cellReuseIdentifier)
         self.tableView.backgroundColor = Theme.colorBackgroundTable
         self.tableView.tableFooterView = UIView()

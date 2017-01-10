@@ -100,8 +100,6 @@ class ProfileEditViewController: BaseEditViewController {
     }
     
     func closeAction(sender: AnyObject?) {
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.PhotoDidChange), object: nil)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: Events.PhotoRemoved), object: nil)
         close()
     }
     
